@@ -34,6 +34,7 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.DumpConfigurazione;
@@ -88,6 +89,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativaConfig;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.MTOMProcessor;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -153,6 +155,9 @@ import org.openspcoop2.pdd.mdb.SbustamentoMessage;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.services.ServicesUtils;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
+import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.error.AbstractErrorGenerator;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
@@ -244,7 +249,7 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 
-public class RicezioneBuste {
+public class RicezioneBuste implements IAsyncResponseCallback {
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
 	public static final String ID_MODULO = "RicezioneBuste";
@@ -265,6 +270,8 @@ public class RicezioneBuste {
 		logCore.error(msg,e);
 	}
 	
+	private static final String INIZIALIZZAZIONE_RISORSE = "InizializzazioneRisorseServizioRicezioneBuste";
+	private static final String SOGGETTO_FRUITORE_NON_IDENTIFICATO = "Soggetto fruitore non identificato";
 	
 	/** Indicazione se sono state inizializzate le variabili del servizio */
 	public static boolean initializeService = false;
@@ -278,13 +285,16 @@ public class RicezioneBuste {
 		
 	/**
 	 * Inizializzatore del servizio RicezioneBuste
+	 * @throws ProtocolException 
 	 * 
 	 * @throws Exception
 	 */
-	public static synchronized void initializeService(ConfigurazionePdDManager configReader,ClassNameProperties className,OpenSPCoop2Properties propertiesReader,Logger logCore) throws Exception{
+	public static synchronized void initializeService(ClassNameProperties className,OpenSPCoop2Properties propertiesReader,Logger logCore) throws CoreException, ProtocolException{
 		if(RicezioneBuste.initializeService)
 			return; // inizializzato da un altro thread
 
+		String effettuataSuffix = " effettuata.";
+		
 		Loader loader = Loader.getInstance();
 		PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
 		
@@ -293,9 +303,9 @@ public class RicezioneBuste {
 		try{
 			INodeSender nodeSender = (INodeSender) loader.newInstance(classTypeNodeSender);
 			nodeSender.toString();
-			logInfo(logCore, "Inizializzazione gestore NodeSender di tipo "+classTypeNodeSender+" effettuata.");
+			logInfo(logCore, "Inizializzazione gestore NodeSender di tipo "+classTypeNodeSender+effettuataSuffix);
 		}catch(Exception e){
-			throw new Exception("Riscontrato errore durante il caricamento della classe ["+classTypeNodeSender+
+			throw new CoreException("Riscontrato errore durante il caricamento della classe 'NodeSender' ["+classTypeNodeSender+
 					"] da utilizzare per la spedizione nell'infrastruttura: "+e.getMessage());
 		}
 
@@ -304,9 +314,9 @@ public class RicezioneBuste {
 		try{
 			INodeReceiver nodeReceiver = (INodeReceiver) loader.newInstance(classType);
 			nodeReceiver.toString();
-			logInfo(logCore, "Inizializzazione gestore NodeReceiver di tipo "+classType+" effettuata.");
+			logInfo(logCore, "Inizializzazione gestore NodeReceiver di tipo "+classType+effettuataSuffix);
 		}catch(Exception e){
-			throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
+			throw new CoreException("Riscontrato errore durante il caricamento della classe 'NodeReceiver' ["+classType+
 					"] da utilizzare per la ricezione dall'infrastruttura: "+e.getMessage());
 		}
 
@@ -318,21 +328,21 @@ public class RicezioneBuste {
 				IGestoreIntegrazionePA gestore = pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazioneDefault[i]);
 				gestore.toString();
 				s.add(tipiIntegrazioneDefault[i]);
-				logCore	.info("Inizializzazione gestore dati di integrazione per le erogazioni di tipo "
-						+ tipiIntegrazioneDefault[i]	+ " effettuata.");
+				logInfo(logCore, "Inizializzazione gestore dati di integrazione 'IGestoreIntegrazionePA' per le erogazioni di tipo "
+						+ tipiIntegrazioneDefault[i]	+ effettuataSuffix);
 			} catch (Exception e) {
-				throw new Exception(e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
 			}
 		}
-		if(s.size()>0){
+		if(!s.isEmpty()){
 			RicezioneBuste.defaultGestoriIntegrazionePA = s.toArray(new String[1]);
 		}
 		
 		// Inizializzo IGestoreIntegrazionePA per protocollo
-		RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA = new java.util.concurrent.ConcurrentHashMap<String, String[]>();
+		RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA = new java.util.concurrent.ConcurrentHashMap<>();
 		Enumeration<String> enumProtocols = ProtocolFactoryManager.getInstance().getProtocolNames();
 		while (enumProtocols.hasMoreElements()) {
-			String protocol = (String) enumProtocols.nextElement();
+			String protocol = enumProtocols.nextElement();
 			String [] tipiIntegrazionePA = propertiesReader.getTipoIntegrazionePA(protocol);
 			if(tipiIntegrazionePA!=null && tipiIntegrazionePA.length>0){
 				List<String> tipiIntegrazionePerProtocollo = new ArrayList<>();
@@ -341,13 +351,13 @@ public class RicezioneBuste {
 						IGestoreIntegrazionePA gestore = pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
 						gestore.toString();
 						tipiIntegrazionePerProtocollo.add(tipiIntegrazionePA[i]);
-						logCore	.info("Inizializzazione gestore dati di integrazione (protocollo: "+protocol+") per le erogazioni di tipo "
-								+ tipiIntegrazionePA[i]	+ " effettuata.");
+						logInfo(logCore, "Inizializzazione gestore dati di integrazione (protocollo: "+protocol+") per le erogazioni di tipo "
+								+ tipiIntegrazionePA[i]	+ effettuataSuffix);
 					} catch (Exception e) {
-						throw new Exception(e.getMessage(),e);
+						throw new CoreException(e.getMessage(),e);
 					}
 				}
-				if(tipiIntegrazionePerProtocollo.size()>0){
+				if(!tipiIntegrazionePerProtocollo.isEmpty()){
 					RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.put(protocol, tipiIntegrazionePerProtocollo.toArray(new String[1]));
 				}
 			}
@@ -361,11 +371,11 @@ public class RicezioneBuste {
 				try {
 					IGestoreCredenziali gestore = (IGestoreCredenziali)loader.newInstance(classType);
 					gestore.toString();
-					logCore	.info("Inizializzazione gestore credenziali di tipo "
-							+ RicezioneBuste.tipiGestoriCredenziali[i]	+ " effettuata.");
+					logInfo(logCore, "Inizializzazione gestore credenziali di tipo "
+							+ RicezioneBuste.tipiGestoriCredenziali[i]	+ effettuataSuffix);
 				} catch (Exception e) {
-					throw new Exception(
-							"Riscontrato errore durante il caricamento della classe ["+ classType
+					throw new CoreException(
+							"Riscontrato errore durante il caricamento della classe 'IGestoreCredenziali' ["+ classType
 							+ "] da utilizzare per la gestione delle credenziali di tipo ["
 							+ RicezioneBuste.tipiGestoriCredenziali[i]+ "]: " + e.getMessage());
 				}
@@ -381,15 +391,125 @@ public class RicezioneBuste {
 	
 	/** Contesto della richiesta */
 	private RicezioneBusteContext msgContext;
+	private RicezioneBusteGeneratoreBustaErrore ricezioneBusteGeneratoreBustaErrore;
+	
+	/** Async Response Callback */
+	private IAsyncResponseCallback asyncResponseCallback;
+	
+	private Logger logCore;
+	private SbustamentoMessage sbustamentoMSG;
+	private ConfigurazionePdDManager configurazionePdDReader;
+	private RegistroServiziManager registroServiziReader;
+	private MsgDiagnostico msgDiag;
+	
+	private PdDContext pddContext;
+	private String idTransazione;
+	private Transaction transaction = null;
+	
+	private String idMessageRequest;
+	private Busta bustaRichiesta;
+	private java.util.List<Eccezione> erroriValidazione;
+	private java.util.List<Eccezione> erroriProcessamento;
+	private OpenSPCoop2Message requestMessage;
+	private boolean isMessaggioErroreProtocollo;
+	private boolean bustaDiServizio;
+	private boolean mittenteAnonimo = false;
+	private String implementazionePdDMittente;
+	private RuoloBusta ruoloBustaRicevuta;
+	private String versioneProtocollo;
+	private IDSoggetto identitaPdD;
+	
+	private IDSoggetto soggettoFruitore = null;
+	private IDServizio idServizio = null;
+		
+	private TipoPdD tipoPorta;
+	private PortaApplicativa pa = null;
+	private PortaDelegata pd = null;
+		
+	private boolean oneWayVersione11;
+	private boolean oneWayStateless;
+	private boolean sincronoStateless;
+	private boolean asincronoStateless;
+	private boolean portaStateless;
+	private boolean routingStateless;
+	private boolean functionAsRouter;
+	private boolean newConnectionForResponse;
+	private boolean utilizzoIndirizzoTelematico;
+	
+	private OpenSPCoopState openspcoopstate = null;
+	private Tracciamento tracciamento = null;
+	private String correlazioneApplicativa = null;
+	private GestoreMessaggi msgRequest = null;
+	private RepositoryBuste repositoryBuste = null;
+	
+	private PdDContext context;
+	
+	private HashMap<String, Object> internalObjects = null;
+	private InRequestContext inRequestContext = null;
+	private RicezioneBusteParametriGenerazioneBustaErrore parametriGenerazioneBustaErrore = null;
+	private RicezioneBusteParametriInvioBustaErrore parametriInvioBustaErrore = null;
+	
+	// Imposto un context di Base (utilizzato anche  per la successiva spedizione della risposta)
+	private MessageSecurityContext messageSecurityContext = null;
+	// Proprieta' FlowParameter MTOM / Security relative alla ricezione della busta
+	private FlowProperties flowPropertiesRequest = null;
+	// Proprieta' FlowParameter MTOM / Security relative alla spedizione della risposta
+	private FlowProperties flowPropertiesResponse = null;
+	
+	private Integrazione infoIntegrazione;
+	
+	private HeaderIntegrazione headerIntegrazioneRichiesta;
+	private String[] tipiIntegrazionePA = null;
+	
+	private IProtocolFactory<?> protocolFactory;
+	private IProtocolVersionManager moduleManager;
+	private ITraduttore traduttore;
+	private boolean readQualifiedAttribute;
+	private ProprietaManifestAttachments proprietaManifestAttachments;
+
+	private boolean asyncWait = false;
 	
 	public RicezioneBuste(RicezioneBusteContext context,
-			RicezioneBusteExternalErrorGenerator generatoreErrore){
+			RicezioneBusteExternalErrorGenerator generatoreErrore,
+			IAsyncResponseCallback asyncResponseCallback){
 		this.msgContext = context;
 		this.generatoreErrore = generatoreErrore;
+		this.asyncResponseCallback = asyncResponseCallback;
 	}
 
-
-	public void process(Object ... params){
+	
+	public void process(Object ... params) throws ConnectorException {
+		try {
+			this._process(params);
+		}finally {
+			if(this.asyncResponseCallback!=null && !this.asyncWait) { 
+				this.asyncResponseCallback.asyncComplete(AsyncResponseCallbackClientEvent.NONE);
+			}
+		}
+	}
+	
+	@Override
+	public void asyncComplete(AsyncResponseCallbackClientEvent clientEvent, Object ... args) throws ConnectorException { // Questo metodo verrà chiamato dalla catena di metodi degli oggetti (IAsyncResponseCallback) fatta scaturire dal response callback dell'Async Client NIO
+		
+		if(this.asyncResponseCallback==null) {
+			throw new ConnectorException("Async context not active");
+		}
+		
+		if(args==null || args.length<1) {
+			throw new ConnectorException("Async context invalid (EsitoLib not found)");
+		}
+		Object esito = args[0];
+		if(! (esito instanceof EsitoLib)) {
+			throw new ConnectorException("Async context invalid (EsitoLib with uncorrect type '"+esito.getClass().getName()+"')");
+		}
+		this.esitoStatelessAfterSendRequest = (EsitoLib) esito;
+		
+		this._statelessComplete(true);
+		
+		this.asyncResponseCallback.asyncComplete(clientEvent);
+	}
+	
+	private void _process(Object ... params) {
 
 		
 		
@@ -397,21 +517,21 @@ public class RicezioneBuste {
 		// ------------- dati generali -----------------------------
 
 		// Context
-		PdDContext context = this.msgContext.getPddContext();
+		this.context = this.msgContext.getPddContext();
 		
 		// Logger
-		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		if(logCore==null){
-			logCore = LoggerWrapperFactory.getLogger(RicezioneBuste.ID_MODULO);
+		this.logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+		if(this.logCore==null){
+			this.logCore = LoggerWrapperFactory.getLogger(RicezioneBuste.ID_MODULO);
 		}
 	
 		// MsgDiagnostico
-		MsgDiagnostico msgDiag = this.msgContext.getMsgDiagnostico();
+		this.msgDiag = this.msgContext.getMsgDiagnostico();
 		
 		// Messaggio
-		OpenSPCoop2Message requestMessage = this.msgContext.getMessageRequest();
-		if(requestMessage==null){
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, logCore, msgDiag, new Exception("Request message is null"), "LetturaMessaggioRichiesta");
+		this.requestMessage = this.msgContext.getMessageRequest();
+		if(this.requestMessage==null){
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.logCore, this.msgDiag, new Exception("Request message is null"), "LetturaMessaggioRichiesta");
 		}
 
 		
@@ -421,20 +541,19 @@ public class RicezioneBuste {
 		
 		// ------------- in-handler -----------------------------
 		
-		IProtocolFactory<?> protocolFactory = null;
 		try{
-			if(context==null) {
-				throw new Exception("Context is null");
+			if(this.context==null) {
+				throw new CoreException("Context is null");
 			}
-			protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)context.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String)this.context.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, logCore, msgDiag, e, "ProtocolFactoryInstance");
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, this.logCore, this.msgDiag, e, "ProtocolFactoryInstance");
 			return;
 		}
-		InRequestContext inRequestContext = new InRequestContext(logCore,protocolFactory,null);
+		this.inRequestContext = new InRequestContext(this.logCore,this.protocolFactory,null);
 		// TipoPorta
-		inRequestContext.setTipoPorta(TipoPdD.APPLICATIVA);
-		inRequestContext.setIdModulo(this.msgContext.getIdModulo());
+		this.inRequestContext.setTipoPorta(TipoPdD.APPLICATIVA);
+		this.inRequestContext.setIdModulo(this.msgContext.getIdModulo());
 		// Informazioni connettore ingresso
 		InfoConnettoreIngresso connettore = new InfoConnettoreIngresso();
 		connettore.setCredenziali(this.msgContext.getCredenziali());
@@ -451,43 +570,43 @@ public class RicezioneBuste {
 						String tipoClass = className.getRealmContainerCustom(tipo);
 						IAutorizzazioneSecurityContainer authEngine = (IAutorizzazioneSecurityContainer) loader.newInstance(tipoClass);
 						authEngine.init(this.msgContext.getUrlProtocolContext().getHttpServletRequest(), 
-								context, protocolFactory);
+								this.context, this.protocolFactory);
 						AutorizzazioneHttpServletRequest httpServletRequestAuth = new AutorizzazioneHttpServletRequest(this.msgContext.getUrlProtocolContext().getHttpServletRequest(), authEngine);
 						this.msgContext.getUrlProtocolContext().updateHttpServletRequest(httpServletRequestAuth);					
 					}catch(Exception e){
-						setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, logCore, msgDiag, e, "AutorizzazioneSecurityContainerInstance");
+						setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.logCore, this.msgDiag, e, "AutorizzazioneSecurityContainerInstance");
 						return;
 					}
 				}
 			}
 		}
 		connettore.setUrlProtocolContext(this.msgContext.getUrlProtocolContext());	
-		if(requestMessage!=null && ServiceBinding.SOAP.equals(requestMessage.getServiceBinding())){
+		if(this.requestMessage!=null && ServiceBinding.SOAP.equals(this.requestMessage.getServiceBinding())){
 			try{
-				connettore.setSoapAction(requestMessage.castAsSoap().getSoapAction());
+				connettore.setSoapAction(this.requestMessage.castAsSoap().getSoapAction());
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, logCore,msgDiag, e, "LetturaSoapAction");
+				setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.logCore, this.msgDiag, e, "LetturaSoapAction");
 				return;
 			}
 		}
 		connettore.setFromLocation(this.msgContext.getSourceLocation());
-		inRequestContext.setConnettore(connettore);
+		this.inRequestContext.setConnettore(connettore);
 		// Data accettazione richiesta
-		inRequestContext.setDataAccettazioneRichiesta(this.msgContext.getDataAccettazioneRichiesta());
+		this.inRequestContext.setDataAccettazioneRichiesta(this.msgContext.getDataAccettazioneRichiesta());
 		// Data ingresso richiesta
-		inRequestContext.setDataElaborazioneMessaggio(this.msgContext.getDataIngressoRichiesta());
+		this.inRequestContext.setDataElaborazioneMessaggio(this.msgContext.getDataIngressoRichiesta());
 		// PddContext
-		inRequestContext.setPddContext(context);
+		this.inRequestContext.setPddContext(this.context);
 		// Dati Messaggio
-		inRequestContext.setMessaggio(requestMessage);
+		this.inRequestContext.setMessaggio(this.requestMessage);
 		// Invoke handler
 		try{
-			GestoreHandlers.inRequest(inRequestContext, msgDiag, logCore);
+			GestoreHandlers.inRequest(this.inRequestContext, this.msgDiag, this.logCore);
 		}catch(HandlerException e){
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, logCore,msgDiag, e, e.getIdentitaHandler());
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.logCore, this.msgDiag, e, e.getIdentitaHandler());
 			return;
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, logCore,msgDiag, e, "InvocazioneInRequestHandler");
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, this.logCore, this.msgDiag, e, "InvocazioneInRequestHandler");
 			return;
 		}
 
@@ -498,41 +617,51 @@ public class RicezioneBuste {
 		
 		
 		// ------------- process -----------------------------
-		HashMap<String, Object> internalObjects = new HashMap<>();
+		this.internalObjects = new HashMap<>();
 		try{
-			process_engine(inRequestContext,internalObjects,params);
+			processEngine(this.inRequestContext,this.internalObjects,params);
 		} catch(TracciamentoException tracciamentoException){
-			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, tracciamentoException, "TracciamentoNonRiuscito");
+			setSOAPFaultProcessamento(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore, this.msgDiag, tracciamentoException, "TracciamentoNonRiuscito");
 			return;
 		} catch(DumpException e){
-			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "DumpNonRiuscito");
+			setSOAPFaultProcessamento(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore, this.msgDiag, e, DumpException.DUMP_NON_RIUSCITO);
 			return;
 		} catch(ProtocolException protocolException){
-			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, protocolException, "ProtocolFactoryNonInstanziata");
+			setSOAPFaultProcessamento(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore, this.msgDiag, protocolException, "ProtocolFactoryNonInstanziata");
 			return;
 		}
 		
+		if(this.asyncResponseCallback==null) {
+			this._processComplete(false);
+		}
+	}
+	private void _processComplete(boolean invokedFromAsyncConnector) {
+		
 		try{
-			if(context!=null  && this.msgContext.getIntegrazione()!=null){
-				if(context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
+			if(invokedFromAsyncConnector) {
+				// debug
+			}
+			
+			if(this.context!=null  && this.msgContext.getIntegrazione()!=null){
+				if(this.context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
 					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRichiesta(
-							(String)context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
+							(String)this.context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
 				}
-				if(context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
+				if(this.context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
 					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRisposta(
-							(String)context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
+							(String)this.context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
 				}
-				if(context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
+				if(this.context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
 					this.msgContext.getIntegrazione().setTipoMessageSecurityRichiesta(
-							(String)context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
+							(String)this.context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
 				}
-				if(context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
+				if(this.context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
 					this.msgContext.getIntegrazione().setTipoMessageSecurityRisposta(
-							(String)context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
+							(String)this.context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
 				}
 			}
 		}catch(Exception e){
-			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "FinalizeIntegrationContextRicezioneBuste");
+			setSOAPFaultProcessamento(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore,this.msgDiag, e, "FinalizeIntegrationContextRicezioneBuste");
 			return;
 		}
 		
@@ -543,33 +672,35 @@ public class RicezioneBuste {
 		
 		
 		// ------------- Dump richiesta in ingresso -----------------------------
-		if(!internalObjects.containsKey(CostantiPdD.DUMP_RICHIESTA_EFFETTUATO) &&
+		if(!this.internalObjects.containsKey(CostantiPdD.DUMP_RICHIESTA_EFFETTUATO) &&
 			Dump.isSistemaDumpDisponibile()){
 			try{
-				ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
+				if(this.configurazionePdDReader==null) {
+					this.configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
+				}
 				
-				if(!internalObjects.containsKey(CostantiPdD.DUMP_CONFIG)) {
+				if(!this.internalObjects.containsKey(CostantiPdD.DUMP_CONFIG)) {
 					URLProtocolContext urlProtocolContext = this.msgContext.getUrlProtocolContext();
 					if(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) {
 						IDPortaApplicativa identificativoPortaApplicativa = new IDPortaApplicativa();
 						identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
-						PortaApplicativa portaApplicativa = configurazionePdDReader.getPortaApplicativaSafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
+						PortaApplicativa portaApplicativa = this.configurazionePdDReader.getPortaApplicativaSafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
 						if(portaApplicativa!=null) {
-							DumpConfigurazione dumpConfig = configurazionePdDReader.getDumpConfigurazione(portaApplicativa);
-							internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
+							DumpConfigurazione dumpConfig = this.configurazionePdDReader.getDumpConfigurazione(portaApplicativa);
+							this.internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
 						}
 					}
 				}
 				
-				OpenSPCoop2Message msgRichiesta = inRequestContext.getMessaggio();
+				OpenSPCoop2Message msgRichiesta = this.inRequestContext.getMessaggio();
 				if (msgRichiesta!=null) {
 					
-					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
+					Dump dumpApplicativo = getDump(this.configurazionePdDReader, this.protocolFactory, this.internalObjects, this.msgDiag.getPorta());
 					dumpApplicativo.dumpRichiestaIngresso(msgRichiesta, 
-							inRequestContext.getConnettore().getUrlProtocolContext());
+							this.inRequestContext.getConnettore().getUrlProtocolContext());
 				}
 			}catch(DumpException dumpException){
-				setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, dumpException, "DumpNonRiuscito");
+				setSOAPFaultProcessamento(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore, this.msgDiag, dumpException, DumpException.DUMP_NON_RIUSCITO);
 				return;
 			}catch(Exception e){
 				// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
@@ -584,14 +715,14 @@ public class RicezioneBuste {
 		
 		
 		// ------------- out-handler -----------------------------
-		OutResponseContext outResponseContext = new OutResponseContext(logCore,protocolFactory,null);
+		OutResponseContext outResponseContext = new OutResponseContext(this.logCore,this.protocolFactory,null);
 		// TipoPorta
 		outResponseContext.setTipoPorta(this.msgContext.getTipoPorta());
 		outResponseContext.setIdModulo(this.msgContext.getIdModulo());
 		// DataUscitaMessaggio
 		outResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
 		// PddContext
-		outResponseContext.setPddContext(inRequestContext.getPddContext());
+		outResponseContext.setPddContext(this.inRequestContext.getPddContext());
 		// Informazioni busta e di integrazione
 		outResponseContext.setProtocollo(this.msgContext.getProtocol());
 		outResponseContext.setIntegrazione(this.msgContext.getIntegrazione());
@@ -602,12 +733,12 @@ public class RicezioneBuste {
 		outResponseContext.setMessaggio(msgResponse);
 		// Invoke handler
 		try{
-			GestoreHandlers.outResponse(outResponseContext, msgDiag, logCore);
+			GestoreHandlers.outResponse(outResponseContext,this.msgDiag, this.logCore);
 		}catch(HandlerException e){
-			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, e.getIdentitaHandler());
+			setSOAPFaultProcessamento(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore, this.msgDiag, e, e.getIdentitaHandler());
 			return;
 		}catch(Exception e){
-			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "InvocazioneOutResponseHandler");
+			setSOAPFaultProcessamento(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore, this.msgDiag, e, "InvocazioneOutResponseHandler");
 			return;
 		}
 		
@@ -623,7 +754,7 @@ public class RicezioneBuste {
 			boolean rispostaPresente = true;
 			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance(); // Puo' non essere inizializzato
 			if(properties!=null){
-				rispostaPresente = ServicesUtils.verificaRispostaRelazioneCodiceTrasporto202(protocolFactory,OpenSPCoop2Properties.getInstance(), msgRisposta,true);
+				rispostaPresente = ServicesUtils.verificaRispostaRelazioneCodiceTrasporto202(this.protocolFactory,OpenSPCoop2Properties.getInstance(), msgRisposta,true);
 			}
 			if(rispostaPresente){
 				this.msgContext.setMessageResponse(msgRisposta);
@@ -632,7 +763,7 @@ public class RicezioneBuste {
 				msgRisposta = null;
 			}
 		}catch(Exception e){
-			setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "FineGestioneRicezioneBuste");
+			setSOAPFaultProcessamento(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore, this.msgDiag, e, "FineGestioneRicezioneBuste");
 			return;
 		}
 	
@@ -648,26 +779,28 @@ public class RicezioneBuste {
 		// ------------- Dump risposta in uscita-----------------------------
 		if(Dump.isSistemaDumpDisponibile()){
 			try{
-				ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();	
+				if(this.configurazionePdDReader==null) {
+					this.configurazionePdDReader = ConfigurazionePdDManager.getInstance();
+				}
 				if (msgRisposta!=null) {
 					
-					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
+					Dump dumpApplicativo = getDump(this.configurazionePdDReader, this.protocolFactory, this.internalObjects, this.msgDiag.getPorta());
 					if(outResponseContext.getResponseHeaders()==null) {
 						outResponseContext.setResponseHeaders(new HashMap<>());
 					}
 					Map<String, List<String>> propertiesTrasporto = outResponseContext.getResponseHeaders();
-					ServiceBinding sb = requestMessage!=null ? requestMessage.getServiceBinding() : this.msgContext.getRequestInfo().getProtocolServiceBinding();
+					ServiceBinding sb = this.requestMessage!=null ? this.requestMessage.getServiceBinding() : this.msgContext.getRequestInfo().getProtocolServiceBinding();
 					ServicesUtils.setGovWayHeaderResponse(sb,
 							msgRisposta, OpenSPCoop2Properties.getInstance(),
-							propertiesTrasporto, logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo());
+							propertiesTrasporto, this.logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
-							inRequestContext.getConnettore().getUrlProtocolContext(), 
+							this.inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getResponseHeaders());
 				}
 			}catch(DumpException dumpException){
-				setSOAPFault_processamento(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, dumpException, "DumpNonRiuscito");
+				setSOAPFaultProcessamento(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore, this.msgDiag, dumpException, DumpException.DUMP_NON_RIUSCITO);
 			}catch(Exception e){
-				logError(logCore, e.getMessage(),e);
+				logError(this.logCore, e.getMessage(),e);
 				// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
 			}
 		}
@@ -689,14 +822,14 @@ public class RicezioneBuste {
 		ProtocolContext protocolContext = this.msgContext.getProtocol();
 		URLProtocolContext urlProtocolContext = this.msgContext.getUrlProtocolContext();
 		IDSoggetto soggettoErogatore = null;
-		IDServizio idServizio = null;
+		IDServizio idServizioForDump = null;
 		IDSoggetto fruitore = null;
 		IDSoggetto dominio = null;
 		String idRichiesta = null;
 		if(protocolContext!=null) {
 			if(protocolContext.getTipoServizio()!=null && protocolContext.getServizio()!=null && protocolContext.getVersioneServizio()!=null &&
 				protocolContext.getErogatore()!=null && protocolContext.getErogatore().getTipo()!=null && protocolContext.getErogatore().getNome()!=null) {
-				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(protocolContext.getTipoServizio(), protocolContext.getServizio(), 
+				idServizioForDump = IDServizioFactory.getInstance().getIDServizioFromValues(protocolContext.getTipoServizio(), protocolContext.getServizio(), 
 						protocolContext.getErogatore(), protocolContext.getVersioneServizio());
 			}
 			dominio = protocolContext.getDominio();
@@ -706,39 +839,41 @@ public class RicezioneBuste {
 			}
 		}
 		
-		if(dominio == null || fruitore==null || idServizio == null) {
-			if(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) {
-				IDPortaApplicativa identificativoPortaApplicativa = new IDPortaApplicativa();
-				identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
-				PortaApplicativa portaApplicativa = null;
-				try {
-					portaApplicativa = configurazionePdDReader.getPortaApplicativaSafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
-				}catch(Exception e) {
-					// ignore
+		if(
+				(dominio == null || fruitore==null || idServizioForDump == null)
+				&&
+				(urlProtocolContext!=null && urlProtocolContext.getInterfaceName()!=null) 
+			){
+			IDPortaApplicativa identificativoPortaApplicativa = new IDPortaApplicativa();
+			identificativoPortaApplicativa.setNome(urlProtocolContext.getInterfaceName());
+			PortaApplicativa portaApplicativa = null;
+			try {
+				portaApplicativa = configurazionePdDReader.getPortaApplicativaSafeMethod(identificativoPortaApplicativa, this.msgContext.getRequestInfo());
+			}catch(Exception e) {
+				// ignore
+			}
+			if(portaApplicativa!=null) {
+				// Aggiorno tutti
+				soggettoErogatore = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
+				if(portaApplicativa.getServizio()!=null) {
+					idServizioForDump = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getServizio().getTipo(),portaApplicativa.getServizio().getNome(), 
+								soggettoErogatore, portaApplicativa.getServizio().getVersione());
 				}
-				if(portaApplicativa!=null) {
-					// Aggiorno tutti
-					soggettoErogatore = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
-					if(portaApplicativa.getServizio()!=null) {
-						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getServizio().getTipo(),portaApplicativa.getServizio().getNome(), 
-									soggettoErogatore, portaApplicativa.getServizio().getVersione());
-					}
-					dominio = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
-					try {
-						dominio.setCodicePorta(RegistroServiziManager.getInstance().getDominio(dominio, null, protocolFactory, this.msgContext.getRequestInfo()));
-					}catch(Exception e) {
-						dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol(), this.msgContext.getRequestInfo());
-					}
+				dominio = new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario());
+				try {
+					dominio.setCodicePorta(RegistroServiziManager.getInstance().getDominio(dominio, null, protocolFactory, this.msgContext.getRequestInfo()));
+				}catch(Exception e) {
+					dominio = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(protocolFactory.getProtocol(), this.msgContext.getRequestInfo());
 				}
 			}
 		}
-		if(idServizio!=null) {
+		if(idServizioForDump!=null) {
 			if(protocolContext!=null && protocolContext.getAzione()!=null) {
-				idServizio.setAzione(protocolContext.getAzione());
+				idServizioForDump.setAzione(protocolContext.getAzione());
 			}
 			else if(this.msgContext.getRequestInfo()!=null && 
 					this.msgContext.getRequestInfo().getIdServizio()!=null && this.msgContext.getRequestInfo().getIdServizio().getAzione()!=null) {
-				idServizio.setAzione(this.msgContext.getRequestInfo().getIdServizio().getAzione());
+				idServizioForDump.setAzione(this.msgContext.getRequestInfo().getIdServizio().getAzione());
 			}
 		}
 		if(dominio==null) {
@@ -749,7 +884,7 @@ public class RicezioneBuste {
 		if(protocolContext!=null){
 			dumpApplicativo = new Dump(dominio,
 					this.msgContext.getIdModulo(), 
-					idRichiesta, fruitore, idServizio,
+					idRichiesta, fruitore, idServizioForDump,
 					this.msgContext.getTipoPorta(),nomePorta,this.msgContext.getPddContext(),
 					null,null,
 					dumpConfig);
@@ -763,38 +898,38 @@ public class RicezioneBuste {
 	}
 	
 	// processamento quando non sono disponibili le risorse (es. MsgDiagnostico)
-	private void setSOAPFault_processamento(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione){
-		setSOAPFault_engine(integrationFunctionError, null, null, null, null, erroreIntegrazione, null, false);
+	private void setSOAPFaultProcessamento(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione){
+		setSOAPFaultEngine(integrationFunctionError, null, null, null, null, erroreIntegrazione, null, false);
 	}
-	private void setSOAPFault_processamento(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione, Exception e){
-		setSOAPFault_engine(integrationFunctionError, null, null, e, null, erroreIntegrazione, null, false);
+	private void setSOAPFaultProcessamento(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione, Exception e){
+		setSOAPFaultEngine(integrationFunctionError, null, null, e, null, erroreIntegrazione, null, false);
 	}
 	// processamento
-	private void setSOAPFault_processamento(IntegrationFunctionError integrationFunctionError, Logger logCore, MsgDiagnostico msgDiag, Exception e, String posizione){
-		setSOAPFault_engine(integrationFunctionError, logCore, msgDiag, e, null, null, posizione, false);
+	private void setSOAPFaultProcessamento(IntegrationFunctionError integrationFunctionError, Logger logCore, MsgDiagnostico msgDiag, Exception e, String posizione){
+		setSOAPFaultEngine(integrationFunctionError, logCore, msgDiag, e, null, null, posizione, false);
 	}
-	private void setSOAPFault_processamento(IntegrationFunctionError integrationFunctionError, Logger logCore, MsgDiagnostico msgDiag, ErroreIntegrazione erroreIntegrazione, Exception e, String posizione){
-		setSOAPFault_engine(integrationFunctionError, logCore, msgDiag, e, null, erroreIntegrazione, posizione, false);
+	private void setSOAPFaultProcessamento(IntegrationFunctionError integrationFunctionError, Logger logCore, MsgDiagnostico msgDiag, ErroreIntegrazione erroreIntegrazione, Exception e, String posizione){
+		setSOAPFaultEngine(integrationFunctionError, logCore, msgDiag, e, null, erroreIntegrazione, posizione, false);
 	}
 	// intestazione
-	private void setSOAPFault_intestazione(IntegrationFunctionError integrationFunctionError, ErroreCooperazione erroreCooperazione){
-		setSOAPFault_engine(integrationFunctionError, null, null, null, erroreCooperazione, null, null, true);
+	private void setSOAPFaultIntestazione(IntegrationFunctionError integrationFunctionError, ErroreCooperazione erroreCooperazione){
+		setSOAPFaultEngine(integrationFunctionError, null, null, null, erroreCooperazione, null, null, true);
 	}
 	@SuppressWarnings("unused")
-	private void setSOAPFault_intestazione(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione){
-		setSOAPFault_engine(integrationFunctionError, null, null, null, null, erroreIntegrazione, null, true);
+	private void setSOAPFaultIntestazione(IntegrationFunctionError integrationFunctionError, ErroreIntegrazione erroreIntegrazione){
+		setSOAPFaultEngine(integrationFunctionError, null, null, null, null, erroreIntegrazione, null, true);
 	}
 	
-	private void setSOAPFault_engine(IntegrationFunctionError integrationFunctionError, Logger logCore, MsgDiagnostico msgDiag, Exception e, 
+	private void setSOAPFaultEngine(IntegrationFunctionError integrationFunctionError, Logger logCore, MsgDiagnostico msgDiag, Exception e, 
 			ErroreCooperazione erroreCooperazione, ErroreIntegrazione erroreIntegrazione, String posizioneErrore, 
 			boolean validazione) {
 				
 		HandlerException he = null;
-		if(e!=null && (e instanceof HandlerException)){
-			he = (HandlerException) e;
+		if(e instanceof HandlerException heCast){
+			he = heCast;
 		}
 		
-		Context context = this.msgContext.getPddContext();
+		Context contextFault = this.msgContext.getPddContext();
 		
 		if(msgDiag!=null){
 			if(he!=null){
@@ -806,14 +941,14 @@ public class RicezioneBuste {
 				if(erroreCooperazione != null){
 					try{
 						descrizioneErrore = erroreCooperazione.getDescrizione(this.generatoreErrore.getProtocolFactory());
-					}catch(Throwable t){
+					}catch(Exception t){
 						// ignore
 					}
 				}
 				if(descrizioneErrore==null && erroreIntegrazione!=null) {
 					try{
 						descrizioneErrore = erroreIntegrazione.getDescrizione(this.generatoreErrore.getProtocolFactory());
-					}catch(Throwable t){
+					}catch(Exception t){
 						// ignore
 					}
 				}
@@ -846,18 +981,18 @@ public class RicezioneBuste {
 					String descrizioneErrore = null;
 					try{
 						descrizioneErrore = erroreCooperazione.getDescrizione(this.generatoreErrore.getProtocolFactory());
-						messageFault = this.generatoreErrore.buildErroreIntestazione(context, integrationFunctionError, 
+						messageFault = this.generatoreErrore.buildErroreIntestazione(contextFault, integrationFunctionError, 
 								erroreCooperazione.getCodiceErrore(), descrizioneErrore);
 					}catch(Exception eP){
-						messageFault = this.generatoreErrore.buildFault(eP, context);
+						messageFault = this.generatoreErrore.buildFault(eP, contextFault);
 					}
 				}else{
-					messageFault = this.generatoreErrore.buildErroreIntestazione(context,integrationFunctionError, 
+					messageFault = this.generatoreErrore.buildErroreIntestazione(contextFault,integrationFunctionError, 
 							erroreIntegrazione);
 				}
 			}else{
 				if(erroreIntegrazione!=null){
-					messageFault = this.generatoreErrore.buildErroreProcessamento(context,integrationFunctionError, 
+					messageFault = this.generatoreErrore.buildErroreProcessamento(contextFault,integrationFunctionError, 
 							erroreIntegrazione,e);
 				}
 				else if(e!=null){
@@ -872,13 +1007,13 @@ public class RicezioneBuste {
 					if(erroreIntegrazioneGenerato==null) {
 						erroreIntegrazioneGenerato = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneErrore);
 					}
-					messageFault = this.generatoreErrore.buildErroreProcessamento(context,ifError, 
+					messageFault = this.generatoreErrore.buildErroreProcessamento(contextFault,ifError, 
 							erroreIntegrazioneGenerato,e);
 					if(he!=null){
 						he.customized(messageFault);
 					}
 				}else{
-					messageFault = this.generatoreErrore.buildErroreProcessamento(context,integrationFunctionError, 
+					messageFault = this.generatoreErrore.buildErroreProcessamento(contextFault,integrationFunctionError, 
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneErrore));
 				}
 			}
@@ -888,7 +1023,7 @@ public class RicezioneBuste {
 	}
 	
 	
-	private boolean checkInizializzazione(Logger logCore, ConfigurazionePdDManager configurazionePdDReader, RegistroServiziManager registroServiziReader) {
+	private boolean checkInizializzazione(Logger logCore) {
 		if( !OpenSPCoop2Startup.initialize){
 			String msgErrore = "Inizializzazione di GovWay non correttamente effettuata";
 			logError(logCore, "["+RicezioneBuste.ID_MODULO+"]  "+msgErrore);
@@ -897,8 +1032,8 @@ public class RicezioneBuste {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneGovWay");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (InizializzazioneGovWay): "+t.getMessage(),t);}
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA));
 			return false;
@@ -911,8 +1046,8 @@ public class RicezioneBuste {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorseGovWay");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (InizializzazioneRisorseGovWay): "+t.getMessage(),t);}
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_532_RISORSE_NON_DISPONIBILI));
 			return false;
@@ -925,8 +1060,8 @@ public class RicezioneBuste {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorseGovWay");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (DisponibilitaRisorseGovWay): "+t.getMessage(),t);}
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_533_RISORSE_DISPONIBILI_LIVELLO_CRITICO));
 			return false;
@@ -939,8 +1074,8 @@ public class RicezioneBuste {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Tracciamento");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (Tracciamento): "+t.getMessage(),t);}
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_545_TRACCIATURA_NON_FUNZIONANTE));
 			return false;
@@ -953,8 +1088,8 @@ public class RicezioneBuste {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Diagnostica");
 				}
-			}catch(Throwable t){logDebug(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
+			}catch(Exception t){logDebug(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (Diagnostica): "+t.getMessage(),t);}
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_546_DIAGNOSTICA_NON_FUNZIONANTE));
 			return false;
@@ -967,15 +1102,16 @@ public class RicezioneBuste {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Dump");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (Dump): "+t.getMessage(),t);}
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_547_DUMP_CONTENUTI_APPLICATIVI_NON_FUNZIONANTE));
 			return false;
 		}
 		// Check Configurazione (XML)
+		this.configurazionePdDReader = ConfigurazionePdDManager.getInstance();
 		try{
-			configurazionePdDReader.verificaConsistenzaConfigurazione();
+			this.configurazionePdDReader.verificaConsistenzaConfigurazione();
 		}catch(Exception e){
 			String msgErrore = "Riscontrato errore durante la verifica della consistenza della configurazione";
 			logError(logCore, "["+RicezioneBuste.ID_MODULO+"]  "+msgErrore,e);
@@ -984,15 +1120,16 @@ public class RicezioneBuste {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazioneGovWay");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (CheckConfigurazioneGovWay): "+t.getMessage(),t);}
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e);
 			return false;
 		}
 		// Check RegistroServizi (XML)
+		this.registroServiziReader = RegistroServiziManager.getInstance();
 		try{
-			registroServiziReader.verificaConsistenzaRegistroServizi();
+			this.registroServiziReader.verificaConsistenzaRegistroServizi();
 		}catch(Exception e){
 			String msgErrore = "Riscontrato errore durante la verifica del registro dei servizi";
 			logError(logCore, "["+ RicezioneBuste.ID_MODULO+ "]  "+msgErrore,e);
@@ -1001,8 +1138,8 @@ public class RicezioneBuste {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckRegistroServizi");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (CheckRegistroServizi): "+t.getMessage(),t);}
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(msgErrore,CodiceErroreIntegrazione.CODICE_534_REGISTRO_DEI_SERVIZI_NON_DISPONIBILE),e);
 			return false;
@@ -1011,23 +1148,23 @@ public class RicezioneBuste {
 		return true;
 	}
 	
-	private void process_engine(InRequestContext inRequestContext,HashMap<String, Object> internalObjects,Object ... params) 
+	private void processEngine(InRequestContext inRequestContext,HashMap<String, Object> internalObjects,Object ... params) 
 			throws TracciamentoException, DumpException, ProtocolException {
 		
 
 		/* ------------ Lettura parametri della richiesta ------------- */
 	
 		// Messaggio di ingresso
-		OpenSPCoop2Message requestMessage = inRequestContext.getMessaggio();
+		this.requestMessage = inRequestContext.getMessaggio();
 		
 		// Logger
-		Logger logCore = inRequestContext.getLogCore();
+		this.logCore = inRequestContext.getLogCore();
 		
 		// Data Ingresso Richiesta
 		Date dataIngressoRichiesta = this.msgContext.getDataIngressoRichiesta();
 		
 		// ID Transazione
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, inRequestContext.getPddContext());
+		this.idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, inRequestContext.getPddContext());
 		
 		// Loader
 		Loader loader = Loader.getInstance();
@@ -1038,9 +1175,7 @@ public class RicezioneBuste {
 		
 		
 		/* ------------ Controllo inizializzazione OpenSPCoop  ------------------ */
-		ConfigurazionePdDManager configurazionePdDReader = ConfigurazionePdDManager.getInstance();
-		RegistroServiziManager registroServiziReader = RegistroServiziManager.getInstance();
-		if(!checkInizializzazione(logCore, configurazionePdDReader, registroServiziReader)) {
+		if(!checkInizializzazione(this.logCore)) {
 			return;
 		}
 
@@ -1061,32 +1196,32 @@ public class RicezioneBuste {
 		ClassNameProperties className = ClassNameProperties.getInstance();
 
 		if(requestInfo==null) {
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,null,
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,null,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento("RequesInfo is null"),null,
-					"InizializzazioneRisorseServizioRicezioneBuste");
+					INIZIALIZZAZIONE_RISORSE);
 			return;
 		}
 		
 		//	IdentificativoPdD
-		IDSoggetto identitaPdD = requestInfo.getIdentitaPdD();
+		this.identitaPdD = requestInfo.getIdentitaPdD();
 
 		
 		// ConnectorInMessage
 		ConnectorInMessage connectorInMessage = null;
 		if(params!=null){
 			for (int i = 0; i < params.length; i++) {
-				if(params[i]!=null && (params[i] instanceof ConnectorInMessage) ){
-					connectorInMessage = (ConnectorInMessage) params[i];
+				if(params[i] instanceof ConnectorInMessage cast ){
+					connectorInMessage = cast;
 					break;
 				}
 			}
 		}
 		
 		// ProtocolFactory
-		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
-		PdDContext pddContext = inRequestContext.getPddContext();
-		ITraduttore traduttore = protocolFactory.createTraduttore();
+		this.protocolFactory = requestInfo.getProtocolFactory();
+		this.pddContext = inRequestContext.getPddContext();
+		this.traduttore = this.protocolFactory.createTraduttore();
 		
 		//	Logger dei messaggi diagnostici
 		String nomePorta = null;
@@ -1096,45 +1231,45 @@ public class RicezioneBuste {
 		else{
 			nomePorta = inRequestContext.getConnettore().getUrlProtocolContext().getFunctionParameters() + "_urlInvocazione("+ inRequestContext.getConnettore().getUrlProtocolContext().getUrlInvocazione_formBased() + ")";
 		}
-		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,identitaPdD,this.msgContext.getIdModulo(),nomePorta,requestInfo,configurazionePdDReader);
-		if(msgDiag==null) {
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,logCore,null,
+		this.msgDiag = MsgDiagnostico.newInstance(TipoPdD.APPLICATIVA,this.identitaPdD,this.msgContext.getIdModulo(),nomePorta,requestInfo,this.configurazionePdDReader);
+		if(this.msgDiag==null) {
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,this.logCore,null,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento("MsgDiagnostico is null",CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),null,
-					"InizializzazioneRisorseServizioRicezioneBuste");
+					INIZIALIZZAZIONE_RISORSE);
 			return;
 		}
-		this.msgContext.setMsgDiagnostico(msgDiag); // aggiorno msg diagnostico
-		msgDiag.setPddContext(inRequestContext.getPddContext(), protocolFactory);
-		msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
+		this.msgContext.setMsgDiagnostico(this.msgDiag); // aggiorno msg diagnostico
+		this.msgDiag.setPddContext(inRequestContext.getPddContext(), this.protocolFactory);
+		this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE);
 			
 		// Parametri della porta applicativa invocata
 		URLProtocolContext urlProtocolContext = this.msgContext.getUrlProtocolContext();
 		
 		// setCredenziali
-		setCredenziali(credenziali, msgDiag);
+		setCredenziali(credenziali, this.msgDiag);
 		
 		// inizializzazione risorse statiche
 		try{
-			if(RicezioneBuste.initializeService==false){
-				msgDiag.mediumDebug("Inizializzazione risorse statiche...");
-				RicezioneBuste.initializeService(configurazionePdDReader, className, propertiesReader,logCore);
+			if(!RicezioneBuste.initializeService){
+				this.msgDiag.mediumDebug("Inizializzazione risorse statiche...");
+				RicezioneBuste.initializeService(className, propertiesReader,this.logCore);
 			}
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,logCore,msgDiag,
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_NOT_INITIALIZED,this.logCore,this.msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e,CodiceErroreIntegrazione.CODICE_501_PDD_NON_INIZIALIZZATA),e,
-					"InizializzazioneRisorseServizioRicezioneBuste");
+					INIZIALIZZAZIONE_RISORSE);
 			return;
 		}
 		
 		// Imposto header di risposta
 		Map<String, List<String>> headerRisposta = new HashMap<>();
-		UtilitiesIntegrazione utilitiesHttpRisposta = UtilitiesIntegrazione.getInstancePAResponse(logCore);
+		UtilitiesIntegrazione utilitiesHttpRisposta = UtilitiesIntegrazione.getInstancePAResponse(this.logCore);
 		try{
 			utilitiesHttpRisposta.setInfoProductTransportProperties(headerRisposta);
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(e),e,
 					"InizializzazioneHeaderRisposta");
@@ -1143,11 +1278,10 @@ public class RicezioneBuste {
 		this.msgContext.setResponseHeaders(headerRisposta);
 
 		// OPENSPCOOPSTATE 
-		OpenSPCoopState openspcoopstate = null;
 		try{ // finally in fondo, vedi  #try-finally-openspcoopstate#
 
 		// Messaggio di libreria 
-		SbustamentoMessage sbustamentoMSG = new SbustamentoMessage();
+		this.sbustamentoMSG = new SbustamentoMessage();
 		InoltroBusteMessage inoltroMSG = new InoltroBusteMessage();
 
 		// Context di risposta
@@ -1157,43 +1291,41 @@ public class RicezioneBuste {
 		
 
 		// DBManager 
-		msgDiag.mediumDebug("Richiesta connessione al database...");
+		this.msgDiag.mediumDebug("Richiesta connessione al database...");
 		try{
-			openspcoopstate = new OpenSPCoopStateful();
-			openspcoopstate.setUseConnection(false); // gestione stateless per default
-			openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(),idTransazione);
+			this.openspcoopstate = new OpenSPCoopStateful();
+			this.openspcoopstate.setUseConnection(false); // gestione stateless per default
+			this.openspcoopstate.initResource(this.identitaPdD, this.msgContext.getIdModulo(),this.idTransazione);
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,logCore,msgDiag,
+			setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,this.logCore,this.msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),e,
-					"initDatabaseResource");
+					"openspcoopstate.initResource()");
 			return;
 		}
 		
 		// Refresh reader
-		registroServiziReader = registroServiziReader.refreshState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		configurazionePdDReader = configurazionePdDReader.refreshState(registroServiziReader);
-		msgDiag.updateState(configurazionePdDReader);
+		this.registroServiziReader = this.registroServiziReader.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.configurazionePdDReader = this.configurazionePdDReader.refreshState(this.registroServiziReader);
+		this.msgDiag.updateState(this.configurazionePdDReader);
 
 		// Dati precedentemente raccolti
 		String servizioApplicativoFruitore = null;
-		String correlazioneApplicativa = null;
-		if(this.msgContext.isTracciamentoAbilitato()==false){
+		if(!this.msgContext.isTracciamentoAbilitato()){
 			// e' gia stata effettuata un'analisi precedentemente
 			servizioApplicativoFruitore = this.msgContext.getIdentitaServizioApplicativoFruitore();
 			this.msgContext.getIntegrazione().setServizioApplicativoFruitore(servizioApplicativoFruitore);
-			correlazioneApplicativa = this.msgContext.getIdCorrelazioneApplicativa();
-			msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
-			msgDiag.addKeyword(CostantiPdD.KEY_ID_CORRELAZIONE_APPLICATIVA, correlazioneApplicativa);
+			this.correlazioneApplicativa = this.msgContext.getIdCorrelazioneApplicativa();
+			this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
+			this.msgDiag.addKeyword(CostantiPdD.KEY_ID_CORRELAZIONE_APPLICATIVA, this.correlazioneApplicativa);
 			this.generatoreErrore.updateInformazioniCooperazione(servizioApplicativoFruitore);
 		}
 
 		// Transaction
-		Transaction transaction = null;
 		try{
-			transaction = TransactionContext.getTransaction(idTransazione);
+			this.transaction = TransactionContext.getTransaction(this.idTransazione);
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),e,
 					"getTransaction");
@@ -1204,35 +1336,35 @@ public class RicezioneBuste {
 		
 		
 		// Messaggio di generazione Errore Protocollo
-		RicezioneBusteParametriGenerazioneBustaErrore parametriGenerazioneBustaErrore = new RicezioneBusteParametriGenerazioneBustaErrore();
-		parametriGenerazioneBustaErrore.setOpenspcoop(openspcoopstate);
-		parametriGenerazioneBustaErrore.setIdentitaPdD(identitaPdD);
-		parametriGenerazioneBustaErrore.setMsgDiag(msgDiag);
-		parametriGenerazioneBustaErrore.setPropertiesReader(propertiesReader);
-		parametriGenerazioneBustaErrore.setLogCore(logCore);
-		parametriGenerazioneBustaErrore.setCorrelazioneApplicativa(correlazioneApplicativa);
-		parametriGenerazioneBustaErrore.setServizioApplicativoFruitore(servizioApplicativoFruitore);
-		parametriGenerazioneBustaErrore.setImplementazionePdDMittente(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
-		parametriGenerazioneBustaErrore.setImplementazionePdDDestinatario(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
+		this.parametriGenerazioneBustaErrore = new RicezioneBusteParametriGenerazioneBustaErrore();
+		this.parametriGenerazioneBustaErrore.setOpenspcoop(this.openspcoopstate);
+		this.parametriGenerazioneBustaErrore.setIdentitaPdD(this.identitaPdD);
+		this.parametriGenerazioneBustaErrore.setMsgDiag(this.msgDiag);
+		this.parametriGenerazioneBustaErrore.setPropertiesReader(propertiesReader);
+		this.parametriGenerazioneBustaErrore.setLogCore(this.logCore);
+		this.parametriGenerazioneBustaErrore.setCorrelazioneApplicativa(this.correlazioneApplicativa);
+		this.parametriGenerazioneBustaErrore.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+		this.parametriGenerazioneBustaErrore.setImplementazionePdDMittente(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
+		this.parametriGenerazioneBustaErrore.setImplementazionePdDDestinatario(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 		
 		
 		// Messaggio di invio Errore Protocollo
-		RicezioneBusteParametriInvioBustaErrore parametriInvioBustaErrore = new RicezioneBusteParametriInvioBustaErrore();
-		parametriInvioBustaErrore.setOpenspcoop(openspcoopstate);
-		parametriInvioBustaErrore.setIdentitaPdD(identitaPdD);
-		parametriInvioBustaErrore.setMsgDiag(msgDiag);
-		parametriInvioBustaErrore.setPropertiesReader(propertiesReader);
-		parametriInvioBustaErrore.setLogCore(logCore);
-		parametriInvioBustaErrore.setCorrelazioneApplicativa(correlazioneApplicativa);
-		parametriInvioBustaErrore.setServizioApplicativoFruitore(servizioApplicativoFruitore);
-		parametriInvioBustaErrore.setImplementazionePdDMittente(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
-		parametriInvioBustaErrore.setImplementazionePdDDestinatario(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
+		this.parametriInvioBustaErrore = new RicezioneBusteParametriInvioBustaErrore();
+		this.parametriInvioBustaErrore.setOpenspcoop(this.openspcoopstate);
+		this.parametriInvioBustaErrore.setIdentitaPdD(this.identitaPdD);
+		this.parametriInvioBustaErrore.setMsgDiag(this.msgDiag);
+		this.parametriInvioBustaErrore.setPropertiesReader(propertiesReader);
+		this.parametriInvioBustaErrore.setLogCore(this.logCore);
+		this.parametriInvioBustaErrore.setCorrelazioneApplicativa(this.correlazioneApplicativa);
+		this.parametriInvioBustaErrore.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+		this.parametriInvioBustaErrore.setImplementazionePdDMittente(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
+		this.parametriInvioBustaErrore.setImplementazionePdDDestinatario(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 		
-		parametriInvioBustaErrore.setNewConnectionForResponse(false);
-		parametriInvioBustaErrore.setUtilizzoIndirizzoTelematico(false);
-		parametriInvioBustaErrore.setFunctionAsRouter(false);
-		parametriInvioBustaErrore.setOnewayVersione11(false);
-		parametriInvioBustaErrore.setPddContext(inRequestContext.getPddContext());
+		this.parametriInvioBustaErrore.setNewConnectionForResponse(false);
+		this.parametriInvioBustaErrore.setUtilizzoIndirizzoTelematico(false);
+		this.parametriInvioBustaErrore.setFunctionAsRouter(false);
+		this.parametriInvioBustaErrore.setOnewayVersione11(false);
+		this.parametriInvioBustaErrore.setPddContext(inRequestContext.getPddContext());
 		
 		// RicezioneBusteUtils
 		RicezioneBusteUtils ricezioneBusteUtils = new RicezioneBusteUtils();
@@ -1253,120 +1385,119 @@ public class RicezioneBuste {
 		
 		/* ------------ Identificazione IDServizio  ------------- */	
 		
-		msgDiag.mediumDebug("Identificazione IDServizio ...");
+		this.msgDiag.mediumDebug("Identificazione IDServizio ...");
 		
-		IDServizio idServizio = requestInfo.getIdServizio();
-		PortaApplicativa pa = null;
-		if(idServizio==null){
+		this.idServizio = requestInfo.getIdServizio();
+		if(this.idServizio==null){
 			// avviene solamente se abbiamo invocazioni speciali con contextURL
 			// provo ad individuarlo con il protocollo
 			String idBusta = null;
 			String profiloBusta = null;
 			try{
-				Busta busta = protocolFactory.createValidazioneSintattica(openspcoopstate.getStatoRichiesta()).getBusta_senzaControlli(requestMessage);
+				Busta busta = this.protocolFactory.createValidazioneSintattica(this.openspcoopstate.getStatoRichiesta()).getBusta_senzaControlli(this.requestMessage);
 				if(busta==null){
-					throw new Exception("Protocollo non individuato nel messaggio");
+					throw new CoreException("Protocollo non individuato nel messaggio");
 				}
 				idBusta = busta.getID();
 				profiloBusta = busta.getProfiloDiCollaborazioneValue();
 				
 				if(busta.getTipoDestinatario()==null){
-					throw new Exception("TipoDestinatario non individuato nel messaggio");
+					throw new CoreException("TipoDestinatario non individuato nel messaggio");
 				}
 				if(busta.getDestinatario()==null){
-					throw new Exception("Destinatario non individuato nel messaggio");
+					throw new CoreException("Destinatario non individuato nel messaggio");
 				}
 				if(busta.getTipoServizio()==null){
-					throw new Exception("TipoServizio non individuato nel messaggio");
+					throw new CoreException("TipoServizio non individuato nel messaggio");
 				}
 				if(busta.getServizio()==null){
-					throw new Exception("Servizio non individuato nel messaggio");
+					throw new CoreException("Servizio non individuato nel messaggio");
 				}
 				if(busta.getVersioneServizio()==null){
-					throw new Exception("VersioneServizio non individuato nel messaggio");
+					throw new CoreException("VersioneServizio non individuato nel messaggio");
 				}
-				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
+				this.idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), 
 						busta.getTipoDestinatario(), busta.getDestinatario(), 
 						busta.getVersioneServizio());
-				idServizio.getSoggettoErogatore().setCodicePorta(registroServiziReader.getDominio(idServizio.getSoggettoErogatore(), null, protocolFactory, requestInfo));
-				idServizio.setAzione(busta.getAzione());
-				requestInfo.setIdServizio(idServizio);
+				this.idServizio.getSoggettoErogatore().setCodicePorta(this.registroServiziReader.getDominio(this.idServizio.getSoggettoErogatore(), null, this.protocolFactory, requestInfo));
+				this.idServizio.setAzione(busta.getAzione());
+				requestInfo.setIdServizio(this.idServizio);
 				
-				List<PortaApplicativa> listPa = configurazionePdDReader.getPorteApplicative(idServizio, false);
-//				if(listPa.size()<=0){
-//					throw new Exception("Non esiste alcuna porta applicativa indirizzabile tramite il servizio ["+idServizio+"]");
-//				}
+				List<PortaApplicativa> listPa = this.configurazionePdDReader.getPorteApplicative(this.idServizio, false);
+				/**if(listPa.size()<=0){
+					throw new Exception("Non esiste alcuna porta applicativa indirizzabile tramite il servizio ["+idServizio+"]");
+				}*/
 				// NOTA: la pa potra' essere null nei casi di profili asincroni
-				if(listPa.size()>0){
+				if(!listPa.isEmpty()){
 					if(listPa.size()>1)
-						throw new Exception("Esiste più di una porta applicativa indirizzabile tramite il servizio ["+idServizio+"]");
-					pa = listPa.get(0);
+						throw new CoreException("Esiste più di una porta applicativa indirizzabile tramite il servizio ["+this.idServizio+"]");
+					this.pa = listPa.get(0);
 					
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
-					idPA.setNome(pa.getNome());
+					idPA.setNome(this.pa.getNome());
 					idPA.setIdentificativiErogazione(new IdentificativiErogazione());
-					idPA.getIdentificativiErogazione().setIdServizio(idServizio);
-					RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, logCore, 
-							requestMessage,
+					idPA.getIdentificativiErogazione().setIdServizio(this.idServizio);
+					RicezioneBusteServiceUtils.updatePortaApplicativaRequestInfo(requestInfo, this.logCore, 
+							this.requestMessage,
 							this.generatoreErrore, 
-							ServicesUtils.getServiceIdentificationReader(logCore, requestInfo, registroServiziReader, configurazionePdDReader), msgDiag, 
+							ServicesUtils.getServiceIdentificationReader(this.logCore, requestInfo, this.registroServiziReader, this.configurazionePdDReader), this.msgDiag, 
 							urlProtocolContext, idPA,
-							pddContext);
-					//requestInfo.getProtocolContext().setInterfaceName(pa.getNome());
+							this.pddContext);
+					/**requestInfo.getProtocolContext().setInterfaceName(pa.getNome());*/
 				}
 				
 			}catch(Exception e){
 				
-				logDebug(logCore, e.getMessage(),e); // lascio come debug puo' essere utile
+				logDebug(this.logCore, e.getMessage(),e); // lascio come debug puo' essere utile
 				
-//				boolean checkAsSecondaFaseAsincrono = false;
-//				try{
-//					if(idServizio!=null){
-//						IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
-//						if(config.isSupportato(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO) || 
-//								config.isSupportato(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO)	) {
-//							Busta busta = protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(requestMessage);
-//							if(busta!=null && busta.getProfiloDiCollaborazione()!=null) {
-//								if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(busta.getProfiloDiCollaborazione()) ||
-//										org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(busta.getProfiloDiCollaborazione())
-//									) {
-//									if(busta.getRiferimentoMessaggio()!=null) {
-//										checkAsSecondaFaseAsincrono = true;
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}catch(Exception eAsincronoCheck){
-//					logError(logCore, "Errore durante il controllo della presenza di un profilo asincrono: "+eAsincronoCheck.getMessage(),eAsincronoCheck);
-//				}
-//				
-//				if(checkAsSecondaFaseAsincrono==false) {
+				/**boolean checkAsSecondaFaseAsincrono = false;
+				try{
+					if(idServizio!=null){
+						IProtocolConfiguration config = this.protocolFactory.createProtocolConfiguration();
+						if(config.isSupportato(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO) || 
+								config.isSupportato(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO)	) {
+							Busta busta = this.protocolFactory.createValidazioneSintattica().getBusta_senzaControlli(requestMessage);
+							if(busta!=null && busta.getProfiloDiCollaborazione()!=null) {
+								if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(busta.getProfiloDiCollaborazione()) ||
+										org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(busta.getProfiloDiCollaborazione())
+									) {
+									if(busta.getRiferimentoMessaggio()!=null) {
+										checkAsSecondaFaseAsincrono = true;
+									}
+								}
+							}
+						}
+					}
+				}catch(Exception eAsincronoCheck){
+					logError(logCore, "Errore durante il controllo della presenza di un profilo asincrono: "+eAsincronoCheck.getMessage(),eAsincronoCheck);
+				}
+				
+				if(checkAsSecondaFaseAsincrono==false) {*/
 				
 				ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
-				if(bindingConfig.existsContextUrlMapping()==false){
+				if(!bindingConfig.existsContextUrlMapping()){
 					IntegrationFunctionError integrationFunctionError = null;
-					if(idServizio!=null){
-						msgDiag.addKeywords(idServizio);
-						if(idServizio.getAzione()==null){
-							msgDiag.addKeyword(CostantiPdD.KEY_AZIONE_BUSTA_RICHIESTA, "-");
+					if(this.idServizio!=null){
+						this.msgDiag.addKeywords(this.idServizio);
+						if(this.idServizio.getAzione()==null){
+							this.msgDiag.addKeyword(CostantiPdD.KEY_AZIONE_BUSTA_RICHIESTA, "-");
 						}
-						msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idBusta!=null ? idBusta : "-");
-						msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, profiloBusta!=null ? profiloBusta : "-");
-						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente.identificazionePerServizio");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_ID_MESSAGGIO_RICHIESTA, idBusta!=null ? idBusta : "-");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, profiloBusta!=null ? profiloBusta : "-");
+						this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente.identificazionePerServizio");
 						integrationFunctionError = IntegrationFunctionError.NOT_FOUND;
 					}
 					else{
-						msgDiag.addKeywordErroreProcessamento(e);
-						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
+						this.msgDiag.addKeywordErroreProcessamento(e);
+						this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
 						integrationFunctionError = IntegrationFunctionError.API_IN_UNKNOWN;
 					}
 					
 					// passo volutamente null come msgDiag poichè ho generato prima il diagnostico
-					setSOAPFault_processamento(integrationFunctionError,logCore,null,
+					setSOAPFaultProcessamento(integrationFunctionError,this.logCore,null,
 							ErroriIntegrazione.ERRORE_450_PA_INESISTENTE.getErroreIntegrazione(),e,
 							"IdentificazioneIDServizio");
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 				}
 			}
@@ -1376,19 +1507,19 @@ public class RicezioneBuste {
 			try{
 				IDPortaApplicativa idPA = new IDPortaApplicativa();
 				idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
-				pa = configurazionePdDReader.getPortaApplicativaSafeMethod(idPA, requestInfo);
+				this.pa = this.configurazionePdDReader.getPortaApplicativaSafeMethod(idPA, requestInfo);
 				// NOTA: la pa potra' essere null nei casi di profili asincroni
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+				setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 							"getPA");
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 		}
-		if(pa!=null){
-			msgDiag.updatePorta(pa.getNome(), requestInfo);
+		if(this.pa!=null){
+			this.msgDiag.updatePorta(this.pa.getNome(), requestInfo);
 		}
 
 		
@@ -1401,90 +1532,90 @@ public class RicezioneBuste {
 		/* ------------ Identificazione Router Function  ------------- */	
 		
 		// PdD Function: router o normale PdD
-		boolean functionAsRouter = false;
+		this.functionAsRouter = false;
 		boolean soggettoVirtuale = false;
-		msgDiag.mediumDebug("Esamina modalita' di ricezione (PdD/Router/SoggettoVirtuale)...");
+		this.msgDiag.mediumDebug("Esamina modalita' di ricezione (PdD/Router/SoggettoVirtuale)...");
 		boolean existsSoggetto = false;
 		try{
-			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null) {
-				existsSoggetto = configurazionePdDReader.existsSoggetto(idServizio.getSoggettoErogatore(), requestInfo);
+			if(this.idServizio!=null && this.idServizio.getSoggettoErogatore()!=null) {
+				existsSoggetto = this.configurazionePdDReader.existsSoggetto(this.idServizio.getSoggettoErogatore(), requestInfo);
 			}
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
-					"existsSoggetto("+idServizio.getSoggettoErogatore().toString()+")");
-			openspcoopstate.releaseResource();
+					"existsSoggetto("+this.idServizio.getSoggettoErogatore().toString()+")");
+			this.openspcoopstate.releaseResource();
 			return;
 		}
-		if(existsSoggetto==false){
+		if(!existsSoggetto){
 			// La PdD non gestisce il soggetto destinatario della busta.
 			// Controllo adesso che sia abilitata la funzione di Router per la PdD, altrimenti nel successivo
 			// modulo verra' generato un errore di soggetto non gestito.
-			msgDiag.mediumDebug("Raccolta identita router...");
+			this.msgDiag.mediumDebug("Raccolta identita router...");
 			boolean routerFunctionActive = false;
 			try{
-				routerFunctionActive = configurazionePdDReader.routerFunctionActive();
+				routerFunctionActive = this.configurazionePdDReader.routerFunctionActive();
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+				setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_514_ROUTING_CONFIGURATION_ERROR),e,
 						"ErroreCheckFunzionalitaRouterAttiva");
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}		
 			if(routerFunctionActive){
-				functionAsRouter = true;	
+				this.functionAsRouter = true;	
 				try{
-					identitaPdD = configurazionePdDReader.getRouterIdentity(protocolFactory, requestInfo);
+					this.identitaPdD = this.configurazionePdDReader.getRouterIdentity(this.protocolFactory, requestInfo);
 				}catch(Exception e){
-					setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+					setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_514_ROUTING_CONFIGURATION_ERROR),e,
 							"ErroreRiconoscimentoIdentitaRouter");
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 				}
 			}
 			// else: assume identita di default.
 		}else{
 			// identita assume quella dell'erogatore
-			msgDiag.mediumDebug("Raccolta identita porta di dominio...");
+			this.msgDiag.mediumDebug("Raccolta identita porta di dominio...");
 			String dominio = null;
 			try{
-				dominio = configurazionePdDReader.getIdentificativoPorta(idServizio.getSoggettoErogatore(),protocolFactory, requestInfo);
+				dominio = this.configurazionePdDReader.getIdentificativoPorta(this.idServizio.getSoggettoErogatore(),this.protocolFactory, requestInfo);
 				if(dominio==null){
-					throw new Exception("Dominio is null");
+					throw new CoreException("Dominio is null");
 				}
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+				setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 						"ErroreRiconoscimentoIdentitaPdD");
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
-			identitaPdD = new IDSoggetto(idServizio.getSoggettoErogatore().getTipo(),
-					idServizio.getSoggettoErogatore().getNome(),dominio);
+			this.identitaPdD = new IDSoggetto(this.idServizio.getSoggettoErogatore().getTipo(),
+					this.idServizio.getSoggettoErogatore().getNome(),dominio);
 		}
-		if(functionAsRouter){
+		if(this.functionAsRouter){
 			this.msgContext.setTipoPorta(TipoPdD.ROUTER);
 		}
 		
 		// Context
-		this.msgContext.setIdentitaPdD(identitaPdD);
+		this.msgContext.setIdentitaPdD(this.identitaPdD);
 		// GeneratoreErrore
-		this.generatoreErrore.updateDominio(identitaPdD);
+		this.generatoreErrore.updateDominio(this.identitaPdD);
 		// Raccolta dati Busta Ricevuta
-		parametriGenerazioneBustaErrore.setIdentitaPdD(identitaPdD);
-		parametriInvioBustaErrore.setIdentitaPdD(identitaPdD);
-		parametriInvioBustaErrore.setFunctionAsRouter(functionAsRouter);
+		this.parametriGenerazioneBustaErrore.setIdentitaPdD(this.identitaPdD);
+		this.parametriInvioBustaErrore.setIdentitaPdD(this.identitaPdD);
+		this.parametriInvioBustaErrore.setFunctionAsRouter(this.functionAsRouter);
 		// requestInfo
-		requestInfo.setIdentitaPdD(identitaPdD);
+		requestInfo.setIdentitaPdD(this.identitaPdD);
 		// altri
-		msgDiag.setDominio(identitaPdD); // imposto anche il dominio nel msgDiag
-		parametriGenerazioneBustaErrore.setMsgDiag(msgDiag);
-		parametriInvioBustaErrore.setMsgDiag(msgDiag);
+		this.msgDiag.setDominio(this.identitaPdD); // imposto anche il dominio nel msgDiag
+		this.parametriGenerazioneBustaErrore.setMsgDiag(this.msgDiag);
+		this.parametriInvioBustaErrore.setMsgDiag(this.msgDiag);
 		
 		
 		
@@ -1497,105 +1628,99 @@ public class RicezioneBuste {
 		
 		
 		/* --------------- Header Integrazione (viene letto solo se tracciamento e' abilitato altrimenti significa che il punto di ingresso ha gia gestito la lettura) --------------- */
-		String[] tipiIntegrazionePA = null;
-		msgDiag.mediumDebug("Header integrazione...");
-		if(propertiesReader.processHeaderIntegrazionePARequest(functionAsRouter)){
-			if(functionAsRouter ){
-				msgDiag.highDebug("Header integrazione (Default gestori integrazione Router)");
-				if(RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.containsKey(protocolFactory.getProtocol()))
-					tipiIntegrazionePA = RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.get(protocolFactory.getProtocol());
+		this.msgDiag.mediumDebug("Header integrazione...");
+		if(propertiesReader.processHeaderIntegrazionePARequest(this.functionAsRouter)){
+			if(this.functionAsRouter ){
+				this.msgDiag.highDebug("Header integrazione (Default gestori integrazione Router)");
+				if(RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.containsKey(this.protocolFactory.getProtocol()))
+					this.tipiIntegrazionePA = RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.get(this.protocolFactory.getProtocol());
 				else
-					tipiIntegrazionePA = RicezioneBuste.defaultGestoriIntegrazionePA;
+					this.tipiIntegrazionePA = RicezioneBuste.defaultGestoriIntegrazionePA;
 			}else{
-				msgDiag.highDebug("Header integrazione (Gestori integrazione...)");
-				if(pa!=null && this.msgContext.isTracciamentoAbilitato()){
-					msgDiag.mediumDebug("Lettura header di integrazione...");
+				this.msgDiag.highDebug("Header integrazione (Gestori integrazione...)");
+				if(this.pa!=null && this.msgContext.isTracciamentoAbilitato()){
+					this.msgDiag.mediumDebug("Lettura header di integrazione...");
 					try {
-						tipiIntegrazionePA = configurazionePdDReader.getTipiIntegrazione(pa);
+						this.tipiIntegrazionePA = this.configurazionePdDReader.getTipiIntegrazione(this.pa);
 					} catch (Exception e) {
-						setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+						setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 								"configurazionePdDReader.getTipiIntegrazione(pa)");
-						openspcoopstate.releaseResource();
+						this.openspcoopstate.releaseResource();
 						return;
 					}
 				}
-				msgDiag.highDebug("Header integrazione (Gestori integrazione terminato)");
-				if (tipiIntegrazionePA == null){
-					if(RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.containsKey(protocolFactory.getProtocol()))
-						tipiIntegrazionePA = RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.get(protocolFactory.getProtocol());
+				this.msgDiag.highDebug("Header integrazione (Gestori integrazione terminato)");
+				if (this.tipiIntegrazionePA == null){
+					if(RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.containsKey(this.protocolFactory.getProtocol()))
+						this.tipiIntegrazionePA = RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.get(this.protocolFactory.getProtocol());
 					else
-						tipiIntegrazionePA = RicezioneBuste.defaultGestoriIntegrazionePA;
+						this.tipiIntegrazionePA = RicezioneBuste.defaultGestoriIntegrazionePA;
 				}
 			}
 		}
-		HeaderIntegrazione headerIntegrazioneRichiesta = new HeaderIntegrazione(idTransazione);
+		this.headerIntegrazioneRichiesta = new HeaderIntegrazione(this.idTransazione);
 		InRequestPAMessage inRequestPAMessage = null;
-		if(tipiIntegrazionePA!=null){
-			msgDiag.highDebug("Header integrazione (Impostazione ...)");
+		if(this.tipiIntegrazionePA!=null){
+			this.msgDiag.highDebug("Header integrazione (Impostazione ...)");
 			inRequestPAMessage = new InRequestPAMessage();
-			inRequestPAMessage.setMessage(requestMessage);
+			inRequestPAMessage.setMessage(this.requestMessage);
 			inRequestPAMessage.setUrlProtocolContext(this.msgContext.getUrlProtocolContext());
-			inRequestPAMessage.setPortaApplicativa(pa);
-			inRequestPAMessage.setServizio(idServizio);
-			for (int i = 0; i < tipiIntegrazionePA.length; i++) {
+			inRequestPAMessage.setPortaApplicativa(this.pa);
+			inRequestPAMessage.setServizio(this.idServizio);
+			for (int i = 0; i < this.tipiIntegrazionePA.length; i++) {
 				try {
-					IGestoreIntegrazionePA gestore = null;
-					try {
-						gestore = (IGestoreIntegrazionePA) pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
-					}catch(Exception e){
-						throw e;
-					}
+					IGestoreIntegrazionePA gestore = pluginLoader.newIntegrazionePortaApplicativa(this.tipiIntegrazionePA[i]);
 					if(gestore!=null){
 						String classType = null;
 						try {
 							classType = gestore.getClass().getName();
-							AbstractCore.init(gestore, pddContext, protocolFactory);
+							AbstractCore.init(gestore, this.pddContext, this.protocolFactory);
 						} catch (Exception e) {
-							throw new Exception(
-									"Riscontrato errore durante l'inizializzazione della classe ["+ classType
-											+ "] da utilizzare per la gestione dell'integrazione delle erogazioni di tipo ["+ tipiIntegrazionePA[i] + "]: " + e.getMessage());
+							throw new CoreException(
+									"Riscontrato errore durante l'inizializzazione della classe (IGestoreIntegrazionePA) ["+ classType
+											+ "] da utilizzare per la gestione dell'integrazione delle erogazioni di tipo ["+ this.tipiIntegrazionePA[i] + "]: " + e.getMessage());
 						}
 					
-						gestore.readInRequestHeader(headerIntegrazioneRichiesta, inRequestPAMessage);
+						gestore.readInRequestHeader(this.headerIntegrazioneRichiesta, inRequestPAMessage);
 					}
 					else {
-						msgDiag.logErroreGenerico("Gestore ["
-								+ tipiIntegrazionePA[i]+ "], per la lettura dell'header di integrazione, non inizializzato",
-								"gestoriIntegrazionePASoap.get("+tipiIntegrazionePA[i]+")");
+						this.msgDiag.logErroreGenerico("Gestore ["
+								+ this.tipiIntegrazionePA[i]+ "], per la lettura dell'header di integrazione, non inizializzato",
+								"gestoriIntegrazionePASoap.get("+this.tipiIntegrazionePA[i]+")");
 					}		
 				} catch (Exception e) {
-					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePA[i]);
-					msgDiag.addKeywordErroreProcessamento(e);
-					msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,this.tipiIntegrazionePA[i]);
+					this.msgDiag.addKeywordErroreProcessamento(e);
+					this.msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
 				}
 			}
-			if(headerIntegrazioneRichiesta!=null){
-				msgDiag.highDebug("Header integrazione (set context...)");
+			if(this.headerIntegrazioneRichiesta!=null){
+				this.msgDiag.highDebug("Header integrazione (set context...)");
 				if(this.msgContext.getIdentitaServizioApplicativoFruitore()!=null)
 					servizioApplicativoFruitore = this.msgContext.getIdentitaServizioApplicativoFruitore();
 				else
-					servizioApplicativoFruitore = headerIntegrazioneRichiesta.getServizioApplicativo();
+					servizioApplicativoFruitore = this.headerIntegrazioneRichiesta.getServizioApplicativo();
 
-				parametriGenerazioneBustaErrore.setServizioApplicativoFruitore(servizioApplicativoFruitore);
-				parametriInvioBustaErrore.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+				this.parametriGenerazioneBustaErrore.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+				this.parametriInvioBustaErrore.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 				this.generatoreErrore.updateInformazioniCooperazione(servizioApplicativoFruitore);
 				
 				if(this.msgContext.getIdCorrelazioneApplicativa()!=null)
-					correlazioneApplicativa = this.msgContext.getIdCorrelazioneApplicativa();
+					this.correlazioneApplicativa = this.msgContext.getIdCorrelazioneApplicativa();
 				else
-					correlazioneApplicativa = headerIntegrazioneRichiesta.getIdApplicativo();
-				parametriGenerazioneBustaErrore.setCorrelazioneApplicativa(correlazioneApplicativa);
-				parametriInvioBustaErrore.setCorrelazioneApplicativa(correlazioneApplicativa);
+					this.correlazioneApplicativa = this.headerIntegrazioneRichiesta.getIdApplicativo();
+				this.parametriGenerazioneBustaErrore.setCorrelazioneApplicativa(this.correlazioneApplicativa);
+				this.parametriInvioBustaErrore.setCorrelazioneApplicativa(this.correlazioneApplicativa);
 				
-				msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
-				msgDiag.addKeyword(CostantiPdD.KEY_ID_CORRELAZIONE_APPLICATIVA, correlazioneApplicativa);
+				this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE, servizioApplicativoFruitore);
+				this.msgDiag.addKeyword(CostantiPdD.KEY_ID_CORRELAZIONE_APPLICATIVA, this.correlazioneApplicativa);
 				
-				this.msgContext.getIntegrazione().setIdCorrelazioneApplicativa(correlazioneApplicativa);
+				this.msgContext.getIntegrazione().setIdCorrelazioneApplicativa(this.correlazioneApplicativa);
 				this.msgContext.getIntegrazione().setServizioApplicativoFruitore(servizioApplicativoFruitore);
 				
-				msgDiag.highDebug("Header integrazione (set context ok)");
+				this.msgDiag.highDebug("Header integrazione (set context ok)");
 			}
 		}
 		
@@ -1607,35 +1732,35 @@ public class RicezioneBuste {
 		Utilities.printFreeMemory("RicezioneBuste - Autorizzazione canale ...");
 		ConfigurazioneCanaliNodo configurazioneCanaliNodo = null;
 		try {
-			if(!functionAsRouter) {
-				configurazioneCanaliNodo = configurazionePdDReader.getConfigurazioneCanaliNodo();
+			if(!this.functionAsRouter) {
+				configurazioneCanaliNodo = this.configurazionePdDReader.getConfigurazioneCanaliNodo();
 			}
 		} catch (Exception e) {
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"configurazionePdDReader.getConfigurazioneCanaliNodo()");
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		boolean canaleNonAutorizzato = false;
 		try {
 			if(configurazioneCanaliNodo!=null && configurazioneCanaliNodo.isEnabled()) {
 			
-				msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
-				msgDiag.logPersonalizzato("autorizzazioneCanale.inCorso");
+				this.msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+				this.msgDiag.logPersonalizzato("autorizzazioneCanale.inCorso");
 				
 				String canaleApiInvocata = null;
-				if(pa!=null) {
-					String canalePorta = pa.getCanale();
+				if(this.pa!=null) {
+					String canalePorta = this.pa.getCanale();
 					if(canalePorta!=null && !"".equals(canalePorta)) {
 						canaleApiInvocata = canalePorta;
 					}
 					else {
 						try {
-							AccordoServizioParteSpecifica asps = registroServiziReader.getAccordoServizioParteSpecifica(idServizio, null, false, requestInfo);
+							AccordoServizioParteSpecifica asps = this.registroServiziReader.getAccordoServizioParteSpecifica(this.idServizio, null, false, requestInfo);
 							if(asps!=null) {
-								AccordoServizioParteComune aspc = registroServiziReader.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, false, requestInfo);
+								AccordoServizioParteComune aspc = this.registroServiziReader.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, false, requestInfo);
 								if(aspc!=null) {
 									String canaleApi = aspc.getCanale();
 									if(canaleApi!=null && !"".equals(canaleApi)) {
@@ -1655,12 +1780,12 @@ public class RicezioneBuste {
 					if(!configurazioneCanaliNodo.getCanaliNodo().contains(canaleApiInvocata)) {
 						canaleNonAutorizzato = true;
 						String dettaglio=" (nodo '"+configurazioneCanaliNodo.getIdNodo()+"':"+configurazioneCanaliNodo.getCanaliNodo()+" api-invocata:"+canaleApiInvocata+")";
-						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, dettaglio);
-						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
-						throw new Exception("L'API invocata richiede un canale differente da quelli associati al nodo; invocazione non autorizzata");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, dettaglio);
+						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
+						throw new CoreException("L'API invocata richiede un canale differente da quelli associati al nodo; invocazione non autorizzata");
 					}
 					else {
-						msgDiag.logPersonalizzato("autorizzazioneCanale.effettuata");
+						this.msgDiag.logPersonalizzato("autorizzazioneCanale.effettuata");
 					}
 					
 				}
@@ -1673,20 +1798,20 @@ public class RicezioneBuste {
 			
 			String msgErrore = e.getMessage();
 			
-			msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
-			msgDiag.logPersonalizzato("autorizzazioneCanale.fallita");
+			this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
+			this.msgDiag.logPersonalizzato("autorizzazioneCanale.fallita");
 			
 			if(canaleNonAutorizzato) {
-				logError(logCore, e.getMessage(),e);
-				setSOAPFault_intestazione(IntegrationFunctionError.AUTHORIZATION_DENY,
+				logError(this.logCore, e.getMessage(),e);
+				setSOAPFaultIntestazione(IntegrationFunctionError.AUTHORIZATION_DENY,
 						ErroriCooperazione.AUTORIZZAZIONE_FALLITA.getErroreAutorizzazione(msgErrore, CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA));
 			}
 			else {
-				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,null,
+				setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,null,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 						"autorizzazioneCanale");
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -1708,25 +1833,25 @@ public class RicezioneBuste {
 			
 			if(httpServletRequest!=null && HttpRequestMethod.OPTIONS.name().equalsIgnoreCase(httpServletRequest.getMethod())) {
 				
-				Object nomePortaObject = pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+				Object nomePortaObject = this.pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
 				String nomePortaS = null;
-				if(nomePortaObject instanceof String) {
-					nomePortaS = (String) nomePortaObject;
+				if(nomePortaObject instanceof String s) {
+					nomePortaS = s;
 				}
 				PortaApplicativa paDefault = null;
 				if(nomePortaS!=null) {
 					IDPortaApplicativa idPAdefault = new IDPortaApplicativa();
 					idPAdefault.setNome(nomePortaS);
-					paDefault = configurazionePdDReader.getPortaApplicativaSafeMethod(idPAdefault, requestInfo);
+					paDefault = this.configurazionePdDReader.getPortaApplicativaSafeMethod(idPAdefault, requestInfo);
 				}
 				if(paDefault!=null) {
-					cors = configurazionePdDReader.getConfigurazioneCORS(paDefault);
+					cors = this.configurazionePdDReader.getConfigurazioneCORS(paDefault);
 				}
-				else if(pa!=null) {
-					cors = configurazionePdDReader.getConfigurazioneCORS(pa);
+				else if(this.pa!=null) {
+					cors = this.configurazionePdDReader.getConfigurazioneCORS(this.pa);
 				}
 				else {
-					cors = configurazionePdDReader.getConfigurazioneCORS();
+					cors = this.configurazionePdDReader.getConfigurazioneCORS();
 				}
 			}
 			else {
@@ -1734,11 +1859,11 @@ public class RicezioneBuste {
 				cors.setStato(StatoFunzionalita.DISABILITATO);
 			}
 		} catch (Exception e) {
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"configurazionePdDReader.getConfigurazioneCORS(pa)");
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -1751,16 +1876,16 @@ public class RicezioneBuste {
 		/* ------------ Identificazione Azione  ------------- */	
 		
 		try{
-			if(pa!=null){
+			if(this.pa!=null && this.idServizio!=null){
 				if(requestInfo.getIdServizio()!=null && requestInfo.getIdServizio().getAzione()!=null){
 					// gia identificata
-					idServizio.setAzione(requestInfo.getIdServizio().getAzione());
+					this.idServizio.setAzione(requestInfo.getIdServizio().getAzione());
 				}
 				else{
-					idServizio.setAzione(configurazionePdDReader.getAzione(pa, urlProtocolContext, requestInfo, requestMessage, null,
-							headerIntegrazioneRichiesta, this.msgContext.getIdModulo().endsWith(IntegrationManager.ID_MODULO), protocolFactory));
+					this.idServizio.setAzione(this.configurazionePdDReader.getAzione(this.pa, urlProtocolContext, requestInfo, this.requestMessage, null,
+							this.headerIntegrazioneRichiesta, this.msgContext.getIdModulo().endsWith(IntegrationManager.ID_MODULO), this.protocolFactory));
 				}
-				requestInfo.setIdServizio(idServizio);
+				requestInfo.setIdServizio(this.idServizio);
 			}
 		}catch(Exception e){
 			
@@ -1773,15 +1898,15 @@ public class RicezioneBuste {
 				IntegrationFunctionError integrationFunctinError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 				if(e instanceof IdentificazioneDinamicaException) {
 					
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
 										
 					integrationFunctinError = IntegrationFunctionError.OPERATION_UNDEFINED;
 				}
 				
-				setSOAPFault_processamento(integrationFunctinError,logCore,msgDiag,
+				setSOAPFaultProcessamento(integrationFunctinError,this.logCore,this.msgDiag,
 						ErroriIntegrazione.ERRORE_403_AZIONE_NON_IDENTIFICATA.getErroreIntegrazione(),e,
 						"identificazioneDinamicaAzionePortaApplicativa");
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 				
 			}
@@ -1801,41 +1926,41 @@ public class RicezioneBuste {
 		
 		Utilities.printFreeMemory("RicezioneBuste - Identificazione PA specifica per azione del servizio ...");
 		
-		msgDiag.mediumDebug("Lettura azione associato alla PA invocata...");
-		if(idServizio!=null && idServizio.getAzione()!=null && pa!=null) {
+		this.msgDiag.mediumDebug("Lettura azione associato alla PA invocata...");
+		if(this.idServizio!=null && this.idServizio.getAzione()!=null && this.pa!=null) {
 			// verifico se esiste una porta applicativa piu' specifica
-			IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(logCore, protocolFactory, 
-					registroServiziReader, configurazionePdDReader, requestInfo,
-					pa);
-			String action = idServizio.getAzione();
+			IdentificazionePortaApplicativa identificazione = new IdentificazionePortaApplicativa(this.logCore, this.protocolFactory, 
+					this.registroServiziReader, this.configurazionePdDReader, requestInfo,
+					this.pa);
+			String action = this.idServizio.getAzione();
 			if(identificazione.find(action)) {
-				IDPortaApplicativa idPA_action = identificazione.getIDPortaApplicativa(action);
-				if(idPA_action!=null) {
+				IDPortaApplicativa idPAAction = identificazione.getIDPortaApplicativa(action);
+				if(idPAAction!=null) {
 					
-					requestMessage.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, pa.getNome()); // prima di aggiornare la porta applicativa
+					this.requestMessage.addContextProperty(CostantiPdD.NOME_PORTA_INVOCATA, this.pa.getNome()); // prima di aggiornare la porta applicativa
 										
-					pa = identificazione.getPortaApplicativa(action);
-					msgDiag.addKeyword(CostantiPdD.KEY_PORTA_APPLICATIVA, pa.getNome());
-					msgDiag.updatePorta(pa.getNome(), requestInfo);
-					if(requestMessage.getTransportRequestContext()!=null) {
-						requestMessage.getTransportRequestContext().setInterfaceName(pa.getNome());
+					this.pa = identificazione.getPortaApplicativa(action);
+					this.msgDiag.addKeyword(CostantiPdD.KEY_PORTA_APPLICATIVA, this.pa.getNome());
+					this.msgDiag.updatePorta(this.pa.getNome(), requestInfo);
+					if(this.requestMessage.getTransportRequestContext()!=null) {
+						this.requestMessage.getTransportRequestContext().setInterfaceName(this.pa.getNome());
 					}
 					
-					pddContext.removeObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
+					this.pddContext.removeObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
 					try {
-						Map<String, String> configProperties = configurazionePdDReader.getProprietaConfigurazione(pa);
+						Map<String, String> configProperties = this.configurazionePdDReader.getProprietaConfigurazione(this.pa);
 			            if (configProperties != null && !configProperties.isEmpty()) {
-			               pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, configProperties);
+			               this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, configProperties);
 			            }
 					}catch(Exception e) {
-						logError(logCore, "Errore durante la lettura delle proprietà di configurazione della porta applicativa [" + pa.getNome() + "]: " + e.getMessage(), e);
+						logError(this.logCore, "Errore durante la lettura delle proprietà di configurazione della porta applicativa [" + this.pa.getNome() + "]: " + e.getMessage(), e);
 					}
 				}
 			}else {
-				pddContext.addObject(org.openspcoop2.core.constants.Costanti.API_NON_INDIVIDUATA, "true");
+				this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.API_NON_INDIVIDUATA, "true");
 				
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, identificazione.getErroreIntegrazione().getDescrizione(protocolFactory));
-				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");	
+				this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, identificazione.getErroreIntegrazione().getDescrizione(this.protocolFactory));
+				this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");	
 				
 				// passo volutamente null come msgDiag poichè ho generato prima il diagnostico
 				IntegrationFunctionError integrationFunctionError = null;
@@ -1844,10 +1969,10 @@ public class RicezioneBuste {
 				}else{
 					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 				}
-				setSOAPFault_processamento(integrationFunctionError,logCore,null,
+				setSOAPFaultProcessamento(integrationFunctionError,this.logCore,null,
 						identificazione.getErroreIntegrazione(),null,
 						"IdentificazionePASpecificaPerAzione");
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 		}
@@ -1861,21 +1986,21 @@ public class RicezioneBuste {
 		
 		// ------------- Informazioni Integrazione -----------------------------
 		
-		msgDiag.mediumDebug("Aggiungo informazioni di integrazione dinamica nel contesto ...");
+		this.msgDiag.mediumDebug("Aggiungo informazioni di integrazione dinamica nel contesto ...");
 				
 		try {
-			if(pa!=null) {
-				configurazionePdDReader.setInformazioniIntegrazioneDinamiche(logCore, urlProtocolContext, pddContext, pa);
+			if(this.pa!=null) {
+				this.configurazionePdDReader.setInformazioniIntegrazioneDinamiche(this.logCore, urlProtocolContext, this.pddContext, this.pa);
 			}
 		} 
 		catch (Exception e) {
-			msgDiag.logErroreGenerico(e, "setInformazioniIntegrazioneDinamiche");
-			setSOAPFault_processamento(IntegrationFunctionError.BAD_REQUEST,logCore, 
+			this.msgDiag.logErroreGenerico(e, "setInformazioniIntegrazioneDinamiche");
+			setSOAPFaultProcessamento(IntegrationFunctionError.BAD_REQUEST,this.logCore, 
 					null, //msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"setInformazioniIntegrazioneDinamiche");
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -1890,34 +2015,34 @@ public class RicezioneBuste {
 		
 		// ------------- Dump richiesta-----------------------------
 			
-		msgDiag.mediumDebug("Dump richiesta ...");
+		this.msgDiag.mediumDebug("Dump richiesta ...");
 		
 		DumpConfigurazione dumpConfig = null;
 		try {
-			if(pa!=null) {
-				dumpConfig = configurazionePdDReader.getDumpConfigurazione(pa);
+			if(this.pa!=null) {
+				dumpConfig = this.configurazionePdDReader.getDumpConfigurazione(this.pa);
 			}
 			else {
-				dumpConfig = configurazionePdDReader.getDumpConfigurazionePortaApplicativa();
+				dumpConfig = this.configurazionePdDReader.getDumpConfigurazionePortaApplicativa();
 			}
 			internalObjects.put(CostantiPdD.DUMP_CONFIG, dumpConfig);
 		} 
 		catch (Exception e) {
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"readDumpConfigurazione");
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
-		Dump dumpApplicativo = new Dump(identitaPdD,
+		Dump dumpApplicativo = new Dump(this.identitaPdD,
 				this.msgContext.getIdModulo(),  null,
-				null, idServizio,
-				this.msgContext.getTipoPorta(),msgDiag.getPorta(),inRequestContext.getPddContext(),
-				openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
+				null, this.idServizio,
+				this.msgContext.getTipoPorta(),this.msgDiag.getPorta(),inRequestContext.getPddContext(),
+				this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta(),
 				dumpConfig);
-		dumpApplicativo.dumpRichiestaIngresso(requestMessage,inRequestContext.getConnettore().getUrlProtocolContext());
+		dumpApplicativo.dumpRichiestaIngresso(this.requestMessage,inRequestContext.getConnettore().getUrlProtocolContext());
 		internalObjects.put(CostantiPdD.DUMP_RICHIESTA_EFFETTUATO, true);
 		
 		
@@ -1942,69 +2067,69 @@ public class RicezioneBuste {
 		 * ------------- */	
 		
 		Servizio infoServizio = null;
-		IDSoggetto soggettoFruitore = null;
 		String id = null;
 		boolean generazioneListaTrasmissioni = false;
 		InformazioniServizioURLMapping is = null;
 		boolean identitaServizioValida = false;
 		String nomeRegistroForSearch = null; // qualsiasi registro
 		try{
-			is = new InformazioniServizioURLMapping(requestMessage,protocolFactory,urlProtocolContext,
-					logCore, this.msgContext.getIdModuloAsIDService(),
+			is = new InformazioniServizioURLMapping(this.requestMessage,this.protocolFactory,urlProtocolContext,
+					this.logCore, this.msgContext.getIdModuloAsIDService(),
 					propertiesReader.getCustomContexts());
-			logDebug(logCore, "InformazioniServizioTramiteURLMapping: "+is.toString());		
+			logDebug(this.logCore, "InformazioniServizioTramiteURLMapping: "+is.toString());		
 			
 		
 			Credential identity = null;
 						
 			// Read Identity
-			if(is.existsIdentityBasedIdentificationMode()){
-				if(connectorInMessage!=null)
-					identity = connectorInMessage.getCredential();
+			if(is.existsIdentityBasedIdentificationMode() &&
+				connectorInMessage!=null) {
+				identity = connectorInMessage.getCredential();
 			}
 			
 			// Refresh dati su mittente
-			soggettoFruitore = new IDSoggetto();
+			this.soggettoFruitore = new IDSoggetto();
 			IDSoggetto headerIntegrazioneRichiestaSoggettoMittente = null;
-			if(headerIntegrazioneRichiesta!=null && headerIntegrazioneRichiesta.getBusta()!=null){
-				headerIntegrazioneRichiestaSoggettoMittente = new IDSoggetto(headerIntegrazioneRichiesta.getBusta().getTipoMittente(), 
-						headerIntegrazioneRichiesta.getBusta().getMittente());
+			if(this.headerIntegrazioneRichiesta!=null && this.headerIntegrazioneRichiesta.getBusta()!=null){
+				headerIntegrazioneRichiestaSoggettoMittente = new IDSoggetto(this.headerIntegrazioneRichiesta.getBusta().getTipoMittente(), 
+						this.headerIntegrazioneRichiesta.getBusta().getMittente());
 			}
-			is.refreshDati(soggettoFruitore, identity, headerIntegrazioneRichiestaSoggettoMittente);
+			is.refreshDati(this.soggettoFruitore, identity, headerIntegrazioneRichiestaSoggettoMittente);
 			
 			// Reimposto a null se il refresh non ha trovato dati.
-			if(soggettoFruitore.getTipo()==null && soggettoFruitore.getNome()==null){
-				soggettoFruitore = null;
+			if(this.soggettoFruitore.getTipo()==null && this.soggettoFruitore.getNome()==null){
+				this.soggettoFruitore = null;
 			}			
 			
 			// Aggiorno domini dei soggetti se completamente ricostruiti tramite url mapping differente da plugin based
-			if(soggettoFruitore!=null && soggettoFruitore.getTipo()!=null && soggettoFruitore.getNome()!=null){
+			if(this.soggettoFruitore!=null && this.soggettoFruitore.getTipo()!=null && this.soggettoFruitore.getNome()!=null){
 				try {
-					soggettoFruitore.setCodicePorta(registroServiziReader.getDominio(soggettoFruitore, nomeRegistroForSearch, protocolFactory, requestInfo));
+					this.soggettoFruitore.setCodicePorta(this.registroServiziReader.getDominio(this.soggettoFruitore, nomeRegistroForSearch, this.protocolFactory, requestInfo));
 				} catch (Exception e) {
-					//e.printStackTrace();
+					// ignore
+					/**e.printStackTrace();*/
 				}
 			}
-			requestInfo.setFruitore(soggettoFruitore);
+			requestInfo.setFruitore(this.soggettoFruitore);
 			
 			// Check id
-			boolean identitaSoggettoErogatoreValida = idServizio!=null &&
-					idServizio.getSoggettoErogatore()!=null && 
-					idServizio.getSoggettoErogatore().getTipo()!=null &&
-					idServizio.getSoggettoErogatore().getNome()!=null;
+			boolean identitaSoggettoErogatoreValida = this.idServizio!=null &&
+					this.idServizio.getSoggettoErogatore()!=null && 
+					this.idServizio.getSoggettoErogatore().getTipo()!=null &&
+					this.idServizio.getSoggettoErogatore().getNome()!=null;
 			identitaServizioValida = identitaSoggettoErogatoreValida && 
-					idServizio!=null && idServizio.getNome()!=null && idServizio.getTipo()!=null && idServizio.getVersione()!=null;
+					this.idServizio!=null && this.idServizio.getNome()!=null && this.idServizio.getTipo()!=null && this.idServizio.getVersione()!=null;
 						
 			// ID Protocollo
 			id = null;
 			if(is.isStaticBasedIdentificationMode_IdProtocol()){
-				Imbustamento imbustamento = new Imbustamento(logCore, protocolFactory, openspcoopstate.getStatoRichiesta());
+				Imbustamento imbustamento = new Imbustamento(this.logCore, this.protocolFactory, this.openspcoopstate.getStatoRichiesta());
 				IDSoggetto idSoggetto = null;
 				if(identitaSoggettoErogatoreValida) {
-					idSoggetto = idServizio.getSoggettoErogatore();
+					idSoggetto = this.idServizio.getSoggettoErogatore();
 				}
 				else {
-					idSoggetto = propertiesReader.getIdentitaPortaDefault(protocolFactory.getProtocol(), requestInfo);
+					idSoggetto = propertiesReader.getIdentitaPortaDefault(this.protocolFactory.getProtocol(), requestInfo);
 				}
 				id = 
 					imbustamento.buildID(idSoggetto, 
@@ -2020,7 +2145,7 @@ public class RicezioneBuste {
 			// InfoServizio (NOTA: lasciare per ultimo)
 			if(is.isStaticBasedIdentificationMode_InfoProtocol()){
 				if(identitaServizioValida) {
-					infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, true, requestInfo);
+					infoServizio = this.registroServiziReader.getInfoServizio(this.soggettoFruitore, this.idServizio,nomeRegistroForSearch,true, true, requestInfo);
 				}
 				else {
 					infoServizio = new Servizio(); // se l'id servizio non e' valido poi viene segnalato dal motore della validazione
@@ -2038,10 +2163,9 @@ public class RicezioneBuste {
 				if(TipoGestioneCORS.TRASPARENTE.equals(cors.getTipo())) {
 					// per poter continuare l'elaborazione ho bisogno dell'id servizio
 					try {
-						if(is.isStaticBasedIdentificationMode_InfoProtocol()){
-							if(identitaServizioValida) {
-								infoServizio = registroServiziReader.getInfoServizio(soggettoFruitore, idServizio,nomeRegistroForSearch,true, false, requestInfo);
-							}
+						if(is.isStaticBasedIdentificationMode_InfoProtocol() &&
+							identitaServizioValida) {
+							infoServizio = this.registroServiziReader.getInfoServizio(this.soggettoFruitore, this.idServizio,nomeRegistroForSearch,true, false, requestInfo);
 						}
 					}catch(Exception eGetInfoServizio) {
 						throwFault = true;
@@ -2051,17 +2175,17 @@ public class RicezioneBuste {
 			if(throwFault) {
 			
 				String azione = "";
-				if(idServizio.getAzione()!=null) {
-					azione = "(azione:"+ idServizio.getAzione()+ ") ";
+				if(this.idServizio.getAzione()!=null) {
+					azione = "(azione:"+ this.idServizio.getAzione()+ ") ";
 				}
 				
-				pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
+				this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
 				
-				setSOAPFault_processamento(IntegrationFunctionError.OPERATION_UNDEFINED,logCore,msgDiag,
+				setSOAPFaultProcessamento(IntegrationFunctionError.OPERATION_UNDEFINED,this.logCore,this.msgDiag,
 						ErroriIntegrazione.ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA.
 						getErrore423_ServizioConAzioneScorretta(azione+ e.getMessage()),e,
 						"readProtocolInfo");
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 				
 			}
@@ -2071,11 +2195,11 @@ public class RicezioneBuste {
 			
 		}
 		catch(Exception e){
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"readProtocolInfo");
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -2084,39 +2208,36 @@ public class RicezioneBuste {
 		// Gestione CORS
 		
 		if(!effettuareGestioneCORS) {
-			if(pddContext.containsKey(CostantiPdD.CORS_PREFLIGHT_REQUEST_SOAP)) {
+			if(this.pddContext.containsKey(CostantiPdD.CORS_PREFLIGHT_REQUEST_SOAP)) {
 				effettuareGestioneCORS = true;
 			}
 			else {
 				// devo verificare se si tratta di una azione matched poichè è stato inserito un tipo http method 'qualsiasi'
-				if(propertiesReader.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste()) {
-					if(cors!=null && 
-							StatoFunzionalita.ABILITATO.equals(cors.getStato()) &&
-							TipoGestioneCORS.GATEWAY.equals(cors.getTipo()) &&
-							this.msgContext.isGestioneRisposta()) {
-						if(idServizio!=null && idServizio.getAzione()!=null) {
-							try {
-								RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance();
-								AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false, requestInfo);
-								if(asps!=null) {
-									AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, false, requestInfo);
-									if(aspc!=null && org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
-										if(aspc.sizeResourceList()>0) {
-											for (Resource resource : aspc.getResourceList()) {
-												if(idServizio.getAzione().equals(resource.getNome())) {
-													if(resource.getMethod()==null){
-														effettuareGestioneCORS = true;
-													}
-													break;
-												}
-											}
+				if(propertiesReader.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste() &&
+					cors!=null && 
+					StatoFunzionalita.ABILITATO.equals(cors.getStato()) &&
+					TipoGestioneCORS.GATEWAY.equals(cors.getTipo()) &&
+					this.msgContext.isGestioneRisposta() &&
+					this.idServizio!=null && this.idServizio.getAzione()!=null) {
+					try {
+						RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance();
+						AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(this.idServizio, null, false, requestInfo);
+						if(asps!=null) {
+							AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false, false, requestInfo);
+							if(aspc!=null && org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding()) &&
+								aspc.sizeResourceList()>0) {
+								for (Resource resource : aspc.getResourceList()) {
+									if(this.idServizio.getAzione().equals(resource.getNome())) {
+										if(resource.getMethod()==null){
+											effettuareGestioneCORS = true;
 										}
+										break;
 									}
 								}
-							}catch(Throwable tIgnore) {
-								// ignore
 							}
 						}
+					}catch(Exception tIgnore) {
+						// ignore
 					}
 				}
 			}
@@ -2126,7 +2247,7 @@ public class RicezioneBuste {
 			
 			if(TipoGestioneCORS.GATEWAY.equals(cors.getTipo())) {
 				
-				CORSFilter corsFilter = new CORSFilter(logCore, cors);
+				CORSFilter corsFilter = new CORSFilter(this.logCore, cors);
 				try {
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(true);
 					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT, true);
@@ -2135,24 +2256,24 @@ public class RicezioneBuste {
 					}
 					this.msgContext.getResponseHeaders().putAll(res.getHeadersValues());
 					this.msgContext.setMessageResponse(res.buildMessage());
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY, "true");
 				}catch(Exception e) {
 					// un eccezione non dovrebbe succedere
-					setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+					setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 							"gestioneCORS");
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 				}
 				
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 					
 			}
 			else {
 				
-				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_TRASPARENTE, "true");
+				this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CORS_PREFLIGHT_REQUEST_TRASPARENTE, "true");
 				
 			}
 			
@@ -2172,38 +2293,36 @@ public class RicezioneBuste {
 		Busta bustaURLMapping = null;
 		try{
 			// Build Busta
-			bustaURLMapping = new Busta(protocolFactory,infoServizio, soggettoFruitore, 
-					idServizio!=null ? idServizio.getSoggettoErogatore() : null, 
+			bustaURLMapping = new Busta(this.protocolFactory,infoServizio, this.soggettoFruitore, 
+					this.idServizio!=null ? this.idServizio.getSoggettoErogatore() : null, 
 					id, generazioneListaTrasmissioni);
-			if(infoServizio!=null && infoServizio.getCollaborazione()) {
-				// in questo punto sar' true solo se infoServizio è stato letto dal registro E siamo in 'isStaticBasedIdentificationMode_InfoProtocol'
-				if(headerIntegrazioneRichiesta!=null && headerIntegrazioneRichiesta.getBusta()!=null 
-						&& headerIntegrazioneRichiesta.getBusta().getIdCollaborazione()!=null) {
-					bustaURLMapping.setCollaborazione(headerIntegrazioneRichiesta.getBusta().getIdCollaborazione());
-				}
+			if(infoServizio!=null && infoServizio.getCollaborazione() &&
+				// in questo punto sara' true solo se infoServizio è stato letto dal registro E siamo in 'isStaticBasedIdentificationMode_InfoProtocol'
+				this.headerIntegrazioneRichiesta!=null && this.headerIntegrazioneRichiesta.getBusta()!=null && 
+				this.headerIntegrazioneRichiesta.getBusta().getIdCollaborazione()!=null) {
+				bustaURLMapping.setCollaborazione(this.headerIntegrazioneRichiesta.getBusta().getIdCollaborazione());
 			}
-			if(infoServizio!=null && infoServizio.getIdRiferimentoRichiesta()) {
-				// in questo punto sar' true solo se infoServizio è stato letto dal registro E siamo in 'isStaticBasedIdentificationMode_InfoProtocol'
-				if(headerIntegrazioneRichiesta!=null && headerIntegrazioneRichiesta.getBusta()!=null 
-						&& headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio()!=null) {
-					bustaURLMapping.setRiferimentoMessaggio(headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
-					this.msgContext.getProtocol().setRiferimentoAsincrono(headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
-				}
+			if(infoServizio!=null && infoServizio.getIdRiferimentoRichiesta() &&
+				// in questo punto sara' true solo se infoServizio è stato letto dal registro E siamo in 'isStaticBasedIdentificationMode_InfoProtocol'
+				this.headerIntegrazioneRichiesta!=null && this.headerIntegrazioneRichiesta.getBusta()!=null &&
+				this.headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio()!=null) {
+				bustaURLMapping.setRiferimentoMessaggio(this.headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
+				this.msgContext.getProtocol().setRiferimentoAsincrono(this.headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio());
 			}
 			TipoOraRegistrazione tipoOraRegistrazione = propertiesReader.getTipoTempoBusta(null);
-			bustaURLMapping.setTipoOraRegistrazione(tipoOraRegistrazione, traduttore.toString(tipoOraRegistrazione));
+			bustaURLMapping.setTipoOraRegistrazione(tipoOraRegistrazione, this.traduttore.toString(tipoOraRegistrazione));
 			if(bustaURLMapping.sizeListaTrasmissioni()>0){
 				for (Trasmissione trasmissione : bustaURLMapping.getListaTrasmissioni()) {
-					trasmissione.setTempo(tipoOraRegistrazione, traduttore.toString(tipoOraRegistrazione));
+					trasmissione.setTempo(tipoOraRegistrazione, this.traduttore.toString(tipoOraRegistrazione));
 				}
 			}
 			bustaURLMapping.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 		}catch(Exception e){
-			setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+			setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 					"bustaURLMapping");
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -2226,18 +2345,18 @@ public class RicezioneBuste {
 				
 		/* ------------  Processamento Busta Ricevuta ------------- */	
 		
-		RicezioneBusteGeneratoreBustaErrore ricezioneBusteGeneratoreBustaErrore = new RicezioneBusteGeneratoreBustaErrore(this.msgContext, this.generatoreErrore);
+		this.ricezioneBusteGeneratoreBustaErrore = new RicezioneBusteGeneratoreBustaErrore(this.msgContext, this.generatoreErrore);
 		
 		// ValidazioneSintattica
-		msgDiag.mediumDebug("Validazione busta ricevuta in corso...");
+		this.msgDiag.mediumDebug("Validazione busta ricevuta in corso...");
 		ProprietaValidazione properties = new ProprietaValidazione();
-		boolean readQualifiedAttribute = propertiesReader.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
+		this.readQualifiedAttribute = propertiesReader.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 		
-		Validatore validatore = new Validatore(requestMessage,pddContext,properties, openspcoopstate.getStatoRichiesta(),readQualifiedAttribute, protocolFactory);
+		Validatore validatore = new Validatore(this.requestMessage,this.pddContext,properties, this.openspcoopstate.getStatoRichiesta(),this.readQualifiedAttribute, this.protocolFactory);
 		
 		
-		msgDiag.logPersonalizzato("validazioneSintattica");
-		if(validatore.validazioneSintattica(bustaURLMapping, true) == false){
+		this.msgDiag.logPersonalizzato("validazioneSintattica");
+		if(!validatore.validazioneSintattica(bustaURLMapping, true)){
 
 			// Provo a reperire il dominio se ho l'informazione sul destinatario valida
 			Busta erroreIntestazione = null;
@@ -2247,24 +2366,24 @@ public class RicezioneBuste {
 				
 				// Imposto Identificativo Richiesta
 				if(erroreIntestazione.getID()!=null){
-					msgDiag.setIdMessaggioRichiesta(erroreIntestazione.getID());
+					this.msgDiag.setIdMessaggioRichiesta(erroreIntestazione.getID());
 					this.msgContext.getProtocol().setIdRichiesta(erroreIntestazione.getID());
 				}
 				
-				IProtocolManager protocolManager = protocolFactory.createProtocolManager();
-				if( (protocolManager.getKeywordMittenteSconosciuto().equals(erroreIntestazione.getDestinatario())==false) &&
-						(protocolManager.getKeywordTipoMittenteSconosciuto().equals(erroreIntestazione.getTipoDestinatario())==false)
+				IProtocolManager protocolManager = this.protocolFactory.createProtocolManager();
+				if( (!protocolManager.getKeywordMittenteSconosciuto().equals(erroreIntestazione.getDestinatario())) &&
+						(!protocolManager.getKeywordTipoMittenteSconosciuto().equals(erroreIntestazione.getTipoDestinatario()))
 				){
 					try{
-						String dominioTmp = configurazionePdDReader.getIdentificativoPorta(new IDSoggetto(erroreIntestazione.getTipoDestinatario(),
-								erroreIntestazione.getDestinatario()),protocolFactory, requestInfo);
+						String dominioTmp = this.configurazionePdDReader.getIdentificativoPorta(new IDSoggetto(erroreIntestazione.getTipoDestinatario(),
+								erroreIntestazione.getDestinatario()),this.protocolFactory, requestInfo);
 						if(dominioTmp!=null){
-							identitaPdD.setCodicePorta(dominioTmp);
-							identitaPdD.setTipo(erroreIntestazione.getTipoDestinatario());
-							identitaPdD.setNome(erroreIntestazione.getDestinatario());
+							this.identitaPdD.setCodicePorta(dominioTmp);
+							this.identitaPdD.setTipo(erroreIntestazione.getTipoDestinatario());
+							this.identitaPdD.setNome(erroreIntestazione.getDestinatario());
 							setDestinatarioDefault = false;
-							parametriGenerazioneBustaErrore.setIdentitaPdD(identitaPdD);
-							parametriInvioBustaErrore.setIdentitaPdD(identitaPdD);
+							this.parametriGenerazioneBustaErrore.setIdentitaPdD(this.identitaPdD);
+							this.parametriInvioBustaErrore.setIdentitaPdD(this.identitaPdD);
 						}
 					}catch(Exception e){
 						// ignore
@@ -2274,7 +2393,7 @@ public class RicezioneBuste {
 				// Imposto i domini corretti, se sono stati impostati dei mittenti e tipi mittenti esistenti
 				if(erroreIntestazione.getMittente()!=null && erroreIntestazione.getTipoMittente()!=null){
 					try{
-						String dominio = registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoMittente(), erroreIntestazione.getMittente()), null, protocolFactory, requestInfo);
+						String dominio = this.registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoMittente(), erroreIntestazione.getMittente()), null, this.protocolFactory, requestInfo);
 						if(dominio!=null)
 							erroreIntestazione.setIdentificativoPortaMittente(dominio);
 					}catch(Exception e){
@@ -2283,7 +2402,7 @@ public class RicezioneBuste {
 				}
 				if(erroreIntestazione.getDestinatario()!=null && erroreIntestazione.getTipoDestinatario()!=null){
 					try{
-						String dominio = registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoDestinatario(), erroreIntestazione.getDestinatario()), null, protocolFactory, requestInfo);
+						String dominio = this.registroServiziReader.getDominio(new IDSoggetto(erroreIntestazione.getTipoDestinatario(), erroreIntestazione.getDestinatario()), null, this.protocolFactory, requestInfo);
 						if(dominio!=null)
 							erroreIntestazione.setIdentificativoPortaDestinatario(dominio);
 					}catch(Exception e){
@@ -2296,31 +2415,31 @@ public class RicezioneBuste {
 			// Provo a tracciare/dumpare la busta di richiesta arrivata malformata
 			try{
 				if(erroreIntestazione!=null){
-					msgDiag.addKeywords(erroreIntestazione,true);
+					this.msgDiag.addKeywords(erroreIntestazione,true);
 					if(erroreIntestazione.getMittente()!=null || erroreIntestazione.getTipoMittente()!=null){
-						msgDiag.logPersonalizzato("ricezioneMessaggio");
+						this.msgDiag.logPersonalizzato("ricezioneMessaggio");
 					}
 					else{
-						msgDiag.logPersonalizzato("ricezioneMessaggio.mittenteAnonimo");
+						this.msgDiag.logPersonalizzato("ricezioneMessaggio.mittenteAnonimo");
 					}
 				}
 
 				if(this.msgContext.isTracciamentoAbilitato() && erroreIntestazione!=null){
-					msgDiag.mediumDebug("Tracciamento busta di richiesta...");
+					this.msgDiag.mediumDebug("Tracciamento busta di richiesta...");
 
 					// Tracciamento richiesta
-					Tracciamento tracciamento = new Tracciamento(identitaPdD,
+					Tracciamento tracciamentoErroreIntestazione = new Tracciamento(this.identitaPdD,
 							this.msgContext.getIdModulo(),
 							inRequestContext.getPddContext(),
-							this.msgContext.getTipoPorta(),msgDiag.getPorta(),
-							configurazionePdDReader);
+							this.msgContext.getTipoPorta(),this.msgDiag.getPorta(),
+							this.configurazionePdDReader);
 					
 					erroreIntestazione.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 					String dettaglioErrore = null;
 					if(erroreIntestazione!=null){
-						msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, erroreIntestazione.toStringListaEccezioni(protocolFactory));
-						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, "sintattica");
-						dettaglioErrore = msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneNonRiuscita");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, erroreIntestazione.toStringListaEccezioni(this.protocolFactory));
+						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, CostantiPdD.TIPO_VALIDAZIONE_BUSTA_SINTATTICA);
+						dettaglioErrore = this.msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_NON_RIUSCITA);
 					}
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(dettaglioErrore);
@@ -2332,58 +2451,58 @@ public class RicezioneBuste {
 					}
 					
 					// Tracciamento Busta Ricevuta
-					tracciamento.registraRichiesta(requestMessage,null,validatore.getHeaderProtocollo_senzaControlli(),erroreIntestazione,esitoTraccia,
+					tracciamentoErroreIntestazione.registraRichiesta(this.requestMessage,null,validatore.getHeaderProtocollo_senzaControlli(),erroreIntestazione,esitoTraccia,
 							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-							correlazioneApplicativa);
+							this.correlazioneApplicativa);
 					
 					// Riaggiungo eccezioni riscontrate per tracciare risposta
-					while(eccezioniRiscontrate.size()>0){
+					while(!eccezioniRiscontrate.isEmpty()){
 						erroreIntestazione.addEccezione(eccezioniRiscontrate.remove(0));
 					}
 				}
 			}catch(Exception e){
-				msgDiag.logErroreGenerico(e,"TracciamentoBustaMalformata");
-				logError(logCore, "Riscontrato errore durante il tracciamento della busta malformata ricevuta",e);
+				this.msgDiag.logErroreGenerico(e,"TracciamentoBustaMalformata");
+				logError(this.logCore, "Riscontrato errore durante il tracciamento della busta malformata ricevuta",e);
 			}
 
 			if(erroreIntestazione!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, erroreIntestazione.toStringListaEccezioni(protocolFactory));
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, "sintattica");
-				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneNonRiuscita");
+				this.msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, erroreIntestazione.toStringListaEccezioni(this.protocolFactory));
+				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, CostantiPdD.TIPO_VALIDAZIONE_BUSTA_SINTATTICA);
+				this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_NON_RIUSCITA);
 				
 				if(this.msgContext.isGestioneRisposta()){
 
 					if(setDestinatarioDefault){
 						// Non sono riuscito a prendere il dominio del destinatario.
 						// Usero' come mittente della busta quella della porta di dominio di default
-						erroreIntestazione.setDestinatario(identitaPdD.getNome());
-						erroreIntestazione.setTipoDestinatario(identitaPdD.getTipo());
-						erroreIntestazione.setIdentificativoPortaDestinatario(identitaPdD.getCodicePorta());
+						erroreIntestazione.setDestinatario(this.identitaPdD.getNome());
+						erroreIntestazione.setTipoDestinatario(this.identitaPdD.getTipo());
+						erroreIntestazione.setIdentificativoPortaDestinatario(this.identitaPdD.getCodicePorta());
 					}
 
-					Tracciamento tracciamento = new Tracciamento(identitaPdD,
+					Tracciamento tracciamentoErroreIntestazione = new Tracciamento(this.identitaPdD,
 							this.msgContext.getIdModulo(),
 							inRequestContext.getPddContext(),
-							this.msgContext.getTipoPorta(),msgDiag.getPorta(),
-							configurazionePdDReader);
+							this.msgContext.getTipoPorta(),this.msgDiag.getPorta(),
+							this.configurazionePdDReader);
 					
-					parametriGenerazioneBustaErrore.setTracciamento(tracciamento);
-					parametriGenerazioneBustaErrore.setBusta(erroreIntestazione);
-					parametriGenerazioneBustaErrore.setError(erroreIntestazione.cloneListaEccezioni());
+					this.parametriGenerazioneBustaErrore.setTracciamento(tracciamentoErroreIntestazione);
+					this.parametriGenerazioneBustaErrore.setBusta(erroreIntestazione);
+					this.parametriGenerazioneBustaErrore.setError(erroreIntestazione.cloneListaEccezioni());
 					
 					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.BAD_REQUEST;
 					if(validatore.getErrore_integrationFunctionError()!=null) {
 						integrationFunctionError = validatore.getErrore_integrationFunctionError();
 					}
-					parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+					this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 					
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(this.parametriGenerazioneBustaErrore);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreValidazione
 					
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 				}
 			}else{
 				
@@ -2392,39 +2511,39 @@ public class RicezioneBuste {
 					integrationFunctionError = validatore.getErrore_integrationFunctionError();
 				}
 				try{
-					msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, validatore.getErrore().getDescrizione(protocolFactory));
+					this.msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, validatore.getErrore().getDescrizione(this.protocolFactory));
 				}catch(Exception e){
-					logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
+					logError(this.logCore, "getDescrizione BadRequest Error:"+e.getMessage(),e);
 				}
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, "sintattica");
-				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneNonRiuscita");
-				setSOAPFault_intestazione(integrationFunctionError, validatore.getErrore());
+				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, CostantiPdD.TIPO_VALIDAZIONE_BUSTA_SINTATTICA);
+				this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_NON_RIUSCITA);
+				setSOAPFaultIntestazione(integrationFunctionError, validatore.getErrore());
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 				
-		idServizio = validatore.getIDServizio();
-		Busta bustaRichiesta = validatore.getBusta();
+		this.idServizio = validatore.getIDServizio();
+		this.bustaRichiesta = validatore.getBusta();
 		BustaRawContent<?> soapHeaderElement = validatore.getHeaderProtocollo();
 		
-		if(bustaRichiesta!=null) {
+		if(this.bustaRichiesta!=null) {
 			try{
-				if(infoServizio.getCollaborazione() && bustaRichiesta.getCollaborazione()==null) {
-					InitialIdConversationType initial = protocolFactory.createProtocolConfiguration().isGenerateInitialIdConversation(TipoPdD.APPLICATIVA, FunzionalitaProtocollo.COLLABORAZIONE);
+				if(infoServizio.getCollaborazione() && this.bustaRichiesta.getCollaborazione()==null) {
+					InitialIdConversationType initial = this.protocolFactory.createProtocolConfiguration().isGenerateInitialIdConversation(TipoPdD.APPLICATIVA, FunzionalitaProtocollo.COLLABORAZIONE);
 					if(InitialIdConversationType.ID_TRANSAZIONE.equals(initial)) {
-						bustaRichiesta.setCollaborazione(idTransazione);
+						this.bustaRichiesta.setCollaborazione(this.idTransazione);
 					}
 					else if(InitialIdConversationType.ID_MESSAGGIO.equals(initial)) {
-						bustaRichiesta.setCollaborazione(bustaRichiesta.getID());
+						this.bustaRichiesta.setCollaborazione(this.bustaRichiesta.getID());
 					}
 				}
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,logCore,msgDiag,
+				setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,this.logCore,this.msgDiag,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE),e,
 						"setCollaborazione");
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 		}
@@ -2445,42 +2564,42 @@ public class RicezioneBuste {
 			String datoBusta = null;
 			String datoPA = null;
 			String locationPA = requestInfo.getProtocolContext().getInterfaceName();
-			if(requestInfo.getIdServizio().getTipo().equals(idServizio.getTipo())==false){
+			if(!requestInfo.getIdServizio().getTipo().equals(this.idServizio.getTipo())){
 				oggetto = "Tipo del servizio";
-				datoBusta = idServizio.getTipo();
+				datoBusta = this.idServizio.getTipo();
 				datoPA = requestInfo.getIdServizio().getTipo();
 			}
-			else if(requestInfo.getIdServizio().getNome().equals(idServizio.getNome())==false){
+			else if(!requestInfo.getIdServizio().getNome().equals(this.idServizio.getNome())){
 				oggetto = "Servizio";
-				datoBusta = idServizio.getNome();
+				datoBusta = this.idServizio.getNome();
 				datoPA = requestInfo.getIdServizio().getNome();
 			}
-			else if(requestInfo.getIdServizio().getVersione().intValue() != idServizio.getVersione().intValue()){
+			else if(requestInfo.getIdServizio().getVersione().intValue() != this.idServizio.getVersione().intValue()){
 				oggetto = "VersioneServizio";
-				datoBusta = idServizio.getVersione().intValue()+"";
+				datoBusta = this.idServizio.getVersione().intValue()+"";
 				datoPA = requestInfo.getIdServizio().getVersione().intValue()+"";
 			}
-			else if(requestInfo.getIdServizio().getAzione()!=null && requestInfo.getIdServizio().getAzione().equals(idServizio.getAzione())==false){
+			else if(requestInfo.getIdServizio().getAzione()!=null && !requestInfo.getIdServizio().getAzione().equals(this.idServizio.getAzione())){
 				oggetto = "Azione";
-				datoBusta = idServizio.getAzione();
+				datoBusta = this.idServizio.getAzione();
 				datoPA = requestInfo.getIdServizio().getAzione();
 			}
-			else if(requestInfo.getIdServizio().getSoggettoErogatore().getTipo().equals(idServizio.getSoggettoErogatore().getTipo())==false){
+			else if(!requestInfo.getIdServizio().getSoggettoErogatore().getTipo().equals(this.idServizio.getSoggettoErogatore().getTipo())){
 				oggetto = "Tipo del soggetto erogatore";
-				datoBusta = idServizio.getSoggettoErogatore().getTipo();
+				datoBusta = this.idServizio.getSoggettoErogatore().getTipo();
 				datoPA = requestInfo.getIdServizio().getSoggettoErogatore().getTipo();
 			}
-			else if(requestInfo.getIdServizio().getSoggettoErogatore().getNome().equals(idServizio.getSoggettoErogatore().getNome())==false){
+			else if(!requestInfo.getIdServizio().getSoggettoErogatore().getNome().equals(this.idServizio.getSoggettoErogatore().getNome())){
 				oggetto = "Soggetto erogatore";
-				datoBusta = idServizio.getSoggettoErogatore().getNome();
+				datoBusta = this.idServizio.getSoggettoErogatore().getNome();
 				datoPA = requestInfo.getIdServizio().getSoggettoErogatore().getNome();
 			}
 			if(oggetto!=null){
-				setSOAPFault_processamento(IntegrationFunctionError.BAD_REQUEST,logCore,msgDiag,
+				setSOAPFaultProcessamento(IntegrationFunctionError.BAD_REQUEST,this.logCore,this.msgDiag,
 						ErroriIntegrazione.ERRORE_455_DATI_BUSTA_DIFFERENTI_PA_INVOCATA.
 							getErrore455DatiBustaDifferentiDatiPAInvocata(oggetto, datoBusta, datoPA, locationPA),null,
 						"ConfrontoDatiBustaConDatiInvocazionePortaApplicativa");
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 		}
@@ -2493,43 +2612,43 @@ public class RicezioneBuste {
 		
 		/* ----------- Ruolo Busta Ricevuta ------------ */
 		
-		RuoloBusta ruoloBustaRicevuta = null;
-		if(!functionAsRouter){
+		if(!this.functionAsRouter){
 			
-			if( validatore.getBusta()!=null && (
-					(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(validatore.getBusta().getProfiloDiCollaborazione())) ||
-					(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(validatore.getBusta().getProfiloDiCollaborazione()))
+			if( validatore.getBusta()!=null && 
+					(
+							(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(validatore.getBusta().getProfiloDiCollaborazione())) ||
+							(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(validatore.getBusta().getProfiloDiCollaborazione()))
 					)
-				){
-				if(openspcoopstate.resourceReleased()) {
-					try{
-						// inizializzo
-						openspcoopstate.setUseConnection(true);
-						openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(), idTransazione);
-						validatore.updateState(openspcoopstate.getStatoRichiesta());
-					}catch(Exception e){
-						msgDiag.logErroreGenerico(e,"validator.getRuoloBustaRicevuta(false) initResources");
-						setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,logCore,msgDiag,
-								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),e,
-								"initDatabaseResource");
-						openspcoopstate.releaseResource();
-						return;
-					}
+					&&
+					this.openspcoopstate.resourceReleased()
+				) {
+				try{
+					// inizializzo
+					this.openspcoopstate.setUseConnection(true);
+					this.openspcoopstate.initResource(this.identitaPdD, this.msgContext.getIdModulo(), this.idTransazione);
+					validatore.updateState(this.openspcoopstate.getStatoRichiesta());
+				}catch(Exception e){
+					this.msgDiag.logErroreGenerico(e,"validator.getRuoloBustaRicevuta(false) initResources");
+					setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,this.logCore,this.msgDiag,
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),e,
+							"initDatabaseResource");
+					this.openspcoopstate.releaseResource();
+					return;
 				}
 			}
 			
-			msgDiag.mediumDebug("Lettura Ruolo Busta...");
+			this.msgDiag.mediumDebug("Lettura Ruolo Busta...");
 			try{
-				ruoloBustaRicevuta = validatore.getRuoloBustaRicevuta(requestInfo.getProtocolServiceBinding(),false);
+				this.ruoloBustaRicevuta = validatore.getRuoloBustaRicevuta(requestInfo.getProtocolServiceBinding(),false);
 			}catch(Exception e){
-				msgDiag.logErroreGenerico(e,"validator.getRuoloBustaRicevuta(false)");
+				this.msgDiag.logErroreGenerico(e,"validator.getRuoloBustaRicevuta(false)");
 			}
 			
 			boolean checkConnection=false;
 			if( validatore.getBusta()!=null) {
 				if(!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(validatore.getBusta().getProfiloDiCollaborazione())){
-					if(RuoloBusta.RICHIESTA.equals(ruoloBustaRicevuta) == false){
+					if(!RuoloBusta.RICHIESTA.equals(this.ruoloBustaRicevuta)){
 						checkConnection=true;
 					}
 				}
@@ -2539,19 +2658,19 @@ public class RicezioneBuste {
 					}
 				}
 			}
-			if(checkConnection && openspcoopstate.resourceReleased()) {
+			if(checkConnection && this.openspcoopstate.resourceReleased()) {
 				try{
 					// inizializzo
-					openspcoopstate.setUseConnection(true);
-					openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(), idTransazione);
-					validatore.updateState(openspcoopstate.getStatoRichiesta());
+					this.openspcoopstate.setUseConnection(true);
+					this.openspcoopstate.initResource(this.identitaPdD, this.msgContext.getIdModulo(), this.idTransazione);
+					validatore.updateState(this.openspcoopstate.getStatoRichiesta());
 				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"validator.getRuoloBustaRicevuta(false) initResources after read role");
-					setSOAPFault_processamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,logCore,msgDiag,
+					this.msgDiag.logErroreGenerico(e,"validator.getRuoloBustaRicevuta(false) initResources after read role");
+					setSOAPFaultProcessamento(IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE,this.logCore,this.msgDiag,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),e,
 							"initDatabaseResource");
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 				}	
 			}
@@ -2567,97 +2686,96 @@ public class RicezioneBuste {
 		/* -------- Lettura Porta Applicativa 
 		 * (Il vero controllo sull'esistenza della Porta Applicativa viene effettuato in Sbustamento, poiche' dipende dal profilo) ------------- */
 		// per profili asincroni
-		PortaDelegata pd = null;
 		IDPortaDelegata idPD = null;
 		IDPortaApplicativa idPA = null;
 		String servizioApplicativoErogatoreAsincronoSimmetricoRisposta = null;
 		boolean asincronoSimmetricoRisposta = false;
-		if(!functionAsRouter && idServizio!=null){
-			msgDiag.mediumDebug("Lettura porta applicativa/delegata...");
+		if(!this.functionAsRouter && this.idServizio!=null){
+			this.msgDiag.mediumDebug("Lettura porta applicativa/delegata...");
 			try{
 
 				/* ----------- Identificazione profilo -------------- */
-				if(     (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ||
-						org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) &&
-						!(RuoloBusta.RICHIESTA.equals(ruoloBustaRicevuta.toString())) )
+				if(     (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) ||
+						org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) &&
+						!(RuoloBusta.RICHIESTA.equals(this.ruoloBustaRicevuta.toString())) )
 				{
-					msgDiag.highDebug("Lettura porta applicativa/delegata (Asincrono)...");
+					this.msgDiag.highDebug("Lettura porta applicativa/delegata (Asincrono)...");
 					// La validazione non deve essere effettuata se abbiamo una ricevuta asincrona, 'modalita' asincrona'
-					ProfiloDiCollaborazione profiloCollaborazione = new ProfiloDiCollaborazione(openspcoopstate.getStatoRichiesta(),protocolFactory);
+					ProfiloDiCollaborazione profiloCollaborazione = new ProfiloDiCollaborazione(this.openspcoopstate.getStatoRichiesta(),this.protocolFactory);
 
-					if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+					if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) {	
 
 						asincronoSimmetricoRisposta = true;
 						
 						//	Risposta Asincrona
-						RepositoryBuste repository = new RepositoryBuste(openspcoopstate.getStatoRichiesta(), true, protocolFactory);
+						RepositoryBuste repository = new RepositoryBuste(this.openspcoopstate.getStatoRichiesta(), true, this.protocolFactory);
 						Integrazione integrazione = null;
-						if(bustaRichiesta.getRiferimentoMessaggio()!=null){
-							integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
+						if(this.bustaRichiesta.getRiferimentoMessaggio()!=null){
+							integrazione = repository.getInfoIntegrazioneFromOutBox(this.bustaRichiesta.getRiferimentoMessaggio());
 						}else{
 							// LineeGuida (Collaborazione)
-							integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getCollaborazione());
+							integrazione = repository.getInfoIntegrazioneFromOutBox(this.bustaRichiesta.getCollaborazione());
 						}
 						servizioApplicativoErogatoreAsincronoSimmetricoRisposta = integrazione.getServizioApplicativo();
 						idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
-						pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
-						idPD = configurazionePdDReader.convertToIDPortaDelegata(pd); // per aggiungere informazioni sugli identificativi
+						this.pd = this.configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
+						idPD = this.configurazionePdDReader.convertToIDPortaDelegata(this.pd); // per aggiungere informazioni sugli identificativi
 						
 					}
 					// Profilo Asincrono Asimmetrico
-					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) {	
 
 						///	Risposta Asincrona
-						if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
+						if(RuoloBusta.RISPOSTA.equals(this.ruoloBustaRicevuta.toString())){
 							// ConversioneServizio.
 							IDServizio idServizioOriginale = null;
-							if(bustaRichiesta.getRiferimentoMessaggio()!=null){
-								idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(bustaRichiesta.getRiferimentoMessaggio());
+							if(this.bustaRichiesta.getRiferimentoMessaggio()!=null){
+								idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(this.bustaRichiesta.getRiferimentoMessaggio());
 							}else{
 								// LineeGuida (Collaborazione)
-								idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(bustaRichiesta.getCollaborazione());
+								idServizioOriginale = profiloCollaborazione.asincronoAsimmetrico_getDatiConsegnaRisposta(this.bustaRichiesta.getCollaborazione());
 							}
-							this.overwriteIdSoggetto(idServizioOriginale, idServizio.getSoggettoErogatore());
+							this.overwriteIdSoggetto(idServizioOriginale, this.idServizio.getSoggettoErogatore());
 								
-							if(pa==null){
-								pa = ricezioneBusteUtils.getPortaApplicativa(configurazionePdDReader, idServizioOriginale);
+							if(this.pa==null){
+								this.pa = ricezioneBusteUtils.getPortaApplicativa(this.configurazionePdDReader, idServizioOriginale);
 							}
 							
 						}
 						// Ricevuta alla richiesta/risposta.
-						else if(RuoloBusta.RICEVUTA_RICHIESTA.equals(ruoloBustaRicevuta.toString()) || 
-								RuoloBusta.RICEVUTA_RISPOSTA.equals(ruoloBustaRicevuta.toString()) ){	
-							RepositoryBuste repository = new RepositoryBuste(openspcoopstate.getStatoRichiesta(), true, protocolFactory);
+						else if(RuoloBusta.RICEVUTA_RICHIESTA.equals(this.ruoloBustaRicevuta.toString()) || 
+								RuoloBusta.RICEVUTA_RISPOSTA.equals(this.ruoloBustaRicevuta.toString()) ){	
+							RepositoryBuste repository = new RepositoryBuste(this.openspcoopstate.getStatoRichiesta(), true, this.protocolFactory);
 							Integrazione integrazione = null;
-							if(bustaRichiesta.getRiferimentoMessaggio()!=null){
-								integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getRiferimentoMessaggio());
+							if(this.bustaRichiesta.getRiferimentoMessaggio()!=null){
+								integrazione = repository.getInfoIntegrazioneFromOutBox(this.bustaRichiesta.getRiferimentoMessaggio());
 							}else{
 								// LineeGuida (Collaborazione)
-								integrazione = repository.getInfoIntegrazioneFromOutBox(bustaRichiesta.getCollaborazione());
+								integrazione = repository.getInfoIntegrazioneFromOutBox(this.bustaRichiesta.getCollaborazione());
 							}
 							idPD = new IDPortaDelegata();
 							idPD.setNome(integrazione.getNomePorta());
-							pd = configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
-							idPD = configurazionePdDReader.convertToIDPortaDelegata(pd); // per aggiungere informazioni sugli identificativi
+							this.pd = this.configurazionePdDReader.getPortaDelegataSafeMethod(idPD, requestInfo);
+							idPD = this.configurazionePdDReader.convertToIDPortaDelegata(this.pd); // per aggiungere informazioni sugli identificativi
 						}
 						
 					}
 					// Chiudo eventuali prepared statement, che non voglio eseguire.
-					((StateMessage)openspcoopstate.getStatoRichiesta()).closePreparedStatement();
+					((StateMessage)this.openspcoopstate.getStatoRichiesta()).closePreparedStatement();
 				}else{
-					msgDiag.highDebug("Lettura porta applicativa/delegata (Normale)...");
-					if(pa==null){
-						pa = ricezioneBusteUtils.getPortaApplicativa(configurazionePdDReader, idServizio);
+					this.msgDiag.highDebug("Lettura porta applicativa/delegata (Normale)...");
+					if(this.pa==null){
+						this.pa = ricezioneBusteUtils.getPortaApplicativa(this.configurazionePdDReader, this.idServizio);
 					}
 				}
 				
 				// Aggiungo identita servizio applicativi
-				if(pa!=null){
-					idPA = configurazionePdDReader.convertToIDPortaApplicativa(pa);
-					msgDiag.updatePorta(pa.getNome(), requestInfo);
-					for(int i=0; i<pa.sizeServizioApplicativoList();i++){
-						this.msgContext.getIntegrazione().addServizioApplicativoErogatore(pa.getServizioApplicativo(i).getNome());
+				if(this.pa!=null){
+					idPA = this.configurazionePdDReader.convertToIDPortaApplicativa(this.pa);
+					this.msgDiag.updatePorta(this.pa.getNome(), requestInfo);
+					for(int i=0; i<this.pa.sizeServizioApplicativoList();i++){
+						this.msgContext.getIntegrazione().addServizioApplicativoErogatore(this.pa.getServizioApplicativo(i).getNome());
 					}
 				}
 				else if(servizioApplicativoErogatoreAsincronoSimmetricoRisposta!=null){
@@ -2673,13 +2791,13 @@ public class RicezioneBuste {
 					this.msgContext.getIntegrazione().setIdPD(idPD);
 				}
 				
-				msgDiag.highDebug("Lettura porta applicativa/delegata terminato");
+				this.msgDiag.highDebug("Lettura porta applicativa/delegata terminato");
 				
 			}catch(Exception e){
 				if(  !(e instanceof DriverConfigurazioneNotFound) ) {
-					msgDiag.logErroreGenerico(e,"letturaPorta");
+					this.msgDiag.logErroreGenerico(e,"letturaPorta");
 					
-					setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
+					setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento("LetturaPorta",CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),e);
 					return;
@@ -2688,7 +2806,7 @@ public class RicezioneBuste {
 			}
 		}
 
-		msgDiag.highDebug("Lettura porta applicativa/delegata terminato impostazione context");
+		this.msgDiag.highDebug("Lettura porta applicativa/delegata terminato impostazione context");
 
 		
 		
@@ -2704,20 +2822,20 @@ public class RicezioneBuste {
 		 */
 		
 		//		 Aggiornamento Informazioni protocollo
-		msgDiag.setIdMessaggioRichiesta(validatore.getBusta().getID());
+		this.msgDiag.setIdMessaggioRichiesta(validatore.getBusta().getID());
 		this.msgContext.setIdMessage(validatore.getBusta().getID());
-		msgDiag.setServizio(idServizio);
-		msgDiag.addKeywords(validatore.getBusta(), true);
-		parametriGenerazioneBustaErrore.setMsgDiag(msgDiag);
-		parametriInvioBustaErrore.setMsgDiag(msgDiag);
+		this.msgDiag.setServizio(this.idServizio);
+		this.msgDiag.addKeywords(validatore.getBusta(), true);
+		this.parametriGenerazioneBustaErrore.setMsgDiag(this.msgDiag);
+		this.parametriInvioBustaErrore.setMsgDiag(this.msgDiag);
 
 		
-		Tracciamento tracciamento = new Tracciamento(identitaPdD,
+		this.tracciamento = new Tracciamento(this.identitaPdD,
 				this.msgContext.getIdModulo(),
 				inRequestContext.getPddContext(),
-				this.msgContext.getTipoPorta(),msgDiag.getPorta(),
-				configurazionePdDReader);
-		parametriGenerazioneBustaErrore.setTracciamento(tracciamento);
+				this.msgContext.getTipoPorta(),this.msgDiag.getPorta(),
+				this.configurazionePdDReader);
+		this.parametriGenerazioneBustaErrore.setTracciamento(this.tracciamento);
 		
 		
 		
@@ -2727,7 +2845,7 @@ public class RicezioneBuste {
 		
 		/* --------------- Gestione credenziali --------------- */
 		if(RicezioneBuste.tipiGestoriCredenziali!=null){
-			msgDiag.mediumDebug("Gestione personalizzata delle credenziali...");
+			this.msgDiag.mediumDebug("Gestione personalizzata delle credenziali...");
 			
 			for (int i = 0; i < RicezioneBuste.tipiGestoriCredenziali.length; i++) {
 				try {
@@ -2737,56 +2855,55 @@ public class RicezioneBuste {
 					try {
 						classType = className.getGestoreCredenziali(RicezioneBuste.tipiGestoriCredenziali[i]);
 						gestore = (IGestoreCredenziali)loader.newInstance(classType);
-						AbstractCore.init(gestore, pddContext, protocolFactory);
+						AbstractCore.init(gestore, this.pddContext, this.protocolFactory);
 					} catch (Exception e) {
-						throw new Exception(
-								"Riscontrato errore durante il caricamento della classe ["+ classType
+						throw new CoreException(
+								"Riscontrato errore durante il caricamento della classe (IGestoreCredenziali) ["+ classType
 								+ "] da utilizzare per la gestione delle credenziali di tipo ["
 								+ RicezioneBuste.tipiGestoriCredenziali[i]+ "]: " + e.getMessage());
 					}
 					
 					if (gestore != null) {
-						Credenziali credenzialiRitornate = gestore.elaborazioneCredenziali(identitaPdD, inRequestContext.getConnettore(), requestMessage);
+						Credenziali credenzialiRitornate = gestore.elaborazioneCredenziali(this.identitaPdD, inRequestContext.getConnettore(), this.requestMessage);
 						if(credenzialiRitornate==null){
-							throw new Exception("Credenziali non ritornate");
+							throw new CoreException("Credenziali non ritornate");
 						}
 						if(!inRequestContext.getConnettore().getCredenziali().equals(credenzialiRitornate)){
 							String nuoveCredenziali = credenzialiRitornate.toString();
 							if(nuoveCredenziali.length()>0) {
 								nuoveCredenziali = nuoveCredenziali.substring(0,(nuoveCredenziali.length()-1));
 							}
-							msgDiag.addKeyword(CostantiPdD.KEY_NUOVE_CREDENZIALI,nuoveCredenziali);
+							this.msgDiag.addKeyword(CostantiPdD.KEY_NUOVE_CREDENZIALI,nuoveCredenziali);
 							String identita = gestore.getIdentitaGestoreCredenziali();
 							if(identita==null){
 								identita = "Gestore delle credenziali di tipo "+RicezioneBuste.tipiGestoriCredenziali[i];
 							}
-							msgDiag.addKeyword(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
-							pddContext.addObject(org.openspcoop2.core.constants.Costanti.IDENTITA_GESTORE_CREDENZIALI, identita);
-							msgDiag.logPersonalizzato("gestoreCredenziali.nuoveCredenziali");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
+							this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.IDENTITA_GESTORE_CREDENZIALI, identita);
+							this.msgDiag.logPersonalizzato("gestoreCredenziali.nuoveCredenziali");
 							// update credenziali
 							inRequestContext.getConnettore().setCredenziali(credenzialiRitornate);
 							credenziali = credenzialiRitornate;
-							setCredenziali(credenziali, msgDiag);	
+							setCredenziali(credenziali, this.msgDiag);	
 						}
 					} else {
-						throw new Exception("non inizializzato");
+						throw new CoreException("non inizializzato");
 					}
 				} 
 				catch (Exception e) {
-					logError(logCore, "Errore durante l'identificazione delle credenziali ["+ RicezioneBuste.tipiGestoriCredenziali[i]
+					logError(this.logCore, "Errore durante l'identificazione delle credenziali ["+ RicezioneBuste.tipiGestoriCredenziali[i]
 					         + "]: "+ e.getMessage(),e);
-					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_GESTORE_CREDENZIALI,RicezioneBuste.tipiGestoriCredenziali[i]);
-					msgDiag.addKeywordErroreProcessamento(e);
-					msgDiag.logPersonalizzato("gestoreCredenziali.errore");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_GESTORE_CREDENZIALI,RicezioneBuste.tipiGestoriCredenziali[i]);
+					this.msgDiag.addKeywordErroreProcessamento(e);
+					this.msgDiag.logPersonalizzato("gestoreCredenziali.errore");
 					ErroreIntegrazione msgErroreIntegrazione = null;
 					String wwwAuthenticateErrorHeader = null;
-					if(e instanceof GestoreCredenzialiConfigurationException){
-						GestoreCredenzialiConfigurationException ge = (GestoreCredenzialiConfigurationException) e;
-						parametriGenerazioneBustaErrore.setIntegrationFunctionError(ge.getIntegrationFunctionError());
+					if(e instanceof GestoreCredenzialiConfigurationException ge){
+						this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(ge.getIntegrationFunctionError());
 						msgErroreIntegrazione = 
 								ErroriIntegrazione.ERRORE_431_GESTORE_CREDENZIALI_ERROR.
 									getErrore431_ErroreGestoreCredenziali(RicezioneBuste.tipiGestoriCredenziali[i],e);
-						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
+						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
 						wwwAuthenticateErrorHeader = ge.getWwwAuthenticateErrorHeader();
 					}else{
 						msgErroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -2796,26 +2913,26 @@ public class RicezioneBuste {
 					// Tracciamento richiesta: non ancora registrata
 					if(this.msgContext.isTracciamentoAbilitato()){
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
-								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords("gestoreCredenziali.errore"));
-						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(this.msgDiag.getMessaggio_replaceKeywords("gestoreCredenziali.errore"));
+						this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-								correlazioneApplicativa);
+								this.correlazioneApplicativa);
 					}
 					if(this.msgContext.isGestioneRisposta()){
 						
-						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-						parametriGenerazioneBustaErrore.setErroreIntegrazione(msgErroreIntegrazione);
-						OpenSPCoop2Message errorMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+						this.parametriGenerazioneBustaErrore.setErroreIntegrazione(msgErroreIntegrazione);
+						OpenSPCoop2Message errorMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 						if(wwwAuthenticateErrorHeader!=null) {
 							errorMsg.forceTransportHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, wwwAuthenticateErrorHeader);
 						}
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-						parametriInvioBustaErrore.setOpenspcoopMsg(errorMsg);
-						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-						ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+						this.parametriInvioBustaErrore.setOpenspcoopMsg(errorMsg);
+						this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+						this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 					}
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 					
 				}
@@ -2833,18 +2950,18 @@ public class RicezioneBuste {
 		
 		/* ------------ GestioneToken ------------- */
 		
-		RicezioneBusteGestioneToken gestioneToken = new RicezioneBusteGestioneToken(msgDiag, logCore,
-				tracciamento, correlazioneApplicativa, soapHeaderElement, bustaRichiesta,
-				pa, idPA, pd, idPD,
-				requestMessage,
+		RicezioneBusteGestioneToken gestioneToken = new RicezioneBusteGestioneToken(this.msgDiag, this.logCore,
+				this.tracciamento, this.correlazioneApplicativa, soapHeaderElement, this.bustaRichiesta,
+				this.pa, idPA, this.pd, idPD,
+				this.requestMessage,
 				asincronoSimmetricoRisposta,
 				this.msgContext, this.generatoreErrore, inRequestContext,
-				configurazionePdDReader,
-				pddContext, idTransazione,
-				openspcoopstate, transaction, requestInfo,
-				protocolFactory,
-				identitaPdD,
-				parametriGenerazioneBustaErrore, parametriInvioBustaErrore);
+				this.configurazionePdDReader,
+				this.pddContext, this.idTransazione,
+				this.openspcoopstate, this.transaction, requestInfo,
+				this.protocolFactory,
+				this.identitaPdD,
+				this.parametriGenerazioneBustaErrore, this.parametriInvioBustaErrore);
 		
 		GestioneTokenAutenticazione gestioneTokenAutenticazione = null;
 		String token = null;
@@ -2867,15 +2984,15 @@ public class RicezioneBuste {
 		
 		/* ------------ Riconciliazione ID Messaggio con quello ricevuto nel token oAuth ------------- */
 		
-		if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
-			ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza = new ModIValidazioneSemanticaProfiloSicurezza(bustaRichiesta, true);
+		if(Costanti.MODIPA_PROTOCOL_NAME.equals(this.protocolFactory.getProtocol())) {
+			ModIValidazioneSemanticaProfiloSicurezza modIValidazioneSemanticaProfiloSicurezza = new ModIValidazioneSemanticaProfiloSicurezza(this.bustaRichiesta, true);
 			if(modIValidazioneSemanticaProfiloSicurezza.isSicurezzaTokenOauth()) {
-				boolean useJtiAuthorization = ModIUtils.useJtiAuthorizationObject(requestMessage);
+				boolean useJtiAuthorization = ModIUtils.useJtiAuthorizationObject(this.requestMessage);
 				if(useJtiAuthorization) {
-					String jti = TokenUtilities.readJtiFromInformazioniToken(pddContext);
+					String jti = TokenUtilities.readJtiFromInformazioniToken(this.pddContext);
 					if(jti!=null && StringUtils.isNotEmpty(jti)) {
 						ModIUtils.replaceBustaIdWithJtiTokenId(modIValidazioneSemanticaProfiloSicurezza, jti);
-						msgDiag.updateKeywordIdMessaggioRichiesta(bustaRichiesta.getID());
+						this.msgDiag.updateKeywordIdMessaggioRichiesta(this.bustaRichiesta.getID());
 					}
 				}
 			}
@@ -2891,18 +3008,18 @@ public class RicezioneBuste {
 		 * ---------------- Mittente / Autenticazione ---------------------
 		 */
 		
-		RicezioneBusteGestioneAutenticazione gestioneAutenticazione = new RicezioneBusteGestioneAutenticazione(msgDiag, logCore,
-				tracciamento, correlazioneApplicativa, soapHeaderElement, bustaRichiesta,
-				pa, idPA, pd, idPD,
-				soggettoFruitore, credenziali, servizioApplicativoFruitore, gestioneTokenAutenticazione,
-				requestMessage,
-				asincronoSimmetricoRisposta, functionAsRouter,
+		RicezioneBusteGestioneAutenticazione gestioneAutenticazione = new RicezioneBusteGestioneAutenticazione(this.msgDiag, this.logCore,
+				this.tracciamento, this.correlazioneApplicativa, soapHeaderElement, this.bustaRichiesta,
+				this.pa, idPA, this.pd, idPD,
+				this.soggettoFruitore, credenziali, servizioApplicativoFruitore, gestioneTokenAutenticazione,
+				this.requestMessage,
+				asincronoSimmetricoRisposta, this.functionAsRouter,
 				this.msgContext, this.generatoreErrore, inRequestContext,
-				configurazionePdDReader, registroServiziReader,
-				pddContext, idTransazione, identitaPdD,
-				openspcoopstate, transaction, requestInfo,
-				protocolFactory, validatore,
-				parametriGenerazioneBustaErrore, parametriInvioBustaErrore);
+				this.configurazionePdDReader, this.registroServiziReader,
+				this.pddContext, this.idTransazione, this.identitaPdD,
+				this.openspcoopstate, this.transaction, requestInfo,
+				this.protocolFactory, validatore,
+				this.parametriGenerazioneBustaErrore, this.parametriInvioBustaErrore);
 		
 		boolean soggettoFruitoreIdentificatoTramiteProtocollo = false;
 		boolean soggettoAutenticato = false;
@@ -2917,7 +3034,7 @@ public class RicezioneBuste {
 		soggettoAutenticato = gestioneAutenticazione.isSoggettoAutenticato();
 		supportatoAutenticazioneSoggetti = gestioneAutenticazione.isSupportatoAutenticazioneSoggetti();
 		idApplicativoToken = gestioneAutenticazione.getIdApplicativoToken();
-		soggettoFruitore = gestioneAutenticazione.getSoggettoFruitore();
+		this.soggettoFruitore = gestioneAutenticazione.getSoggettoFruitore();
 		boolean autenticazioneOpzionale = gestioneAutenticazione.isAutenticazioneOpzionale();
 		servizioApplicativoFruitore = gestioneAutenticazione.getServizioApplicativoFruitore();
 		
@@ -2935,84 +3052,83 @@ public class RicezioneBuste {
 			
 		Trasmissione trasmissioneSoggettoAutenticato = null; 
 		if(soggettoAutenticato || soggettoFruitoreIdentificatoTramiteProtocollo){
-			validatore.getBusta().setTipoMittente(soggettoFruitore.getTipo());
-			validatore.getBusta().setMittente(soggettoFruitore.getNome());
+			validatore.getBusta().setTipoMittente(this.soggettoFruitore.getTipo());
+			validatore.getBusta().setMittente(this.soggettoFruitore.getNome());
 			if(validatore.getBusta().sizeListaTrasmissioni()>0){
 				for (int i = 0; i < validatore.getBusta().sizeListaTrasmissioni(); i++) {
 					Trasmissione trasmissione = validatore.getBusta().getTrasmissione(i);
 					if(trasmissione.getOrigine()==null && trasmissione.getTipoOrigine()==null && trasmissione.getIdentificativoPortaOrigine()==null){
 						trasmissioneSoggettoAutenticato = trasmissione;
-						trasmissione.setTipoOrigine(soggettoFruitore.getTipo());
-						trasmissione.setOrigine(soggettoFruitore.getNome());
+						trasmissione.setTipoOrigine(this.soggettoFruitore.getTipo());
+						trasmissione.setOrigine(this.soggettoFruitore.getNome());
 					}
 				}
 			}
-			validatore.setMittente(soggettoFruitore);
-			bustaRichiesta = validatore.getBusta();
-			msgDiag.addKeywords(validatore.getBusta(), true);
+			validatore.setMittente(this.soggettoFruitore);
+			this.bustaRichiesta = validatore.getBusta();
+			this.msgDiag.addKeywords(validatore.getBusta(), true);
 		}
 				
 		// VM ProtocolInfo (se siamo arrivati da un canale VM)
-		if(pddContext!=null && bustaRichiesta!=null)
-			DirectVMProtocolInfo.setInfoFromContext(pddContext, bustaRichiesta);
+		if(this.pddContext!=null && this.bustaRichiesta!=null)
+			DirectVMProtocolInfo.setInfoFromContext(this.pddContext, this.bustaRichiesta);
 			
 		// Se non impostati, imposto i domini
-		org.openspcoop2.pdd.core.Utilities.refreshIdentificativiPorta(bustaRichiesta, requestInfo.getIdentitaPdD(), registroServiziReader, protocolFactory, requestInfo);
-		if(soggettoFruitore != null){
-			if(soggettoFruitore.getCodicePorta()==null){
-				soggettoFruitore.setCodicePorta(bustaRichiesta.getIdentificativoPortaMittente());
+		org.openspcoop2.pdd.core.Utilities.refreshIdentificativiPorta(this.bustaRichiesta, requestInfo.getIdentitaPdD(), this.registroServiziReader, this.protocolFactory, requestInfo);
+		if(this.soggettoFruitore != null){
+			if(this.soggettoFruitore.getCodicePorta()==null){
+				this.soggettoFruitore.setCodicePorta(this.bustaRichiesta.getIdentificativoPortaMittente());
 			}
 			if(trasmissioneSoggettoAutenticato!=null && trasmissioneSoggettoAutenticato.getIdentificativoPortaOrigine()==null){
-				trasmissioneSoggettoAutenticato.setIdentificativoPortaOrigine(bustaRichiesta.getIdentificativoPortaMittente());
+				trasmissioneSoggettoAutenticato.setIdentificativoPortaOrigine(this.bustaRichiesta.getIdentificativoPortaMittente());
 			}
-			msgDiag.setFruitore(soggettoFruitore);
+			this.msgDiag.setFruitore(this.soggettoFruitore);
 		}
-		if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
-			if(idServizio.getSoggettoErogatore().getCodicePorta()==null){
-				idServizio.getSoggettoErogatore().setCodicePorta(bustaRichiesta.getIdentificativoPortaDestinatario());
-			}
+		if(this.idServizio!=null && this.idServizio.getSoggettoErogatore()!=null &&
+			this.idServizio.getSoggettoErogatore().getCodicePorta()==null){
+			this.idServizio.getSoggettoErogatore().setCodicePorta(this.bustaRichiesta.getIdentificativoPortaDestinatario());
 		}
 		
 		if(servizioApplicativoFruitore!=null){
 			// overriding busta
-			if(bustaRichiesta!=null) {
-				bustaRichiesta.setServizioApplicativoFruitore(servizioApplicativoFruitore);
+			if(this.bustaRichiesta!=null) {
+				this.bustaRichiesta.setServizioApplicativoFruitore(servizioApplicativoFruitore);
 			}
 		}
 		else{
 			// altrimenti se è valorizzato internamente alla busta (poichè previsto dal protocollo (es. pdc)) e non capito tramite informazioni di integrazione uso quello
-			if(bustaRichiesta!=null && bustaRichiesta.getServizioApplicativoFruitore()!=null){
-				servizioApplicativoFruitore = bustaRichiesta.getServizioApplicativoFruitore();
+			if(this.bustaRichiesta!=null && this.bustaRichiesta.getServizioApplicativoFruitore()!=null){
+				servizioApplicativoFruitore = this.bustaRichiesta.getServizioApplicativoFruitore();
 			}
 		}
-		String idMessageRequest = bustaRichiesta!=null ? bustaRichiesta.getID() : null;
+		this.idMessageRequest = this.bustaRichiesta!=null ? this.bustaRichiesta.getID() : null;
 
-		TipoPdD tipoPorta = TipoPdD.APPLICATIVA;
-		if(functionAsRouter)
-			tipoPorta = TipoPdD.ROUTER;
-		this.msgContext.getProtocol().setDominio(identitaPdD);
-		this.msgContext.setIdentitaPdD(identitaPdD);
-		this.msgContext.setTipoPorta(tipoPorta);
-		this.msgContext.getProtocol().setFruitore(soggettoFruitore);
-		if(bustaRichiesta!=null){
-			this.msgContext.getProtocol().setIndirizzoFruitore(bustaRichiesta.getIndirizzoMittente());
+		this.tipoPorta = TipoPdD.APPLICATIVA;
+		if(this.functionAsRouter)
+			this.tipoPorta = TipoPdD.ROUTER;
+		this.msgContext.getProtocol().setDominio(this.identitaPdD);
+		this.msgContext.setIdentitaPdD(this.identitaPdD);
+		this.msgContext.setTipoPorta(this.tipoPorta);
+		this.msgContext.getProtocol().setFruitore(this.soggettoFruitore);
+		if(this.bustaRichiesta!=null){
+			this.msgContext.getProtocol().setIndirizzoFruitore(this.bustaRichiesta.getIndirizzoMittente());
 		}
-		if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
-			this.msgContext.getProtocol().setErogatore(idServizio.getSoggettoErogatore());
+		if(this.idServizio!=null && this.idServizio.getSoggettoErogatore()!=null){
+			this.msgContext.getProtocol().setErogatore(this.idServizio.getSoggettoErogatore());
 		}
-		if(bustaRichiesta!=null){
-			this.msgContext.getProtocol().setIndirizzoErogatore(bustaRichiesta.getIndirizzoDestinatario());
+		if(this.bustaRichiesta!=null){
+			this.msgContext.getProtocol().setIndirizzoErogatore(this.bustaRichiesta.getIndirizzoDestinatario());
 		}
-		if(idServizio!=null) {
-			this.msgContext.getProtocol().setTipoServizio(idServizio.getTipo());
-			this.msgContext.getProtocol().setServizio(idServizio.getNome());
-			this.msgContext.getProtocol().setVersioneServizio(idServizio.getVersione());
-			this.msgContext.getProtocol().setAzione(idServizio.getAzione()); 
+		if(this.idServizio!=null) {
+			this.msgContext.getProtocol().setTipoServizio(this.idServizio.getTipo());
+			this.msgContext.getProtocol().setServizio(this.idServizio.getNome());
+			this.msgContext.getProtocol().setVersioneServizio(this.idServizio.getVersione());
+			this.msgContext.getProtocol().setAzione(this.idServizio.getAzione()); 
 		}
-		this.msgContext.getProtocol().setIdRichiesta(idMessageRequest);
-		if(bustaRichiesta!=null) {
-			this.msgContext.getProtocol().setProfiloCollaborazione(bustaRichiesta.getProfiloDiCollaborazione(),bustaRichiesta.getProfiloDiCollaborazioneValue());
-			this.msgContext.getProtocol().setCollaborazione(bustaRichiesta.getCollaborazione());
+		this.msgContext.getProtocol().setIdRichiesta(this.idMessageRequest);
+		if(this.bustaRichiesta!=null) {
+			this.msgContext.getProtocol().setProfiloCollaborazione(this.bustaRichiesta.getProfiloDiCollaborazione(),this.bustaRichiesta.getProfiloDiCollaborazioneValue());
+			this.msgContext.getProtocol().setCollaborazione(this.bustaRichiesta.getCollaborazione());
 		}
 
 
@@ -3033,14 +3149,14 @@ public class RicezioneBuste {
 		boolean portaEnabled = false;
 		Exception serviceIsEnabledExceptionProcessamento = null;
 		try{
-			serviceIsEnabled = StatoServiziPdD.isEnabledPortaApplicativa(soggettoFruitore, idServizio);
+			serviceIsEnabled = StatoServiziPdD.isEnabledPortaApplicativa(this.soggettoFruitore, this.idServizio);
 			if(serviceIsEnabled){
 				// verifico la singola porta
-				if(pa!=null){
-					portaEnabled = configurazionePdDReader.isPortaAbilitata(pa);
+				if(this.pa!=null){
+					portaEnabled = this.configurazionePdDReader.isPortaAbilitata(this.pa);
 				}
 				else{
-					portaEnabled = configurazionePdDReader.isPortaAbilitata(pd);
+					portaEnabled = this.configurazionePdDReader.isPortaAbilitata(this.pd);
 				}
 			}
 		}catch(Exception e){
@@ -3051,22 +3167,22 @@ public class RicezioneBuste {
 			String esito = null;
 			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.API_SUSPEND;
 			if(serviceIsEnabledExceptionProcessamento!=null){
-				logError(logCore, "["+ RicezioneBuste.ID_MODULO+ "] Identificazione stato servizio di ricezione buste non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
-				msgDiag.logErroreGenerico("Identificazione stato servizio di ricezione buste non riuscita", "PA");
+				logError(this.logCore, "["+ RicezioneBuste.ID_MODULO+ "] Identificazione stato servizio di ricezione buste non riuscita: "+serviceIsEnabledExceptionProcessamento.getMessage(),serviceIsEnabledExceptionProcessamento);
+				this.msgDiag.logErroreGenerico("Identificazione stato servizio di ricezione buste non riuscita", "PA");
 				esito = "["+ RicezioneBuste.ID_MODULO+ "] Identificazione stato servizio di ricezione buste non riuscita";
 				errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione();
 				integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 			}else{
 				
-				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_SOSPENSIONE, "true");
+				this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_SOSPENSIONE, "true");
 				
 				String msg = "Servizio di ricezione buste disabilitato";
 				if(serviceIsEnabled){
-					if(pa!=null){
-						msg = "Porta Applicativa ["+pa.getNome()+"] disabilitata";
+					if(this.pa!=null){
+						msg = "Porta Applicativa ["+this.pa.getNome()+"] disabilitata";
 					}
 					else{
-						msg = "Porta Delegata ["+pd.getNome()+"] disabilitata";
+						msg = "Porta Delegata ["+this.pd.getNome()+"] disabilitata";
 					}
 					errore = ErroriIntegrazione.ERRORE_446_PORTA_SOSPESA.getErroreIntegrazione();
 				}
@@ -3074,25 +3190,25 @@ public class RicezioneBuste {
 					errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_551_PA_SERVICE_NOT_ACTIVE);
 				}
-				logError(logCore, "["+ RicezioneBuste.ID_MODULO+ "] "+msg);
-				msgDiag.logErroreGenerico(msg, "PA");
+				logError(this.logCore, "["+ RicezioneBuste.ID_MODULO+ "] "+msg);
+				this.msgDiag.logErroreGenerico(msg, "PA");
 				esito = "["+ RicezioneBuste.ID_MODULO+ "] "+msg;
 			}
 			// Tracciamento richiesta: non ancora registrata
 			if(this.msgContext.isTracciamentoAbilitato()){
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(esito);
-				tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+				this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 						Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-						correlazioneApplicativa);
+						this.correlazioneApplicativa);
 			}
 			if(this.msgContext.isGestioneRisposta()){
 
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);							
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(errore);
-				parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);							
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(errore);
+				this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
 
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,serviceIsEnabledExceptionProcessamento);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,serviceIsEnabledExceptionProcessamento);
 				
 				if(IntegrationFunctionError.API_SUSPEND.equals(integrationFunctionError) &&
 						propertiesReader.isEnabledServiceUnavailableRetryAfter_pa_suspend() && 
@@ -3107,12 +3223,12 @@ public class RicezioneBuste {
 				}
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -3127,58 +3243,58 @@ public class RicezioneBuste {
 		
 		/* ------------ Gestione Attribute Authority ------------- */
 		
-		msgDiag.mediumDebug("Gestione Attribute Authority...");
+		this.msgDiag.mediumDebug("Gestione Attribute Authority...");
 		List<AttributeAuthority> attributeAuthorities = null;
-		if(pa!=null) {
-			attributeAuthorities = pa.getAttributeAuthorityList();
+		if(this.pa!=null) {
+			attributeAuthorities = this.pa.getAttributeAuthorityList();
 		}
-		else if(pd!=null) {
-			attributeAuthorities = pd.getAttributeAuthorityList();
+		else if(this.pd!=null) {
+			attributeAuthorities = this.pd.getAttributeAuthorityList();
 		}
 		this.msgContext.getIntegrazione().setAttributeAuthoritiesFromObjectList(attributeAuthorities);
 		
 		if (attributeAuthorities == null || attributeAuthorities.isEmpty()) {
 
 			if(!asincronoSimmetricoRisposta) {
-				msgDiag.logPersonalizzato("gestioneAADisabilitata");
+				this.msgDiag.logPersonalizzato("gestioneAADisabilitata");
 			}
 			
 		} else {
 
-			transaction.getTempiElaborazione().startAttributeAuthority();
+			this.transaction.getTempiElaborazione().startAttributeAuthority();
 			
 			try {
-				msgDiag.logPersonalizzato("gestioneAAInCorso");
+				this.msgDiag.logPersonalizzato("gestioneAAInCorso");
 				
 				org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa datiInvocazione = new org.openspcoop2.pdd.core.token.attribute_authority.pa.DatiInvocazionePortaApplicativa();
 				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
-				datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setState(this.openspcoopstate.getStatoRichiesta());
 				datiInvocazione.setIdModulo(inRequestContext.getIdModulo());
-				datiInvocazione.setMessage(requestMessage);
-				datiInvocazione.setBusta(bustaRichiesta);
+				datiInvocazione.setMessage(this.requestMessage);
+				datiInvocazione.setBusta(this.bustaRichiesta);
 				datiInvocazione.setRequestInfo(requestInfo);
 				datiInvocazione.setIdPA(idPA);
-				datiInvocazione.setPa(pa);	
+				datiInvocazione.setPa(this.pa);	
 				datiInvocazione.setIdPD(idPD);
-				datiInvocazione.setPd(pd);		
+				datiInvocazione.setPd(this.pd);		
 				
-				GestioneAttributeAuthority gestioneAAEngine = new GestioneAttributeAuthority(logCore, idTransazione, pddContext, protocolFactory);
-				List<InformazioniAttributi> esitiValidiRecuperoAttributi = new ArrayList<InformazioniAttributi>();
+				GestioneAttributeAuthority gestioneAAEngine = new GestioneAttributeAuthority(this.logCore, this.idTransazione, this.pddContext, this.protocolFactory);
+				List<InformazioniAttributi> esitiValidiRecuperoAttributi = new ArrayList<>();
 				
 				for (AttributeAuthority aa : attributeAuthorities) {
 					
 					try {
-						msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_NAME, aa.getNome());
-						msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_ENDPOINT, "-");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_NAME, aa.getNome());
+						this.msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_ENDPOINT, "-");
 						
-						PolicyAttributeAuthority policyAttributeAuthority = configurazionePdDReader.getPolicyAttributeAuthority(false, aa.getNome(), requestInfo);
+						PolicyAttributeAuthority policyAttributeAuthority = this.configurazionePdDReader.getPolicyAttributeAuthority(false, aa.getNome(), requestInfo);
 						datiInvocazione.setPolicyAttributeAuthority(policyAttributeAuthority);
 				
 						GestoreToken.validazioneConfigurazione(policyAttributeAuthority); // assicura che la configurazione sia corretta
 						
-						msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_ENDPOINT, policyAttributeAuthority.getEndpoint());
+						this.msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTE_AUTHORITY_ENDPOINT, policyAttributeAuthority.getEndpoint());
 						
-						msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve");
+						this.msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve");
 						
 						EsitoRecuperoAttributi esitoRecuperoAttributi = gestioneAAEngine.readAttributes(datiInvocazione);
 						if(esitoRecuperoAttributi.isValido()) {
@@ -3194,74 +3310,74 @@ public class RicezioneBuste {
 									attributiRecuperati.append(attrName);
 								}
 							}
-							msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTES, attributiRecuperati.toString());
+							this.msgDiag.addKeyword(CostantiPdD.KEY_ATTRIBUTES, attributiRecuperati.toString());
 							
 							if(esitoRecuperoAttributi.isInCache()) {
-								msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.completataSuccesso.inCache");
+								this.msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.completataSuccesso.inCache");
 							}
 							else {
-								msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.completataSuccesso");
+								this.msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.completataSuccesso");
 							}
 							
 							esitiValidiRecuperoAttributi.add(esitoRecuperoAttributi.getInformazioniAttributi());
 						}
 						else {
 							
-							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoRecuperoAttributi.getDetails());
-							msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.fallita");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esitoRecuperoAttributi.getDetails());
+							this.msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.fallita");
 		
 							String msgErrore = "processo di gestione dell'attribute authority ["+ aa.getNome() + "] fallito: " + esitoRecuperoAttributi.getDetails();
 							if(esitoRecuperoAttributi.getEccezioneProcessamento()!=null) {
-								logError(logCore, msgErrore,esitoRecuperoAttributi.getEccezioneProcessamento());
+								logError(this.logCore, msgErrore,esitoRecuperoAttributi.getEccezioneProcessamento());
 							}
 							else {
-								logError(logCore, msgErrore);
+								logError(this.logCore, msgErrore);
 							}							
 						}
 						
 					} catch (Throwable e) {
 						
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
-						msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.fallita");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+						this.msgDiag.logPersonalizzato("gestioneAAInCorso.retrieve.fallita");
 						String msgErrore = "processo di gestione dell'attribute authority ["+ aa.getNome() + "] fallito: " + e.getMessage();
-						logError(logCore, msgErrore,e);
+						logError(this.logCore, msgErrore,e);
 						
 					}
 					
 				}
 				
 				InformazioniAttributi informazioniAttributiNormalizzati = null;
-				if(esitiValidiRecuperoAttributi!=null && esitiValidiRecuperoAttributi.size()>0) {
+				if(esitiValidiRecuperoAttributi!=null && !esitiValidiRecuperoAttributi.isEmpty()) {
 					informazioniAttributiNormalizzati = GestoreToken.normalizeInformazioniAttributi(esitiValidiRecuperoAttributi, attributeAuthorities);
 					informazioniAttributiNormalizzati.setValid(true);
 				}
 				if(informazioniAttributiNormalizzati!=null) {
-					pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE, informazioniAttributiNormalizzati);
+					this.pddContext.addObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_ATTRIBUTI_INFORMAZIONI_NORMALIZZATE, informazioniAttributiNormalizzati);
 					
 					InformazioniToken informazioniTokenNormalizzate = null;
-					if(pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
-						informazioniTokenNormalizzate = (InformazioniToken) pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+					if(this.pddContext.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE)) {
+						informazioniTokenNormalizzate = (InformazioniToken) this.pddContext.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
 					}
 					
 					if(informazioniTokenNormalizzate!=null) {
 						informazioniTokenNormalizzate.setAa(informazioniAttributiNormalizzati);
 					}
 					else {
-						transaction.setInformazioniAttributi(informazioniAttributiNormalizzati);
+						this.transaction.setInformazioniAttributi(informazioniAttributiNormalizzati);
 					}
 				}
 				
-				msgDiag.logPersonalizzato("gestioneAACompletata");
+				this.msgDiag.logPersonalizzato("gestioneAACompletata");
 
 			} catch (Throwable e) {
 				
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
-				msgDiag.logPersonalizzato("gestioneAAFallita");
-				logError(logCore, "processo di gestione delle attribute authorities fallito: " + e.getMessage(),e);
+				this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
+				this.msgDiag.logPersonalizzato("gestioneAAFallita");
+				logError(this.logCore, "processo di gestione delle attribute authorities fallito: " + e.getMessage(),e);
 				
 			}
 			finally {
-				transaction.getTempiElaborazione().endAttributeAuthority();
+				this.transaction.getTempiElaborazione().endAttributeAuthority();
 			}
 			
 		}
@@ -3277,43 +3393,43 @@ public class RicezioneBuste {
 		
 		/* -------- OpenSPCoop2Message Update ------------- */
 		try {
-			msgDiag.mediumDebug("Aggiornamento del messaggio");
-			requestMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageRequest(requestMessage, bustaRichiesta,
-					protocolFactory.getCachedRegistryReader(registroServiziReader, requestInfo));
+			this.msgDiag.mediumDebug("Aggiornamento del messaggio");
+			this.requestMessage = this.protocolFactory.createProtocolManager().updateOpenSPCoop2MessageRequest(this.requestMessage, this.bustaRichiesta,
+					this.protocolFactory.getCachedRegistryReader(this.registroServiziReader, requestInfo));
 		} catch (Exception e) {
 			// Emetto log, non ancora emesso
 			boolean mittenteEsistente = validatore.getBusta()!=null && 
 					(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null); 
-			msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, !mittenteEsistente);
+			this.msgDiag.emitRicezioneMessaggioModuloBuste(this.msgDiag, this.pddContext, !mittenteEsistente);
 			
-			msgDiag.addKeywordErroreProcessamento(e,"Aggiornamento messaggio fallito");
-			msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
-			logError(logCore, "ProtocolManager.updateOpenSPCoop2Message error: "+e.getMessage(),e);
+			this.msgDiag.addKeywordErroreProcessamento(e,"Aggiornamento messaggio fallito");
+			this.msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
+			logError(this.logCore, "ProtocolManager.updateOpenSPCoop2Message error: "+e.getMessage(),e);
 			
 			// Tracciamento richiesta: non ancora registrata
 			if(this.msgContext.isTracciamentoAbilitato()){
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("ProtocolManager.updateOpenSPCoop2Message, non riuscito: "+e.getMessage());
-				tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+				this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 						Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-						correlazioneApplicativa);
+						this.correlazioneApplicativa);
 			}
 			if(this.msgContext.isGestioneRisposta()){
 
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.
 					setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO));
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -3325,27 +3441,20 @@ public class RicezioneBuste {
 		
 
 		
-		// Imposto un context di Base (utilizzato anche  per la successiva spedizione della risposta)
-		MessageSecurityContext messageSecurityContext = null;
-		// Proprieta' FlowParameter MTOM / Security relative alla ricezione della busta
-		FlowProperties flowPropertiesRequest = null;
-		// Proprieta' FlowParameter MTOM / Security relative alla spedizione della risposta
-		FlowProperties flowPropertiesResponse = null;
 
-		
 		// Modalita' gestione risposta (Sincrona/Fault/Ricevute...)
 		// Per i profili diversi dal sincrono e' possibile impostare dove far ritornare l'errore
-		boolean newConnectionForResponse = false; 
-		boolean utilizzoIndirizzoTelematico = false;		
-		if(!functionAsRouter){
+		this.newConnectionForResponse = false; 
+		this.utilizzoIndirizzoTelematico = false;		
+		if(!this.functionAsRouter){
 
 			// Calcolo newConnectionForResponse in caso di asincroni
-			if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ||
-					org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())	){
-				newConnectionForResponse = configurazionePdDReader.newConnectionForResponse();
-				utilizzoIndirizzoTelematico = configurazionePdDReader.isUtilizzoIndirizzoTelematico();
-				parametriInvioBustaErrore.setNewConnectionForResponse(newConnectionForResponse);
-				parametriInvioBustaErrore.setUtilizzoIndirizzoTelematico(utilizzoIndirizzoTelematico);
+			if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) ||
+					org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())	){
+				this.newConnectionForResponse = this.configurazionePdDReader.newConnectionForResponse();
+				this.utilizzoIndirizzoTelematico = this.configurazionePdDReader.isUtilizzoIndirizzoTelematico();
+				this.parametriInvioBustaErrore.setNewConnectionForResponse(this.newConnectionForResponse);
+				this.parametriInvioBustaErrore.setUtilizzoIndirizzoTelematico(this.utilizzoIndirizzoTelematico);
 			}
 
 
@@ -3355,24 +3464,24 @@ public class RicezioneBuste {
 			   prima di procedere con la gestione della risposta/richiesta-stato, devono termiare le precedenti richieste/ricevute.
 			   ------------
 			 */
-			if(validatore.isErroreProtocollo()==false && validatore.isBustaDiServizio()==false){
+			if(!validatore.isErroreProtocollo() && !validatore.isBustaDiServizio()){
 				try{
 					long scadenzaControllo = DateManager.getTimeMillis() + propertiesReader.getTimeoutBustaRispostaAsincrona();
 					int checkIntervalControllo = propertiesReader.getCheckIntervalBustaRispostaAsincrona();
 					boolean attendiTerminazioneRichiesta = 
-						this.gestioneRispostaAsincrona_checkPresenzaRichiesta(scadenzaControllo,checkIntervalControllo, bustaRichiesta, 
-								openspcoopstate, msgDiag, newConnectionForResponse, inRequestContext.getPddContext());
+						this.gestioneRispostaAsincronaCheckPresenzaRichiesta(scadenzaControllo,checkIntervalControllo, this.bustaRichiesta, 
+								this.openspcoopstate, this.msgDiag, this.newConnectionForResponse, inRequestContext.getPddContext());
 					boolean attendiTerminazioneRicevutaRichiesta = 
-						this.gestioneRispostaAsincrona_checkPresenzaRicevutaRichiesta(scadenzaControllo,checkIntervalControllo, bustaRichiesta, 
-								openspcoopstate, msgDiag, newConnectionForResponse, inRequestContext.getPddContext());
+						this.gestioneRispostaAsincronaCheckPresenzaRicevutaRichiesta(scadenzaControllo,checkIntervalControllo, this.bustaRichiesta, 
+								this.openspcoopstate, this.msgDiag, this.newConnectionForResponse, inRequestContext.getPddContext());
 
 					ErroreIntegrazione msgErroreIntegrazione = null;
 					String motivoErrore = null;
 					if(attendiTerminazioneRichiesta){
-						msgDiag.logPersonalizzato("attesaFineProcessamento.richiestaAsincrona.timeoutScaduto");
+						this.msgDiag.logPersonalizzato("attesaFineProcessamento.richiestaAsincrona.timeoutScaduto");
 						msgErroreIntegrazione = ErroriIntegrazione.ERRORE_538_RICHIESTA_ASINCRONA_ANCORA_IN_PROCESSAMENTO.getErroreIntegrazione();
 					}else if(attendiTerminazioneRicevutaRichiesta){
-						msgDiag.logPersonalizzato("attesaFineProcessamento.ricevutaRichiestaAsincrona.timeoutScaduto");
+						this.msgDiag.logPersonalizzato("attesaFineProcessamento.ricevutaRichiestaAsincrona.timeoutScaduto");
 						msgErroreIntegrazione = ErroriIntegrazione.ERRORE_539_RICEVUTA_RICHIESTA_ASINCRONA_ANCORA_IN_PROCESSAMENTO.getErroreIntegrazione();
 					}
 					if(attendiTerminazioneRichiesta || attendiTerminazioneRicevutaRichiesta){
@@ -3380,24 +3489,24 @@ public class RicezioneBuste {
 						if(this.msgContext.isTracciamentoAbilitato()){
 							EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 									EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(motivoErrore);
-							tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+							this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 									Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-									correlazioneApplicativa);
+									this.correlazioneApplicativa);
 						}
 						if(this.msgContext.isGestioneRisposta()){
 
-							parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-							parametriGenerazioneBustaErrore.setErroreIntegrazione(msgErroreIntegrazione);
+							this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+							this.parametriGenerazioneBustaErrore.setErroreIntegrazione(msgErroreIntegrazione);
 
-							OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,null);
+							OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,null);
 							
 							// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-							parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-							parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-							ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+							this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+							this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+							this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 						}
-						openspcoopstate.releaseResource();
+						this.openspcoopstate.releaseResource();
 						return;
 					}
 
@@ -3406,66 +3515,66 @@ public class RicezioneBuste {
 					// Emetto log, non ancora emesso
 					boolean mittenteEsistente = validatore.getBusta()!=null && 
 							(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null); 
-					msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, !mittenteEsistente);
+					this.msgDiag.emitRicezioneMessaggioModuloBuste(this.msgDiag, this.pddContext, !mittenteEsistente);
 					
-					msgDiag.logErroreGenerico(e,"checkPresenzaRichiestaRicevutaAsincronaAncoraInGestione");
-					logError(logCore, "Controllo presenza richieste/ricevuteRichieste ancora in gestione " +
+					this.msgDiag.logErroreGenerico(e,"checkPresenzaRichiestaRicevutaAsincronaAncoraInGestione");
+					logError(this.logCore, "Controllo presenza richieste/ricevuteRichieste ancora in gestione " +
 							"correlate alla risposta/richiesta-stato asincrona simmetrica/asimmetrica arrivata, non riuscito",e);
 					// Tracciamento richiesta: non ancora registrata
 					if(this.msgContext.isTracciamentoAbilitato()){
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Controllo presenza richieste/ricevuteRichieste ancora in gestione " +
 										"correlate alla risposta/richiesta-stato asincrona simmetrica/asimmetrica arrivata, non riuscito: "+e.getMessage());
-						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+						this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-								correlazioneApplicativa);
+								this.correlazioneApplicativa);
 					}
 					if(this.msgContext.isGestioneRisposta()){
 
-						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-						parametriGenerazioneBustaErrore.
+						this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+						this.parametriGenerazioneBustaErrore.
 							setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 									get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
-						OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-						parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-						ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+						this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+						this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+						this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 					}
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 				}
 			}
 			
 			/* ----------- Scenario Cooperazione ------------ */
-			if(ruoloBustaRicevuta!=null){
+			if(this.ruoloBustaRicevuta!=null){
 				try{
 					String scenarioCooperazione = null;
-					if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+					if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) {	
 						scenarioCooperazione = Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO;
 					}
-					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) {	
 						scenarioCooperazione = Costanti.SCENARIO_SINCRONO_INVOCAZIONE_SERVIZIO;
 					}
-					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
-						if(RuoloBusta.RICHIESTA.equals(ruoloBustaRicevuta.toString())){
+					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) {	
+						if(RuoloBusta.RICHIESTA.equals(this.ruoloBustaRicevuta.toString())){
 							scenarioCooperazione = Costanti.SCENARIO_ASINCRONO_SIMMETRICO_INVOCAZIONE_SERVIZIO;
 						}
-						else if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
+						else if(RuoloBusta.RISPOSTA.equals(this.ruoloBustaRicevuta.toString())){
 							scenarioCooperazione = Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA;
 						}
 						else{
 							// sono ricevute asincrone
 						}
 					}
-					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
-						if(RuoloBusta.RICHIESTA.equals(ruoloBustaRicevuta.toString())){
+					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) {	
+						if(RuoloBusta.RICHIESTA.equals(this.ruoloBustaRicevuta.toString())){
 							scenarioCooperazione = Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_INVOCAZIONE_SERVIZIO;
 						}
-						else if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
+						else if(RuoloBusta.RISPOSTA.equals(this.ruoloBustaRicevuta.toString())){
 							scenarioCooperazione = Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING;
 						}
 						else{
@@ -3474,7 +3583,7 @@ public class RicezioneBuste {
 					}
 					this.msgContext.getProtocol().setScenarioCooperazione(scenarioCooperazione);
 				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"setScenarioCooperazione");
+					this.msgDiag.logErroreGenerico(e,"setScenarioCooperazione");
 				}
 			}
 
@@ -3491,90 +3600,89 @@ public class RicezioneBuste {
 		
 		
 		/* -------------------------- Implementazione PdD Soggetti busta -------------------------------*/
-		String implementazionePdDMittente = null;
+		this.implementazionePdDMittente = null;
 		String implementazionePdDDestinatario = null;
 		String idPdDMittente = null;
 		String idPdDDestinatario = null;
-		msgDiag.mediumDebug("Ricerca implementazione della porta di dominio dei soggetti...");
-		ProprietaManifestAttachments proprietaManifestAttachments = null;
+		this.msgDiag.mediumDebug("Ricerca implementazione della porta di dominio dei soggetti...");
 		boolean validazioneIDBustaCompleta = true;
 		try{
-			if(soggettoFruitore!=null){
-				implementazionePdDMittente = registroServiziReader.getImplementazionePdD(soggettoFruitore, null, requestInfo);
+			if(this.soggettoFruitore!=null){
+				this.implementazionePdDMittente = this.registroServiziReader.getImplementazionePdD(this.soggettoFruitore, null, requestInfo);
 			}
-			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
-				implementazionePdDDestinatario = registroServiziReader.getImplementazionePdD(idServizio.getSoggettoErogatore(), null, requestInfo);
+			if(this.idServizio!=null && this.idServizio.getSoggettoErogatore()!=null){
+				implementazionePdDDestinatario = this.registroServiziReader.getImplementazionePdD(this.idServizio.getSoggettoErogatore(), null, requestInfo);
 			}
-			if(soggettoFruitore!=null){
-				idPdDMittente = registroServiziReader.getIdPortaDominio(soggettoFruitore, null, requestInfo);
+			if(this.soggettoFruitore!=null){
+				idPdDMittente = this.registroServiziReader.getIdPortaDominio(this.soggettoFruitore, null, requestInfo);
 			}
-			if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
-				idPdDDestinatario = registroServiziReader.getIdPortaDominio(idServizio.getSoggettoErogatore(), null, requestInfo);
+			if(this.idServizio!=null && this.idServizio.getSoggettoErogatore()!=null){
+				idPdDDestinatario = this.registroServiziReader.getIdPortaDominio(this.idServizio.getSoggettoErogatore(), null, requestInfo);
 			}
-			parametriGenerazioneBustaErrore.setImplementazionePdDMittente(implementazionePdDMittente);
-			parametriGenerazioneBustaErrore.setImplementazionePdDDestinatario(implementazionePdDDestinatario);
-			parametriInvioBustaErrore.setImplementazionePdDMittente(implementazionePdDMittente);
-			parametriInvioBustaErrore.setImplementazionePdDDestinatario(implementazionePdDDestinatario);
+			this.parametriGenerazioneBustaErrore.setImplementazionePdDMittente(this.implementazionePdDMittente);
+			this.parametriGenerazioneBustaErrore.setImplementazionePdDDestinatario(implementazionePdDDestinatario);
+			this.parametriInvioBustaErrore.setImplementazionePdDMittente(this.implementazionePdDMittente);
+			this.parametriInvioBustaErrore.setImplementazionePdDDestinatario(implementazionePdDDestinatario);
 			
-			properties.setValidazioneConSchema(configurazionePdDReader.isLivelloValidazioneRigido(implementazionePdDMittente));
-			properties.setValidazioneProfiloCollaborazione(configurazionePdDReader.isValidazioneProfiloCollaborazione(implementazionePdDMittente));
-			if(openspcoopstate!=null) {
-				properties.setRuntimeState(openspcoopstate.getStatoRichiesta());
+			properties.setValidazioneConSchema(this.configurazionePdDReader.isLivelloValidazioneRigido(this.implementazionePdDMittente));
+			properties.setValidazioneProfiloCollaborazione(this.configurazionePdDReader.isValidazioneProfiloCollaborazione(this.implementazionePdDMittente));
+			if(this.openspcoopstate!=null) {
+				properties.setRuntimeState(this.openspcoopstate.getStatoRichiesta());
 				if(propertiesReader.isTransazioniUsePddRuntimeDatasource()) {
-					properties.setTracceState(openspcoopstate.getStatoRichiesta());
+					properties.setTracceState(this.openspcoopstate.getStatoRichiesta());
 				}
 			}
 			validatore.setProprietaValidazione(properties); // update
 			
 			MessageSecurityContextParameters contextParameters = new MessageSecurityContextParameters();
-			contextParameters.setUseActorDefaultIfNotDefined(propertiesReader.isGenerazioneActorDefault(implementazionePdDMittente));
-			contextParameters.setActorDefault(propertiesReader.getActorDefault(implementazionePdDMittente));
-			contextParameters.setLog(logCore);
+			contextParameters.setUseActorDefaultIfNotDefined(propertiesReader.isGenerazioneActorDefault(this.implementazionePdDMittente));
+			contextParameters.setActorDefault(propertiesReader.getActorDefault(this.implementazionePdDMittente));
+			contextParameters.setLog(this.logCore);
 			contextParameters.setFunctionAsClient(SecurityConstants.SECURITY_SERVER);
 			contextParameters.setPrefixWsuId(propertiesReader.getPrefixWsuId());
 			contextParameters.setRemoveAllWsuIdRef(propertiesReader.isRemoveAllWsuIdRef());
-			contextParameters.setIdFruitore(soggettoFruitore);
+			contextParameters.setIdFruitore(this.soggettoFruitore);
 			contextParameters.setPddFruitore(idPdDMittente);
-			contextParameters.setIdServizio(idServizio);
+			contextParameters.setIdServizio(this.idServizio);
 			contextParameters.setPddErogatore(idPdDDestinatario);
-			messageSecurityContext = new MessageSecurityFactory().getMessageSecurityContext(contextParameters);
-			parametriGenerazioneBustaErrore.setMessageSecurityContext(messageSecurityContext);
+			this.messageSecurityContext = new MessageSecurityFactory().getMessageSecurityContext(contextParameters);
+			this.parametriGenerazioneBustaErrore.setMessageSecurityContext(this.messageSecurityContext);
 			
-			proprietaManifestAttachments = propertiesReader.getProprietaManifestAttachments(implementazionePdDMittente);
-			readQualifiedAttribute = propertiesReader.isReadQualifiedAttribute(implementazionePdDMittente);
-			validazioneIDBustaCompleta = propertiesReader.isValidazioneIDBustaCompleta(implementazionePdDMittente);
+			this.proprietaManifestAttachments = propertiesReader.getProprietaManifestAttachments(this.implementazionePdDMittente);
+			this.readQualifiedAttribute = propertiesReader.isReadQualifiedAttribute(this.implementazionePdDMittente);
+			validazioneIDBustaCompleta = propertiesReader.isValidazioneIDBustaCompleta(this.implementazionePdDMittente);
 			
 		}catch(Exception e){
-			msgDiag.logErroreGenerico(e,"ricercaImplementazionePdDSoggettiBusta");
+			this.msgDiag.logErroreGenerico(e,"ricercaImplementazionePdDSoggettiBusta");
 			// Tracciamento richiesta: non ancora registrata
 			if(this.msgContext.isTracciamentoAbilitato()){
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Errore durante la ricerca dell'implementazione della porta di dominio dei soggetti: "+e.getMessage());
-				tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+				this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 						Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-						correlazioneApplicativa);
+						this.correlazioneApplicativa);
 			}
 			if(this.msgContext.isGestioneRisposta()){
 				
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.
 				setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
-		if(soggettoFruitore!=null){
-			msgDiag.mediumDebug("ImplementazionePdD soggetto fruitore ("+soggettoFruitore.toString()+"): ["+implementazionePdDMittente+"]");
+		if(this.soggettoFruitore!=null){
+			this.msgDiag.mediumDebug("ImplementazionePdD soggetto fruitore ("+this.soggettoFruitore.toString()+"): ["+this.implementazionePdDMittente+"]");
 		}
-		if(idServizio!=null && idServizio.getSoggettoErogatore()!=null){
-			msgDiag.mediumDebug("ImplementazionePdD soggetto erogatore ("+idServizio.getSoggettoErogatore().toString()+"): ["+implementazionePdDDestinatario+"]");
+		if(this.idServizio!=null && this.idServizio.getSoggettoErogatore()!=null){
+			this.msgDiag.mediumDebug("ImplementazionePdD soggetto erogatore ("+this.idServizio.getSoggettoErogatore().toString()+"): ["+implementazionePdDDestinatario+"]");
 		}
 		
 		
@@ -3590,61 +3698,61 @@ public class RicezioneBuste {
 		
 		/* -------- Manifest attachments ------------- */
 		// per profili asincroni
-		if(!functionAsRouter){
-			msgDiag.mediumDebug("Lettura manifest attachments impostato in porta applicativa/delegata...");
+		if(!this.functionAsRouter){
+			this.msgDiag.mediumDebug("Lettura manifest attachments impostato in porta applicativa/delegata...");
 			try{
 
 				// Validazione manifest attachments
-				msgDiag.highDebug("Lettura porta applicativa/delegata (Set)...");
-				if(pa!=null){
+				this.msgDiag.highDebug("Lettura porta applicativa/delegata (Set)...");
+				if(this.pa!=null){
 					properties.setValidazioneManifestAttachments(
-							configurazionePdDReader.isValidazioneManifestAttachments(implementazionePdDMittente) &&
-							configurazionePdDReader.isGestioneManifestAttachments(pa,protocolFactory));
+							this.configurazionePdDReader.isValidazioneManifestAttachments(this.implementazionePdDMittente) &&
+							this.configurazionePdDReader.isGestioneManifestAttachments(this.pa,this.protocolFactory));
 				}
-				else if(pd!=null){
+				else if(this.pd!=null){
 					properties.setValidazioneManifestAttachments(
-							configurazionePdDReader.isValidazioneManifestAttachments(implementazionePdDDestinatario) &&
-							configurazionePdDReader.isGestioneManifestAttachments(pd,protocolFactory));
+							this.configurazionePdDReader.isValidazioneManifestAttachments(implementazionePdDDestinatario) &&
+							this.configurazionePdDReader.isGestioneManifestAttachments(this.pd,this.protocolFactory));
 				}
 				else{
 					properties.setValidazioneManifestAttachments(
-							configurazionePdDReader.isValidazioneManifestAttachments(implementazionePdDMittente));
+							this.configurazionePdDReader.isValidazioneManifestAttachments(this.implementazionePdDMittente));
 				}
 				
-				msgDiag.highDebug("Lettura porta applicativa/delegata terminato");
+				this.msgDiag.highDebug("Lettura porta applicativa/delegata terminato");
 				
 			}catch(Exception e){
 				if(  !(e instanceof DriverConfigurazioneNotFound) ) {
-					msgDiag.logErroreGenerico(e,"letturaPortaManifestAttachments");
+					this.msgDiag.logErroreGenerico(e,"letturaPortaManifestAttachments");
 					
 					// Tracciamento richiesta: non ancora registrata
 					if(this.msgContext.isTracciamentoAbilitato()){
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Errore durante la lettura della porta applicativa/delegata per la gestione ManifestAttachments: "+e.getMessage());
-						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+						this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-								correlazioneApplicativa);
+								this.correlazioneApplicativa);
 					}
 					if(this.msgContext.isGestioneRisposta()){
 						
-						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-						parametriGenerazioneBustaErrore.
+						this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+						this.parametriGenerazioneBustaErrore.
 						setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
-						OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-						parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-						ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+						this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+						this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+						this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 					}
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 				}
 			}
-			msgDiag.highDebug("Lettura manifest attachments impostato in porta applicativa/delegata terminato");
+			this.msgDiag.highDebug("Lettura manifest attachments impostato in porta applicativa/delegata terminato");
 		}
 
 		
@@ -3663,18 +3771,18 @@ public class RicezioneBuste {
 			idModuloInAttesa = this.msgContext.getIdModulo();
 		RichiestaApplicativa richiestaApplicativa = null;
 		if(idPA!=null) {
-			richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore,
-					idModuloInAttesa,identitaPdD,idPA);
-			if(idServizio!=null && idServizio.getAzione()!=null && 
+			richiestaApplicativa = new RichiestaApplicativa(this.soggettoFruitore,
+					idModuloInAttesa,this.identitaPdD,idPA);
+			if(this.idServizio!=null && this.idServizio.getAzione()!=null && 
 					idPA!=null && idPA.getIdentificativiErogazione()!=null && idPA.getIdentificativiErogazione().getIdServizio()!=null &&
 					idPA.getIdentificativiErogazione().getIdServizio().getAzione()==null) {
-				idPA.getIdentificativiErogazione().getIdServizio().setAzione(idServizio.getAzione());
+				idPA.getIdentificativiErogazione().getIdServizio().setAzione(this.idServizio.getAzione());
 			}
 		}
 		else {
 			// Scenario Asincrono Simmetrico - Risposta
-			richiestaApplicativa = new RichiestaApplicativa(soggettoFruitore,
-					idModuloInAttesa,identitaPdD,idServizio); 
+			richiestaApplicativa = new RichiestaApplicativa(this.soggettoFruitore,
+					idModuloInAttesa,this.identitaPdD,this.idServizio); 
 		}
 		richiestaApplicativa.setFiltroProprietaPorteApplicative(this.msgContext.getProprietaFiltroPortaApplicativa());
 		richiestaApplicativa.setIntegrazione(this.msgContext.getIntegrazione());
@@ -3693,53 +3801,50 @@ public class RicezioneBuste {
 		try{
 			// NOTA: Usare getIntegrationServiceBinding poichè le funzionalità si riferiscono al tipo di integrazione scelta
 			
-			IProtocolConfiguration protocolConfiguration = protocolFactory.createProtocolConfiguration();
-			if(bustaRichiesta!=null && bustaRichiesta.getProfiloDiCollaborazione()!=null && 
-					!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.UNKNOWN.equals(bustaRichiesta.getProfiloDiCollaborazione()) ){
-				if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),bustaRichiesta.getProfiloDiCollaborazione())==false){
-					throw new Exception("Profilo di Collaborazione ["+bustaRichiesta.getProfiloDiCollaborazione().getEngineValue()+"]");
-				}
+			IProtocolConfiguration protocolConfiguration = this.protocolFactory.createProtocolConfiguration();
+			if(this.bustaRichiesta!=null && this.bustaRichiesta.getProfiloDiCollaborazione()!=null && 
+					!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.UNKNOWN.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) &&
+				!protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),this.bustaRichiesta.getProfiloDiCollaborazione())){
+				throw new CoreException("Profilo di Collaborazione ["+this.bustaRichiesta.getProfiloDiCollaborazione().getEngineValue()+"]");
 			}
 			// NOTA:  FiltroDuplicati, consegnaAffidabile, idCollaborazione, consegnaInOrdine verificato in sbustamento.
-			if(bustaRichiesta!=null && bustaRichiesta.getScadenza()!=null){
-				if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.SCADENZA)==false){
-					throw new Exception(FunzionalitaProtocollo.SCADENZA.getEngineValue());
-				}
+			if(this.bustaRichiesta!=null && this.bustaRichiesta.getScadenza()!=null &&
+				!protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.SCADENZA)){
+				throw new CoreException(FunzionalitaProtocollo.SCADENZA.getEngineValue());
 			}
 			
-			if(configurazionePdDReader.isGestioneManifestAttachments(pa,protocolFactory)){
-				if(protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)==false){
-					throw new Exception(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS.getEngineValue());
-				}
+			if(this.configurazionePdDReader.isGestioneManifestAttachments(this.pa,this.protocolFactory) &&
+				!protocolConfiguration.isSupportato(requestInfo.getIntegrationServiceBinding(),FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+				throw new CoreException(FunzionalitaProtocollo.MANIFEST_ATTACHMENTS.getEngineValue());
 			}			
 		}catch(Exception e){	
-			msgDiag.addKeywordErroreProcessamento(e);
-			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"protocolli.funzionalita.unsupported");
+			this.msgDiag.addKeywordErroreProcessamento(e);
+			this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"protocolli.funzionalita.unsupported");
 			// Tracciamento richiesta: non ancora registrata
 			if(this.msgContext.isTracciamentoAbilitato()){
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
-						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords("protocolli.funzionalita.unsupported"));
-				tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(this.msgDiag.getMessaggio_replaceKeywords("protocolli.funzionalita.unsupported"));
+				this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 						Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-						correlazioneApplicativa);
+						this.correlazioneApplicativa);
 			}
 			if(this.msgContext.isGestioneRisposta()){
 				
-				parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.
+				this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.
 				setErroreIntegrazione(ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.
-						getErrore439_FunzionalitaNotSupportedByProtocol(e.getMessage(), protocolFactory));
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						getErrore439_FunzionalitaNotSupportedByProtocol(e.getMessage(), this.protocolFactory));
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -3754,112 +3859,113 @@ public class RicezioneBuste {
 
 		/* ------------- Modalita' di gestione ---------------------------- */
 		//Versione OneWay 
-		boolean oneWayStateless = false;
-		boolean oneWayVersione11 = false;
+		this.oneWayStateless = false;
+		this.oneWayVersione11 = false;
 		// Versione Sincrono 
-		boolean sincronoStateless = false;
+		this.sincronoStateless = false;
 		// Asincrono stateless
-		boolean asincronoStateless = false;
+		this.asincronoStateless = false;
 
 		// Gestione stateless
-		boolean portaStateless = false; // vero se almeno uno dei 3 precedenti e' vero
+		this.portaStateless = false; // vero se almeno uno dei 3 precedenti e' vero
 
 		// Routing stateless
-		boolean routingStateless = false;
+		this.routingStateless = false;
 
 		try {
 			
-			if(functionAsRouter == false){
+			if(!this.functionAsRouter){
 				
-				if(propertiesReader.isServerJ2EE()==false){
+				if(propertiesReader.isServerJ2EE()==null || !propertiesReader.isServerJ2EE().booleanValue()){
 					// Stateless obbligatorio in server di tipo web (non j2ee)
-					oneWayStateless = true;
-					sincronoStateless = true;
-					asincronoStateless = true;
+					this.oneWayStateless = true;
+					this.sincronoStateless = true;
+					this.asincronoStateless = true;
 				}
-				else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione())){
-					if(soggettoVirtuale==false) {
-						oneWayStateless = configurazionePdDReader.isModalitaStateless(pa,bustaRichiesta.getProfiloDiCollaborazione());
+				else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(this.bustaRichiesta.getProfiloDiCollaborazione())){
+					if(!soggettoVirtuale) {
+						this.oneWayStateless = this.configurazionePdDReader.isModalitaStateless(this.pa,this.bustaRichiesta.getProfiloDiCollaborazione());
 					}
 				}
-				else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())){	
-					sincronoStateless = configurazionePdDReader.isModalitaStateless(pa,bustaRichiesta.getProfiloDiCollaborazione());
-				}else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ||
-						org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())){
-					// Le ricevute arrivano solo con connection-new (possibile solo con stateful)
-					if( (RuoloBusta.RICEVUTA_RICHIESTA.equals(ruoloBustaRicevuta.toString())==false) &&
-							(RuoloBusta.RICEVUTA_RISPOSTA.equals(ruoloBustaRicevuta.toString())==false)){
-						if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) && 
-								pd!=null){
-							// Risposta
-							asincronoStateless = configurazionePdDReader.isModalitaStateless(pd, bustaRichiesta.getProfiloDiCollaborazione());
-						}else{
-							asincronoStateless = configurazionePdDReader.isModalitaStateless(pa, bustaRichiesta.getProfiloDiCollaborazione());
-						}
-					}
-				}
-
-				oneWayVersione11 = propertiesReader.isGestioneOnewayStateful_1_1() &&  
-				org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione())&& !oneWayStateless ; 
-
-				if ( oneWayStateless || sincronoStateless || asincronoStateless || oneWayVersione11 ) {
-					portaStateless = true;		
-					if(oneWayVersione11==false){
-						this.msgContext.getIntegrazione().setGestioneStateless(true);
+				else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())){	
+					this.sincronoStateless = this.configurazionePdDReader.isModalitaStateless(this.pa,this.bustaRichiesta.getProfiloDiCollaborazione());
+				}else if(
+						(
+								org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) 
+								||
+								org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())
+						)
+						&&
+						// Le ricevute arrivano solo con connection-new (possibile solo con stateful)
+						(!RuoloBusta.RICEVUTA_RICHIESTA.equals(this.ruoloBustaRicevuta.toString())) &&
+						(!RuoloBusta.RICEVUTA_RISPOSTA.equals(this.ruoloBustaRicevuta.toString()))
+						) {
+					if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) && 
+							this.pd!=null){
+						// Risposta
+						this.asincronoStateless = this.configurazionePdDReader.isModalitaStateless(this.pd, this.bustaRichiesta.getProfiloDiCollaborazione());
 					}else{
-						this.msgContext.getIntegrazione().setGestioneStateless(false);
+						this.asincronoStateless = this.configurazionePdDReader.isModalitaStateless(this.pa, this.bustaRichiesta.getProfiloDiCollaborazione());
 					}
+				}
+
+				this.oneWayVersione11 = propertiesReader.isGestioneOnewayStateful_1_1() &&  
+				org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(this.bustaRichiesta.getProfiloDiCollaborazione())&& !this.oneWayStateless ; 
+
+				if ( this.oneWayStateless || this.sincronoStateless || this.asincronoStateless || this.oneWayVersione11 ) {
+					this.portaStateless = true;		
+					this.msgContext.getIntegrazione().setGestioneStateless(!this.oneWayVersione11);
 				}else{
 					this.msgContext.getIntegrazione().setGestioneStateless(false);
 				}
 				
-				if(!portaStateless || oneWayVersione11) {
-					if(!openspcoopstate.isUseConnection() && 
-							(openspcoopstate instanceof OpenSPCoopStateful || oneWayVersione11)) {
-						if(openspcoopstate.resourceReleased()) {
-							// inizializzo
-							openspcoopstate.setUseConnection(true);
-							openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(), idTransazione);
-						}
-					}
+				if(
+						(!this.portaStateless || this.oneWayVersione11) &&
+						!this.openspcoopstate.isUseConnection() && 
+						(this.openspcoopstate instanceof OpenSPCoopStateful || this.oneWayVersione11) &&
+						this.openspcoopstate.resourceReleased()
+					) {
+					// inizializzo
+					this.openspcoopstate.setUseConnection(true);
+					this.openspcoopstate.initResource(this.identitaPdD, this.msgContext.getIdModulo(), this.idTransazione);
 				}
 				
 			}else{
-				routingStateless = CostantiConfigurazione.ABILITATO.equals(propertiesReader.getStatelessRouting());
-				this.msgContext.getIntegrazione().setGestioneStateless(routingStateless);
+				this.routingStateless = CostantiConfigurazione.ABILITATO.equals(propertiesReader.getStatelessRouting());
+				this.msgContext.getIntegrazione().setGestioneStateless(this.routingStateless);
 				
-				if(!routingStateless) {
-					if(!openspcoopstate.isUseConnection() && 
-							(openspcoopstate instanceof OpenSPCoopStateful)) {
-						if(openspcoopstate.resourceReleased()) {
-							// inizializzo
-							openspcoopstate.setUseConnection(true);
-							openspcoopstate.initResource(identitaPdD, this.msgContext.getIdModulo(), idTransazione);
-						}
-					}
+				if(
+						!this.routingStateless &&
+						!this.openspcoopstate.isUseConnection() && 
+						(this.openspcoopstate instanceof OpenSPCoopStateful) &&
+						this.openspcoopstate.resourceReleased()
+					) {
+					// inizializzo
+					this.openspcoopstate.setUseConnection(true);
+					this.openspcoopstate.initResource(this.identitaPdD, this.msgContext.getIdModulo(), this.idTransazione);
 				}
 			}
 			
-			parametriInvioBustaErrore.setOnewayVersione11(oneWayVersione11);
+			this.parametriInvioBustaErrore.setOnewayVersione11(this.oneWayVersione11);
 			
 		} catch (Exception e) {
-			msgDiag.logErroreGenerico(e,"AnalisiModalitaGestioneStatefulStateless");
-			logError(logCore, "Analisi modalita di gestione STATEFUL/STATELESS non riuscita: "	+ e);
+			this.msgDiag.logErroreGenerico(e,"AnalisiModalitaGestioneStatefulStateless");
+			logError(this.logCore, "Analisi modalita di gestione STATEFUL/STATELESS non riuscita: "	+ e);
 			if (this.msgContext.isGestioneRisposta()) {
 				
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 
@@ -3867,32 +3973,32 @@ public class RicezioneBuste {
 		// UPDATE: Modalita' gestione risposta (Sincrona/Fault/Ricevute...)
 		// Per i profili diversi dal sincrono e' possibile impostare dove far ritornare l'errore
 		if(
-				(bustaRichiesta!=null) &&
-				(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())==false) &&
-				(oneWayStateless==false) && 
-				(sincronoStateless==false) && 
-				(asincronoStateless==false) && 
-				(routingStateless==false) 
+				(this.bustaRichiesta!=null) &&
+				(!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) &&
+				(!this.oneWayStateless) && 
+				(!this.sincronoStateless) && 
+				(!this.asincronoStateless) && 
+				(!this.routingStateless) 
 			){
 			// New connection puo' essere usata solo se non siamo in modalita stateless
-			newConnectionForResponse = configurazionePdDReader.newConnectionForResponse();
+			this.newConnectionForResponse = this.configurazionePdDReader.newConnectionForResponse();
 		}
-		parametriInvioBustaErrore.setNewConnectionForResponse(newConnectionForResponse);
-		if( (oneWayStateless==false) && (sincronoStateless==false) && (asincronoStateless==false) && (routingStateless==false)){
+		this.parametriInvioBustaErrore.setNewConnectionForResponse(this.newConnectionForResponse);
+		if( (!this.oneWayStateless) && (!this.sincronoStateless) && (!this.asincronoStateless) && (!this.routingStateless)){
 			// New connection puo' essere usata solo se non siamo in modalita stateless
-			utilizzoIndirizzoTelematico = configurazionePdDReader.isUtilizzoIndirizzoTelematico();
+			this.utilizzoIndirizzoTelematico = this.configurazionePdDReader.isUtilizzoIndirizzoTelematico();
 		}
-		parametriInvioBustaErrore.setUtilizzoIndirizzoTelematico(utilizzoIndirizzoTelematico);
+		this.parametriInvioBustaErrore.setUtilizzoIndirizzoTelematico(this.utilizzoIndirizzoTelematico);
 
 		/* --------- Rilascio connessione se agisco come router stateless --------------- */
-		if(routingStateless){
-			openspcoopstate.releaseResource();
+		if(this.routingStateless){
+			this.openspcoopstate.releaseResource();
 		} 
 
-		Integrazione infoIntegrazione = new Integrazione();
-		infoIntegrazione.setIdModuloInAttesa(this.msgContext.getIdModulo());
-		infoIntegrazione.setStateless(portaStateless);
-		parametriGenerazioneBustaErrore.setIntegrazione(infoIntegrazione);
+		this.infoIntegrazione = new Integrazione();
+		this.infoIntegrazione.setIdModuloInAttesa(this.msgContext.getIdModulo());
+		this.infoIntegrazione.setStateless(this.portaStateless);
+		this.parametriGenerazioneBustaErrore.setIntegrazione(this.infoIntegrazione);
 
 
 
@@ -3911,30 +4017,29 @@ public class RicezioneBuste {
 		try{
 			InRequestProtocolContext inRequestProtocolContext = new InRequestProtocolContext(inRequestContext);
 			if(inRequestProtocolContext.getStato()==null) {
-				inRequestProtocolContext.setStato(openspcoopstate.getStatoRichiesta());
+				inRequestProtocolContext.setStato(this.openspcoopstate.getStatoRichiesta());
 			}
 			if(inRequestProtocolContext.getConnettore()!=null){
 				inRequestProtocolContext.getConnettore().setCredenziali(credenziali);
 			}
 			inRequestProtocolContext.setProtocollo(this.msgContext.getProtocol());
 			inRequestProtocolContext.setIntegrazione(this.msgContext.getIntegrazione());
-			GestoreHandlers.inRequestProtocol(inRequestProtocolContext, msgDiag, logCore);
+			GestoreHandlers.inRequestProtocol(inRequestProtocolContext, this.msgDiag, this.logCore);
 		}catch(Exception e){		
 			ErroreIntegrazione erroreIntegrazione = null;
 			IntegrationFunctionError integrationFunctionError = null; 
-			if(e instanceof HandlerException){
-				HandlerException he = (HandlerException) e;
+			if(e instanceof HandlerException he){
 				if(he.isEmettiDiagnostico()){
-					msgDiag.logErroreGenerico(e,he.getIdentitaHandler());
+					this.msgDiag.logErroreGenerico(e,he.getIdentitaHandler());
 				}
-				logError(logCore, "Gestione InRequestProtocolHandler non riuscita ("+he.getIdentitaHandler()+"): "	+ he);
+				logError(this.logCore, "Gestione InRequestProtocolHandler non riuscita ("+he.getIdentitaHandler()+"): "	+ he);
 				if(this.msgContext.isGestioneRisposta()){
 					erroreIntegrazione = he.convertToErroreIntegrazione();
 					integrationFunctionError = he.getIntegrationFunctionError();
 				}
 			}else{
-				msgDiag.logErroreGenerico(e,"InvocazioneInRequestHandler");
-				logError(logCore, "Gestione InRequestProtocolHandler non riuscita: "	+ e);
+				this.msgDiag.logErroreGenerico(e,"InvocazioneInRequestHandler");
+				logError(this.logCore, "Gestione InRequestProtocolHandler non riuscita: "	+ e);
 			}
 			if (this.msgContext.isGestioneRisposta()) {
 				
@@ -3946,21 +4051,20 @@ public class RicezioneBuste {
 					integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 				}
 				
-				parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreIntegrazione);
-				OpenSPCoop2Message errorMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
-				if(e instanceof HandlerException){
-					HandlerException he = (HandlerException) e;
+				this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreIntegrazione);
+				OpenSPCoop2Message errorMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
+				if(e instanceof HandlerException he){
 					he.customized(errorMsg);
 				}
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -3974,70 +4078,69 @@ public class RicezioneBuste {
 		
 
 		// Validazione Semantica (se modalita router non attiva)
-		if(!functionAsRouter){
+		if(!this.functionAsRouter){
 
 
 			/* ----------- Raccolta FlowParameter MTOM / Security ------------ */
-			msgDiag.mediumDebug("Raccolta FlowParameter MTOM / Security proprieta...");
+			this.msgDiag.mediumDebug("Raccolta FlowParameter MTOM / Security proprieta...");
 			MTOMProcessor mtomProcessor = null;
 			try{
 				
 				// read flow Properties
-				flowPropertiesRequest = ricezioneBusteUtils.getFlowPropertiesRequest(requestMessage, bustaRichiesta, configurazionePdDReader, 
-						((StateMessage)openspcoopstate.getStatoRichiesta()), msgDiag,logCore,propertiesReader,
-						ruoloBustaRicevuta,implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),pa);				
-				flowPropertiesResponse = ricezioneBusteUtils.getFlowPropertiesResponse(requestMessage, bustaRichiesta, configurazionePdDReader, 
-						((StateMessage)openspcoopstate.getStatoRichiesta()), msgDiag,logCore,propertiesReader,
-						ruoloBustaRicevuta,implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),pa,
-						flowPropertiesRequest);
-				parametriGenerazioneBustaErrore.setFlowPropertiesResponse(flowPropertiesResponse);
+				this.flowPropertiesRequest = ricezioneBusteUtils.getFlowPropertiesRequest(this.requestMessage, this.bustaRichiesta, this.configurazionePdDReader, 
+						((StateMessage)this.openspcoopstate.getStatoRichiesta()), this.msgDiag,this.logCore,propertiesReader,
+						this.ruoloBustaRicevuta,this.implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),this.pa);				
+				this.flowPropertiesResponse = ricezioneBusteUtils.getFlowPropertiesResponse(this.requestMessage, this.bustaRichiesta, this.configurazionePdDReader, 
+						((StateMessage)this.openspcoopstate.getStatoRichiesta()), this.msgDiag,this.logCore,propertiesReader,
+						this.ruoloBustaRicevuta,this.implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),this.pa,
+						this.flowPropertiesRequest);
+				this.parametriGenerazioneBustaErrore.setFlowPropertiesResponse(this.flowPropertiesResponse);
 				
 				// init message security context
-				if(flowPropertiesRequest!=null && flowPropertiesRequest.messageSecurity!=null && 
-						flowPropertiesRequest.messageSecurity.getFlowParameters()!=null){
-					if(flowPropertiesRequest.messageSecurity.getFlowParameters().size() > 0){
-						messageSecurityContext.setIncomingProperties(flowPropertiesRequest.messageSecurity.getFlowParameters());
-					}
+				if(this.flowPropertiesRequest!=null && this.flowPropertiesRequest.messageSecurity!=null && 
+						this.flowPropertiesRequest.messageSecurity.getFlowParameters()!=null &&
+					this.flowPropertiesRequest.messageSecurity.getFlowParameters().size() > 0){
+					this.messageSecurityContext.setIncomingProperties(this.flowPropertiesRequest.messageSecurity.getFlowParameters());
 				}
 				
 				// init mtom processor
-				mtomProcessor = new MTOMProcessor(flowPropertiesRequest.mtom, flowPropertiesRequest.messageSecurity, 
-						tipoPorta, msgDiag, logCore, pddContext);
+				mtomProcessor = new MTOMProcessor(this.flowPropertiesRequest.mtom, this.flowPropertiesRequest.messageSecurity, 
+						this.tipoPorta, this.msgDiag, this.logCore, this.pddContext);
 				
-				msgDiag.mediumDebug("Raccolta FlowParameter MTOM / Security completata con successo");
+				this.msgDiag.mediumDebug("Raccolta FlowParameter MTOM / Security completata con successo");
 				
 			}catch(Exception e){
 
 				// Emetto log, non ancora emesso
 				boolean mittenteEsistente = validatore.getBusta()!=null && 
 						(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null); 
-				msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, !mittenteEsistente);
+				this.msgDiag.emitRicezioneMessaggioModuloBuste(this.msgDiag, this.pddContext, !mittenteEsistente);
 			
-				msgDiag.logErroreGenerico(e,"RaccoltaFlowParameter_MTOM_Security");
+				this.msgDiag.logErroreGenerico(e,"RaccoltaFlowParameter_MTOM_Security");
 				
 				// Tracciamento richiesta: non ancora registrata
 				if(this.msgContext.isTracciamentoAbilitato()){
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la lettura delle proprieta' di MTOM / SecurityMessage: "+e.getMessage());
-					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+					this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-							correlazioneApplicativa);
+							this.correlazioneApplicativa);
 				}
 				if(this.msgContext.isGestioneRisposta()){
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 				}
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 
@@ -4045,222 +4148,222 @@ public class RicezioneBuste {
 			
 			
 			/* ----------- MTOM Processor BeforeSecurity ------------ */
-			msgDiag.mediumDebug("MTOM Processor [BeforeSecurity]...");
+			this.msgDiag.mediumDebug("MTOM Processor [BeforeSecurity]...");
 			try{
-				mtomProcessor.mtomBeforeSecurity(requestMessage, flowPropertiesRequest.tipoMessaggio);
+				mtomProcessor.mtomBeforeSecurity(this.requestMessage, this.flowPropertiesRequest.tipoMessaggio);
 			}catch(Exception e){
 				// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
-				//msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
+				/**this.msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");*/
 				
 				// Tracciamento richiesta: non ancora registrata
 				if(this.msgContext.isTracciamentoAbilitato()){
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la gestione MTOM(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+"): "+e.getMessage());
-					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+					this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-							correlazioneApplicativa);
+							this.correlazioneApplicativa);
 				}
 				if(this.msgContext.isGestioneRisposta()){
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR));
-					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED);
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 				}
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 			
 
 			/* ----------- Validazione Semantica (viene anche applicata la sicurezza) ------------ */
 			
-			msgDiag.logPersonalizzato("validazioneSemantica.beforeSecurity");
+			this.msgDiag.logPersonalizzato("validazioneSemantica.beforeSecurity");
 			boolean presenzaRichiestaProtocollo = validatore.validazioneSemantica_beforeMessageSecurity(requestInfo.getProtocolServiceBinding(),false, null, requestInfo);
 			
-			if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
+			if(!validatore.isRilevatiErroriDuranteValidazioneSemantica()){
 				
 				try{
-					if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
-						msgDiag.mediumDebug("Normalize to saajImpl");
-						//System.out.println("RicezioneBuste.request.normalize");
-						requestMessage = requestMessage.normalizeToSaajImpl();
+					if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(this.messageSecurityContext)){
+						this.msgDiag.mediumDebug("Normalize to saajImpl");
+						/**System.out.println("RicezioneBuste.request.normalize");*/
+						this.requestMessage = this.requestMessage.normalizeToSaajImpl();
 						
-						validatore.updateMsg(requestMessage);
+						validatore.updateMsg(this.requestMessage);
 					}
 				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"NormalizeRequestToSaajImpl");
+					this.msgDiag.logErroreGenerico(e,"NormalizeRequestToSaajImpl");
 					
 					// Tracciamento richiesta: non ancora registrata
 					if(this.msgContext.isTracciamentoAbilitato()){
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la gestione NormalizeRequestToSaajImpl: "+e.getMessage());
-						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+						this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-								correlazioneApplicativa);
+								this.correlazioneApplicativa);
 					}
 					if(this.msgContext.isGestioneRisposta()){
 						
-						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+						this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 						if(validatore.getErrore_integrationFunctionError()!=null) {
-							parametriGenerazioneBustaErrore.setIntegrationFunctionError(validatore.getErrore_integrationFunctionError());
+							this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(validatore.getErrore_integrationFunctionError());
 						}
-						OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-						parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-						ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+						this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+						this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+						this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 					}
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 				}
 				
-				msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta ...");
-				presenzaRichiestaProtocollo = validatore.validazioneSemantica_messageSecurity_readSecurityInfo(messageSecurityContext);
-				msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta completata con successo");
+				this.msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta ...");
+				presenzaRichiestaProtocollo = validatore.validazioneSemantica_messageSecurity_readSecurityInfo(this.messageSecurityContext);
+				this.msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta completata con successo");
 			
-				if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){				
-					if(messageSecurityContext!= null && messageSecurityContext.getIncomingProperties() != null && messageSecurityContext.getIncomingProperties().size() > 0){
+				if(!validatore.isRilevatiErroriDuranteValidazioneSemantica()){				
+					if(this.messageSecurityContext!= null && this.messageSecurityContext.getIncomingProperties() != null && this.messageSecurityContext.getIncomingProperties().size() > 0){
 					
-						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getIncomingProperties());
-						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
-						pddContext.addObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
+						String tipoSicurezza = SecurityConstants.convertActionToString(this.messageSecurityContext.getIncomingProperties());
+						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
+						this.pddContext.addObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA, tipoSicurezza);
 						
-						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
+						this.msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
 						
 						StringBuilder bfErroreSecurity = new StringBuilder();
-						DynamicMapBuilderUtils.injectDynamicMap(bustaRichiesta, requestInfo, pddContext, logCore);
-						presenzaRichiestaProtocollo = validatore.validazioneSemantica_messageSecurity_process(messageSecurityContext, bfErroreSecurity,
-								transaction!=null ? transaction.getTempiElaborazione() : null,
+						DynamicMapBuilderUtils.injectDynamicMap(this.bustaRichiesta, requestInfo, this.pddContext, this.logCore);
+						presenzaRichiestaProtocollo = validatore.validazioneSemantica_messageSecurity_process(this.messageSecurityContext, bfErroreSecurity,
+								this.transaction!=null ? this.transaction.getTempiElaborazione() : null,
 										true);
 						
 						if(bfErroreSecurity.length()>0){
-							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , bfErroreSecurity.toString() );
-							msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInErrore");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , bfErroreSecurity.toString() );
+							this.msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInErrore");
 						}
 						else{
-							msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaEffettuato");
+							this.msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaEffettuato");
 						}
 					}	
 					else{
-						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaDisabilitato");
+						this.msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaDisabilitato");
 					}
 				}
 			
-				if(validatore.isRilevatiErroriDuranteValidazioneSemantica()==false){
+				if(!validatore.isRilevatiErroriDuranteValidazioneSemantica()){
 					
-					msgDiag.logPersonalizzato("validazioneSemantica.afterSecurity");
-					presenzaRichiestaProtocollo = validatore.validazioneSemantica_afterMessageSecurity(proprietaManifestAttachments, validazioneIDBustaCompleta, requestInfo);
+					this.msgDiag.logPersonalizzato("validazioneSemantica.afterSecurity");
+					presenzaRichiestaProtocollo = validatore.validazioneSemantica_afterMessageSecurity(this.proprietaManifestAttachments, validazioneIDBustaCompleta, requestInfo);
 			
 				}
 			}
 
-			if(presenzaRichiestaProtocollo == false){
+			if(!presenzaRichiestaProtocollo){
 
 				// Emetto log, non ancora emesso
 				boolean mittenteEsistente = validatore.getBusta()!=null && 
 						(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null); 
-				msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, !mittenteEsistente);
+				this.msgDiag.emitRicezioneMessaggioModuloBuste(this.msgDiag, this.pddContext, !mittenteEsistente);
 				
 				try{
-					msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, validatore.getErrore().getDescrizione(protocolFactory));
+					this.msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, validatore.getErrore().getDescrizione(this.protocolFactory));
 				}catch(Exception e){
-					logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
+					logError(this.logCore, "getDescrizione protocollo Error:"+e.getMessage(),e);
 				}
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, "semantica");
-				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneNonRiuscita");
+				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_BUSTA, CostantiPdD.TIPO_VALIDAZIONE_BUSTA_SEMANTICA);
+				this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_NON_RIUSCITA);
 				
 				// Tracciamento richiesta: non ancora registrata
 				if(this.msgContext.isTracciamentoAbilitato()){
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
-							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneNonRiuscita"));
-					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(this.msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_NON_RIUSCITA));
+					this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-							correlazioneApplicativa);
+							this.correlazioneApplicativa);
 				}
 				if(this.msgContext.isGestioneRisposta()){
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO));
 					if(validatore.getErrore_integrationFunctionError()!=null) {
-						parametriGenerazioneBustaErrore.setIntegrationFunctionError(validatore.getErrore_integrationFunctionError());
+						this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(validatore.getErrore_integrationFunctionError());
 					}
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,validatore.getEccezioneProcessamentoValidazioneSemantica());
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,validatore.getEccezioneProcessamentoValidazioneSemantica());
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 				}
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 			
 			
 			/* ----------- MTOM Processor AfterSecurity ------------ */
-			msgDiag.mediumDebug("MTOM Processor [AfterSecurity]...");
+			this.msgDiag.mediumDebug("MTOM Processor [AfterSecurity]...");
 			try{
-				mtomProcessor.mtomAfterSecurity(requestMessage, flowPropertiesRequest.tipoMessaggio);
+				mtomProcessor.mtomAfterSecurity(this.requestMessage, this.flowPropertiesRequest.tipoMessaggio);
 			}catch(Exception e){
 				// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
-				//msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
+				/**this.msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");*/
 				
 				// Tracciamento richiesta: non ancora registrata
 				if(this.msgContext.isTracciamentoAbilitato()){
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la gestione MTOM(AfterSec-"+mtomProcessor.getMTOMProcessorType()+"): "+e.getMessage());
-					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+					this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-							correlazioneApplicativa);
+							this.correlazioneApplicativa);
 				}
 				if(this.msgContext.isGestioneRisposta()){
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR));
-					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED);
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_REQUEST_FAILED);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 				}
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 			
 		}
-		java.util.List<Eccezione> erroriValidazione = validatore.getEccezioniValidazione();
-		java.util.List<Eccezione> erroriProcessamento =validatore.getEccezioniProcessamento();
+		this.erroriValidazione = validatore.getEccezioniValidazione();
+		this.erroriProcessamento =validatore.getEccezioniProcessamento();
 		IntegrationFunctionError integrationFunctionErrorValidazione = validatore.getErrore_integrationFunctionError(); 
 		SecurityInfo securityInfoRequest = validatore.getSecurityInfo();
 		
-		boolean isMessaggioErroreProtocollo = validatore.isErroreProtocollo();
+		this.isMessaggioErroreProtocollo = validatore.isErroreProtocollo();
 		// Se ho un msg Errore e' interessante solo utilizzare mittente/destinatario poiche' il servizio non esistera'
 		// La busta e' stata invertita tra mittente e destinatario
-		if(isMessaggioErroreProtocollo && idServizio!=null){
-			this.cleanDatiServizio(idServizio);
-			idServizio.setAzione(null);
+		if(this.isMessaggioErroreProtocollo && this.idServizio!=null){
+			this.cleanDatiServizio(this.idServizio);
+			this.idServizio.setAzione(null);
 		}
-		boolean bustaDiServizio = validatore.isBustaDiServizio();
+		this.bustaDiServizio = validatore.isBustaDiServizio();
 		if(validatore.getInfoServizio()!=null && validatore.getInfoServizio().getIdAccordo()!=null){
 			this.msgContext.getProtocol().setIdAccordo(validatore.getInfoServizio().getIdAccordo());
 			richiestaApplicativa.setIdAccordo(validatore.getInfoServizio().getIdAccordo());
@@ -4271,16 +4374,16 @@ public class RicezioneBuste {
 		}
 		
 		// Aggiorno eventuale valore ProfiloCollaborazione dipendete dal profilo (PDC)
-		if(bustaRichiesta!=null && this.msgContext.getProtocol()!=null) {
-			this.msgContext.getProtocol().setProfiloCollaborazione(bustaRichiesta.getProfiloDiCollaborazione(),bustaRichiesta.getProfiloDiCollaborazioneValue());
+		if(this.bustaRichiesta!=null && this.msgContext.getProtocol()!=null) {
+			this.msgContext.getProtocol().setProfiloCollaborazione(this.bustaRichiesta.getProfiloDiCollaborazione(),this.bustaRichiesta.getProfiloDiCollaborazioneValue());
 			if(
-					(bustaRichiesta!=null) &&
-					(bustaRichiesta.getVersioneServizio()!=null) && 
-					(bustaRichiesta.getVersioneServizio().intValue()>0) && 
+					(this.bustaRichiesta!=null) &&
+					(this.bustaRichiesta.getVersioneServizio()!=null) && 
+					(this.bustaRichiesta.getVersioneServizio().intValue()>0) && 
 					(this.msgContext.getProtocol().getVersioneServizio()!=null) &&
-					(bustaRichiesta.getVersioneServizio().intValue()!=this.msgContext.getProtocol().getVersioneServizio().intValue())
+					(this.bustaRichiesta.getVersioneServizio().intValue()!=this.msgContext.getProtocol().getVersioneServizio().intValue())
 				) {
-				this.msgContext.getProtocol().setVersioneServizio(bustaRichiesta.getVersioneServizio());
+				this.msgContext.getProtocol().setVersioneServizio(this.bustaRichiesta.getVersioneServizio());
 			}
 		}
 
@@ -4290,21 +4393,19 @@ public class RicezioneBuste {
 		
 		
 		/* ------------ Riconciliazione Mittente per caso intermediario ------------- */
-		if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) &&
-				pddContext.containsKey(CostantiPdD.INTERMEDIARIO)) {
-				Object o = pddContext.get(CostantiPdD.INTERMEDIARIO);
-				if(o instanceof IDSoggetto) {
-					IDSoggetto intermediario = (IDSoggetto) o;
-					if(soggettoFruitore!=null && soggettoFruitore.equals(intermediario) && bustaRichiesta!=null &&
-							bustaRichiesta.getMittente()!=null && !bustaRichiesta.getMittente().equals(intermediario.getNome())) {
-						soggettoFruitore.setNome(bustaRichiesta.getMittente());
-						soggettoFruitore.setCodicePorta(bustaRichiesta.getIdentificativoPortaMittente());
-						if(msgDiag!=null) {
-							msgDiag.setFruitore(soggettoFruitore);
-						}
-						if(this.msgContext.getProtocol()!=null) {
-							this.msgContext.getProtocol().setFruitore(soggettoFruitore);
-						}
+		if(Costanti.MODIPA_PROTOCOL_NAME.equals(this.protocolFactory.getProtocol()) &&
+				this.pddContext.containsKey(CostantiPdD.INTERMEDIARIO)) {
+				Object o = this.pddContext.get(CostantiPdD.INTERMEDIARIO);
+				if(o instanceof IDSoggetto intermediario &&
+					this.soggettoFruitore!=null && this.soggettoFruitore.equals(intermediario) && this.bustaRichiesta!=null &&
+					this.bustaRichiesta.getMittente()!=null && !this.bustaRichiesta.getMittente().equals(intermediario.getNome())) {
+					this.soggettoFruitore.setNome(this.bustaRichiesta.getMittente());
+					this.soggettoFruitore.setCodicePorta(this.bustaRichiesta.getIdentificativoPortaMittente());
+					if(this.msgDiag!=null) {
+						this.msgDiag.setFruitore(this.soggettoFruitore);
+					}
+					if(this.msgContext.getProtocol()!=null) {
+						this.msgContext.getProtocol().setFruitore(this.soggettoFruitore);
 					}
 				}
 		}
@@ -4315,13 +4416,13 @@ public class RicezioneBuste {
 		
 		/* ------------ Riconciliazione ID Messaggio con quello ricevuto nel token oAuth ------------- */
 		
-		if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol()) &&
-			pddContext.containsKey(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC)) {
-			Object o = pddContext.get(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC);
-			if(o instanceof String) {
-				msgDiag.updateKeywordIdMessaggioRichiesta((String)o);
-				idMessageRequest = (String)o;
-				this.msgContext.getProtocol().setIdRichiesta(idMessageRequest);
+		if(Costanti.MODIPA_PROTOCOL_NAME.equals(this.protocolFactory.getProtocol()) &&
+			this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC)) {
+			Object o = this.pddContext.get(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC);
+			if(o instanceof String s) {
+				this.msgDiag.updateKeywordIdMessaggioRichiesta(s);
+				this.idMessageRequest = (String)o;
+				this.msgContext.getProtocol().setIdRichiesta(this.idMessageRequest);
 			}
 		}
 		
@@ -4334,35 +4435,35 @@ public class RicezioneBuste {
 		
 		/* -------- Controlli Header di Integrazione ------------- */
 		
-		IProtocolConfiguration protocolConfig = protocolFactory.createProtocolConfiguration();
+		IProtocolConfiguration protocolConfig = this.protocolFactory.createProtocolConfiguration();
 		if(
 				(infoServizio!=null) && 
 				(infoServizio.getIdRiferimentoRichiesta()) &&
 				(protocolConfig.isIntegrationInfoRequired(TipoPdD.APPLICATIVA, requestInfo.getProtocolServiceBinding(),FunzionalitaProtocollo.RIFERIMENTO_ID_RICHIESTA))
 			) {
 			String riferimentoRichiesta = null;
-			if (headerIntegrazioneRichiesta!=null &&
-					headerIntegrazioneRichiesta.getBusta() != null && headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null) {
-				riferimentoRichiesta = headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio();
+			if (this.headerIntegrazioneRichiesta!=null &&
+					this.headerIntegrazioneRichiesta.getBusta() != null && this.headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio() != null) {
+				riferimentoRichiesta = this.headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio();
 			}
 			if(riferimentoRichiesta==null) {
 				StringBuilder bf = new StringBuilder();
-				for (int i = 0; i < tipiIntegrazionePA.length; i++) {
+				for (int i = 0; i < this.tipiIntegrazionePA.length; i++) {
 					if(i>0) {
 						bf.append(",");
 					}
-					bf.append(tipiIntegrazionePA[i]);
+					bf.append(this.tipiIntegrazionePA[i]);
 				}
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPI_INTEGRAZIONE ,bf.toString() );
-				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"riferimentoIdRichiesta.nonFornito");
+				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPI_INTEGRAZIONE ,bf.toString() );
+				this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"riferimentoIdRichiesta.nonFornito");
 				
 				// Tracciamento richiesta: non ancora registrata
 				if(this.msgContext.isTracciamentoAbilitato()){
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
-							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"riferimentoIdRichiesta.nonFornito"));
-					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(this.msgDiag.getMessaggio(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"riferimentoIdRichiesta.nonFornito"));
+					this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-							correlazioneApplicativa);
+							this.correlazioneApplicativa);
 				}
 				
 				if(this.msgContext.isGestioneRisposta()){
@@ -4370,17 +4471,17 @@ public class RicezioneBuste {
 					ErroreIntegrazione erroreIntegrazione = ErroriIntegrazione.ERRORE_442_RIFERIMENTO_ID_MESSAGGIO.getErroreIntegrazione();
 					IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.CORRELATION_INFORMATION_NOT_FOUND;
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreIntegrazione);
-					parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore, null);
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(erroreIntegrazione);
+					this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore, null);
 
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 				}
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 
 				
@@ -4394,16 +4495,16 @@ public class RicezioneBuste {
 		
 		/* ----------- Sbustamento ------------ */
 		BustaRawContent<?> headerProtocolloRichiesta = null;
-		if(functionAsRouter == false && 
-				isMessaggioErroreProtocollo==false && 
-				erroriProcessamento.size()==0 && erroriValidazione.size()==0 &&
-				bustaDiServizio==false){
-			msgDiag.highDebug("Tipo Messaggio Richiesta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
-					+"] ["+requestMessage.getClass().getName()+"]");
-			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory,openspcoopstate.getStatoRichiesta());
-			ProtocolMessage protocolMessage = sbustatore.sbustamento(requestMessage,pddContext,
-					bustaRichiesta,
-					RuoloMessaggio.RICHIESTA,properties.isValidazioneManifestAttachments(),proprietaManifestAttachments,
+		if(!this.functionAsRouter && 
+				!this.isMessaggioErroreProtocollo && 
+				this.erroriProcessamento.isEmpty() && this.erroriValidazione.isEmpty() &&
+				!this.bustaDiServizio){
+			this.msgDiag.highDebug("Tipo Messaggio Richiesta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
+					+"] ["+this.requestMessage.getClass().getName()+"]");
+			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(this.protocolFactory,this.openspcoopstate.getStatoRichiesta());
+			ProtocolMessage protocolMessage = sbustatore.sbustamento(this.requestMessage,this.pddContext,
+					this.bustaRichiesta,
+					RuoloMessaggio.RICHIESTA,properties.isValidazioneManifestAttachments(),this.proprietaManifestAttachments,
 					FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA, requestInfo);
 			if(protocolMessage!=null) {
 				if(protocolMessage.isUseBustaRawContentReadByValidation()) {
@@ -4412,10 +4513,10 @@ public class RicezioneBuste {
 				else {
 					headerProtocolloRichiesta = protocolMessage.getBustaRawContent();
 				}
-				requestMessage = protocolMessage.getMessage(); // updated
+				this.requestMessage = protocolMessage.getMessage(); // updated
 			}
-			msgDiag.highDebug("Tipo Messaggio Richiesta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
-					+"] ["+requestMessage.getClass().getName()+"]");
+			this.msgDiag.highDebug("Tipo Messaggio Richiesta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
+					+"] ["+this.requestMessage.getClass().getName()+"]");
 		}
 		else{
 			headerProtocolloRichiesta = soapHeaderElement;
@@ -4429,47 +4530,47 @@ public class RicezioneBuste {
 		 * NOTA: Vi e' l'overwrite dell'informazione sulla correlazione applicativa eventualmente letta prima dall'header di trasporto
 		 *        opzione comunuque per default disabitata.
 		 * --------------- */
-		if(functionAsRouter == false && 
-				isMessaggioErroreProtocollo==false && 
-				erroriProcessamento.size()==0 && erroriValidazione.size()==0 &&
-				bustaDiServizio==false &&
-				pa!=null && pa.getCorrelazioneApplicativa()!=null){
+		if(!this.functionAsRouter && 
+				!this.isMessaggioErroreProtocollo && 
+				this.erroriProcessamento.isEmpty() && this.erroriValidazione.isEmpty() &&
+				!this.bustaDiServizio &&
+				this.pa!=null && this.pa.getCorrelazioneApplicativa()!=null){
 		
 			GestoreCorrelazioneApplicativa gestoreCorrelazioneApplicativa = null;
 			try {
 				GestoreCorrelazioneApplicativaConfig caConfig = new GestoreCorrelazioneApplicativaConfig();
-				caConfig.setState(openspcoopstate.getStatoRichiesta());
-				caConfig.setAlog(logCore);
-				caConfig.setSoggettoFruitore(soggettoFruitore);
-				caConfig.setIdServizio(idServizio);
-				caConfig.setBusta(bustaRichiesta);
+				caConfig.setState(this.openspcoopstate.getStatoRichiesta());
+				caConfig.setAlog(this.logCore);
+				caConfig.setSoggettoFruitore(this.soggettoFruitore);
+				caConfig.setIdServizio(this.idServizio);
+				caConfig.setBusta(this.bustaRichiesta);
 				caConfig.setServizioApplicativo(servizioApplicativoFruitore);
-				caConfig.setProtocolFactory(protocolFactory);
-				caConfig.setTransaction(transaction);
-				caConfig.setPddContext(pddContext);
-				caConfig.setPa(pa);
+				caConfig.setProtocolFactory(this.protocolFactory);
+				caConfig.setTransaction(this.transaction);
+				caConfig.setPddContext(this.pddContext);
+				caConfig.setPa(this.pa);
 				gestoreCorrelazioneApplicativa = new GestoreCorrelazioneApplicativa(caConfig);
 				
-				gestoreCorrelazioneApplicativa.verificaCorrelazione(pa.getCorrelazioneApplicativa(), urlProtocolContext, requestMessage, 
-						headerIntegrazioneRichiesta, false);
+				gestoreCorrelazioneApplicativa.verificaCorrelazione(this.pa.getCorrelazioneApplicativa(), urlProtocolContext, this.requestMessage, 
+						this.headerIntegrazioneRichiesta, false);
 				
 				if(gestoreCorrelazioneApplicativa.getIdCorrelazione()!=null)
-					correlazioneApplicativa = gestoreCorrelazioneApplicativa.getIdCorrelazione();
+					this.correlazioneApplicativa = gestoreCorrelazioneApplicativa.getIdCorrelazione();
 				
 			}catch(Exception e){
 				
-				pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_CORRELAZIONE_APPLICATIVA_RICHIESTA, "true");
+				this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_CORRELAZIONE_APPLICATIVA_RICHIESTA, "true");
 				
-				msgDiag.logErroreGenerico(e,"CorrelazioneApplicativa("+bustaRichiesta.getID()+")");
-				logError(logCore, "Riscontrato errore durante la correlazione applicativa ["+bustaRichiesta.getID()+"]",e);
+				this.msgDiag.logErroreGenerico(e,"CorrelazioneApplicativa("+this.bustaRichiesta.getID()+")");
+				logError(this.logCore, "Riscontrato errore durante la correlazione applicativa ["+this.bustaRichiesta.getID()+"]",e);
 				
 				// Tracciamento richiesta: non ancora registrata
 				if(this.msgContext.isTracciamentoAbilitato()){
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = 
-							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la correlazione applicativa ["+bustaRichiesta.getID()+"]: "+e.getMessage());
-					tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la correlazione applicativa ["+this.bustaRichiesta.getID()+"]: "+e.getMessage());
+					this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 							Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-							correlazioneApplicativa);
+							this.correlazioneApplicativa);
 				}
 				
 				if(this.msgContext.isGestioneRisposta()){
@@ -4483,8 +4584,8 @@ public class RicezioneBuste {
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_529_CORRELAZIONE_APPLICATIVA_RICHIESTA_NON_RIUSCITA);
 					}
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(errore);
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(errore);
 					IntegrationFunctionError integrationFunctionError = null;
 					if(CodiceErroreIntegrazione.CODICE_416_CORRELAZIONE_APPLICATIVA_RICHIESTA_ERRORE.equals(errore.getCodiceErrore())){
 						integrationFunctionError = IntegrationFunctionError.APPLICATION_CORRELATION_IDENTIFICATION_REQUEST_FAILED;
@@ -4492,22 +4593,22 @@ public class RicezioneBuste {
 					else{
 						integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 					}
-					parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 				}
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 		}
 		else{
 			// L'informazione nel caso di functionAsRouter o isMessaggioErrore o erroriProcessamento.size()>0 o erroriValidazione.size()>0 o bustaDiServizio non e' significativa
 			// Invece nel caso di pa==null o di pa.getCorrelazioneApplicativa==null l'informazione eventualmente cmq letta prima non deve essere usata:
-			correlazioneApplicativa = null;
+			this.correlazioneApplicativa = null;
 		}
 		
 		
@@ -4521,65 +4622,60 @@ public class RicezioneBuste {
 		
 		
 		/* --------------- Header Integrazione SOAP (aggiornamento/eliminazione) -------------------  */
-		if(tipiIntegrazionePA!=null){
+		if(this.tipiIntegrazionePA!=null){
 			
 			if(inRequestPAMessage!=null){
-				inRequestPAMessage.setBustaRichiesta(bustaRichiesta);
-				inRequestPAMessage.setSoggettoMittente(soggettoFruitore);
+				inRequestPAMessage.setBustaRichiesta(this.bustaRichiesta);
+				inRequestPAMessage.setSoggettoMittente(this.soggettoFruitore);
 			}
 			
-			for (int i = 0; i < tipiIntegrazionePA.length; i++) {
+			for (int i = 0; i < this.tipiIntegrazionePA.length; i++) {
 				try {
-					IGestoreIntegrazionePA gestore = null;
-					try {
-						gestore = (IGestoreIntegrazionePA) pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
-					}catch(Exception e){
-						throw e;
-					}
+					IGestoreIntegrazionePA gestore = pluginLoader.newIntegrazionePortaApplicativa(this.tipiIntegrazionePA[i]);
 					if(gestore!=null){
 						String classType = null;
 						try {
 							classType = gestore.getClass().getName();
-							AbstractCore.init(gestore, pddContext, protocolFactory);
+							AbstractCore.init(gestore, this.pddContext, this.protocolFactory);
 						} catch (Exception e) {
-							throw new Exception(
+							throw new CoreException(
 									"Riscontrato errore durante l'inizializzazione della classe ["+ classType
-											+ "] da utilizzare per la gestione dell'integrazione delle erogazioni (aggiornamento/eliminazione) di tipo ["+ tipiIntegrazionePA[i] + "]: " + e.getMessage());
+											+ "] da utilizzare per la gestione dell'integrazione delle erogazioni (aggiornamento/eliminazione) di tipo ["+ this.tipiIntegrazionePA[i] + "]: " + e.getMessage());
 						}
-						if (gestore instanceof IGestoreIntegrazionePASoap) {
+						if (gestore instanceof IGestoreIntegrazionePASoap gestorePASoap) {
 							if(propertiesReader.deleteHeaderIntegrazioneRequestPA()){
-								((IGestoreIntegrazionePASoap)gestore).deleteInRequestHeader(inRequestPAMessage);
+								gestorePASoap.deleteInRequestHeader(inRequestPAMessage);
 							}
 							else{
-								((IGestoreIntegrazionePASoap)gestore).updateInRequestHeader(inRequestPAMessage, idMessageRequest, servizioApplicativoFruitore, correlazioneApplicativa);
+								gestorePASoap.updateInRequestHeader(inRequestPAMessage, this.idMessageRequest, servizioApplicativoFruitore, this.correlazioneApplicativa);
 							}
 						} 	
 					}
 				} catch (Exception e) {
-					msgDiag.logErroreGenerico(e,"HeaderIntegrazione("+tipiIntegrazionePA[i]+")");
+					this.msgDiag.logErroreGenerico(e,"HeaderIntegrazione("+this.tipiIntegrazionePA[i]+")");
 					
 					// Tracciamento richiesta: non ancora registrata
 					if(this.msgContext.isTracciamentoAbilitato()){
 						EsitoElaborazioneMessaggioTracciato esitoTraccia = 
-								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la gestione dell'Header di Integrazione("+tipiIntegrazionePA[i]+"): "+e.getMessage());
-						tracciamento.registraRichiesta(requestMessage,null,soapHeaderElement,bustaRichiesta,esitoTraccia,
+								EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore("Riscontrato errore durante la gestione dell'Header di Integrazione("+this.tipiIntegrazionePA[i]+"): "+e.getMessage());
+						this.tracciamento.registraRichiesta(this.requestMessage,null,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 								Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-								correlazioneApplicativa);
+								this.correlazioneApplicativa);
 					}
 					
 					if(this.msgContext.isGestioneRisposta()){
 						
-						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+						this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_541_GESTIONE_HEADER_INTEGRAZIONE));
-						OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-						parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-						ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+						this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+						this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+						this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 					}
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 				}
 			}
@@ -4597,11 +4693,11 @@ public class RicezioneBuste {
 		
 
 		/* ----------- Correlazione nei messaggi diagnostici ---------------*/
-		msgDiag.setIdCorrelazioneApplicativa(correlazioneApplicativa);
+		this.msgDiag.setIdCorrelazioneApplicativa(this.correlazioneApplicativa);
 		if(this.msgContext.getIntegrazione()!=null)
-			this.msgContext.getIntegrazione().setIdCorrelazioneApplicativa(correlazioneApplicativa);
-		parametriGenerazioneBustaErrore.setMsgDiag(msgDiag);
-		parametriInvioBustaErrore.setMsgDiag(msgDiag);
+			this.msgContext.getIntegrazione().setIdCorrelazioneApplicativa(this.correlazioneApplicativa);
+		this.parametriGenerazioneBustaErrore.setMsgDiag(this.msgDiag);
+		this.parametriInvioBustaErrore.setMsgDiag(this.msgDiag);
 		
 		
 		
@@ -4615,31 +4711,31 @@ public class RicezioneBuste {
 		
 		/* ----------- Emetto msg diagnostico di ricezione Busta ----------------------*/
 		DettaglioEccezione dettaglioEccezione = null;
-		boolean mittenteAnonimo = false;
+		this.mittenteAnonimo = false;
 		if(validatore.getBusta()!=null && 
 				(validatore.getBusta().getMittente()!=null || validatore.getBusta().getTipoMittente()!=null)){
-			mittenteAnonimo = false;
+			this.mittenteAnonimo = false;
 		}
 		else{
-			mittenteAnonimo = true;
+			this.mittenteAnonimo = true;
 		}
-		if(isMessaggioErroreProtocollo){
+		if(this.isMessaggioErroreProtocollo){
 			if(validatore.isMessaggioErroreIntestazione()){
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO_BUSTA_ERRORE, CostantiPdD.TIPO_MESSAGGIO_BUSTA_ERRORE_INTESTAZIONE);
+				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO_BUSTA_ERRORE, CostantiPdD.TIPO_MESSAGGIO_BUSTA_ERRORE_INTESTAZIONE);
 			}else{
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO_BUSTA_ERRORE, CostantiPdD.TIPO_MESSAGGIO_BUSTA_ERRORE_PROCESSAMENTO);
+				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO_BUSTA_ERRORE, CostantiPdD.TIPO_MESSAGGIO_BUSTA_ERRORE_PROCESSAMENTO);
 			}
-			msgDiag.logPersonalizzato("ricezioneMessaggioErrore");
+			this.msgDiag.logPersonalizzato("ricezioneMessaggioErrore");
 			
 			// Esamino se e' presente un elemento DettaglioEccezione
 			try{
-				dettaglioEccezione = XMLUtils.getDettaglioEccezione(logCore,requestMessage);
+				dettaglioEccezione = XMLUtils.getDettaglioEccezione(this.logCore,this.requestMessage);
 			}catch(Exception e){
-				logError(logCore, "Errore durante l'analisi del dettaglio dell'eccezione",e);
+				logError(this.logCore, "Errore durante l'analisi del dettaglio dell'eccezione",e);
 			}
 			
 		}else{
-			msgDiag.emitRicezioneMessaggioModuloBuste(msgDiag, pddContext, mittenteAnonimo);
+			this.msgDiag.emitRicezioneMessaggioModuloBuste(this.msgDiag, this.pddContext, this.mittenteAnonimo);
 		}
 
 
@@ -4654,22 +4750,20 @@ public class RicezioneBuste {
 
 
 		/* -------- Profilo di Gestione ------------- */
-		String versioneProtocollo = validatore.getProfiloGestione();
-		msgDiag.mediumDebug("Profilo di gestione ["+RicezioneBuste.ID_MODULO+"] della busta: "+versioneProtocollo);
-		richiestaApplicativa.setProfiloGestione(versioneProtocollo);
-		parametriGenerazioneBustaErrore.setProfiloGestione(versioneProtocollo);
-		IProtocolVersionManager moduleManager = protocolFactory.createProtocolVersionManager(versioneProtocollo);
-		if( !functionAsRouter ){
-
+		this.versioneProtocollo = validatore.getProfiloGestione();
+		this.msgDiag.mediumDebug("Profilo di gestione ["+RicezioneBuste.ID_MODULO+"] della busta: "+this.versioneProtocollo);
+		richiestaApplicativa.setProfiloGestione(this.versioneProtocollo);
+		this.parametriGenerazioneBustaErrore.setProfiloGestione(this.versioneProtocollo);
+		this.moduleManager = this.protocolFactory.createProtocolVersionManager(this.versioneProtocollo);
+		if( !this.functionAsRouter &&
 			// Riferimento messaggio con un profilo sincrono non può essere ricevuto in questo contesto.
-			if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione()) && 
-					bustaRichiesta.getRiferimentoMessaggio()!=null &&
-					!isMessaggioErroreProtocollo &&// aggiunto !isMessaggioErrore poiche' una busta di eccezione puo' contenenere in effetti il rifMsg
-					(ruoloBustaRicevuta==null || !ruoloBustaRicevuta.equals(RuoloBusta.RICHIESTA)) // aggiunto questo controllo perchè i protocolli con id riferimento richiesta hanno il rif messaggio, ma il ruolo rimane RICHIESTA
-					){ 
-				Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.RIFERIMENTO_MESSAGGIO_NON_VALIDO.getErroreCooperazione(), protocolFactory);
-				erroriValidazione.add(ecc);
-			}
+			org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) && 
+			this.bustaRichiesta.getRiferimentoMessaggio()!=null &&
+			!this.isMessaggioErroreProtocollo &&// aggiunto !isMessaggioErrore poiche' una busta di eccezione puo' contenenere in effetti il rifMsg
+			(this.ruoloBustaRicevuta==null || !this.ruoloBustaRicevuta.equals(RuoloBusta.RICHIESTA)) // aggiunto questo controllo perchè i protocolli con id riferimento richiesta hanno il rif messaggio, ma il ruolo rimane RICHIESTA
+			){ 
+			Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.RIFERIMENTO_MESSAGGIO_NON_VALIDO.getErroreCooperazione(), this.protocolFactory);
+			this.erroriValidazione.add(ecc);
 		}
 
 
@@ -4691,66 +4785,66 @@ public class RicezioneBuste {
 		/* -------- Gestione errori ------------- */
 		// Se sono in modalita router: se vi sono errori di processamento/validazione, ritorno subito l'errore.
 		// altrimenti: se sono presenti errore di processamento, ritorno subito l'errore.
-		msgDiag.mediumDebug("Gestione errori...");
-		if( (erroriProcessamento.size()>0) || (functionAsRouter && (erroriValidazione.size()>0)) ){
+		this.msgDiag.mediumDebug("Gestione errori...");
+		if( (!this.erroriProcessamento.isEmpty()) || (this.functionAsRouter && (!this.erroriValidazione.isEmpty())) ){
 			StringBuilder errore = new StringBuilder();
-			for(int k=0; k<erroriProcessamento.size();k++){
-				Eccezione erroreProcessamento = erroriProcessamento.get(k);
+			for(int k=0; k<this.erroriProcessamento.size();k++){
+				Eccezione erroreProcessamento = this.erroriProcessamento.get(k);
 				try{
-					errore.append("Processamento["+traduttore.toString(erroreProcessamento.getCodiceEccezione(),erroreProcessamento.getSubCodiceEccezione())+"] "+erroriProcessamento.get(k).getDescrizione(protocolFactory)+"\n");
+					errore.append("Processamento["+this.traduttore.toString(erroreProcessamento.getCodiceEccezione(),erroreProcessamento.getSubCodiceEccezione())+"] "+this.erroriProcessamento.get(k).getDescrizione(this.protocolFactory)+"\n");
 				}catch(Exception e){
-					logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
+					logError(this.logCore, "getDescrizione failure:"+e.getMessage(),e);
 				}
 			}
-			for(int k=0; k<erroriValidazione.size();k++){
-				Eccezione erroreValidazione = erroriValidazione.get(k);
+			for(int k=0; k<this.erroriValidazione.size();k++){
+				Eccezione erroreValidazione = this.erroriValidazione.get(k);
 				try{
-					errore.append("Validazione["+traduttore.toString(erroreValidazione.getCodiceEccezione(),erroreValidazione.getSubCodiceEccezione())+"] "+erroriValidazione.get(k).getDescrizione(protocolFactory)+"\n");
+					errore.append("Validazione["+this.traduttore.toString(erroreValidazione.getCodiceEccezione(),erroreValidazione.getSubCodiceEccezione())+"] "+this.erroriValidazione.get(k).getDescrizione(this.protocolFactory)+"\n");
 				}catch(Exception e){
-					logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
+					logError(this.logCore, "getDescrizione errore validazione fallita:"+e.getMessage(),e);
 				}
 			}
-			msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, errore.toString());
-			msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_ECCEZIONI, (erroriProcessamento.size()+erroriValidazione.size())+"" );
-			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneBusta.bustaNonCorretta");
+			this.msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, errore.toString());
+			this.msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_ECCEZIONI, (this.erroriProcessamento.size()+this.erroriValidazione.size())+"" );
+			this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA);
 			// Tracciamento richiesta: non ancora registrata
 			if(this.msgContext.isTracciamentoAbilitato()){
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
-						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneBusta.bustaNonCorretta"));
-				tracciamento.registraRichiesta(requestMessage,securityInfoRequest,soapHeaderElement,bustaRichiesta,esitoTraccia,
+						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(this.msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA));
+				this.tracciamento.registraRichiesta(this.requestMessage,securityInfoRequest,soapHeaderElement,this.bustaRichiesta,esitoTraccia,
 						Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-						correlazioneApplicativa);
+						this.correlazioneApplicativa);
 			}
 			if(this.msgContext.isGestioneRisposta()){
 				OpenSPCoop2Message errorOpenSPCoopMsg = null;
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				if(erroriProcessamento.size()>0){
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				if(!this.erroriProcessamento.isEmpty()){
 					// inserisco in erroriProcessamento anche erroriValidazione
-					for(int j=0; j<erroriValidazione.size(); j++){
-						erroriProcessamento.add(erroriValidazione.get(j));
+					for(int j=0; j<this.erroriValidazione.size(); j++){
+						this.erroriProcessamento.add(this.erroriValidazione.get(j));
 					}
 
-					parametriGenerazioneBustaErrore.setError(erroriProcessamento);
-					errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,null);
+					this.parametriGenerazioneBustaErrore.setError(this.erroriProcessamento);
+					errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,null);
 
 				}else{
 
-					parametriGenerazioneBustaErrore.setError(erroriValidazione);
+					this.parametriGenerazioneBustaErrore.setError(this.erroriValidazione);
 					if(integrationFunctionErrorValidazione!=null) {
-						parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionErrorValidazione);
+						this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionErrorValidazione);
 					}
-					errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+					errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(this.parametriGenerazioneBustaErrore);
 
 				}
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 
@@ -4769,23 +4863,23 @@ public class RicezioneBuste {
 		
 		/* -------- Tracciamento ------------- */
 		if(this.msgContext.isTracciamentoAbilitato()){
-			msgDiag.mediumDebug("Tracciamento busta di richiesta...");
+			this.msgDiag.mediumDebug("Tracciamento busta di richiesta...");
 			
 			EsitoElaborazioneMessaggioTracciato esitoTraccia = null;
-			if( (erroriProcessamento.size()>0) || (erroriValidazione.size()>0) ){
+			if( (!this.erroriProcessamento.isEmpty()) || (!this.erroriValidazione.isEmpty()) ){
 				
 				boolean foundErroriGravi = false;
 				
 				String dettaglioErrore = null;
 				StringBuilder eccBuffer = new StringBuilder();
-				for(int k = 0; k < erroriProcessamento.size() ; k++){
-					Eccezione er = erroriProcessamento.get(k);
+				for(int k = 0; k < this.erroriProcessamento.size() ; k++){
+					Eccezione er = this.erroriProcessamento.get(k);
 					if(k>0)
 						eccBuffer.append(" ");
-					eccBuffer.append(er.toString(protocolFactory));
+					eccBuffer.append(er.toString(this.protocolFactory));
 					eccBuffer.append(";");
 					
-					if(moduleManager.isIgnoraEccezioniLivelloNonGrave()){
+					if(this.moduleManager.isIgnoraEccezioniLivelloNonGrave()){
 						if(er.getRilevanza()!=null){
 							if(LivelloRilevanza.isEccezioneLivelloGrave(er.getRilevanza())){
 								foundErroriGravi = true;
@@ -4797,14 +4891,14 @@ public class RicezioneBuste {
 						foundErroriGravi = true;
 					}
 				}
-				for(int k = 0; k < erroriValidazione.size() ; k++){
-					Eccezione er = erroriValidazione.get(k);
+				for(int k = 0; k < this.erroriValidazione.size() ; k++){
+					Eccezione er = this.erroriValidazione.get(k);
 					if(eccBuffer.length()>0)
 						eccBuffer.append(" ");
-					eccBuffer.append(er.toString(protocolFactory));
+					eccBuffer.append(er.toString(this.protocolFactory));
 					eccBuffer.append(";");
 					
-					if(moduleManager.isIgnoraEccezioniLivelloNonGrave()){
+					if(this.moduleManager.isIgnoraEccezioniLivelloNonGrave()){
 						if(er.getRilevanza()!=null){
 							if(LivelloRilevanza.isEccezioneLivelloGrave(er.getRilevanza())){
 								foundErroriGravi = true;
@@ -4816,12 +4910,12 @@ public class RicezioneBuste {
 						foundErroriGravi = true;
 					}
 				}
-				msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_ECCEZIONI, erroriProcessamento.size()+erroriValidazione.size()+"");
-				msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, eccBuffer.toString());
-				if(isMessaggioErroreProtocollo){
-					dettaglioErrore = msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneBustaErrore.listaEccezioniMalformata");
+				this.msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_ECCEZIONI, this.erroriProcessamento.size()+this.erroriValidazione.size()+"");
+				this.msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, eccBuffer.toString());
+				if(this.isMessaggioErroreProtocollo){
+					dettaglioErrore = this.msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneBustaErrore.listaEccezioniMalformata");
 				}else{
-					dettaglioErrore = msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneBusta.bustaNonCorretta");
+					dettaglioErrore = this.msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA);
 				}
 				if(foundErroriGravi){
 					esitoTraccia = 
@@ -4838,9 +4932,9 @@ public class RicezioneBuste {
 			}
 			
 			// Tracciamento Busta Ricevuta
-			tracciamento.registraRichiesta(requestMessage,securityInfoRequest,headerProtocolloRichiesta,bustaRichiesta,esitoTraccia,
+			this.tracciamento.registraRichiesta(this.requestMessage,securityInfoRequest,headerProtocolloRichiesta,this.bustaRichiesta,esitoTraccia,
 					Tracciamento.createLocationString(true,this.msgContext.getSourceLocation()),
-					correlazioneApplicativa);
+					this.correlazioneApplicativa);
 		}
 
 
@@ -4856,65 +4950,65 @@ public class RicezioneBuste {
 
 
 		/* -------- Check Mittente o Destinatario o Servizio conosciuto o identificativo errato ---------------- */
-		msgDiag.mediumDebug("Controllo mittente/destinatario/servizio (se sconosciuto, risposta immediata sulla connessione)...");
-		for(int k = 0; k < erroriValidazione.size() ; k++){
-			Eccezione er = erroriValidazione.get(k);
+		this.msgDiag.mediumDebug("Controllo mittente/destinatario/servizio (se sconosciuto, risposta immediata sulla connessione)...");
+		for(int k = 0; k < this.erroriValidazione.size() ; k++){
+			Eccezione er = this.erroriValidazione.get(k);
 			if( CodiceErroreCooperazione.isEccezioneMittente(er.getCodiceEccezione()) ||			
 				CodiceErroreCooperazione.isEccezioneDestinatario(er.getCodiceEccezione()) ||	
 				CodiceErroreCooperazione.isEccezioneServizio(er.getCodiceEccezione()) ||	
 				CodiceErroreCooperazione.isEccezioneIdentificativoMessaggio(er.getCodiceEccezione()) ||	
 				CodiceErroreCooperazione.isEccezioneSicurezzaAutorizzazione(er.getCodiceEccezione()) ){
 
-				if(!functionAsRouter){ 
+				if(!this.functionAsRouter &&
 					// Può esistere un errore mittente, che non è altro che una segnalazione sull'indirizzo telematico
-					if(moduleManager.isEccezioniLivelloInfoAbilitato()){
-						if(LivelloRilevanza.INFO.equals(er.getRilevanza()))
-							continue;
-					}
+					this.moduleManager.isEccezioniLivelloInfoAbilitato()&&
+					LivelloRilevanza.INFO.equals(er.getRilevanza())
+					) {
+					continue;
 				}
 
 				StringBuilder eccBuffer = new StringBuilder();
-				for(int j = 0; j < erroriValidazione.size() ; j++){
+				for(int j = 0; j < this.erroriValidazione.size() ; j++){
 					if(j>0)
 						eccBuffer.append("\n");
-					eccBuffer.append(erroriValidazione.get(j).toString(protocolFactory));
+					eccBuffer.append(this.erroriValidazione.get(j).toString(this.protocolFactory));
 				}
-				msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, eccBuffer.toString());
-				msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_ECCEZIONI, erroriValidazione.size()+"" );
-				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"validazioneBusta.bustaNonCorretta");
+				this.msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, eccBuffer.toString());
+				this.msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_ECCEZIONI, this.erroriValidazione.size()+"" );
+				this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA);
 				if(this.msgContext.isGestioneRisposta()){
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
 					List<Eccezione> errs = new ArrayList<>();
-					for(int add = 0; add < erroriValidazione.size() ; add++){
-						errs.add(erroriValidazione.get(add));
+					for(int add = 0; add < this.erroriValidazione.size() ; add++){
+						errs.add(this.erroriValidazione.get(add));
 					}
-					parametriGenerazioneBustaErrore.setError(errs);
+					this.parametriGenerazioneBustaErrore.setError(errs);
 					
 					if(integrationFunctionErrorValidazione!=null) {
-						parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionErrorValidazione);
+						this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionErrorValidazione);
 					}
 					else if(CodiceErroreCooperazione.isEccezioneSicurezzaAutorizzazione(er.getCodiceEccezione())) {
-						parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.AUTHORIZATION);
+						this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.AUTHORIZATION);
 					}
 					else {
-						parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_REQUEST);
+						this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INVALID_INTEROPERABILITY_PROFILE_REQUEST);
 					}
 					
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(this.parametriGenerazioneBustaErrore);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
 					// se il mittente e' sconosciuto non e' possibile utilizzare l'invio su di una nuova connessione,
 					// a meno della presenza dell'indirizzo telematico, poiche' non esistera un connettore su cui spedire
 
-					parametriInvioBustaErrore.setUtilizzoIndirizzoTelematico(false);
-					parametriInvioBustaErrore.setNewConnectionForResponse(false);
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setUtilizzoIndirizzoTelematico(false);
+					this.parametriInvioBustaErrore.setNewConnectionForResponse(false);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 				}
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 		}
@@ -4937,34 +5031,36 @@ public class RicezioneBuste {
 		// Guardo se vi sono eccezioni di validazione
 		// Se ci sono eccezioni di processamento vengono ritornate prima
 		boolean eccezioniValidazioni = false;
-		for(int k = 0; k < erroriValidazione.size() ; k++){
-			Eccezione er = erroriValidazione.get(k);
-			if(!functionAsRouter){ 
+		for(int k = 0; k < this.erroriValidazione.size() ; k++){
+			Eccezione er = this.erroriValidazione.get(k);
+			if(!this.functionAsRouter &&
 				// Check profilo linee guida 1.0
 				// Può esistere un errore, che non è altro che una segnalazione sull'indirizzo telematico
-				if(moduleManager.isEccezioniLivelloInfoAbilitato()){
-					if(LivelloRilevanza.INFO.equals(er.getRilevanza()))
-						continue;
-				}
+				this.moduleManager.isEccezioniLivelloInfoAbilitato() &&
+				LivelloRilevanza.INFO.equals(er.getRilevanza())
+				){
+				// nop
 			}
-			eccezioniValidazioni = true;
-			break;
+			else {
+				eccezioniValidazioni = true;
+				break;
+			}
 		}
 		
-		msgDiag.mediumDebug("Autorizzazione ...");
+		this.msgDiag.mediumDebug("Autorizzazione ...");
 		String tipoAutorizzazione = null;
 		try{
-			if(functionAsRouter){
+			if(this.functionAsRouter){
 				tipoAutorizzazione = propertiesReader.getTipoAutorizzazioneBuste();
 			}
 			else{
-				if(pa!=null){
-					tipoAutorizzazione = configurazionePdDReader.getAutorizzazione(pa);
+				if(this.pa!=null){
+					tipoAutorizzazione = this.configurazionePdDReader.getAutorizzazione(this.pa);
 				}
 				// Non ha senso effettuare l'autorizzazione basato sulla PD
-//				else{
-//					tipoAutorizzazione = configurazionePdDReader.getAutorizzazione(pd);
-//				}
+				/**else{
+					tipoAutorizzazione = this.configurazionePdDReader.getAutorizzazione(this.pd);
+				}*/
 			}
 		}catch(Exception notFound){
 			// ignore
@@ -4972,132 +5068,132 @@ public class RicezioneBuste {
 		boolean isAttivoAutorizzazioneBuste = tipoAutorizzazione!=null && !CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazione);
 		this.msgContext.getIntegrazione().setTipoAutorizzazione(tipoAutorizzazione);
 		if(tipoAutorizzazione!=null){
-			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE, tipoAutorizzazione);
-			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE_BUSTE, tipoAutorizzazione);
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE, tipoAutorizzazione);
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE_BUSTE, tipoAutorizzazione);
 		}
 		if(!isAttivoAutorizzazioneBuste){
-			msgDiag.logPersonalizzato("autorizzazioneBusteDisabilitata");
+			this.msgDiag.logPersonalizzato("autorizzazioneBusteDisabilitata");
 		}
 
 		DatiInvocazionePortaApplicativa datiInvocazione = null;
 		
 		if(isAttivoAutorizzazioneBuste &&
-				isMessaggioErroreProtocollo==false &&
-				bustaDiServizio==false &&
-				eccezioniValidazioni==false){	
+				!this.isMessaggioErroreProtocollo &&
+				!this.bustaDiServizio &&
+				!eccezioniValidazioni){	
 			
-			transaction.getTempiElaborazione().startAutorizzazione();
+			this.transaction.getTempiElaborazione().startAutorizzazione();
 			try{
 
-				msgDiag.mediumDebug("Autorizzazione di tipo ["+tipoAutorizzazione+"]...");
+				this.msgDiag.mediumDebug("Autorizzazione di tipo ["+tipoAutorizzazione+"]...");
 
 				//	Controllo Autorizzazione
 				String identitaMittente = null;
-				if(credenziali!=null && !soggettoAutenticato){
-					if(!"".equals(credenziali.toString())){
-						identitaMittente = credenziali.toString();
-						if(identitaMittente.endsWith(" ")){
-							identitaMittente = identitaMittente.substring(0, identitaMittente.length()-1);	
-						}
+				if(credenziali!=null && !soggettoAutenticato &&
+					!"".equals(credenziali.toString())){
+					identitaMittente = credenziali.toString();
+					if(identitaMittente.endsWith(" ")){
+						identitaMittente = identitaMittente.substring(0, identitaMittente.length()-1);	
 					}
 				}
 				String subjectMessageSecurity = null;
-				if(messageSecurityContext!=null){
-					subjectMessageSecurity = messageSecurityContext.getSubject();
+				if(this.messageSecurityContext!=null){
+					subjectMessageSecurity = this.messageSecurityContext.getSubject();
 				}
 
 
 
 				/* --- Calcolo idServizio e fruitore ---- */
 
-				IDServizio idServizioPerAutorizzazione = getIdServizioPerAutorizzazione(idServizio, soggettoFruitore, functionAsRouter, bustaRichiesta, ruoloBustaRicevuta); 
-				IDSoggetto idSoggettoMittentePerAutorizzazione = getIDSoggettoMittentePerAutorizzazione(idServizio, soggettoFruitore, functionAsRouter, bustaRichiesta, ruoloBustaRicevuta, supportatoAutenticazioneSoggetti);
+				IDServizio idServizioPerAutorizzazione = getIdServizioPerAutorizzazione(this.idServizio, this.soggettoFruitore, this.functionAsRouter, this.bustaRichiesta, this.ruoloBustaRicevuta); 
+				IDSoggetto idSoggettoMittentePerAutorizzazione = getIDSoggettoMittentePerAutorizzazione(this.idServizio, this.soggettoFruitore, this.functionAsRouter,this. bustaRichiesta, this.ruoloBustaRicevuta, supportatoAutenticazioneSoggetti);
 				Soggetto soggettoMittentePerAutorizzazione = null;
 				if(idSoggettoMittentePerAutorizzazione!=null){
-					soggettoMittentePerAutorizzazione = registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null, requestInfo);
+					soggettoMittentePerAutorizzazione = this.registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null, requestInfo);
 				}
 
 				String tipoMessaggio = "messaggio";
-				if(ruoloBustaRicevuta!=null){
-					if(RuoloBusta.RICEVUTA_RICHIESTA.equals(ruoloBustaRicevuta.toString()) || RuoloBusta.RICEVUTA_RISPOSTA.equals(ruoloBustaRicevuta.toString())){
-						tipoMessaggio = "ricevuta asincrona";
-					}
+				if(this.ruoloBustaRicevuta!=null &&
+					(RuoloBusta.RICEVUTA_RICHIESTA.equals(this.ruoloBustaRicevuta.toString()) || RuoloBusta.RICEVUTA_RISPOSTA.equals(this.ruoloBustaRicevuta.toString()))
+					){
+					tipoMessaggio = "ricevuta asincrona";
 				}
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO_BUSTA, tipoMessaggio);
+				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO_BUSTA, tipoMessaggio);
 				if(idSoggettoMittentePerAutorizzazione!=null){
-					msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_E_SERVIZIO_DA_AUTORIZZARE, "fruitore ["+idSoggettoMittentePerAutorizzazione.toString()+"] -> servizio ["+idServizioPerAutorizzazione.toString()+"]");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_E_SERVIZIO_DA_AUTORIZZARE, "fruitore ["+idSoggettoMittentePerAutorizzazione.toString()+"] -> servizio ["+idServizioPerAutorizzazione.toString()+"]");
 				}
 				else{
-					msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_E_SERVIZIO_DA_AUTORIZZARE, "servizio ["+idServizioPerAutorizzazione.toString()+"]");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_E_SERVIZIO_DA_AUTORIZZARE, "servizio ["+idServizioPerAutorizzazione.toString()+"]");
 				}
 				if(identitaMittente!=null)
-					msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, " credenzialiMittente "+identitaMittente);
+					this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, " credenzialiMittente "+identitaMittente);
 				else
-					msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, "");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, "");
 				if(servizioApplicativoFruitore!=null)
-					msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE_MSG, " identitaServizioApplicativoFruitore ["+servizioApplicativoFruitore+"]");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE_MSG, " identitaServizioApplicativoFruitore ["+servizioApplicativoFruitore+"]");
 				else
-					msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE_MSG, "");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE_MSG, "");
 				if(subjectMessageSecurity!=null)
-					msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, " subjectMessageSecurity ["+subjectMessageSecurity+"]");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, " subjectMessageSecurity ["+subjectMessageSecurity+"]");
 				else
-					msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, "");
-				msgDiag.logPersonalizzato("autorizzazioneBusteInCorso");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, "");
+				this.msgDiag.logPersonalizzato("autorizzazioneBusteInCorso");
 				
 				IDServizioApplicativo identitaServizioApplicativoFruitore = new IDServizioApplicativo();
 				identitaServizioApplicativoFruitore.setNome(servizioApplicativoFruitore);
 				identitaServizioApplicativoFruitore.setIdSoggettoProprietario(idSoggettoMittentePerAutorizzazione);
 				
 				datiInvocazione = new DatiInvocazionePortaApplicativa();
-				datiInvocazione.setBusta(bustaRichiesta);
+				datiInvocazione.setBusta(this.bustaRichiesta);
 				datiInvocazione.setToken(token);
-				datiInvocazione.setPddContext(pddContext);
+				datiInvocazione.setPddContext(this.pddContext);
 				datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
 				datiInvocazione.setIdServizio(idServizioPerAutorizzazione);
-				datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setState(this.openspcoopstate.getStatoRichiesta());
+				datiInvocazione.setRequestInfo(requestInfo);
 				datiInvocazione.setCredenzialiPdDMittente(credenziali);
 				datiInvocazione.setIdentitaServizioApplicativoFruitore(identitaServizioApplicativoFruitore);
 				datiInvocazione.setSubjectServizioApplicativoFruitoreFromMessageSecurityHeader(subjectMessageSecurity);
 				datiInvocazione.setIdPA(idPA);
-				datiInvocazione.setPa(pa);
+				datiInvocazione.setPa(this.pa);
 				datiInvocazione.setIdPD(idPD);
-				datiInvocazione.setPd(pd);
+				datiInvocazione.setPd(this.pd);
 				datiInvocazione.setIdSoggettoFruitore(idSoggettoMittentePerAutorizzazione);
 				datiInvocazione.setSoggettoFruitore(soggettoMittentePerAutorizzazione);
-				datiInvocazione.setRuoloBusta(ruoloBustaRicevuta);
+				datiInvocazione.setRuoloBusta(this.ruoloBustaRicevuta);
 				
 				EsitoAutorizzazionePortaApplicativa esito = 
 						GestoreAutorizzazione.verificaAutorizzazionePortaApplicativa(tipoAutorizzazione, 
-								datiInvocazione, pddContext, protocolFactory, requestMessage, logCore);
-				CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache(),
-						pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE);
+								datiInvocazione, this.pddContext, this.protocolFactory, this.requestMessage, this.logCore);
+				CostantiPdD.addKeywordInCache(this.msgDiag, esito.isEsitoPresenteInCache(),
+						this.pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE);
 				if(esito.getDetails()==null){
-					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 				}else{
-					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 				}
-				if(esito.isAutorizzato()==false){
-					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
+				if(!esito.isAutorizzato()){
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
 					String descrizioneErrore = null;
 					try{
 						if(esito.getErroreCooperazione()!=null){
-							descrizioneErrore = esito.getErroreCooperazione().getDescrizione(protocolFactory);
+							descrizioneErrore = esito.getErroreCooperazione().getDescrizione(this.protocolFactory);
 						}
 						else{
-							descrizioneErrore = esito.getErroreIntegrazione().getDescrizione(protocolFactory);
+							descrizioneErrore = esito.getErroreIntegrazione().getDescrizione(this.protocolFactory);
 						}
-						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
+						this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, descrizioneErrore);
 					}catch(Exception e){
-						logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
+						logError(this.logCore, "getDescrizione Error:"+e.getMessage(),e);
 					}
-					msgDiag.addKeyword(CostantiPdD.KEY_POSIZIONE_ERRORE, traduttore.toString(esito.getErroreCooperazione().getCodiceErrore()));
-					msgDiag.logPersonalizzato("autorizzazioneBusteFallita");
-					String errorMsg =  "Riscontrato errore durante il processo di Autorizzazione per il messaggio con identificativo ["+bustaRichiesta.getID()+"]: "+descrizioneErrore;
+					this.msgDiag.addKeyword(CostantiPdD.KEY_POSIZIONE_ERRORE, this.traduttore.toString(esito.getErroreCooperazione().getCodiceErrore()));
+					this.msgDiag.logPersonalizzato("autorizzazioneBusteFallita");
+					String errorMsg =  "Riscontrato errore durante il processo di Autorizzazione per il messaggio con identificativo ["+this.bustaRichiesta.getID()+"]: "+descrizioneErrore;
 					if(esito.getEccezioneProcessamento()!=null){
-						logError(logCore, errorMsg,esito.getEccezioneProcessamento());
+						logError(this.logCore, errorMsg,esito.getEccezioneProcessamento());
 					}
 					else{
-						logError(logCore, errorMsg);
+						logError(this.logCore, errorMsg);
 					}
 					if(this.msgContext.isGestioneRisposta()){
 						
@@ -5107,44 +5203,44 @@ public class RicezioneBuste {
 						else {
 						
 							OpenSPCoop2Message errorOpenSPCoopMsg = null;
-							parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
+							this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
 							IntegrationFunctionError integrationFunctionError = esito.getIntegrationFunctionError();
 							if(esito.getErroreCooperazione()!=null){
-								parametriGenerazioneBustaErrore.setErroreCooperazione(esito.getErroreCooperazione());
+								this.parametriGenerazioneBustaErrore.setErroreCooperazione(esito.getErroreCooperazione());
 								if(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.equals(esito.getErroreCooperazione().getCodiceErrore()) || 
 										CodiceErroreCooperazione.SICUREZZA_FALSIFICAZIONE_MITTENTE.equals(esito.getErroreCooperazione().getCodiceErrore()) ||
 										CodiceErroreCooperazione.SICUREZZA_TOKEN_AUTORIZZAZIONE_FALLITA.equals(esito.getErroreCooperazione().getCodiceErrore())){
 									if(integrationFunctionError==null) {
 										integrationFunctionError = IntegrationFunctionError.AUTHORIZATION;
 									}
-									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
-									errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+									this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+									errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(this.parametriGenerazioneBustaErrore);
 								}
 								// Else necessario per Certificazione DigitPA tramite Router
 								else if(CodiceErroreCooperazione.SERVIZIO_SCONOSCIUTO.equals(esito.getErroreCooperazione().getCodiceErrore())){
-									parametriGenerazioneBustaErrore.setErroreCooperazione(
+									this.parametriGenerazioneBustaErrore.setErroreCooperazione(
 											ErroriCooperazione.SERVIZIO_SCONOSCIUTO.getErroreCooperazione()); // in modo da utilizzare la posizione standard.
 									if(integrationFunctionError==null) {
 										integrationFunctionError = IntegrationFunctionError.NOT_FOUND;
 									}
-									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
-									errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+									this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+									errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(this.parametriGenerazioneBustaErrore);
 								}
 								else{
 									if(integrationFunctionError==null) {
 										integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 									}
-									parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
-									errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore, esito.getEccezioneProcessamento());
+									this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+									errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore, esito.getEccezioneProcessamento());
 								}
 							}
 							else{
-								parametriGenerazioneBustaErrore.setErroreIntegrazione(esito.getErroreIntegrazione());
+								this.parametriGenerazioneBustaErrore.setErroreIntegrazione(esito.getErroreIntegrazione());
 								if(integrationFunctionError==null) {
 									integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 								}
-								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
-								errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore, esito.getEccezioneProcessamento());
+								this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+								errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore, esito.getEccezioneProcessamento());
 							}
 							
 							if(esito.getWwwAuthenticateErrorHeader()!=null) {
@@ -5152,40 +5248,40 @@ public class RicezioneBuste {
 							}
 	
 							// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-							parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-							parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-							ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+							this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+							this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+							this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 							
 						}
 					}
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 				}else{
-					msgDiag.logPersonalizzato("autorizzazioneBusteEffettuata");
+					this.msgDiag.logPersonalizzato("autorizzazioneBusteEffettuata");
 				}
 			}catch(Exception e){
-				CostantiPdD.addKeywordInCache(msgDiag, false,
-						pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE);
-				msgDiag.logErroreGenerico(e,"AutorizzazioneMessaggio("+bustaRichiesta.getID()+")");
-				logError(logCore, "Riscontrato errore durante il processo di Autorizzazione per il messaggio con identificativo ["+bustaRichiesta.getID()+"]",e);
+				CostantiPdD.addKeywordInCache(this.msgDiag, false,
+						this.pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE);
+				this.msgDiag.logErroreGenerico(e,"AutorizzazioneMessaggio("+this.bustaRichiesta.getID()+")");
+				logError(this.logCore, "Riscontrato errore durante il processo di Autorizzazione per il messaggio con identificativo ["+this.bustaRichiesta.getID()+"]",e);
 				if(this.msgContext.isGestioneRisposta()){
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_504_AUTORIZZAZIONE));
 					
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 				}
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 			finally {
-				transaction.getTempiElaborazione().endAutorizzazione();
+				this.transaction.getTempiElaborazione().endAutorizzazione();
 			}
 		}
 
@@ -5205,57 +5301,57 @@ public class RicezioneBuste {
 		
 		/* --------------- Verifica tipo soggetto fruitore e tipo servizio rispetto al canale utilizzato 
 		 * (NOTA!: non sportarlo prima senno non si supera eventuali certificazioni) --------------- */
-		msgDiag.mediumDebug("Verifica canale utilizzato...");
-		List<String> tipiSoggettiSupportatiCanale = protocolFactory.createProtocolConfiguration().getTipiSoggetti();
-		List<String> tipiServiziSupportatiCanale = protocolFactory.createProtocolConfiguration().getTipiServizi(requestMessage.getServiceBinding());
+		this.msgDiag.mediumDebug("Verifica canale utilizzato...");
+		List<String> tipiSoggettiSupportatiCanale = this.protocolFactory.createProtocolConfiguration().getTipiSoggetti();
+		List<String> tipiServiziSupportatiCanale = this.protocolFactory.createProtocolConfiguration().getTipiServizi(this.requestMessage.getServiceBinding());
 		ErroreCooperazione erroreVerificaTipoByProtocol = null;
 		// Nota: se qualche informazione e' null verranno segnalati altri errori
-		if(soggettoFruitore!=null && soggettoFruitore.getTipo()!=null && 
-				!tipiSoggettiSupportatiCanale.contains(soggettoFruitore.getTipo())){
+		if(this.soggettoFruitore!=null && this.soggettoFruitore.getTipo()!=null && 
+				!tipiSoggettiSupportatiCanale.contains(this.soggettoFruitore.getTipo())){
 			if(autenticazioneOpzionale && !propertiesReader.isAutorizzazioneBustaAutenticazioneOpzionaleSoggettoFruitoreProfiloInteroperabilitaDifferenteServizioBloccaRichiesta()) {
-				msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported.warning");
+				this.msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported.warning");
 			}
 			else {
-				parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
-				msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported");
+				this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
+				this.msgDiag.logPersonalizzato("protocolli.tipoSoggetto.fruitore.unsupported");
 				erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_MITTENTE_NON_VALIDO.getErroreCooperazione();
 			}
 		}
-		else if(idServizio!=null && idServizio.getSoggettoErogatore()!=null && idServizio.getSoggettoErogatore().getTipo()!=null &&
-				!tipiSoggettiSupportatiCanale.contains(idServizio.getSoggettoErogatore().getTipo())){
-			parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
-			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.erogatore.unsupported");
+		else if(this.idServizio!=null && this.idServizio.getSoggettoErogatore()!=null && this.idServizio.getSoggettoErogatore().getTipo()!=null &&
+				!tipiSoggettiSupportatiCanale.contains(this.idServizio.getSoggettoErogatore().getTipo())){
+			this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
+			this.msgDiag.logPersonalizzato("protocolli.tipoSoggetto.erogatore.unsupported");
 			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_DESTINATARIO_NON_VALIDO.getErroreCooperazione();
 		}
-		else if(idServizio!=null && idServizio.getTipo()!=null && 
-				!tipiServiziSupportatiCanale.contains(idServizio.getTipo())){
-			parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
-			msgDiag.logPersonalizzato("protocolli.tipoServizio.unsupported");
+		else if(this.idServizio!=null && this.idServizio.getTipo()!=null && 
+				!tipiServiziSupportatiCanale.contains(this.idServizio.getTipo())){
+			this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
+			this.msgDiag.logPersonalizzato("protocolli.tipoServizio.unsupported");
 			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_SERVIZIO_NON_VALIDO.getErroreCooperazione();
 		}
 		else if(idApplicativoToken!=null && idApplicativoToken.getIdSoggettoProprietario()!=null &&
 				idApplicativoToken.getIdSoggettoProprietario().getTipo()!=null && 
 				!tipiSoggettiSupportatiCanale.contains(idApplicativoToken.getIdSoggettoProprietario().getTipo())){
-			parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
-			msgDiag.logPersonalizzato("protocolli.tipoSoggetto.applicativoToken.unsupported");
+			this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.NOT_SUPPORTED_BY_PROTOCOL);
+			this.msgDiag.logPersonalizzato("protocolli.tipoSoggetto.applicativoToken.unsupported");
 			erroreVerificaTipoByProtocol = ErroriCooperazione.TIPO_MITTENTE_NON_VALIDO.getErroreCooperazione();
 		}
 			
 		if(erroreVerificaTipoByProtocol!=null){
 			if(this.msgContext.isGestioneRisposta()){
 
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);							
-				parametriGenerazioneBustaErrore.setErroreCooperazione(erroreVerificaTipoByProtocol);
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);							
+				this.parametriGenerazioneBustaErrore.setErroreCooperazione(erroreVerificaTipoByProtocol);
 
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(this.parametriGenerazioneBustaErrore);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -5276,114 +5372,114 @@ public class RicezioneBuste {
 		ValidazioneContenutiApplicativi validazioneContenutoApplicativoApplicativo = null;
 		List<Proprieta> proprietaPorta = null;
 		String tipoAutorizzazionePerContenuto = null;
-		if(functionAsRouter == false && 
-				isMessaggioErroreProtocollo==false && 
-				erroriProcessamento.size()==0 && erroriValidazione.size()==0 &&
-				bustaDiServizio==false &&
-				pa!=null){
-			msgDiag.mediumDebug("Controllo abilitazione validazione XSD della richiesta...");
-			boolean isRicevutaAsincrona_modalitaAsincrona = false;
+		if(!this.functionAsRouter && 
+				!this.isMessaggioErroreProtocollo && 
+				this.erroriProcessamento.isEmpty() && this.erroriValidazione.isEmpty() &&
+				!this.bustaDiServizio &&
+				this.pa!=null){
+			this.msgDiag.mediumDebug("Controllo abilitazione validazione XSD della richiesta...");
+			boolean isRicevutaAsincronaModalitaAsincrona = false;
 			try{
 
 
 				/* ----------- Identificazione profilo -------------- */
-				if(     (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ||
-						org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) &&
-						(bustaRichiesta.getRiferimentoMessaggio()!=null) )
+				if(     (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) ||
+						org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) &&
+						(this.bustaRichiesta.getRiferimentoMessaggio()!=null) )
 				{
-					msgDiag.mediumDebug("Controllo abilitazione validazione XSD della richiesta (check asincrono)...");
+					this.msgDiag.mediumDebug("Controllo abilitazione validazione XSD della richiesta (check asincrono)...");
 					// La validazione non deve essere effettuata se abbiamo una ricevuta asincrona, 'modalita' asincrona'
 
-					if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+					if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) {	
 
 						//	Richiesta Asincrona
-						if(bustaRichiesta.getRiferimentoMessaggio()==null){
-							validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
-							proprietaPorta = pa.getProprietaList();
-							tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
+						if(this.bustaRichiesta.getRiferimentoMessaggio()==null){
+							validazioneContenutoApplicativoApplicativo = this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.pa,this.implementazionePdDMittente, true);
+							proprietaPorta = this.pa.getProprietaList();
+							tipoAutorizzazionePerContenuto = this.configurazionePdDReader.getAutorizzazioneContenuto(this.pa);
 						}else{
 							//	Risposta Asincrona
-							if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
-								validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, true);
-								proprietaPorta = pd.getProprietaList();
+							if(RuoloBusta.RISPOSTA.equals(this.ruoloBustaRicevuta.toString())){
+								validazioneContenutoApplicativoApplicativo = this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.pd,this.implementazionePdDMittente, true);
+								proprietaPorta = this.pd.getProprietaList();
 								// NOTA: deve essere registrato un tipo di autorizzazione per contenuto busta uguale al tipo di autorizzazione utilizzato lato servizi applicativi.
-								tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pd);
+								tipoAutorizzazionePerContenuto = this.configurazionePdDReader.getAutorizzazioneContenuto(this.pd);
 							}
 							//	Ricevuta alla richiesta/risposta.
-							else if(RuoloBusta.RICEVUTA_RICHIESTA.equals(ruoloBustaRicevuta.toString()) || 
-									RuoloBusta.RICEVUTA_RISPOSTA.equals(ruoloBustaRicevuta.toString()) ){	
-								if( configurazionePdDReader.ricevutaAsincronaSimmetricaAbilitata(pd))	{
-									isRicevutaAsincrona_modalitaAsincrona = true;	
+							else if(RuoloBusta.RICEVUTA_RICHIESTA.equals(this.ruoloBustaRicevuta.toString()) || 
+									RuoloBusta.RICEVUTA_RISPOSTA.equals(this.ruoloBustaRicevuta.toString()) ){	
+								if( this.configurazionePdDReader.ricevutaAsincronaSimmetricaAbilitata(this.pd))	{
+									isRicevutaAsincronaModalitaAsincrona = true;	
 								}else{
-									validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, true);
-									proprietaPorta = pd.getProprietaList();
+									validazioneContenutoApplicativoApplicativo = this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.pd,this.implementazionePdDMittente, true);
+									proprietaPorta = this.pd.getProprietaList();
 									// NOTA: deve essere registrato un tipo di autorizzazione per contenuto busta uguale al tipo di autorizzazione utilizzato lato servizi applicativi.
-									tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pd);
+									tipoAutorizzazionePerContenuto = this.configurazionePdDReader.getAutorizzazioneContenuto(this.pd);
 								}
 							}
 						}
 					}
 					// Profilo Asincrono Asimmetrico
-					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
+					else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) {	
 
 						//	Richiesta Asincrona
-						if(bustaRichiesta.getRiferimentoMessaggio()==null){
-							validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
-							proprietaPorta = pa.getProprietaList();
-							tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
+						if(this.bustaRichiesta.getRiferimentoMessaggio()==null){
+							validazioneContenutoApplicativoApplicativo = this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.pa,this.implementazionePdDMittente, true);
+							proprietaPorta = this.pa.getProprietaList();
+							tipoAutorizzazionePerContenuto = this.configurazionePdDReader.getAutorizzazioneContenuto(this.pa);
 						}else{
 							//	Risposta Asincrona
-							if(RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString())){
-								validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
-								proprietaPorta = pa.getProprietaList();
-								tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
+							if(RuoloBusta.RISPOSTA.equals(this.ruoloBustaRicevuta.toString())){
+								validazioneContenutoApplicativoApplicativo = this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.pa,this.implementazionePdDMittente, true);
+								proprietaPorta = this.pa.getProprietaList();
+								tipoAutorizzazionePerContenuto = this.configurazionePdDReader.getAutorizzazioneContenuto(this.pa);
 							}
 							// Ricevuta alla richiesta/risposta.
-							else if(RuoloBusta.RICEVUTA_RICHIESTA.equals(ruoloBustaRicevuta.toString()) || 
-									RuoloBusta.RICEVUTA_RISPOSTA.equals(ruoloBustaRicevuta.toString()) ){	
-								if( configurazionePdDReader.ricevutaAsincronaAsimmetricaAbilitata(pd))	{
-									isRicevutaAsincrona_modalitaAsincrona = true;	
+							else if(RuoloBusta.RICEVUTA_RICHIESTA.equals(this.ruoloBustaRicevuta.toString()) || 
+									RuoloBusta.RICEVUTA_RISPOSTA.equals(this.ruoloBustaRicevuta.toString()) ){	
+								if( this.configurazionePdDReader.ricevutaAsincronaAsimmetricaAbilitata(this.pd))	{
+									isRicevutaAsincronaModalitaAsincrona = true;	
 								}else{
-									validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente, true);
-									proprietaPorta = pd.getProprietaList();
+									validazioneContenutoApplicativoApplicativo = this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.pd,this.implementazionePdDMittente, true);
+									proprietaPorta = this.pd.getProprietaList();
 									// NOTA: deve essere registrato un tipo di autorizzazione per contenuto busta uguale al tipo di autorizzazione utilizzato lato servizi applicativi.
-									tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pd);
+									tipoAutorizzazionePerContenuto = this.configurazionePdDReader.getAutorizzazioneContenuto(this.pd);
 								}
 							}
 						}
 					}
 					// Chiudo eventuali prepared statement, che non voglio eseguire.
-					((StateMessage)openspcoopstate.getStatoRichiesta()).closePreparedStatement();
+					((StateMessage)this.openspcoopstate.getStatoRichiesta()).closePreparedStatement();
 				}else{
-					msgDiag.mediumDebug("Controllo abilitazione validazione dei contenuti applicativi della richiesta...");
-					validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente, true);
-					proprietaPorta = pa.getProprietaList();
-					tipoAutorizzazionePerContenuto = configurazionePdDReader.getAutorizzazioneContenuto(pa);
+					this.msgDiag.mediumDebug("Controllo abilitazione validazione dei contenuti applicativi della richiesta...");
+					validazioneContenutoApplicativoApplicativo = this.configurazionePdDReader.getTipoValidazioneContenutoApplicativo(this.pa,this.implementazionePdDMittente, true);
+					proprietaPorta = this.pa.getProprietaList();
+					tipoAutorizzazionePerContenuto = this.configurazionePdDReader.getAutorizzazioneContenuto(this.pa);
 				}
 			}catch(Exception e){
-				msgDiag.logErroreGenerico(e,"getTipoValidazione/Autorizzazione ContenutoApplicativo");
+				this.msgDiag.logErroreGenerico(e,"getTipoValidazione/Autorizzazione ContenutoApplicativo");
 				if(this.msgContext.isGestioneRisposta()){
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 				}
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
-			if(isRicevutaAsincrona_modalitaAsincrona==false){
+			if(!isRicevutaAsincronaModalitaAsincrona){
 
 				if(validazioneContenutoApplicativoApplicativo!=null && validazioneContenutoApplicativoApplicativo.getTipo()!=null){
 					String tipo = ValidatoreMessaggiApplicativi.getTipo(validazioneContenutoApplicativoApplicativo);
 					this.msgContext.getIntegrazione().setTipoValidazioneContenuti(tipo);
-					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_CONTENUTI, tipo);
-					msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,"");
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_VALIDAZIONE_CONTENUTI, tipo);
+					this.msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,"");
 				}
 				
 				// VALIDAZIONE CONTENUTI APPLICATIVI
@@ -5398,80 +5494,83 @@ public class RicezioneBuste {
 						)
 					){
 				
-					transaction.getTempiElaborazione().startValidazioneRichiesta();
+					this.transaction.getTempiElaborazione().startValidazioneRichiesta();
 					ByteArrayInputStream binXSD = null;
 					try{
 												
-						msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaInCorso");
+						this.msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaInCorso");
 						
 						boolean readInterface = CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo());
 								
-						if(ServiceBinding.SOAP.equals(requestMessage.getServiceBinding())){
+						if(ServiceBinding.SOAP.equals(this.requestMessage.getServiceBinding())){
 						
 							// Accept mtom message
 							List<MtomXomReference> xomReferences = null;
 							if(StatoFunzionalita.ABILITATO.equals(validazioneContenutoApplicativoApplicativo.getAcceptMtomMessage())){
-								msgDiag.mediumDebug("Validazione xsd della richiesta (mtomFastUnpackagingForXSDConformance)...");
-								if(ServiceBinding.SOAP.equals(requestMessage.getServiceBinding())==false){
-									throw new Exception("Funzionalita 'AcceptMtomMessage' valida solamente per Service Binding SOAP");
+								this.msgDiag.mediumDebug("Validazione xsd della richiesta (mtomFastUnpackagingForXSDConformance)...");
+								if(!ServiceBinding.SOAP.equals(this.requestMessage.getServiceBinding())){
+									throw new CoreException("Funzionalita 'AcceptMtomMessage' valida solamente per Service Binding SOAP");
 								}
-								xomReferences = requestMessage.castAsSoap().mtomFastUnpackagingForXSDConformance();
+								xomReferences = this.requestMessage.castAsSoap().mtomFastUnpackagingForXSDConformance();
 							}
 							
 							// Init Validatore
-							msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
+							this.msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
 							ValidatoreMessaggiApplicativi validatoreMessaggiApplicativi = 
-								new ValidatoreMessaggiApplicativi(registroServiziReader,idServizio,requestMessage,readInterface,
+								new ValidatoreMessaggiApplicativi(this.registroServiziReader,this.idServizio,this.requestMessage,readInterface,
 										propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione(),
 										proprietaPorta,
-										pddContext);
+										this.pddContext);
 	
 							// Validazione WSDL 
 							if( CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo()) 
 									||
 									CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())
 							){
-								msgDiag.mediumDebug("Validazione wsdl della richiesta ...");
+								this.msgDiag.mediumDebug("Validazione wsdl della richiesta ...");
 								validatoreMessaggiApplicativi.validateWithWsdlLogicoImplementativo(true);
 							}
 							
 							// Validazione XSD
-							msgDiag.mediumDebug("Validazione xsd della richiesta (validazione)...");
+							this.msgDiag.mediumDebug("Validazione xsd della richiesta (validazione)...");
 							validatoreMessaggiApplicativi.validateWithWsdlDefinitorio(true);
 													
 							// Validazione WSDL (Restore Original Document)
-							if (CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo())
-								|| CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo())) {
-								if(propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione() &&
-										propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione()){
-									msgDiag.mediumDebug("Ripristino elementi modificati per supportare validazione wsdl della richiesta ...");
-									validatoreMessaggiApplicativi.restoreOriginalDocument(true);
-								}
+							if (
+									(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_INTERFACE.equals(validazioneContenutoApplicativoApplicativo.getTipo())
+											|| 
+									CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_OPENSPCOOP.equals(validazioneContenutoApplicativoApplicativo.getTipo()))
+									&&
+									propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione() &&
+									propertiesReader.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione()
+								){
+								this.msgDiag.mediumDebug("Ripristino elementi modificati per supportare validazione wsdl della richiesta ...");
+								validatoreMessaggiApplicativi.restoreOriginalDocument(true);
 							}
 							
 							// Ripristino struttura messaggio con xom
-							if(xomReferences!=null && xomReferences.size()>0){
-								msgDiag.mediumDebug("Validazione xsd della richiesta (mtomRestoreAfterXSDConformance)...");
-								if(ServiceBinding.SOAP.equals(requestMessage.getServiceBinding())==false){
-									throw new Exception("Funzionalita 'AcceptMtomMessage' valida solamente per Service Binding SOAP");
+							if(xomReferences!=null && !xomReferences.isEmpty()){
+								this.msgDiag.mediumDebug("Validazione xsd della richiesta (mtomRestoreAfterXSDConformance)...");
+								if(!ServiceBinding.SOAP.equals(this.requestMessage.getServiceBinding())){
+									throw new CoreException("Funzionalita 'AcceptMtomMessage' valida solamente per Service Binding SOAP");
 								}
-								requestMessage.castAsSoap().mtomRestoreAfterXSDConformance(xomReferences);
+								this.requestMessage.castAsSoap().mtomRestoreAfterXSDConformance(xomReferences);
 							}
 							
 						}
 						else {
 							
 							// Init Validatore
-							msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
+							this.msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
 							ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-								new ValidatoreMessaggiApplicativiRest(registroServiziReader, idServizio, requestMessage, readInterface, proprietaPorta,
-										protocolFactory, pddContext);
+								new ValidatoreMessaggiApplicativiRest(this.registroServiziReader, this.idServizio, this.requestMessage, readInterface, proprietaPorta,
+										this.protocolFactory, this.pddContext);
 							
 							if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
-									requestMessage.castAsRest().hasContent()) {
+									this.requestMessage.castAsRest().hasContent()) {
 								
 								// Validazione XSD
-								msgDiag.mediumDebug("Validazione xsd della richiesta ...");
+								this.msgDiag.mediumDebug("Validazione xsd della richiesta ...");
 								validatoreMessaggiApplicativi.validateWithSchemiXSD(true);
 								
 							}
@@ -5484,20 +5583,20 @@ public class RicezioneBuste {
 							
 						}
 						
-						msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaEffettuata");
+						this.msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaEffettuata");
 	
 					}catch(ValidatoreMessaggiApplicativiException ex){
-						msgDiag.addKeywordErroreProcessamento(ex);
-						logError(logCore, "[ValidazioneContenutiApplicativi Richiesta] "+ex.getMessage(),ex);
+						this.msgDiag.addKeywordErroreProcessamento(ex);
+						logError(this.logCore, "[ValidazioneContenutiApplicativi Richiesta] "+ex.getMessage(),ex);
 						if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
-							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly");
+							this.msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly");
 						}
 						else {
-							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
+							this.msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 						}
-						if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
+						if(!CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())){
 							
-							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RICHIESTA, "true");
+							this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RICHIESTA, "true");
 							
 							// validazione abilitata
 							if(this.msgContext.isGestioneRisposta()){
@@ -5514,51 +5613,51 @@ public class RicezioneBuste {
 								else{
 									integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 								}
-								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
-								parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-								parametriGenerazioneBustaErrore.setErroreIntegrazione(ex.getErrore());
-								OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,ex);
+								this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+								this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+								this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ex.getErrore());
+								OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,ex);
 								
 								// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-								parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-								parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-								ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+								this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+								this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+								this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 							}
-							openspcoopstate.releaseResource();
+							this.openspcoopstate.releaseResource();
 							return;
 						}
 					}catch(Exception ex){
-						msgDiag.addKeywordErroreProcessamento(ex);
-						logError(logCore, "Riscontrato errore durante la validazione dei contenuti applicativi (richiesta applicativa)",ex);
+						this.msgDiag.addKeywordErroreProcessamento(ex);
+						logError(this.logCore, "Riscontrato errore durante la validazione dei contenuti applicativi (richiesta applicativa)",ex);
 						if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
-							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly");
+							this.msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly");
 						}
 						else {
-							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
+							this.msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 						}
-						if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
+						if(!CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())){
 							
-							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RICHIESTA, "true");
+							this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RICHIESTA, "true");
 							
 							// validazione abilitata
 							if(this.msgContext.isGestioneRisposta()){
 								
-								parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-								parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+								this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+								this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA));
 	
-								OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,ex);
+								OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,ex);
 								
 								// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-								parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-								parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-								ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+								this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+								this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+								this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 							}
-							openspcoopstate.releaseResource();
+							this.openspcoopstate.releaseResource();
 							return;
 						}
 					}finally{
-						transaction.getTempiElaborazione().endValidazioneRichiesta();
+						this.transaction.getTempiElaborazione().endValidazioneRichiesta();
 						if(binXSD!=null){
 							try{
 								binXSD.close();
@@ -5569,7 +5668,7 @@ public class RicezioneBuste {
 					}
 				}
 				else{
-					msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaDisabilitata");
+					this.msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaDisabilitata");
 				}
 			}
 			
@@ -5578,58 +5677,57 @@ public class RicezioneBuste {
 			// AUTORIZZAZIONE PER CONTENUTO
 			this.msgContext.getIntegrazione().setTipoAutorizzazioneContenuto(tipoAutorizzazionePerContenuto);
 			if(tipoAutorizzazionePerContenuto!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE_CONTENUTO, tipoAutorizzazionePerContenuto);
+				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_AUTORIZZAZIONE_CONTENUTO, tipoAutorizzazionePerContenuto);
 			}
-			if (CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazionePerContenuto) == false) {
+			if (!CostantiConfigurazione.AUTORIZZAZIONE_NONE.equalsIgnoreCase(tipoAutorizzazionePerContenuto)) {
 				
-				transaction.getTempiElaborazione().startAutorizzazioneContenuti();
+				this.transaction.getTempiElaborazione().startAutorizzazioneContenuti();
 				try {
 					
 					String identitaMittente = null;
-					if(credenziali!=null && !soggettoAutenticato){
-						if(!"".equals(credenziali.toString())){
-							identitaMittente = credenziali.toString();
-							if(identitaMittente.endsWith(" ")){
-								identitaMittente = identitaMittente.substring(0, identitaMittente.length()-1);	
-							}
+					if(credenziali!=null && !soggettoAutenticato &&
+						!"".equals(credenziali.toString())){
+						identitaMittente = credenziali.toString();
+						if(identitaMittente.endsWith(" ")){
+							identitaMittente = identitaMittente.substring(0, identitaMittente.length()-1);	
 						}
 					}
 					String subjectMessageSecurity = null;
-					if(messageSecurityContext!=null){
-						subjectMessageSecurity = messageSecurityContext.getSubject();
+					if(this.messageSecurityContext!=null){
+						subjectMessageSecurity = this.messageSecurityContext.getSubject();
 					}
 					
-					IDServizio idServizioPerAutorizzazione = getIdServizioPerAutorizzazione(idServizio, soggettoFruitore, functionAsRouter, bustaRichiesta, ruoloBustaRicevuta); 
-					IDSoggetto idSoggettoMittentePerAutorizzazione = getIDSoggettoMittentePerAutorizzazione(idServizio, soggettoFruitore, functionAsRouter, bustaRichiesta, ruoloBustaRicevuta, supportatoAutenticazioneSoggetti);
+					IDServizio idServizioPerAutorizzazione = getIdServizioPerAutorizzazione(this.idServizio, this.soggettoFruitore, this.functionAsRouter, this.bustaRichiesta, this.ruoloBustaRicevuta); 
+					IDSoggetto idSoggettoMittentePerAutorizzazione = getIDSoggettoMittentePerAutorizzazione(this.idServizio, this.soggettoFruitore, this.functionAsRouter, this.bustaRichiesta, this.ruoloBustaRicevuta, supportatoAutenticazioneSoggetti);
 					Soggetto soggettoMittentePerAutorizzazione = null;
 					if(idSoggettoMittentePerAutorizzazione!=null){
-						soggettoMittentePerAutorizzazione = registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null, requestInfo);
+						soggettoMittentePerAutorizzazione = this.registroServiziReader.getSoggetto(idSoggettoMittentePerAutorizzazione, null, requestInfo);
 					}
 					
 					String tipoMessaggio = "messaggio";
-					if(RuoloBusta.RICEVUTA_RICHIESTA.equals(ruoloBustaRicevuta.toString()) || RuoloBusta.RICEVUTA_RISPOSTA.equals(ruoloBustaRicevuta.toString())){
+					if(RuoloBusta.RICEVUTA_RICHIESTA.equals(this.ruoloBustaRicevuta.toString()) || RuoloBusta.RICEVUTA_RISPOSTA.equals(this.ruoloBustaRicevuta.toString())){
 						tipoMessaggio = "ricevuta asincrona";
 					}
-					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO_BUSTA, tipoMessaggio);
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_MESSAGGIO_BUSTA, tipoMessaggio);
 					if(idSoggettoMittentePerAutorizzazione!=null){
-						msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_E_SERVIZIO_DA_AUTORIZZARE, "fruitore ["+idSoggettoMittentePerAutorizzazione.toString()+"] -> servizio ["+idServizioPerAutorizzazione.toString()+"]");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_E_SERVIZIO_DA_AUTORIZZARE, "fruitore ["+idSoggettoMittentePerAutorizzazione.toString()+"] -> servizio ["+idServizioPerAutorizzazione.toString()+"]");
 					}
 					else{
-						msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_E_SERVIZIO_DA_AUTORIZZARE, "servizio ["+idServizioPerAutorizzazione.toString()+"]");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_MITTENTE_E_SERVIZIO_DA_AUTORIZZARE, "servizio ["+idServizioPerAutorizzazione.toString()+"]");
 					}
 					if(identitaMittente!=null)
-						msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, " credenzialiMittente "+identitaMittente);
+						this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, " credenzialiMittente "+identitaMittente);
 					else
-						msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, "");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_MITTENTE_MSG, "");
 					if(servizioApplicativoFruitore!=null)
-						msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE_MSG, " identitaServizioApplicativoFruitore ["+servizioApplicativoFruitore+"]");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE_MSG, " identitaServizioApplicativoFruitore ["+servizioApplicativoFruitore+"]");
 					else
-						msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE_MSG, "");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_SA_FRUITORE_MSG, "");
 					if(subjectMessageSecurity!=null)
-						msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, " subjectMessageSecurity ["+subjectMessageSecurity+"]");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, " subjectMessageSecurity ["+subjectMessageSecurity+"]");
 					else
-						msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, "");
-					msgDiag.logPersonalizzato("autorizzazioneContenutiBusteInCorso");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_SUBJECT_MESSAGE_SECURITY_MSG, "");
+					this.msgDiag.logPersonalizzato("autorizzazioneContenutiBusteInCorso");
 					
 					if(datiInvocazione==null){
 						
@@ -5638,102 +5736,103 @@ public class RicezioneBuste {
 						identitaServizioApplicativoFruitore.setIdSoggettoProprietario(idSoggettoMittentePerAutorizzazione);
 						
 						datiInvocazione = new DatiInvocazionePortaApplicativa();
-						datiInvocazione.setBusta(bustaRichiesta);
+						datiInvocazione.setBusta(this.bustaRichiesta);
 						datiInvocazione.setToken(token);
-						datiInvocazione.setPddContext(pddContext);
+						datiInvocazione.setPddContext(this.pddContext);
 						datiInvocazione.setInfoConnettoreIngresso(inRequestContext.getConnettore());
 						datiInvocazione.setIdServizio(idServizioPerAutorizzazione);
-						datiInvocazione.setState(openspcoopstate.getStatoRichiesta());
+						datiInvocazione.setState(this.openspcoopstate.getStatoRichiesta());
+						datiInvocazione.setRequestInfo(requestInfo);
 						datiInvocazione.setCredenzialiPdDMittente(credenziali);
 						datiInvocazione.setIdentitaServizioApplicativoFruitore(identitaServizioApplicativoFruitore);
 						datiInvocazione.setSubjectServizioApplicativoFruitoreFromMessageSecurityHeader(subjectMessageSecurity);
 						datiInvocazione.setIdPA(idPA);
-						datiInvocazione.setPa(pa);
+						datiInvocazione.setPa(this.pa);
 						datiInvocazione.setIdPD(idPD);
-						datiInvocazione.setPd(pd);
+						datiInvocazione.setPd(this.pd);
 						datiInvocazione.setIdSoggettoFruitore(idSoggettoMittentePerAutorizzazione);
 						datiInvocazione.setSoggettoFruitore(soggettoMittentePerAutorizzazione);
-						datiInvocazione.setRuoloBusta(ruoloBustaRicevuta);
+						datiInvocazione.setRuoloBusta(this.ruoloBustaRicevuta);
 					}
 					
 					// Controllo Autorizzazione
 					EsitoAutorizzazionePortaApplicativa esito = 
-							GestoreAutorizzazione.verificaAutorizzazioneContenutoPortaApplicativa(tipoAutorizzazionePerContenuto, datiInvocazione, pddContext, protocolFactory, requestMessage, logCore);
-					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache(),
-							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI);
+							GestoreAutorizzazione.verificaAutorizzazioneContenutoPortaApplicativa(tipoAutorizzazionePerContenuto, datiInvocazione, this.pddContext, this.protocolFactory, this.requestMessage, this.logCore);
+					CostantiPdD.addKeywordInCache(this.msgDiag, esito.isEsitoPresenteInCache(),
+							this.pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI);
 					if(esito.getDetails()==null){
-						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 					}else{
-						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 					}
-					if(esito.isAutorizzato()==false){
-						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
+					if(!esito.isAutorizzato()){
+						this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
 						try{
-							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esito.getErroreCooperazione().getDescrizione(protocolFactory));
+							this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, esito.getErroreCooperazione().getDescrizione(this.protocolFactory));
 						}catch(Exception e){
-							logError(logCore, "getDescrizione Error:"+e.getMessage(),e);
+							logError(this.logCore, "getDescrizione Error:"+e.getMessage(),e);
 						}
-						msgDiag.addKeyword(CostantiPdD.KEY_POSIZIONE_ERRORE, traduttore.toString(esito.getErroreCooperazione().getCodiceErrore()));
-						msgDiag.logPersonalizzato("autorizzazioneContenutiBusteFallita");
+						this.msgDiag.addKeyword(CostantiPdD.KEY_POSIZIONE_ERRORE, this.traduttore.toString(esito.getErroreCooperazione().getCodiceErrore()));
+						this.msgDiag.logPersonalizzato("autorizzazioneContenutiBusteFallita");
 						if(this.msgContext.isGestioneRisposta()){
 							OpenSPCoop2Message errorMsg = null;
-							parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-							parametriGenerazioneBustaErrore.setErroreCooperazione(esito.getErroreCooperazione());
+							this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+							this.parametriGenerazioneBustaErrore.setErroreCooperazione(esito.getErroreCooperazione());
 							IntegrationFunctionError integrationFunctionError = esito.getIntegrationFunctionError();
 							if(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA.equals(esito.getErroreCooperazione().getCodiceErrore()) 
 									|| CodiceErroreCooperazione.SICUREZZA_FALSIFICAZIONE_MITTENTE.equals(esito.getErroreCooperazione().getCodiceErrore())){
 								if(integrationFunctionError==null) {
 									integrationFunctionError = IntegrationFunctionError.CONTENT_AUTHORIZATION_DENY;
 								}
-								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
-								errorMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+								this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+								errorMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(this.parametriGenerazioneBustaErrore);
 							}
 							else{
 								if(integrationFunctionError==null) {
 									integrationFunctionError = IntegrationFunctionError.INTERNAL_REQUEST_ERROR;
 								}
-								parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
-								errorMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,esito.getEccezioneProcessamento());
+								this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(integrationFunctionError);
+								errorMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,esito.getEccezioneProcessamento());
 							}
 
 							// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-							parametriInvioBustaErrore.setOpenspcoopMsg(errorMsg);
-							parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-							ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+							this.parametriInvioBustaErrore.setOpenspcoopMsg(errorMsg);
+							this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+							this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 						}
 						
-						openspcoopstate.releaseResource();
+						this.openspcoopstate.releaseResource();
 						return;
 					}else{
-						msgDiag.logPersonalizzato("autorizzazioneContenutiBusteEffettuata");
+						this.msgDiag.logPersonalizzato("autorizzazioneContenutiBusteEffettuata");
 					}
 
 				}catch(Exception ex){
-					CostantiPdD.addKeywordInCache(msgDiag, false,
-							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI);
-					msgDiag.logErroreGenerico(ex,"AutorizzazioneContenuto Messaggio("+bustaRichiesta.getID()+")");
-					logError(logCore, "Riscontrato errore durante il processo di Autorizzazione del Contenuto per il messaggio con identificativo ["+bustaRichiesta.getID()+"]",ex);
+					CostantiPdD.addKeywordInCache(this.msgDiag, false,
+							this.pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI);
+					this.msgDiag.logErroreGenerico(ex,"AutorizzazioneContenuto Messaggio("+this.bustaRichiesta.getID()+")");
+					logError(this.logCore, "Riscontrato errore durante il processo di Autorizzazione del Contenuto per il messaggio con identificativo ["+this.bustaRichiesta.getID()+"]",ex);
 					if(this.msgContext.isGestioneRisposta()){
 						
-						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+						this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_542_AUTORIZZAZIONE_CONTENUTO));
-						OpenSPCoop2Message errorMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,ex);
+						OpenSPCoop2Message errorMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,ex);
 
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-						parametriInvioBustaErrore.setOpenspcoopMsg(errorMsg);
-						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-						ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+						this.parametriInvioBustaErrore.setOpenspcoopMsg(errorMsg);
+						this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+						this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 					}
-					openspcoopstate.releaseResource();
+					this.openspcoopstate.releaseResource();
 					return;
 				}
 				finally {
-					transaction.getTempiElaborazione().endAutorizzazioneContenuti();
+					this.transaction.getTempiElaborazione().endAutorizzazioneContenuti();
 				}
 			}
 			else{
-				msgDiag.logPersonalizzato("autorizzazioneContenutiBusteDisabilitata");
+				this.msgDiag.logPersonalizzato("autorizzazioneContenutiBusteDisabilitata");
 			}
 		}
 
@@ -5748,47 +5847,47 @@ public class RicezioneBuste {
 
 
 		Utilities.printFreeMemory("RicezioneBuste - Recupero configurazione per salvataggio risposta in cache ...");
-		msgDiag.mediumDebug("Recupero configurazione per salvataggio risposta in cache ...");
+		this.msgDiag.mediumDebug("Recupero configurazione per salvataggio risposta in cache ...");
 		try{
 			ResponseCachingConfigurazione responseCachingConfig = null;
-			if(pa!=null) {
-				responseCachingConfig = configurazionePdDReader.getConfigurazioneResponseCaching(pa);
+			if(this.pa!=null) {
+				responseCachingConfig = this.configurazionePdDReader.getConfigurazioneResponseCaching(this.pa);
 			}
 			else {
-				responseCachingConfig = configurazionePdDReader.getConfigurazioneResponseCaching();
+				responseCachingConfig = this.configurazionePdDReader.getConfigurazioneResponseCaching();
 			}
 			if(responseCachingConfig!=null && StatoFunzionalita.ABILITATO.equals(responseCachingConfig.getStato())) {
 				
-				transaction.getTempiElaborazione().startResponseCachingCalcoloDigest();
+				this.transaction.getTempiElaborazione().startResponseCachingCalcoloDigest();
 				try {
 				
-					msgDiag.mediumDebug("Calcolo digest per salvataggio risposta ...");
+					this.msgDiag.mediumDebug("Calcolo digest per salvataggio risposta ...");
 					
 					HashGenerator hashGenerator = new HashGenerator(propertiesReader.getCachingResponseDigestAlgorithm());
-					String digest = hashGenerator.buildKeyCache(requestMessage, requestInfo, responseCachingConfig);
-					requestMessage.addContextProperty(CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST, digest);
+					String digest = hashGenerator.buildKeyCache(this.requestMessage, requestInfo, responseCachingConfig);
+					this.requestMessage.addContextProperty(CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST, digest);
 				
 				}finally {
-					transaction.getTempiElaborazione().endResponseCachingCalcoloDigest();
+					this.transaction.getTempiElaborazione().endResponseCachingCalcoloDigest();
 				}
 			}
 		} catch (Exception e){
-			msgDiag.logErroreGenerico(e,"calcoloDigestSalvataggioRisposta");
-			logError(logCore, "Calcolo Digest Salvataggio Risposta non riuscito: "	+ e);
+			this.msgDiag.logErroreGenerico(e,"calcoloDigestSalvataggioRisposta");
+			logError(this.logCore, "Calcolo Digest Salvataggio Risposta non riuscito: "	+ e);
 			if (this.msgContext.isGestioneRisposta()) {
 				
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_561_DIGEST_REQUEST));
 
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -5802,28 +5901,28 @@ public class RicezioneBuste {
 
 		/* ------------- Modalita' di gestione ---------------------------- */
 		try {
-			if ( oneWayStateless || sincronoStateless || asincronoStateless || oneWayVersione11 || routingStateless ) {
-				openspcoopstate = OpenSPCoopState.toStateless(((OpenSPCoopStateful)openspcoopstate), true);
-				parametriGenerazioneBustaErrore.setOpenspcoop(openspcoopstate);
-				parametriInvioBustaErrore.setOpenspcoop(openspcoopstate);
+			if ( this.oneWayStateless || this.sincronoStateless || this.asincronoStateless || this.oneWayVersione11 || this.routingStateless ) {
+				this.openspcoopstate = OpenSPCoopState.toStateless(((OpenSPCoopStateful)this.openspcoopstate), true);
+				this.parametriGenerazioneBustaErrore.setOpenspcoop(this.openspcoopstate);
+				this.parametriInvioBustaErrore.setOpenspcoop(this.openspcoopstate);
 			}
 		} catch (Exception e) {
-			msgDiag.logErroreGenerico(e,"OpenSPCoopState.toStateless");
-			logError(logCore, "Creazione stato STATEFUL/STATELESS non riuscita: "	+ e);
+			this.msgDiag.logErroreGenerico(e,"OpenSPCoopState.toStateless");
+			logError(this.logCore, "Creazione stato STATEFUL/STATELESS non riuscita: "	+ e);
 			if (this.msgContext.isGestioneRisposta()) {
 				
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 			}
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 
@@ -5844,12 +5943,12 @@ public class RicezioneBuste {
 
 		/* -------- Gestione Richiesta ---------- */
 		String tipoMsg = Costanti.INBOX;
-		if(functionAsRouter)
+		if(this.functionAsRouter)
 			tipoMsg = Costanti.OUTBOX;
-		GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopstate, true, idMessageRequest, tipoMsg,msgDiag, inRequestContext.getPddContext());
-		msgRequest.setOneWayVersione11(oneWayVersione11);
-		msgRequest.setRoutingStateless(routingStateless);
-		RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopstate.getStatoRichiesta(), true, protocolFactory);
+		this.msgRequest = new GestoreMessaggi(this.openspcoopstate, true, this.idMessageRequest, tipoMsg,this.msgDiag, inRequestContext.getPddContext());
+		this.msgRequest.setOneWayVersione11(this.oneWayVersione11);
+		this.msgRequest.setRoutingStateless(this.routingStateless);
+		this.repositoryBuste = new RepositoryBuste(this.openspcoopstate.getStatoRichiesta(), true, this.protocolFactory);
 
 
 
@@ -5874,50 +5973,50 @@ public class RicezioneBuste {
 	   Negli altri casi emetto anche un messaggio Errore di msg gia ricevuto.
 	   ------------
 		 */
-		msgDiag.mediumDebug("Controllo presenza del messaggio gia' in gestione...");
-		if( (!functionAsRouter) || (!routingStateless) ){
+		this.msgDiag.mediumDebug("Controllo presenza del messaggio gia' in gestione...");
+		if( (!this.functionAsRouter) || (!this.routingStateless) ){
 			try{
-				if(  msgRequest.existsMessage_noCache() ){
+				if(  this.msgRequest.existsMessage_noCache() ){
 
 					// Se il proprietario attuale e' GestoreMessaggi, forzo l'eliminazione e continuo a processare il messaggio.
-					String proprietarioMessaggio = msgRequest.getProprietario(this.msgContext.getIdModulo());
+					String proprietarioMessaggio = this.msgRequest.getProprietario(this.msgContext.getIdModulo());
 					if(TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio)){
-						msgDiag.logPersonalizzato("messaggioInGestione.marcatoDaEliminare");
-						String msg = msgDiag.getMessaggio_replaceKeywords("messaggioInGestione.marcatoDaEliminare");
+						this.msgDiag.logPersonalizzato("messaggioInGestione.marcatoDaEliminare");
+						String msg = this.msgDiag.getMessaggio_replaceKeywords("messaggioInGestione.marcatoDaEliminare");
 						if(propertiesReader.isMsgGiaInProcessamentoUseLock()) {
-							msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamentoAttesaAttiva(),
+							this.msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamentoAttesaAttiva(),
 								propertiesReader.getMsgGiaInProcessamentoCheckInterval());
 						}
 						else {
-							msgRequest.deleteMessageByNow();
+							this.msgRequest.deleteMessageByNow();
 						}
 					}
 
 					// Altrimenti gestisco il duplicato
 					else{
 
-						boolean rispostaModalitaSincrona = org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ||
-						(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) && configurazionePdDReader.ricevutaAsincronaSimmetricaAbilitata(pa)) ||
-						(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) && configurazionePdDReader.ricevutaAsincronaAsimmetricaAbilitata(pa));
+						boolean rispostaModalitaSincrona = org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) ||
+						(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) && this.configurazionePdDReader.ricevutaAsincronaSimmetricaAbilitata(this.pa)) ||
+						(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) && this.configurazionePdDReader.ricevutaAsincronaAsimmetricaAbilitata(this.pa));
 
 						// Se la modalita e' sincrona non deve essere possibile ricevere una busta due volte con lo stesso identificativo
 						if(rispostaModalitaSincrona){
-							msgDiag.addKeyword(CostantiPdD.KEY_PROPRIETARIO_MESSAGGIO, proprietarioMessaggio);
-							msgDiag.logPersonalizzato("messaggioInGestione.gestioneSincrona");
-							pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_PROPRIETARIO_MESSAGGIO, proprietarioMessaggio);
+							this.msgDiag.logPersonalizzato("messaggioInGestione.gestioneSincrona");
+							this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
 							if(this.msgContext.isGestioneRisposta()){
 								
-								parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-								parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_537_BUSTA_GIA_RICEVUTA.get537_BustaGiaRicevuta(idMessageRequest));
-								parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.CONFLICT_IN_QUEUE);
-								OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,null);
+								this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+								this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_537_BUSTA_GIA_RICEVUTA.get537_BustaGiaRicevuta(this.idMessageRequest));
+								this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.CONFLICT_IN_QUEUE);
+								OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,null);
 								
 								// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-								parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-								parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-								ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+								this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+								this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+								this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 							}
-							openspcoopstate.releaseResource();
+							this.openspcoopstate.releaseResource();
 							return;
 						}
 
@@ -5930,70 +6029,70 @@ public class RicezioneBuste {
 							// altrimenti provo ad aspettare che il messaggio non esista piu' o abbia cmq come proprietario GestoreMessaggi per poi eliminarlo.
 							// 
 							// Se scade il timeout cmq genero un errore di busta gia' in gestione.
-							msgDiag.addKeyword(CostantiPdD.KEY_PROPRIETARIO_MESSAGGIO, proprietarioMessaggio);
-							msgDiag.logPersonalizzato("messaggioInGestione.gestioneAsincrona");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_PROPRIETARIO_MESSAGGIO, proprietarioMessaggio);
+							this.msgDiag.logPersonalizzato("messaggioInGestione.gestioneAsincrona");
 							long scadenzaWhile = DateManager.getTimeMillis() + propertiesReader.getMsgGiaInProcessamentoAttesaAttiva();
 							boolean isErroreMsgGiaRicevuto = true;
 							boolean msgAttesaFineProcessamento = false;
 							int millisecondiTrascorsi = 0;
 							while( DateManager.getTimeMillis() < scadenzaWhile  ){
 
-								proprietarioMessaggio = msgRequest.getProprietario(this.msgContext.getIdModulo());
+								proprietarioMessaggio = this.msgRequest.getProprietario(this.msgContext.getIdModulo());
 
-								if( (Inoltro.SENZA_DUPLICATI.equals(bustaRichiesta.getInoltro())) || 
+								if( (Inoltro.SENZA_DUPLICATI.equals(this.bustaRichiesta.getInoltro())) || 
 										(this.msgContext.isForzaFiltroDuplicati_msgGiaInProcessamento())  ){
 
 									// Se sono entrato in questo controllo vuole dire che prima esisteva un msg che aveva come proprietario Sbustamento o RicezioneBuste.
 									// Quindi se ho raggiunto ConsegnaContenutiApplicativi, GestoreMessaggi o non esiste piu' il messaggio, vuole dire che e' stato elaborato.
 									if(ConsegnaContenutiApplicativi.ID_MODULO.equals(proprietarioMessaggio) || 
 											TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio) ||
-											(!msgRequest.existsMessage_noCache()) ){
+											(!this.msgRequest.existsMessage_noCache()) ){
 										
-										pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
+										this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
 										
 										if(this.msgContext.isGestioneRisposta()){
-											this.msgContext.setMessageResponse(ricezioneBusteGeneratoreBustaErrore.generaRispostaMsgGiaRicevuto(!this.msgContext.isForzaFiltroDuplicati_msgGiaInProcessamento(),
-													bustaRichiesta,infoIntegrazione, msgDiag, openspcoopstate, logCore, propertiesReader,
-													versioneProtocollo,ruoloBustaRicevuta,implementazionePdDMittente,protocolFactory,
-													identitaPdD,idTransazione,loader,oneWayVersione11,implementazionePdDMittente,
-													tracciamento,
-													correlazioneApplicativa,
-													pddContext, IntegrationFunctionError.CONFLICT));
+											this.msgContext.setMessageResponse(this.ricezioneBusteGeneratoreBustaErrore.generaRispostaMsgGiaRicevuto(!this.msgContext.isForzaFiltroDuplicati_msgGiaInProcessamento(),
+													this.bustaRichiesta,this.infoIntegrazione, this.msgDiag, this.openspcoopstate, this.logCore, propertiesReader,
+													this.versioneProtocollo,this.ruoloBustaRicevuta,this.implementazionePdDMittente,this.protocolFactory,
+													this.identitaPdD,this.idTransazione,loader,this.oneWayVersione11,this.implementazionePdDMittente,
+													this.tracciamento,
+													this.correlazioneApplicativa,
+													this.pddContext, IntegrationFunctionError.CONFLICT));
 										}
-										openspcoopstate.releaseResource();
+										this.openspcoopstate.releaseResource();
 										return;
 									}
 
 									if(!msgAttesaFineProcessamento){
-										msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, ""+(propertiesReader.getMsgGiaInProcessamentoAttesaAttiva()/1000));
-										msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiAbilitato");
+										this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, ""+(propertiesReader.getMsgGiaInProcessamentoAttesaAttiva()/1000));
+										this.msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiAbilitato");
 										msgAttesaFineProcessamento = true;
 									}
 
 								}else{
 
 									if(!msgAttesaFineProcessamento){
-										msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, ""+(propertiesReader.getMsgGiaInProcessamentoAttesaAttiva()/1000));
-										msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato");
+										this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, ""+(propertiesReader.getMsgGiaInProcessamentoAttesaAttiva()/1000));
+										this.msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato");
 										msgAttesaFineProcessamento = true;
 									}
 
-									boolean existsMessage = msgRequest.existsMessage_noCache();
-									if(existsMessage==false){
-										msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.attesaTerminata");
+									boolean existsMessage = this.msgRequest.existsMessage_noCache();
+									if(!existsMessage){
+										this.msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.attesaTerminata");
 										isErroreMsgGiaRicevuto = false;
 										break;
 									}
 
 									if(TimerGestoreMessaggi.ID_MODULO.equals(proprietarioMessaggio)){
-										msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.forzoEliminazione");
-										String msg = msgDiag.getMessaggio_replaceKeywords("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.forzoEliminazione");
+										this.msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.forzoEliminazione");
+										String msg = this.msgDiag.getMessaggio_replaceKeywords("messaggioInGestione.attesaFineProcessamento.filtroDuplicatiDisabilitato.forzoEliminazione");
 										if(propertiesReader.isMsgGiaInProcessamentoUseLock()) {
-											msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamentoAttesaAttiva()-millisecondiTrascorsi,
+											this.msgRequest._deleteMessageWithLock(msg,propertiesReader.getMsgGiaInProcessamentoAttesaAttiva()-millisecondiTrascorsi,
 													propertiesReader.getMsgGiaInProcessamentoCheckInterval());
 										}
 										else {
-											msgRequest.deleteMessageByNow();
+											this.msgRequest.deleteMessageByNow();
 										}
 										isErroreMsgGiaRicevuto = false;
 										break;
@@ -6006,43 +6105,43 @@ public class RicezioneBuste {
 
 							}
 							if(isErroreMsgGiaRicevuto){
-								msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.timeoutScaduto");
-								pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
+								this.msgDiag.logPersonalizzato("messaggioInGestione.attesaFineProcessamento.timeoutScaduto");
+								this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.RICHIESTA_DUPLICATA, "true");
 								if(this.msgContext.isGestioneRisposta()){
 									
-									parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-									parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_537_BUSTA_GIA_RICEVUTA.get537_BustaGiaRicevuta(idMessageRequest));
-									parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.CONFLICT_IN_QUEUE);
-									OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,null);
+									this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+									this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_537_BUSTA_GIA_RICEVUTA.get537_BustaGiaRicevuta(this.idMessageRequest));
+									this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.CONFLICT_IN_QUEUE);
+									OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,null);
 									
 									// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-									parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-									parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-									ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore,false);
+									this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+									this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+									this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore,false);
 								}
-								openspcoopstate.releaseResource();
+								this.openspcoopstate.releaseResource();
 								return;
 							}
 						}
 					}
 				}
 			}catch(Exception e){
-				msgDiag.logErroreGenerico(e,"ControlloPresenzaMessaggioGiaInGestione");
-				logError(logCore, "Controllo/gestione presenza messaggio gia in gestione non riuscito",e);
+				this.msgDiag.logErroreGenerico(e,"ControlloPresenzaMessaggioGiaInGestione");
+				logError(this.logCore, "Controllo/gestione presenza messaggio gia in gestione non riuscito",e);
 				if(this.msgContext.isGestioneRisposta()){
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 				}
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 		}
@@ -6068,27 +6167,27 @@ public class RicezioneBuste {
 
 
 		/* ----------------   Creo sessione di gestione del messaggio ricevuto  --------------------- */
-		msgDiag.mediumDebug("Registrazione messaggio di richiesta nel RepositoryMessaggi...");
+		this.msgDiag.mediumDebug("Registrazione messaggio di richiesta nel RepositoryMessaggi...");
 		try{
-			msgRequest.registraMessaggio(requestMessage,dataIngressoRichiesta, 
-					(oneWayStateless || sincronoStateless || asincronoStateless || routingStateless),
-					correlazioneApplicativa);
+			this.msgRequest.registraMessaggio(this.requestMessage,dataIngressoRichiesta, 
+					(this.oneWayStateless || this.sincronoStateless || this.asincronoStateless || this.routingStateless),
+					this.correlazioneApplicativa);
 		}catch(Exception e){
-			msgDiag.logErroreGenerico(e,"msgRequest.registraMessaggio");
+			this.msgDiag.logErroreGenerico(e,"msgRequest.registraMessaggio");
 			if(this.msgContext.isGestioneRisposta()){
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_508_SAVE_REQUEST_MSG));
 
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 			}
-			msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata su fileSystem
-			openspcoopstate.releaseResource();
+			this.msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata su fileSystem
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 
@@ -6104,30 +6203,30 @@ public class RicezioneBuste {
 
 
 		/* ----------------   Salvo busta ricevuta (se non l'ho gia' ricevuta)   --------------------- */
-		msgDiag.mediumDebug("Registrazione busta di richiesta nel RepositoryBuste...");
+		this.msgDiag.mediumDebug("Registrazione busta di richiesta nel RepositoryBuste...");
 		try{
-			if( (!oneWayStateless) && (!sincronoStateless) && (!asincronoStateless)  && (!routingStateless) ){
-				if(repositoryBuste.isRegistrata(bustaRichiesta.getID(),tipoMsg)){
+			if( (!this.oneWayStateless) && (!this.sincronoStateless) && (!this.asincronoStateless)  && (!this.routingStateless) ){
+				if(this.repositoryBuste.isRegistrata(this.bustaRichiesta.getID(),tipoMsg)){
 					try{
-						repositoryBuste.aggiornaBusta(bustaRichiesta,tipoMsg,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(),erroriValidazione);
-						repositoryBuste.impostaUtilizzoPdD(bustaRichiesta.getID(),tipoMsg);
+						this.repositoryBuste.aggiornaBusta(this.bustaRichiesta,tipoMsg,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(),this.erroriValidazione);
+						this.repositoryBuste.impostaUtilizzoPdD(this.bustaRichiesta.getID(),tipoMsg);
 					}catch(Exception e){
 						if(propertiesReader.isMsgGiaInProcessamentoUseLock()) {
-							String causa = "Aggiornamento dati busta con id ["+bustaRichiesta.getID()+"] tipo["+tipoMsg+"] non riuscito: "+e.getMessage();
+							String causa = "Aggiornamento dati busta con id ["+this.bustaRichiesta.getID()+"] tipo["+tipoMsg+"] non riuscito: "+e.getMessage();
 							try{
-								GestoreMessaggi.acquireLock(msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()), msgDiag, causa, propertiesReader.getMsgGiaInProcessamentoAttesaAttiva(), propertiesReader.getMsgGiaInProcessamentoCheckInterval());
+								GestoreMessaggi.acquireLock(this.msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()), this.msgDiag, causa, propertiesReader.getMsgGiaInProcessamentoAttesaAttiva(), propertiesReader.getMsgGiaInProcessamentoCheckInterval());
 								// errore che puo' avvenire a causa del Timer delle Buste (vedi spiegazione in classe GestoreMessaggi.deleteMessageWithLock)
 								// Si riesegue tutto il codice isRegistrata e update o create con il lock. Stavolta se avviene un errore non e' dovuto al timer.
-								if(repositoryBuste.isRegistrata(bustaRichiesta.getID(),tipoMsg)){
-									repositoryBuste.aggiornaBusta(bustaRichiesta,tipoMsg,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(),erroriValidazione);
-									repositoryBuste.impostaUtilizzoPdD(bustaRichiesta.getID(),tipoMsg);
+								if(this.repositoryBuste.isRegistrata(this.bustaRichiesta.getID(),tipoMsg)){
+									this.repositoryBuste.aggiornaBusta(this.bustaRichiesta,tipoMsg,propertiesReader.getRepositoryIntervalloScadenzaMessaggi(),this.erroriValidazione);
+									this.repositoryBuste.impostaUtilizzoPdD(this.bustaRichiesta.getID(),tipoMsg);
 								}
 								else{
-									repositoryBuste.registraBusta(bustaRichiesta, tipoMsg, erroriValidazione, propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
+									this.repositoryBuste.registraBusta(this.bustaRichiesta, tipoMsg, this.erroriValidazione, propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
 								}
 							}finally{
 								try{
-									GestoreMessaggi.releaseLock(msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()),msgDiag, causa);
+									GestoreMessaggi.releaseLock(this.msgRequest,TimerLock.newInstance(TipoLock._getLockGestioneRepositoryMessaggi()),this.msgDiag, causa);
 								}catch(Exception eUnlock){
 									// ignore
 								}
@@ -6140,29 +6239,29 @@ public class RicezioneBuste {
 
 				}
 				else{
-					repositoryBuste.registraBusta(bustaRichiesta, tipoMsg, erroriValidazione, propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
+					this.repositoryBuste.registraBusta(this.bustaRichiesta, tipoMsg, this.erroriValidazione, propertiesReader.getRepositoryIntervalloScadenzaMessaggi());
 				}
-				repositoryBuste.aggiornaInfoIntegrazione(bustaRichiesta.getID(),tipoMsg,infoIntegrazione);
+				this.repositoryBuste.aggiornaInfoIntegrazione(this.bustaRichiesta.getID(),tipoMsg,this.infoIntegrazione);
 			}else{
-				((StatelessMessage)openspcoopstate.getStatoRichiesta()).setBusta(bustaRichiesta);
+				((StatelessMessage)this.openspcoopstate.getStatoRichiesta()).setBusta(this.bustaRichiesta);
 			}
 		}catch(Exception e){
-			msgDiag.logErroreGenerico(e,"repositoryBuste.registraBusta");
+			this.msgDiag.logErroreGenerico(e,"repositoryBuste.registraBusta");
 			if(this.msgContext.isGestioneRisposta()){
 				
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO));
 
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);	
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);	
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 			}
-			msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata su fileSystem
-			openspcoopstate.releaseResource();
+			this.msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata su fileSystem
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 
@@ -6183,126 +6282,126 @@ public class RicezioneBuste {
 
 		/* ------------  Forward a Sbustamento o InoltroBuste (a seconda se il modulo assume funzione di Router) ------------- */
 		try{
-			if(functionAsRouter){ // solo stateful
-				msgDiag.mediumDebug("Invio messaggio al modulo di InoltroBuste (router)...");
-				msgRequest.aggiornaProprietarioMessaggio(org.openspcoop2.pdd.mdb.InoltroBuste.ID_MODULO);
+			if(this.functionAsRouter){ // solo stateful
+				this.msgDiag.mediumDebug("Invio messaggio al modulo di InoltroBuste (router)...");
+				this.msgRequest.aggiornaProprietarioMessaggio(org.openspcoop2.pdd.mdb.InoltroBuste.ID_MODULO);
 				// Creazione InoltroBuste
-				msgDiag.highDebug("Creazione ObjectMessage for send nell'infrastruttura.");
-				inoltroMSG.setBusta(bustaRichiesta);
-				RichiestaDelegata rd = new RichiestaDelegata(soggettoFruitore);
-				rd.setDominio(identitaPdD);
+				this.msgDiag.highDebug("Creazione ObjectMessage for send nell'infrastruttura.");
+				inoltroMSG.setBusta(this.bustaRichiesta);
+				RichiestaDelegata rd = new RichiestaDelegata(this.soggettoFruitore);
+				rd.setDominio(this.identitaPdD);
 				rd.setIdModuloInAttesa(this.msgContext.getIdModulo());
-				rd.setIdServizio(idServizio);
-				rd.setIdCorrelazioneApplicativa(correlazioneApplicativa);
+				rd.setIdServizio(this.idServizio);
+				rd.setIdCorrelazioneApplicativa(this.correlazioneApplicativa);
 				rd.setServizioApplicativo(servizioApplicativoFruitore);
 				rd.setIntegrazione(this.msgContext.getIntegrazione());
 				rd.setProtocol(this.msgContext.getProtocol());
 				inoltroMSG.setRichiestaDelegata(rd);
-				inoltroMSG.setImplementazionePdDSoggettoMittente(implementazionePdDMittente);
+				inoltroMSG.setImplementazionePdDSoggettoMittente(this.implementazionePdDMittente);
 				inoltroMSG.setImplementazionePdDSoggettoDestinatario(implementazionePdDDestinatario);
 				inoltroMSG.setPddContext(inRequestContext.getPddContext());
 
 				// send jms solo x il comportamento stateful
-				if (!routingStateless) {
+				if (!this.routingStateless) {
 					
 					String classTypeNodeSender = null;
 					INodeSender nodeSender = null;
 					try{
 						classTypeNodeSender = className.getNodeSender(propertiesReader.getNodeSender());
 						nodeSender = (INodeSender) loader.newInstance(classTypeNodeSender);
-						AbstractCore.init(nodeSender, pddContext, protocolFactory);
+						AbstractCore.init(nodeSender, this.pddContext, this.protocolFactory);
 					}catch(Exception e){
-						throw new Exception("Riscontrato errore durante il caricamento della classe ["+classTypeNodeSender+
-								"] da utilizzare per la spedizione nell'infrastruttura: "+e.getMessage());
+						throw new CoreException("Riscontrato errore durante il caricamento della classe (INodeSender) ["+classTypeNodeSender+
+								"] per la spedizione nell'infrastruttura: "+e.getMessage());
 					}
 					
-					nodeSender.send(inoltroMSG, org.openspcoop2.pdd.mdb.InoltroBuste.ID_MODULO, msgDiag, 
-							identitaPdD,this.msgContext.getIdModulo(), idMessageRequest, msgRequest);
+					nodeSender.send(inoltroMSG, org.openspcoop2.pdd.mdb.InoltroBuste.ID_MODULO, this.msgDiag, 
+							this.identitaPdD,this.msgContext.getIdModulo(), this.idMessageRequest, this.msgRequest);
 				}
 			}else{
-				msgDiag.mediumDebug("Invio messaggio al modulo di Sbustamento...");
-				msgRequest.aggiornaProprietarioMessaggio(org.openspcoop2.pdd.mdb.Sbustamento.ID_MODULO);
+				this.msgDiag.mediumDebug("Invio messaggio al modulo di Sbustamento...");
+				this.msgRequest.aggiornaProprietarioMessaggio(org.openspcoop2.pdd.mdb.Sbustamento.ID_MODULO);
 
 				// set tipologia di filtro duplicati
 				if(proprietaPorta!=null && !proprietaPorta.isEmpty()) {
 					boolean filtroDuplicatiTestEnabled = CostantiProprieta.isFiltroDuplicatiTestEnabled(proprietaPorta, false); // filtro duplicati usato per test
 					if(filtroDuplicatiTestEnabled) {
-						pddContext.addObject(CostantiPdD.FILTRO_DUPLICATI_TEST, filtroDuplicatiTestEnabled);
+						this.pddContext.addObject(CostantiPdD.FILTRO_DUPLICATI_TEST, filtroDuplicatiTestEnabled);
 					}
 				}
 				
 				// setto parametri SbustamentoMessage
-				msgDiag.highDebug("Creazione ObjectMessage for send nell'infrastruttura.");
-				richiestaApplicativa.setIdCorrelazioneApplicativa(correlazioneApplicativa);
+				this.msgDiag.highDebug("Creazione ObjectMessage for send nell'infrastruttura.");
+				richiestaApplicativa.setIdCorrelazioneApplicativa(this.correlazioneApplicativa);
 				richiestaApplicativa.setIdentitaServizioApplicativoFruitore(servizioApplicativoFruitore);
-				sbustamentoMSG.setRichiestaApplicativa(richiestaApplicativa);
-				sbustamentoMSG.setBusta(bustaRichiesta);
-				sbustamentoMSG.setErrors(erroriValidazione, integrationFunctionErrorValidazione);
-				sbustamentoMSG.setMessaggioErroreProtocollo(isMessaggioErroreProtocollo);
-				sbustamentoMSG.setIsBustaDiServizio(bustaDiServizio);
-				sbustamentoMSG.setServizioCorrelato(validatore.getServizioCorrelato());
-				sbustamentoMSG.setTipoServizioCorrelato(validatore.getTipoServizioCorrelato());
-				sbustamentoMSG.setVersioneServizioCorrelato(validatore.getVersioneServizioCorrelato());
-				sbustamentoMSG.setRuoloBustaRicevuta(ruoloBustaRicevuta);
-				sbustamentoMSG.setOneWayVersione11(oneWayVersione11);
-				sbustamentoMSG.setStateless((oneWayStateless || sincronoStateless || asincronoStateless));
-				sbustamentoMSG.setImplementazionePdDSoggettoMittente(implementazionePdDMittente);
-				sbustamentoMSG.setImplementazionePdDSoggettoDestinatario(implementazionePdDDestinatario);
-				sbustamentoMSG.setPddContext(inRequestContext.getPddContext());
-				sbustamentoMSG.setDettaglioEccezione(dettaglioEccezione);
+				this.sbustamentoMSG.setRichiestaApplicativa(richiestaApplicativa);
+				this.sbustamentoMSG.setBusta(this.bustaRichiesta);
+				this.sbustamentoMSG.setErrors(this.erroriValidazione, integrationFunctionErrorValidazione);
+				this.sbustamentoMSG.setMessaggioErroreProtocollo(this.isMessaggioErroreProtocollo);
+				this.sbustamentoMSG.setIsBustaDiServizio(this.bustaDiServizio);
+				this.sbustamentoMSG.setServizioCorrelato(validatore.getServizioCorrelato());
+				this.sbustamentoMSG.setTipoServizioCorrelato(validatore.getTipoServizioCorrelato());
+				this.sbustamentoMSG.setVersioneServizioCorrelato(validatore.getVersioneServizioCorrelato());
+				this.sbustamentoMSG.setRuoloBustaRicevuta(this.ruoloBustaRicevuta);
+				this.sbustamentoMSG.setOneWayVersione11(this.oneWayVersione11);
+				this.sbustamentoMSG.setStateless((this.oneWayStateless || this.sincronoStateless || this.asincronoStateless));
+				this.sbustamentoMSG.setImplementazionePdDSoggettoMittente(this.implementazionePdDMittente);
+				this.sbustamentoMSG.setImplementazionePdDSoggettoDestinatario(implementazionePdDDestinatario);
+				this.sbustamentoMSG.setPddContext(inRequestContext.getPddContext());
+				this.sbustamentoMSG.setDettaglioEccezione(dettaglioEccezione);
 				
 				if(validatore.getInfoServizio()!=null){
-					sbustamentoMSG.setFiltroDuplicatiRichiestoAccordo(Inoltro.SENZA_DUPLICATI.equals(validatore.getInfoServizio().getInoltro()));
-					if(StatoFunzionalitaProtocollo.REGISTRO.equals(moduleManager.getConsegnaAffidabile(bustaRichiesta)))
-						sbustamentoMSG.setConfermaRicezioneRichiestoAccordo(validatore.getInfoServizio().getConfermaRicezione());
-					if(StatoFunzionalitaProtocollo.REGISTRO.equals(moduleManager.getConsegnaInOrdine(bustaRichiesta)))	
-						sbustamentoMSG.setConsegnaOrdineRichiestoAccordo(validatore.getInfoServizio().getOrdineConsegna());
+					this.sbustamentoMSG.setFiltroDuplicatiRichiestoAccordo(Inoltro.SENZA_DUPLICATI.equals(validatore.getInfoServizio().getInoltro()));
+					if(StatoFunzionalitaProtocollo.REGISTRO.equals(this.moduleManager.getConsegnaAffidabile(this.bustaRichiesta)))
+						this.sbustamentoMSG.setConfermaRicezioneRichiestoAccordo(validatore.getInfoServizio().getConfermaRicezione());
+					if(StatoFunzionalitaProtocollo.REGISTRO.equals(this.moduleManager.getConsegnaInOrdine(this.bustaRichiesta)))	
+						this.sbustamentoMSG.setConsegnaOrdineRichiestoAccordo(validatore.getInfoServizio().getOrdineConsegna());
 				}
 
 				// send jms solo x il comportamento stateful
-				if (!portaStateless) {
-					logDebug(logCore, RicezioneBuste.ID_MODULO + " :eseguo send a sbustamento");
+				if (!this.portaStateless) {
+					logDebug(this.logCore, RicezioneBuste.ID_MODULO + " :eseguo send a sbustamento");
 					
 					String classTypeNodeSender = null;
 					INodeSender nodeSender = null;
 					try{
 						classTypeNodeSender = className.getNodeSender(propertiesReader.getNodeSender());
 						nodeSender = (INodeSender) loader.newInstance(classTypeNodeSender);
-						AbstractCore.init(nodeSender, pddContext, protocolFactory);
+						AbstractCore.init(nodeSender, this.pddContext, this.protocolFactory);
 					}catch(Exception e){
-						throw new Exception("Riscontrato errore durante il caricamento della classe ["+classTypeNodeSender+
+						throw new CoreException("Riscontrato errore durante il caricamento della classe ["+classTypeNodeSender+
 								"] da utilizzare per la spedizione nell'infrastruttura: "+e.getMessage());
 					}
 					
-					nodeSender.send(sbustamentoMSG, org.openspcoop2.pdd.mdb.Sbustamento.ID_MODULO, msgDiag, 
-							identitaPdD,this.msgContext.getIdModulo(), idMessageRequest, msgRequest);
-					logDebug(logCore, RicezioneBuste.ID_MODULO + " :send a sbustamento eseguita");
+					nodeSender.send(this.sbustamentoMSG, org.openspcoop2.pdd.mdb.Sbustamento.ID_MODULO, this.msgDiag, 
+							this.identitaPdD,this.msgContext.getIdModulo(), this.idMessageRequest, this.msgRequest);
+					logDebug(this.logCore, RicezioneBuste.ID_MODULO + " :send a sbustamento eseguita");
 				}
 			}
 
 		} catch (Exception e) {	
-			if(functionAsRouter){
-				logError(logCore, "Spedizione->InoltroBuste(router) non riuscita",e);
-				msgDiag.logErroreGenerico(e,"GenericLib.nodeSender.send(InoltroBuste)");
+			if(this.functionAsRouter){
+				logError(this.logCore, "Spedizione->InoltroBuste(router) non riuscita",e);
+				this.msgDiag.logErroreGenerico(e,"GenericLib.nodeSender.send(InoltroBuste)");
 			}else{
-				logError(logCore, "Spedizione->Sbustamento non riuscita",e);
-				msgDiag.logErroreGenerico(e,"GenericLib.nodeSender.send(Sbustamento)");
+				logError(this.logCore, "Spedizione->Sbustamento non riuscita",e);
+				this.msgDiag.logErroreGenerico(e,"GenericLib.nodeSender.send(Sbustamento)");
 			}
 			if(this.msgContext.isGestioneRisposta()){
 				
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND));
 				
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 			}
-			msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata su fileSystem
-			openspcoopstate.releaseResource();
+			this.msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata su fileSystem
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 
@@ -6312,27 +6411,27 @@ public class RicezioneBuste {
 
 
 		/* ------------  Commit connessione al DB (RichiestaSalvata) ------------- */
-		msgDiag.mediumDebug("Commit delle operazioni per la gestione della richiesta...");
+		this.msgDiag.mediumDebug("Commit delle operazioni per la gestione della richiesta...");
 		try{
-			openspcoopstate.commit();
-			logDebug(logCore, RicezioneBuste.ID_MODULO+ " :RicezioneBuste commit eseguito");
+			this.openspcoopstate.commit();
+			logDebug(this.logCore, RicezioneBuste.ID_MODULO+ " :RicezioneBuste commit eseguito");
 		}catch (Exception e) {	
-			msgDiag.logErroreGenerico(e,"openspcoopstate.commit()");
+			this.msgDiag.logErroreGenerico(e,"openspcoopstate.commit()");
 			if(this.msgContext.isGestioneRisposta()){
 				
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_506_COMMIT_JDBC));
 
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 			}
-			msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata 
-			openspcoopstate.releaseResource();
+			this.msgRequest.deleteMessageFromFileSystem(); // elimino richiesta salvata 
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 
@@ -6346,19 +6445,19 @@ public class RicezioneBuste {
 		validatore = null;
 		// *** GB ***
 		
-		if ( portaStateless==false && routingStateless== false  ) {
+		if ( !this.portaStateless && !this.routingStateless  ) {
 
 			// Aggiornamento cache messaggio
-			if(msgRequest!=null)
-				msgRequest.addMessaggiIntoCache_readFromTable(RicezioneBuste.ID_MODULO, "richiesta");
+			if(this.msgRequest!=null)
+				this.msgRequest.addMessaggiIntoCache_readFromTable(RicezioneBuste.ID_MODULO, "richiesta");
 
 			// Aggiornamento cache proprietario messaggio
-			if(msgRequest!=null)
-				msgRequest.addProprietariIntoCache_readFromTable(RicezioneBuste.ID_MODULO, "richiesta",null,functionAsRouter);
+			if(this.msgRequest!=null)
+				this.msgRequest.addProprietariIntoCache_readFromTable(RicezioneBuste.ID_MODULO, "richiesta",null,this.functionAsRouter);
 
 			// Rilascia connessione al DB 
-			msgDiag.mediumDebug("Commit delle operazioni per la gestione della richiesta effettuato, rilascio della connessione...");
-			openspcoopstate.releaseResource();
+			this.msgDiag.mediumDebug("Commit delle operazioni per la gestione della richiesta effettuato, rilascio della connessione...");
+			this.openspcoopstate.releaseResource();
 		}
 
 
@@ -6368,7 +6467,7 @@ public class RicezioneBuste {
 		
 		
 		/* FIX bug riferimentoMessaggio errato, contiene un id generato nel flusso di risposta (e poi non usato in seguito a errori) invece di quello della richiesta */
-		bustaRichiesta = bustaRichiesta.newInstance(); // Per evitare che mi venga modificato da ImbustamentoRisposte (Non ho capito il motivo)
+		this.bustaRichiesta = this.bustaRichiesta.newInstance(); // Per evitare che mi venga modificato da ImbustamentoRisposte (Non ho capito il motivo)
 		
 		
 		
@@ -6377,50 +6476,50 @@ public class RicezioneBuste {
 
 
 		/* ------------------------------ STATELESS  ROUTING -------------------------------- */
-		if(routingStateless){
-			((OpenSPCoopStateless)openspcoopstate).setMessageLib(inoltroMSG);
-			((OpenSPCoopStateless)openspcoopstate).setIDMessaggioSessione(idMessageRequest);
+		if(this.routingStateless){
+			this.openspcoopstate.setMessageLib(inoltroMSG);
+			this.openspcoopstate.setIDMessaggioSessione(this.idMessageRequest);
 
 			// Durante le invocazioni non deve essere utilizzata la connessione al database 
-			((OpenSPCoopStateless)openspcoopstate).setUseConnection(false);
+			this.openspcoopstate.setUseConnection(false);
 
 			// InoltroBuste 
 			InoltroBuste lib = null;
 			try{
-				lib = new InoltroBuste(logCore);
-				EsitoLib esito = lib.onMessage(openspcoopstate);
+				lib = new InoltroBuste(this.logCore);
+				EsitoLib esito = lib.onMessage(this.openspcoopstate);
 
 				if ( esito.getStatoInvocazione() == EsitoLib.OK ||
 						esito.getStatoInvocazione() == EsitoLib.ERRORE_GESTITO ){
-					msgDiag.mediumDebug("Invocazione libreria InoltroBuste riuscito con esito: "+esito.getStatoInvocazione());
+					this.msgDiag.mediumDebug("Invocazione libreria InoltroBuste riuscito con esito: "+esito.getStatoInvocazione());
 				}
 				else if (esito.getStatoInvocazione() == EsitoLib.ERRORE_NON_GESTITO ) {
-					throw new Exception("Errore non gestito dalla libreria");
+					throw new CoreException("Errore non gestito dalla libreria");
 				}
-				//else {
-				//	throw new Exception("Esito libreria sconosciuto");
-				//}
+				/**else {
+					throw new Exception("Esito libreria sconosciuto");
+				}*/
 			}catch(Exception e){
-				msgDiag.logErroreGenerico(e,"GestioneRoutingStateless");
-				logError(logCore, "Errore Generale durante la gestione del routing stateless: "+e.getMessage(),e);
+				this.msgDiag.logErroreGenerico(e,"GestioneRoutingStateless");
+				logError(this.logCore, "Errore Generale durante la gestione del routing stateless: "+e.getMessage(),e);
 
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						getErroreIntegrazione());
 
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-				openspcoopstate.releaseResource();
+				this.openspcoopstate.setUseConnection(true);
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 
 			// ripristino utilizzo connessione al database
-			((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
+			this.openspcoopstate.setUseConnection(true);
 		}
 
 
@@ -6434,127 +6533,75 @@ public class RicezioneBuste {
 		 * viene restituito un errore senza messaggio di risposta, ne creiamo uno noi (generico) e lo inviamo al mittente
 		 */ 
 
-		if (portaStateless) {
-						
-			((OpenSPCoopStateless)openspcoopstate).setMessageLib(sbustamentoMSG);
-			((OpenSPCoopStateless)openspcoopstate).setIDMessaggioSessione(idMessageRequest);
-
-			// Durante le invocazioni non deve essere utilizzata la connessione al database 
-			((OpenSPCoopStateless)openspcoopstate).setUseConnection(false);
-
-			EsitoLib esito = new EsitoLib();
-			try {
-				((OpenSPCoopStateless)openspcoopstate).setDestinatarioResponseMsgLib(""); // Verra aggiornato dalle librerie
-				while (((OpenSPCoopStateless)openspcoopstate).getDestinatarioResponseMsgLib().startsWith(RicezioneBuste.ID_MODULO) == false) {
-
-					boolean libreriaSbustamento = false;
-					if (  ((OpenSPCoopStateless)openspcoopstate).getDestinatarioRequestMsgLib().startsWith(Sbustamento.ID_MODULO) ) {
-						libreriaSbustamento = true;
-					}
-					
-					if (  ((OpenSPCoopStateless)openspcoopstate).getDestinatarioResponseMsgLib().startsWith(ImbustamentoRisposte.ID_MODULO) ) {
-						/* Verifico che non abbia rilasciato la connessione, se si la riprendo */
-						if( propertiesReader.isRinegoziamentoConnessione(bustaRichiesta.getProfiloDiCollaborazione()) && (oneWayStateless || sincronoStateless || asincronoStateless)
-								&& openspcoopstate.resourceReleased()){
-							/* per default disabilitato 
-							((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
-							((OpenSPCoopStateless)openspcoopstate).initResource(identitaPdD, ImbustamentoRisposte.ID_MODULO, idTransazione);
-							((OpenSPCoopStateless)openspcoopstate).setUseConnection(false);
-							*/
-							// update states
-							registroServiziReader = registroServiziReader.refreshState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-							configurazionePdDReader = configurazionePdDReader.refreshState(registroServiziReader);
-							tracciamento.updateState(configurazionePdDReader);
-							msgDiag.updateState(configurazionePdDReader);
-						}
-					}
-
-					esito = chiamaLibreria(((OpenSPCoopStateless)openspcoopstate), logCore);
-
-					if ( oneWayVersione11 && newConnectionForResponse && 
-							esito.getStatoInvocazione() == EsitoLib.OK &&
-							libreriaSbustamento) {
-
-						((OpenSPCoopStateless)openspcoopstate).setDestinatarioResponseMsgLib(RicezioneBuste.ID_MODULO);
-
-						// Ho finito di gestire la richiesta in questo caso.
-						((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
-						openspcoopstate.commit();
-						((OpenSPCoopStateless)openspcoopstate).setUseConnection(false);
-					}
-
-					if ( esito.getStatoInvocazione() == EsitoLib.ERRORE_GESTITO ) {
-
-						if(oneWayVersione11 && newConnectionForResponse &&
-								libreriaSbustamento ){
-
-							// Ho finito di gestire la richiesta in questo caso.
-							((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
-							openspcoopstate.commit();
-							((OpenSPCoopStateless)openspcoopstate).setUseConnection(false);
-						}
-
-						break;
-					} 
-					
-					else if (esito.getStatoInvocazione() == EsitoLib.ERRORE_NON_GESTITO ) {
-						throw new Exception("Errore non gestito dalla libreria");
-					}
-					
-					if(libreriaSbustamento==true){
-						// invocazione della libreriaSbustamento terminata, posso rilasciare la connessione se sono in stateless puro
-						if( propertiesReader.isRinegoziamentoConnessione(bustaRichiesta.getProfiloDiCollaborazione()) && (oneWayStateless || sincronoStateless || asincronoStateless) ){
-							((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
-							openspcoopstate.commit();
-							openspcoopstate.releaseResource();
-							((OpenSPCoopStateless)openspcoopstate).setUseConnection(false);
-						}
-					}
-					
-					//else {
-					//	throw new Exception("Esito libreria sconosciuto");
-					//}
-				}
-			}catch (Exception e) {
-				msgDiag.logErroreGenerico(e,"GestioneStateless");
-				logError(logCore, "Errore Generale durante la gestione stateless: "+e.getMessage(),e);
-
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						getErroreIntegrazione());
-				
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
-				
-				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-				openspcoopstate.releaseResource();
+		if (this.portaStateless) {
+			
+			boolean resultRequest = this.comportamentoStatelessRichiesta();
+			if (!resultRequest){
+				this.openspcoopstate.releaseResource();
 				return;
 			}
-
-			// ripristino utilizzo connessione al database
-			((OpenSPCoopStateless)openspcoopstate).setUseConnection(true);
+			
 		}
 
+		if(this.asyncResponseCallback==null || this.terminataGestioneStatelessErrorBeforeAsyncrConnettore) {
+			this._statelessComplete(false);
+		}
 
-
-
+		}finally{ // try vedi  #try-finally-openspcoopstate#
+			try{
+				if(this.openspcoopstate!=null){
+					this.openspcoopstate.forceFinallyReleaseResource();
+				}
+			}catch(Throwable e){
+				if(this.msgDiag!=null){
+					try{
+						this.msgDiag.logErroreGenerico(e, "Rilascio risorsa");
+					}catch(Throwable eLog){
+						this.logCore.error("Diagnostico errore per Rilascio risorsa: "+eLog.getMessage(),eLog);
+					}
+				}
+				else{
+					this.logCore.error("Rilascio risorsa: "+e.getMessage(),e);
+				}
+			}
+		}
+	}
+	
+	private void _statelessComplete(boolean invokedFromAsyncConnector) {
+		
+		try {
+		
+		/*
+		 * ---------------- STATELESS OR Stateful v11 -------------
+		 */
+		if (this.portaStateless && !this.terminataGestioneStateless) {
+			
+			boolean resultResponse = this.comportamentoStatelessRisposta(invokedFromAsyncConnector);
+			if (!resultResponse){
+				this.openspcoopstate.releaseResource();
+				return;
+			}
+				
+			// ripristino utilizzo connessione al database
+			this.openspcoopstate.setUseConnection(true);
+		}
+		
+		OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+		
 		// refresh risorse con nuovi stati
-		registroServiziReader = registroServiziReader.refreshState(openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta());
-		configurazionePdDReader = configurazionePdDReader.refreshState(registroServiziReader);
-		tracciamento.updateState(configurazionePdDReader);
-		msgDiag.updateState(configurazionePdDReader);
+		this.registroServiziReader = this.registroServiziReader.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+		this.configurazionePdDReader = this.configurazionePdDReader.refreshState(this.registroServiziReader);
+		this.tracciamento.updateState(this.configurazionePdDReader);
+		this.msgDiag.updateState(this.configurazionePdDReader);
 
 		
 		
 
 		/* ------------  GestioneRisposta non effettuata ------------- */
-		msgDiag.mediumDebug("Gestione risposta...");
-		if(this.msgContext.isGestioneRisposta()==false){
-			if(portaStateless)
-				openspcoopstate.releaseResource();
+		this.msgDiag.mediumDebug("Gestione risposta...");
+		if(!this.msgContext.isGestioneRisposta()){
+			if(this.portaStateless)
+				this.openspcoopstate.releaseResource();
 			return;
 		}
 		
@@ -6569,10 +6616,10 @@ public class RicezioneBuste {
 		 * Es. puo' darsi che la PdD finale mandi il sincrono su di una nuova connessione.
 		 */
 		
-		if(functionAsRouter){
-			if( (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())==false) &&
-					newConnectionForResponse ) {
-				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(),MessageRole.RESPONSE));
+		if(this.functionAsRouter){
+			if( (!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) &&
+					this.newConnectionForResponse ) {
+				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(this.requestMessage.getFactory(),this.requestMessage.getMessageType(),MessageRole.RESPONSE));
 				return;
 			}
 			richiestaRispostaProtocollo = false;
@@ -6595,38 +6642,46 @@ public class RicezioneBuste {
 		 * Se viene richiesta un profilo OneWay senza confermaRicezione
 		 */
 		else{
-			if ( utilizzoIndirizzoTelematico && bustaRichiesta.getIndirizzoMittente()!=null &&
-					moduleManager.isUtilizzoIndirizzoSoggettoPresenteBusta() &&
-					(!oneWayStateless) && (!sincronoStateless) && (!asincronoStateless)  ){
-				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(),MessageRole.RESPONSE));
-				if(portaStateless){
-					openspcoopstate.releaseResource();
-				}
-				return;
-			} else if( (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())==false) &&
-					newConnectionForResponse &&
-					(!oneWayStateless) && (!sincronoStateless) && (!asincronoStateless) ) {
-				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(),MessageRole.RESPONSE));
-				if(portaStateless){
-					openspcoopstate.releaseResource();
+			if(
+					(
+							this.utilizzoIndirizzoTelematico && this.bustaRichiesta.getIndirizzoMittente()!=null &&
+							this.moduleManager.isUtilizzoIndirizzoSoggettoPresenteBusta() &&
+							(!this.oneWayStateless) && (!this.sincronoStateless) && (!this.asincronoStateless)
+					)
+					||
+					(
+							(!org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(this.bustaRichiesta.getProfiloDiCollaborazione())) &&
+							this.newConnectionForResponse &&
+							(!this.oneWayStateless) && (!this.sincronoStateless) && (!this.asincronoStateless)
+					)
+			) {
+				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(this.requestMessage.getFactory(),this.requestMessage.getMessageType(),MessageRole.RESPONSE));
+				if(this.portaStateless){
+					this.openspcoopstate.releaseResource();
 				}
 				return;
 			} else {
-				if ( isMessaggioErroreProtocollo  ) {
+				if ( 
+						this.isMessaggioErroreProtocollo
+						||
+						this.bustaDiServizio
+						||
+						( 
+								StatoFunzionalitaProtocollo.DISABILITATA.equals(this.moduleManager.getConsegnaAffidabile(this.bustaRichiesta)) ||
+								(!propertiesReader.isGestioneRiscontri(this.implementazionePdDMittente)) ||
+								(
+										org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) 
+										&&
+										(!this.bustaRichiesta.isConfermaRicezione())
+								)
+						)
+						||
+						( 
+								org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) ||
+								org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) )
+					) {
 					richiestaRispostaProtocollo = false;
-				} else if ( bustaDiServizio  ) {
-					richiestaRispostaProtocollo = false;
-				} else if( StatoFunzionalitaProtocollo.DISABILITATA.equals(moduleManager.getConsegnaAffidabile(bustaRichiesta)) ||
-						(propertiesReader.isGestioneRiscontri(implementazionePdDMittente)==false) ||
-						(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione()) &&
-								(bustaRichiesta.isConfermaRicezione()==false))
-				){
-					richiestaRispostaProtocollo = false;
-				}
-				else if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ||
-						org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) ){
-					richiestaRispostaProtocollo = false;
-				}
+				} 
 			}
 		}
 
@@ -6638,68 +6693,12 @@ public class RicezioneBuste {
 		
 		RicezioneBusteGestioneRisposta parametriGestioneRisposta = 
 				new RicezioneBusteGestioneRisposta();
-
-		parametriGestioneRisposta.setOpenspcoopstate(openspcoopstate);
 		
-		parametriGestioneRisposta.setRegistroServiziReader(registroServiziReader);
-		parametriGestioneRisposta.setConfigurazionePdDReader(configurazionePdDReader);
-		parametriGestioneRisposta.setMsgDiag(msgDiag);
-		parametriGestioneRisposta.setTracciamento(tracciamento);
-		parametriGestioneRisposta.setLogCore(logCore);
 		parametriGestioneRisposta.setPropertiesReader(propertiesReader);
-		
-		parametriGestioneRisposta.setIdentitaPdD(identitaPdD);
-		parametriGestioneRisposta.setIdMessageRequest(idMessageRequest);
-		
-		parametriGestioneRisposta.setMittenteAnonimo(mittenteAnonimo);
-		parametriGestioneRisposta.setImplementazionePdDMittente(implementazionePdDMittente);
-		
-		parametriGestioneRisposta.setHeaderIntegrazioneRichiesta(headerIntegrazioneRichiesta);
-		parametriGestioneRisposta.setTipiIntegrazionePA(tipiIntegrazionePA);
-		
-		parametriGestioneRisposta.setMsgRequest(msgRequest);
-		parametriGestioneRisposta.setRepositoryBuste(repositoryBuste);
-		parametriGestioneRisposta.setRequestMessage(requestMessage);
-		
-		parametriGestioneRisposta.setPortaStateless(portaStateless);
-		parametriGestioneRisposta.setOneWayStateless(oneWayStateless);
-		parametriGestioneRisposta.setOneWayVers11(oneWayVersione11);
-		parametriGestioneRisposta.setSincronoStateless(sincronoStateless);
-		parametriGestioneRisposta.setAsincronoStateless(asincronoStateless);
-		parametriGestioneRisposta.setRoutingStateless(routingStateless);
-		
+				
 		parametriGestioneRisposta.setRichiestaRispostaProtocollo(richiestaRispostaProtocollo);
 		
-		parametriGestioneRisposta.setTipoPorta(tipoPorta);
-		parametriGestioneRisposta.setFunctionAsRouter(functionAsRouter);
-
-		parametriGestioneRisposta.setPortaApplicativa(pa);
-		parametriGestioneRisposta.setPortaDelegata(pd);
-		parametriGestioneRisposta.setSoggettoMittente(soggettoFruitore);
-		parametriGestioneRisposta.setIdServizio(idServizio);
-		parametriGestioneRisposta.setCorrelazioneApplicativa(correlazioneApplicativa);
-		
-		parametriGestioneRisposta.setPddContext(inRequestContext.getPddContext());
-		parametriGestioneRisposta.setInfoIntegrazione(infoIntegrazione);
-		parametriGestioneRisposta.setTransaction(transaction);
-		
-		parametriGestioneRisposta.setProtocolFactory(protocolFactory);
-		parametriGestioneRisposta.setTraduttore(traduttore);
-		parametriGestioneRisposta.setModuleManager(moduleManager);
-		
-		parametriGestioneRisposta.setBustaRichiesta(bustaRichiesta);
-		parametriGestioneRisposta.setErroriValidazione(erroriValidazione);
-		parametriGestioneRisposta.setVersioneProtocollo(versioneProtocollo);
-		parametriGestioneRisposta.setRuoloBustaRicevuta(ruoloBustaRicevuta);
-		parametriGestioneRisposta.setReadQualifiedAttribute(readQualifiedAttribute);
-		parametriGestioneRisposta.setProprietaManifestAttachments(proprietaManifestAttachments);
-		
-		parametriGestioneRisposta.setMessageSecurityContext(messageSecurityContext);
-		parametriGestioneRisposta.setFlowPropertiesResponse(flowPropertiesResponse);
-		
-		parametriGestioneRisposta.setParametriGenerazioneBustaErrore(parametriGenerazioneBustaErrore);
-		parametriGestioneRisposta.setParametriInvioBustaErrore(parametriInvioBustaErrore);
-		parametriGestioneRisposta.setRicezioneBusteGeneratoreBustaErrore(ricezioneBusteGeneratoreBustaErrore);
+		parametriGestioneRisposta.setPddContext(this.inRequestContext.getPddContext());
 
 
 
@@ -6710,42 +6709,215 @@ public class RicezioneBuste {
 		try {
 			gestioneRisposta(parametriGestioneRisposta);
 		} catch (Exception e) {
-			logError(logCore, "ErroreGenerale",e);
-			msgDiag.logErroreGenerico(e, "Generale");
+			logError(this.logCore, "ErroreGenerale",e);
+			this.msgDiag.logErroreGenerico(e, "Generale");
 			
-			parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-			parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+			this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+			this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					getErroreIntegrazione());
 			
-			OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+			OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 			
 			// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-			parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-			parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-			ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-			openspcoopstate.releaseResource();
+			this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+			this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+			this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 		
 		}finally{ // try vedi  #try-finally-openspcoopstate#
 			try{
-				if(openspcoopstate!=null){
-					openspcoopstate.forceFinallyReleaseResource();
+				if(this.openspcoopstate!=null){
+					this.openspcoopstate.forceFinallyReleaseResource();
 				}
 			}catch(Throwable e){
-				if(msgDiag!=null){
+				if(this.msgDiag!=null){
 					try{
-						msgDiag.logErroreGenerico(e, "Rilascio risorsa");
+						this.msgDiag.logErroreGenerico(e, "Rilascio risorsa");
 					}catch(Throwable eLog){
-						logError(logCore, "Diagnostico errore per Rilascio risorsa: "+eLog.getMessage(),eLog);
+						logError(this.logCore, "Diagnostico errore per Rilascio risorsa: "+eLog.getMessage(),eLog);
 					}
 				}
 				else{
-					logError(logCore, "Rilascio risorsa: "+e.getMessage(),e);
+					logError(this.logCore, "Rilascio risorsa: "+e.getMessage(),e);
 				}
 			}
+			
+			this._processComplete(invokedFromAsyncConnector);
 		}
 		
+	}
+
+	private boolean comportamentoStatelessRichiesta() {
+		return _comportamentoStateless(true, false);
+	}
+	private boolean comportamentoStatelessRisposta(boolean invokedFromAsyncConnector) {
+		return _comportamentoStateless(false, invokedFromAsyncConnector);
+	}
+	private EsitoLib esitoStatelessAfterSendRequest;
+	private boolean terminataGestioneStateless = false;
+	private boolean terminataGestioneStatelessErrorBeforeAsyncrConnettore = false;
+	private boolean _comportamentoStateless(boolean gestioneRichiesta, boolean invokedFromAsyncConnector) {
+		
+		boolean esitoReturn = true;
+		
+		OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+		
+		if(gestioneRichiesta) {
+			this.openspcoopstate.setMessageLib(this.sbustamentoMSG);
+		}
+		this.openspcoopstate.setIDMessaggioSessione(this.idMessageRequest);
+
+		// Durante le invocazioni non deve essere utilizzata la connessione al database 
+		this.openspcoopstate.setUseConnection(false);
+
+		EsitoLib esito = new EsitoLib();
+		try {
+						
+			boolean jumpTocheckEsitoConsegna = false;
+			if(gestioneRichiesta) {
+				((OpenSPCoopStateless)this.openspcoopstate).setDestinatarioResponseMsgLib(""); // Verra aggiornato dalle librerie
+			}
+			else {
+				esito = this.esitoStatelessAfterSendRequest;
+				jumpTocheckEsitoConsegna = true;
+			}
+
+			while (!((OpenSPCoopStateless)this.openspcoopstate).getDestinatarioResponseMsgLib().startsWith(RicezioneBuste.ID_MODULO)) {
+
+				boolean libreriaSbustamento = false;
+				
+				if (  ((OpenSPCoopStateless)this.openspcoopstate).getDestinatarioRequestMsgLib().startsWith(Sbustamento.ID_MODULO) ) {
+					libreriaSbustamento = true;
+				}
+				
+				boolean libreriaConsegnaContenutiRichiesta = false;
+				if (  ((OpenSPCoopStateless)this.openspcoopstate).getDestinatarioRequestMsgLib().startsWith(ConsegnaContenutiApplicativi.ID_MODULO) ) {
+					libreriaConsegnaContenutiRichiesta = true;
+				}
+				boolean libreriaImbustamentoRisposte = false;
+				if ( !gestioneRichiesta && ((OpenSPCoopStateless)this.openspcoopstate).getDestinatarioResponseMsgLib().startsWith(ImbustamentoRisposte.ID_MODULO) ) {
+					libreriaImbustamentoRisposte = true;
+				}
+				
+				if(!jumpTocheckEsitoConsegna) {
+									
+					if (  ((OpenSPCoopStateless)this.openspcoopstate).getDestinatarioResponseMsgLib().startsWith(ImbustamentoRisposte.ID_MODULO) &&
+						/* Verifico che non abbia rilasciato la connessione, se si la riprendo */
+						( propertiesReader.isRinegoziamentoConnessione(this.bustaRichiesta.getProfiloDiCollaborazione()) && 
+								(this.oneWayStateless || this.sincronoStateless || this.asincronoStateless) 
+								&& this.openspcoopstate.resourceReleased())
+						){
+						/** per default disabilitato 
+						((OpenSPCoopStateless)this.openspcoopstate).setUseConnection(true);
+						((OpenSPCoopStateless)this.openspcoopstate).initResource(this.identitaPdD, ImbustamentoRisposte.ID_MODULO, this.idTransazione);
+						((OpenSPCoopStateless)this.openspcoopstate).setUseConnection(false);
+						*/
+						// update states
+						this.registroServiziReader = this.registroServiziReader.refreshState(this.openspcoopstate.getStatoRichiesta(),this.openspcoopstate.getStatoRisposta());
+						this.configurazionePdDReader = this.configurazionePdDReader.refreshState(this.registroServiziReader);
+						this.tracciamento.updateState(this.configurazionePdDReader);
+						this.msgDiag.updateState(this.configurazionePdDReader);
+					}
+	
+					esito = chiamaLibreria(((OpenSPCoopStateless)this.openspcoopstate), this.logCore,
+							this.registroServiziReader, this.configurazionePdDReader);
+					
+					if(gestioneRichiesta && libreriaConsegnaContenutiRichiesta) {
+						return true;
+					}
+				
+				}
+								
+				if ( this.oneWayVersione11 && this.newConnectionForResponse && 
+						esito.getStatoInvocazione() == EsitoLib.OK &&
+						libreriaSbustamento) {
+
+					((OpenSPCoopStateless)this.openspcoopstate).setDestinatarioResponseMsgLib(RicezioneBuste.ID_MODULO);
+
+					// Ho finito di gestire la richiesta in questo caso.
+					this.openspcoopstate.setUseConnection(true);
+					this.openspcoopstate.commit();
+					this.openspcoopstate.setUseConnection(false);
+				}
+
+				if ( esito.getStatoInvocazione() == EsitoLib.ERRORE_GESTITO ) {
+
+					if(this.oneWayVersione11 && this.newConnectionForResponse &&
+							libreriaSbustamento ){
+
+						// Ho finito di gestire la richiesta in questo caso.
+						this.openspcoopstate.setUseConnection(true);
+						this.openspcoopstate.commit();
+						this.openspcoopstate.setUseConnection(false);
+					}
+
+					if(libreriaSbustamento) {
+						this.terminataGestioneStatelessErrorBeforeAsyncrConnettore = true;
+					}
+					
+					this.terminataGestioneStateless = true;
+					
+					break;
+				} 
+				
+				else if (esito.getStatoInvocazione() == EsitoLib.ERRORE_NON_GESTITO ) {
+					throw new CoreException("Errore non gestito dalla libreria");
+				}
+				
+				if(libreriaSbustamento &&
+					// invocazione della libreriaSbustamento terminata, posso rilasciare la connessione se sono in stateless puro
+					( propertiesReader.isRinegoziamentoConnessione(this.bustaRichiesta.getProfiloDiCollaborazione()) && (this.oneWayStateless || this.sincronoStateless || this.asincronoStateless) )
+					){
+					this.openspcoopstate.setUseConnection(true);
+					this.openspcoopstate.commit();
+					this.openspcoopstate.releaseResource();
+					this.openspcoopstate.setUseConnection(false);
+				}
+				
+				if(jumpTocheckEsitoConsegna) {
+					jumpTocheckEsitoConsegna = false;
+					
+					if(libreriaImbustamentoRisposte && invokedFromAsyncConnector) {
+						// avanzo di modulo
+						((OpenSPCoopStateless)this.openspcoopstate).setDestinatarioRequestMsgLib(""); // azzero per poter invocare imbustamento risposta in metodo chiamaLibreria
+					}
+				}
+				
+				/**else {
+					throw new Exception("Esito libreria sconosciuto");
+				}*/
+			}
+		}catch (Exception e) {
+			this.msgDiag.logErroreGenerico(e,"GestioneStateless");
+			this.logCore.error("Errore Generale durante la gestione stateless: "+e.getMessage(),e);
+
+			this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+			this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					getErroreIntegrazione());
+			
+			OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
+			
+			// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
+			this.openspcoopstate.setUseConnection(true);
+			this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+			this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+			this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+			this.openspcoopstate.releaseResource();
+			return false;
+		}
+
+		if(!gestioneRichiesta) {
+			this.terminataGestioneStateless = true;
+		}
+		
+		if(!gestioneRichiesta || this.terminataGestioneStateless) {
+			// ripristino utilizzo connessione al database
+			this.openspcoopstate.setUseConnection(true);
+		}
+		
+		return esitoReturn;
 	}
 
 	private void setCredenziali(Credenziali credenziali,MsgDiagnostico msgDiag){
@@ -6759,77 +6931,26 @@ public class RicezioneBuste {
 	private void gestioneRisposta(RicezioneBusteGestioneRisposta parametriGestioneRisposta) throws Exception{
 
 		/* ------- Lettura parametri ---------- */
-		IOpenSPCoopState openspcoopstate = parametriGestioneRisposta.getOpenspcoopstate();
 		
-		MsgDiagnostico msgDiag = parametriGestioneRisposta.getMsgDiag();
-		Tracciamento tracciamento = parametriGestioneRisposta.getTracciamento();
-		Logger logCore = parametriGestioneRisposta.getLogCore();
 		OpenSPCoop2Properties propertiesReader = parametriGestioneRisposta.getPropertiesReader();
-		
-		IDSoggetto identitaPdD = parametriGestioneRisposta.getIdentitaPdD();
-		String idMessageRequest = parametriGestioneRisposta.getIdMessageRequest();
-		
-		boolean mittenteAnonimo = parametriGestioneRisposta.isMittenteAnonimo();
-		String implementazionePdDMittente = parametriGestioneRisposta.getImplementazionePdDMittente();
-		
-		/* --- HeaderIntegrazione headerIntegrazioneRichiesta = parametriGestioneRisposta.getHeaderIntegrazioneRichiesta();
+				
+		/** --- HeaderIntegrazione headerIntegrazioneRichiesta = parametriGestioneRisposta.getHeaderIntegrazioneRichiesta();
 		String[] tipiIntegrazionePA = parametriGestioneRisposta.getTipiIntegrazionePA(); --- */
-		
-		GestoreMessaggi msgRequest = parametriGestioneRisposta.getMsgRequest();
-		RepositoryBuste repositoryBuste = parametriGestioneRisposta.getRepositoryBuste();
-		OpenSPCoop2Message requestMessage = parametriGestioneRisposta.getRequestMessage();
-		
-		boolean portaStateless = parametriGestioneRisposta.isPortaStateless();
-		boolean oneWayStateless = parametriGestioneRisposta.isOneWayStateless();
-		boolean oneWayVersione11 = parametriGestioneRisposta.isOneWayVers11();
-		boolean sincronoStateless = parametriGestioneRisposta.isSincronoStateless();
-		boolean asincronoStateless = parametriGestioneRisposta.isAsincronoStateless();
-		boolean routingStateless = parametriGestioneRisposta.isRoutingStateless();
 		
 		boolean richiestaRispostaProtocollo = parametriGestioneRisposta.isRichiestaRispostaProtocollo();
 		
-		TipoPdD tipoPorta = parametriGestioneRisposta.getTipoPorta();
-		boolean functionAsRouter = parametriGestioneRisposta.isFunctionAsRouter();
+		PdDContext pddContextGestioneRisposta = parametriGestioneRisposta.getPddContext();
+		if(this.idTransazione==null) {
+			this.idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContextGestioneRisposta);
+		}
+		RequestInfo requestInfo = (RequestInfo) pddContextGestioneRisposta.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		
-		PdDContext pddContext = parametriGestioneRisposta.getPddContext();
-		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext);
-		RequestInfo requestInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
-		Integrazione infoIntegrazione = parametriGestioneRisposta.getInfoIntegrazione();
-		Transaction transaction = parametriGestioneRisposta.getTransaction();
-		
-		IProtocolFactory<?> protocolFactory = parametriGestioneRisposta.getProtocolFactory();
-		ITraduttore traduttore = parametriGestioneRisposta.getTraduttore();
-		IProtocolVersionManager moduleManager = parametriGestioneRisposta.getModuleManager();
-		
-		Busta bustaRichiesta = parametriGestioneRisposta.getBustaRichiesta();
-		java.util.List<Eccezione> erroriValidazione = parametriGestioneRisposta.getErroriValidazione();
-		String versioneProtocollo = parametriGestioneRisposta.getVersioneProtocollo();
-		RuoloBusta ruoloBustaRicevuta = parametriGestioneRisposta.getRuoloBustaRicevuta();
-		boolean readQualifiedAttribute = parametriGestioneRisposta.isReadQualifiedAttribute();
-		ProprietaManifestAttachments proprietaManifestAttachments = parametriGestioneRisposta.getProprietaManifestAttachments();
-		
-		PortaApplicativa pa = parametriGestioneRisposta.getPortaApplicativa();
-		PortaDelegata pd = parametriGestioneRisposta.getPortaDelegata();
-		
-		IDSoggetto soggettoFruitore = parametriGestioneRisposta.getSoggettoMittente();
-		IDServizio idServizio = parametriGestioneRisposta.getIdServizio();
-		String correlazioneApplicativa = parametriGestioneRisposta.getCorrelazioneApplicativa();
-		
-		MessageSecurityContext messageSecurityContext = parametriGestioneRisposta.getMessageSecurityContext();
-		FlowProperties flowPropertiesResponse = parametriGestioneRisposta.getFlowPropertiesResponse();
-		
-		RicezioneBusteParametriGenerazioneBustaErrore parametriGenerazioneBustaErrore = parametriGestioneRisposta.getParametriGenerazioneBustaErrore();
-		RicezioneBusteParametriInvioBustaErrore parametriInvioBustaErrore = parametriGestioneRisposta.getParametriInvioBustaErrore();
-		RicezioneBusteGeneratoreBustaErrore ricezioneBusteGeneratoreBustaErrore = parametriGestioneRisposta.getRicezioneBusteGeneratoreBustaErrore();
-		
-		RegistroServiziManager registroServiziReader = parametriGestioneRisposta.getRegistroServiziReader();
-		ConfigurazionePdDManager configurazionePdDReader = parametriGestioneRisposta.getConfigurazionePdDReader();
 		
 		Loader loader = Loader.getInstance();
 		PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
 		
 		GestoreMessaggi msgResponse = null;
-		OpenSPCoop2Message responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(),MessageRole.RESPONSE);
+		OpenSPCoop2Message responseMessage = MessageUtilities.buildEmptyMessage(this.requestMessage.getFactory(),this.requestMessage.getMessageType(),MessageRole.RESPONSE);
 
 		Busta bustaRisposta = null;
 		String idMessaggioSblocco = null;
@@ -6839,45 +6960,45 @@ public class RicezioneBuste {
 		RicezioneBusteMessage ricezioneBusteMSG = null;
 		String idCorrelazioneApplicativaRisposta = null;
 		try{
-			msgDiag.mediumDebug("Attesa/lettura risposta...");
+			this.msgDiag.mediumDebug("Attesa/lettura risposta...");
 
-			if ( portaStateless==false && routingStateless== false  ) {
+			if ( !this.portaStateless && !this.routingStateless  ) {
 				
 				String classType = null;
 				INodeReceiver nodeReceiver = null;
 				try{
 					classType = ClassNameProperties.getInstance().getNodeReceiver(propertiesReader.getNodeReceiver());
 					nodeReceiver = (INodeReceiver) loader.newInstance(classType);
-					AbstractCore.init(nodeReceiver, pddContext, protocolFactory);
+					AbstractCore.init(nodeReceiver, pddContextGestioneRisposta, this.protocolFactory);
 				}catch(Exception e){
-					throw new Exception("Riscontrato errore durante il caricamento della classe ["+classType+
+					throw new CoreException("Riscontrato errore durante il caricamento della classe ["+classType+
 							"] da utilizzare per la ricezione dall'infrastruttura: "+e.getMessage());
 				}
 				
-				ricezioneBusteMSG =	(RicezioneBusteMessage) nodeReceiver.receive(msgDiag,identitaPdD,this.msgContext.getIdModulo(),
-						idMessageRequest,propertiesReader.getNodeReceiverTimeoutRicezioneBuste(),
+				ricezioneBusteMSG =	(RicezioneBusteMessage) nodeReceiver.receive(this.msgDiag,this.identitaPdD,this.msgContext.getIdModulo(),
+						this.idMessageRequest,propertiesReader.getNodeReceiverTimeoutRicezioneBuste(),
 						propertiesReader.getNodeReceiverCheckInterval());
 				
 				// aggiorno pddContext
-				pddContext = ricezioneBusteMSG.getPddContext();
-				if(pddContext!=null){
-					List<MapKey<String>> enumPddContext = pddContext.keys();
+				pddContextGestioneRisposta = ricezioneBusteMSG.getPddContext();
+				if(pddContextGestioneRisposta!=null){
+					List<MapKey<String>> enumPddContext = pddContextGestioneRisposta.keys();
 					if(enumPddContext!=null && !enumPddContext.isEmpty()) {
 						for (MapKey<String> key : enumPddContext) {
-							// -- System.out.println("AGGIORNO KEY BUSTE ["+key+"]"); 
-							this.msgContext.getPddContext().addObject(key, pddContext.getObject(key));
+							/** -- System.out.println("AGGIORNO KEY BUSTE ["+key+"]");*/ 
+							this.msgContext.getPddContext().addObject(key, pddContextGestioneRisposta.getObject(key));
 						}
 					}
 				}
 			}
 			else{
-				ricezioneBusteMSG = (RicezioneBusteMessage) openspcoopstate.getMessageLib();
+				ricezioneBusteMSG = (RicezioneBusteMessage) this.openspcoopstate.getMessageLib();
 			}
 
 
 			contenutoRispostaPresente = ricezioneBusteMSG.getBustaRisposta()!=null;
-			if( richiestaRispostaProtocollo && (contenutoRispostaPresente==false)  ){
-				throw new Exception("Risposta attesa e non ritornata: ErroreInterno");
+			if( richiestaRispostaProtocollo && (!contenutoRispostaPresente)  ){
+				throw new CoreException("Risposta attesa e non ritornata: ErroreInterno");
 			}
 			// Leggo il contenuto
 			if(contenutoRispostaPresente){
@@ -6891,16 +7012,16 @@ public class RicezioneBuste {
 			}
 
 		} catch (Exception e) {
-			msgDiag.logErroreGenerico(e,"GestioneRisposta("+this.msgContext.getIdModulo()+")");
-			logError(logCore, "Gestione risposta ("+this.msgContext.getIdModulo()+") con errore",e);
+			this.msgDiag.logErroreGenerico(e,"GestioneRisposta("+this.msgContext.getIdModulo()+")");
+			logError(this.logCore, "Gestione risposta ("+this.msgContext.getIdModulo()+") con errore",e);
 			
 			// per la costruzione dell'errore ho bisogno di una connessione al database
-			if ( portaStateless==false && routingStateless== false  ) {
+			if ( !this.portaStateless && !this.routingStateless  ) {
 				try{
-					msgDiag.mediumDebug("Richiesta connessione al database per la gestione della risposta...");
-					openspcoopstate.updateResource(idTransazione);
+					this.msgDiag.mediumDebug("Richiesta connessione al database per la gestione della risposta...");
+					this.openspcoopstate.updateResource(this.idTransazione);
 				}catch(Exception eDB){
-					setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,logCore,msgDiag,
+					setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,this.logCore,this.msgDiag,
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),eDB,
 							"openspcoopstate.updateDatabaseResource");
@@ -6911,28 +7032,28 @@ public class RicezioneBuste {
 			// In caso di Timeout elimino messaggi di richiesta ancora in processamento.
 			if(e instanceof NodeTimeoutException) {
 				try{
-					msgDiag.logPersonalizzato("timeoutRicezioneRisposta");
-					msgRequest.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
-					openspcoopstate.commit();
+					this.msgDiag.logPersonalizzato("timeoutRicezioneRisposta");
+					this.msgRequest.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+					this.openspcoopstate.commit();
 				}catch(Exception eDel){
-					msgDiag.logErroreGenerico(eDel.getMessage(),"EliminazioneMessaggioScadutoTimeoutRicezioneRisposta");
+					this.msgDiag.logErroreGenerico(eDel.getMessage(),"EliminazioneMessaggioScadutoTimeoutRicezioneRisposta");
 				}
 			}
 
 			// Spedisco errore
-			parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-			parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+			this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+			this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 					get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_513_RECEIVE));
 
-			OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+			OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 			
 			// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-			parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-			parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-			ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
+			this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+			this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+			this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
 
 			// rilascio connessione e ritorno messaggio
-			openspcoopstate.releaseResource();
+			this.openspcoopstate.releaseResource();
 			return;
 		}
 
@@ -6940,22 +7061,22 @@ public class RicezioneBuste {
 
 		//	Aggiornamento Informazioni
 		if(contenutoRispostaPresente){
-			msgDiag.setIdMessaggioRisposta(bustaRisposta.getID());
-			msgDiag.addKeywords(bustaRisposta, false);
+			this.msgDiag.setIdMessaggioRisposta(bustaRisposta.getID());
+			this.msgDiag.addKeywords(bustaRisposta, false);
 		}else{
-			msgDiag.setIdMessaggioRisposta(idMessaggioSblocco);
+			this.msgDiag.setIdMessaggioRisposta(idMessaggioSblocco);
 		}
-		parametriGenerazioneBustaErrore.setMsgDiag(msgDiag);
-		parametriInvioBustaErrore.setMsgDiag(msgDiag);
+		this.parametriGenerazioneBustaErrore.setMsgDiag(this.msgDiag);
+		this.parametriInvioBustaErrore.setMsgDiag(this.msgDiag);
 		
-		if ( portaStateless==false && routingStateless== false  ) {
+		if ( !this.portaStateless && !this.routingStateless  ) {
 
 			/* ------------  Re-ottengo Connessione al DB -------------- */
 			try{
-				msgDiag.mediumDebug("Richiesta connessione al database per la gestione della risposta...");
-				openspcoopstate.updateResource(idTransazione);
+				this.msgDiag.mediumDebug("Richiesta connessione al database per la gestione della risposta...");
+				this.openspcoopstate.updateResource(this.idTransazione);
 			}catch(Exception e){
-				setSOAPFault_processamento(IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,logCore,msgDiag,
+				setSOAPFaultProcessamento(IntegrationFunctionError.INTERNAL_RESPONSE_ERROR,this.logCore,this.msgDiag,
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_505_GET_DB_CONNECTION),e,
 						"openspcoopstate.updateDatabaseResource");
@@ -6964,55 +7085,55 @@ public class RicezioneBuste {
 
 			// MsgResponse
 			if(contenutoRispostaPresente){
-				msgResponse = new GestoreMessaggi(openspcoopstate, false, bustaRisposta.getID(),Costanti.OUTBOX,msgDiag,pddContext);
+				msgResponse = new GestoreMessaggi(this.openspcoopstate, false, bustaRisposta.getID(),Costanti.OUTBOX,this.msgDiag,pddContextGestioneRisposta);
 			}else{
-				msgResponse = new GestoreMessaggi(openspcoopstate, false,idMessaggioSblocco,Costanti.OUTBOX,msgDiag,pddContext);
+				msgResponse = new GestoreMessaggi(this.openspcoopstate, false,idMessaggioSblocco,Costanti.OUTBOX,this.msgDiag,pddContextGestioneRisposta);
 			}
-			//tempiAttraversamentoGestioneMessaggi = msgResponse.getTempiAttraversamentoPdD();
-			//dimensioneMessaggiAttraversamentoGestioneMessaggi = msgResponse.getDimensioneMessaggiAttraversamentoPdD();
+			/**tempiAttraversamentoGestioneMessaggi = msgResponse.getTempiAttraversamentoPdD();
+			dimensioneMessaggiAttraversamentoGestioneMessaggi = msgResponse.getDimensioneMessaggiAttraversamentoPdD();*/
 
 
 			/* ------------  Lettura Contenuto Messaggio (mapping in Message)  -------------- */
-			if(contenutoRispostaPresente || functionAsRouter){
-				msgDiag.mediumDebug("Lettura messaggio di risposta...");
+			if(contenutoRispostaPresente || this.functionAsRouter){
+				this.msgDiag.mediumDebug("Lettura messaggio di risposta...");
 				try{
 					responseMessage = msgResponse.getMessage();
 					if(responseMessage!=null && this.msgContext.getPddContext()!=null) {
 						Object o = responseMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
-						if(o!=null && o instanceof Boolean) {
+						if(o instanceof Boolean) {
 							this.msgContext.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 						}
 						o = responseMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
-						if(o!=null && o instanceof ParseException) {
+						if(o instanceof ParseException) {
 							this.msgContext.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, o);
 						}
 						
 						o = responseMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);
-						if(o!=null && o instanceof Boolean) {
+						if(o instanceof Boolean) {
 							this.msgContext.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 						}
 						o = responseMessage.getContextProperty(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
-						if(o!=null && o instanceof ParseException) {
+						if(o instanceof ParseException) {
 							this.msgContext.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, o);
 						}
 					}
 					idCorrelazioneApplicativaRisposta = msgResponse.getIDCorrelazioneApplicativaRisposta();
 				}catch(Exception e){
 					// Il router potrebbe ricevere il SOAPFault da reinoltrare
-					if( (!functionAsRouter) || (contenutoRispostaPresente==true) ){
-						msgDiag.logErroreGenerico(e,"msgResponse.getMessage()");
+					if( (!this.functionAsRouter) || (contenutoRispostaPresente) ){
+						this.msgDiag.logErroreGenerico(e,"msgResponse.getMessage()");
 						
-						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+						this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_511_READ_RESPONSE_MSG));
 
-						OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-						parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-						ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-						openspcoopstate.releaseResource();
+						this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+						this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+						this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+						this.openspcoopstate.releaseResource();
 						return;
 					}
 				}
@@ -7020,21 +7141,21 @@ public class RicezioneBuste {
 		}
 
 		else {
-			responseMessage = ((OpenSPCoopStateless)openspcoopstate).getRispostaMsg();
-			idCorrelazioneApplicativaRisposta = ((OpenSPCoopStateless)openspcoopstate).getIDCorrelazioneApplicativaRisposta();
+			responseMessage = ((OpenSPCoopStateless)this.openspcoopstate).getRispostaMsg();
+			idCorrelazioneApplicativaRisposta = ((OpenSPCoopStateless)this.openspcoopstate).getIDCorrelazioneApplicativaRisposta();
 			if(responseMessage!=null){
-				parametriGenerazioneBustaErrore.setParseException(responseMessage.getParseException());
+				this.parametriGenerazioneBustaErrore.setParseException(responseMessage.getParseException());
 			}
-			/*tempiAttraversamentoGestioneMessaggi = 
+			/**tempiAttraversamentoGestioneMessaggi = 
 				((OpenSPCoopStateless) openspcoopstate).getTempiAttraversamentoPDD();
 			dimensioneMessaggiAttraversamentoGestioneMessaggi = 
 				((OpenSPCoopStateless) openspcoopstate).getDimensioneMessaggiAttraversamentoPDD();*/
 		}
 
 		/* ---- Aggiorno informazioni correlazione applicativa risposta ---- */
-		parametriGenerazioneBustaErrore.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
-		parametriInvioBustaErrore.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
-		msgDiag.setIdCorrelazioneRisposta(idCorrelazioneApplicativaRisposta);
+		this.parametriGenerazioneBustaErrore.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+		this.parametriInvioBustaErrore.setCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
+		this.msgDiag.setIdCorrelazioneRisposta(idCorrelazioneApplicativaRisposta);
 		if(this.msgContext.getIntegrazione()!=null)
 			this.msgContext.getIntegrazione().setIdCorrelazioneApplicativaRisposta(idCorrelazioneApplicativaRisposta);
 
@@ -7043,32 +7164,32 @@ public class RicezioneBuste {
 
 			/* ----------- Trasmissione ------------------ */
 			Trasmissione tras = null;
-			if( propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente)){
-				msgDiag.mediumDebug("Impostazione trasmissione nella busta di risposta...");
+			if( propertiesReader.isGenerazioneListaTrasmissioni(this.implementazionePdDMittente)){
+				this.msgDiag.mediumDebug("Impostazione trasmissione nella busta di risposta...");
 				// Tracciamento in busta
 				tras = new Trasmissione();
 				
 				// origine
-				tras.setOrigine(identitaPdD.getNome());
-				tras.setTipoOrigine(identitaPdD.getTipo());
-				tras.setIdentificativoPortaOrigine(identitaPdD.getCodicePorta());
+				tras.setOrigine(this.identitaPdD.getNome());
+				tras.setTipoOrigine(this.identitaPdD.getTipo());
+				tras.setIdentificativoPortaOrigine(this.identitaPdD.getCodicePorta());
 				
 				// trasmissione
 				// Cerco destinatario con identita che sto assumendo (l'origine di quella trasmissione e' la destinazione di questa!)
 				// che come mittente non possieda il mittente attuale della busta (senno potrebbe essere il potenziale
 				// precedente hop che ha aggiunto una trasmissione da lui a questo hop)
-				for(int i=0;i<bustaRichiesta.sizeListaTrasmissioni();i++){
-					if( identitaPdD.getTipo().equals(bustaRichiesta.getTrasmissione(i).getTipoDestinazione()) &&
-							identitaPdD.getNome().equals(bustaRichiesta.getTrasmissione(i).getDestinazione()) ){
+				for(int i=0;i<this.bustaRichiesta.sizeListaTrasmissioni();i++){
+					if( this.identitaPdD.getTipo().equals(this.bustaRichiesta.getTrasmissione(i).getTipoDestinazione()) &&
+							this.identitaPdD.getNome().equals(this.bustaRichiesta.getTrasmissione(i).getDestinazione()) ){
 						boolean tipoOrigineValido = true;
 						try {
-							traduttore.toProtocolOrganizationType(bustaRichiesta.getTrasmissione(i).getTipoOrigine());
+							this.traduttore.toProtocolOrganizationType(this.bustaRichiesta.getTrasmissione(i).getTipoOrigine());
 						}catch(Exception e) {
 							tipoOrigineValido = false;
 						}
 						if(tipoOrigineValido) {
-							tras.setDestinazione(bustaRichiesta.getTrasmissione(i).getOrigine());
-							tras.setTipoDestinazione(bustaRichiesta.getTrasmissione(i).getTipoOrigine());
+							tras.setDestinazione(this.bustaRichiesta.getTrasmissione(i).getOrigine());
+							tras.setTipoDestinazione(this.bustaRichiesta.getTrasmissione(i).getTipoOrigine());
 						}
 					}
 				}
@@ -7077,7 +7198,7 @@ public class RicezioneBuste {
 					tras.setTipoDestinazione(bustaRisposta.getTipoDestinatario());
 				}
 				try{
-					String dominio = registroServiziReader.getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, protocolFactory, requestInfo);
+					String dominio = this.registroServiziReader.getDominio(new IDSoggetto(tras.getTipoDestinazione(),tras.getDestinazione()), null, this.protocolFactory, requestInfo);
 					tras.setIdentificativoPortaDestinazione(dominio);
 				}catch(Exception e){
 					// ignore
@@ -7085,7 +7206,7 @@ public class RicezioneBuste {
 				
 				// oraRegistrazione
 				tras.setOraRegistrazione(bustaRisposta.getOraRegistrazione());
-				tras.setTempo(propertiesReader.getTipoTempoBusta(implementazionePdDMittente));
+				tras.setTempo(propertiesReader.getTipoTempoBusta(this.implementazionePdDMittente));
 				
 				bustaRisposta.addTrasmissione(tras);
 			}
@@ -7094,14 +7215,14 @@ public class RicezioneBuste {
 
 			/* ------------  Gestione Funzionalita' speciali per Attachments (Manifest) ------------- */	
 			boolean scartaBody = false;
-			if(!functionAsRouter){
-				boolean allegaBody = configurazionePdDReader.isAllegaBody(pa);
+			if(!this.functionAsRouter){
+				boolean allegaBody = this.configurazionePdDReader.isAllegaBody(this.pa);
 				if(allegaBody){
 					// E' stato effettuato prima l'inserimento del body come allegato.
 					// Forzo lo scartamento.
 					scartaBody = true;
 				}else{
-					scartaBody = configurazionePdDReader.isScartaBody(pa);
+					scartaBody = this.configurazionePdDReader.isScartaBody(this.pa);
 				}
 			}
 
@@ -7113,13 +7234,12 @@ public class RicezioneBuste {
 
 
 			/* ------------  Aggiunta eccezioni di livello info riscontrate dalla validazione, se profilo e' lineeGuida1.1 ------------- */	
-			if(!functionAsRouter){
-				if( bustaRisposta.sizeListaEccezioni()==0 && moduleManager.isIgnoraEccezioniLivelloNonGrave()){
-					for(int i=0; i<erroriValidazione.size();i++){
-						Eccezione ec = erroriValidazione.get(i);
-						if(LivelloRilevanza.INFO.equals(ec.getRilevanza())){
-							bustaRisposta.addEccezione(ec);
-						}
+			if(!this.functionAsRouter &&
+				bustaRisposta.sizeListaEccezioni()==0 && this.moduleManager.isIgnoraEccezioniLivelloNonGrave()){
+				for(int i=0; i<this.erroriValidazione.size();i++){
+					Eccezione ec = this.erroriValidazione.get(i);
+					if(LivelloRilevanza.INFO.equals(ec.getRilevanza())){
+						bustaRisposta.addEccezione(ec);
 					}
 				}
 			}
@@ -7133,91 +7253,91 @@ public class RicezioneBuste {
 
 			/* ------------  Imbustamento (Prima della Sicurezza)  ------------- */	
 			
-			msgDiag.mediumDebug("Imbustamento della risposta...");
+			this.msgDiag.mediumDebug("Imbustamento della risposta...");
 			BustaRawContent<?> headerBustaRisposta = null;
 			boolean gestioneManifestRisposta = false;
 			Imbustamento imbustatore = null;
 			try{
-				if(functionAsRouter){
-					gestioneManifestRisposta = configurazionePdDReader.isGestioneManifestAttachments();
+				if(this.functionAsRouter){
+					gestioneManifestRisposta = this.configurazionePdDReader.isGestioneManifestAttachments();
 				}else{
-					if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) &&
-							RuoloBusta.RISPOSTA.equals(ruoloBustaRicevuta.toString()) &&
-							pd!=null){ // devo generare la ricevuta alla risposta
-						gestioneManifestRisposta = configurazionePdDReader.isGestioneManifestAttachments(pd,protocolFactory);
+					if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(this.bustaRichiesta.getProfiloDiCollaborazione()) &&
+							RuoloBusta.RISPOSTA.equals(this.ruoloBustaRicevuta.toString()) &&
+							this.pd!=null){ // devo generare la ricevuta alla risposta
+						gestioneManifestRisposta = this.configurazionePdDReader.isGestioneManifestAttachments(this.pd,this.protocolFactory);
 					}else{
-						gestioneManifestRisposta = configurazionePdDReader.isGestioneManifestAttachments(pa,protocolFactory);
+						gestioneManifestRisposta = this.configurazionePdDReader.isGestioneManifestAttachments(this.pa,this.protocolFactory);
 					}
 				}
-				imbustatore = new Imbustamento(logCore, protocolFactory,openspcoopstate.getStatoRichiesta());
-				if(functionAsRouter && 
-						!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
+				imbustatore = new Imbustamento(this.logCore, this.protocolFactory,this.openspcoopstate.getStatoRichiesta());
+				if(this.functionAsRouter && 
+						!( this.identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && this.identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
 				){
 					// Aggiungo trasmissione solo se la busta e' stata generata dalla porta di dominio destinataria della richiesta.
 					// Se il mittente e' il router, logicamente la busta sara' un errore generato dal router
-					if( propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente)){
-						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute, 
+					if( propertiesReader.isGenerazioneListaTrasmissioni(this.implementazionePdDMittente)){
+						this.msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, this.readQualifiedAttribute, 
 								FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 							headerBustaRisposta = protocolMessage.getBustaRawContent();
 							responseMessage = protocolMessage.getMessage(); // updated
 						}
-						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
+						this.msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 					}
 					else{
-						Validatore v = new Validatore(responseMessage,pddContext,openspcoopstate.getStatoRichiesta(), logCore, protocolFactory);
+						Validatore v = new Validatore(responseMessage,pddContextGestioneRisposta,this.openspcoopstate.getStatoRichiesta(), this.logCore, this.protocolFactory);
 						headerBustaRisposta = v.getHeaderProtocollo_senzaControlli();
 					}
 				}else{
-					msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
-					ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,pddContext,
-							bustaRisposta,bustaRichiesta,
-							infoIntegrazione,gestioneManifestRisposta,scartaBody,proprietaManifestAttachments,
+					this.msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
+					ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,pddContextGestioneRisposta,
+							bustaRisposta,this.bustaRichiesta,
+							this.infoIntegrazione,gestioneManifestRisposta,scartaBody,this.proprietaManifestAttachments,
 							FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 					if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 						headerBustaRisposta = protocolMessage.getBustaRawContent();
 						responseMessage = protocolMessage.getMessage(); // updated
 					}
-					msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
+					this.msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 				}
 			}catch(Exception e){
 				
 				// STATEFUL
-				if (msgResponse!=null && !portaStateless && !routingStateless){ 
+				if (msgResponse!=null && !this.portaStateless && !this.routingStateless){ 
 					try {
 						// Aggiorno proprietario Messaggio
-						msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
+						this.msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta (statefull) ...");
 						msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
 					}catch(Throwable t) {
 						// ignore
 					}
 				}
 				
-				if(functionAsRouter && 
-						!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
+				if(this.functionAsRouter && 
+						!( this.identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && this.identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
 				){
-					msgDiag.logErroreGenerico(e,"imbustatore.pre-security.addTrasmissione(risposta)");
+					this.msgDiag.logErroreGenerico(e,"imbustatore.pre-security.addTrasmissione(risposta)");
 				}else{
-					msgDiag.logErroreGenerico(e,"imbustatore.pre-security-imbustamento(risposta)");
+					this.msgDiag.logErroreGenerico(e,"imbustatore.pre-security-imbustamento(risposta)");
 				}
 
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO));
-				parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_RESPONSE_FAILED);
+				this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_RESPONSE_FAILED);
 				
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				if(responseMessage!=null && responseMessage.getParseException()!=null){
 					errorOpenSPCoopMsg.setParseException(responseMessage.getParseException());
 				}
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-				openspcoopstate.releaseResource();
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 
@@ -7230,12 +7350,11 @@ public class RicezioneBuste {
 			
 			/* ------------ Init MTOM Processor  -------------- */
 			MTOMProcessor mtomProcessor = null;
-			if(!functionAsRouter){
-				if(flowPropertiesResponse!=null){
-					msgDiag.mediumDebug("init MTOM Processor ...");
-					mtomProcessor = new MTOMProcessor(flowPropertiesResponse.mtom, flowPropertiesResponse.messageSecurity, 
-							tipoPorta, msgDiag, logCore, pddContext);
-				}
+			if(!this.functionAsRouter &&
+				this.flowPropertiesResponse!=null){
+				this.msgDiag.mediumDebug("init MTOM Processor ...");
+				mtomProcessor = new MTOMProcessor(this.flowPropertiesResponse.mtom, this.flowPropertiesResponse.messageSecurity, 
+						this.tipoPorta, this.msgDiag, this.logCore, pddContextGestioneRisposta);
 			}
 			
 			
@@ -7249,10 +7368,10 @@ public class RicezioneBuste {
 				}catch(Exception e){
 					
 					// STATEFUL
-					if (msgResponse!=null && !portaStateless && !routingStateless){ 
+					if (msgResponse!=null && !this.portaStateless && !this.routingStateless){ 
 						try {
 							// Aggiorno proprietario Messaggio
-							msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
+							this.msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta (before security) ...");
 							msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
 						}catch(Throwable t) {
 							// ignore
@@ -7260,20 +7379,20 @@ public class RicezioneBuste {
 					}
 					
 					// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
-					//msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");
+					/**msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");*/
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR));
-					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED);
+					this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED);
 					
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-					openspcoopstate.releaseResource();
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+					this.openspcoopstate.releaseResource();
 					return;
 				}
 			}
@@ -7282,88 +7401,88 @@ public class RicezioneBuste {
 
 
 			/* ------------ Message-Security -------------- */
-			if(!functionAsRouter){
-				if(flowPropertiesResponse != null && flowPropertiesResponse.messageSecurity!=null && 
-					flowPropertiesResponse.messageSecurity.getFlowParameters() !=null &&
-					flowPropertiesResponse.messageSecurity.getFlowParameters().size() > 0){
+			if(!this.functionAsRouter){
+				if(this.flowPropertiesResponse != null && this.flowPropertiesResponse.messageSecurity!=null && 
+						this.flowPropertiesResponse.messageSecurity.getFlowParameters() !=null &&
+						this.flowPropertiesResponse.messageSecurity.getFlowParameters().size() > 0){
 					try{
 						// Aggiorno valori dinamici
-						configurazionePdDReader.updateMessageSecurityForSender(flowPropertiesResponse.messageSecurity, logCore, responseMessage, bustaRichiesta, requestInfo, pddContext,
-								flowPropertiesResponse.messageSecurityRequest);
+						this.configurazionePdDReader.updateMessageSecurityForSender(this.flowPropertiesResponse.messageSecurity, this.logCore, responseMessage, this.bustaRichiesta, requestInfo, pddContextGestioneRisposta,
+								this.flowPropertiesResponse.messageSecurityRequest);
 						
-						messageSecurityContext.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
-						messageSecurityContext.setOutgoingProperties(flowPropertiesResponse.messageSecurity.getFlowParameters());
+						this.messageSecurityContext.setFunctionAsClient(SecurityConstants.SECURITY_CLIENT);
+						this.messageSecurityContext.setOutgoingProperties(this.flowPropertiesResponse.messageSecurity.getFlowParameters());
 						
-						String tipoSicurezza = SecurityConstants.convertActionToString(messageSecurityContext.getOutgoingProperties());
-						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
-						pddContext.addObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
+						String tipoSicurezza = SecurityConstants.convertActionToString(this.messageSecurityContext.getOutgoingProperties());
+						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
+						pddContextGestioneRisposta.addObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA, tipoSicurezza);
 						
-						msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInCorso");
+						this.msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInCorso");
 						
-						if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(messageSecurityContext)){
-							msgDiag.mediumDebug("Normalize to saajImpl");
-							//System.out.println("RicezioneBuste.response.normalize");
+						if(org.openspcoop2.security.message.engine.WSSUtilities.isNormalizeToSaajImpl(this.messageSecurityContext)){
+							this.msgDiag.mediumDebug("Normalize to saajImpl");
+							/**System.out.println("RicezioneBuste.response.normalize");*/
 							responseMessage = responseMessage.normalizeToSaajImpl();
 						}
 						
-						DynamicMapBuilderUtils.injectDynamicMap(bustaRichiesta, requestInfo, pddContext, logCore);
-						if(messageSecurityContext.processOutgoing(responseMessage,pddContext,
-								transaction!=null ? transaction.getTempiElaborazione() : null) == false){
+						DynamicMapBuilderUtils.injectDynamicMap(this.bustaRichiesta, requestInfo, pddContextGestioneRisposta, this.logCore);
+						if(!this.messageSecurityContext.processOutgoing(responseMessage,pddContextGestioneRisposta,
+								this.transaction!=null ? this.transaction.getTempiElaborazione() : null)){
 							
-							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , messageSecurityContext.getMsgErrore() );
-							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInErrore");
+							this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO , this.messageSecurityContext.getMsgErrore() );
+							this.msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInErrore");
 							
-							parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-							parametriGenerazioneBustaErrore.setErroreCooperazione(ErroriCooperazione.MESSAGE_SECURITY.
-									getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()));
-							parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.MESSAGE_SECURITY_RESPONSE_FAILED);
+							this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+							this.parametriGenerazioneBustaErrore.setErroreCooperazione(ErroriCooperazione.MESSAGE_SECURITY.
+									getErroreMessageSecurity(this.messageSecurityContext.getMsgErrore(), this.messageSecurityContext.getCodiceErrore()));
+							this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.MESSAGE_SECURITY_RESPONSE_FAILED);
 							
-							OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+							OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(this.parametriGenerazioneBustaErrore);
 							
 							// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-							parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-							parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-							ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-							openspcoopstate.releaseResource();
+							this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+							this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+							this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+							this.openspcoopstate.releaseResource();
 							return;
 						}
 						else{
-							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaEffettuato");
+							this.msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaEffettuato");
 						}
 						
 					}catch(Exception e){
 						
 						// STATEFUL
-						if (msgResponse!=null && !portaStateless && !routingStateless){ 
+						if (msgResponse!=null && !this.portaStateless && !this.routingStateless){ 
 							try {
 								// Aggiorno proprietario Messaggio
-								msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
+								this.msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta (security) ...");
 								msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
 							}catch(Throwable t) {
 								// ignore
 							}
 						}
 						
-						msgDiag.addKeywordErroreProcessamento(e);
-						msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInErrore");
-						logError(logCore, "[MessageSecurityResponse]" + e.getMessage(),e);
+						this.msgDiag.addKeywordErroreProcessamento(e);
+						this.msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInErrore");
+						logError(this.logCore, "[MessageSecurityResponse]" + e.getMessage(),e);
 						
-						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+						this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 
-						OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-						parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-						ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-						openspcoopstate.releaseResource();
+						this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+						this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+						this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+						this.openspcoopstate.releaseResource();
 						return;
 					}
 				}
 				else{
-					msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaDisabilitato");
+					this.msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaDisabilitato");
 				}
 			}
 
@@ -7377,10 +7496,10 @@ public class RicezioneBuste {
 				}catch(Exception e){
 					
 					// STATEFUL
-					if (msgResponse!=null && !portaStateless && !routingStateless){ 
+					if (msgResponse!=null && !this.portaStateless && !this.routingStateless){ 
 						try {
 							// Aggiorno proprietario Messaggio
-							msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
+							this.msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta (after security) ...");
 							msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
 						}catch(Throwable t) {
 							// ignore
@@ -7388,20 +7507,20 @@ public class RicezioneBuste {
 					}
 					
 					// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
-					//msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");
+					/**msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");*/
 					
-					parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_557_MTOM_PROCESSOR_ERROR));
-					parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED);
+					this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.ATTACHMENTS_PROCESSING_RESPONSE_FAILED);
 					
-					OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 					
 					// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-					parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-					parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-					ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-					openspcoopstate.releaseResource();
+					this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+					this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+					this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+					this.openspcoopstate.releaseResource();
 					return;
 				}
 			}
@@ -7412,77 +7531,77 @@ public class RicezioneBuste {
 			
 			/* ------------  Imbustamento (Dopo della Sicurezza)  ------------- */	
 			
-			msgDiag.mediumDebug("Imbustamento della risposta dopo la sicurezza...");
+			this.msgDiag.mediumDebug("Imbustamento della risposta dopo la sicurezza...");
 			try{
-				if(functionAsRouter && 
-						!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
+				if(this.functionAsRouter && 
+						!( this.identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && this.identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
 				){
 					// Aggiungo trasmissione solo se la busta e' stata generata dalla porta di dominio destinataria della richiesta.
 					// Se il mittente e' il router, logicamente la busta sara' un errore generato dal router
-					if( propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente)){
-						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, readQualifiedAttribute, 
+					if( propertiesReader.isGenerazioneListaTrasmissioni(this.implementazionePdDMittente)){
+						this.msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+						ProtocolMessage protocolMessage = imbustatore.addTrasmissione(responseMessage, tras, this.readQualifiedAttribute, 
 								FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 							headerBustaRisposta = protocolMessage.getBustaRawContent();
 							responseMessage = protocolMessage.getMessage(); // updated
 						}
-						msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+						this.msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
 					}
 					// else gia' effettuato nella precedente fase pre-sicurezza
 				}else{
-					msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
-					ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,pddContext,
-							bustaRisposta,bustaRichiesta,
-							infoIntegrazione,gestioneManifestRisposta,scartaBody,proprietaManifestAttachments,
+					this.msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+					ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,pddContextGestioneRisposta,
+							bustaRisposta,this.bustaRichiesta,
+							this.infoIntegrazione,gestioneManifestRisposta,scartaBody,this.proprietaManifestAttachments,
 							FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 					if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 						headerBustaRisposta = protocolMessage.getBustaRawContent();
 						responseMessage = protocolMessage.getMessage(); // updated
 					}
-					msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
+					this.msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
 				}
 			}catch(Exception e){
 				
 				// STATEFUL
-				if (msgResponse!=null && !portaStateless && !routingStateless){ 
+				if (msgResponse!=null && !this.portaStateless && !this.routingStateless){ 
 					try {
 						// Aggiorno proprietario Messaggio
-						msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
+						this.msgDiag.mediumDebug("Aggiornamento proprietario messaggio risposta ...");
 						msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
 					}catch(Throwable t) {
 						// ignore
 					}
 				}
 				
-				if(functionAsRouter && 
-						!( identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
+				if(this.functionAsRouter && 
+						!( this.identitaPdD.getTipo().equals(bustaRisposta.getTipoMittente()) && this.identitaPdD.getNome().equals(bustaRisposta.getMittente()) ) 
 				){
-					msgDiag.logErroreGenerico(e,"imbustatore.after-security.addTrasmissione(risposta)");
+					this.msgDiag.logErroreGenerico(e,"imbustatore.after-security.addTrasmissione(risposta)");
 				}else{
-					msgDiag.logErroreGenerico(e,"imbustatore.after-security-imbustamento(risposta)");
+					this.msgDiag.logErroreGenerico(e,"imbustatore.after-security-imbustamento(risposta)");
 				}
 
 				OpenSPCoop2Message errorOpenSPCoopMsg = null;
 				
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_RESPONSE_FAILED);
-				if(e!=null && e instanceof ProtocolException && ((ProtocolException)e).isInteroperabilityError() ) {
-					parametriGenerazioneBustaErrore.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setIntegrationFunctionError(IntegrationFunctionError.INTEROPERABILITY_PROFILE_ENVELOPING_RESPONSE_FAILED);
+				if(e instanceof ProtocolException pe && pe.isInteroperabilityError() ) {
+					this.parametriGenerazioneBustaErrore.setErroreCooperazione(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.
 							getErroreCooperazione(e.getMessage()));
-					errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(parametriGenerazioneBustaErrore);
+					errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreValidazione(this.parametriGenerazioneBustaErrore);
 				}
 				else {
-					parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+					this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_526_GESTIONE_IMBUSTAMENTO));
-					errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+					errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				}
 
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-				openspcoopstate.releaseResource();
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 			
@@ -7490,46 +7609,45 @@ public class RicezioneBuste {
 			
 
 			/* ---------- Tracciamento Busta Ricevuta ------------- */
-			msgDiag.mediumDebug("Tracciamento busta di risposta...");
+			this.msgDiag.mediumDebug("Tracciamento busta di risposta...");
 			if(this.msgContext.isTracciamentoAbilitato()){
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = 
 						EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneMessaggioInviato();
 				SecurityInfo securityInfoResponse  = null;
-				if(!functionAsRouter){
-					if(messageSecurityContext!=null && messageSecurityContext.getDigestReader(responseMessage.getFactory())!=null){
-						IValidazioneSemantica validazioneSemantica = protocolFactory.createValidazioneSemantica(openspcoopstate.getStatoRichiesta());
-						securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(responseMessage.getFactory()),responseMessage);
-					}
+				if(!this.functionAsRouter &&
+					this.messageSecurityContext!=null && this.messageSecurityContext.getDigestReader(responseMessage.getFactory())!=null){
+					IValidazioneSemantica validazioneSemantica = this.protocolFactory.createValidazioneSemantica(this.openspcoopstate.getStatoRichiesta());
+					securityInfoResponse = validazioneSemantica.readSecurityInformation(this.messageSecurityContext.getDigestReader(responseMessage.getFactory()),responseMessage);
 				}
-				tracciamento.registraRisposta(responseMessage,securityInfoResponse,headerBustaRisposta,bustaRisposta,esitoTraccia,
+				this.tracciamento.registraRisposta(responseMessage,securityInfoResponse,headerBustaRisposta,bustaRisposta,esitoTraccia,
 						Tracciamento.createLocationString(false,this.msgContext.getSourceLocation()),
-						correlazioneApplicativa,idCorrelazioneApplicativaRisposta);
+						this.correlazioneApplicativa,idCorrelazioneApplicativaRisposta);
 			}
-			IValidatoreErrori validatoreErrori = protocolFactory.createValidatoreErrori(openspcoopstate.getStatoRichiesta());
-			IProtocolManager protocolManager = protocolFactory.createProtocolManager();
+			IValidatoreErrori validatoreErrori = this.protocolFactory.createValidatoreErrori(this.openspcoopstate.getStatoRichiesta());
+			IProtocolManager protocolManager = this.protocolFactory.createProtocolManager();
 			ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
 			pValidazioneErrori.setIgnoraEccezioniNonGravi(protocolManager.isIgnoraEccezioniNonGravi());
-			pValidazioneErrori.setVersioneProtocollo(versioneProtocollo);
+			pValidazioneErrori.setVersioneProtocollo(this.versioneProtocollo);
 			if( validatoreErrori.isBustaErrore(bustaRisposta,responseMessage,pValidazioneErrori) ) {
-				if(mittenteAnonimo){
-					msgDiag.logPersonalizzato("generazioneMessaggioErroreRisposta.mittenteAnonimo");
+				if(this.mittenteAnonimo){
+					this.msgDiag.logPersonalizzato("generazioneMessaggioErroreRisposta.mittenteAnonimo");
 				}
 				else{
-					msgDiag.logPersonalizzato("generazioneMessaggioErroreRisposta");
+					this.msgDiag.logPersonalizzato("generazioneMessaggioErroreRisposta");
 				}
 			}else{
-				if(mittenteAnonimo){
-					msgDiag.logPersonalizzato("generazioneMessaggioRisposta.mittenteAnonimo");
+				if(this.mittenteAnonimo){
+					this.msgDiag.logPersonalizzato("generazioneMessaggioRisposta.mittenteAnonimo");
 				}
 				else{
-					msgDiag.logPersonalizzato("generazioneMessaggioRisposta");
+					this.msgDiag.logPersonalizzato("generazioneMessaggioRisposta");
 				}
 			}
 				
 
 			/* --------	Elimino accesso daPdD --------- */
-			msgDiag.mediumDebug("Eliminazione accesso da PdD...");
-			repositoryBuste.eliminaUtilizzoPdDFromOutBox(bustaRisposta.getID());
+			this.msgDiag.mediumDebug("Eliminazione accesso da PdD...");
+			this.repositoryBuste.eliminaUtilizzoPdDFromOutBox(bustaRisposta.getID());
 
 		}
 
@@ -7541,101 +7659,96 @@ public class RicezioneBuste {
 		
 		
 		/* ----- Header Integrazione ------ */
-		if(pa!=null){
-			msgDiag.mediumDebug("Gestione header di integrazione messaggio di risposta...");
-			HeaderIntegrazione headerIntegrazioneRisposta = new HeaderIntegrazione(idTransazione);
+		if(this.pa!=null){
+			this.msgDiag.mediumDebug("Gestione header di integrazione messaggio di risposta...");
+			HeaderIntegrazione headerIntegrazioneRisposta = new HeaderIntegrazione(this.idTransazione);
 			headerIntegrazioneRisposta.setBusta(new HeaderIntegrazioneBusta());
-			headerIntegrazioneRisposta.getBusta().setTipoMittente(bustaRichiesta.getTipoMittente());
-			headerIntegrazioneRisposta.getBusta().setMittente(bustaRichiesta.getMittente());
-			headerIntegrazioneRisposta.getBusta().setTipoDestinatario(bustaRichiesta.getTipoDestinatario());
-			headerIntegrazioneRisposta.getBusta().setDestinatario(bustaRichiesta.getDestinatario());
-			headerIntegrazioneRisposta.getBusta().setTipoServizio(bustaRichiesta.getTipoServizio());
-			headerIntegrazioneRisposta.getBusta().setServizio(bustaRichiesta.getServizio());
-			headerIntegrazioneRisposta.getBusta().setVersioneServizio(bustaRichiesta.getVersioneServizio());
-			headerIntegrazioneRisposta.getBusta().setAzione(bustaRichiesta.getAzione());
-			if(bustaRichiesta.getCollaborazione()!=null) {
-				headerIntegrazioneRisposta.getBusta().setIdCollaborazione(bustaRichiesta.getCollaborazione());
+			headerIntegrazioneRisposta.getBusta().setTipoMittente(this.bustaRichiesta.getTipoMittente());
+			headerIntegrazioneRisposta.getBusta().setMittente(this.bustaRichiesta.getMittente());
+			headerIntegrazioneRisposta.getBusta().setTipoDestinatario(this.bustaRichiesta.getTipoDestinatario());
+			headerIntegrazioneRisposta.getBusta().setDestinatario(this.bustaRichiesta.getDestinatario());
+			headerIntegrazioneRisposta.getBusta().setTipoServizio(this.bustaRichiesta.getTipoServizio());
+			headerIntegrazioneRisposta.getBusta().setServizio(this.bustaRichiesta.getServizio());
+			headerIntegrazioneRisposta.getBusta().setVersioneServizio(this.bustaRichiesta.getVersioneServizio());
+			headerIntegrazioneRisposta.getBusta().setAzione(this.bustaRichiesta.getAzione());
+			if(this.bustaRichiesta.getCollaborazione()!=null) {
+				headerIntegrazioneRisposta.getBusta().setIdCollaborazione(this.bustaRichiesta.getCollaborazione());
 			}
 			else if(bustaRisposta!=null && bustaRisposta.getCollaborazione()!=null) {
 				headerIntegrazioneRisposta.getBusta().setIdCollaborazione(bustaRisposta.getCollaborazione());
 			}
-			headerIntegrazioneRisposta.getBusta().setID(bustaRichiesta.getID());
-			headerIntegrazioneRisposta.getBusta().setProfiloDiCollaborazione(bustaRichiesta.getProfiloDiCollaborazione());
-			headerIntegrazioneRisposta.setIdApplicativo(correlazioneApplicativa);
+			headerIntegrazioneRisposta.getBusta().setID(this.bustaRichiesta.getID());
+			headerIntegrazioneRisposta.getBusta().setProfiloDiCollaborazione(this.bustaRichiesta.getProfiloDiCollaborazione());
+			headerIntegrazioneRisposta.setIdApplicativo(this.correlazioneApplicativa);
 				
-			String[] tipiIntegrazionePA_response = null;
-			msgDiag.mediumDebug("Header integrazione...");
-			if(functionAsRouter ){
-				msgDiag.highDebug("Header integrazione (Default gestori integrazione Router)");
-				if(RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.containsKey(protocolFactory.getProtocol()))
-					tipiIntegrazionePA_response = RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.get(protocolFactory.getProtocol());
+			String[] tipiIntegrazionePAResponse = null;
+			this.msgDiag.mediumDebug("Header integrazione...");
+			if(this.functionAsRouter ){
+				this.msgDiag.highDebug("Header integrazione (Default gestori integrazione Router)");
+				if(RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.containsKey(this.protocolFactory.getProtocol()))
+					tipiIntegrazionePAResponse = RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.get(this.protocolFactory.getProtocol());
 				else
-					tipiIntegrazionePA_response = RicezioneBuste.defaultGestoriIntegrazionePA;
+					tipiIntegrazionePAResponse = RicezioneBuste.defaultGestoriIntegrazionePA;
 			}else{
-				msgDiag.highDebug("Header integrazione (Gestori integrazione...)");
-				if(pa!=null && this.msgContext.isTracciamentoAbilitato()){
-					msgDiag.mediumDebug("Lettura header di integrazione...");
+				this.msgDiag.highDebug("Header integrazione (Gestori integrazione...)");
+				if(this.pa!=null && this.msgContext.isTracciamentoAbilitato()){
+					this.msgDiag.mediumDebug("Lettura header di integrazione...");
 					try {
-						tipiIntegrazionePA_response = configurazionePdDReader.getTipiIntegrazione(pa);
+						tipiIntegrazionePAResponse = this.configurazionePdDReader.getTipiIntegrazione(this.pa);
 					} catch (Exception e) {
-						msgDiag.logErroreGenerico(e,"configurazionePdDReader.getTipiIntegrazione(pa)");
+						this.msgDiag.logErroreGenerico(e,"configurazionePdDReader.getTipiIntegrazione(pa)");
 						
-						parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-						parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+						this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
 
-						OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+						OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 						
 						// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-						parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-						parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-						ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-						openspcoopstate.releaseResource();
+						this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+						this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+						this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+						this.openspcoopstate.releaseResource();
 						return;
 					}
-					msgDiag.highDebug("Header integrazione (Gestori integrazione terminato)");
-					if (tipiIntegrazionePA_response == null){
-						if(RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.containsKey(protocolFactory.getProtocol()))
-							tipiIntegrazionePA_response = RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.get(protocolFactory.getProtocol());
+					this.msgDiag.highDebug("Header integrazione (Gestori integrazione terminato)");
+					if (tipiIntegrazionePAResponse == null){
+						if(RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.containsKey(this.protocolFactory.getProtocol()))
+							tipiIntegrazionePAResponse = RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA.get(this.protocolFactory.getProtocol());
 						else
-							tipiIntegrazionePA_response = RicezioneBuste.defaultGestoriIntegrazionePA;
+							tipiIntegrazionePAResponse = RicezioneBuste.defaultGestoriIntegrazionePA;
 					}
 				}
 			}
 			
 			OutResponsePAMessage outResponsePAMessage = new OutResponsePAMessage();
-			outResponsePAMessage.setBustaRichiesta(bustaRichiesta);
+			outResponsePAMessage.setBustaRichiesta(this.bustaRichiesta);
 			outResponsePAMessage.setMessage(responseMessage);
 			Map<String, List<String>> propertiesIntegrazioneRisposta = new HashMap<>();
 			outResponsePAMessage.setHeaders(propertiesIntegrazioneRisposta);
-			outResponsePAMessage.setPortaDelegata(pd);
-			outResponsePAMessage.setPortaApplicativa(pa);
-			outResponsePAMessage.setSoggettoMittente(soggettoFruitore);
-			outResponsePAMessage.setServizio(idServizio);
+			outResponsePAMessage.setPortaDelegata(this.pd);
+			outResponsePAMessage.setPortaApplicativa(this.pa);
+			outResponsePAMessage.setSoggettoMittente(this.soggettoFruitore);
+			outResponsePAMessage.setServizio(this.idServizio);
 			
-			if(tipiIntegrazionePA_response!=null) {
-				for (int i = 0; i < tipiIntegrazionePA_response.length; i++) {
+			if(tipiIntegrazionePAResponse!=null) {
+				for (int i = 0; i < tipiIntegrazionePAResponse.length; i++) {
 					try {
-						IGestoreIntegrazionePA gestore = null;
-						try {
-							gestore = (IGestoreIntegrazionePA) pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePA_response[i]);
-						}catch(Exception e){
-							throw e;
-						}
+						IGestoreIntegrazionePA gestore = pluginLoader.newIntegrazionePortaApplicativa(tipiIntegrazionePAResponse[i]);
 						if(gestore!=null){
 							String classType = null;
 							try {
 								classType = gestore.getClass().getName();
-								AbstractCore.init(gestore, pddContext, protocolFactory);
+								AbstractCore.init(gestore, pddContextGestioneRisposta, this.protocolFactory);
 							} catch (Exception e) {
-								throw new Exception(
+								throw new CoreException(
 										"Riscontrato errore durante l'inizializzazione della classe ["+ classType
-												+ "] da utilizzare per la gestione dell'integrazione delle erogazioni (Risposta Update/Delete) di tipo ["+ tipiIntegrazionePA_response[i] + "]: " + e.getMessage());
+												+ "] da utilizzare per la gestione dell'integrazione delle erogazioni (Risposta Update/Delete) di tipo ["+ tipiIntegrazionePAResponse[i] + "]: " + e.getMessage());
 							}
 							if(gestore instanceof IGestoreIntegrazionePASoap){
 								if(propertiesReader.deleteHeaderIntegrazioneResponsePA()){
 									if(responseMessage==null){
-										responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(), MessageRole.RESPONSE);
+										responseMessage = MessageUtilities.buildEmptyMessage(this.requestMessage.getFactory(),this.requestMessage.getMessageType(), MessageRole.RESPONSE);
 										outResponsePAMessage.setMessage(responseMessage);
 									}
 									gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePAMessage);
@@ -7644,20 +7757,20 @@ public class RicezioneBuste {
 								}
 							}else{
 								if(responseMessage==null){
-									responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(), MessageRole.RESPONSE);
+									responseMessage = MessageUtilities.buildEmptyMessage(this.requestMessage.getFactory(),this.requestMessage.getMessageType(), MessageRole.RESPONSE);
 									outResponsePAMessage.setMessage(responseMessage);
 								}
 								gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePAMessage);
 							}
 						} else {
-							throw new Exception("Gestore non inizializzato");
+							throw new CoreException("Gestore non inizializzato");
 						}
 							
 					} catch (Exception e) {
-						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePA_response[i]);
-						msgDiag.addKeywordErroreProcessamento(e);
-						msgDiag.logPersonalizzato("headerIntegrazione.creazioneFallita");
-						logError(logCore, msgDiag.getMessaggio_replaceKeywords("headerIntegrazione.creazioneFallita"), e);
+						this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePAResponse[i]);
+						this.msgDiag.addKeywordErroreProcessamento(e);
+						this.msgDiag.logPersonalizzato("headerIntegrazione.creazioneFallita");
+						logError(this.logCore, this.msgDiag.getMessaggio_replaceKeywords("headerIntegrazione.creazioneFallita"), e);
 					}
 				}
 			}
@@ -7672,31 +7785,31 @@ public class RicezioneBuste {
 
 
 		// STATELESS
-		if (oneWayStateless || sincronoStateless || asincronoStateless) {
-			msgDiag.mediumDebug("Aggiorno proprietario messaggio richiesta ...");
+		if (this.oneWayStateless || this.sincronoStateless || this.asincronoStateless) {
+			this.msgDiag.mediumDebug("Aggiorno proprietario messaggio richiesta ...");
 			try {
 				/* Lo stateless che non è onewayVersione11 non salva niente su database */
-				//msgRequest.setReadyForDrop(true);
-				//msgRequest.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
-				//repositoryBuste.eliminaBustaStatelessFromInBox(idMessageRequest);
+				/**msgRequest.setReadyForDrop(true);
+				msgRequest.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
+				repositoryBuste.eliminaBustaStatelessFromInBox(idMessageRequest);*/
 
 				// Committo modifiche (I commit servono per eventuali modifiche ai duplicati)
-				openspcoopstate.commit();
+				this.openspcoopstate.commit();
 			} catch (Exception e) {
-				logError(logCore, "Riscontrato errore durante l'aggiornamento proprietario messaggio", e);
-				msgDiag.logErroreGenerico(e, "openspcoopstate.commit(stateless risposta)");
+				logError(this.logCore, "Riscontrato errore durante l'aggiornamento proprietario messaggio", e);
+				this.msgDiag.logErroreGenerico(e, "openspcoopstate.commit(stateless risposta)");
 				
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						getErroreIntegrazione());
 				
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-				openspcoopstate.releaseResource();
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 		}
@@ -7704,44 +7817,44 @@ public class RicezioneBuste {
 
 
 		/* ----- OneWay stateful/stateless ibrido ------ */
-		if (oneWayVersione11) {
-			msgDiag.mediumDebug("Commit della gestione oneWay stateful/stateless ibrido ...");
+		if (this.oneWayVersione11) {
+			this.msgDiag.mediumDebug("Commit della gestione oneWay stateful/stateless ibrido ...");
 			try {
 				// Committo modifiche
-				openspcoopstate.commit();
+				this.openspcoopstate.commit();
 			} catch (Exception e) {
-				logError(logCore, "Riscontrato errore durante il commit della gestione oneWay stateful/stateless ibrido", e);
-				msgDiag.logErroreGenerico(e, "openspcoopstate.commit(oneway1.1 risposta)");
+				logError(this.logCore, "Riscontrato errore durante il commit della gestione oneWay stateful/stateless ibrido", e);
+				this.msgDiag.logErroreGenerico(e, "openspcoopstate.commit(oneway1.1 risposta)");
 				
-				parametriGenerazioneBustaErrore.setBusta(bustaRichiesta);
-				parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+				this.parametriGenerazioneBustaErrore.setBusta(this.bustaRichiesta);
+				this.parametriGenerazioneBustaErrore.setErroreIntegrazione(ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 						getErroreIntegrazione());
 				
-				OpenSPCoop2Message errorOpenSPCoopMsg = ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(parametriGenerazioneBustaErrore,e);
+				OpenSPCoop2Message errorOpenSPCoopMsg = this.ricezioneBusteGeneratoreBustaErrore.generaBustaErroreProcessamento(this.parametriGenerazioneBustaErrore,e);
 				
 				// Nota: la bustaRichiesta e' stata trasformata da generaErroreProcessamento
-				parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
-				parametriInvioBustaErrore.setBusta(parametriGenerazioneBustaErrore.getBusta());
-				ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(parametriInvioBustaErrore);
-				openspcoopstate.releaseResource();
+				this.parametriInvioBustaErrore.setOpenspcoopMsg(errorOpenSPCoopMsg);
+				this.parametriInvioBustaErrore.setBusta(this.parametriGenerazioneBustaErrore.getBusta());
+				this.ricezioneBusteGeneratoreBustaErrore.sendRispostaBustaErrore(this.parametriInvioBustaErrore);
+				this.openspcoopstate.releaseResource();
 				return;
 			}
 		}
 
 
 		// STATEFUL
-		if (!portaStateless && !routingStateless){ 
+		if (!this.portaStateless && !this.routingStateless){ 
 
 			/* ---------- Gestione Transazione Modulo ---------------- */	    
 			// Aggiorno proprietario Messaggio
-			msgDiag.mediumDebug("Aggiornamento proprietario messaggio...");
+			this.msgDiag.mediumDebug("Aggiornamento proprietario messaggio...");
 			if(msgResponse!=null) {
 				msgResponse.aggiornaProprietarioMessaggio(TimerGestoreMessaggi.ID_MODULO);
 			}
 
 			// Commit JDBC
-			msgDiag.mediumDebug("Commit delle operazioni per la gestione della risposta...");
-			openspcoopstate.commit();
+			this.msgDiag.mediumDebug("Commit delle operazioni per la gestione della risposta...");
+			this.openspcoopstate.commit();
 
 			// Aggiornamento cache messaggio
 			if(msgResponse!=null)
@@ -7749,7 +7862,7 @@ public class RicezioneBuste {
 
 			// Aggiornamento cache proprietario messaggio
 			if(msgResponse!=null)
-				msgResponse.addProprietariIntoCache_readFromTable(RicezioneBuste.ID_MODULO, "risposta",idMessageRequest,functionAsRouter);
+				msgResponse.addProprietariIntoCache_readFromTable(RicezioneBuste.ID_MODULO, "risposta",this.idMessageRequest,this.functionAsRouter);
 
 		}
 
@@ -7758,13 +7871,13 @@ public class RicezioneBuste {
 
 
 		// Rilascio connessione al DB
-		msgDiag.mediumDebug("Commit delle operazioni per la gestione della richiesta effettuato, rilascio della connessione...");
-		openspcoopstate.releaseResource();
+		this.msgDiag.mediumDebug("Commit delle operazioni per la gestione della richiesta effettuato, rilascio della connessione...");
+		this.openspcoopstate.releaseResource();
 
 		// Risposta 
-		msgDiag.mediumDebug("Imposto risposta nel context...");
+		this.msgDiag.mediumDebug("Imposto risposta nel context...");
 		this.msgContext.setMessageResponse(responseMessage);
-		msgDiag.mediumDebug("Lavoro Terminato.");
+		this.msgDiag.mediumDebug("Lavoro Terminato.");
 
 
 
@@ -7779,27 +7892,29 @@ public class RicezioneBuste {
 
 
 
-	private boolean gestioneRispostaAsincrona_checkPresenzaRichiesta(long scadenzaControllo,int checkInterval,Busta bustaRichiesta,
+	private boolean gestioneRispostaAsincronaCheckPresenzaRichiesta(long scadenzaControllo,int checkInterval,Busta bustaRichiesta,
 			IOpenSPCoopState openspcoopstate,MsgDiagnostico msgDiag,boolean newConnectionForResponse,
-			PdDContext pddContext) throws Exception{
+			PdDContext pddContext) throws ProtocolException, GestoreMessaggiException {
 		boolean attendiTerminazioneRichiesta = false;
 
-		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
-				
+		if(this.protocolFactory==null) {
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+		}
+		
 		// Puo' potenzialmente essere una ricevuta alla richiesta (new connection for response)
 		// o alla risposta (e cmq la risposta l'ho generata io e quindi e' chiaro che ho finito di gestire la richiesta)
 		boolean isRicevutaRichiesta = false;
 		boolean isRicevutaRisposta = false;
-		if(newConnectionForResponse){
-			if( ((org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) 
+		if(newConnectionForResponse &&
+			( ((org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) 
 					||
 					(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()))) &&
-					bustaRichiesta.getRiferimentoMessaggio()!=null) {	
-				// Le ricevute hanno il riferimento messaggio anche nelle linee guida!
-				ProfiloDiCollaborazione profiloCollaborazione = new ProfiloDiCollaborazione(openspcoopstate.getStatoRichiesta(),protocolFactory);
-				isRicevutaRichiesta = profiloCollaborazione.asincrono_isRicevutaRichiesta(bustaRichiesta.getRiferimentoMessaggio());
-				isRicevutaRisposta =  profiloCollaborazione.asincrono_isRicevutaRisposta(bustaRichiesta.getRiferimentoMessaggio());
-			}
+					bustaRichiesta.getRiferimentoMessaggio()!=null) 
+			){	
+			// Le ricevute hanno il riferimento messaggio anche nelle linee guida!
+			ProfiloDiCollaborazione profiloCollaborazione = new ProfiloDiCollaborazione(openspcoopstate.getStatoRichiesta(),this.protocolFactory);
+			isRicevutaRichiesta = profiloCollaborazione.asincrono_isRicevutaRichiesta(bustaRichiesta.getRiferimentoMessaggio());
+			isRicevutaRisposta =  profiloCollaborazione.asincrono_isRicevutaRisposta(bustaRichiesta.getRiferimentoMessaggio());
 		}
 
 
@@ -7809,11 +7924,11 @@ public class RicezioneBuste {
 
 			if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
 				if( (bustaRichiesta.getRiferimentoMessaggio()!=null) || 
-						( bustaRichiesta.getCollaborazione()!=null && (bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())==false) ) 
+						( bustaRichiesta.getCollaborazione()!=null && (!bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())) ) 
 				){
 
 					if( 
-							( newConnectionForResponse==false ) 
+							( !newConnectionForResponse ) 
 							|| 
 							( (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
 					){	
@@ -7826,7 +7941,7 @@ public class RicezioneBuste {
 						attendiTerminazioneRichiesta =  checkRichiesta.existsMessageInProcessamento();
 						if(!attendiTerminazioneRichiesta)
 							break;
-						/*else{
+						/**else{
 							String proprietario = checkRichiesta.getProprietario(RicezioneBuste.ID_MODULO);
 							msgDiag.infoOpenSPCoop("RICHIESTA  ID["+bustaRichiesta.getRiferimentoMessaggio()+"] OUTBOX attendiTerminazioneRichiesta["+attendiTerminazioneRichiesta+"] PROPRIETARIO["+proprietario+"]");
 						}*/
@@ -7838,11 +7953,11 @@ public class RicezioneBuste {
 				}
 			}else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {
 				if( (bustaRichiesta.getRiferimentoMessaggio()!=null) || 
-						( bustaRichiesta.getCollaborazione()!=null && (bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())==false) ) 
+						( bustaRichiesta.getCollaborazione()!=null && (!bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())) ) 
 				){
 
 					if( 
-							( newConnectionForResponse==false ) 
+							( !newConnectionForResponse ) 
 							|| 
 							( (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
 					){	
@@ -7856,7 +7971,7 @@ public class RicezioneBuste {
 						attendiTerminazioneRichiesta =  checkRichiesta.existsMessageInProcessamento();
 						if(!attendiTerminazioneRichiesta)
 							break;
-						/*else{
+						/**else{
 							String proprietario = checkRichiesta.getProprietario(RicezioneBuste.ID_MODULO);
 							msgDiag.infoOpenSPCoop("RICHIESTA  ID["+bustaRichiesta.getRiferimentoMessaggio()+"] INBOX attendiTerminazioneRichiesta["+attendiTerminazioneRichiesta+"] PROPRIETARIO["+proprietario+"]");
 						}*/
@@ -7884,27 +7999,29 @@ public class RicezioneBuste {
 		return attendiTerminazioneRichiesta;
 	}
 
-	private boolean gestioneRispostaAsincrona_checkPresenzaRicevutaRichiesta(long scadenzaControllo,int checkInterval,Busta bustaRichiesta,
+	private boolean gestioneRispostaAsincronaCheckPresenzaRicevutaRichiesta(long scadenzaControllo,int checkInterval,Busta bustaRichiesta,
 			IOpenSPCoopState openspcoopstate,MsgDiagnostico msgDiag,boolean newConnectionForResponse,
-			PdDContext pddContext)throws Exception{
+			PdDContext pddContext) throws ProtocolException, GestoreMessaggiException{
 		boolean attendiTerminazioneRicevutaRichiesta = false;
 
-		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+		if(this.protocolFactory==null) {
+			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName((String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME));
+		}
 		
 		// Puo' potenzialmente essere una ricevuta alla richiesta (new connection for response)
 		// o alla risposta (e cmq la risposta l'ho generata io e quindi e' chiaro che ho finito di gestire la richiesta)
 		boolean isRicevutaRichiesta = false;
 		boolean isRicevutaRisposta = false;
-		if(newConnectionForResponse){
-			if( ((org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) 
+		if(newConnectionForResponse &&
+			( ((org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) 
 					||
 					(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()))) &&
-					bustaRichiesta.getRiferimentoMessaggio()!=null) {
-				// Le ricevute hanno il riferimento messaggio anche nelle linee guida!
-				ProfiloDiCollaborazione profiloCollaborazione = new ProfiloDiCollaborazione(openspcoopstate.getStatoRichiesta(),protocolFactory);
-				isRicevutaRichiesta = profiloCollaborazione.asincrono_isRicevutaRichiesta(bustaRichiesta.getRiferimentoMessaggio());
-				isRicevutaRisposta =  profiloCollaborazione.asincrono_isRicevutaRisposta(bustaRichiesta.getRiferimentoMessaggio());
-			}
+					bustaRichiesta.getRiferimentoMessaggio()!=null) 
+			){
+			// Le ricevute hanno il riferimento messaggio anche nelle linee guida!
+			ProfiloDiCollaborazione profiloCollaborazione = new ProfiloDiCollaborazione(openspcoopstate.getStatoRichiesta(),this.protocolFactory);
+			isRicevutaRichiesta = profiloCollaborazione.asincrono_isRicevutaRichiesta(bustaRichiesta.getRiferimentoMessaggio());
+			isRicevutaRisposta =  profiloCollaborazione.asincrono_isRicevutaRisposta(bustaRichiesta.getRiferimentoMessaggio());
 		}
 
 		while( DateManager.getTimeMillis() < scadenzaControllo ){
@@ -7913,11 +8030,11 @@ public class RicezioneBuste {
 
 			if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {	
 				if( (bustaRichiesta.getRiferimentoMessaggio()!=null) || 
-						( bustaRichiesta.getCollaborazione()!=null && (bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())==false) ) 
+						( bustaRichiesta.getCollaborazione()!=null && (!bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())) ) 
 				){
 
 					if( 
-							( newConnectionForResponse==false ) 
+							( !newConnectionForResponse ) 
 							|| 
 							( (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
 					){
@@ -7930,7 +8047,7 @@ public class RicezioneBuste {
 						attendiTerminazioneRicevutaRichiesta =  checkRicevutaRichiesta.existsMessageInProcessamentoByReference();
 						if(!attendiTerminazioneRicevutaRichiesta)
 							break;
-						/*else{
+						/**else{
 							String proprietario = checkRicevutaRichiesta.getProprietario(RicezioneBuste.ID_MODULO);
 							msgDiag.infoOpenSPCoop("RICHIESTA  ID["+bustaRichiesta.getRiferimentoMessaggio()+"] INBOX attendiTerminazioneRichiesta["+attendiTerminazioneRicevutaRichiesta+"] PROPRIETARIO["+proprietario+"]");
 						}*/
@@ -7942,11 +8059,11 @@ public class RicezioneBuste {
 				}
 			}else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_ASIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione())) {
 				if( (bustaRichiesta.getRiferimentoMessaggio()!=null) || 
-						( bustaRichiesta.getCollaborazione()!=null && (bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())==false) ) 
+						( bustaRichiesta.getCollaborazione()!=null && (!bustaRichiesta.getCollaborazione().equals(bustaRichiesta.getID())) ) 
 				){
 
 					if( 
-							( newConnectionForResponse==false ) 
+							( !newConnectionForResponse ) 
 							|| 
 							( (!isRicevutaRichiesta) && (!isRicevutaRisposta) ) 
 					){
@@ -7959,7 +8076,7 @@ public class RicezioneBuste {
 						attendiTerminazioneRicevutaRichiesta =  checkRicevutaRichiesta.existsMessageInProcessamentoByReference();
 						if(!attendiTerminazioneRicevutaRichiesta)
 							break;
-						/*else{
+						/**else{
 							String proprietario = checkRicevutaRichiesta.getProprietario(RicezioneBuste.ID_MODULO);
 							msgDiag.infoOpenSPCoop("RICHIESTA  ID["+bustaRichiesta.getRiferimentoMessaggio()+"] OUTBOX attendiTerminazioneRichiesta["+attendiTerminazioneRicevutaRichiesta+"] PROPRIETARIO["+proprietario+"]");
 						}*/
@@ -7990,18 +8107,24 @@ public class RicezioneBuste {
 
 	
 
-	private EsitoLib chiamaLibreria(OpenSPCoopStateless openspcoopstate, Logger log) throws OpenSPCoopStateException, GenericLibException{
+	private EsitoLib chiamaLibreria(OpenSPCoopStateless openspcoopstate, Logger log,
+			RegistroServiziManager registroServiziManager, ConfigurazionePdDManager configurazionePdDManager) throws OpenSPCoopStateException, GenericLibException{
 
 		/* --------------------------- SBUSTAMENTO ------------------------ */
 		if (openspcoopstate.getDestinatarioRequestMsgLib().startsWith(Sbustamento.ID_MODULO)) {
 			Sbustamento lib = new Sbustamento(log);
-			return lib.onMessage(openspcoopstate);	
+			return lib.onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager);	
 		}
 
 		/* ---------------------------ConsegnaContenutiApplicativi----------------------------- */
 		else if (openspcoopstate.getDestinatarioRequestMsgLib().startsWith(ConsegnaContenutiApplicativi.ID_MODULO)) {
 			ConsegnaContenutiApplicativi lib = new ConsegnaContenutiApplicativi(log);
-			EsitoLib result = lib.onMessage(openspcoopstate);
+			EsitoLib result = lib.onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager, 
+					this.asyncResponseCallback!=null ? this : null);
+			if(this.asyncResponseCallback!=null) {
+				this.asyncWait = true;
+			}
+			this.esitoStatelessAfterSendRequest = result;
 			if (result.getStatoInvocazione()==EsitoLib.OK) openspcoopstate.setDestinatarioRequestMsgLib("");
 			return result;
 		}
@@ -8009,13 +8132,13 @@ public class RicezioneBuste {
 		/* ----------------------        -ImbustamentoRisposte         ------------------------------- */
 		else if (openspcoopstate.getDestinatarioResponseMsgLib().startsWith(ImbustamentoRisposte.ID_MODULO)) {
 			ImbustamentoRisposte lib = new ImbustamentoRisposte(log);
-			return lib.onMessage(openspcoopstate);
+			return lib.onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager);
 		}
 
 		/* ---------------------       -InoltroRisposte----------------------------- */
 		else if (openspcoopstate.getDestinatarioResponseMsgLib().startsWith(InoltroRisposte.ID_MODULO)) {
 			InoltroRisposte lib = new InoltroRisposte(log);
-			return lib.onMessage(openspcoopstate);
+			return lib.onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager);
 		}
 
 		else throw new OpenSPCoopStateException(RicezioneBuste.ID_MODULO + ".chiamaLibreria: nome libreria non valido");
@@ -8024,7 +8147,7 @@ public class RicezioneBuste {
 	
 	
 	private IDServizio getIdServizioPerAutorizzazione(IDServizio idServizio,IDSoggetto soggettoFruitore,
-			boolean functionAsRouter,Busta bustaRichiesta,RuoloBusta ruoloBustaRicevuta) throws Exception{
+			boolean functionAsRouter,Busta bustaRichiesta,RuoloBusta ruoloBustaRicevuta) throws CoreException, DriverRegistroServiziException {
 
 
 		IDSoggetto soggettoDestinatarioPerAutorizzazione = null;
@@ -8048,7 +8171,7 @@ public class RicezioneBuste {
 							idServizio.getSoggettoErogatore().getCodicePorta());
 				}else{
 					if(soggettoFruitore==null){
-						throw new Exception("Soggetto fruitore non identificato");
+						throw new CoreException(SOGGETTO_FRUITORE_NON_IDENTIFICATO);
 					}
 					soggettoDestinatarioPerAutorizzazione = new IDSoggetto(soggettoFruitore.getTipo(),soggettoFruitore.getNome(),
 							soggettoFruitore.getCodicePorta());
@@ -8066,7 +8189,7 @@ public class RicezioneBuste {
 							idServizio.getSoggettoErogatore().getCodicePorta());
 				}else{
 					if(soggettoFruitore==null){
-						throw new Exception("Soggetto fruitore non identificato");
+						throw new CoreException(SOGGETTO_FRUITORE_NON_IDENTIFICATO);
 					}
 					soggettoDestinatarioPerAutorizzazione = new IDSoggetto(soggettoFruitore.getTipo(),soggettoFruitore.getNome(),
 							soggettoFruitore.getCodicePorta());
@@ -8087,11 +8210,11 @@ public class RicezioneBuste {
 	}
 	
 	private IDSoggetto getIDSoggettoMittentePerAutorizzazione(IDServizio idServizio,IDSoggetto soggettoFruitore,
-			boolean functionAsRouter,Busta bustaRichiesta,RuoloBusta ruoloBustaRicevuta, boolean supportatoAutenticazioneSoggetti) throws Exception{
+			boolean functionAsRouter,Busta bustaRichiesta,RuoloBusta ruoloBustaRicevuta, boolean supportatoAutenticazioneSoggetti) throws CoreException{
 		IDSoggetto soggettoMittentePerAutorizzazione = null;
 		if(functionAsRouter){
 			if(soggettoFruitore==null){
-				throw new Exception("Soggetto fruitore non identificato");
+				throw new CoreException(SOGGETTO_FRUITORE_NON_IDENTIFICATO);
 			}
 			soggettoMittentePerAutorizzazione = new IDSoggetto(soggettoFruitore.getTipo(),soggettoFruitore.getNome(),
 					soggettoFruitore.getCodicePorta());
@@ -8102,7 +8225,7 @@ public class RicezioneBuste {
 				if(supportatoAutenticazioneSoggetti){
 					return null; // invocazione anonima
 				}else{
-					throw new Exception("Soggetto fruitore non identificato");		
+					throw new CoreException(SOGGETTO_FRUITORE_NON_IDENTIFICATO);		
 				}
 			}
 			soggettoMittentePerAutorizzazione = new IDSoggetto(soggettoFruitore.getTipo(),soggettoFruitore.getNome(),
@@ -8113,7 +8236,7 @@ public class RicezioneBuste {
 					if(supportatoAutenticazioneSoggetti){
 						return null; // invocazione anonima
 					}else{
-						throw new Exception("Soggetto fruitore non identificato");		
+						throw new CoreException(SOGGETTO_FRUITORE_NON_IDENTIFICATO);		
 					}
 				}
 				soggettoMittentePerAutorizzazione = new IDSoggetto(soggettoFruitore.getTipo(),soggettoFruitore.getNome(),
@@ -8124,7 +8247,7 @@ public class RicezioneBuste {
 						if(supportatoAutenticazioneSoggetti){
 							return null; // invocazione anonima
 						}else{
-							throw new Exception("Soggetto fruitore non identificato");		
+							throw new CoreException(SOGGETTO_FRUITORE_NON_IDENTIFICATO);		
 						}
 					}
 					soggettoMittentePerAutorizzazione = new IDSoggetto(soggettoFruitore.getTipo(),soggettoFruitore.getNome(),
@@ -8140,7 +8263,7 @@ public class RicezioneBuste {
 					if(supportatoAutenticazioneSoggetti){
 						return null; // invocazione anonima
 					}else{
-						throw new Exception("Soggetto fruitore non identificato");		
+						throw new CoreException(SOGGETTO_FRUITORE_NON_IDENTIFICATO);		
 					}
 				}
 				soggettoMittentePerAutorizzazione = new IDSoggetto(soggettoFruitore.getTipo(),soggettoFruitore.getNome(),
@@ -8151,7 +8274,7 @@ public class RicezioneBuste {
 						if(supportatoAutenticazioneSoggetti){
 							return null; // invocazione anonima
 						}else{
-							throw new Exception("Soggetto fruitore non identificato");		
+							throw new CoreException(SOGGETTO_FRUITORE_NON_IDENTIFICATO);		
 						}
 					}
 					soggettoMittentePerAutorizzazione = new IDSoggetto(soggettoFruitore.getTipo(),soggettoFruitore.getNome(),
@@ -8166,7 +8289,7 @@ public class RicezioneBuste {
 				if(supportatoAutenticazioneSoggetti){
 					return null; // invocazione anonima
 				}else{
-					throw new Exception("Soggetto fruitore non identificato");		
+					throw new CoreException(SOGGETTO_FRUITORE_NON_IDENTIFICATO);		
 				}
 			}
 			soggettoMittentePerAutorizzazione = new IDSoggetto(soggettoFruitore.getTipo(),soggettoFruitore.getNome(),

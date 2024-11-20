@@ -76,7 +76,7 @@ public abstract class AbstractRicezioneConnectorAsync {
 	protected abstract IDService getIdService();
 	protected abstract String getIdModulo();
 	
-	protected abstract AbstractErrorGenerator getErrorGenerator(Logger logCore, RequestInfo requestInfo) throws ServletException;
+	protected abstract AbstractErrorGenerator getErrorGenerator(Logger logCore, RequestInfo requestInfo) throws ConnectorException;
 	protected abstract void doError(RequestInfo requestInfo, AbstractErrorGenerator generatoreErrore, 
 			ErroreIntegrazione erroreIntegrazione, IntegrationFunctionError integrationFunctionError,
 			Throwable t, HttpServletResponse res,  Logger logCore);
@@ -129,7 +129,7 @@ public abstract class AbstractRicezioneConnectorAsync {
 		IProtocolFactory<?> protocolFactory = null;
 		try{
 			protocolFactory = httpIn.getProtocolFactory();
-		}catch(Throwable e){
+		}catch(Exception e){
 			// ignore
 		}
 		
@@ -142,8 +142,8 @@ public abstract class AbstractRicezioneConnectorAsync {
 		}
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-		boolean stream = op2Properties.isNIOConfig_asyncRequest_doStream();
-		int dimensione_buffer =  op2Properties.getNIOConfig_asyncRequest_buffer();
+		boolean stream = op2Properties.isNIOConfigAsyncRequestStreamEnabled();
+		int dimensioneBuffer =  op2Properties.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer();
 		long timeout = getTimeout();
 		
 		
@@ -174,7 +174,7 @@ public abstract class AbstractRicezioneConnectorAsync {
 								IDService.PORTA_APPLICATIVA.equals(getIdService()) || IDService.PORTA_APPLICATIVA_NIO.equals(getIdService()) ?
 										CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI :
 										CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE, // verra' poi aggiornato dentro  HttpServletConnectorAsyncInMessage
-								"Request");
+										CostantiPdD.CONNETTORE_FASE_GESTIIONE_RICHIESTA);
 					}catch(Throwable t) {
 						this.log.error("Istanziazione PipedStream fallita: "+t.getMessage(),t);
 						throw new ServletException(t.getMessage(),t);
@@ -207,7 +207,7 @@ public abstract class AbstractRicezioneConnectorAsync {
 			@Override
 			public void onDataAvailable() throws IOException {
 		        int len = -1;
-		        byte b[] = new byte[Utilities.DIMENSIONE_BUFFER];
+		        byte [] b = new byte[Utilities.DIMENSIONE_BUFFER];
 		        while ( this.is.isReady() && (len = this.is.read(b)) != -1) {
 		        	if(this.stream) {
 		        		this.pipe.write(b, 0, len);
@@ -241,7 +241,7 @@ public abstract class AbstractRicezioneConnectorAsync {
 				}
 				
 			}
-		}).init(logCore, req.getInputStream(), stream, dimensione_buffer, 
+		}).init(logCore, req.getInputStream(), stream, dimensioneBuffer, 
 				generatoreErrore,
 				httpIn, httpOut) );
 
@@ -262,11 +262,12 @@ public abstract class AbstractRicezioneConnectorAsync {
 				else {
 					this.httpOut.setNioException(new TimeoutIOException("Timeout '"+timeout+"' exceeded"));
 				}
-				//((HttpServletResponse)ac.getResponse()).setStatus(500);
+				/**((HttpServletResponse)ac.getResponse()).setStatus(500);*/
 			}
 
 			@Override
 			public void onStartAsync(AsyncEvent event) throws IOException {
+				// nop
 			}
 
 			@Override
@@ -277,12 +278,12 @@ public abstract class AbstractRicezioneConnectorAsync {
 				else {
 					this.httpOut.setNioException(new ConnectorException("Async IO error"));
 				}
-				//((HttpServletResponse)ac.getResponse()).setStatus(500);
+				/**((HttpServletResponse)ac.getResponse()).setStatus(500);*/
 			}
 
 			@Override
 			public void onComplete(AsyncEvent event) throws IOException {
-				//((HttpServletResponse)ac.getResponse()).setStatus(500);
+				/**((HttpServletResponse)ac.getResponse()).setStatus(500);*/
 			}
 		}.init(httpOut));
 		
@@ -315,7 +316,7 @@ public abstract class AbstractRicezioneConnectorAsync {
 					
 				}
 			}.init(ricezioneService, httpIn, httpOut);
-			AsyncThreadPool.executeInRequestPool(runnable);
+			ConnectorApplicativeThreadPool.executeInAsyncRequestPool(runnable);
 		}
 			
 	}

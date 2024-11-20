@@ -787,6 +787,8 @@ public class MsgDiagnosticiProperties {
 	public static final String MSG_DIAG_OPENSPCOOP_STARTUP="openspcoopStartup.";
 	public static final String MSG_DIAG_ALL="all.";
 	// Keyword
+	public static final String MSG_DIAG_VALIDAZIONE_NON_RIUSCITA = "validazioneNonRiuscita";
+	public static final String MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA = "validazioneBusta.bustaNonCorretta";
     public static final String MSG_DIAG_PARSING_EXCEPTION_RICHIESTA = "parsingExceptionRichiesta";
     public static final String MSG_DIAG_PARSING_EXCEPTION_RISPOSTA = "parsingExceptionRisposta";
 	// All Diag
@@ -1217,9 +1219,9 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"soggettoIntermediario",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBustaErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBusta.eccezioniNonGravi",
-		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneNonRiuscita",
+		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+MSG_DIAG_VALIDAZIONE_NON_RIUSCITA,
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneBustaErrore.listaEccezioniMalformata",
-		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneBusta.bustaNonCorretta",
+		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA,
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneBusta.eccezioniNonGravi",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneRicevutaAsincrona",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneRiscontro",
@@ -1243,7 +1245,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE+"ricezioneBusta.eccezioniNonGravi",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE+"validazioneBustaErrore.listaEccezioniMalformata",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE+"validazioneBusta.eccezioniNonGravi",
-		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE+"validazioneBusta.bustaNonCorretta",
+		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE+MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA,
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE+"validazioneRicevutaAsincrona",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE+"ricezioneRiscontro",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE+"ricezioneBustaServizio",

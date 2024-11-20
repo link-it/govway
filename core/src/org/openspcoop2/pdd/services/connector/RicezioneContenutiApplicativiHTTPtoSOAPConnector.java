@@ -123,7 +123,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector {
 		}
 			
 		try{
-			ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta);
+			ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta, ConnectorCostanti.SYNC);
 		}catch(Exception e){
 			doError("RicezioneContenutiApplicativiXMLtoSOAP.process error", e);
 		}

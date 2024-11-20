@@ -28,6 +28,8 @@ package org.openspcoop2.pdd.services.connector;
  * @version $Rev$, $Date$
  */
 public class ConnectorCostanti {
+	
+	private ConnectorCostanti() {}
 
 	public static final String SEPARATOR_CODE = "-";
 	
@@ -37,6 +39,9 @@ public class ConnectorCostanti {
 	public static final String KEYWORD_SERVICE_BINDING = "@SERVICE_BINDING@";
 	public static final String MESSAGE_SERVICE_BINDING_NOT_SUPPORTED = "ServiceBinding "+KEYWORD_SERVICE_BINDING+" non supportato";
 
+	public static final boolean ASYNC = true;
+	public static final boolean SYNC = false;
+	
 	// ID: 7 cifre (parlante)
 	public static final String ID_ERRORE_GENERICO = "0000000";
 	// Altri codici definiti in org.openspcoop2.protocol.engine.constants.IDService

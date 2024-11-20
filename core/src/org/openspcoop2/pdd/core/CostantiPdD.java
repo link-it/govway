@@ -378,6 +378,9 @@ public class CostantiPdD {
     /** Pool Size Applicative Threads */
     public static final int CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE = 100;
     
+    public static final String CONNETTORE_FASE_GESTIIONE_RICHIESTA = "Request";
+    public static final String CONNETTORE_FASE_GESTIIONE_RISPOSTA = "Response";
+    
     
     /** Configurazione default per refresh cluster dinamico */
     public static final int CLUSTER_DINAMICO_REFRESH_SECONDS = 30;
@@ -806,6 +809,8 @@ public class CostantiPdD {
     public static final String KEY_IDENTITA_GESTORE_CREDENZIALI = "@IDENTITA_GESTORE_CREDENZIALI@";
     /** Costante che indica il tipo di validazione */
     public static final String KEY_TIPO_VALIDAZIONE_BUSTA = "@TIPO_VALIDAZIONE_BUSTA@";
+    public static final String TIPO_VALIDAZIONE_BUSTA_SINTATTICA = "sintattica";
+    public static final String TIPO_VALIDAZIONE_BUSTA_SEMANTICA = "semantica";
     
     /** Costante che identifica un soggetto intermediario.  */
     public static final String KEY_INTERMEDIARIO = "@SOGGETTO_INTERMEDIARIO@";

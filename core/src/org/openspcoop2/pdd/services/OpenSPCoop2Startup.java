@@ -2690,13 +2690,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			try{
-				RicezioneContenutiApplicativi.initializeService(configurazionePdDManager, classNameReader, propertiesReader, logCore);
+				RicezioneContenutiApplicativi.initializeService(classNameReader, propertiesReader, logCore);
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione servizio RicezioneContenutiApplicativi");
 				return;
 			}
 			try{
-				RicezioneBuste.initializeService(configurazionePdDManager,classNameReader, propertiesReader, logCore);
+				RicezioneBuste.initializeService(classNameReader, propertiesReader, logCore);
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione servizio RicezioneBuste");
 				return;

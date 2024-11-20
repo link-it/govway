@@ -25,9 +25,9 @@ package org.openspcoop2.pdd.services.connector;
 import java.io.IOException;
 import java.util.Date;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -47,7 +47,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 /**
- * RicezioneContenutiApplicativiConnector
+ * RicezioneContenutiApplicativiHTTPtoSOAPConnectorAsync
  *
  * @author Poli Andrea (apoli@link.it)
  * @author Lorenzo Nardi (nardi@link.it)
@@ -61,8 +61,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnectorAsync extends Abstr
 
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public final static IDService ID_SERVICE = IDService.PORTA_DELEGATA_XML_TO_SOAP_NIO;
-	public final static String ID_MODULO = ID_SERVICE.getValue();
+	public static final IDService ID_SERVICE = IDService.PORTA_DELEGATA_XML_TO_SOAP_NIO;
+	public static final String ID_MODULO = ID_SERVICE.getValue();
 
 	@Override
 	protected IDService getIdService() {
@@ -88,10 +88,14 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnectorAsync extends Abstr
 	}
 	
 	@Override
-	protected AbstractErrorGenerator getErrorGenerator(Logger logCore, RequestInfo requestInfo) throws Exception{
-		RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore = new RicezioneContenutiApplicativiInternalErrorGenerator(logCore, ID_MODULO, requestInfo);
-		RicezioneContenutiApplicativiHTTPtoSOAPService.forceXmlResponse(generatoreErrore);
-		return generatoreErrore;
+	protected AbstractErrorGenerator getErrorGenerator(Logger logCore, RequestInfo requestInfo) throws ConnectorException{
+		try {
+			RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore = new RicezioneContenutiApplicativiInternalErrorGenerator(logCore, ID_MODULO, requestInfo);
+			RicezioneContenutiApplicativiHTTPtoSOAPService.forceXmlResponse(generatoreErrore);
+			return generatoreErrore;
+		}catch(Exception e) {
+			throw new ConnectorException(e.getMessage(),e);
+		}
 	}
 	@Override
 	protected void doError(RequestInfo requestInfo, AbstractErrorGenerator generatoreErroreParam, 

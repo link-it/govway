@@ -4261,8 +4261,8 @@ public class InoltroBuste extends GenericLib{
 					}else{
 						msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, errore.toString());
 						msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_ECCEZIONI, erroriProcessamento.size()+"");
-						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE,"validazioneBusta.bustaNonCorretta");
-						esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE,"validazioneBusta.bustaNonCorretta"));
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA);
+						esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO_RISPOSTE,MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA));
 					}
 					tracciamento.registraRisposta(responseMessage,securityInfoResponse,headerProtocolloRisposta,bustaRisposta,esitoTraccia,
 							Tracciamento.createLocationString(true, location),

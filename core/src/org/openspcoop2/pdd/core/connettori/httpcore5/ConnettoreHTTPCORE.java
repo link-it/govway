@@ -572,7 +572,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 								}
 								requestReadTimeout = requestReadTimeout + 1000; // aggiungo un ulteriore secondo per far scattare prima il timeout sull'input stream
 								isRequest = PipedUnblockedStreamFactory.newPipedUnblockedStream(this.logger.getLogger(), this.openspcoopProperties.getBIOConfigSyncClientPipedUnblockedStreamBuffer(), 
-										requestReadTimeout, "Request");
+										requestReadTimeout, CostantiPdD.CONNETTORE_FASE_GESTIIONE_RICHIESTA);
 								PipedUnblockedOutputStream puos = new PipedUnblockedOutputStream((IPipedUnblockedStream) isRequest);
 								messageWriteToRunnable = new MessageWriteToRunnable(this.logger.getLogger(), this.requestMsg, puos, consumeRequestMessage);
 								ConnectorApplicativeThreadPool.executeInSyncRequestPool(messageWriteToRunnable); // la scrittura si fermerà su buffer e poi prenderà a funzionare mentre viene letto l'input stream dal connettore httpcore

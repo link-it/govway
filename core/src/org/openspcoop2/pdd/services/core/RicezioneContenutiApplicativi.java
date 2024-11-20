@@ -33,6 +33,7 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.CorrelazioneApplicativa;
@@ -250,13 +251,14 @@ public class RicezioneContenutiApplicativi {
 	 * @throws Exception
 	 */
 	public static synchronized void initializeService(
-			ConfigurazionePdDManager configReader,
 			ClassNameProperties className,
 			OpenSPCoop2Properties propertiesReader, Logger logCore)
-			throws Exception {
+			throws CoreException, ProtocolException {
 		if (RicezioneContenutiApplicativi.initializeService)
 			return; // inizializzato da un altro thread
 
+		String effettuataSuffix = " effettuata.";
+		
 		Loader loader = Loader.getInstance();
 		PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
 		
@@ -265,10 +267,10 @@ public class RicezioneContenutiApplicativi {
 		try {
 			INodeSender nodeSender = (INodeSender) loader.newInstance(classTypeNodeSender);
 			nodeSender.toString();
-			logInfo(logCore, "Inizializzazione gestore NodeSender di tipo "	+ classTypeNodeSender + " effettuata.");
+			logInfo(logCore, "Inizializzazione gestore NodeSender di tipo "	+ classTypeNodeSender + effettuataSuffix);
 		} catch (Exception e) {
-			throw new Exception(
-					"Riscontrato errore durante il caricamento della classe ["+ classTypeNodeSender
+			throw new CoreException(
+					"Riscontrato errore durante il caricamento della classe 'NodeSender' ["+ classTypeNodeSender
 							+ "] da utilizzare per la spedizione nell'infrastruttura: "	+ e.getMessage());
 		}
 
@@ -277,10 +279,10 @@ public class RicezioneContenutiApplicativi {
 		try {
 			INodeReceiver nodeReceiver = (INodeReceiver) loader.newInstance(classType);
 			nodeReceiver.toString();
-			logInfo(logCore, "Inizializzazione gestore NodeReceiver di tipo "+ classType + " effettuata.");
+			logInfo(logCore, "Inizializzazione gestore NodeReceiver di tipo "+ classType + effettuataSuffix);
 		} catch (Exception e) {
-			throw new Exception(
-					"Riscontrato errore durante il caricamento della classe ["+ classType
+			throw new CoreException(
+					"Riscontrato errore durante il caricamento della classe 'NodeReceiver' ["+ classType
 							+ "] da utilizzare per la ricezione dall'infrastruttura: "+ e.getMessage());
 		}
 
@@ -288,12 +290,12 @@ public class RicezioneContenutiApplicativi {
 		RicezioneContenutiApplicativi.defaultGestoriIntegrazionePD = propertiesReader.getTipoIntegrazionePD();
 		for (int i = 0; i < RicezioneContenutiApplicativi.defaultGestoriIntegrazionePD.length; i++) {
 			try {
-				IGestoreIntegrazionePD gestore = (IGestoreIntegrazionePD) pluginLoader.newIntegrazionePortaDelegata(RicezioneContenutiApplicativi.defaultGestoriIntegrazionePD[i]);
+				IGestoreIntegrazionePD gestore = pluginLoader.newIntegrazionePortaDelegata(RicezioneContenutiApplicativi.defaultGestoriIntegrazionePD[i]);
 				gestore.toString();
 				logInfo(logCore, "Inizializzazione gestore dati di integrazione per le fruizioni di tipo "
-								+ RicezioneContenutiApplicativi.defaultGestoriIntegrazionePD[i]	+ " effettuata.");
+								+ RicezioneContenutiApplicativi.defaultGestoriIntegrazionePD[i]	+ effettuataSuffix);
 			} catch (Exception e) {
-				throw new Exception(e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
 			}
 		}
 		
@@ -301,22 +303,22 @@ public class RicezioneContenutiApplicativi {
 		RicezioneContenutiApplicativi.defaultPerProtocolloGestoreIntegrazionePD = new java.util.concurrent.ConcurrentHashMap<String, String[]>();
 		Enumeration<String> enumProtocols = ProtocolFactoryManager.getInstance().getProtocolNames();
 		while (enumProtocols.hasMoreElements()) {
-			String protocol = (String) enumProtocols.nextElement();
+			String protocol = enumProtocols.nextElement();
 			String[] tipiIntegrazionePD = propertiesReader.getTipoIntegrazionePD(protocol);
 			if(tipiIntegrazionePD!=null && tipiIntegrazionePD.length>0){
 				List<String> tipiIntegrazionePerProtocollo = new ArrayList<>();
 				for (int i = 0; i < tipiIntegrazionePD.length; i++) {
 					try {
-						IGestoreIntegrazionePD gestore = (IGestoreIntegrazionePD) pluginLoader.newIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
+						IGestoreIntegrazionePD gestore = pluginLoader.newIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
 						gestore.toString();
 						tipiIntegrazionePerProtocollo.add(tipiIntegrazionePD[i]);
-						logCore	.info("Inizializzazione gestore dati di integrazione (protocollo: "+protocol+") per le fruizioni di tipo "
-								+ tipiIntegrazionePD[i]	+ " effettuata.");
+						logInfo(logCore, "Inizializzazione gestore dati di integrazione (protocollo: "+protocol+") per le fruizioni di tipo "
+								+ tipiIntegrazionePD[i]	+ effettuataSuffix);
 					} catch (Exception e) {
-						throw new Exception(e.getMessage(),e);
+						throw new CoreException(e.getMessage(),e);
 					}
 				}
-				if(tipiIntegrazionePerProtocollo.size()>0){
+				if(!tipiIntegrazionePerProtocollo.isEmpty()){
 					RicezioneContenutiApplicativi.defaultPerProtocolloGestoreIntegrazionePD.put(protocol, tipiIntegrazionePerProtocollo.toArray(new String[1]));
 				}
 			}
@@ -330,11 +332,11 @@ public class RicezioneContenutiApplicativi {
 				try {
 					IGestoreCredenziali gestore = (IGestoreCredenziali)loader.newInstance(classType);
 					gestore.toString();
-					logCore	.info("Inizializzazione gestore credenziali di tipo "
-							+ RicezioneContenutiApplicativi.tipiGestoriCredenziali[i]	+ " effettuata.");
+					logInfo(logCore, "Inizializzazione gestore credenziali di tipo "
+							+ RicezioneContenutiApplicativi.tipiGestoriCredenziali[i]	+ effettuataSuffix);
 				} catch (Exception e) {
-					throw new Exception(
-							"Riscontrato errore durante il caricamento della classe ["+ classType
+					throw new CoreException(
+							"Riscontrato errore durante il caricamento della classe 'IGestoreCredenziali' ["+ classType
 							+ "] da utilizzare per la gestione delle credenziali di tipo ["
 							+ RicezioneContenutiApplicativi.tipiGestoriCredenziali[i]+ "]: " + e.getMessage());
 				}
@@ -470,7 +472,7 @@ public class RicezioneContenutiApplicativi {
 			setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "TracciamentoNonRiuscito");
 			return;
 		} catch(DumpException e){
-			setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "DumpNonRiuscito");
+			setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, DumpException.DUMP_NON_RIUSCITO);
 			return;
 		} catch(ProtocolException e){
 			setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "InstanziazioneProtocolFactoryNonRiuscita");
@@ -535,7 +537,7 @@ public class RicezioneContenutiApplicativi {
 							inRequestContext.getConnettore().getUrlProtocolContext());
 				}
 			}catch(DumpException e){
-				setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "DumpNonRiuscito");
+				setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, DumpException.DUMP_NON_RIUSCITO);
 				return;
 			}catch(Exception e){
 				// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
@@ -625,7 +627,7 @@ public class RicezioneContenutiApplicativi {
 							outResponseContext.getResponseHeaders());
 				}
 			}catch(DumpException e){
-				setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, "DumpNonRiuscito");
+				setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(context), logCore,msgDiag, e, DumpException.DUMP_NON_RIUSCITO);
 			}catch(Exception e){
 				logError(logCore, e.getMessage(),e);
 				// Se non riesco ad accedere alla configurazione sicuramente gia' nel messaggio di risposta e' presente l'errore di PdD non correttamente inizializzata
@@ -788,7 +790,7 @@ public class RicezioneContenutiApplicativi {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneGovWay");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (InizializzazioneGovWay): "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext, IntegrationFunctionError.GOVWAY_NOT_INITIALIZED, 
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -804,7 +806,7 @@ public class RicezioneContenutiApplicativi {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"InizializzazioneRisorseGovWay");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (InizializzazioneRisorseGovWay): "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext, IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, 
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -820,7 +822,7 @@ public class RicezioneContenutiApplicativi {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"DisponibilitaRisorseGovWay");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (DisponibilitaRisorseGovWay): "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext, IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, 
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -837,7 +839,7 @@ public class RicezioneContenutiApplicativi {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Tracciamento");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (Tracciamento): "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext, IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, 
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -854,7 +856,7 @@ public class RicezioneContenutiApplicativi {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Diagnostica");
 				}
-			}catch(Throwable t){logDebug(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Exception t){logDebug(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (Diagnostica): "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext, IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, 
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -871,7 +873,7 @@ public class RicezioneContenutiApplicativi {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"Dump");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (Dump): "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext, IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, 
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -891,7 +893,7 @@ public class RicezioneContenutiApplicativi {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckConfigurazioneGovWay");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (CheckConfigurazioneGovWay): "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext, IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, 
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -911,7 +913,7 @@ public class RicezioneContenutiApplicativi {
 				if(this.msgContext.getMsgDiagnostico()!=null){
 					this.msgContext.getMsgDiagnostico().logErroreGenerico(msgErrore,"CheckRegistroServizi");
 				}
-			}catch(Throwable t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita: "+t.getMessage(),t);}
+			}catch(Exception t){logError(logCore, "Emissione diagnostico per errore inizializzazione non riuscita (CheckRegistroServizi): "+t.getMessage(),t);}
 			if (this.msgContext.isGestioneRisposta()) {
 				this.msgContext.setMessageResponse((this.generatoreErrore.build(pddContext, IntegrationFunctionError.GOVWAY_RESOURCES_NOT_AVAILABLE, 
 						ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -1054,9 +1056,9 @@ public class RicezioneContenutiApplicativi {
 
 		// inizializzazione risorse statiche
 		try {
-			if (RicezioneContenutiApplicativi.initializeService == false) {
+			if (!RicezioneContenutiApplicativi.initializeService) {
 				msgDiag.mediumDebug("Inizializzazione risorse statiche...");
-				RicezioneContenutiApplicativi.initializeService(configurazionePdDReader,className,propertiesReader, logCore);
+				RicezioneContenutiApplicativi.initializeService(className,propertiesReader, logCore);
 			}
 		} catch (Exception e) {
 			msgDiag.logErroreGenerico(e,"InizializzazioneRisorseServizioRicezioneContenutiApplicativi");

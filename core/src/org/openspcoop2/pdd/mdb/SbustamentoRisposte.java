@@ -652,7 +652,7 @@ public class SbustamentoRisposte extends GenericLib {
 						// della busta sia "Warning Only" o "active"
 						msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, eccBuffer.toString());
 						msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_ECCEZIONI, errors.size()+"");
-						msgDiag.logPersonalizzato("validazioneBusta.bustaNonCorretta");
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA);
 
 						// Spedizione BustaErrore contenente gli errori riscontrati, solo se
 						// la modalita di validazione della busta e' "active"
@@ -707,12 +707,12 @@ public class SbustamentoRisposte extends GenericLib {
 											parseException);
 								ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRiferimentoMessaggio,pd,sa);
 								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
-										msgDiag.getMessaggio_replaceKeywords("validazioneBusta.bustaNonCorretta"));
+										msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA));
 							}else{
 								// profilo OneWay, non aspetta una risposta
 								ejbUtils.releaseInboxMessage(false);
 								esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO,
-										msgDiag.getMessaggio_replaceKeywords("validazioneBusta.bustaNonCorretta"));
+										msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA));
 							}
 							msgDiag.mediumDebug("Rilascio connessione...");
 							openspcoopstate.releaseResource();

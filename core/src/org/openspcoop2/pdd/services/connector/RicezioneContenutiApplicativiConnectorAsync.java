@@ -24,7 +24,7 @@ package org.openspcoop2.pdd.services.connector;
 
 import java.util.Date;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -57,8 +57,8 @@ public class RicezioneContenutiApplicativiConnectorAsync extends AbstractRicezio
 
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public final static IDService ID_SERVICE = IDService.PORTA_DELEGATA_NIO;
-	public final static String ID_MODULO = ID_SERVICE.getValue();
+	public static final IDService ID_SERVICE = IDService.PORTA_DELEGATA_NIO;
+	public static final String ID_MODULO = ID_SERVICE.getValue();
 
 	@Override
 	protected IDService getIdService() {
@@ -70,8 +70,12 @@ public class RicezioneContenutiApplicativiConnectorAsync extends AbstractRicezio
 	}
 	
 	@Override
-	protected AbstractErrorGenerator getErrorGenerator(Logger logCore, RequestInfo requestInfo) throws Exception{
-		return new RicezioneContenutiApplicativiInternalErrorGenerator(logCore, ID_MODULO, requestInfo);
+	protected AbstractErrorGenerator getErrorGenerator(Logger logCore, RequestInfo requestInfo) throws ConnectorException{
+		try {
+			return new RicezioneContenutiApplicativiInternalErrorGenerator(logCore, ID_MODULO, requestInfo);
+		}catch(Exception e) {
+			throw new ConnectorException(e.getMessage(),e);
+		}
 	}
 	@Override
 	protected void doError(RequestInfo requestInfo, AbstractErrorGenerator generatoreErroreParam, 
