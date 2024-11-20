@@ -1,0 +1,12 @@
+{
+    "connettore": {
+        "tipo": "status",
+        "risposta": "json",
+        "verificaConnettivita": false,
+        "debug": false,
+        "verificaStatistica": {
+            "tipoPeriodo": "orario",
+            "lunghezzaPeriodo": 4
+        }
+    }
+}
