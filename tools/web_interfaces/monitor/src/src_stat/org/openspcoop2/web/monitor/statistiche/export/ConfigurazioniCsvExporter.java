@@ -2239,6 +2239,21 @@ public class ConfigurazioniCsvExporter {
 		else if(TipiConnettore.NULLECHO.getNome().equals(connettore.getTipo())){
 			mapProperties.put(2, ConnettoreNULLEcho.LOCATION);
 		}
+		else if(TipiConnettore.STATUS.getNome().equals(connettore.getTipo())){
+			StringBuilder sb = new StringBuilder();
+			sb.append(CostantiConfigurazioni.LABEL_STATUS_RESPONSE_TYPE).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_RESPONSE_TYPE, connettore.getPropertyList())).append("\n");
+			sb.append(CostantiConfigurazioni.LABEL_STATUS_TEST_CONNECTIVITY).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_TEST_CONNECTIVITY, connettore.getPropertyList())).append("\n");
+			
+			if (ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_PERIOD, connettore.getPropertyList()) != null) {
+				sb.append(CostantiConfigurazioni.LABEL_STATUS_PERIOD).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_PERIOD, connettore.getPropertyList())).append("\n");
+				sb.append(CostantiConfigurazioni.LABEL_STATUS_PERIOD_VALUE).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_PERIOD_VALUE, connettore.getPropertyList())).append("\n");
+
+			}
+			if (ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_STAT_LIFETIME, connettore.getPropertyList()) != null)
+				sb.append(CostantiConfigurazioni.LABEL_STATUS_STAT_LIFETIME).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_STAT_LIFETIME, connettore.getPropertyList())).append("\n");
+			
+			mapProperties.put(17, sb.toString());
+		}
 		else if(integrationManager!=null && StatoFunzionalita.ABILITATO.equals(integrationManager)) {
 			
 			// confonde e basta. Nel caso di HTTP ci sara' sempre integration manager però con la location http
