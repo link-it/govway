@@ -1132,7 +1132,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
 			}
 			if(!connettoreStatic &&
-				!this.endPointCheckData(protocollo, gestioneErogatori,
+				!this.endPointCheckData(serviceBinding, protocollo, gestioneErogatori,
 						endpointtype, url, nome, tipo,
 						user, password, initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia, httpshostverify,
@@ -1661,7 +1661,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				String servizioApplicativoServer = null;
 				// Controllo dell'end-point
 				// Non li puo' prendere dalla servtlet
-				if (!this.endPointCheckData(protocollo, false,
+				if (!this.endPointCheckData(null, protocollo, false,
 						endpointtype, url, nome, tipo,
 						user, password, initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia, httpshostverify,

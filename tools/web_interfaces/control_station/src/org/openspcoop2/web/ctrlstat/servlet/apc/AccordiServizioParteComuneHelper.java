@@ -4865,7 +4865,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
 			
-			if (!this.endPointCheckData(protocollo, false, listExtendedConnettore)) {
+			if (!this.endPointCheckData(null, protocollo, false, listExtendedConnettore)) {
 				return false;
 			}
 

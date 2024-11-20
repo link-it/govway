@@ -89,6 +89,7 @@ import org.openspcoop2.web.ctrlstat.costanti.TipologiaConnettori;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
@@ -767,7 +768,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					List<ExtendedConnettore> listExtendedConnettore = 
 							ServletExtendedConnettoreUtils.getExtendedConnettore(connettore, ConnettoreServletType.WIZARD_REGISTRY, this, false, endpointtype);
 					
-					boolean isOk = this.endPointCheckData(null, false, listExtendedConnettore);
+					boolean isOk = this.endPointCheckData(null, null, false, listExtendedConnettore);
 					if (!isOk) {
 						return false;
 					}
@@ -1384,6 +1385,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String responseInputDeleteAfterRead = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
+			//status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(this);
 			
 			Connettore connis = invServizio.getConnettore();
 			if(connis==null){
@@ -1413,6 +1416,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
 					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					listExtendedConnettore);
 			invServizio.setConnettore(connis);
 		
@@ -1560,6 +1564,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			String responseInputDeleteAfterRead = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
+			//status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(this);
 						
 			org.openspcoop2.core.registry.Connettore connettore = new org.openspcoop2.core.registry.Connettore();
 			
@@ -1586,6 +1592,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
 					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					listExtendedConnettore);
 			
 			return connettore;
@@ -1618,6 +1625,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		boolean showIntestazioneArchivio = true;
 		boolean showSection = true;
+		ServiceBinding serviceBinding = null;
 		if(wizard!=null){
 			
 			if ( importInformationMissingException!=null && importInformationMissingException.isMissingRequisitiInfoInput() ){
@@ -2248,7 +2256,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			
 				Object object = importInformationMissingException.getObject();
 				AccordoServizioParteComune aspc = (AccordoServizioParteComune) object;
-				ServiceBinding serviceBinding = this.apcCore.toMessageServiceBinding(aspc.getServiceBinding());						
+				serviceBinding = this.apcCore.toMessageServiceBinding(aspc.getServiceBinding());						
 				
 				// Provo a comprendere il protocollo associato all'accordo di servizio parte comune se e' definito il soggetto referente
 				// Serve per visualizzare i profili di collaborazione supportati
@@ -2547,8 +2555,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					}
 					
 				}
-				
-				addDatiConnettore(dati, readedDatiConnettori, importInformationMissingException.getMissingInfoDefault(), showSectionTitle, 
+
+				addDatiConnettore(dati, serviceBinding, readedDatiConnettori, importInformationMissingException.getMissingInfoDefault(), showSectionTitle, 
 						ConnettoreServletType.WIZARD_CONFIG, forceEnabled, tipologiaConnettori);
 			}
 			finally{
@@ -2608,7 +2616,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 				boolean forceEnabled = true; // non ha senso non fornire un connettore
 				
-				addDatiConnettore(dati, readedDatiConnettori, importInformationMissingException.getMissingInfoDefault(), showSection, 
+				addDatiConnettore(dati, serviceBinding, readedDatiConnettori, importInformationMissingException.getMissingInfoDefault(), showSection, 
 						ConnettoreServletType.WIZARD_REGISTRY, forceEnabled, tipologiaConnettori);
 			}
 			finally{
@@ -2829,7 +2837,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				postBackViaPost); 
 	}
 	
-	private void addDatiConnettore(List<DataElement> dati, boolean readedDatiConnettori, Default defaultProperties,
+	private void addDatiConnettore(List<DataElement> dati, ServiceBinding serviceBinding, boolean readedDatiConnettori, Default defaultProperties,
 			boolean showSectionTitle,ConnettoreServletType connettoreServletType,
 			boolean forceEnabled, TipologiaConnettori tipologiaConnettoriInfoMissing) throws Exception{
 		
@@ -3050,6 +3058,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			responseInputDeleteAfterRead = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			responseInputWaitTime = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
+			// status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(this);
+			
 			Boolean isConnettoreCustomUltimaImmagineSalvata = null;
 						
 			if(endpointtype==null || (forceEnabled && TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) ){
@@ -3062,7 +3073,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 			boolean postBackViaPost = true;
 			
-			this.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
+			this.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
 					url, nomeCodaJMS,
 					tipo, user, password, initcont, urlpgk, provurl,
 					connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
@@ -3088,6 +3099,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					null, false,false
 					, false, false, null, null,
 					autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					postBackViaPost
 					);
 			

@@ -73,6 +73,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -316,6 +317,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
+			// stauts
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(apsHelper);
+			
 			boolean servizioApplicativoServerEnabled = false;
 			String servizioApplicativoServer = null;
 			
@@ -707,7 +711,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 					
 					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 								url, nomeCodaJms,
 								tipoJms, user,
@@ -734,6 +738,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 								listExtendedConnettore, forceEnableConnettore,
 								protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null,
 								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+								connettoreStatusParams,
 								postBackViaPost);
 					}
 				}
@@ -752,7 +757,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			
 			// controllo endpoint
 			if(isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-				isOk = apsHelper.endPointCheckData(protocollo, false,
+				isOk = apsHelper.endPointCheckData(serviceBinding, protocollo, false,
 						endpointtype, url, nome, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
@@ -803,7 +808,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 				
 				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 							url, nomeCodaJms,
 							tipoJms, user,
@@ -830,6 +835,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null,
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams,
 							postBackViaPost);
 				}
 
@@ -898,7 +904,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 					userLogin,
 					apsCore, apsHelper,
 					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi,
-					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue, connettoreStatusParams);
 			
 			// Preparo la lista
 			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);

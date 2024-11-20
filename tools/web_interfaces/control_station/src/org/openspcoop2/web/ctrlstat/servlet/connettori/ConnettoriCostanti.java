@@ -225,6 +225,22 @@ public class ConnettoriCostanti {
 	public static final String PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ = "responseInputFileNameDelete";
 	public static final String PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = "responseInputWaitTime";
 	
+	// Connettore status
+	public static final String PARAMETRO_CONNETTORE_STATUS_RESPONSE_TYPE = "statusResponseType";
+	public static final String PARAMETRO_CONNETTORE_STATUS_TEST_CONNECTIVITY = "testConnectivity";
+	public static final String PARAMETRO_CONNETTORE_STATUS_TEST_STATISTICS = "testStatistics";
+	public static final String PARAMETRO_CONNETTORE_STATUS_RESPONSE_PERSONALIZED = "statusResponsePersonalized";
+	public static final String PARAMETRO_CONNETTORE_STATUS_PERIOD = "period";
+	public static final String PARAMETRO_CONNETTORE_STATUS_PERIOD_VALUE = "periodValue";
+	public static final String PARAMETRO_CONNETTORE_STATUS_STAT_LIFETIME = "statLifetime";
+	
+	public static final String LABEL_CONNETTORE_STATUS_TEST_CONNECTIVITY = "Verifica connettività:";
+	public static final String LABEL_CONNETTORE_STATUS_TEST_STATISTICS = "Verifica statistica:";
+	public static final String LABEL_CONNETTORE_STATUS_PERIOD = "Frequenza";
+	public static final String LABEL_CONNETTORE_STATUS_OBSERVATION_INTERVAL = "Intervallo Osservazione:";
+	public static final String LABEL_CONNETTORE_STATUS_STAT_LIFETIME = "Cache lifetime (s):";
+	
+	
 	public static final String PARAMETRO_CONNETTORE_CUSTOM_ID = "id";
 	public static final String PARAMETRO_CONNETTORE_CUSTOM_MY_ID = "myId";
 	public static final String PARAMETRO_CONNETTORE_CUSTOM_SERVLET = "servlet";

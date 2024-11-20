@@ -53,6 +53,7 @@ import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -221,6 +222,9 @@ public final class SoggettiEndPoint extends Action {
 			String responseInputDeleteAfterRead = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = soggettiHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
+			// status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(soggettiHelper);
+						
 			boolean postBackViaPost = true;
 			
 			// Preparo il menu
@@ -255,7 +259,8 @@ public final class SoggettiEndPoint extends Action {
 				if (endpointtype == null) {
 					if ( (c.getCustom()!=null && c.getCustom()) && 
 							!c.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-							!c.getTipo().equals(TipiConnettore.FILE.toString())) {
+							!c.getTipo().equals(TipiConnettore.FILE.toString()) &&
+							!c.getTipo().equals(TipiConnettore.STATUS.toString())) {
 						endpointtype = TipiConnettore.CUSTOM.toString();
 						tipoconn = c.getTipo();
 					} else
@@ -560,7 +565,7 @@ public final class SoggettiEndPoint extends Action {
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 				dati.add(de);
 
-				dati = soggettiHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = soggettiHelper.addEndPointToDati(dati, null, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl, 
 						connfact, sendas, SoggettiCostanti.OBJECT_NAME_SOGGETTI,TipoOperazione.CHANGE, 
@@ -585,6 +590,7 @@ public final class SoggettiEndPoint extends Action {
 						protocollo, false, false
 						, false, false, null, null,
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams,
 						postBackViaPost
 						);
 
@@ -615,7 +621,7 @@ public final class SoggettiEndPoint extends Action {
 				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID);
 				dati.add(de);
 
-				dati = soggettiHelper.addEndPointToDati(dati,  connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = soggettiHelper.addEndPointToDati(dati, null, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, SoggettiCostanti.OBJECT_NAME_SOGGETTI,TipoOperazione.CHANGE, 
@@ -640,6 +646,7 @@ public final class SoggettiEndPoint extends Action {
 						protocollo, false, false
 						, false, false, null, null,
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams,
 						postBackViaPost
 						);
 
@@ -654,7 +661,8 @@ public final class SoggettiEndPoint extends Action {
 			String oldConnT = c.getTipo();
 			if ((c.getCustom()!=null && c.getCustom()) && 
 					!c.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-					!c.getTipo().equals(TipiConnettore.FILE.toString()))
+					!c.getTipo().equals(TipiConnettore.FILE.toString()) &&
+					!c.getTipo().equals(TipiConnettore.STATUS.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			soggettiHelper.fillConnettore(c, connettoreDebug, endpointtype, oldConnT, tipoconn, url, nome, tipo, user,
 					password, initcont, urlpgk, provurl, connfact, sendas,
@@ -672,6 +680,7 @@ public final class SoggettiEndPoint extends Action {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
 					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					listExtendedConnettore);
 			ss.setConnettore(c);
 			SoggettoCtrlStat newCsc = new SoggettoCtrlStat(ss, ssconf);
