@@ -410,6 +410,7 @@ public class DriverConfigurazioneDB_connettoriDriver {
 					risultato.close();
 					stmt.close();
 					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
 					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 					sqlQueryObject.addSelectField("utenterisp");
 					sqlQueryObject.addSelectField("passwordrisp");
