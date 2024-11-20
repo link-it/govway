@@ -19,11 +19,39 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
-* OneOfApplicativoServerConnettore
-*/
-public interface OneOfApplicativoServerConnettore {
-    public ConnettoreEnum getTipo();
+ * Gets or Sets TipoRispostaStatusEnum
+ */
+public enum TipoRispostaStatusEnum {
+MODI("ModI"),
+  VUOTO("vuoto"),
+  XML("xml"),
+  JSON("json"),
+  TEXT("text");
+
+  private String value;
+
+  TipoRispostaStatusEnum(String value) {
+    this.value = value;
+  }
+
+  @Override
+  @JsonValue
+  public String toString() {
+    return String.valueOf(this.value);
+  }
+
+  @JsonCreator
+  public static TipoRispostaStatusEnum fromValue(String text) {
+    for (TipoRispostaStatusEnum b : TipoRispostaStatusEnum.values()) {
+      if (String.valueOf(b.value).equals(text)) {
+        return b;
+      }
+    }
+    return null;
+  }
+  
 }

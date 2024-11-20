@@ -1,98 +1,52 @@
-/*
- * GovWay - A customizable API Gateway 
- * https://govway.org
- * 
- * Copyright (c) 2005-2024 Link.it srl (https://link.it).
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 3, as published by
- * the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 package org.openspcoop2.core.config.rs.server.api.impl.erogazioni;
 
 import java.util.Map;
+import java.util.Objects;
 
-import org.openspcoop2.core.config.Credenziali;
-import org.openspcoop2.core.config.InvocazionePorta;
-import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.constants.CredenzialeTipo;
-import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpBasic;
 import org.openspcoop2.core.config.rs.server.model.ConnettoreEnum;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreMessageBox;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreStatus;
+import org.openspcoop2.core.config.rs.server.model.ConnettoreStatusVerificaStatistica;
 import org.openspcoop2.core.config.rs.server.model.OneOfApplicativoServerConnettore;
 import org.openspcoop2.core.config.rs.server.model.OneOfConnettoreErogazioneConnettore;
 import org.openspcoop2.core.config.rs.server.model.OneOfConnettoreFruizioneConnettore;
+import org.openspcoop2.core.config.rs.server.model.TipoPeriodoStatisticoEnum;
+import org.openspcoop2.core.config.rs.server.model.TipoRispostaStatusEnum;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
-/**
- * ConnettoreMessageBoxApiHelper
- * 
- * @author $Author$
- * @version $Rev$, $Date$
- * 
- */
-public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<ConnettoreMessageBox> {
+public class ConnettoreStatusApiHelper extends AbstractConnettoreApiHelper<ConnettoreStatus> {
 
 	@Override
-	public boolean connettoreCheckData(ConnettoreMessageBox conn, ErogazioniEnv env, boolean erogazione) throws Exception {
-		return true;
+	protected boolean connettoreCheckData(ConnettoreStatus conn, ErogazioniEnv env, boolean erogazione) throws Exception { 
+		return !ConnettoreStatusParams.check(env.apsHelper, null, null).getParsingErrors();
 	}
 
-	@Override
-	protected org.openspcoop2.core.config.Connettore buildConnettoreConfigurazione(ServizioApplicativo sa, ErogazioniEnv env, ConnettoreMessageBox connettore, String oldConnT) throws Exception {
-		
-		Credenziali credenziali = new Credenziali();
-		credenziali.setTipo(CredenzialeTipo.BASIC);
-		credenziali.setUser(connettore.getAutenticazioneHttp().getUsername());
-		credenziali.setPassword(connettore.getAutenticazioneHttp().getPassword());
-		if(sa.getInvocazionePorta() == null) {
-			sa.setInvocazionePorta(new InvocazionePorta());
-		}
-		sa.getInvocazionePorta().addCredenziali(credenziali);
-		sa.getInvocazioneServizio().setGetMessage(StatoFunzionalita.ABILITATO);
-		
-		String protocollo = env.soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
-
-		env.requestWrapper.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX, CostantiConfigurazione.ABILITATO.toString());
-		env.requestWrapper.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME, connettore.getAutenticazioneHttp().getUsername());
-		env.requestWrapper.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD, connettore.getAutenticazioneHttp().getPassword());
-		env.requestWrapper.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP, CostantiConfigurazione.DISABILITATO.toString());
-		env.requestWrapper.overrideParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA, CostantiConfigurazione.DISABILITATO.toString());
-		env.requestWrapper.overrideParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE, TipiConnettore.DISABILITATO.getNome());
-
-		boolean ok = env.saHelper.servizioApplicativoEndPointCheckData(protocollo, null, sa);
-		
-		if(!ok) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(env.saHelper.getPd().getMessage());
-		}
-		return super.buildConnettoreConfigurazione(sa, env, connettore, oldConnT);
-	}
-	
 	@Override
 	public Connettore fillConnettoreRegistro(org.openspcoop2.core.registry.Connettore regConnettore,
 			ErogazioniEnv env,
-			ConnettoreMessageBox conn,
+			ConnettoreStatus conn,
 			String oldConnT) throws Exception {
+		
+		ConnettoreStatusParams params = new ConnettoreStatusParams()
+				.statusResponseType(conn.getRisposta().toString())
+				.testConnectivity(conn.isVerificaConnettivita())
+				.testStatistics(false);
+		
+		if (conn.getVerificaStatistica() != null) {
+			params.testStatistics(true);
+			params.periodValue(conn.getVerificaStatistica().getLunghezzaPeriodo());
+			params.period(conn.getVerificaStatistica().getTipoPeriodo().toString());
+			params.statLifetime(conn.getVerificaStatistica().getCacheLifetime());
+		}
+		
 		env.apsHelper.fillConnettore(
 				regConnettore, 
-				"false",				// this.connettoreDebug,
-				TipiConnettore.DISABILITATO.getNome(), 			// endpointtype
+				conn.isDebug() == Boolean.TRUE ? "true" : "false",				// this.connettoreDebug,
+				TipiConnettore.STATUS.getNome(), 			// endpointtype
 				oldConnT,						// oldConnT
 				"",						// tipoConn Personalizzato
 				null, // this.url,
@@ -155,22 +109,34 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
-				
-				null, // connettoreStatusParams
+				params, // connettoreStatusParams
 				null // listExtendedConnettore
-				);		
+				);
+		
 		return regConnettore;
 	}
 
 	@Override
 	public org.openspcoop2.core.config.Connettore buildConnettoreConfigurazione(
-			org.openspcoop2.core.config.Connettore regConnettore, ErogazioniEnv env, ConnettoreMessageBox conn,
+			org.openspcoop2.core.config.Connettore regConnettore, ErogazioniEnv env, ConnettoreStatus conn,
 			String oldConnType) throws Exception {
 
+		ConnettoreStatusParams params = new ConnettoreStatusParams()
+				.statusResponseType(conn.getRisposta().toString())
+				.testConnectivity(conn.isVerificaConnettivita())
+				.testStatistics(false);
+		
+		if (conn.getVerificaStatistica() != null) {
+			params.testStatistics(true);
+			params.periodValue(conn.getVerificaStatistica().getLunghezzaPeriodo());
+			params.period(conn.getVerificaStatistica().getTipoPeriodo().toString());
+			params.statLifetime(conn.getVerificaStatistica().getCacheLifetime());
+		}
+		
 		env.apsHelper.fillConnettore(
 				regConnettore, 
-				"false",				// this.connettoreDebug,
-				TipiConnettore.DISABILITATO.getNome(), 			// endpointtype
+				conn.isDebug() == Boolean.TRUE ? "true" : "false",				// this.connettoreDebug,
+				TipiConnettore.STATUS.getNome(), 			// endpointtype
 				oldConnType,						// oldConnT
 				"",						// tipoConn Personalizzato
 				null, // this.url,
@@ -211,7 +177,7 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,
 				
 				ServletUtils.boolToCheckBoxStatus( false ),	
-				null,	// this.tempiRisposta_connectionTimeout, 
+				null,	// this.tempiRisposta_connectionTimeout,
 				null, //null,	// this.tempiRisposta_readTimeout, 
 				null,	// this.tempiRisposta_tempoMedioRisposta,
 				"no",	// this.opzioniAvanzate, 
@@ -233,54 +199,56 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
-				
-				null, // connettoreStatusParams
+				params, // connettoreStatusParams
 				null // listExtendedConnettore
 				);		
 		return regConnettore;
 	}
 
 	@Override
-	protected ConnettoreMessageBox buildConnettore(ServizioApplicativo sa) {
-		ConnettoreMessageBox c = new ConnettoreMessageBox();
+	public ConnettoreStatus buildConnettore(Map<String, String> props, String tipo) {
+		String verificaConnettivita = props.get(CostantiDB.CONNETTORE_STATUS_TEST_CONNECTIVITY);
+		String statusResponseType = props.get(CostantiDB.CONNETTORE_STATUS_RESPONSE_TYPE);
+		String period = props.get(CostantiDB.CONNETTORE_STATUS_STATISTICAL_PERIOD);
+		String periodValue = props.get(CostantiDB.CONNETTORE_STATUS_STATISTICAL_PERIOD_VALUE);
+		String cacheLifetime = props.get(CostantiDB.CONNETTORE_STATUS_STAT_LIFETIME);
+		String debug = props.get(CostantiDB.CONNETTORE_DEBUG);
 		
-		c.setTipo(ConnettoreEnum.MESSAGE_BOX);
+		ConnettoreStatusVerificaStatistica verificaStatistica = null;
 		
-		ConnettoreConfigurazioneHttpBasic autenticazioneHttp = new ConnettoreConfigurazioneHttpBasic();
-		
-		if(sa.getInvocazionePorta().getCredenzialiList().size() > 0) {
-			autenticazioneHttp.setUsername(sa.getInvocazionePorta().getCredenziali(0).getUser());
-			autenticazioneHttp.setPassword(sa.getInvocazionePorta().getCredenziali(0).getPassword());
+		if (period != null) {
+			verificaStatistica = new ConnettoreStatusVerificaStatistica()
+					.lunghezzaPeriodo(Integer.valueOf(periodValue))
+					.tipoPeriodo(TipoPeriodoStatisticoEnum.fromValue(period))
+					.cacheLifetime(cacheLifetime == null ? null : Integer.valueOf(cacheLifetime));
 		}
 		
-		c.setAutenticazioneHttp(autenticazioneHttp);
-		return c;
-	}
-
-	@Override
-	public ConnettoreMessageBox buildConnettore(Map<String, String> props, String tipo) {
-		//non utilizzabile
-		return null; //TODO eccezione
+		return new ConnettoreStatus()
+				.tipo(ConnettoreEnum.STATUS)
+				.risposta(TipoRispostaStatusEnum.fromValue(statusResponseType))
+				.debug(Objects.requireNonNullElse(debug, Boolean.FALSE).equals(Boolean.TRUE))
+				.verificaConnettivita(Objects.requireNonNullElse(verificaConnettivita, Boolean.FALSE).equals(Boolean.TRUE))
+				.verificaStatistica(verificaStatistica);
 	}
 
 	@Override
 	public String getUrlConnettore(Map<String, String> props, String tipoConnettore) throws Exception {
-		return "disabilitato [MessageBox]";
+		return "[status] govway://status";
 	}
 
 	@Override
-	protected ConnettoreMessageBox getConnettore(OneOfConnettoreErogazioneConnettore conn) throws Exception {
-		return (ConnettoreMessageBox) conn;
+	protected ConnettoreStatus getConnettore(OneOfConnettoreErogazioneConnettore conn) throws Exception {
+		return (ConnettoreStatus) conn;
 	}
 
 	@Override
-	protected ConnettoreMessageBox getConnettore(OneOfConnettoreFruizioneConnettore conn) throws Exception {
-		return (ConnettoreMessageBox) conn;
+	protected ConnettoreStatus getConnettore(OneOfConnettoreFruizioneConnettore conn) throws Exception {
+		return (ConnettoreStatus) conn;
 	}
 
 	@Override
-	protected ConnettoreMessageBox getConnettore(OneOfApplicativoServerConnettore conn) throws Exception {
-		return (ConnettoreMessageBox) conn;
+	protected ConnettoreStatus getConnettore(OneOfApplicativoServerConnettore conn) throws Exception {
+		return (ConnettoreStatus) conn;
 	}
 
 }

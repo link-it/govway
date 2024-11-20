@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import javax.validation.constraints.*;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -31,6 +33,7 @@ HTTP("http"),
   JMS("jms"),
   NULL("null"),
   ECHO("echo"),
+  STATUS("status"),
   PLUGIN("plugin"),
   APPLICATIVO_SERVER("applicativo-server"),
   MESSAGE_BOX("message-box");
@@ -44,7 +47,7 @@ HTTP("http"),
   @Override
   @JsonValue
   public String toString() {
-    return String.valueOf(this.value);
+    return String.valueOf(value);
   }
 
   @JsonCreator

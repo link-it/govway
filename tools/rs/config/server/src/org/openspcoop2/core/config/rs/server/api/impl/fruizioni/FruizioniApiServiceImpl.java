@@ -1165,7 +1165,8 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					String oldConnT = connettore.getTipo();
 					if ((connettore.getCustom() != null && connettore.getCustom())
 							&& !connettore.getTipo().equals(TipiConnettore.HTTPS.toString())
-							&& !connettore.getTipo().equals(TipiConnettore.FILE.toString())) {
+							&& !connettore.getTipo().equals(TipiConnettore.FILE.toString())
+							&& !connettore.getTipo().equals(TipiConnettore.STATUS.toString())) {
 						oldConnT = TipiConnettore.CUSTOM.toString();
 					}
 
@@ -1183,7 +1184,8 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					String oldConnT = connettoreN.getTipo();
 					if ((connettoreN.getCustom() != null && connettoreN.getCustom())
 							&& !connettoreN.getTipo().equals(TipiConnettore.HTTPS.toString())
-							&& !connettoreN.getTipo().equals(TipiConnettore.FILE.toString())) {
+							&& !connettoreN.getTipo().equals(TipiConnettore.FILE.toString())
+							&& !connettoreN.getTipo().equals(TipiConnettore.STATUS.toString())) {
 						oldConnT = TipiConnettore.CUSTOM.toString();
 					}
 	
@@ -1207,7 +1209,8 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 				String oldConnT = connettore.getTipo();
 				if ((connettore.getCustom() != null && connettore.getCustom())
 						&& !connettore.getTipo().equals(TipiConnettore.HTTPS.toString())
-						&& !connettore.getTipo().equals(TipiConnettore.FILE.toString())) {
+						&& !connettore.getTipo().equals(TipiConnettore.FILE.toString())
+						&& !connettore.getTipo().equals(TipiConnettore.STATUS.toString())) {
 					oldConnT = TipiConnettore.CUSTOM.toString();
 				}
 

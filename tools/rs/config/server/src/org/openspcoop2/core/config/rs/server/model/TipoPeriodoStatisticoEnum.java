@@ -19,11 +19,38 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
-* OneOfApplicativoServerConnettore
-*/
-public interface OneOfApplicativoServerConnettore {
-    public ConnettoreEnum getTipo();
+ * Gets or Sets TipoPeriodoStatisticoEnum
+ */
+public enum TipoPeriodoStatisticoEnum {
+ORARIO("orario"),
+  GIORNALIERO("giornaliero"),
+  SETTIMANALE("settimanale"),
+  MENSILE("mensile");
+
+  private String value;
+
+  TipoPeriodoStatisticoEnum(String value) {
+    this.value = value;
+  }
+
+  @Override
+  @JsonValue
+  public String toString() {
+    return String.valueOf(this.value);
+  }
+
+  @JsonCreator
+  public static TipoPeriodoStatisticoEnum fromValue(String text) {
+    for (TipoPeriodoStatisticoEnum b : TipoPeriodoStatisticoEnum.values()) {
+      if (String.valueOf(b.value).equals(text)) {
+        return b;
+      }
+    }
+    return null;
+  }
+  
 }

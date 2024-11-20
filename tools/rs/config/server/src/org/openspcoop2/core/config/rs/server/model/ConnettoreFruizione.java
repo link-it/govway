@@ -35,6 +35,7 @@ public class ConnettoreFruizione  {
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreJms.class, name = "jms"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreNull.class, name = "null"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreEcho.class, name = "echo"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettoreStatus.class, name = "status"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ConnettorePlugin.class, name = "plugin")  })
   private OneOfConnettoreFruizioneConnettore connettore = null;
  /**
