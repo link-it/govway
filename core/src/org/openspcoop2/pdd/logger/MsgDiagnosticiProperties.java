@@ -787,8 +787,11 @@ public class MsgDiagnosticiProperties {
 	public static final String MSG_DIAG_OPENSPCOOP_STARTUP="openspcoopStartup.";
 	public static final String MSG_DIAG_ALL="all.";
 	// Keyword
+	public static final String MSG_DIAG_IDENTIFICAZIONE_DINAMICA_AZIONE_NON_RIUSCITA = "identificazioneDinamicaAzioneNonRiuscita";
+	public static final String MSG_DIAG_REGISTRO_RICERCA_SERVIZIO_FALLITA = "registroServizi.ricercaServizioFallita";
 	public static final String MSG_DIAG_VALIDAZIONE_NON_RIUSCITA = "validazioneNonRiuscita";
 	public static final String MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA = "validazioneBusta.bustaNonCorretta";
+	public static final String MSG_DIAG_CONSEGNA_RISPOSTA_APPLICATIVA = "consegnaRispostaApplicativa";
     public static final String MSG_DIAG_PARSING_EXCEPTION_RICHIESTA = "parsingExceptionRichiesta";
     public static final String MSG_DIAG_PARSING_EXCEPTION_RISPOSTA = "parsingExceptionRisposta";
 	// All Diag
@@ -796,7 +799,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"correlazioneApplicativaEsistente",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"correlazioneApplicativaInstaurata",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"ricevutaRichiestaApplicativa",
-		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"consegnaRispostaApplicativa",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+MSG_DIAG_CONSEGNA_RISPOSTA_APPLICATIVA,
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"consegnaRispostaApplicativaOkEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"consegnaRispostaApplicativaKoEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"consegnaRispostaApplicativaVuota",
@@ -806,7 +809,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"portaDelegataNonEsistente",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"servizioApplicativoFruitore.identificazioneTramiteInfoIntegrazioneNonRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"servizioApplicativoFruitore.identificazioneTramiteCredenzialiFallita",
-		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"identificazioneDinamicaAzioneNonRiuscita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+MSG_DIAG_IDENTIFICAZIONE_DINAMICA_AZIONE_NON_RIUSCITA,
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"servizioApplicativoFruitore.nonAutorizzato",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"servizioApplicativoFruitore.contenuto.nonAutorizzato",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"validazioneContenutiApplicativiRichiestaNonRiuscita",
@@ -952,7 +955,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"gestioneTokenInCorso.dynamicDiscovery.disabilitata",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioEffettuata",
-		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioFallita",
+		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+MSG_DIAG_REGISTRO_RICERCA_SERVIZIO_FALLITA,
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"consegnaAffidabile.salvataggioInformazioni",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"consegnaAffidabile.profiloNonOneway",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"consegnaInOrdine.profiloNonOneway",
@@ -1114,7 +1117,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"ricezioneMessaggio.mittenteAnonimo",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"generazioneMessaggioRisposta.mittenteAnonimo",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"generazioneMessaggioErroreRisposta.mittenteAnonimo",
-		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"identificazioneDinamicaAzioneNonRiuscita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+MSG_DIAG_IDENTIFICAZIONE_DINAMICA_AZIONE_NON_RIUSCITA,
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"riferimentoIdRichiesta.nonFornito",		
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"controlloTraffico.maxRequestsViolated",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"controlloTraffico.pddCongestionata",

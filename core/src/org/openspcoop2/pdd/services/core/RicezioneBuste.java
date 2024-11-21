@@ -451,8 +451,6 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 	
 	// Imposto un context di Base (utilizzato anche  per la successiva spedizione della risposta)
 	private MessageSecurityContext messageSecurityContext = null;
-	// Proprieta' FlowParameter MTOM / Security relative alla ricezione della busta
-	private FlowProperties flowPropertiesRequest = null;
 	// Proprieta' FlowParameter MTOM / Security relative alla spedizione della risposta
 	private FlowProperties flowPropertiesResponse = null;
 	
@@ -480,7 +478,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 	
 	public void process(Object ... params) throws ConnectorException {
 		try {
-			this._process(params);
+			this.internalProcess(params);
 		}finally {
 			if(this.asyncResponseCallback!=null && !this.asyncWait) { 
 				this.asyncResponseCallback.asyncComplete(AsyncResponseCallbackClientEvent.NONE);
@@ -509,7 +507,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		this.asyncResponseCallback.asyncComplete(clientEvent);
 	}
 	
-	private void _process(Object ... params) {
+	private void internalProcess(Object ... params) {
 
 		
 		
@@ -4084,27 +4082,28 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			/* ----------- Raccolta FlowParameter MTOM / Security ------------ */
 			this.msgDiag.mediumDebug("Raccolta FlowParameter MTOM / Security proprieta...");
 			MTOMProcessor mtomProcessor = null;
+			FlowProperties flowPropertiesRequest = null;
 			try{
 				
 				// read flow Properties
-				this.flowPropertiesRequest = ricezioneBusteUtils.getFlowPropertiesRequest(this.requestMessage, this.bustaRichiesta, this.configurazionePdDReader, 
+				flowPropertiesRequest = ricezioneBusteUtils.getFlowPropertiesRequest(this.requestMessage, this.bustaRichiesta, this.configurazionePdDReader, 
 						((StateMessage)this.openspcoopstate.getStatoRichiesta()), this.msgDiag,this.logCore,propertiesReader,
 						this.ruoloBustaRicevuta,this.implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),this.pa);				
 				this.flowPropertiesResponse = ricezioneBusteUtils.getFlowPropertiesResponse(this.requestMessage, this.bustaRichiesta, this.configurazionePdDReader, 
 						((StateMessage)this.openspcoopstate.getStatoRichiesta()), this.msgDiag,this.logCore,propertiesReader,
 						this.ruoloBustaRicevuta,this.implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),this.pa,
-						this.flowPropertiesRequest);
+						flowPropertiesRequest);
 				this.parametriGenerazioneBustaErrore.setFlowPropertiesResponse(this.flowPropertiesResponse);
 				
 				// init message security context
-				if(this.flowPropertiesRequest!=null && this.flowPropertiesRequest.messageSecurity!=null && 
-						this.flowPropertiesRequest.messageSecurity.getFlowParameters()!=null &&
-					this.flowPropertiesRequest.messageSecurity.getFlowParameters().size() > 0){
-					this.messageSecurityContext.setIncomingProperties(this.flowPropertiesRequest.messageSecurity.getFlowParameters());
+				if(flowPropertiesRequest!=null && flowPropertiesRequest.messageSecurity!=null && 
+						flowPropertiesRequest.messageSecurity.getFlowParameters()!=null &&
+					flowPropertiesRequest.messageSecurity.getFlowParameters().size() > 0){
+					this.messageSecurityContext.setIncomingProperties(flowPropertiesRequest.messageSecurity.getFlowParameters());
 				}
 				
 				// init mtom processor
-				mtomProcessor = new MTOMProcessor(this.flowPropertiesRequest.mtom, this.flowPropertiesRequest.messageSecurity, 
+				mtomProcessor = new MTOMProcessor(flowPropertiesRequest.mtom, flowPropertiesRequest.messageSecurity, 
 						this.tipoPorta, this.msgDiag, this.logCore, this.pddContext);
 				
 				this.msgDiag.mediumDebug("Raccolta FlowParameter MTOM / Security completata con successo");
@@ -4150,7 +4149,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			/* ----------- MTOM Processor BeforeSecurity ------------ */
 			this.msgDiag.mediumDebug("MTOM Processor [BeforeSecurity]...");
 			try{
-				mtomProcessor.mtomBeforeSecurity(this.requestMessage, this.flowPropertiesRequest.tipoMessaggio);
+				mtomProcessor.mtomBeforeSecurity(this.requestMessage, flowPropertiesRequest.tipoMessaggio);
 			}catch(Exception e){
 				// L'errore viene registrato dentro il metodo mtomProcessor.mtomBeforeSecurity
 				/**this.msgDiag.logErroreGenerico(e,"MTOMProcessor(BeforeSec-"+mtomProcessor.getMTOMProcessorType()+")");*/
@@ -4318,7 +4317,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			/* ----------- MTOM Processor AfterSecurity ------------ */
 			this.msgDiag.mediumDebug("MTOM Processor [AfterSecurity]...");
 			try{
-				mtomProcessor.mtomAfterSecurity(this.requestMessage, this.flowPropertiesRequest.tipoMessaggio);
+				mtomProcessor.mtomAfterSecurity(this.requestMessage, flowPropertiesRequest.tipoMessaggio);
 			}catch(Exception e){
 				// L'errore viene registrato dentro il metodo mtomProcessor.mtomAfterSecurity
 				/**this.msgDiag.logErroreGenerico(e,"MTOMProcessor(AfterSec-"+mtomProcessor.getMTOMProcessorType()+")");*/
@@ -6936,10 +6935,16 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				
 		/** --- HeaderIntegrazione headerIntegrazioneRichiesta = parametriGestioneRisposta.getHeaderIntegrazioneRichiesta();
 		String[] tipiIntegrazionePA = parametriGestioneRisposta.getTipiIntegrazionePA(); --- */
+		if(this.headerIntegrazioneRichiesta!=null) {
+			// nop
+		}
 		
 		boolean richiestaRispostaProtocollo = parametriGestioneRisposta.isRichiestaRispostaProtocollo();
 		
 		PdDContext pddContextGestioneRisposta = parametriGestioneRisposta.getPddContext();
+		if(pddContextGestioneRisposta==null) {
+			pddContextGestioneRisposta = this.pddContext;
+		}
 		if(this.idTransazione==null) {
 			this.idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContextGestioneRisposta);
 		}
@@ -7241,6 +7246,9 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					if(LivelloRilevanza.INFO.equals(ec.getRilevanza())){
 						bustaRisposta.addEccezione(ec);
 					}
+				}
+				if(this.erroriProcessamento!=null) {
+					// ignore
 				}
 			}
 
