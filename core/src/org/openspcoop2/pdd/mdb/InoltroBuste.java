@@ -4975,11 +4975,11 @@ public class InoltroBuste extends GenericLib{
 								else{
 									if(hasContent==false){
 										msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_BODY_NON_PRESENTE);
-										msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaDisabilitata");
+										msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_CONTENUTI_RISPOSTA_DISABILITATA);
 									}
 									else if (isFault){
 										msgDiag.addKeyword(CostantiPdD.KEY_DETAILS_VALIDAZIONE_CONTENUTI,CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_VALIDAZIONE_SOAP_FAULT_PRESENTE);
-										msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaDisabilitata");
+										msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_CONTENUTI_RISPOSTA_DISABILITATA);
 									}
 								}
 
@@ -5065,7 +5065,7 @@ public class InoltroBuste extends GenericLib{
 							}
 						}
 						else{
-							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaDisabilitata");
+							msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_VALIDAZIONE_CONTENUTI_RISPOSTA_DISABILITATA);
 						}
 					}
 
@@ -5336,7 +5336,7 @@ public class InoltroBuste extends GenericLib{
 
 
 		}catch(Throwable e){
-			this.log.error("ErroreGenerale",e);
+			this.log.error(CostantiPdD.GOVWAY_CORE_ERRORE_GENERALE,e);
 			msgDiag.logErroreGenerico(e, "Generale");
 
 			if(openspcoopstate.resourceReleased()){
@@ -5365,7 +5365,7 @@ public class InoltroBuste extends GenericLib{
 									parseException);
 					try{
 						ejbUtils.sendRispostaApplicativaErrore(responseMessageError,richiestaDelegata,rollbackRichiesta,pd,sa);
-						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "ErroreGenerale");
+						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, CostantiPdD.GOVWAY_CORE_ERRORE_GENERALE);
 						esito.setEsitoInvocazione(true);
 					}catch(Exception er){
 						msgDiag.logErroreGenerico(er,"ejbUtils.sendErroreGenerale(profiloConRisposta)");

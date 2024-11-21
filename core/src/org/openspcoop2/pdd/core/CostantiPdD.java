@@ -967,6 +967,7 @@ public class CostantiPdD {
     
     public static final String GOVWAY_CORE = "GovWayCore";
     public static final String GOVWAY_CORE_ERRORE_GENERAZIONE_DIAGNOSTICO = "Errore generazione diagnostico";
+    public static final String GOVWAY_CORE_ERRORE_GENERALE = "ErroreGenerale";
     
 }
 

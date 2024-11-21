@@ -791,7 +791,13 @@ public class MsgDiagnosticiProperties {
 	public static final String MSG_DIAG_REGISTRO_RICERCA_SERVIZIO_FALLITA = "registroServizi.ricercaServizioFallita";
 	public static final String MSG_DIAG_VALIDAZIONE_NON_RIUSCITA = "validazioneNonRiuscita";
 	public static final String MSG_DIAG_VALIDAZIONE_RILEVATA_BUSTA_NON_CORRETTA = "validazioneBusta.bustaNonCorretta";
+	public static final String MSG_DIAG_VALIDAZIONE_CONTENUTI_RISPOSTA_DISABILITATA = "validazioneContenutiApplicativiRispostaDisabilitata";
 	public static final String MSG_DIAG_CONSEGNA_RISPOSTA_APPLICATIVA = "consegnaRispostaApplicativa";
+	public static final String MSG_DIAG_CONSEGNA_CON_ERRORE = "consegnaConErrore";
+	public static final String MSG_DIAG_CONSEGNA_CON_ERRORE_MITTENTE_ANONIMO = "consegnaConErrore.mittenteAnonimo";
+	public static final String MSG_DIAG_CONSEGNA_EFFETTUATA = "consegnaEffettuata";
+	public static final String MSG_DIAG_CONSEGNA_EFFETTUATA_MITTENTE_ANONIMO = "consegnaEffettuata.mittenteAnonimo";
+	public static final String MSG_DIAG_CONSEGNA_IN_ORDINE_MESSAGGIO_FUORI_ORDINE = "consegnaInOrdine.messaggioFuoriOrdine";
     public static final String MSG_DIAG_PARSING_EXCEPTION_RICHIESTA = "parsingExceptionRichiesta";
     public static final String MSG_DIAG_PARSING_EXCEPTION_RISPOSTA = "parsingExceptionRisposta";
 	// All Diag
@@ -993,7 +999,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"gestioneConsegnaTerminata",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"headerIntegrazione.letturaFallita",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"profiloAsincrono.rispostaNonPervenuta",
-		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"validazioneContenutiApplicativiRispostaDisabilitata",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+MSG_DIAG_VALIDAZIONE_CONTENUTI_RISPOSTA_DISABILITATA,
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"validazioneContenutiApplicativiRispostaInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"validazioneContenutiApplicativiRispostaEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault",
@@ -1270,11 +1276,11 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"gestioneProfiloNonOneway.consegnaVersoNServiziApplicativi",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"gestioneStateless.consegnaVersoNServiziApplicativi",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"gestioneStateless.integrationManager",
-		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"consegnaInOrdine.messaggioFuoriOrdine",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+MSG_DIAG_CONSEGNA_IN_ORDINE_MESSAGGIO_FUORI_ORDINE,
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"consegnaInOrdine.messaggioGiaConsegnato",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"consegnaInCorso",
-		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"consegnaEffettuata",
-		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"consegnaConErrore",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+MSG_DIAG_CONSEGNA_EFFETTUATA,
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+MSG_DIAG_CONSEGNA_CON_ERRORE,
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"ricezioneSoapFault",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"validazioneContenutiApplicativiRispostaNonRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"funzionalitaScartaBodyNonRiuscita",
@@ -1284,12 +1290,12 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"rispostaContenenteBusta",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"headerIntegrazione.letturaFallita",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"behaviour.servizioApplicativoNonDefinito",
-		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"validazioneContenutiApplicativiRispostaDisabilitata",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+MSG_DIAG_VALIDAZIONE_CONTENUTI_RISPOSTA_DISABILITATA,
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"validazioneContenutiApplicativiRispostaInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"validazioneContenutiApplicativiRispostaEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"comportamentoAnomalo.erroreConsegna.ricezioneMessaggioDiversoFault",
-		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"consegnaEffettuata.mittenteAnonimo",
-		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"consegnaConErrore.mittenteAnonimo",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+MSG_DIAG_CONSEGNA_EFFETTUATA_MITTENTE_ANONIMO,
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+MSG_DIAG_CONSEGNA_CON_ERRORE_MITTENTE_ANONIMO,
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"trasformazione.processamentoRichiestaDisabilitato",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"trasformazione.processamentoRichiestaNessunMatch",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"trasformazione.processamentoRichiestaInCorso",

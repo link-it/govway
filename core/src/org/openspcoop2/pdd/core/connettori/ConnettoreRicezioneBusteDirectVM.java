@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.core.connettori;
 import java.util.Date;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.pdd.services.connector.ConnectorCostanti;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessage;
@@ -49,7 +50,7 @@ public class ConnettoreRicezioneBusteDirectVM extends AbstractConnettoreDirectVM
 
 	public static final String TIPO = "vmPA";
 	
-	private String pa;
+	private String nomePA;
 	
 	@Override
 	public String getIdModulo(){
@@ -67,25 +68,25 @@ public class ConnettoreRicezioneBusteDirectVM extends AbstractConnettoreDirectVM
 	public void process(DirectVMConnectorInMessage inMessage,DirectVMConnectorOutMessage outMessage) throws ConnectorException{
 		RicezioneBusteService soapConnector = new RicezioneBusteService(null); // il generatore di errori verrà creato direttamente dal servizio
 		Date dataAccettazioneRichiesta = DateManager.getDate();
-		soapConnector.process(inMessage, outMessage, dataAccettazioneRichiesta);
+		soapConnector.process(inMessage, outMessage, dataAccettazioneRichiesta, ConnectorCostanti.SYNC);
 	}
 	@Override
 	public boolean validate(ConnettoreMsg request) {
 		
 		if(request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PA)==null){
 			// La PA in alcuni protocolli puo' non essere fornita
-//			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_DIRECT_VM_PA+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
-//			return false;
+			/**this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_DIRECT_VM_PA+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
+			return false;*/
 		}
 		else{
-			this.pa = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PA).trim();
+			this.nomePA = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PA).trim();
 		}
 		
 		return true;
 	}
 	@Override
 	public String getFunctionParameters() {
-		return super.normalizeFunctionParamters(this.pa);
+		return super.normalizeFunctionParamters(this.nomePA);
 	}
 
 }
