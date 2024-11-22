@@ -798,8 +798,13 @@ public class MsgDiagnosticiProperties {
 	public static final String MSG_DIAG_CONSEGNA_EFFETTUATA = "consegnaEffettuata";
 	public static final String MSG_DIAG_CONSEGNA_EFFETTUATA_MITTENTE_ANONIMO = "consegnaEffettuata.mittenteAnonimo";
 	public static final String MSG_DIAG_CONSEGNA_IN_ORDINE_MESSAGGIO_FUORI_ORDINE = "consegnaInOrdine.messaggioFuoriOrdine";
+	public static final String MSG_DIAG_INOLTRO_CON_ERRORE = "inoltroConErrore";
+	public static final String MSG_DIAG_RICEZIONE_SOAP_FAULT = "ricezioneSoapFault";
+	public static final String MSG_DIAG_RICEZIONE_REST_PROBLEM = "ricezioneRestProblem";
+	public static final String MSG_DIAG_RICEZIONE_SOAP_MESSAGE_HEADER_PROTOCOLLO_NON_PRESENTE = "ricezioneSoapMessage.headerProtocolloNonPresente";
     public static final String MSG_DIAG_PARSING_EXCEPTION_RICHIESTA = "parsingExceptionRichiesta";
     public static final String MSG_DIAG_PARSING_EXCEPTION_RISPOSTA = "parsingExceptionRisposta";
+    public static final String MSG_DIAG_ROUTING_TABLE_ESAMINA_IN_CORSO_FALLITA = "routingTable.esaminaInCorsoFallita";
 	// All Diag
 	private static final String[] MSG_DIAGNOSTICI_PERSONALIZZATI = {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"correlazioneApplicativaEsistente",
@@ -977,21 +982,21 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"profiloAsincronoAsimmetrico.richiestaStato.correlazioneRichiesta",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"protocolli.funzionalita.unsupported",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"routingTable.esaminaInCorso",
-		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"routingTable.esaminaInCorsoFallita",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+MSG_DIAG_ROUTING_TABLE_ESAMINA_IN_CORSO_FALLITA,
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"routingTable.esaminaEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"routingTable.utilizzoIndirizzoTelematico",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"routingTable.soggettoFruitoreNonGestito",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"inoltroInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"inoltroEffettuato",
-		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"inoltroConErrore",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+MSG_DIAG_INOLTRO_CON_ERRORE,
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneMessaggio",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneMessaggioErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneMessaggioErrore.rollback",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"inoltroBustaScaduta",
-		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneSoapFault",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+MSG_DIAG_RICEZIONE_SOAP_FAULT,
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"profiloSincrono.rispostaNonPervenuta",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"validazioneContenutiApplicativiRispostaNonRiuscita",
-		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneSoapMessage.headerProtocolloNonPresente",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+MSG_DIAG_RICEZIONE_SOAP_MESSAGE_HEADER_PROTOCOLLO_NON_PRESENTE,
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneSoapMessage.msgGiaPresente",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"riconsegnaMessaggioPrematura",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"rispostaRicevuta.messaggio",
@@ -1034,7 +1039,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"trasformazione.processamentoRispostaInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"trasformazione.processamentoRispostaEffettuato",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"trasformazione.processamentoRispostaInErrore",
-		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneRestProblem",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+MSG_DIAG_RICEZIONE_REST_PROBLEM,
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"headerIntegrazione.creazioneFallita",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneRisposta.firstAccessRequestStream",
@@ -1281,7 +1286,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"consegnaInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+MSG_DIAG_CONSEGNA_EFFETTUATA,
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+MSG_DIAG_CONSEGNA_CON_ERRORE,
-		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"ricezioneSoapFault",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+MSG_DIAG_RICEZIONE_SOAP_FAULT,
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"validazioneContenutiApplicativiRispostaNonRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"funzionalitaScartaBodyNonRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"funzionalitaAllegaBodyNonRiuscita",
@@ -1324,7 +1329,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.loadBalancer.sticky.identificazioneFallita",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.loadBalancer.sticky.identificazioneRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.consegnaCondizionale.identificazioneRiuscita",
-		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"ricezioneRestProblem",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+MSG_DIAG_RICEZIONE_REST_PROBLEM,
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"headerIntegrazione.creazioneFallita",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.consegnaCondizionale.nessunConnettoreIdentificato.connettoreDefault",

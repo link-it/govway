@@ -346,7 +346,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 	private GestioneErrore gestioneConsegnaConnettore = null;
 	private String location = "";
 	
-	private boolean asynWait = false;
+	private boolean asyncWait = false;
 	
 	private Busta bustaRichiesta = null;
 	private String idMessaggioConsegna = null;
@@ -418,12 +418,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 
 		EsitoLib esitoLib = null;
 		try {
-			esitoLib = this._process(openspcoopstate,
+			esitoLib = this.processEngine(openspcoopstate,
 					registroServiziManager, configurazionePdDManager,
 					msgDiag);
 			return esitoLib;
 		}finally {
-			if(this.asyncResponseCallback!=null && !this.asynWait) {
+			if(this.asyncResponseCallback!=null && !this.asyncWait) {
 				try {
 					this.asyncResponseCallback.asyncComplete(AsyncResponseCallbackClientEvent.NONE, esitoLib);
 				}catch(Exception e) {
@@ -457,7 +457,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		this.asyncResponseCallback.asyncComplete(clientEvent, esitoLib);
 	}
 	
-	public EsitoLib _process(IOpenSPCoopState openspcoopstateParam,
+	private EsitoLib processEngine(IOpenSPCoopState openspcoopstateParam,
 			RegistroServiziManager registroServiziManagerParam,ConfigurazionePdDManager configurazionePdDManagerParam, 
 			MsgDiagnostico msgDiagParam) throws OpenSPCoopStateException {
 		
@@ -994,7 +994,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				
 				if(TipoBehaviour.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
 					if(this.transazioneApplicativoServer==null) {
-						List<String> serviziApplicativiAbilitatiForwardTo = readServiziApplicativiAbilitatiForwardTo(this.pddContext);
+						List<String> serviziApplicativiAbilitatiForwardTo = readServiziApplicativiAbilitatiForwardTo();
 						if(serviziApplicativiAbilitatiForwardTo!=null && !serviziApplicativiAbilitatiForwardTo.isEmpty()) {
 							MessaggioDaNotificare tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(this.pa, serviziApplicativiAbilitatiForwardTo);
 							if(tipiMessaggiNotificabili!=null && 
@@ -2188,7 +2188,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			
 			// correggo eventuali contesti e parametri della url nel caso di consegna di una notifica
 			try {
-				correctForwardPathNotifiche(this.transazioneApplicativoServer, this.consegnaMessageTrasformato, this.protocolFactory);
+				correctForwardPathNotifiche();
 			}catch(Exception e){
 				this.msgDiag.logErroreGenerico(e,"ConnettoreBaseHTTP.correctForwardPathNotifiche");
 				this.invokerNonSupportato = true;
@@ -2574,7 +2574,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 				
 				// se il tracciamento lo prevedo emetto un log
 				if(this.transazioneApplicativoServer==null) {
-					registraTracciaOutRequest(this.transactionNullable, this.outRequestContext, this.log, this.msgDiag);
+					registraTracciaOutRequest();
 				}
 				
 				// utilizzo connettore
@@ -2587,14 +2587,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					// L'errore viene fornito durante l'invocazione dell'asyncComplete
 					this.connettoreMsg.setAsyncResponseCallback(this);
 					this.connectorSender.send(responseCachingConfig, this.connettoreMsg);
-					this.asynWait = true;
+					this.asyncWait = true;
 				}
 				else {
 					this.errorConsegna = !this.connectorSender.send(responseCachingConfig, this.connettoreMsg);
 				}
 			}
 			
-			if(this.asyncResponseCallback==null || !this.asynWait) {
+			if(this.asyncResponseCallback==null || !this.asyncWait) {
 				return this.complete();
 			}
 			else {
@@ -3351,7 +3351,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					){
 					// Se non l'ho gia indicato nel motivo di errore, registro il fault
 					this.msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(this.faultMessageFactory, this.soapFault, this.log));
-					this.msgDiag.logPersonalizzato("ricezioneSoapFault");
+					this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_SOAP_FAULT);
 				}
 				else if(this.restProblem!=null && 
 						( 
@@ -3361,7 +3361,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					){
 					// Se non l'ho gia indicato nel motivo di errore, registro il fault
 					this.msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, this.restProblem.getRaw());
-					this.msgDiag.logPersonalizzato("ricezioneRestProblem");
+					this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_REST_PROBLEM);
 				}
 				else{
 					
@@ -3645,12 +3645,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			// Effettuo log del fault
 			if(this.soapFault!=null){
 				this.msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(this.faultMessageFactory, this.soapFault, this.log));
-				this.msgDiag.logPersonalizzato("ricezioneSoapFault");
+				this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_SOAP_FAULT);
 			}
 			else if(this.restProblem!=null){
 				// Se non l'ho gia indicato nel motivo di errore, registro il fault
 				this.msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, this.restProblem.getRaw());
-				this.msgDiag.logPersonalizzato("ricezioneRestProblem");
+				this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_REST_PROBLEM);
 			}
 			
 			if(this.existsModuloInAttesaRispostaApplicativa){
@@ -4860,11 +4860,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		}
 	}
 	
-	private void correctForwardPathNotifiche(TransazioneApplicativoServer transazioneApplicativoServer, OpenSPCoop2Message msg, IProtocolFactory<?> pf) throws ProtocolException {
-		if(transazioneApplicativoServer!=null && ServiceBinding.REST.equals(msg.getServiceBinding())) {
+	private void correctForwardPathNotifiche() throws ProtocolException {
+		if(this.transazioneApplicativoServer!=null && ServiceBinding.REST.equals(this.consegnaMessageTrasformato.getServiceBinding())) {
 			
 			// non deve essere effettuato il forward del contesto nel path
-			TransportRequestContext requestContext = msg.getTransportRequestContext();
+			TransportRequestContext requestContext = this.consegnaMessageTrasformato.getTransportRequestContext();
 			if(requestContext!=null) {
 				String resourcePath = requestContext.getFunctionParameters();
 				if(resourcePath!=null){
@@ -4876,7 +4876,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 							requestContext.setFunctionParameters(requestContext.getInterfaceName());
 						}		
 						else {
-							String normalizedInterfaceName = ConnettoreUtils.normalizeInterfaceName(msg, ConsegnaContenutiApplicativi.ID_MODULO, pf);
+							String normalizedInterfaceName = ConnettoreUtils.normalizeInterfaceName(this.consegnaMessageTrasformato, ConsegnaContenutiApplicativi.ID_MODULO, this.protocolFactory);
 							if(normalizedInterfaceName!=null && resourcePath.startsWith(normalizedInterfaceName)){
 								requestContext.setFunctionParameters(normalizedInterfaceName);
 							}
@@ -4893,19 +4893,19 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<String> readServiziApplicativiAbilitatiForwardTo(PdDContext pddContext) {
+	private List<String> readServiziApplicativiAbilitatiForwardTo() {
 		List<String> serviziApplicativiAbilitatiForwardTo = null;
-		if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_SA)) {
-			serviziApplicativiAbilitatiForwardTo = (List<String>) pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_SA);
+		if(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_SA)) {
+			serviziApplicativiAbilitatiForwardTo = (List<String>) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI_BY_SA);
 		}
 		return serviziApplicativiAbilitatiForwardTo;
 	}
 	
-	private void registraTracciaOutRequest(Transaction transactionNullable, OutRequestContext outRequestContext, Logger log, MsgDiagnostico msgDiag) throws HandlerException {
+	private void registraTracciaOutRequest() throws HandlerException {
 
 		try {
 		
-			if(transactionNullable==null) {
+			if(this.transactionNullable==null) {
 				// comunicazione statefull
 				return;
 			}
@@ -4916,25 +4916,25 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			}
 				
 			InformazioniTransazione info = new InformazioniTransazione();
-			info.setContext(outRequestContext.getPddContext());
-			info.setTipoPorta(outRequestContext.getTipoPorta());
-			info.setProtocolFactory(outRequestContext.getProtocolFactory());
-			info.setProtocollo(outRequestContext.getProtocollo());
-			info.setIntegrazione(outRequestContext.getIntegrazione());
-			info.setIdModulo(outRequestContext.getIdModulo());
+			info.setContext(this.outRequestContext.getPddContext());
+			info.setTipoPorta(this.outRequestContext.getTipoPorta());
+			info.setProtocolFactory(this.outRequestContext.getProtocolFactory());
+			info.setProtocollo(this.outRequestContext.getProtocollo());
+			info.setIntegrazione(this.outRequestContext.getIntegrazione());
+			info.setIdModulo(this.outRequestContext.getIdModulo());
 			
 			TransportRequestContext transportRequestContext = null;
-			if(outRequestContext.getMessaggio()!=null) {
-				transportRequestContext = outRequestContext.getMessaggio().getTransportRequestContext();
+			if(this.outRequestContext.getMessaggio()!=null) {
+				transportRequestContext = this.outRequestContext.getMessaggio().getTransportRequestContext();
 			}
-			String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(log, outRequestContext.getProtocolFactory()), log);
+			String esitoContext = EsitoBuilder.getTipoContext(transportRequestContext, EsitiProperties.getInstance(this.log, this.outRequestContext.getProtocolFactory()), this.log);
 			
 			tracciamentoManager.invoke(info, esitoContext, 
-					outRequestContext.getConnettore()!=null ? outRequestContext.getConnettore().getHeaders() : null,
-							msgDiag);
+					this.outRequestContext.getConnettore()!=null ? this.outRequestContext.getConnettore().getHeaders() : null,
+							this.msgDiag);
 			
 		}catch(Exception e) {
-			ServicesUtils.processTrackingException(e, log, FaseTracciamento.OUT_REQUEST, outRequestContext.getPddContext());
+			ServicesUtils.processTrackingException(e, this.log, FaseTracciamento.OUT_REQUEST, this.outRequestContext.getPddContext());
 		}
 		
 	}
