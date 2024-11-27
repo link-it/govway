@@ -285,6 +285,8 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			op2Properties = OpenSPCoop2Properties.getInstance();
 			
+			boolean nioEnabled = op2Properties.isNIOEnabled();
+			
 			boolean printCertificate = false;
 			FunctionContextsCustom customContexts = null;
 			if(op2Properties!=null) {
@@ -317,7 +319,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
 			}
-			else if((idServiceCustom!=null && IDService.PORTA_DELEGATA_NIO.equals(idServiceCustom))
+			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_DELEGATA_NIO.equals(idServiceCustom))
 					){
 					
 				checkSecrets();
@@ -338,7 +340,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
 			}
-			else if((idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(idServiceCustom))
+			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(idServiceCustom))
 					){
 					
 				checkSecrets();
@@ -358,7 +360,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				RicezioneBusteConnector r = new RicezioneBusteConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 			}
-			else if((idServiceCustom!=null && IDService.PORTA_APPLICATIVA_NIO.equals(idServiceCustom))
+			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_APPLICATIVA_NIO.equals(idServiceCustom))
 					){
 					
 				checkSecrets();

@@ -32,14 +32,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.classic.HttpClient;
-import org.apache.hc.client5.http.classic.methods.HttpDelete;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.classic.methods.HttpHead;
-import org.apache.hc.client5.http.classic.methods.HttpOptions;
-import org.apache.hc.client5.http.classic.methods.HttpPatch;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.classic.methods.HttpPut;
-import org.apache.hc.client5.http.classic.methods.HttpTrace;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -97,6 +89,9 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	private static final String MSG_RELEASE_RESOURCES_FAILED = "Release resources failed: ";
 	
 	private static boolean gestioneRedirectTramiteLibrerieApache = false; // con l'implementazione di govway, vengono registrati gli hop nei diagnostici 
+	
+	
+	/* ********  F I E L D S  P R I V A T I  ******** */
 	
 	private HttpEntity httpEntityResponse = null;
 		
@@ -181,38 +176,9 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			if(this.httpMethod==null){
 				throw new ConnettoreException("HttpRequestMethod non definito");
 			}
-			this.httpRequest = null;
-			switch (this.httpMethod) {
-				case GET:
-					this.httpRequest = new HttpGet(url.toString());
-					break;
-				case DELETE:
-					this.httpRequest = new HttpDelete(url.toString());
-					break;
-				case HEAD:
-					this.httpRequest = new HttpHead(url.toString());
-					break;
-				case POST:
-					this.httpRequest = new HttpPost(url.toString());
-					break;
-				case PUT:
-					this.httpRequest = new HttpPut(url.toString());
-					break;
-				case OPTIONS:
-					this.httpRequest = new HttpOptions(url.toString());
-					break;
-				case TRACE:
-					this.httpRequest = new HttpTrace(url.toString());
-					break;
-				case PATCH:
-					this.httpRequest = new HttpPatch(url.toString());
-					break;	
-				default:
-					this.httpRequest = new CustomHttpCoreEntity(this.httpMethod, url.toString());
-					break;
-			}
-			if(this.httpMethod==null){
-				throw new ConnettoreException("HttpRequest non definito ?");
+			this.httpRequest = ConnettoreHTTPCOREUtils.buildHttpRequest(this.httpMethod, url);
+			if(this.httpRequest==null){
+				throw new ConnettoreException("HttpRequest non definita ?");
 			}
 			
 			
@@ -467,6 +433,8 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
 			
 			// Impostazione Metodo
+			if(this.debug)
+				this.logger.info("Impostazione "+this.httpMethod+"...",false);
 			HttpBodyParameters httpBody = new  HttpBodyParameters(this.httpMethod, contentTypeRichiesta);
 			
 			
@@ -606,7 +574,8 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				config.setProxyPort(this.proxyPort);
 			}
 			ConnettoreHTTPCOREConnection conn = ConnettoreHTTPCOREConnectionManager.getConnettoreHTTPCOREConnection(config, buildSSLContextFactory(), 
-					this.loader, this.logger, keepAliveStrategy, httpRequestInterceptor);
+					this.loader, this.logger, 
+					keepAliveStrategy, httpRequestInterceptor);
 			HttpClient httpClient = conn.getHttpclient();
 			
 			// Imposto Configurazione

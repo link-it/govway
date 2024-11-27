@@ -85,6 +85,9 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	public HttpRequestMethod getHttpMethod() {
 		return this.httpMethod;
 	}
+	public void setHttpMethod(HttpRequestMethod httpMethod) {
+		this.httpMethod = httpMethod;
+	}
 	public void setHttpMethod(OpenSPCoop2Message msg) throws ConnettoreException {
 		// HttpMethod
 		if(this.forceHttpMethod!=null) {
@@ -112,6 +115,12 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
 	/** InputStream Risposta */
 	protected String resultHTTPMessage;
+	public String getResultHTTPMessage() {
+		return this.resultHTTPMessage;
+	}
+	public void setResultHTTPMessage(String resultHTTPMessage) {
+		this.resultHTTPMessage = resultHTTPMessage;
+	}
 
 	/** RFC 2047 */
 	protected boolean encodingRFC2047 = false;
@@ -428,7 +437,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	protected boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
+	public boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
 		
 		if(this.isRest){
 			if(this.proxyPassReverseEnabled) {
@@ -452,7 +461,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	protected boolean doSoapResponse() throws Exception{
+	public boolean doSoapResponse() throws Exception{
 
 		// gestione ordinaria via WS/SOAP
 		
@@ -521,7 +530,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	protected boolean doRestResponse() throws Exception{
+	public boolean doRestResponse() throws Exception{
 		
 		if(this.proxyPassReverseEnabled) {
 			checkProxyPassReverse();

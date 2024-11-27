@@ -71,27 +71,48 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 
 	/** InputStream Risposta */
 	protected InputStream isResponse = null;
-	
+	public InputStream getIsResponse() {
+		return this.isResponse;
+	}
+	public void setInputStreamResponse(InputStream isResponse) {
+		this.isResponse = isResponse;
+	}
+
 	/** MessageType Risposta */
 	protected MessageType messageTypeResponse = null;
 	
 	/** ContentType Risposta */
 	protected String tipoRisposta = null;
-	
+	public void setTipoRisposta(String tipoRisposta) {
+		this.tipoRisposta = tipoRisposta;
+	}
+
 	/** Check ContentType */
 	protected boolean checkContentType = true;
 	
 	/** NotifierInputStreamParams */
 	protected NotifierInputStreamParams notifierInputStreamParams;
-	
+	public void setNotifierInputStreamParams(NotifierInputStreamParams notifierInputStreamParams) {
+		this.notifierInputStreamParams = notifierInputStreamParams;
+	}
+
 	/** Imbustamento SOAP */
 	protected boolean imbustamentoConAttachment;
 	protected String mimeTypeAttachment;
+	public void setImbustamentoConAttachment(boolean imbustamentoConAttachment) {
+		this.imbustamentoConAttachment = imbustamentoConAttachment;
+	}
+	public void setMimeTypeAttachment(String mimeTypeAttachment) {
+		this.mimeTypeAttachment = mimeTypeAttachment;
+	}
 	
 	/** acceptOnlyReturnCode_202_200 SOAP */
 	protected boolean acceptOnlyReturnCode_202_200 = true;
+	public boolean isAcceptOnlyReturnCode_202_200() {
+		return this.acceptOnlyReturnCode_202_200;
+	}
 			
-	protected void normalizeInputStreamResponse(int timeout, boolean configurazioneGlobale) throws Exception{
+	public void normalizeInputStreamResponse(int timeout, boolean configurazioneGlobale) throws Exception{
 		//Se non e' null, controllo che non sia vuoto.
 		if(this.isResponse!=null){
 			this.isResponse = Utilities.normalizeStream(this.isResponse, false);
@@ -156,7 +177,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	public static boolean containsReadTimeoutException(Exception e, String message){
 		return message!=null && message.contains("Read timed out") && (e instanceof java.net.SocketTimeoutException || Utilities.existsInnerException(e, java.net.SocketTimeoutException.class));
 	}
-    protected void processReadTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
+	public void processReadTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
     	try {
 	    	if(timeout>0 && isReadTimeoutException(e, message)) {
 	      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.WAIT_RESPONSE);
@@ -192,7 +213,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						Utilities.existsInnerException(e, java.net.SocketTimeoutException.class)
 				);
 	}
-    protected void processConnectionTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
+    public void processConnectionTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
     	try {
 	    	if(timeout>0 && isConnectionTimeoutException(e, message)) {
 	      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.CONNECTION);
@@ -205,7 +226,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
     	}
     }
 	
-	protected void initCheckContentTypeConfiguration(){		
+	public void initCheckContentTypeConfiguration(){		
 		this.checkContentType = true;
 		if(this.idModulo!=null){
 			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
@@ -216,7 +237,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 	}
 	
-	protected void initConfigurationAcceptOnlyReturnCode_202_200(){
+	public void initConfigurationAcceptOnlyReturnCode_202_200(){
 		this.acceptOnlyReturnCode_202_200 = true;
 		if(this.isRest){
 			this.acceptOnlyReturnCode_202_200 = false;

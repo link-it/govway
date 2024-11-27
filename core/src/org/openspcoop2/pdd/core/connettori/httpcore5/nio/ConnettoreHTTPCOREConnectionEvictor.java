@@ -18,11 +18,11 @@
  *
  */
 
-package org.openspcoop2.pdd.core.connettori.httpcore5;
+package org.openspcoop2.pdd.core.connettori.httpcore5.nio;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.HttpRoute;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.core5.pool.PoolStats;
 import org.apache.hc.core5.util.TimeValue;
 import org.openspcoop2.pdd.core.connettori.AbstractConnettoreConnectionEvictor;
@@ -39,7 +39,7 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
 
 	private static final String HTTPCORE_PREFIX = "["+ConnettoreHTTPCORE.ID_HTTPCORE+"] ";
 	
-    public ConnettoreHTTPCOREConnectionEvictor(boolean debug, int sleepTimeSeconds, int closeIdleConnectionsAfterSeconds) {
+	public ConnettoreHTTPCOREConnectionEvictor(boolean debug, int sleepTimeSeconds, int closeIdleConnectionsAfterSeconds) {
         super(debug, sleepTimeSeconds, closeIdleConnectionsAfterSeconds,
         		ConnettoreHTTPCOREConnectionManager.mapConnection, ConnettoreHTTPCORE.ID_HTTPCORE);
     }
@@ -50,7 +50,7 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
     	if(ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager!=null && !ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.isEmpty()) {
     		
     		this.logDebug(HTTPCORE_PREFIX+"ConnectionManager attivi: "+ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.size());	
-    		
+    		    		
 			for (String key : ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.keySet()) {
 				if(key!=null) {
 					check(key);
@@ -63,8 +63,9 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
     	return false;
     	
     }
+    
     private void check(String key) {
-    	PoolingHttpClientConnectionManager connMgr = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(key);
+    	PoolingAsyncClientConnectionManager connMgr = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(key);
 		ConnettoreHTTPCOREConnection connection = ConnettoreHTTPCOREConnectionManager.mapConnection.get(key);
 		
     	// DEBUG
@@ -75,7 +76,7 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
     		/**this.logDebug("  Totali - In uso: " + totalStats.getLeased() + "; Disponibili: " +
                        totalStats.getAvailable() + "; In attesa: " + totalStats.getPending());*/
     		
-    		if(connMgr.getRoutes()!=null && !connMgr.getRoutes().isEmpty()) {
+    	    if(connMgr.getRoutes()!=null && !connMgr.getRoutes().isEmpty()) {
     			for (HttpRoute route : connMgr.getRoutes()) {
     				PoolStats routeStats = connMgr.getStats(route);
     				this.logDebug(HTTPCORE_PREFIX+"("+key+") route ["+route.toString()+"]: "+routeStats.toString());	
@@ -84,8 +85,8 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
 	                           "; In attesa: " + routeStats.getPending());*/
 				}
     		}
-
-    		if(connection!=null) {
+    	    
+    	    if(connection!=null) {
     			String status = connection.getStatus();
     			if(status!=null && StringUtils.isNotEmpty(status)) {
     				this.logDebug(HTTPCORE_PREFIX+"("+key+"): status: "+connection.getStatus());
@@ -98,7 +99,7 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
 	    	// Close expired connections
 	    	connMgr.closeExpired();
 	    	// Optionally, close connections
-	    	// that have been idle longer than x sec
+	    	// that have been idle longer than 30 sec
 	    	connMgr.closeIdle(TimeValue.ofSeconds(this.closeIdleConnectionsAfterSeconds));
     	}
     }

@@ -370,13 +370,21 @@ public class CostantiPdD {
     public static final int CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS = 300;
     /** Close asyncClient that have been unused longer than X sec */
     public static final int CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS = 900;
-    /** Controllo effettuato ogni X secondi */
-    public static final int CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_CHECK_INTERVAL_SECONDS = 60;
     
     /** Pool Size Applicative Threads */
     public static final int CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE = 100;
     /** Pool Size Applicative Threads */
     public static final int CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE = 100;
+    /** Maximum limit of connection on a per route basis */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE = 100;
+    /** Maximum limit of connection on total */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_TOTAL = 100;
+    /** Close connections that have been idle longer than X sec */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS = 30;
+    /** Expire asyncClient that have been unused longer than X sec */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS = 300;
+    /** Close asyncClient that have been unused longer than X sec */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS = 900;
     
     public static final String CONNETTORE_FASE_GESTIIONE_RICHIESTA = "Request";
     public static final String CONNETTORE_FASE_GESTIIONE_RISPOSTA = "Response";
