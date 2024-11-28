@@ -45,13 +45,12 @@ import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE;
-import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPSCORE;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -227,9 +226,11 @@ public class ConnettoreUtils {
 				TipiConnettore.HTTPS.toString().equals(tipoConnettore)||
 				ConnettoreHTTP.ENDPOINT_TYPE.equals(tipoConnettore) ||
 				ConnettoreHTTPS.ENDPOINT_TYPE.equals(tipoConnettore) ||
-				ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||
-				ConnettoreHTTPSCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||
-				ConnettoreSAAJ.ENDPOINT_TYPE.equals(tipoConnettore)  ||
+				org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||
+				org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPSCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||
+				org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||
+				org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPSCORE.ENDPOINT_TYPE.equals(tipoConnettore) ||
+				ConnettoreSAAJ.ENDPOINT_TYPE.equals(tipoConnettore) ||
 				ConnettoreStresstest.ENDPOINT_TYPE.equals(tipoConnettore)){
 	
 			try{
@@ -339,7 +340,7 @@ public class ConnettoreUtils {
 		return location;
 	}
 	
-	public static String formatTipoConnettore(OpenSPCoop2Properties props, String tipoConnector, ConnettoreMsg connettoreMsg) {
+	public static String formatTipoConnettore(OpenSPCoop2Properties props, String tipoConnector, ConnettoreMsg connettoreMsg, IAsyncResponseCallback asyncResponseCallback) {
 		if(tipoConnector==null) {
 			return null;
 		}
@@ -352,68 +353,83 @@ public class ConnettoreUtils {
 			return tipoConnector;
 		}
 		
-		String newTipoConnettore = formatTipoConnettore(props, tipoConnector, t, connettoreMsg);
+		String newTipoConnettore = formatTipoConnettore(props, tipoConnector, t, connettoreMsg, asyncResponseCallback);
 		if(!tipoConnector.equals(newTipoConnettore)) {
 			connettoreMsg.setTipoConnettore(newTipoConnettore);
 		}
 		return newTipoConnettore;
 	}
-	private static String formatTipoConnettore(OpenSPCoop2Properties props, String tipoConnector, TipiConnettore t, ConnettoreMsg connettoreMsg) {
+	private static String formatTipoConnettore(OpenSPCoop2Properties props, String tipoConnector, TipiConnettore t, ConnettoreMsg connettoreMsg, IAsyncResponseCallback asyncResponseCallback) {
 		if(connettoreMsg.getConnectorProperties()!=null && !connettoreMsg.getConnectorProperties().isEmpty()) {
 			String impl = connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_HTTP_IMPL);
 			ConnettoriHttpImpl cImpl = ConnettoriHttpImpl.getConnettoreHttpImplSafe(impl);
 			if(cImpl!=null) {
-				return formatTipoConnettore(tipoConnector, t, cImpl);
+				return formatTipoConnettore(tipoConnector, t, cImpl, asyncResponseCallback);
 			}
 		}
 		
+		boolean nio = asyncResponseCallback!=null;
+		String libreriaHttpDefault = nio ? props.getConnettoreNIOLibreriaHttpDefault() : props.getConnettoreLibreriaHttpDefault();
+		String libreriaHttpsDefault = nio ? props.getConnettoreNIOLibreriaHttpsDefault() : props.getConnettoreLibreriaHttpsDefault();
+		return formatTipoConnettore(tipoConnector, t, 
+				nio,
+				libreriaHttpDefault,
+				libreriaHttpsDefault);
+	}
+	private static final String NIO_SUFFIX_TIPO_CONNETTORE = "-nio";
+	private static String formatTipoConnettore(String tipoConnector, TipiConnettore t, 
+			boolean nio,
+			String libreriaHttpDefault,
+			String libreriaHttpsDefault) {
+		
 		if(isHttp(t, tipoConnector) &&
-				props.getConnettoreLibreriaHttpDefault()!=null && StringUtils.isNotEmpty(props.getConnettoreLibreriaHttpDefault())) {
-			String tipo = props.getConnettoreLibreriaHttpDefault();
-			String classTipo = ClassNameProperties.getInstance().getConnettore(tipo);
-			String defaultHttp = ClassNameProperties.getInstance().getConnettore(TipiConnettore.HTTP.getNome());
-			if(classTipo.equals(defaultHttp)) {
-				return TipiConnettore.HTTP.getNome(); // per far finire nei log 'http'
-			}
-			else {
-				return tipo;
-			}
+				libreriaHttpDefault!=null && StringUtils.isNotEmpty(libreriaHttpDefault)) {
+			return formatTipoConnettore(libreriaHttpDefault, 
+					nio?
+							TipiConnettore.HTTP.getNome()+NIO_SUFFIX_TIPO_CONNETTORE // per far finire nei log 'http-nio'
+							:
+							TipiConnettore.HTTP.getNome() // per far finire nei log 'http'
+					);
 		}
 		else if(isHttps(t, tipoConnector) &&
-			props.getConnettoreLibreriaHttpsDefault()!=null && StringUtils.isNotEmpty(props.getConnettoreLibreriaHttpsDefault())) {
-			String tipo = props.getConnettoreLibreriaHttpsDefault();
-			String classTipo = ClassNameProperties.getInstance().getConnettore(tipo);
-			String defaultHttps = ClassNameProperties.getInstance().getConnettore(TipiConnettore.HTTPS.getNome());
-			if(classTipo.equals(defaultHttps)) {
-				return TipiConnettore.HTTPS.getNome(); // per far finire nei log 'https'
-			}
-			else {
-				return tipo;
-			}
+				libreriaHttpsDefault!=null && StringUtils.isNotEmpty(libreriaHttpsDefault)) {
+			return formatTipoConnettore(libreriaHttpsDefault, 
+					nio?
+							TipiConnettore.HTTPS.getNome()+NIO_SUFFIX_TIPO_CONNETTORE // per far finire nei log 'https-nio'
+							:
+							TipiConnettore.HTTPS.getNome() // per far finire nei log 'https'
+					);
 		}
 		else {
 			return tipoConnector;
 		}
 	}
-	private static String formatTipoConnettore(String tipoConnector, TipiConnettore t, ConnettoriHttpImpl cImpl) {
+	private static String formatTipoConnettore(String libreriaDefault, String tipoDefault) {
+		String tipo = libreriaDefault;
+		String classTipo = ClassNameProperties.getInstance().getConnettore(tipo);
+		String defaultHttp = ClassNameProperties.getInstance().getConnettore(tipoDefault);
+		if(classTipo.equals(defaultHttp)) {
+			return tipoDefault;
+		}
+		else {
+			return tipo;
+		}
+	}
+	private static boolean forceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting = true;
+	public static boolean isForceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting() {
+		return forceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting;
+	}
+	public static void setForceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting(
+			boolean forceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting) {
+		ConnettoreUtils.forceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting = forceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting;
+	}
+	private static String formatTipoConnettore(String tipoConnector, TipiConnettore t, ConnettoriHttpImpl cImpl, IAsyncResponseCallback asyncResponseCallback) {
 		switch (cImpl) {
 		case HTTP_CORE5: {
-			if(isHttp(t, tipoConnector)) {
-				return ConnettoreHTTPCORE.ENDPOINT_TYPE;
-			}
-			else if(isHttps(t, tipoConnector)) {
-				return ConnettoreHTTPSCORE.ENDPOINT_TYPE;
-			}
-			break;
+			return formatTipoConnettoreHttpCore5Library(tipoConnector, t, asyncResponseCallback);
 		}
 		case HTTP_URL_CONNECTION: {
-			if(isHttp(t, tipoConnector)) {
-				return ConnettoreHTTP.ENDPOINT_TYPE;
-			}
-			else if(isHttps(t, tipoConnector)) {
-				return ConnettoreHTTPS.ENDPOINT_TYPE;
-			}
-			break;
+			return formatTipoConnettoreHttpUrlConnectionLibrary(tipoConnector, t, asyncResponseCallback);
 		}
 		default: {
 			break;
@@ -421,6 +437,32 @@ public class ConnettoreUtils {
 		}
 		return null;
 	}	
+	private static String formatTipoConnettoreHttpCore5Library(String tipoConnector, TipiConnettore t, IAsyncResponseCallback asyncResponseCallback) {
+		if(isHttp(t, tipoConnector)) {
+			return asyncResponseCallback!=null ?  
+					org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCORE.ENDPOINT_TYPE :  org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE.ENDPOINT_TYPE;
+		}
+		else if(isHttps(t, tipoConnector)) {
+			return asyncResponseCallback!=null ?  
+					org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPSCORE.ENDPOINT_TYPE : org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPSCORE.ENDPOINT_TYPE;
+		}
+		return null;
+	}
+	private static String formatTipoConnettoreHttpUrlConnectionLibrary(String tipoConnector, TipiConnettore t, IAsyncResponseCallback asyncResponseCallback) {
+		if(isHttp(t, tipoConnector)) {
+			if(asyncResponseCallback!=null && forceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting) {
+				return org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCORE.ENDPOINT_TYPE;
+			}
+			return ConnettoreHTTP.ENDPOINT_TYPE;
+		}
+		else if(isHttps(t, tipoConnector)) {
+			if(asyncResponseCallback!=null && forceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting) {
+				return org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPSCORE.ENDPOINT_TYPE;
+			}
+			return ConnettoreHTTPS.ENDPOINT_TYPE;
+		}
+		return null;
+	}
 	public static boolean isHttp(TipiConnettore t, String tipoConnector) {
 		return (t!=null &&
 			(
@@ -429,7 +471,9 @@ public class ConnettoreUtils {
 					(
 							TipiConnettore.CUSTOM.equals(t) &&
 							(
-									ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnector) 
+									org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnector) 
+									||
+									org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCORE.ENDPOINT_TYPE.equals(tipoConnector) 
 									|| 
 									ConnettoreHTTP.ENDPOINT_TYPE.equals(tipoConnector)
 							)
@@ -445,7 +489,9 @@ public class ConnettoreUtils {
 					(
 							TipiConnettore.CUSTOM.equals(t) &&
 							(
-									ConnettoreHTTPSCORE.ENDPOINT_TYPE.equals(tipoConnector) 
+									org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPSCORE.ENDPOINT_TYPE.equals(tipoConnector) 
+									|| 
+									org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPSCORE.ENDPOINT_TYPE.equals(tipoConnector) 
 									|| 
 									ConnettoreHTTPS.ENDPOINT_TYPE.equals(tipoConnector)
 							)

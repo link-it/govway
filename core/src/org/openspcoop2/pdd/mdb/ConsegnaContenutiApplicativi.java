@@ -2122,7 +2122,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			this.msgDiag.mediumDebug("Inizializzazione connettore per la spedizione...");
 			//	Connettore per consegna
 			this.tipoConnector = this.connettoreMsg.getTipoConnettore();
-			this.tipoConnector = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, this.tipoConnector, this.connettoreMsg);
+			this.tipoConnector = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, this.tipoConnector, this.connettoreMsg, this.asyncResponseCallback);
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, this.tipoConnector);
 			this.connectorSender = null;
 

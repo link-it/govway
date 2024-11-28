@@ -476,7 +476,7 @@ public class OpenSPCoop2Properties {
 				if (getRepositoryDirectory() == null)	{						
 					return false;
 				}
-				// Verra' creata se non esiste in openspcoop startup
+				// Verra' creata se non esiste in GovWay startup
 /**				if( (new File(getRepositoryDirectory())).exists() == false ){
 //					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.directory'. \n La directory indicata non esiste ["+getRepositoryDirectory()+"].");
 //					return false;
@@ -499,7 +499,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String adapterClass = className.getJDBCAdapter(jdbcAdapter);
 					if(adapterClass == null){
-						this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
+						this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -592,7 +592,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String tipoClass = className.getThreshold(tipiThreshold.get(i));
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -771,7 +771,7 @@ public class OpenSPCoop2Properties {
 				//	Ricerco connettore
 				String tipoClass = className.getNodeReceiver(this.getNodeReceiver());
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
@@ -796,7 +796,7 @@ public class OpenSPCoop2Properties {
 				//	Ricerco connettore
 				String tipoClass = className.getNodeSender(this.getNodeSender());
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
@@ -827,7 +827,7 @@ public class OpenSPCoop2Properties {
 					else{
 						String adapterClass = className.getJDBCAdapter(jdbcAdapter);
 						if(adapterClass == null){
-							this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
+							this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"] nelle classi registrate in GovWay");
 							return false;
 						}
 						try{
@@ -1371,7 +1371,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String tipoClass = className.getAutorizzazionePortaApplicativa(this.getTipoAutorizzazioneBuste());
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -1414,7 +1414,7 @@ public class OpenSPCoop2Properties {
 				else{
 					String tipoClass = className.getRepositoryBuste(this.getGestoreRepositoryBuste());
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -1431,7 +1431,7 @@ public class OpenSPCoop2Properties {
 			// Ricerco
 			String tipoClassFiltroDuplicati = className.getFiltroDuplicati(this.getGestoreFiltroDuplicatiRepositoryBuste());
 			if(tipoClassFiltroDuplicati == null){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"] nelle classi registrate in OpenSPCoop");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"] nelle classi registrate in GovWay");
 				return false;
 			}
 			try{
@@ -1451,7 +1451,7 @@ public class OpenSPCoop2Properties {
 				// Ricerco
 				String tipoClass = className.getSQLQueryObject(this.getDatabaseType());
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
@@ -1520,7 +1520,7 @@ public class OpenSPCoop2Properties {
 			if(tipoHttpDefault!=null && StringUtils.isNotEmpty(tipoHttpDefault)) {
 				String classNameHttp = className.getConnettore(tipoHttpDefault);
 				if(classNameHttp == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpDefault+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpDefault+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
@@ -1536,7 +1536,7 @@ public class OpenSPCoop2Properties {
 			if(tipoHttpsDefault!=null && StringUtils.isNotEmpty(tipoHttpsDefault)) {
 				String classNameHttp = className.getConnettore(tipoHttpsDefault);
 				if(classNameHttp == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsDefault+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsDefault+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
@@ -1547,6 +1547,40 @@ public class OpenSPCoop2Properties {
 					return false;
 				}	
 			}
+			
+			String tipoHttpNIODefault = getConnettoreNIOLibreriaHttpDefault();
+			if(tipoHttpNIODefault!=null && StringUtils.isNotEmpty(tipoHttpNIODefault)) {
+				String classNameHttp = className.getConnettore(tipoHttpNIODefault);
+				if(classNameHttp == null){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpNIODefault+"] nelle classi registrate in GovWay");
+					return false;
+				}
+				try{
+					IConnettore c = (IConnettore) loaderOpenSPCoop.newInstance(classNameHttp);
+					c.toString();
+				}catch(Exception e){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpNIODefault+"]: "+e.getMessage(),e);
+					return false;
+				}	
+			}
+			
+			String tipoHttpsNIODefault = getConnettoreNIOLibreriaHttpsDefault();
+			if(tipoHttpsNIODefault!=null && StringUtils.isNotEmpty(tipoHttpsNIODefault)) {
+				String classNameHttp = className.getConnettore(tipoHttpsNIODefault);
+				if(classNameHttp == null){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsNIODefault+"] nelle classi registrate in GovWay");
+					return false;
+				}
+				try{
+					IConnettore c = (IConnettore) loaderOpenSPCoop.newInstance(classNameHttp);
+					c.toString();
+				}catch(Exception e){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpsNIODefault+"]: "+e.getMessage(),e);
+					return false;
+				}	
+			}
+			
+			isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary();
 			
 			// Connettore https
 			this.getConnettoreHttpsSecureRandomAlgo();
@@ -1614,7 +1648,7 @@ public class OpenSPCoop2Properties {
 			}
 			String tipoDateManger = className.getDateManager(this.getTipoDateManager());
 			if(tipoDateManger == null){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"] nelle classi registrate in OpenSPCoop");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"] nelle classi registrate in GovWay");
 				return false;
 			}
 			try{
@@ -1711,7 +1745,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenziali(gestoriCredenzialiPD[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -1731,7 +1765,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenziali(gestoriCredenzialiPA[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -1751,7 +1785,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenzialiIM(gestoriCredenzialiIM[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -1915,7 +1949,7 @@ public class OpenSPCoop2Properties {
 			if(CostantiConfigurazione.NONE.equals(tipoIDGenerator)==false){
 				String tipoIdManger = className.getUniqueIdentifier(tipoIDGenerator);
 				if(tipoIdManger == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier indicato non esiste ["+this.getTipoIDManager()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier indicato non esiste ["+this.getTipoIDManager()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				useIDManagerWithThreadLocal();
@@ -15399,6 +15433,78 @@ public class OpenSPCoop2Properties {
 		return this.getConnettoreLibreriaHttpsDefault;
 	}
 	
+	private String getConnettoreNIOLibreriaHttpDefault = null;
+	private Boolean getConnettoreNIOLibreriaHttpDefaultRead = null;
+	public String getConnettoreNIOLibreriaHttpDefault() {	
+		if(this.getConnettoreNIOLibreriaHttpDefaultRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.getConnettoreNIOLibreriaHttpDefault = name;
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' per il connettore nio, non impostata");
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			
+			this.getConnettoreNIOLibreriaHttpDefaultRead=true;
+		}
+
+		return this.getConnettoreNIOLibreriaHttpDefault;
+	}
+	
+	private String getConnettoreNIOLibreriaHttpsDefault = null;
+	private Boolean getConnettoreNIOLibreriaHttpsDefaultRead = null;
+	public String getConnettoreNIOLibreriaHttpsDefault() {	
+		if(this.getConnettoreNIOLibreriaHttpsDefaultRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.nio.libreriaHttpsDefault";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.getConnettoreNIOLibreriaHttpsDefault = name;
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' per il connettore nio, non impostata");
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			
+			this.getConnettoreNIOLibreriaHttpsDefaultRead=true;
+		}
+
+		return this.getConnettoreNIOLibreriaHttpsDefault;
+	}
+	
+	private Boolean isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary = null;
+	public boolean isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary() {	
+		if(this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary==null){
+			String pName = "org.openspcoop2.pdd.connettori.nio.forceUseNioInAsyncChannelWithBIOOnlyLibrary";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary = true;
+			}  
+		}
+
+		return this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary;
+	}
 	
 
 	/* ***************** HTTPS  ************* */

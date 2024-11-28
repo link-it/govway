@@ -1034,7 +1034,7 @@ public class InoltroRisposte extends GenericLib{
 			connettoreMsg.setState(openspcoopstate.getStatoRichiesta());
 			connettoreMsg.initPolicyGestioneToken(configurazionePdDManager, requestInfo);
 			
-			tipoConnector = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, tipoConnector, connettoreMsg);
+			tipoConnector = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, tipoConnector, connettoreMsg, this.asyncResponseCallback);
 			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, tipoConnector);
 			
 			// Risposte del connettore

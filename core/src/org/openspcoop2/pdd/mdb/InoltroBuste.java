@@ -2135,7 +2135,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			this.connettoreMsg.setForwardProxy(forwardProxy);
 			this.connettoreMsg.setIdAccordo(idAccordoServizio);
 			
-			this.tipoConnector = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, this.tipoConnector, this.connettoreMsg);
+			this.tipoConnector = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, this.tipoConnector, this.connettoreMsg, this.asyncResponseCallback);
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, this.tipoConnector);
 			
 			if(this.requestMessagePrimaTrasformazione!=null && this.requestMessagePrimaTrasformazione.getTransportRequestContext()!=null) {

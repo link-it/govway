@@ -31,6 +31,7 @@ package org.openspcoop2.pdd.core.connettori.httpcore5.nio;
  */
 public class ConnettoreHTTPSCORE extends ConnettoreHTTPCORE {
 
+	public static final String ENDPOINT_TYPE = "httpscore-nio";
 	
 	public ConnettoreHTTPSCORE(){
 		super(true);
