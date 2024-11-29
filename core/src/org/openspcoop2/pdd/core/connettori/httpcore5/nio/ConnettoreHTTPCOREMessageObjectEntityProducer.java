@@ -24,6 +24,7 @@ import java.io.IOException;
 import org.apache.hc.core5.http.nio.DataStreamChannel;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
+import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 
 /**
  * ConnettoreHTTPCOREMessageObjectEntityProducer
@@ -37,20 +38,21 @@ public class ConnettoreHTTPCOREMessageObjectEntityProducer extends AbstractConne
 	private boolean consume;
 	private boolean consumed = false;
 	
-	public ConnettoreHTTPCOREMessageObjectEntityProducer(OpenSPCoop2Message msg, boolean consume, org.apache.hc.core5.http.ContentType contentType, String contentEncoding, ConnettoreLogger logger) {
+	public ConnettoreHTTPCOREMessageObjectEntityProducer(OpenSPCoop2Message msg, boolean consume, 
+			org.apache.hc.core5.http.ContentType contentType, String contentEncoding, ConnettoreLogger logger) throws TransactionNotExistsException {
 		super(msg, contentType, contentEncoding, logger);
 		this.consume = consume;
 	}
 	
 	@Override
-	public int available() {
-		System.out.println("@@ AVAILABLE ???");
+	public int available()  {
+		/**System.out.println("@@ AVAILABLE ???");*/
 		if(this.consumed) {
-			System.out.println("@@ AVAILABLE rETURN -1");
+			/**System.out.println("@@ AVAILABLE rETURN -1");*/
 			return -1;
 		}
 		else {
-			System.out.println("@@ AVAILABLE rETURN 1");
+			/**System.out.println("@@ AVAILABLE rETURN 1");*/
 			return 1;
 		}
 	}

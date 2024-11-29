@@ -23,6 +23,7 @@
 
 package org.openspcoop2.pdd.core.connettori.httpcore5.nio;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
@@ -43,6 +44,7 @@ import org.apache.hc.core5.http.nio.AsyncResponseConsumer;
 import org.apache.hc.core5.http.nio.entity.BasicAsyncEntityProducer;
 import org.apache.hc.core5.http.nio.entity.FileEntityProducer;
 import org.apache.hc.core5.http.nio.support.BasicRequestProducer;
+import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
@@ -59,6 +61,8 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreHttpPoolParams;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCOREUtils;
 import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHttpRequestInterceptor;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -116,6 +120,17 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	
 	/* ********  METODI  ******** */
 
+	private String entryPointThreadName = null;
+	private String actualThreadName = null;
+	@Override
+	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired, ResponseCachingConfigurazione responseCachingConfig){
+		
+		this.entryPointThreadName = Thread.currentThread().getName();
+		this.actualThreadName = this.entryPointThreadName;
+		
+		return super.initialize(request, connectorPropertiesRequired, responseCachingConfig);
+	}
+	
 	/**
 	 * Si occupa di effettuare la consegna HTTP_POST (sbustando il messaggio SOAP).
 	 * Si aspetta di ricevere una risposta non sbustata.
@@ -357,13 +372,13 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	    	
 			
 	    	// ForwardProxy
-	    	if(this.forwardProxy_headerName!=null && this.forwardProxy_headerValue!=null) {
+	    	if(this.forwardProxyHeaderName!=null && this.forwardProxyHeaderValue!=null) {
 	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
-	    			this.requestMsg.getTransportRequestContext().removeHeader(this.forwardProxy_headerName); // Fix: senno sovrascriveva il vecchio token
+	    			this.requestMsg.getTransportRequestContext().removeHeader(this.forwardProxyHeaderName); // Fix: senno sovrascriveva il vecchio token
 	    		}
-	    		setRequestHeader(this.forwardProxy_headerName,this.forwardProxy_headerValue, propertiesTrasportoDebug);
+	    		setRequestHeader(this.forwardProxyHeaderName,this.forwardProxyHeaderValue, propertiesTrasportoDebug);
 	    		if(this.debug) {
-					this.logger.info("Impostazione ForwardProxy (header-name '"+this.forwardProxy_headerName+"' value '"+this.forwardProxy_headerValue+"')",false);
+					this.logger.info("Impostazione ForwardProxy (header-name '"+this.forwardProxyHeaderName+"' value '"+this.forwardProxyHeaderValue+"')",false);
 	    		}
 	    	}
 
@@ -479,7 +494,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 						hasContentBuilded || // contenuto della richiesta già in memoria
 						!consumeRequestMessage // non devo consumare la richiesta
 					) {
-					this.cloasebleDumpBout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+					this.cloasebleDumpBout = new DumpByteArrayOutputStream(this.dumpBinarioSoglia, this.dumpBinarioRepositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
 						if(this.isSoap && this.sbustamentoSoap){
@@ -575,7 +590,11 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				this.logger.debug("NIOV - Predisposizione callback...");
 			ConnettoreHTTPCOREResponseCallback responseCallback = new ConnettoreHTTPCOREResponseCallback(this, request, httpBody);
 			/**System.out.println("CLIENT ["+httpClient.getHttpclient().getClass().getName()+"]");*/
-			AsyncRequestProducer requestProducer = new BasicRequestProducer(this.httpRequest, entityProducer);
+			ConnettoreHTTPCORETransactionThreadContextSwitchEntityProducer<?> producer = null;
+			if(entityProducer!=null) {
+				producer = new ConnettoreHTTPCORETransactionThreadContextSwitchEntityProducer<>(this, entityProducer);
+			}
+			AsyncRequestProducer requestProducer = new BasicRequestProducer(this.httpRequest, producer);
 			AsyncResponseConsumer<ConnettoreHTTPCOREResponse> responseConsumer = null;
 			boolean stream = OpenSPCoop2Properties.getInstance().isNIOConfigAsyncResponseStreamEnabled();
 			int dimensioneBuffer = OpenSPCoop2Properties.getInstance().getNIOConfigAsyncResponsePipedUnblockedStreamBuffer();
@@ -585,6 +604,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			else {
 				responseConsumer = new ConnettoreHTTPCOREExtendAbstractBinResponseConsumer();
 			}
+			this.removeThreadLocalContext("ConnettoreHTTPRequest", BooleanNullable.TRUE());
 			httpClient.execute(requestProducer, responseConsumer, HttpClientContext.create(), responseCallback);
 						
 			if(this.debug) {
@@ -623,6 +643,49 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 		}
 	}
 	
+	public void checkThreadLocalContext(String function, BooleanNullable switchThreadLocalContextDoneHolder) throws IOException {
+		String tName = Thread.currentThread().getName();
+		if(function!=null) {
+			// debug
+		}
+		/**System.out.println("("+function+")("+this.idTransazione+") SWITCH THREAD CONTEXT DA [entry:"+this.entryPointThreadName+"][actual:"+this.actualThreadName+"] -> ["+tName+"] ...");*/
+		boolean switchThreadLocalContextDone = false;
+		if(switchThreadLocalContextDoneHolder!=null && switchThreadLocalContextDoneHolder.getValue()!=null) {
+			switchThreadLocalContextDone = switchThreadLocalContextDoneHolder.getValue().booleanValue();
+		}
+		if(this.transactionNullable!=null && this.idTransazione!=null && !switchThreadLocalContextDone &&
+			!tName.equals(this.actualThreadName)) {
+			try {
+				// lo aggiungo al thread della libreria httpasync NIO
+				/**System.out.println("("+function+")("+this.idTransazione+") SWITCH THREAD CONTEXT DA [entry:"+this.entryPointThreadName+"][actual:"+this.actualThreadName+"] -> ["+tName+"] OK");*/
+				TransactionContext.setTransactionThreadLocal(this.idTransazione, this.transactionNullable);
+				if(switchThreadLocalContextDoneHolder!=null) {
+					switchThreadLocalContextDoneHolder.setValue(true);
+				}
+				this.actualThreadName = tName;
+			}catch(Exception e) {
+				this.logger.error("checkThreadLocalContext failed: "+e.getMessage(),e);
+				throw new IOException(e.getMessage(),e);
+			}
+		}
+	}
+	public void removeThreadLocalContext(String function, BooleanNullable switchThreadLocalContextDoneHolder) {
+		String tName = Thread.currentThread().getName();
+		if(tName!=null && function!=null) {
+			// debug
+		}
+		/**System.out.println("("+function+")("+this.idTransazione+") REMOVE THREAD CONTEXT in ["+tName+"] ...");*/
+		boolean switchThreadLocalContextDone = false;
+		if(switchThreadLocalContextDoneHolder!=null && switchThreadLocalContextDoneHolder.getValue()!=null) {
+			switchThreadLocalContextDone = switchThreadLocalContextDoneHolder.getValue().booleanValue();
+		}
+		if(this.transactionNullable!=null && this.idTransazione!=null && switchThreadLocalContextDone) {
+			// lo rimuovo dal thread della libreria httpasync NIO
+			/**System.out.println("("+function+")("+this.idTransazione+") REMOVE THREAD CONTEXT in ["+tName+"] OK");*/
+			TransactionContext.removeTransaction(this.idTransazione);
+			switchThreadLocalContextDoneHolder.setValue(false);
+		}
+	}
 	
     /**
      * Effettua la disconnessione 
@@ -648,7 +711,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
     
     private Map<String,List<String>> recHeaderForInterceptor = null;
     @Override
-	protected void setRequestHeader(String key, List<String> values) throws Exception {
+	protected void setRequestHeader(String key, List<String> values) throws ConnettoreException {
     	if(values!=null && !values.isEmpty()) {
     		for (String value : values) {
     			this.httpRequest.addHeader(key,value);

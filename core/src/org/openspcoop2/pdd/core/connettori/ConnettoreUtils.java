@@ -333,7 +333,7 @@ public class ConnettoreUtils {
 	public static String addGovWayProxyInfoToLocationForHTTPConnector(ForwardProxy forwardProxy, IConnettore connectorSender, String location) throws ConnettoreException {
 		if(forwardProxy!=null && connectorSender instanceof ConnettoreBaseHTTP http) {
 			http.updateForwardProxy(forwardProxy);
-			if(http.updateLocation_forwardProxy(location)) {
+			if(http.updateLocationForwardProxy(location)) {
 				return http.getLocation();
 			}
 		}

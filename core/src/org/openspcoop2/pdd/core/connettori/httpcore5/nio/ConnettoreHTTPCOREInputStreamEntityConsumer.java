@@ -55,7 +55,7 @@ public class ConnettoreHTTPCOREInputStreamEntityConsumer implements AsyncRespons
 	private FutureCallback<ConnettoreHTTPCOREResponse> callback;
 	private long count = 0;
 	private boolean complete = false;
-	
+
 	private ConnettoreLogger logger;
 	private int sizeBuffer;
 	private Integer readTimeout;

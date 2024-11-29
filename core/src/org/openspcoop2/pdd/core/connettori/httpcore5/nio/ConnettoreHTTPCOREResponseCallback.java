@@ -35,9 +35,11 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -57,6 +59,10 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 	private boolean connettoreDebug;
 	private ConnettoreLogger connettoreLogger;
 
+	private boolean switchThreadContext = false; 
+	private String function;
+	private BooleanNullable switchThreadLocalContextDoneHolder = BooleanNullable.FALSE();
+	
 	public ConnettoreHTTPCOREResponseCallback(ConnettoreHTTPCORE connettore, ConnettoreMsg request, HttpBodyParameters httpBody ) {
 		this.connettore = connettore;
 		this.request = request;
@@ -64,6 +70,14 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 		
 		this.connettoreDebug = this.connettore.isDebug();
 		this.connettoreLogger = this.connettore.getLogger();
+		
+		// L'inizializzazione avviene nel worker thread del webserver o nel worker thread della richiesta a seconda della configurazione (vedi org.openspcoop2.pdd.services.connector.ConnectorApplicativeThreadPool)
+		// Il thread context è stato poi spostato sul thread della libreria client nio tramite ConnettoreHTTPCORETransactionThreadContextSwitchEntityProducer
+		// Infine se viene usato il thread local per gestire il contesto, gli oggetti devono essere riportati sul thread iin cui viene gestita la risposta
+		if(TransactionContext.isUseThreadLocal()) {
+			this.switchThreadContext = true;
+			this.function = "ResponseCallback-"+this.getClass().getName();
+		}
 	}
 
 	@Override
@@ -74,6 +88,10 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 		Map<String, List<String>> connettorePropertiesTrasportoRisposta = this.connettore.getPropertiesTrasportoRisposta(); 
 		
 		try {
+			if(this.switchThreadContext) {
+				this.connettore.checkThreadLocalContext(this.function, this.switchThreadLocalContextDoneHolder);
+			}
+			
 			HttpResponse response = responseParam.getHttpResponse();
 			HttpEntity httpEntityResponse = responseParam.getEntity();
 			
@@ -152,7 +170,7 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 			// Ricezione Risposta
 			if(this.connettoreDebug)
 				this.connettoreLogger.debug("Analisi risposta input stream e risultato http...");
-			this.connettore.initConfigurationAcceptOnlyReturnCode_202_200();
+			this.connettore.initConfigurationAcceptOnlyReturnCode202or200();
 
 			
 			// return code
@@ -160,7 +178,7 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 			this.connettore.setResultHTTPMessage(response.getReasonPhrase());
 
 			if(this.connettore.getCodiceTrasporto()<300) {
-				if(this.connettore.isSoap() && this.connettore.isAcceptOnlyReturnCode_202_200() &&
+				if(this.connettore.isSoap() && this.connettore.isAcceptOnlyReturnCode202or200() &&
 					this.connettore.getCodiceTrasporto()!=200 && this.connettore.getCodiceTrasporto()!=202){
 					throw new ConnettoreException("Return code ["+this.connettore.getCodiceTrasporto()+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
 				}
@@ -325,7 +343,6 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 				this.connettoreLogger.info("Gestione invio/risposta http effettuata con successo",false);
 
 			this.connettore.setAsyncInvocationSuccess(true);
-			return;
 
 		}  catch(Exception e){ 
 			

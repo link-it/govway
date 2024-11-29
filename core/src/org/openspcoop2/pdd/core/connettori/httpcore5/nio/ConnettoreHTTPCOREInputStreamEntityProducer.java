@@ -25,6 +25,7 @@ import java.nio.ByteBuffer;
 
 import org.apache.hc.core5.http.nio.DataStreamChannel;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
+import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsRuntimeException;
 
@@ -39,7 +40,7 @@ public class ConnettoreHTTPCOREInputStreamEntityProducer extends AbstractConnett
 
 	private int count = 0;
 	
-	public ConnettoreHTTPCOREInputStreamEntityProducer(InputStream is, org.apache.hc.core5.http.ContentType contentType, String contentEncoding, ConnettoreLogger logger) {
+	public ConnettoreHTTPCOREInputStreamEntityProducer(InputStream is, org.apache.hc.core5.http.ContentType contentType, String contentEncoding, ConnettoreLogger logger) throws TransactionNotExistsException {
 		super(is, contentType, contentEncoding, logger);
 	}
 	

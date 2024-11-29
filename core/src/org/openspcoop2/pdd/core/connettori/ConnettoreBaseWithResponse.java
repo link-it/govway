@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -48,10 +50,12 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.dump.DumpException;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -107,12 +111,12 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	}
 	
 	/** acceptOnlyReturnCode_202_200 SOAP */
-	protected boolean acceptOnlyReturnCode_202_200 = true;
-	public boolean isAcceptOnlyReturnCode_202_200() {
-		return this.acceptOnlyReturnCode_202_200;
+	protected boolean acceptOnlyReturnCode202or200 = true;
+	public boolean isAcceptOnlyReturnCode202or200() {
+		return this.acceptOnlyReturnCode202or200;
 	}
 			
-	public void normalizeInputStreamResponse(int timeout, boolean configurazioneGlobale) throws Exception{
+	public void normalizeInputStreamResponse(int timeout, boolean configurazioneGlobale) throws UtilsException, IOException, DriverConfigurazioneException, ProtocolException {
 		//Se non e' null, controllo che non sia vuoto.
 		if(this.isResponse!=null){
 			this.isResponse = Utilities.normalizeStream(this.isResponse, false);
@@ -121,24 +125,22 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			this.logger.info("Stream di risposta (return-code:"+this.codice+") is null",true);
 		}
 		
-		if(this.isResponse!=null && this.useLimitedInputStream) {
-			if(this.limitBytes!=null && this.limitBytes.getSogliaKb()>0) {
-				LimitExceededNotifier notifier = new LimitExceededNotifier(this.getPddContext(), this.limitBytes, this.logger.getLogger());
-				long limitBytes = this.limitBytes.getSogliaKb()*1024; // trasformo kb in bytes
-				this.isResponse = new LimitedInputStream(this.isResponse, limitBytes, 
-						CostantiPdD.PREFIX_LIMITED_RESPONSE,
-						this.getPddContext(),
-						notifier);
-			}
+		if(this.isResponse!=null && this.useLimitedInputStream &&
+			this.limitBytes!=null && this.limitBytes.getSogliaKb()>0) {
+			LimitExceededNotifier notifier = new LimitExceededNotifier(this.getPddContext(), this.limitBytes, this.logger.getLogger());
+			long limitBytes = this.limitBytes.getSogliaKb()*1024; // trasformo kb in bytes
+			this.isResponse = new LimitedInputStream(this.isResponse, limitBytes, 
+					CostantiPdD.PREFIX_LIMITED_RESPONSE,
+					this.getPddContext(),
+					notifier);
 		}
-		if(this.isResponse!=null && this.useTimeoutInputStream) {
-			if(timeout>0) {
-				TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.RECEIVE_RESPONSE);
-				this.isResponse = new TimeoutInputStream(this.isResponse, timeout, 
-						CostantiPdD.PREFIX_TIMEOUT_RESPONSE,
-						this.getPddContext(),
-						notifier);
-			}
+		if(this.isResponse!=null && this.useTimeoutInputStream &&
+			timeout>0) {
+			TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.RECEIVE_RESPONSE);
+			this.isResponse = new TimeoutInputStream(this.isResponse, timeout, 
+					CostantiPdD.PREFIX_TIMEOUT_RESPONSE,
+					this.getPddContext(),
+					notifier);
 		}
 		if(this.isResponse!=null && this.useDiagnosticInputStream && this.msgDiagnostico!=null) {
 			String idModuloFunzionale = 
@@ -237,18 +239,18 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 	}
 	
-	public void initConfigurationAcceptOnlyReturnCode_202_200(){
-		this.acceptOnlyReturnCode_202_200 = true;
+	public void initConfigurationAcceptOnlyReturnCode202or200(){
+		this.acceptOnlyReturnCode202or200 = true;
 		if(this.isRest){
-			this.acceptOnlyReturnCode_202_200 = false;
+			this.acceptOnlyReturnCode202or200 = false;
 		}
 		else{
 			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-				this.acceptOnlyReturnCode_202_200 = this.openspcoopProperties.isAcceptOnlyReturnCode_200_202_consegnaContenutiApplicativi();
+				this.acceptOnlyReturnCode202or200 = this.openspcoopProperties.isAcceptOnlyReturnCode_200_202_consegnaContenutiApplicativi();
 			}
 			else{
 				// InoltroBuste e InoltroRisposte
-				this.acceptOnlyReturnCode_202_200 = this.openspcoopProperties.isAcceptOnlyReturnCode_200_202_inoltroBuste();
+				this.acceptOnlyReturnCode202or200 = this.openspcoopProperties.isAcceptOnlyReturnCode_200_202_inoltroBuste();
 			}
 		}
 	}
@@ -269,7 +271,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		
 		boolean returnValue = false;
 		try {
-			returnValue = _dumpResponse(trasporto);
+			returnValue = internalDumpResponse(trasporto);
 		}
 		catch(Exception e) {
 			if(exceptionCheck!=null) {
@@ -290,43 +292,43 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	}
 	
 	
-	private DumpByteArrayOutputStream readResponseForDump() throws Exception{
+	private DumpByteArrayOutputStream readResponseForDump() throws UtilsException, IOException {
 		DumpByteArrayOutputStream bout = null;
 		try {
-			bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+			bout = new DumpByteArrayOutputStream(this.dumpBinarioSoglia, this.dumpBinarioRepositoryFile, this.idTransazione, 
 					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.getValue());
 			
 			this.emitDiagnosticStartDumpBinarioRispostaIngresso();
 			
-//				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-//				int readByte = 0;
-//				while((readByte = this.isResponse.read(readB))!= -1){
-//					bout.write(readB,0,readByte);
-//				}
-			//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] ...");
+			/**	byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+				int readByte = 0;
+				while((readByte = this.isResponse.read(readB))!= -1){
+					bout.write(readB,0,readByte);
+				}*/
+			/**System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] ...");*/
 			CopyStream.copy(this.isResponse, bout);
-			//System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] complete");
+			/**System.out.println("READ FROM ["+this.isResponse.getClass().getName()+"] complete");*/
 			this.isResponse.close();
 		}finally {
 			try {
 				if(bout!=null) {
 					bout.flush();
 				}
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				// ignore
 			}
 			try {
 				if(bout!=null) {
 					bout.close();
 				}
-			}catch(Throwable t) {
+			}catch(Exception t) {
 				// ignore
 			}
 		}
 		return bout;
 	}
 	
-	private boolean _dumpResponse(Map<String, List<String>> trasporto) throws Exception{
+	private boolean internalDumpResponse(Map<String, List<String>> trasporto) throws UtilsException, IOException, DumpException {
 		if(this.isResponse!=null){
 			
 			this.emitDiagnosticResponseRead(this.isResponse);
@@ -375,7 +377,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		return true;
 	}
 	
-	private void checkRestResponseMessageType() throws Exception{
+	private void checkRestResponseMessageType() throws ConnettoreException{
 		
 		if(this.messageTypeResponse!=null) {
 			return; // gia' calcolato
@@ -407,10 +409,10 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 					String ctConosciuti = this.requestInfo.getBindingConfig().getContentTypesSupportedAsString(this.requestMsg.getServiceBinding(), MessageRole.RESPONSE, 
 							this.requestMsg.getTransportRequestContext());
 					if(this.tipoRisposta==null){
-						throw new Exception("Header Content-Type non risulta definito nell'http reply e non esiste una configurazione che supporti tale casistica. Content-Type conosciuti: "+ctConosciuti);
+						throw new ConnettoreException("Header Content-Type non risulta definito nell'http reply e non esiste una configurazione che supporti tale casistica. Content-Type conosciuti: "+ctConosciuti);
 					}
 					else {
-						throw new Exception("Header Content-Type definito nell'http reply non è tra quelli conosciuti: "+ctConosciuti);
+						throw new ConnettoreException("Header Content-Type definito nell'http reply non è tra quelli conosciuti: "+ctConosciuti);
 					}
 					
 				}
@@ -422,31 +424,31 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		
 		if(msgErrore!=null){
 			if(this.checkContentType){
-				//if(exErrore!=null){
+				/**if(exErrore!=null){*/
 				this.logger.error(msgErrore,exErrore);
-				//}
+				/**}
 				//else{
 				//	this.logger.error(msgErrore);
-				//}
-				Exception e = new Exception(msgErrore);
+				//}*/
+				ConnettoreException e = new ConnettoreException(msgErrore);
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION,
 						ParseExceptionUtils.buildParseException(e, MessageRole.RESPONSE));
 				throw e;
 			}else{
 				msgErrore = msgErrore+"; viene utilizzata forzatamente la tipologia "+MessageType.BINARY.name() +" come modalità di gestione del messaggio";
-				//if(exErrore!=null){
+				/**if(exErrore!=null){*/
 				this.logger.warn(msgErrore,exErrore);
-				//}
+				/**}
 				//else{
 				//	this.logger.warn(msgErrore);
-				//}
+				//}*/
 				this.messageTypeResponse = MessageType.BINARY;
 			}
 		}
 	}
 	
-	protected boolean doRestResponse() throws Exception{
+	protected boolean doRestResponse() throws ConnettoreException{
 		if(this.debug)
 			this.logger.debug("gestione REST in corso ...");
 		
@@ -464,7 +466,12 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			isParam = this.isResponse; // è stato normalizzato, quindi se non c'è un contenuto è null
 		}
 		
-		TransportResponseContext responseContext = new TransportResponseContext(this.logger.getLogger());
+		TransportResponseContext responseContext = null;
+		try {
+			responseContext = new TransportResponseContext(this.logger.getLogger());
+		}catch(Exception e) {
+			throw new ConnettoreException(e.getMessage(),e);
+		}
 		responseContext.setCodiceTrasporto(this.codice+"");
 		responseContext.setContentLength(this.contentLength);
 		responseContext.setHeaders(this.propertiesTrasportoRisposta);
@@ -473,10 +480,15 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			this.emitDiagnosticResponseRead(isParam);
 		}
 		
-		OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
-				createMessage(this.messageTypeResponse,responseContext,
-						isParam,this.notifierInputStreamParams,
-						this.openspcoopProperties.getAttachmentsProcessingMode());	
+		OpenSPCoop2MessageParseResult pr = null;
+		try {
+			pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
+					createMessage(this.messageTypeResponse,responseContext,
+							isParam,this.notifierInputStreamParams,
+							this.openspcoopProperties.getAttachmentsProcessingMode());	
+		}catch(Exception e) {
+			throw new ConnettoreException(e.getMessage(),e);
+		}
 		if(pr.getParseException()!=null){
 			this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 		}
@@ -490,7 +502,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			// Se non ho un premature, ed un errore di lettura in 200, allora devo segnalare l'errore, altrimenti comunque 
 			// il msg ritornato e' null e nel codiceStato vi e' l'errore.
 			
-			if( premature == false ){
+			if( !premature ){
 				this.eccezioneProcessamento = e;
 				this.errore = "Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e);
 				this.logger.error("Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e),e);
@@ -503,17 +515,17 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		return true;
 	}
 	
-	private void checkSoapResponseMessageType() throws Exception{
+	private void checkSoapResponseMessageType() throws ConnettoreException, MessageNotSupportedException{
 		
 		if(this.messageTypeResponse!=null) {
 			return; // gia' calcolato
 		}
 		
-		this.contentTypeMessaggioOriginale_tunnelSoap = this.tipoRisposta; // serve per funzionalità TunnelSOAP
+		this.contentTypeMessaggioOriginaleTunnelSoap = this.tipoRisposta; // serve per funzionalità TunnelSOAP
 		
 		if(this.isResponse!=null){
 			
-			if(this.sbustamentoSoap==false){
+			if(!this.sbustamentoSoap){
 				
 				String msgErrore = null;
 				Exception exErrore = null;
@@ -540,13 +552,13 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						}
 						else{
 							if(this.requestInfo==null) {
-								throw new Exception("BindingConfig is null");
+								throw new ConnettoreException("BindingConfig is null");
 							}
 							if(this.requestInfo.getBindingConfig()==null) {
-								throw new Exception("BindingConfig is null");
+								throw new ConnettoreException("BindingConfig is null");
 							}
 							if(this.requestMsg==null) {
-								throw new Exception("RequestMsg is null");
+								throw new ConnettoreException("RequestMsg is null");
 							}
 							this.messageTypeResponse = this.requestInfo.getBindingConfig().getResponseMessageType(this.requestMsg.getServiceBinding(), 
 									this.requestMsg.getTransportRequestContext(),
@@ -560,14 +572,14 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 									this.requestMsg.getTransportRequestContext());
 							
 							if(this.tipoRisposta==null){
-								throw new Exception("Header Content-Type non risulta definito nell'http reply e non esiste una configurazione che supporti tale casistica. Content-Type conosciuti: "+ctConosciuti);
+								throw new ConnettoreException("Header Content-Type non risulta definito nell'http reply e non esiste una configurazione che supporti tale casistica. Content-Type conosciuti: "+ctConosciuti);
 							}
 							else {
-								throw new Exception("Header Content-Type definito nell'http reply non è tra quelli conosciuti: "+ctConosciuti);
+								throw new ConnettoreException("Header Content-Type definito nell'http reply non è tra quelli conosciuti: "+ctConosciuti);
 							}
 						}
 						else{
-							if(this.requestMsg.getMessageType().equals(this.messageTypeResponse)==false){
+							if(!this.requestMsg.getMessageType().equals(this.messageTypeResponse)){
 								msgErrore = "Header Content-Type definito nell'http reply associato ad un tipo ("+this.messageTypeResponse.name()
 											+") differente da quello associato al messaggio di richiesta ("+this.requestMsg.getMessageType().name()+")";
 							}
@@ -580,14 +592,14 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 				
 				if(msgErrore!=null){
 					if(this.checkContentType){
-						Exception e = null;
+						ConnettoreException e = null;
 						if(exErrore!=null){
 							this.logger.error(msgErrore,exErrore);
-							e = new Exception(msgErrore, exErrore);
+							e = new ConnettoreException(msgErrore, exErrore);
 						}
 						else{
 							this.logger.error(msgErrore);
-							e = new Exception(msgErrore);
+							e = new ConnettoreException(msgErrore);
 						}
 						this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 						this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION,
@@ -613,9 +625,9 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 	}
 	
-	private String contentTypeMessaggioOriginale_tunnelSoap = null; // serve per funzionalità TunnelSOAP;
+	private String contentTypeMessaggioOriginaleTunnelSoap = null; /** serve per funzionalità TunnelSOAP; */
 	
-	protected boolean doSoapResponse() throws Exception{
+	protected boolean doSoapResponse() throws ConnettoreException{
 
 		String tipoLetturaRisposta = null;
 		
@@ -624,11 +636,20 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		if(this.debug)
 			this.logger.debug("gestione WS/SOAP in corso ...");
 		
-		checkSoapResponseMessageType();
+		try {
+			checkSoapResponseMessageType();
+		}catch(Exception e) {
+			throw new ConnettoreException(e.getMessage(),e);
+		}
 		
 		if(this.isResponse!=null){
 			
-			TransportResponseContext responseContext = new TransportResponseContext(this.logger.getLogger());
+			TransportResponseContext responseContext = null;
+			try {
+				responseContext = new TransportResponseContext(this.logger.getLogger());
+			}catch(Exception e) {
+				throw new ConnettoreException(e.getMessage(),e);
+			}
 			responseContext.setCodiceTrasporto(this.codice+"");
 			responseContext.setContentLength(this.contentLength);
 			responseContext.setHeaders(this.propertiesTrasportoRisposta);
@@ -678,7 +699,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 							// Se non ho un premature, ed un errore di lettura in 200, allora devo segnalare l'errore, altrimenti comunque 
 							// il msg ritornato e' null e nel codiceStato vi e' l'errore.
 							
-							if( premature == false ){
+							if( !premature ){
 								this.eccezioneProcessamento = e;
 								this.errore = "Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e);
 								this.logger.error("Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e),e);
@@ -716,7 +737,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 								this.responseMsg = TunnelSoapUtils.imbustamentoMessaggioConAttachment(org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE),
 										this.messageTypeResponse,MessageRole.RESPONSE, 
 										cis,this.mimeTypeAttachment,
-										MailcapActivationReader.existsDataContentHandler(this.mimeTypeAttachment),this.contentTypeMessaggioOriginale_tunnelSoap, 
+										MailcapActivationReader.existsDataContentHandler(this.mimeTypeAttachment),this.contentTypeMessaggioOriginaleTunnelSoap, 
 										this.openspcoopProperties.getHeaderSoapActorIntegrazione());
 							}else{
 								if(this.debug)
@@ -727,7 +748,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 								// ALtrimenti dopo effettuando la close, nel caso di saaj instreaming otterrei un errore (o il msg non viene cmq costruito)
 								byte[] msg = Utilities.getAsByteArray(cis);
 								if(msg==null || msg.length<=0){
-									throw new Exception("Contenuto messaggio da imbustare non presente");
+									throw new ConnettoreException("Contenuto messaggio da imbustare non presente");
 								}
 								this.isResponse.close();
 								// Creo nuovo inputStream
@@ -783,7 +804,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 					// Se non ho un premature, ed un errore di lettura in 200, allora devo segnalare l'errore, altrimenti comunque 
 					// il msg ritornato e' null e nel codiceStato vi e' l'errore.
 					
-					if( premature == false ){
+					if( !premature ){
 						this.eccezioneProcessamento = e;
 						this.errore = "Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e);
 						this.logger.error("Errore avvenuto durante il parsing della risposta: " + this.readExceptionMessageFromException(e),e);
@@ -806,14 +827,12 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 			if(this.debug)
 				this.logger.debug("Save messaggio...");
 			try{
-				if(this.responseMsg!=null){
+				if(this.responseMsg!=null &&
 					// save changes.
 					// N.B. il countAttachments serve per il msg con attachments come saveMessage!
-					if(this.responseMsg.castAsSoap().hasAttachments()) {
-						if(this.responseMsg.castAsSoap().countAttachments()==0){
-							this.responseMsg.castAsSoap().getSOAPPart();
-						}
-					}
+					this.responseMsg.castAsSoap().hasAttachments() &&
+					this.responseMsg.castAsSoap().countAttachments()==0){
+					this.responseMsg.castAsSoap().getSOAPPart();
 				}
 			}catch(Exception e){
 				this.eccezioneProcessamento = e;

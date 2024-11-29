@@ -818,7 +818,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 			connettoreMsg.setForwardProxy(forwardProxy);
 		}
 		
-		connettore.setForceDisable_proxyPassReverse(true);
+		connettore.setForceDisableProxyPassReverse(true);
 		connettore.init(dynamicParameters.getPddContext(), protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
 		

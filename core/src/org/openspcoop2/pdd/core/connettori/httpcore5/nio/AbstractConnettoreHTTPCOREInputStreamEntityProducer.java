@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.apache.hc.core5.http.nio.AsyncEntityProducer;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
+import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 
 /**
  * AbstractConnettoreHTTPCOREInputStreamEntityProducer
@@ -39,14 +40,14 @@ public abstract class AbstractConnettoreHTTPCOREInputStreamEntityProducer<T> imp
 	protected boolean chunked;
 	protected ConnettoreLogger logger;
 	
-	protected AbstractConnettoreHTTPCOREInputStreamEntityProducer(T object, org.apache.hc.core5.http.ContentType contentType, String contentEncoding, ConnettoreLogger logger) {
+	protected AbstractConnettoreHTTPCOREInputStreamEntityProducer(T object, org.apache.hc.core5.http.ContentType contentType, String contentEncoding, ConnettoreLogger logger) throws TransactionNotExistsException {
 		this.object = object;
 		this.contentType = contentType;
 		this.contentEncoding = contentEncoding;
 		this.chunked = true;
 		this.logger = logger;
 	}
-	
+
 	@Override
 	public void releaseResources() {
 		/**this.is.close();*/

@@ -380,13 +380,13 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 	    	
 	    	
 	    	// ForwardProxy
-	    	if(this.forwardProxy_headerName!=null && this.forwardProxy_headerValue!=null) {
+	    	if(this.forwardProxyHeaderName!=null && this.forwardProxyHeaderValue!=null) {
 	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
-	    			this.requestMsg.getTransportRequestContext().removeHeader(this.forwardProxy_headerName); // Fix: senno sovrascriveva il vecchio token
+	    			this.requestMsg.getTransportRequestContext().removeHeader(this.forwardProxyHeaderName); // Fix: senno sovrascriveva il vecchio token
 	    		}
-	    		setRequestHeader(this.forwardProxy_headerName,this.forwardProxy_headerValue, propertiesTrasportoDebug);
+	    		setRequestHeader(this.forwardProxyHeaderName,this.forwardProxyHeaderValue, propertiesTrasportoDebug);
 	    		if(this.debug) {
-					this.logger.info("Impostazione ForwardProxy (header-name '"+this.forwardProxy_headerName+"' value '"+this.forwardProxy_headerValue+"')",false);
+					this.logger.info("Impostazione ForwardProxy (header-name '"+this.forwardProxyHeaderName+"' value '"+this.forwardProxyHeaderValue+"')",false);
 	    		}
 	    	}
 	    	
@@ -480,7 +480,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 					this.logger.debug("Spedizione byte (consume-request-message:"+consumeRequestMessage+")...");
 				OutputStream out = this.httpConn.getOutputStream();
 				if(this.isDumpBinarioRichiesta()) {
-					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+					DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinarioSoglia, this.dumpBinarioRepositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
 						this.emitDiagnosticStartDumpBinarioRichiestaUscita();
@@ -611,7 +611,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			// Ricezione Risposta
 			if(this.debug)
 				this.logger.debug("Analisi risposta input stream e risultato http...");
-			this.initConfigurationAcceptOnlyReturnCode_202_200();
+			this.initConfigurationAcceptOnlyReturnCode202or200();
 			
 			// return code
 			this.codice = this.httpConn.getResponseCode();
@@ -708,7 +708,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 					}
 				}
 				else{
-					if(this.isSoap && this.acceptOnlyReturnCode_202_200 &&
+					if(this.isSoap && this.acceptOnlyReturnCode202or200 &&
 						this.codice!=200 && this.codice!=202){
 						throw new ConnettoreException("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
 					}
@@ -908,7 +908,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 	}
     
     @Override
-	protected void setRequestHeader(String key,List<String> values) throws Exception {
+	protected void setRequestHeader(String key,List<String> values) throws ConnettoreException {
     	if(values!=null && !values.isEmpty()) {
     		for (String value : values) {
     			this.httpConn.addRequestProperty(key,value);		

@@ -63,8 +63,7 @@ public class GestoreCodaRunnable extends BaseThread{
 
 	
 	public String getThreadsImage() {
-		if(this.threadsPool instanceof ThreadPoolExecutor) {
-			ThreadPoolExecutor tpe = (ThreadPoolExecutor) this.threadsPool;
+		if(this.threadsPool instanceof ThreadPoolExecutor tpe) {
 			return
 	                String.format("(queue:%d) [%d/%d] Active: %d, Completed: %d, Task: %d, isShutdown: %s, isTerminated: %s",
 	                		this.threads.size(),

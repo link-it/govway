@@ -362,16 +362,39 @@ public class ConnettoreHTTPCOREConnectionManager {
 			// ** Proxy **
 			setProxy(httpClientBuilder, connectionConfig);
 			
-			// ** Reactor **
-			/**IOReactorConfig.Builder reactorConfigBuilder = IOReactorConfig.custom();
-			reactorConfigBuilder.setIoThreadCount(ioThreadCount);
-			httpClientBuilder.setIOReactorConfig(reactorConfigBuilder.build());*/
+			/** ** Reactor **
+			 * Interazione tra PoolingAsyncClientConnectionManager e Thread
+			   Il PoolingAsyncClientConnectionManager è progettato per gestire un pool di connessioni asincrone. 
+			   Ogni connessione è associata a un worker thread solo durante l'esecuzione di operazioni asincrone, 
+			   ma il numero di thread disponibili per gestire queste connessioni dipende dall'IOReactorConfig o dal ExecutorService configurato.
+
+			  Thread I/O (IOReactor): Determinano quanti worker thread possono gestire operazioni asincrone contemporaneamente.
+			  Pool di connessioni (PoolingAsyncClientConnectionManager): Limita il numero massimo di connessioni totali o per host, ma non controlla direttamente il numero di thread.
+			  
+			  Di default il numero di worker thread è uguale al numero di core della CPU disponibile, ricavabile dalla chiamata: Runtime.getRuntime().availableProcessors()
+			  
+			  Di seguito due gli esempi per modificare la configurazione di default
+			 */
+			/** Indicare il numero di thread da utilizzare */
+			/**int numeroThread = Runtime.getRuntime().availableProcessors();
+			org.apache.hc.core5.reactor.IOReactorConfig ioReactorConfig = org.apache.hc.core5.reactor.IOReactorConfig.custom()
+			        .setIoThreadCount(numeroThread)
+			        .build();
+			httpClientBuilder.setIOReactorConfig(ioReactorConfig);*/
+			/** Configurazione di un Executor Personalizzato (opzionale)
+			org.apache.hc.core5.reactor.IOReactorConfig ioReactorConfig = null //vedi sopra;
+			org.apache.hc.core5.reactor.DefaultConnectingIOReactor ioReactor = new ConnettoreHTTPCORECustomConnectingIOReactor(.cm..);
+			rimane da capire come si aggancia
+			 */
+			
+			/** Callback exception */
 			Callback<Exception> callback = e -> {
 			    OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().error("[IoReactorExceptionCallback] " + e.getMessage(), e);
 			    OpenSPCoop2Logger.getLoggerOpenSPCoopCore().error("[IoReactorExceptionCallback] " + e.getMessage(), e);
 			};
 			httpClientBuilder.setIoReactorExceptionCallback(callback);
 			
+			// build e start client
 			CloseableHttpAsyncClient httpclient = httpClientBuilder.build();
 			httpclient.start();
 			

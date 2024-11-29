@@ -22,7 +22,9 @@ package org.openspcoop2.pdd.services.connector;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 
@@ -38,16 +40,51 @@ public class ConnectorApplicativeThreadPool {
 	
 	private ConnectorApplicativeThreadPool() {}
 	
+	// I thread attivi oltre ai seguenti sono i worker thread del web server e il pool di thread utilizzato dalla libreria client NIO
+	
+	/* Per i client della libreria NIO utilizzando CloseableHttpAsyncClient (dalla libreria Apache HttpComponents), 
+	 * il pool di thread predefinito dipende dal java.util.concurrent.ExecutorService utilizzato internamente. 
+	 * Se non configurato esplicitamente un executor, il client utilizza un DefaultConnectingIOReactor per gestire le connessioni, che a sua volta crea un numero di worker thread pari a:
+	 * 
+	 * Runtime.getRuntime().availableProcessors()
+	 * 
+	 * Il numero di worker thread è uguale al numero di core della CPU disponibile.
+	 * Il pool utilizza un comportamento predefinito per la gestione degli I/O asincroni.
+	 * 
+	 * Ulteriori spiegazioni in org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCOREConnectionManager
+	 */
+	
+	/**
+	 * thread lanciato in org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE
+	 * Viene utilizzato per inviare in streaming i messaggi SOAP tramite l'utilizzo di un PipedUnblockedStream
+	 * Questa funzionalità per default non è attiva.
+	 * Si attiva disabilitando l'utilizzo del MessageObjectEntity per spedire in streaming tramite la proprietà 'org.openspcoop2.pdd.connettori.syncClient.useCustomMessageObjectEntity'
+	 */
 	private static ExecutorService syncRequestPool;
 	
+	/**
+	 * thread lanciato in org.openspcoop2.pdd.services.connector.AbstractRicezioneConnectorAsync
+	 * Viene utilizzato per sganciare subito il worker thread del connettore NIO del webserver, in modo che tutta la logica di gestione della richiesta avvenga su un thread applicativo,
+	 * mentre il worker thread del connettore NIO può esssere utilizzato per accettare una nuova richiesta e/o consegnare una risposta pronta 
+	 * Questa funzionalità per default è attiva.
+	 * Si gestisce tramite la proprietà 'org.openspcoop2.pdd.connettori.asyncRequest.stream'
+	 */
 	private static ExecutorService asyncRequestPool;
+	
+	/**
+	 * thread lanciato in org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCOREInputStreamEntityConsumer
+	 * Viene utilizzato per sganciare subito il worker thread del connettore NIO della libreria client, in modo che tutta la logica di gestione della risposta avvenga su un thread applicativo,
+	 * mentre il worker thread del connettore NIO può esssere utilizzato per gestire l'invio di una nuova richiesta e/o ricevere una risposta 
+	 * Questa funzionalità per default è attiva.
+	 * Si gestisce tramite la proprietà 'org.openspcoop2.pdd.connettori.asyncResponse.stream'
+	 */
 	private static ExecutorService asyncResponsePool;
 	
 	public static void initialize(OpenSPCoop2Properties op2) {
 		if(!op2.isBIOConfigSyncClientUseCustomMessageObjectEntity()) {
 			int size = op2.getBIOConfigSyncClientApplicativeThreadPoolSize();
 			if(size>0) {
-				syncRequestPool = Executors.newFixedThreadPool(size);
+				syncRequestPool = Executors.newFixedThreadPool(size, new ConnectorApplicativeThreadFactory("request-bio-nonblocking-io"));
 			}
 		}
 		
@@ -55,13 +92,13 @@ public class ConnectorApplicativeThreadPool {
 			if(op2.isNIOConfigAsyncRequestStreamEnabled()) {
 				int size = op2.getNIOConfigAsyncRequestApplicativeThreadPoolSize();
 				if(size>0) {
-					asyncRequestPool = Executors.newFixedThreadPool(size);
+					asyncRequestPool = Executors.newFixedThreadPool(size, new ConnectorApplicativeThreadFactory("request-nio-worker"));
 				}
 			}
 			if(op2.isNIOConfigAsyncResponseStreamEnabled()) {
 				int size = op2.getNIOConfigAsyncResponseApplicativeThreadPoolSize();
 				if(size>0) {
-					asyncResponsePool = Executors.newFixedThreadPool(size);
+					asyncResponsePool = Executors.newFixedThreadPool(size, new ConnectorApplicativeThreadFactory("response-nio-worker"));
 				}
 			}
 		}
@@ -135,4 +172,20 @@ public class ConnectorApplicativeThreadPool {
                 		tpe.isShutdown(),
                 		tpe.isTerminated());
 	}
+}
+
+class ConnectorApplicativeThreadFactory implements ThreadFactory {
+    private final AtomicInteger threadNumber = new AtomicInteger(1);
+    private final String namePrefix;
+
+    public ConnectorApplicativeThreadFactory(String namePrefix) {
+        this.namePrefix = namePrefix;
+    }
+
+    @Override
+    public Thread newThread(Runnable r) {
+        Thread thread = new Thread(r);
+        thread.setName(this.namePrefix +"-" + this.threadNumber.getAndIncrement());
+        return thread;
+    }
 }
