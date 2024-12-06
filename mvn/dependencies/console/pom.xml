@@ -22,7 +22,6 @@
 
 		<jquery.version>3.6.4</jquery.version>
 		<jquery-ui.version>1.14.0</jquery-ui.version>
-		
 		<jsoup.version>1.18.3</jsoup.version>
 
 	</properties>

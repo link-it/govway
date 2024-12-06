@@ -20,14 +20,9 @@
 
 package org.openspcoop2.web.lib.mvc.security;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import org.jsoup.safety.Safelist;
-import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
 /**
