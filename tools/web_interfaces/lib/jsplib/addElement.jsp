@@ -68,7 +68,6 @@ String jQueryUiVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUT
 <!-- JQuery lib-->
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, jQueryUiVersion) %>" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.datepicker-it.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 <script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
@@ -99,19 +98,6 @@ function CheckDati() {
   
   //evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
   eliminaElementiHidden(theForm);
-  
-  //elimino codice html dall'input testuale
-  for (var k=0; k<theForm.elements.length; k++) {
-		var tipo = theForm.elements[k].type;
-		if (tipo == "text" || tipo == "textarea" || tipo == "number"){
-			var valore = theForm.elements[k].value;
-			
-			var logMsg = 'Elemento ['+theForm.elements[k].name+'], Tipo ['+tipo+'], ValoreOriginale ['+valore+'], ValoreCorretto ['+HtmlSanitizer.SanitizeHtml(valore)+']';
-			console.log(logMsg);
-			
-			theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
-		}
-  }
   
   // aggiungo parametro idTab
   if(tabValue != ''){

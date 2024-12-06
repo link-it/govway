@@ -1187,6 +1187,10 @@ public class PddMonitorProperties {
 		return this.appProperties.readProperties("console.security.");
 	}
 	
+	public Properties getConsoleInputSanitizerConfiguration() throws UtilsException{
+		return this.appProperties.readProperties("console.inputSanitizer.");
+	}
+	
 	// allarmi
 	
 	public boolean isAllarmiEnabled() throws UtilsException{

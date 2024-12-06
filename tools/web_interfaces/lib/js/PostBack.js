@@ -34,11 +34,6 @@ function postBack(dataElementName) {
 		if (nome && nome.length > 0 && nome != "idhid" && nome != "edit-mode" && hiddenInfo == -1) {
 		    var tipo = theForm.elements[k].type;
 		    var valore = "";
-		    // elimino codice html dall'input testuale
-		    if (tipo == "text" || tipo == "textarea" || tipo == "number"){
-				var valoreTmp = theForm.elements[k].value;
-				theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valoreTmp);
-			}
 		    
 		    if (tipo == "text" || tipo == "file" || tipo == "hidden" || tipo == "textarea"|| tipo == "number")
 		    	valore = theForm.elements[k].value;
@@ -104,12 +99,6 @@ function postVersion_postBack(dataElementName) {
 		
 		var tipo = theForm.elements[k].type;
 	
-		// elimino codice html dall'input testuale
-		if (tipo == "text" || tipo == "textarea" || tipo == "number"){
-			var valore = theForm.elements[k].value;
-			theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
-		}
-
 		if (tipo == "checkbox") {
 			if (!theForm.elements[k].checked){
   			   addHidden(theForm, nome , 'no');

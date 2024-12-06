@@ -109,7 +109,8 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 	}
 	
 	public String getOriginalParameter(String key) {
-		return this.getHttpServletRequest().getParameter(key);
+		String value = this.getHttpServletRequest().getParameter(key);
+		return this.validator.getParametroSanificato(value);
 	}
 	
 	@Override
@@ -117,6 +118,7 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 		String val = this.getHttpServletRequest().getParameter(key);
 		if(val != null) {
 			try {
+				val = this.validator.getParametroSanificato(val);
 				boolean usaValidazioneTextArea = ServletUtils.usaValidazioneTextArea(getHttpServletRequest(), key);
 				String pattern = usaValidazioneTextArea ? Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE_TEXT_AREA : Costanti.PATTERN_REQUEST_HTTP_PARAMETER_VALUE;
 				return this.validator.validate("Il valore del parametro [" + key + "]:["+val+"]", val, null, true, !usaValidazioneTextArea, pattern);
@@ -144,7 +146,8 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 				String[] value = entry.getValue();
 				String[] cleanValues = new String[value.length];
 				for (int j = 0; j < value.length; j++) {
-					String cleanValue = this.validator.validate("Il valore del parametro [" + name + "]:["+value[j]+"]", value[j], null, true, !usaValidazioneTextArea, pattern);
+					String val = this.validator.getParametroSanificato(value[j]);
+					String cleanValue = this.validator.validate("Il valore del parametro [" + name + "]:["+val+"]", val, null, true, !usaValidazioneTextArea, pattern);
 					cleanValues[j] = cleanValue;
 				}
 				cleanMap.put(cleanName, cleanValues);
@@ -186,7 +189,8 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 
 		for (String value : values) {
 			try {
-				newValues.add(this.validator.validate("Il valore del parametro [" + arg0 + "]:["+value+"]", value, null, true, !usaValidazioneTextArea, pattern));
+				String val = this.validator.getParametroSanificato(value);
+				newValues.add(this.validator.validate("Il valore del parametro [" + arg0 + "]:["+val+"]", val, null, true, !usaValidazioneTextArea, pattern));
 			} catch (ValidationException e) {
 				this.log.warn("Errore di validazione: {}, {}", e.getMessage(),e);
 			}
@@ -386,6 +390,7 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 
 		if(value != null) {
 			try {
+				value = this.validator.getParametroSanificato(value);
 				return this.validator.validate("Il valore dell'Header [" + name+ "]:["+value+"]", value, null, true, Costanti.PATTERN_REQUEST_HTTP_HEADER_VALUE);
 			} catch (ValidationException e) {
 				this.log.warn("Errore di validazione: {}, {}", e.getMessage(),e);
@@ -420,6 +425,7 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 		while (en.hasMoreElements()) {
 			try {
 				String value = en.nextElement();
+				value = this.validator.getParametroSanificato(value);
 				v.add(this.validator.validate("Il valore dell'Header [" + arg0+ "]:["+value+"]", value, null, true, Costanti.PATTERN_REQUEST_HTTP_HEADER_VALUE));
 			} catch (ValidationException e) {
 				this.log.warn("Errore di validazione: {}, {}", e.getMessage(),e);

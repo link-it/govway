@@ -27,6 +27,9 @@ import java.util.regex.Pattern;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Entities;
+import org.jsoup.safety.Safelist;
 import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 import org.slf4j.Logger;
 
@@ -41,14 +44,16 @@ public class Validatore {
 
 	private static Logger log;
 	private SecurityProperties sc;
+	private InputSanitizerProperties isp;
 	private static Validatore instance;
+	private Safelist safelist;
 
-	public static synchronized void init(SecurityProperties sc, Logger log) {
+	public static synchronized void init(SecurityProperties sc, InputSanitizerProperties isp,  Logger log) {
 		if(Validatore.log == null) {
 			Validatore.log = log;
 		}
 		if(Validatore.instance == null) {
-			Validatore.instance = new Validatore(sc);
+			Validatore.instance = new Validatore(sc, isp);
 		}
 	}
 
@@ -56,8 +61,10 @@ public class Validatore {
 		return instance;
 	}
 
-	private Validatore(SecurityProperties sc) {
+	private Validatore(SecurityProperties sc, InputSanitizerProperties isp) {
 		this.sc = sc;
+		this.isp = isp;
+		this.safelist = this.isp.getSafelist();
 	}
 	
 	public String validate(String oggetto, String valore, boolean nullable, String... pattern) throws ValidationException {
@@ -225,4 +232,13 @@ public class Validatore {
 		
 		return request.getParameter(parametro);
 	}
+	
+	public String getParametroSanificato(String originalValue) {
+		if(originalValue == null) {
+			return null;
+		}
+		
+		return Entities.unescape(Jsoup.parse(Jsoup.clean(originalValue, this.safelist)).body().html());
+	}
+	
 }

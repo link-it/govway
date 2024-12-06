@@ -165,11 +165,9 @@ if(browsername != null){
 var destElement;
 
 if(window.location.hash){
-//	destElement = window.location.hash.substr(1);
-	destElement = HtmlSanitizer.SanitizeHtml(window.location.hash.substr(1));
+	destElement = window.location.hash.substr(1);
 	
 //	console.log(window.location.hash.substr(1));
-//	console.log(HtmlSanitizer.SanitizeHtml(window.location.hash.substr(1)));
 }  
 
 var browserName = '<%=browsername%>';
@@ -202,11 +200,11 @@ function IEVersione(){
 	return browserVersion;
 }
 
-var tabSessionKey = HtmlSanitizer.SanitizeHtml('<%=Costanti.PARAMETER_TAB_KEY %>');
-var prevTabSessionKey = HtmlSanitizer.SanitizeHtml('<%=Costanti.PARAMETER_PREV_TAB_KEY %>');
-var tabValue = HtmlSanitizer.SanitizeHtml('<%=tabSessionKey %>');
-var csrfTokenKey = HtmlSanitizer.SanitizeHtml('<%=Costanti.PARAMETRO_CSRF_TOKEN%>');
-var csrfToken = HtmlSanitizer.SanitizeHtml('<%=csrfTokenFromSession %>');
+var tabSessionKey = '<%=Costanti.PARAMETER_TAB_KEY %>';
+var prevTabSessionKey = '<%=Costanti.PARAMETER_PREV_TAB_KEY %>';
+var tabValue = '<%=tabSessionKey %>';
+var csrfTokenKey = '<%=Costanti.PARAMETRO_CSRF_TOKEN%>';
+var csrfToken = '<%=csrfTokenFromSession %>';
 
 </script>
 

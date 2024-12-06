@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.security.InputSanitizerProperties;
 import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
 import org.openspcoop2.web.lib.mvc.security.SecurityWrappedHttpServletRequest;
 import org.openspcoop2.web.lib.mvc.security.SecurityWrappedHttpServletResponse;
@@ -105,7 +106,9 @@ public class HeadersFilter implements Filter {
 
 			Properties consoleSecurityConfiguration = pddMonitorProperties.getConsoleSecurityConfiguration();
 			SecurityProperties.init(consoleSecurityConfiguration, log);
-			Validatore.init(SecurityProperties.getInstance(), log);
+			Properties consoleInputSanitizerConfiguration = pddMonitorProperties.getConsoleInputSanitizerConfiguration();
+			InputSanitizerProperties.init(consoleInputSanitizerConfiguration, log);
+			Validatore.init(SecurityProperties.getInstance(), InputSanitizerProperties.getInstance(), log);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

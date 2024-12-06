@@ -20,6 +20,9 @@
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -38,12 +41,18 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.security.InputSanitizerProperties;
 import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
 import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.lib.mvc.security.SecurityWrappedHttpServletRequest;
 import org.openspcoop2.web.lib.mvc.security.SecurityWrappedHttpServletResponse;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
+
+import org.jsoup.safety.Safelist;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Entities;
+
 
 /**     
  * HeadersFilter
@@ -66,7 +75,9 @@ public class HeadersFilter implements Filter {
 			this.core = new ControlStationCore();
 			Properties consoleSecurityConfiguration = this.core.getConsoleSecurityConfiguration();
 			SecurityProperties.init(consoleSecurityConfiguration, log);
-			Validatore.init(SecurityProperties.getInstance(), log);
+			Properties consoleInputSanitizerConfiguration = this.core.getConsoleInputSanitizerConfiguration();
+			InputSanitizerProperties.init(consoleInputSanitizerConfiguration, log);
+			Validatore.init(SecurityProperties.getInstance(), InputSanitizerProperties.getInstance(), log);
 			
 		} catch (Exception e) {
 			log.error("Errore durante il caricamento iniziale: " + e.getMessage(), e);
@@ -79,6 +90,9 @@ public class HeadersFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) res;
 		GeneralHelper generalHelper = null;
 		try {	
+			// dump della richiesta prima di passarla al tool di validazione
+			dumpRichiesta(request, response);
+			
 			SecurityWrappedHttpServletRequest seqReq = new SecurityWrappedHttpServletRequest(request, log);
 			
 			SecurityWrappedHttpServletResponse seqRes = new SecurityWrappedHttpServletResponse(response, log);
@@ -139,5 +153,28 @@ public class HeadersFilter implements Filter {
 		if(StringUtils.isNoneBlank(this.core.getXContentTypeOptionsHeaderValue())) {
 			response.setHeader(HttpConstants.HEADER_NAME_X_CONTENT_TYPE_OPTIONS, this.core.getXContentTypeOptionsHeaderValue());
 		}
+	}
+	
+	private void dumpRichiesta(HttpServletRequest request,	HttpServletResponse response) {
+		
+        // Crea la safelist personalizzata
+        Safelist customSafelist = InputSanitizerProperties.getInstance().getSafelist();
+		
+		// Itera su tutti i parametri della richiesta
+        Enumeration<String> parameterNames = request.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            String paramName = parameterNames.nextElement();
+            String[] paramValues = request.getParameterValues(paramName);
+            List<String> parametriCorretti = new ArrayList<>();
+
+            // Sanifica ogni valore del parametro
+            for (int i = 0; i < paramValues.length; i++) {
+                parametriCorretti.add(Entities.unescape(Jsoup.parse(Jsoup.clean(paramValues[i], customSafelist)).body().html()));
+            }
+           
+            log.debug("AAAAAA [{}] Valori Originali [{}]", paramName, StringUtils.join(paramValues, "|")); 
+            log.debug("AAAAAA [{}] Valori Corretti [{}]", paramName, StringUtils.join(parametriCorretti, "|"));
+        }
+
 	}
 }

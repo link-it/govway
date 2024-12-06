@@ -1306,6 +1306,7 @@ public class ControlStationCore {
 	private String xXssProtectionHeaderValue = null;
 	private String xFrameOptionsHeaderValue = null;
 	private Properties consoleSecurityConfiguration = null;
+	private Properties consoleInputSanitizerConfiguration = null;
 	
 	public boolean isShowCorrelazioneAsincronaInAccordi() {
 		return this.showCorrelazioneAsincronaInAccordi;
@@ -1441,6 +1442,9 @@ public class ControlStationCore {
 	}
 	public Properties getConsoleSecurityConfiguration() {
 		return this.consoleSecurityConfiguration;
+	}
+	public Properties getConsoleInputSanitizerConfiguration() {
+		return this.consoleInputSanitizerConfiguration;
 	}
 	public boolean showCodaMessage() {
 		return this.isShowJ2eeOptions() || this.isIntegrationManagerEnabled();
@@ -2696,6 +2700,7 @@ public class ControlStationCore {
 		this.xFrameOptionsHeaderValue = core.xFrameOptionsHeaderValue;
 		this.xXssProtectionHeaderValue = core.xXssProtectionHeaderValue;
 		this.consoleSecurityConfiguration = core.consoleSecurityConfiguration;
+		this.consoleInputSanitizerConfiguration = core.consoleInputSanitizerConfiguration;
 
 		/** Opzioni di importazione/esportazione Archivi */
 		this.importArchivi_tipoPdD = core.importArchivi_tipoPdD;
@@ -3151,6 +3156,7 @@ public class ControlStationCore {
 			this.xFrameOptionsHeaderValue = consoleProperties.getXFrameOptionsHeaderValue();
 			this.xXssProtectionHeaderValue = consoleProperties.getXXssProtectionHeaderValue();
 			this.consoleSecurityConfiguration = consoleProperties.getConsoleSecurityConfiguration();
+			this.consoleInputSanitizerConfiguration = consoleProperties.getConsoleInputSanitizerConfiguration();
 			
 			// Gestione govwayConsole locale
 			if(this.singlePdD){

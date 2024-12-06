@@ -54,6 +54,7 @@ import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.ProviderUtils;
+import org.openspcoop2.web.lib.mvc.security.InputSanitizerProperties;
 import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
 import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
@@ -376,7 +377,9 @@ public class Startup implements ServletContextListener {
 		
 			Properties consoleSecurityConfiguration = properties.getConsoleSecurityConfiguration();
 			SecurityProperties.init(consoleSecurityConfiguration, log);
-			Validatore.init(SecurityProperties.getInstance(), log);
+			Properties consoleInputSanitizerConfiguration = properties.getConsoleInputSanitizerConfiguration();
+			InputSanitizerProperties.init(consoleInputSanitizerConfiguration, log);
+			Validatore.init(SecurityProperties.getInstance(), InputSanitizerProperties.getInstance(), log);
 			
 			Startup.log.info("Inizializzazione Risorse Statiche Console effettuata con successo");
 		} 

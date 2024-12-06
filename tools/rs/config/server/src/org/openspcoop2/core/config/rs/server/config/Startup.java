@@ -50,6 +50,7 @@ import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
+import org.openspcoop2.web.lib.mvc.security.InputSanitizerProperties;
 import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
 import org.openspcoop2.web.lib.mvc.security.Validatore;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
@@ -342,7 +343,9 @@ public class Startup implements ServletContextListener {
 			
 			Properties consoleSecurityConfiguration = serverProperties.getConsoleSecurityConfiguration();
 			SecurityProperties.init(consoleSecurityConfiguration, log);
-			Validatore.init(SecurityProperties.getInstance(), log);
+			Properties consoleInputSanitizerConfiguration = serverProperties.getConsoleInputSanitizerConfiguration();
+			InputSanitizerProperties.init(consoleInputSanitizerConfiguration, log);
+			Validatore.init(SecurityProperties.getInstance(), InputSanitizerProperties.getInstance(), log);
 			
 		} catch (Exception e) {
 			logAndThrow(e.getMessage(),e);

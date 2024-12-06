@@ -385,16 +385,6 @@ function Change(theForm,dataElementName,fromFilters) {
 	// evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
 	 eliminaElementiHidden(theForm);
 
-	// elimino codice html dall'input testuale
-     for (var k=0; k<theForm.elements.length; k++) {
-   		// elimino codice html dall'input testuale
-   		 var tipo = theForm.elements[k].type;
-		 if (tipo == "text" || tipo == "textarea" || tipo == "number"){
-			var valore = theForm.elements[k].value;
-			theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
-		}
-     }
-
   // aggiungo parametro idTab
   	  if(tabValue != ''){
   	  	addHidden(theForm, tabSessionKey , tabValue);
@@ -499,15 +489,6 @@ function Search(theForm) {
 	// evito di mandare indietro al server il valore degli elementi hidden che si utilizzano per la creazione delle finestre DialogInfo.
 	eliminaElementiHidden(theForm);
 	
-	// elimino codice html dall'input testuale
-  	for (var k=0; k<theForm.elements.length; k++) {
-		 var tipo = theForm.elements[k].type;
-		 if (tipo == "text" || tipo == "textarea" || tipo == "number"){
-			var valore = theForm.elements[k].value;
-			theForm.elements[k].value = HtmlSanitizer.SanitizeHtml(valore);
-		}
-	}
-
   // aggiungo parametro idTab
   if(tabValue != ''){
   	addHidden(theForm, tabSessionKey , tabValue);

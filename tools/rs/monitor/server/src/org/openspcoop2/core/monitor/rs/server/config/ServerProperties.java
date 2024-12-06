@@ -306,4 +306,7 @@ public class ServerProperties  {
 	public Properties getConsoleSecurityConfiguration() throws UtilsException{
 		return this.reader.readPropertiesConvertEnvProperties("console.security.");
 	}
+	public Properties getConsoleInputSanitizerConfiguration() throws UtilsException{
+		return this.reader.readPropertiesConvertEnvProperties("console.inputSanitizer.");
+	}
 }
