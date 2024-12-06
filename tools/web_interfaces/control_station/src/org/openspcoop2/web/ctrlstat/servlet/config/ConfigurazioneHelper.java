@@ -168,6 +168,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.integrazione.GruppoIntegrazione;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
+import org.openspcoop2.pdd.core.jmx.MonitoraggioRisorse;
 import org.openspcoop2.pdd.core.token.PolicyGestioneToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
@@ -6820,10 +6821,157 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setRows(6);
 			de.setCols(80);
 			dati.add(de);
-			
+
 		}
 		
 		
+		
+		
+		
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+		
+		
+		
+		
+		
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_BIO_HTTP_CLIENT);
+		de.setType(DataElementType.SUBTITLE);
+		dati.add(de);
+		
+		stato = null;
+		try{
+			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+					this.confCore.jmxPdDConfigurazioneSistemaNomeMetodoBIOHttpClientConnectionManagerStatus(alias));
+			if(this.isErroreHttp(stato, "stato del connection manager http per le connessioni BIO")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}catch(Exception e){
+			this.logError("Errore durante la lettura dello stato del connection manager http per le connessioni BIO (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_BIO_CONNECTION_MANAGER_STATUS);
+		if(stato!=null){
+			stato = StringEscapeUtils.escapeHtml(stato);
+		}
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_BIO_CONNECTION_MANAGER_STATUS);
+		de.setSize(this.getSize());
+		de.setRows(2);
+		de.setCols(80);
+		dati.add(de);
+		
+		
+		
+		
+		
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_NIO_HTTP_CLIENT);
+		de.setType(DataElementType.SUBTITLE);
+		dati.add(de);
+		
+		boolean nioEnabled = true;
+		stato = null;
+		try{
+			stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+					this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+					this.confCore.jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerStatus(alias));
+			if(this.isErroreHttp(stato, "stato del connection manager http per le connessioni NIO")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+			else if(MonitoraggioRisorse.MSG_FUNZIONALITA_DISABILITATA.equals(stato)) {
+				nioEnabled=false;
+			}
+		}catch(Exception e){
+			this.logError("Errore durante la lettura dello stato del connection manager http per le connessioni NIO (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_STATUS);
+		if(stato!=null){
+			stato = StringEscapeUtils.escapeHtml(stato);
+		}
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_STATUS);
+		de.setSize(this.getSize());
+		de.setRows(2);
+		de.setCols(80);
+		dati.add(de);
+		
+		if(nioEnabled) {
+						
+			stato = null;
+			try{
+				stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						this.confCore.jmxPdDConfigurazioneSistemaNomeMetodoNIOWorkerThreadPoolStatus(alias));
+				if(this.isErroreHttp(stato, "stato del pool di thread utilizzata per inviare la richiesta in streaming tramite connettore HTTP NIO")){
+					// e' un errore
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+			}catch(Exception e){
+				this.logError("Errore durante la lettura dello stato del pool di thread utilizzata per inviare la richiesta in streaming tramite connettore HTTP NIO (jmxResourcePdD): "+e.getMessage(),e);
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_POOL);
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_POOL);
+			de.setSize(this.getSize());
+			de.setRows(3);
+			de.setCols(80);
+			dati.add(de);
+			
+			stato = null;
+			try{
+				stato = this.confCore.getInvoker().invokeJMXMethod(alias,this.confCore.getJmxPdDConfigurazioneSistemaType(alias), 
+						this.confCore.getJmxPdDConfigurazioneSistemaNomeRisorsaMonitoraggio(alias),
+						this.confCore.jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerIOThreadCount(alias));
+				if(this.isErroreHttp(stato, "numero di thread dedicati per IORactor del connettore HTTP NIO")){
+					// e' un errore
+					stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+				}
+			}catch(Exception e){
+				this.logError("Errore durante la lettura del numero di thread dedicati per IORactor del connettore HTTP NIO (jmxResourcePdD): "+e.getMessage(),e);
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_IOREACTOR);
+			if(stato!=null){
+				stato = StringEscapeUtils.escapeHtml(stato);
+			}
+			de.setValue(stato);
+			de.setLabelAffiancata(false);
+			de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_IOREACTOR);
+			de.setSize(this.getSize());
+			de.setRows(1);
+			de.setCols(80);
+			dati.add(de);
+		}
 		
 		
 		
@@ -6832,21 +6980,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		List<String> code = this.confCore.getConsegnaNotificaCode();
 		
-		if(code.size()<=1) {
-			de = newDataElementStyleRuntime();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
-			de.setType(DataElementType.TITLE);
-			dati.add(de);
-		}
-		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE);
-		if(code.size()<=1) {
-			de.setType(DataElementType.SUBTITLE);
-		}
-		else {
-			de.setType(DataElementType.TITLE);
-		}
+		de.setType(DataElementType.SUBTITLE);
 		dati.add(de);
 		
 		boolean timerAttivo = addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi(alias), 

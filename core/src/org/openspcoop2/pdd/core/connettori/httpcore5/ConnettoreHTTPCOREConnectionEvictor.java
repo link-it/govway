@@ -45,17 +45,30 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
     }
 
     @Override
+	protected String getLogPrefix() {
+    	return HTTPCORE_PREFIX;
+    }
+    
+    @Override
     protected boolean check() {
+    	return internalCheck(null);
+    }
+    protected boolean internalCheck(StringBuilder sb) {
     	
     	if(ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager!=null && !ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.isEmpty()) {
     		
-    		this.logDebug(HTTPCORE_PREFIX+"ConnectionManager attivi: "+ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.size());	
+    		print(sb, "ConnectionManager attivi: "+ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.size());
     		
 			for (String key : ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.keySet()) {
 				if(key!=null) {
-					check(key);
+					check(key, sb);
 				}
 			}
+			
+			/**ConnettoreHTTPCOREConnectionManager.USE_POOL_CONNECTION è false
+			 * if(sb!=null && ConnettoreHTTPCOREConnectionManager.USE_POOL_CONNECTION) {
+				super.check(sb);
+			}*/
 			
 			return ConnettoreHTTPCOREConnectionManager.USE_POOL_CONNECTION; // devo continuare l'analisi delle connessione solo se uso un pool delle connessioni; ha senso solo per il nio
 		}
@@ -63,7 +76,7 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
     	return false;
     	
     }
-    private void check(String key) {
+    private void check(String key, StringBuilder sb) {
     	PoolingHttpClientConnectionManager connMgr = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(key);
 		ConnettoreHTTPCOREConnection connection = ConnettoreHTTPCOREConnectionManager.mapConnection.get(key);
 		
@@ -71,14 +84,14 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
     	if(this.debug) {
     		
     		PoolStats totalStats = connMgr.getTotalStats();
-    	    this.logDebug(HTTPCORE_PREFIX+"("+key+") stats: "+totalStats.toString());	
+    		print(sb, "("+key+") stats: "+totalStats.toString());
     		/**this.logDebug("  Totali - In uso: " + totalStats.getLeased() + "; Disponibili: " +
                        totalStats.getAvailable() + "; In attesa: " + totalStats.getPending());*/
     		
     		if(connMgr.getRoutes()!=null && !connMgr.getRoutes().isEmpty()) {
     			for (HttpRoute route : connMgr.getRoutes()) {
     				PoolStats routeStats = connMgr.getStats(route);
-    				this.logDebug(HTTPCORE_PREFIX+"("+key+") route ["+route.toString()+"]: "+routeStats.toString());	
+    				print(sb, "("+key+") route ["+route.toString()+"]: "+routeStats.toString());	
     				/**this.logDebug("  Rotta: " + route + " - In uso: " + routeStats.getLeased() +
 	                           "; Disponibili: " + routeStats.getAvailable() +
 	                           "; In attesa: " + routeStats.getPending());*/
@@ -88,7 +101,7 @@ public class ConnettoreHTTPCOREConnectionEvictor extends AbstractConnettoreConne
     		if(connection!=null) {
     			String status = connection.getStatus();
     			if(status!=null && StringUtils.isNotEmpty(status)) {
-    				this.logDebug(HTTPCORE_PREFIX+"("+key+"): status: "+connection.getStatus());
+    				print(sb, "("+key+"): status: "+connection.getStatus());
     			}
     		}
     		

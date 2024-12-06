@@ -371,10 +371,11 @@ public class CostantiPdD {
     /** Close asyncClient that have been unused longer than X sec */
     public static final int CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS = 900;
     
-    /** Pool Size Applicative Threads */
-    public static final int CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE = 100;
-    /** Pool Size Applicative Threads */
-    public static final int CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE = 100;
+    public static final String CONNETTORE_NIO_ASYNC_CONFIG_AVAILABLE_PROCESSORS = "availableProcessors";
+    public static int getAvailableProcessors() {
+    	return Runtime.getRuntime().availableProcessors();
+    }
+    
     /** Maximum limit of connection on a per route basis */
     public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE = 100;
     /** Maximum limit of connection on total */

@@ -316,7 +316,13 @@ public abstract class AbstractRicezioneConnectorAsync {
 					
 				}
 			}.init(ricezioneService, httpIn, httpOut);
-			ConnectorApplicativeThreadPool.executeInAsyncRequestPool(runnable);
+			boolean delegata = getIdService()!=null && getIdService().isPortaDelegata();
+			if(delegata) {
+				ConnectorApplicativeThreadPool.executeByAsyncOutRequestPool(runnable);
+			}
+			else {
+				ConnectorApplicativeThreadPool.executeByAsyncInRequestPool(runnable);
+			}
 		}
 			
 	}

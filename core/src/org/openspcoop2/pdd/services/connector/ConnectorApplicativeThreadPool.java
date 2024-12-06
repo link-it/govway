@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.services.connector;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -69,8 +71,17 @@ public class ConnectorApplicativeThreadPool {
 	 * Questa funzionalità per default è attiva.
 	 * Si gestisce tramite la proprietà 'org.openspcoop2.pdd.connettori.asyncRequest.stream'
 	 */
-	private static ExecutorService asyncRequestPool;
-	
+	// erogazioni
+	private static String inRequestThreadPoolId = null;
+	public String getInRequestThreadPoolId() {
+		return inRequestThreadPoolId;
+	}
+	// fruizioni
+	private static String outRequestThreadPoolId = null;
+	public String getOutRequestThreadPoolId() {
+		return outRequestThreadPoolId;
+	}	
+		
 	/**
 	 * thread lanciato in org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCOREInputStreamEntityConsumer
 	 * Viene utilizzato per sganciare subito il worker thread del connettore NIO della libreria client, in modo che tutta la logica di gestione della risposta avvenga su un thread applicativo,
@@ -78,7 +89,20 @@ public class ConnectorApplicativeThreadPool {
 	 * Questa funzionalità per default è attiva.
 	 * Si gestisce tramite la proprietà 'org.openspcoop2.pdd.connettori.asyncResponse.stream'
 	 */
-	private static ExecutorService asyncResponsePool;
+	// erogazioni
+	private static String outResponseThreadPoolId = null;
+	public String getOutResponseThreadPoolId() {
+		return outResponseThreadPoolId;
+	}
+	// fruizioni
+	private static String inResponseThreadPoolId = null;
+	public String getInResponseThreadPoolId() {
+		return inResponseThreadPoolId;
+	}
+	
+	/** Pool Thread Asincroni */
+	private static Map<String, ExecutorService> asyncThreadPool = null;
+	
 	
 	public static void initialize(OpenSPCoop2Properties op2) {
 		if(!op2.isBIOConfigSyncClientUseCustomMessageObjectEntity()) {
@@ -88,43 +112,56 @@ public class ConnectorApplicativeThreadPool {
 			}
 		}
 		
-		if(op2.isNIOEnabled()) {
-			if(op2.isNIOConfigAsyncRequestStreamEnabled()) {
-				int size = op2.getNIOConfigAsyncRequestApplicativeThreadPoolSize();
-				if(size>0) {
-					asyncRequestPool = Executors.newFixedThreadPool(size, new ConnectorApplicativeThreadFactory("request-nio-worker"));
-				}
-			}
-			if(op2.isNIOConfigAsyncResponseStreamEnabled()) {
-				int size = op2.getNIOConfigAsyncResponseApplicativeThreadPoolSize();
-				if(size>0) {
-					asyncResponsePool = Executors.newFixedThreadPool(size, new ConnectorApplicativeThreadFactory("response-nio-worker"));
-				}
+		if(op2.isNIOEnabled() &&
+			(op2.isNIOConfigAsyncRequestStreamEnabled() || op2.isNIOConfigAsyncResponseStreamEnabled()) 
+			){
+			ConnectorAsyncThreadPoolConfig poolConfig = op2.getNIOConfigAsyncThreadPoolConfig();
+			inRequestThreadPoolId = poolConfig.getInRequestThreadPoolId();
+			outRequestThreadPoolId = poolConfig.getOutRequestThreadPoolId();
+			inResponseThreadPoolId = poolConfig.getInResponseThreadPoolId();
+			outResponseThreadPoolId = poolConfig.getOutResponseThreadPoolId();
+			asyncThreadPool = new HashMap<>();
+			for (Map.Entry<String,Integer> entry : poolConfig.getPoolSize().entrySet()) {
+				String poolName = entry.getKey();
+				int size = entry.getValue();
+				asyncThreadPool.put(poolName, Executors.newFixedThreadPool(size, new ConnectorApplicativeThreadFactory(poolName+"-worker")));
 			}
 		}
 	}
 	
 	
-	public static void executeInSyncRequestPool(Runnable runnable) {
+	public static void executeBySyncRequestPool(Runnable runnable) {
 		syncRequestPool.execute(runnable);
 	}
 	
-	public static void executeInAsyncRequestPool(Runnable runnable) {
-		asyncRequestPool.execute(runnable);
+	public static void executeByAsyncInRequestPool(Runnable runnable) {
+		asyncThreadPool.get(inRequestThreadPoolId).execute(runnable);
 	}
-	public static void executeInAsyncResponsePool(Runnable runnable) {
-		asyncResponsePool.execute(runnable);
+	public static void executeByAsyncOutRequestPool(Runnable runnable) {
+		asyncThreadPool.get(outRequestThreadPoolId).execute(runnable);
+	}
+	public static void executeByAsyncInResponsePool(Runnable runnable) {
+		asyncThreadPool.get(inResponseThreadPoolId).execute(runnable);
+	}
+	public static void executeByAsyncOutResponsePool(Runnable runnable) {
+		asyncThreadPool.get(outResponseThreadPoolId).execute(runnable);
 	}
 	
 	public static ExecutorService getSyncRequestPool() {
 		return syncRequestPool;
 	}
 
-	public static ExecutorService getAsyncRequestPool() {
-		return asyncRequestPool;
+	public static ExecutorService getAsyncInRequestPool() {
+		return asyncThreadPool.get(inRequestThreadPoolId);
 	}
-	public static ExecutorService getAsyncResponsePool() {
-		return asyncResponsePool;
+	public static ExecutorService getAsyncOutRequestPool() {
+		return asyncThreadPool.get(outRequestThreadPoolId);
+	}
+	public static ExecutorService getAsyncInResponsePool() {
+		return asyncThreadPool.get(inResponseThreadPoolId);
+	}
+	public static ExecutorService getAsyncOutResponsePool() {
+		return asyncThreadPool.get(outResponseThreadPoolId);
 	}
 	
 	public static void shutdown() {
@@ -132,11 +169,10 @@ public class ConnectorApplicativeThreadPool {
 			syncRequestPool.shutdown();
 		}
 		
-		if(asyncRequestPool!=null) {
-			asyncRequestPool.shutdown();
-		}
-		if(asyncResponsePool!=null) {
-			asyncResponsePool.shutdown();
+		for (Map.Entry<String,ExecutorService> entry : asyncThreadPool.entrySet()) {
+			if(entry.getValue()!=null) {
+				entry.getValue().shutdown();
+			}
 		}
 	}
 	
@@ -146,18 +182,28 @@ public class ConnectorApplicativeThreadPool {
 		}
 		return null;
 	}
+	public static boolean isSyncRequestPoolThreadsEnabled() {
+		return syncRequestPool!=null;
+	}
 	
-	public static String getAsyncRequestPoolThreadsImage() {
-		if(asyncRequestPool instanceof ThreadPoolExecutor tpe) {
-			return getThreadsImage(tpe);
+	public static String getAsyncPoolThreadsImage() {
+		StringBuilder sb = new StringBuilder();
+		for (Map.Entry<String,ExecutorService> entry : asyncThreadPool.entrySet()) {
+			if(entry.getKey()!=null && entry.getValue() instanceof ThreadPoolExecutor tpe) {
+				if(sb.length()>0) {
+					sb.append("\n\n");
+				}
+				sb.append("[").append(entry.getKey()).append("] ").
+					append(getThreadsImage(tpe));
+			}
+		}
+		if(sb.length()>0) {
+			return sb.toString();
 		}
 		return null;
 	}
-	public static String getAsyncResponsePoolThreadsImage() {
-		if(asyncResponsePool instanceof ThreadPoolExecutor tpe) {
-			return getThreadsImage(tpe);
-		}
-		return null;
+	public static boolean isAsyncPoolThreadsEnabled() {
+		return asyncThreadPool!=null;
 	}
 	
 	private static String getThreadsImage(ThreadPoolExecutor tpe) {

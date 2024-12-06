@@ -55,15 +55,17 @@ public class ConnettoreHTTPCOREInputStreamEntityConsumer implements AsyncRespons
 	private FutureCallback<ConnettoreHTTPCOREResponse> callback;
 	private long count = 0;
 	private boolean complete = false;
+	private boolean delegata;
 
 	private ConnettoreLogger logger;
 	private int sizeBuffer;
 	private Integer readTimeout;
 	
-	public ConnettoreHTTPCOREInputStreamEntityConsumer(ConnettoreLogger logger, int sizeBuffer, int readTimeout) {
+	public ConnettoreHTTPCOREInputStreamEntityConsumer(ConnettoreLogger logger, int sizeBuffer, int readTimeout, boolean delegata) {
 		this.logger = logger;
 		this.sizeBuffer = sizeBuffer;
 		this.readTimeout = readTimeout;
+		this.delegata = delegata;
 	}
 	
 	private void invokeCallback() {
@@ -86,7 +88,13 @@ public class ConnettoreHTTPCOREInputStreamEntityConsumer implements AsyncRespons
 				}
 			}.init(this.callback, this.res);
 			/**System.out.println("ESEGUO!");*/
-			ConnectorApplicativeThreadPool.executeInAsyncResponsePool(runnable);
+			if(this.delegata) {
+				ConnectorApplicativeThreadPool.executeByAsyncInResponsePool(runnable);
+			}
+			else {
+				ConnectorApplicativeThreadPool.executeByAsyncOutResponsePool(runnable);
+			}
+
 			this.callback = null;
 		}
 	}

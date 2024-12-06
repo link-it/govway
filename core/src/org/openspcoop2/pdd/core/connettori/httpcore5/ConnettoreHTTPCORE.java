@@ -543,7 +543,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 										requestReadTimeout, CostantiPdD.CONNETTORE_FASE_GESTIIONE_RICHIESTA);
 								PipedUnblockedOutputStream puos = new PipedUnblockedOutputStream((IPipedUnblockedStream) isRequest);
 								messageWriteToRunnable = new MessageWriteToRunnable(this.logger.getLogger(), this.requestMsg, puos, consumeRequestMessage);
-								ConnectorApplicativeThreadPool.executeInSyncRequestPool(messageWriteToRunnable); // la scrittura si fermerà su buffer e poi prenderà a funzionare mentre viene letto l'input stream dal connettore httpcore
+								ConnectorApplicativeThreadPool.executeBySyncRequestPool(messageWriteToRunnable); // la scrittura si fermerà su buffer e poi prenderà a funzionare mentre viene letto l'input stream dal connettore httpcore
 							}
 							HttpEntity httpEntity = new InputStreamEntity(isRequest, ct);
 							this.httpRequest.setEntity(httpEntity);

@@ -1634,7 +1634,12 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoIdTransazioniAttive = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD = new HashMap<>();
-	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA= new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoBIOHttpClientConnectionManagerStatus = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoBIOWorkerThreadPoolStatus = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerStatus = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoNIOWorkerThreadPoolStatus = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerIOThreadCount = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j = new HashMap<>();
@@ -1896,6 +1901,21 @@ public class ControlStationCore {
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA.get(alias);
 	}
+	public String jmxPdDConfigurazioneSistemaNomeMetodoBIOHttpClientConnectionManagerStatus(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoBIOHttpClientConnectionManagerStatus.get(alias);
+	}
+	public String jmxPdDConfigurazioneSistemaNomeMetodoBIOWorkerThreadPoolStatus(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoBIOWorkerThreadPoolStatus.get(alias);
+	}
+	public String jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerStatus(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerStatus.get(alias);
+	}
+	public String jmxPdDConfigurazioneSistemaNomeMetodoNIOWorkerThreadPoolStatus(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoNIOWorkerThreadPoolStatus.get(alias);
+	}
+	public String jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerIOThreadCount(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerIOThreadCount.get(alias);
+	}	
 	public String getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD.get(alias);
 	}
@@ -2775,6 +2795,11 @@ public class ControlStationCore {
 		this.jmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive = core.jmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD = core.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD;
 		this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA = core.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoBIOHttpClientConnectionManagerStatus = core.jmxPdDConfigurazioneSistemaNomeMetodoBIOHttpClientConnectionManagerStatus;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoBIOWorkerThreadPoolStatus = core.jmxPdDConfigurazioneSistemaNomeMetodoBIOWorkerThreadPoolStatus;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerStatus = core.jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerStatus;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoNIOWorkerThreadPoolStatus = core.jmxPdDConfigurazioneSistemaNomeMetodoNIOWorkerThreadPoolStatus;
+		this.jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerIOThreadCount = core.jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerIOThreadCount;
 		this.jmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD = core.jmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici = core.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j = core.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j;
@@ -3290,6 +3315,11 @@ public class ControlStationCore {
 					this.jmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoIdProtocolloTransazioniAttive(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPD(alias));
 					this.jmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoBIOHttpClientConnectionManagerStatus.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoBIOHttpClientConnectionManagerStatus(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoBIOWorkerThreadPoolStatus.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoBIOWorkerThreadPoolStatus(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerStatus.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerStatus(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoNIOWorkerThreadPoolStatus.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoNIOWorkerThreadPoolStatus(alias));
+					this.jmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerIOThreadCount.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerIOThreadCount(alias));
 					this.jmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnostici(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoSeveritaDiagnosticiLog4j(alias));

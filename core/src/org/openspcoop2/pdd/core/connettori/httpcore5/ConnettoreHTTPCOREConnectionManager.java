@@ -101,6 +101,15 @@ public class ConnettoreHTTPCOREConnectionManager {
 		}
 	}
 	
+	public static String getHttpClientConnectionManagerStatus() {
+		if(idleConnectionEvictor!=null) {
+			StringBuilder sb = new StringBuilder();
+			idleConnectionEvictor.internalCheck(sb);
+			return sb.toString();
+		}
+		return null;
+	}
+	
 	private static void initialize(String key, SSLConnectionSocketFactory sslConnectionSocketFactory, 
 			ConnettoreHTTPCOREConnectionConfig connectionConfig, ConnettoreLogger logger) throws ConnettoreException {
 		

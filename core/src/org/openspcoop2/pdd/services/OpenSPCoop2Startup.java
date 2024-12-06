@@ -2742,9 +2742,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/* ----------- Inizializzazione BIO Client ------------ */
 			try{
-				ConnettoreHTTPCOREConnectionManager.initialize();
+				org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCOREConnectionManager.initialize();
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione BIO Client Manager");
+				return;
+			}
+			
+			/* ----------- Inizializzazione NIO Client ------------ */
+			try{
+				if(propertiesReader.isNIOEnabled()) {
+					org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCOREConnectionManager.initialize();
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione NIO Client Manager");
 				return;
 			}
 			

@@ -53,6 +53,17 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	CHECK_PDD ("Check"),
 	PROXY ("Proxy");
 	
+	public boolean isPortaDelegata() {
+		return PORTA_DELEGATA.equals(this) || 
+				PORTA_DELEGATA_NIO.equals(this) || 
+				PORTA_DELEGATA_XML_TO_SOAP.equals(this) || 
+				PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(this) || 
+				PORTA_DELEGATA_INTEGRATION_MANAGER.equals(this);
+	}
+	public boolean isPortaApplicativa() {
+		return PORTA_APPLICATIVA.equals(this) || 
+				PORTA_APPLICATIVA_NIO.equals(this);
+	}
 	
 	// ID: 7 cifre (parlante)
 	private static final String ID_OPENSPCOOP_SERVLET = "OP20000";

@@ -45,7 +45,7 @@ public abstract class AbstractConnettoreConnectionEvictor extends BaseThread {
     private Map<String, Object> mapConnection;
     private String id;
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	protected AbstractConnettoreConnectionEvictor(boolean debug, int sleepTimeSeconds, int closeIdleConnectionsAfterSeconds,
     		Object mapConnection, String id) {
         this.setTimeout(sleepTimeSeconds);
@@ -56,6 +56,10 @@ public abstract class AbstractConnettoreConnectionEvictor extends BaseThread {
         this.id = id;
     }
 
+    protected String getIdConnettore() {
+		return this.id;
+	}
+	
     protected void logDebug(String msg) {
     	if(this.logConnettori!=null) {
     		this.logConnettori.debug(msg);
@@ -77,6 +81,32 @@ public abstract class AbstractConnettoreConnectionEvictor extends BaseThread {
     	}
     }
     
+    protected abstract String getLogPrefix();
+    protected void print(StringBuilder sb, String msg) {
+    	if(sb!=null) {
+			sb.append(msg+"\n");
+		}
+		else {
+			this.logDebug(getLogPrefix()+msg);
+		}
+    }
+    protected void printError(StringBuilder sb, String msg) {
+    	if(sb!=null) {
+			sb.append(msg+"\n");
+		}
+		else {
+			this.logError(getLogPrefix()+msg);
+		}
+    }
+    protected void printError(StringBuilder sb, String msg, Exception e) {
+    	if(sb!=null) {
+			sb.append(msg+"\n");
+		}
+		else {
+			this.logError(getLogPrefix()+msg,e);
+		}
+    }
+    
     protected abstract boolean check();
     
     @Override
@@ -85,79 +115,82 @@ public abstract class AbstractConnettoreConnectionEvictor extends BaseThread {
     	boolean check = this.check();
     	
     	if(check) {
-	    	List<String> removedKeys = new ArrayList<>();
-	    				
-	    	if(this.mapConnection!=null) {
-	    	
-				this.logDebug("["+this.id+"] Client attivi: "+this.mapConnection.size());	
-	    		
-				for (Map.Entry<String,Object> entry : this.mapConnection.entrySet()) {
-					String key = entry.getKey();
-					if(key!=null) {
-						
-						String prefix = "["+this.id+"] Client ("+key+") ";
-						
-						Object o = this.mapConnection.get(key);
-						AbstractConnettoreConnection<?> connection = null;
-						if(o instanceof AbstractConnettoreConnection) {
-							connection = (AbstractConnettoreConnection<?>) o;
-						}
-						else {
-							this.logError(prefix+"Incompatible type '"+o.getClass().getName()+"'");
-							continue;
-						}
-				    	if(!connection.isExpired()) {
-				    		connection.checkExpire();
-				    	}
-						
-				    	// DEBUG
-				    	if(this.debug &&
-				    		connection!=null) {
-				    		String status = connection.getStatus();
-				    		if(status!=null && StringUtils.isNotEmpty(status)) {
-				    			this.logDebug(prefix+"(expired:"+connection.isExpired()+"): status: "+connection.getStatus());
-				    		}
-				    		else {
-				    			this.logDebug(prefix+"(expired:"+connection.isExpired()+")");
-				    		}
-				    		
-				    	}
+    		check(null);
+    	}
+    }
+    protected void check(StringBuilder sb) {
+    	List<String> removedKeys = new ArrayList<>();
+    				
+    	if(this.mapConnection!=null) {
+    	
+    		print(sb,"Client attivi: "+this.mapConnection.size());	
+    		
+			for (Map.Entry<String,Object> entry : this.mapConnection.entrySet()) {
+				String key = entry.getKey();
+				if(key!=null) {
 					
-				    	if(connection.isExpired() &&
-				    		connection.isReadyForClose()) {
-				    		removedKeys.add(key);
-				    	}
-				    	
+					String prefix = "Client ("+key+") ";
+					
+					Object o = this.mapConnection.get(key);
+					AbstractConnettoreConnection<?> connection = null;
+					if(o instanceof AbstractConnettoreConnection) {
+						connection = (AbstractConnettoreConnection<?>) o;
 					}
-				}
+					else {
+						printError(sb,prefix+"Incompatible type '"+o.getClass().getName()+"'");
+						continue;
+					}
+			    	if(!connection.isExpired()) {
+			    		connection.checkExpire();
+			    	}
+					
+			    	// DEBUG
+			    	if(this.debug &&
+			    		connection!=null) {
+			    		String status = connection.getStatus();
+			    		if(status!=null && StringUtils.isNotEmpty(status)) {
+			    			print(sb,prefix+"(expired:"+connection.isExpired()+"): status: "+connection.getStatus());
+			    		}
+			    		else {
+			    			print(sb,prefix+"(expired:"+connection.isExpired()+")");
+			    		}
+			    		
+			    	}
 				
-				if(!removedKeys.isEmpty()) {
-					while(!removedKeys.isEmpty()) {
-						String key = removedKeys.remove(0);
-						
-						String prefix = "["+this.id+"] Client ("+key+") ";
-						
-						this.logDebug(prefix+"close unused connection ...");
-						Object o = this.mapConnection.get(key);
-						AbstractConnettoreConnection<?> connection = null;
-						if(o instanceof AbstractConnettoreConnection) {
-							connection = (AbstractConnettoreConnection<?>) o;
-						}
-						else {
-							this.logDebug(prefix+"close unused connection failed: incompatible type '"+o.getClass().getName()+"'");
-							continue;
-						}
-						try {
-							connection.close();
-							this.logDebug(prefix+"close unused connection ok");
-							this.mapConnection.remove(key);
-						}catch(Exception e) {
-							this.logDebug(prefix+"close unused connection failed: "+e.getMessage(),e);
-						}
+			    	if(connection.isExpired() &&
+			    		connection.isReadyForClose()) {
+			    		removedKeys.add(key);
+			    	}
+			    	
+				}
+			}
+			
+			if(!removedKeys.isEmpty()) {
+				while(!removedKeys.isEmpty()) {
+					String key = removedKeys.remove(0);
+					
+					String prefix = "Client ("+key+") ";
+					
+					this.logDebug(prefix+"close unused connection ...");
+					Object o = this.mapConnection.get(key);
+					AbstractConnettoreConnection<?> connection = null;
+					if(o instanceof AbstractConnettoreConnection) {
+						connection = (AbstractConnettoreConnection<?>) o;
+					}
+					else {
+						printError(sb,prefix+"close unused connection failed: incompatible type '"+o.getClass().getName()+"'");
+						continue;
+					}
+					try {
+						connection.close();
+						print(sb,prefix+"close unused connection ok");
+						this.mapConnection.remove(key);
+					}catch(Exception e) {
+						printError(sb,prefix+"close unused connection failed: "+e.getMessage(),e);
 					}
 				}
 			}
-    	}
+		}
     	
     }
 

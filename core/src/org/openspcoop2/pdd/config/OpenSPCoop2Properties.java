@@ -107,6 +107,7 @@ import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.mdb.Sbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.pdd.services.connector.ConnectorAsyncThreadPoolConfig;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
@@ -1500,13 +1501,19 @@ public class OpenSPCoop2Properties {
 				this.getNIOConfigAsyncClientExpireUnusedAfterSeconds();
 				this.getNIOConfigAsyncClientCloseUnusedAfterSeconds();
 				this.isNIOConfigAsyncClientUseCustomMessageObjectEntity();
+				this.getNIOConfigAsyncHttpclientIoReactorThread();
 				if(this.isNIOConfigAsyncRequestStreamEnabled()) {
 					this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer();
-					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize();
 				}
 				if(this.isNIOConfigAsyncResponseStreamEnabled()) {
 					this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer();
-					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize();
+				}
+				if(this.isNIOConfigAsyncRequestStreamEnabled() || this.isNIOConfigAsyncResponseStreamEnabled()) {
+					ConnectorAsyncThreadPoolConfig pool = this.getNIOConfigAsyncThreadPoolConfig();
+					if(pool==null) {
+						this.logError("Riscontrato errore durante la lettura della configurazione del pool di thread per la gestione asincrona in streaming");
+						return false;
+					}
 				}
 			}
 			
@@ -15123,6 +15130,32 @@ public class OpenSPCoop2Properties {
 		return this.isNIOConfigAsyncClientUseCustomMessageObjectEntity;
 	}
 	
+	private Integer getNIOConfigAsyncHttpclientIoReactorThread = null;
+	private Boolean getNIOConfigAsyncHttpclientIoReactorThreadRead = null;
+	public Integer getNIOConfigAsyncHttpclientIoReactorThread() {	
+		if(this.getNIOConfigAsyncHttpclientIoReactorThreadRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncRequest.httpclient.ioreactor.threadCount";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					if(CostantiPdD.CONNETTORE_NIO_ASYNC_CONFIG_AVAILABLE_PROCESSORS.equals(v)) {
+						this.getNIOConfigAsyncHttpclientIoReactorThread = CostantiPdD.getAvailableProcessors();
+					}
+					else {
+						this.getNIOConfigAsyncHttpclientIoReactorThread = java.lang.Integer.parseInt(v);
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			this.getNIOConfigAsyncHttpclientIoReactorThreadRead = true;
+		}
+
+		return this.getNIOConfigAsyncHttpclientIoReactorThread;
+	}
+	
 	private Boolean isNIOConfigAsyncRequestStreamEnabled = null;
 	public boolean isNIOConfigAsyncRequestStreamEnabled() {	
 		if(this.isNIOConfigAsyncRequestStreamEnabled==null){
@@ -15168,30 +15201,6 @@ public class OpenSPCoop2Properties {
 
 		return this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer;
 	}
-	
-	private Integer getNIOConfigAsyncRequestApplicativeThreadPoolSize = null;
-	public int getNIOConfigAsyncRequestApplicativeThreadPoolSize() {	
-		if(this.getNIOConfigAsyncRequestApplicativeThreadPoolSize==null){
-			String pName = "org.openspcoop2.pdd.connettori.asyncRequest.applicativeThreadPool.size";
-			try{ 
-				String v = null;
-				v = this.reader.getValueConvertEnvProperties(pName);
-				if(v!=null){
-					v = v.trim();
-					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
-				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE);
-					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE;
-				}
-			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE+", errore:"+e.getMessage(),e);
-				this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE;
-			}  
-		}
-
-		return this.getNIOConfigAsyncRequestApplicativeThreadPoolSize;
-	}
-	
 	
 	
 	private Boolean isNIOConfigAsyncResponseStreamEnabled = null;
@@ -15240,28 +15249,22 @@ public class OpenSPCoop2Properties {
 		return this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer;
 	}
 	
-	private Integer getNIOConfigAsyncResponseApplicativeThreadPoolSize = null;
-	public int getNIOConfigAsyncResponseApplicativeThreadPoolSize() {	
-		if(this.getNIOConfigAsyncResponseApplicativeThreadPoolSize==null){
-			String pName = "org.openspcoop2.pdd.connettori.asyncResponse.applicativeThreadPool.size";
+	private ConnectorAsyncThreadPoolConfig getNIOConfigAsyncThreadPoolConfig = null;
+	public ConnectorAsyncThreadPoolConfig getNIOConfigAsyncThreadPoolConfig() {	
+		if(this.getNIOConfigAsyncThreadPoolConfig==null){
 			try{ 
-				String v = null;
-				v = this.reader.getValueConvertEnvProperties(pName);
-				if(v!=null){
-					v = v.trim();
-					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
-				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE);
-					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE;
-				}
+				this.getNIOConfigAsyncThreadPoolConfig=new ConnectorAsyncThreadPoolConfig(this.reader.readPropertiesConvertEnvProperties(ConnectorAsyncThreadPoolConfig.PROPERTY_PREFIX),
+						this.isNIOConfigAsyncRequestStreamEnabled(), this.isNIOConfigAsyncResponseStreamEnabled());
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE+", errore:"+e.getMessage(),e);
-				this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE;
+				this.logError("Proprietà "+ConnectorAsyncThreadPoolConfig.PROPERTY_PREFIX+" non corrette:"+e.getMessage(),e);
 			}  
 		}
 
-		return this.getNIOConfigAsyncResponseApplicativeThreadPoolSize;
+		return this.getNIOConfigAsyncThreadPoolConfig;
 	}
+	
+	
+	
 	
 	
 	

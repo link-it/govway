@@ -107,6 +107,25 @@ public class ConnettoreHTTPCOREConnectionManager {
 		}
 	}
 	
+	public static String getHttpClientConnectionManagerStatus() {
+		if(idleConnectionEvictor!=null) {
+			StringBuilder sb = new StringBuilder();
+			idleConnectionEvictor.internalCheck(sb);
+			return sb.toString();
+		}
+		return null;
+	}
+	public static String getNIOHttpClientConnectionManagerIOThreadCount() {
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		Integer numeroThread = op2Properties.getNIOConfigAsyncHttpclientIoReactorThread();
+		if(numeroThread!=null && numeroThread.intValue()>0) {
+			return numeroThread.intValue()+"";
+		}
+		else {
+			return "[default] availableProcessors:"+Runtime.getRuntime().availableProcessors();
+		}
+	}
+	
 	private static void initialize(String key, TlsStrategy tlsStrategy, 
 			ConnettoreHTTPCOREConnectionConfig connectionConfig, ConnettoreLogger logger) throws ConnettoreException {
 		
@@ -315,6 +334,8 @@ public class ConnettoreHTTPCOREConnectionManager {
 		try {				
 			RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
 			
+			OpenSPCoop2Properties op2 = OpenSPCoop2Properties.getInstance();
+						
 			// ** Timeout **
 			ConnettoreHTTPCOREUtils.setTimeout(requestConfigBuilder, connectionConfig);
 						
@@ -376,11 +397,14 @@ public class ConnettoreHTTPCOREConnectionManager {
 			  Di seguito due gli esempi per modificare la configurazione di default
 			 */
 			/** Indicare il numero di thread da utilizzare */
-			/**int numeroThread = Runtime.getRuntime().availableProcessors();
-			org.apache.hc.core5.reactor.IOReactorConfig ioReactorConfig = org.apache.hc.core5.reactor.IOReactorConfig.custom()
-			        .setIoThreadCount(numeroThread)
-			        .build();
-			httpClientBuilder.setIOReactorConfig(ioReactorConfig);*/
+			/**int numeroThread = Runtime.getRuntime().availableProcessors();*/
+			Integer numeroThread = op2.getNIOConfigAsyncHttpclientIoReactorThread();
+			if(numeroThread!=null && numeroThread.intValue()>0) {
+				org.apache.hc.core5.reactor.IOReactorConfig ioReactorConfig = org.apache.hc.core5.reactor.IOReactorConfig.custom()
+				        .setIoThreadCount(numeroThread)
+				        .build();
+				httpClientBuilder.setIOReactorConfig(ioReactorConfig);
+			}
 			/** Configurazione di un Executor Personalizzato (opzionale)
 			org.apache.hc.core5.reactor.IOReactorConfig ioReactorConfig = null //vedi sopra;
 			org.apache.hc.core5.reactor.DefaultConnectingIOReactor ioReactor = new ConnettoreHTTPCORECustomConnectingIOReactor(.cm..);
@@ -398,7 +422,6 @@ public class ConnettoreHTTPCOREConnectionManager {
 			CloseableHttpAsyncClient httpclient = httpClientBuilder.build();
 			httpclient.start();
 			
-			OpenSPCoop2Properties op2 = OpenSPCoop2Properties.getInstance();
 			int expireUnusedAfterSeconds = op2.getNIOConfigAsyncClientExpireUnusedAfterSeconds(); 
 			int closeUnusedAfterSeconds = op2.getNIOConfigAsyncClientCloseUnusedAfterSeconds(); 
 			

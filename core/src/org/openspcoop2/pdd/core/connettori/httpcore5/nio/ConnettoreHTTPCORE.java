@@ -62,6 +62,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCOREUtils;
 import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHttpRequestInterceptor;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -599,7 +600,8 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			boolean stream = OpenSPCoop2Properties.getInstance().isNIOConfigAsyncResponseStreamEnabled();
 			int dimensioneBuffer = OpenSPCoop2Properties.getInstance().getNIOConfigAsyncResponsePipedUnblockedStreamBuffer();
 			if(stream) {
-				responseConsumer = new ConnettoreHTTPCOREInputStreamEntityConsumer(this.logger, dimensioneBuffer, this.readConnectionTimeout);	
+				boolean delegata = !ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo);
+				responseConsumer = new ConnettoreHTTPCOREInputStreamEntityConsumer(this.logger, dimensioneBuffer, this.readConnectionTimeout, delegata);	
 			}
 			else {
 				responseConsumer = new ConnettoreHTTPCOREExtendAbstractBinResponseConsumer();
@@ -645,7 +647,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	
 	public void checkThreadLocalContext(String function, BooleanNullable switchThreadLocalContextDoneHolder) throws IOException {
 		String tName = Thread.currentThread().getName();
-		if(function!=null) {
+		if(function!=null && this.entryPointThreadName!=null) {
 			// debug
 		}
 		/**System.out.println("("+function+")("+this.idTransazione+") SWITCH THREAD CONTEXT DA [entry:"+this.entryPointThreadName+"][actual:"+this.actualThreadName+"] -> ["+tName+"] ...");*/
