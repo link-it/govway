@@ -29,6 +29,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
@@ -58,7 +59,7 @@ import org.slf4j.Logger;
 public class OpenSPCoop2Servlet extends HttpServlet {
 	private static Logger logger = null;
 
-	private static synchronized Logger _getLogger() {
+	private static synchronized Logger getLoggerStartup() {
 		if ( logger == null ) {
 			logger = LoggerWrapperFactory.getLogger("govway.startup");
 		}
@@ -66,7 +67,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 	}
 	private static Logger getLogger() {
 		if ( logger == null )
-			_getLogger();
+			getLoggerStartup();
 		return logger;
 	}
 
@@ -110,7 +111,8 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 		try {
 			m = HttpRequestMethod.valueOf(req.getMethod().toUpperCase());
 		}catch(Exception e) {
-			super.service(req, resp); // richiamo implementazione originale che genera errore: Method XXX is not defined in RFC 2068 and is not supported by the Servlet API
+			// richiamo implementazione originale che genera errore: Method is not defined in RFC 2068 and is not supported by the Servlet API
+			super.service(req, resp); 
 			return;
 		}
 		switch (m) {
@@ -140,14 +142,12 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			break;
 			
 		// Additionals
-		case PATCH:
-		case LINK:
-		case UNLINK:
+		case PATCH, LINK, UNLINK:
 			boolean enabled = true;
 			OpenSPCoop2Properties op2Properties = null;
 			try {
 				op2Properties = OpenSPCoop2Properties.getInstance();
-			}catch(Throwable t) { 
+			}catch(Exception t) { 
 				//come default si lasciano abilitati
 			}
 			if(op2Properties!=null) {
@@ -157,7 +157,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				else if(HttpRequestMethod.LINK.equals(m)) {
 					enabled = op2Properties.isServiceRequestHttpMethodLinkEnabled();
 				}
-				else if(HttpRequestMethod.UNLINK.equals(m)) {
+				else {/**else if(HttpRequestMethod.UNLINK.equals(m)) {*/
 					enabled = op2Properties.isServiceRequestHttpMethodUnlinkEnabled();
 				}
 			}
@@ -165,12 +165,12 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				dispatch(req, resp, m);
 			}
 			else {
-				super.service(req, resp); // richiamo implementazione originale che genera errore: Method XXX is not defined in RFC 2068 and is not supported by the Servlet API
+				super.service(req, resp); // richiamo implementazione originale che genera errore: Method is not defined in RFC 2068 and is not supported by the Servlet API
 			}
 			break;
 			
 		default:
-			super.service(req, resp); // richiamo implementazione originale che genera errore: Method XXX is not defined in RFC 2068 and is not supported by the Servlet API
+			super.service(req, resp); // richiamo implementazione originale che genera errore: Method is not defined in RFC 2068 and is not supported by the Servlet API
 			break;
 		}
 	}
@@ -236,7 +236,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					if(function.startsWith("/") && function.length()>1) {
 						function = function.substring(1);
 					}
-					if(function.equals(URLProtocolContext.Check_FUNCTION) || function.equals(URLProtocolContext.Proxy_FUNCTION)){
+					if(function.equals(URLProtocolContext.CHECK_FUNCTION) || function.equals(URLProtocolContext.PROXY_FUNCTION)){
 						CheckStatoPdD.serializeNotInitializedResponse(res, (logCore!=null) ? logCore : logOpenSPCoop2Servlet);
 						return;
 					}
@@ -271,10 +271,12 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					StringBuilder bfLogError = new StringBuilder();
 					ConnectorUtils.generateErrorMessage(IDService.OPENSPCOOP2_SERVLET,method,req,bfLogError, "GovWay non inizializzato", true, false);
 					if(logCore!=null){
-						logCore.error(bfLogError.toString());
+						String msg = bfLogError.toString();
+						logCore.error(msg);
 					}
 					else{
-						logOpenSPCoop2Servlet.error(bfLogError.toString());
+						String msg = bfLogError.toString();
+						logOpenSPCoop2Servlet.error(msg);
 					}
 					res.sendError(404,ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeGovWayNotInitialized(IDService.OPENSPCOOP2_SERVLET)));
 					return;
@@ -282,6 +284,8 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				}
 			}
 			op2Properties = OpenSPCoop2Properties.getInstance();
+			
+			boolean nioEnabled = op2Properties.isNIOEnabled();
 			
 			boolean printCertificate = false;
 			FunctionContextsCustom customContexts = null;
@@ -292,14 +296,15 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			
 			URLProtocolContext protocolContext = new URLProtocolContextImpl(req, logCore, printCertificate, customContexts);
 			String function = protocolContext.getFunction();
+			String prefixFunction = "Service ["+function+"] ";
 			IDService idServiceCustom = protocolContext.getIdServiceCustom();
 			
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByServletContext(protocolContext.getProtocolWebContext());
 			if(pf==null){
 				if(!Costanti.CONTEXT_EMPTY.equals(protocolContext.getProtocolWebContext()))
-					throw new Exception("Non risulta registrato un protocollo con contesto ["+protocolContext.getProtocolWebContext()+"]");
+					throw new CoreException("Non risulta registrato un protocollo con contesto ["+protocolContext.getProtocolWebContext()+"]");
 				else
-					throw new Exception("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
+					throw new CoreException("Non risulta registrato un protocollo con contesto speciale 'vuoto'");
 			}
 						
 			if( 
@@ -314,8 +319,17 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
 			}
+			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_DELEGATA_NIO.equals(idServiceCustom))
+					){
+					
+				checkSecrets();
+				
+				RicezioneContenutiApplicativiConnectorAsync r = new RicezioneContenutiApplicativiConnectorAsync();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+					
+			}
 			else if(
-					(function.equals(URLProtocolContext.PDtoSOAP_FUNCTION) && op2Properties.isEnabledFunctionPDtoSOAP()) 
+					(function.equals(URLProtocolContext.PD_TO_SOAP_FUNCTION) && op2Properties.isEnabledFunctionPDtoSOAP()) 
 					|| 
 					(idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(idServiceCustom))
 				){
@@ -325,6 +339,15 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				RicezioneContenutiApplicativiHTTPtoSOAPConnector r = new RicezioneContenutiApplicativiHTTPtoSOAPConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 				
+			}
+			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(idServiceCustom))
+					){
+					
+				checkSecrets();
+				
+				RicezioneContenutiApplicativiHTTPtoSOAPConnectorAsync r = new RicezioneContenutiApplicativiHTTPtoSOAPConnectorAsync();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+					
 			}
 			else if(
 					(function.equals(URLProtocolContext.PA_FUNCTION) && op2Properties.isEnabledFunctionPA()) 
@@ -337,13 +360,21 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				RicezioneBusteConnector r = new RicezioneBusteConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 			}
-			
-			else if(function.equals(URLProtocolContext.IntegrationManager_FUNCTION) || (idServiceCustom!=null && IDService.INTEGRATION_MANAGER_SOAP.equals(idServiceCustom))){
+			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_APPLICATIVA_NIO.equals(idServiceCustom))
+					){
+					
+				checkSecrets();
+				
+				RicezioneBusteConnectorAsync r = new RicezioneBusteConnectorAsync();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+					
+			}
+			else if(function.equals(URLProtocolContext.INTEGRATION_MANAGER_FUNCTION) || (idServiceCustom!=null && IDService.INTEGRATION_MANAGER_SOAP.equals(idServiceCustom))){
 				
 				checkSecrets();
 				
-				if(op2Properties!=null && op2Properties.isIntegrationManagerEnabled()==false) {
-					throw new Exception("Service ["+function+"] not active");
+				if(op2Properties!=null && !op2Properties.isIntegrationManagerEnabled()) {
+					throw new CoreException(prefixFunction+"not active");
 				}
 				
 				boolean wsdl = false;
@@ -354,7 +385,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 						String value = req.getParameter(key);
 						if("wsdl".equalsIgnoreCase(key) && (value==null || "".equals(value)) ){
 							// richiesta del wsdl
-							if(op2Properties!=null && op2Properties.isGenerazioneWsdlIntegrationManagerEnabled()==false){
+							if(op2Properties!=null && !op2Properties.isGenerazioneWsdlIntegrationManagerEnabled()){
 								res.sendError(404, ConnectorUtils.generateError404Message(ConnectorUtils.getFullCodeWsdlUnsupported(IDService.INTEGRATION_MANAGER_SOAP)));
 								return;
 							}
@@ -383,16 +414,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 						
 						ConnectorUtils.generateErrorMessage(IDService.INTEGRATION_MANAGER_SOAP, method, req, res, ConnectorUtils.getMessageHttpMethodNotSupported(method), false, true);
 								
-						try{
-							res.getOutputStream().flush();
-						}catch(Exception eClose){
-							// ignore
-						}
-						try{
-							res.getOutputStream().close();
-						}catch(Exception eClose){
-							// ignore
-						}
+						resFlushAndCloseSafe(res);
 						
 						return;
 					}
@@ -400,11 +422,11 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 								
 				// Dispatching al servizio di IntegrationManager implementato tramite CXF
 				String serviceIM = protocolContext.getFunctionParameters();
-				if(URLProtocolContext.IntegrationManager_SERVICE_PD_GOVWAY.equals(serviceIM) || 
-						(URLProtocolContext.IntegrationManager_SERVICE_PD_GOVWAY+"/").equals(serviceIM)) {
-					serviceIM = URLProtocolContext.IntegrationManager_SERVICE_PD;
+				if(URLProtocolContext.INTEGRATION_MANAGER_SERVICE_PD_GOVWAY.equals(serviceIM) || 
+						(URLProtocolContext.INTEGRATION_MANAGER_SERVICE_PD_GOVWAY+"/").equals(serviceIM)) {
+					serviceIM = URLProtocolContext.INTEGRATION_MANAGER_SERVICE_PD;
 				}
-				String forwardUrl = "/"+URLProtocolContext.IntegrationManager_ENGINE+"/"+serviceIM;
+				String forwardUrl = "/"+URLProtocolContext.INTEGRATION_MANAGER_ENGINE+"/"+serviceIM;
 				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME.getValue(), protocolContext.getProtocolName());
 				req.setAttribute(org.openspcoop2.core.constants.Costanti.PROTOCOL_WEB_CONTEXT.getValue(), protocolContext.getProtocolWebContext());
 				req.setAttribute(org.openspcoop2.core.constants.Costanti.INTEGRATION_MANAGER_ENGINE_AUTHORIZED.getValue(), true);
@@ -412,9 +434,9 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				dispatcher.forward(req, res);
 				
 			}
-			else if(function.equals(URLProtocolContext.Check_FUNCTION)){
+			else if(function.equals(URLProtocolContext.CHECK_FUNCTION)){
 				
-				if(HttpRequestMethod.GET.equals(method)==false){
+				if(!HttpRequestMethod.GET.equals(method)){
 					// messaggio di errore
 					boolean errore404 = false;
 					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled()){
@@ -431,16 +453,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 						
 						ConnectorUtils.generateErrorMessage(IDService.CHECK_PDD,method,req,res, ConnectorUtils.getMessageHttpMethodNotSupported(method), false, true);
 								
-						try{
-							res.getOutputStream().flush();
-						}catch(Exception eClose){
-							// ignore
-						}
-						try{
-							res.getOutputStream().close();
-						}catch(Exception eClose){
-							// ignore
-						}
+						resFlushAndCloseSafe(res);
 						
 						return;
 					}
@@ -452,13 +465,13 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				checkStatoPdD.doGet(req, res);
 				
 			}
-			else if(function.equals(URLProtocolContext.Proxy_FUNCTION)){
+			else if(function.equals(URLProtocolContext.PROXY_FUNCTION)){
 				
 				if(op2Properties!=null && !op2Properties.isProxyReadJMXResourcesEnabled()) {
-					throw new Exception("Service ["+function+"] not supported");
+					throw new CoreException(prefixFunction+"not supported");
 				}
 				
-				if(HttpRequestMethod.GET.equals(method)==false){
+				if(!HttpRequestMethod.GET.equals(method)){
 					// messaggio di errore
 					boolean errore404 = false;
 					if(op2Properties!=null && !op2Properties.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled()){
@@ -475,16 +488,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 						
 						ConnectorUtils.generateErrorMessage(IDService.PROXY,method,req,res, ConnectorUtils.getMessageHttpMethodNotSupported(method), false, true);
 								
-						try{
-							res.getOutputStream().flush();
-						}catch(Exception eClose){
-							// ignore
-						}
-						try{
-							res.getOutputStream().close();
-						}catch(Exception eClose){
-							// ignore
-						}
+						resFlushAndCloseSafe(res);
 						
 						return;
 					}
@@ -497,7 +501,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				
 			}
 			else{
-				throw new Exception("Service ["+function+"] not supported");
+				throw new CoreException(prefixFunction+"not supported");
 			}
 			
 		} catch (Exception e) {
@@ -515,11 +519,13 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 						
 			if(logCore!=null){
 				logCore.error(e.getMessage(),e);
-				logCore.error("Detail: "+bf.toString());
+				String msgError = "Detail: "+bf.toString();
+				logCore.error(msgError);
 			}
 			else{
 				logOpenSPCoop2Servlet.error(e.getMessage(),e);
-				logOpenSPCoop2Servlet.error("Detail: "+bf.toString());
+				String msgError = "Detail: "+bf.toString();
+				logOpenSPCoop2Servlet.error(msgError);
 			}
 			
 			// log su file core
@@ -573,16 +579,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 					}
 				}
 				
-				try{
-					res.getOutputStream().flush();
-				}catch(Throwable eClose){
-					// ignore
-				}
-				try{
-					res.getOutputStream().close();
-				}catch(Throwable eClose){
-					// ignore
-				}
+				resFlushAndCloseSafe(res);
 				
 			}
 			
@@ -593,6 +590,17 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 	}
 	
 
-	
+	private void resFlushAndCloseSafe(HttpServletResponse res) {
+		try{
+			res.getOutputStream().flush();
+		}catch(Exception eClose){
+			// ignore
+		}
+		try{
+			res.getOutputStream().close();
+		}catch(Exception eClose){
+			// ignore
+		}
+	}
 
 }

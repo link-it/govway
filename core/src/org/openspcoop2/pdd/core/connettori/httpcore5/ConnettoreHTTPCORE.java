@@ -32,14 +32,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.classic.HttpClient;
-import org.apache.hc.client5.http.classic.methods.HttpDelete;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.classic.methods.HttpHead;
-import org.apache.hc.client5.http.classic.methods.HttpOptions;
-import org.apache.hc.client5.http.classic.methods.HttpPatch;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.classic.methods.HttpPut;
-import org.apache.hc.client5.http.classic.methods.HttpTrace;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -97,6 +89,9 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	private static final String MSG_RELEASE_RESOURCES_FAILED = "Release resources failed: ";
 	
 	private static boolean gestioneRedirectTramiteLibrerieApache = false; // con l'implementazione di govway, vengono registrati gli hop nei diagnostici 
+	
+	
+	/* ********  F I E L D S  P R I V A T I  ******** */
 	
 	private HttpEntity httpEntityResponse = null;
 		
@@ -181,38 +176,9 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			if(this.httpMethod==null){
 				throw new ConnettoreException("HttpRequestMethod non definito");
 			}
-			this.httpRequest = null;
-			switch (this.httpMethod) {
-				case GET:
-					this.httpRequest = new HttpGet(url.toString());
-					break;
-				case DELETE:
-					this.httpRequest = new HttpDelete(url.toString());
-					break;
-				case HEAD:
-					this.httpRequest = new HttpHead(url.toString());
-					break;
-				case POST:
-					this.httpRequest = new HttpPost(url.toString());
-					break;
-				case PUT:
-					this.httpRequest = new HttpPut(url.toString());
-					break;
-				case OPTIONS:
-					this.httpRequest = new HttpOptions(url.toString());
-					break;
-				case TRACE:
-					this.httpRequest = new HttpTrace(url.toString());
-					break;
-				case PATCH:
-					this.httpRequest = new HttpPatch(url.toString());
-					break;	
-				default:
-					this.httpRequest = new CustomHttpCoreEntity(this.httpMethod, url.toString());
-					break;
-			}
-			if(this.httpMethod==null){
-				throw new ConnettoreException("HttpRequest non definito ?");
+			this.httpRequest = ConnettoreHTTPCOREUtils.buildHttpRequest(this.httpMethod, url);
+			if(this.httpRequest==null){
+				throw new ConnettoreException("HttpRequest non definita ?");
 			}
 			
 			
@@ -384,13 +350,13 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	    	
 			
 	    	// ForwardProxy
-	    	if(this.forwardProxy_headerName!=null && this.forwardProxy_headerValue!=null) {
+	    	if(this.forwardProxyHeaderName!=null && this.forwardProxyHeaderValue!=null) {
 	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
-	    			this.requestMsg.getTransportRequestContext().removeHeader(this.forwardProxy_headerName); // Fix: senno sovrascriveva il vecchio token
+	    			this.requestMsg.getTransportRequestContext().removeHeader(this.forwardProxyHeaderName); // Fix: senno sovrascriveva il vecchio token
 	    		}
-	    		setRequestHeader(this.forwardProxy_headerName,this.forwardProxy_headerValue, propertiesTrasportoDebug);
+	    		setRequestHeader(this.forwardProxyHeaderName,this.forwardProxyHeaderValue, propertiesTrasportoDebug);
 	    		if(this.debug) {
-					this.logger.info("Impostazione ForwardProxy (header-name '"+this.forwardProxy_headerName+"' value '"+this.forwardProxy_headerValue+"')",false);
+					this.logger.info("Impostazione ForwardProxy (header-name '"+this.forwardProxyHeaderName+"' value '"+this.forwardProxyHeaderValue+"')",false);
 	    		}
 	    	}
 
@@ -467,6 +433,8 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
 			
 			// Impostazione Metodo
+			if(this.debug)
+				this.logger.info("Impostazione "+this.httpMethod+"...",false);
 			HttpBodyParameters httpBody = new  HttpBodyParameters(this.httpMethod, contentTypeRichiesta);
 			
 			
@@ -503,7 +471,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 						hasContentBuilded || // contenuto della richiesta già in memoria
 						!consumeRequestMessage // non devo consumare la richiesta
 					) {
-					this.cloasebleDumpBout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+					this.cloasebleDumpBout = new DumpByteArrayOutputStream(this.dumpBinarioSoglia, this.dumpBinarioRepositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					try {
 						if(this.isSoap && this.sbustamentoSoap){
@@ -572,10 +540,10 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 								}
 								requestReadTimeout = requestReadTimeout + 1000; // aggiungo un ulteriore secondo per far scattare prima il timeout sull'input stream
 								isRequest = PipedUnblockedStreamFactory.newPipedUnblockedStream(this.logger.getLogger(), this.openspcoopProperties.getBIOConfigSyncClientPipedUnblockedStreamBuffer(), 
-										requestReadTimeout, "Request");
+										requestReadTimeout, CostantiPdD.CONNETTORE_FASE_GESTIIONE_RICHIESTA);
 								PipedUnblockedOutputStream puos = new PipedUnblockedOutputStream((IPipedUnblockedStream) isRequest);
 								messageWriteToRunnable = new MessageWriteToRunnable(this.logger.getLogger(), this.requestMsg, puos, consumeRequestMessage);
-								ConnectorApplicativeThreadPool.executeInSyncRequestPool(messageWriteToRunnable); // la scrittura si fermerà su buffer e poi prenderà a funzionare mentre viene letto l'input stream dal connettore httpcore
+								ConnectorApplicativeThreadPool.executeBySyncRequestPool(messageWriteToRunnable); // la scrittura si fermerà su buffer e poi prenderà a funzionare mentre viene letto l'input stream dal connettore httpcore
 							}
 							HttpEntity httpEntity = new InputStreamEntity(isRequest, ct);
 							this.httpRequest.setEntity(httpEntity);
@@ -606,7 +574,8 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				config.setProxyPort(this.proxyPort);
 			}
 			ConnettoreHTTPCOREConnection conn = ConnettoreHTTPCOREConnectionManager.getConnettoreHTTPCOREConnection(config, buildSSLContextFactory(), 
-					this.loader, this.logger, keepAliveStrategy, httpRequestInterceptor);
+					this.loader, this.logger, 
+					keepAliveStrategy, httpRequestInterceptor);
 			HttpClient httpClient = conn.getHttpclient();
 			
 			// Imposto Configurazione
@@ -705,13 +674,13 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			// Ricezione Risposta
 			if(this.debug)
 				this.logger.debug("Analisi risposta input stream e risultato http...");
-			this.initConfigurationAcceptOnlyReturnCode_202_200();
+			this.initConfigurationAcceptOnlyReturnCode202or200();
 			
 			this.codice = httpResponse.getCode();
 			this.resultHTTPMessage = httpResponse.getReasonPhrase();
 			
 			if(this.codice<300) {
-				if(this.isSoap && this.acceptOnlyReturnCode_202_200 &&
+				if(this.isSoap && this.acceptOnlyReturnCode202or200 &&
 					this.codice!=200 && this.codice!=202){
 					throw new ConnettoreException("Return code ["+this.codice+"] non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Success_Status_Codes)");
 				}
@@ -975,7 +944,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
     
 	private Map<String,List<String>> recHeaderForInterceptor = null;
     @Override
-	protected void setRequestHeader(String key, List<String> values) throws Exception {
+	protected void setRequestHeader(String key, List<String> values) throws ConnettoreException {
     	if(values!=null && !values.isEmpty()) {
     		for (String value : values) {
     			this.httpRequest.addHeader(key,value);

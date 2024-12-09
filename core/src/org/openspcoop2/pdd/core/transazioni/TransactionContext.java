@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.UtilsException;
 
 /**     
  * TransactionContext
@@ -37,33 +38,39 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
  */
 public class TransactionContext {
 
+	private TransactionContext() {}
+	
+	private static final String INDICAZIONE_GESTIONE_STATEFUL_ERRATA = "Indicazione sulla gestione stateful errata: ";
+	
 	private static Boolean gestioneStateful = null;
-	public static synchronized void initGestioneStateful() throws Exception{
+	public static synchronized void initGestioneStateful() {
 		if(gestioneStateful==null){
 			gestioneStateful = OpenSPCoop2Properties.getInstance().isTransazioniStatefulEnabled();
 		}
 	}
 	
 	private static boolean useThreadLocal = true;
+	public static boolean isUseThreadLocal() {
+		return useThreadLocal;
+	}
+
 	private static Map<String, TransactionInfo> setTransactionInfoThreadLocal = new ConcurrentHashMap<>(); // 1 sola insert per ogni thread, poi acceduta tramite getTransactionKeys
-	private static final ThreadLocal<TransactionInfo> transactionContext_threadLocal =  new ThreadLocal<>() {
-		 @Override
-		 protected TransactionInfo initialValue() {
-			 String tName = Thread.currentThread().getName();
-			 TransactionInfo info = new TransactionInfo(tName);
-			 setTransactionInfoThreadLocal.put(tName, info);
-			 return info;
-		 }
-	};
+	private static final ThreadLocal<TransactionInfo> transactionContextThreadLocal = ThreadLocal.withInitial(() -> {
+	    String tName = Thread.currentThread().getName();
+	    TransactionInfo info = new TransactionInfo(tName);
+	    /** System.out.println("ADD ["+tName+"]");*/ /* Ogni ThreadLocalContext comporterà la creazione di una entry */
+	    setTransactionInfoThreadLocal.put(tName, info);
+	    return info;
+	});
        
-	public static void removeTransactionContext_threadLocal() {
-		if(transactionContext_threadLocal!=null) {
-			transactionContext_threadLocal.remove();
+	public static void removeTransactionContextThreadLocal() {
+		if(transactionContextThreadLocal!=null) {
+			transactionContextThreadLocal.remove();
 		}
 	}
 	
 	private static Map<String, Transaction> transactionContextShared = null;
-	public static synchronized void initResources() throws Exception{
+	public static synchronized void initResources() {
 		if(!useThreadLocal) {
 			if(OpenSPCoop2Properties.getInstance().isConfigurazioneCache_transactionContext_accessiSynchronized()) {
 				transactionContextShared = new java.util.Hashtable<>();
@@ -89,43 +96,40 @@ public class TransactionContext {
 		// Lo clono per non incorrere in errori di modifica durante il runtime
 		List<String> keys = new ArrayList<>();
 		if(useThreadLocal) {
-			
-			List<String> thNames = new ArrayList<>();
-			thNames.addAll(setTransactionInfoThreadLocal.keySet());
-			
-			for (String tName : thNames) {
-				TransactionInfo tInfo = setTransactionInfoThreadLocal.get(tName);
-				if(tInfo!=null && tInfo.transaction!=null) {
-					String id = null;
-					try {
-						id = tInfo.transaction.getId();
-					}catch(Throwable t) {
-						// potrebbe diventare null
-					}
-					if(id!=null) {
-						keys.add(id);
-					}
-				}
-			}
+			fillTransactionKeysThreadLocal(keys);
 		}
 		else {
 			keys.addAll(transactionContextShared.keySet());
 		}
 		return keys;
 	}
+	private static void fillTransactionKeysThreadLocal(List<String> keys) {
+		List<String> thNames = new ArrayList<>();
+		thNames.addAll(setTransactionInfoThreadLocal.keySet());
+		
+		/**System.out.println("FILL ["+thNames.size()+"] ["+thNames+"]");*/
+		
+		for (String tName : thNames) {
+			TransactionInfo tInfo = setTransactionInfoThreadLocal.get(tName);
+			if(tInfo!=null && tInfo.transaction!=null) {
+				String id = null;
+				try {
+					id = tInfo.transaction.getId();
+				}catch(Throwable t) {
+					// potrebbe diventare null
+				}
+				/**System.out.println("tName id["+id+"]");*/
+				if(id!=null) {
+					keys.add(id);
+				}
+			}
+		}
+	}
 			
+	
 	public static void createTransaction(String id, String originator) throws TransactionNotExistsException{
 		if(useThreadLocal) {
-			if(transactionContext_threadLocal.get().transaction==null || !id.equals(transactionContext_threadLocal.get().transaction.getId()) ) {
-				try{
-					if(gestioneStateful==null){
-						initGestioneStateful();
-					}
-				}catch(Exception e){
-					throw new TransactionNotExistsException("Indicazione sulla gestione stateful errata: "+e.getMessage(),e);
-				}
-				transactionContext_threadLocal.get().transaction = new Transaction(id, originator, gestioneStateful);
-			}
+			createTransactionThreadLocal(id, originator);	
 		}
 		else {
 			if(!transactionContextShared.containsKey(id)) {
@@ -134,20 +138,48 @@ public class TransactionContext {
 						initGestioneStateful();
 					}
 				}catch(Exception e){
-					throw new TransactionNotExistsException("Indicazione sulla gestione stateful errata: "+e.getMessage(),e);
+					throw new TransactionNotExistsException(INDICAZIONE_GESTIONE_STATEFUL_ERRATA+e.getMessage(),e);
 				}
 				Transaction transaction = new Transaction(id, originator, gestioneStateful);
 				transactionContextShared.put(id, transaction);
 			}
 		}
 	}
+	private static void createTransactionThreadLocal(String id, String originator) throws TransactionNotExistsException {
+		if(transactionContextThreadLocal.get().transaction==null || !id.equals(transactionContextThreadLocal.get().transaction.getId()) ) {
+			try{
+				if(gestioneStateful==null){
+					initGestioneStateful();
+				}
+			}catch(Exception e){
+				throw new TransactionNotExistsException(INDICAZIONE_GESTIONE_STATEFUL_ERRATA+e.getMessage(),e);
+			}
+			transactionContextThreadLocal.get().transaction = new Transaction(id, originator, gestioneStateful);
+		}
+	}
+	// usato per trasferire l'oggetto in un altro thread
+	public static void setTransactionThreadLocal(String id, Transaction transaction) throws TransactionNotExistsException {
+		if(useThreadLocal &&
+				(transactionContextThreadLocal.get().transaction==null || !id.equals(transactionContextThreadLocal.get().transaction.getId()) ) 
+			){
+			try{
+				if(gestioneStateful==null){
+					initGestioneStateful();
+				}
+			}catch(Exception e){
+				throw new TransactionNotExistsException(INDICAZIONE_GESTIONE_STATEFUL_ERRATA+e.getMessage(),e);
+			}
+			transactionContextThreadLocal.get().transaction = transaction;
+		}
+	}
+	
 	
 	public static Transaction getTransaction(String id) throws TransactionNotExistsException{
 		return getTransaction(id, null, false);
 	}
 	private static Transaction getTransaction(String id,String originator, boolean createIfNotExists) throws TransactionNotExistsException{
 		if(useThreadLocal) {
-			if(transactionContext_threadLocal.get().transaction==null || !id.equals(transactionContext_threadLocal.get().transaction.getId()) ) {
+			if(transactionContextThreadLocal.get().transaction==null || !id.equals(transactionContextThreadLocal.get().transaction.getId()) ) {
 				if(createIfNotExists){
 					createTransaction(id, originator);
 				}
@@ -155,7 +187,7 @@ public class TransactionContext {
 					throw new TransactionNotExistsException("Transaction con id ["+id+"] non esiste"); 
 				}
 			}
-			return transactionContext_threadLocal.get().transaction;
+			return transactionContextThreadLocal.get().transaction;
 		}
 		else {
 			/**if(transactionContext==null){
@@ -178,8 +210,8 @@ public class TransactionContext {
 	
 	public static Transaction removeTransaction(String id){
 		if(useThreadLocal) {
-			Transaction t = transactionContext_threadLocal.get().transaction;
-			transactionContext_threadLocal.get().transaction = null;
+			Transaction t = transactionContextThreadLocal.get().transaction;
+			transactionContextThreadLocal.get().transaction = null;
 			return t;
 		}
 		else {
@@ -198,11 +230,11 @@ public class TransactionContext {
 	}
 	
 	private static org.openspcoop2.utils.Semaphore semaphoreIdentificativoProtocollo = new org.openspcoop2.utils.Semaphore("TransactionContext.idProtocollo");
-	public static void registraIdentificativoProtocollo(String idBusta, String idTransazione) throws Exception{
+	public static void registraIdentificativoProtocollo(String idBusta, String idTransazione) throws UtilsException{
 		semaphoreIdentificativoProtocollo.acquire("registraIdentificativoProtocollo_"+idBusta, idTransazione);
 		try {
 			if(idBustaFiltroDuplicati.contains(idBusta)){
-				throw new Exception("DUPLICATA");
+				throw new UtilsException("DUPLICATA");
 			}
 			idBustaFiltroDuplicati.add(idBusta);
 		}finally{
@@ -222,7 +254,8 @@ class TransactionInfo {
 	Transaction transaction = null;
 	
 	public TransactionInfo(String threadName) {
-		OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().debug("ThreadLocal transaction context created for thread '"+threadName+"'");
+		String msg = "ThreadLocal transaction context created for thread '"+threadName+"'";
+		OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori().debug(msg);
 	}
 	
 }

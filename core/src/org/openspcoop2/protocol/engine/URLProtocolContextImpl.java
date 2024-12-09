@@ -106,7 +106,7 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 						this.function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PA_FUNCTION_GOVWAY;
 						break;
 					case PORTA_DELEGATA_XML_TO_SOAP:
-						this.function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PDtoSOAP_FUNCTION_GOVWAY;
+						this.function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PD_TO_SOAP_FUNCTION_GOVWAY;
 						break;
 					default:
 						throw new Exception("GovWay [protocol/]service to be used not supplied");
@@ -136,7 +136,7 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 				
 				// Vedo se ho un protocollo prima della funzione o direttamente il protocollo
 				boolean IMengine = false;
-				if(integrationManagerEngine && protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.IntegrationManager_ENGINE)) {
+				if(integrationManagerEngine && protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.INTEGRATION_MANAGER_ENGINE)) {
 					if(logCore!=null)
 						logCore.debug("SERVLET INTEGRATION MANAGER SERVICE");
 					function = protocollo;
@@ -171,8 +171,8 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 						functionParameters = req.getRequestURI().substring(sizePrefix);
 					}
 					
-					if(functionParameters!=null && functionParameters.startsWith(IntegrationManager_SERVICE_PD)) {
-						function+="_"+IntegrationManager_SERVICE_PD;
+					if(functionParameters!=null && functionParameters.startsWith(INTEGRATION_MANAGER_SERVICE_PD)) {
+						function+="_"+INTEGRATION_MANAGER_SERVICE_PD;
 						
 						Object oPD = getHttpServletRequest().getAttribute(org.openspcoop2.core.constants.Costanti.PORTA_DELEGATA.getValue());
 						if(oPD == null || !(oPD instanceof String)){
@@ -182,11 +182,11 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 						functionParameters=(String)oPD;
 						
 					} 
-					else if(functionParameters!=null && functionParameters.startsWith(IntegrationManager_SERVICE_MessageBox)) {
-						function+="_"+IntegrationManager_SERVICE_MessageBox;
+					else if(functionParameters!=null && functionParameters.startsWith(INTEGRATION_MANAGER_SERVICE_MESSAGE_BOX)) {
+						function+="_"+INTEGRATION_MANAGER_SERVICE_MESSAGE_BOX;
 						
-						if(functionParameters.length()>IntegrationManager_SERVICE_MessageBox.length()) {
-							functionParameters = functionParameters.substring(IntegrationManager_SERVICE_MessageBox.length());
+						if(functionParameters.length()>INTEGRATION_MANAGER_SERVICE_MESSAGE_BOX.length()) {
+							functionParameters = functionParameters.substring(INTEGRATION_MANAGER_SERVICE_MESSAGE_BOX.length());
 						}
 	//					else {
 	//						functionParameters = null;
@@ -195,10 +195,10 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 				}
 				else if(protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PA_FUNCTION) || 
 						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PD_FUNCTION) || 
-						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PDtoSOAP_FUNCTION) || 
-						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.IntegrationManager_FUNCTION) ||
-						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.Check_FUNCTION) ||
-						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.Proxy_FUNCTION) ||
+						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PD_TO_SOAP_FUNCTION) || 
+						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.INTEGRATION_MANAGER_FUNCTION) ||
+						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.CHECK_FUNCTION) ||
+						protocollo.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PROXY_FUNCTION) ||
 						(customContexts!=null && customContexts.isMatch(protocollo, function))) {
 					// ContextProtocol Empty
 					if(logCore!=null)
@@ -267,10 +267,10 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 							(
 									! (function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PA_FUNCTION) || 
 											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PD_FUNCTION) || 
-											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PDtoSOAP_FUNCTION) || 
-											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.IntegrationManager_FUNCTION) ||
-											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.Check_FUNCTION) ||
-											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.Proxy_FUNCTION) ||
+											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PD_TO_SOAP_FUNCTION) || 
+											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.INTEGRATION_MANAGER_FUNCTION) ||
+											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.CHECK_FUNCTION) ||
+											function.equals(org.openspcoop2.protocol.sdk.state.URLProtocolContext.PROXY_FUNCTION) ||
 										(customContexts!=null && customContexts.isMatch(function, functionParameterForCheckCustom))) 
 									)
 							){
@@ -296,7 +296,7 @@ public class URLProtocolContextImpl extends org.openspcoop2.protocol.sdk.state.U
 								emptyFunction = true;
 								break;
 							case PORTA_DELEGATA_XML_TO_SOAP:
-								function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PDtoSOAP_FUNCTION_GOVWAY;
+								function = org.openspcoop2.protocol.sdk.state.URLProtocolContext.PD_TO_SOAP_FUNCTION_GOVWAY;
 								emptyFunction = true;
 								break;
 							default:

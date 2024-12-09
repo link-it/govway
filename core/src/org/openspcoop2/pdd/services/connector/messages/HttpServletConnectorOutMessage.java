@@ -41,6 +41,7 @@ import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.IDService;
@@ -138,15 +139,21 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			
 			if(hasContent) {
 				this.outNullable = this.res.getOutputStream();
-				msg.writeTo(this.outNullable,consume);
+				writeTo(this.outNullable, msg, consume);
 			}
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
 	}
+	protected void writeTo(OutputStream out, OpenSPCoop2Message msg, boolean consume) throws MessageException {
+		msg.writeTo(out,consume);
+	}
 	
 	@Override
 	public void sendResponse(DumpByteArrayOutputStream message) throws ConnectorException{
+		sendResponseByBuffer(message);
+	}
+	protected void sendResponseByBuffer(DumpByteArrayOutputStream message) throws ConnectorException{
 		try{
 			if(message!=null && message.size()>0) {
 				this.outNullable = this.res.getOutputStream();
@@ -195,16 +202,19 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			List<Proprieta> listProprieta = null;
 			if(this.idModuloAsIDService!=null){
 				switch (this.idModuloAsIDService) {
-				case PORTA_DELEGATA:
-				case PORTA_DELEGATA_INTEGRATION_MANAGER:
-				case PORTA_DELEGATA_XML_TO_SOAP:
+				case PORTA_DELEGATA,
+					PORTA_DELEGATA_NIO,
+					PORTA_DELEGATA_INTEGRATION_MANAGER, 
+					PORTA_DELEGATA_XML_TO_SOAP,
+					PORTA_DELEGATA_XML_TO_SOAP_NIO:
 					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueRicezioneContenutiApplicativi();
 					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueRicezioneContenutiApplicativi();
 					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueRicezioneContenutiApplicativi();
 					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueRicezioneContenutiApplicativi();
 					listProprieta = readProprietaPortaDelegata();
 					break;
-				case PORTA_APPLICATIVA:
+				case PORTA_APPLICATIVA,
+					PORTA_APPLICATIVA_NIO:
 					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueRicezioneBuste();
 					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueRicezioneBuste();
 					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueRicezioneBuste();
@@ -242,6 +252,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 	}
 	
 	private List<Proprieta> readProprietaPortaApplicativa(){
+		List<Proprieta> lNull = null;
 		if(this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null && this.requestInfo.getProtocolContext().getInterfaceName()!=null && 
 				StringUtils.isNotEmpty(this.requestInfo.getProtocolContext().getInterfaceName())) {
 			IDPortaApplicativa idPA = new IDPortaApplicativa();
@@ -257,9 +268,10 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 				}
 			}
 		}
-		return null;
+		return lNull;
 	}
 	private List<Proprieta> readProprietaPortaDelegata(){
+		List<Proprieta> lNull = null;
 		if(this.requestInfo!=null && this.requestInfo.getProtocolContext()!=null && this.requestInfo.getProtocolContext().getInterfaceName()!=null && 
 				StringUtils.isNotEmpty(this.requestInfo.getProtocolContext().getInterfaceName())) {
 			IDPortaDelegata idPD = new IDPortaDelegata();
@@ -275,7 +287,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 				}
 			}
 		}
-		return null;
+		return lNull;
 	}
 	
 	private void putResponseHeader(boolean validazioneHeaderRFC2047, String key, String value, boolean add) {
@@ -352,43 +364,52 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			//    <Connector protocol="HTTP/1.1" port="8080" address="${jboss.bind.address}" 
             //       connectionTimeout="20000" redirectPort="8443" socketBuffer="-1" />
 			if(this.res!=null){
-				try{
-					this.res.flushBuffer();
-				}catch(Exception e){
-					if(throwException){
-						throw e;
-					}
-				}
+				resFlushBuffer(throwException);
 			}
 			if(this.outNullable!=null){
-				try{
-					this.outNullable.flush();
-				}catch(Exception e){
-					if(throwException){
-						throw e;
-					}
-				}
+				outFlush(throwException);
 			}
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	
 	}
+	private void resFlushBuffer(boolean throwException) throws ConnectorException {
+		try{
+			this.res.flushBuffer();
+		}catch(Exception e){
+			if(throwException){
+				throw new ConnectorException(e.getMessage(),e);
+			}
+		}
+	}
+	private void outFlush(boolean throwException) throws ConnectorException {
+		try{
+			this.outNullable.flush();
+		}catch(Exception e){
+			if(throwException){
+				throw new ConnectorException(e.getMessage(),e);
+			}
+		}
+	}
 	
 	@Override
-	public void close(boolean throwException) throws ConnectorException{
+	public void close(AsyncResponseCallbackClientEvent clientEvent, boolean throwException) throws ConnectorException{
 		try{
 			if(this.outNullable!=null){
-				try{
-					this.outNullable.close();
-					this.outNullable = null;
-				}catch(Exception e){
-					if(throwException){
-						throw e;
-					}
-				}
+				closeOut(throwException);
 			}
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	
+	}
+	private void closeOut(boolean throwException) throws ConnectorException{
+		try{
+			this.outNullable.close();
+			this.outNullable = null;
+		}catch(Exception e){
+			if(throwException){
+				throw new ConnectorException(e.getMessage(),e);
+			}
+		}
 	}
 }

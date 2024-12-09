@@ -59,6 +59,7 @@ import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
@@ -80,9 +81,9 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	protected OpenSPCoop2Properties openspcoopProperties;
 	protected OpenSPCoop2Message message;
 	protected InputStream is;
-	protected LimitedInputStream _limitedIS;
-	protected TimeoutInputStream _timeoutIS;
-	protected DiagnosticInputStream _diagnosticIS;
+	protected LimitedInputStream internalLimitedIS;
+	protected TimeoutInputStream internalTimeoutIS;
+	protected DiagnosticInputStream internalDiagnosticIS;
 	protected DumpByteArrayOutputStream buffer;
 	protected boolean buffered = false;
 	protected OpenSPCoop2MessageSoapStreamReader soapReader;
@@ -149,52 +150,52 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		this.soglia = soglia;
 		this.repositoryFile = repositoryFile;
 		
-		if(this._timeoutIS!=null && this.context!=null) {
-			this._timeoutIS.updateContext(this.context);
+		if(this.internalTimeoutIS!=null && this.context!=null) {
+			this.internalTimeoutIS.updateContext(this.context);
 		}
-		if(this._limitedIS!=null && this.context!=null) {
-			this._limitedIS.updateContext(this.context);
+		if(this.internalLimitedIS!=null && this.context!=null) {
+			this.internalLimitedIS.updateContext(this.context);
 		}
 	}
 	
 	@Override
 	public void setRequestReadTimeout(SogliaReadTimeout timeout) {
 		this.requestReadTimeout = timeout;
-		if(this._timeoutIS!=null) {
+		if(this.internalTimeoutIS!=null) {
 			try {
-				this._timeoutIS.updateThreshold(this.requestReadTimeout.getSogliaMs());
+				this.internalTimeoutIS.updateThreshold(this.requestReadTimeout.getSogliaMs());
 			}catch(Exception e) {
-				throw new RuntimeException(e.getMessage(),e); // non dovrebbe mai succedere essendo chiamato il metodo solo se timeout e' maggiore di 0
+				throw new UtilsRuntimeException(e.getMessage(),e); // non dovrebbe mai succedere essendo chiamato il metodo solo se timeout e' maggiore di 0
 			}
 			TimeoutNotifier notifier = new TimeoutNotifier(this.context, this.getProtocolFactory(), 
 					this.requestReadTimeout, TimeoutNotifierType.REQUEST, this.log, true);
-			this._timeoutIS.updateNotifier(notifier);
+			this.internalTimeoutIS.updateNotifier(notifier);
 		}
 	}
 	@Override
 	public void disableReadTimeout() {
-		if(this._timeoutIS!=null) {
-			this._timeoutIS.disableCheckTimeout();
+		if(this.internalTimeoutIS!=null) {
+			this.internalTimeoutIS.disableCheckTimeout();
 		}
 	}
 	@Override
 	public void setRequestLimitedStream(SogliaDimensioneMessaggio requestLimitSize) {
 		this.requestLimitSize = requestLimitSize;
-		if(this._limitedIS!=null && this.requestLimitSize!=null && this.requestLimitSize.getSogliaKb()>0) {
+		if(this.internalLimitedIS!=null && this.requestLimitSize!=null && this.requestLimitSize.getSogliaKb()>0) {
 			try {
 				long limitBytes = this.requestLimitSize.getSogliaKb()*1024; // trasformo kb in bytes
-				this._limitedIS.updateThreshold(limitBytes);
+				this.internalLimitedIS.updateThreshold(limitBytes);
 			}catch(Exception e) {
-				throw new RuntimeException(e.getMessage(),e); // non dovrebbe mai succedere essendo chiamato il metodo solo se la soglia e' maggiore di 0
+				throw new UtilsRuntimeException(e.getMessage(),e); // non dovrebbe mai succedere essendo chiamato il metodo solo se la soglia e' maggiore di 0
 			}
 			LimitExceededNotifier notifier = new LimitExceededNotifier(this.context, this.requestLimitSize, this.log);
-			this._limitedIS.updateNotifier(notifier);
+			this.internalLimitedIS.updateNotifier(notifier);
 		}
 	}
 	@Override
 	public void disableLimitedStream() {
-		if(this._limitedIS!=null) {
-			this._limitedIS.disableCheck();
+		if(this.internalLimitedIS!=null) {
+			this.internalLimitedIS.disableCheck();
 		}
 	}
 	@Override
@@ -206,10 +207,9 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	}
 	private InputStream buildInputStream() throws IOException {
 		
-		if(this.buffered) {
-			if(this.buffer!=null && this.buffer.size()>0) {
-				return new ByteArrayInputStream(this.buffer.toByteArray());
-			}
+		if(this.buffered &&
+			this.buffer!=null && this.buffer.size()>0) {
+			return new ByteArrayInputStream(this.buffer.toByteArray());
 		}
 		
 		if(this.is!=null && this.soapReader!=null) {
@@ -219,29 +219,29 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		if(this.is!=null && this.requestLimitSize!=null && this.requestLimitSize.getSogliaKb()>0) {
 			LimitExceededNotifier notifier = new LimitExceededNotifier(this.context, this.requestLimitSize, this.log);
 			long limitBytes = this.requestLimitSize.getSogliaKb()*1024; // trasformo kb in bytes
-			this._limitedIS = new LimitedInputStream(this.is, limitBytes,
+			this.internalLimitedIS = new LimitedInputStream(this.is, limitBytes,
 					CostantiPdD.PREFIX_LIMITED_REQUEST,
 					this.context,
 					notifier);
-			this.is = this._limitedIS;
+			this.is = this.internalLimitedIS;
 		}
 		if(this.is!=null && this.requestReadTimeout!=null && this.requestReadTimeout.getSogliaMs()>0) {
 			TimeoutNotifier notifier = new TimeoutNotifier(this.context, this.getProtocolFactory(), 
 					this.requestReadTimeout, TimeoutNotifierType.REQUEST, this.log, true);
-			this._timeoutIS = new TimeoutInputStream(this.is, this.requestReadTimeout.getSogliaMs(),
+			this.internalTimeoutIS = new TimeoutInputStream(this.is, this.requestReadTimeout.getSogliaMs(),
 					CostantiPdD.PREFIX_TIMEOUT_REQUEST,
 					this.context,
 					notifier);
-			this.is = this._timeoutIS;
+			this.is = this.internalTimeoutIS;
 		}
 		if(this.is!=null && this.useDiagnosticInputStream && this.msgDiagnostico!=null) {
 			String idModuloFunzionale = 
 					IDService.PORTA_APPLICATIVA.equals(this.idModuloAsIDService) ? 
 							MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE : MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI;
-			this._diagnosticIS = new DiagnosticInputStream(this.is, idModuloFunzionale, "letturaPayloadRichiesta", true, this.msgDiagnostico, 
+			this.internalDiagnosticIS = new DiagnosticInputStream(this.is, idModuloFunzionale, "letturaPayloadRichiesta", true, this.msgDiagnostico, 
 					(this.log!=null) ? this.log : OpenSPCoop2Logger.getLoggerOpenSPCoopCore(),
 					this.context);
-			this.is = this._diagnosticIS;
+			this.is = this.internalDiagnosticIS;
 		}
 		return this.is;
 	}
@@ -387,7 +387,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			this.dataIngressoRichiesta = DateManager.getDate();
 			return pr;
 		}catch(Throwable t){
-			//throw new ConnectorException(e.getMessage(),e);
+			/**throw new ConnectorException(e.getMessage(),e);*/
 			OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
 			result.setParseException(ParseExceptionUtils.buildParseException(t,MessageRole.REQUEST));
 			return result;
@@ -476,14 +476,19 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	public void close() throws ConnectorException{
 		try{
 			if(this.is!=null){
-				try{
-					this.is.close();
-					this.is = null;
-				}catch(Exception e){}
+				isCloseSafe();
 			}
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}	
+	}
+	private void isCloseSafe() {
+		try{
+			this.is.close();
+			this.is = null;
+		}catch(Exception e){
+			// ignore
+		}
 	}
 	
 	@Override

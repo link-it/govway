@@ -271,7 +271,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 			if(this.debug)
 				this.logger.debug("Serializzazione (consume-request-message:"+consumeRequestMessage+")...");
 			if(this.isDumpBinarioRichiesta()) {
-				this.requestBout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+				this.requestBout = new DumpByteArrayOutputStream(this.dumpBinarioSoglia, this.dumpBinarioRepositoryFile, this.idTransazione, 
 						"NullEcho-"+TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 				
 				this.emitDiagnosticStartDumpBinarioRichiestaUscita();
@@ -290,7 +290,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 				this.dumpBinarioRichiestaUscita(this.requestBout, requestMessageType, contentTypeRichiesta, this.location, propertiesTrasportoDebug);
 			}
 			else {
-				this.requestBout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+				this.requestBout = new DumpByteArrayOutputStream(this.dumpBinarioSoglia, this.dumpBinarioRepositoryFile, this.idTransazione, 
 						"NullEcho-"+TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue()); 
 				if(this.isSoap && this.sbustamentoSoap){
 					this.logger.debug("Sbustamento...");
@@ -664,7 +664,7 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
     	
     }
     @Override
-	protected void setRequestHeader(String key,List<String> values) throws Exception {
+	protected void setRequestHeader(String key,List<String> values) throws ConnettoreException {
     	this.propertiesTrasportoRisposta.put(key, values);
     }
 	

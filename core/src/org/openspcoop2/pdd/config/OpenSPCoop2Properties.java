@@ -107,6 +107,7 @@ import org.openspcoop2.pdd.mdb.InoltroRisposte;
 import org.openspcoop2.pdd.mdb.Sbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.pdd.services.connector.ConnectorAsyncThreadPoolConfig;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
 import org.openspcoop2.pdd.timers.TimerGestoreBusteNonRiscontrate;
@@ -476,7 +477,7 @@ public class OpenSPCoop2Properties {
 				if (getRepositoryDirectory() == null)	{						
 					return false;
 				}
-				// Verra' creata se non esiste in openspcoop startup
+				// Verra' creata se non esiste in GovWay startup
 /**				if( (new File(getRepositoryDirectory())).exists() == false ){
 //					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.directory'. \n La directory indicata non esiste ["+getRepositoryDirectory()+"].");
 //					return false;
@@ -499,7 +500,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String adapterClass = className.getJDBCAdapter(jdbcAdapter);
 					if(adapterClass == null){
-						this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
+						this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -592,7 +593,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String tipoClass = className.getThreshold(tipiThreshold.get(i));
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -771,7 +772,7 @@ public class OpenSPCoop2Properties {
 				//	Ricerco connettore
 				String tipoClass = className.getNodeReceiver(this.getNodeReceiver());
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
@@ -796,7 +797,7 @@ public class OpenSPCoop2Properties {
 				//	Ricerco connettore
 				String tipoClass = className.getNodeSender(this.getNodeSender());
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
@@ -827,7 +828,7 @@ public class OpenSPCoop2Properties {
 					else{
 						String adapterClass = className.getJDBCAdapter(jdbcAdapter);
 						if(adapterClass == null){
-							this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"] nelle classi registrate in OpenSPCoop");
+							this.logError(PREFIX_JDBC_ADAPTER_NOT_EXISTS+getRepositoryJDBCAdapter()+"] nelle classi registrate in GovWay");
 							return false;
 						}
 						try{
@@ -1371,7 +1372,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String tipoClass = className.getAutorizzazionePortaApplicativa(this.getTipoAutorizzazioneBuste());
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -1414,7 +1415,7 @@ public class OpenSPCoop2Properties {
 				else{
 					String tipoClass = className.getRepositoryBuste(this.getGestoreRepositoryBuste());
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -1431,7 +1432,7 @@ public class OpenSPCoop2Properties {
 			// Ricerco
 			String tipoClassFiltroDuplicati = className.getFiltroDuplicati(this.getGestoreFiltroDuplicatiRepositoryBuste());
 			if(tipoClassFiltroDuplicati == null){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"] nelle classi registrate in OpenSPCoop");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"] nelle classi registrate in GovWay");
 				return false;
 			}
 			try{
@@ -1451,7 +1452,7 @@ public class OpenSPCoop2Properties {
 				// Ricerco
 				String tipoClass = className.getSQLQueryObject(this.getDatabaseType());
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
@@ -1491,13 +1492,28 @@ public class OpenSPCoop2Properties {
 			}
 			
 			if(this.isNIOEnabled()) {
+				this.getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds();
+				this.getNIOConfigAsyncClientMaxPerRoute("qualsiasiRotta", -1);
+				this.getNIOConfigAsyncClientMaxTotal("qualsiasiTotal", -1);
+				this.getNIOConfigAsyncClientValidateAfterInactivity("qualsiasi", -1);
+				this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds();
+				this.isNIOConfigAsyncClientCloseIdleConnectionsDebug();
+				this.getNIOConfigAsyncClientExpireUnusedAfterSeconds();
+				this.getNIOConfigAsyncClientCloseUnusedAfterSeconds();
+				this.isNIOConfigAsyncClientUseCustomMessageObjectEntity();
+				this.getNIOConfigAsyncHttpclientIoReactorThread();
 				if(this.isNIOConfigAsyncRequestStreamEnabled()) {
 					this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer();
-					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize();
 				}
 				if(this.isNIOConfigAsyncResponseStreamEnabled()) {
 					this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer();
-					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize();
+				}
+				if(this.isNIOConfigAsyncRequestStreamEnabled() || this.isNIOConfigAsyncResponseStreamEnabled()) {
+					ConnectorAsyncThreadPoolConfig pool = this.getNIOConfigAsyncThreadPoolConfig();
+					if(pool==null) {
+						this.logError("Riscontrato errore durante la lettura della configurazione del pool di thread per la gestione asincrona in streaming");
+						return false;
+					}
 				}
 			}
 			
@@ -1511,7 +1527,7 @@ public class OpenSPCoop2Properties {
 			if(tipoHttpDefault!=null && StringUtils.isNotEmpty(tipoHttpDefault)) {
 				String classNameHttp = className.getConnettore(tipoHttpDefault);
 				if(classNameHttp == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpDefault+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpDefault+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
@@ -1527,7 +1543,7 @@ public class OpenSPCoop2Properties {
 			if(tipoHttpsDefault!=null && StringUtils.isNotEmpty(tipoHttpsDefault)) {
 				String classNameHttp = className.getConnettore(tipoHttpsDefault);
 				if(classNameHttp == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsDefault+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsDefault+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
@@ -1538,6 +1554,40 @@ public class OpenSPCoop2Properties {
 					return false;
 				}	
 			}
+			
+			String tipoHttpNIODefault = getConnettoreNIOLibreriaHttpDefault();
+			if(tipoHttpNIODefault!=null && StringUtils.isNotEmpty(tipoHttpNIODefault)) {
+				String classNameHttp = className.getConnettore(tipoHttpNIODefault);
+				if(classNameHttp == null){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpNIODefault+"] nelle classi registrate in GovWay");
+					return false;
+				}
+				try{
+					IConnettore c = (IConnettore) loaderOpenSPCoop.newInstance(classNameHttp);
+					c.toString();
+				}catch(Exception e){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpNIODefault+"]: "+e.getMessage(),e);
+					return false;
+				}	
+			}
+			
+			String tipoHttpsNIODefault = getConnettoreNIOLibreriaHttpsDefault();
+			if(tipoHttpsNIODefault!=null && StringUtils.isNotEmpty(tipoHttpsNIODefault)) {
+				String classNameHttp = className.getConnettore(tipoHttpsNIODefault);
+				if(classNameHttp == null){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsNIODefault+"] nelle classi registrate in GovWay");
+					return false;
+				}
+				try{
+					IConnettore c = (IConnettore) loaderOpenSPCoop.newInstance(classNameHttp);
+					c.toString();
+				}catch(Exception e){
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpsNIODefault+"]: "+e.getMessage(),e);
+					return false;
+				}	
+			}
+			
+			isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary();
 			
 			// Connettore https
 			this.getConnettoreHttpsSecureRandomAlgo();
@@ -1605,7 +1655,7 @@ public class OpenSPCoop2Properties {
 			}
 			String tipoDateManger = className.getDateManager(this.getTipoDateManager());
 			if(tipoDateManger == null){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"] nelle classi registrate in OpenSPCoop");
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"] nelle classi registrate in GovWay");
 				return false;
 			}
 			try{
@@ -1702,7 +1752,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenziali(gestoriCredenzialiPD[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -1722,7 +1772,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenziali(gestoriCredenzialiPA[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -1742,7 +1792,7 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenzialiIM(gestoriCredenzialiIM[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"] nelle classi registrate in OpenSPCoop");
+						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
@@ -1906,7 +1956,7 @@ public class OpenSPCoop2Properties {
 			if(CostantiConfigurazione.NONE.equals(tipoIDGenerator)==false){
 				String tipoIdManger = className.getUniqueIdentifier(tipoIDGenerator);
 				if(tipoIdManger == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier indicato non esiste ["+this.getTipoIDManager()+"] nelle classi registrate in OpenSPCoop");
+					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier indicato non esiste ["+this.getTipoIDManager()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				useIDManagerWithThreadLocal();
@@ -14474,10 +14524,10 @@ public class OpenSPCoop2Properties {
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.<nome>, errore:"+e.getMessage(),e);
 			} 
-			initBIOConfigSyncClientMap(this.getBIOConfigSyncClientMaxPerRouteMap, p, pNamePrefix);
+			initConfigClientMap(this.getBIOConfigSyncClientMaxPerRouteMap, p, pNamePrefix);
 
 		}
-		return getBIOConfigSyncClientMap(this.getBIOConfigSyncClientMaxPerRouteMap, hostname, port, getBIOConfigSyncClientMaxPerRoute());
+		return getConfigClientMap(this.getBIOConfigSyncClientMaxPerRouteMap, hostname, port, getBIOConfigSyncClientMaxPerRoute());
 	}
 	
 	private Integer getBIOConfigSyncClientMaxTotal = null;
@@ -14515,10 +14565,10 @@ public class OpenSPCoop2Properties {
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
 			} 
-			initBIOConfigSyncClientMap(this.getBIOConfigSyncClientMaxTotalMap, p, pNamePrefix);
+			initConfigClientMap(this.getBIOConfigSyncClientMaxTotalMap, p, pNamePrefix);
 
 		}
-		return getBIOConfigSyncClientMap(this.getBIOConfigSyncClientMaxTotalMap, hostname, port, getBIOConfigSyncClientMaxTotal());
+		return getConfigClientMap(this.getBIOConfigSyncClientMaxTotalMap, hostname, port, getBIOConfigSyncClientMaxTotal());
 	}
 	
 	private Integer getBIOConfigSyncClientValidateAfterInactivity = null;
@@ -14557,23 +14607,23 @@ public class OpenSPCoop2Properties {
 			}catch(java.lang.Exception e) {
 				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
 			} 
-			initBIOConfigSyncClientMap(this.getBIOConfigSyncClientValidateAfterInactivityMap, p, pNamePrefix);
+			initConfigClientMap(this.getBIOConfigSyncClientValidateAfterInactivityMap, p, pNamePrefix);
 
 		}
-		return getBIOConfigSyncClientMap(this.getBIOConfigSyncClientValidateAfterInactivityMap, hostname, port, getBIOConfigSyncClientValidateAfterInactivity());
+		return getConfigClientMap(this.getBIOConfigSyncClientValidateAfterInactivityMap, hostname, port, getBIOConfigSyncClientValidateAfterInactivity());
 	}
 	
 	
-	private void initBIOConfigSyncClientMap(Map<String,Integer> map, Properties p, String pNamePrefix) {
+	private void initConfigClientMap(Map<String,Integer> map, Properties p, String pNamePrefix) {
 		if(p!=null && p.size()>0) {
 			Enumeration<Object> en = p.keys();
 			while (en.hasMoreElements()) {
 				Object o = en.nextElement();
-				initBIOConfigSyncClientMap(map, o, p, pNamePrefix);
+				initConfigClientMap(map, o, p, pNamePrefix);
 			}
 		}
 	}
-	private void initBIOConfigSyncClientMap(Map<String,Integer> map, Object o, Properties p, String pNamePrefix) {
+	private void initConfigClientMap(Map<String,Integer> map, Object o, Properties p, String pNamePrefix) {
 		if(o instanceof String key) {
 			String v = p.getProperty(key);
 			try {
@@ -14589,7 +14639,7 @@ public class OpenSPCoop2Properties {
 			}  
 		}
 	}
-	private Integer getBIOConfigSyncClientMap(Map<String,Integer> map, String hostname, int port, Integer defaultValue) {
+	private Integer getConfigClientMap(Map<String,Integer> map, String hostname, int port, Integer defaultValue) {
 		if(map==null || map.isEmpty()) {
 			return defaultValue;
 		}
@@ -14817,6 +14867,295 @@ public class OpenSPCoop2Properties {
 		return this.isNIOEnabled;
 	}
 	
+	private Integer getNIOConfigAsyncClientMaxPerRoute = null;
+	private int getNIOConfigAsyncClientMaxPerRoute() {	
+		if(this.getNIOConfigAsyncClientMaxPerRoute==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.maxPerRoute";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncClientMaxPerRoute = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE);
+					this.getNIOConfigAsyncClientMaxPerRoute = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncClientMaxPerRoute = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE;
+			}  
+		}
+
+		return this.getNIOConfigAsyncClientMaxPerRoute;
+	}
+	
+	private Map<String,Integer> getNIOConfigAsyncClientMaxPerRouteMap = null;
+	public Integer getNIOConfigAsyncClientMaxPerRoute(String hostname, int port) {	
+		if(this.getNIOConfigAsyncClientMaxPerRouteMap==null){
+			String pNamePrefix = "org.openspcoop2.pdd.connettori.asyncClient.maxPerRoute.";
+			this.getNIOConfigAsyncClientMaxPerRouteMap=new HashMap<>();
+			
+			Properties p = null;
+			try {
+				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.<nome>, errore:"+e.getMessage(),e);
+			} 
+			initConfigClientMap(this.getNIOConfigAsyncClientMaxPerRouteMap, p, pNamePrefix);
+
+		}
+		return getConfigClientMap(this.getNIOConfigAsyncClientMaxPerRouteMap, hostname, port, getNIOConfigAsyncClientMaxPerRoute());
+	}
+	
+	private Integer getNIOConfigAsyncClientMaxTotal = null;
+	private int getNIOConfigAsyncClientMaxTotal() {	
+		if(this.getNIOConfigAsyncClientMaxTotal==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.maxTotal";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncClientMaxTotal = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL);
+					this.getNIOConfigAsyncClientMaxTotal = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncClientMaxTotal = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL;
+			}  
+		}
+
+		return this.getNIOConfigAsyncClientMaxTotal;
+	}
+	
+	private Map<String,Integer> getNIOConfigAsyncClientMaxTotalMap = null;
+	public Integer getNIOConfigAsyncClientMaxTotal(String hostname, int port) {	
+		if(this.getNIOConfigAsyncClientMaxTotalMap==null){
+			String pNamePrefix = "org.openspcoop2.pdd.connettori.asyncClient.maxTotal.";
+			this.getNIOConfigAsyncClientMaxTotalMap=new HashMap<>();
+			
+			Properties p = null;
+			try {
+				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
+			} 
+			initConfigClientMap(this.getNIOConfigAsyncClientMaxTotalMap, p, pNamePrefix);
+
+		}
+		return getConfigClientMap(this.getNIOConfigAsyncClientMaxTotalMap, hostname, port, getNIOConfigAsyncClientMaxTotal());
+	}
+	
+	private Integer getNIOConfigAsyncClientValidateAfterInactivity = null;
+	private Boolean getNIOConfigAsyncClientValidateAfterInactivityRead = null;
+	private Integer getNIOConfigAsyncClientValidateAfterInactivity() {	
+		if(this.getNIOConfigAsyncClientValidateAfterInactivityRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.validateAfterInactivity";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncClientValidateAfterInactivity = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName));
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			
+			this.getNIOConfigAsyncClientValidateAfterInactivityRead = true;
+		}
+
+		return this.getNIOConfigAsyncClientValidateAfterInactivity;
+	}
+	
+	private Map<String,Integer> getNIOConfigAsyncClientValidateAfterInactivityMap = null;
+	public Integer getNIOConfigAsyncClientValidateAfterInactivity(String hostname, int port) {	
+		if(this.getNIOConfigAsyncClientValidateAfterInactivityMap==null){
+			String pNamePrefix = "org.openspcoop2.pdd.connettori.syncClient.validateAfterInactivity.";
+			this.getNIOConfigAsyncClientValidateAfterInactivityMap=new HashMap<>();
+			
+			Properties p = null;
+			try {
+				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
+			} 
+			initConfigClientMap(this.getNIOConfigAsyncClientValidateAfterInactivityMap, p, pNamePrefix);
+
+		}
+		return getConfigClientMap(this.getNIOConfigAsyncClientValidateAfterInactivityMap, hostname, port, getNIOConfigAsyncClientValidateAfterInactivity());
+	}
+	
+	
+	private Integer getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds = null;
+	private Boolean getNIOConfigAsyncClientCloseIdleConnectionsAfterSecondsRead = null;
+	public Integer getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds() {	
+		if(this.getNIOConfigAsyncClientCloseIdleConnectionsAfterSecondsRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.closeIdleConnectionsAfterSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata");
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			this.getNIOConfigAsyncClientCloseIdleConnectionsAfterSecondsRead = true;
+		}
+
+		return this.getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds;
+	}
+	
+	private Integer getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds = null;
+	public Integer getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds() {	
+		if(this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.closeIdleConnectionsCheckIntervalSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS);
+					this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
+			}  
+		}
+
+		return this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds;
+	}	
+	
+	private Boolean isNIOConfigAsyncClientCloseIdleConnectionsDebug = null;
+	public boolean isNIOConfigAsyncClientCloseIdleConnectionsDebug() {	
+		if(this.isNIOConfigAsyncClientCloseIdleConnectionsDebug==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.closeIdleConnections.debug";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.isNIOConfigAsyncClientCloseIdleConnectionsDebug = java.lang.Boolean.parseBoolean(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.isNIOConfigAsyncClientCloseIdleConnectionsDebug = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.isNIOConfigAsyncClientCloseIdleConnectionsDebug = true;
+			}  
+		}
+
+		return this.isNIOConfigAsyncClientCloseIdleConnectionsDebug;
+	}
+	
+	private Integer getNIOConfigAsyncClientExpireUnusedAfterSeconds = null;
+	public Integer getNIOConfigAsyncClientExpireUnusedAfterSeconds() {	
+		if(this.getNIOConfigAsyncClientExpireUnusedAfterSeconds==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.expireUnusedAfterSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncClientExpireUnusedAfterSeconds = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS);
+					this.getNIOConfigAsyncClientExpireUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncClientExpireUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
+			}  
+		}
+
+		return this.getNIOConfigAsyncClientExpireUnusedAfterSeconds;
+	}
+	
+	private Integer getNIOConfigAsyncClientCloseUnusedAfterSeconds = null;
+	public Integer getNIOConfigAsyncClientCloseUnusedAfterSeconds() {	
+		if(this.getNIOConfigAsyncClientCloseUnusedAfterSeconds==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.closeUnusedAfterSeconds";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.getNIOConfigAsyncClientCloseUnusedAfterSeconds = java.lang.Integer.parseInt(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS);
+					this.getNIOConfigAsyncClientCloseUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.getNIOConfigAsyncClientCloseUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
+			}  
+		}
+
+		return this.getNIOConfigAsyncClientCloseUnusedAfterSeconds;
+	}
+	
+	private Boolean isNIOConfigAsyncClientUseCustomMessageObjectEntity = null;
+	public boolean isNIOConfigAsyncClientUseCustomMessageObjectEntity() {	
+		if(this.isNIOConfigAsyncClientUseCustomMessageObjectEntity==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncClient.useCustomMessageObjectEntity";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					this.isNIOConfigAsyncClientUseCustomMessageObjectEntity = java.lang.Boolean.parseBoolean(v);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.isNIOConfigAsyncClientUseCustomMessageObjectEntity = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.isNIOConfigAsyncClientUseCustomMessageObjectEntity = true;
+			}  
+		}
+
+		return this.isNIOConfigAsyncClientUseCustomMessageObjectEntity;
+	}
+	
+	private Integer getNIOConfigAsyncHttpclientIoReactorThread = null;
+	private Boolean getNIOConfigAsyncHttpclientIoReactorThreadRead = null;
+	public Integer getNIOConfigAsyncHttpclientIoReactorThread() {	
+		if(this.getNIOConfigAsyncHttpclientIoReactorThreadRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.asyncRequest.httpclient.ioreactor.threadCount";
+			try{ 
+				String v = null;
+				v = this.reader.getValueConvertEnvProperties(pName);
+				if(v!=null){
+					v = v.trim();
+					if(CostantiPdD.CONNETTORE_NIO_ASYNC_CONFIG_AVAILABLE_PROCESSORS.equals(v)) {
+						this.getNIOConfigAsyncHttpclientIoReactorThread = CostantiPdD.getAvailableProcessors();
+					}
+					else {
+						this.getNIOConfigAsyncHttpclientIoReactorThread = java.lang.Integer.parseInt(v);
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			this.getNIOConfigAsyncHttpclientIoReactorThreadRead = true;
+		}
+
+		return this.getNIOConfigAsyncHttpclientIoReactorThread;
+	}
+	
 	private Boolean isNIOConfigAsyncRequestStreamEnabled = null;
 	public boolean isNIOConfigAsyncRequestStreamEnabled() {	
 		if(this.isNIOConfigAsyncRequestStreamEnabled==null){
@@ -14862,30 +15201,6 @@ public class OpenSPCoop2Properties {
 
 		return this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer;
 	}
-	
-	private Integer getNIOConfigAsyncRequestApplicativeThreadPoolSize = null;
-	public int getNIOConfigAsyncRequestApplicativeThreadPoolSize() {	
-		if(this.getNIOConfigAsyncRequestApplicativeThreadPoolSize==null){
-			String pName = "org.openspcoop2.pdd.connettori.asyncRequest.applicativeThreadPool.size";
-			try{ 
-				String v = null;
-				v = this.reader.getValueConvertEnvProperties(pName);
-				if(v!=null){
-					v = v.trim();
-					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
-				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE);
-					this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE;
-				}
-			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE+", errore:"+e.getMessage(),e);
-				this.getNIOConfigAsyncRequestApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE;
-			}  
-		}
-
-		return this.getNIOConfigAsyncRequestApplicativeThreadPoolSize;
-	}
-	
 	
 	
 	private Boolean isNIOConfigAsyncResponseStreamEnabled = null;
@@ -14934,28 +15249,22 @@ public class OpenSPCoop2Properties {
 		return this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer;
 	}
 	
-	private Integer getNIOConfigAsyncResponseApplicativeThreadPoolSize = null;
-	public int getNIOConfigAsyncResponseApplicativeThreadPoolSize() {	
-		if(this.getNIOConfigAsyncResponseApplicativeThreadPoolSize==null){
-			String pName = "org.openspcoop2.pdd.connettori.asyncResponse.applicativeThreadPool.size";
+	private ConnectorAsyncThreadPoolConfig getNIOConfigAsyncThreadPoolConfig = null;
+	public ConnectorAsyncThreadPoolConfig getNIOConfigAsyncThreadPoolConfig() {	
+		if(this.getNIOConfigAsyncThreadPoolConfig==null){
 			try{ 
-				String v = null;
-				v = this.reader.getValueConvertEnvProperties(pName);
-				if(v!=null){
-					v = v.trim();
-					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
-				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE);
-					this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE;
-				}
+				this.getNIOConfigAsyncThreadPoolConfig=new ConnectorAsyncThreadPoolConfig(this.reader.readPropertiesConvertEnvProperties(ConnectorAsyncThreadPoolConfig.PROPERTY_PREFIX),
+						this.isNIOConfigAsyncRequestStreamEnabled(), this.isNIOConfigAsyncResponseStreamEnabled());
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE+", errore:"+e.getMessage(),e);
-				this.getNIOConfigAsyncResponseApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE;
+				this.logError("Proprietà "+ConnectorAsyncThreadPoolConfig.PROPERTY_PREFIX+" non corrette:"+e.getMessage(),e);
 			}  
 		}
 
-		return this.getNIOConfigAsyncResponseApplicativeThreadPoolSize;
+		return this.getNIOConfigAsyncThreadPoolConfig;
 	}
+	
+	
+	
 	
 	
 	
@@ -15127,6 +15436,78 @@ public class OpenSPCoop2Properties {
 		return this.getConnettoreLibreriaHttpsDefault;
 	}
 	
+	private String getConnettoreNIOLibreriaHttpDefault = null;
+	private Boolean getConnettoreNIOLibreriaHttpDefaultRead = null;
+	public String getConnettoreNIOLibreriaHttpDefault() {	
+		if(this.getConnettoreNIOLibreriaHttpDefaultRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.getConnettoreNIOLibreriaHttpDefault = name;
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' per il connettore nio, non impostata");
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			
+			this.getConnettoreNIOLibreriaHttpDefaultRead=true;
+		}
+
+		return this.getConnettoreNIOLibreriaHttpDefault;
+	}
+	
+	private String getConnettoreNIOLibreriaHttpsDefault = null;
+	private Boolean getConnettoreNIOLibreriaHttpsDefaultRead = null;
+	public String getConnettoreNIOLibreriaHttpsDefault() {	
+		if(this.getConnettoreNIOLibreriaHttpsDefaultRead==null){
+			String pName = "org.openspcoop2.pdd.connettori.nio.libreriaHttpsDefault";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.getConnettoreNIOLibreriaHttpsDefault = name;
+				}
+				else {
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' per il connettore nio, non impostata");
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+			}  
+			
+			this.getConnettoreNIOLibreriaHttpsDefaultRead=true;
+		}
+
+		return this.getConnettoreNIOLibreriaHttpsDefault;
+	}
+	
+	private Boolean isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary = null;
+	public boolean isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary() {	
+		if(this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary==null){
+			String pName = "org.openspcoop2.pdd.connettori.nio.forceUseNioInAsyncChannelWithBIOOnlyLibrary";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary = true;
+			}  
+		}
+
+		return this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary;
+	}
 	
 
 	/* ***************** HTTPS  ************* */

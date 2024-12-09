@@ -1034,7 +1034,7 @@ public class InoltroRisposte extends GenericLib{
 			connettoreMsg.setState(openspcoopstate.getStatoRichiesta());
 			connettoreMsg.initPolicyGestioneToken(configurazionePdDManager, requestInfo);
 			
-			tipoConnector = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, tipoConnector, connettoreMsg);
+			tipoConnector = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, tipoConnector, connettoreMsg, this.asyncResponseCallback);
 			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, tipoConnector);
 			
 			// Risposte del connettore
@@ -1269,7 +1269,7 @@ public class InoltroRisposte extends GenericLib{
 				}
 
 				if(errorConsegna){
-					msgDiag.logPersonalizzato("inoltroConErrore");
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_REST_PROBLEM);
 				}else{
 					String tipoMsg = "Messaggio Protocollo";
 					ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
@@ -1351,11 +1351,11 @@ public class InoltroRisposte extends GenericLib{
 				//	Effettuo log dell'eventuale fault
 				if(soapFaultConnectionReply!=null){
 					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(faultConnectionReplyMessageFactory, soapFaultConnectionReply, this.log));
-					msgDiag.logPersonalizzato("ricezioneSoapFault");
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_SOAP_FAULT);
 				}
 				else if(restProblemConnectionReply!=null){
 					msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, restProblemConnectionReply.getRaw());
-					msgDiag.logPersonalizzato("ricezioneRestProblem");
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_REST_PROBLEM);
 				}
 				String motivazioneErrore = "Errore duranta la spedizione della busta: "+motivoErroreConsegna;
 				if(riconsegna){
@@ -1493,11 +1493,11 @@ public class InoltroRisposte extends GenericLib{
 				// potenziale Fault (inserito dopo il codice soprastante, per fare decriptare il body al MessageSecurity se presente)
 				if(soapFaultConnectionReply!=null){
 					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(faultConnectionReplyMessageFactory, soapFaultConnectionReply, this.log));
-					msgDiag.logPersonalizzato("ricezioneSoapFault");
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_SOAP_FAULT);
 				}
 				else if(restProblemConnectionReply!=null){
 					msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, restProblemConnectionReply.getRaw());
-					msgDiag.logPersonalizzato("ricezioneRestProblem");
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_REST_PROBLEM);
 				}
 			}
 

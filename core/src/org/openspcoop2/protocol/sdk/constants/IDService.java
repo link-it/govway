@@ -24,6 +24,7 @@ import java.net.ProtocolException;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
+import org.openspcoop2.utils.UtilsRuntimeException;
 
 /**     
  * Enumeration dell'elemento MethodType xsd (tipo:string) 
@@ -52,6 +53,17 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	CHECK_PDD ("Check"),
 	PROXY ("Proxy");
 	
+	public boolean isPortaDelegata() {
+		return PORTA_DELEGATA.equals(this) || 
+				PORTA_DELEGATA_NIO.equals(this) || 
+				PORTA_DELEGATA_XML_TO_SOAP.equals(this) || 
+				PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(this) || 
+				PORTA_DELEGATA_INTEGRATION_MANAGER.equals(this);
+	}
+	public boolean isPortaApplicativa() {
+		return PORTA_APPLICATIVA.equals(this) || 
+				PORTA_APPLICATIVA_NIO.equals(this);
+	}
 	
 	// ID: 7 cifre (parlante)
 	private static final String ID_OPENSPCOOP_SERVLET = "OP20000";
@@ -141,21 +153,36 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	
 	/** compatibility with the generated bean (reflection) */
 	public boolean equals(Object object,List<String> fieldsNotCheck){
-		if( !(object instanceof IDService) ){
-			throw new RuntimeException("Wrong type: "+object.getClass().getName());
+		if(fieldsNotCheck!=null) {
+			// nop
 		}
-		return this.equals(((IDService)object));
+		if( !(object instanceof IDService) ){
+			throw new UtilsRuntimeException("Wrong type: "+object.getClass().getName());
+		}
+		return this.equals((object));
 	}
 	public String toString(boolean reportHTML){
+		if(reportHTML) {
+			// nop
+		}
 		return toString();
 	}
   	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
-  		return toString();
+  		if(reportHTML && fieldsNotIncluded!=null) {
+			// nop
+		}
+		return toString();
   	}
   	public String diff(Object object,StringBuilder bf,boolean reportHTML){
+  		if(reportHTML && object!=null) {
+			// nop
+		}
 		return bf.toString();
 	}
 	public String diff(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){
+		if(reportHTML && fieldsNotIncluded!=null) {
+			// nop
+		}
 		return bf.toString();
 	}
 	

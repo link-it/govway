@@ -91,10 +91,14 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 	
 	private ByteArrayOutputStream boutFileOutputHeaders;
 	
+	private static final String REQUEST = "Request";
+	private static final String REQUEST_HEADERS = "Request-Headers";
+	private static final String RESPONSE = "Response";
+	private static final String RESPONSE_HEADERS = "Response-Headers";
 	
 	/* Costruttori */
 	public ConnettoreFILE(){
-		
+		// nop
 	}
 
 	
@@ -235,11 +239,11 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			
 			// OutputFile
-			this.checkOutputFile(this.outputFile, "Request");
+			this.checkOutputFile(this.outputFile, REQUEST);
 			
 			// OutputFile Headers
 			if(this.outputFileHeaders!=null){
-				this.checkOutputFile(this.outputFileHeaders, "Request-Headers");
+				this.checkOutputFile(this.outputFileHeaders, REQUEST_HEADERS);
 			}
 			
 			
@@ -374,7 +378,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				this.logger.debug("Serializzazione ["+this.outputFile.getOutputFile().getAbsolutePath()+"] (consume-request-message:"+consumeRequestMessage+")...");
 			OutputStream out = new FileOutputStream(this.outputFile.getOutputFile());
 			if(this.isDumpBinarioRichiesta()) {
-				DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+				DumpByteArrayOutputStream bout = new DumpByteArrayOutputStream(this.dumpBinarioSoglia, this.dumpBinarioRepositoryFile, this.idTransazione, 
 						TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 				try {
 					this.emitDiagnosticStartDumpBinarioRichiestaUscita();
@@ -504,11 +508,11 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				/* ------------  Response ------------- */
 				
 				// InputFile
-				this.checkInputFile(this.inputFile, "Response");
+				this.checkInputFile(this.inputFile, RESPONSE);
 				
 				// InputFile Header
 				if(this.inputFileHeaders!=null){
-					this.checkInputFile(this.inputFileHeaders, "Response-Headers");
+					this.checkInputFile(this.inputFileHeaders, RESPONSE_HEADERS);
 					this.propertiesTrasportoRisposta = new HashMap<>();
 					FileInputStream fin = new FileInputStream(this.inputFileHeaders);
 					try{
@@ -728,10 +732,14 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
     }
     
     @Override
-   	protected void setRequestHeader(String key,List<String> values) throws Exception{
+   	protected void setRequestHeader(String key,List<String> values) throws ConnettoreException{
     	if(values!=null && !values.isEmpty()) {
     		for (String value : values) {
-    	    	this.boutFileOutputHeaders.write((key+"="+value+"\n").getBytes());		
+    			try {
+    				this.boutFileOutputHeaders.write((key+"="+value+"\n").getBytes());
+    			}catch(Exception e) {
+    				throw new ConnettoreException(e.getMessage(),e);
+    			}
 			}
     	} 
     }

@@ -1991,7 +1991,7 @@ public class GestoreTokenValidazioneUtilities {
 			}
 		}
 		
-		connettore.setForceDisable_proxyPassReverse(true);
+		connettore.setForceDisableProxyPassReverse(true);
 		connettore.init(pddContext, protocolFactory);
 		connettore.setRegisterSendIntoContext(false);
 		

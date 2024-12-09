@@ -34,6 +34,7 @@ import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
+import org.openspcoop2.pdd.services.connector.ConnectorCostanti;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.pdd.services.error.RicezioneBusteExternalErrorGenerator;
 import org.openspcoop2.pdd.services.service.RicezioneBusteService;
@@ -75,7 +76,7 @@ public class RicezioneBusteConnector extends AbstractRicezioneConnector{
 		
 		RicezioneBusteConnettoreUtils utils = new RicezioneBusteConnettoreUtils(this.log);
 		
-		HashMap<String, byte[]> content = new HashMap<String, byte[]>();
+		HashMap<String, byte[]> content = new HashMap<>();
 		UserMessage userMessage = new UserMessage();
 		utils.fillUserMessage(map, userMessage, content);
 		
@@ -114,7 +115,7 @@ public class RicezioneBusteConnector extends AbstractRicezioneConnector{
 		RicezioneBusteService ricezioneBuste = new RicezioneBusteService(generatoreErrore);
 		
 		try{
-			ricezioneBuste.process(as4In, as4Out, dataAccettazioneRichiesta);
+			ricezioneBuste.process(as4In, as4Out, dataAccettazioneRichiesta, ConnectorCostanti.SYNC);
 		}catch(Exception e){
 			ConnectorUtils.getErrorLog().error("RicezioneBusteConnector.process error: "+e.getMessage(),e);
 			throw new ServletException(e.getMessage(),e);

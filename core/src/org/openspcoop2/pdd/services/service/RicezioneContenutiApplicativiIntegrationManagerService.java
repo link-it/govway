@@ -272,7 +272,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 		try{
 			msgDiag.mediumDebug("Accesso configurazione della richiesta in corso...");
 		}catch(Exception e){
-			logCore.error("Errore generazione diagnostico",e);
+			logCore.error(CostantiPdD.GOVWAY_CORE_ERRORE_GENERAZIONE_DIAGNOSTICO,e);
 		}
 		ConnectorDispatcherInfo cInfo = null;
 		try{
@@ -313,7 +313,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			try{
 				msgDiag.mediumDebug("Lettura configurazione dump binario ...");
 			}catch(Exception e){
-				logCore.error("Errore generazione diagnostico",e);
+				logCore.error(CostantiPdD.GOVWAY_CORE_ERRORE_GENERAZIONE_DIAGNOSTICO,e);
 			}
 			boolean dumpBinario = configPdDManager.dumpBinarioPD();
 			PortaDelegata pd = null;
@@ -325,7 +325,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			try{
 				msgDiag.mediumDebug("Lettura configurazione dump ...");
 			}catch(Exception e){
-				logCore.error("Errore generazione diagnostico",e);
+				logCore.error(CostantiPdD.GOVWAY_CORE_ERRORE_GENERAZIONE_DIAGNOSTICO,e);
 			}
 			DumpConfigurazione dumpConfigurazione = configPdDManager.getDumpConfigurazione(pd);
 			ConfigurazioneTracciamento configurazioneTracciamento = new ConfigurazioneTracciamento(logCore, configPdDManager, pd);
@@ -361,7 +361,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			try{
 				msgDiag.mediumDebug("Creazione contesto ...");
 			}catch(Exception e){
-				logCore.error("Errore generazione diagnostico",e);
+				logCore.error(CostantiPdD.GOVWAY_CORE_ERRORE_GENERAZIONE_DIAGNOSTICO,e);
 			}
 			// viene generato l'UUID
 			if(context==null) {
@@ -598,7 +598,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			urlProtocolContext.setInterfaceName(portaDelegata);
 			urlProtocolContext.setFunctionParameters(portaDelegata);
 			urlProtocolContext.setRequestURI(portaDelegata);
-			urlProtocolContext.setFunction(URLProtocolContext.IntegrationManager_FUNCTION);
+			urlProtocolContext.setFunction(URLProtocolContext.INTEGRATION_MANAGER_FUNCTION);
 			urlProtocolContext.setProtocol(protocolFactory.getProtocol(),
 					requestInfo.getProtocolContext().getProtocolWebContext());
 			if(openSPCoopProperties.integrationManager_readInformazioniTrasporto()){
@@ -837,7 +837,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			msgDiag.logPersonalizzato("ricezioneRichiesta.elaborazioneDati.completata");
 			
 			// Invocazione...
-			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context,generatoreErrore);
+			RicezioneContenutiApplicativi gestoreRichiesta = new RicezioneContenutiApplicativi(context,generatoreErrore,null);
 			gestoreRichiesta.process(req);
 			msgResponse = context.getMessageResponse();
 			if(context.getMsgDiagnostico()!=null){
@@ -874,9 +874,9 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 				}	
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				if(parseException!=null) {
-					logCore.error("parsingExceptionRichiesta",parseException.getSourceException());
+					logCore.error(MsgDiagnosticiProperties.MSG_DIAG_PARSING_EXCEPTION_RICHIESTA,parseException.getSourceException());
 				}
-//				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
+//				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_PARSING_EXCEPTION_RICHIESTA);
 //				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
 //						getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()));
 				// Per l'IntegrationManager esiste un codice specifico
@@ -990,8 +990,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 								msgErrore = parseException.getParseException().toString();
 							}
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
-							logCore.error("parsingExceptionRisposta",parseException.getSourceException());
-							msgDiag.logPersonalizzato("parsingExceptionRisposta");
+							logCore.error(MsgDiagnosticiProperties.MSG_DIAG_PARSING_EXCEPTION_RISPOSTA,parseException.getSourceException());
+							msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_PARSING_EXCEPTION_RISPOSTA);
 							throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
 									getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
 									IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT, erroriProperties);
@@ -1035,8 +1035,8 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 								msgErrore = parseException.getParseException().toString();
 							}
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
-							logCore.error("parsingExceptionRisposta",parseException.getSourceException());
-							msgDiag.logPersonalizzato("parsingExceptionRisposta");
+							logCore.error(MsgDiagnosticiProperties.MSG_DIAG_PARSING_EXCEPTION_RISPOSTA,parseException.getSourceException());
+							msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_PARSING_EXCEPTION_RISPOSTA);
 							throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
 									getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
 									IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT, erroriProperties);

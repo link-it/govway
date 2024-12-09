@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.core.connettori;
 import java.util.Date;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.pdd.services.connector.ConnectorCostanti;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorOutMessage;
@@ -49,7 +50,7 @@ public class ConnettoreRicezioneContenutiApplicativiDirectVM extends AbstractCon
 
 	public static final String TIPO = "vmPD";
 	
-	private String pd;
+	private String nomePD;
 	
 	@Override
 	public String getIdModulo(){
@@ -67,7 +68,7 @@ public class ConnettoreRicezioneContenutiApplicativiDirectVM extends AbstractCon
 	public void process(DirectVMConnectorInMessage inMessage,DirectVMConnectorOutMessage outMessage) throws ConnectorException{	
 		RicezioneContenutiApplicativiService soapConnector = new RicezioneContenutiApplicativiService(null); // il generatore di errori verrà creato direttamente dal servizio
 		Date dataAccettazioneRichiesta = DateManager.getDate();
-		soapConnector.process(inMessage, outMessage, dataAccettazioneRichiesta);
+		soapConnector.process(inMessage, outMessage, dataAccettazioneRichiesta, ConnectorCostanti.SYNC);
 	}
 	
 	@Override
@@ -78,14 +79,14 @@ public class ConnettoreRicezioneContenutiApplicativiDirectVM extends AbstractCon
 			return false;
 		}
 		else{
-			this.pd = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PD).trim();
+			this.nomePD = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PD).trim();
 		}
 		
 		return true;
 	}
 	@Override
 	public String getFunctionParameters() {
-		return super.normalizeFunctionParamters(this.pd);
+		return super.normalizeFunctionParamters(this.nomePD);
 	}
 }
 

@@ -49,19 +49,19 @@ public abstract class URLProtocolContext extends HttpServletTransportRequestCont
 	public static final String PA_FUNCTION_GOVWAY = "in";
 	public static final String PD_FUNCTION = "PD";
 	public static final String PD_FUNCTION_GOVWAY = "out";
-	public static final String PDtoSOAP_FUNCTION = "PDtoSOAP";
-	public static final String PDtoSOAP_FUNCTION_GOVWAY = "out/xml2soap";
-	public static final String IntegrationManager_FUNCTION = "IntegrationManager";
-	public static final String IntegrationManager_ENGINE = "IntegrationManagerEngine";
-	public static final String IntegrationManager_SERVICE_PD = "PD";
-	public static final String IntegrationManager_SERVICE_PD_GOVWAY = "out";
-	public static final String IntegrationManager_SERVICE_MessageBox = "MessageBox";
-	public static final String IntegrationManager_FUNCTION_PD = IntegrationManager_FUNCTION+"/"+IntegrationManager_SERVICE_PD;
-	public static final String IntegrationManager_FUNCTION_MessageBox = IntegrationManager_FUNCTION+"/"+IntegrationManager_SERVICE_MessageBox;
-	public static final String IntegrationManager_ENGINE_FUNCTION_PD = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_PD;
-	public static final String IntegrationManager_ENGINE_FUNCTION_MessageBox = IntegrationManager_ENGINE+"/"+IntegrationManager_SERVICE_MessageBox;
-	public static final String Check_FUNCTION = "check";
-	public static final String Proxy_FUNCTION = "proxy";
+	public static final String PD_TO_SOAP_FUNCTION = "PDtoSOAP";
+	public static final String PD_TO_SOAP_FUNCTION_GOVWAY = "out/xml2soap";
+	public static final String INTEGRATION_MANAGER_FUNCTION = "IntegrationManager";
+	public static final String INTEGRATION_MANAGER_ENGINE = "IntegrationManagerEngine";
+	public static final String INTEGRATION_MANAGER_SERVICE_PD = "PD";
+	public static final String INTEGRATION_MANAGER_SERVICE_PD_GOVWAY = "out";
+	public static final String INTEGRATION_MANAGER_SERVICE_MESSAGE_BOX = "MessageBox";
+	public static final String INTEGRATION_MANAGER_FUNCTION_PD = INTEGRATION_MANAGER_FUNCTION+"/"+INTEGRATION_MANAGER_SERVICE_PD;
+	public static final String INTEGRATION_MANAGER_FUNCTION_MESSAGE_BOX = INTEGRATION_MANAGER_FUNCTION+"/"+INTEGRATION_MANAGER_SERVICE_MESSAGE_BOX;
+	public static final String INTEGRATION_MANAGER_ENGINE_FUNCTION_PD = INTEGRATION_MANAGER_ENGINE+"/"+INTEGRATION_MANAGER_SERVICE_PD;
+	public static final String INTEGRATION_MANAGER_ENGINE_FUNCTION_MESSAGE_BOX = INTEGRATION_MANAGER_ENGINE+"/"+INTEGRATION_MANAGER_SERVICE_MESSAGE_BOX;
+	public static final String CHECK_FUNCTION = "check";
+	public static final String PROXY_FUNCTION = "proxy";
 	
 	protected IDService idServiceCustom;
 	
@@ -71,7 +71,8 @@ public abstract class URLProtocolContext extends HttpServletTransportRequestCont
 	
 	public boolean isPortaApplicativaService() {
 		if(this.idServiceCustom!=null) {
-			return IDService.PORTA_APPLICATIVA.equals(this.idServiceCustom);
+			return IDService.PORTA_APPLICATIVA.equals(this.idServiceCustom) ||
+					IDService.PORTA_APPLICATIVA_NIO.equals(this.idServiceCustom);
 		}
 		else {
 			return URLProtocolContext.PA_FUNCTION.equals(this.function);
@@ -80,8 +81,10 @@ public abstract class URLProtocolContext extends HttpServletTransportRequestCont
 	public boolean isPortaDelegataService() {
 		if(this.idServiceCustom!=null) {
 			return IDService.PORTA_DELEGATA.equals(this.idServiceCustom) || 
+					IDService.PORTA_DELEGATA_NIO.equals(this.idServiceCustom) || 
 					IDService.PORTA_DELEGATA_INTEGRATION_MANAGER.equals(this.idServiceCustom) || 
-					IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(this.idServiceCustom);
+					IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(this.idServiceCustom) ||
+					IDService.PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(this.idServiceCustom);
 		}
 		else {
 			return URLProtocolContext.PD_FUNCTION.equals(this.function);

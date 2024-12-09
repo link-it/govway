@@ -125,18 +125,7 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 		}
 		return null;
 	}
-//	public byte[] getRequestAsByte(){
-//		if(this.bout!=null && this.bout.size()>0){
-//			return this.bout.toByteArray();
-//		}
-//		return null;
-//	}
-//	public String getRequestAsString(){
-//		if(this.bout!=null && this.bout.size()>0){
-//			return this.bout.toString();
-//		}
-//		return null;
-//	}
+
 	public boolean isParsingRequestError(){
 		return this.parseResult!=null && this.parseResult.getParseException()!=null;
 	}
@@ -171,8 +160,7 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 			return this.parseResult;
 		}
 
-		if(this.connectorInMessage instanceof HttpServletConnectorInMessage){
-			HttpServletConnectorInMessage http = (HttpServletConnectorInMessage) this.connectorInMessage;
+		if(this.connectorInMessage instanceof HttpServletConnectorInMessage http){
 			this.bout = new DumpByteArrayOutputStream(this.soglia, this.repositoryFile, this.idTransazione, 
 					TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.getValue());
 			try{
@@ -185,12 +173,16 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 					if(this.bout!=null){
 						this.bout.flush();
 					}
-				}catch(Throwable close){}
+				}catch(Exception close){
+					// ignore
+				}
 				try{
 					if(this.bout!=null){
 						this.bout.close();
 					}
-				}catch(Throwable close){}
+				}catch(Exception close){
+					// ignore
+				}
 			}
 		}
 		else{
@@ -215,12 +207,16 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 						if(this.bout!=null){
 							this.bout.flush();
 						}
-					}catch(Throwable close){}
+					}catch(Throwable close){
+						// ignore
+					}
 					try{
 						if(this.bout!=null){
 							this.bout.close();
 						}
-					}catch(Throwable close){}
+					}catch(Throwable close){
+						// ignore
+					}
 				}
 			}
 		}
@@ -248,19 +244,25 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 		}catch(Throwable t){
 			try{
 				this.bout = DumpByteArrayOutputStream.newInstance(("getRequest error: "+t.getMessage()).getBytes());
-			}catch(Throwable tWrite){}
+			}catch(Throwable tWrite){
+				// ignore
+			}
 			this.log.error("getRequest error: "+t.getMessage(),t);
 		}finally{
 			try{
 				if(this.bout!=null){
 					this.bout.flush();
 				}
-			}catch(Throwable close){}
+			}catch(Throwable close){
+				// ignore
+			}
 			try{
 				if(this.bout!=null){
 					this.bout.close();
 				}
-			}catch(Throwable close){}
+			}catch(Throwable close){
+				// ignore
+			}
 		}
 		
 		if(this.bout!=null){

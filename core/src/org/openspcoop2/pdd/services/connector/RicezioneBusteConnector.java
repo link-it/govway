@@ -132,7 +132,7 @@ public class RicezioneBusteConnector {
 		}
 			
 		try{
-			ricezioneBuste.process(httpIn, httpOut, dataAccettazioneRichiesta);
+			ricezioneBuste.process(httpIn, httpOut, dataAccettazioneRichiesta, ConnectorCostanti.SYNC);
 		}catch(Exception e){
 			doError("RicezioneBuste.process error", e);
 		}

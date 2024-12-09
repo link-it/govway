@@ -32,7 +32,8 @@ package org.openspcoop2.protocol.sdk.dump;
 
 public class DumpException extends Exception {
 
-
+	public static final String DUMP_NON_RIUSCITO = "DumpNonRiuscito";
+	
 	/**
 	 * SerialUID
 	 */
@@ -46,11 +47,9 @@ public class DumpException extends Exception {
 	 public DumpException(String message, Throwable cause)
 		{
 			super(message, cause);
-			// TODO Auto-generated constructor stub
 		}
 		public DumpException(Throwable cause)
 		{
 			super(cause);
-			// TODO Auto-generated constructor stub
 		}
 }

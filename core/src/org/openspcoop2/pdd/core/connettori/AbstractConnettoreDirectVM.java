@@ -64,11 +64,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 	@Override
 	protected boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request) {
 		
-		if(this.initialize(request, true, responseCachingConfig)==false){
-			return false;
-		}
-		
-		return true;
+		return this.initialize(request, true, responseCachingConfig);
 		
 	}
 	
@@ -116,7 +112,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 
 	}
 
-	private IProtocolFactory<?> buildProtocolFactoryForForwardMessage(Map<String, String> properties) throws Exception{
+	private IProtocolFactory<?> buildProtocolFactoryForForwardMessage(Map<String, String> properties) throws ConnettoreException{
 		// protocol
 		IProtocolFactory<?> pFactory = this.getProtocolFactory();
 		String protocol = properties.get(CostantiConnettori.CONNETTORE_DIRECT_VM_PROTOCOL);
@@ -124,13 +120,13 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			try{
 				pFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocol);
 			}catch(Exception e){
-				throw new Exception("Proprieta' '"+CostantiConnettori.CONNETTORE_DIRECT_VM_PROTOCOL+"' fornita contiene un tipo di protocollo ["+protocol+"] non valido: "+e.getMessage());
+				throw new ConnettoreException("Proprieta' '"+CostantiConnettori.CONNETTORE_DIRECT_VM_PROTOCOL+"' fornita contiene un tipo di protocollo ["+protocol+"] non valido: "+e.getMessage());
 			}
 		}
 		return pFactory;
 	}
 	
-	public void buildLocation(Map<String, String> properties, boolean setFormBasedParameter) throws Exception{
+	public void buildLocation(Map<String, String> properties, boolean setFormBasedParameter) throws ConnettoreException{
 		
 		// protocol
 		IProtocolFactory<?> pFactory = buildProtocolFactoryForForwardMessage(properties);
@@ -150,7 +146,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		
 		if(setFormBasedParameter){
 			// Il connettore non possiede possibilita' di consegnare su di una url reale
-			//this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, this.location);
+			/**this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, this.propertiesUrlBased, this.location);*/
 		}
 	}
 	
@@ -178,12 +174,11 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			
 			PdDContext newPddContext = null;
 			String pddContextPreserve = this.properties.get(CostantiConnettori.CONNETTORE_DIRECT_VM_PDD_CONTEXT_PRESERVE);
-			if(pddContextPreserve!=null){
-				if("true".equalsIgnoreCase(pddContextPreserve.trim())){
-					newPddContext = this.getPddContext();
-					if(newPddContext.containsKey(Costanti.ID_TRANSAZIONE)){
-						oldIdTransazione = (String) newPddContext.removeObject(Costanti.ID_TRANSAZIONE);
-					}
+			if(pddContextPreserve!=null &&
+				"true".equalsIgnoreCase(pddContextPreserve.trim())){
+				newPddContext = this.getPddContext();
+				if(newPddContext.containsKey(Costanti.ID_TRANSAZIONE)){
+					oldIdTransazione = (String) newPddContext.removeObject(Costanti.ID_TRANSAZIONE);
 				}
 			}
 			
@@ -254,13 +249,13 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 			
 //			/* ------------  PreInResponseHandler ------------- */
 			// Con connettore Direct non e' utilizzabile
-//			this.preInResponse();
-//			
-//			// Lettura risposta parametri NotifierInputStream per la risposta
-//			org.openspcoop.utils.io.notifier.NotifierInputStreamParams notifierInputStreamParams = null;
-//			if(this.preInResponseContext!=null){
-//				notifierInputStreamParams = this.preInResponseContext.getNotifierInputStreamParams();
-//			}
+			/**this.preInResponse();
+			
+			// Lettura risposta parametri NotifierInputStream per la risposta
+			org.openspcoop.utils.io.notifier.NotifierInputStreamParams notifierInputStreamParams = null;
+			if(this.preInResponseContext!=null){
+				notifierInputStreamParams = this.preInResponseContext.getNotifierInputStreamParams();
+			}*/
 			
 			
 			return true;
@@ -283,6 +278,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
     
 	public abstract boolean validate(ConnettoreMsg request);
 	public abstract String getFunctionParameters();
+	@Override
 	public abstract String getIdModulo();
 	public abstract IDService getIdModuloAsIDService();
 	public abstract String getFunction();

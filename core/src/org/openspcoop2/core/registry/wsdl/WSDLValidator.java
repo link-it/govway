@@ -77,6 +77,9 @@ public class WSDLValidator {
 	public static final String XMLSCHEMA_INSTANCE_LOCAL_NAME_TYPE = "type";
 	private static final String PREFIX_RPC_AGGIUNTO = "op2RPC";
 	
+	private static final String REQUEST = "Request";
+	private static final String RESPONSE = "Response";
+	
 	/** OpenSPCoop2Message */
 	private OpenSPCoop2Message openspcoop2Message;
 	/** SOAPVersion */
@@ -313,10 +316,10 @@ public class WSDLValidator {
 					if(errorMsgValidazioneXSD.length()==0){
 						if(this.addPrefixError) {
 							if(isRichiesta) {
-								errorMsgValidazioneXSD.append("Request");
+								errorMsgValidazioneXSD.append(REQUEST);
 							}
 							else {
-								errorMsgValidazioneXSD.append("Response");
+								errorMsgValidazioneXSD.append(RESPONSE);
 							}
 							errorMsgValidazioneXSD.append("content not conform to XSD specification\n");
 						}
@@ -447,7 +450,7 @@ public class WSDLValidator {
 								this.logger.debug("Validazione XSD con style["+style+"] e use["+use+"] RPC Validation...");
 								String nomeAtteso = azione;
 								if(isRichiesta==false)
-									nomeAtteso = azione+"Response";
+									nomeAtteso = azione+RESPONSE;
 								if(nomeAtteso.equals(nomeElemento)==false){
 									throw new Exception("Root element ["+nomeElemento+"] non equivale all'operation name "+nomeAtteso +" (RPC Style)");
 								}
@@ -484,10 +487,10 @@ public class WSDLValidator {
 							if(errorMsgValidazioneXSD.length()==0){
 								if(this.addPrefixError) {
 									if(isRichiesta) {
-										errorMsgValidazioneXSD.append("Request");
+										errorMsgValidazioneXSD.append(REQUEST);
 									}
 									else {
-										errorMsgValidazioneXSD.append("Response");
+										errorMsgValidazioneXSD.append(RESPONSE);
 									}
 									errorMsgValidazioneXSD.append("content not conform to XSD specification\n");
 								}
@@ -831,7 +834,7 @@ public class WSDLValidator {
 						// RPC
 						String nomeAtteso = operation;
 						if(isRichiesta==false)
-							nomeAtteso = operation+"Response";
+							nomeAtteso = operation+RESPONSE;
 						SOAPElement childRPCElement = SoapUtils.getNotEmptyFirstChildSOAPElement(body);
 						if(childRPCElement==null){
 							this.logger.debug("WSDL, esamino operation["+operation+"] con style["+style+"] e use["+use+"]: Root element RCP non trovato rispetto all'operation name "+nomeAtteso +" (RPC Style)");
@@ -1180,10 +1183,10 @@ public class WSDLValidator {
 			StringBuilder errorMsgValidazioneXSDBuilder = new StringBuilder();
 			if(this.addPrefixError) {
 				if(isRichiesta) {
-					errorMsgValidazioneXSDBuilder.append("Request");
+					errorMsgValidazioneXSDBuilder.append(REQUEST);
 				}
 				else {
-					errorMsgValidazioneXSDBuilder.append("Response");
+					errorMsgValidazioneXSDBuilder.append(RESPONSE);
 				}
 				errorMsgValidazioneXSDBuilder.append(" content not conform to ").append(this.accordoServizioWrapper.isPortTypesLoadedFromWSDL()?"WSDL":"API").append(" specification; ");
 			}

@@ -124,6 +124,7 @@ import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.byok.DriverBYOK;
 import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.pdd.core.cache.GestoreCacheCleaner;
+import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCOREConnectionManager;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
@@ -1072,6 +1073,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				// DiagnosticInputStream
 				DiagnosticInputStream.setSetDateEmptyStream(propertiesReader.isConnettoriUseDiagnosticInputStreamSetDateEmptyStream());
 				OpenSPCoop2Startup.logStartupInfo("DiagnosticInputStream isSetDateEmptyStream: "+DiagnosticInputStream.isSetDateEmptyStream());
+				
+				// ForceUseNioInAsyncChannelWithBIOOnlyLibrary
+				ConnettoreUtils.setForceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting(propertiesReader.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary());
+				OpenSPCoop2Startup.logStartupInfo(""
+						+ "ForceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting: "+ConnettoreUtils.isForceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting());
 				
 				// PipeUnblockedStream
 				if(propertiesReader.getPipedUnblockedStreamClassName()!=null) {
@@ -2690,13 +2696,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			try{
-				RicezioneContenutiApplicativi.initializeService(configurazionePdDManager, classNameReader, propertiesReader, logCore);
+				RicezioneContenutiApplicativi.initializeService(classNameReader, propertiesReader, logCore);
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione servizio RicezioneContenutiApplicativi");
 				return;
 			}
 			try{
-				RicezioneBuste.initializeService(configurazionePdDManager,classNameReader, propertiesReader, logCore);
+				RicezioneBuste.initializeService(classNameReader, propertiesReader, logCore);
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione servizio RicezioneBuste");
 				return;
@@ -2736,9 +2742,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			/* ----------- Inizializzazione BIO Client ------------ */
 			try{
-				ConnettoreHTTPCOREConnectionManager.initialize();
+				org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCOREConnectionManager.initialize();
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Inizializzazione BIO Client Manager");
+				return;
+			}
+			
+			/* ----------- Inizializzazione NIO Client ------------ */
+			try{
+				if(propertiesReader.isNIOEnabled()) {
+					org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCOREConnectionManager.initialize();
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Inizializzazione NIO Client Manager");
 				return;
 			}
 			

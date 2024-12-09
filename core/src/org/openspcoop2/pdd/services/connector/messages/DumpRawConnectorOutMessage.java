@@ -36,10 +36,12 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.services.DumpRaw;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -100,18 +102,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		}
 		return null;
 	}
-//	public byte[] getResponseAsByte(){
-//		if(this.bout!=null && this.bout.size()>0){
-//			return this.bout.toByteArray();
-//		}
-//		return null;
-//	}
-//	public String getResponseAsString(){
-//		if(this.bout!=null && this.bout.size()>0){
-//			return this.bout.toString();
-//		}
-//		return null;
-//	}
+
 	public MessageType getMessageType() {
 		return this.messageType;
 	}
@@ -121,14 +112,14 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	public String getParsingResponseErrorAsString(){
 		if(this.parseException!=null){
 			try{
-				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				PrintWriter pw = new PrintWriter(bout);
+				ByteArrayOutputStream boutError = new ByteArrayOutputStream();
+				PrintWriter pw = new PrintWriter(boutError);
 				this.parseException.getSourceException().printStackTrace(pw);
 				pw.flush();
-				bout.flush();
+				boutError.flush();
 				pw.close();
-				bout.close();
-				return bout.toString();
+				boutError.close();
+				return boutError.toString();
 			}catch(Exception e){
 				return "ParsingResponseError, serializazione eccezione non riuscita: "+e.getMessage();
 			}
@@ -159,9 +150,9 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		}
 	}
 	
-	private void _sendHeaders(OpenSPCoop2Message message) throws Exception {
+	private void sendHeadersEngine(OpenSPCoop2Message message) throws MessageException, ConnectorException {
 		if(message==null) {
-			throw new Exception("Message is null");
+			throw new MessageException("Message is null");
 		}
 		// Eventuali header http propagati
 		OpenSPCoop2MessageProperties forwardHeader = null;
@@ -174,7 +165,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		if(forwardHeader!=null && forwardHeader.size()>0){
 			Iterator<String> keys = forwardHeader.getKeys();
 			while (keys.hasNext()) {
-				String key = (String) keys.next();
+				String key = keys.next();
 				List<String> values = forwardHeader.getPropertyValues(key);
 				if(values!=null && !values.isEmpty()) {
 					for (String value : values) {
@@ -193,7 +184,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		
 		try{
 			// Propago eventuali header http
-			this._sendHeaders(message);
+			this.sendHeadersEngine(message);
 			
 			// Prima lo registro e dopo serializzo
 			if(this.bout!=null){
@@ -242,12 +233,16 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 				if(this.bout!=null){
 					this.bout.flush();
 				}
-			}catch(Throwable close){}
+			}catch(Throwable close){
+				// ignore
+			}
 			try{
 				if(this.bout!=null){
 					this.bout.close();
 				}
-			}catch(Throwable close){}
+			}catch(Throwable close){
+				// ignore
+			}
 		}
 		
 		// wrapped method
@@ -274,19 +269,25 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		}catch(Throwable t){
 			try{
 				this.bout = DumpByteArrayOutputStream.newInstance(("SendResponse byte[] error: "+t.getMessage()).getBytes());
-			}catch(Throwable tWrite){}
+			}catch(Throwable tWrite){
+				// ignore
+			}
 			this.log.error("SendResponse byte[] error: "+t.getMessage(),t);
 		}finally{
 			try{
 				if(this.bout!=null){
 					this.bout.flush();
 				}
-			}catch(Throwable close){}
+			}catch(Throwable close){
+				// ignore
+			}
 			try{
 				if(this.bout!=null){
 					this.bout.close();
 				}
-			}catch(Throwable close){}
+			}catch(Throwable close){
+				// ignore
+			}
 		}
 		
 		// wrapped method
@@ -300,7 +301,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		
 		try{
 			// Propago eventuali header http
-			this._sendHeaders(message);
+			this.sendHeadersEngine(message);
 		}catch(Exception e){
 			throw new ConnectorException(e.getMessage(),e);
 		}
@@ -383,7 +384,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	}
 
 	@Override
-	public void close(boolean throwException) throws ConnectorException {
+	public void close(AsyncResponseCallbackClientEvent clientEvent, boolean throwException) throws ConnectorException {
 		// wrapped method
 		this.connectorOutMessage.close(throwException);
 	}

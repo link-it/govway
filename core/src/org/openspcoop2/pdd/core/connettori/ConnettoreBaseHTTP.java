@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,6 +86,9 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	public HttpRequestMethod getHttpMethod() {
 		return this.httpMethod;
 	}
+	public void setHttpMethod(HttpRequestMethod httpMethod) {
+		this.httpMethod = httpMethod;
+	}
 	public void setHttpMethod(OpenSPCoop2Message msg) throws ConnettoreException {
 		// HttpMethod
 		if(this.forceHttpMethod!=null) {
@@ -112,6 +116,12 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
 	/** InputStream Risposta */
 	protected String resultHTTPMessage;
+	public String getResultHTTPMessage() {
+		return this.resultHTTPMessage;
+	}
+	public void setResultHTTPMessage(String resultHTTPMessage) {
+		this.resultHTTPMessage = resultHTTPMessage;
+	}
 
 	/** RFC 2047 */
 	protected boolean encodingRFC2047 = false;
@@ -122,21 +132,21 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	
 	/** Proxy Pass Reverse */
 	protected boolean proxyPassReverseEnabled = false;
-	protected boolean proxyPassReverse_location = false;
-	protected boolean proxyPassReverse_setCookie_path = false;
-	protected boolean proxyPassReverse_setCookie_domain = false;
-	protected boolean proxyPassReverse_usePrefixProtocol = false;
-	protected List<String> proxyPassReverse_headers = null;
-	protected List<String> proxyPassReverse_setCookie_headers = null;
-	private boolean forceDisable_proxyPassReverse = false;
-	public void setForceDisable_proxyPassReverse(boolean forceDisable_proxyPassReverse) {
-		this.forceDisable_proxyPassReverse = forceDisable_proxyPassReverse;
+	protected boolean proxyPassReverseLocation = false;
+	protected boolean proxyPassReverseSetCookiePath = false;
+	protected boolean proxyPassReverseSetCookieDomain = false;
+	protected boolean proxyPassReverseUsePrefixProtocol = false;
+	protected List<String> proxyPassReverseHeaders = null;
+	protected List<String> proxyPassReverseSetCookieHeaders = null;
+	private boolean forceDisableProxyPassReverse = false;
+	public void setForceDisableProxyPassReverse(boolean forceDisableProxyPassReverseParam) {
+		this.forceDisableProxyPassReverse = forceDisableProxyPassReverseParam;
 	}
 
 	/** ForwardProxy */
 	protected ForwardProxy forwardProxy;
-	protected String forwardProxy_headerName;
-	protected String forwardProxy_headerValue;
+	protected String forwardProxyHeaderName;
+	protected String forwardProxyHeaderValue;
 	
 	
     /* Costruttori */
@@ -180,17 +190,17 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			this.validazioneHeaderRFC2047 = CostantiProprieta.isConnettoriHeaderValidationRequestEnabled(this.proprietaPorta, this.validazioneHeaderRFC2047);
 		}
 		
-		if(!this.forceDisable_proxyPassReverse) {
+		if(!this.forceDisableProxyPassReverse) {
 			
 			if(this.isRest) {
 				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-					this.proxyPassReverse_location = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse();
-					this.proxyPassReverse_setCookie_path = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie() && this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path();
-					this.proxyPassReverse_setCookie_domain = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie() && this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain();
-					this.proxyPassReverse_usePrefixProtocol = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix();
+					this.proxyPassReverseLocation = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse();
+					this.proxyPassReverseSetCookiePath = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie() && this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path();
+					this.proxyPassReverseSetCookieDomain = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie() && this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain();
+					this.proxyPassReverseUsePrefixProtocol = this.openspcoopProperties.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix();
 					try {
-						this.proxyPassReverse_headers = this.openspcoopProperties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers();
-						this.proxyPassReverse_setCookie_headers = this.openspcoopProperties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers();
+						this.proxyPassReverseHeaders = this.openspcoopProperties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_headers();
+						this.proxyPassReverseSetCookieHeaders = this.openspcoopProperties.getRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers();
 					}catch(Exception e) {
 						this.errore = e.getMessage();
 						return false;
@@ -198,13 +208,13 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				}
 				else{
 					// InoltroBuste e InoltroRisposte
-					this.proxyPassReverse_location = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse();
-					this.proxyPassReverse_setCookie_path = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_setCookie() && this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_path();
-					this.proxyPassReverse_setCookie_domain = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_setCookie() && this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_domain();
-					this.proxyPassReverse_usePrefixProtocol = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_useProtocolPrefix();
+					this.proxyPassReverseLocation = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse();
+					this.proxyPassReverseSetCookiePath = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_setCookie() && this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_path();
+					this.proxyPassReverseSetCookieDomain = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_setCookie() && this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_domain();
+					this.proxyPassReverseUsePrefixProtocol = this.openspcoopProperties.isRESTServices_inoltroBuste_proxyPassReverse_useProtocolPrefix();
 					try {
-						this.proxyPassReverse_headers = this.openspcoopProperties.getRESTServices_inoltroBuste_proxyPassReverse_headers();
-						this.proxyPassReverse_setCookie_headers = this.openspcoopProperties.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers();
+						this.proxyPassReverseHeaders = this.openspcoopProperties.getRESTServices_inoltroBuste_proxyPassReverse_headers();
+						this.proxyPassReverseSetCookieHeaders = this.openspcoopProperties.getRESTServices_inoltroBuste_proxyPassReverse_setCookie_headers();
 					}catch(Exception e) {
 						this.errore = e.getMessage();
 						return false;
@@ -212,13 +222,13 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				}
 			}else {
 				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-					this.proxyPassReverse_location = this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse();
-					this.proxyPassReverse_setCookie_path = this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie() && this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path();
-					this.proxyPassReverse_setCookie_domain = this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie() && this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain();
-					this.proxyPassReverse_usePrefixProtocol = this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix();
+					this.proxyPassReverseLocation = this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse();
+					this.proxyPassReverseSetCookiePath = this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie() && this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path();
+					this.proxyPassReverseSetCookieDomain = this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie() && this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain();
+					this.proxyPassReverseUsePrefixProtocol = this.openspcoopProperties.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix();
 					try {
-						this.proxyPassReverse_headers = this.openspcoopProperties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers();
-						this.proxyPassReverse_setCookie_headers = this.openspcoopProperties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers();
+						this.proxyPassReverseHeaders = this.openspcoopProperties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_headers();
+						this.proxyPassReverseSetCookieHeaders = this.openspcoopProperties.getSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_headers();
 					}catch(Exception e) {
 						this.errore = e.getMessage();
 						return false;
@@ -226,13 +236,13 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				}
 				else{
 					// InoltroBuste e InoltroRisposte
-					this.proxyPassReverse_location = this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse();
-					this.proxyPassReverse_setCookie_path = this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie() && this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_path();
-					this.proxyPassReverse_setCookie_domain = this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie() && this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_domain();
-					this.proxyPassReverse_usePrefixProtocol = this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix();
+					this.proxyPassReverseLocation = this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse();
+					this.proxyPassReverseSetCookiePath = this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie() && this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_path();
+					this.proxyPassReverseSetCookieDomain = this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie() && this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_domain();
+					this.proxyPassReverseUsePrefixProtocol = this.openspcoopProperties.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix();
 					try {
-						this.proxyPassReverse_headers = this.openspcoopProperties.getSOAPServices_inoltroBuste_proxyPassReverse_headers();
-						this.proxyPassReverse_setCookie_headers = this.openspcoopProperties.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers();
+						this.proxyPassReverseHeaders = this.openspcoopProperties.getSOAPServices_inoltroBuste_proxyPassReverse_headers();
+						this.proxyPassReverseSetCookieHeaders = this.openspcoopProperties.getSOAPServices_inoltroBuste_proxyPassReverse_setCookie_headers();
 					}catch(Exception e) {
 						this.errore = e.getMessage();
 						return false;
@@ -243,19 +253,19 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			// check proprieta' specifiche
 			if(this.proprietaPorta!=null && !this.proprietaPorta.isEmpty()) {
 				try {
-					this.proxyPassReverse_location = CostantiProprieta.isConnettoriProxyPassReverseEnabled(this.proprietaPorta, this.proxyPassReverse_location);
-					if(this.proxyPassReverse_location) {
-						this.proxyPassReverse_headers = CostantiProprieta.getConnettoriProxyPassReverseHeaders(this.proprietaPorta, this.proxyPassReverse_headers);
+					this.proxyPassReverseLocation = CostantiProprieta.isConnettoriProxyPassReverseEnabled(this.proprietaPorta, this.proxyPassReverseLocation);
+					if(this.proxyPassReverseLocation) {
+						this.proxyPassReverseHeaders = CostantiProprieta.getConnettoriProxyPassReverseHeaders(this.proprietaPorta, this.proxyPassReverseHeaders);
 					}
 					
-					this.proxyPassReverse_setCookie_path = CostantiProprieta.isConnettoriProxyPassReverseSetCookiePathEnabled(this.proprietaPorta, this.proxyPassReverse_setCookie_path);
-					this.proxyPassReverse_setCookie_domain = CostantiProprieta.isConnettoriProxyPassReverseSetCookieDomainEnabled(this.proprietaPorta, this.proxyPassReverse_setCookie_domain);
-					if(this.proxyPassReverse_setCookie_path || this.proxyPassReverse_setCookie_domain) {
-						this.proxyPassReverse_setCookie_headers = CostantiProprieta.getConnettoriProxyPassReverseHeaders(this.proprietaPorta, this.proxyPassReverse_setCookie_headers);
+					this.proxyPassReverseSetCookiePath = CostantiProprieta.isConnettoriProxyPassReverseSetCookiePathEnabled(this.proprietaPorta, this.proxyPassReverseSetCookiePath);
+					this.proxyPassReverseSetCookieDomain = CostantiProprieta.isConnettoriProxyPassReverseSetCookieDomainEnabled(this.proprietaPorta, this.proxyPassReverseSetCookieDomain);
+					if(this.proxyPassReverseSetCookiePath || this.proxyPassReverseSetCookieDomain) {
+						this.proxyPassReverseSetCookieHeaders = CostantiProprieta.getConnettoriProxyPassReverseHeaders(this.proprietaPorta, this.proxyPassReverseSetCookieHeaders);
 					}
 					
-					if(this.proxyPassReverse_location || this.proxyPassReverse_setCookie_path || this.proxyPassReverse_setCookie_domain) {
-						this.proxyPassReverse_usePrefixProtocol = CostantiProprieta.isConnettoriProxyPassReverseUseProtocolPrefix(this.proprietaPorta, this.proxyPassReverse_usePrefixProtocol);
+					if(this.proxyPassReverseLocation || this.proxyPassReverseSetCookiePath || this.proxyPassReverseSetCookieDomain) {
+						this.proxyPassReverseUsePrefixProtocol = CostantiProprieta.isConnettoriProxyPassReverseUseProtocolPrefix(this.proprietaPorta, this.proxyPassReverseUsePrefixProtocol);
 					}
 				}catch(Exception e) {
 					this.errore = e.getMessage();
@@ -263,17 +273,17 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				}
 			}
 			
-			if(this.proxyPassReverse_location) {
-				this.proxyPassReverse_location = (this.proxyPassReverse_headers!=null && !this.proxyPassReverse_headers.isEmpty());
+			if(this.proxyPassReverseLocation) {
+				this.proxyPassReverseLocation = (this.proxyPassReverseHeaders!=null && !this.proxyPassReverseHeaders.isEmpty());
 			}
-			if(this.proxyPassReverse_setCookie_path) {
-				this.proxyPassReverse_setCookie_path = (this.proxyPassReverse_setCookie_headers!=null && !this.proxyPassReverse_setCookie_headers.isEmpty());
+			if(this.proxyPassReverseSetCookiePath) {
+				this.proxyPassReverseSetCookiePath = (this.proxyPassReverseSetCookieHeaders!=null && !this.proxyPassReverseSetCookieHeaders.isEmpty());
 			}
-			if(this.proxyPassReverse_setCookie_domain) {
-				this.proxyPassReverse_setCookie_domain = (this.proxyPassReverse_setCookie_headers!=null && !this.proxyPassReverse_setCookie_headers.isEmpty());
+			if(this.proxyPassReverseSetCookieDomain) {
+				this.proxyPassReverseSetCookieDomain = (this.proxyPassReverseSetCookieHeaders!=null && !this.proxyPassReverseSetCookieHeaders.isEmpty());
 			}
 
-			this.proxyPassReverseEnabled = this.proxyPassReverse_location || this.proxyPassReverse_setCookie_path || this.proxyPassReverse_setCookie_domain;
+			this.proxyPassReverseEnabled = this.proxyPassReverseLocation || this.proxyPassReverseSetCookiePath || this.proxyPassReverseSetCookieDomain;
 		}
 		
 		return init;
@@ -307,7 +317,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		
 		this.setSecureRandomSSLContext();
 	}
-	private void setSecureRandomSSLContext() throws ConnettoreException{
+	private void setSecureRandomSSLContext() {
 		if(this.sslContextProperties!=null &&
 				!this.sslContextProperties.isSecureRandomSet() &&
 				this.openspcoopProperties.isConnettoreHttpsUseSecureRandom()
@@ -363,7 +373,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			this.forwardProxy = forwardProxy;
 		}
 	}
-	protected boolean updateLocation_forwardProxy(String location) throws ConnettoreException {
+	protected boolean updateLocationForwardProxy(String location) throws ConnettoreException {
 		
 		if(this.forwardProxy!=null && this.forwardProxy.isEnabled()) {
 					
@@ -371,22 +381,22 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			
 			String base64Location = null;
 			if(config.getHeader()!=null) {
-				this.forwardProxy_headerName = config.getHeader();
+				this.forwardProxyHeaderName = config.getHeader();
 				
 				if(config.isHeaderBase64()) {
 					base64Location = Base64Utilities.encodeAsString(location.getBytes());
-					this.forwardProxy_headerValue = base64Location;
+					this.forwardProxyHeaderValue = base64Location;
 				}
 				else {
-					this.forwardProxy_headerValue = location;
+					this.forwardProxyHeaderValue = location;
 					if(this.encodingRFC2047){
 						try {
-							if(RFC2047Utilities.isAllCharactersInCharset(this.forwardProxy_headerValue, this.charsetRFC2047)==false){
-								String encoded = RFC2047Utilities.encode(new String(this.forwardProxy_headerValue), this.charsetRFC2047, this.encodingAlgorithmRFC2047);
-								//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+							if(!RFC2047Utilities.isAllCharactersInCharset(this.forwardProxyHeaderValue, this.charsetRFC2047)){
+								String encoded = RFC2047Utilities.encode(this.forwardProxyHeaderValue+"", this.charsetRFC2047, this.encodingAlgorithmRFC2047);
+								/**System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");*/
 								if(this.debug)
-									this.logger.info("RFC2047 Encoded value ["+this.forwardProxy_headerValue+"] in ["+encoded+"] (charset:"+this.charsetRFC2047+" encoding-algorithm:"+this.encodingAlgorithmRFC2047+")",false);
-								this.forwardProxy_headerValue = encoded;
+									this.logger.info("RFC2047 Encoded value ["+this.forwardProxyHeaderValue+"] in ["+encoded+"] (charset:"+this.charsetRFC2047+" encoding-algorithm:"+this.encodingAlgorithmRFC2047+")",false);
+								this.forwardProxyHeaderValue = encoded;
 							}
 						}catch(Exception e) {
 							throw new ConnettoreException(e.getMessage(),e);
@@ -428,7 +438,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	protected boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
+	public boolean dumpResponse(Map<String, List<String>> trasporto) throws Exception{
 		
 		if(this.isRest){
 			if(this.proxyPassReverseEnabled) {
@@ -452,7 +462,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	protected boolean doSoapResponse() throws Exception{
+	public boolean doSoapResponse() throws ConnettoreException{
 
 		// gestione ordinaria via WS/SOAP
 		
@@ -461,9 +471,13 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		
 		/*
 		 * Se il messaggio e' un html di errore me ne esco 
-		 */		
-		if(!checkSoapHtmlResponse()) {
-			return false;
+		 */	
+		try {
+			if(!checkSoapHtmlResponse()) {
+				return false;
+			}
+		}catch(Exception e) {
+			throw new ConnettoreException(e.getMessage(),e);
 		}
 		
 		if(this.proxyPassReverseEnabled) {
@@ -473,7 +487,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 		return super.doSoapResponse();
 	}
 	
-	private boolean checkSoapHtmlResponse() throws Exception {
+	private boolean checkSoapHtmlResponse() throws UtilsException, IOException {
 		/*
 		 * Se il messaggio e' un html di errore me ne esco 
 		 */			
@@ -498,11 +512,11 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				this.emitDiagnosticResponseRead(this.isResponse);
 				
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-//				byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
-//				int readByte = 0;
-//				while((readByte = this.isResponse.read(readB))!= -1){
-//					bout.write(readB,0,readByte);
-//				}
+				/**byte [] readB = new byte[Utilities.DIMENSIONE_BUFFER];
+				int readByte = 0;
+				while((readByte = this.isResponse.read(readB))!= -1){
+					bout.write(readB,0,readByte);
+				}*/
 				CopyStream.copy(this.isResponse, bout);
 				this.isResponse.close();
 				bout.flush();
@@ -521,7 +535,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 	
 	@Override
-	protected boolean doRestResponse() throws Exception{
+	public boolean doRestResponse() throws ConnettoreException{
 		
 		if(this.proxyPassReverseEnabled) {
 			checkProxyPassReverse();
@@ -531,12 +545,12 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	}
 
 	private boolean proxyPassReverseDone = false;
-	private void checkProxyPassReverse() throws Exception {
+	private void checkProxyPassReverse() throws ConnettoreException {
 		if(!this.proxyPassReverseDone) {
 			try {
 				if(this.debug)
 					this.logger.debug("gestione (rest:"+this.isRest+") - proxyPassReverse:"+this.proxyPassReverseEnabled+
-							" (location:"+this.proxyPassReverse_location+" setCookie-path:"+this.proxyPassReverse_setCookie_path+" setCookie-domain:"+this.proxyPassReverse_setCookie_domain+") ...");
+							" (location:"+this.proxyPassReverseLocation+" setCookie-path:"+this.proxyPassReverseSetCookiePath+" setCookie-domain:"+this.proxyPassReverseSetCookieDomain+") ...");
 			
 				if(this.proxyPassReverseEnabled) {
 					
@@ -547,25 +561,24 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 					try {
 						baseUrl = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
 						if(baseUrl==null) {
-							throw new Exception("BaseURL undefined");
+							throw new ConnettoreException("BaseURL undefined");
 						}
 						if(this.debug)
-							this.logger.debug("Base URL: ["+baseUrl+"] ...");
+							this.logger.debug("Base URL: ["+baseUrl+"]");
 						 
 						String interfaceName = null;
 						if(this.requestMsg!=null) {
 							Object porta = this.requestMsg.getContextProperty(CostantiPdD.NOME_PORTA_INVOCATA);
-							if(porta!=null && porta instanceof String) {
-								interfaceName = (String) porta;
+							if(porta instanceof String s) {
+								interfaceName = s;
 							}
-							if(interfaceName==null) {
-								if(this.requestMsg.getTransportRequestContext()!=null) {
-									interfaceName = this.requestMsg.getTransportRequestContext().getInterfaceName();
-								}
+							if(interfaceName==null &&
+								this.requestMsg.getTransportRequestContext()!=null) {
+								interfaceName = this.requestMsg.getTransportRequestContext().getInterfaceName();
 							}
 						}
 						 
-						if(this.proxyPassReverse_usePrefixProtocol) {
+						if(this.proxyPassReverseUsePrefixProtocol) {
 							UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(this.getProtocolFactory(), 
 									ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? RuoloContesto.PORTA_APPLICATIVA : RuoloContesto.PORTA_DELEGATA,
 									this.requestMsg!=null ? this.requestMsg.getServiceBinding() : null,
@@ -578,37 +591,37 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 						}
 						 
 					}catch(Exception e) {
-						throw new Exception("Errore durante la raccolta delle informazioni necessarie alla funzione di proxy pass reverse: "+e.getMessage(),e);
+						throw new ConnettoreException("Errore durante la raccolta delle informazioni necessarie alla funzione di proxy pass reverse: "+e.getMessage(),e);
 					}
 	
-					if(this.proxyPassReverse_location) {
+					if(this.proxyPassReverseLocation) {
 					 
-						for (String header : this.proxyPassReverse_headers) {
+						for (String header : this.proxyPassReverseHeaders) {
 							String redirectLocation = TransportUtils.getFirstValue(this.propertiesTrasportoRisposta, header); 
 							if(redirectLocation!=null) {
 								if(this.debug)
-									this.logger.debug("Trovato Header '"+header+"':["+redirectLocation+"] ...");
+									this.logger.debug("Trovato Header '"+header+"':["+redirectLocation+"]");
 								
 								try {
 									String newRedirectLocation = RestUtilities.buildPassReverseUrl(this.requestMsg.getTransportRequestContext(), baseUrl, redirectLocation, prefixGatewayUrl, contesto);
 									if(this.debug)
-										this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"] ...");
+										this.logger.debug("Nuovo Header '"+header+"':["+newRedirectLocation+"]");
 				               
 									if(!redirectLocation.equals(newRedirectLocation)) {
 										TransportUtils.removeObject(this.propertiesTrasportoRisposta, header);
 										TransportUtils.addHeader(this.propertiesTrasportoRisposta,header, newRedirectLocation);
 									}
 								}catch(Exception e) {
-									throw new Exception("Errore durante l'aggiornamento dell'header '"+header+
+									throw new ConnettoreException("Errore durante l'aggiornamento dell'header '"+header+
 											"' attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
 								}
 							}
 						}
 					}
 				
-					if(this.proxyPassReverse_setCookie_path || this.proxyPassReverse_setCookie_domain) {
+					if(this.proxyPassReverseSetCookiePath || this.proxyPassReverseSetCookieDomain) {
 					 
-						for (String header : this.proxyPassReverse_setCookie_headers) {
+						for (String header : this.proxyPassReverseSetCookieHeaders) {
 							List<String> cookieValues = TransportUtils.getValues(this.propertiesTrasportoRisposta, header);
 							List<String> newCookieValues = null; 
 							boolean modify = false;
@@ -619,7 +632,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 								for (String cookieValue : cookieValues) {
 									if(cookieValue!=null) {
 										if(this.debug)
-											this.logger.debug("Trovato CookieHeader '"+header+"':["+cookieValue+"] ...");
+											this.logger.debug("Trovato CookieHeader '"+header+"':["+cookieValue+"]");
 											
 										List<String> cookieNames = new ArrayList<>();
 										List<String> cookiePaths = new ArrayList<>();
@@ -627,14 +640,14 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 										try {
 											List<HttpCookie> l = java.net.HttpCookie.parse(cookieValue);
 											for (HttpCookie httpCookie : l) {
-												//System.out.println("cookie ["+httpCookie.getName()+"] ["+httpCookie.getPath()+"]");
+												/**System.out.println("cookie ["+httpCookie.getName()+"] ["+httpCookie.getPath()+"]");*/
 												if(httpCookie.getPath()!=null) {
 													cookieNames.add(httpCookie.getName());
 													cookiePaths.add(httpCookie.getPath());
 													cookieDomains.add(httpCookie.getDomain());
 												}
 											}
-										}catch(Throwable e) {
+										}catch(Exception e) {
 											this.logger.error("Errore durante il parsing del valore dell'header '"+header+"' (gestione cookie): "+e.getMessage(),e);
 										}
 										
@@ -646,7 +659,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 												
 												String newValue = cookieValue;
 												
-												if(this.proxyPassReverse_setCookie_path) {
+												if(this.proxyPassReverseSetCookiePath) {
 													try {
 														if(cPath!=null) {
 															String newPath = RestUtilities.buildCookiePassReversePath(this.requestMsg.getTransportRequestContext(), baseUrl, cPath, prefixGatewayUrl, contesto);
@@ -655,7 +668,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 										               
 															if(!cPath.equals(newPath)) {
 																newValue = newValue.replace(cPath, newPath);
-																/*
+																/**
 																String newValue = newValue.replace("path="+cPath, "path="+newPath);
 																newValue = newValue.replace("path ="+cPath, "path ="+newPath);
 																newValue = newValue.replace("path= "+cPath, "path= "+newPath);
@@ -690,12 +703,12 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 															}
 														}
 													}catch(Exception e) {
-														throw new Exception("Errore durante l'aggiornamento del cookie '"+cName+
+														throw new ConnettoreException("Errore durante l'aggiornamento del cookie '"+cName+
 																"' (header:"+header+") attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
 													}	
 												}
 												
-												if(this.proxyPassReverse_setCookie_domain) {
+												if(this.proxyPassReverseSetCookieDomain) {
 													try {
 														if(cDomain!=null) {
 															String newDomain = RestUtilities.buildCookiePassReverseDomain(this.requestMsg.getTransportRequestContext(), baseUrl, cDomain, prefixGatewayUrl);
@@ -704,7 +717,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 										               
 															if(!cDomain.equals(newDomain)) {
 																newValue = newValue.replace(cDomain, newDomain);
-																/*
+																/**
 																String newValue = newValue.replace("domain="+cDomain, "domain="+newDomain);
 																newValue = newValue.replace("domain ="+cDomain, "domain ="+newDomain);
 																newValue = newValue.replace("domain= "+cDomain, "domain= "+newDomain);
@@ -739,18 +752,18 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 															}
 														}
 													}catch(Exception e) {
-														throw new Exception("Errore durante l'aggiornamento del cookie '"+cName+
+														throw new ConnettoreException("Errore durante l'aggiornamento del cookie '"+cName+
 																"' (header:"+header+") attraverso la funzione di proxy pass reverse: "+e.getMessage(),e);
 													}
 												}
 												
 												newCookieValues.add(newValue);
 											
-											} // end for (int i = 0; i < cookieNames.size(); i++) {
-										} // end !cookieNames.isEmpty()
-									} // end cookieValue!=null
-								} // end for (String cookieValue : cookieValues) {
-							} //end if(cookieValues!=null && !cookieValues.isEmpty()) {
+											} /** end for (int i = 0; i < cookieNames.size(); i++) { */
+										} /** end !cookieNames.isEmpty() */
+									} /** end cookieValue!=null */
+								} /** end for (String cookieValue : cookieValues) { */
+							} /** end if(cookieValues!=null && !cookieValues.isEmpty()) { */
 							
 							if(modify) {
 								TransportUtils.removeObject(this.propertiesTrasportoRisposta, header);

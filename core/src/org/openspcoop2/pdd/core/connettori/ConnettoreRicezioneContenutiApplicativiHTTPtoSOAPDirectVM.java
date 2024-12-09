@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.core.connettori;
 import java.util.Date;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.pdd.services.connector.ConnectorCostanti;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.RicezioneContenutiApplicativiHTTPtoSOAPConnector;
 import org.openspcoop2.pdd.services.connector.messages.DirectVMConnectorInMessage;
@@ -49,7 +50,7 @@ public class ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM extends A
 
 	public static final String TIPO = "vmPDtoSOAP";
 	
-	private String pd;
+	private String nomePD;
 	
 	@Override
 	public String getIdModulo(){
@@ -61,13 +62,13 @@ public class ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM extends A
 	}
 	@Override
 	public String getFunction(){
-		return URLProtocolContext.PDtoSOAP_FUNCTION;
+		return URLProtocolContext.PD_TO_SOAP_FUNCTION;
 	}
 	@Override
 	public void process(DirectVMConnectorInMessage inMessage,DirectVMConnectorOutMessage outMessage) throws ConnectorException{
 		RicezioneContenutiApplicativiHTTPtoSOAPService soapConnector = new RicezioneContenutiApplicativiHTTPtoSOAPService(null); // il generatore di errori verrà creato direttamente dal servizio
 		Date dataAccettazioneRichiesta = DateManager.getDate();
-		soapConnector.process(inMessage, outMessage, dataAccettazioneRichiesta);
+		soapConnector.process(inMessage, outMessage, dataAccettazioneRichiesta, ConnectorCostanti.SYNC);
 	}
 	
 	@Override
@@ -78,14 +79,14 @@ public class ConnettoreRicezioneContenutiApplicativiHTTPtoSOAPDirectVM extends A
 			return false;
 		}
 		else{
-			this.pd = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PD).trim();
+			this.nomePD = request.getConnectorProperties().get(CostantiConnettori.CONNETTORE_DIRECT_VM_PD).trim();
 		}
 		
 		return true;
 	}
 	@Override
 	public String getFunctionParameters() {
-		return super.normalizeFunctionParamters(this.pd);
+		return super.normalizeFunctionParamters(this.nomePD);
 	}
 }
 

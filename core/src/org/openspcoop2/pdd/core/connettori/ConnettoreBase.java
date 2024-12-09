@@ -54,6 +54,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -76,11 +77,12 @@ import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
-import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.transazioni.ConfigurazioneTracciamento;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.services.connector.AsyncResponseCallbackClientEvent;
+import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
@@ -123,7 +125,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	/** Msg di richiesta */
 	protected OpenSPCoop2Message requestMsg;	
 	protected boolean isSoap = false;
+	public boolean isSoap() {
+		return this.isSoap;
+	}
 	protected boolean isRest = false;
+	public boolean isRest() {
+		return this.isRest;
+	}
 	
 	/** Indicazione su di un eventuale sbustamento SOAP */
 	protected boolean sbustamentoSoap;
@@ -135,7 +143,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected Map<String, List<String>> propertiesUrlBased;
 	
 	/** Tipo di Autenticazione */
-	//private String tipoAutenticazione;
+	/**private String tipoAutenticazione;*/
 	/** Credenziali per l'autenticazione */
 	protected InvocazioneCredenziali credenziali;
 	
@@ -144,6 +152,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	/** Indicazione se siamo in modalita' debug */
 	protected boolean debug = false;
+	public boolean isDebug() {
+		return this.debug;
+	}
 
 	/** OpenSPCoopProperties */
 	protected OpenSPCoop2Properties openspcoopProperties = null;
@@ -153,30 +164,69 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	
 	/** Logger */
 	protected ConnettoreLogger logger = null;
+	public ConnettoreLogger getLogger() {
+		return this.logger;
+	}
 
 	/** Loader loader */
 	protected Loader loader = null;
 	
 	/** Errore generato con un prefisso del connettore */
 	protected boolean generateErrorWithConnectorPrefix = true;
+	public boolean isGenerateErrorWithConnectorPrefix() {
+		return this.generateErrorWithConnectorPrefix;
+	}
 	
 	/** Identificativo Modulo */
 	protected String idModulo = null;
+	public String getIdModulo() {
+		return this.idModulo;
+	}
 	
 	/** motivo di un eventuale errore */
 	protected String errore = null;
+	public void setErrore(String errore) {
+		this.errore = errore;
+	}
+	
 	/** Messaggio di risposta */
 	protected OpenSPCoop2Message responseMsg = null;
+	public void setResponseMsg(OpenSPCoop2Message responseMsg) {
+		this.responseMsg = responseMsg;
+	}
+	
 	/** Codice Operazione Effettuata */
 	protected int codice;
+	public void setCodiceTrasporto(int codice) {
+		this.codice = codice;
+	}
+	
 	/** ContentLength */
 	protected long contentLength = -1;
+	public void setContentLength(long contentLength) {
+		this.contentLength = contentLength;
+	}
+
 	/** File tmp */
 	protected String location = null;
+	public String internalGetLocationValue() {
+		return this.location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
 	/** Eccezione processamento */
 	protected Exception eccezioneProcessamento = null;
+	public void setEccezioneProcessamento(Exception eccezioneProcessamento) {
+		this.eccezioneProcessamento = eccezioneProcessamento;
+	}
+	
 	/** Proprieta' del trasporto della risposta */
 	protected Map<String, List<String>> propertiesTrasportoRisposta = new HashMap<>();
+	public Map<String, List<String>> getPropertiesTrasportoRisposta() {
+		return this.propertiesTrasportoRisposta;
+	}
+
 	/** CreationDate */
 	protected Date creationDate;
 	
@@ -188,6 +238,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected PostOutRequestContext postOutRequestContext;
 	/** PreInResponseContext */
 	protected PreInResponseContext preInResponseContext;
+	public PreInResponseContext getPreInResponseContext() {
+		return this.preInResponseContext;
+	}
 	/** State */
 	protected IState state;
 	
@@ -219,8 +272,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     protected DumpRaw dumpRaw = null;
-    protected boolean logFileTrace_headers = false;
-    protected boolean logFileTrace_payload = false;
+    protected boolean logFileTraceHeaders = false;
+    protected boolean logFileTracePayload = false;
 	
     private boolean registerSendIntoContext = true;
     public void setRegisterSendIntoContext(boolean registerSendIntoContext) {
@@ -233,9 +286,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	}
 
     protected String idTransazione;
-    
-	protected int dumpBinario_soglia;
-	protected File dumpBinario_repositoryFile;
+    protected Transaction transactionNullable = null;
+	
+	protected int dumpBinarioSoglia;
+	protected File dumpBinarioRepositoryFile;
     
 	protected PortaApplicativa pa;
 	protected String nomeConnettoreAsincrono;
@@ -249,6 +303,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected boolean useDiagnosticInputStream = false;
 	
 	protected List<Proprieta> proprietaPorta;
+	
+	protected IAsyncResponseCallback asyncResponseCallback;
+	protected boolean asyncWait = false;
+	protected boolean asyncInvocationSuccess = false;
+	public void setAsyncInvocationSuccess(boolean asyncInvocationSuccess) {
+		this.asyncInvocationSuccess = asyncInvocationSuccess;
+	}
 	
 	protected ConnettoreBase(){
 		this.creationDate = DateManager.getDate();
@@ -272,13 +333,16 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			return false;
 		}
 		
+		// async context
+		this.asyncResponseCallback = request.getAsyncResponseCallback();
+		
 		// Raccolta parametri per costruttore logger
 		this.properties = request.getConnectorProperties();
 		if(connectorPropertiesRequired){
 			if(this.properties == null)
-				this.errore = "Proprieta' del connettore non definite";
+				this.errore = "Proprietà del connettore non definite";
 			else if(this.properties.size() == 0)
-				this.errore = "Proprieta' del connettore non definite";
+				this.errore = "Proprietà del connettore vuote";
 		}
 		
 		// tipoConnetore
@@ -293,9 +357,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			this.idMessaggio=this.busta.getID();
 		
 		// - Debug mode
-		if(this.properties!=null && this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null){
-			if("true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim()))
-				this.debug = true;
+		if(this.properties!=null && this.properties.get(CostantiConnettori.CONNETTORE_DEBUG)!=null &&
+			"true".equalsIgnoreCase(this.properties.get(CostantiConnettori.CONNETTORE_DEBUG).trim())) {
+			this.debug = true;
 		}
 	
 		// Logger
@@ -333,7 +397,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		this.propertiesUrlBased = request.getPropertiesUrlBased();
 
 		// Credenziali
-		//this.tipoAutenticazione = request.getAutenticazione();
+		/**this.tipoAutenticazione = request.getAutenticazione();*/
 		this.credenziali = request.getCredenziali();
 
 		// Identificativo modulo
@@ -349,14 +413,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		// Limit
 		if(this.getPddContext()!=null && this.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.LIMITED_STREAM)){
 			Object o = this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.LIMITED_STREAM);
-			if(o!=null && o instanceof SogliaDimensioneMessaggio) {
+			if(o instanceof SogliaDimensioneMessaggio soglia) {
 				try {
-					SogliaDimensioneMessaggio soglia = (SogliaDimensioneMessaggio) o;
 					if(soglia!=null && soglia.getSogliaKb()>0) {
 						this.useLimitedInputStream = true;
 						this.limitBytes = soglia;
 					}
-				}catch(Throwable t) {
+				}catch(Exception t) {
 					// ignore
 				}
 			}
@@ -391,8 +454,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		else if(this.idModulo!=null) {
 			try {
 				// Soglia Dump
-				this.dumpBinario_soglia = this.openspcoopProperties.getDumpBinarioInMemoryThreshold();
-				this.dumpBinario_repositoryFile = this.openspcoopProperties.getDumpBinarioRepository();
+				this.dumpBinarioSoglia = this.openspcoopProperties.getDumpBinarioInMemoryThreshold();
+				this.dumpBinarioRepositoryFile = this.openspcoopProperties.getDumpBinarioRepository();
 				
 				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance();
 				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
@@ -407,8 +470,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					}
 					
 					ConfigurazioneTracciamento configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, TipoPdD.APPLICATIVA);
-					this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
-					this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
+					this.logFileTraceHeaders = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+					this.logFileTracePayload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 					
 					if(idPA!=null) {
 						this.pa = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, this.requestInfo);
@@ -416,8 +479,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pa);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(this.pa);
 							configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, this.pa);
-							this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
-							this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
+							this.logFileTraceHeaders = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+							this.logFileTracePayload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 							this.proprietaPorta = this.pa.getProprietaList();
 							if(request.getTransazioneApplicativoServer()!=null) {
 								this.nomeConnettoreAsincrono = request.getTransazioneApplicativoServer().getConnettoreNome();
@@ -435,8 +498,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					}
 					
 					ConfigurazioneTracciamento configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, TipoPdD.DELEGATA);
-					this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
-					this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
+					this.logFileTraceHeaders = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+					this.logFileTracePayload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 					
 					if(idPD!=null) {
 						this.pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, this.requestInfo);
@@ -444,8 +507,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							this.useTimeoutInputStream = configurazionePdDManager.isConnettoriUseTimeoutInputStream(this.pd);
 							dumpConfigurazione = configurazionePdDManager.getDumpConfigurazione(this.pd);
 							configurazioneTracciamento = new ConfigurazioneTracciamento(this.logger.getLogger(), configurazionePdDManager, this.pd);
-							this.logFileTrace_headers = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
-							this.logFileTrace_payload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
+							this.logFileTraceHeaders = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettoreHeaderEnabled();
+							this.logFileTracePayload = configurazioneTracciamento.isTransazioniFileTraceDumpBinarioConnettorePayloadEnabled();
 							this.proprietaPorta = this.pd.getProprietaList();
 						}
 					}
@@ -453,14 +516,14 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				}
 			
 				if(request.getTransazioneApplicativoServer()!=null) {
-					this.logFileTrace_headers = false;
-					this.logFileTrace_payload = false;
+					this.logFileTraceHeaders = false;
+					this.logFileTracePayload = false;
 				}
 				
 				this.dumpRaw = new DumpRaw(this.logger,dominio,this.idModulo,this.outRequestContext.getTipoPorta(), 
 						dumpBinario, 
 						dumpConfigurazione,
-						this.logFileTrace_headers, this.logFileTrace_payload);
+						this.logFileTraceHeaders, this.logFileTracePayload);
 				if(this.dumpRaw.isActiveDumpDatabase()) {
 					if(request.getTransazioneApplicativoServer()!=null) {
 						this.dumpRaw.initDump(nomePorta, this.outRequestContext.getPddContext(),
@@ -493,121 +556,115 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		// IdTransazione
 		if(this.getPddContext()!=null) {
 			Object oIdTransazione = this.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
-			if(oIdTransazione!=null && (oIdTransazione instanceof String)){
-				this.idTransazione = (String) oIdTransazione;
+			if(oIdTransazione instanceof String s){
+				this.idTransazione = s;
 			}
+		}
+		try{
+			if(this.idTransazione!=null) {
+				this.transactionNullable = TransactionContext.getTransaction(this.idTransazione);
+			}
+		}catch(Throwable e){
+			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
 		}
 		
 		// Cache Response
 		this.responseCachingConfig = responseCachingConfig;
-		if(this.responseCachingConfig!=null && StatoFunzionalita.ABILITATO.equals(this.responseCachingConfig.getStato())) {
-			if(this.requestMsg!=null) {
-				Object digestO = this.requestMsg.getContextProperty(CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST);
-				if(digestO!=null) {
+		if(this.responseCachingConfig!=null && StatoFunzionalita.ABILITATO.equals(this.responseCachingConfig.getStato()) &&
+			this.requestMsg!=null) {
+			Object digestO = this.requestMsg.getContextProperty(CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST);
+			if(digestO!=null) {
+									
+				if(this.transactionNullable!=null) {
+					this.transactionNullable.getTempiElaborazione().startResponseCachingReadFromCache();
+				}
+				
+				this.responseCachingDigest = (String) digestO;
+				try{
+					ResponseCached responseCached =  GestoreCacheResponseCaching.getInstance().readByDigest(this.responseCachingDigest);
+					if(responseCached!=null) {
 					
-					Transaction transactionNullable = null;
-					try{
-						if(this.idTransazione!=null) {
-							transactionNullable = TransactionContext.getTransaction(this.idTransazione);
+						// esiste una risposta cachata, verifico eventuali direttive
+						ResponseCachingConfigurazioneControl cacheControl = this.responseCachingConfig.getControl();
+						if(cacheControl==null) {
+							cacheControl = new ResponseCachingConfigurazioneControl(); // uso i valori di default
 						}
-					}catch(Throwable e){
-						// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
-					}
+						if(cacheControl!=null) {
 					
-					if(transactionNullable!=null) {
-						transactionNullable.getTempiElaborazione().startResponseCachingReadFromCache();
-					}
-					
-					this.responseCachingDigest = (String) digestO;
-					try{
-						ResponseCached responseCached =  GestoreCacheResponseCaching.getInstance().readByDigest(this.responseCachingDigest);
+							Map<String, List<String>> trasportoRichiesta = null;
+							if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null && 
+									this.requestMsg.getTransportRequestContext().getHeaders()!=null) {
+								trasportoRichiesta = this.requestMsg.getTransportRequestContext().getHeaders();
+							}
+							
+							if(cacheControl.isNoCache() &&
+								HttpUtilities.isDirectiveNoCache(trasportoRichiesta)) {
+								GestoreCacheResponseCaching.getInstance().removeByUUID(responseCached.getUuid());
+								responseCached = null;
+							}
+							
+							if(responseCached!=null &&
+								cacheControl.isMaxAge()) {
+								Integer maxAge = HttpUtilities.getDirectiveCacheMaxAge(trasportoRichiesta);
+								if(maxAge!=null && maxAge.intValue()>0 &&
+									responseCached.getAgeInSeconds() > maxAge.intValue()) {
+									GestoreCacheResponseCaching.getInstance().removeByUUID(responseCached.getUuid());
+									responseCached = null;
+								}
+							}
+								
+						}
+						
 						if(responseCached!=null) {
 						
-							// esiste una risposta cachata, verifico eventuali direttive
-							ResponseCachingConfigurazioneControl cacheControl = this.responseCachingConfig.getControl();
-							if(cacheControl==null) {
-								cacheControl = new ResponseCachingConfigurazioneControl(); // uso i valori di default
-							}
-							if(cacheControl!=null) {
-						
-								Map<String, List<String>> trasportoRichiesta = null;
-								if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null && 
-										this.requestMsg.getTransportRequestContext().getHeaders()!=null) {
-									trasportoRichiesta = this.requestMsg.getTransportRequestContext().getHeaders();
-								}
-								
-								if(cacheControl.isNoCache()) {
-									if(HttpUtilities.isDirectiveNoCache(trasportoRichiesta)) {
-										GestoreCacheResponseCaching.getInstance().removeByUUID(responseCached.getUuid());
-										responseCached = null;
-									}
-								}
-								
-								if(responseCached!=null) {
-									if(cacheControl.isMaxAge()) {
-										Integer maxAge = HttpUtilities.getDirectiveCacheMaxAge(trasportoRichiesta);
-										if(maxAge!=null && maxAge.intValue()>0) {
-											if(responseCached.getAgeInSeconds() > maxAge.intValue()) {
-												GestoreCacheResponseCaching.getInstance().removeByUUID(responseCached.getUuid());
-												responseCached = null;
-											}
-										}
-									}
-								}
-									
-							}
+							OpenSPCoop2Message msgResponse = responseCached.toOpenSPCoop2Message(
+									org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(), this.requestMsg, this.requestInfo, MessageRole.RESPONSE),
+									this.openspcoopProperties.getAttachmentsProcessingMode(),
+									this.openspcoopProperties.getCachingResponseHeaderCacheKey());
+													
+							this.responseMsg = msgResponse;
 							
-							if(responseCached!=null) {
+							this.dataAccettazioneRisposta = DateManager.getDate();
 							
-								OpenSPCoop2Message msgResponse = responseCached.toOpenSPCoop2Message(
-										org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(), this.requestMsg, this.requestInfo, MessageRole.RESPONSE),
-										this.openspcoopProperties.getAttachmentsProcessingMode(),
-										this.openspcoopProperties.getCachingResponseHeaderCacheKey());
-														
-								this.responseMsg = msgResponse;
-								
-								this.dataAccettazioneRisposta = DateManager.getDate();
-								
-								org.openspcoop2.utils.transport.TransportResponseContext transportResponseContenxt = msgResponse.getTransportResponseContext();
-								
-								if(transportResponseContenxt!=null && transportResponseContenxt.getCodiceTrasporto()!=null){
-									try {
-										this.codice = Integer.parseInt(transportResponseContenxt.getCodiceTrasporto());
-									}catch(Exception e) {
-										this.logger.error("Errore durante la conversione del codice di trasporto ["+transportResponseContenxt.getCodiceTrasporto()+"]");
-										this.codice = 200;
-									}
-								}
-								else {
+							org.openspcoop2.utils.transport.TransportResponseContext transportResponseContenxt = msgResponse.getTransportResponseContext();
+							
+							if(transportResponseContenxt!=null && transportResponseContenxt.getCodiceTrasporto()!=null){
+								try {
+									this.codice = Integer.parseInt(transportResponseContenxt.getCodiceTrasporto());
+								}catch(Exception e) {
+									this.logger.error("Errore durante la conversione del codice di trasporto ["+transportResponseContenxt.getCodiceTrasporto()+"]");
 									this.codice = 200;
 								}
-								
-								if(transportResponseContenxt!=null) {
-									this.propertiesTrasportoRisposta = transportResponseContenxt.getHeaders();
-								}
-								
-								this.contentLength = responseCached.getMessageLength();
-								
-								if(this.getPddContext()!=null) {
-									this.getPddContext().addObject(RESPONSE_FROM_CACHE, true);
-								}
-								
-								this.location = LOCATION_CACHED;
-								
-								
-								this.responseAlready = true;
-								
 							}
+							else {
+								this.codice = 200;
+							}
+							
+							if(transportResponseContenxt!=null) {
+								this.propertiesTrasportoRisposta = transportResponseContenxt.getHeaders();
+							}
+							
+							this.contentLength = responseCached.getMessageLength();
+							
+							if(this.getPddContext()!=null) {
+								this.getPddContext().addObject(RESPONSE_FROM_CACHE, true);
+							}
+							
+							this.location = LOCATION_CACHED;
+							
+							
+							this.responseAlready = true;
+							
 						}
-					}catch(Exception e){
-						this.eccezioneProcessamento = e;
-						this.logger.error("Errore durante la lettura della cache delle risposte: "+this.readExceptionMessageFromException(e),e);
-						this.errore = "Errore durante la lettura della cache delle risposte: "+this.readExceptionMessageFromException(e);
-						return false;
-					}finally {
-						if(transactionNullable!=null) {
-							transactionNullable.getTempiElaborazione().endResponseCachingReadFromCache();
-						}
+					}
+				}catch(Exception e){
+					this.eccezioneProcessamento = e;
+					this.logger.error("Errore durante la lettura della cache delle risposte: "+this.readExceptionMessageFromException(e),e);
+					this.errore = "Errore durante la lettura della cache delle risposte: "+this.readExceptionMessageFromException(e);
+					return false;
+				}finally {
+					if(this.transactionNullable!=null) {
+						this.transactionNullable.getTempiElaborazione().endResponseCachingReadFromCache();
 					}
 				}
 			}
@@ -622,7 +679,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		return true;
 	}
 	
-	private static final String format = "yyyy-MM-dd HH:mm:ss.SSS";
+	private static final String FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 	protected NameValue getTokenHeader() throws ConnettoreException {
 		return this.getTokenParameter(true);
 	}
@@ -682,13 +739,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				if(this.debug) {
 					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' ...");
 				}
-				if(this.msgDiagnostico!=null) {
-					try {
-						this.msgDiagnostico.logPersonalizzato("negoziazioneToken.inCorso");
-					}catch(Throwable t) {
-						this.logger.error("Emissione diagnostica 'negoziazioneToken.inCorso' fallita: "+t.getMessage(),t);
-					}
-				}
+				logPersonalizzato("negoziazioneToken.inCorso");
 				EsitoNegoziazioneToken esitoNegoziazione = GestoreToken.endpointToken(this.debug, this.logger.getLogger(), this.policyNegoziazioneToken, 
 						this.busta, this.requestInfo, 
 						ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo) ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA, this.idModulo, this.pa, this.pd,
@@ -697,13 +748,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' terminata");
 				}
 				
-				SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
+				SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(FORMAT);
 								
 				if(esitoNegoziazione==null) {
-					throw new Exception("Esito Negoziazione non ritornato ?");
+					throw new ConnettoreException("Esito Negoziazione non ritornato ?");
 				}
 				if(!esitoNegoziazione.isValido()) {
-					throw new Exception(esitoNegoziazione.getDetails(),esitoNegoziazione.getEccezioneProcessamento());
+					throw new ConnettoreException(esitoNegoziazione.getDetails(),esitoNegoziazione.getEccezioneProcessamento());
 				}
 				if(esitoNegoziazione.isInCache()) {
 					if(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
@@ -712,13 +763,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					else {
 						this.logger.debug("Presente in cache access_token '"+esitoNegoziazione.getToken()+"'; no expire");
 					}
-					if(this.msgDiagnostico!=null) {
-						try {
-							this.msgDiagnostico.logPersonalizzato("negoziazioneToken.inCache");
-						}catch(Exception t) {
-							this.logger.error("Emissione diagnostica 'negoziazioneToken.inCache' fallita: "+t.getMessage(),t);
-						}
-					}
+					logPersonalizzato("negoziazioneToken.inCache");
 				}
 				else {
 					if(esitoNegoziazione.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {
@@ -727,13 +772,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					else {
 						this.logger.debug("Recuperato access_token '"+esitoNegoziazione.getToken()+"'; no expire");
 					}
-					if(this.msgDiagnostico!=null) {
-						try {
-							this.msgDiagnostico.logPersonalizzato("negoziazioneToken.completata");
-						}catch(Exception t) {
-							this.logger.error("Emissione diagnostica 'negoziazioneToken.completata' fallita: "+t.getMessage(),t);
-						}
-					}
+					logPersonalizzato("negoziazioneToken.completata");
 				}
 				
 				if(this.modIValidazioneSemanticaProfiloSicurezza!=null) {
@@ -748,13 +787,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 						}
 					}
 					
-					if(this.msgDiagnostico!=null) {
-						try {
-							this.msgDiagnostico.logPersonalizzato("inoltroInCorso");
-						}catch(Exception t) {
-							this.logger.error("Emissione diagnostica 'inoltroInCorso' fallita: "+t.getMessage(),t);
-						}
-					}
+					logPersonalizzato("inoltroInCorso");
 				}
 				
 				if(n.getValue()!=null) {
@@ -775,25 +808,20 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		
 		return null;
 	}
+	protected void logPersonalizzato(String idDiagnostico) {
+		if(this.msgDiagnostico!=null) {
+			try {
+				this.msgDiagnostico.logPersonalizzato(idDiagnostico);
+			}catch(Exception t) {
+				this.logger.error("Emissione diagnostica '"+idDiagnostico+"' fallita: "+t.getMessage(),t);
+			}
+		}
+	}
 	
 	private void saveResponseInCache() {
-		
-		Transaction transactionNullable = null;
-		try{
-			if(this.getPddContext()!=null) {
-				Object oIdTransazione = this.getPddContext().getObject(Costanti.ID_TRANSAZIONE);
-				String idTransazione = null;
-				if(oIdTransazione!=null && (oIdTransazione instanceof String)){
-					idTransazione = (String) oIdTransazione;
-				}
-				transactionNullable = TransactionContext.getTransaction(idTransazione);
-			}
-		}catch(Throwable e){
-			// La transazione potrebbe essere stata eliminata nelle comunicazioni stateful
-		}
-		
-		if(transactionNullable!=null) {
-			transactionNullable.getTempiElaborazione().startResponseCachingSaveInCache();
+				
+		if(this.transactionNullable!=null) {
+			this.transactionNullable.getTempiElaborazione().startResponseCachingSaveInCache();
 		}
 		
 		try {
@@ -820,94 +848,84 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				if(cacheControl==null) {
 					cacheControl = new ResponseCachingConfigurazioneControl(); // uso i valori di default
 				}
-				if(cacheControl!=null) {
-					if(cacheControl.isNoStore()) {
-						if(HttpUtilities.isDirectiveNoStore(trasportoRichiesta)) {
-							saveInCache = false;
-						}
-					}
+				if(cacheControl!=null &&
+					cacheControl.isNoStore() &&
+					HttpUtilities.isDirectiveNoStore(trasportoRichiesta)) {
+					saveInCache = false;
 				}
 				
-				if(saveInCache) {
-					if(this.responseCachingConfig.sizeRegolaList()>0) {
+				if(saveInCache &&
+					this.responseCachingConfig.sizeRegolaList()>0) {
 						
-						int returnCode = -1;
-						try {
-							if(this.responseMsg.getTransportResponseContext()!=null && this.responseMsg.getTransportResponseContext().getCodiceTrasporto()!=null) {
-								returnCode = Integer.parseInt(this.responseMsg.getTransportResponseContext().getCodiceTrasporto());
-							}
-						}catch(Exception e) {}
+					int returnCode = internalReadReturnCode();
+					
+					boolean isFault = this.responseMsg.isFault();
+					
+					ResponseCachingConfigurazioneRegola regolaGeneraleIncludeFault = null;
+					
+					saveInCache = false; // se ci sono delle regole, salvo solamente se la regola ha un match
+					for (ResponseCachingConfigurazioneRegola regola : this.responseCachingConfig.getRegolaList()) {
 						
-						boolean isFault = this.responseMsg.isFault();
+						boolean skip = false;
+						if(returnCode>0 && regola.getReturnCodeMin()!=null &&
+							returnCode<regola.getReturnCodeMin().intValue()) {
+							skip=true;
+						}
+						if(!skip && returnCode>0 && regola.getReturnCodeMax()!=null &&
+							returnCode>regola.getReturnCodeMax().intValue()) {
+							skip=true;
+						}
 						
-						ResponseCachingConfigurazioneRegola regolaGeneraleIncludeFault = null;
+						if(!skip && isFault && !regola.isFault()) {
+							skip=true;
+						}
+						else if(!skip && !isFault && regola.isFault()) {
+							// in questo caso la regola va bene poichè l'istruzione fault indica semplicemente se includere o meno un fault
+							// e quindi essendo il messaggio non un fault la regola match.
+							// Però prima di usarla verifico se esiste una regola specifica senza fault
+							if(regolaGeneraleIncludeFault==null) {
+								regolaGeneraleIncludeFault = regola;
+							}
+							skip=true;
+						}
+						if(!skip) {
 						
-						saveInCache = false; // se ci sono delle regole, salvo solamente se la regola ha un match
-						for (ResponseCachingConfigurazioneRegola regola : this.responseCachingConfig.getRegolaList()) {
-							
-							if(returnCode>0 && regola.getReturnCodeMin()!=null) {
-								if(returnCode<regola.getReturnCodeMin().intValue()) {
-									continue;
-								}
-							}
-							if(returnCode>0 && regola.getReturnCodeMax()!=null) {
-								if(returnCode>regola.getReturnCodeMax().intValue()) {
-									continue;
-								}
-							}
-							
-							if(isFault && !regola.isFault()) {
-								continue;
-							}
-							else if(!isFault && regola.isFault()) {
-								// in questo caso la regola va bene poichè l'istruzione fault indica semplicemente se includere o meno un fault
-								// e quindi essendo il messaggio non un fault la regola match.
-								// Però prima di usarla verifico se esiste una regola specifica senza fault
-								if(regolaGeneraleIncludeFault==null) {
-									regolaGeneraleIncludeFault = regola;
-								}
-								continue;
-							}
-							
 							// ho un match
 							saveInCache = true;
 							if(regola.getCacheTimeoutSeconds()!=null) {
 								cacheTimeoutSeconds = regola.getCacheTimeoutSeconds().intValue();
 							}
 							break;
+							
 						}
-						
-						if(!saveInCache && regolaGeneraleIncludeFault!=null) {
-							// ho il match di un messaggio che non è un fault con una regola che fa includere anche i fault
-							saveInCache = true;
-							if(regolaGeneraleIncludeFault.getCacheTimeoutSeconds()!=null) {
-								cacheTimeoutSeconds = regolaGeneraleIncludeFault.getCacheTimeoutSeconds().intValue();
-							}
+					}
+					
+					if(!saveInCache && regolaGeneraleIncludeFault!=null) {
+						// ho il match di un messaggio che non è un fault con una regola che fa includere anche i fault
+						saveInCache = true;
+						if(regolaGeneraleIncludeFault.getCacheTimeoutSeconds()!=null) {
+							cacheTimeoutSeconds = regolaGeneraleIncludeFault.getCacheTimeoutSeconds().intValue();
 						}
 					}
 				}
 				
-				if(saveInCache) {				
-					if(kbMax!=null) {
-						if(this.contentLength>0) {
-							if(this.contentLength>byteMax) {
-								this.logger.debug("Messaggio non salvato in cache, nonostante la configurazione lo richiesta poichè la sua dimensione ("+this.contentLength+ 
-										" bytes) supera la dimensione massima consentita ("+byteMax+" bytes)");
-								saveInCache = false;
-							}
-						}
-					}
+				if(saveInCache &&			
+					kbMax!=null &&
+					this.contentLength>0 &&
+					this.contentLength>byteMax) {
+					this.logger.debug("Messaggio non salvato in cache, nonostante la configurazione lo richiesta poichè la sua dimensione ("+this.contentLength+ 
+							" bytes) supera la dimensione massima consentita ("+byteMax+" bytes)");
+					saveInCache = false;
 				}
 				
 				if(saveInCache) {
 					ResponseCached responseCached = ResponseCached.toResponseCached(this.responseMsg, cacheTimeoutSeconds);
-					if(kbMax!=null && this.contentLength<=0) {
+					if(kbMax!=null && this.contentLength<=0 &&
 						// ricontrollo poichè non era disponibile l'informazione
-						if(responseCached.getMessageLength()>byteMax) {
-							this.logger.debug("Messaggio non salvato in cache, nonostante la configurazione lo richiesta poichè la sua dimensione ("+responseCached.getMessageLength()+ 
-									" bytes) supera la dimensione massima consentita ("+byteMax+" bytes)");
-							saveInCache = false;
-						}
+						responseCached.getMessageLength()>byteMax) {
+						this.logger.debug("Messaggio non salvato in cache, nonostante la configurazione lo richiesta poichè la sua dimensione ("+responseCached.getMessageLength()+ 
+								" bytes) supera la dimensione massima consentita ("+byteMax+" bytes)");
+						saveInCache = false;
 					}
 					if(saveInCache) {
 						GestoreCacheResponseCaching.getInstance().save(this.responseCachingDigest, responseCached);
@@ -917,33 +935,71 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		}catch(Throwable e){
 			this.logger.error("Errore durante il salvataggio nella cache delle risposte: "+this.readExceptionMessageFromException(e),e);
 		}finally {
-			if(transactionNullable!=null) {
-				transactionNullable.getTempiElaborazione().endResponseCachingSaveInCache();
+			if(this.transactionNullable!=null) {
+				this.transactionNullable.getTempiElaborazione().endResponseCachingSaveInCache();
 			}
 		}
+	}
+	private int internalReadReturnCode() {
+		int returnCode = -1;
+		try {
+			if(this.responseMsg.getTransportResponseContext()!=null && this.responseMsg.getTransportResponseContext().getCodiceTrasporto()!=null) {
+				returnCode = Integer.parseInt(this.responseMsg.getTransportResponseContext().getCodiceTrasporto());
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return returnCode;
 	}
 	
 	protected abstract boolean initializePreSend(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request);
 	
 	protected abstract boolean send(ConnettoreMsg request);
-	
+		
 	@Override
 	public boolean send(ResponseCachingConfigurazione responseCachingConfig, ConnettoreMsg request){
 		
-		if(this.initializePreSend(responseCachingConfig, request)==false){
-			return false;
+		try {
+		
+			if(!this.initializePreSend(responseCachingConfig, request)){
+				return false;
+			}
+			
+			// caching response
+			if(this.responseAlready) {
+				return true;
+			}
+			
+			boolean returnEsitoSend = send(request);
+			if(returnEsitoSend) {
+				saveResponseInCache();
+			}
+			return returnEsitoSend;
+			
+		}finally {
+			if(this.asyncResponseCallback!=null && !this.asyncWait) {
+				try {
+					this.asyncResponseCallback.asyncComplete(AsyncResponseCallbackClientEvent.NONE, this.asyncInvocationSuccess);
+				}catch(Exception e) {
+					this.logger.error("AsyncCallback.complete: "+e.getMessage(),e);
+				}
+			}
 		}
 		
-		// caching response
-		if(this.responseAlready) {
-			return true;
+	}
+	
+	public void asyncComplete(AsyncResponseCallbackClientEvent clientEvent) {
+		try {
+			if(this.asyncResponseCallback==null) {
+				this.logger.error("Async context not active");
+				this.errore = "Async context not active";
+			}
+			else {
+				this.asyncResponseCallback.asyncComplete(clientEvent, this.asyncInvocationSuccess);
+			}
+		}catch(Throwable e) {
+			this.logger.error("AsyncCallback.complete: "+e.getMessage(),e);
 		}
-		
-		boolean returnEsitoSend = send(request);
-		if(returnEsitoSend) {
-			saveResponseInCache();
-		}
-		return returnEsitoSend;
 	}
 	
 	/**
@@ -976,11 +1032,11 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
      */
     @Override
 	public Map<String, List<String>> getHeaderTrasporto(){
-    	if(this.propertiesTrasportoRisposta.size()<=0){
-    		return null;
-    	}else{
-    		return this.propertiesTrasportoRisposta;
+    	Map<String, List<String>> m = null;
+		if(this.propertiesTrasportoRisposta.size()>0){
+    		m = this.propertiesTrasportoRisposta;
     	}
+		return m;
     }
 	
 	/**
@@ -1078,7 +1134,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     }
     
     
-    protected void postOutRequest() throws Exception{
+    public void postOutRequest() throws ConnettoreException{
     	
     	if(this.registerSendIntoContext && this.getPddContext()!=null) {
     		this.getPddContext().addObject(Costanti.RICHIESTA_INOLTRATA_BACKEND, Costanti.RICHIESTA_INOLTRATA_BACKEND_VALORE);
@@ -1094,8 +1150,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     		try{
     			GestoreHandlers.postOutRequest(this.postOutRequestContext, this.msgDiagnostico, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
     		}catch(Exception e){
-				if(e instanceof HandlerException){
-					HandlerException he = (HandlerException) e;
+				if(e instanceof HandlerException he){
 					if(he.isEmettiDiagnostico()){
 						this.msgDiagnostico.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 					}
@@ -1105,13 +1160,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				}else{
 					this.msgDiagnostico.logErroreGenerico(e, "PostOutRequestHandler");
 				}
-				throw e;
+				throw new ConnettoreException(e.getMessage(),e);
     		}
     	}
     	
     }
     
-    protected void preInResponse() throws Exception{
+    public void preInResponse() throws ConnettoreException{
     	
     	this.dataAccettazioneRisposta = DateManager.getDate();
     	
@@ -1130,8 +1185,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     		try{
     			GestoreHandlers.preInResponse(this.preInResponseContext, this.msgDiagnostico, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
     		}catch(Exception e){
-				if(e instanceof HandlerException){
-					HandlerException he = (HandlerException) e;
+				if(e instanceof HandlerException he){
 					if(he.isEmettiDiagnostico()){
 						this.msgDiagnostico.logErroreGenerico(e, ((HandlerException)e).getIdentitaHandler());
 					}
@@ -1141,13 +1195,13 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 				}else{
 					this.msgDiagnostico.logErroreGenerico(e, "PreInResponseHandler");
 				}
-				throw e;
+				throw new ConnettoreException(e.getMessage(),e);
     		}
     	}
     	 	
     }
         
-    protected String readExceptionMessageFromException(Throwable e) {
+    public String readExceptionMessageFromException(Throwable e) {
     	return readConnectionExceptionMessageFromException(e);
     }
     public static String readConnectionExceptionMessageFromException(Throwable e) {
@@ -1161,82 +1215,33 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	}
     	
     	// 2. java.net.SocketException
-    	if(e instanceof java.net.SocketException){
-    		java.net.SocketException s = (java.net.SocketException) e;
-    		if(_isNotNullMessageException(s)){
-    			return s.getMessage();
-    		}
-    	}
-    	if(Utilities.existsInnerException(e, java.net.SocketException.class)){
-    		Throwable internal = Utilities.getInnerException(e, java.net.SocketException.class);
-    		if(_isNotNullMessageException(internal)){
-    			return _buildException(e, internal);
-    		}
+    	String se = readSocketExceptionFromException(e);
+    	if(se!=null) {
+    		return se;
     	}
     	
     	// 3. java.security.cert.CertificateException
-    	if(java.security.cert.CertificateException.class.isInstance(e)){
-    		java.security.cert.CertificateException ce = (java.security.cert.CertificateException) e;
-    		if(_isNotNullMessageException(ce)){
-    			return ce.getMessage();
-    		}
-    	}
-    	if(Utilities.existsInnerInstanceException(e, java.security.cert.CertificateException.class)){
-    		boolean last = true;
-    		
-    		Throwable internalNotYetValid = Utilities.getInnerInstanceException(e, java.security.cert.CertificateNotYetValidException.class, last);
-    		if(internalNotYetValid!=null) {
-	    		if(_isNotNullMessageException(internalNotYetValid)){
-	    			return _buildException(e, internalNotYetValid);
-	    		}
-    		}
-    		
-    		Throwable internalExpired = Utilities.getInnerInstanceException(e, java.security.cert.CertificateExpiredException.class, last);
-    		if(internalExpired!=null) {
-	    		if(_isNotNullMessageException(internalExpired)){
-	    			return _buildException(e, internalExpired);
-	    		}
-    		}
-    		
-    		// Anche in questo caso vengono due eccezioni uguali
-//    		Throwable internalRevoked = Utilities.getInnerInstanceException(e, java.security.cert.CertificateRevokedException.class, last);
-//    		if(internalRevoked!=null) {
-//	    		if(_isNotNullMessageException(internalRevoked)){
-//	    			return _buildException(e, internalRevoked);
-//	    		}
-//    		}
-//    		
-    		// solo nei casi precedenti costruisco una eccezione con la parte interna.
-    		// Negli altri casi (es. certificato non presente nel truststore 'unable to find valid certification path to requested target') verrebbero due eccezioni uguali
-    		if(_isNotNullMessageException(e)){
-    			return e.getMessage();
-    		}
+    	String ce = readCertificateExceptionFromException(e);
+    	if(ce!=null) {
+    		return ce;
     	}
     	
     	// 4. java.io.IOException
-    	if(e instanceof java.io.IOException || java.io.IOException.class.isInstance(e)){
-    		java.io.IOException io = (java.io.IOException) e;
-    		if(_isNotNullMessageException(io)){
-    			return io.getMessage();
-    		}
-    	}
-    	if(Utilities.existsInnerException(e, java.io.IOException.class)){
-    		Throwable internal = Utilities.getInnerException(e, java.io.IOException.class);
-    		if(_isNotNullMessageException(internal)){
-    			return _buildException(e, internal);
-    		}
+    	String ioe = readIOExceptionFromException(e);
+    	if(ioe!=null) {
+    		return ioe;
     	}
     	
     	// 5. ClientAbortException (Succede nel caso il buffer del client non sia più disponibile)
     	if(Utilities.existsInnerException(e, "org.apache.catalina.connector.ClientAbortException")){
     		Throwable internal = Utilities.getInnerException(e, "org.apache.catalina.connector.ClientAbortException");
-    		if(_isNotNullMessageException(internal)){
-    			return "ClientAbortException - "+ _buildException(e, internal);
+    		if(internalIsNotNullMessageException(internal)){
+    			return "ClientAbortException - "+ internalBuildException(e, internal);
     		}
     	}
     	    	    	    	
     	// Check Null Message
-    	if(_isNotNullMessageException(e)){
+    	if(internalIsNotNullMessageException(e)){
     		return e.getMessage();
     	}
     	else{
@@ -1250,11 +1255,73 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	}
     	
     }
-    protected String buildException(Throwable original,Throwable internal){
-    	return _buildException(original, internal);
+    private static String readSocketExceptionFromException(Throwable e) {
+    	if(e instanceof java.net.SocketException s &&
+    		internalIsNotNullMessageException(s)){
+    		return s.getMessage();
+    	}
+    	if(Utilities.existsInnerException(e, java.net.SocketException.class)){
+    		Throwable internal = Utilities.getInnerException(e, java.net.SocketException.class);
+    		if(internalIsNotNullMessageException(internal)){
+    			return internalBuildException(e, internal);
+    		}
+    	}
+    	return null;
     }
-    private static String _buildException(Throwable original,Throwable internal){
-    	if(_isNotNullMessageException(original)){
+    private static String readCertificateExceptionFromException(Throwable e) {
+    	if(e instanceof java.security.cert.CertificateException ce &&
+    		internalIsNotNullMessageException(ce)){
+    		return ce.getMessage();
+    	}
+    	if(Utilities.existsInnerInstanceException(e, java.security.cert.CertificateException.class)){
+    		boolean last = true;
+    		
+    		Throwable internalNotYetValid = Utilities.getInnerInstanceException(e, java.security.cert.CertificateNotYetValidException.class, last);
+    		if(internalNotYetValid!=null &&
+	    		internalIsNotNullMessageException(internalNotYetValid)){
+    			return internalBuildException(e, internalNotYetValid);
+    		}
+    		
+    		Throwable internalExpired = Utilities.getInnerInstanceException(e, java.security.cert.CertificateExpiredException.class, last);
+    		if(internalExpired!=null &&
+	    		internalIsNotNullMessageException(internalExpired)){
+    			return internalBuildException(e, internalExpired);
+    		}
+    		
+    		// Anche in questo caso vengono due eccezioni uguali
+    		/**Throwable internalRevoked = Utilities.getInnerInstanceException(e, java.security.cert.CertificateRevokedException.class, last);
+    		if(internalRevoked!=null) {
+	    		if(_isNotNullMessageException(internalRevoked)){
+	    			return _buildException(e, internalRevoked);
+	    		}
+    		}*/
+    		
+    		// solo nei casi precedenti costruisco una eccezione con la parte interna.
+    		// Negli altri casi (es. certificato non presente nel truststore 'unable to find valid certification path to requested target') verrebbero due eccezioni uguali
+    		if(internalIsNotNullMessageException(e)){
+    			return e.getMessage();
+    		}
+    	}
+    	return null;
+    }
+    private static String readIOExceptionFromException(Throwable e) {
+    	if(e instanceof java.io.IOException io && /** || java.io.IOException.class.isInstance(e)){ */
+    		internalIsNotNullMessageException(io)){
+    		return io.getMessage();
+    	}
+    	if(Utilities.existsInnerException(e, java.io.IOException.class)){
+    		Throwable internal = Utilities.getInnerException(e, java.io.IOException.class);
+    		if(internalIsNotNullMessageException(internal)){
+    			return internalBuildException(e, internal);
+    		}
+    	}
+    	return null;
+    }
+    protected String buildException(Throwable original,Throwable internal){
+    	return internalBuildException(original, internal);
+    }
+    private static String internalBuildException(Throwable original,Throwable internal){
+    	if(internalIsNotNullMessageException(original)){
     		String internalMessage = internal.getMessage();
     		String originalMessage = original.getMessage();
     		if(originalMessage!=null && !originalMessage.equals(internalMessage)) {
@@ -1269,19 +1336,19 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	}
     }
     protected boolean isNotNullMessageException(Throwable tmp){
-    	return _isNotNullMessageException(tmp);
+    	return internalIsNotNullMessageException(tmp);
     }
-    private static boolean _isNotNullMessageException(Throwable tmp){
+    private static boolean internalIsNotNullMessageException(Throwable tmp){
     	return tmp.getMessage()!=null && !"".equals(tmp.getMessage()) && !"null".equalsIgnoreCase(tmp.getMessage());
     }
     
     protected boolean isDumpBinarioRichiesta() {
     	return this.debug || (this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRichiesta()); 
-    			//this.logFileTrace;
+    			/**this.logFileTrace;*/
     }
-    protected boolean isDumpBinarioRisposta() {
+    public boolean isDumpBinarioRisposta() {
     	return this.debug || (this.dumpRaw!=null && this.dumpRaw.isActiveDumpDatabaseRisposta()); 
-    			//this.logFileTrace;
+    			/**this.logFileTrace;*/
     }
     
     private InfoConnettoreUscita infoConnettoreUscita = null;
@@ -1336,6 +1403,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		return this.dynamicMap;
     }
     
+    private String getPropertyPrefix(String name) {
+    	return "Proprieta' '"+name+"' ";
+    }
+    
     protected String getDynamicProperty(String tipoConnettore,boolean required,String name,Map<String,Object> dynamicMap) throws ConnettoreException{
 		String tmp = this.properties.get(name);
 		if(tmp!=null){
@@ -1343,7 +1414,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		}
 		if(tmp==null || "".equals(tmp)){
 			if(required){
-				throw new ConnettoreException("Proprieta' '"+name+"' non fornita e richiesta da questo tipo di connettore ["+tipoConnettore+"]");
+				throw new ConnettoreException(getPropertyPrefix(name)+"non fornita e richiesta da questo tipo di connettore ["+tipoConnettore+"]");
 			}
 			return null;
 		}
@@ -1357,6 +1428,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
    
     
     protected boolean isBooleanProperty(String tipoConnettore,boolean defaultValue,String name){
+    	if(tipoConnettore!=null) {
+    		// nop
+    	}
   		String tmp = this.properties.get(name);
   		if(tmp!=null){
   			tmp = tmp.trim();
@@ -1374,20 +1448,20 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		}
 		if(tmp==null || "".equals(tmp)){
 			if(required){
-				throw new ConnettoreException("Proprieta' '"+name+"' non fornita e richiesta da questo tipo di connettore ["+tipoConnettore+"]");
+				throw new ConnettoreException(getPropertyPrefix(name)+"non fornita e richiesta da questo tipo di connettore ["+tipoConnettore+"]");
 			}
 			return null;
 		}
 		try{
 			return Integer.parseInt(tmp);
 		}catch(Exception e){
-			throw new ConnettoreException("Proprieta' '"+name+"' contiene un valore non corretto: "+e.getMessage(),e);
+			throw new ConnettoreException(getPropertyPrefix(name)+"contiene un valore non corretto: "+e.getMessage(),e);
 		}
 
     }
     
     
-	protected void forwardHttpRequestHeader() throws Exception{
+	protected void forwardHttpRequestHeader() throws MessageException {
 		OpenSPCoop2MessageProperties forwardHeader = null;
 		if(ServiceBinding.REST.equals(this.requestMsg.getServiceBinding())) {
 			forwardHeader = this.requestMsg.getForwardTransportHeader(this.openspcoopProperties.getRESTServicesHeadersForwardConfig(true));
@@ -1402,17 +1476,20 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			if(this.propertiesTrasporto==null){
 				this.propertiesTrasporto = new HashMap<>();
 			}
-			Iterator<String> keys = forwardHeader.getKeys();
-			while (keys.hasNext()) {
-				String key = (String) keys.next();
-				List<String> values = forwardHeader.getPropertyValues(key);
-				if(values!=null && !values.isEmpty()) {
-					List<String> vs = new ArrayList<>(values); // per evitare che la add sottostante aggiunga alla collezione e si continui a iterare
-					for (String value : vs) {
-						if(this.debug)
-							this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
-						TransportUtils.addHeader(this.propertiesTrasporto, key, value);		
-					}
+			forwardHttpRequestHeader(forwardHeader);
+		}
+	}
+	private void forwardHttpRequestHeader(OpenSPCoop2MessageProperties forwardHeader) {
+		Iterator<String> keys = forwardHeader.getKeys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			List<String> values = forwardHeader.getPropertyValues(key);
+			if(values!=null && !values.isEmpty()) {
+				List<String> vs = new ArrayList<>(values); // per evitare che la add sottostante aggiunga alla collezione e si continui a iterare
+				for (String value : vs) {
+					if(this.debug)
+						this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
+					TransportUtils.addHeader(this.propertiesTrasporto, key, value);		
 				}
 			}
 		}
@@ -1424,13 +1501,15 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	this.headersImpostati.clear();
     }
     private Messaggio messaggioDumpUscita = null;
-    protected void setRequestHeader(String key,List<String> values) throws Exception {} // ridefinito nei connettori dove esistono header da spedire 
-    protected void setRequestHeader(String key, String value, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
+    protected void setRequestHeader(String key,List<String> values) throws ConnettoreException {
+    	// ridefinito nei connettori dove esistono header da spedire 
+    } 
+    protected void setRequestHeader(String key, String value, Map<String, List<String>> propertiesTrasportoDebug) throws ConnettoreException {
     	List<String> list = new ArrayList<>(); 
     	list.add(value);
     	this.setRequestHeader(key, list, propertiesTrasportoDebug);
     }
-    protected void setRequestHeader(String key,List<String> values, Map<String, List<String>> propertiesTrasportoDebug) throws Exception {
+    protected void setRequestHeader(String key,List<String> values, Map<String, List<String>> propertiesTrasportoDebug) throws ConnettoreException {
     	if(!this.headersImpostati.containsKey(key)) {
     		this.headersImpostati.put(key,values);
 	    	this.setRequestHeader(key,values);
@@ -1440,35 +1519,31 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	}
     	else {
     		// Update eventuale dump in TransazioneContext
-    		if(this.messaggioDumpUscita==null) {
-				if(this.openspcoopProperties.isTransazioniSaveDumpInUniqueTransaction() && this.getPddContext()!=null && this.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
-					try {
-						Transaction tr = TransactionContext.getTransaction((String)this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
-						if(tr!=null) {
-							for (Messaggio messaggio : tr.getMessaggi()) {
-								if(TipoMessaggio.RICHIESTA_USCITA.equals(messaggio.getTipoMessaggio())) {
-									this.messaggioDumpUscita = messaggio;
-									break;
-								}
-							}
-						}
-					}
-					catch(TransactionNotExistsException e) {
-						this.logger.debug("Adeguamento dump http header non riuscito (token ): "+e.getMessage());
-					}
-					catch(Throwable e){
-						this.logger.error("Adeguamento dump http header non riuscito: "+e.getMessage(),e);
+    		setRequestHeaderUpdateTransactionContext(key);
+    	}
+    }
+    private void setRequestHeaderUpdateTransactionContext(String key) {
+    	if(this.messaggioDumpUscita==null &&
+				this.openspcoopProperties.isTransazioniSaveDumpInUniqueTransaction() && this.transactionNullable!=null) {
+			try {
+				for (Messaggio messaggio : this.transactionNullable.getMessaggi()) {
+					if(TipoMessaggio.RICHIESTA_USCITA.equals(messaggio.getTipoMessaggio())) {
+						this.messaggioDumpUscita = messaggio;
+						break;
 					}
 				}
-    		}
-    		if(this.messaggioDumpUscita!=null) {
-    			if(this.messaggioDumpUscita.getHeaders()==null) {
-    				this.messaggioDumpUscita.setHeaders(new HashMap<>());
-    			}
-    			TransportUtils.removeRawObject(this.messaggioDumpUscita.getHeaders(), key);
-    			this.messaggioDumpUscita.getHeaders().put(key, this.headersImpostati.get(key));
-    		}
-    	}
+			}
+			catch(Exception e){
+				this.logger.error("Adeguamento dump http header non riuscito: "+e.getMessage(),e);
+			}
+		}
+		if(this.messaggioDumpUscita!=null) {
+			if(this.messaggioDumpUscita.getHeaders()==null) {
+				this.messaggioDumpUscita.setHeaders(new HashMap<>());
+			}
+			TransportUtils.removeRawObject(this.messaggioDumpUscita.getHeaders(), key);
+			this.messaggioDumpUscita.getHeaders().put(key, this.headersImpostati.get(key));
+		}
     }
     
     private boolean emitDiagnosticResponseRead = false;

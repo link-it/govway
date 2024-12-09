@@ -343,7 +343,7 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
 					this.getProtocolFactory(), this.idModulo);
 		}
 
-		this.updateLocation_forwardProxy(this.location);
+		this.updateLocationForwardProxy(this.location);
 	}
 
 
@@ -364,7 +364,7 @@ public abstract class ConnettoreExtBaseHTTP extends ConnettoreBaseHTTP {
 	}
 
 	@Override
-	protected abstract void setRequestHeader(String key,List<String> values) throws Exception;
+	protected abstract void setRequestHeader(String key,List<String> values) throws ConnettoreException;
 
 }
 

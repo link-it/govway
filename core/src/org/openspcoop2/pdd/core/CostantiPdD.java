@@ -371,13 +371,25 @@ public class CostantiPdD {
     public static final int CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS = 300;
     /** Close asyncClient that have been unused longer than X sec */
     public static final int CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS = 900;
-    /** Controllo effettuato ogni X secondi */
-    public static final int CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_CHECK_INTERVAL_SECONDS = 60;
     
-    /** Pool Size Applicative Threads */
-    public static final int CONNETTORE_NIO_ASYNC_REQUEST_POOL_SIZE = 100;
-    /** Pool Size Applicative Threads */
-    public static final int CONNETTORE_NIO_ASYNC_RESPONSE_POOL_SIZE = 100;
+    public static final String CONNETTORE_NIO_ASYNC_CONFIG_AVAILABLE_PROCESSORS = "availableProcessors";
+    public static int getAvailableProcessors() {
+    	return Runtime.getRuntime().availableProcessors();
+    }
+    
+    /** Maximum limit of connection on a per route basis */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE = 100;
+    /** Maximum limit of connection on total */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_TOTAL = 100;
+    /** Close connections that have been idle longer than X sec */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS = 30;
+    /** Expire asyncClient that have been unused longer than X sec */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS = 300;
+    /** Close asyncClient that have been unused longer than X sec */
+    public static final int CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS = 900;
+    
+    public static final String CONNETTORE_FASE_GESTIIONE_RICHIESTA = "Request";
+    public static final String CONNETTORE_FASE_GESTIIONE_RISPOSTA = "Response";
     
     
     /** Configurazione default per refresh cluster dinamico */
@@ -807,6 +819,8 @@ public class CostantiPdD {
     public static final String KEY_IDENTITA_GESTORE_CREDENZIALI = "@IDENTITA_GESTORE_CREDENZIALI@";
     /** Costante che indica il tipo di validazione */
     public static final String KEY_TIPO_VALIDAZIONE_BUSTA = "@TIPO_VALIDAZIONE_BUSTA@";
+    public static final String TIPO_VALIDAZIONE_BUSTA_SINTATTICA = "sintattica";
+    public static final String TIPO_VALIDAZIONE_BUSTA_SEMANTICA = "semantica";
     
     /** Costante che identifica un soggetto intermediario.  */
     public static final String KEY_INTERMEDIARIO = "@SOGGETTO_INTERMEDIARIO@";
@@ -975,6 +989,12 @@ public class CostantiPdD {
     
     
     public static final MapKey<String> REQUEST_READ_TIMEOUT = Map.newMapKey("REQUEST_READ_TIMEOUT");
+    
+    
+    public static final String GOVWAY_CORE = "GovWayCore";
+    public static final String GOVWAY_CORE_ERRORE_GENERAZIONE_DIAGNOSTICO = "Errore generazione diagnostico";
+    public static final String GOVWAY_CORE_ERRORE_GENERALE = "ErroreGenerale";
+    
 }
 
 

@@ -184,7 +184,7 @@ public class ConnettoreNULL extends ConnettoreBase {
 				DumpByteArrayOutputStream bout = null;
 				boolean close = true;
 				try {
-					bout = new DumpByteArrayOutputStream(this.dumpBinario_soglia, this.dumpBinario_repositoryFile, this.idTransazione, 
+					bout = new DumpByteArrayOutputStream(this.dumpBinarioSoglia, this.dumpBinarioRepositoryFile, this.idTransazione, 
 							TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.getValue());
 					
 					this.emitDiagnosticStartDumpBinarioRichiestaUscita();
@@ -304,7 +304,7 @@ public class ConnettoreNULL extends ConnettoreBase {
     	
     }
     @Override
-	protected void setRequestHeader(String key,List<String> values) throws Exception {
+	protected void setRequestHeader(String key,List<String> values) throws ConnettoreException {
     	// nop
     }
 	

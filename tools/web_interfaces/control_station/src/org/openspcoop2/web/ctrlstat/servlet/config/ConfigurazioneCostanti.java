@@ -731,6 +731,8 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP = "Connessioni HTTP Attive";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD = "In uscita dal modulo InoltroBuste";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA = "In uscita dal modulo ConsegnaContenutiApplicativi";
+	public static final String LABEL_CONFIGURAZIONE_SISTEMA_BIO_HTTP_CLIENT = "HTTP Client - BIO";
+	public static final String LABEL_CONFIGURAZIONE_SISTEMA_NIO_HTTP_CLIENT = "HTTP Client - NIO";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE = "Consegna Notifiche";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_THREADS = "Thread Attivi";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_STATISTICHE = "Generazione Statistiche";
@@ -1065,6 +1067,11 @@ public class ConfigurazioneCostanti {
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI = "threadsPA";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI_CONFIG = "threadsPACfg";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI_CONNNETTORI_PRIORITARI = "threadsPAPrio";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_BIO_CONNECTION_MANAGER_STATUS = "bioStatus";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_STATUS = "nioStatus";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_POOL= "nioThPool";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_IOREACTOR= "nioThIO";
+	
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI = "timerConsegnaContenutiApplicativi";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_EVENTI = "timerEventi";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_FILE_SYSTEM_RECOVERY = "timerFileSystemRecovery";
@@ -1662,6 +1669,10 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONFIG = "Configurazione";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONNNETTORI_PRIORITARI = "Consegna Immediata";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_BIO_CONNECTION_MANAGER_STATUS = "Stato";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_STATUS = "Stato";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_POOL = "Threads Pool";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_IOREACTOR = "Threads IO-Reactor";
 	
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX = "Timer ";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONSEGNA_CONTENUTI_APPLICATIVI = "Stato";

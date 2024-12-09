@@ -1090,6 +1090,21 @@ public class ConsoleProperties {
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoConnessioniPA(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.connessioniPA");
 	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoBIOHttpClientConnectionManagerStatus(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getBIOHttpClientConnectionManagerStatus");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoBIOWorkerThreadPoolStatus(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getBIOWorkerThreadPoolStatus");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerStatus(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getNIOHttpClientConnectionManagerStatus");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoNIOHttpClientConnectionManagerIOThreadCount(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getNIOHttpClientConnectionManagerIOThreadCount");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoNIOWorkerThreadPoolStatus(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getNIOWorkerThreadPoolStatus");
+	}
 	public String getJmxPdDConfigurazioneSistemaNomeRisorsaConfigurazionePdD(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaConfigurazionePdD");
 	}

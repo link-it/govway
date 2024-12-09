@@ -133,7 +133,7 @@ public class RicezioneContenutiApplicativiConnector {
 		}
 			
 		try{
-			ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta);
+			ricezioneContenutiApplicativi.process(httpIn, httpOut, dataAccettazioneRichiesta, ConnectorCostanti.SYNC);
 		}catch(Exception e){
 			doError("RicezioneContenutiApplicativi.process error", e);
 		}

@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
@@ -56,7 +55,6 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.resources.Loader;
-import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
 
@@ -74,7 +72,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 	
 	// ******** STATIC **********
 
-	private static final org.openspcoop2.utils.Semaphore semaphorePoolingConnectionManager = new org.openspcoop2.utils.Semaphore(ConnettoreHTTPCORE.ID_HTTPCORE+"-PoolingConnectionManager"); // usato per instanziare una pool
+	private static final org.openspcoop2.utils.Semaphore semaphorePoolingConnectionManager = new org.openspcoop2.utils.Semaphore(ConnettoreHTTPCORE.ID_HTTPCORE+"-PoolingConnectionManager"); // usato per instanziare un pool
 	
 	public static final boolean USE_POOL_CONNECTION = false; // ha senso solo con il NIO dove si utilizza una sola connessione
 	private static final org.openspcoop2.utils.Semaphore semaphoreConnection = new org.openspcoop2.utils.Semaphore(ConnettoreHTTPCORE.ID_HTTPCORE+"-ConnectionManager"); // usato per negoziare una connessione da un pool
@@ -101,6 +99,15 @@ public class ConnettoreHTTPCOREConnectionManager {
 		}catch(Exception t) {
 			throw new ConnettoreException(t.getMessage(),t);
 		}
+	}
+	
+	public static String getHttpClientConnectionManagerStatus() {
+		if(idleConnectionEvictor!=null) {
+			StringBuilder sb = new StringBuilder();
+			idleConnectionEvictor.internalCheck(sb);
+			return sb.toString();
+		}
+		return null;
 	}
 	
 	private static void initialize(String key, SSLConnectionSocketFactory sslConnectionSocketFactory, 
@@ -182,27 +189,14 @@ public class ConnettoreHTTPCOREConnectionManager {
 		
 	}
 	private static ConnectionConfig buildConnectionConfig(ConnettoreHttpPoolParams poolParams, long connectionTimeout) {
-		ConnectionConfig.Builder buider = ConnectionConfig.custom();
-		buider.setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS);
-		/**
-		 * specifica l'intervallo di tempo di inattività dopo il quale le connessioni persistenti dovrebbero essere convalidate prima di essere riutilizzate. 
-		 * Questo è importante per evitare l'uso di connessioni che potrebbero essere state chiuse dal server o interrotte per altri motivi.
-		 * Un parametro troppo basso, a meno che non ci sia una necessità specifica, non va usato poiché ciò potrebbe introdurre un overhead significativo e influire sulle prestazioni complessive dell'applicazione.
-		 **/
-		if(poolParams.getValidateAfterInactivity()!=null) {
-			buider.setValidateAfterInactivity(poolParams.getValidateAfterInactivity().intValue(), TimeUnit.MILLISECONDS);
-		}
-		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		Integer closeIdleConnectionsAfterSeconds = op2Properties.getBIOConfigSyncClientCloseIdleConnectionsAfterSeconds();
 		boolean idleConnectionEvictorEnabled = (closeIdleConnectionsAfterSeconds!=null && closeIdleConnectionsAfterSeconds>0);
+		int sleepTimeSeconds = -1;
 		if(idleConnectionEvictorEnabled) {
-			// Defines the total span of time connections can be kept alive or execute requests
-			int sleepTimeSeconds = op2Properties.getBIOConfigSyncClientCloseIdleConnectionsAfterSeconds();
-			buider.setTimeToLive(sleepTimeSeconds, TimeUnit.SECONDS);
+			sleepTimeSeconds = op2Properties.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds();
 		}
-		
-		return buider.build();
+		return ConnettoreHTTPCOREUtils.buildConnectionConfig(poolParams, connectionTimeout, idleConnectionEvictorEnabled, sleepTimeSeconds);
 	}
 	
 	
@@ -226,6 +220,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 		// Shut down connManager
 		stopConnectionManager(listT);
 					
+		// gestione eccezione
 		if(!listT.isEmpty()) {
 			if(listT.size()==1) {
 				throw new ConnettoreException(listT.get(0).getMessage(),listT.get(0));		
@@ -237,7 +232,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 		}
 		
 	}
-	public static synchronized void stopClients(List<Throwable> listT) throws ConnettoreException {
+	private static void stopClients(List<Throwable> listT) throws ConnettoreException {
 		if(mapConnection!=null && !mapConnection.isEmpty()) {
 			Iterator<String> it = mapConnection.keySet().iterator();
 			while (it.hasNext()) {
@@ -251,7 +246,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			}
 		}
 	}
-	public static synchronized void stopConnectionManager(List<Throwable> listT) {
+	private static void stopConnectionManager(List<Throwable> listT) {
 		if(ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager!=null && ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.isEmpty()) {
 			for (String key : ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.keySet()) {
 				if(key!=null) {
@@ -261,7 +256,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			}
 		}
 	}
-	public static synchronized void stopConnectionManager(PoolingHttpClientConnectionManager cm, List<Throwable> listT) {
+	private static void stopConnectionManager(PoolingHttpClientConnectionManager cm, List<Throwable> listT) {
 		if(cm!=null) {
 			try {			
 				cm.close(CloseMode.GRACEFUL); // tenta di chiudere le connessioni in modo ordinato, permettendo alle richieste in corso di completarsi.
@@ -330,10 +325,10 @@ public class ConnettoreHTTPCOREConnectionManager {
 			RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
 			
 			// ** Timeout **
-			setTimeout(requestConfigBuilder, connectionConfig);
+			ConnettoreHTTPCOREUtils.setTimeout(requestConfigBuilder, connectionConfig);
 			
 			// ** Redirect **
-			setRedirect(requestConfigBuilder, connectionConfig);
+			ConnettoreHTTPCOREUtils.setRedirect(requestConfigBuilder, connectionConfig);
 						
 			RequestConfig requestConfig = requestConfigBuilder.build();
 			
@@ -373,6 +368,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 				httpClientBuilder.setRedirectStrategy(DefaultRedirectStrategy.INSTANCE);
 			}
 			
+			// ** Proxy **
 			setProxy(httpClientBuilder, connectionConfig);
 			
 			CloseableHttpClient httpclient = httpClientBuilder.build();
@@ -388,39 +384,14 @@ public class ConnettoreHTTPCOREConnectionManager {
 			throw new ConnettoreException( t.getMessage(),t );
 		}
 	}
-	private static void setTimeout(RequestConfig.Builder requestConfigBuilder, AbstractConnettoreConnectionConfig connectionConfig) {
-		int connectionTimeout = -1;
-		if(connectionConfig.getConnectionTimeout()!=null) {
-			connectionTimeout = connectionConfig.getConnectionTimeout();
-		}
-		else {
-			connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
-		}
-		requestConfigBuilder.setConnectionRequestTimeout(connectionTimeout, TimeUnit.MILLISECONDS); // quanto tempo il client aspetterà per ottenere una connessione dal pool.
-		/** requestConfigBuilder.setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS); spostato in initialize della connnection */
-		
-		
-		int readTimeout = -1;
-		if(connectionConfig.getReadTimeout()!=null) {
-			readTimeout = connectionConfig.getReadTimeout();
-		}
-		else {
-			readTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
-		}
-		requestConfigBuilder.setResponseTimeout( readTimeout, TimeUnit.MILLISECONDS  ); // // Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets).
-		
-	}
-	private static void setRedirect(RequestConfig.Builder requestConfigBuilder, AbstractConnettoreConnectionConfig connectionConfig) {
-		requestConfigBuilder.setRedirectsEnabled(connectionConfig.isFollowRedirect());
-		requestConfigBuilder.setCircularRedirectsAllowed(true); // da file properties
-		requestConfigBuilder.setMaxRedirects(connectionConfig.getMaxNumberRedirects());
-	}
+	
 	private static void setProxy(HttpClientBuilder httpClientBuilder, AbstractConnettoreConnectionConfig connectionConfig) {
 		if(connectionConfig.getProxyHost()!=null && connectionConfig.getProxyPort()!=null) {
 			HttpHost proxy = new HttpHost(connectionConfig.getProxyHost(), connectionConfig.getProxyPort());
 			httpClientBuilder.setProxy(proxy);
 		}
 	}
+	
 	private static SSLConnectionSocketFactory buildSSLConnectionSocketFactory(AbstractConnettoreConnectionConfig connectionConfig,
 			SSLSocketFactory sslSocketFactory,
 			Loader loader, ConnettoreLogger logger) throws UtilsException {
@@ -475,7 +446,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 		}
 		else {
 			connection = buildClient(connectionConfig, sslSocketFactory,
-					loader, logger, connectionConfig.toString(),
+					loader, logger, connectionConfig.toKeyConnection(),
 					keepAliveStrategy,
 					httpRequestInterceptor);
 			connection.refresh();

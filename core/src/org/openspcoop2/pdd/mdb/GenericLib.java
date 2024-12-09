@@ -28,6 +28,7 @@ import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.utils.resources.Loader;
@@ -62,7 +63,7 @@ public abstract class GenericLib {
 	public boolean getInizializzazioneUltimata(){ return this.inizializzazioneUltimata;}
 
 	protected synchronized void inizializza() throws GenericLibException{
-		if(this.inizializzazioneUltimata == false){
+		if(!this.inizializzazioneUltimata){
 			
 			try{
 			
@@ -92,38 +93,44 @@ public abstract class GenericLib {
 			return MsgDiagnostico.newInstance(this.idModulo,configurazionePdDManager);
 		} catch (Exception e) {
 			this.log.error("Riscontrato Errore durante l'inizializzazione del MsgDiagnostico",e);
-			//if(this.msgDiag!=null)
-			//	this.msgDiag.logErroreGenerico(e.getMessage(),"MsgDiagnostico.new()");
+			/**if(this.msgDiag!=null)
+				this.msgDiag.logErroreGenerico(e.getMessage(),"MsgDiagnostico.new()");*/
 			throw new OpenSPCoopStateException("Riscontrato Errore durante l'inizializzazione del MsgDiagnostico");
 		}
 	}
 
+
+	protected IAsyncResponseCallback asyncResponseCallback;
+	public EsitoLib onMessage(IOpenSPCoopState openspcoopState, RegistroServiziManager registroServiziManager, ConfigurazionePdDManager configurazionePdDManager, 
+			IAsyncResponseCallback asyncResponseCallback) throws OpenSPCoopStateException{
+		this.asyncResponseCallback = asyncResponseCallback;
+		return this.onMessage(openspcoopState, registroServiziManager, configurazionePdDManager);
+	}
 	
-	public EsitoLib onMessage(IOpenSPCoopState openspcoop_state, RegistroServiziManager registroServiziManager, ConfigurazionePdDManager configurazionePdDManager) throws OpenSPCoopStateException{
+	public EsitoLib onMessage(IOpenSPCoopState openspcoopState, RegistroServiziManager registroServiziManager, ConfigurazionePdDManager configurazionePdDManager) throws OpenSPCoopStateException{
 		if(registroServiziManager!=null && configurazionePdDManager!=null) {
-			return _onMessage(openspcoop_state, registroServiziManager, configurazionePdDManager,
+			return _onMessage(openspcoopState, registroServiziManager, configurazionePdDManager,
 					initMsgDiagnostico(configurazionePdDManager));
 		}
 		else {
-			return onMessage(openspcoop_state);
+			return onMessage(openspcoopState);
 		}
 	}
-	public EsitoLib onMessage(IOpenSPCoopState openspcoop_state, ConfigurazionePdDManager configurazionePdDManager) throws OpenSPCoopStateException{
+	public EsitoLib onMessage(IOpenSPCoopState openspcoopState, ConfigurazionePdDManager configurazionePdDManager) throws OpenSPCoopStateException{
 		if(configurazionePdDManager!=null && configurazionePdDManager.getRegistroServiziManager()!=null) {
-			return _onMessage(openspcoop_state, configurazionePdDManager.getRegistroServiziManager(), configurazionePdDManager,
+			return _onMessage(openspcoopState, configurazionePdDManager.getRegistroServiziManager(), configurazionePdDManager,
 					initMsgDiagnostico(configurazionePdDManager));
 		}
 		else {
-			return onMessage(openspcoop_state);
+			return onMessage(openspcoopState);
 		}
 	}
-	public EsitoLib onMessage(IOpenSPCoopState openspcoop_state) throws OpenSPCoopStateException{
+	public EsitoLib onMessage(IOpenSPCoopState iopenspcoopState) throws OpenSPCoopStateException{
 		
 		RegistroServiziManager registroServiziManager = null;
 		ConfigurazionePdDManager configurazionePdDManager = null;
 		
-		if(openspcoop_state instanceof OpenSPCoopState){
-			OpenSPCoopState openspcoopState = (OpenSPCoopState)openspcoop_state;
+		if(iopenspcoopState instanceof OpenSPCoopState openspcoopState){
 			registroServiziManager = RegistroServiziManager.getInstance(openspcoopState.getStatoRichiesta(),openspcoopState.getStatoRisposta());
 			configurazionePdDManager = ConfigurazionePdDManager.getInstance(openspcoopState.getStatoRichiesta(),openspcoopState.getStatoRisposta());
 		}
@@ -132,11 +139,11 @@ public abstract class GenericLib {
 			configurazionePdDManager = ConfigurazionePdDManager.getInstance();
 		}
 	
-		return _onMessage(openspcoop_state, registroServiziManager, configurazionePdDManager,
+		return _onMessage(iopenspcoopState, registroServiziManager, configurazionePdDManager,
 				initMsgDiagnostico(configurazionePdDManager));
 	}
 	
-	public abstract EsitoLib _onMessage(IOpenSPCoopState openspcoop_state,
+	public abstract EsitoLib _onMessage(IOpenSPCoopState openspcoopState,
 			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, MsgDiagnostico msgDiag) throws OpenSPCoopStateException;
 	
 }

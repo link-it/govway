@@ -213,7 +213,7 @@ public class Proxy extends HttpServlet {
 		if(!context.endsWith("/")) {
 			context = context + "/";
 		}
-		context = context + URLProtocolContext.Check_FUNCTION;
+		context = context + URLProtocolContext.CHECK_FUNCTION;
 		
 		// paramters
 		Map<String, List<String>> parameters = buildParameters(req);
