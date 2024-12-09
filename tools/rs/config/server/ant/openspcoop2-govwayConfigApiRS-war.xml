@@ -104,6 +104,7 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/console">
 				<include name="govway-console-ui-*.jar"/>
+				<include name="jsoup-1.18.3.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/shared">
 				<include name="reactive-streams-1.0.4.jar"/>
