@@ -57,10 +57,18 @@ public class RicezioneBusteConnectorAsync extends AbstractRicezioneConnectorAsyn
 
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public static final IDService ID_SERVICE = IDService.PORTA_APPLICATIVA_NIO;
+	public static final IDService ID_SERVICE = getIdServiceFromProperties();
 	public static final String ID_MODULO = ID_SERVICE.getValue();
 
-
+	private static IDService getIdServiceFromProperties() {
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		if(op2Properties!=null && op2Properties.isEnabledPDChannelNIODefault()) {
+			return IDService.PORTA_APPLICATIVA;
+		}
+		else {
+			return IDService.PORTA_APPLICATIVA_NIO;
+		}
+	}
 	@Override
 	protected IDService getIdService() {
 		return ID_SERVICE;

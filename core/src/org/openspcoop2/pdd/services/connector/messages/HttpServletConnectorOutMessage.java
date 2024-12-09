@@ -203,9 +203,11 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 			if(this.idModuloAsIDService!=null){
 				switch (this.idModuloAsIDService) {
 				case PORTA_DELEGATA,
+					PORTA_DELEGATA_BIO,
 					PORTA_DELEGATA_NIO,
 					PORTA_DELEGATA_INTEGRATION_MANAGER, 
 					PORTA_DELEGATA_XML_TO_SOAP,
+					PORTA_DELEGATA_XML_TO_SOAP_BIO,
 					PORTA_DELEGATA_XML_TO_SOAP_NIO:
 					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueRicezioneContenutiApplicativi();
 					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueRicezioneContenutiApplicativi();
@@ -214,6 +216,7 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 					listProprieta = readProprietaPortaDelegata();
 					break;
 				case PORTA_APPLICATIVA,
+					PORTA_APPLICATIVA_BIO,
 					PORTA_APPLICATIVA_NIO:
 					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueRicezioneBuste();
 					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueRicezioneBuste();

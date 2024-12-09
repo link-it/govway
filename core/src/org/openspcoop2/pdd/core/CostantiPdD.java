@@ -990,6 +990,8 @@ public class CostantiPdD {
     
     public static final MapKey<String> REQUEST_READ_TIMEOUT = Map.newMapKey("REQUEST_READ_TIMEOUT");
     
+    public static final String GOVWAY_CHANNEL_BIO = "BIO";
+    public static final String GOVWAY_CHANNEL_NIO = "NIO";
     
     public static final String GOVWAY_CORE = "GovWayCore";
     public static final String GOVWAY_CORE_ERRORE_GENERAZIONE_DIAGNOSTICO = "Errore generazione diagnostico";

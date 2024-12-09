@@ -55,7 +55,7 @@ public class MappingProperties {
 			this.propertiesReader.load(properties);
 			properties.close();
 		} catch(IOException e) {
-			this.log.error("Riscontrato errore durante la lettura del file '"+fileNameProperties+"': \n\n"+e.getMessage());
+			this.log.error("Riscontrato errore durante la lettura del file '"+fileNameProperties+"': "+e.getMessage());
 			try {
 				if(properties!=null)
 					properties.close();
@@ -72,11 +72,13 @@ public class MappingProperties {
 		String urlWithoutContext = null;
 		
 		List<String> paContexts = new ArrayList<>();
-		if(IDService.PORTA_APPLICATIVA.equals(idService) || IDService.PORTA_APPLICATIVA_NIO.equals(idService)){
+		if(IDService.PORTA_APPLICATIVA.equals(idService) || 
+				IDService.PORTA_APPLICATIVA_NIO.equals(idService) || 
+				IDService.PORTA_APPLICATIVA_BIO.equals(idService)){
 			paContexts.add("/PA");
 			if(customContexts!=null) {
 				List<FunctionContextCustom> list = customContexts.getContexts();
-				if(list!=null && list.size()>0) {
+				if(list!=null && !list.isEmpty()) {
 					for (FunctionContextCustom functionContextCustom : list) {
 						if(functionContextCustom.getIdService()!=null) {
 							if(idService.equals(functionContextCustom.getIdService())){
@@ -86,7 +88,7 @@ public class MappingProperties {
 						else if(functionContextCustom.getSubcontext()!=null && functionContextCustom.getSubcontext().size()>0){
 							Iterator<String> it = functionContextCustom.getSubcontext().keySet().iterator();
 							while (it.hasNext()) {
-								String subcontext = (String) it.next();
+								String subcontext = it.next();
 								IDService idServiceSubContext = functionContextCustom.getSubcontext().get(subcontext);
 								if(idService.equals(idServiceSubContext)){
 									paContexts.add("/"+functionContextCustom.getContext()+"/"+subcontext);
@@ -144,7 +146,7 @@ public class MappingProperties {
 		if(urlWithoutContext==null){
 			throw new ProtocolException("Identificazione URL senza contesto applicazione e protocollo non riuscita (protocollo ["+ protocol + "], url [" + urlWithContext + "])");
 		}
-		//System.out.println("URL["+urlWithContext+"] URL_SENZA_CONTEXT["+urlWithoutContext+"]");
+		/**System.out.println("URL["+urlWithContext+"] URL_SENZA_CONTEXT["+urlWithoutContext+"]");*/
 		return urlWithoutContext;
 	}
 	
@@ -172,12 +174,12 @@ public class MappingProperties {
 					continue;
 				}
 				
-				if(tmpurl.startsWith("/")==false && !tmpurl.equals("*")){
+				if(!tmpurl.startsWith("/") && !tmpurl.equals("*")){
 					tmpurl = "/" + tmpurl;
 				}
 				
-//				if(tmpurl.endsWith("/")==false && !tmpurl.equals("*"))
-//					tmpurl = tmpurl + "/";
+				/**if(tmpurl.endsWith("/")==false && !tmpurl.equals("*"))
+					tmpurl = tmpurl + "/";*/
 				
 				//Verifico se la URL matcha.
 				//Due casi: sono uguali o il prefisso e' lo stesso e c'e' la wildcard (*)

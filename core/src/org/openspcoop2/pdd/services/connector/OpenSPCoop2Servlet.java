@@ -315,8 +315,14 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				
 				checkSecrets();
 				
-				RicezioneContenutiApplicativiConnector r = new RicezioneContenutiApplicativiConnector();
-				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				if(nioEnabled && op2Properties.isEnabledPDChannelNIODefault()) {
+					RicezioneContenutiApplicativiConnectorAsync r = new RicezioneContenutiApplicativiConnectorAsync();
+					r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				}
+				else {
+					RicezioneContenutiApplicativiConnector r = new RicezioneContenutiApplicativiConnector();
+					r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				}
 				
 			}
 			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_DELEGATA_NIO.equals(idServiceCustom))
@@ -328,6 +334,15 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 					
 			}
+			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_DELEGATA_BIO.equals(idServiceCustom))
+					){
+					
+				checkSecrets();
+				
+				RicezioneContenutiApplicativiConnector r = new RicezioneContenutiApplicativiConnector();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+					
+			}
 			else if(
 					(function.equals(URLProtocolContext.PD_TO_SOAP_FUNCTION) && op2Properties.isEnabledFunctionPDtoSOAP()) 
 					|| 
@@ -336,8 +351,14 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				
 				checkSecrets();
 				
-				RicezioneContenutiApplicativiHTTPtoSOAPConnector r = new RicezioneContenutiApplicativiHTTPtoSOAPConnector();
-				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				if(nioEnabled && op2Properties.isEnabledPDtoSoapChannelNIODefault()) {
+					RicezioneContenutiApplicativiHTTPtoSOAPConnectorAsync r = new RicezioneContenutiApplicativiHTTPtoSOAPConnectorAsync();
+					r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				}
+				else {
+					RicezioneContenutiApplicativiHTTPtoSOAPConnector r = new RicezioneContenutiApplicativiHTTPtoSOAPConnector();
+					r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				}
 				
 			}
 			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(idServiceCustom))
@@ -349,6 +370,15 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 					
 			}
+			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_DELEGATA_XML_TO_SOAP_BIO.equals(idServiceCustom))
+					){
+					
+				checkSecrets();
+				
+				RicezioneContenutiApplicativiHTTPtoSOAPConnector r = new RicezioneContenutiApplicativiHTTPtoSOAPConnector();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+					
+			}
 			else if(
 					(function.equals(URLProtocolContext.PA_FUNCTION) && op2Properties.isEnabledFunctionPA()) 
 					|| 
@@ -357,8 +387,14 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				
 				checkSecrets();
 				
-				RicezioneBusteConnector r = new RicezioneBusteConnector();
-				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				if(nioEnabled && op2Properties.isEnabledPAChannelNIODefault()) {
+					RicezioneBusteConnectorAsync r = new RicezioneBusteConnectorAsync();
+					r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				}
+				else {
+					RicezioneBusteConnector r = new RicezioneBusteConnector();
+					r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+				}
 			}
 			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_APPLICATIVA_NIO.equals(idServiceCustom))
 					){
@@ -366,6 +402,15 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				checkSecrets();
 				
 				RicezioneBusteConnectorAsync r = new RicezioneBusteConnectorAsync();
+				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
+					
+			}
+			else if(nioEnabled && (idServiceCustom!=null && IDService.PORTA_APPLICATIVA_BIO.equals(idServiceCustom))
+					){
+					
+				checkSecrets();
+				
+				RicezioneBusteConnector r = new RicezioneBusteConnector();
 				r.doEngine(ConnectorUtils.getRequestInfo(pf, protocolContext), req, res, method);
 					
 			}

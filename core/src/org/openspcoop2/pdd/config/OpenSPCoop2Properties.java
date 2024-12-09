@@ -171,7 +171,7 @@ import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.slf4j.Logger;
 
 /**
- * Contiene un lettore del file di proprieta' di OpenSPCoop.
+ * Contiene un lettore del file di proprietà di govway.
  *
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
@@ -257,7 +257,7 @@ public class OpenSPCoop2Properties {
 	
 	private static final String PROPERTY_START_SUFFIX_ERRORE = ".*': ";
 
-	private static final String PREFIX_JDBC_ADAPTER_NOT_EXISTS = "Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste [";
+	private static final String PREFIX_JDBC_ADAPTER_NOT_EXISTS = "Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.jdbcAdapter'. \n L'adapter indicato non esiste [";
 	
 	private static final String PROPRIETA_NON_DEFINITA = "Proprietà non definita";
 	
@@ -419,7 +419,7 @@ public class OpenSPCoop2Properties {
 			if (getRootDirectory() == null)		
 				return false;
 			if( (new File(getRootDirectory())).exists() == false ){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.confDirectory'. \n La directory indicata non esiste ["+getRootDirectory()+"].");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.confDirectory'. \n La directory indicata non esiste ["+getRootDirectory()+"].");
 				return false;
 			}
 			
@@ -459,7 +459,7 @@ public class OpenSPCoop2Properties {
 						test.toString();
 						loaderOpenSPCoop = new Loader(loader);
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura del class loader indicato nella proprieta' di openspcoop 'org.openspcoop2.pdd.classLoader': "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura del class loader indicato nella proprietà di govway 'org.openspcoop2.pdd.classLoader': "+e.getMessage(),e);
 						return false;
 					}
 				}else{
@@ -479,7 +479,7 @@ public class OpenSPCoop2Properties {
 				}
 				// Verra' creata se non esiste in GovWay startup
 /**				if( (new File(getRepositoryDirectory())).exists() == false ){
-//					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.directory'. \n La directory indicata non esiste ["+getRepositoryDirectory()+"].");
+//					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.directory'. \n La directory indicata non esiste ["+getRepositoryDirectory()+"].");
 //					return false;
 //				}*/
 			}else if(CostantiConfigurazione.REPOSITORY_DB.equals(tipoRepository)){
@@ -512,7 +512,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}else{
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipo'. \n Il tipo indicato non e' un tipo valido ["+getRepositoryType()+"].");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.tipo'. \n Il tipo indicato non e' un tipo valido ["+getRepositoryType()+"].");
 				return false;
 			}
 			// warning
@@ -538,14 +538,14 @@ public class OpenSPCoop2Properties {
 			long intervalloEliminazione = getRepositoryIntervalloEliminazioneMessaggi();
 			if(intervalloEliminazione<=0){
 				if(intervalloEliminazione!=-1){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.timer'. \n Valore non valido ["+intervalloEliminazione+"].");			
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.timer'. \n Valore non valido ["+intervalloEliminazione+"].");			
 				}
 				return false;
 			}
 			long intervalloScadenza = getRepositoryIntervalloScadenzaMessaggi();
 			if(intervalloScadenza<=0){
 				if(intervalloScadenza!=-1){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.scadenzaMessaggio'. \n Valore non valido ["+intervalloScadenza+"].");			
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.scadenzaMessaggio'. \n Valore non valido ["+intervalloScadenza+"].");			
 				}
 				return false;
 			}
@@ -555,7 +555,7 @@ public class OpenSPCoop2Properties {
 			long intervalloScadenzaCorrelazioneApplicativa = getRepositoryIntervalloScadenzaCorrelazioneApplicativa();
 			if(intervalloScadenzaCorrelazioneApplicativa<=0){
 				if(intervalloScadenzaCorrelazioneApplicativa!=-1){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa'. \n Valore non valido ["+intervalloScadenzaCorrelazioneApplicativa+"].");			
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa'. \n Valore non valido ["+intervalloScadenzaCorrelazioneApplicativa+"].");			
 				}
 				return false;
 			}
@@ -584,7 +584,7 @@ public class OpenSPCoop2Properties {
 				// CheckInterval in Repository
 				long intervalloCheck = this.getRepositoryThresholdCheckInterval();
 				if(intervalloCheck<=0){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.checkInterval', valore non impostato/valido.");			
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.threshold.checkInterval', valore non impostato/valido.");			
 					return false;
 				}
 				for(int i=0; i<tipiThreshold.size();i++){
@@ -593,14 +593,14 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String tipoClass = className.getThreshold(tipiThreshold.get(i));
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"] nelle classi registrate in GovWay");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
 						IThreshold t = (IThreshold) loaderOpenSPCoop.newInstance(tipoClass);
 						t.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.threshold.tipo'. \n La classe di Threshold indicata non esiste ["+tipiThreshold.get(i)+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -625,7 +625,7 @@ public class OpenSPCoop2Properties {
 				// CheckInterval 
 				long intervalloCheck = this.getControlloRisorseCheckInterval();
 				if(intervalloCheck<=0){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.risorse.checkInterval', valore non impostato/valido.");			
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.risorse.checkInterval', valore non impostato/valido.");			
 					return false;
 				}
 				// Warning
@@ -663,12 +663,12 @@ public class OpenSPCoop2Properties {
 			this.getConfigPreLoadingLocale();
 			
 			if (getTipoConfigurazionePDD() == null){		
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. Proprieta' non impostata");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.config.tipo'. Proprieta' non impostata");
 				return false;
 			}
 			if( (CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD()) == false) &&
 					(CostantiConfigurazione.CONFIGURAZIONE_DB.equalsIgnoreCase(getTipoConfigurazionePDD()) == false) ){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. Tipo non Supportato");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.config.tipo'. Tipo non Supportato");
 				return false;
 			}
 			if( CostantiConfigurazione.CONFIGURAZIONE_DB.equalsIgnoreCase(getTipoConfigurazionePDD()) ){
@@ -681,7 +681,7 @@ public class OpenSPCoop2Properties {
 					try{
 						DBUtils.estraiTipoDatabaseFromLocation(this.getPathConfigurazionePDD());
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location', mentre veniva analizzato il prefisso tipoDatabase@datasource: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.config.location', mentre veniva analizzato il prefisso tipoDatabase@datasource: "+e.getMessage(),e);
 						return false;
 					}
 				}else{
@@ -695,7 +695,7 @@ public class OpenSPCoop2Properties {
 
 			// Location della configurazione
 			if (getPathConfigurazionePDD() == null){		
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. Proprieta' non impostata");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.config.location'. Proprieta' non impostata");
 				return false;
 			}
 			if( CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD()) ){
@@ -703,7 +703,7 @@ public class OpenSPCoop2Properties {
 				String path = getPathConfigurazionePDD();
 				if( (!path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX)) && (!path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)) ){
 					if( !(new File(path)).exists() ){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. \n Il file indicato non esiste ["+path+"].");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.config.location'. \n Il file indicato non esiste ["+path+"].");
 						return false;
 					}
 				}else{
@@ -712,13 +712,13 @@ public class OpenSPCoop2Properties {
 						URL v  = new URI(path).toURL();
 						v.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.location'. \n La url indicata non e' corretta ["+path+"].");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.config.location'. \n La url indicata non e' corretta ["+path+"].");
 						return false;
 					}
 				}
 			}
 			else if( !CostantiConfigurazione.CONFIGURAZIONE_DB.equalsIgnoreCase(getTipoConfigurazionePDD())){		
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.config.tipo'. \n Tipo non supportato ["+getTipoConfigurazionePDD()+"].");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.config.tipo'. \n Tipo non supportato ["+getTipoConfigurazionePDD()+"].");
 				return false;
 			}
 
@@ -757,7 +757,7 @@ public class OpenSPCoop2Properties {
 
 			// DataSource
 			if (getJNDIName_DataSource() == null){		
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.dataSource'. Proprieta' non impostata");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.dataSource'. Proprieta' non impostata");
 				return false;
 			}
 			if (getJNDIContext_DataSource() == null){		
@@ -772,14 +772,14 @@ public class OpenSPCoop2Properties {
 				//	Ricerco connettore
 				String tipoClass = className.getNodeReceiver(this.getNodeReceiver());
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"] nelle classi registrate in GovWay");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
 					INodeReceiver nodeReceiverTest = (INodeReceiver) loaderOpenSPCoop.newInstance(tipoClass);
 					nodeReceiverTest.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.nodeReceiver'. \n Il node receiver indicato non esiste ["+this.getNodeReceiver()+"]: "+e.getMessage(),e);
 					return false;
 				}
 			}
@@ -797,14 +797,14 @@ public class OpenSPCoop2Properties {
 				//	Ricerco connettore
 				String tipoClass = className.getNodeSender(this.getNodeSender());
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"] nelle classi registrate in GovWay");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
 					INodeSender nodeSenderTest = (INodeSender) loaderOpenSPCoop.newInstance(tipoClass);
 					nodeSenderTest.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.nodeSender'. \n Il node sender indicato non esiste ["+this.getNodeSender()+"]: "+e.getMessage(),e);
 					return false;
 				}
 
@@ -945,7 +945,7 @@ public class OpenSPCoop2Properties {
 			if( CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_JMS.equals(this.getNodeReceiver()) 
 					|| CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_JMS.equals(this.getNodeSender()) ){
 				if (getJNDIName_ConnectionFactory() == null){		
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.queueConnectionFactory'. Proprieta' non impostata");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.queueConnectionFactory'. Proprieta' non impostata");
 					return false;
 				}
 				if (getJNDIContext_ConnectionFactory() == null){		
@@ -1066,13 +1066,13 @@ public class OpenSPCoop2Properties {
 				}
 				if(i==(priorita.size()-1)) {
 					if(!conf.isNessunaPriorita()) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita.*': l'ultima priorità deve rappresentare 'nessuna priorita' e deve quindi avere un valore <=0 (trovato: "+conf.getPercentuale()+")");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita.*': l'ultima priorità deve rappresentare 'nessuna priorita' e deve quindi avere un valore <=0 (trovato: "+conf.getPercentuale()+")");
 						return false;
 					}
 				}
 			}
 			if(sommaPercentuale>100) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita.*': la somma delle percentuali fornite non deve essere superiore a 100 (trovato: "+sommaPercentuale+")");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita.*': la somma delle percentuali fornite non deve essere superiore a 100 (trovato: "+sommaPercentuale+")");
 				return false;
 			}
 			this.isLoadBalancerDebug();
@@ -1108,7 +1108,7 @@ public class OpenSPCoop2Properties {
 			// GestioneErrore
 			ProprietaErroreApplicativo paError = getProprietaGestioneErrorePD_engine(null,true);
 			if( paError == null  ){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.erroreApplicativo'.");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.erroreApplicativo'.");
 				return false;
 			}
 			getLocaleSOAPFaultString();
@@ -1141,7 +1141,7 @@ public class OpenSPCoop2Properties {
 
 			// IdentitaPdD
 			if( this.getIdentitaPortaDefault() == null  ){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.identificativoPorta'.");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.identificativoPorta'.");
 				return false;
 			}
 			/**
@@ -1163,7 +1163,7 @@ public class OpenSPCoop2Properties {
 			
 			// Integrazione tra Servizi Applicativi e GovWay
 			if ( this.getTipoIntegrazionePD() == null ){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd'. Almeno un tipo di integrazione e' obbligatorio.");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.tipo.pd'. Almeno un tipo di integrazione e' obbligatorio.");
 				return false;
 			}else{
 				String[] tipiIntegrazionePD = this.getTipoIntegrazionePD();
@@ -1172,7 +1172,7 @@ public class OpenSPCoop2Properties {
 				for(int i=0; i<tipiIntegrazionePD.length;i++){
 					String tipoClass = className.getIntegrazionePortaDelegata(tipiIntegrazionePD[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd="+tipiIntegrazionePD[i]+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.tipo.pd="+tipiIntegrazionePD[i]+
 								"'"+"\n"+HEADER_INTEGRAZIONE_SCONOSCIUTO);
 						return false;
 					}
@@ -1183,7 +1183,7 @@ public class OpenSPCoop2Properties {
 						}
 						gestore.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd="+tipiIntegrazionePD[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.tipo.pd="+tipiIntegrazionePD[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1205,7 +1205,7 @@ public class OpenSPCoop2Properties {
 					for(int i=0; i<tipiIntegrazionePDprotocollo.length;i++){
 						String tipoClass = className.getIntegrazionePortaDelegata(tipiIntegrazionePDprotocollo[i]);
 						if(tipoClass == null){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"="+tipiIntegrazionePDprotocollo[i]+
+							this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"="+tipiIntegrazionePDprotocollo[i]+
 									"'"+"\n"+HEADER_INTEGRAZIONE_SCONOSCIUTO);
 							return false;
 						}
@@ -1216,7 +1216,7 @@ public class OpenSPCoop2Properties {
 							}
 							gestore.toString();
 						}catch(Exception e){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"="+tipiIntegrazionePDprotocollo[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
+							this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"="+tipiIntegrazionePDprotocollo[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
 							return false;
 						}
 					}
@@ -1234,7 +1234,7 @@ public class OpenSPCoop2Properties {
 				for(int i=0; i<tipiIntegrazionePA.length;i++){
 					String tipoClass = className.getIntegrazionePortaApplicativa(tipiIntegrazionePA[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa="+tipiIntegrazionePA[i]+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.tipo.pa="+tipiIntegrazionePA[i]+
 								"'"+"\n"+HEADER_INTEGRAZIONE_SCONOSCIUTO);
 						return false;
 					}
@@ -1245,7 +1245,7 @@ public class OpenSPCoop2Properties {
 						}
 						gestore.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa="+tipiIntegrazionePA[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.tipo.pa="+tipiIntegrazionePA[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1267,7 +1267,7 @@ public class OpenSPCoop2Properties {
 					for(int i=0; i<tipiIntegrazionePAprotocollo.length;i++){
 						String tipoClass = className.getIntegrazionePortaApplicativa(tipiIntegrazionePAprotocollo[i]);
 						if(tipoClass == null){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"="+tipiIntegrazionePAprotocollo[i]+
+							this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"="+tipiIntegrazionePAprotocollo[i]+
 									"'"+"\n"+HEADER_INTEGRAZIONE_SCONOSCIUTO);
 							return false;
 						}
@@ -1278,7 +1278,7 @@ public class OpenSPCoop2Properties {
 							}
 							gestore.toString();
 						}catch(Exception e){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"="+tipiIntegrazionePAprotocollo[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
+							this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"="+tipiIntegrazionePAprotocollo[i]+"' (classe:"+tipoClass+"). \n Errore avvenuto: "+e.getMessage(),e);
 							return false;
 						}
 					}
@@ -1372,14 +1372,14 @@ public class OpenSPCoop2Properties {
 					//	Ricerco connettore
 					String tipoClass = className.getAutorizzazionePortaApplicativa(this.getTipoAutorizzazioneBuste());
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"] nelle classi registrate in GovWay");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
 						IAutorizzazionePortaApplicativa auth = (IAutorizzazionePortaApplicativa) loaderOpenSPCoop.newInstance(tipoClass);
 						auth.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.autorizzazioneBuste'. \n L'autorizzazione delle buste indicata non esiste ["+this.getTipoAutorizzazioneBuste()+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1415,14 +1415,14 @@ public class OpenSPCoop2Properties {
 				else{
 					String tipoClass = className.getRepositoryBuste(this.getGestoreRepositoryBuste());
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"] nelle classi registrate in GovWay");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
 						IGestoreRepository repository = (IGestoreRepository) loaderOpenSPCoop.newInstance(tipoClass);
 						repository.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.repositoryBuste'. \n Il gestore del repository buste indicato non esiste ["+this.getGestoreRepositoryBuste()+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1432,34 +1432,34 @@ public class OpenSPCoop2Properties {
 			// Ricerco
 			String tipoClassFiltroDuplicati = className.getFiltroDuplicati(this.getGestoreFiltroDuplicatiRepositoryBuste());
 			if(tipoClassFiltroDuplicati == null){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"] nelle classi registrate in GovWay");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"] nelle classi registrate in GovWay");
 				return false;
 			}
 			try{
 				IFiltroDuplicati duplicati = (IFiltroDuplicati) loaderOpenSPCoop.newInstance(tipoClassFiltroDuplicati);
 				duplicati.toString();
 			}catch(Exception e){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"]: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.protocol.filtroDuplicati'. \n Il gestore filtro duplicati del repository buste indicato non esiste ["+this.getGestoreFiltroDuplicatiRepositoryBuste()+"]: "+e.getMessage(),e);
 				return false;
 			}
 			
 			// SQLQueryObject
 			if(this.getDatabaseType()!=null){
 				if ( ! TipiDatabase.isAMember(this.getDatabaseType())){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase', tipo di database non gestito");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.tipoDatabase', tipo di database non gestito");
 					return false;
 				}
 				// Ricerco
 				String tipoClass = className.getSQLQueryObject(this.getDatabaseType());
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"] nelle classi registrate in GovWay");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
 					ISQLQueryObject sqlQuery = (ISQLQueryObject) loaderOpenSPCoop.newInstance(tipoClass,TipiDatabase.DEFAULT);
 					sqlQuery.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.repository.tipoDatabase'. \n L'oggetto SQLQuery indicato non esiste ["+this.getDatabaseType()+"]: "+e.getMessage(),e);
 					return false;
 				}
 			}
@@ -1527,14 +1527,14 @@ public class OpenSPCoop2Properties {
 			if(tipoHttpDefault!=null && StringUtils.isNotEmpty(tipoHttpDefault)) {
 				String classNameHttp = className.getConnettore(tipoHttpDefault);
 				if(classNameHttp == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpDefault+"] nelle classi registrate in GovWay");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpDefault+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
 					IConnettore c = (IConnettore) loaderOpenSPCoop.newInstance(classNameHttp);
 					c.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpDefault+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpDefault+"]: "+e.getMessage(),e);
 					return false;
 				}	
 			}
@@ -1543,14 +1543,14 @@ public class OpenSPCoop2Properties {
 			if(tipoHttpsDefault!=null && StringUtils.isNotEmpty(tipoHttpsDefault)) {
 				String classNameHttp = className.getConnettore(tipoHttpsDefault);
 				if(classNameHttp == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsDefault+"] nelle classi registrate in GovWay");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsDefault+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
 					IConnettore c = (IConnettore) loaderOpenSPCoop.newInstance(classNameHttp);
 					c.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpsDefault+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.connettori.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpsDefault+"]: "+e.getMessage(),e);
 					return false;
 				}	
 			}
@@ -1559,14 +1559,14 @@ public class OpenSPCoop2Properties {
 			if(tipoHttpNIODefault!=null && StringUtils.isNotEmpty(tipoHttpNIODefault)) {
 				String classNameHttp = className.getConnettore(tipoHttpNIODefault);
 				if(classNameHttp == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpNIODefault+"] nelle classi registrate in GovWay");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpNIODefault+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
 					IConnettore c = (IConnettore) loaderOpenSPCoop.newInstance(classNameHttp);
 					c.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpNIODefault+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpNIODefault+"]: "+e.getMessage(),e);
 					return false;
 				}	
 			}
@@ -1575,14 +1575,14 @@ public class OpenSPCoop2Properties {
 			if(tipoHttpsNIODefault!=null && StringUtils.isNotEmpty(tipoHttpsNIODefault)) {
 				String classNameHttp = className.getConnettore(tipoHttpsNIODefault);
 				if(classNameHttp == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsNIODefault+"] nelle classi registrate in GovWay");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n Il tipo indicato non esiste ["+tipoHttpsNIODefault+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				try{
 					IConnettore c = (IConnettore) loaderOpenSPCoop.newInstance(classNameHttp);
 					c.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpsNIODefault+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.connettori.nio.libreriaHttpDefault'. \n La classe '"+classNameHttp+"' associata al tipo indicato non esiste ["+tipoHttpsNIODefault+"]: "+e.getMessage(),e);
 					return false;
 				}	
 			}
@@ -1655,14 +1655,14 @@ public class OpenSPCoop2Properties {
 			}
 			String tipoDateManger = className.getDateManager(this.getTipoDateManager());
 			if(tipoDateManger == null){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"] nelle classi registrate in GovWay");
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"] nelle classi registrate in GovWay");
 				return false;
 			}
 			try{
 				IDate date = (IDate) loaderOpenSPCoop.newInstance(tipoDateManger);
 				date.toString();
 			}catch(Exception e){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"]: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"]: "+e.getMessage(),e);
 				return false;
 			}
 			if (this.getDateManagerProperties() == null){		
@@ -1752,14 +1752,14 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenziali(gestoriCredenzialiPD[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"] nelle classi registrate in GovWay");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
 						IGestoreCredenziali g = (IGestoreCredenziali) loaderOpenSPCoop.newInstance(tipoClass);
 						g.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.services.pd.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPD[i]+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1772,14 +1772,14 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenziali(gestoriCredenzialiPA[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"] nelle classi registrate in GovWay");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
 						IGestoreCredenziali g = (IGestoreCredenziali) loaderOpenSPCoop.newInstance(tipoClass);
 						g.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.services.pa.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiPA[i]+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1792,14 +1792,14 @@ public class OpenSPCoop2Properties {
 					//	Ricerco
 					String tipoClass = className.getGestoreCredenzialiIM(gestoriCredenzialiIM[i]);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"] nelle classi registrate in GovWay");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"] nelle classi registrate in GovWay");
 						return false;
 					}
 					try{
 						IGestoreCredenzialiIM g = (IGestoreCredenzialiIM) loaderOpenSPCoop.newInstance(tipoClass);
 						g.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"]: "+e.getMessage(),e);
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali'. \n La classe del GestoreCredenziali indicata non esiste ["+gestoriCredenzialiIM[i]+"]: "+e.getMessage(),e);
 						return false;
 					}
 				}
@@ -1956,7 +1956,7 @@ public class OpenSPCoop2Properties {
 			if(CostantiConfigurazione.NONE.equals(tipoIDGenerator)==false){
 				String tipoIdManger = className.getUniqueIdentifier(tipoIDGenerator);
 				if(tipoIdManger == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier indicato non esiste ["+this.getTipoIDManager()+"] nelle classi registrate in GovWay");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier indicato non esiste ["+this.getTipoIDManager()+"] nelle classi registrate in GovWay");
 					return false;
 				}
 				useIDManagerWithThreadLocal();
@@ -1966,7 +1966,7 @@ public class OpenSPCoop2Properties {
 					IUniqueIdentifierGenerator uniqueIdentifier = (IUniqueIdentifierGenerator) loaderOpenSPCoop.newInstance(tipoIdManger);
 					uniqueIdentifier.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier non esiste ["+this.getTipoIDManager()+"]: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.idGenerator'. \n Il generatore di unique identifier non esiste ["+this.getTipoIDManager()+"]: "+e.getMessage(),e);
 					return false;
 				}
 			}
@@ -1977,7 +1977,7 @@ public class OpenSPCoop2Properties {
 				// Check tipi registrati
 				String tipoClass = className.getOpenSPCoop2MessageFactory(tipo);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messagefactory'=...,"+tipo+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.messagefactory'=...,"+tipo+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -1985,7 +1985,7 @@ public class OpenSPCoop2Properties {
 					OpenSPCoop2MessageFactory test = (OpenSPCoop2MessageFactory) loaderOpenSPCoop.newInstance(tipoClass);
 					test.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messagefactory'=...,"+tipoClass+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.messagefactory'=...,"+tipoClass+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				} 
@@ -1997,7 +1997,7 @@ public class OpenSPCoop2Properties {
 				// Check tipi registrati
 				String tipoClass = className.getMessageSecurityContext(tipo);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.context'=...,"+tipo+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.messageSecurity.context'=...,"+tipo+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2005,7 +2005,7 @@ public class OpenSPCoop2Properties {
 					MessageSecurityContext test = (MessageSecurityContext) loaderOpenSPCoop.newInstance(tipoClass);
 					test.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.context'=...,"+tipoClass+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.messageSecurity.context'=...,"+tipoClass+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				} 
@@ -2015,7 +2015,7 @@ public class OpenSPCoop2Properties {
 				// Check tipi registrati
 				String tipoClass = className.getMessageSecurityDigestReader(tipo);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.digestReader'=...,"+tipo+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.messageSecurity.digestReader'=...,"+tipo+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2023,7 +2023,7 @@ public class OpenSPCoop2Properties {
 					IDigestReader test = (IDigestReader) loaderOpenSPCoop.newInstance(tipoClass);
 					test.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.messageSecurity.digestReader'=...,"+tipoClass+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.messageSecurity.digestReader'=...,"+tipoClass+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				} 
@@ -2143,7 +2143,7 @@ public class OpenSPCoop2Properties {
 				if(notifierClass!=null){
 					String tipoClass = className.getNotifierCallback(notifierClass);
 					if(tipoClass == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.notifierCallback'=...,"+notifierClass+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.notifierCallback'=...,"+notifierClass+
 						"'"+"\n"+TIPO_SCONOSCIUTO);
 						return false;
 					}
@@ -2151,7 +2151,7 @@ public class OpenSPCoop2Properties {
 						INotifierCallback test = (INotifierCallback) loaderOpenSPCoop.newInstance(tipoClass);
 						test.toString();
 					}catch(Exception e){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.notifierCallback'=...,"+tipoClass+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.notifierCallback'=...,"+tipoClass+
 								"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 						return false;
 					} 
@@ -2174,6 +2174,11 @@ public class OpenSPCoop2Properties {
 			this.getSemaphoreType();
 			this.isSemaphoreFair();
 			
+			// Channel
+			this.isEnabledPDChannelNIODefault();
+			this.isEnabledPDtoSoapChannelNIODefault();
+			this.isEnabledPAChannelNIODefault();
+			
 			// Custom Contexts
 			this.isEnabledFunctionPD();
 			this.isEnabledFunctionPDtoSOAP();
@@ -2186,7 +2191,7 @@ public class OpenSPCoop2Properties {
 				// Check tipi registrati
 				String tipoClass = className.getRealmContainerCustom(tipo);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.realmContainer.custom'="+tipo+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.realmContainer.custom'="+tipo+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2194,7 +2199,7 @@ public class OpenSPCoop2Properties {
 					IAutorizzazioneSecurityContainer test = (IAutorizzazioneSecurityContainer) loaderOpenSPCoop.newInstance(tipoClass);
 					test.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.realmContainer.custom'="+tipoClass+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.realmContainer.custom'="+tipoClass+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				} 
@@ -2752,7 +2757,7 @@ public class OpenSPCoop2Properties {
 			return true;
 
 		}catch(java.lang.Exception e) {
-			this.logError("Riscontrato errore durante la validazione lettura della proprieta' di openspcoop: "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la validazione lettura della proprietà di govway: "+e.getMessage(),e);
 			return false;
 		}
 	}
@@ -2781,7 +2786,7 @@ public class OpenSPCoop2Properties {
 			return true;
 			
 		}catch(java.lang.Exception e) {
-			this.logError("Riscontrato errore durante la validazione lettura della proprieta' di openspcoop: "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la validazione lettura della proprietà di govway: "+e.getMessage(),e);
 			return false;
 		}
 	}
@@ -2794,7 +2799,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getInitHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.init'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.init'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2802,7 +2807,7 @@ public class OpenSPCoop2Properties {
 					InitHandler handler = (InitHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.init'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.init'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -2816,7 +2821,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getExitHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.exit'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.exit'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2824,7 +2829,7 @@ public class OpenSPCoop2Properties {
 					ExitHandler handler = (ExitHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.exit'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.exit'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -2838,7 +2843,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getPreInRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.pre-in-request'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2846,7 +2851,7 @@ public class OpenSPCoop2Properties {
 					PreInRequestHandler handler = (PreInRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.pre-in-request'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -2859,7 +2864,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getInRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.in-request'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2867,7 +2872,7 @@ public class OpenSPCoop2Properties {
 					InRequestHandler handler = (InRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.in-request'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -2880,7 +2885,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getInRequestProtocolHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-protocol-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.in-protocol-request'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2888,7 +2893,7 @@ public class OpenSPCoop2Properties {
 					InRequestProtocolHandler handler = (InRequestProtocolHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-protocol-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.in-protocol-request'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -2901,7 +2906,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getOutRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.out-request'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2909,7 +2914,7 @@ public class OpenSPCoop2Properties {
 					OutRequestHandler handler = (OutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.out-request'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -2922,7 +2927,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getPostOutRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.post-out-request'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2930,7 +2935,7 @@ public class OpenSPCoop2Properties {
 					PostOutRequestHandler handler = (PostOutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.post-out-request'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -2943,7 +2948,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getPreInResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.pre-in-response'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2951,7 +2956,7 @@ public class OpenSPCoop2Properties {
 					PreInResponseHandler handler = (PreInResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.pre-in-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.pre-in-response'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -2964,7 +2969,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getInResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.in-response'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2972,7 +2977,7 @@ public class OpenSPCoop2Properties {
 					InResponseHandler handler = (InResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.in-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.in-response'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -2985,7 +2990,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getOutResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.out-response'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -2993,7 +2998,7 @@ public class OpenSPCoop2Properties {
 					OutResponseHandler handler = (OutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.out-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.out-response'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3006,7 +3011,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getPostOutResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.post-out-response'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3014,7 +3019,7 @@ public class OpenSPCoop2Properties {
 					PostOutResponseHandler handler = (PostOutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.built-in.post-out-response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.built-in.post-out-response'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3027,7 +3032,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getIntegrationManagerRequestHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrationManager.handler.built-in.request'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3035,7 +3040,7 @@ public class OpenSPCoop2Properties {
 					IntegrationManagerRequestHandler handler = (IntegrationManagerRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.request'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrationManager.handler.built-in.request'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3048,7 +3053,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandlerBuiltIn.length;i++){
 				String tipoClass = className.getIntegrationManagerResponseHandlerBuiltIn(tipiHandlerBuiltIn[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrationManager.handler.built-in.response'=...,"+tipiHandlerBuiltIn[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3056,7 +3061,7 @@ public class OpenSPCoop2Properties {
 					IntegrationManagerResponseHandler handler = (IntegrationManagerResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.built-in.response'=...,"+tipiHandlerBuiltIn[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrationManager.handler.built-in.response'=...,"+tipiHandlerBuiltIn[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3074,7 +3079,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getInitHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3082,7 +3087,7 @@ public class OpenSPCoop2Properties {
 					InitHandler handler = (InitHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.init'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3096,7 +3101,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getExitHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3104,7 +3109,7 @@ public class OpenSPCoop2Properties {
 					ExitHandler handler = (ExitHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.exit'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3118,7 +3123,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getPreInRequestHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3126,7 +3131,7 @@ public class OpenSPCoop2Properties {
 					PreInRequestHandler handler = (PreInRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.pre-in-request'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3139,7 +3144,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getInRequestHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3147,7 +3152,7 @@ public class OpenSPCoop2Properties {
 					InRequestHandler handler = (InRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.in-request'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3160,7 +3165,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getInRequestProtocolHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3168,7 +3173,7 @@ public class OpenSPCoop2Properties {
 					InRequestProtocolHandler handler = (InRequestProtocolHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.in-protocol-request'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3181,7 +3186,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getOutRequestHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3189,7 +3194,7 @@ public class OpenSPCoop2Properties {
 					OutRequestHandler handler = (OutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.out-request'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3202,7 +3207,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getPostOutRequestHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3210,7 +3215,7 @@ public class OpenSPCoop2Properties {
 					PostOutRequestHandler handler = (PostOutRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.post-out-request'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3223,7 +3228,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getPreInResponseHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3231,7 +3236,7 @@ public class OpenSPCoop2Properties {
 					PreInResponseHandler handler = (PreInResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.pre-in-response'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3244,7 +3249,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getInResponseHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3252,7 +3257,7 @@ public class OpenSPCoop2Properties {
 					InResponseHandler handler = (InResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.in-response'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3265,7 +3270,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getOutResponseHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3273,7 +3278,7 @@ public class OpenSPCoop2Properties {
 					OutResponseHandler handler = (OutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.out-response'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3286,7 +3291,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getPostOutResponseHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3294,7 +3299,7 @@ public class OpenSPCoop2Properties {
 					PostOutResponseHandler handler = (PostOutResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.handler.post-out-response'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3307,7 +3312,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getIntegrationManagerRequestHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3315,7 +3320,7 @@ public class OpenSPCoop2Properties {
 					IntegrationManagerRequestHandler handler = (IntegrationManagerRequestHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrationManager.handler.request'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3328,7 +3333,7 @@ public class OpenSPCoop2Properties {
 			for(int i=0; i<tipiHandler.length;i++){
 				String tipoClass = className.getIntegrationManagerResponseHandler(tipiHandler[i]);
 				if(tipoClass == null){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
 					"'"+"\n"+TIPO_SCONOSCIUTO);
 					return false;
 				}
@@ -3336,7 +3341,7 @@ public class OpenSPCoop2Properties {
 					IntegrationManagerResponseHandler handler = (IntegrationManagerResponseHandler) loaderOpenSPCoop.newInstance(tipoClass);
 					handler.toString();
 				}catch(Exception e){
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrationManager.handler.response'=...,"+tipiHandler[i]+
 							"'"+"\n"+getMessaggioClasseSconosciuta(e),e);
 					return false;
 				}
@@ -3371,7 +3376,7 @@ public class OpenSPCoop2Properties {
 		
 		Map<?,?> prop = this.getKeyValueGestioneTokenHeaderIntegrazioneTrasporto();
 		if ( prop == null ){
-			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*'.");
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword.*'.");
 			return false;
 		}
 		
@@ -3379,7 +3384,7 @@ public class OpenSPCoop2Properties {
 		try {
 			propSetPDtrasporto = this.getKeyPDSetEnabledGestioneTokenHeaderIntegrazioneTrasporto();
 		}catch(Exception e) {
-			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.*'.");
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled.*'.");
 			return false;
 		}
 		
@@ -3387,7 +3392,7 @@ public class OpenSPCoop2Properties {
 		try {
 			propSetPDjson = this.getKeyPDSetEnabledGestioneTokenHeaderIntegrazioneJson();
 		}catch(Exception e) {
-			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.*'.");
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled.*'.");
 			return false;
 		}
 		
@@ -3395,7 +3400,7 @@ public class OpenSPCoop2Properties {
 		try {
 			propSetPAtrasporto = this.getKeyPASetEnabledGestioneTokenHeaderIntegrazioneTrasporto();
 		}catch(Exception e) {
-			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.*'.");
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled.*'.");
 			return false;
 		}
 		
@@ -3403,34 +3408,34 @@ public class OpenSPCoop2Properties {
 		try {
 			propSetPAjson = this.getKeyPASetEnabledGestioneTokenHeaderIntegrazioneJson();
 		}catch(Exception e) {
-			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.*'.");
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled.*'.");
 			return false;
 		}
 		
 		List<String> keywords = this.getKeywordsIntegrazioneGestioneToken();
 		for (String keyword : keywords) {
 			if( prop.get(keyword) == null){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword."+
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.keyword."+
 						keyword+"'.");
 				return false;
 			}
 			if( !propSetPDtrasporto.containsKey(keyword)){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled."+
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pd.set.enabled."+
 						keyword+"'.");
 				return false;
 			}
 			if( !propSetPDjson.containsKey(keyword)){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled."+
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.gestioneToken.forward.json.pd.set.enabled."+
 						keyword+"'.");
 				return false;
 			}
 			if( !propSetPAtrasporto.containsKey(keyword)){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled."+
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.pa.set.enabled."+
 						keyword+"'.");
 				return false;
 			}
 			if( !propSetPAjson.containsKey(keyword)){
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled."+
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.gestioneToken.forward.json.pa.set.enabled."+
 						keyword+"'.");
 				return false;
 			}
@@ -3489,7 +3494,7 @@ public class OpenSPCoop2Properties {
 				String tipo = "";
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO.equals(tipiIntegrazione[i])){
 					if ( this.getKeyValue_HeaderIntegrazioneTrasporto() == null ){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.keyword.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.trasporto.keyword.*'.");
 						return false;
 					}
 					propGovWay = this.getKeyValue_HeaderIntegrazioneTrasporto();
@@ -3498,43 +3503,43 @@ public class OpenSPCoop2Properties {
 					try {
 						propSetRequestPD = this.getKeyPDSetEnabled_HeaderIntegrazioneTrasporto(true);
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.request.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.request.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetResponsePD = this.getKeyPDSetEnabled_HeaderIntegrazioneTrasporto(false);
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.response.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.trasporto.pd.set.response.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPD = this.getKeyPDReadEnabled_HeaderIntegrazioneTrasporto();
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetRequestPA = this.getKeyPASetEnabled_HeaderIntegrazioneTrasporto(true);
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.request.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.request.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetResponsePA = this.getKeyPASetEnabled_HeaderIntegrazioneTrasporto(false);
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.response.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.trasporto.pa.set.response.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPA = this.getKeyPAReadEnabled_HeaderIntegrazioneTrasporto();
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.*'.");
 						return false;
 					}
 					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO;
 				}else if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 					if ( this.getKeyValue_HeaderIntegrazioneUrlBased() == null ){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.keyword.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.urlBased.keyword.*'.");
 						return false;
 					}
 					propGovWay = this.getKeyValue_HeaderIntegrazioneUrlBased();
@@ -3543,31 +3548,31 @@ public class OpenSPCoop2Properties {
 					try {
 						propSetRequestPD = this.getKeyPDSetEnabled_HeaderIntegrazioneUrlBased();
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.urlBased.pd.set.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPD = this.getKeyPDReadEnabled_HeaderIntegrazioneUrlBased();
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetRequestPA = this.getKeyPASetEnabled_HeaderIntegrazioneUrlBased();
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.urlBased.pa.set.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPA = this.getKeyPAReadEnabled_HeaderIntegrazioneUrlBased();
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.*'.");
 						return false;
 					}
 					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED;
 				}else if(CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP.equals(tipiIntegrazione[i])){
 					if ( this.getKeyValue_HeaderIntegrazioneSoap() == null ){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.keyword.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.soap.keyword.*'.");
 						return false;
 					}
 					propGovWay = this.getKeyValue_HeaderIntegrazioneSoap();
@@ -3576,44 +3581,44 @@ public class OpenSPCoop2Properties {
 					try {
 						propSetRequestPD = this.getKeyPDSetEnabled_HeaderIntegrazioneSoap(true);
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetResponsePD = this.getKeyPDSetEnabled_HeaderIntegrazioneSoap(false);
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.response.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.soap.pd.set.response.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPD = this.getKeyPDReadEnabled_HeaderIntegrazioneSoap();
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetRequestPA = this.getKeyPASetEnabled_HeaderIntegrazioneSoap(true);
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.set.request.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.soap.pa.set.request.enabled.*'.");
 						return false;
 					}
 					try {
 						propSetResponsePA = this.getKeyPASetEnabled_HeaderIntegrazioneSoap(false);
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.set.response.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.soap.pa.set.response.enabled.*'.");
 						return false;
 					}
 					try {
 						propReadPA = this.getKeyPAReadEnabled_HeaderIntegrazioneSoap();
 					}catch(Exception e) {
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.*'.");
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.*'.");
 						return false;
 					}
 					tipo=CostantiConfigurazione.HEADER_INTEGRAZIONE_SOAP;
 				}
 				
 				if(propSetRequestPD==null) {
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.*'. Set is null");
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.soap.pd.set.request.enabled.*'. Set is null");
 					return false;
 				}
 				
@@ -3625,65 +3630,65 @@ public class OpenSPCoop2Properties {
 					}
 					
 					if( propGovWay.get(mapkey) == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propOpenSPCoop2.get(mapkey) == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2."+tipo+".keyword."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop2."+tipo+".keyword."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propOpenSPCoop1.get(mapkey) == null){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1."+tipo+".keyword."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione.backward_compatibility.openspcoop1."+tipo+".keyword."+
 								mapkey.toString()+"'.");
 						return false;
 					}
 					if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 						if( !propSetRequestPD.containsKey(mapkey)){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 					}
 					else {
 						if( !propSetRequestPD.containsKey(mapkey)){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 						if( propSetResponsePD==null || !propSetResponsePD.containsKey(mapkey)){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 					}
 					if( !propReadPD.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.read.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.read.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 						if( !propSetRequestPA.containsKey(mapkey)){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 					}
 					else {
 						if( !propSetRequestPA.containsKey(mapkey)){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 						if( !propSetResponsePA.containsKey(mapkey)){
-							this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
+							this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
 									mapkey+"'.");
 							return false;
 						}
 					}
 					if( !propReadPA.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.read.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.read.enabled."+
 								mapkey+"'.");
 						return false;
 					}
@@ -3692,34 +3697,34 @@ public class OpenSPCoop2Properties {
 				MapKey<String> mapkey = CostantiPdD.HEADER_INTEGRAZIONE_INFO;
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 					if( !propSetRequestPD.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( !propSetRequestPA.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 				}
 				else {
 					if( !propSetRequestPD.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetResponsePD==null || !propSetResponsePD.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( !propSetRequestPA.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( !propSetResponsePA.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
@@ -3728,22 +3733,22 @@ public class OpenSPCoop2Properties {
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO.equals(tipo)) {
 					mapkey = CostantiPdD.HEADER_INTEGRAZIONE_USER_AGENT;
 					if( !propSetRequestPD.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetResponsePD==null || !propSetResponsePD.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( !propSetRequestPA.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( !propSetResponsePA.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
@@ -3752,34 +3757,34 @@ public class OpenSPCoop2Properties {
 				mapkey = CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO;
 				if(CostantiConfigurazione.HEADER_INTEGRAZIONE_URL_BASED.equals(tipiIntegrazione[i])){
 					if( !propSetRequestPD.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( !propSetRequestPA.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 				}
 				else {
 					if( !propSetRequestPD.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( propSetResponsePD==null || !propSetResponsePD.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pd.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( !propSetRequestPA.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.request.enabled."+
 								mapkey+"'.");
 						return false;
 					}
 					if( !propSetResponsePA.containsKey(mapkey)){
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway: 'org.openspcoop2.pdd.integrazione."+tipo+".pa.set.response.enabled."+
 								mapkey+"'.");
 						return false;
 					}
@@ -3882,7 +3887,7 @@ public class OpenSPCoop2Properties {
 
 				this.rootDirectory = root;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, 'org.openspcoop2.pdd.confDirectory': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway, 'org.openspcoop2.pdd.confDirectory': "+e.getMessage(),e);
 				this.rootDirectory = null;
 			}    
 		}
@@ -3917,7 +3922,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop, 'org.openspcoop2.pdd.server': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway, 'org.openspcoop2.pdd.server': "+e.getMessage(),e);
 				this.serverJ2EE = null;
 			}    
 		}
@@ -3939,7 +3944,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.classLoader' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.classLoader' non impostata, errore:"+e.getMessage(),e);
 			}
 			this.getClassLoaderRead = true;
 		}
@@ -4207,7 +4212,7 @@ public class OpenSPCoop2Properties {
 
 				this.pathConfigurazionePDD = indirizzo;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.location': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.config.location': "+e.getMessage(),e);
 				this.pathConfigurazionePDD = null;
 			}
 		}
@@ -4270,7 +4275,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.preLoading.locale': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.config.preLoading.locale': "+e.getMessage(),e);
 				this.tipoConfigurazionePDD = null;
 			}  
 			
@@ -4297,7 +4302,7 @@ public class OpenSPCoop2Properties {
 
 				this.tipoConfigurazionePDD = tipo;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.config.tipo': "+e.getMessage(),e);
 				this.tipoConfigurazionePDD = null;
 			}    
 		}
@@ -4322,7 +4327,7 @@ public class OpenSPCoop2Properties {
 					this.isCondivisioneConfigurazioneRegistroDB = Boolean.parseBoolean(value);
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.config.db.condivisioneDBRegserv' (Viene utilizzato il default:false): "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.config.db.condivisioneDBRegserv' (Viene utilizzato il default:false): "+e.getMessage(),e);
 				this.isCondivisioneConfigurazioneRegistroDB = false;
 			}    
 		}
@@ -4406,12 +4411,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isConfigurazioneDinamica_value = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.config.refresh' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.config.refresh' non impostata, viene utilizzato il default=true");
 					this.isConfigurazioneDinamica_value = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.config.refresh' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.config.refresh' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isConfigurazioneDinamica_value = true;
 			}
 		}
@@ -4429,12 +4434,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isConfigurazioneCache_ConfigPrefill_value = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.config.prefill' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.cache.config.prefill' non impostata, viene utilizzato il default=false");
 					this.isConfigurazioneCache_ConfigPrefill_value = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.config.prefill' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.cache.config.prefill' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isConfigurazioneCache_ConfigPrefill_value = false;
 			}
 		}
@@ -4452,12 +4457,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isConfigurazioneCache_RegistryPrefill_value = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.registry.prefill' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.cache.registry.prefill' non impostata, viene utilizzato il default=false");
 					this.isConfigurazioneCache_RegistryPrefill_value = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.registry.prefill' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.cache.registry.prefill' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isConfigurazioneCache_RegistryPrefill_value = false;
 			}
 		}
@@ -4475,12 +4480,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isConfigurazioneCache_accessiSynchronized = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.get.synchronized' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.cache.get.synchronized' non impostata, viene utilizzato il default=false");
 					this.isConfigurazioneCache_accessiSynchronized = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.get.synchronized' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.cache.get.synchronized' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isConfigurazioneCache_accessiSynchronized = false;
 			}
 		}
@@ -4498,12 +4503,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isConfigurazioneCache_transactionContext_accessiSynchronized = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.transactionContext.synchronized' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.cache.transactionContext.synchronized' non impostata, viene utilizzato il default=true");
 					this.isConfigurazioneCache_transactionContext_accessiSynchronized = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cache.transactionContext.synchronized' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.cache.transactionContext.synchronized' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isConfigurazioneCache_transactionContext_accessiSynchronized = true;
 			}
 		}
@@ -4688,7 +4693,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isConfigurazioneCacheRequestManagerExternalResourceSaveInCache = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isConfigurazioneCacheRequestManagerExternalResourceSaveInCache = false;
 			}    
 		}
@@ -4710,7 +4715,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isConfigurazioneCacheRequestManagerOCSPResponseSaveInCache = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isConfigurazioneCacheRequestManagerOCSPResponseSaveInCache = false;
 			}    
 		}
@@ -4732,7 +4737,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isConfigurazioneCacheRequestManagerRemoteStoreSaveInCache = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isConfigurazioneCacheRequestManagerRemoteStoreSaveInCache = false;
 			}    
 		}
@@ -4807,12 +4812,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getConfigurazionePluginsSeconds = Integer.parseInt(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=300");
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default=300");
 					this.getConfigurazionePluginsSeconds = 300;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=300, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default=300, errore:"+e.getMessage(),e);
 				this.getConfigurazionePluginsSeconds = 300;
 			}
 		}
@@ -4845,7 +4850,7 @@ public class OpenSPCoop2Properties {
 
 				this.jndiNameDatasource = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dataSource': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.dataSource': "+e.getMessage(),e);
 				this.jndiNameDatasource = null;
 			}    
 		}
@@ -4907,7 +4912,7 @@ public class OpenSPCoop2Properties {
 
 				this.jndiNameConnectionFactory = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.queueConnectionFactory': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.queueConnectionFactory': "+e.getMessage(),e);
 				this.jndiNameConnectionFactory = null;
 			}    
 		}
@@ -4963,12 +4968,12 @@ public class OpenSPCoop2Properties {
 					else
 						throw new CoreException("Tipo di acknowledgeModeSessione non conosciuto (viene utilizzato il default:AUTO_ACKNOWLEDGE)");
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.queueConnectionFactory.session.AcknowledgeMode' non impostata, viene utilizzato il default=AUTO_ACKNOWLEDGE");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.queueConnectionFactory.session.AcknowledgeMode' non impostata, viene utilizzato il default=AUTO_ACKNOWLEDGE");
 					this.acknowledgeModeSessioneConnectionFactory = jakarta.jms.Session.AUTO_ACKNOWLEDGE; // Default
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.queueConnectionFactory.session.AcknowledgeMode' non impostata, viene utilizzato il default=AUTO_ACKNOWLEDGE, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.queueConnectionFactory.session.AcknowledgeMode' non impostata, viene utilizzato il default=AUTO_ACKNOWLEDGE, errore:"+e.getMessage(),e);
 				this.acknowledgeModeSessioneConnectionFactory = jakarta.jms.Session.AUTO_ACKNOWLEDGE; // Default
 			}    
 		}
@@ -5217,12 +5222,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerAutoStart_StopTimer = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.autoStart.stop' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.autoStart.stop' non impostata, viene utilizzato il default=true");
 					this.isTimerAutoStart_StopTimer = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.autoStart.stop', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.autoStart.stop', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerAutoStart_StopTimer = true;
 			}
 		}
@@ -5252,12 +5257,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreRiscontriRicevuteAbilitato = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.enable' non impostata, viene utilizzato il default=true");
 					this.isTimerGestoreRiscontriRicevuteAbilitato = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerGestoreRiscontriRicevuteAbilitato = true;
 			}
 		}
@@ -5281,12 +5286,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreRiscontriRicevuteAbilitatoLog = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.logQuery' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.logQuery' non impostata, viene utilizzato il default=false");
 					this.isTimerGestoreRiscontriRicevuteAbilitatoLog = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.logQuery', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.logQuery', viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isTimerGestoreRiscontriRicevuteAbilitatoLog = false;
 			}
 		}
@@ -5310,12 +5315,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getTimerGestoreRiscontriRicevuteLimit = Integer.parseInt(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.query.limit' non impostata, viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.query.limit' non impostata, viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI);
 					this.getTimerGestoreRiscontriRicevuteLimit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.query.limit', viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.query.limit', viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreRiscontriRicevuteLimit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 			}
 		}
@@ -5334,11 +5339,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerGestoreRiscontriRicevuteLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
 					this.getTimerGestoreRiscontriRicevuteLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreRiscontriRicevuteLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}  
 			if(this.getTimerGestoreRiscontriRicevuteLockMaxLife!=null && this.getTimerGestoreRiscontriRicevuteLockMaxLife>0) {
@@ -5364,11 +5369,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerGestoreRiscontriRicevuteLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
 					this.getTimerGestoreRiscontriRicevuteLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreBusteNonRiscontrate.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreRiscontriRicevuteLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			} 
 			if(this.getTimerGestoreRiscontriRicevuteLockIdleTime!=null && this.getTimerGestoreRiscontriRicevuteLockIdleTime>0) {
@@ -5396,12 +5401,12 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva = time*1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
 					this.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreRiscontriRicevuteGetLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
@@ -5422,11 +5427,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.getTimerGestoreRiscontriRicevuteGetLockCheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
 					this.getTimerGestoreRiscontriRicevuteGetLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreRiscontriRicevuteGetLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
@@ -5455,12 +5460,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreMessaggiAbilitato = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.enable' non impostata, viene utilizzato il default=true");
 					this.isTimerGestoreMessaggiAbilitato = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerGestoreMessaggiAbilitato = true;
 			}
 		}
@@ -5478,12 +5483,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiEliminati.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiEliminati.enable' non impostata, viene utilizzato il default=true");
 					this.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiEliminati.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiEliminati.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerGestoreMessaggiPuliziaMessaggiEliminatiAbilitata = true;
 			}
 		}
@@ -5501,12 +5506,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiScaduti.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiScaduti.enable' non impostata, viene utilizzato il default=true");
 					this.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiScaduti.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiScaduti.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerGestoreMessaggiPuliziaMessaggiScadutiAbilitata = true;
 			}
 		}
@@ -5524,12 +5529,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiNonGestiti.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiNonGestiti.enable' non impostata, viene utilizzato il default=true");
 					this.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiNonGestiti.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaMessaggiNonGestiti.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerGestoreMessaggiPuliziaMessaggiNonGestitiAbilitata = true;
 			}
 		}
@@ -5547,12 +5552,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaCorrelazioneApplicativa.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaCorrelazioneApplicativa.enable' non impostata, viene utilizzato il default=true");
 					this.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaCorrelazioneApplicativa.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.puliziaCorrelazioneApplicativa.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerGestoreMessaggiPuliziaCorrelazioneApplicativaAbilitata = true;
 			}
 		}
@@ -5576,12 +5581,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreMessaggiAbilitatoOrderBy = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.orderBy' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.orderBy' non impostata, viene utilizzato il default=false");
 					this.isTimerGestoreMessaggiAbilitatoOrderBy = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.orderBy', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.orderBy', viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isTimerGestoreMessaggiAbilitatoOrderBy = false;
 			}
 		}
@@ -5605,12 +5610,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreMessaggiAbilitatoLog = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.logQuery' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.logQuery' non impostata, viene utilizzato il default=false");
 					this.isTimerGestoreMessaggiAbilitatoLog = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.logQuery', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.logQuery', viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isTimerGestoreMessaggiAbilitatoLog = false;
 			}
 		}
@@ -5634,12 +5639,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getTimerGestoreMessaggiLimit = Integer.parseInt(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.query.limit' non impostata, viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.query.limit' non impostata, viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI);
 					this.getTimerGestoreMessaggiLimit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.query.limit', viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.query.limit', viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreMessaggiLimit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 			}
 		}
@@ -5663,12 +5668,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreMessaggiVerificaConnessioniAttive = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.verificaConnessioniAttive' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.verificaConnessioniAttive' non impostata, viene utilizzato il default=false");
 					this.isTimerGestoreMessaggiVerificaConnessioniAttive = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.verificaConnessioniAttive', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.verificaConnessioniAttive', viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isTimerGestoreMessaggiVerificaConnessioniAttive = false;
 			}
 		}
@@ -5687,11 +5692,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerGestoreMessaggiLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
 					this.getTimerGestoreMessaggiLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreMessaggiLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}
 			if(this.getTimerGestoreMessaggiLockMaxLife!=null && this.getTimerGestoreMessaggiLockMaxLife>0) {
@@ -5717,11 +5722,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerGestoreMessaggiLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
 					this.getTimerGestoreMessaggiLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreMessaggi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreMessaggiLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			}
 			if(this.getTimerGestoreMessaggiLockIdleTime!=null && this.getTimerGestoreMessaggiLockIdleTime>0) {
@@ -5749,12 +5754,12 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.getTimerGestoreMessaggi_getLockAttesaAttiva = time*1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
 					this.getTimerGestoreMessaggi_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreMessaggi_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
@@ -5775,11 +5780,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.getTimerGestoreMessaggi_getLockCheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
 					this.getTimerGestoreMessaggi_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreMessaggi_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
@@ -5807,12 +5812,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestorePuliziaMessaggiAnomaliAbilitato = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.enable' non impostata, viene utilizzato il default=true");
 					this.isTimerGestorePuliziaMessaggiAnomaliAbilitato = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerGestorePuliziaMessaggiAnomaliAbilitato = true;
 			}
 		}
@@ -5835,12 +5840,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoOrderBy = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.orderBy' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.orderBy' non impostata, viene utilizzato il default=false");
 					this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoOrderBy = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.orderBy', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.orderBy', viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoOrderBy = false;
 			}
 		}
@@ -5863,12 +5868,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoLog = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.logQuery' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.logQuery' non impostata, viene utilizzato il default=false");
 					this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoLog = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.logQuery', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.logQuery', viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isTimerGestorePuliziaMessaggiAnomaliAbilitatoLog = false;
 			}
 		}
@@ -5892,12 +5897,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getTimerGestorePuliziaMessaggiAnomaliLimit = Integer.parseInt(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.query.limit' non impostata, viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.query.limit' non impostata, viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI);
 					this.getTimerGestorePuliziaMessaggiAnomaliLimit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.query.limit', viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.query.limit', viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI+", errore:"+e.getMessage(),e);
 				this.getTimerGestorePuliziaMessaggiAnomaliLimit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 			}
 		}
@@ -5916,11 +5921,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
 					this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
 				this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}  
 			if(this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife!=null && this.getTimerGestorePuliziaMessaggiAnomaliLockMaxLife>0) {
@@ -5946,11 +5951,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
 					this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestorePuliziaMessaggiAnomali.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
 				this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			} 
 			if(this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime!=null && this.getTimerGestorePuliziaMessaggiAnomaliLockIdleTime>0) {
@@ -5978,12 +5983,12 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva = time*1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
 					this.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.getTimerGestorePuliziaMessaggiAnomali_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
@@ -6004,11 +6009,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
 					this.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.getTimerGestorePuliziaMessaggiAnomali_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
@@ -6036,12 +6041,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreRepositoryBusteAbilitato = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.enable' non impostata, viene utilizzato il default=true");
 					this.isTimerGestoreRepositoryBusteAbilitato = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerGestoreRepositoryBusteAbilitato = true;
 			}
 		}
@@ -6058,12 +6063,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreRepositoryBusteAbilitatoInitialState = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.statoIniziale.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.statoIniziale.enable' non impostata, viene utilizzato il default=true");
 					this.isTimerGestoreRepositoryBusteAbilitatoInitialState = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.statoIniziale.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.statoIniziale.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerGestoreRepositoryBusteAbilitatoInitialState = true;
 			}
 		}
@@ -6087,12 +6092,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreRepositoryBusteAbilitatoOrderBy = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.orderBy' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.orderBy' non impostata, viene utilizzato il default=false");
 					this.isTimerGestoreRepositoryBusteAbilitatoOrderBy = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.orderBy', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.orderBy', viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isTimerGestoreRepositoryBusteAbilitatoOrderBy = false;
 			}
 		}
@@ -6116,12 +6121,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerGestoreRepositoryBusteAbilitatoLog = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.logQuery' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.logQuery' non impostata, viene utilizzato il default=false");
 					this.isTimerGestoreRepositoryBusteAbilitatoLog = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.logQuery', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.logQuery', viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isTimerGestoreRepositoryBusteAbilitatoLog = false;
 			}
 		}
@@ -6145,12 +6150,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getTimerGestoreRepositoryBusteLimit = Integer.parseInt(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.query.limit' non impostata, viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.query.limit' non impostata, viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI);
 					this.getTimerGestoreRepositoryBusteLimit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.query.limit', viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.query.limit', viene utilizzato il default="+CostantiPdD.LIMIT_MESSAGGI_GESTORI+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreRepositoryBusteLimit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
 			}
 		}
@@ -6169,11 +6174,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerGestoreRepositoryBusteLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
 					this.getTimerGestoreRepositoryBusteLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreRepositoryBusteLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}
 			if(this.getTimerGestoreRepositoryBusteLockMaxLife!=null && this.getTimerGestoreRepositoryBusteLockMaxLife>0) {
@@ -6199,11 +6204,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerGestoreRepositoryBusteLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
 					this.getTimerGestoreRepositoryBusteLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.gestoreRepositoryBuste.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreRepositoryBusteLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			}
 			if(this.getTimerGestoreRepositoryBusteLockIdleTime!=null && this.getTimerGestoreRepositoryBusteLockIdleTime>0) {
@@ -6231,12 +6236,12 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.getTimerGestoreRepositoryBuste_getLockAttesaAttiva = time*1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
 					this.getTimerGestoreRepositoryBuste_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreRepositoryBuste_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
@@ -6257,11 +6262,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.getTimerGestoreRepositoryBuste_getLockCheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
 					this.getTimerGestoreRepositoryBuste_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.getTimerGestoreRepositoryBuste_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
@@ -6286,7 +6291,7 @@ public class OpenSPCoop2Properties {
 		
 		if(this.isTimerConsegnaContenutiApplicativiAbilitato==null){
 			if(this.isServerJ2EE()!=null && this.isServerJ2EE().booleanValue()){
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable' disabilitata poiche' il prodotto e' configurato in modalita' server j2ee");
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable' disabilitata poiche' il prodotto e' configurato in modalita' server j2ee");
 				this.isTimerConsegnaContenutiApplicativiAbilitato = false;
 			}
 			else{			
@@ -6296,12 +6301,12 @@ public class OpenSPCoop2Properties {
 						value = value.trim();
 						this.isTimerConsegnaContenutiApplicativiAbilitato = Boolean.parseBoolean(value);
 					}else{
-						this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable' non impostata, viene utilizzato il default=true");
+						this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable' non impostata, viene utilizzato il default=true");
 						this.isTimerConsegnaContenutiApplicativiAbilitato = true;
 					}
 	
 				}catch(java.lang.Exception e) {
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.enable', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 					this.isTimerConsegnaContenutiApplicativiAbilitato = true;
 				}
 			}
@@ -6317,7 +6322,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.scheduling.debug";
 		if(this.isTimerConsegnaContenutiApplicativiSchedulingDebug==null){
 			if(this.isServerJ2EE()!=null && this.isServerJ2EE().booleanValue()){
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' disabilitata poiche' il prodotto e' configurato in modalita' server j2ee");
+				this.logWarn("proprietà di govway '"+pName+"' disabilitata poiche' il prodotto e' configurato in modalita' server j2ee");
 				this.isTimerConsegnaContenutiApplicativiSchedulingDebug = false;
 			}
 			else{			
@@ -6332,7 +6337,7 @@ public class OpenSPCoop2Properties {
 					}
 	
 				}catch(java.lang.Exception e) {
-					this.logWarn("Proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+					this.logWarn("proprietà di govway '"+pName+"', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 					this.isTimerConsegnaContenutiApplicativiSchedulingDebug = true;
 				}
 			}
@@ -6348,7 +6353,7 @@ public class OpenSPCoop2Properties {
 		String pName = "org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.scheduling.checkEliminazioneLogica";
 		if(this.isTimerConsegnaContenutiApplicativiSchedulingCheckEliminazioneLogica==null){
 			if(this.isServerJ2EE()!=null && this.isServerJ2EE().booleanValue()){
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' disabilitata poiche' il prodotto e' configurato in modalita' server j2ee");
+				this.logWarn("proprietà di govway '"+pName+"' disabilitata poiche' il prodotto e' configurato in modalita' server j2ee");
 				this.isTimerConsegnaContenutiApplicativiSchedulingCheckEliminazioneLogica = false;
 			}
 			else{			
@@ -6363,7 +6368,7 @@ public class OpenSPCoop2Properties {
 					}
 	
 				}catch(java.lang.Exception e) {
-					this.logWarn("Proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+					this.logWarn("proprietà di govway '"+pName+"', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 					this.isTimerConsegnaContenutiApplicativiSchedulingCheckEliminazioneLogica = true;
 				}
 			}
@@ -6389,7 +6394,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"', viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativiSchedulingCheckPassaggioOraLegaleVersoOraSolare = true;
 			}
 		}
@@ -6421,7 +6426,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.code': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.code': "+e.getMessage(),e);
 				this.getTimerConsegnaContenutiApplicativiCode = null;
 			}  
 			this.getTimerConsegnaContenutiApplicativiCodeRead = true;
@@ -6450,7 +6455,7 @@ public class OpenSPCoop2Properties {
 			return confCoda;
 			
 		}catch(java.lang.Exception e) {
-			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+prefix+"*': "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+prefix+"*': "+e.getMessage(),e);
 			return null;
 		}  
 
@@ -6480,7 +6485,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.priorita': "+e.getMessage(),e);
 				this.getTimerConsegnaContenutiApplicativiPriorita = null;
 			}  
 			this.getTimerConsegnaContenutiApplicativiPrioritaRead = true;
@@ -6509,7 +6514,7 @@ public class OpenSPCoop2Properties {
 			return confPriorita;
 			
 		}catch(java.lang.Exception e) {
-			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+prefix+"*': "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+prefix+"*': "+e.getMessage(),e);
 			return null;
 		}  
 
@@ -6524,12 +6529,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isLoadBalancerDebug = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.loadBalancer.debug' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.loadBalancer.debug' non impostata, viene utilizzato il default=false");
 					this.isLoadBalancerDebug = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.loadBalancer.debug', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.loadBalancer.debug', viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isLoadBalancerDebug = false;
 			}
 		}
@@ -6548,11 +6553,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerConsegnaContenutiApplicativiLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
 					this.getTimerConsegnaContenutiApplicativiLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
 				this.getTimerConsegnaContenutiApplicativiLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}  
 			if(this.getTimerConsegnaContenutiApplicativiLockMaxLife!=null && this.getTimerConsegnaContenutiApplicativiLockMaxLife>0) {
@@ -6578,11 +6583,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerConsegnaContenutiApplicativiLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
 					this.getTimerConsegnaContenutiApplicativiLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
 				this.getTimerConsegnaContenutiApplicativiLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			} 
 			if(this.getTimerConsegnaContenutiApplicativiLockIdleTime!=null && this.getTimerConsegnaContenutiApplicativiLockIdleTime>0) {
@@ -6608,11 +6613,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE);
 					this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE+", errore:"+e.getMessage(),e);
 				this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE;
 			}  
 			if(this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife!=null && this.getTimerConsegnaContenutiApplicativiPresaInConsegnaMaxLife>0) {
@@ -6640,12 +6645,12 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva = time*1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
 					this.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.getTimerConsegnaContenutiApplicativi_getLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
@@ -6666,11 +6671,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.getTimerConsegnaContenutiApplicativi_getLockCheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
 					this.getTimerConsegnaContenutiApplicativi_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.getTimerConsegnaContenutiApplicativi_getLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
@@ -6695,7 +6700,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_smistatore_runtime_useRuntimeManager = true;
 			}    
 		}
@@ -6716,7 +6721,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -6731,7 +6736,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSourceJndiContext = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -6753,7 +6758,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_smistatore_runtime_dataSource_useDBUtils = true;
 			}    
 		}
@@ -6779,7 +6784,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_runtime_useRuntimeManager = true;
 			}    
 		}
@@ -6800,7 +6805,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getTimerConsegnaContenutiApplicativi_runtime_dataSource = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -6815,7 +6820,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getTimerConsegnaContenutiApplicativi_runtime_dataSourceJndiContext = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -6837,7 +6842,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_runtime_dataSource_useDBUtils = true;
 			}    
 		}
@@ -6862,7 +6867,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_transazioni_useTransactionManager = true;
 			}    
 		}
@@ -6883,7 +6888,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getTimerConsegnaContenutiApplicativi_transazioni_dataSource = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -6898,7 +6903,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getTimerConsegnaContenutiApplicativi_transazioni_dataSourceJndiContext = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -6920,7 +6925,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTimerConsegnaContenutiApplicativi_transazioni_dataSource_useDBUtils = true;
 			}    
 		}
@@ -6948,7 +6953,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.repositoryType = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.tipo': "+e.getMessage(),e);
 				this.repositoryType = null;
 			}    
 		}
@@ -6972,7 +6977,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 				this.databaseType = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.tipoDatabase': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.tipoDatabase': "+e.getMessage(),e);
 				this.databaseType = null;
 			}    
 		}
@@ -7004,12 +7009,12 @@ public class OpenSPCoop2Properties {
 						this.isRepositoryOnFS_value = true;
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.tipo' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.tipo' non impostata, viene utilizzato il default=true");
 					this.isRepositoryOnFS_value = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.tipo' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.tipo' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isRepositoryOnFS_value = true;
 			}    
 		}
@@ -7034,7 +7039,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.repositoryDirectory = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.directory': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.directory': "+e.getMessage(),e);
 				this.repositoryDirectory = null;
 			}  
 		}
@@ -7059,7 +7064,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.repositoryJDBCAdapter = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.jdbcAdapter': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.jdbcAdapter': "+e.getMessage(),e);
 				this.repositoryJDBCAdapter = null;
 			}    
 		}
@@ -7082,12 +7087,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.forceIndex = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.forceIndex' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.forceIndex' non impostata, viene utilizzato il default=false");
 					this.forceIndex = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.forceIndex' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.forceIndex' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.forceIndex = false;
 			}    
 		}
@@ -7122,13 +7127,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.attachment.fileCacheEnable");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileCacheEnable' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.attachment.fileCacheEnable' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isFileCacheEnable = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileCacheEnable': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.attachment.fileCacheEnable': "+e.getMessage(),e);
 				this.isFileCacheEnable = false;
 			}    
 		}
@@ -7156,7 +7161,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.repositoryDir': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.attachment.repositoryDir': "+e.getMessage(),e);
 				this.attachmentRepoDir = null;
 			}    
 		}
@@ -7176,12 +7181,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.fileThreshold = name;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileThreshold' non impostata, viene utilizzato il default=1024");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.attachment.fileThreshold' non impostata, viene utilizzato il default=1024");
 					this.fileThreshold = "1024";
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileThreshold': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.attachment.fileThreshold': "+e.getMessage(),e);
 				this.fileThreshold = "1024";
 			}    
 		}
@@ -7201,12 +7206,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.filePrefix = name;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.filePrefix' non impostata, viene utilizzato il default="+CostantiPdD.OPENSPCOOP2);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.attachment.filePrefix' non impostata, viene utilizzato il default="+CostantiPdD.OPENSPCOOP2);
 					this.filePrefix = CostantiPdD.OPENSPCOOP2;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.filePrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.attachment.filePrefix': "+e.getMessage(),e);
 				this.filePrefix = CostantiPdD.OPENSPCOOP2;
 			}    
 		}
@@ -7226,12 +7231,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.fileSuffix = name;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileSuffix' non impostata, viene utilizzato il default=.att");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.attachment.fileSuffix' non impostata, viene utilizzato il default=.att");
 					this.fileSuffix = ".att";
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.fileSuffix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.attachment.fileSuffix': "+e.getMessage(),e);
 				this.fileSuffix = ".att";
 			}    
 		}
@@ -7251,12 +7256,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.deleteInterval = Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.deleteInterval' non impostata, viene utilizzato il default=300");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.attachment.deleteInterval' non impostata, viene utilizzato il default=300");
 					this.deleteInterval = 300;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.attachment.deleteInterval': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.attachment.deleteInterval': "+e.getMessage(),e);
 				this.deleteInterval = 300;
 			}    
 		}
@@ -7281,7 +7286,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.repositoryIntervalloEliminazioneMessaggi = java.lang.Long.parseLong(name);
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.timer': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.timer': "+e.getMessage(),e);
 				this.repositoryIntervalloEliminazioneMessaggi = -1L;
 			}   
 		}
@@ -7306,7 +7311,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.repositoryIntervalloScadenzaMessaggi = java.lang.Long.parseLong(name);
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaMessaggio': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.scadenzaMessaggio': "+e.getMessage(),e);
 				this.repositoryIntervalloScadenzaMessaggi = -1L;
 			}    
 		}
@@ -7328,7 +7333,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.useSoapMessageReader = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.useSoapMessageReader = true;
 			}    
 		}
@@ -7348,12 +7353,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.soapMessageReaderBufferThresholdKb = Integer.valueOf(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soapMessage.reader.bufferThreshold' non impostata, viene utilizzato il default=10");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.soapMessage.reader.bufferThreshold' non impostata, viene utilizzato il default=10");
 					this.soapMessageReaderBufferThresholdKb = 10;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soapMessage.reader.bufferThreshold': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soapMessage.reader.bufferThreshold': "+e.getMessage(),e);
 				this.soapMessageReaderBufferThresholdKb = 10;
 			}    
 		}
@@ -7375,7 +7380,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.useSoapMessageReaderHeaderOptimization = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.useSoapMessageReaderHeaderOptimization = true;
 			}    
 		}
@@ -7397,7 +7402,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.useSoapMessagePassthrough = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.useSoapMessagePassthrough = true;
 			}    
 		}
@@ -7417,12 +7422,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.soapMessageSaajSaxParserPoolSize = Integer.valueOf(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soapMessage.saaj.saxParserPoolSize' non impostata, viene utilizzato il default=200");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.soapMessage.saaj.saxParserPoolSize' non impostata, viene utilizzato il default=200");
 					this.soapMessageSaajSaxParserPoolSize = 200;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soapMessage.saaj.saxParserPoolSize': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soapMessage.saaj.saxParserPoolSize': "+e.getMessage(),e);
 				this.soapMessageSaajSaxParserPoolSize = 200;
 			}    
 		}
@@ -7454,7 +7459,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+": "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+": "+e.getMessage(),e);
 				this.alternativeContentTypeSoap12 = null;
 			}  
 			this.alternativeContentTypeSoap12Read = true;
@@ -7478,7 +7483,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.useRestMultipartLazy = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.useRestMultipartLazy = true;
 			}    
 		}
@@ -7500,13 +7505,13 @@ public class OpenSPCoop2Properties {
 			try{ 
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione");
 				if(value==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione' non definita (Viene utilizzato il default:true)");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione' non definita (Viene utilizzato il default:true)");
 					this.repositoryBusteFiltraBusteScaduteRispettoOraRegistrazione = true;
 				}else{
 					this.repositoryBusteFiltraBusteScaduteRispettoOraRegistrazione = Boolean.parseBoolean(value);
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione' (Viene utilizzato il default:true): "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.scadenzaMessaggio.filtraBusteScaduteRispettoOraRegistrazione' (Viene utilizzato il default:true): "+e.getMessage(),e);
 				this.repositoryBusteFiltraBusteScaduteRispettoOraRegistrazione = true;
 			}    
 		}
@@ -7528,7 +7533,7 @@ public class OpenSPCoop2Properties {
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa");
 				if(name==null){
 					/** throw new CoreException(NON_DEFINITA); */
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa' non definita, viene usato il valore impostato nella proprieta 'org.openspcoop2.pdd.repository.scadenzaMessaggio'");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa' non definita, viene usato il valore impostato nella proprieta 'org.openspcoop2.pdd.repository.scadenzaMessaggio'");
 					this.repositoryIntervalloScadenzaCorrelazioneApplicativa = getRepositoryIntervalloScadenzaMessaggi();
 				}
 				else{
@@ -7536,7 +7541,7 @@ public class OpenSPCoop2Properties {
 					this.repositoryIntervalloScadenzaCorrelazioneApplicativa = java.lang.Long.parseLong(name);
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa': "+e.getMessage(),e);
 				this.repositoryIntervalloScadenzaCorrelazioneApplicativa = -1L;
 			}    
 		}
@@ -7552,7 +7557,7 @@ public class OpenSPCoop2Properties {
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength");
 				if(name==null){
 					/** throw new CoreException(NON_DEFINITA); */
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength' non definita, viene usato il valore di default: 255");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength' non definita, viene usato il valore di default: 255");
 					this.maxLengthCorrelazioneApplicativa = 255;
 				}
 				else{
@@ -7560,7 +7565,7 @@ public class OpenSPCoop2Properties {
 					this.maxLengthCorrelazioneApplicativa = java.lang.Integer.parseInt(name);
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.correlazioneApplicativa.maxLength': "+e.getMessage(),e);
 				this.maxLengthCorrelazioneApplicativa = 255;
 			}    
 		}
@@ -7577,7 +7582,7 @@ public class OpenSPCoop2Properties {
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					/** throw new CoreException(NON_DEFINITA); */
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: false");
+					this.logWarn("proprietà di govway '"+pName+"' non definita, viene usato il valore di default: false");
 					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateActive = false;
 				}
 				else{
@@ -7585,7 +7590,7 @@ public class OpenSPCoop2Properties {
 					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateActive = java.lang.Boolean.parseBoolean(name);
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
 				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncateActive = false;
 			}    
 		}
@@ -7611,11 +7616,11 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				else {
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: 245");
+					this.logWarn("proprietà di govway '"+pName+"' non definita, viene usato il valore di default: 245");
 					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate = 245;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaBloccaTruncate = null;
 			}  
 			
@@ -7634,7 +7639,7 @@ public class OpenSPCoop2Properties {
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
 					/** throw new CoreException(NON_DEFINITA); */
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: false");
+					this.logWarn("proprietà di govway '"+pName+"' non definita, viene usato il valore di default: false");
 					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateActive = false;
 				}
 				else{
@@ -7642,7 +7647,7 @@ public class OpenSPCoop2Properties {
 					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateActive = java.lang.Boolean.parseBoolean(name);
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage()+". Viene usato il valore di default: false",e);
 				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncateActive = false;
 			}    
 		}
@@ -7668,11 +7673,11 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				else {
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non definita, viene usato il valore di default: 245");
+					this.logWarn("proprietà di govway '"+pName+"' non definita, viene usato il valore di default: 245");
 					this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate = 245;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.maxLengthExceededCorrelazioneApplicativaIdentificazioneFallitaAccettaTruncate = null;
 			}  
 			
@@ -7695,12 +7700,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione' non impostata, viene utilizzato il default=true");
 					this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione = true;
 				}
 	
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazione = true;
 			}    
 		}
@@ -7720,12 +7725,12 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione.soloCorrelazioniSenzaScadenza' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione.soloCorrelazioniSenzaScadenza' non impostata, viene utilizzato il default=false");
 					this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata = false;
 				}
 	
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione.soloCorrelazioniSenzaScadenza' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.scadenzaCorrelazioneApplicativa.filtraCorrelazioniScaduteRispettoOraRegistrazione.soloCorrelazioniSenzaScadenza' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isRepositoryScadenzaCorrelazioneApplicativaFiltraRispettoOraRegistrazioneEscludiConScadenzaImpostata = false;
 			}    
 		}
@@ -7910,12 +7915,12 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.msgGiaInProcessamentoAttesaAttiva = time*1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioInProcessamento.attesaAttiva' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.messaggioInProcessamento.attesaAttiva' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA);
 					this.msgGiaInProcessamentoAttesaAttiva = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioInProcessamento.attesaAttiva' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.messaggioInProcessamento.attesaAttiva' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.msgGiaInProcessamentoAttesaAttiva = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_ATTESA_ATTIVA;
 			}    
 		}
@@ -7942,11 +7947,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.msgGiaInProcessamentoCheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL);
 					this.msgGiaInProcessamentoCheckInterval = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.msgGiaInProcessamentoCheckInterval = CostantiPdD.MSG_GIA_IN_PROCESSAMENTO_CHECK_INTERVAL;
 			}  
 		}
@@ -7966,11 +7971,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.msgGiaInProcessamentoUseLock = Boolean.valueOf(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+false);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+false);
 					this.msgGiaInProcessamentoUseLock = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
 				this.msgGiaInProcessamentoUseLock = false;
 			}  
 		}
@@ -8007,7 +8012,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold.tipi': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.threshold.tipi': "+e.getMessage(),e);
 				this.repositoryThresholdTypes = null;
 			}  
 			this.repositoryThresholdTypesRead = true;
@@ -8028,7 +8033,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.repositoryThresholdParameters = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.repository.threshold."+tipoThreshould+".");
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold."+tipoThreshould+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.threshold."+tipoThreshould+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
 				this.repositoryThresholdParameters = null;
 			}  
 			this.repositoryThresholdParametersRead = true; 
@@ -8056,7 +8061,7 @@ public class OpenSPCoop2Properties {
 					this.repositoryThresholdCheckInterval = 0L;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.threshold.checkInterval': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.threshold.checkInterval': "+e.getMessage(),e);
 				this.repositoryThresholdCheckInterval = -1L;
 			}    
 		}
@@ -8088,12 +8093,12 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_CORRETTO_ABILITATO_DISABILITATO+value);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.config.xml.validazioneSemantica' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.config.xml.validazioneSemantica' non impostata, viene utilizzato il default=true");
 					this.isValidazioneSemanticaConfigurazioneStartupXML = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.config.xml.validazioneSemantica' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.config.xml.validazioneSemantica' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isValidazioneSemanticaConfigurazioneStartupXML = true;
 			}
 		}
@@ -8124,12 +8129,12 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_CORRETTO_ABILITATO_DISABILITATO+value);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.config.validazioneSemantica' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.config.validazioneSemantica' non impostata, viene utilizzato il default=false");
 					this.isValidazioneSemanticaConfigurazioneStartup = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.config.validazioneSemantica' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.config.validazioneSemantica' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isValidazioneSemanticaConfigurazioneStartup = false;
 			}
 		}
@@ -8160,12 +8165,12 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_CORRETTO_ABILITATO_DISABILITATO+value);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.xml.validazioneSemantica' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.registri.xml.validazioneSemantica' non impostata, viene utilizzato il default=true");
 					this.isValidazioneSemanticaRegistroServiziStartupXML = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.xml.validazioneSemantica' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.registri.xml.validazioneSemantica' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isValidazioneSemanticaRegistroServiziStartupXML = true;
 			}
 		}
@@ -8196,12 +8201,12 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_CORRETTO_ABILITATO_DISABILITATO+value);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.validazioneSemantica' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.registri.validazioneSemantica' non impostata, viene utilizzato il default=false");
 					this.isValidazioneSemanticaRegistroServiziStartup = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.validazioneSemantica' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.registri.validazioneSemantica' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isValidazioneSemanticaRegistroServiziStartup = false;
 			}
 		}
@@ -8232,12 +8237,12 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_CORRETTO_ABILITATO_DISABILITATO+value);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.validazioneSemantica.checkURI' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.registri.validazioneSemantica.checkURI' non impostata, viene utilizzato il default=false");
 					this.isValidazioneSemanticaRegistroServiziCheckURI = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.registri.validazioneSemantica.checkURI' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.registri.validazioneSemantica.checkURI' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isValidazioneSemanticaRegistroServiziCheckURI = false;
 			}
 		}
@@ -8332,13 +8337,13 @@ public class OpenSPCoop2Properties {
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.check.registri.tipo"); 
 				if(value==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check.registri.tipo' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.risorse.check.registri.tipo' non impostata, viene utilizzato il default=false");
 					this.isControlloRisorseRegistriRaggiungibilitaTotale = false;
 				}
 				else
 					this.isControlloRisorseRegistriRaggiungibilitaTotale = "singolo".equals(value);
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.check.registri.tipo' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.risorse.check.registri.tipo' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isControlloRisorseRegistriRaggiungibilitaTotale = false;
 			}
 		}
@@ -8393,12 +8398,12 @@ public class OpenSPCoop2Properties {
 		try{  
 			String value = this.reader.getValueConvertEnvProperties(RISORSE_PROPERTY_NAME_CHECK+tipo+".iterazioni"); 
 			if(value==null){
-				this.logWarn("Proprieta' di openspcoop '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+".iterazioni' non impostata, viene utilizzato il default=1");
+				this.logWarn("proprietà di govway '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+".iterazioni' non impostata, viene utilizzato il default=1");
 				return 1;
 			}
 			return Integer.parseInt(value);
 		}catch(java.lang.Exception e) {
-			this.logWarn("Proprieta' di openspcoop '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+"' non impostata, viene utilizzato il default=1, errore:"+e.getMessage(),e);
+			this.logWarn("proprietà di govway '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+"' non impostata, viene utilizzato il default=1, errore:"+e.getMessage(),e);
 			return 1;
 		}
 	}
@@ -8449,12 +8454,12 @@ public class OpenSPCoop2Properties {
 		try{  
 			String value = this.reader.getValueConvertEnvProperties(RISORSE_PROPERTY_NAME_CHECK+tipo+".checkInterval"); 
 			if(value==null){
-				this.logWarn("Proprieta' di openspcoop '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+".checkInterval' non impostata, viene utilizzato il default=500");
+				this.logWarn("proprietà di govway '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+".checkInterval' non impostata, viene utilizzato il default=500");
 				return 500;
 			}
 			return Integer.parseInt(value);
 		}catch(java.lang.Exception e) {
-			this.logWarn("Proprieta' di openspcoop '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+".checkInterval' non impostata, viene utilizzato il default=500, errore:"+e.getMessage(),e);
+			this.logWarn("proprietà di govway '"+RISORSE_PROPERTY_NAME_CHECK+""+tipo+".checkInterval' non impostata, viene utilizzato il default=500, errore:"+e.getMessage(),e);
 			return 500;
 		}
 	}
@@ -8478,7 +8483,7 @@ public class OpenSPCoop2Properties {
 					this.controlloRisorseCheckInterval = 0L;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.checkInterval': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.risorse.checkInterval': "+e.getMessage(),e);
 				this.controlloRisorseCheckInterval = -1L;
 			}    
 		}
@@ -8493,13 +8498,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.risorse.registraEvento");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.registraEvento' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.risorse.registraEvento' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isControlloRisorseRegistrazioneEvento = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.risorse.registraEvento', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.risorse.registraEvento', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloRisorseRegistrazioneEvento = true;
 			}    
 		}
@@ -8533,7 +8538,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(NON_DEFINITA);
 				fault = fault.trim();		
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.fault': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.fault': "+e.getMessage(),e);
 				return null;
 			}
 
@@ -8544,7 +8549,7 @@ public class OpenSPCoop2Properties {
 					faultCodeIntegrationNamespace = faultCodeIntegrationNamespace.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultCode.integrationNamespace': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.faultCode.integrationNamespace': "+e.getMessage(),e);
 			}
 			
 			String faultCodeProtocolNamespace = null;
@@ -8554,7 +8559,7 @@ public class OpenSPCoop2Properties {
 					faultCodeProtocolNamespace = faultCodeProtocolNamespace.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultCode.protocolNamespace': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.faultCode.protocolNamespace': "+e.getMessage(),e);
 			}
 			
 			String faultActor = null;
@@ -8564,7 +8569,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(NON_DEFINITA);
 				faultActor = faultActor.trim();		
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultActor': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.faultActor': "+e.getMessage(),e);
 				return null;
 			}
 
@@ -8575,7 +8580,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(NON_DEFINITA);
 				faultGeneric = faultGeneric.trim();		
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.genericFaultCode': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.genericFaultCode': "+e.getMessage(),e);
 				return null;
 			}
 
@@ -8675,10 +8680,10 @@ public class OpenSPCoop2Properties {
 					
 					this.localeSOAPFaultString = Locale.of(language, country, variant);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultString.language' non impostata, viene utilizzato il default="+Locale.getDefault());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.faultString.language' non impostata, viene utilizzato il default="+Locale.getDefault());
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultString.language' non impostata, viene utilizzato il default="+Locale.getDefault()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.faultString.language' non impostata, viene utilizzato il default="+Locale.getDefault()+", errore:"+e.getMessage(),e);
 			}
 			this.localeSOAPFaultStringRead = true;
 		}
@@ -8703,12 +8708,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isErroreApplicativoIntoDetails = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.fault.details' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.fault.details' non impostata, viene utilizzato il default=true");
 					this.isErroreApplicativoIntoDetails = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.fault.details' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.fault.details' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isErroreApplicativoIntoDetails = true;
 			}
 		}
@@ -8732,12 +8737,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default=true");
 					this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.faultApplicativo.enrichDetails' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isAggiungiDetailErroreApplicativo_SoapFaultApplicativo = true;
 			}
 		}
@@ -8761,12 +8766,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default=true");
 					this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.erroreApplicativo.faultPdD.enrichDetails' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isAggiungiDetailErroreApplicativo_SoapFaultPdD = true;
 			}
 		}
@@ -9198,7 +9203,7 @@ public class OpenSPCoop2Properties {
 				this.identificativoPortaDefault = fault;
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.identificativoPorta.dominio': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.identificativoPorta.dominio': "+e.getMessage(),e);
 				this.identificativoPortaDefault = null;
 			}
 		}
@@ -9222,7 +9227,7 @@ public class OpenSPCoop2Properties {
 				this.nomePortaDefault = fault;
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.identificativoPorta.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.identificativoPorta.nome': "+e.getMessage(),e);
 				this.nomePortaDefault = null;
 			}
 		}
@@ -9248,7 +9253,7 @@ public class OpenSPCoop2Properties {
 				this.tipoPortaDefault = fault;
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.identificativoPorta.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.identificativoPorta.tipo': "+e.getMessage(),e);
 				this.tipoPortaDefault = null;
 			}
 		}
@@ -9308,7 +9313,7 @@ public class OpenSPCoop2Properties {
 				this.identificativoPortaDefault_mappingProtocol.put(protocol, fault);
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd."+protocol+".identificativoPorta.dominio': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd."+protocol+".identificativoPorta.dominio': "+e.getMessage(),e);
 				return this.getIdentificativoPortaDefault();
 			}
 		}
@@ -9336,7 +9341,7 @@ public class OpenSPCoop2Properties {
 				this.nomePortaDefault_mappingProtocol.put(protocol, nome);
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd."+protocol+".identificativoPorta.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd."+protocol+".identificativoPorta.nome': "+e.getMessage(),e);
 				return this.getNomePortaDefault();
 			}
 		}
@@ -9364,7 +9369,7 @@ public class OpenSPCoop2Properties {
 				this.tipoPortaDefault_mappingProtocol.put(protocol, tipo);
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd."+protocol+".identificativoPorta.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd."+protocol+".identificativoPorta.tipo': "+e.getMessage(),e);
 				return this.getTipoPortaDefault();
 			}
 		}
@@ -9456,7 +9461,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getAutorizzazioneLockPermitsRead = true;
@@ -9492,7 +9497,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 		}
@@ -9517,7 +9522,7 @@ public class OpenSPCoop2Properties {
 				this.tipoAutorizzazioneBuste = autorizzazione;
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.autorizzazioneBuste.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.autorizzazioneBuste.tipo': "+e.getMessage(),e);
 				this.tipoAutorizzazioneBuste = null;
 			}
 		}
@@ -9540,7 +9545,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isAutorizzazioneBustaAutenticazioneOpzionaleSoggettoFruitoreProfiloInteroperabilitaDifferenteServizioBloccaRichiesta = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isAutorizzazioneBustaAutenticazioneOpzionaleSoggettoFruitoreProfiloInteroperabilitaDifferenteServizioBloccaRichiesta = true;
 			}    
 		}
@@ -9575,7 +9580,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getAutorizzazioneContenutiLockPermitsRead = true;
@@ -9611,7 +9616,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 		}
@@ -9730,12 +9735,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isBypassFilterMustUnderstandEnabledForAllHeaders = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.BypassMustUnderstandHandler.allHeaders' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.BypassMustUnderstandHandler.allHeaders' non impostata, viene utilizzato il default=false");
 					this.isBypassFilterMustUnderstandEnabledForAllHeaders = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.BypassMustUnderstandHandler.allHeaders' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.BypassMustUnderstandHandler.allHeaders' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isBypassFilterMustUnderstandEnabledForAllHeaders = false;
 			}
 		}
@@ -9761,12 +9766,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.contentType.checkEnabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.contentType.checkEnabled' non impostata, viene utilizzato il default=true");
 					this.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.contentType.checkEnabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.contentType.checkEnabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isControlloContentTypeAbilitatoRicezioneContenutiApplicativi = true;
 			}
 		}
@@ -9783,12 +9788,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isControlloContentTypeAbilitatoRicezioneBuste = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.contentType.checkEnabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.contentType.checkEnabled' non impostata, viene utilizzato il default=true");
 					this.isControlloContentTypeAbilitatoRicezioneBuste = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.contentType.checkEnabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.contentType.checkEnabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isControlloContentTypeAbilitatoRicezioneBuste = true;
 			}
 		}
@@ -10025,12 +10030,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isPrintInfoCertificate = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.certificate.printInfo' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.certificate.printInfo' non impostata, viene utilizzato il default=false");
 					this.isPrintInfoCertificate = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.certificate.printInfo' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.services.certificate.printInfo' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isPrintInfoCertificate = false;
 			}
 		}
@@ -10075,7 +10080,7 @@ public class OpenSPCoop2Properties {
 					this.getGestoreCredenzialiPortaDelegataProperties=new Properties();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+prefixGestoreCredenzialiPortaDelegataProperties+"*' non impostate correttamente, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+prefixGestoreCredenzialiPortaDelegataProperties+"*' non impostate correttamente, errore:"+e.getMessage(),e);
 				this.getGestoreCredenzialiPortaDelegataProperties = null;
 			}
 		}
@@ -10121,7 +10126,7 @@ public class OpenSPCoop2Properties {
 					this.getGestoreCredenzialiPortaApplicativaProperties=new Properties();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+prefixGestoreCredenzialiPortaApplicativaProperties+"*' non impostate correttamente, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+prefixGestoreCredenzialiPortaApplicativaProperties+"*' non impostate correttamente, errore:"+e.getMessage(),e);
 				this.getGestoreCredenzialiPortaApplicativaProperties = null;
 			}
 		}
@@ -10148,7 +10153,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verranno caricate variabili errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, non verranno caricate variabili errore:"+e.getMessage(),e);
 				this.getEnvMapConfig = null;
 			}
 		}
@@ -10197,7 +10202,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine HSM errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, non verrà abilitato l'engine HSM errore:"+e.getMessage(),e);
 				this.getHSMConfig = null;
 			}
 		}
@@ -10269,7 +10274,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine OCSP errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, non verrà abilitato l'engine OCSP errore:"+e.getMessage(),e);
 				this.getOCSPConfig = null;
 			}
 		}
@@ -10342,7 +10347,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verrà abilitato l'engine BYOK errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, non verrà abilitato l'engine BYOK errore:"+e.getMessage(),e);
 				this.getBYOKConfig = null;
 			}
 		}
@@ -10432,7 +10437,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, non verranno caricati secrets errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, non verranno caricati secrets errore:"+e.getMessage(),e);
 				this.getBYOKEnvSecretsConfig = null;
 			}
 		}
@@ -10485,11 +10490,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.nodeReceiverTimeout = java.lang.Long.parseLong(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.timeout' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.timeout' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_ATTESA_ATTIVA);
 					this.nodeReceiverTimeout = CostantiPdD.NODE_RECEIVER_ATTESA_ATTIVA;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.timeout' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.timeout' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.nodeReceiverTimeout = CostantiPdD.NODE_RECEIVER_ATTESA_ATTIVA;
 			}    
 		}
@@ -10512,11 +10517,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.nodeReceiverTimeoutRicezioneContenutiApplicativi = java.lang.Long.parseLong(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.ricezioneContenutiApplicativi.timeout' non impostata, viene utilizzato il default="+this.getNodeReceiverTimeout());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.ricezioneContenutiApplicativi.timeout' non impostata, viene utilizzato il default="+this.getNodeReceiverTimeout());
 					this.nodeReceiverTimeoutRicezioneContenutiApplicativi = this.getNodeReceiverTimeout();
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.ricezioneContenutiApplicativi.timeout' non impostata, viene utilizzato il default="+this.getNodeReceiverTimeout()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.ricezioneContenutiApplicativi.timeout' non impostata, viene utilizzato il default="+this.getNodeReceiverTimeout()+", errore:"+e.getMessage(),e);
 				this.nodeReceiverTimeoutRicezioneContenutiApplicativi = this.getNodeReceiverTimeout();
 			}    
 		}
@@ -10540,11 +10545,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.nodeReceiverTimeoutRicezioneBuste = java.lang.Long.parseLong(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.ricezioneBuste.timeout' non impostata, viene utilizzato il default="+this.getNodeReceiverTimeout());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.ricezioneBuste.timeout' non impostata, viene utilizzato il default="+this.getNodeReceiverTimeout());
 					this.nodeReceiverTimeoutRicezioneBuste = this.getNodeReceiverTimeout();
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.ricezioneBuste.timeout' non impostata, viene utilizzato il default="+this.getNodeReceiverTimeout()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.ricezioneBuste.timeout' non impostata, viene utilizzato il default="+this.getNodeReceiverTimeout()+", errore:"+e.getMessage(),e);
 				this.nodeReceiverTimeoutRicezioneBuste = this.getNodeReceiverTimeout();
 			}    
 		}
@@ -10567,11 +10572,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.nodeReceiverCheckInterval = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.check' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.check' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_CHECK_INTERVAL);
 					this.nodeReceiverCheckInterval = CostantiPdD.NODE_RECEIVER_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.check' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.check' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.nodeReceiverCheckInterval = CostantiPdD.NODE_RECEIVER_CHECK_INTERVAL;
 			}    
 		}
@@ -10597,11 +10602,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.nodeReceiverCheckDBInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.checkDB' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_CHECK_DB_INTERVAL);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.checkDB' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_CHECK_DB_INTERVAL);
 					this.nodeReceiverCheckDBInterval = CostantiPdD.NODE_RECEIVER_CHECK_DB_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.checkDB' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_CHECK_DB_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.checkDB' non impostata, viene utilizzato il default="+CostantiPdD.NODE_RECEIVER_CHECK_DB_INTERVAL+", errore:"+e.getMessage(),e);
 				this.nodeReceiverCheckDBInterval = CostantiPdD.NODE_RECEIVER_CHECK_DB_INTERVAL;
 			}  
 		}
@@ -10624,7 +10629,7 @@ public class OpenSPCoop2Properties {
 				this.nodeReceiver = this.nodeReceiver.trim();
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.nodeReceiver': "+e.getMessage(),e);
 				this.nodeReceiver = null;
 			}    
 		}
@@ -10649,12 +10654,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.singleConnection_nodeReceiver_value = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.singleConnection' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.singleConnection' non impostata, viene utilizzato il default=false");
 					this.singleConnection_nodeReceiver_value = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.singleConnection' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.nodeReceiver.singleConnection' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.singleConnection_nodeReceiver_value = false;
 			}
 		}
@@ -10683,7 +10688,7 @@ public class OpenSPCoop2Properties {
 				this.nodeSender = this.nodeSender.trim();
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.nodeSender': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.nodeSender': "+e.getMessage(),e);
 				this.nodeSender = null;
 			}    
 		}
@@ -10717,11 +10722,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.timerEJBDeployTimeout = java.lang.Long.parseLong(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.timeout' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_EJB_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.timeout' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_EJB_ATTESA_ATTIVA);
 					this.timerEJBDeployTimeout = CostantiPdD.TIMER_EJB_ATTESA_ATTIVA;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.timeout' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_EJB_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.timeout' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_EJB_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.timerEJBDeployTimeout = CostantiPdD.TIMER_EJB_ATTESA_ATTIVA;
 			}    
 		}
@@ -10745,11 +10750,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.timerEJBDeployCheckInterval = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.check' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_EJB_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.check' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_EJB_CHECK_INTERVAL);
 					this.timerEJBDeployCheckInterval = CostantiPdD.TIMER_EJB_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.check' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_EJB_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.check' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_EJB_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.timerEJBDeployCheckInterval = CostantiPdD.TIMER_EJB_CHECK_INTERVAL;
 			}  
 		}
@@ -10784,11 +10789,11 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.transactionManager_AttesaAttiva = time*1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.attesaAttiva' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.TransactionManager.attesaAttiva' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA);
 					this.transactionManager_AttesaAttiva = CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.attesaAttiva' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.TransactionManager.attesaAttiva' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.transactionManager_AttesaAttiva = CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA;
 			}    
 		}
@@ -10814,11 +10819,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.transactionManager_CheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.check' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.TransactionManager.check' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL);
 					this.transactionManager_CheckInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.check' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.TransactionManager.check' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.transactionManager_CheckInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL;
 			}  
 		}
@@ -10844,11 +10849,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.transactionManager_CheckDBInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.checkDB' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.TransactionManager.checkDB' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL);
 					this.transactionManager_CheckDBInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.checkDB' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.TransactionManager.checkDB' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL+", errore:"+e.getMessage(),e);
 				this.transactionManager_CheckDBInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL;
 			}  
 		}
@@ -10874,12 +10879,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.singleConnection_TransactionManager_value = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.singleConnection' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.TransactionManager.singleConnection' non impostata, viene utilizzato il default=false");
 					this.singleConnection_TransactionManager_value = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.singleConnection' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.TransactionManager.singleConnection' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.singleConnection_TransactionManager_value = false;
 			}
 		}
@@ -10912,11 +10917,11 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.gestioneSerializableDB_AttesaAttiva = time*1000;
 				} else {
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jdbc.serializable.attesaAttiva' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.jdbc.serializable.attesaAttiva' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA);
 					this.gestioneSerializableDB_AttesaAttiva =  Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jdbc.serializable.attesaAttiva' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.jdbc.serializable.attesaAttiva' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.gestioneSerializableDB_AttesaAttiva = Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
 			}   
 		}
@@ -10940,11 +10945,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.gestioneSerializableDB_CheckInterval = time;
 				} else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jdbc.serializable.check' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.jdbc.serializable.check' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL);
 					this.gestioneSerializableDB_CheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jdbc.serializable.check' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.jdbc.serializable.check' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.gestioneSerializableDB_CheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
 			}    
 		}
@@ -10981,7 +10986,7 @@ public class OpenSPCoop2Properties {
 						name = GestoreRepositoryFactory.getTipoRepositoryBuste(this.getDatabaseType());
 					}
 					else{
-						this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.repository.gestore': il valore '"+
+						this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.protocol.repository.gestore': il valore '"+
 								CostantiConfigurazione.REPOSITORY_BUSTE_AUTO_BYTEWISE+"' deve essere utilizzato in combinazione con la definizione del tipo di database del repository. Viene impostato come gestore il tipo di default: "+
 								CostantiConfigurazione.REPOSITORY_BUSTE_DEFAULT);
 						name = CostantiConfigurazione.REPOSITORY_BUSTE_DEFAULT;
@@ -10991,7 +10996,7 @@ public class OpenSPCoop2Properties {
 				this.gestoreRepositoryBuste = name;
 			
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.repository.gestore': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.protocol.repository.gestore': "+e.getMessage(),e);
 				this.gestoreRepositoryBuste = null;
 			}    
 		}
@@ -11011,7 +11016,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.filtroDuplicati");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroDuplicati' non impostata, viene utilizzato il default="+CostantiConfigurazione.FILTRO_DUPLICATI_OPENSPCOOP);
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.filtroDuplicati' non impostata, viene utilizzato il default="+CostantiConfigurazione.FILTRO_DUPLICATI_OPENSPCOOP);
 					this.gestoreFiltroDuplicatiRepositoryBuste = CostantiConfigurazione.FILTRO_DUPLICATI_OPENSPCOOP;
 				}else{
 					name = name.trim();
@@ -11019,7 +11024,7 @@ public class OpenSPCoop2Properties {
 				}
 			
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroDuplicati' non impostata, viene utilizzato il default="+CostantiConfigurazione.FILTRO_DUPLICATI_OPENSPCOOP+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.filtroDuplicati' non impostata, viene utilizzato il default="+CostantiConfigurazione.FILTRO_DUPLICATI_OPENSPCOOP+", errore:"+e.getMessage(),e);
 				this.gestoreFiltroDuplicatiRepositoryBuste = CostantiConfigurazione.FILTRO_DUPLICATI_OPENSPCOOP;
 			}    
 		}
@@ -11060,12 +11065,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isGenerazioneAttributiAsincroni = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.asincroni.attributiCorrelati.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.asincroni.attributiCorrelati.enable' non impostata, viene utilizzato il default=true");
 					this.isGenerazioneAttributiAsincroni = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.asincroni.attributiCorrelati.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.asincroni.attributiCorrelati.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isGenerazioneAttributiAsincroni = true;
 			}
 		}
@@ -11091,12 +11096,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.ignoraEccezioniNonGravi_Validazione = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi' non impostata, viene utilizzato il default=false");
 					this.ignoraEccezioniNonGravi_Validazione = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.ignoraEccezioniNonGravi_Validazione = false;
 			}
 		}
@@ -11120,12 +11125,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.forceSoapPrefixCompatibilitaOpenSPCoopV1 = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.backwardCompatibility.forceSoapPrefix' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.spcoop.backwardCompatibility.forceSoapPrefix' non impostata, viene utilizzato il default=true");
 					this.forceSoapPrefixCompatibilitaOpenSPCoopV1 = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.backwardCompatibility.forceSoapPrefix' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.spcoop.backwardCompatibility.forceSoapPrefix' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.forceSoapPrefixCompatibilitaOpenSPCoopV1 = true;
 			}
 		}
@@ -11165,12 +11170,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isGenerazioneListaTrasmissioni = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasmissione.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.trasmissione.enable' non impostata, viene utilizzato il default=true");
 					this.isGenerazioneListaTrasmissioni = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.trasmissione.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.trasmissione.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isGenerazioneListaTrasmissioni = true;
 			}
 		}
@@ -11209,12 +11214,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isGenerazioneErroreFiltroDuplicati = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroduplicati.generazioneErrore' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.filtroduplicati.generazioneErrore' non impostata, viene utilizzato il default=false");
 					this.isGenerazioneErroreFiltroDuplicati = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroduplicati.generazioneErrore' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.filtroduplicati.generazioneErrore' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isGenerazioneErroreFiltroDuplicati = false;
 			}
 		}
@@ -11253,12 +11258,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isCheckFromRegistroFiltroDuplicatiAbilitato = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroDuplicati.letturaRegistro' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.filtroDuplicati.letturaRegistro' non impostata, viene utilizzato il default=true");
 					this.isCheckFromRegistroFiltroDuplicatiAbilitato = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.filtroDuplicati.letturaRegistro' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.filtroDuplicati.letturaRegistro' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isCheckFromRegistroFiltroDuplicatiAbilitato = true;
 			}
 		}
@@ -11297,12 +11302,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isCheckFromRegistroConfermaRicezioneAbilitato = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.confermaRicezione.letturaRegistro' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.confermaRicezione.letturaRegistro' non impostata, viene utilizzato il default=true");
 					this.isCheckFromRegistroConfermaRicezioneAbilitato = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.confermaRicezione.letturaRegistro' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.confermaRicezione.letturaRegistro' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isCheckFromRegistroConfermaRicezioneAbilitato = true;
 			}
 		}
@@ -11341,12 +11346,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isCheckFromRegistroConsegnaInOrdineAbilitato = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.consegnaInOrdine.letturaRegistro' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.consegnaInOrdine.letturaRegistro' non impostata, viene utilizzato il default=true");
 					this.isCheckFromRegistroConsegnaInOrdineAbilitato = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.consegnaInOrdine.letturaRegistro' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.consegnaInOrdine.letturaRegistro' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isCheckFromRegistroConsegnaInOrdineAbilitato = true;
 			}
 		}
@@ -11385,12 +11390,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isGestioneElementoCollaborazione = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.collaborazione.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.collaborazione.enable' non impostata, viene utilizzato il default=true");
 					this.isGestioneElementoCollaborazione = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.collaborazione.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.collaborazione.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isGestioneElementoCollaborazione = true;
 			}
 		}
@@ -11423,12 +11428,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isGestioneElementoIdRiferimentoRichiesta = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.idRiferimentoRichiesta.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.idRiferimentoRichiesta.enable' non impostata, viene utilizzato il default=true");
 					this.isGestioneElementoIdRiferimentoRichiesta = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.idRiferimentoRichiesta.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.idRiferimentoRichiesta.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isGestioneElementoIdRiferimentoRichiesta = true;
 			}
 		}
@@ -11467,12 +11472,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isGestioneConsegnaInOrdine = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.consegnaInOrdine.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.consegnaInOrdine.enable' non impostata, viene utilizzato il default=true");
 					this.isGestioneConsegnaInOrdine = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.consegnaInOrdine.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.consegnaInOrdine.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isGestioneConsegnaInOrdine = true;
 			}
 		}
@@ -11511,12 +11516,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isGestioneRiscontri = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.riscontri.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.riscontri.enable' non impostata, viene utilizzato il default=true");
 					this.isGestioneRiscontri = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.riscontri.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.riscontri.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isGestioneRiscontri = true;
 			}
 		}
@@ -11561,12 +11566,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isReadQualifiedAttribute = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.validazione.readQualifiedAttribute' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.validazione.readQualifiedAttribute' non impostata, viene utilizzato il default=false");
 					this.isReadQualifiedAttribute = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.validazione.readQualifiedAttribute' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.validazione.readQualifiedAttribute' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isReadQualifiedAttribute = false;
 			}
 		}
@@ -11609,12 +11614,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isValidazioneIDBustaCompleta = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.validazione.idbusta.validazioneCompleta' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.protocol.validazione.idbusta.validazioneCompleta' non impostata, viene utilizzato il default=true");
 					this.isValidazioneIDBustaCompleta = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.validazione.idbusta.validazioneCompleta' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.protocol.validazione.idbusta.validazioneCompleta' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isValidazioneIDBustaCompleta = true;
 			}
 		}
@@ -11647,7 +11652,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.filePddPropertiesLetto= true;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.pddProperties': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.protocol.pddProperties': "+e.getMessage(),e);
 				this.filePddProperties = null;
 			}    			
 		}
@@ -11680,7 +11685,7 @@ public class OpenSPCoop2Properties {
 				this.tipoIntegrazionePD = r;
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.tipo.pd': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.tipo.pd': "+e.getMessage(),e);
 				this.tipoIntegrazionePD = null;
 			}
 			this.tipoIntegrazionePDRead = true;
@@ -11740,7 +11745,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo+"': "+e.getMessage(),e);
 			}
 		}
 
@@ -11777,7 +11782,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo+"': "+e.getMessage(),e);
 			}
 		}
 
@@ -11810,12 +11815,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isIntegrazioneAsincroniConIdCollaborazioneEnabled = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.asincroni.idCollaborazione.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.asincroni.idCollaborazione.enabled' non impostata, viene utilizzato il default=false");
 					this.isIntegrazioneAsincroniConIdCollaborazioneEnabled = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.asincroni.idCollaborazione.enabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.asincroni.idCollaborazione.enabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isIntegrazioneAsincroniConIdCollaborazioneEnabled = false;
 			}
 		}
@@ -12685,12 +12690,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.headerIntegrazioneSOAPPdDVersione = value;
 				}else{
-					//NON EMETTO WARNING: this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.pddVersion' non impostata, viene utilizzato il default="+this.getVersione());
+					//NON EMETTO WARNING: this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.pddVersion' non impostata, viene utilizzato il default="+this.getVersione());
 					this.headerIntegrazioneSOAPPdDVersione = this.getVersione();
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.pddVersion' non impostata, viene utilizzato il default=true, errore:"+this.getVersione());
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.pddVersion' non impostata, viene utilizzato il default=true, errore:"+this.getVersione());
 				this.headerIntegrazioneSOAPPdDVersione = this.getVersione();
 			}
 		}
@@ -12713,7 +12718,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.pddDetails' non impostata correttamente: "+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.pddDetails' non impostata correttamente: "+e.getMessage(),e);
 				this.headerIntegrazioneSOAPPdDDetails = this.getDetails();
 			}
 		}
@@ -12740,12 +12745,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.deleteHeaderIntegrazioneRequestPD = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pd.request.readAndDelete' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pd.request.readAndDelete' non impostata, viene utilizzato il default=true");
 					this.deleteHeaderIntegrazioneRequestPD = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pd.request.readAndDelete' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pd.request.readAndDelete' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.deleteHeaderIntegrazioneRequestPD = true;
 			}
 		}
@@ -12771,12 +12776,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.deleteHeaderIntegrazioneResponsePD = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pd.response.readAndDelete' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pd.response.readAndDelete' non impostata, viene utilizzato il default=true");
 					this.deleteHeaderIntegrazioneResponsePD = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pd.response.readAndDelete' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pd.response.readAndDelete' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.deleteHeaderIntegrazioneResponsePD = true;
 			}
 		}
@@ -12805,12 +12810,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.processHeaderIntegrazionePDResponse = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pd.response.process' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pd.response.process' non impostata, viene utilizzato il default=false");
 					this.processHeaderIntegrazionePDResponse = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pd.response.process' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pd.response.process' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.processHeaderIntegrazionePDResponse = false;
 			}
 		}
@@ -12838,12 +12843,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.deleteHeaderIntegrazioneRequestPA = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pa.request.readAndDelete' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pa.request.readAndDelete' non impostata, viene utilizzato il default=true");
 					this.deleteHeaderIntegrazioneRequestPA = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pa.request.readAndDelete' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pa.request.readAndDelete' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.deleteHeaderIntegrazioneRequestPA = true;
 			}
 		}
@@ -12869,12 +12874,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.deleteHeaderIntegrazioneResponsePA = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pa.response.readAndDelete' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pa.response.readAndDelete' non impostata, viene utilizzato il default=true");
 					this.deleteHeaderIntegrazioneResponsePA = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pa.response.readAndDelete' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pa.response.readAndDelete' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.deleteHeaderIntegrazioneResponsePA = true;
 			}
 		}
@@ -12903,12 +12908,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.processHeaderIntegrazionePARequest = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pa.request.process' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pa.request.process' non impostata, viene utilizzato il default=false");
 					this.processHeaderIntegrazionePARequest = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.pa.request.process' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrazione.pa.request.process' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.processHeaderIntegrazionePARequest = false;
 			}
 		}
@@ -12933,7 +12938,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapNameIntegrazione = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.headerName': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.headerName': "+e.getMessage(),e);
 				this.headerSoapNameIntegrazione = null;
 			}    
 		}
@@ -12952,7 +12957,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapNameIntegrazione_backwardCompatibility_openspcoop2 = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerName': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerName': "+e.getMessage(),e);
 				this.headerSoapNameIntegrazione_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -12971,7 +12976,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapNameIntegrazione_backwardCompatibility_openspcoop1 = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerName': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerName': "+e.getMessage(),e);
 				this.headerSoapNameIntegrazione_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -12995,7 +13000,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapActorIntegrazione = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.headerActor': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.headerActor': "+e.getMessage(),e);
 				this.headerSoapActorIntegrazione = null;
 			}    
 		}
@@ -13014,7 +13019,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapActorIntegrazione_backwardCompatibility_openspcoop2 = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerActor': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerActor': "+e.getMessage(),e);
 				this.headerSoapActorIntegrazione_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -13033,7 +13038,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapActorIntegrazione_backwardCompatibility_openspcoop1 = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerActor': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerActor': "+e.getMessage(),e);
 				this.headerSoapActorIntegrazione_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -13057,7 +13062,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapPrefixIntegrazione = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.headerPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.headerPrefix': "+e.getMessage(),e);
 				this.headerSoapPrefixIntegrazione = null;
 			}    
 		}
@@ -13076,7 +13081,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapPrefixIntegrazione_backwardCompatibility_openspcoop2 = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.headerPrefix': "+e.getMessage(),e);
 				this.headerSoapPrefixIntegrazione_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -13095,7 +13100,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapPrefixIntegrazione_backwardCompatibility_openspcoop1 = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.headerPrefix': "+e.getMessage(),e);
 				this.headerSoapPrefixIntegrazione_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -13119,7 +13124,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione = null;
 			}    
 		}
@@ -13137,7 +13142,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione_backwardCompatibility_openspcoop2 = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -13155,7 +13160,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione_backwardCompatibility_openspcoop1 = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.elemento.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeElementoIntegrazione_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -13178,7 +13183,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione = null;
 			}    
 		}
@@ -13197,7 +13202,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop2 = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop2.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop2 = null;
 			}    
 		}
@@ -13216,7 +13221,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1 = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrazione.soap.backward_compatibility.openspcoop1.extProtocolInfo.attributo.nome': "+e.getMessage(),e);
 				this.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1 = null;
 			}    
 		}
@@ -13240,7 +13245,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrazioneDynamicInfoEnabled = Boolean.parseBoolean(name);
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isIntegrazioneDynamicInfoEnabled = false;
 			}    
 		}
@@ -13263,7 +13268,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneDynamicInfoType = InformazioniIntegrazioneSorgente.valueOf(name);
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -13282,7 +13287,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneDynamicInfoName = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -13301,7 +13306,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneDynamicInfoEncodeType = InformazioniIntegrazioneCodifica.valueOf(name);
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -13320,7 +13325,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrazioneDynamicInfoRequired = Boolean.parseBoolean(name);
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isIntegrazioneDynamicInfoRequired = false;
 			}    
 		}
@@ -13345,7 +13350,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrazioneResponseDynamicInfoEnabled = Boolean.parseBoolean(name);
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isIntegrazioneResponseDynamicInfoEnabled = false;
 			}    
 		}
@@ -13368,7 +13373,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneResponseDynamicInfoName = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -13387,7 +13392,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneResponseDynamicInfoEncodeType = InformazioniIntegrazioneCodifica.valueOf(name);
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -13406,7 +13411,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrazioneResponseDynamicInfoRequired = Boolean.parseBoolean(name);
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isIntegrazioneResponseDynamicInfoRequired = false;
 			}    
 		}
@@ -13433,7 +13438,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneTemplateRequestPropertyTipo = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneTemplateRequestPropertyTipo = null;
 			}    
 		}
@@ -13453,7 +13458,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneTemplateRequestPropertyFile = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneTemplateRequestPropertyFile = null;
 			}    
 		}
@@ -13473,7 +13478,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneTemplateResponsePropertyTipo = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneTemplateResponsePropertyTipo = null;
 			}    
 		}
@@ -13493,7 +13498,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneTemplateResponsePropertyFile = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneTemplateResponsePropertyFile = null;
 			}    
 		}
@@ -13518,7 +13523,7 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaDelegataRequestTipo_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13541,7 +13546,7 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaDelegataRequestFile_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13564,7 +13569,7 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaDelegataResponseTipo_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13587,7 +13592,7 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaDelegataResponseFile_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13611,7 +13616,7 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaApplicativaRequestTipo_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13634,7 +13639,7 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaApplicativaRequestFile_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13657,7 +13662,7 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaApplicativaResponseTipo_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13680,7 +13685,7 @@ public class OpenSPCoop2Properties {
 					this.getIntegrazioneTemplatePortaApplicativaResponseFile_read = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13717,7 +13722,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13749,7 +13754,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNamePrefix+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13783,7 +13788,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13815,7 +13820,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNamePrefix+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNamePrefix+PROPERTY_START_SUFFIX_ERRORE+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13835,7 +13840,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneAutenticazionePropertyHeaders = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneAutenticazionePropertyHeaders = null;
 			}    
 		}
@@ -13855,7 +13860,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrazioneAutenticazionePropertyHeaderPrefix = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrazioneAutenticazionePropertyHeaderPrefix = null;
 			}    
 		}
@@ -13878,7 +13883,7 @@ public class OpenSPCoop2Properties {
 				this.isRitardoConsegnaAbilitato = CostantiConfigurazione.ABILITATO.equals(name);
 
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.stato': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.connettore.ritardo.stato': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13901,7 +13906,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Il ritardo deve essere > 0");
 				this.ritardoConsegnaEsponenziale = r;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.fattore': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.connettore.ritardo.fattore': "+e.getMessage(),e);
 				this.ritardoConsegnaEsponenziale = -1L;
 			}    
 		}
@@ -13928,7 +13933,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Tipo di operazione non definita");
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.operazione': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.connettore.ritardo.operazione': "+e.getMessage(),e);
 				throw new CoreException (e);
 			}    
 		}
@@ -13951,7 +13956,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Il limite deve essere > 0");
 				this.ritardoConsegnaEsponenzialeLimite = r;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettore.ritardo.limite': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.connettore.ritardo.limite': "+e.getMessage(),e);
 				this.ritardoConsegnaEsponenzialeLimite = -1L;
 			}    
 		}
@@ -13989,11 +13994,11 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isAbilitataCacheGestoreMessaggi_value = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.enable' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.enable' non impostata, viene utilizzato il default=false");
 					this.isAbilitataCacheGestoreMessaggi_value = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.enable' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.enable' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isAbilitataCacheGestoreMessaggi_value = false;
 			}
 		}
@@ -14018,8 +14023,8 @@ public class OpenSPCoop2Properties {
 					this.dimensioneCacheGestoreMessaggi_value = -1;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.dimensione': "+e.getMessage(),e);
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.dimensione'",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.dimensione': "+e.getMessage(),e);
+				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.dimensione'",e);
 			}
 		}
 
@@ -14043,8 +14048,8 @@ public class OpenSPCoop2Properties {
 					this.algoritmoCacheGestoreMessaggi_value = null;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.algoritmo': "+e.getMessage(),e);
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.algoritmo'",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.algoritmo': "+e.getMessage(),e);
+				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.algoritmo'",e);
 			}
 		}
 
@@ -14068,8 +14073,8 @@ public class OpenSPCoop2Properties {
 					this.itemIdleTimeCacheGestoreMessaggi_value = -1;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemIdleTime': "+e.getMessage(),e);
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemIdleTime'",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemIdleTime': "+e.getMessage(),e);
+				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemIdleTime'",e);
 			}
 		}
 
@@ -14093,8 +14098,8 @@ public class OpenSPCoop2Properties {
 					this.itemLifeSecondCacheGestoreMessaggi_value = -1;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemLifeSecond': "+e.getMessage(),e);
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemLifeSecond'",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemLifeSecond': "+e.getMessage(),e);
+				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.repository.gestoreMessaggi.cache.itemLifeSecond'",e);
 			}
 		}
 
@@ -14122,12 +14127,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isRisorseJMXAbilitate = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.jmx.enable' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.jmx.enable' non impostata, viene utilizzato il default=false");
 					this.isRisorseJMXAbilitate = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.jmx.enable' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.jmx.enable' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isRisorseJMXAbilitate = false;
 			}
 		}
@@ -14151,7 +14156,7 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 				this.jndiNameMBeanServer = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.jmx.jndi.mbeanServer': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.core.jmx.jndi.mbeanServer': "+e.getMessage(),e);
 				this.jndiNameMBeanServer = null;
 			}    
 		}
@@ -14283,11 +14288,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.connectionTimeoutInoltroBuste = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE);
 					this.connectionTimeoutInoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
 				this.connectionTimeoutInoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 			}  
 		}
@@ -14312,11 +14317,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.connectionTimeoutConsegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI);
 					this.connectionTimeoutConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI+", errore:"+e.getMessage(),e);
 				this.connectionTimeoutConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
 			}  
 		}
@@ -14341,11 +14346,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.readConnectionTimeoutInoltroBuste = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE);
 					this.readConnectionTimeoutInoltroBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
 				this.readConnectionTimeoutInoltroBuste = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_INOLTRO_BUSTE;
 			}  
 		}
@@ -14370,11 +14375,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.readConnectionTimeoutConsegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI);
 					this.readConnectionTimeoutConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.readConnection.timeout' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI+", errore:"+e.getMessage(),e);
 				this.readConnectionTimeoutConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_READ_CONNECTION_TIMEOUT_CONSEGNA_CONTENUTI_APPLICATIVI;
 			}  
 		}
@@ -14398,11 +14403,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.connectionLifeInoltroBuste = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE);
 					this.connectionLifeInoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE+", errore:"+e.getMessage(),e);
 				this.connectionLifeInoltroBuste = CostantiPdD.CONNETTORE_CONNECTION_LIFE_INOLTRO_BUSTE;
 			}  
 		}
@@ -14427,11 +14432,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.connectionLifeConsegnaContenutiApplicativi = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI);
 					this.connectionLifeConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.connection.life' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI+", errore:"+e.getMessage(),e);
 				this.connectionLifeConsegnaContenutiApplicativi = CostantiPdD.CONNETTORE_CONNECTION_LIFE_CONSEGNA_CONTENUTI_APPLICATIVI;
 			}  
 		}
@@ -14500,11 +14505,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientMaxPerRoute = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE);
 					this.getBIOConfigSyncClientMaxPerRoute = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE+", errore:"+e.getMessage(),e);
 				this.getBIOConfigSyncClientMaxPerRoute = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE;
 			}  
 		}
@@ -14522,7 +14527,7 @@ public class OpenSPCoop2Properties {
 			try {
 				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.<nome>, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pNamePrefix+"'.<nome>, errore:"+e.getMessage(),e);
 			} 
 			initConfigClientMap(this.getBIOConfigSyncClientMaxPerRouteMap, p, pNamePrefix);
 
@@ -14541,11 +14546,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientMaxTotal = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL);
 					this.getBIOConfigSyncClientMaxTotal = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL+", errore:"+e.getMessage(),e);
 				this.getBIOConfigSyncClientMaxTotal = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL;
 			}  
 		}
@@ -14563,7 +14568,7 @@ public class OpenSPCoop2Properties {
 			try {
 				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
 			} 
 			initConfigClientMap(this.getBIOConfigSyncClientMaxTotalMap, p, pNamePrefix);
 
@@ -14586,7 +14591,7 @@ public class OpenSPCoop2Properties {
 					this.logWarn(getMessaggioProprietaNonImpostata(pName));
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}  
 			
 			this.getBIOConfigSyncClientValidateAfterInactivityRead = true;
@@ -14605,7 +14610,7 @@ public class OpenSPCoop2Properties {
 			try {
 				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
 			} 
 			initConfigClientMap(this.getBIOConfigSyncClientValidateAfterInactivityMap, p, pNamePrefix);
 
@@ -14632,10 +14637,10 @@ public class OpenSPCoop2Properties {
 					int vInt = java.lang.Integer.parseInt(v);
 					map.put(key, vInt);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pNamePrefix+"'.key impostata vuota");
+					this.logWarn("proprietà di govway '"+pNamePrefix+"'.key impostata vuota");
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.key possiede un valore ["+v+"] non corretto, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pNamePrefix+"'.key possiede un valore ["+v+"] non corretto, errore:"+e.getMessage(),e);
 			}  
 		}
 	}
@@ -14669,10 +14674,10 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientCloseIdleConnectionsAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata");
+					this.logWarn("proprietà di govway '"+pName+"' non impostata");
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}  
 			this.getBIOConfigSyncClientCloseIdleConnectionsAfterSecondsRead = true;
 		}
@@ -14691,11 +14696,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS);
 					this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS+", errore:"+e.getMessage(),e);
 				this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
 			}  
 		}
@@ -14714,11 +14719,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientExpireUnusedAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS);
 					this.getBIOConfigSyncClientExpireUnusedAfterSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
 				this.getBIOConfigSyncClientExpireUnusedAfterSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
 			}  
 		}
@@ -14737,11 +14742,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientCloseUnusedAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS);
 					this.getBIOConfigSyncClientCloseUnusedAfterSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
 				this.getBIOConfigSyncClientCloseUnusedAfterSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
 			}  
 		}
@@ -14760,11 +14765,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isBIOConfigSyncClientCloseIdleConnectionsDebug = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
 					this.isBIOConfigSyncClientCloseIdleConnectionsDebug = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.isBIOConfigSyncClientCloseIdleConnectionsDebug = true;
 			}  
 		}
@@ -14783,11 +14788,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isBIOConfigSyncClientUseCustomMessageObjectEntity = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
 					this.isBIOConfigSyncClientUseCustomMessageObjectEntity = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.isBIOConfigSyncClientUseCustomMessageObjectEntity = true;
 			}  
 		}
@@ -14806,11 +14811,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientPipedUnblockedStreamBuffer = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
 					this.getBIOConfigSyncClientPipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER+", errore:"+e.getMessage(),e);
 				this.getBIOConfigSyncClientPipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
 			}  
 		}
@@ -14829,11 +14834,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE);
 					this.getBIOConfigSyncClientApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE+", errore:"+e.getMessage(),e);
 				this.getBIOConfigSyncClientApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE;
 			}  
 		}
@@ -14855,11 +14860,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isNIOEnabled = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+false);
 					this.isNIOEnabled = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
 				this.isNIOEnabled = false;
 			}  
 		}
@@ -14878,11 +14883,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientMaxPerRoute = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE);
 					this.getNIOConfigAsyncClientMaxPerRoute = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE+", errore:"+e.getMessage(),e);
 				this.getNIOConfigAsyncClientMaxPerRoute = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE;
 			}  
 		}
@@ -14900,7 +14905,7 @@ public class OpenSPCoop2Properties {
 			try {
 				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.<nome>, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pNamePrefix+"'.<nome>, errore:"+e.getMessage(),e);
 			} 
 			initConfigClientMap(this.getNIOConfigAsyncClientMaxPerRouteMap, p, pNamePrefix);
 
@@ -14919,11 +14924,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientMaxTotal = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL);
 					this.getNIOConfigAsyncClientMaxTotal = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL+", errore:"+e.getMessage(),e);
 				this.getNIOConfigAsyncClientMaxTotal = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL;
 			}  
 		}
@@ -14941,7 +14946,7 @@ public class OpenSPCoop2Properties {
 			try {
 				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
 			} 
 			initConfigClientMap(this.getNIOConfigAsyncClientMaxTotalMap, p, pNamePrefix);
 
@@ -14964,7 +14969,7 @@ public class OpenSPCoop2Properties {
 					this.logWarn(getMessaggioProprietaNonImpostata(pName));
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}  
 			
 			this.getNIOConfigAsyncClientValidateAfterInactivityRead = true;
@@ -14983,7 +14988,7 @@ public class OpenSPCoop2Properties {
 			try {
 				p = this.reader.readPropertiesConvertEnvProperties(pNamePrefix);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pNamePrefix+"'.*, errore:"+e.getMessage(),e);
 			} 
 			initConfigClientMap(this.getNIOConfigAsyncClientValidateAfterInactivityMap, p, pNamePrefix);
 
@@ -15004,10 +15009,10 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata");
+					this.logWarn("proprietà di govway '"+pName+"' non impostata");
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}  
 			this.getNIOConfigAsyncClientCloseIdleConnectionsAfterSecondsRead = true;
 		}
@@ -15026,11 +15031,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS);
 					this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS+", errore:"+e.getMessage(),e);
 				this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
 			}  
 		}
@@ -15049,11 +15054,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isNIOConfigAsyncClientCloseIdleConnectionsDebug = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
 					this.isNIOConfigAsyncClientCloseIdleConnectionsDebug = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.isNIOConfigAsyncClientCloseIdleConnectionsDebug = true;
 			}  
 		}
@@ -15072,11 +15077,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientExpireUnusedAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS);
 					this.getNIOConfigAsyncClientExpireUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
 				this.getNIOConfigAsyncClientExpireUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
 			}  
 		}
@@ -15095,11 +15100,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientCloseUnusedAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS);
 					this.getNIOConfigAsyncClientCloseUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS+", errore:"+e.getMessage(),e);
 				this.getNIOConfigAsyncClientCloseUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
 			}  
 		}
@@ -15118,11 +15123,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isNIOConfigAsyncClientUseCustomMessageObjectEntity = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
 					this.isNIOConfigAsyncClientUseCustomMessageObjectEntity = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.isNIOConfigAsyncClientUseCustomMessageObjectEntity = true;
 			}  
 		}
@@ -15148,7 +15153,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}  
 			this.getNIOConfigAsyncHttpclientIoReactorThreadRead = true;
 		}
@@ -15167,11 +15172,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isNIOConfigAsyncRequestStreamEnabled = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
 					this.isNIOConfigAsyncRequestStreamEnabled = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.isNIOConfigAsyncRequestStreamEnabled = true;
 			}  
 		}
@@ -15190,11 +15195,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
 					this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER+", errore:"+e.getMessage(),e);
 				this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
 			}  
 		}
@@ -15214,11 +15219,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isNIOConfigAsyncResponseStreamEnabled = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
 					this.isNIOConfigAsyncResponseStreamEnabled = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.isNIOConfigAsyncResponseStreamEnabled = true;
 			}  
 		}
@@ -15237,11 +15242,11 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
 					this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER+", errore:"+e.getMessage(),e);
 				this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
 			}  
 		}
@@ -15399,10 +15404,10 @@ public class OpenSPCoop2Properties {
 					this.getConnettoreLibreriaHttpDefault = name;
 				}
 				else {
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' per il connettore non impostata");
+					this.logWarn("proprietà di govway '"+pName+"' per il connettore non impostata");
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}  
 			
 			this.getConnettoreLibreriaHttpDefaultRead=true;
@@ -15424,10 +15429,10 @@ public class OpenSPCoop2Properties {
 					this.getConnettoreLibreriaHttpsDefault = name;
 				}
 				else {
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' per il connettore non impostata");
+					this.logWarn("proprietà di govway '"+pName+"' per il connettore non impostata");
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}  
 			
 			this.getConnettoreLibreriaHttpsDefaultRead=true;
@@ -15449,10 +15454,10 @@ public class OpenSPCoop2Properties {
 					this.getConnettoreNIOLibreriaHttpDefault = name;
 				}
 				else {
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' per il connettore nio, non impostata");
+					this.logWarn("proprietà di govway '"+pName+"' per il connettore nio, non impostata");
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}  
 			
 			this.getConnettoreNIOLibreriaHttpDefaultRead=true;
@@ -15474,10 +15479,10 @@ public class OpenSPCoop2Properties {
 					this.getConnettoreNIOLibreriaHttpsDefault = name;
 				}
 				else {
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' per il connettore nio, non impostata");
+					this.logWarn("proprietà di govway '"+pName+"' per il connettore nio, non impostata");
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}  
 			
 			this.getConnettoreNIOLibreriaHttpsDefaultRead=true;
@@ -15547,7 +15552,7 @@ public class OpenSPCoop2Properties {
 					this.getConnettoreHttpsSecureRandomAlgo = name;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"', errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"', errore:"+e.getMessage(),e);
 			}  
 			
 			this.getConnettoreHttpsSecureRandomAlgoRead=true;
@@ -15566,11 +15571,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true);
 					this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationInoltroBuste = true;
 			}  
 		}
@@ -15588,11 +15593,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true);
 					this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.overrideDefaultConfiguration' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.isConnettoreHttpUrlHttpsOverrideDefaultConfigurationConsegnaContenutiApplicativi = true;
 			}  
 		}
@@ -15613,7 +15618,7 @@ public class OpenSPCoop2Properties {
 				this.getConnettoreHttpUrlHttpsRepositoryInoltroBuste = new File(name);
 				checkConnettoreHttpUrlHttpsRepositoryInoltroBuste();
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.http.urlHttps.repository': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -15650,7 +15655,7 @@ public class OpenSPCoop2Properties {
 				this.getConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi = new File(name);
 				checkConnettoreHttpUrlHttpsRepositoryConsegnaContenutiApplicativi();
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.http.urlHttps.repository': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -15684,11 +15689,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isConnettoreHttpUrlHttpsCacheEnabled = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.enabled' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.enabled' non impostata, viene utilizzato il default="+true);
 					this.isConnettoreHttpUrlHttpsCacheEnabled = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.enabled' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.enabled' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.isConnettoreHttpUrlHttpsCacheEnabled = true;
 			}  
 		}
@@ -15706,11 +15711,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getConnettoreHttpUrlHttpsCacheSize = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.size' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.size' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE);
 					this.getConnettoreHttpUrlHttpsCacheSize = CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.size' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.http.urlHttps.cache.size' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE+", errore:"+e.getMessage(),e);
 				this.getConnettoreHttpUrlHttpsCacheSize = CostantiPdD.CONNETTORE_HTTP_URL_HTTPS_CACHE_SIZE;
 			}  
 		}
@@ -15756,11 +15761,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.serviceRequestHttpMethodPatchEnabled = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.PATCH' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.request.method.PATCH' non impostata, viene utilizzato il default="+true);
 					this.serviceRequestHttpMethodPatchEnabled = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.PATCH' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.request.method.PATCH' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.serviceRequestHttpMethodPatchEnabled = true;
 			}  
 		}
@@ -15778,11 +15783,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.serviceRequestHttpMethodLinkEnabled = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.LINK' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.request.method.LINK' non impostata, viene utilizzato il default="+true);
 					this.serviceRequestHttpMethodLinkEnabled = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.LINK' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.request.method.LINK' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.serviceRequestHttpMethodLinkEnabled = true;
 			}  
 		}
@@ -15800,11 +15805,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.serviceRequestHttpMethodUnlinkEnabled = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.UNLINK' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.request.method.UNLINK' non impostata, viene utilizzato il default="+true);
 					this.serviceRequestHttpMethodUnlinkEnabled = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.request.method.UNLINK' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.request.method.UNLINK' non impostata, viene utilizzato il default="+true+", errore:"+e.getMessage(),e);
 				this.serviceRequestHttpMethodUnlinkEnabled = true;
 			}  
 		}
@@ -15823,11 +15828,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.readTransferLengthModes_ricezioneContenutiApplicativi = TransferLengthModes.getTransferLengthModes(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.WEBSERVER_DEFAULT);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.WEBSERVER_DEFAULT);
 					this.readTransferLengthModes_ricezioneContenutiApplicativi = TransferLengthModes.WEBSERVER_DEFAULT;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.WEBSERVER_DEFAULT+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.WEBSERVER_DEFAULT+", errore:"+e.getMessage(),e);
 				this.readTransferLengthModes_ricezioneContenutiApplicativi = TransferLengthModes.WEBSERVER_DEFAULT;
 			}  
 		}
@@ -15845,11 +15850,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.readTransferLengthModes_ricezioneBuste = TransferLengthModes.getTransferLengthModes(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.WEBSERVER_DEFAULT);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.WEBSERVER_DEFAULT);
 					this.readTransferLengthModes_ricezioneBuste = TransferLengthModes.WEBSERVER_DEFAULT;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.WEBSERVER_DEFAULT+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.WEBSERVER_DEFAULT+", errore:"+e.getMessage(),e);
 				this.readTransferLengthModes_ricezioneBuste = TransferLengthModes.WEBSERVER_DEFAULT;
 			}  
 		}
@@ -15867,11 +15872,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.readTransferLengthModes_inoltroBuste = TransferLengthModes.getTransferLengthModes(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.CONTENT_LENGTH);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.CONTENT_LENGTH);
 					this.readTransferLengthModes_inoltroBuste = TransferLengthModes.CONTENT_LENGTH;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.CONTENT_LENGTH+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.CONTENT_LENGTH+", errore:"+e.getMessage(),e);
 				this.readTransferLengthModes_inoltroBuste = TransferLengthModes.CONTENT_LENGTH;
 			}  
 		}
@@ -15893,7 +15898,7 @@ public class OpenSPCoop2Properties {
 					this.getChunkLength_inoltroBuste = DEFAULT_CHUNKLEN;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength.chunkLength' posside un valore non corretto:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.httpTransferLength.chunkLength' posside un valore non corretto:"+e.getMessage(),e);
 				this.getChunkLength_inoltroBuste = -1;
 			}  
 		}
@@ -15911,11 +15916,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.readTransferLengthModes_consegnaContenutiApplicativi = TransferLengthModes.getTransferLengthModes(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.CONTENT_LENGTH);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.CONTENT_LENGTH);
 					this.readTransferLengthModes_consegnaContenutiApplicativi = TransferLengthModes.CONTENT_LENGTH;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.CONTENT_LENGTH+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength' non impostata, viene utilizzato il default="+TransferLengthModes.CONTENT_LENGTH+", errore:"+e.getMessage(),e);
 				this.readTransferLengthModes_consegnaContenutiApplicativi = TransferLengthModes.CONTENT_LENGTH;
 			}  
 		}
@@ -15937,7 +15942,7 @@ public class OpenSPCoop2Properties {
 					this.getChunkLength_consegnaContenutiApplicativi = DEFAULT_CHUNKLEN;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength.chunkLength' posside un valore non corretto:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.httpTransferLength.chunkLength' posside un valore non corretto:"+e.getMessage(),e);
 				this.getChunkLength_consegnaContenutiApplicativi = -1;
 			}  
 		}
@@ -15955,11 +15960,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isAcceptOnlyReturnCode_200_202_inoltroBuste = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.2xx.acceptOnly_202_200' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.2xx.acceptOnly_202_200' non impostata, viene utilizzato il default=true");
 					this.isAcceptOnlyReturnCode_200_202_inoltroBuste = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.2xx.acceptOnly_202_200' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.2xx.acceptOnly_202_200' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isAcceptOnlyReturnCode_200_202_inoltroBuste = true;
 			}  
 		}
@@ -15977,11 +15982,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isAcceptOnlyReturnCode_200_202_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.2xx.acceptOnly_202_200' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.2xx.acceptOnly_202_200' non impostata, viene utilizzato il default=true");
 					this.isAcceptOnlyReturnCode_200_202_consegnaContenutiApplicativi = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.2xx.acceptOnly_202_200' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.2xx.acceptOnly_202_200' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isAcceptOnlyReturnCode_200_202_consegnaContenutiApplicativi = true;
 			}  
 		}
@@ -15999,11 +16004,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isAcceptOnlyReturnCode_307_inoltroBuste = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.3xx.acceptOnly_307' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.3xx.acceptOnly_307' non impostata, viene utilizzato il default=false");
 					this.isAcceptOnlyReturnCode_307_inoltroBuste = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.3xx.acceptOnly_307' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.returnCode.3xx.acceptOnly_307' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isAcceptOnlyReturnCode_307_inoltroBuste = false;
 			}  
 		}
@@ -16021,11 +16026,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.3xx.acceptOnly_307' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.3xx.acceptOnly_307' non impostata, viene utilizzato il default=false");
 					this.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.3xx.acceptOnly_307' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.returnCode.3xx.acceptOnly_307' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isAcceptOnlyReturnCode_307_consegnaContenutiApplicativi = false;
 			}  
 		}
@@ -16043,11 +16048,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isFollowRedirects_inoltroBuste_soap = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.soap' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.soap' non impostata, viene utilizzato il default=false");
 					this.isFollowRedirects_inoltroBuste_soap = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.soap' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.soap' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isFollowRedirects_inoltroBuste_soap = false;
 			}  
 		}
@@ -16065,11 +16070,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isFollowRedirects_inoltroBuste_rest = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.rest' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.rest' non impostata, viene utilizzato il default=false");
 					this.isFollowRedirects_inoltroBuste_rest = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.rest' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.rest' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isFollowRedirects_inoltroBuste_rest = false;
 			}  
 		}
@@ -16089,11 +16094,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isFollowRedirects_consegnaContenutiApplicativi_soap = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.soap' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.soap' non impostata, viene utilizzato il default=false");
 					this.isFollowRedirects_consegnaContenutiApplicativi_soap = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.soap' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.soap' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isFollowRedirects_consegnaContenutiApplicativi_soap = false;
 			}  
 		}
@@ -16111,11 +16116,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isFollowRedirects_consegnaContenutiApplicativi_rest = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.rest' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.rest' non impostata, viene utilizzato il default=false");
 					this.isFollowRedirects_consegnaContenutiApplicativi_rest = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.rest' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.rest' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isFollowRedirects_consegnaContenutiApplicativi_rest = false;
 			}  
 		}
@@ -16133,11 +16138,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getFollowRedirectsMaxHop_inoltroBuste = Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.maxHop' non impostata, viene utilizzato il default=5");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.maxHop' non impostata, viene utilizzato il default=5");
 					this.getFollowRedirectsMaxHop_inoltroBuste = 5;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.maxHop' non impostata, viene utilizzato il default=5, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.followRedirects.maxHop' non impostata, viene utilizzato il default=5, errore:"+e.getMessage(),e);
 				this.getFollowRedirectsMaxHop_inoltroBuste = 5;
 			}  
 		}
@@ -16155,11 +16160,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getFollowRedirectsMaxHop_consegnaContenutiApplicativi = Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.maxHop' non impostata, viene utilizzato il default=5");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.maxHop' non impostata, viene utilizzato il default=5");
 					this.getFollowRedirectsMaxHop_consegnaContenutiApplicativi = 5;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.maxHop' non impostata, viene utilizzato il default=5, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.followRedirects.maxHop' non impostata, viene utilizzato il default=5, errore:"+e.getMessage(),e);
 				this.getFollowRedirectsMaxHop_consegnaContenutiApplicativi = 5;
 			}  
 		}
@@ -16178,11 +16183,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.checkSoapActionQuotedString_ricezioneContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soapAction.checkQuotedString' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soapAction.checkQuotedString' non impostata, viene utilizzato il default=false");
 					this.checkSoapActionQuotedString_ricezioneContenutiApplicativi = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soapAction.checkQuotedString' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.soapAction.checkQuotedString' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.checkSoapActionQuotedString_ricezioneContenutiApplicativi = false;
 			}  
 		}
@@ -16200,11 +16205,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.checkSoapActionQuotedString_ricezioneBuste = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.soapAction.checkQuotedString' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.soapAction.checkQuotedString' non impostata, viene utilizzato il default=false");
 					this.checkSoapActionQuotedString_ricezioneBuste = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.soapAction.checkQuotedString' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.soapAction.checkQuotedString' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.checkSoapActionQuotedString_ricezioneBuste = false;
 			}  
 		}
@@ -16222,11 +16227,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.httpUserAgent = name;
 				}else{
-					/**NON EMETTO WARNING: this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.http.userAgent' non impostata, viene utilizzato il default="+Costanti.OPENSPCOOP_PRODUCT_VERSION);*/
+					/**NON EMETTO WARNING: this.logWarn("proprietà di govway 'org.openspcoop2.pdd.http.userAgent' non impostata, viene utilizzato il default="+Costanti.OPENSPCOOP_PRODUCT_VERSION);*/
 					this.httpUserAgent = this.getProductName();
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.http.userAgent' non impostata, viene utilizzato il default="+this.getProductName()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.http.userAgent' non impostata, viene utilizzato il default="+this.getProductName()+", errore:"+e.getMessage(),e);
 				this.httpUserAgent = this.getProductName();
 			}  
 		}
@@ -16244,11 +16249,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.httpServer = name;
 				}else{
-					/**NON EMETTO WARNING: this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.http.xPdd' non impostata, viene utilizzato il default="+this.getHttpUserAgent());*/
+					/**NON EMETTO WARNING: this.logWarn("proprietà di govway 'org.openspcoop2.pdd.http.xPdd' non impostata, viene utilizzato il default="+this.getHttpUserAgent());*/
 					this.httpServer = this.getVersione();
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.http.xPdd' non impostata, viene utilizzato il default="+this.getVersione()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.http.xPdd' non impostata, viene utilizzato il default="+this.getVersione()+", errore:"+e.getMessage(),e);
 				this.httpServer = this.getVersione();
 			}  
 		}
@@ -16270,7 +16275,7 @@ public class OpenSPCoop2Properties {
 					this.httpXPdDDetails = this.getDetails();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.http.xDetails' non impostata correttamente:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.http.xDetails' non impostata correttamente:"+e.getMessage(),e);
 				this.httpXPdDDetails = this.getDetails();
 			}  
 		}
@@ -16290,11 +16295,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isEnabledEncodingRFC2047HeaderValueRicezioneContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
 					this.isEnabledEncodingRFC2047HeaderValueRicezioneContenutiApplicativi = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isEnabledEncodingRFC2047HeaderValueRicezioneContenutiApplicativi = true;
 			}  
 		}
@@ -16315,11 +16320,11 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_VALIDO+name);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
 					this.getCharsetEncodingRFC2047HeaderValueRicezioneContenutiApplicativi = Charset.US_ASCII;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage(),e);
 				this.getCharsetEncodingRFC2047HeaderValueRicezioneContenutiApplicativi = Charset.US_ASCII;
 			}  
 		}
@@ -16340,11 +16345,11 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_VALIDO+name);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
 					this.getEncodingRFC2047HeaderValueRicezioneContenutiApplicativi = RFC2047Encoding.Q;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage(),e);
 				this.getEncodingRFC2047HeaderValueRicezioneContenutiApplicativi = RFC2047Encoding.Q;
 			}  
 		}
@@ -16362,11 +16367,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isEnabledEncodingRFC2047HeaderValueRicezioneBuste = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
 					this.isEnabledEncodingRFC2047HeaderValueRicezioneBuste = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isEnabledEncodingRFC2047HeaderValueRicezioneBuste = true;
 			}  
 		}
@@ -16387,11 +16392,11 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_VALIDO+name);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
 					this.getCharsetEncodingRFC2047HeaderValueRicezioneBuste = Charset.US_ASCII;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage(),e);
 				this.getCharsetEncodingRFC2047HeaderValueRicezioneBuste = Charset.US_ASCII;
 			}  
 		}
@@ -16412,11 +16417,11 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_VALIDO+name);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
 					this.getEncodingRFC2047HeaderValueRicezioneBuste = RFC2047Encoding.Q;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage(),e);
 				this.getEncodingRFC2047HeaderValueRicezioneBuste = RFC2047Encoding.Q;
 			}  
 		}
@@ -16434,11 +16439,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isEnabledEncodingRFC2047HeaderValueInoltroBuste = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
 					this.isEnabledEncodingRFC2047HeaderValueInoltroBuste = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isEnabledEncodingRFC2047HeaderValueInoltroBuste = true;
 			}  
 		}
@@ -16459,11 +16464,11 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_VALIDO+name);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
 					this.getCharsetEncodingRFC2047HeaderValueInoltroBuste = Charset.US_ASCII;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage(),e);
 				this.getCharsetEncodingRFC2047HeaderValueInoltroBuste = Charset.US_ASCII;
 			}  
 		}
@@ -16484,11 +16489,11 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_VALIDO+name);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
 					this.getEncodingRFC2047HeaderValueInoltroBuste = RFC2047Encoding.Q;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage(),e);
 				this.getEncodingRFC2047HeaderValueInoltroBuste = RFC2047Encoding.Q;
 			}  
 		}
@@ -16506,11 +16511,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isEnabledEncodingRFC2047HeaderValueConsegnaContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true");
 					this.isEnabledEncodingRFC2047HeaderValueConsegnaContenutiApplicativi = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isEnabledEncodingRFC2047HeaderValueConsegnaContenutiApplicativi = true;
 			}  
 		}
@@ -16531,11 +16536,11 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_VALIDO+name);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name());
 					this.getCharsetEncodingRFC2047HeaderValueConsegnaContenutiApplicativi = Charset.US_ASCII;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.charset' non impostata, viene utilizzato il default="+Charset.US_ASCII.name()+", errore:"+e.getMessage(),e);
 				this.getCharsetEncodingRFC2047HeaderValueConsegnaContenutiApplicativi = Charset.US_ASCII;
 			}  
 		}
@@ -16556,11 +16561,11 @@ public class OpenSPCoop2Properties {
 						throw new CoreException(VALORE_NON_VALIDO+name);
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name());
 					this.getEncodingRFC2047HeaderValueConsegnaContenutiApplicativi = RFC2047Encoding.Q;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerValue.encodingRFC2047.encoding' non impostata, viene utilizzato il default="+RFC2047Encoding.Q.name()+", errore:"+e.getMessage(),e);
 				this.getEncodingRFC2047HeaderValueConsegnaContenutiApplicativi = RFC2047Encoding.Q;
 			}  
 		}
@@ -16579,11 +16584,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isEnabledValidazioneRFC2047HeaderNameValueRicezioneContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true");
 					this.isEnabledValidazioneRFC2047HeaderNameValueRicezioneContenutiApplicativi = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isEnabledValidazioneRFC2047HeaderNameValueRicezioneContenutiApplicativi = true;
 			}  
 		}
@@ -16601,11 +16606,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isEnabledValidazioneRFC2047HeaderNameValueRicezioneBuste = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true");
 					this.isEnabledValidazioneRFC2047HeaderNameValueRicezioneBuste = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isEnabledValidazioneRFC2047HeaderNameValueRicezioneBuste = true;
 			}  
 		}
@@ -16623,11 +16628,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isEnabledValidazioneRFC2047HeaderNameValueInoltroBuste = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true");
 					this.isEnabledValidazioneRFC2047HeaderNameValueInoltroBuste = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.inoltroBuste.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.inoltroBuste.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isEnabledValidazioneRFC2047HeaderNameValueInoltroBuste = true;
 			}  
 		}
@@ -16645,11 +16650,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.isEnabledValidazioneRFC2047HeaderNameValueConsegnaContenutiApplicativi = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true");
 					this.isEnabledValidazioneRFC2047HeaderNameValueConsegnaContenutiApplicativi = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.headerNameValue.validazione.enabled' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isEnabledValidazioneRFC2047HeaderNameValueConsegnaContenutiApplicativi = true;
 			}  
 		}
@@ -16667,11 +16672,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getGestioneCORS_returnCode_ricezioneContenutiApplicativi = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE);
 					this.getGestioneCORS_returnCode_ricezioneContenutiApplicativi = CostantiPdD.GESTIONE_CORS_RETURN_CODE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE+", errore:"+e.getMessage(),e);
 				this.getGestioneCORS_returnCode_ricezioneContenutiApplicativi = CostantiPdD.GESTIONE_CORS_RETURN_CODE;
 			}    
 		}
@@ -16712,11 +16717,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getGestioneCORS_returnCode_ricezioneBuste = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE);
 					this.getGestioneCORS_returnCode_ricezioneBuste = CostantiPdD.GESTIONE_CORS_RETURN_CODE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.ricezioneBuste.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.services.ricezioneBuste.cors.returnCode' non impostata, viene utilizzato il default="+CostantiPdD.GESTIONE_CORS_RETURN_CODE+", errore:"+e.getMessage(),e);
 				this.getGestioneCORS_returnCode_ricezioneBuste = CostantiPdD.GESTIONE_CORS_RETURN_CODE;
 			}    
 		}
@@ -16811,12 +16816,12 @@ public class OpenSPCoop2Properties {
 						throw new CoreException("Tipo "+name+" non conosciuto");
 				}
 				else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.tempo.tipo' non impostata, viene utilizzato il default="+CostantiConfigurazione.TEMPO_TIPO_LOCALE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.tempo.tipo' non impostata, viene utilizzato il default="+CostantiConfigurazione.TEMPO_TIPO_LOCALE);
 					this.tipoTempo = TipoOraRegistrazione.LOCALE;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.tempo.tipo' non impostata, viene utilizzato il default="+CostantiConfigurazione.TEMPO_TIPO_LOCALE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.tempo.tipo' non impostata, viene utilizzato il default="+CostantiConfigurazione.TEMPO_TIPO_LOCALE+", errore:"+e.getMessage(),e);
 				this.tipoTempo = TipoOraRegistrazione.LOCALE;
 			}    
 		}
@@ -16842,7 +16847,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(NON_DEFINITA);
 				this.tipoDateManager = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.date.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.date.tipo': "+e.getMessage(),e);
 				this.tipoDateManager = null;
 			}    
 		}
@@ -16862,7 +16867,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(NON_DEFINITA);
 				this.tipoDateTimeFormat = DateEngineType.valueOf(name);
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dateTimeFormat': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.dateTimeFormat': "+e.getMessage(),e);
 				this.tipoDateTimeFormat = null;
 			}    
 		}
@@ -16910,13 +16915,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrationManager.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrationManager.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isIntegrationManagerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrationManager.enabled': "+e.getMessage(),e);
 				this.isIntegrationManagerEnabled = false;
 			}    
 		}
@@ -16931,13 +16936,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrationManager.idWithDate");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.idWithDate' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.integrationManager.idWithDate' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isIntegrationManagerIdWithDate = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.integrationManager.idWithDate': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.integrationManager.idWithDate': "+e.getMessage(),e);
 				this.isIntegrationManagerIdWithDate = false;
 			}    
 		}
@@ -16960,7 +16965,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrationManagerIdsLimit = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getIntegrationManagerIdsLimit = null;
 			}   
 			this.getIntegrationManagerIdsLimit_read = true;
@@ -16979,11 +16984,11 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.integrationManager_isNomePortaDelegataUrlBasedValue = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.service.IntegrationManager.nomePortaDelegataUrlBased' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.service.IntegrationManager.nomePortaDelegataUrlBased' non impostata, viene utilizzato il default=false");
 					this.integrationManager_isNomePortaDelegataUrlBasedValue = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.service.IntegrationManager.nomePortaDelegataUrlBased' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.service.IntegrationManager.nomePortaDelegataUrlBased' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.integrationManager_isNomePortaDelegataUrlBasedValue = false;
 			}
 		}
@@ -17001,11 +17006,11 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.integrationManager_readInformazioniTrasportoValue = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.service.IntegrationManager.infoTrasporto' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.service.IntegrationManager.infoTrasporto' non impostata, viene utilizzato il default=false");
 					this.integrationManager_readInformazioniTrasportoValue = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.service.IntegrationManager.infoTrasporto' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.service.IntegrationManager.infoTrasporto' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.integrationManager_readInformazioniTrasportoValue = false;
 			}
 		}
@@ -17031,7 +17036,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_runtime_useRuntimeManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_runtime_useRuntimeManager = true;
 			}    
 		}
@@ -17053,7 +17058,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_runtime_useConsegnePreseInCaricoManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_runtime_useConsegnePreseInCaricoManager = true;
 			}    
 		}
@@ -17074,7 +17079,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrationManager_runtime_dataSource = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -17089,7 +17094,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getIntegrationManager_runtime_dataSourceJndiContext = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -17111,7 +17116,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_runtime_dataSource_useDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_runtime_dataSource_useDBUtils = true;
 			}    
 		}
@@ -17136,7 +17141,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_transazioni_useTransactionManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_transazioni_useTransactionManager = true;
 			}    
 		}
@@ -17158,7 +17163,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_transazioni_useConsegnePreseInCaricoManager = true;
 			}    
 		}
@@ -17179,7 +17184,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getIntegrationManager_transazioni_dataSource = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -17194,7 +17199,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getIntegrationManager_transazioni_dataSourceJndiContext = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -17216,7 +17221,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isIntegrationManager_transazioni_dataSource_useDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isIntegrationManager_transazioni_dataSource_useDBUtils = true;
 			}    
 		}
@@ -17248,12 +17253,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isDeleteInstructionTargetMachineXml = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.deleteInstructionTargetMachineXml' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.deleteInstructionTargetMachineXml' non impostata, viene utilizzato il default=false");
 					this.isDeleteInstructionTargetMachineXml = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.deleteInstructionTargetMachineXml' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.deleteInstructionTargetMachineXml' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isDeleteInstructionTargetMachineXml = false;
 			}
 		}
@@ -17271,11 +17276,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.tunnelSOAP_loadMailcap = Boolean.parseBoolean(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mailcap.load' non impostata, viene utilizzato il default="+false);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mailcap.load' non impostata, viene utilizzato il default="+false);
 					this.tunnelSOAP_loadMailcap = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mailcap.load' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mailcap.load' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
 				this.tunnelSOAP_loadMailcap = false;
 			}    
 		}
@@ -17299,11 +17304,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.tunnelSOAPKeyWord_headerTrasporto = name;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.tunnelSOAP.trasporto' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_ATTACHMENT);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.tunnelSOAP.trasporto' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_ATTACHMENT);
 					this.tunnelSOAPKeyWord_headerTrasporto = CostantiPdD.IMBUSTAMENTO_ATTACHMENT;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.tunnelSOAP.trasporto' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_ATTACHMENT+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.tunnelSOAP.trasporto' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_ATTACHMENT+", errore:"+e.getMessage(),e);
 				this.tunnelSOAPKeyWord_headerTrasporto = CostantiPdD.IMBUSTAMENTO_ATTACHMENT;
 			}    
 		}
@@ -17327,11 +17332,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.tunnelSOAPKeyWordMimeType_headerTrasporto = name;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.trasporto' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_MIME_TYPE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.trasporto' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_MIME_TYPE);
 					this.tunnelSOAPKeyWordMimeType_headerTrasporto = CostantiPdD.IMBUSTAMENTO_MIME_TYPE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.trasporto' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_MIME_TYPE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.trasporto' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_MIME_TYPE+", errore:"+e.getMessage(),e);
 				this.tunnelSOAPKeyWordMimeType_headerTrasporto = CostantiPdD.IMBUSTAMENTO_MIME_TYPE;
 			}    
 		}
@@ -17355,11 +17360,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.tunnelSOAPKeyWord_urlBased = name;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.tunnelSOAP.urlBased' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_ATTACHMENT);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.tunnelSOAP.urlBased' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_ATTACHMENT);
 					this.tunnelSOAPKeyWord_urlBased = CostantiPdD.IMBUSTAMENTO_ATTACHMENT;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.tunnelSOAP.urlBased' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_ATTACHMENT+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.tunnelSOAP.urlBased' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_ATTACHMENT+", errore:"+e.getMessage(),e);
 				this.tunnelSOAPKeyWord_urlBased = CostantiPdD.IMBUSTAMENTO_ATTACHMENT;
 			}    
 		}
@@ -17383,11 +17388,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.tunnelSOAPKeyWordMimeType_urlBased = name;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.urlBased' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_MIME_TYPE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.urlBased' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_MIME_TYPE);
 					this.tunnelSOAPKeyWordMimeType_urlBased = CostantiPdD.IMBUSTAMENTO_MIME_TYPE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.urlBased' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_MIME_TYPE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.core.soap.tunnelSOAP.mimeType.urlBased' non impostata, viene utilizzato il default="+CostantiPdD.IMBUSTAMENTO_MIME_TYPE+", errore:"+e.getMessage(),e);
 				this.tunnelSOAPKeyWordMimeType_urlBased = CostantiPdD.IMBUSTAMENTO_MIME_TYPE;
 			}    
 		}
@@ -17415,11 +17420,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.timeoutBustaRispostaAsincrona = java.lang.Long.parseLong(name) * 1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.attesaAttiva' non impostata, viene utilizzato il default="+(CostantiPdD.RISPOSTA_ASINCRONA_ATTESA_ATTIVA/1000));
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.attesaAttiva' non impostata, viene utilizzato il default="+(CostantiPdD.RISPOSTA_ASINCRONA_ATTESA_ATTIVA/1000));
 					this.timeoutBustaRispostaAsincrona = CostantiPdD.RISPOSTA_ASINCRONA_ATTESA_ATTIVA;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.attesaAttiva' non impostata" +
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.attesaAttiva' non impostata" +
 						", viene utilizzato il default="+(CostantiPdD.RISPOSTA_ASINCRONA_ATTESA_ATTIVA/1000)+", errore:"+e.getMessage(),e);
 				this.timeoutBustaRispostaAsincrona = CostantiPdD.RISPOSTA_ASINCRONA_ATTESA_ATTIVA;
 			}    
@@ -17443,11 +17448,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.checkIntervalBustaRispostaAsincrona = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.check' non impostata, viene utilizzato il default="+CostantiPdD.RISPOSTA_ASINCRONA_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.check' non impostata, viene utilizzato il default="+CostantiPdD.RISPOSTA_ASINCRONA_CHECK_INTERVAL);
 					this.checkIntervalBustaRispostaAsincrona = CostantiPdD.RISPOSTA_ASINCRONA_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.check' non impostata, viene utilizzato il default="+CostantiPdD.RISPOSTA_ASINCRONA_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.repository.messaggioAsincronoInProcessamento.check' non impostata, viene utilizzato il default="+CostantiPdD.RISPOSTA_ASINCRONA_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.checkIntervalBustaRispostaAsincrona = CostantiPdD.RISPOSTA_ASINCRONA_CHECK_INTERVAL;
 			}    
 		}
@@ -17520,7 +17525,7 @@ public class OpenSPCoop2Properties {
 					this.cluster_hostname = name;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id.hostname': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.cluster_id.hostname': "+e.getMessage(),e);
 				this.cluster_hostname = null;
 			}  
 		}
@@ -17554,7 +17559,7 @@ public class OpenSPCoop2Properties {
 					this.group_id = name;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.group_id = null;
 			}  
 		}
@@ -17581,7 +17586,7 @@ public class OpenSPCoop2Properties {
 					this.cluster_id = name;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.cluster_id': "+e.getMessage(),e);
 				this.cluster_id = null;
 			}  
 		}
@@ -17641,7 +17646,7 @@ public class OpenSPCoop2Properties {
 				this.cluster_id_numerico_read = true;
 				
 			}catch(java.lang.Exception e) {
-				String msg = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id.numeric': "+e.getMessage();
+				String msg = "Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.cluster_id.numeric': "+e.getMessage();
 				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}   
@@ -17678,7 +17683,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.getClusterDinamicoIdNumericoCifre = -1;
 			}  
 		}
@@ -17699,12 +17704,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerLockByDatabase = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.lockDatabase' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.lockDatabase' non impostata, viene utilizzato il default=true");
 					this.isTimerLockByDatabase = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.lockDatabase' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.lockDatabase' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerLockByDatabase = true;
 			}
 			
@@ -17731,12 +17736,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTimerLockByDatabaseNotifyLogEnabled = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.lockDatabase.notify.log' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.lockDatabase.notify.log' non impostata, viene utilizzato il default=true");
 					this.isTimerLockByDatabaseNotifyLogEnabled = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.lockDatabase.notify.log' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.timer.lockDatabase.notify.log' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTimerLockByDatabaseNotifyLogEnabled = true;
 			}
 		}
@@ -17756,7 +17761,7 @@ public class OpenSPCoop2Properties {
 					this.pddContextSerializer = CostantiConfigurazione.NONE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.contextSerializer': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.contextSerializer': "+e.getMessage(),e);
 				this.pddContextSerializer = CostantiConfigurazione.NONE;
 			}  
 		}
@@ -17792,7 +17797,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.statelessOneWay = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.default.oneway': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.stateless.default.oneway': "+e.getMessage(),e);
 				this.statelessOneWay = null;
 			}    
 		}
@@ -17823,7 +17828,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.statelessSincrono = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.default.sincrono': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.stateless.default.sincrono': "+e.getMessage(),e);
 				this.statelessSincrono = null;
 			}    
 		}
@@ -17854,7 +17859,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.statelessAsincrono = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.default.asincroni': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.stateless.default.asincroni': "+e.getMessage(),e);
 				this.statelessAsincrono = null;
 			}    
 		}
@@ -17881,12 +17886,12 @@ public class OpenSPCoop2Properties {
 					}
 					this.isGestioneOnewayStateful_1_1 = CostantiConfigurazione.ONEWAY_STATEFUL_1_1.equals(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.stateful.oneway' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.stateful.oneway' non impostata, viene utilizzato il default=true");
 					this.isGestioneOnewayStateful_1_1 = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.stateful.oneway' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.stateful.oneway' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isGestioneOnewayStateful_1_1 = true;
 			}
 		}
@@ -17917,7 +17922,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.statelessRouting = name;
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.router': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.stateless.router': "+e.getMessage(),e);
 				this.statelessRouting = null;
 			}    
 		}
@@ -17949,12 +17954,12 @@ public class OpenSPCoop2Properties {
 						this.isGestioneStateful_RinegoziamentoConnessione = true;
 					}
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.dataSource.rinegoziamentoConnessione' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.stateless.dataSource.rinegoziamentoConnessione' non impostata, viene utilizzato il default=true");
 					this.isGestioneStateful_RinegoziamentoConnessione = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.stateless.dataSource.rinegoziamentoConnessione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.stateless.dataSource.rinegoziamentoConnessione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isGestioneStateful_RinegoziamentoConnessione = true;
 			}
 		}
@@ -17982,11 +17987,11 @@ public class OpenSPCoop2Properties {
 					this.mergeHandlerBuiltInAndHandlerUser = Boolean.parseBoolean(v);
 				} 
 				else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.merge' non impostata, viene utilizzato il default="+false);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.handler.merge' non impostata, viene utilizzato il default="+false);
 					this.mergeHandlerBuiltInAndHandlerUser = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.merge' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.handler.merge' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.mergeHandlerBuiltInAndHandlerUser;
@@ -18005,11 +18010,11 @@ public class OpenSPCoop2Properties {
 					this.printInfoHandlerBuiltIn = Boolean.parseBoolean(v);
 				} 
 				else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.built-in.printInfo' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.handler.built-in.printInfo' non impostata, viene utilizzato il default="+true);
 					this.printInfoHandlerBuiltIn = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.built-in.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.handler.built-in.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.printInfoHandlerBuiltIn;
@@ -18399,11 +18404,11 @@ public class OpenSPCoop2Properties {
 					this.printInfoHandler = Boolean.parseBoolean(v);
 				} 
 				else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.printInfo' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.handler.printInfo' non impostata, viene utilizzato il default="+true);
 					this.printInfoHandler = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.handler.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.handler.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.printInfoHandler;
@@ -18820,12 +18825,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isLoadBouncyCastle = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.security.addBouncyCastleProvider' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.security.addBouncyCastleProvider' non impostata, viene utilizzato il default=true");
 					this.isLoadBouncyCastle = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.security.addBouncyCastleProvider' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.security.addBouncyCastleProvider' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isLoadBouncyCastle = true;
 			}
 		}
@@ -18848,7 +18853,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.bouncyCastleSecureRandomAlgo = null;
 			}
 			
@@ -18948,7 +18953,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.securityEgd = null;
 			}
 			
@@ -18989,12 +18994,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isGenerazioneActorDefault = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.actorDefault.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.actorDefault.enable' non impostata, viene utilizzato il default=true");
 					this.isGenerazioneActorDefault = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.actorDefault.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.actorDefault.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isGenerazioneActorDefault = true;
 			}
 		}
@@ -19028,12 +19033,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.actorDefault = value;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.actorDefault.valore' non impostata, viene utilizzato il default=openspcoop");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.actorDefault.valore' non impostata, viene utilizzato il default=openspcoop");
 					this.actorDefault = "openspcoop";
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.actorDefault.valore' non impostata, viene utilizzato il default=openspcoop, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.actorDefault.valore' non impostata, viene utilizzato il default=openspcoop, errore:"+e.getMessage(),e);
 				this.actorDefault = "openspcoop";
 			}
 		}
@@ -19058,12 +19063,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.prefixWsuId = value;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.prefixWsuId' non impostata, viene utilizzato il default di MessageSecurity");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.prefixWsuId' non impostata, viene utilizzato il default di MessageSecurity");
 					this.prefixWsuId = "";
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.prefixWsuId' non impostata, viene utilizzato il default di MessageSecurity, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.prefixWsuId' non impostata, viene utilizzato il default di MessageSecurity, errore:"+e.getMessage(),e);
 				this.prefixWsuId = "";
 			}
 		}
@@ -19086,7 +19091,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.wsuIdSecureRandomAlgo = null;
 			}
 			
@@ -19107,12 +19112,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.removeAllWsuIdRef = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.removeAllWsuIdRef' non impostata, viene utilizzato il default 'false'");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.removeAllWsuIdRef' non impostata, viene utilizzato il default 'false'");
 					this.removeAllWsuIdRef = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.removeAllWsuIdRef' non impostata, viene utilizzato il default 'false', errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.removeAllWsuIdRef' non impostata, viene utilizzato il default 'false', errore:"+e.getMessage(),e);
 				this.removeAllWsuIdRef = false;
 			}
 		}
@@ -19132,13 +19137,13 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.externalPWCallback = value;
 				}else{
-					this.logDebug("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile' non impostata");
+					this.logDebug("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile' non impostata");
 					this.externalPWCallback = null;
 				}
 				this.externalPWCallbackReaded = true;
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.externalPWCallback.propertiesFile' non impostata, errore:"+e.getMessage(),e);
 				this.externalPWCallback = null;
 				this.externalPWCallbackReaded = true;
 			}
@@ -19162,11 +19167,11 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isAbilitataCacheMessageSecurityKeystore_value = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.keystore.cache.enable' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.keystore.cache.enable' non impostata, viene utilizzato il default=false");
 					this.isAbilitataCacheMessageSecurityKeystore_value = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.keystore.cache.enable' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.keystore.cache.enable' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isAbilitataCacheMessageSecurityKeystore_value = false;
 			}
 		}
@@ -19191,8 +19196,8 @@ public class OpenSPCoop2Properties {
 					this.dimensioneCacheMessageSecurityKeystore_value = -1;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.keystore.cache.dimensione': "+e.getMessage(),e);
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop  'org.openspcoop2.pdd.messageSecurity.keystore.cache.dimensione'",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.messageSecurity.keystore.cache.dimensione': "+e.getMessage(),e);
+				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprietà di govway  'org.openspcoop2.pdd.messageSecurity.keystore.cache.dimensione'",e);
 			}
 		}
 
@@ -19216,8 +19221,8 @@ public class OpenSPCoop2Properties {
 					this.itemLifeSecondCacheMessageSecurityKeystore_value = -1;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.keystore.cache.itemLifeSecond': "+e.getMessage(),e);
-				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprieta' di openspcoop  'org.openspcoop2.pdd.messageSecurity.keystore.cache.itemLifeSecond'",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.messageSecurity.keystore.cache.itemLifeSecond': "+e.getMessage(),e);
+				throw new OpenSPCoop2ConfigurationException("Riscontrato errore durante la lettura della proprietà di govway  'org.openspcoop2.pdd.messageSecurity.keystore.cache.itemLifeSecond'",e);
 			}
 		}
 
@@ -19251,7 +19256,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getAutenticazioneLockPermitsRead = true;
@@ -19272,7 +19277,7 @@ public class OpenSPCoop2Properties {
 				Properties p = this.reader.readPropertiesConvertEnvProperties(pName);
 				processAutenticazioneLockPermits(p);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 		}
@@ -19335,7 +19340,7 @@ public class OpenSPCoop2Properties {
 					this.getCryptConfigAutenticazioneApplicativi = new CryptConfig(value);
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.autenticazione.applicativi.password': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.core.autenticazione.applicativi.password': "+e.getMessage(),e);
 				return null;
 			}
 		}
@@ -19353,7 +19358,7 @@ public class OpenSPCoop2Properties {
 					this.getCryptConfigAutenticazioneSoggetti = new CryptConfig(value);
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.core.autenticazione.soggetti.password': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.core.autenticazione.soggetti.password': "+e.getMessage(),e);
 				return null;
 			}
 		}
@@ -19372,11 +19377,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazioneBasicLogPassword = Boolean.valueOf(value);
 				}
 				else {
-					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=false");
+					this.logError("proprietà di govway '"+pName+"' non definita; viene usato il default=false");
 					this.isAutenticazioneBasicLogPassword = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=false. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"'; viene usato il default=false. Errore: "+e.getMessage(),e);
 				this.isAutenticazioneBasicLogPassword = false;
 			}
 		}
@@ -19397,7 +19402,7 @@ public class OpenSPCoop2Properties {
 //					authType = authType.trim();
 //				}
 //			}catch(java.lang.Exception e) {
-//				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+//				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameAuth+"': "+e.getMessage(),e);
 //			}
 			String authType = HttpConstants.AUTHENTICATION_BASIC;
 			
@@ -19409,7 +19414,7 @@ public class OpenSPCoop2Properties {
 					realm = realm.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameRealm+"': "+e.getMessage(),e);
 			}
 			
 			if(authType!=null && !"".equals(authType) && realm!=null && !"".equals(realm)) {
@@ -19429,7 +19434,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 				
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.basic.error_description.invalid";
@@ -19444,7 +19449,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 			}
 			
@@ -19467,7 +19472,7 @@ public class OpenSPCoop2Properties {
 					authType = authType.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameAuth+"': "+e.getMessage(),e);
 			}
 			
 			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.apiKey.realm";
@@ -19478,7 +19483,7 @@ public class OpenSPCoop2Properties {
 					realm = realm.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameRealm+"': "+e.getMessage(),e);
 			}
 			
 			if(authType!=null && !"".equals(authType) && realm!=null && !"".equals(realm)) {
@@ -19498,7 +19503,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 				
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.apiKey.error_description.invalid";
@@ -19513,7 +19518,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 			}
 			
@@ -19534,11 +19539,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazioneHttpsPortaDelegataValidityCheck = Boolean.valueOf(value);
 				}
 				else {
-					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					this.logError("proprietà di govway '"+pName+"' non definita; viene usato il default=true");
 					this.isAutenticazioneHttpsPortaDelegataValidityCheck = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
 				this.isAutenticazioneHttpsPortaDelegataValidityCheck = true;
 			}
 		}
@@ -19569,7 +19574,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaDelegataTruststorePath_read = true;
 		}
@@ -19589,7 +19594,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststorePassword = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaDelegataTruststorePassword_read = true;
 		}
@@ -19611,7 +19616,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststoreType = KeystoreType.JKS.getNome();
 				}
 			}catch(java.lang.Exception e) {
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}
 		}
 
@@ -19630,7 +19635,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststoreCRLs = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaDelegataTruststoreCRLs_read = true;
 		}
@@ -19650,7 +19655,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaDelegataTruststoreOCSPPolicy_read = true;
 		}
@@ -19669,11 +19674,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazioneHttpsPortaApplicativaValidityCheck = Boolean.valueOf(value);
 				}
 				else {
-					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					this.logError("proprietà di govway '"+pName+"' non definita; viene usato il default=true");
 					this.isAutenticazioneHttpsPortaApplicativaValidityCheck = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
 				this.isAutenticazioneHttpsPortaApplicativaValidityCheck = true;
 			}
 		}
@@ -19704,7 +19709,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaApplicativaTruststorePath_read = true;
 		}
@@ -19724,7 +19729,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststorePassword = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaApplicativaTruststorePassword_read = true;
 		}
@@ -19746,7 +19751,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststoreType = KeystoreType.JKS.getNome();
 				}
 			}catch(java.lang.Exception e) {
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}
 		}
 
@@ -19765,7 +19770,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaApplicativaTruststoreCRLs_read = true;
 		}
@@ -19785,7 +19790,7 @@ public class OpenSPCoop2Properties {
 					this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy = value;
 				}
 			}catch(java.lang.Exception e) {
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}
 			this.getAutenticazioneHttpsPortaApplicativaTruststoreOCSPPolicy_read = true;
 		}
@@ -19805,11 +19810,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
 				}
 				else {
-					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					this.logError("proprietà di govway '"+pName+"' non definita; viene usato il default=true");
 					this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
 				this.isAutenticazioneHttpsPortaDelegataCheckSoggettiProprietari = true;
 			}
 		}
@@ -19830,7 +19835,7 @@ public class OpenSPCoop2Properties {
 					authType = authType.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameAuth+"': "+e.getMessage(),e);
 			}
 			
 			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.https.realm";
@@ -19841,7 +19846,7 @@ public class OpenSPCoop2Properties {
 					realm = realm.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameRealm+"': "+e.getMessage(),e);
 			}
 			
 			if(authType!=null && !"".equals(authType) && realm!=null && !"".equals(realm)) {
@@ -19861,7 +19866,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 				
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.https.error_description.invalid";
@@ -19876,7 +19881,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 			}
 			
@@ -19897,11 +19902,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
 				}
 				else {
-					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					this.logError("proprietà di govway '"+pName+"' non definita; viene usato il default=true");
 					this.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
 				this.isAutenticazionePrincipalPortaDelegataCheckSoggettiProprietari = true;
 			}
 		}
@@ -19921,7 +19926,7 @@ public class OpenSPCoop2Properties {
 					authType = authType.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameAuth+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameAuth+"': "+e.getMessage(),e);
 			}
 			
 			String pNameRealm = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".realm";
@@ -19932,7 +19937,7 @@ public class OpenSPCoop2Properties {
 					realm = realm.trim();
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameRealm+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameRealm+"': "+e.getMessage(),e);
 			}
 			
 			WWWAuthenticateConfig wwwConfig = null;
@@ -19954,7 +19959,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 				
 				pNameErrorDescription = "org.openspcoop2.pdd.core.autenticazione.principal."+principal.getValue()+".error_description.invalid";
@@ -19969,7 +19974,7 @@ public class OpenSPCoop2Properties {
 						}
 					}
 				}catch(java.lang.Exception e) {
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pNameErrorDescription+"': "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pNameErrorDescription+"': "+e.getMessage(),e);
 				}
 				
 			}
@@ -19991,11 +19996,11 @@ public class OpenSPCoop2Properties {
 					this.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = Boolean.valueOf(value);
 				}
 				else {
-					this.logError("Proprieta' di openspcoop '"+pName+"' non definita; viene usato il default=true");
+					this.logError("proprietà di govway '"+pName+"' non definita; viene usato il default=true");
 					this.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"'; viene usato il default=true. Errore: "+e.getMessage(),e);
 				this.isAutenticazioneTokenPortaDelegataCheckSoggettiProprietari = true;
 			}
 		}
@@ -20020,7 +20025,7 @@ public class OpenSPCoop2Properties {
 					this.tipoGestoreCredenzialiPD = r;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.services.pd.gestoriCredenziali': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.services.pd.gestoriCredenziali': "+e.getMessage(),e);
 				this.tipoGestoreCredenzialiPD = null;
 			}
 			this.tipoGestoreCredenzialiPDRead = true;
@@ -20046,7 +20051,7 @@ public class OpenSPCoop2Properties {
 					this.tipoGestoreCredenzialiPA = r;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.services.pa.gestoriCredenziali': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.services.pa.gestoriCredenziali': "+e.getMessage(),e);
 				this.tipoGestoreCredenzialiPA = null;
 			}
 			this.tipoGestoreCredenzialiPARead = true;
@@ -20072,7 +20077,7 @@ public class OpenSPCoop2Properties {
 					this.tipoGestoreCredenzialiIM = r;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.services.integrationManager.gestoriCredenziali': "+e.getMessage(),e);
 				this.tipoGestoreCredenzialiIM = null;
 			}
 			this.tipoGestoreCredenzialiIMRead = true;
@@ -20108,12 +20113,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isReadObjectStatoBozza = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.registroServizi.readObjectStatoBozza' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.registroServizi.readObjectStatoBozza' non impostata, viene utilizzato il default=true");
 					this.isReadObjectStatoBozza = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.registroServizi.readObjectStatoBozza' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.registroServizi.readObjectStatoBozza' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isReadObjectStatoBozza = false;
 			}
 		}
@@ -20144,12 +20149,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTracciaturaFallita_BloccaCooperazioneInCorso = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.tracciamento.registrazioneFallita.bloccaCooperazioneInCorso' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.tracciamento.registrazioneFallita.bloccaCooperazioneInCorso' non impostata, viene utilizzato il default=true");
 					this.isTracciaturaFallita_BloccaCooperazioneInCorso = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.tracciamento.registrazioneFallita.bloccaCooperazioneInCorso' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.tracciamento.registrazioneFallita.bloccaCooperazioneInCorso' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isTracciaturaFallita_BloccaCooperazioneInCorso = true;
 			}
 		}
@@ -20173,12 +20178,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isTracciaturaFallita_BloccoServiziPdD = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.tracciamento.registrazione.bloccoServiziPdD' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.tracciamento.registrazione.bloccoServiziPdD' non impostata, viene utilizzato il default=false");
 					this.isTracciaturaFallita_BloccoServiziPdD = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.tracciamento.registrazione.bloccoServiziPdD' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.tracciamento.registrazione.bloccoServiziPdD' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isTracciaturaFallita_BloccoServiziPdD = false;
 			}
 		}
@@ -20209,12 +20214,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isRegistrazioneDiagnosticaFile_intestazione_formatValues = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.msgDiagnostici.file.header.formatValues' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.msgDiagnostici.file.header.formatValues' non impostata, viene utilizzato il default=true");
 					this.isRegistrazioneDiagnosticaFile_intestazione_formatValues = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.msgDiagnostici.file.header.formatValues' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.msgDiagnostici.file.header.formatValues' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isRegistrazioneDiagnosticaFile_intestazione_formatValues = true;
 			}
 		}
@@ -20239,12 +20244,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isRegistrazioneDiagnosticaFallita_BloccoServiziPdD = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.msgDiagnostici.emissioneFallita.bloccoServiziPdD' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.msgDiagnostici.emissioneFallita.bloccoServiziPdD' non impostata, viene utilizzato il default=false");
 					this.isRegistrazioneDiagnosticaFallita_BloccoServiziPdD = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.msgDiagnostici.emissioneFallita.bloccoServiziPdD' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.msgDiagnostici.emissioneFallita.bloccoServiziPdD' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isRegistrazioneDiagnosticaFallita_BloccoServiziPdD = false;
 			}
 		}
@@ -20263,12 +20268,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isLoggerSaajDisabilitato = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.com.sun.xml.messaging.saaj.disabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.com.sun.xml.messaging.saaj.disabled' non impostata, viene utilizzato il default=true");
 					this.isLoggerSaajDisabilitato = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.com.sun.xml.messaging.saaj.disabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.com.sun.xml.messaging.saaj.disabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isLoggerSaajDisabilitato = true;
 			}
 		}
@@ -20302,7 +20307,7 @@ public class OpenSPCoop2Properties {
 				this.getDumpBufferImplRead = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 
@@ -20326,12 +20331,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isDumpAllAttachments = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dump.allAttachments' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.dump.allAttachments' non impostata, viene utilizzato il default=true");
 					this.isDumpAllAttachments = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.registroServizi.readObjectStatoBozza' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.registroServizi.readObjectStatoBozza' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isDumpAllAttachments = true;
 			}
 		}
@@ -20356,12 +20361,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isDumpFallitoBloccaCooperazioneInCorso = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dump.registrazioneFallita.bloccaCooperazioneInCorso' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.dump.registrazioneFallita.bloccaCooperazioneInCorso' non impostata, viene utilizzato il default=false");
 					this.isDumpFallitoBloccaCooperazioneInCorso = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dump.registrazioneFallita.bloccaCooperazioneInCorso' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.dump.registrazioneFallita.bloccaCooperazioneInCorso' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isDumpFallitoBloccaCooperazioneInCorso = false;
 			}
 		}
@@ -20385,12 +20390,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isDumpFallitoBloccoServiziPdD = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dump.registrazione.bloccoServiziPdD' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.dump.registrazione.bloccoServiziPdD' non impostata, viene utilizzato il default=false");
 					this.isDumpFallitoBloccoServiziPdD = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dump.registrazione.bloccoServiziPdD' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.dump.registrazione.bloccoServiziPdD' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isDumpFallitoBloccoServiziPdD = false;
 			}
 		}
@@ -20408,7 +20413,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20425,7 +20430,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20442,7 +20447,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderErogazioniWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20459,7 +20464,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderErogazioniBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20476,7 +20481,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderFruizioniWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20493,7 +20498,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderFruizioniBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20510,7 +20515,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderErogazioniRichiestaIngressoWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20527,7 +20532,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderErogazioniRichiestaIngressoBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20544,7 +20549,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderErogazioniRichiestaUscitaWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20561,7 +20566,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderErogazioniRichiestaUscitaBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20578,7 +20583,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderErogazioniRispostaIngressoWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20595,7 +20600,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderErogazioniRispostaIngressoBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20612,7 +20617,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderErogazioniRispostaUscitaWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20629,7 +20634,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderErogazioniRispostaUscitaBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20646,7 +20651,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderFruizioniRichiestaIngressoWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20663,7 +20668,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderFruizioniRichiestaIngressoBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20680,7 +20685,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderFruizioniRichiestaUscitaWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20697,7 +20702,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderFruizioniRichiestaUscitaBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20714,7 +20719,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderFruizioniRispostaIngressoWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20731,7 +20736,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderFruizioniRispostaIngressoBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20748,7 +20753,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName);
 				initDumpList(this.getDumpHeaderFruizioniRispostaUscitaWhiteList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20765,7 +20770,7 @@ public class OpenSPCoop2Properties {
 				String tmp = this.reader.getValueConvertEnvProperties(pName); 
 				initDumpList(this.getDumpHeaderFruizioniRispostaUscitaBlackList, tmp);
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 		}
 
@@ -20837,12 +20842,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isDumpBinarioRegistrazioneDatabase = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false");
 					this.isDumpBinarioRegistrazioneDatabase = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.logger.dumpBinario.registrazioneDatabase' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isDumpBinarioRegistrazioneDatabase = false;
 			}
 		}
@@ -20887,7 +20892,7 @@ public class OpenSPCoop2Properties {
 				this.getDumpBinarioRepository = new File(name);
 				checkDumpBinarioRepository();
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -20926,11 +20931,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getDumpNonRealtimeInMemoryThreshold = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.inMemory.threshold' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_NON_REALTIME_THRESHOLD);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.dump.nonRealTime.inMemory.threshold' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_NON_REALTIME_THRESHOLD);
 					this.getDumpNonRealtimeInMemoryThreshold = CostantiPdD.DUMP_NON_REALTIME_THRESHOLD;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.inMemory.threshold' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_NON_REALTIME_THRESHOLD+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.dump.nonRealTime.inMemory.threshold' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_NON_REALTIME_THRESHOLD+", errore:"+e.getMessage(),e);
 				this.getDumpNonRealtimeInMemoryThreshold = CostantiPdD.DUMP_NON_REALTIME_THRESHOLD;
 			}  
 		}
@@ -20953,11 +20958,11 @@ public class OpenSPCoop2Properties {
 					}
 					this.getDumpNonRealtimeMode = name;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.mode' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.dump.nonRealTime.mode' non impostata, viene utilizzato il default="+CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO);
 					this.getDumpNonRealtimeMode = CostantiPdD.DUMP_NON_REALTIME_MODE_AUTO;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop ''org.openspcoop2.pdd.dump.nonRealTime.mode' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway ''org.openspcoop2.pdd.dump.nonRealTime.mode' non impostata, errore:"+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}  
 			
@@ -21002,7 +21007,7 @@ public class OpenSPCoop2Properties {
 				this.getDumpNonRealtimeRepository = new File(name);
 				checkDumpNonRealtimeRepository();
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.msgRepository': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.dump.nonRealTime.msgRepository': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -21037,12 +21042,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isDumpNonRealtimeThrowStreamingHandlerException = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.throwStreamingHandlerException' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.dump.nonRealTime.throwStreamingHandlerException' non impostata, viene utilizzato il default=true");
 					this.isDumpNonRealtimeThrowStreamingHandlerException = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.dump.nonRealTime.throwStreamingHandlerException' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.dump.nonRealTime.throwStreamingHandlerException' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isDumpNonRealtimeThrowStreamingHandlerException = true;
 			}
 		}
@@ -21074,7 +21079,7 @@ public class OpenSPCoop2Properties {
 					this.tipoIDManager = CostantiConfigurazione.NONE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.idGenerator': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.idGenerator': "+e.getMessage(),e);
 				this.tipoIDManager = CostantiConfigurazione.NONE;
 			}    
 		}
@@ -21119,7 +21124,7 @@ public class OpenSPCoop2Properties {
 				initIDManagerParameters(value);
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			this.listIDManagerParametersRead = true;
 		}
@@ -21158,12 +21163,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getIDManagerBufferSize = Integer.parseInt(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=-1");
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default=-1");
 					this.getIDManagerBufferSize = -1;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=-1, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default=-1, errore:"+e.getMessage(),e);
 				this.getIDManagerBufferSize = -1;
 			}
 		}
@@ -21200,7 +21205,7 @@ public class OpenSPCoop2Properties {
 					this.generazioneDateCasualiLogAbilitato = false; //default, anche senza che sia definita la proprieta'
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.generazioneDateCasuali.enabled' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.generazioneDateCasuali.enabled' non impostata correttamente,  errore:"+e.getMessage(),e);
 				this.generazioneDateCasualiLogAbilitato = false;
 			}    
 		}
@@ -21251,10 +21256,10 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.openspcoop2MessageFactory = v;
 				} else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messagefactory' non impostata, viene utilizzato il default="+OpenSPCoop2MessageFactory.messageFactoryImpl);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messagefactory' non impostata, viene utilizzato il default="+OpenSPCoop2MessageFactory.messageFactoryImpl);
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messagefactory' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.messagefactory' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		this.openspcoop2MessageFactoryRead = true;
@@ -21272,10 +21277,10 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.messageSecurityContext = v;
 				} else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.context' non impostata, viene utilizzato il default="+MessageSecurityFactory.messageSecurityContextImplClass);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.context' non impostata, viene utilizzato il default="+MessageSecurityFactory.messageSecurityContextImplClass);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.context' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.context' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		this.messageSecurityContextRead = true;
@@ -21293,10 +21298,10 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.messageSecurityDigestReader = v;
 				} else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.digestReader' non impostata, viene utilizzato il default="+MessageSecurityFactory.messageSecurityDigestReaderImplClass);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.digestReader' non impostata, viene utilizzato il default="+MessageSecurityFactory.messageSecurityDigestReaderImplClass);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.digestReader' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.digestReader' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		this.messageSecurityDigestReaderRead = true;
@@ -21314,11 +21319,11 @@ public class OpenSPCoop2Properties {
 					this.printInfoFactory = Boolean.parseBoolean(v);
 				} 
 				else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messagefactory.printInfo' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messagefactory.printInfo' non impostata, viene utilizzato il default="+true);
 					this.printInfoFactory = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messagefactory.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.messagefactory.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.printInfoFactory;
@@ -21335,11 +21340,11 @@ public class OpenSPCoop2Properties {
 					this.printInfoMessageSecurity = Boolean.parseBoolean(v);
 				} 
 				else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.printInfo' non impostata, viene utilizzato il default="+true);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.printInfo' non impostata, viene utilizzato il default="+true);
 					this.printInfoMessageSecurity = true;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.messageSecurity.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.messageSecurity.printInfo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.printInfoMessageSecurity;
@@ -21363,7 +21368,7 @@ public class OpenSPCoop2Properties {
 					this.freeMemoryLog = false;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.freememorylog' non impostata correttamente. Assumo valore di default 'false'.");
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.freememorylog' non impostata correttamente. Assumo valore di default 'false'.");
 				this.freeMemoryLog = false;
 			} 
 		}
@@ -21386,7 +21391,7 @@ public class OpenSPCoop2Properties {
 					this.defaultProtocolName = this.defaultProtocolName.trim();
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.services.defaultProtocol' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.services.defaultProtocol' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.defaultProtocolName;
@@ -21411,7 +21416,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSoggettiVirtualiEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isSoggettiVirtualiEnabled = false;
 			}    
 		}
@@ -21429,13 +21434,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.protocolNotSupported.generateErrorMessage");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.protocolNotSupported.generateErrorMessage' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.protocolNotSupported.generateErrorMessage' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isGenerazioneErroreProtocolloNonSupportato = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.protocolNotSupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.protocolNotSupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreProtocolloNonSupportato = false;
 			}    
 		}
@@ -21455,13 +21460,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.pd.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataEnabled = true;
 			}    
 		}
@@ -21476,13 +21481,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.pdToSoap.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaDelegataImbustamentoSOAPEnabled = true;
 			}    
 		}
@@ -21497,13 +21502,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.pa.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedPortaApplicativaEnabled = true;
 			}    
 		}
@@ -21518,13 +21523,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.im.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedIntegrationManagerEnabled = true;
 			}    
 		}
@@ -21539,13 +21544,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.check.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedCheckEnabled = true;
 			}    
 		}
@@ -21560,13 +21565,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxy.httpMethodUnsupported.generateErrorMessage': "+e.getMessage(),e);
 				this.isGenerazioneErroreHttpMethodUnsupportedProxyEnabled = true;
 			}    
 		}
@@ -21586,13 +21591,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.pd.generateWsdl");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pd.generateWsdl' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.pd.generateWsdl' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isGenerazioneWsdlPortaDelegataEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pd.generateWsdl': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.pd.generateWsdl': "+e.getMessage(),e);
 				this.isGenerazioneWsdlPortaDelegataEnabled = false;
 			}    
 		}
@@ -21607,13 +21612,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.pa.generateWsdl");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.pa.generateWsdl' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.pa.generateWsdl' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isGenerazioneWsdlPortaApplicativaEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.pa.generateWsdl': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.pa.generateWsdl': "+e.getMessage(),e);
 				this.isGenerazioneWsdlPortaApplicativaEnabled = false;
 			}    
 		}
@@ -21628,13 +21633,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.im.generateWsdl");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.im.generateWsdl' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.im.generateWsdl' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isGenerazioneWsdlIntegrationManagerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.im.generateWsdl': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.im.generateWsdl': "+e.getMessage(),e);
 				this.isGenerazioneWsdlIntegrationManagerEnabled = true;
 			}    
 		}
@@ -21654,13 +21659,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.check.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.check.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.check.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isCheckEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.check.enabled': "+e.getMessage(),e);
 				this.isCheckEnabled = true;
 			}    
 		}
@@ -21682,7 +21687,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckHealthCheckApiRestEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isCheckHealthCheckApiRestEnabled = false;
 			}    
 		}
@@ -21703,7 +21708,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getCheckHealthCheckApiRestEndpoint = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getCheckHealthCheckApiRestEndpoint = null;
 			}    
 		}
@@ -21725,7 +21730,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckHealthCheckApiSoapEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isCheckHealthCheckApiSoapEnabled = false;
 			}    
 		}
@@ -21746,7 +21751,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getCheckHealthCheckApiSoapEndpoint = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getCheckHealthCheckApiSoapEndpoint = null;
 			}    
 		}
@@ -21768,7 +21773,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckHealthCheckStatsEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isCheckHealthCheckStatsEnabled = false;
 			}    
 		}
@@ -21790,7 +21795,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckHealthCheckStatsHourlyEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isCheckHealthCheckStatsHourlyEnabled = false;
 			}    
 		}
@@ -21812,7 +21817,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getCheckHealthCheckStatsHourlyThreshold = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getCheckHealthCheckStatsHourlyThreshold = -1;
 			}    
 		}
@@ -21835,7 +21840,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckHealthCheckStatsDailyEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isCheckHealthCheckStatsDailyEnabled = false;
 			}    
 		}
@@ -21857,7 +21862,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getCheckHealthCheckStatsDailyThreshold = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getCheckHealthCheckStatsDailyThreshold = -1;
 			}    
 		}
@@ -21879,7 +21884,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckHealthCheckStatsWeeklyEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isCheckHealthCheckStatsWeeklyEnabled = false;
 			}    
 		}
@@ -21901,7 +21906,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getCheckHealthCheckStatsWeeklyThreshold = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getCheckHealthCheckStatsWeeklyThreshold = -1;
 			}    
 		}
@@ -21925,7 +21930,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isCheckHealthCheckStatsMonthlyEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isCheckHealthCheckStatsMonthlyEnabled = false;
 			}    
 		}
@@ -21947,7 +21952,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getCheckHealthCheckStatsMonthlyThreshold = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getCheckHealthCheckStatsMonthlyThreshold = -1;
 			}    
 		}
@@ -21962,13 +21967,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.check.readJMXResources.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.check.readJMXResources.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isCheckReadJMXResourcesEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.check.readJMXResources.enabled': "+e.getMessage(),e);
 				this.isCheckReadJMXResourcesEnabled = false;
 			}    
 		}
@@ -21989,7 +21994,7 @@ public class OpenSPCoop2Properties {
 				this.getCheckReadJMXResourcesUsernameRead = true;
 				this.getCheckReadJMXResourcesUsername = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.username': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.check.readJMXResources.username': "+e.getMessage(),e);
 			}    
 		}
 		return this.getCheckReadJMXResourcesUsername;
@@ -22008,7 +22013,7 @@ public class OpenSPCoop2Properties {
 				this.getCheckReadJMXResourcesPasswordRead = true;
 				this.getCheckReadJMXResourcesPassword = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.check.readJMXResources.password': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.check.readJMXResources.password': "+e.getMessage(),e);
 			}    
 		}
 		return this.getCheckReadJMXResourcesPassword;
@@ -22022,13 +22027,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isProxyReadJMXResourcesEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.enabled': "+e.getMessage(),e);
 				this.isProxyReadJMXResourcesEnabled = false;
 			}    
 		}
@@ -22043,13 +22048,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.proxyJMXResources.asyncUpdate");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isProxyReadJMXResourcesAsyncProcessByTimer = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate': "+e.getMessage(),e);
 				this.isProxyReadJMXResourcesAsyncProcessByTimer = false;
 			}    
 		}
@@ -22070,7 +22075,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClassRead = true;
 				this.getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClass = name;
 			} catch(java.lang.Exception e) {
-				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.serviceClass': "+e.getMessage(),e);
+				this.logWarn("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.serviceClass': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesAsyncProcessByTimerServiceImplClass;
@@ -22090,7 +22095,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isProxyReadJMXResourcesAsyncProcessByTimerDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isProxyReadJMXResourcesAsyncProcessByTimerDebug = true;
 			}    
 		}
@@ -22111,7 +22116,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesAsyncProcessByTimerHostnameRead = true;
 				this.getProxyReadJMXResourcesAsyncProcessByTimerHostname = name;
 			} catch(java.lang.Exception e) {
-				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.hostname': "+e.getMessage(),e);
+				this.logWarn("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.hostname': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesAsyncProcessByTimerHostname;
@@ -22130,7 +22135,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesAsyncProcessByTimerSchemaRead = true;
 				this.getProxyReadJMXResourcesAsyncProcessByTimerSchema = name;
 			} catch(java.lang.Exception e) {
-				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.schema': "+e.getMessage(),e);
+				this.logWarn("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.schema': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesAsyncProcessByTimerSchema;
@@ -22149,7 +22154,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getProxyReadJMXResourcesAsyncProcessByTimerPortRead = true;
 			} catch(java.lang.Exception e) {
-				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.port': "+e.getMessage(),e);
+				this.logWarn("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.port': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesAsyncProcessByTimerPort;
@@ -22167,11 +22172,11 @@ public class OpenSPCoop2Properties {
 					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval = Integer.valueOf(name);
 				}
 				else {
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.checkInterval' non impostata, viene utilizzato il default=60");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.checkInterval' non impostata, viene utilizzato il default=60");
 					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval = 60;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.checkInterval': "+e.getMessage()+". Viene utilizzato il default=60",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.checkInterval': "+e.getMessage()+". Viene utilizzato il default=60",e);
 				this.getProxyReadJMXResourcesAsyncProcessByTimerCheckInterval = 60;
 			}
 			this.getProxyReadJMXResourcesAsyncProcessByTimerCheckIntervalRead = true;
@@ -22191,11 +22196,11 @@ public class OpenSPCoop2Properties {
 					this.getProxyReadJMXResourcesAsyncProcessByTimerLimit = Integer.valueOf(name);
 				}
 				else {
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.limit' non impostata, viene utilizzato il default=100");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.limit' non impostata, viene utilizzato il default=100");
 					this.getProxyReadJMXResourcesAsyncProcessByTimerLimit = 100;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.limit': "+e.getMessage()+". Viene utilizzato il default=100",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.limit': "+e.getMessage()+". Viene utilizzato il default=100",e);
 				this.getProxyReadJMXResourcesAsyncProcessByTimerLimit = 100;
 			}
 			this.getProxyReadJMXResourcesAsyncProcessByTimerLimitRead = true;
@@ -22215,11 +22220,11 @@ public class OpenSPCoop2Properties {
 					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval = Integer.valueOf(name);
 				}
 				else {
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.checkInterval' non impostata, viene utilizzato il default=3600");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.checkInterval' non impostata, viene utilizzato il default=3600");
 					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval = 3600;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.checkInterval': "+e.getMessage()+". Viene utilizzato il default=3600",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.checkInterval': "+e.getMessage()+". Viene utilizzato il default=3600",e);
 				this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordInterval = 3600;
 			}
 			this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordIntervalRead = true;
@@ -22239,11 +22244,11 @@ public class OpenSPCoop2Properties {
 					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutes = Integer.valueOf(name);
 				}
 				else {
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.olderThanMinutes' non impostata, viene utilizzato il default=60");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.olderThanMinutes' non impostata, viene utilizzato il default=60");
 					this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutes = 60;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.olderThanMinutes': "+e.getMessage()+". Viene utilizzato il default=60",e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.asyncUpdate.historyCleaning.olderThanMinutes': "+e.getMessage()+". Viene utilizzato il default=60",e);
 				this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutes = 60;
 			}
 			this.getProxyReadJMXResourcesAsyncProcessByTimerCheckOldRecordDeleteOlderThanMinutesRead = true;
@@ -22264,7 +22269,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesSchemaRead = true;
 				this.getProxyReadJMXResourcesSchema = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.schema': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.schema': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesSchema;
@@ -22283,7 +22288,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getProxyReadJMXResourcesPortRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.port': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.port': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesPort;
@@ -22299,7 +22304,7 @@ public class OpenSPCoop2Properties {
 				return Integer.valueOf(name);
 			}
 		} catch(java.lang.Exception e) {
-			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.port."+hostname+"': "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.port."+hostname+"': "+e.getMessage(),e);
 		}    
 		return null;
 	}
@@ -22317,7 +22322,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesUsernameRead = true;
 				this.getProxyReadJMXResourcesUsername = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.username': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.username': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesUsername;
@@ -22336,7 +22341,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesPasswordRead = true;
 				this.getProxyReadJMXResourcesPassword = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.password': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.password': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesPassword;
@@ -22356,7 +22361,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isProxyReadJMXResourcesHttpsEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isProxyReadJMXResourcesHttpsEnabled = false;
 			}    
 		}
@@ -22378,7 +22383,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isProxyReadJMXResourcesHttpsEnabledVerificaHostName = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isProxyReadJMXResourcesHttpsEnabledVerificaHostName = true;
 			}    
 		}
@@ -22400,7 +22405,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isProxyReadJMXResourcesHttpsEnabledAutenticazioneServer = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isProxyReadJMXResourcesHttpsEnabledAutenticazioneServer = true;
 			}    
 		}
@@ -22425,7 +22430,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePathRead = true;
 				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePath = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePath;
@@ -22448,7 +22453,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreTypeRead = true;
 				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreType = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststoreType;
@@ -22471,7 +22476,7 @@ public class OpenSPCoop2Properties {
 				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePasswordRead = true;
 				this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePassword = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesHttpsEnabledAutenticazioneServerTruststorePassword;
@@ -22491,7 +22496,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getProxyReadJMXResourcesConnectionTimeout = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.connection.timeout': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.connection.timeout': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesConnectionTimeout;
@@ -22511,7 +22516,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getProxyReadJMXResourcesReadTimeout = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.proxyJMXResources.readConnection.timeout': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.proxyJMXResources.readConnection.timeout': "+e.getMessage(),e);
 			}    
 		}
 		return this.getProxyReadJMXResourcesReadTimeout;
@@ -22529,13 +22534,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.datasource.useDSUtils");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.datasource.useDSUtils' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.datasource.useDSUtils' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isDSOp2UtilsEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.datasource.useDSUtils': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.datasource.useDSUtils': "+e.getMessage(),e);
 				this.isDSOp2UtilsEnabled = false;
 			}    
 		}
@@ -22561,7 +22566,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isDataSourceGetConnectionCheckAutoCommitDisabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isDataSourceGetConnectionCheckAutoCommitDisabled = true;
 			}    
 		}
@@ -22583,7 +22588,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isDataSourceGetConnectionCheckTransactionIsolationLevel = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isDataSourceGetConnectionCheckTransactionIsolationLevel = true;
 			}    
 		}
@@ -22605,7 +22610,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getDataSourceGetConnectionCheckTransactionIsolationLevelExpected = Connection.TRANSACTION_READ_COMMITTED;
 			}    
 		}
@@ -22629,12 +22634,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isNotifierInputStreamEnabled = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.notifierInputStream.enabled' non impostata, viene utilizzato il default=false");
 					this.isNotifierInputStreamEnabled = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.enabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.notifierInputStream.enabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isNotifierInputStreamEnabled = false;
 			}
 		}
@@ -22653,8 +22658,8 @@ public class OpenSPCoop2Properties {
 				}
 				this.notifierInputStreamCallbackRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage(),e);
-				throw new CoreException("Proprieta' di openspcoop 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new CoreException("proprietà di govway 'org.openspcoop2.pdd.notifierInputStream.tipo' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.notifierInputStreamCallback;
@@ -22675,8 +22680,8 @@ public class OpenSPCoop2Properties {
 				}
 				this.pipedUnblockedStreamClassNameRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
-				throw new CoreException("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new CoreException("proprietà di govway '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.pipedUnblockedStreamClassName;
@@ -22698,12 +22703,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isFormUrlEncodedFilterEnabled = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.formUrlEncodedFilter.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.formUrlEncodedFilter.enabled' non impostata, viene utilizzato il default=false");
 					this.isFormUrlEncodedFilterEnabled = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.formUrlEncodedFilter.enabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.formUrlEncodedFilter.enabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isFormUrlEncodedFilterEnabled = false;
 			}
 		}
@@ -22757,12 +22762,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getSemaphoreTimeoutMS = Long.parseLong(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=-1");
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default=-1");
 					this.getSemaphoreTimeoutMS = -1l;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=1-, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default=1-, errore:"+e.getMessage(),e);
 				this.getSemaphoreTimeoutMS = -1l;
 			}
 		}
@@ -22851,6 +22856,120 @@ public class OpenSPCoop2Properties {
 	
 	
 	
+	/* ------------- Channel ---------------------*/
+	
+	private Boolean isEnabledPDChannelNIODefault = null;
+	public boolean isEnabledPDChannelNIODefault() {	
+		if(this.isEnabledPDChannelNIODefault==null){
+			String pName = "org.openspcoop2.pdd.channel.pd.default";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null && StringUtils.isNotEmpty(name.trim())){
+					name = name.trim();
+					parsePDChannelNIODefault(name);
+				}
+				else {
+					this.isEnabledPDChannelNIODefault = false;
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				this.isEnabledPDChannelNIODefault = false;
+			}    
+		}
+
+		return this.isEnabledPDChannelNIODefault;
+	}
+	private void parsePDChannelNIODefault(String name) throws UtilsException {
+		if(CostantiPdD.GOVWAY_CHANNEL_NIO.equalsIgnoreCase(name)) {
+			this.isEnabledPDChannelNIODefault = true;
+			if(!this.isNIOEnabled()) {
+				throw new UtilsException("NIO pd channel value uncorrect: NIO isnt' enabled");
+			}
+		}
+		else if(CostantiPdD.GOVWAY_CHANNEL_BIO.equalsIgnoreCase(name)) {
+			this.isEnabledPDChannelNIODefault = false;
+		}
+		else {
+			throw new UtilsException("Unknown pd channel value '"+name+"'");
+		}
+	}
+	
+	private Boolean isEnabledPDtoSoapChannelNIODefault = null;
+	public boolean isEnabledPDtoSoapChannelNIODefault() {	
+		if(this.isEnabledPDtoSoapChannelNIODefault==null){
+			String pName = "org.openspcoop2.pdd.channel.pdToSoap.default";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null && StringUtils.isNotEmpty(name.trim())){
+					name = name.trim();
+					parsePDtoSoapChannelNIODefault(name);
+				}
+				else {
+					this.isEnabledPDtoSoapChannelNIODefault = false;
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				this.isEnabledPDtoSoapChannelNIODefault = false;
+			}    
+		}
+
+		return this.isEnabledPDtoSoapChannelNIODefault;
+	}
+	private void parsePDtoSoapChannelNIODefault(String name) throws UtilsException {
+		if(CostantiPdD.GOVWAY_CHANNEL_NIO.equalsIgnoreCase(name)) {
+			this.isEnabledPDtoSoapChannelNIODefault = true;
+			if(!this.isNIOEnabled()) {
+				throw new UtilsException("NIO pdToSoap channel value uncorrect: NIO isnt' enabled");
+			}
+		}
+		else if(CostantiPdD.GOVWAY_CHANNEL_BIO.equalsIgnoreCase(name)) {
+			this.isEnabledPDtoSoapChannelNIODefault = false;
+		}
+		else {
+			throw new UtilsException("Unknown pdToSoap channel value '"+name+"'");
+		}
+	}
+	
+	private Boolean isEnabledPAChannelNIODefault = null;
+	public boolean isEnabledPAChannelNIODefault() {	
+		if(this.isEnabledPAChannelNIODefault==null){
+			String pName = "org.openspcoop2.pdd.channel.pa.default";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null && StringUtils.isNotEmpty(name.trim())){
+					name = name.trim();
+					parsePAChannelNIODefault(name);
+				}
+				else {
+					this.isEnabledPAChannelNIODefault = false;
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				this.isEnabledPAChannelNIODefault = false;
+			}    
+		}
+
+		return this.isEnabledPAChannelNIODefault;
+	}
+	private void parsePAChannelNIODefault(String name) throws UtilsException {
+		if(CostantiPdD.GOVWAY_CHANNEL_NIO.equalsIgnoreCase(name)) {
+			this.isEnabledPAChannelNIODefault = true;
+			if(!this.isNIOEnabled()) {
+				throw new UtilsException("NIO pa channel value uncorrect: NIO isnt' enabled");
+			}
+		}
+		else if(CostantiPdD.GOVWAY_CHANNEL_BIO.equalsIgnoreCase(name)) {
+			this.isEnabledPAChannelNIODefault = false;
+		}
+		else {
+			throw new UtilsException("Unknown pa channel value '"+name+"'");
+		}
+	}
+	
+	
 
 	/* ------------- Custom Function ---------------------*/
 	
@@ -22861,13 +22980,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.function.pd.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.function.pd.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.function.pd.enabled' non impostata, viene utilizzato il default=false");
 					name="true";
 				}
 				name = name.trim();
 				this.isEnabledFunctionPD = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pd.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.function.pd.enabled': "+e.getMessage(),e);
 				this.isEnabledFunctionPD = false;
 			}    
 		}
@@ -22882,13 +23001,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.function.pdToSoap.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.function.pdToSoap.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.function.pdToSoap.enabled' non impostata, viene utilizzato il default=false");
 					name="true";
 				}
 				name = name.trim();
 				this.isEnabledFunctionPDtoSOAP = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pdToSoap.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.function.pdToSoap.enabled': "+e.getMessage(),e);
 				this.isEnabledFunctionPDtoSOAP = false;
 			}    
 		}
@@ -22903,13 +23022,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.function.pa.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.function.pa.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.function.pa.enabled' non impostata, viene utilizzato il default=false");
 					name="true";
 				}
 				name = name.trim();
 				this.isEnabledFunctionPA = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.function.pa.enabled': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.function.pa.enabled': "+e.getMessage(),e);
 				this.isEnabledFunctionPA = false;
 			}    
 		}
@@ -23045,7 +23164,7 @@ public class OpenSPCoop2Properties {
 					this.realContainerCustom = v;
 				} 
 			} catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.realmContainer.custom' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.realmContainer.custom' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		this.realContainerCustomRead = true;
@@ -23141,11 +23260,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getStartupLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
 					this.getStartupLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
 				this.getStartupLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}
 			if(this.getStartupLockMaxLife!=null && this.getStartupLockMaxLife>0) {
@@ -23171,11 +23290,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getStartupLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
 					this.getStartupLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.startup.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.startup.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
 				this.getStartupLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			}
 			if(this.getStartupLockIdleTime!=null && this.getStartupLockIdleTime>0) {
@@ -23203,12 +23322,12 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.getStartupGetLockAttesaAttiva = time*1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
 					this.getStartupGetLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.getStartupGetLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
@@ -23229,11 +23348,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.getStartupGetLockCheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
 					this.getStartupGetLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.getStartupGetLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
@@ -23256,8 +23375,8 @@ public class OpenSPCoop2Properties {
 					this.extendedInfoConfigurazioneRead = true;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
-				throw new CoreException("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new CoreException("proprietà di govway '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.extendedInfoConfigurazione;
@@ -23275,8 +23394,8 @@ public class OpenSPCoop2Properties {
 					this.extendedInfoPortaDelegataRead = true;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
-				throw new CoreException("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new CoreException("proprietà di govway '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.extendedInfoPortaDelegata;
@@ -23294,8 +23413,8 @@ public class OpenSPCoop2Properties {
 					this.extendedInfoPortaApplicativaRead = true;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
-				throw new CoreException("Proprieta' di openspcoop '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
+				throw new CoreException("proprietà di govway '"+pName+"' non impostata correttamente,  errore:"+e.getMessage(),e);
 			} 
 		}
 		return this.extendedInfoPortaApplicativa;
@@ -23320,12 +23439,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isValidazioneContenutiApplicativiDebug = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.debug' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.debug' non impostata, viene utilizzato il default=false");
 					this.isValidazioneContenutiApplicativiDebug = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.debug' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.debug' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isValidazioneContenutiApplicativiDebug = false;
 			}
 		}
@@ -23419,12 +23538,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione' non impostata, viene utilizzato il default=true");
 					this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.gestione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione = true;
 			}
 		}
@@ -23443,12 +23562,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione' non impostata, viene utilizzato il default=true");
 					this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.rpcLiteral.xsiType.ripulituraDopoValidazione' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isValidazioneContenutiApplicativiRpcLiteralXsiTypeRipulituraDopoValidazione = true;
 			}
 		}
@@ -23567,12 +23686,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isValidazioneContenutiApplicativiCheckSoapAction = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check' non impostata, viene utilizzato il default=true");
 					this.isValidazioneContenutiApplicativiCheckSoapAction = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.soapAction.check' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isValidazioneContenutiApplicativiCheckSoapAction = true;
 			}
 		}
@@ -23591,12 +23710,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties = ADDITIONAL.valueOf(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties' non impostata, viene utilizzato il default");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties' non impostata, viene utilizzato il default");
 					this.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties = ADDITIONAL.DEFAULT;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties' con un valore non ammesso (valori consentiti: "+ADDITIONAL.DEFAULT.name()+","+ADDITIONAL.IF_NULL_DISABLE+","+ADDITIONAL.FORCE_DISABLE+"), viene utilizzato il default, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.json.additionalProperties' con un valore non ammesso (valori consentiti: "+ADDITIONAL.DEFAULT.name()+","+ADDITIONAL.IF_NULL_DISABLE+","+ADDITIONAL.FORCE_DISABLE+"), viene utilizzato il default, errore:"+e.getMessage(),e);
 				this.getValidazioneContenutiApplicativiJsonPolicyAdditionalProperties = ADDITIONAL.DEFAULT;
 			}
 		}
@@ -23616,12 +23735,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getValidazioneContenutiApplicativiOpenApiJsonValidator = ApiName.valueOf(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator' non impostata, viene utilizzato il default "+ApiName.NETWORK_NT);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator' non impostata, viene utilizzato il default "+ApiName.NETWORK_NT);
 					this.getValidazioneContenutiApplicativiOpenApiJsonValidator = ApiName.NETWORK_NT;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator' con un valore non ammesso (valori consentiti: "+ApiName.NETWORK_NT.name()+","+ApiName.FGE+"), viene utilizzato il default, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.json.validator' con un valore non ammesso (valori consentiti: "+ApiName.NETWORK_NT.name()+","+ApiName.FGE+"), viene utilizzato il default, errore:"+e.getMessage(),e);
 				this.getValidazioneContenutiApplicativiOpenApiJsonValidator = ApiName.NETWORK_NT;
 			}
 		}
@@ -24160,7 +24279,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostate, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostate, errore:"+e.getMessage(),e);
 			}
 			this.yamlSnakeLimits_read=true;
 		}
@@ -24239,12 +24358,12 @@ public class OpenSPCoop2Properties {
 					MessageDigest.getInstance(value); // valida
 					this.getCachingResponseDigestAlgorithm = value;
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cachingResponse.digestAlgorithm' non impostata, viene utilizzato il default="+CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.cachingResponse.digestAlgorithm' non impostata, viene utilizzato il default="+CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM);
 					this.getCachingResponseDigestAlgorithm = CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.cachingResponse.digestAlgorithm' non impostata, viene utilizzato il default="+CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.cachingResponse.digestAlgorithm' non impostata, viene utilizzato il default="+CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM+", errore:"+e.getMessage(),e);
 				this.getCachingResponseDigestAlgorithm = CostantiPdD.RESPONSE_CACHE_REQUEST_DIGEST_DEFAULT_ALGORITHM;
 			}
 		}
@@ -24268,7 +24387,7 @@ public class OpenSPCoop2Properties {
 				this.getCachingResponseHeaderCacheKey_read = true;
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop 'org.openspcoop2.pdd.cachingResponse.header.cacheKey', errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway 'org.openspcoop2.pdd.cachingResponse.header.cacheKey', errore:"+e.getMessage(),e);
 				
 			}
 		}
@@ -24375,7 +24494,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneTokenDynamicDiscoveryLockPermitsRead = true;
@@ -24404,7 +24523,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneTokenValidazioneJWTLockPermitsRead = true;
@@ -24433,7 +24552,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneTokenIntrospectionLockPermitsRead = true;
@@ -24462,7 +24581,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneTokenUserInfoLockPermitsRead = true;
@@ -24536,7 +24655,7 @@ public class OpenSPCoop2Properties {
 					this.getGestioneTokenIatTimeCheckMilliseconds = minuti * 60l * 1000l;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}
 			
@@ -24564,7 +24683,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}
 			
@@ -24617,7 +24736,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}
 			
@@ -24666,12 +24785,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isGestioneTokenSaveSourceTokenInfo = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.saveSourceTokenInfo' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.gestioneToken.saveSourceTokenInfo' non impostata, viene utilizzato il default=false");
 					this.isGestioneTokenSaveSourceTokenInfo = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.saveSourceTokenInfo' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.gestioneToken.saveSourceTokenInfo' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isGestioneTokenSaveSourceTokenInfo = false;
 			}
 		}
@@ -24793,7 +24912,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.date.format' non impostata, errore:"+e.getMessage();
+				String msg = "proprietà di govway 'org.openspcoop2.pdd.gestioneToken.forward.date.format' non impostata, errore:"+e.getMessage();
 				this.logError(msg,e);
 				throw new CoreException(msg);
 			}
@@ -24819,7 +24938,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.jsonHeader' non impostata, errore:"+e.getMessage();
+				String msg = "proprietà di govway 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.jsonHeader' non impostata, errore:"+e.getMessage();
 				this.logError(msg,e);
 				throw new CoreException(msg);
 			}
@@ -24843,7 +24962,7 @@ public class OpenSPCoop2Properties {
 				}
 
 			}catch(java.lang.Exception e) {
-				String msg = "Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.jwsHeader' non impostata, errore:"+e.getMessage();
+				String msg = "proprietà di govway 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.jwsHeader' non impostata, errore:"+e.getMessage();
 				this.logError(msg,e);
 				throw new CoreException(msg);
 			}
@@ -25074,12 +25193,12 @@ public class OpenSPCoop2Properties {
 					}
 					this.gestioneTokenHeaderIntegrazioneTrasportoAudienceSeparator = value.charAt(0);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.audience.separator' non impostata, viene utilizzato il default=,");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.audience.separator' non impostata, viene utilizzato il default=,");
 					this.gestioneTokenHeaderIntegrazioneTrasportoAudienceSeparator = ',';
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.audience.separator' non impostata, viene utilizzato il default=, ; errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.audience.separator' non impostata, viene utilizzato il default=, ; errore:"+e.getMessage(),e);
 				this.gestioneTokenHeaderIntegrazioneTrasportoAudienceSeparator = ',';
 			}
 		}
@@ -25101,12 +25220,12 @@ public class OpenSPCoop2Properties {
 					}
 					this.gestioneTokenHeaderIntegrazioneTrasportoScopeSeparator = value.charAt(0);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.scopes.separator' non impostata, viene utilizzato il default=,");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.scopes.separator' non impostata, viene utilizzato il default=,");
 					this.gestioneTokenHeaderIntegrazioneTrasportoScopeSeparator = ',';
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.scopes.separator' non impostata, viene utilizzato il default=, ; errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.scopes.separator' non impostata, viene utilizzato il default=, ; errore:"+e.getMessage(),e);
 				this.gestioneTokenHeaderIntegrazioneTrasportoScopeSeparator = ',';
 			}
 		}
@@ -25128,12 +25247,12 @@ public class OpenSPCoop2Properties {
 					}
 					this.gestioneTokenHeaderIntegrazioneTrasportoRoleSeparator = value.charAt(0);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.roles.separator' non impostata, viene utilizzato il default=,");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.roles.separator' non impostata, viene utilizzato il default=,");
 					this.gestioneTokenHeaderIntegrazioneTrasportoRoleSeparator = ',';
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.roles.separator' non impostata, viene utilizzato il default=, ; errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.gestioneToken.forward.trasporto.roles.separator' non impostata, viene utilizzato il default=, ; errore:"+e.getMessage(),e);
 				this.gestioneTokenHeaderIntegrazioneTrasportoRoleSeparator = ',';
 			}
 		}
@@ -25471,7 +25590,7 @@ public class OpenSPCoop2Properties {
 				this.isGestioneRetrieveToken_debug_read=true;
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default='Utilizzo dell'impostazione del connettore', errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default='Utilizzo dell'impostazione del connettore', errore:"+e.getMessage(),e);
 				this.isGestioneRetrieveToken_debug = false;
 			}
 		}
@@ -25499,7 +25618,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneRetrieveTokenLockPermitsRead = true;
@@ -25525,7 +25644,7 @@ public class OpenSPCoop2Properties {
 				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_read=true;
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent = null;
 			}
 		}
@@ -25550,7 +25669,7 @@ public class OpenSPCoop2Properties {
 				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_read=true;
 
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"' non impostata, errore:"+e.getMessage(),e);
 				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds = null;
 			}
 		}
@@ -25962,7 +26081,7 @@ public class OpenSPCoop2Properties {
 				
 				
 			}catch(java.lang.Exception e) {
-				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				this.logError("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
 			}
 			
 			this.getGestioneAttributeAuthorityLockPermitsRead = true;
@@ -26067,12 +26186,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isStatisticheViaJmx = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jmx.statistiche' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.jmx.statistiche' non impostata, viene utilizzato il default=false");
 					this.isStatisticheViaJmx = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jmx.statistiche' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.jmx.statistiche' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
 				this.isStatisticheViaJmx = false;
 			}
 		}
@@ -26567,12 +26686,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isSOAPServicesUrlParametersForward = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.forward.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.soap.urlParameters.forward.enable' non impostata, viene utilizzato il default=true");
 					this.isSOAPServicesUrlParametersForward = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.soap.urlParameters.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isSOAPServicesUrlParametersForward = true;
 			}
 		}
@@ -26599,7 +26718,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListInternalUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.blackList.internal': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.urlParameters.blackList.internal': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26625,7 +26744,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.blackList': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.urlParameters.blackList': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26651,7 +26770,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesWhiteListUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.urlParameters.whiteList': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.urlParameters.whiteList': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26712,12 +26831,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isSOAPServicesHeadersForward = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.forward.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.soap.headers.forward.enable' non impostata, viene utilizzato il default=true");
 					this.isSOAPServicesHeadersForward = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.soap.headers.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isSOAPServicesHeadersForward = true;
 			}
 		}
@@ -26744,7 +26863,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListBothInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.headers.blackList.internal.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26770,7 +26889,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListRequestInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.headers.blackList.internal.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26796,7 +26915,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListResponseInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.internal.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.headers.blackList.internal.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26822,7 +26941,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListBothHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.headers.blackList.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26848,7 +26967,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListRequestHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.headers.blackList.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26874,7 +26993,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesBlackListResponseHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.blackList.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.headers.blackList.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26900,7 +27019,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesWhiteListBothHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.headers.whiteList.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26926,7 +27045,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesWhiteListRequestHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.headers.whiteList.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -26952,7 +27071,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getSOAPServicesWhiteListResponseHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.headers.whiteList.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.headers.whiteList.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27030,13 +27149,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_proxyPassReverse = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_proxyPassReverse = false;
 			}    
 		}
@@ -27051,13 +27170,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse = false;
 			}    
 		}
@@ -27088,7 +27207,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.headers': "+e.getMessage();
+				String error = "Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.headers': "+e.getMessage();
 				this.logError(error,e);
 				throw new CoreException(error);
 			}    
@@ -27120,7 +27239,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers': "+e.getMessage();
+				String error = "Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers': "+e.getMessage();
 				this.logError(error,e);
 				throw new CoreException(error);
 			}    
@@ -27145,7 +27264,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie = false;
 			}    
 		}
@@ -27167,7 +27286,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie = false;
 			}    
 		}
@@ -27189,7 +27308,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_path = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_path = isSOAPServices_inoltroBuste_proxyPassReverse_setCookie();
 			}    
 		}
@@ -27211,7 +27330,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path = isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
 			}    
 		}
@@ -27233,7 +27352,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_domain = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_setCookie_domain = isSOAPServices_inoltroBuste_proxyPassReverse_setCookie();
 			}    
 		}
@@ -27255,7 +27374,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain = isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
 			}    
 		}
@@ -27286,7 +27405,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie.headers': "+e.getMessage();
+				String error = "Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.setCookie.headers': "+e.getMessage();
 				this.logError(error,e);
 				throw new CoreException(error);
 			}    
@@ -27318,7 +27437,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers': "+e.getMessage();
+				String error = "Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers': "+e.getMessage();
 				this.logError(error,e);
 				throw new CoreException(error);
 			}    
@@ -27336,13 +27455,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = false;
 			}    
 		}
@@ -27357,13 +27476,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.soap.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = false;
 			}    
 		}
@@ -27385,7 +27504,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_inoltroBuste_response_securityHeaders = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_inoltroBuste_response_securityHeaders = true;
 			}    
 		}
@@ -27400,7 +27519,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServices_inoltroBuste_response_securityHeaders = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -27422,7 +27541,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isSOAPServices_consegnaContenutiApplicativi_response_securityHeaders = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isSOAPServices_consegnaContenutiApplicativi_response_securityHeaders = true;
 			}    
 		}
@@ -27437,7 +27556,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getSOAPServices_consegnaContenutiApplicativi_response_securityHeaders = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -27460,12 +27579,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isRESTServicesUrlParametersForward = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.forward.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.rest.urlParameters.forward.enable' non impostata, viene utilizzato il default=true");
 					this.isRESTServicesUrlParametersForward = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.rest.urlParameters.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isRESTServicesUrlParametersForward = true;
 			}
 		}
@@ -27492,7 +27611,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListInternalUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.blackList.internal': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.urlParameters.blackList.internal': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27518,7 +27637,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.blackList': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.urlParameters.blackList': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27544,7 +27663,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesWhiteListUrlParametersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.urlParameters.whiteList': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.urlParameters.whiteList': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27605,12 +27724,12 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.isRESTServicesHeadersForward = Boolean.parseBoolean(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.forward.enable' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.rest.headers.forward.enable' non impostata, viene utilizzato il default=true");
 					this.isRESTServicesHeadersForward = true;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.rest.headers.forward.enable' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
 				this.isRESTServicesHeadersForward = true;
 			}
 		}
@@ -27637,7 +27756,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListBothInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.headers.blackList.internal.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27663,7 +27782,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListRequestInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.headers.blackList.internal.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27689,7 +27808,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListResponseInternalHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.internal.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.headers.blackList.internal.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27715,7 +27834,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListBothHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.headers.blackList.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27741,7 +27860,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListRequestHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.headers.blackList.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27767,7 +27886,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesBlackListResponseHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.blackList.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.headers.blackList.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27793,7 +27912,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesWhiteListBothHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.both': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.headers.whiteList.both': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27819,7 +27938,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesWhiteListRequestHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.request': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.headers.whiteList.request': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27845,7 +27964,7 @@ public class OpenSPCoop2Properties {
 				}
 				this.getRESTServicesWhiteListResponseHeadersRead = true;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.headers.whiteList.response': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.headers.whiteList.response': "+e.getMessage(),e);
 			}    
 		}
 		
@@ -27923,13 +28042,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_proxyPassReverse = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_proxyPassReverse = false;
 			}    
 		}
@@ -27944,13 +28063,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse = false;
 			}    
 		}
@@ -27981,7 +28100,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.headers': "+e.getMessage();
+				String error = "Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.headers': "+e.getMessage();
 				this.logError(error,e);
 				throw new CoreException(error);
 			}    
@@ -28013,7 +28132,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers': "+e.getMessage();
+				String error = "Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.headers': "+e.getMessage();
 				this.logError(error,e);
 				throw new CoreException(error);
 			}    
@@ -28038,7 +28157,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie = false;
 			}    
 		}
@@ -28060,7 +28179,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie = false;
 			}    
 		}
@@ -28082,7 +28201,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_path = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_path = isRESTServices_inoltroBuste_proxyPassReverse_setCookie();
 			}    
 		}
@@ -28104,7 +28223,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_path = isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
 			}    
 		}
@@ -28126,7 +28245,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_domain = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_proxyPassReverse_setCookie_domain = isRESTServices_inoltroBuste_proxyPassReverse_setCookie();
 			}    
 		}
@@ -28148,7 +28267,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie_domain = isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_setCookie();
 			}    
 		}
@@ -28179,7 +28298,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie.headers': "+e.getMessage();
+				String error = "Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.setCookie.headers': "+e.getMessage();
 				this.logError(error,e);
 				throw new CoreException(error);
 			}    
@@ -28211,7 +28330,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				String error = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers': "+e.getMessage();
+				String error = "Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.setCookie.headers': "+e.getMessage();
 				this.logError(error,e);
 				throw new CoreException(error);
 			}    
@@ -28229,13 +28348,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.connettori.inoltroBuste.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_proxyPassReverse_useProtocolPrefix = false;
 			}    
 		}
@@ -28250,13 +28369,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.rest.connettori.consegnaContenutiApplicativi.proxyPassReverse.useProtocolPrefix': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_proxyPassReverse_useProtocolPrefix = false;
 			}    
 		}
@@ -28279,7 +28398,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_inoltroBuste_response_securityHeaders = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_inoltroBuste_response_securityHeaders = true;
 			}    
 		}
@@ -28294,7 +28413,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServices_inoltroBuste_response_securityHeaders = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -28316,7 +28435,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRESTServices_consegnaContenutiApplicativi_response_securityHeaders = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.isRESTServices_consegnaContenutiApplicativi_response_securityHeaders = true;
 			}    
 		}
@@ -28331,7 +28450,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getRESTServices_consegnaContenutiApplicativi_response_securityHeaders = this.reader.readPropertiesConvertEnvProperties(pName);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -28350,13 +28469,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniEnabled = true;
 			}    
 		}
@@ -28371,13 +28490,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.debug");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.debug' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.debug' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniDebug = true;
 			}    
 		}
@@ -28392,13 +28511,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniUsePddRuntimeDatasource = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniUsePddRuntimeDatasource = true;
 			}    
 		}
@@ -28418,7 +28537,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getTransazioniDatasource = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.dataSource': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -28432,7 +28551,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getTransazioniDatasourceJndiContext = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.transazioni.dataSource.property.");
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dataSource.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.dataSource.property.*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -28447,13 +28566,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.datasource.useDSUtils");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.datasource.useDSUtils' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.datasource.useDSUtils' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniDatasourceUseDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.datasource.useDSUtils', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.datasource.useDSUtils', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniDatasourceUseDBUtils = true;
 			}    
 		}
@@ -28468,13 +28587,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.tracce.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniSaveTracceInUniqueTransaction = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.tracce.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniSaveTracceInUniqueTransaction = true;
 			}    
 		}
@@ -28489,13 +28608,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.diagnostici.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.diagnostici.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniSaveDiagnosticiInUniqueTransaction = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.diagnostici.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniSaveDiagnosticiInUniqueTransaction = true;
 			}    
 		}
@@ -28510,13 +28629,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.dump.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.dump.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniSaveDumpInUniqueTransaction = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.dump.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniSaveDumpInUniqueTransaction = true;
 			}    
 		}
@@ -28538,7 +28657,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniValorizzaDataIngressoConDataAccettazione = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniValorizzaDataIngressoConDataAccettazione = true;
 			}    
 		}
@@ -28560,7 +28679,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent = true;
 			}    
 		}
@@ -28575,13 +28694,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.fault.prettyPrint");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.fault.prettyPrint' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.fault.prettyPrint' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isTransazioniFaultPrettyPrint = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.fault.prettyPrint', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.fault.prettyPrint', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFaultPrettyPrint = false;
 			}    
 		}
@@ -28603,7 +28722,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniHttpStatusAsEvent_inResponseCode = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniHttpStatusAsEvent_inResponseCode = false;
 			}    
 		}
@@ -28624,7 +28743,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniHttpStatusAsEvent_outResponseCode = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniHttpStatusAsEvent_outResponseCode = false;
 			}    
 		}
@@ -28646,7 +28765,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniTipoApiAsEvent = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniTipoApiAsEvent = false;
 			}    
 		}
@@ -28668,7 +28787,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniConnettoriMultipliAsEvent = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniConnettoriMultipliAsEvent = false;
 			}    
 		}
@@ -28690,7 +28809,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniUpdateUseDayInterval = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniUpdateUseDayInterval = true;
 			}    
 		}
@@ -28712,7 +28831,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneSlowLog = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneSlowLog = false;
 			}    
 		}
@@ -28735,7 +28854,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getTransazioniRegistrazioneSlowLogThresholdMs = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+this.getTransazioniRegistrazioneSlowLogThresholdMs_default+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+this.getTransazioniRegistrazioneSlowLogThresholdMs_default+" : "+e.getMessage(),e);
 				this.getTransazioniRegistrazioneSlowLogThresholdMs = this.getTransazioniRegistrazioneSlowLogThresholdMs_default;
 			}    
 		}
@@ -28757,7 +28876,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneSlowLogBuildTransactionDetails = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneSlowLogBuildTransactionDetails = false;
 			}    
 		}
@@ -28779,7 +28898,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneSlowLogRateLimitingDetails = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneSlowLogRateLimitingDetails = false;
 			}    
 		}
@@ -28801,7 +28920,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneSlowLogConnettoriMultipliProcessTransactionSADetails = false;
 			}    
 		}
@@ -28823,7 +28942,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneSlowLogConnettoriMultipliUpdateTransactionDetails = false;
 			}    
 		}
@@ -28848,7 +28967,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniTracciamentoDBOutRequestThrowRequestException = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniTracciamentoDBOutRequestThrowRequestException = true;
 			}    
 		}
@@ -28870,7 +28989,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniTracciamentoDBOutResponseThrowRequestException = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniTracciamentoDBOutResponseThrowRequestException = true;
 			}    
 		}
@@ -28892,7 +29011,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniTracciamentoDBPostOutResponseThrowRequestException = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniTracciamentoDBPostOutResponseThrowRequestException = true;
 			}    
 		}
@@ -28914,7 +29033,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniTracciamentoDBPostOutResponseThrowResponseException = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniTracciamentoDBPostOutResponseThrowResponseException = true;
 			}    
 		}
@@ -28932,13 +29051,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.dateIdentificativiProtocolloInCampiSeparati");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.dateIdentificativiProtocolloInCampiSeparati' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.duplicati.dateIdentificativiProtocolloInCampiSeparati' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniFiltroDuplicatiSaveDateEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.dateIdentificativiProtocolloInCampiSeparati', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.duplicati.dateIdentificativiProtocolloInCampiSeparati', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniFiltroDuplicatiSaveDateEnabled = true;
 			}    
 		}
@@ -28956,13 +29075,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniEnabled = true;
 			}    
 		}
@@ -28977,13 +29096,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.usePdDConnection");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.usePdDConnection' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.usePdDConnection' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniUsePdDConnection = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.usePdDConnection', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.usePdDConnection', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniUsePdDConnection = true;
 			}    
 		}
@@ -28998,13 +29117,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.forceIndex");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.forceIndex' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.forceIndex' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniForceIndex = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.forceIndex', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.duplicati.filtroTramiteTransazioni.forceIndex', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFiltroDuplicatiTramiteTransazioniForceIndex = false;
 			}    
 		}
@@ -29022,13 +29141,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.stateful.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniStatefulEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.stateful.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniStatefulEnabled = true;
 			}    
 		}
@@ -29043,13 +29162,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.stateful.debug");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.debug' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.stateful.debug' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isTransazioniStatefulDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.stateful.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isTransazioniStatefulDebug = true;
 			}    
 		}
@@ -29069,7 +29188,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getTransazioniStatefulTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.stateful.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.stateful.seconds': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -29092,7 +29211,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getTransazioniCredenzialiMittenteMaxLength = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.credenzialiMittente.maxLength': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -29113,7 +29232,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getTransazioniCredenzialiMittenteLifeSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.credenzialiMittente.updateAfterSeconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.credenzialiMittente.updateAfterSeconds': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 			
@@ -29130,13 +29249,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.tracce.protocolProperties.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled = false;
 			}    
 		}
@@ -29151,13 +29270,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isTransazioniRegistrazioneTracceHeaderRawEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.tracce.headerRaw.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneTracceHeaderRawEnabled = false;
 			}    
 		}
@@ -29172,13 +29291,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.tracce.digest.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.digest.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.tracce.digest.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isTransazioniRegistrazioneTracceDigestEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.digest.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.tracce.digest.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneTracceDigestEnabled = false;
 			}    
 		}
@@ -29210,7 +29329,7 @@ public class OpenSPCoop2Properties {
 				this.getTransazioniRegistrazioneTracceManager_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.tracce.salvataggio': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.tracce.salvataggio': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -29242,7 +29361,7 @@ public class OpenSPCoop2Properties {
 				this.getTransazioniRegistrazioneDiagnosticiManager_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.diagnostici.salvataggio': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.diagnostici.salvataggio': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -29257,13 +29376,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.transazioni.dump.headers.compact.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.headers.compact.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.transazioni.dump.headers.compact.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isTransazioniRegistrazioneDumpHeadersCompactEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.transazioni.dump.headers.compact.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.transazioni.dump.headers.compact.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniRegistrazioneDumpHeadersCompactEnabled = false;
 			}    
 		}
@@ -29287,7 +29406,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFileTraceEnabled = false;
 			}    
 		}
@@ -29309,7 +29428,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDEnabled = false;
 			}    
 		}
@@ -29330,7 +29449,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDPayloadEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDPayloadEnabled = isTransazioniFileTraceDumpBinarioPDEnabled();
 			}    
 		}
@@ -29351,7 +29470,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDHeadersEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDHeadersEnabled = isTransazioniFileTraceDumpBinarioPDEnabled();
 			}    
 		}
@@ -29373,7 +29492,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDConnettoreEnabled = false;
 			}    
 		}
@@ -29394,7 +29513,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDConnettorePayloadEnabled = isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
 			}    
 		}
@@ -29415,7 +29534,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPDConnettoreEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPDConnettoreHeadersEnabled = isTransazioniFileTraceDumpBinarioPDConnettoreEnabled();
 			}    
 		}
@@ -29437,7 +29556,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAEnabled = false;
 			}    
 		}
@@ -29458,7 +29577,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAPayloadEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAPayloadEnabled = isTransazioniFileTraceDumpBinarioPAEnabled();
 			}    
 		}
@@ -29479,7 +29598,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAHeadersEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAHeadersEnabled = isTransazioniFileTraceDumpBinarioPAEnabled();
 			}    
 		}
@@ -29502,7 +29621,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAConnettoreEnabled = false;
 			}    
 		}
@@ -29523,7 +29642,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAConnettorePayloadEnabled = isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
 			}    
 		}
@@ -29544,7 +29663,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+isTransazioniFileTraceDumpBinarioPAConnettoreEnabled()+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioPAConnettoreHeadersEnabled = isTransazioniFileTraceDumpBinarioPAConnettoreEnabled();
 			}    
 		}
@@ -29566,7 +29685,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isTransazioniFileTraceDumpBinarioReleaseInLastTrackingPhase = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+true+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+true+" : "+e.getMessage(),e);
 				this.isTransazioniFileTraceDumpBinarioReleaseInLastTrackingPhase = true;
 			}    
 		}
@@ -29589,7 +29708,7 @@ public class OpenSPCoop2Properties {
 				this.getTransazioniFileTraceConfig = ConfigurazioneTracciamento.toFileTraceConfig(name, this.getRootDirectory(), false);
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -29649,7 +29768,7 @@ public class OpenSPCoop2Properties {
 					this.getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommit = name;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 			this.getTransazioniTestsuiteManuallyFaultHeaderDBBeforeCommitRead=true;
@@ -29671,7 +29790,7 @@ public class OpenSPCoop2Properties {
 					this.getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLog = name;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 			this.getTransazioniTestsuiteManuallyFaultHeaderFileTraceBeforeLogRead=true;
@@ -29689,13 +29808,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.eventi.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.eventi.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isEventiEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.eventi.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEventiEnabled = true;
 			}    
 		}
@@ -29710,13 +29829,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.eventi.debug");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.debug' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.eventi.debug' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isEventiDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.eventi.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEventiDebug = true;
 			}    
 		}
@@ -29731,13 +29850,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.eventi.registraStatoPorta");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.registraStatoPorta' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.eventi.registraStatoPorta' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isEventiRegistrazioneStatoPorta = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.registraStatoPorta', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.eventi.registraStatoPorta', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEventiRegistrazioneStatoPorta = true;
 			}    
 		}
@@ -29752,13 +29871,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.eventi.timer.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.timer.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.eventi.timer.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isEventiTimerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.timer.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.eventi.timer.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEventiTimerEnabled = true;
 			}    
 		}
@@ -29778,7 +29897,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getEventiTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.eventi.timer.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.eventi.timer.seconds': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -29802,7 +29921,7 @@ public class OpenSPCoop2Properties {
 					this.getEventiTimerIntervalConnectionTimeoutEveryXTimes = 1;
 				}
 			} catch(java.lang.Exception e) {
-				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+5+" : "+e.getMessage(),e);
+				this.logWarn("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+5+" : "+e.getMessage(),e);
 				this.getEventiTimerIntervalConnectionTimeoutEveryXTimes = 5;
 			}    
 		}
@@ -29826,7 +29945,7 @@ public class OpenSPCoop2Properties {
 					this.getEventiTimerIntervalRequestReadTimeoutEveryXTimes = 1;
 				}
 			} catch(java.lang.Exception e) {
-				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=5 : "+e.getMessage(),e);
+				this.logWarn("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=5 : "+e.getMessage(),e);
 				this.getEventiTimerIntervalRequestReadTimeoutEveryXTimes = 5;
 			}    
 		}
@@ -29850,7 +29969,7 @@ public class OpenSPCoop2Properties {
 					this.getEventiTimerIntervalReadTimeoutEveryXTimes = 1;
 				}
 			} catch(java.lang.Exception e) {
-				this.logWarn("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=5 : "+e.getMessage(),e);
+				this.logWarn("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=5 : "+e.getMessage(),e);
 				this.getEventiTimerIntervalReadTimeoutEveryXTimes = 5;
 			}    
 		}
@@ -29876,7 +29995,7 @@ public class OpenSPCoop2Properties {
 				this.getFileSystemRecoveryRepository = new File(name);
 				checkFileSystemRecoveryRepository();
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.repository': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.repository': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -29907,13 +30026,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.debug");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.debug' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.debug' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isFileSystemRecoveryDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isFileSystemRecoveryDebug = true;
 			}    
 		}
@@ -29928,13 +30047,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isFileSystemRecoveryTimerEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isFileSystemRecoveryTimerEnabled = true;
 			}    
 		}
@@ -29954,7 +30073,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getFileSystemRecoveryTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.timeout': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.timeout': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -29974,7 +30093,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getFileSystemRecoveryTimerMaxAttempts = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.maxAttempts': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.maxAttempts': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -29989,13 +30108,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isFileSystemRecoveryTimerEventEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.events.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isFileSystemRecoveryTimerEventEnabled = true;
 			}    
 		}
@@ -30010,13 +30129,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isFileSystemRecoveryTimerTransactionEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.resources.fileSystemRecovery.transaction.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isFileSystemRecoveryTimerTransactionEnabled = true;
 			}    
 		}
@@ -30037,7 +30156,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getFileSystemRecoveryEventsProcessingFileAfterMs = Long.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -30058,7 +30177,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getFileSystemRecoveryTransactionProcessingFileAfterMs = Long.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -30077,21 +30196,21 @@ public class OpenSPCoop2Properties {
 		if(this.isControlloTrafficoEnabled==null){
 			try{ 
 				if(CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD())){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.enabled' ignorata. Il controllo del traffico e' disabilitato sulla configurazione xml");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.enabled' ignorata. Il controllo del traffico e' disabilitato sulla configurazione xml");
 					this.isControlloTrafficoEnabled = false;
 				}
 				else {
 					String name = null;
 					name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.enabled");
 					if(name==null){
-						this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.enabled' non impostata, viene utilizzato il default=true");
+						this.logWarn("proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.enabled' non impostata, viene utilizzato il default=true");
 						name="true";
 					}
 					name = name.trim();
 					this.isControlloTrafficoEnabled = Boolean.parseBoolean(name);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoEnabled = true;
 			}    
 		}
@@ -30106,13 +30225,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.debug");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.debug' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.debug' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isControlloTrafficoDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoDebug = true;
 			}    
 		}
@@ -30127,13 +30246,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.erroreGenerico");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.erroreGenerico' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.erroreGenerico' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isControlloTrafficoViolazioneGenerazioneErroreGenerico = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.erroreGenerico', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.erroreGenerico', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoViolazioneGenerazioneErroreGenerico = true;
 			}    
 		}
@@ -30148,13 +30267,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.policy.readWithDynamicCache");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.policy.readWithDynamicCache' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.policy.readWithDynamicCache' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isControlloTrafficoPolicyLetturaDaCacheDinamica = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.policy.readWithDynamicCache', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.policy.readWithDynamicCache', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoPolicyLetturaDaCacheDinamica = true;
 			}    
 		}
@@ -30295,13 +30414,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.statistiche.finestraScorrevole.gestioneUltimoIntervallo', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoStatisticheFinestraScorrevoleGestioneUltimoIntervallo = true;
 			}    
 		}
@@ -30323,7 +30442,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoStatisticheDistribuzioneSettimanaleUsaStatisticheGiornaliere = true;
 			}    
 		}
@@ -30345,7 +30464,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoStatisticheDistribuzioneMensileUsaStatisticheGiornaliere = true;
 			}    
 		}
@@ -30367,7 +30486,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isControlloTrafficoStatisticheDistribuzioneSettimanaleMensileUsaStatisticheGiornaliereLatenzaMediaPesata = true;
 			}    
 		}
@@ -30438,13 +30557,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.realtime.incrementaSoloPolicyApplicabile");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.realtime.incrementaSoloPolicyApplicabile' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.realtime.incrementaSoloPolicyApplicabile' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.realtime.incrementaSoloPolicyApplicabile', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.realtime.incrementaSoloPolicyApplicabile', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile = false;
 			}    
 		}
@@ -30510,7 +30629,7 @@ public class OpenSPCoop2Properties {
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.tipo");
 				if(name==null){
 					TipoGestorePolicy gestoreDefault = TipoGestorePolicy.IN_MEMORY;
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.tipo' non impostata, viene utilizzato il default="+gestoreDefault);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.tipo' non impostata, viene utilizzato il default="+gestoreDefault);
 					this.isControlloTrafficoGestorePolicyTipo = gestoreDefault;
 				}
 				else {
@@ -30519,7 +30638,7 @@ public class OpenSPCoop2Properties {
 				}
 			} catch(java.lang.Exception e) {
 				TipoGestorePolicy gestoreDefault = TipoGestorePolicy.IN_MEMORY;
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.tipo', viene utilizzato il default="+gestoreDefault+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.tipo', viene utilizzato il default="+gestoreDefault+" : "+e.getMessage(),e);
 				this.isControlloTrafficoGestorePolicyTipo = gestoreDefault;
 			}    
 		}
@@ -30542,7 +30661,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryType = PolicyGroupByActiveThreadsType.valueOf(name);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.tipo': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -30568,7 +30687,7 @@ public class OpenSPCoop2Properties {
 						this.getControlloTrafficoGestorePolicyInMemoryTypeLazyInitialization.put(initType, v);
 					}
 				} catch(java.lang.Exception e) {
-					this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"'; viene usato il default: "+true+". Errore: "+e.getMessage(),e);
+					this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"'; viene usato il default: "+true+". Errore: "+e.getMessage(),e);
 					this.getControlloTrafficoGestorePolicyInMemoryTypeLazyInitialization.put(initType, true);
 				}    		
 			}
@@ -30754,7 +30873,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isHazelcastEngineEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isHazelcastEngineEnabled = true;
 			}    
 		}
@@ -30781,7 +30900,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPath_read = true;
 				
 			}catch(java.lang.Exception e) {
-				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
 				this.logError(msgError,e);
 				throw new CoreException(msgError,e);
 			}
@@ -30809,7 +30928,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath_read = true;
 				
 			}catch(java.lang.Exception e) {
-				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
 				this.logError(msgError,e);
 				throw new CoreException(msgError,e);
 			}
@@ -30837,7 +30956,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath_read = true;
 				
 			}catch(java.lang.Exception e) {
-				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
 				this.logError(msgError,e);
 				throw new CoreException(msgError,e);
 			}
@@ -30866,7 +30985,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath_read = true;
 				
 			}catch(java.lang.Exception e) {
-				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
 				this.logError(msgError,e);
 				throw new CoreException(msgError,e);
 			}
@@ -30895,7 +31014,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath_read = true;
 				
 			}catch(java.lang.Exception e) {
-				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
 				this.logError(msgError,e);
 				throw new CoreException(msgError,e);
 			}
@@ -30922,7 +31041,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath_read = true;
 				
 			}catch(java.lang.Exception e) {
-				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
 				this.logError(msgError,e);
 				throw new CoreException(msgError,e);
 			}
@@ -30949,7 +31068,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath_read = true;
 				
 			}catch(java.lang.Exception e) {
-				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
 				this.logError(msgError,e);
 				throw new CoreException(msgError,e);
 			}
@@ -30976,7 +31095,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath_read = true;
 				
 			}catch(java.lang.Exception e) {
-				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
 				this.logError(msgError,e);
 				throw new CoreException(msgError,e);
 			}
@@ -31004,7 +31123,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalConfigPath_read = true;
 				
 			}catch(java.lang.Exception e) {
-				String msgError = "Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage();
+				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
 				this.logError(msgError,e);
 				throw new CoreException(msgError,e);
 			}
@@ -31053,7 +31172,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId = name;
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				this.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId = null;
 			}  
 		}
@@ -31085,7 +31204,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}
 			this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig_read = true;
@@ -31133,7 +31252,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isRedisEngineEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isRedisEngineEnabled = true;
 			}    
 		}
@@ -31169,8 +31288,8 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new CoreException("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 			}  
 			this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrlRead = true;
 		}
@@ -31245,7 +31364,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyWSUrl = name;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.ws.url': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.ws.url': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31265,7 +31384,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoNotifyImpl = (INotify) loaderOpenSPCoop.newInstance(name);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.notifier.implementation': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.notifier.implementation': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}  
 			this.getControlloTrafficoNotifyImpl_read = true;
@@ -31299,7 +31418,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.fileSystemRecovery.repository': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.fileSystemRecovery.repository': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31331,7 +31450,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.limit': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31357,7 +31476,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31383,7 +31502,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoOccupazioneBandaHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31409,7 +31528,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoComplessivoRispostaHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31435,7 +31554,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoMedioRispostaHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31461,7 +31580,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31487,7 +31606,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31513,7 +31632,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31539,7 +31658,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31566,7 +31685,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit.windows': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31589,7 +31708,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoOccupazioneBandaHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit.windows': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31612,7 +31731,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit.windows': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31635,7 +31754,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoMedioRispostaHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit.windows': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31658,7 +31777,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit.windows': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31681,7 +31800,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit.windows': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31704,7 +31823,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31727,7 +31846,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31757,7 +31876,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.remaining': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31783,7 +31902,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.remaining': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31809,7 +31928,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoOccupazioneBandaHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.remaining': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31835,7 +31954,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoComplessivoRispostaHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.remaining': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31861,7 +31980,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31887,7 +32006,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.remaining': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31913,7 +32032,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.remaining': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31939,7 +32058,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteNonCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteNonCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31971,7 +32090,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.reset': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -31997,7 +32116,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoOccupazioneBandaHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.reset': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32023,7 +32142,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoComplessivoRispostaHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.reset': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32049,7 +32168,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoTempoMedioRispostaHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.reset': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32075,7 +32194,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.reset': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32101,7 +32220,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.reset': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32127,7 +32246,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.reset': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32153,7 +32272,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.reset': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.reset': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32183,7 +32302,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoRetryAfterHeader_read = true;
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32205,7 +32324,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoRetryAfterHeader_randomBackoff = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getControlloTrafficoRetryAfterHeader_randomBackoff = 0;
 			}    
 		}
@@ -32222,21 +32341,21 @@ public class OpenSPCoop2Properties {
 		if(this.isAllarmiEnabled==null){
 			try{ 
 				if(CostantiConfigurazione.CONFIGURAZIONE_XML.equalsIgnoreCase(getTipoConfigurazionePDD())){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.enabled' ignorata. La segnalazione degli allarmi è disabilitata sulla configurazione xml");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.allarmi.enabled' ignorata. La segnalazione degli allarmi è disabilitata sulla configurazione xml");
 					this.isAllarmiEnabled = false;
 				}
 				else {
 					String name = null;
 					name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.allarmi.enabled");
 					if(name==null){
-						this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.enabled' non impostata, viene utilizzato il default=false");
+						this.logWarn("proprietà di govway 'org.openspcoop2.pdd.allarmi.enabled' non impostata, viene utilizzato il default=false");
 						name="false";
 					}
 					name = name.trim();
 					this.isAllarmiEnabled = Boolean.parseBoolean(name);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.allarmi.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isAllarmiEnabled = true;
 			}    
 		}
@@ -32251,13 +32370,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.allarmi.debug");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.debug' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.allarmi.debug' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isAllarmiDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.allarmi.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.allarmi.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isAllarmiDebug = true;
 			}    
 		}
@@ -32284,7 +32403,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pd = 60;
 			}    
 		}
@@ -32306,7 +32425,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = 0;
 			}    
 		}
@@ -32328,7 +32447,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pa = 60;
 			}    
 		}
@@ -32350,7 +32469,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = 0;
 			}    
 		}
@@ -32367,13 +32486,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isEnabledServiceUnavailableRetryAfter_pd_suspend = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEnabledServiceUnavailableRetryAfter_pd_suspend = true;
 			}    
 		}
@@ -32395,7 +32514,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pd_suspend = 60;
 			}    
 		}
@@ -32417,7 +32536,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend = 0;
 			}    
 		}
@@ -32432,13 +32551,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isEnabledServiceUnavailableRetryAfter_pa_suspend = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEnabledServiceUnavailableRetryAfter_pa_suspend = true;
 			}    
 		}
@@ -32460,7 +32579,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pa_suspend = 60;
 			}    
 		}
@@ -32482,7 +32601,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend = 0;
 			}    
 		}
@@ -32497,13 +32616,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed = true;
 			}    
 		}
@@ -32525,7 +32644,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed = 60;
 			}    
 		}
@@ -32547,7 +32666,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed = 0;
 			}    
 		}
@@ -32562,13 +32681,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed = true;
 			}    
 		}
@@ -32590,7 +32709,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.seconds', default:60 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.seconds', default:60 : "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed = 60;
 			}    
 		}
@@ -32612,7 +32731,7 @@ public class OpenSPCoop2Properties {
 					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed = 0;
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.randomBackoff.seconds': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.randomBackoff.seconds': "+e.getMessage(),e);
 				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed = 0;
 			}    
 		}
@@ -32638,7 +32757,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.serviceUnavailable.error.': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.error.': "+e.getMessage(),e);
 				this.isReadTimedOut = new ArrayList<>();
 			}    
 		}
@@ -32664,13 +32783,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneEnabled = true;
 			}    
 		}
@@ -32686,13 +32805,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheUsePddRuntimeDatasource = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isStatisticheUsePddRuntimeDatasource = false;
 			}    
 		}
@@ -32707,13 +32826,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.useTransazioni");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.useTransazioni' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.dataSource.useTransazioni' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheUseTransazioniDatasource = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.useTransazioni', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.dataSource.useTransazioni', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheUseTransazioniDatasource = true;
 			}    
 		}
@@ -32733,7 +32852,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getStatisticheDatasource = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.dataSource': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32747,7 +32866,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 				this.getStatisticheDatasourceJndiContext = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.property.");
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.property.*': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.dataSource.property.*': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32762,13 +32881,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.datasource.useDSUtils");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.datasource.useDSUtils' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.datasource.useDSUtils' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheDatasourceUseDBUtils = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.datasource.useDSUtils', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.datasource.useDSUtils', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheDatasourceUseDBUtils = true;
 			}    
 		}
@@ -32783,13 +32902,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneUseUnionForLatency = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.useUnionForLatency', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneUseUnionForLatency = true;
 			}    
 		}
@@ -32804,13 +32923,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.custom.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.custom.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.custom.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneCustomEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.custom.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.custom.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneCustomEnabled = false;
 			}    
 		}
@@ -32825,13 +32944,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.custom.transazioniSdk.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.custom.transazioniSdk.enabled' non impostata, viene utilizzato il default=false");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.custom.transazioniSdk.enabled' non impostata, viene utilizzato il default=false");
 					name="false";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneCustomSdkEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.custom.transazioniSdk.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.custom.transazioniSdk.enabled', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneCustomSdkEnabled = false;
 			}    
 		}
@@ -32846,13 +32965,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.debug");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.debug' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.debug' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.debug', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.debug', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneDebug = true;
 			}    
 		}
@@ -32872,7 +32991,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getStatisticheOrarieGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32892,7 +33011,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32912,7 +33031,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32932,7 +33051,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getStatisticheMensiliGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.timer.intervalloSecondi': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -32951,11 +33070,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getStatisticheGenerazioneTimerLockMaxLife = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE);
 					this.getStatisticheGenerazioneTimerLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_MAX_LIFE+", errore:"+e.getMessage(),e);
 				this.getStatisticheGenerazioneTimerLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
 			}
 			if(this.getStatisticheGenerazioneTimerLockMaxLife!=null && this.getStatisticheGenerazioneTimerLockMaxLife>0) {
@@ -32981,11 +33100,11 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.getStatisticheGenerazioneTimerLockIdleTime = java.lang.Integer.parseInt(name);
 				}else{
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME);
 					this.getStatisticheGenerazioneTimerLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.timer.lock.idleTime' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_LOCK_IDLE_TIME+", errore:"+e.getMessage(),e);
 				this.getStatisticheGenerazioneTimerLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
 			}
 			if(this.getStatisticheGenerazioneTimerLockIdleTime!=null && this.getStatisticheGenerazioneTimerLockIdleTime>0) {
@@ -33013,12 +33132,12 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.getStatisticheGenerazioneTimerLockAttesaAttiva = time*1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
 					this.getStatisticheGenerazioneTimerLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.getStatisticheGenerazioneTimerLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
@@ -33039,11 +33158,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.getStatisticheGenerazioneTimerLockCheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
 					this.getStatisticheGenerazioneTimerLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.getStatisticheGenerazioneTimerLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
@@ -33058,13 +33177,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseOrariaEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseOrariaEnabled = true;
 			}    
 		}
@@ -33079,13 +33198,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseGiornalieraEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseGiornalieraEnabled = true;
 			}    
 		}
@@ -33100,13 +33219,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseSettimanaleEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseSettimanaleEnabled = true;
 			}    
 		}
@@ -33121,13 +33240,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseMensileEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseMensileEnabled = true;
 			}    
 		}
@@ -33143,13 +33262,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseOrariaEnabledUltimaOra = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseOraria.gestioneUltimaOra', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseOrariaEnabledUltimaOra = true;
 			}    
 		}
@@ -33164,13 +33283,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseGiornalieraEnabledUltimoGiorno = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseGiornalieraEnabledUltimoGiorno = true;
 			}    
 		}
@@ -33185,13 +33304,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseSettimanaleEnabledUltimaSettimana = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.gestioneUltimaSettimana', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseSettimanaleEnabledUltimaSettimana = true;
 			}    
 		}
@@ -33206,13 +33325,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese");
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneBaseMensileEnabledUltimoMese = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.baseMensile.gestioneUltimoMese', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneBaseMensileEnabledUltimoMese = true;
 			}    
 		}
@@ -33228,13 +33347,13 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=true");
+					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default=true");
 					name="true";
 				}
 				name = name.trim();
 				this.isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie = true;
 			}    
 		}
@@ -33250,7 +33369,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata");
+					this.logWarn("proprietà di govway '"+pName+"' non impostata");
 					name="-1";
 				}
 				name = name.trim();
@@ -33259,7 +33378,7 @@ public class OpenSPCoop2Properties {
 					this.getStatisticheGenerazioneTradeOffMs = this.getStatisticheGenerazioneTradeOffMs * 1000l; // traduco in ms
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=300 : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=300 : "+e.getMessage(),e);
 				this.getStatisticheGenerazioneTradeOffMs = 300l * 1000l;  // traduco in ms
 			}    
 		}
@@ -33280,7 +33399,7 @@ public class OpenSPCoop2Properties {
 			return null;
 			
 		} catch(java.lang.Exception e) {
-			this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.generazione.forceIndex.repository': "+e.getMessage(),e);
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.statistiche.generazione.forceIndex.repository': "+e.getMessage(),e);
 			throw new CoreException(e.getMessage(),e);
 		}    
 		
@@ -33329,7 +33448,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDEnabled = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=false : "+e.getMessage(),e);
 				this.isGestoreChiaviPDNDEnabled = false;
 			}    
 		}
@@ -33351,7 +33470,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDDebug = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isGestoreChiaviPDNDDebug = true;
 			}    
 		}
@@ -33373,7 +33492,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDEventiAdd = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isGestoreChiaviPDNDEventiAdd = true;
 			}    
 		}
@@ -33395,7 +33514,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDEventiUpdate = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isGestoreChiaviPDNDEventiUpdate = true;
 			}    
 		}
@@ -33417,7 +33536,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDEventiDelete = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
 				this.isGestoreChiaviPDNDEventiDelete = true;
 			}    
 		}
@@ -33438,7 +33557,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getGestoreChiaviPDNDRemoteStoreName = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33464,7 +33583,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Atteso un limite maggiore di zero");
 				}*/ // Se la proprietà viene valorizzata con un valore <=0 le informazioni hanno vita infinita
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
 				this.getGestoreChiaviPDNDkeysMaxLifeMinutes = defaultValue;
 			}    
 		}
@@ -33485,7 +33604,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getGestoreChiaviPDNDkeysPath = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33506,7 +33625,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getGestoreChiaviPDNDeventsKeysPath = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33527,7 +33646,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getGestoreChiaviPDNDeventsKeysParameterLastEventId = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33548,7 +33667,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getGestoreChiaviPDNDeventsKeysParameterLimit = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33574,7 +33693,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Atteso un limite maggiore di zero");
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
 				this.getGestoreChiaviPDNDeventsKeysLimit = defaultValue;
 			}    
 		}
@@ -33600,7 +33719,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Atteso un intervallo maggiore di zero");
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
 				this.getGestoreChiaviPDNDeventsKeysTimerIntervalloSecondi = defaultValue;
 			}    
 		}
@@ -33626,7 +33745,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Atteso un intervallo maggiore di zero");
 				}
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
 				this.getGestoreChiaviPDNDcacheKeysTimerIntervalloSecondi = defaultValue;
 			}    
 		}
@@ -33709,12 +33828,12 @@ public class OpenSPCoop2Properties {
 					long time = java.lang.Long.parseLong(name);
 					this.getGestoreChiaviPDNDTimerLockAttesaAttiva = time*1000;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
 					this.getGestoreChiaviPDNDTimerLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
 				this.getGestoreChiaviPDNDTimerLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
 			}    
 		}
@@ -33735,11 +33854,11 @@ public class OpenSPCoop2Properties {
 					int time = java.lang.Integer.parseInt(name);
 					this.getGestoreChiaviPDNDTimerLockCheckInterval = time;
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
 					this.getGestoreChiaviPDNDTimerLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.logWarn("proprietà di govway '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
 				this.getGestoreChiaviPDNDTimerLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
 			}  
 		}
@@ -33760,7 +33879,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getGestoreChiaviPDNDclientsPath = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33781,7 +33900,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getGestoreChiaviPDNDclientsOrganizationJsonPath = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33802,7 +33921,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.getGestoreChiaviPDNDorganizationsPath = name;
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33830,7 +33949,7 @@ public class OpenSPCoop2Properties {
 				}
 				
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33856,7 +33975,7 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Atteso un limite maggiore di zero");
 				}*/ // Se la proprietà viene valorizzata con un valore <=0 le informazioni hanno vita infinita
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
 				this.getGestoreChiaviPDNDclientInfoMaxLifeMinutes = defaultValue;
 			}    
 		}
@@ -33877,7 +33996,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDclientsErrorAbortTransaction = Boolean.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33898,7 +34017,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDorganizationsErrorAbortTransaction = Boolean.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33919,7 +34038,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDRateLimitingInfoNotAvailableAbortTransaction = Boolean.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33940,7 +34059,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDretrieveClientInfoAfterVoucherPDNDValidation = Boolean.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33961,7 +34080,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDclientsTraceJsonResponse = Boolean.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -33982,7 +34101,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDorganizationsTraceJsonResponse = Boolean.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}
@@ -34003,7 +34122,7 @@ public class OpenSPCoop2Properties {
 				name = name.trim();
 				this.isGestoreChiaviPDNDorganizationsTraceName = Boolean.valueOf(name);
 			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}    
 		}

@@ -29,6 +29,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.HttpServletConnectorOutMessage;
@@ -57,8 +58,18 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPConnector {
 
 
 	/** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
-	public static final IDService ID_SERVICE = IDService.PORTA_DELEGATA_XML_TO_SOAP;
+	public static final IDService ID_SERVICE = getIdServiceFromProperties();
 	public static final String ID_MODULO = ID_SERVICE.getValue();
+	
+	private static IDService getIdServiceFromProperties() {
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		if(op2Properties!=null && op2Properties.isEnabledPDtoSoapChannelNIODefault()) {
+			return IDService.PORTA_DELEGATA_XML_TO_SOAP_BIO;
+		}
+		else {
+			return IDService.PORTA_DELEGATA_XML_TO_SOAP;
+		}
+	}
 
 	public void doEngine(RequestInfo requestInfo, 
 			HttpServletRequest req, HttpServletResponse res, HttpRequestMethod method) throws ServletException, IOException {

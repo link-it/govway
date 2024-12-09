@@ -72,6 +72,7 @@ public abstract class URLProtocolContext extends HttpServletTransportRequestCont
 	public boolean isPortaApplicativaService() {
 		if(this.idServiceCustom!=null) {
 			return IDService.PORTA_APPLICATIVA.equals(this.idServiceCustom) ||
+					IDService.PORTA_APPLICATIVA_BIO.equals(this.idServiceCustom) ||
 					IDService.PORTA_APPLICATIVA_NIO.equals(this.idServiceCustom);
 		}
 		else {
@@ -81,9 +82,11 @@ public abstract class URLProtocolContext extends HttpServletTransportRequestCont
 	public boolean isPortaDelegataService() {
 		if(this.idServiceCustom!=null) {
 			return IDService.PORTA_DELEGATA.equals(this.idServiceCustom) || 
+					IDService.PORTA_DELEGATA_BIO.equals(this.idServiceCustom) || 
 					IDService.PORTA_DELEGATA_NIO.equals(this.idServiceCustom) || 
 					IDService.PORTA_DELEGATA_INTEGRATION_MANAGER.equals(this.idServiceCustom) || 
 					IDService.PORTA_DELEGATA_XML_TO_SOAP.equals(this.idServiceCustom) ||
+					IDService.PORTA_DELEGATA_XML_TO_SOAP_BIO.equals(this.idServiceCustom) ||
 					IDService.PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(this.idServiceCustom);
 		}
 		else {

@@ -38,14 +38,17 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	OPENSPCOOP2_SERVLET ("OpenSPCoop2Servlet"),
 	
 	PORTA_DELEGATA ("RicezioneContenutiApplicativi"),
+	PORTA_DELEGATA_BIO ("RicezioneContenutiApplicativiBIO"),
 	PORTA_DELEGATA_NIO ("RicezioneContenutiApplicativiNIO"),
 	
 	PORTA_DELEGATA_XML_TO_SOAP ("RicezioneContenutiApplicativiHTTP"),
+	PORTA_DELEGATA_XML_TO_SOAP_BIO ("RicezioneContenutiApplicativiHTTPBIO"),
 	PORTA_DELEGATA_XML_TO_SOAP_NIO ("RicezioneContenutiApplicativiHTTPNIO"),
 	
 	PORTA_DELEGATA_INTEGRATION_MANAGER ("RicezioneContenutiApplicativiIntegrationManager"),
 	
 	PORTA_APPLICATIVA ("RicezioneBuste"),
+	PORTA_APPLICATIVA_BIO ("RicezioneBusteBIO"),
 	PORTA_APPLICATIVA_NIO ("RicezioneBusteNIO"),
 	
 	INTEGRATION_MANAGER_SOAP ("IntegrationManager"),
@@ -55,13 +58,16 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	
 	public boolean isPortaDelegata() {
 		return PORTA_DELEGATA.equals(this) || 
+				PORTA_DELEGATA_BIO.equals(this) || 
 				PORTA_DELEGATA_NIO.equals(this) || 
 				PORTA_DELEGATA_XML_TO_SOAP.equals(this) || 
+				PORTA_DELEGATA_XML_TO_SOAP_BIO.equals(this) || 
 				PORTA_DELEGATA_XML_TO_SOAP_NIO.equals(this) || 
 				PORTA_DELEGATA_INTEGRATION_MANAGER.equals(this);
 	}
 	public boolean isPortaApplicativa() {
 		return PORTA_APPLICATIVA.equals(this) || 
+				PORTA_APPLICATIVA_BIO.equals(this) || 
 				PORTA_APPLICATIVA_NIO.equals(this);
 	}
 	
@@ -69,14 +75,17 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 	private static final String ID_OPENSPCOOP_SERVLET = "OP20000";
 	
 	private static final String ID_PORTA_DELEGATA = "PD00000";
+	private static final String ID_PORTA_DELEGATA_BIO = "PDBIO00";
 	private static final String ID_PORTA_DELEGATA_NIO = "PDNIO00";
 	
 	private static final String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP = "PD2SOAP";
+	private static final String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP_BIO = "PD2SOAB";
 	private static final String ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP_NIO = "PD2SOAN";
 	
 	private static final String ID_PORTA_DELEGATA_INTEGRATION_MANAGER = "PDIM000";
 	
 	private static final String ID_PORTA_APPLICATIVA = "PA00000";
+	private static final String ID_PORTA_APPLICATIVA_BIO = "PABIO00";
 	private static final String ID_PORTA_APPLICATIVA_NIO = "PANIO00";
 	
 	private static final String ID_INTEGRATION_MANAGER = "IM00000";
@@ -92,11 +101,15 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 			
 		case PORTA_DELEGATA:
 			return ID_PORTA_DELEGATA;
+		case PORTA_DELEGATA_BIO:
+			return ID_PORTA_DELEGATA_BIO;
 		case PORTA_DELEGATA_NIO:
 			return ID_PORTA_DELEGATA_NIO;
 			
 		case PORTA_DELEGATA_XML_TO_SOAP:
 			return ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP;
+		case PORTA_DELEGATA_XML_TO_SOAP_BIO:
+			return ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP_BIO;
 		case PORTA_DELEGATA_XML_TO_SOAP_NIO:
 			return ID_PORTA_DELEGATA_IMBUSTAMENTO_SOAP_NIO;
 			
@@ -105,6 +118,8 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 			
 		case PORTA_APPLICATIVA:
 			return ID_PORTA_APPLICATIVA;
+		case PORTA_APPLICATIVA_BIO:
+			return ID_PORTA_APPLICATIVA_BIO;
 		case PORTA_APPLICATIVA_NIO:
 			return ID_PORTA_APPLICATIVA_NIO;
 			
@@ -180,7 +195,7 @@ public enum IDService implements IEnumeration , Serializable , Cloneable {
 		return bf.toString();
 	}
 	public String diff(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){
-		if(reportHTML && fieldsNotIncluded!=null) {
+		if(object!=null && reportHTML && fieldsNotIncluded!=null) {
 			// nop
 		}
 		return bf.toString();
