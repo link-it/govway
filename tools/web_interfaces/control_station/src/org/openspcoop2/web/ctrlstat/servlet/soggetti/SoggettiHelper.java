@@ -1965,7 +1965,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			String endpointtype = this.readEndPointType();
 
 			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoSoggetto);
-			if (!this.endPointCheckData(protocollo, false, listExtendedConnettore)) {
+			if (!this.endPointCheckData(null, protocollo, false, listExtendedConnettore)) {
 				return false;
 			}
 

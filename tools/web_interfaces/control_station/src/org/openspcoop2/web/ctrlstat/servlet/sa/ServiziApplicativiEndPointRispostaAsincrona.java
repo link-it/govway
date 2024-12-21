@@ -75,6 +75,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
@@ -281,6 +282,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String responseInputDeleteAfterRead = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
+			//status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(saHelper);
 			
 			String tipologia = ServletUtils.getObjectFromSession(request, session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneErogatori = false;
@@ -490,7 +493,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				if (endpointtype == null) {
 					if ((connra.getCustom()!=null && connra.getCustom()) && 
 							!connra.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-							!connra.getTipo().equals(TipiConnettore.FILE.toString())) {
+							!connra.getTipo().equals(TipiConnettore.FILE.toString()) &&
+							!connra.getTipo().equals(TipiConnettore.STATUS.toString()) ) {
 						endpointtype = TipiConnettore.CUSTOM.toString();
 						tipoconn = connra.getTipo();
 					} else
@@ -837,7 +841,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						TipoOperazione.CHANGE, null,null,
 						postBackViaPost);
 				
-				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
@@ -863,6 +867,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						nomeProtocollo, false, false
 						, false, erogazioneServizioApplicativoServerEnabled, null, null,
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams,
 						postBackViaPost
 						);
 				
@@ -899,7 +904,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						TipoOperazione.CHANGE, null,null,
 						postBackViaPost);
 				
-				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, "", "", initcont, urlpgk, provurl, connfact,
 						sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
@@ -925,6 +930,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						nomeProtocollo, false, false
 						, false, erogazioneServizioApplicativoServerEnabled, null, null,
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams,
 						postBackViaPost
 						);
 				
@@ -981,7 +987,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			String oldConnT = connra.getTipo();
 			if ((connra.getCustom()!=null && connra.getCustom()) && 
 					!connra.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-					!connra.getTipo().equals(TipiConnettore.FILE.toString()))
+					!connra.getTipo().equals(TipiConnettore.FILE.toString()) &&
+					!connra.getTipo().equals(TipiConnettore.STATUS.toString()))
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			saHelper.fillConnettore(connra, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 					nome, tipo, user, password,
@@ -1002,6 +1009,7 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
 					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					listExtendedConnettore);
 			ra.setConnettore(connra);
 			sa.setRispostaAsincrona(ra);

@@ -503,11 +503,21 @@ public class CheckStatoPdD extends HttpServlet {
 			return;
 		}
 		
-		addParameter(params, signatures, req,
+		add = addParameter(params, signatures, req,
 				CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE_3,
 				CostantiPdD.CHECK_STATO_PDD_PARAM_INT_VALUE_3, 
 				CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_3,
 				CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_3);
+		
+		if(!add) {
+			return;
+		}
+		
+		addParameter(params, signatures, req,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE_4,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_INT_VALUE_4, 
+				CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_4,
+				CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_4);
 			
 	}
 	

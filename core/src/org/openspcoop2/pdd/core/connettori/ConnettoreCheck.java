@@ -102,6 +102,7 @@ public class ConnettoreCheck {
 				switch (tipo) {
 				case HTTP:
 				case HTTPS:
+				case STATUS:
 					return true;
 
 				default:

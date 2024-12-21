@@ -756,6 +756,7 @@ public final class CostantiDB {
     public static final String CONNETTORE_TIPO_HTTPS = TipiConnettore.HTTPS.getNome();
     public static final String CONNETTORE_TIPO_JMS = TipiConnettore.JMS.getNome();
     public static final String CONNETTORE_TIPO_FILE = TipiConnettore.FILE.getNome();
+    public static final String CONNETTORE_TIPO_STATUS = TipiConnettore.STATUS.getNome();
     public static final String CONNETTORE_TIPO_DISABILITATO = TipiConnettore.DISABILITATO.getNome();
     
     public static final String CONNETTORE_DEBUG = CostantiConnettori.CONNETTORE_DEBUG;
@@ -830,6 +831,12 @@ public final class CostantiDB {
 	public static final String CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_FILE_DELETE_AFTER_READ;
 	public static final String CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME;
 	
+	// connettore status
+	public static final String CONNETTORE_STATUS_RESPONSE_TYPE = CostantiConnettori.CONNETTORE_STATUS_RESPONSE_TYPE;
+	public static final String CONNETTORE_STATUS_TEST_CONNECTIVITY = CostantiConnettori.CONNETTORE_STATUS_TEST_CONNECTIVITY;
+	public static final String CONNETTORE_STATUS_STATISTICAL_PERIOD = CostantiConnettori.CONNETTORE_STATUS_PERIOD;
+	public static final String CONNETTORE_STATUS_STATISTICAL_PERIOD_VALUE = CostantiConnettori.CONNETTORE_STATUS_PERIOD_VALUE;
+	public static final String CONNETTORE_STATUS_STAT_LIFETIME = CostantiConnettori.CONNETTORE_STATUS_STAT_LIFETIME;
 	
     /**
      * PROPRIETA MODI

@@ -82,6 +82,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 		
 		
 		return env.saHelper.endPointCheckData(
+				null,
 				env.tipo_protocollo,
 				erogazione,
 				TipiConnettore.CUSTOM.getNome(),
@@ -231,6 +232,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
+				null, // connettoreStatusParams
 				null // listExtendedConnettore
 				);
 		
@@ -318,6 +320,7 @@ public class ConnettorePluginApiHelper extends AbstractConnettoreApiHelper<Conne
 						null,   // tokenPolicy
 						null, null, // apiKeyHeader,  apiKeyValue
 						null, null, // appIdHeader, appIdValue
+						null, // connettoreStatusParams
 						null // listExtendedConnettore
 						);	
 

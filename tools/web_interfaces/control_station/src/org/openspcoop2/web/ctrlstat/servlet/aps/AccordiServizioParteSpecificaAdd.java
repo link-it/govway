@@ -94,6 +94,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
@@ -302,7 +303,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			strutsBean.responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			strutsBean.responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
-
+			//status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(apsHelper);
 
 
 			strutsBean.profilo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
@@ -1538,7 +1540,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					
 					if(!(strutsBean.accordo == null || strutsBean.accordo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO))) {
 					
-						dati = apsHelper.addEndPointToDati(dati, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, 
+						dati = apsHelper.addEndPointToDati(dati, strutsBean.serviceBinding, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, 
 								null,//(apsHelper.isModalitaCompleta() || !multitenant)?null:
 								//	(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 								strutsBean.url, strutsBean.nome,
@@ -1567,6 +1569,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, strutsBean.erogazioneServizioApplicativoServerEnabled,
 								strutsBean.erogazioneServizioApplicativoServer, saSoggetti,
 								strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+								connettoreStatusParams,
 								postBackViaPost);
 						
 						// url suggerita
@@ -1760,7 +1763,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					}
 					
 					if(!(strutsBean.accordo == null || strutsBean.accordo.equals(AccordiServizioParteSpecificaCostanti.DEFAULT_VALUE_PARAMETRO_ACCORDO_NON_SELEZIONATO))) {
-						dati = apsHelper.addEndPointToDati(dati, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, 
+						dati = apsHelper.addEndPointToDati(dati, strutsBean.serviceBinding, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, 
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:
 								//	(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 								strutsBean.url, strutsBean.nome, strutsBean.tipo, strutsBean.user,
@@ -1789,6 +1792,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, strutsBean.erogazioneServizioApplicativoServerEnabled,
 								strutsBean.erogazioneServizioApplicativoServer, saSoggetti,
 								strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+								connettoreStatusParams,
 								postBackViaPost);
 						
 						// url suggerita
@@ -1927,6 +1931,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
 						strutsBean.tokenPolicy,
 						strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+						connettoreStatusParams,
 						listExtendedConnettore);
 			}
 
@@ -2027,7 +2032,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							forceEnableConnettore = true;
 						}
 						
-						dati = apsHelper.addEndPointToDati(dati, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, 
+						dati = apsHelper.addEndPointToDati(dati, strutsBean.serviceBinding, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, 
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:
 								//	(generaPortaApplicativa?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX), 
 								strutsBean.url, strutsBean.nome, strutsBean.tipo, strutsBean.user,
@@ -2056,6 +2061,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								strutsBean.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, strutsBean.erogazioneServizioApplicativoServerEnabled,
 								strutsBean.erogazioneServizioApplicativoServer, saSoggetti,
 								strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+								connettoreStatusParams,
 								postBackViaPost);
 						
 					}

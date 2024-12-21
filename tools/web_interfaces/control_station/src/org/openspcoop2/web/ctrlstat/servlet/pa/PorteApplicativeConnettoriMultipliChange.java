@@ -89,6 +89,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -307,6 +308,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			String responseInputDeleteAfterRead = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
+			// status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(porteApplicativeHelper);
+						
 			String erogazioneServizioApplicativoServerEnabledS = porteApplicativeHelper.getParametroBoolean(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
 			boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
 			String erogazioneServizioApplicativoServer = porteApplicativeHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
@@ -901,7 +905,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					if (endpointtype == null) {
 						if ((oldConnis.getCustom()!=null && oldConnis.getCustom()) && 
 								!oldConnis.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-								!oldConnis.getTipo().equals(TipiConnettore.FILE.toString())) {
+								!oldConnis.getTipo().equals(TipiConnettore.FILE.toString()) &&
+								!oldConnis.getTipo().equals(TipiConnettore.STATUS.toString())) {
 							endpointtype = TipiConnettore.CUSTOM.toString();
 							tipoconn = oldConnis.getTipo();
 						} else
@@ -1280,7 +1285,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd,
 							postBackViaPost);
 
-					dati = porteApplicativeHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+					dati = porteApplicativeHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 							null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 							url, nomeCodaJms,
 							tipoJms, user,
@@ -1316,6 +1321,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer),
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams,
 							postBackViaPost);
 				} else {
 
@@ -1330,7 +1336,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 					dati = porteApplicativeHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 
-					dati = porteApplicativeHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+					dati = porteApplicativeHelper.addEndPointToDatiAsHidden(dati, serviceBinding, connettoreDebug,
 							endpointtype, autenticazioneHttp,
 							url, nomeCodaJms, tipoJms,
 							user, password, initcont, urlpgk,
@@ -1358,7 +1364,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken,tokenPolicy,
-							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams);
 				}
 
 				pd.setDati(dati);
@@ -1375,7 +1382,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					getmsg, getmsgUsername, getmsgPassword, oldSA);
 
 			if(isOk) {
-				isOk = porteApplicativeHelper.endPointCheckData(protocollo, true,
+				isOk = porteApplicativeHelper.endPointCheckData(serviceBinding, protocollo, true,
 						endpointtype, url, nomeCodaJms, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
@@ -1425,7 +1432,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd,
 							postBackViaPost);
 
-					dati = porteApplicativeHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+					dati = porteApplicativeHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 							null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 							url, nomeCodaJms,
 							tipoJms, user,
@@ -1461,6 +1468,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer),
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams,
 							postBackViaPost);
 				} else {
 
@@ -1475,7 +1483,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 					dati = porteApplicativeHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 
-					dati = porteApplicativeHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+					dati = porteApplicativeHelper.addEndPointToDatiAsHidden(dati, serviceBinding, connettoreDebug,
 							endpointtype, autenticazioneHttp,
 							url, nomeCodaJms, tipoJms,
 							user, password, initcont, urlpgk,
@@ -1503,7 +1511,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken,tokenPolicy,
-							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams);
 				}
 
 				pd.setDati(dati);
@@ -1805,7 +1814,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 						String oldConnT = connis.getTipo();
 						if ((connis.getCustom()!=null && connis.getCustom()) && 
 								!connis.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-								!connis.getTipo().equals(TipiConnettore.FILE.toString()))
+								!connis.getTipo().equals(TipiConnettore.FILE.toString()) &&
+								!oldConnis.getTipo().equals(TipiConnettore.STATUS.toString()))
 							oldConnT = TipiConnettore.CUSTOM.toString();
 						porteApplicativeHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 								nomeCodaJms, tipoJms, user, password,
@@ -1826,6 +1836,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								tokenPolicy,
 								apiKeyHeader, apiKeyValue, appIdHeader, appIdValue, 
+								connettoreStatusParams,
 								listExtendedConnettore);
 						is.setConnettore(connis);
 						sa.setInvocazioneServizio(is);
@@ -1950,6 +1961,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								tokenPolicy,
 								apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,  
+								connettoreStatusParams,
 								listExtendedConnettore);
 
 						// creare un servizio applicativo

@@ -21,6 +21,7 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -169,11 +170,146 @@ public class DatiStatisticiDAOManager  {
 		}
     	
     }
-    
 	
 	
-	
-	
+	/* ********************** NUMERO ESISTI *************************** */
+	public RisultatoStatistico readNumeroEsiti(String key, TipoPeriodoStatistico tipoPeriodo, Integer periodLength, 
+			Date endDate,  List<Integer> esiti, IDServizio servizio, IDSoggetto mittente, List<String> ignoreOperations, DatiTransazione datiTransazione, IState state) throws Exception {
+		Resource r = null;
+    	boolean useConnectionRuntime = false;
+		IDSoggetto dominio = datiTransazione.getDominio();
+    	String idModulo = datiTransazione.getModulo()+".statistiche.readExpression";
+    	String idTransazione = datiTransazione.getIdTransazione();
+    	try{
+			
+    		Connection con = null;
+			if(this.checkState) {
+				if(state!=null) {
+					if(state instanceof StateMessage) {
+						StateMessage s = (StateMessage) state;
+						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+							con = s.getConnectionDB();
+							useConnectionRuntime = true;
+						}
+					}
+				}
+			}
+			if(useConnectionRuntime==false){
+				r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
+				if(r==null){
+					throw new Exception("Risorsa al database non disponibile");
+				}
+				con = (Connection) r.getResource();
+			}
+			if(con == null)
+				throw new Exception("Connessione non disponibile");	
+			
+			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
+					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
+							con, this.daoFactoryServiceManagerPropertiesStatistiche, this.daoFactoryLogger);
+			boolean useGiornaliero = this.configurazioneControlloTraffico.isElaborazioneStatistica_distribuzioneSettimanale_usaStatisticheGiornaliere();
+			
+			StatisticaModel model = null;
+			IServiceSearchWithoutId<?> dao = null;
+			Calendar c = Calendar.getInstance();
+			c.setTime(endDate);
+			
+			switch (tipoPeriodo) {
+			case ORARIO:
+				model = StatisticaOraria.model().STATISTICA_BASE;
+				dao = statisticheSM.getStatisticaOrariaServiceSearch();
+				c.add(Calendar.HOUR, -periodLength);
+				break;
+			case GIORNALIERO:
+				model = StatisticaGiornaliera.model().STATISTICA_BASE;
+				dao = statisticheSM.getStatisticaGiornalieraServiceSearch();
+				c.add(Calendar.DATE, -periodLength);
+				break;
+			case SETTIMANALE:
+				model = useGiornaliero ? StatisticaGiornaliera.model().STATISTICA_BASE : StatisticaSettimanale.model().STATISTICA_BASE;
+				dao = useGiornaliero ? statisticheSM.getStatisticaGiornalieraServiceSearch() : statisticheSM.getStatisticaSettimanaleServiceSearch();
+				c.add(Calendar.DATE, -7 * periodLength);
+				break;
+			case MENSILE:
+				model = useGiornaliero ? StatisticaGiornaliera.model().STATISTICA_BASE : StatisticaMensile.model().STATISTICA_BASE;
+				dao = useGiornaliero ? statisticheSM.getStatisticaGiornalieraServiceSearch() : statisticheSM.getStatisticaMensileServiceSearch();
+				c.add(Calendar.MONTH, -periodLength);
+				break;
+			}
+			Date startDate = c.getTime();
+			
+			if(model==null) {
+				throw new Exception("Model unknown");
+			}
+			if(dao==null) {
+				throw new Exception("DAO unknown");
+			}
+			
+			IExpression expression = dao.newExpression();
+			expression.between(model.DATA, startDate, endDate);
+			if (esiti != null)
+				expression.in(model.ESITO, esiti);
+			expression.equals(model.SERVIZIO, servizio.getNome());
+			expression.equals(model.TIPO_SERVIZIO, servizio.getTipo());
+			expression.equals(model.VERSIONE_SERVIZIO, servizio.getVersione());
+			expression.equals(model.DESTINATARIO, servizio.getSoggettoErogatore().getNome());
+			expression.equals(model.TIPO_DESTINATARIO, servizio.getSoggettoErogatore().getTipo());
+			expression.isNotNull(model.NUMERO_TRANSAZIONI);
+			if (mittente != null) {
+				expression.equals(model.MITTENTE, mittente.getNome());
+				expression.equals(model.TIPO_MITTENTE, mittente.getTipo());
+			}
+			
+			if (ignoreOperations != null) {
+				for (String ignoreOperation : ignoreOperations)
+					expression.notEquals(model.AZIONE, ignoreOperation);
+			}
+			
+			
+			RisultatoStatistico risultato = new RisultatoStatistico();
+			risultato.setDateCheck(DateManager.getDate());
+			risultato.setDataInizio(startDate);
+			risultato.setDataFine(endDate);
+			FunctionField ff = new  FunctionField(model.NUMERO_TRANSAZIONI, Function.SUM, "somma");
+			
+			try{
+				Object result = dao.aggregate(expression, ff);
+				if(result!=null && this.isKnownType(result) ){
+					this.log.debug("NumeroRichiesteFound ["+result.getClass().getName()+"]: "+result);
+					Long l = this.translateType(result);
+					if(l!=null) {
+						risultato.setRisultato(l.longValue());
+					}
+					else {
+						throw new CoreException("Translate type (result) '"+result+"' non riuscito");
+					}
+				}
+				else{
+					if(result!=null){
+						this.log.debug("NumeroRichiesteNotFound ["+result.getClass().getName()+"]: "+result);
+					}else{
+						this.log.debug("NumeroRichiesteNotFound, result is null");
+					}
+					risultato.setRisultato(0);
+				}
+			}catch(NotFoundException notFound){
+				this.log.debug("NumeroRichiesteNotFound:"+notFound.getMessage(),notFound);
+				risultato.setRisultato(0);
+			}
+			
+			return risultato;
+			
+		}catch(Exception e){
+			this.log.error("Errore durante la raccolta dei dati statisti (" + key + "): "+e.getMessage(),e);
+			throw e;
+		}finally {
+			try{
+				if(!useConnectionRuntime && r != null) {
+					this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
+				}
+			}catch(Exception eClose){}
+		}
+	}
 	
 	/* ********************** NUMERO RICHIESTE ************************** */
 	

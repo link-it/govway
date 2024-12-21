@@ -272,6 +272,9 @@ Examples:
 |connettore_erogazione_apikey_appid.json|https://ginovadifretta.it/petstore|
 |connettore_erogazione_apikey_appid_custom.json|https://ginovadifretta.it/petstore|
 |connettore_erogazione_apikey_custom.json|https://ginovadifretta.it/petstore|
+|connettore_erogazione_status_empty.json|[status] govway://status|
+|connettore_erogazione_status_verifica_statistica.json|[status] govway://status|
+|connettore_erogazione_status_verifica_statistica_custom_lifetime.json|[status] govway://status|
 
 
 

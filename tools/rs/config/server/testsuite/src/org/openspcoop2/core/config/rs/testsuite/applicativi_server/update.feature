@@ -140,6 +140,9 @@ Examples:
 |connettore_applicativo_server_apikey_appid.json|
 |connettore_applicativo_server_apikey_appid_custom.json|
 |connettore_applicativo_server_apikey_custom.json|
+|connettore_applicativo_server_status_empty.json|
+|connettore_applicativo_server_status_verifica_statistica.json|
+|connettore_applicativo_server_status_verifica_statistica_custom_lifetime.json|
 
 @UpdateConnettore400
 Scenario Outline: Applicativi Server Aggiornamento Connettore 400

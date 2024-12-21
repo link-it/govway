@@ -81,6 +81,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
@@ -293,6 +294,9 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			String responseInputDeleteAfterRead = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = porteApplicativeHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
+			// status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(porteApplicativeHelper);
+						
 			String erogazioneServizioApplicativoServerEnabledS = porteApplicativeHelper.getParametroBoolean(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
 			boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
 			String erogazioneServizioApplicativoServer = porteApplicativeHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
@@ -454,7 +458,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			
 			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
 			lstParam.add(ServletUtils.getParameterAggiungi());
-
+			
 			// Se nome = null, devo visualizzare la pagina per l'inserimento
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
@@ -580,7 +584,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						TipoOperazione.ADD, null,null,
 						postBackViaPost);
 				
-				dati = porteApplicativeHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+				dati = porteApplicativeHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 						null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 						url, nomeCodaJms,
 						tipoJms, user,
@@ -608,6 +612,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer),
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams,
 						postBackViaPost);
 
 				pd.setDati(dati);
@@ -624,7 +629,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 					getmsg, getmsgUsername, getmsgPassword, null);
 			
 			if(isOk) {
-				isOk = porteApplicativeHelper.endPointCheckData(protocollo, true,
+				isOk = porteApplicativeHelper.endPointCheckData(serviceBinding, protocollo, true,
 						endpointtype, url, nomeCodaJms, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
@@ -672,7 +677,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						TipoOperazione.ADD, null,null,
 						postBackViaPost);
 				
-				dati = porteApplicativeHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+				dati = porteApplicativeHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 						null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 						url, nomeCodaJms,
 						tipoJms, user,
@@ -700,6 +705,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer),
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams,
 						postBackViaPost);
 
 				pd.setDati(dati);
@@ -784,6 +790,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						tokenPolicy,
 						apiKeyHeader, apiKeyValue, appIdHeader, appIdValue, 
+						connettoreStatusParams,
 						listExtendedConnettore);
 			
 				// creare un servizio applicativo

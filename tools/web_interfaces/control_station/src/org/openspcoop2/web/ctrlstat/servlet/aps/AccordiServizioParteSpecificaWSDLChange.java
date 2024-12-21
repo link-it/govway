@@ -70,6 +70,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilit
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
@@ -471,6 +472,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String responseInputDeleteAfterRead = null;
 			String responseInputWaitTime = null;
 			
+			ConnettoreStatusParams connettoreStatusParams = null;
+			
 			String servizioApplicativoServer = null;
 			boolean servizioApplicativoServerEnabled = false;
 			if ((endpointtype == null) || (url == null) || (nome == null)) {
@@ -479,7 +482,8 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 				if (endpointtype == null) {
 					if ((connettore.getCustom()!=null && connettore.getCustom()) && 
 							!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
-							!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
+							!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE) &&
+							!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_STATUS)) {
 						endpointtype = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 						tipoconn = connettore.getTipo();
 					} else
@@ -773,6 +777,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					}
 					
 				}
+				
+				// status
+				connettoreStatusParams = ConnettoreStatusParams.fillFrom(props);
 			}
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = connettore.getCustom();
@@ -868,7 +875,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 
 			boolean postBackViaPost = false;
 			
-			dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null, 
+			dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null, 
 					url, nome,
 					strutsBean.tipo, user, password, initcont, urlpgk, provurl,
 					connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,TipoOperazione.CHANGE, 
@@ -893,6 +900,7 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					protocollo,false,false
 					, false, servizioApplicativoServerEnabled, servizioApplicativoServer, null,
 					autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					postBackViaPost
 					);
 

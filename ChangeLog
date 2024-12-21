@@ -1,3 +1,9 @@
+2024-12-21  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità #1543
+	Aggiunto un connettore nella configurazione avanzata per simulare una risorsa che verifica lo stato di un servizio, nel caso in cui non sia nativamente disponibile nel backend dell'API.
+
 2024-11-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

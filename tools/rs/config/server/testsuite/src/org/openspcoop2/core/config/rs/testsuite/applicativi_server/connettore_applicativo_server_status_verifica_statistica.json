@@ -1,0 +1,12 @@
+{
+    "connettore": {
+        "tipo": "status",
+        "risposta": "json",
+        "verifica_connettivita": false,
+        "debug": false,
+        "verifica_statistica": {
+            "frequenza": "orario",
+            "intervallo": 4
+        }
+    }
+}

@@ -1246,6 +1246,8 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			//BOH
 		case ECHO:
 			return TipiConnettore.NULLECHO.getNome();
+		case STATUS:
+			return TipiConnettore.STATUS.getNome();
 		case FILE: return TipiConnettore.FILE.getNome();
 		case HTTP:
 			ConnettoreHttp connettoreHttp = (ConnettoreHttp) connettore;

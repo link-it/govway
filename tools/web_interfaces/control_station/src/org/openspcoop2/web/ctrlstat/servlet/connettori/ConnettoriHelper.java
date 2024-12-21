@@ -64,6 +64,7 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.pdd.core.connettori.ConnettoreFILE;
 import org.openspcoop2.pdd.core.connettori.ConnettoreFile_outputConfig;
@@ -692,7 +693,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 	}
 	
-	public List<DataElement> addEndPointToDati(List<DataElement> dati,String connettoreDebug,
+	public List<DataElement> addEndPointToDati(List<DataElement> dati, ServiceBinding serviceBinding, String connettoreDebug,
 			String endpointtype, String autenticazioneHttp, String prefix, String url, String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
@@ -718,8 +719,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String protocollo, boolean forceHttps, boolean forceHttpsClient,
 			boolean visualizzaSezioneSAServer, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer, String[] listaSAServer,
 			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
+			ConnettoreStatusParams connettoreStatusParams,
 			boolean postBackViaPost) throws Exception {
-		return addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, prefix, url, nome, tipo, user,
+		return addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, prefix, url, nome, tipo, user,
 				password, initcont, urlpgk, provurl, connfact, sendas,
 				objectName,tipoOperazione, httpsurl, httpstipologia, httpshostverify,
 				httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
@@ -740,6 +742,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				listExtendedConnettore, forceEnabled,
 				protocollo, forceHttps, forceHttpsClient,visualizzaSezioneSAServer, servizioApplicativoServerEnabled, servizioApplicativoServer, listaSAServer,
 				autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+				connettoreStatusParams,
 				postBackViaPost);
 	}
 
@@ -2617,7 +2620,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return dati;
 	}
 	
-	public List<DataElement> addEndPointToDati(List<DataElement> dati,String connettoreDebug,
+	public List<DataElement> addEndPointToDati(List<DataElement> dati, ServiceBinding serviceBinding, String connettoreDebug,
 			String endpointtype, String autenticazioneHttp,String prefix, String url, String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas, String objectName, TipoOperazione tipoOperazione,
@@ -2644,6 +2647,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String protocollo, boolean forceHttps, boolean forceHttpsClient,
 			boolean visualizzaSezioneSAServer, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer, String[] listaSAServer,
 			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
+			ConnettoreStatusParams connettoreStatusParams,
 			boolean postBackViaPost) throws Exception {
 
 		if(forcePDND || forceOAuth) {
@@ -2752,7 +2756,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			dati.add(de);
 			
 			if(servizioApplicativoServerEnabled) {
-				dati = this.addEndPointToDatiAsHidden(dati, connettoreDebug,
+				dati = this.addEndPointToDatiAsHidden(dati, serviceBinding, connettoreDebug,
 						endpointtype, autenticazioneHttp,
 						url, nome, tipo, user, password, initcont, urlpgk, provurl, connfact, sendas, objectName, tipoOperazione, 
 						httpsurl, httpstipologia, httpshostverify, 
@@ -2768,7 +2772,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 						requestOutputParentDirCreateIfNotExists, requestOutputOverwriteIfExists, 
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy,
-						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams);
 			}
 		}
 		
@@ -3682,6 +3687,11 @@ public class ConnettoriHelper extends ConsoleHelper {
 							postBackViaPost);
 				}
 				
+				//status
+				if (TipiConnettore.STATUS.toString().equals(endpointtype)) {
+					connettoreStatusParams.addDati(dati, serviceBinding, postBackViaPost);
+				}
+				
 				// FileSystem
 				if (TipiConnettore.FILE.toString().equals(endpointtype)) {
 					ConnettoreFileUtils.addFileDati(dati, this.getSize(),this,
@@ -3745,7 +3755,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return dati;
 	}
 
-	public List<DataElement> addEndPointToDatiAsHidden(List<DataElement> dati, String connettoreDebug,
+	public List<DataElement> addEndPointToDatiAsHidden(List<DataElement> dati, ServiceBinding serviceBinding, String connettoreDebug,
 			String endpointtype, String autenticazioneHttp, 
 			String url, String nome, String tipo,
 			String user, String password, String initcont, String urlpgk,
@@ -3766,7 +3776,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
-			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws UtilsException {
+			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
+			ConnettoreStatusParams connettoreStatusParams) throws UtilsException {
 
 		if(tipo!=null || servletChiamante!=null) {
 			// nop
@@ -3937,6 +3948,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			
 		}
 		
+		if (endpointtype.equals(TipiConnettore.STATUS.toString())) {
+			connettoreStatusParams.addDatiHidden(dati, serviceBinding);
+		}
+		
 		// Proxy
 		if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
 			this.addProxyToDatiAsHidden(dati, proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword);
@@ -3995,7 +4010,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 
 
 	// Controlla i dati dell'end-point
-	public boolean endPointCheckData(String protocollo, boolean servizioApplicativo, List<ExtendedConnettore> listExtendedConnettore) throws CoreException {
+	public boolean endPointCheckData(ServiceBinding serviceBinding, String protocollo, boolean servizioApplicativo, List<ExtendedConnettore> listExtendedConnettore) throws CoreException {
 		try {
 
 			String endpointtype = this.readEndPointType();
@@ -4106,7 +4121,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			boolean servizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(servizioApplicativoServerEnabledS);
 			String servizioApplicativoServer = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
 			
-			return endPointCheckData(protocollo, servizioApplicativo, endpointtype, url, nome, tipo, user,
+			return endPointCheckData(serviceBinding, protocollo, servizioApplicativo, endpointtype, url, nome, tipo, user,
 					password, initcont, urlpgk, provurl, connfact, sendas,
 					httpsurl, httpstipologia, httpshostverify,
 					httpsTrustVerifyCert, httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato,
@@ -4132,7 +4147,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 	}
 
 	// Controlla i dati dell'end-point
-	public boolean endPointCheckData(String protocollo, boolean servizioApplicativo,
+	public boolean endPointCheckData(ServiceBinding serviceBinding, String protocollo, boolean servizioApplicativo,
 			String endpointtype, String url, String nome,
 			String tipo, String user, String password, String initcont,
 			String urlpgk, String provurl, String connfact, String sendas,
@@ -4633,8 +4648,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				}
 	
 				// Se il tipo di connettore è custom, tipoconn non può essere
-				if (endpointtype.equals(TipiConnettore.CUSTOM.toString()) && (tipoconn.equals(TipiConnettore.HTTP.toString()) || tipoconn.equals(TipiConnettore.HTTPS.toString()) || tipoconn.equals(TipiConnettore.JMS.toString()) || tipoconn.equals(TipiConnettore.NULL.toString()) || tipoconn.equals(TipiConnettore.NULLECHO.toString()) || tipoconn.equals(TipiConnettore.DISABILITATO.toString()) )) {
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" non può assumere i valori: disabilitato,http,https,jms,null,nullEcho");
+				if (endpointtype.equals(TipiConnettore.CUSTOM.toString()) && (tipoconn.equals(TipiConnettore.HTTP.toString()) || tipoconn.equals(TipiConnettore.HTTPS.toString()) || tipoconn.equals(TipiConnettore.STATUS.toString()) || tipoconn.equals(TipiConnettore.JMS.toString()) || tipoconn.equals(TipiConnettore.NULL.toString()) || tipoconn.equals(TipiConnettore.NULLECHO.toString()) || tipoconn.equals(TipiConnettore.DISABILITATO.toString()) )) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" non può assumere i valori: disabilitato,http,https,jms,null,nullEcho,status");
 					return false;
 				}
 	
@@ -5051,6 +5066,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 					}
 				}
 				
+				if (endpointtype.equals(TipiConnettore.STATUS.toString()) && ConnettoreStatusParams.check(this, serviceBinding, this.pd).getParsingErrors()) {
+						return false;
+				}
+				
 				
 				try{
 					ServletExtendedConnettoreUtils.checkInfo(listExtendedConnettore);
@@ -5096,6 +5115,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			String tokenPolicy,
 			String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
+			ConnettoreStatusParams connettoreStatusParams,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws CoreException {
 		try {
@@ -5168,6 +5188,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// nessuna proprieta per connettore null
 			} else if (tipoConnettore.equals(TipiConnettore.NULLECHO.getNome())) {
 				// nessuna proprieta per connettore nullEcho
+			} else if (tipoConnettore.equals(TipiConnettore.STATUS.getNome())) {
+				connettoreStatusParams.fillConnettoreRegistry(connettore);
 			} else if (tipoConnettore.equals(TipiConnettore.HTTPS.getNome())) {
 				ConnettoreHTTPSUtils.fillConnettoreRegistry(connettore, httpsurl, httpstipologia, httpshostverify, httpsTrustVerifyCert, httpspath, 
 						httpstipo, httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, 
@@ -5386,6 +5408,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			String tokenPolicy,
 			String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
+			ConnettoreStatusParams connettoreStatusParams,
 			List<ExtendedConnettore> listExtendedConnettore)
 					throws CoreException {
 		try {
@@ -5444,6 +5467,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// nessuna proprieta per connettore null
 			} else if (tipoConnettore.equals(TipiConnettore.NULLECHO.getNome())) {
 				// nessuna proprieta per connettore nullEcho
+			} else if (tipoConnettore.equals(TipiConnettore.STATUS.getNome())) {
+				connettoreStatusParams.fillConnettoreConfig(connettore);
 			} else if (tipoConnettore.equals(TipiConnettore.HTTPS.getNome())) {
 				ConnettoreHTTPSUtils.fillConnettoreConfig(connettore, httpsurl, httpstipologia, httpshostverify, httpsTrustVerifyCert, httpspath, httpstipo, 
 						httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, 

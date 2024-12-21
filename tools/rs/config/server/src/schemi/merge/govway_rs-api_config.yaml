@@ -8947,6 +8947,7 @@ components:
               file: "#/components/schemas/ConnettoreFile"
               jms: "#/components/schemas/ConnettoreJms"
               "null": "#/components/schemas/ConnettoreNull"
+              status: "#/components/schemas/ConnettoreStatus"
               echo: "#/components/schemas/ConnettoreEcho"
               plugin: "#/components/schemas/ConnettorePlugin"
               applicativo-server: "#/components/schemas/ConnettoreApplicativoServer"
@@ -8956,6 +8957,7 @@ components:
           - $ref: "#/components/schemas/ConnettoreFile"
           - $ref: "#/components/schemas/ConnettoreJms"
           - $ref: "#/components/schemas/ConnettoreNull"
+          - $ref: "#/components/schemas/ConnettoreStatus"
           - $ref: "#/components/schemas/ConnettoreEcho"
           - $ref: "#/components/schemas/ConnettorePlugin"
           - $ref: "#/components/schemas/ConnettoreApplicativoServer"
@@ -9982,6 +9984,41 @@ components:
         debug:
           type: "boolean"
           default: false
+    ConnettoreStatus:
+      required:
+      - "risposta"
+      - "tipo"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/ConnettoreEnum"
+        risposta:
+          $ref: "#/components/schemas/TipoRispostaStatusEnum"
+        verifica_connettivita:
+          type: "boolean"
+          default: false
+        verifica_statistica:
+          $ref: "#/components/schemas/ConnettoreStatusVerificaStatistica"
+        debug:
+          type: "boolean"
+          default: false
+    ConnettoreStatusVerificaStatistica:
+      required:
+      - "frequenza"
+      - "intervallo"
+      type: "object"
+      properties:
+        frequenza:
+          $ref: "#/components/schemas/TipoPeriodoStatisticoEnum"
+        intervallo:
+          type: "integer"
+          format: "int32"
+        cache_life_time:
+          type: "integer"
+          description: "tempo di permanenza in cache di un risultato, se non impostato\
+            \ viene usato il tempo di default della cache del controllo traffico"
+          format: "int32"
+      description: "parametri di un periodo statistico per il connettore status"
     ConnettorePlugin:
       required:
       - "plugin"
@@ -10033,6 +10070,7 @@ components:
               jms: "#/components/schemas/ConnettoreJms"
               "null": "#/components/schemas/ConnettoreNull"
               echo: "#/components/schemas/ConnettoreEcho"
+              status: "#/components/schemas/ConnettoreStatus"
               plugin: "#/components/schemas/ConnettorePlugin"
               applicativo-server: "#/components/schemas/ConnettoreApplicativoServer"
               message-box: "#/components/schemas/ConnettoreMessageBox"
@@ -10042,6 +10080,7 @@ components:
           - $ref: "#/components/schemas/ConnettoreJms"
           - $ref: "#/components/schemas/ConnettoreNull"
           - $ref: "#/components/schemas/ConnettoreEcho"
+          - $ref: "#/components/schemas/ConnettoreStatus"
           - $ref: "#/components/schemas/ConnettorePlugin"
           - $ref: "#/components/schemas/ConnettoreApplicativoServer"
           - $ref: "#/components/schemas/ConnettoreMessageBox"
@@ -10061,6 +10100,7 @@ components:
               jms: "#/components/schemas/ConnettoreJms"
               "null": "#/components/schemas/ConnettoreNull"
               echo: "#/components/schemas/ConnettoreEcho"
+              status: "#/components/schemas/ConnettoreStatus"
               plugin: "#/components/schemas/ConnettorePlugin"
           oneOf:
           - $ref: "#/components/schemas/ConnettoreHttp"
@@ -10068,6 +10108,7 @@ components:
           - $ref: "#/components/schemas/ConnettoreJms"
           - $ref: "#/components/schemas/ConnettoreNull"
           - $ref: "#/components/schemas/ConnettoreEcho"
+          - $ref: "#/components/schemas/ConnettoreStatus"
           - $ref: "#/components/schemas/ConnettorePlugin"
       additionalProperties: false
     APIBaseImpl:
@@ -12745,6 +12786,7 @@ components:
       - "jms"
       - "null"
       - "echo"
+      - "status"
       - "plugin"
       - "applicativo-server"
       - "message-box"
@@ -12793,6 +12835,22 @@ components:
       enum:
       - "abilitato"
       - "disabilitato"
+    TipoRispostaStatusEnum:
+      type: "string"
+      enum:
+      - "ModI"
+      - "vuoto"
+      - "xml"
+      - "json"
+      - "text"
+    TipoPeriodoStatisticoEnum:
+      type: "string"
+      default: "giornaliero"
+      enum:
+      - "orario"
+      - "giornaliero"
+      - "settimanale"
+      - "mensile"
     ModISicurezzaCanaleEnum:
       type: "string"
       enum:
@@ -13300,7 +13358,7 @@ components:
     data_fine:
       name: "data_fine"
       in: "query"
-      description: "data inizio dell'intervallo di ricerca"
+      description: "data fine dell'intervallo di ricerca"
       required: true
       schema:
         type: "string"

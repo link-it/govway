@@ -20,7 +20,10 @@
 package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -35,6 +38,9 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoLatenza;
 import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.core.cache.CacheEntry;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneGatewayControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -65,6 +71,7 @@ public class GestoreCacheControlloTraffico {
 //	private static final Boolean semaphoreOccupazioneBanda = true;
 //	private static final Boolean semaphoreLatenza = true;
 //	private static final Boolean semaphoreStato = true;
+	private static final org.openspcoop2.utils.Semaphore lockNumeroEsiti = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-NumeroEsiti");
 	private static final org.openspcoop2.utils.Semaphore lockNumeroRichieste = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-NumeroRichieste");
 	private static final org.openspcoop2.utils.Semaphore lockOccupazioneBanda = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-OccupazioneBanda");
 	private static final org.openspcoop2.utils.Semaphore lockLatenza = new org.openspcoop2.utils.Semaphore("GestoreCacheControlloTraffico-Latenza");
@@ -333,8 +340,136 @@ public class GestoreCacheControlloTraffico {
 	
 	
 	
+	/*********************** NUMERO ESITI ******************************* */
+	public RisultatoStatistico readNumeroEsiti(TipoPeriodoStatistico tipoPeriodo, Integer periodLength, Date endDate, 
+			List<Integer> esiti, IDServizio servizio, IDSoggetto mittente, List<String> ignoreOperations, DatiTransazione datiTransazione, IState state, Integer lifetimeSecond) throws Exception{
+						
+		// BuildKey
+		SimpleDateFormat dateformat; 
+		switch(tipoPeriodo) {
+		case ORARIO: dateformat = DateUtils.getSimpleDateFormatHour(); break;
+		case GIORNALIERO: dateformat = DateUtils.getSimpleDateFormatDay(); break;
+		case SETTIMANALE: dateformat = DateUtils.getSimpleDateFormatDay(); break;
+		case MENSILE: dateformat = DateUtils.getSimpleDateFormatDay(); break;
+		default: dateformat = DateUtils.getSimpleDateFormatDay(); break;
+		}
+		
+		
+		StringBuilder bfKey = new StringBuilder(servizio.toString());		
+		if (ignoreOperations != null) {
+			Collections.sort(ignoreOperations);
+			bfKey.append("~" + ignoreOperations);
+		}
+		bfKey.append(mittente == null ? "" : " " + mittente);
+		bfKey.append(esiti == null ? "" : " " + String.join(",", esiti.stream().map(Object::toString).collect(Collectors.toList())));
+		bfKey.append(" [").append(dateformat.format(endDate));
+		bfKey.append("-").append(periodLength).append(" ").append(tipoPeriodo).append("]");
+		String key = bfKey.toString();
+		
+		// Search key
+		RisultatoStatistico risultato = null;
+		if(GestoreCacheControlloTraffico.cache!=null){
+			risultato = this.readNumeroEsiti(key, tipoPeriodo, periodLength, endDate, 
+				esiti, servizio, mittente, ignoreOperations, datiTransazione, state, lifetimeSecond);
+		}
+		else{
+			risultato = this.datiStatisticiReader.readNumeroEsiti(key, tipoPeriodo, periodLength, endDate, 
+					esiti, servizio, mittente, ignoreOperations, datiTransazione, state);
+		}
+		return risultato;
+	}
 	
+	private RisultatoStatistico readNumeroEsiti(String keyCache, TipoPeriodoStatistico tipoPeriodo, Integer periodLength, Date endDate, 
+			List<Integer> esiti, IDServizio servizio, IDSoggetto mittente, List<String> ignoreOperations, DatiTransazione datiTransazione, IState state, Integer lifetimeSecond) throws Exception{
+
+		RisultatoStatistico obj = null;
+		try{
+
+			if(keyCache == null)
+				throw new Exception("KeyCache non definita");
+
+			// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+    		if(cache!=null){
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						this.log.debug("Oggetto (tipo:{}) con chiave [{}] valore[{}] in cache.", response.getObject().getClass().getName(), keyCache, response.getObject());
+						@SuppressWarnings("unchecked")
+						CacheEntry<RisultatoStatistico> entry = (CacheEntry<RisultatoStatistico>) response.getObject();
+						if (entry.isValid())
+							return entry.getObject();
+					}else if(response.getException()!=null){
+						this.log.debug("Eccezione (tipo:{}) con chiave [{}]", response.getException().getClass().getName().concat(keyCache), keyCache);
+						throw (Exception) response.getException();
+					}else{
+						this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+			}
+			
+    		String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
+    		lockNumeroEsiti.acquire("readNumeroEsitiInCache", idTransazione);
+			try {
+    			
+				// se e' attiva una cache provo ad utilizzarla
+				if(cache!=null){
+					org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							this.log.debug("Oggetto (tipo:{}) con chiave [{}] valore[{}] in cache.", response.getObject().getClass().getName(), keyCache, response.getObject());
+							@SuppressWarnings("unchecked")
+							CacheEntry<RisultatoStatistico> entry = (CacheEntry<RisultatoStatistico>) response.getObject();
+							if (entry.isValid())
+								return entry.getObject();
+						}else if(response.getException()!=null){
+							this.log.debug("Eccezione (tipo:{}) con chiave [{}] in cache.", response.getException().getClass().getName(), keyCache);
+							throw (Exception) response.getException();
+						}else{
+							this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+						}
+					}
+				}
 	
+				// Effettuo le query nella mia gerarchia di registri.
+				this.log.debug("oggetto con chiave [{}] non in cache, effettuo ricerca...", keyCache);
+				try{
+					obj = this.datiStatisticiReader.readNumeroEsiti(keyCache, tipoPeriodo, periodLength, endDate, 
+						 esiti, servizio, mittente,  ignoreOperations, datiTransazione, state);
+				}catch(Exception e){
+					throw e;
+				}
+	
+				// Aggiungo la risposta in cache (se esiste una cache)	
+				// Se ho una eccezione aggiungo in cache solo una not found
+				if( cache!=null ){ 	
+					if(obj!=null){
+						this.log.debug("Aggiungo oggetto con chiave [{}] valore[{}] in cache", keyCache, obj);
+					}else{
+						throw new Exception("Ricerca ha ritornato un valore null");
+					}
+					try{	
+						org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+						responseCache.setObject(new CacheEntry<RisultatoStatistico>(obj, lifetimeSecond * 1000l));
+						
+						cache.put(keyCache,responseCache);
+					}catch(UtilsException e){
+						this.log.error("Errore durante l'inserimento in cache con chiave [{}] valore[{}]: {}", keyCache, obj, e.getMessage());
+					}
+				}
+			}finally {
+				lockNumeroEsiti.release("readNumeroEsitiInCache", idTransazione);
+			}
+
+		}
+		catch(Exception e){
+			this.log.error(e.getMessage(),e);
+			throw new Exception("NumeroEsiti, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}
+
+		return obj;
+	}
 	
 	
 	/* ********************** NUMERO RICHIESTE ************************** */
