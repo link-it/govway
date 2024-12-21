@@ -31,6 +31,7 @@ HTTP("http"),
   JMS("jms"),
   NULL("null"),
   ECHO("echo"),
+  STATUS("status"),
   PLUGIN("plugin"),
   APPLICATIVO_SERVER("applicativo-server"),
   MESSAGE_BOX("message-box");

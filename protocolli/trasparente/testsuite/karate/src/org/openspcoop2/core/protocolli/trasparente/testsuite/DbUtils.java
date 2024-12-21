@@ -189,6 +189,10 @@ public class DbUtils {
         return this.jdbc.update(query);
     }
     
+    public int update(String query, Object ...args) {
+        return this.jdbc.update(query, args);
+    }
+    
     public long getIdErogazione(String erogatore, String erogazione) {
     	String query = "select serv.id from "+CostantiDB.SERVIZI+" serv, "+CostantiDB.SOGGETTI+" sog WHERE serv.id_soggetto = sog.id AND sog.tipo_soggetto='gw' AND sog.nome_soggetto='"+erogatore+"' AND serv.tipo_servizio='gw' AND serv.nome_servizio='"+erogazione+"'";
     	logger.info(query);

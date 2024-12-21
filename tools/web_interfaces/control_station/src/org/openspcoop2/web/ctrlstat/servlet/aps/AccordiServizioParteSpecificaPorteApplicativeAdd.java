@@ -77,6 +77,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
@@ -325,7 +326,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
-
+			// status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(apsHelper);
 
 			boolean httpshostverify = false;
 			if (httpshostverifyS != null && httpshostverifyS.equals(Costanti.CHECK_BOX_ENABLED))
@@ -743,7 +745,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 //					apsHelper.isModalitaCompleta()?null:(generaPACheckSoggetto?AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX : AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX)
 					
 					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 								url, nomeCodaJms,
 								tipoJms, user,
@@ -771,6 +773,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 								protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 								erogazioneServizioApplicativoServer, saSoggetti,
 								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+								connettoreStatusParams,
 								postBackViaPost);
 					}
 				}
@@ -788,7 +791,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			boolean isOk = apsHelper.configurazioneErogazioneCheckData(TipoOperazione.ADD, nome, nomeGruppo, azioni, asps, azioniOccupate,modeCreazione,null,erogazioneIsSupportatoAutenticazioneSoggetti, mappingInfo);
 			// controllo endpoint
 			if(isOk && ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-				isOk = apsHelper.endPointCheckData(protocollo, true,
+				isOk = apsHelper.endPointCheckData(serviceBinding, protocollo, true,
 						endpointtype, url, nome, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
@@ -840,7 +843,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						autorizzazioneRuoliToken, autorizzazioneRuoliTipologiaToken, autorizzazioneRuoliMatchToken);
 				
 				if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
-					dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 							url, nomeCodaJms,
 							tipoJms, user,
@@ -868,6 +871,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, saSoggetti,
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams,
 							postBackViaPost);
 				}
 
@@ -1033,7 +1037,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					protocollo, userLogin,
 					apsCore, apsHelper,erogazioneServizioApplicativoServer,
 					identificazioneAttributiStato, attributeAuthoritySelezionate, attributeAuthorityAttributi,
-					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue, connettoreStatusParams);
 			
 			
 			// Preparo la lista

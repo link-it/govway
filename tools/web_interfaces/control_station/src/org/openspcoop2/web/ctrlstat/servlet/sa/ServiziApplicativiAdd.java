@@ -84,6 +84,7 @@ import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUti
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.OggettoDialogEnum;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -431,6 +432,10 @@ public final class ServiziApplicativiAdd extends Action {
 			String responseInputFileNameHeaders = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 			String responseInputDeleteAfterRead = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			
+			
+			//status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(saHelper);
 			
 			boolean visualizzaModificaCertificato = false;
 			boolean visualizzaAddCertificato = false;
@@ -943,7 +948,8 @@ public final class ServiziApplicativiAdd extends Action {
 						integrationManagerEnabled, 
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration,consoleOperationType, protocolProperties);
@@ -1058,7 +1064,8 @@ public final class ServiziApplicativiAdd extends Action {
 						integrationManagerEnabled, 
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, consoleConfiguration,consoleOperationType, protocolProperties);
@@ -1242,7 +1249,8 @@ public final class ServiziApplicativiAdd extends Action {
 					String oldConnT = connis.getTipo();
 					if ( (connis.getCustom()!=null && connis.getCustom()) && 
 							!connis.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-							!connis.getTipo().equals(TipiConnettore.FILE.toString()))
+							!connis.getTipo().equals(TipiConnettore.FILE.toString()) && 
+							!connis.getTipo().equals(TipiConnettore.STATUS.toString()))
 						oldConnT = TipiConnettore.CUSTOM.toString();
 					saHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 							nomeCodaJMS, tipoCodaJMS, user, password,
@@ -1263,6 +1271,7 @@ public final class ServiziApplicativiAdd extends Action {
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							tokenPolicy,
 							apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams,
 							listExtendedConnettore);
 					invServizio.setConnettore(connis);
 				}

@@ -51,8 +51,10 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -61,10 +63,12 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
 import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUtils;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
@@ -252,6 +256,9 @@ public class PorteDelegateConnettoreDefault extends Action {
 			String responseInputDeleteAfterRead = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = porteDelegateHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
+			//status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(porteDelegateHelper);
+			
 			boolean servizioApplicativoServerEnabled = false;
 			String servizioApplicativoServer = null;
 			
@@ -391,6 +398,11 @@ public class PorteDelegateConnettoreDefault extends Action {
 			String servletConnettore = null;
 			Parameter[] parametriServletConnettore =null;
 			
+			asps = apsCore.getServizio(idServizio,false);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteDelegateCore);
+			AccordoServizioParteComuneSintetico aspc = apcCore.getAccordoServizioSintetico(porteDelegateHelper.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			ServiceBinding serviceBinding = porteDelegateCore.toMessageServiceBinding(aspc.getServiceBinding()); 
+			
 			if(	porteDelegateHelper.isEditModeInProgress()){
 				
 				if(modalita == null) {
@@ -494,8 +506,10 @@ public class PorteDelegateConnettoreDefault extends Action {
 				
 				dati = porteDelegateHelper.addConnettoreDefaultRidefinitoToDati(dati,TipoOperazione.OTHER, modalita, modalitaValues,modalitaLabels,false,servletConnettore,parametriServletConnettore);
 				
+				
 				if(modalita.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO)) {
-					dati = porteDelegateHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+					
+					dati = porteDelegateHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 							null,//(porteDelegateHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX ,
 							url, nomeCodaJms,
 							tipoJms, user,
@@ -522,6 +536,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null,
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams,
 							postBackViaPost);
 				}
 
@@ -541,7 +556,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 			boolean isOk = porteDelegateHelper.connettoreDefaultRidefinitoCheckData(TipoOperazione.OTHER, modalita);
 			
 			if(isOk && modalita.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO)) {
-				isOk = porteDelegateHelper.endPointCheckData(protocollo, false,
+				isOk = porteDelegateHelper.endPointCheckData(serviceBinding, protocollo, false,
 						endpointtype, url, nomeCodaJms, tipoJms,
 						user, password, initcont, urlpgk, provurl, connfact,
 						tipoSendas, httpsurl, httpstipologia, httpshostverify,
@@ -574,7 +589,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 				dati = porteDelegateHelper.addConnettoreDefaultRidefinitoToDati(dati,TipoOperazione.OTHER, modalita, modalitaValues,modalitaLabels,false,servletConnettore,parametriServletConnettore);
 				
 				if(modalita.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO)) {
-					dati = porteDelegateHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+					dati = porteDelegateHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 							null,//(porteDelegateHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
 							url, nomeCodaJms,
 							tipoJms, user,
@@ -601,6 +616,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null,
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams,
 							postBackViaPost);
 				}
 
@@ -638,6 +654,7 @@ public class PorteDelegateConnettoreDefault extends Action {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
 					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					listExtendedConnettore);
 			
 			Fruitore fruitore = null;

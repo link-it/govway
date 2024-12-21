@@ -93,7 +93,33 @@ public class ConnettoriCostanti {
 	public static final String LABEL_CONNETTORE_JMS_CONFIGURAZIONI_CONTESTO_JNDI = "Contesto JNDI";
 	public static final String LABEL_CONNETTORE_REQUEST_OUTPUT = "Richiesta";
 	public static final String LABEL_CONNETTORE_RESPONSE_INPUT = "Risposta";
+	public static final String LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO = "Formato della risposta fornita dal connettore";
+	private static List<String> labelConnettoreResponseInputDataElementInfoFormati = new ArrayList<>();
+	public static List<String> getLabelConnettoreResponseInputDataElementInfoFormati() {
+		return labelConnettoreResponseInputDataElementInfoFormati;
+	}
+	public static final String LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_MODI = "ModI";
+	public static final String LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_PERSONALIZZATO = "Personalizzata";
+	static {
+		labelConnettoreResponseInputDataElementInfoFormati.add(LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_MODI+": viene prodotta una risposta conforme alle indicazioni descritte nel documento 'Raccomandazioni di implementazione' delle Linee Guida AGID.");
+		labelConnettoreResponseInputDataElementInfoFormati.add(LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_PERSONALIZZATO+": consente di configurare il tipo di risposta generata.");
+	}
 	public static final String LABEL_CONNETTORE_CUSTOM = "Personalizzato";
+	private static List<String> labelConnettoreResponseInputDataElementInfoFormatiCustom = new ArrayList<>();
+	public static List<String> getLabelConnettoreResponseInputDataElementInfoFormatiCustom() {
+		return labelConnettoreResponseInputDataElementInfoFormatiCustom;
+	}
+	public static final String LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_CUSTOM_EMPTY = "Empty HTTP Payload";
+	public static final String LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_CUSTOM_XML = "XML";
+	public static final String LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_CUSTOM_JSON = "JSON";
+	public static final String LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_CUSTOM_TEXT = "Text";
+	static {
+		labelConnettoreResponseInputDataElementInfoFormatiCustom.add(LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_CUSTOM_EMPTY+": non viene prodotto alcun payload http.");
+		labelConnettoreResponseInputDataElementInfoFormatiCustom.add(LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_CUSTOM_XML+": viene generata una risposta xml.");
+		labelConnettoreResponseInputDataElementInfoFormatiCustom.add(LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_CUSTOM_JSON+": viene generata una risposta json.");
+		labelConnettoreResponseInputDataElementInfoFormatiCustom.add(LABEL_CONNETTORE_RESPONSE_INPUT_DATA_ELEMENT_INFO_FORMATO_CUSTOM_TEXT+": viene generata una risposta in formato testuale.");
+	}
+	
 	public static final String LABEL_PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER = CostantiControlStation.LABEL_PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER;
 	public static final String LABEL_PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER = CostantiControlStation.LABEL_PARAMETRO_ID_APPLICATIVO_SERVER;
 
@@ -224,6 +250,28 @@ public class ConnettoriCostanti {
 	public static final String PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS = "responseInputFileNameHeaders";
 	public static final String PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ = "responseInputFileNameDelete";
 	public static final String PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME = "responseInputWaitTime";
+	
+	// Connettore status
+	public static final String PARAMETRO_CONNETTORE_STATUS_RESPONSE_TYPE = "statusResponseType";
+	public static final String PARAMETRO_CONNETTORE_STATUS_TEST_CONNECTIVITY = "testConnectivity";
+	public static final String PARAMETRO_CONNETTORE_STATUS_TEST_STATISTICS = "testStatistics";
+	public static final String PARAMETRO_CONNETTORE_STATUS_RESPONSE_PERSONALIZED = "statusResponsePersonalized";
+	public static final String PARAMETRO_CONNETTORE_STATUS_PERIOD = "period";
+	public static final String PARAMETRO_CONNETTORE_STATUS_PERIOD_VALUE = "periodValue";
+	public static final String PARAMETRO_CONNETTORE_STATUS_STAT_LIFETIME = "statLifetime";
+	
+	public static final String LABEL_CONNETTORE_STATUS_VERIFICHE = "Verifiche";
+	public static final String LABEL_CONNETTORE_STATUS_TEST_CONNECTIVITY = "Connettività";
+	public static final String LABEL_CONNETTORE_STATUS_TEST_CONNECTIVITY_DATA_ELEMENT_INFO = "Attiva la verifica della connettività, che controlla la raggiungibilità di ciascun connettore HTTP(S) configurato.";
+	public static final String LABEL_CONNETTORE_STATUS_TEST_STATISTICS = "Osservazione Statistica";
+	public static final String LABEL_CONNETTORE_STATUS_TEST_STATISTICS_DATA_ELEMENT_INFO = "Attiva la verifica statistica, che controlla la presenza di almeno una transazione che sia stata completata con successo, qualora ne siano presenti.";
+	public static final String LABEL_CONNETTORE_STATUS_PERIOD = "Frequenza";
+	public static final String LABEL_CONNETTORE_STATUS_OBSERVATION_INTERVAL = "Intervallo Osservazione";
+	public static final String LABEL_CONNETTORE_STATUS_OBSERVATION_INTERVAL_DATA_ELEMENT_INFO = "Finestra temporale entro cui effettuare la verifica statistica; saranno considerate unicamente le transazioni eseguite all'interno dell'intervallo specificato.";
+	public static final String LABEL_CONNETTORE_STATUS_STAT_LIFETIME = "Cache Life Time (Secondi)";
+	public static final String LABEL_CONNETTORE_STATUS_STAT_LIFETIME_DATA_ELEMENT_INFO = "Valore opzionale che specifica la durata del lifetime in cache delle analisi già effettuate.<BR/><BR/>"
+			+ "<b>NOTA</b>: il valore deve essere minore o uguale al valore di default della cache '"+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO_NAME+"'; in caso contrario, verrà utilizzato il valore di default.";
+	
 	
 	public static final String PARAMETRO_CONNETTORE_CUSTOM_ID = "id";
 	public static final String PARAMETRO_CONNETTORE_CUSTOM_MY_ID = "myId";

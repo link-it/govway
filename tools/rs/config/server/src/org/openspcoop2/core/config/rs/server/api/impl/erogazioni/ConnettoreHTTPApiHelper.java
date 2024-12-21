@@ -97,6 +97,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 		String httpskeystore = ErogazioniCheckNotNull.getHttpskeystore(httpsClient);
         			    
 		return env.saHelper.endPointCheckData(
+				null,
 				env.tipo_protocollo,
 				erogazione,
 				endpointtype,
@@ -279,7 +280,8 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				httpApiKey!=null ? evalnull( httpApiKey::getApiKey ) : null, // apiKeyValue
 		        httpApiKey!=null ? evalnull( httpApiKey::getAppIdHeader ) : null, // appIdHeader
 		        httpApiKey!=null ? evalnull( httpApiKey::getAppId ) : null, // appIdValue	
-				
+		        
+		        null, // connettoreStatusParams
 				listExtendedConnettore);			
 		
 		return regConnettore;
@@ -386,6 +388,7 @@ public class ConnettoreHTTPApiHelper extends AbstractConnettoreApiHelper<Connett
 				httpApiKey!=null ? evalnull( httpApiKey::getAppIdHeader ) : null, // appIdHeader
 				httpApiKey!=null ? evalnull( httpApiKey::getAppId ) : null, // appIdValue	
 				
+				null, // connettoreStatusParams
 				listExtendedConnettore);
 		return regConnettore;
 	}

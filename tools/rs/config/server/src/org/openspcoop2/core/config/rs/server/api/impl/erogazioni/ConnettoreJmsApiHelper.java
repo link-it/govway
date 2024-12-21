@@ -78,6 +78,7 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 
 		String sendAs = conn.getSendAs().equals(ConnettoreJmsSendAsEnum.BYTES) ? CostantiConnettori.CONNETTORE_JMS_SEND_AS_BYTES_MESSAGE : CostantiConnettori.CONNETTORE_JMS_SEND_AS_TEXT_MESSAGE;
 		return env.saHelper.endPointCheckData(
+				null,
 				env.tipo_protocollo,
 				erogazione,
 				endpointtype,
@@ -233,6 +234,8 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
+				
+				null, // connettoreStatusParams
 				listExtendedConnettore);				
 		return regConnettore;
 	}
@@ -317,6 +320,8 @@ public class ConnettoreJmsApiHelper extends AbstractConnettoreApiHelper<Connetto
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
+				
+				null, // connettoreStatusParams
 				listExtendedConnettore);		
 		return regConnettore;
 	}

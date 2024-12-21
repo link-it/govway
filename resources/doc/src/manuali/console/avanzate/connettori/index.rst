@@ -17,7 +17,7 @@ della comunicazione http:
 
 -  *Autenticazione http*: tale funzionalità permette di impostare delle
    credenziali http basic (username e password).
-      
+
 -  *Autenticazione token*: tale funzionalità permette di inoltrate un Bearer Token.
 
 -  *Autenticazione API Key*: funzionalità che consente di inoltrare al backend una chiave di identificazione 'Api Key' veicolata all'interno di un header http 'X-API-KEY' (https://swagger.io/docs/specification/authentication/api-keys/). È possibile abilitare anche la modalità 'App ID' che prevede oltre all'ApiKey un identificatore dell'applicazione oltre a personalizzare i nomi degli header http utilizzati.
@@ -62,9 +62,13 @@ ulteriori connettori:
 -  *NullEcho*: connettore per test. Si comporta come un servizio
    Sincrono rispondendo con un messaggio identico alla richiesta
 
+-  *Status*: connettore che permette di ottenere informazioni sul
+   corretto funzionamento della servizio sul quale
+   è impostato.
+
 Nel seguito vengono descritte alcune funzionalità specifiche dei
 connettori HTTP e HTTPS. Inoltre viene fornita una descrizione del
-connettore built-in JMS e File.
+connettore built-in JMS, File e Status.
 
 .. toctree::
         :maxdepth: 2
@@ -81,3 +85,4 @@ connettore built-in JMS e File.
 	encodedWord
 	jms
 	file
+	status

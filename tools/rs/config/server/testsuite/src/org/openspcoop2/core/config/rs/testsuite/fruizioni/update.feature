@@ -153,6 +153,9 @@ Examples:
 |connettore_fruizione_apikey_appid.json|https://ginovadifretta.it/petstore|
 |connettore_fruizione_apikey_appid_custom.json|https://ginovadifretta.it/petstore|
 |connettore_fruizione_apikey_custom.json|https://ginovadifretta.it/petstore|
+|connettore_fruizione_status_empty.json|[status] govway://status|
+|connettore_fruizione_status_verifica_statistica.json|[status] govway://status|
+|connettore_fruizione_status_verifica_statistica_custom_lifetime.json|[status] govway://status|
 
 @UpdateConnettore400
 Scenario Outline: Erogazioni Update Connettore 400

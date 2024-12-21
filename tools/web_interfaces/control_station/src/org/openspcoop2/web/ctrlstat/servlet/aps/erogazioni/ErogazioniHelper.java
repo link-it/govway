@@ -3084,7 +3084,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							String endpointtype = "";
 							if ((connis.getCustom()!=null && connis.getCustom()) && 
 									!connis.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-									!connis.getTipo().equals(TipiConnettore.FILE.toString())) {
+									!connis.getTipo().equals(TipiConnettore.FILE.toString()) &&
+									!connis.getTipo().equals(TipiConnettore.STATUS.toString())) {
 								endpointtype = TipiConnettore.CUSTOM.toString();
 							} else
 								endpointtype = connis.getTipo();

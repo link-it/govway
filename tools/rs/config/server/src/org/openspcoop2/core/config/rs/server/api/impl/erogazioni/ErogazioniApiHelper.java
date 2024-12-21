@@ -1750,6 +1750,7 @@ public class ErogazioniApiHelper {
 				httpApiKey!=null ? evalnull( httpApiKey::getAppIdHeader ) : null, 
 				httpApiKey!=null ? evalnull( httpApiKey::getAppId ): null, 
 				
+				null, // connettoreStatusParams
 				listExtendedConnettore);			
 	}
 	

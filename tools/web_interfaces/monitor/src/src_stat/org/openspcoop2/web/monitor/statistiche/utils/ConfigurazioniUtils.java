@@ -423,6 +423,41 @@ public class ConfigurazioniUtils {
 			p.setNome(CostantiConfigurazioni.LABEL_URL); p.setValore(ConnettoreNULLEcho.LOCATION);
 			lst.add(p);
 		}
+		else if(TipiConnettore.STATUS.getNome().equals(connettore.getTipo())){
+			p = new Property();
+			p.setId(idx++);
+			p.setNome(CostantiConfigurazioni.LABEL_STATUS_RESPONSE_TYPE); 
+			p.setValore(getProperty(CostantiConnettori.CONNETTORE_STATUS_RESPONSE_TYPE, connettore.getPropertyList()));
+			lst.add(p);
+			
+			p = new Property();
+			p.setId(idx++);
+			p.setNome(CostantiConfigurazioni.LABEL_STATUS_TEST_CONNECTIVITY); 
+			p.setValore(getProperty(CostantiConnettori.CONNETTORE_STATUS_TEST_CONNECTIVITY, connettore.getPropertyList()));
+			lst.add(p);
+			
+			if (getProperty(CostantiConnettori.CONNETTORE_STATUS_PERIOD, connettore.getPropertyList()) != null) {
+				p = new Property();
+				p.setId(idx++);
+				p.setNome(CostantiConfigurazioni.LABEL_STATUS_PERIOD); 
+				p.setValore(getProperty(CostantiConnettori.CONNETTORE_STATUS_PERIOD, connettore.getPropertyList()));
+				lst.add(p);
+				
+				p = new Property();
+				p.setId(idx++);
+				p.setNome(CostantiConfigurazioni.LABEL_STATUS_PERIOD_VALUE); 
+				p.setValore(getProperty(CostantiConnettori.CONNETTORE_STATUS_PERIOD_VALUE, connettore.getPropertyList()));
+				lst.add(p);
+			}
+			
+			if (getProperty(CostantiConnettori.CONNETTORE_STATUS_STAT_LIFETIME, connettore.getPropertyList()) != null) {
+				p = new Property();
+				p.setId(idx++);
+				p.setNome(CostantiConfigurazioni.LABEL_STATUS_STAT_LIFETIME); 
+				p.setValore(getProperty(CostantiConnettori.CONNETTORE_STATUS_STAT_LIFETIME, connettore.getPropertyList()));
+				lst.add(p);
+			}
+		}
 		else{
 			List<Property> list = connettore.getPropertyList();
 			if(list!=null && !list.isEmpty()){

@@ -27,17 +27,21 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.utils.transport.http.HttpUtilsException;
 import org.slf4j.Logger;
 
 import com.intuit.karate.FileUtils;
@@ -172,7 +176,7 @@ public class ConfigLoader {
         resetCache();
     }
     
-    public static void resetCache() throws Exception {
+    public static void resetCache() throws UtilsException, HttpUtilsException {
         
     	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
     	logger.debug("---- resetAllCache ----");
@@ -197,7 +201,7 @@ public class ConfigLoader {
     	resetCache(false, "DatiRichieste");
     }
     
-    public static void resetCache(boolean useForSkip, String ... cache) throws Exception {
+    public static void resetCache(boolean useForSkip, String ... cache) throws UtilsException, HttpUtilsException {
         
     	if(cache==null || cache.length<=0) {
     		resetCache();
@@ -205,7 +209,7 @@ public class ConfigLoader {
     	}
     	
     	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
-    	logger.debug("---- resetCache useForSkip:"+useForSkip+" cache:"+Arrays.asList(cache)+" ----");
+    	logger.debug("---- resetCache useForSkip:{} cache:{} ----", useForSkip, Arrays.asList(cache));
     	    	
         String jmx_user = prop.getProperty("jmx_username");
         String jmx_pass = prop.getProperty("jmx_password"); 
@@ -232,6 +236,60 @@ public class ConfigLoader {
             org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
         }
 
+    }
+    
+    public static void enableCaches(String ...caches) throws UtilsException, HttpUtilsException {
+    	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
+    	logger.debug("---- enableCache  cache:{} ----", Arrays.asList(caches));
+    	    	
+        String jmxUser = prop.getProperty("jmx_username");
+        String jmxPass = prop.getProperty("jmx_password"); 
+    	
+        String[] govwayCaches = prop.getProperty("jmx_cache_resources").split(",");
+        
+        Map<String, String> params = Map.of(
+        		"methodName", "abilitaCache",
+        		CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE, "0",
+        		CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_2, "true",
+        		CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_3, "0",
+        		CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_4, "0"
+        );
+        String encodedParams = params
+        		.entrySet()
+        		.stream()
+        		.map(e -> e.getKey() + "=" + e.getValue())
+        		.collect(Collectors.joining("&"));
+        
+        for (String resource : govwayCaches) {
+    		for (String c : caches) {
+				if(resource.equals(c)) {
+					logger.debug("abilito cache: {}", resource);
+		            String url = prop.getProperty("govway_base_path") + "/check?" + encodedParams + "&resourceName=" + resource;
+		            org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmxUser, jmxPass);
+					break;
+				}
+			}
+         }
+    }
+    
+    public static void disableCaches(String ...caches) throws UtilsException, HttpUtilsException {
+    	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
+    	logger.debug("---- disableCache  cache:{} ----", Arrays.asList(caches));
+    	    	
+        String jmxUser = prop.getProperty("jmx_username");
+        String jmxPass = prop.getProperty("jmx_password"); 
+    	
+        String[] govwayCaches = prop.getProperty("jmx_cache_resources").split(",");
+        for (String resource : govwayCaches) {
+    		for (String c : caches) {
+				if(resource.equals(c)) {
+					logger.debug("disabilito cache: {}", resource);
+		            String url = prop.getProperty("govway_base_path") + "/check?methodName=disabilitaCache&resourceName=" + resource;
+		            org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmxUser, jmxPass);
+					break;
+				}
+			}
+         }
     }
 
     public static void deleteConfig() throws Exception {

@@ -1030,6 +1030,44 @@ components:
         debug:
           type: boolean
           default: false
+          
+    # ConnettoreStatus
+    ConnettoreStatus:
+      type: object
+      required:
+        - tipo 
+        - risposta
+      properties:
+        tipo:
+          $ref: '#/components/schemas/ConnettoreEnum'
+        risposta:
+          $ref: '#/components/schemas/TipoRispostaStatusEnum'
+        verifica_connettivita:
+           type: boolean
+           default: false
+        verifica_statistica:
+          $ref: '#/components/schemas/ConnettoreStatusVerificaStatistica'
+        debug:
+          type: boolean
+          default: false
+    ConnettoreStatusVerificaStatistica:
+       type: object
+       description: 'parametri di un periodo statistico per il connettore status'
+       required:
+          - frequenza
+          - intervallo
+       properties:
+          frequenza:
+             $ref: '#/components/schemas/TipoPeriodoStatisticoEnum'
+          intervallo:
+             type: integer
+             format: int32
+             min: 1
+          cache_life_time:
+             description: 'tempo di permanenza in cache di un risultato, se non impostato viene usato il tempo di default della cache del controllo traffico'
+             type: integer
+             format: int32
+             min: 1          
 
     # ConnettorePlugin
     ConnettorePlugin:
@@ -1087,6 +1125,7 @@ components:
                - $ref: '#/components/schemas/ConnettoreJms'
                - $ref: '#/components/schemas/ConnettoreNull'
                - $ref: '#/components/schemas/ConnettoreEcho'
+               - $ref: '#/components/schemas/ConnettoreStatus'
                - $ref: '#/components/schemas/ConnettorePlugin'
                - $ref: '#/components/schemas/ConnettoreApplicativoServer'
                - $ref: '#/components/schemas/ConnettoreMessageBox'
@@ -1098,6 +1137,7 @@ components:
                  'jms': '#/components/schemas/ConnettoreJms'
                  'null': '#/components/schemas/ConnettoreNull'
                  'echo': '#/components/schemas/ConnettoreEcho'
+                 'status': '#/components/schemas/ConnettoreStatus'
                  'plugin': '#/components/schemas/ConnettorePlugin'
                  'applicativo-server': '#/components/schemas/ConnettoreApplicativoServer'
                  'message-box': '#/components/schemas/ConnettoreMessageBox' 
@@ -1116,6 +1156,7 @@ components:
                - $ref: '#/components/schemas/ConnettoreJms'
                - $ref: '#/components/schemas/ConnettoreNull'
                - $ref: '#/components/schemas/ConnettoreEcho'
+               - $ref: '#/components/schemas/ConnettoreStatus'
                - $ref: '#/components/schemas/ConnettorePlugin'
              discriminator:
                propertyName: tipo
@@ -1125,6 +1166,7 @@ components:
                  'jms': '#/components/schemas/ConnettoreJms'
                  'null': '#/components/schemas/ConnettoreNull'
                  'echo': '#/components/schemas/ConnettoreEcho'
+                 'status': '#/components/schemas/ConnettoreStatus'
                  'plugin': '#/components/schemas/ConnettorePlugin'
       additionalProperties: false
 
@@ -3724,6 +3766,7 @@ components:
         - 'jms'
         - 'null'
         - 'echo'
+        - 'status'
         - 'plugin'
         - 'applicativo-server'
         - 'message-box'
@@ -3749,7 +3792,13 @@ components:
     TracciamentoTransazioniStatoFase:
       type: string
       enum: ['abilitato', 'disabilitato']
-    
+    TipoRispostaStatusEnum:
+       type: string
+       enum: ['ModI', 'vuoto', 'xml', 'json', 'text']
+    TipoPeriodoStatisticoEnum:
+       type: string
+       enum: ['orario','giornaliero','settimanale','mensile']
+       default: giornaliero
     # ModI: Enumeration
     ModISicurezzaCanaleEnum:
       type: string
