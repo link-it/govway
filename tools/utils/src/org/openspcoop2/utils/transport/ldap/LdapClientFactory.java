@@ -24,6 +24,7 @@ package org.openspcoop2.utils.transport.ldap;
  * Factory pattern per ottenere un implementazione concreta di un client ldap
  * 
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$  
  * @version $Rev$, $Date$
  *
  */

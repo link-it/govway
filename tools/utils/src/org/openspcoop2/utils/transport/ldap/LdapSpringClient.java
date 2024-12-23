@@ -34,6 +34,7 @@ import org.springframework.ldap.query.LdapQueryBuilder;
  * Implementazione spring di un client ldap
  * 
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$  
  * @version $Rev$, $Date$
  *
  */

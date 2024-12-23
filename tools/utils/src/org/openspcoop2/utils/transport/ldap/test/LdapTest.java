@@ -63,6 +63,7 @@ import org.springframework.ldap.ldif.parser.LdifParser;
  * Test
  * 
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$  
  * @version $Rev$, $Date$
  *
  */

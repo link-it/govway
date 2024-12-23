@@ -30,6 +30,7 @@ import javax.naming.ldap.LdapName;
  * viene definito un filtro, gli attributi da ritornare e una quantita di risultati
  * 
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$  
  * @version $Rev$, $Date$
  *
  */
