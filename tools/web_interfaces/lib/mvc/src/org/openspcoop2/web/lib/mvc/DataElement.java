@@ -137,6 +137,8 @@ public class DataElement implements Serializable {
 	
 	private boolean contextMenu = false;
 	
+	private String copyToClipboard = null;
+	
 	public String getIdToRemove() {
 		return this.idToRemove;
 	}
@@ -171,6 +173,7 @@ public class DataElement implements Serializable {
 		this.labelLink = null;
 		this.dataAttributes = new HashMap<>();
 		this.contextMenu = false;
+		this.copyToClipboard = null;
 	}
 
 	public void setId(int i) {
@@ -1110,5 +1113,13 @@ public class DataElement implements Serializable {
 
 	public void setContextMenu(boolean contextMenu) {
 		this.contextMenu = contextMenu;
+	}
+	
+	public void setCopyToClipboard(String copyToClipboard) {
+		this.copyToClipboard = copyToClipboard;
+	}
+	
+	public String getCopyToClipboard() {
+		return this.copyToClipboard;
 	}
 }

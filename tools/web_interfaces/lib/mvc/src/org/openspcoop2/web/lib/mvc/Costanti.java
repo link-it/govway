@@ -373,6 +373,9 @@ public class Costanti {
 	public static final String INFO_BUTTON_ICON_WHITE = "&#xE88F;"; // info_outline
 	public static final String ICON_DIALOG_HEADER = "&#xE8B2;"; // report_problem
 	public static final String ICON_COPY = "&#xE14D;"; // "content_copy" 
+	public static final String ICON_COPY_TOOLTIP = "Copia";
+	public static final String ICON_COPY_TOOLTIP_CON_PARAMETRO = "Copia {0}";
+	public static final String ICON_COPY_ESITO_OPERAZIONE = "Copiato negli appunti!";
 	public static final String ICON_USO = "&#xE880;"; // "find_in_page" //"location_searching"
 	public static final String ICON_USO_INFO = INFO_BUTTON_ICON; //"info"
 	

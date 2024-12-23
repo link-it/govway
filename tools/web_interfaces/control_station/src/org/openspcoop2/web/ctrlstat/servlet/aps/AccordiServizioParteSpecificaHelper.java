@@ -5787,10 +5787,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								}
 								
 								String servletConnettore = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE;
+								String labelConnettore = this.getLabelConnettore(fru.getConnettore(),true,false);
 								if(mapping.isDefault()) {
 									if(visualizzazioneTabs) {
-										de.setValue(this.getLabelConnettore(fru.getConnettore(),true,false));
+										de.setValue(labelConnettore);
 										de.setToolTip(this.getLabelConnettore(fru.getConnettore(),true,true)); // NEW
+										de.setCopyToClipboard(labelConnettore); // valore da copiare
 									}
 									else {
 										ServletUtils.setDataElementVisualizzaLabel(de);
@@ -5842,7 +5844,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									} else {
 										servletConnettore = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT;
 										if(visualizzazioneTabs) {
-											de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT+"] "+this.getLabelConnettore(fru.getConnettore(),true,false));
+											de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT+"] "+labelConnettore);
+											de.setCopyToClipboard(labelConnettore); // valore da copiare
 										}
 										else {
 											de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_DEFAULT);
