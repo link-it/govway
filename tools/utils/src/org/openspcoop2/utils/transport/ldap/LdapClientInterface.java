@@ -31,6 +31,7 @@ import javax.naming.ldap.LdapName;
  * Interfaccia del client ldap
  * 
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$  
  * @version $Rev$, $Date$
  *
  */
