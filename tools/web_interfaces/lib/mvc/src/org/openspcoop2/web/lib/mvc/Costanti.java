@@ -455,6 +455,8 @@ public class Costanti {
 	public static final String ICON_VISIBILITY_LOCK = "&#xF653;"; // visibility_lock
 	public static final String ICONA_VISIBILITY_LOCK_TOOLTIP = "Visualizza informazione cifrata";
 	
+	public static final String ICONA_REFRESH_SEZIONE = "&#xE863;"; // autorenew
+	public static final String ICONA_REFRESH_SEZIONE_TOOLTIP = "Refresh";
 	
 	public static final int LUNGHEZZA_LABEL_TABS = 30;
 	public static final int LUNGHEZZA_RIGA_TESTO_TABELLA = 150;
