@@ -8,12 +8,21 @@
 
 	<properties>		
 		<revision>1.0</revision>
-		<maven-antrun-plugin>1.8</maven-antrun-plugin>
-		<maven-resources-plugin>3.1.0</maven-resources-plugin>
-		<maven-clean-plugin>3.1.0</maven-clean-plugin>
-		<maven-dependency-plugin>3.1.1</maven-dependency-plugin>
-		<exec-maven-plugin>1.6.0</exec-maven-plugin>
-		<ant.version>1.10.6</ant.version>
+
+		<!-- maven plugin -->
+		<maven-antrun-plugin>3.1.0</maven-antrun-plugin>
+		<maven-resources-plugin>3.3.1</maven-resources-plugin>
+		<maven-clean-plugin>3.4.0</maven-clean-plugin>
+		<maven-dependency-plugin>3.8.1</maven-dependency-plugin>
+		<maven-compiler-plugin>3.13.0</maven-compiler-plugin>
+		<maven-jar-plugin>3.4.2</maven-jar-plugin>
+		<maven-source-plugin>3.3.1</maven-source-plugin>
+		<maven-javadoc-plugin>3.11.2</maven-javadoc-plugin>
+		<flatten-maven-plugin>1.6.0</flatten-maven-plugin>
+		<maven-gpg-plugin>3.2.7</maven-gpg-plugin>
+		<central-publishing-maven-plugin>0.6.0</central-publishing-maven-plugin>
+		<exec-maven-plugin>3.5.0</exec-maven-plugin>
+		<ant.version>1.10.14</ant.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -25,7 +34,7 @@
 		
 		<!-- owasp config -->
 		<owasp>verify</owasp> <!-- owasp phase, use 'none' for disable -->
-		<owasp.plugin.version>11.1.0</owasp.plugin.version>
+		<owasp.plugin.version>11.1.1</owasp.plugin.version>
 		<owasp.plugin.autoUpdate>true</owasp.plugin.autoUpdate> <!-- Impostare a false quando ci sono problemi su repository NIST -->
 		<owasp.plugin.failBuildOnAnyVulnerability>false</owasp.plugin.failBuildOnAnyVulnerability>
 		<owasp.ossindex.prevents429.sleep>5</owasp.ossindex.prevents429.sleep> <!-- https://github.com/sonatype/ossindex-maven/issues/17 -->
@@ -84,6 +93,11 @@
                 <!-- coverage-reports -->
                 <jacoco>none</jacoco>
 
+		<!-- libraries -->
+		<lib.ant.version>1.10.11</lib.ant.version>
+		<lib.org.eclipse.jgit.version>6.10.0.202406032230-r</lib.org.eclipse.jgit.version>
+		<lib.log4j.version>2.23.1</lib.log4j.version>
+
 	</properties>
 
 	<modules>
@@ -99,20 +113,5 @@
                 <module>tools/zap/mvn</module>
                 <module>tools/jacoco/mvn</module>
 	</modules>
-
-	<repositories>
-		<repository>
-			<id>linkit-releases</id>
-			<url>https://maven.link.it/content/repositories/public/</url>
-		</repository>
-		<repository>
-			<id>linkit-snapshot</id>
-			<url>https://maven.link.it/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
-			<id>linkit-thirdparty</id>
-			<url>https://maven.link.it/content/repositories/thirdparty-releases/</url>
-		</repository>
-	</repositories>
 
 </project>

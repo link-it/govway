@@ -25,13 +25,15 @@
 			<matches string="${ant.version}" pattern=".*1\.7\..*"/>
 			<matches string="${ant.version}" pattern=".*1\.8\..*"/>
 			<matches string="${ant.version}" pattern=".*1\.9\..*"/>
-			<matches string="${ant.version}" pattern=".*1\.10\.[0-5] .*"/>
+			<matches string="${ant.version}" pattern=".*1\.10\.[0-9] .*"/>
+			<matches string="${ant.version}" pattern=".*1\.10\.[0-1][0-3] .*"/>
 		</or>
 		<then>
 			<echo message="Ant version: ${ant.version}"/>
-			<fail message="E' richiesta una versione di apache-ant 1.10.6 o superiore"/>
+			<fail message="E' richiesta una versione di apache-ant 1.10.14 o superiore"/>
 			<!-- da 1.10.2 viene fornita la versione corretta di java -->
 			<!-- da 1.10.6 sparisce il seguente errore, se esato con java 11: [taskdef] WARNING: sun.reflect.Reflection.getCallerClass is not supported. This will impact performance. -->
+			<!-- da 1.10.14 sparisce l'errore: "WARNING: System::setSecurityManager has been called by org.apache.tools.ant.types.Permissions" -->
 		</then>
 	</if>
 	<if>
@@ -88,7 +90,7 @@
 					<arg value="${stubBuild.urlWSDL}" />
 					<classpath>
 						<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk1.jar"/>
-						<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-jk1.jar"/>
+						<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
 						<pathelement path="${required_lib}/axis14/axis-saaj-1.4.jar"/>
 						<pathelement path="${required_lib}/axis14/mailapi-1.5.6.jar"/>
 						<pathelement path="${required_lib}/axis14/jakarta.activation-1.2.2.jar"/>
@@ -105,7 +107,7 @@
 					<arg value="${stubBuild.urlWSDL}" />
 					<classpath>
 						<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk1.jar"/>
-						<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-jk1.jar"/>
+						<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
 						<pathelement path="${required_lib}/axis14/axis-saaj-1.4.jar"/>
 						<pathelement path="${required_lib}/axis14/mailapi-1.5.6.jar"/>
 						<pathelement path="${required_lib}/axis14/jakarta.activation-1.2.2.jar"/>
@@ -122,7 +124,7 @@
 			<src path="${stubBuild.srcDir}" />
 			<classpath>
 				<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk1.jar"/>
-				<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-jk1.jar"/>
+				<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
 				<pathelement path="${required_lib}/axis14/axis-saaj-1.4.jar"/>
 				<pathelement path="${required_lib}/axis14/mailapi-1.5.6.jar"/>
 				<pathelement path="${required_lib}/axis14/jakarta.activation-1.2.2.jar"/>

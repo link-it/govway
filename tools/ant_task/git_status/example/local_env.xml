@@ -1,0 +1,3 @@
+<project name="git_task_LocalEnv" basedir="." >
+	<property name="git_repository" value="OP2DIR" />
+</project>

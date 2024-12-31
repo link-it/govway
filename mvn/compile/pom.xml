@@ -23,8 +23,11 @@
 						<phase>${compile}</phase>
 						<configuration>
 							<target>
-								<taskdef resource="net/sf/antcontrib/antlib.xml"
-									classpathref="maven.plugin.classpath" />
+								<taskdef resource="net/sf/antcontrib/antlib.xml">
+									<classpath>
+										<pathelement location="../../lib/ant/ant-contrib-1.0b3.jar"/>
+									</classpath>
+								</taskdef>
 								<ant antfile="../../build.xml" useNativeBasedir="true">
 									<property name="rootDir" location="../../" />
 									<property name="govway.version" value="${govway.version}" />

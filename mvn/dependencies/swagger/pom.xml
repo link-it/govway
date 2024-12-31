@@ -24,6 +24,7 @@
 		<swagger.parser.v3.gov4j.version>2.1.22-gov4j-1</swagger.parser.v3.gov4j.version>
 		<swagger.version>1.6.14</swagger.version>
 		<swagger.parser.version>1.0.71</swagger.parser.version>
+		<swagger.request-validator.version>2.41.0</swagger.request-validator.version>
 		<swagger.request-validator.gov4j.version>2.41.0-gov4j-1</swagger.request-validator.gov4j.version>
 	</properties>
 
@@ -153,9 +154,20 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>io.swagger.parser.v3</groupId>
+			<groupId>org.gov4j.thirdparty.io.swagger.parser.v3</groupId>
 			<artifactId>swagger-parser-v3</artifactId>
 			<version>${swagger.parser.v3.gov4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.parser.v3</groupId>
+			<artifactId>swagger-parser-v3</artifactId>
+			<version>${swagger.parser.v3.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -200,7 +212,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.atlassian.oai</groupId>
+			<groupId>org.gov4j.thirdparty.com.atlassian.oai</groupId>
 			<artifactId>swagger-request-validator-core</artifactId>
 			<version>${swagger.request-validator.gov4j.version}</version>
 			<exclusions>
@@ -210,6 +222,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>com.atlassian.oai</groupId>
+			<artifactId>swagger-request-validator-core</artifactId>
+			<version>${swagger.request-validator.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
 
 	</dependencies>
 
@@ -220,15 +243,28 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin}</version>
-				<configuration>
-					<target>
-						<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
-					</target>
-				</configuration>
 				<executions>
 					<execution>
 						<id>sleep-for-a-while</id>
 						<phase>${owasp}</phase>
+						<configuration>
+							<target name="owasp">
+								<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>delete-dependencies-override-gov4j</id>
+						<phase>initialize</phase> <!-- fase successiva a validate -->
+						<configuration>
+							<target name="delete">
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/swagger-parser-v3-${swagger.parser.v3.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/swagger-request-validator-core-${swagger.request-validator.version}.jar" failonerror="true"/>
+							</target>
+						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -242,19 +278,19 @@
 				<executions>
 					<execution>
 						<id>clean</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
 						<configuration>
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
-								<filesets>
+								<fileset>
 									<directory>../../../lib/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
-								</filesets>
+								</fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -267,7 +303,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>

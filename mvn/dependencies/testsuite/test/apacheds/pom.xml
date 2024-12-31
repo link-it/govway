@@ -17,6 +17,7 @@
 
 		<jar.group.name>apacheds</jar.group.name>
 		
+		<apacheds.version>2.0.0.AM27</apacheds.version>
 		<apacheds.gov4j.version>2.0.0.AM27-gov4j-1</apacheds.gov4j.version>
 
 	</properties>
@@ -24,9 +25,21 @@
 	<dependencies>
 	
 		<dependency>
-			<groupId>org.apache.directory.server</groupId>
+			<groupId>org.gov4j.thirdparty.org.apache.directory.server</groupId>
 			<artifactId>apacheds-all</artifactId>
 			<version>${apacheds.gov4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.server</groupId>
+			<artifactId>apacheds-all</artifactId>
+			<version>${apacheds.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -45,15 +58,27 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin}</version>
-				<configuration>
-					<target>
-						<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
-					</target>
-				</configuration>
 				<executions>
 					<execution>
 						<id>sleep-for-a-while</id>
 						<phase>${owasp}</phase>
+						<configuration>
+							<target name="owasp">
+								<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>delete-dependencies-override-gov4j</id>
+						<phase>initialize</phase> <!-- fase successiva a validate -->
+						<configuration>
+							<target name="delete">
+								<delete file="${project.basedir}/../../../../../lib/testsuite/${jar.group.name}/apacheds-all-${apacheds.version}.jar" failonerror="true"/>
+							</target>
+						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -67,19 +92,19 @@
 				<executions>
 					<execution>
 						<id>clean</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
 						<configuration>
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
-								<filesets>
+								<fileset>
 									<directory>../../../../../lib/testsuite/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
-								</filesets>
+								</fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -92,7 +117,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>

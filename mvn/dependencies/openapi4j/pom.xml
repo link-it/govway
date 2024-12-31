@@ -4,7 +4,7 @@
 	<version>${revision}</version>
 	<artifactId>org.openspcoop2.openapi4j</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.swagger</name>
+	<name>dependencies.openapi4j</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
@@ -25,7 +25,7 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>org.openapi4j</groupId>
+			<groupId>org.gov4j.thirdparty.org.openapi4j</groupId>
 			<artifactId>openapi-core</artifactId>
 			<version>${openapi4j.gov4j.version}</version>
 			<exclusions>
@@ -37,6 +37,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.openapi4j</groupId>
+			<artifactId>openapi-core</artifactId>
+			<version>${openapi4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		
+		<dependency>
+			<groupId>org.gov4j.thirdparty.org.openapi4j</groupId>
 			<artifactId>openapi-parser</artifactId>
 			<version>${openapi4j.gov4j.version}</version>
 			<exclusions>
@@ -48,6 +60,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.openapi4j</groupId>
+			<artifactId>openapi-parser</artifactId>
+			<version>${openapi4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		
+		<dependency>
+			<groupId>org.gov4j.thirdparty.org.openapi4j</groupId>
 			<artifactId>openapi-schema-validator</artifactId>
 			<version>${openapi4j.gov4j.version}</version>
 			<exclusions>
@@ -59,6 +83,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.openapi4j</groupId>
+			<artifactId>openapi-schema-validator</artifactId>
+			<version>${openapi4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		
+		<dependency>
+			<groupId>org.gov4j.thirdparty.org.openapi4j</groupId>
 			<artifactId>openapi-operation-validator</artifactId>
 			<version>${openapi4j.gov4j.version}</version>
 			<exclusions>
@@ -68,6 +104,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.openapi4j</groupId>
+			<artifactId>openapi-operation-validator</artifactId>
+			<version>${openapi4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
 
 	</dependencies>
 
@@ -78,15 +125,30 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin}</version>
-				<configuration>
-					<target>
-						<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
-					</target>
-				</configuration>
 				<executions>
 					<execution>
 						<id>sleep-for-a-while</id>
 						<phase>${owasp}</phase>
+						<configuration>
+							<target name="owasp">
+								<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>delete-dependencies-override-gov4j</id>
+						<phase>initialize</phase> <!-- fase successiva a validate -->
+						<configuration>
+							<target name="delete">
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/openapi-core-${openapi4j.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/openapi-parser-${openapi4j.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/openapi-schema-validator-${openapi4j.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/openapi-operation-validator-${openapi4j.version}.jar" failonerror="true"/>
+							</target>
+						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -100,19 +162,19 @@
 				<executions>
 					<execution>
 						<id>clean</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
 						<configuration>
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
-								<filesets>
+								<fileset>
 									<directory>../../../lib/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
-								</filesets>
+								</fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -125,7 +187,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>

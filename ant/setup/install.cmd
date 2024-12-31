@@ -49,7 +49,7 @@ set CLASSPATH=%CLASSPATH%;%ROOT_OPENSPCOOP%\ant\setup\deploy\resources
 
 REM # minimal regular expression env
 set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\ant-apache-regexp-1.10.11.jar
-set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\jakarta-regexp-1.5.jar
+set CLASSPATH=%CLASSPATH%;%ANTINSTALLER_LIBRARIES%\jakarta-regexp-1.4.jar
 
 del ant.install.properties
 copy installer\setup\ant.install.properties.template ant.install.properties

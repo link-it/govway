@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.gov4j.govway</groupId>
+	<artifactId>openspcoop2_git-status-task</artifactId>
+	<version>1.0</version>
+	<packaging>jar</packaging>
+
+	<name>git-status-task-1.0.jar</name>
+	<description>Fornisce un task ant per ottenere le informazioni di un repository git per committer, author e hashCommitId</description>
+	<url>https://gov4j.org/maven/openspcoop2/ant/git-status-task/1.0</url>
+
+        <parent>
+                <groupId>org.openspcoop2</groupId>
+                <artifactId>org.openspcoop2</artifactId>
+                <version>${revision}</version>
+                <relativePath>../../../pom.xml</relativePath>
+        </parent>
+
+
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE, Version 3</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Andrea Manca</name>
+			<email>andrea.manca@link.it</email>
+			<organization>Link.it s.r.l.</organization>
+			<organizationUrl>https://www.link.it</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:none</connection>
+		<developerConnection>scm:none</developerConnection>
+		<url>scm:none</url>
+	</scm>
+  
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>${lib.org.eclipse.jgit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>${lib.ant.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${lib.log4j.version}</version>
+		</dependency>
+	</dependencies>
+  
+	<build>
+		<plugins>
+
+			<!-- Plugin per la compilazione -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin}</version>
+				<configuration>
+					<source>11</source>
+					<target>11</target>
+				</configuration>
+			</plugin>
+
+			<!-- Plugin per la generazione del JAR eseguibile -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven-jar-plugin}</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>org.openspcoop2.ant.git.GitStatus</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<!-- Plugin per la generazione del JAR dei sorgenti -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven-source-plugin}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Plugin per la generazione del JAR della Javadoc -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven-javadoc-plugin}</version>
+				<executions>
+					<execution>
+					<id>attach-javadocs</id>
+					<goals>
+						<goal>jar</goal>
+					</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Predispone pom per pubblicazione -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>${flatten-maven-plugin}</version>
+				<executions>
+					<execution>
+						<id>flatten</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<flattenMode>oss</flattenMode>
+                			<pomElements>
+						<properties>keep</properties>
+						<dependencies>remove</dependencies>
+                    				<distributionManagement>remove</distributionManagement>
+					</pomElements>
+				</configuration>
+			</plugin>
+
+			<!-- Firma GPG -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>${maven-gpg-plugin}</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Deploy -->
+			<plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<version>${central-publishing-maven-plugin}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>central</publishingServerId>
+					<checksums>all</checksums>
+					<autoPublish>false</autoPublish>
+					<!-- <waitUntil>published</waitUntil> -->
+					<waitUntil>validated</waitUntil>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+  
+</project>

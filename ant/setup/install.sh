@@ -57,7 +57,7 @@ CLASSPATH=${CLASSPATH}:${ROOT_OPENSPCOOP}/ant/setup/deploy/resources
 
 # minimal regular expression env
 CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/ant-apache-regexp-1.10.11.jar
-CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/jakarta-regexp-1.5.jar
+CLASSPATH=${CLASSPATH}:${ANTINSTALLER_LIBRARIES}/jakarta-regexp-1.4.jar
 
 COMMAND=$JAVA_HOME/bin/java
 

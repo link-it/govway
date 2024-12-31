@@ -298,7 +298,7 @@
 			<include name="openapi4j/*"/>
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
-			<include name="testsuite/*"/>
+			<include name="testsuite/testng/*"/>
 			<include name="testsuite/apacheds/*"/>
 			<include name="stub/cxf/openspcoop2_registrySearchStub_cxf.jar"/>
 		</fileset>

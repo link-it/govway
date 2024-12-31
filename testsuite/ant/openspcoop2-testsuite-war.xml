@@ -96,7 +96,7 @@
 			<lib dir="${required_lib}/axis14">
 				<include name="axis-1.4-gov4j-jk1.jar"/>
 				<include name="${axis_saaj_jar}"/>
-				<include name="axis-jaxrpc-1.4-gov4j-jk1.jar"/>
+				<include name="axis-jaxrpc-1.4-gov4j-1.jar"/>
 				<include name="wss4j-1.5.11.jar"/>
 				<include name="opensaml-1.1.jar"/>
 				<include name="xmlsec-1.4.4.jar"/>

@@ -198,7 +198,7 @@
 	<archive path="/op2_3.4.dev/lib/shared/guava-33.3.0-jre.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/java-uuid-generator-5.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/joda-time-2.12.7.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/Saxon-HE-12.5-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/Saxon-HE-12.5-gov4j-2.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/xmlresolver-5.2.0.jar"/>
         <archive path="/op2_3.4.dev/lib/shared/xom-1.3.5.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/snakeyaml-2.2-gov4j-1.jar"/>

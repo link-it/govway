@@ -29,6 +29,7 @@
 		<commons.fileupload-core.version>2.0.0-M2</commons.fileupload-core.version>
 		<commons.fileupload-jakarta.version>2.0.0-M1</commons.fileupload-jakarta.version>
 		<commons.io.version>2.17.0</commons.io.version>
+		<commons.jcs3-core.version>3.2.1</commons.jcs3-core.version>
 		<commons.jcs3-core.gov4j.version>3.2.1-gov4j-1</commons.jcs3-core.gov4j.version>
 		<commons.lang.version>2.6</commons.lang.version>
 		<commons.lang3.version>3.16.0</commons.lang3.version>
@@ -186,7 +187,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.commons</groupId>
+			<groupId>org.gov4j.thirdparty.org.apache.commons</groupId>
 			<artifactId>commons-jcs3-core</artifactId>
 			<version>${commons.jcs3-core.gov4j.version}</version>
 			<exclusions>
@@ -195,7 +196,18 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>	
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-jcs3-core</artifactId>
+			<version>${commons.jcs3-core.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>			
 
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -290,15 +302,27 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin}</version>
-				<configuration>
-					<target>
-						<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
-					</target>
-				</configuration>
 				<executions>
 					<execution>
 						<id>sleep-for-a-while</id>
 						<phase>${owasp}</phase>
+						<configuration>
+							<target name="owasp">
+								<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>delete-dependencies-override-gov4j</id>
+						<phase>initialize</phase> <!-- fase successiva a validate -->
+						<configuration>
+							<target name="delete">
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/commons-jcs3-core-${commons-jcs3-core.version}.jar" failonerror="true"/>
+							</target>
+						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -312,19 +336,19 @@
 				<executions>
 					<execution>
 						<id>clean</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
 						<configuration>
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
-								<filesets>
+								<fileset>
 									<directory>../../../lib/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
-								</filesets>
+								</fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -337,7 +361,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
