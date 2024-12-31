@@ -34,7 +34,7 @@
 			</not>
 			<then>
 				<var name="jgit.jar.presente" value="true"/>
-				<taskdef name="GitProperties" classname="it.link.git.GitStatus" classpathref="jgit.classpath" />
+				<taskdef name="GitProperties" classname="org.openspcoop2.ant.git.GitStatus" classpathref="jgit.classpath" />
 				<var name="git.url" value="master" />
 			</then>
 		</if>

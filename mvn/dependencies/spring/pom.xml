@@ -35,6 +35,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aspects</artifactId>
@@ -46,8 +47,9 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
-			<groupId>org.springframework</groupId>
+			<groupId>org.gov4j.thirdparty.org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
 			<version>${spring.gov4j.version}</version>
 			<exclusions>
@@ -59,6 +61,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		
+		<dependency>
+			<groupId>org.gov4j.thirdparty.org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<version>${spring.gov4j.version}</version>
 			<exclusions>
@@ -70,6 +84,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		
+		<dependency>
+			<groupId>org.gov4j.thirdparty.org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 			<version>${spring.gov4j.version}</version>
 			<exclusions>
@@ -81,6 +107,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		
+		<dependency>
+			<groupId>org.gov4j.thirdparty.org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${spring.gov4j.version}</version>
 			<exclusions>
@@ -92,6 +130,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		
+		<dependency>
+			<groupId>org.gov4j.thirdparty.org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
 			<version>${spring.gov4j.version}</version>
 			<exclusions>
@@ -103,6 +153,18 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>${spring.version}</version>
 			<exclusions>
@@ -112,6 +174,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
@@ -123,10 +186,22 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.gov4j.thirdparty.org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.gov4j.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>${spring.gov4j.version}</version>
+			<version>${spring.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
@@ -144,15 +219,32 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin}</version>
-				<configuration>
-					<target>
-						<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
-					</target>
-				</configuration>
 				<executions>
 					<execution>
 						<id>sleep-for-a-while</id>
 						<phase>${owasp}</phase>
+						<configuration>
+							<target name="owasp">
+								<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>delete-dependencies-override-gov4j</id>
+						<phase>initialize</phase> <!-- fase successiva a validate -->
+						<configuration>
+							<target name="delete">
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/spring-beans-${spring.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/spring-context-${spring.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/spring-context-support-${spring.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/spring-core-${spring.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/spring-expression-${spring.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/spring-web-${spring.version}.jar" failonerror="true"/>
+							</target>
+						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -166,19 +258,19 @@
 				<executions>
 					<execution>
 						<id>clean</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
 						<configuration>
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
-								<filesets>
+								<fileset>
 									<directory>../../../lib/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
-								</filesets>
+								</fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -191,7 +283,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>

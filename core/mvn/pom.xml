@@ -50,8 +50,11 @@
 									</fileset>
 								</path>
 
-								<taskdef resource="net/sf/antcontrib/antlib.xml"
-									classpathref="classpath_run" />
+								<taskdef resource="net/sf/antcontrib/antlib.xml">
+									<classpath>
+										<pathelement location="${rootDir}/lib/ant/ant-contrib-1.0b3.jar"/>
+									</classpath>
+								</taskdef>
 								<taskdef classpathref="classpath_run"
 								     resource="testngtasks" classpath="${rootDir}/lib/testsuite/testng-7.8.0.jar"/>
 

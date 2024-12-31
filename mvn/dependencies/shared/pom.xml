@@ -24,6 +24,7 @@
 		<activation.version>1.2.2</activation.version>
 		<aspectjrt.version>1.9.9.1</aspectjrt.version>
 		<aspectjweaver.version>1.9.9.1</aspectjweaver.version>
+		<commons-jcs3-core.version>3.1</commons-jcs3-core.version>
 		<commons-jcs3-core.gov4j.version>3.1-gov4j-2</commons-jcs3-core.gov4j.version>
 		<com.springsource.edu.oswego.cs.dl.util.concurrent.version>1.3.4</com.springsource.edu.oswego.cs.dl.util.concurrent.version>
 		<ezmorph.version>1.0.6</ezmorph.version>
@@ -32,8 +33,10 @@
 		<java-uuid-generator.version>4.0.1</java-uuid-generator.version>
 		<joda-time.version>2.12.0</joda-time.version>
 		<mailapi.version>1.6.7</mailapi.version>
-		<Saxon-HE.gov4j.version>11.4-gov4j-1</Saxon-HE.gov4j.version>
+		<Saxon-HE.version>11.4</Saxon-HE.version>
+		<Saxon-HE.gov4j.version>11.4-gov4j-2</Saxon-HE.gov4j.version>
 		<xmlresolver.version>4.4.3</xmlresolver.version>
+		<snakeyaml.version>1.33</snakeyaml.version>
 		<snakeyaml.gov4j.version>1.33-gov4j-1</snakeyaml.gov4j.version>
 		<struts-core.version>1.3.10</struts-core.version>
 		<uddi4j.version>2.0.5</uddi4j.version>
@@ -55,7 +58,7 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>org.xmldb</groupId>
+			<groupId>org.gov4j.thirdparty.org.xmldb</groupId>
 			<artifactId>xmldb</artifactId>
 			<version>${xmldb.version}</version>
 			<exclusions>
@@ -103,7 +106,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.commons</groupId>
+			<groupId>org.gov4j.thirdparty.org.apache.commons</groupId>
 			<artifactId>commons-jcs3-core</artifactId>
 			<version>${commons-jcs3-core.gov4j.version}</version>
 			<exclusions>
@@ -113,6 +116,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-jcs3-core</artifactId>
+			<version>${commons-jcs3-core.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
 
 		<dependency>
 			<groupId>org.tuckey</groupId>
@@ -256,7 +270,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.io7m.xom</groupId>
+			<groupId>org.gov4j.thirdparty.com.io7m.xom</groupId>
 			<artifactId>xom</artifactId>
 			<version>${xom.version}</version>
 			<exclusions>
@@ -303,7 +317,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>net.sf.saxon</groupId>
+			<groupId>org.gov4j.thirdparty.net.sf.saxon</groupId>
 			<artifactId>Saxon-HE</artifactId>
 			<version>${Saxon-HE.gov4j.version}</version>
 			<exclusions>
@@ -313,6 +327,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>Saxon-HE</artifactId>
+			<version>${Saxon-HE.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
 
 		<dependency>
 			<groupId>org.xmlresolver</groupId>
@@ -327,7 +352,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.yaml</groupId>
+			<groupId>org.gov4j.thirdparty.org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
 			<version>${snakeyaml.gov4j.version}</version>
 			<exclusions>
@@ -337,6 +362,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>${snakeyaml.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
 
 		<dependency>
 			<groupId>org.apache.struts</groupId>
@@ -351,7 +387,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>edu.oswego.cs.concurrent</groupId>
+			<groupId>org.gov4j.thirdparty.edu.oswego.cs.concurrent</groupId>
 			<artifactId>com.springsource.edu.oswego.cs.dl.util.concurrent</artifactId>
 			<version>${com.springsource.edu.oswego.cs.dl.util.concurrent.version}</version>
 			<exclusions>
@@ -515,15 +551,29 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin}</version>
-				<configuration>
-					<target>
-						<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
-					</target>
-				</configuration>
 				<executions>
 					<execution>
 						<id>sleep-for-a-while</id>
 						<phase>${owasp}</phase>
+						<configuration>
+							<target name="owasp">
+								<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>delete-dependencies-override-gov4j</id>
+						<phase>initialize</phase> <!-- fase successiva a validate -->
+						<configuration>
+							<target name="delete">
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/commons-jcs3-core-${commons-jcs3-core.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/Saxon-HE-${Saxon-HE.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/snakeyaml-${snakeyaml.version}.jar" failonerror="true"/>
+							</target>
+						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -537,19 +587,19 @@
 				<executions>
 					<execution>
 						<id>clean</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
 						<configuration>
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
-								<filesets>
+								<fileset>
 									<directory>../../../lib/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
-								</filesets>
+								</fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -562,7 +612,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>

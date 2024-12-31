@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="git_task" basedir="." default="use">
+   	<include file="./local_env.xml" />
+
+        <path id="lib.path">
+		<fileset dir="${basedir}/lib/git">
+			<include name="*.jar"/>
+        	</fileset>
+        </path>
+
+        <taskdef name="GitProperties" classname="org.openspcoop2.ant.git.GitStatus" classpathref="lib.path"/>
+
+	<target name="use" description="Use the Task" >
+		<GitProperties src="${git_repository}" 
+				authorNameProperty="git.authorName"
+				authorMailProperty="git.authorMail"
+				authorCommitDateProperty="git.authorDate"
+				committerNameProperty="git.committerName" 
+				committerMailProperty="git.committerMail" 
+				committerCommitDateProperty="git.committerDate" 
+				shortHashProperty="git.commitShortHash"
+				hashProperty="git.commitHash"
+		/>
+
+		<echo>Nome Autore             : ${git.authorName}</echo>
+		<echo>Email Autore            : ${git.authorMail}</echo>
+		<echo>Data Commit (autore)    : ${git.authorDate}</echo>
+		<echo>Nome Committer          : ${git.committerName}</echo>
+		<echo>Email Committer         : ${git.committerMail}</echo>
+		<echo>Data commit (committer) : ${git.committerDate}</echo>
+		<echo>Hash commit (short)     : ${git.commitShortHash}</echo>
+		<echo>Hash commit (full)      : ${git.commitHash}</echo>
+
+	</target>
+
+
+</project>
+
+

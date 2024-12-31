@@ -17,7 +17,7 @@
 
 		<jar.group.name>wildfly8</jar.group.name>
 		
-		<wildfly.version>wf8</wildfly.version>
+		<wildfly.version>8.0.0.Final</wildfly.version>
 
 	</properties>
 
@@ -25,7 +25,7 @@
 	
 		<dependency>
 			<groupId>org.wildfly</groupId>
-			<artifactId>jboss-client</artifactId>
+			<artifactId>wildfly-client-all</artifactId>
 			<version>${wildfly.version}</version>
 			<exclusions>
 				<exclusion>

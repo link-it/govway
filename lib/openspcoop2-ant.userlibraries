@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="openspcoop2_3.3.16_lib_ant" systemlibrary="false">
+        <archive path="/op2_3.3.dev/lib/antinstaller/ant-1.10.11.jar"/>
+        <archive path="/op2_3.3.dev/lib/git/org.eclipse.jgit-6.7.0.202309050840-r.jar"/>
+    </library>
+</eclipse-userlibraries>

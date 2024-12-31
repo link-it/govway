@@ -24,6 +24,7 @@ UPDATE_DOC=true
 UPDATE_LIB=true
 REBUILD=true
 READ_GIT_INFO=true
+SOAPBOX=false
 
 #####################################
 # Variabili per lo skip ############
@@ -91,6 +92,17 @@ if [ $# -eq 8 ] ; then
     UPDATE_DOC="$7"
     READ_GIT_INFO="$8"
 fi
+if [ $# -eq 9 ] ; then
+    ramo="$1"
+    WORK_DIR="$2"
+    SKIP_CHECKS="$3"
+    SKIP_SRC_VERSION="$4"
+    UPDATE_LIB="$5"
+    LOG_DIR="$6"
+    UPDATE_DOC="$7"
+    READ_GIT_INFO="$8"
+    SOAPBOX="$9"
+fi
 
 #####################################
 # Variabili a Runtime ##############
@@ -112,6 +124,7 @@ infoPrintln "BUILD-SETUP: ${REBUILD}"
 infoPrintln "BUILD-DOC: ${UPDATE_DOC}"
 infoPrintln "BUILD-LIB: ${UPDATE_LIB}"
 infoPrintln "READ_GIT_INFO: ${READ_GIT_INFO}"
+#infoPrintln "SOAPBOX: ${SOAPBOX}"
 
 #####################################
 # Versionamento dei sorgenti #######
@@ -233,10 +246,10 @@ then
 	infoPrintln "Generazione distribuzione sorgente ..."
 	cd ${WORKING_COPY}
 	sed -i -e "s#<module>git</module>#<!-- <module>git</module> -->#g" ${WORKING_COPY}/mvn/dependencies/pom.xml
-	mv ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar.rename
+	mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar.rename
 	mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-6.7.0.202309050840-r.jar ${WORKING_COPY}/lib/git/org.eclipse.jgit-6.7.0.202309050840-r.jar.rename
 	tar -h -c -z -f ${TMP_DIR}/${OPENSPCOOP_SRC_FILE}.tgz --xform="s@^@${OPENSPCOOP_SRC_FILE}/@" --exclude-vcs --exclude lib/svn * 
-	mv ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar.rename ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar
+	mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar.rename ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar
 	mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-6.7.0.202309050840-r.jar.rename ${WORKING_COPY}/lib/git/org.eclipse.jgit-6.7.0.202309050840-r.jar
 	mv ${TMP_DIR}/${OPENSPCOOP_SRC_FILE}.tgz ${WORK_DIR}/
 	infoPrintln "Generazione distribuzione sorgente completata. Archivio generato: ${WORK_DIR}/${OPENSPCOOP_SRC_FILE}.tgz"
@@ -259,10 +272,16 @@ cd ${WORKING_COPY}/ant/setup
 if [ ! -d deploy/sw/ -o "$REBUILD" == "true" ]
 then
 
+	rm -f compile-options.soapbox
+	if [ "${SOAPBOX}" == "true" ]
+	then
+		touch compile-options.soapbox	
+	fi
+
 	if [ "${READ_GIT_INFO}" == "false" ]
 	then
 		debugPrintln "Disabilitazione jar per accesso informazioni git ..."
-		mv ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar.rename
+		mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar.rename
 		mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-6.7.0.202309050840-r.jar ${WORKING_COPY}/lib/git/org.eclipse.jgit-6.7.0.202309050840-r.jar.rename
 	fi
 
@@ -291,7 +310,7 @@ then
 	if [ "${READ_GIT_INFO}" == "false" ]
 	then
 		debugPrintln "Ripristino jar per accesso informazioni git ..."
-		mv ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar.rename ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar
+		mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar.rename ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar
 		mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-6.7.0.202309050840-r.jar.rename ${WORKING_COPY}/lib/git/org.eclipse.jgit-6.7.0.202309050840-r.jar
 	fi
 fi

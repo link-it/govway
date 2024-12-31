@@ -21,6 +21,7 @@
 		<jaxb.xjc.version>2.3.7</jaxb.xjc.version>
 		<jaxb.core.version>2.3.0.1</jaxb.core.version>
 		<jaxb.impl.version>2.3.7</jaxb.impl.version>
+		<jaxp-ri.version>1.4.5</jaxp-ri.version>
 		<jaxp-ri.gov4j.version>1.4.5-gov4j-1</jaxp-ri.gov4j.version>
 		<jaxws-api.version>2.3.1</jaxws-api.version>
 		<jaxws-jsr181-api.version>1.0-MR1</jaxws-jsr181-api.version>
@@ -30,7 +31,7 @@
 	<dependencies>
 	
 		<dependency>
-			<groupId>com.sun.xml.parsers</groupId>
+			<groupId>org.gov4j.thirdparty.com.sun.xml.parsers</groupId>
 			<artifactId>jaxp-ri</artifactId>
 			<version>${jaxp-ri.gov4j.version}</version>
 			<exclusions>
@@ -40,6 +41,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!--<dependency>
+			<groupId>com.sun.xml.parsers</groupId>
+			<artifactId>jaxp-ri</artifactId>
+			<version>${jaxp-ri.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>-->
 
 		<dependency>
 			<groupId>javax.jws</groupId>
@@ -118,15 +130,27 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin}</version>
-				<configuration>
-					<target>
-						<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
-					</target>
-				</configuration>
 				<executions>
 					<execution>
 						<id>sleep-for-a-while</id>
 						<phase>${owasp}</phase>
+						<configuration>
+							<target name="owasp">
+								<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>delete-dependencies-override-gov4j</id>
+						<phase>initialize</phase> <!-- fase successiva a validate -->
+						<configuration>
+							<target name="delete">
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/jaxp-ri-${jaxp-ri.version}.jar" failonerror="true"/>
+							</target>
+						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -140,19 +164,19 @@
 				<executions>
 					<execution>
 						<id>clean</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
 						<configuration>
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
-								<filesets>
+								<fileset>
 									<directory>../../../lib/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
-								</filesets>
+								</fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -165,7 +189,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>
@@ -187,7 +211,7 @@
 				<executions>
 					<execution>
 						<id>rename-file</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>rename</goal>
 						</goals>

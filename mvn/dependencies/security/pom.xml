@@ -24,6 +24,7 @@
 		<herasaf-xacml-core.version>2.0.4</herasaf-xacml-core.version>
 		<jasypt.version>1.9.3</jasypt.version>
 		<neethi.version>3.2.0</neethi.version>
+		<xmlsec.version>2.3.4</xmlsec.version>
 		<xmlsec.gov4j.version>2.3.4-gov4j-1</xmlsec.gov4j.version>
 		<xml-security-impl.version>1.0</xml-security-impl.version>
 		<nimbus-jose.version>9.37.3</nimbus-jose.version>
@@ -117,7 +118,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.apache.santuario</groupId>
+			<groupId>org.gov4j.thirdparty.org.apache.santuario</groupId>
 			<artifactId>xmlsec</artifactId>
 			<version>${xmlsec.gov4j.version}</version>
 			<exclusions>
@@ -127,6 +128,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.santuario</groupId>
+			<artifactId>xmlsec</artifactId>
+			<version>${xmlsec.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
 
 		<dependency>
 			<groupId>com.sun.xml.security</groupId>
@@ -161,15 +173,27 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin}</version>
-				<configuration>
-					<target>
-						<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
-					</target>
-				</configuration>
 				<executions>
 					<execution>
 						<id>sleep-for-a-while</id>
 						<phase>${owasp}</phase>
+						<configuration>
+							<target name="owasp">
+								<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>delete-dependencies-override-gov4j</id>
+						<phase>initialize</phase> <!-- fase successiva a validate -->
+						<configuration>
+							<target name="delete">
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/xmlsec-${xmlsec.version}.jar" failonerror="true"/>
+							</target>
+						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -183,19 +207,19 @@
 				<executions>
 					<execution>
 						<id>clean</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
 						<configuration>
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
-								<filesets>
+								<fileset>
 									<directory>../../../lib/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
-								</filesets>
+								</fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -208,7 +232,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>

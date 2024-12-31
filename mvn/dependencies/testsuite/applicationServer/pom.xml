@@ -11,7 +11,7 @@
 	</properties>
 
 	<modules>
-                <module>wildfly8</module>
+                <!-- <module>wildfly8</module> -->
 		<module>wildfly9</module>
 		<module>wildfly10</module>
 		<module>wildfly11</module>

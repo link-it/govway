@@ -202,6 +202,18 @@
 				<var name="jminix_jar" value="*.jar" />
 			</then>
 		</if>
+		
+		<!-- soapbox -->
+		<if>
+			<not>
+				<istrue value="${buildSecurity_soapbox}"/>
+			</not>
+			<then>
+				<mkdir dir="${required_lib}/soapbox"/>
+			</then>
+		</if>
+		
+		<!-- build war -->
 		<war destfile="${openspcoopWeb.warName}" webxml="${openspcoopWeb.webXml}">
 			<!-- Informazioni sulla versione -->
 			<fileset file="${rootDir}/README.txt"/>
@@ -389,6 +401,16 @@
 				<include name="*.zip"/>
 			</classes>
 		</war>
+		
+		<!-- soapbox -->
+		<if>
+			<not>
+				<istrue value="${buildSecurity_soapbox}"/>
+			</not>
+			<then>
+				<delete dir="${required_lib}/soapbox"/>
+			</then>
+		</if>
 	</target>
 	
 	

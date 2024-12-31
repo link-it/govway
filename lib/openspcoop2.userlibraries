@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <eclipse-userlibraries version="2">
-    <library name="openspcoop2_3.3.9_lib" systemlibrary="false">
+    <library name="openspcoop2_3.3.16_lib" systemlibrary="false">
 	<!-- ant -->
         <archive path="/op2_3.3.dev/lib/ant/ant-contrib-1.0b3.jar"/>
 	<!-- commons -->
@@ -93,7 +93,7 @@
         <archive path="/op2_3.3.dev/lib/javax/javax.servlet-api-4.0.1.jar"/>
         <archive path="/op2_3.3.dev/lib/javax/javax.security.jacc-api-1.6.jar"/>
         <archive path="/op2_3.3.dev/lib/javax/javax.resource-api-1.7.1.jar"/>
-        <!-- <archive path="/op2_3.3.dev/lib/javax/javax.management-1.0-gov4j.jar"/>  The package javax.management is accessible from more than one module: <unnamed>, javax.management --> -->
+        <!-- <archive path="/op2_3.3.dev/lib/javax/javax.management-1.0.jar"/>  The package javax.management is accessible from more than one module: <unnamed>, javax.management --> -->
         <archive path="/op2_3.3.dev/lib/javax/javax.jms-api-2.0.1.jar"/>
         <archive path="/op2_3.3.dev/lib/javax/deployment-api-1.2-rev-1.jar"/>
         <archive path="/op2_3.3.dev/lib/javax/ejb-api-3.0.jar"/>
@@ -125,7 +125,7 @@
 	<archive path="/op2_3.3.dev/lib/json/msg-simple-1.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/networknt_json-schema-validator-1.0.73.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/itu-1.7.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/json/org.everit.json.schema-1.14.1.jar"/>
+	<archive path="/op2_3.3.dev/lib/json/everit-json-schema-1.14.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/uri-template-0.9.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/accessors-smart-2.4.8.jar"/>
 	<archive path="/op2_3.3.dev/lib/json/json-path-2.9.0-gov4j-1.jar"/>
@@ -228,7 +228,7 @@
         <archive path="/op2_3.3.dev/lib/shared/jakarta.activation-1.2.2.jar"/>
         <archive path="/op2_3.3.dev/lib/shared/aspectjrt-1.9.9.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/freemarker-2.3.31.jar"/>
-	<archive path="/op2_3.3.dev/lib/shared/Saxon-HE-11.4-gov4j-1.jar"/>
+	<archive path="/op2_3.3.dev/lib/shared/Saxon-HE-11.4-gov4j-2.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/xmlresolver-4.4.3.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/xmlunit-legacy-2.10.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/xmlunit-core-2.10.0.jar"/>
@@ -243,10 +243,6 @@
 	<archive path="/op2_3.3.dev/lib/shared/rhino-1.7.14.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/hibernate-core-6.1.4.Final.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/hazelcast-5.3.5.jar"/>
-	<!-- soapbox -->
-        <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
-        <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
-        <archive path="/op2_3.3.dev/lib/soapbox/metro-webservices_xwss_com_sun_xml-2.2.jar"/>
 	<!-- spring -->
         <archive path="/op2_3.3.dev/lib/spring/spring-web-5.3.39-gov4j-1.jar"/>
         <archive path="/op2_3.3.dev/lib/spring/spring-tx-5.3.39.jar"/>
@@ -304,13 +300,13 @@
 	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-policy-stax-2.4.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-stax-2.4.1.jar"/>
     </library>
-    <library name="openspcoop2_3.3.9_lib_axiom" systemlibrary="false">
+    <library name="openspcoop2_3.3.16_lib_axiom" systemlibrary="false">
 	<archive path="/op2_3.3.dev/lib/axiom/axiom-api-1.2.13-gov4j-2.jar"/>
 	<archive path="/op2_3.3.dev/lib/axiom/axiom-common-impl-1.2.13.jar"/>
 	<archive path="/op2_3.3.dev/lib/axiom/axiom-dom-1.2.13-gov4j-2.jar"/>
 	<archive path="/op2_3.3.dev/lib/axiom/axiom-impl-1.2.13-gov4j-2.jar"/>
     </library>
-    <library name="openspcoop2_3.3.9_lib_faces" systemlibrary="false">
+    <library name="openspcoop2_3.3.16_lib_faces" systemlibrary="false">
         <archive path="/op2_3.3.dev/lib/faces/richfaces-api-3.3.4.Final.jar"/>
         <archive path="/op2_3.3.dev/lib/faces/richfaces-impl-3.3.4.Final-gov4j-4.jar"/>
         <!-- <archive path="/op2_3.3.dev/lib/faces/richfaces-impl-jsf2-3.3.4.Final.jar"/> -->
@@ -318,7 +314,7 @@
         <archive path="/op2_3.3.dev/lib/faces/jsf-api-1.2_15-06.jar"/>
 	<archive path="/op2_3.3.dev/lib/faces/jsf-impl-1.2_15-06.jar"/>
     </library>
-    <library name="openspcoop2_3.3.9_lib_stub" systemlibrary="false">
+    <library name="openspcoop2_3.3.16_lib_stub" systemlibrary="false">
         <archive path="/op2_3.3.dev/lib/stub/cxf/openspcoop2_integrationManagerStub_cxf.jar"/>
 	<archive path="/op2_3.3.dev/lib/stub/cxf/openspcoop2_configStub_cxf.jar"/>
 	<archive path="/op2_3.3.dev/lib/stub/cxf/openspcoop2_registryStub_cxf.jar"/>

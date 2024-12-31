@@ -17,6 +17,8 @@
 
 		<jar.group.name>jminix</jar.group.name>
 		
+		<jminix.version>1.2.0</jminix.version>
+		<jminix-standalone.version>1.2.0-standalone</jminix-standalone.version>
 		<jminix.gov4j.version>1.2.0-gov4j-1</jminix.gov4j.version>
 		<org.restlet.version>2.4.0</org.restlet.version>
 
@@ -25,7 +27,7 @@
 	<dependencies>
 	
 		<dependency>
-			<groupId>org.jminix</groupId>
+			<groupId>org.gov4j.thirdparty.org.jminix</groupId>
 			<artifactId>jminix-standalone</artifactId>
 			<version>${jminix.gov4j.version}</version>
 			<exclusions>
@@ -35,9 +37,20 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- conflitto di gropuId:artifactId <dependency>
+			<groupId>org.jminix</groupId>
+			<artifactId>jminix</artifactId>
+			<version>${jminix-standalone.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency> -->	
 
 		<dependency>
-			<groupId>org.jminix</groupId>
+			<groupId>org.gov4j.thirdparty.org.jminix</groupId>
 			<artifactId>jminix</artifactId>
 			<version>${jminix.gov4j.version}</version>
 			<exclusions>
@@ -47,9 +60,20 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.jminix</groupId>
+			<artifactId>jminix</artifactId>
+			<version>${jminix.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<dependency>
-			<groupId>org.restlet.jee</groupId>
+			<groupId>org.gov4j.thirdparty.org.restlet.jee</groupId>
 			<artifactId>org.restlet</artifactId>
 			<version>${org.restlet.version}</version>
 			<exclusions>
@@ -60,7 +84,7 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.restlet.jee</groupId>
+			<groupId>org.gov4j.thirdparty.org.restlet.jee</groupId>
 			<artifactId>org.restlet.ext.servlet</artifactId>
 			<version>${org.restlet.version}</version>
 			<exclusions>
@@ -71,7 +95,7 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.restlet.jee</groupId>
+			<groupId>org.gov4j.thirdparty.org.restlet.jee</groupId>
 			<artifactId>org.restlet.ext.velocity</artifactId>
 			<version>${org.restlet.version}</version>
 			<exclusions>
@@ -91,15 +115,28 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven-antrun-plugin}</version>
-				<configuration>
-					<target>
-						<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
-					</target>
-				</configuration>
 				<executions>
 					<execution>
 						<id>sleep-for-a-while</id>
 						<phase>${owasp}</phase>
+						<configuration>
+							<target name="owasp">
+								<sleep seconds="${owasp.ossindex.prevents429.sleep}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>delete-dependencies-override-gov4j</id>
+						<phase>initialize</phase> <!-- fase successiva a validate -->
+						<configuration>
+							<target name="delete">
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/jminix-${jminix.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/jminix-${jminix-standalone.version}.jar" failonerror="true"/>
+							</target>
+						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
@@ -113,19 +150,19 @@
 				<executions>
 					<execution>
 						<id>clean</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>clean</goal>
 						</goals>
 						<configuration>
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
-								<filesets>
+								<fileset>
 									<directory>../../../lib/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
-								</filesets>
+								</fileset>
 							</filesets>
 						</configuration>
 					</execution>
@@ -138,7 +175,7 @@
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
-						<phase>initialize</phase>
+						<phase>validate</phase>
 						<goals>
 							<goal>copy-dependencies</goal>
 						</goals>

@@ -130,7 +130,13 @@ then
         cp ${BATCH_RUNTIME_REPOSITORY}/local_env.xml.template ${BATCH_RUNTIME_REPOSITORY}/local_env.xml
 fi
 
+# compile-options.properties
+SOAPBOX=false
+if [ -f "compile-options.soapbox" ]
+then
+	SOAPBOX=true
+fi
 
 touch arch.dodeploy
-ant -buildfile prepare-build.xml -Dapplication_server_version=${AS_VERSION} -Ddatabase_version=${DB_VERSION}
+ant -buildfile prepare-build.xml -Dapplication_server_version=${AS_VERSION} -Ddatabase_version=${DB_VERSION} -DbuildSecurity_soapbox=${SOAPBOX}
 

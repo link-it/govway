@@ -765,6 +765,16 @@
 		    <param name="file" value="*.properties"/>
 		</antcall>
 		
+		<!-- soapbox -->
+		<if>
+			<not>
+				<istrue value="${buildSecurity_soapbox}"/>
+			</not>
+			<then>
+				<mkdir dir="${required_lib}/soapbox"/>
+			</then>
+		</if>
+		
 		<!-- build ear -->
 		<echo message="Costruisco per application server [${as}]"/>
 		<mkdir dir="${build}/classes_tmp"/>
@@ -988,6 +998,16 @@
 		<delete file="${dist}/govway.war" />
 		<delete file="${dist}/govwaySec.war" />
 		<delete file="${dist}/govway.jar" />
+		
+		<!-- soapbox -->
+		<if>
+			<not>
+				<istrue value="${buildSecurity_soapbox}"/>
+			</not>
+			<then>
+				<delete dir="${required_lib}/soapbox"/>
+			</then>
+		</if>
 		
 	</target>
 

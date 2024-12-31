@@ -17,7 +17,7 @@
 
 		<jar.group.name>wildfly9</jar.group.name>
 		
-		<wildfly.version>wf9</wildfly.version>
+		<wildfly.version>9.0.0.Final</wildfly.version>
 
 	</properties>
 
@@ -25,7 +25,7 @@
 	
 		<dependency>
 			<groupId>org.wildfly</groupId>
-			<artifactId>jboss-client</artifactId>
+			<artifactId>wildfly-client-all</artifactId>
 			<version>${wildfly.version}</version>
 			<exclusions>
 				<exclusion>

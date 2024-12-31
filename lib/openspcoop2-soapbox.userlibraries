@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="openspcoop2_3.3.16_lib_soapbox" systemlibrary="false">
+        <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-core-1.7.1.jar"/>
+        <archive path="/op2_3.3.dev/lib/soapbox/ultraesb-api-1.7.1.jar"/>
+        <archive path="/op2_3.3.dev/lib/soapbox/metro-webservices_xwss_com_sun_xml-2.2.jar"/>
+    </library>
+</eclipse-userlibraries>
