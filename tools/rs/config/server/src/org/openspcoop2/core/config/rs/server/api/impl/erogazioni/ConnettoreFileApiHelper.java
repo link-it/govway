@@ -93,6 +93,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 		String overwriteIfExists = conn.getRichiesta().isOverwriteIfExists() != null ? ServletUtils.boolToCheckBoxStatus(conn.getRichiesta().isOverwriteIfExists()) : ServletUtils.boolToCheckBoxStatus(false);
 		
 		return env.saHelper.endPointCheckData(
+				null,
 				env.tipo_protocollo,
 				erogazione,
 				endpointtype,
@@ -266,6 +267,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
+				null, // connettoreStatusParams
 				listExtendedConnettore);	
 		return regConnettore;
 	}
@@ -366,6 +368,7 @@ public class ConnettoreFileApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
+				null, // connettoreStatusParams
 				listExtendedConnettore);	
 		return regConnettore;
 	}

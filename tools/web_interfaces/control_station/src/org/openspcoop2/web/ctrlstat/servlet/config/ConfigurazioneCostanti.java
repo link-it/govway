@@ -701,7 +701,8 @@ public class ConfigurazioneCostanti {
 	
 	public static final String LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI = "Cache (Load Balancer)";
 	
-	public static final String LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO = "Cache (Controllo Traffico - Dati Statistici)";
+	public static final String LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO_NAME = "Controllo Traffico - Dati Statistici";
+	public static final String LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO = "Cache ("+LABEL_CONFIGURAZIONE_CACHE_CONTROLLO_TRAFFICO_NAME+")";
 	
 	public static final String LABEL_CONFIGURAZIONE_CACHE_DATI_RICHIESTE = "Cache (Dati delle Richieste)";
 	

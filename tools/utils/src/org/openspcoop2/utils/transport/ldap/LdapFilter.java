@@ -35,6 +35,7 @@ import javax.naming.directory.Attributes;
  * classe che implementa i filtri di ricerca
  * 
  * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$ 
  * @version $Rev$, $Date$
  *
  */

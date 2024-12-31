@@ -178,6 +178,12 @@ public class CostantiConnettori {
     public static final String CONNETTORE_NULL_ECHO_GENERA_TRASMISSIONE_ANDATA_RITORNO = "generaTrasmissioneAndataRitorno";
     
     
+    /** STATUS PROPERTIES */ 
+    public static final String CONNETTORE_STATUS_RESPONSE_TYPE = "statusResponseType";
+    public static final String CONNETTORE_STATUS_TEST_CONNECTIVITY = "testConnectivity";
+    public static final String CONNETTORE_STATUS_PERIOD = "period";
+    public static final String CONNETTORE_STATUS_PERIOD_VALUE = "periodValue";
+    public static final String CONNETTORE_STATUS_STAT_LIFETIME = "statLifetime";
     
     /** BYOK PROPERTIES */
     

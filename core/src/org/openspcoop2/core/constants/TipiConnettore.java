@@ -38,7 +38,8 @@ public enum TipiConnettore {
 	NULL ("null",null,"Consuma la richiesta e ritorna una risposta vuota"),
 	NULLECHO("nullEcho","echo","Restituisce in risposta la richiesta ricevuta"),
 	FILE ("file",null,"Consente di salvare la richiesta su filesystem e restituire una risposta"),
-	CUSTOM("custom",org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_CUSTOM_IN_SELECT,null);
+	CUSTOM("custom",org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_CUSTOM_IN_SELECT,null),
+	STATUS("status",null,"restituisce lo stato dell'API");
 	
 	
 	private final String nome;

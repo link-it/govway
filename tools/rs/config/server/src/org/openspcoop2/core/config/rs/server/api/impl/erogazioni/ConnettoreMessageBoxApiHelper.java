@@ -156,6 +156,8 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
+				
+				null, // connettoreStatusParams
 				null // listExtendedConnettore
 				);		
 		return regConnettore;
@@ -233,6 +235,8 @@ public class ConnettoreMessageBoxApiHelper extends AbstractConnettoreApiHelper<C
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
+				
+				null, // connettoreStatusParams
 				null // listExtendedConnettore
 				);		
 		return regConnettore;

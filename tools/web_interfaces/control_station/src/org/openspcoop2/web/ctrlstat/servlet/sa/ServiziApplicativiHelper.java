@@ -96,6 +96,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCos
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
@@ -314,7 +315,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				 */
 
 			}
-			if (!this.endPointCheckData(protocollo, true, listExtendedConnettore)) {
+			if (!this.endPointCheckData(null, protocollo, true, listExtendedConnettore)) {
 				return false;
 			}
 
@@ -364,7 +365,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			boolean integrationManagerEnabled, 
 			boolean visualizzaModificaCertificato, boolean visualizzaAddCertificato, String servletCredenzialiList, List<Parameter> parametersServletCredenzialiList, Integer numeroCertificati, String servletCredenzialiAdd,
 			String tokenPolicySA, String tokenClientIdSA, boolean tokenWithHttpsEnabledByConfigSA,
-			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws Exception {
+			String autenticazioneApiKey, boolean useOAS3Names, boolean useAppId, String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
+			ConnettoreStatusParams connettoreStatusParams) throws Exception {
 
 		if(oldNomeSA!=null && invrifRichiesta!=null) {
 			// nop
@@ -1456,7 +1458,10 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				
 			}
 			
-			dati = this.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
+			
+			
+			
+			dati = this.addEndPointToDati(dati, null, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
 					url, nomeCodaJMS,
 					tipoCodaJMS, userRichiesta, passwordRichiesta, initcont, urlpgk, provurl,
 					connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
@@ -1482,6 +1487,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					nomeProtocollo, false, false
 					, false, servizioApplicativoServerEnabled, null, null,
 					autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					postBackViaPost
 					);
 		}

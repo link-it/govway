@@ -90,6 +90,7 @@ import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilit
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
@@ -307,6 +308,9 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String responseInputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 			String responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			
+			//status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(apsHelper);
 			
 			String profilo = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROFILO);
 
@@ -1009,7 +1013,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					if (endpointtype == null) {
 						if ((connettore.getCustom()!=null && connettore.getCustom()) && 
 								!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
-								!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
+								!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE) &&
+								!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_STATUS)) {
 							endpointtype = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 							tipoconn = connettore.getTipo();
 						} else
@@ -1373,7 +1378,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							forceEnableConnettore = true;
 						}*/
 						
-						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp,  
+						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp,  
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url,nome, tipo, user, password, initcont, urlpgk,
 								provurl, connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp,
@@ -1399,13 +1404,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 								erogazioneServizioApplicativoServer, saSoggetti,
 								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+								connettoreStatusParams,
 								postBackViaPost);
 						
 					}
 					else {
 						dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 						
-						dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+						dati = apsHelper.addEndPointToDatiAsHidden(dati, serviceBinding, connettoreDebug,
 								endpointtype, autenticazioneHttp,
 								url, nome, tipo,
 								user, password, initcont, urlpgk,
@@ -1427,7 +1433,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, tokenPolicy,
-								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+								connettoreStatusParams);
 						
 					}
 					
@@ -1586,7 +1593,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						forceEnableConnettore = true;
 					}*/
 					
-					dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
+					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug,  endpointtype, autenticazioneHttp, 
 							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
@@ -1613,6 +1620,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, saSoggetti,
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams,
 							postBackViaPost);
 					
 				}
@@ -1620,7 +1628,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					
 					dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 					
-					dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+					dati = apsHelper.addEndPointToDatiAsHidden(dati, serviceBinding, connettoreDebug,
 							endpointtype, autenticazioneHttp,
 							url, nome, tipo,
 							user, password, initcont, urlpgk,
@@ -1642,7 +1650,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken, tokenPolicy,
-							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams);
 					
 				}
 				
@@ -1716,7 +1725,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						forceEnableConnettore = true;
 					}
 					
-					dati = apsHelper.addEndPointToDati(dati, connettoreDebug,  endpointtype, autenticazioneHttp, 
+					dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug,  endpointtype, autenticazioneHttp, 
 							null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 							url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
@@ -1743,6 +1752,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 							erogazioneServizioApplicativoServer, saSoggetti,
 							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams,
 							postBackViaPost);
 					
 				}
@@ -1756,7 +1766,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 
 				dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 				
-				dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+				dati = apsHelper.addEndPointToDatiAsHidden(dati, serviceBinding, connettoreDebug,
 						endpointtype, autenticazioneHttp,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
@@ -1778,7 +1788,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 						requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, tokenPolicy,
-						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams);
 				
 				if(backToStato != null) {
 					// backtostato per chiudere la modifica dopo la conferma
@@ -1975,7 +1986,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			String oldConnT = asps.getConfigurazioneServizio().getConnettore().getTipo();
 			if ((asps.getConfigurazioneServizio().getConnettore().getCustom()!=null && asps.getConfigurazioneServizio().getConnettore().getCustom()) && 
 					!asps.getConfigurazioneServizio().getConnettore().getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
-					!asps.getConfigurazioneServizio().getConnettore().getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)){
+					!asps.getConfigurazioneServizio().getConnettore().getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE) &&
+					!asps.getConfigurazioneServizio().getConnettore().getTipo().equals(CostantiDB.CONNETTORE_TIPO_STATUS)){
 
 				oldConnT = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 				// mantengo vecchie proprieta connettore custom
@@ -2002,6 +2014,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
 					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					listExtendedConnettore);
 
 			asps.getConfigurazioneServizio().setConnettore(newConnettore);
@@ -2104,7 +2117,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							forceEnableConnettore = true;
 						}*/
 						
-						dati = apsHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
+						dati = apsHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, 
 								null, //(apsHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_ESTERNO_PREFIX,
 								url,
 								nome, tipo, user, password, initcont, urlpgk,
@@ -2132,13 +2145,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 								erogazioneServizioApplicativoServer, saSoggetti,
 								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+								connettoreStatusParams,
 								postBackViaPost);
 						
 					}
 					else {
 						dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 						
-						dati = apsHelper.addEndPointToDatiAsHidden(dati, connettoreDebug,
+						dati = apsHelper.addEndPointToDatiAsHidden(dati, serviceBinding, connettoreDebug,
 								endpointtype, autenticazioneHttp,
 								url, nome, tipo,
 								user, password, initcont, urlpgk,
@@ -2160,7 +2174,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, tokenPolicy,
-								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+								autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+								connettoreStatusParams);
 						
 					}
 					

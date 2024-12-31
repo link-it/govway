@@ -85,6 +85,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
@@ -316,7 +317,9 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 			strutsBean.responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			strutsBean.responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
-
+			//status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(apsHelper);
+			
 			strutsBean.statoPackage = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_STATO_PACKAGE);
 
 			strutsBean.wsdlimpler = apsHelper.getBinaryParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_WSDL_EROGATORE);
@@ -781,7 +784,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					String tipoSendas = ConnettoriCostanti.TIPO_SEND_AS[0];
 					String tipoJms = ConnettoriCostanti.TIPI_CODE_JMS[0];
 					if (apsHelper.isModalitaAvanzata()) {
-						dati = apsHelper.addEndPointToDati(dati, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null, 
+						dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null, 
 								strutsBean.url, strutsBean.nome,
 								tipoJms, strutsBean.user,
 								strutsBean.password, strutsBean.initcont, strutsBean.urlpgk,
@@ -807,6 +810,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								listExtendedConnettore, false,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null,
 								strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+								connettoreStatusParams,
 								postBackViaPost);
 					}else{
 						//spostato dentro l'helper
@@ -932,7 +936,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						,null,null,null,null,null,null,null,null,null);
 
 				if (apsHelper.isModalitaAvanzata()) {
-					dati = apsHelper.addEndPointToDati(dati, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null,
+					dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null,
 							strutsBean.url, strutsBean.nome, strutsBean.tipo, strutsBean.user,
 							strutsBean.password, strutsBean.initcont, strutsBean.urlpgk,
 							strutsBean.provurl, strutsBean.connfact, strutsBean.sendas,
@@ -958,6 +962,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							listExtendedConnettore, false,
 							protocollo, forceHttps, forceHttpsClient, false, false, null, null,
 							strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+							connettoreStatusParams,
 							postBackViaPost);
 				}else{
 					//spostato dentro l'helper
@@ -1010,6 +1015,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 						strutsBean.responseInputMode, strutsBean.responseInputFileName, strutsBean.responseInputFileNameHeaders, strutsBean.responseInputDeleteAfterRead, strutsBean.responseInputWaitTime,
 						strutsBean.tokenPolicy,
 						strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+						connettoreStatusParams,
 						listExtendedConnettore);
 			}
 
@@ -1096,7 +1102,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							,null,null,null,null,null,null,null,null,null);
 
 					if (apsHelper.isModalitaAvanzata()) {
-						dati = apsHelper.addEndPointToDati(dati, strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null,
+						dati = apsHelper.addEndPointToDati(dati, apcCore.toMessageServiceBinding(as.getServiceBinding()), strutsBean.connettoreDebug, strutsBean.endpointtype, strutsBean.autenticazioneHttp, null,
 								strutsBean.url, strutsBean.nome, strutsBean.tipo, strutsBean.user,
 								strutsBean.password, strutsBean.initcont, strutsBean.urlpgk,
 								strutsBean.provurl, strutsBean.connfact, strutsBean.sendas,
@@ -1123,6 +1129,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								listExtendedConnettore, false,
 								protocollo, forceHttps, forceHttpsClient, false, false, null, null,
 								strutsBean.autenticazioneApiKey, strutsBean.useOAS3Names, strutsBean.useAppId, strutsBean.apiKeyHeader, strutsBean.apiKeyValue, strutsBean.appIdHeader, strutsBean.appIdValue,
+								connettoreStatusParams,
 								postBackViaPost);
 					}else{
 						//spostato dentro l'helper

@@ -19,6 +19,8 @@
 
 
 
+<%@page import="java.text.MessageFormat"%>
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
 <%@page import="java.util.List"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti"%>
@@ -129,6 +131,7 @@
 							  	String classInput= de.getStyleClass();
 							  	String labelStyleClass= de.getLabelStyleClass();
 							  	String deHiddenId = "__i_hidden_lbl_de_"+i;
+								String deCopyId = "__i_hidden_copy_de_"+i;
 							  	
 							  	String stile=null;
 							  	//per ogni entry:
@@ -137,6 +140,8 @@
 							  	} else {
 								    stile = "even";
 							  	}
+							  	
+								String copyToClipboard = de.getCopyToClipboard();
 								
 							  	if (type.equals("hidden")) {
 						    		%>
@@ -172,9 +177,17 @@
 													tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
 												}
 												textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
-											}		
+											}
 											
+											String deTextId = rowName+"_txt";
+											String dataCopy = "";
 											
+											// valore da copiare negli appunti
+											if(StringUtils.isNotEmpty(copyToClipboard)){
+												dataCopy = " data-copy=\"" + copyToClipboard + "\"";		
+// 												classSpanNoEdit = "	 spanNoEdit-copy-box";
+											}
+																						
 				            				%>
 				                			<tr class="">
 												<td class="tdTextRiepilogo labelRiepilogo">
@@ -183,9 +196,21 @@
 												<td class="tdTextRiepilogo <%= stile %>">
 													<div class="<%=classDivNoEdit %>"> 
 														<input type="hidden" name="<%= deHiddenId %>" value="" id="<%= deHiddenId%>"/>
-						                				<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %> ><%= textValNoEdit %></span>
+						                				<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %>  <%= dataCopy %> id="<%= deTextId%>"><%= textValNoEdit %></span>
 						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>" />
 					                				
+					                				<% if(StringUtils.isNotEmpty(copyToClipboard)){ %>
+						                				<span class="copy-box" id="<%= deCopyId%>" title="<%=MessageFormat.format(Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO, deLabel) %>">
+															<i class="material-icons md-18"><%= Costanti.ICON_COPY %></i>
+														</span>
+														
+        												<div id="<%= deCopyId%>_message" class="copy-message"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
+														<script type="text/javascript" nonce="<%= randomNonce %>">
+													      	 $(document).ready(function(){
+													      		 setupCopyButtonEvents('<%= deTextId%>', '<%= deCopyId%>', '<%= deCopyId%>_message'); // imposta gestione eventi per visualizzazione tasto copia
+															});
+														</script>
+													<% } %>
 													<% 
 														if(!de.getImage().isEmpty()){
 															for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){

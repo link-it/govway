@@ -88,6 +88,7 @@ import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUti
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.OggettoDialogEnum;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
@@ -446,6 +447,9 @@ public final class ServiziApplicativiChange extends Action {
 			String responseInputDeleteAfterRead = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
+			//status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(saHelper);
+			
 			String resetElementoCacheS = saHelper.getParametroBoolean(CostantiControlStation.PARAMETRO_ELIMINA_ELEMENTO_DALLA_CACHE);
 			boolean resetElementoCache = ServletUtils.isCheckBoxEnabled(resetElementoCacheS);
 			
@@ -528,7 +532,8 @@ public final class ServiziApplicativiChange extends Action {
 				connis!=null){
 				if ((connis.getCustom()!=null && connis.getCustom()) && 
 						!TipiConnettore.HTTPS.toString().equals(connis.getTipo()) && 
-						!TipiConnettore.FILE.toString().equals(connis.getTipo())) {
+						!TipiConnettore.FILE.toString().equals(connis.getTipo()) &&
+						!TipiConnettore.STATUS.toString().equals(connis.getTipo())) {
 					endpointtype = TipiConnettore.CUSTOM.toString();
 					tipoconn = connis.getTipo();
 				} else
@@ -1657,7 +1662,8 @@ public final class ServiziApplicativiChange extends Action {
 						integrationManagerEnabled, 
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, consoleConfiguration,consoleOperationType, protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1768,7 +1774,8 @@ public final class ServiziApplicativiChange extends Action {
 						integrationManagerEnabled, 
 						visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 						tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, consoleConfiguration,consoleOperationType, protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -2198,6 +2205,7 @@ public final class ServiziApplicativiChange extends Action {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						tokenPolicy,
 						apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams,
 						listExtendedConnettore);
 				is.setConnettore(connis);
 				

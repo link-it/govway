@@ -83,6 +83,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHel
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
@@ -300,6 +301,9 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String responseInputDeleteAfterRead = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
+			//status
+			ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(saHelper);
+			
 			String erogazioneServizioApplicativoServerEnabledS = saHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
 			boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
 			String erogazioneServizioApplicativoServer = saHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
@@ -482,6 +486,9 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					responseInputFileNameHeaders = null;
 					responseInputDeleteAfterRead = null;
 					responseInputWaitTime = null;
+					
+					// status
+					connettoreStatusParams = null;
 				}
 				
 				// Change Password basic/api
@@ -703,7 +710,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				if (endpointtype == null) {
 					if ((connis.getCustom()!=null && connis.getCustom()) && 
 							!connis.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-							!connis.getTipo().equals(TipiConnettore.FILE.toString())) {
+							!connis.getTipo().equals(TipiConnettore.FILE.toString()) &&
+							!connis.getTipo().equals(TipiConnettore.STATUS.toString())) {
 						endpointtype = TipiConnettore.CUSTOM.toString();
 						tipoconn = connis.getTipo();
 					} else
@@ -1034,6 +1042,9 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					}
 
 				}
+				
+				// status
+				connettoreStatusParams.updateFromDB(props);
 
 
 				// preparo i campi
@@ -1050,7 +1061,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd,
 						postBackViaPost);
 
-				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
@@ -1077,6 +1088,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer),
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams,
 						postBackViaPost
 						);
 
@@ -1111,7 +1123,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						TipoOperazione.CHANGE, tipoCredenzialiSSLVerificaTuttiICampi, changepwd,
 						postBackViaPost);
 
-				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
+				dati = saHelper.addEndPointToDati(dati, serviceBinding, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
 						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, 
@@ -1137,6 +1149,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						nomeProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
 						erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer),
 						autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams,
 						postBackViaPost
 						);
 
@@ -1292,7 +1305,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				String oldConnT = connis.getTipo();
 				if ((connis.getCustom()!=null && connis.getCustom()) && 
 						!connis.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-						!connis.getTipo().equals(TipiConnettore.FILE.toString()))
+						!connis.getTipo().equals(TipiConnettore.FILE.toString()) &&
+						!connis.getTipo().equals(TipiConnettore.STATUS.toString()))
 					oldConnT = TipiConnettore.CUSTOM.toString();
 				saHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
 						nome, tipo, user, password,
@@ -1313,6 +1327,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						tokenPolicy,
 						apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+						connettoreStatusParams,
 						listExtendedConnettore);
 				is.setConnettore(connis);
 				sa.setInvocazioneServizio(is);

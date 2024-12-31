@@ -467,15 +467,19 @@ public class CostantiPdD {
     public static final String CHECK_STATO_PDD_PARAM_VALUE = "paramValue";
     public static final String CHECK_STATO_PDD_PARAM_VALUE_2 = "paramValue2";
     public static final String CHECK_STATO_PDD_PARAM_VALUE_3 = "paramValue3";
+    public static final String CHECK_STATO_PDD_PARAM_VALUE_4 = "paramValue4";
     public static final String CHECK_STATO_PDD_PARAM_INT_VALUE = "paramIntegerValue";
     public static final String CHECK_STATO_PDD_PARAM_INT_VALUE_2 = "paramIntegerValue2";
     public static final String CHECK_STATO_PDD_PARAM_INT_VALUE_3 = "paramIntegerValue3";
+    public static final String CHECK_STATO_PDD_PARAM_INT_VALUE_4 = "paramIntegerValue4";
     public static final String CHECK_STATO_PDD_PARAM_LONG_VALUE = "paramLongValue";
     public static final String CHECK_STATO_PDD_PARAM_LONG_VALUE_2 = "paramLongValue2";
     public static final String CHECK_STATO_PDD_PARAM_LONG_VALUE_3 = "paramLongValue3";
+    public static final String CHECK_STATO_PDD_PARAM_LONG_VALUE_4 = "paramLongValue4";
     public static final String CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE = "paramBooleanValue";
     public static final String CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_2 = "paramBooleanValue2";
     public static final String CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_3 = "paramBooleanValue3";
+    public static final String CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_4 = "paramBooleanValue4";
     
     
     

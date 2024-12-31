@@ -108,6 +108,9 @@ public class ConnettoreUtils {
 		else if(TipiConnettore.NULLECHO.getNome().equals(connettoreMsg.getTipoConnettore())){
 			location = ConnettoreNULLEcho.LOCATION;
 		}
+		else if(TipiConnettore.STATUS.getNome().equals(connettoreMsg.getTipoConnettore())){
+			location = ConnettoreStatus.LOCATION;
+		}
 		else if(ConnettoreStresstest.ENDPOINT_TYPE.equals(connettoreMsg.getTipoConnettore())){
 			location = ConnettoreStresstest.LOCATION;
 		}
@@ -577,6 +580,9 @@ public class ConnettoreUtils {
 		else if(TipiConnettore.NULLECHO.getNome().equals(connettore.getTipo())){
 			/**endpoint = org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho.LOCATION;*/
 		}
+		else if(TipiConnettore.STATUS.getNome().equals(connettore.getTipo())){
+			/**endpoint = org.openspcoop2.pdd.core.connettori.ConnettoreStatus.LOCATION;*/
+		}
 		else {
 			String endpointV = getProperty(CostantiConnettori.CONNETTORE_LOCATION, connettore.getPropertyList());
 			if(StringUtils.isNotEmpty(endpointV)) {
@@ -923,6 +929,9 @@ public class ConnettoreUtils {
 		}
 		else if(TipiConnettore.NULLECHO.getNome().equals(connettore.getTipo())){
 			endpoint = org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho.LOCATION;
+		}
+		else if(TipiConnettore.STATUS.getNome().equals(connettore.getTipo())){
+			endpoint = org.openspcoop2.pdd.core.connettori.ConnettoreStatus.LOCATION;
 		}
 		else {
 			String endpointV = getProperty(CostantiConnettori.CONNETTORE_LOCATION, connettore.getPropertyList());

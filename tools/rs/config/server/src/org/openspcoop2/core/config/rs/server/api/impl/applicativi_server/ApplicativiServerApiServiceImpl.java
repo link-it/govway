@@ -150,7 +150,8 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 			String oldConnT = connis.getTipo();
 			if ((connis.getCustom() != null && connis.getCustom())
 					&& !connis.getTipo().equals(TipiConnettore.HTTPS.toString())
-					&& !connis.getTipo().equals(TipiConnettore.FILE.toString())) {
+					&& !connis.getTipo().equals(TipiConnettore.FILE.toString())
+					&& !connis.getTipo().equals(TipiConnettore.STATUS.toString())) {
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			}
 
@@ -433,7 +434,8 @@ public class ApplicativiServerApiServiceImpl extends BaseImpl implements Applica
 			String oldConnT = connis.getTipo();
 			if ((connis.getCustom() != null && connis.getCustom())
 					&& !connis.getTipo().equals(TipiConnettore.HTTPS.toString())
-					&& !connis.getTipo().equals(TipiConnettore.FILE.toString())) {
+					&& !connis.getTipo().equals(TipiConnettore.FILE.toString())
+					&& !connis.getTipo().equals(TipiConnettore.STATUS.toString())) {
 				oldConnT = TipiConnettore.CUSTOM.toString();
 			}
 

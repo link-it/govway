@@ -1132,7 +1132,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				connettoreStatic = this.apsCore.isConnettoreStatic(protocollo);
 			}
 			if(!connettoreStatic &&
-				!this.endPointCheckData(protocollo, gestioneErogatori,
+				!this.endPointCheckData(serviceBinding, protocollo, gestioneErogatori,
 						endpointtype, url, nome, tipo,
 						user, password, initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia, httpshostverify,
@@ -1661,7 +1661,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				String servizioApplicativoServer = null;
 				// Controllo dell'end-point
 				// Non li puo' prendere dalla servtlet
-				if (!this.endPointCheckData(protocollo, false,
+				if (!this.endPointCheckData(null, protocollo, false,
 						endpointtype, url, nome, tipo,
 						user, password, initcont, urlpgk, provurl, connfact,
 						sendas, httpsurl, httpstipologia, httpshostverify,
@@ -3905,6 +3905,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
 						de.setToolTip(paAssociata.getDescrizione());
+						de.setCopyToClipboard(paAssociata.getDescrizione());
 						
 						if(visualizzazioneTabs) {
 							DataElementImage image = new DataElementImage();
@@ -3964,6 +3965,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										de.setValue(this.getLabelConnettore(sa,is,true));
 										String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 										de.setToolTip(tooltipConnettore);
+										de.setCopyToClipboard(this.getClipBoardUrlConnettore(sa,is));
 									} else {
 										de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociata));
 										de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paAssociata));
@@ -4006,6 +4008,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 											de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getLabelConnettore(sa,is,true));
 											String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 											de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
+											de.setCopyToClipboard(this.getClipBoardUrlConnettore(sa,is));
 										} 
 										else if(connettoreMultiploEnabledDefault) {
 											/**de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getNomiConnettoriMultipliPortaApplicativa(paAssociataDefault));*/
@@ -4023,6 +4026,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 											de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT); 
 											String tooltipConnettore = this.getTooltipConnettore(sa, is,true);
 											de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
+											de.setCopyToClipboard(this.getClipBoardUrlConnettore(sa,is));
 										} else {
 											de.setType(DataElementType.TEXT);
 											de.setValue("-");
@@ -4036,6 +4040,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 											de.setValue(this.getLabelConnettore(sa,is,true));
 											String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 											de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
+											de.setCopyToClipboard(this.getClipBoardUrlConnettore(sa,is));
 										} else {
 											de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociata));
 											de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paAssociata));
@@ -4046,6 +4051,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 											de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO);
 											String tooltipConnettore = this.getTooltipConnettore(sa, is,true);
 											de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
+											de.setCopyToClipboard(this.getClipBoardUrlConnettore(sa,is));
 										} else {
 											de.setType(DataElementType.TEXT);
 											de.setValue("-");
@@ -5736,6 +5742,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
 						de.setToolTip(pdAssociata.getDescrizione());
+						de.setCopyToClipboard(pdAssociata.getDescrizione());	
 						
 						if(visualizzazioneTabs) {
 							DataElementImage image = new DataElementImage();
@@ -5776,10 +5783,13 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								}
 								
 								String servletConnettore = AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE;
+								String labelConnettore = this.getLabelConnettore(fru.getConnettore(),true,false);
+								String copyConnettore = this.getClipBoardUrlConnettore(fru.getConnettore());
 								if(mapping.isDefault()) {
 									if(visualizzazioneTabs) {
-										de.setValue(this.getLabelConnettore(fru.getConnettore(),true,false));
+										de.setValue(labelConnettore);
 										de.setToolTip(this.getLabelConnettore(fru.getConnettore(),true,true)); // NEW
+										de.setCopyToClipboard(copyConnettore); // valore da copiare
 									}
 									else {
 										ServletUtils.setDataElementVisualizzaLabel(de);
@@ -5821,6 +5831,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										servletConnettore = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_RIDEFINITO;
 										if(visualizzazioneTabs) {
 											de.setValue(this.getLabelConnettore(connettore,true,false));
+											de.setCopyToClipboard(this.getClipBoardUrlConnettore(connettore));
 										}
 										else {
 											de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO);
@@ -5831,7 +5842,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									} else {
 										servletConnettore = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT;
 										if(visualizzazioneTabs) {
-											de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT+"] "+this.getLabelConnettore(fru.getConnettore(),true,false));
+											de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_FRUIZIONE_PD_DESCRIZIONE_DEFAULT+"] "+labelConnettore);
+											de.setCopyToClipboard(copyConnettore);
 										}
 										else {
 											de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_DEFAULT);

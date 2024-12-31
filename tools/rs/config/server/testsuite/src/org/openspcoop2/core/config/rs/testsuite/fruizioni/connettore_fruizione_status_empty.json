@@ -1,0 +1,8 @@
+{
+    "connettore": {
+        "tipo": "status",
+        "risposta": "json",
+        "verifica_connettivita": false,
+        "debug": false
+    }
+}

@@ -345,7 +345,8 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 	        		null, // apiKeyHeader
 					null, // apiKey,
 					null, // appIdHeader,
-					null // appId,
+					null, // appId,
+					null // connettoreStatusParams
 				);
 
 

@@ -6561,11 +6561,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI);
 			de.setType(DataElementType.TITLE);
+			de.abilitaRefresh();
 			dati.add(de);
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE);
 			de.setType(DataElementType.SUBTITLE);
+			de.abilitaRefresh();
 			dati.add(de);
 			
 			try{
@@ -6607,6 +6609,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = newDataElementStyleRuntime();
 					de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_DATABASE+" "+idAltroDB.split(" ")[0]);
 					de.setType(DataElementType.SUBTITLE);
+					de.abilitaRefresh();
 					dati.add(de);
 					
 					de = newDataElementStyleRuntime();
@@ -6629,6 +6632,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS);
 			de.setType(DataElementType.SUBTITLE);
+			de.abilitaRefresh();
 			dati.add(de);
 			
 			stato = null;
@@ -6668,11 +6672,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI);
 			de.setType(DataElementType.TITLE);
+			de.abilitaRefresh();
 			dati.add(de);
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID);
 			de.setType(DataElementType.SUBTITLE);
+			de.abilitaRefresh();
 			dati.add(de);
 			
 			stato = null;
@@ -6706,6 +6712,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO);
 			de.setType(DataElementType.SUBTITLE);
+			de.abilitaRefresh();
 			dati.add(de);
 			
 			stato = null;
@@ -6746,6 +6753,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP);
 		de.setType(DataElementType.TITLE);
+		de.abilitaRefresh();
 		dati.add(de);
 				
 		addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiVerificaConnessioniAttive(alias), 
@@ -6757,6 +6765,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD);
 			de.setType(DataElementType.SUBTITLE);
+			de.abilitaRefresh();
 			dati.add(de);
 			
 			stato = null;
@@ -6792,6 +6801,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
 			de.setType(DataElementType.SUBTITLE);
+			de.abilitaRefresh();
 			dati.add(de);
 			
 			stato = null;
@@ -6832,6 +6842,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
 		de.setType(DataElementType.TITLE);
+		de.abilitaRefresh();
 		dati.add(de);
 		
 		
@@ -6842,6 +6853,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_BIO_HTTP_CLIENT);
 		de.setType(DataElementType.SUBTITLE);
+		de.abilitaRefresh();
 		dati.add(de);
 		
 		stato = null;
@@ -6880,6 +6892,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_NIO_HTTP_CLIENT);
 		de.setType(DataElementType.SUBTITLE);
+		de.abilitaRefresh();
 		dati.add(de);
 		
 		boolean nioEnabled = true;
@@ -6983,6 +6996,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE);
 		de.setType(DataElementType.SUBTITLE);
+		de.abilitaRefresh();
 		dati.add(de);
 		
 		boolean timerAttivo = addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerConsegnaContenutiApplicativi(alias), 

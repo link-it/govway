@@ -209,6 +209,7 @@ import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
+import org.openspcoop2.pdd.core.connettori.ConnettoreStatus;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -17844,6 +17845,35 @@ public class ConsoleHelper implements IConsoleHelper {
 		return sbCon.toString();
 	}
 	
+	public String getClipBoardUrlConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is) throws DriverControlStationException {
+		
+		if(sa==null) {
+			throw new DriverControlStationException("Param sa is null");
+		}
+		
+		StringBuilder sbCon = new StringBuilder();
+		sbCon.append(this.getClipBoardUrlConnettore(is));
+		return sbCon.toString();
+	}
+	
+	public String getClipBoardUrlConnettore(org.openspcoop2.core.config.InvocazioneServizio is) throws DriverControlStationException {
+		
+		if(is==null) {
+			throw new DriverControlStationException("Param is is null");
+		}
+		
+		// la parte che aggiungeva MessageBox e' stata eliminata
+		return this.getLabelConnettoreInternal(is.getConnettore(), false, false, false);
+	}
+	public String getClipBoardUrlConnettore(org.openspcoop2.core.registry.Connettore connettore) throws DriverControlStationException {
+		
+		if(connettore==null) {
+			throw new DriverControlStationException("Param connettore is null");
+		}
+		
+		return this.getLabelConnettoreInternal(connettore.mappingIntoConnettoreConfigurazione(), false, false, false);
+	}
+	
 	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) throws DriverControlStationException {
 		
 		if(sa==null) {
@@ -17882,6 +17912,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.getLabelConnettore(connettore.mappingIntoConnettoreConfigurazione(), addExtInfo, tooltip);
 	}
 	public String getLabelConnettore(org.openspcoop2.core.config.Connettore connettore, boolean addExtInfo, boolean tooltip) throws DriverControlStationException {
+		return getLabelConnettoreInternal(connettore, addExtInfo, tooltip, true);
+	}
+	private String getLabelConnettoreInternal(org.openspcoop2.core.config.Connettore connettore, boolean addExtInfo, boolean tooltip, boolean addPrefix) throws DriverControlStationException {
 		
 		if(connettore==null) {
 			throw new DriverControlStationException("Param connettore is null");
@@ -17904,16 +17937,17 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(tipoC!=null) {
 			labelC = tipoC.getLabel();
 		}
-		String tipoLabel = "[" + labelC + "] ";
+		String tipoLabel = addPrefix ? "[" + labelC + "] " : "";
 		if ((connettore.getCustom()!=null && connettore.getCustom()) && 
 				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
-				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE)) {
+				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE) &&
+				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_STATUS)) {
 			tipo = ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM;
 		}  
 
 		if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
 			if(this.connettoriCore.isConfigurazionePluginsEnabled()) {
-				tipoLabel = "[" + TipiConnettore.CUSTOM.getLabel() + "] ";
+				tipoLabel = addPrefix ? "[" + TipiConnettore.CUSTOM.getLabel() + "] " : "";
 				Plugin plugin = null;
 				try {
 					plugin = this.confCore.getPlugin(TipoPlugin.CONNETTORE,connettore.getTipo(), false);
@@ -17937,6 +17971,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			urlConnettore = tipoLabel + ConnettoreNULL.LOCATION;
 		} else if(tipo.equals(TipiConnettore.NULLECHO.getNome())) {
 			urlConnettore = tipoLabel + ConnettoreNULLEcho.LOCATION;
+		} else if(tipo.equals(TipiConnettore.STATUS.getNome())) {
+			urlConnettore = tipoLabel + ConnettoreStatus.LOCATION;
 		} else {  
 			String propertyName = CostantiConnettori.CONNETTORE_LOCATION;
 			if(tipo.equals(TipiConnettore.FILE.getNome()))

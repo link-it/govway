@@ -344,7 +344,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 	        		null, // apiKeyHeader
 					null, // apiKey,
 					null, // appIdHeader,
-					null // appId,
+					null, // appId,
+					null // connettoreStatusParams
 				);
 
 		        

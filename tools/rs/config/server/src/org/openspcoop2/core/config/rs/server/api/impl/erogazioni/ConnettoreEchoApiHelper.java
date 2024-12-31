@@ -118,6 +118,7 @@ public class ConnettoreEchoApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
+				null, // connettoreStatusParams
 				null // listExtendedConnettore
 				);
 		
@@ -196,6 +197,7 @@ public class ConnettoreEchoApiHelper extends AbstractConnettoreApiHelper<Connett
 				null,   // tokenPolicy
 				null, null, // apiKeyHeader,  apiKeyValue
 				null, null, // appIdHeader, appIdValue
+				null, // connettoreStatusParams
 				null // listExtendedConnettore
 				);		
 		return regConnettore;

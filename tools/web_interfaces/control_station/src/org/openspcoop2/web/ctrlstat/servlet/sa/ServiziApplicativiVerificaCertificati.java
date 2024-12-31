@@ -86,6 +86,7 @@ import org.openspcoop2.web.ctrlstat.plugins.servlet.ServletExtendedConnettoreUti
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
@@ -1268,6 +1269,9 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 						
 					}
 					
+					// status
+					ConnettoreStatusParams connettoreStatusParams = ConnettoreStatusParams.fillFrom(props);
+					
 					Boolean isConnettoreCustomUltimaImmagineSalvata = connis!=null ? connis.getCustom() : null;
 					
 					Boolean contaListe = ServletUtils.getContaListeFromSession(session);
@@ -1425,7 +1429,8 @@ public class ServiziApplicativiVerificaCertificati extends Action {
 							integrationManagerEnabled, 
 							visualizzaModificaCertificato, visualizzaAddCertificato, servletCredenzialiList, parametersServletCredenzialiList, numeroCertificati, servletCredenzialiAdd,
 							tokenPolicySA, tokenClientIdSA, tokenWithHttpsEnabledByConfigSA,
-							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue);
+							autenticazioneApiKey, useOAS3Names, useAppId, apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+							connettoreStatusParams);
 
 					// aggiunta campi custom
 					dati = saHelper.addProtocolPropertiesToDatiConfig(dati, consoleConfiguration,consoleOperationType, protocolProperties,oldProtocolPropertyList,propertiesProprietario);
