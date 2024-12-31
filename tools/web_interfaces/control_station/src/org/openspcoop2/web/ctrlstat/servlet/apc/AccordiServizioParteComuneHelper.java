@@ -6416,6 +6416,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						de.setValue(risorsa.getPath());
 					}
 					de.setToolTip(nomeRisorsa);
+					de.setCopyToClipboard(risorsa.getPath());
 					de.setIdToRemove(nomeRisorsa);
 					if(existsBigDescription==false) {
 						de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());

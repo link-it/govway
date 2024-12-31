@@ -19,6 +19,7 @@
 
 
 
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
 
@@ -243,7 +244,16 @@ if (hidden!=null && !hidden.isEmpty()) {
 							    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+j;
 							    String classLink = "";
 							    String classSpan = de.getLabelStyleClass();
-							    String cssClassTdStyle = !de.getStyle().equals("") ? "tdStyle-"+i+"-"+j : ""; 
+							    String cssClassTdStyle = !de.getStyle().equals("") ? "tdStyle-"+i+"-"+j : "";
+							    String copyToClipboard = de.getCopyToClipboard();
+								String dataCopy = "";
+								
+								// valore da copiare negli appunti
+								if(StringUtils.isNotEmpty(copyToClipboard)){
+									dataCopy = " data-copy=\"" + copyToClipboard + "\"";		
+//										classSpanNoEdit = "	 spanNoEdit-copy-box";
+								}
+								
 							    // se e' un elemento visualizzabile inserisco una cella
 							    if (!de.getType().equals("hidden")) {
 							      %><td class="tdText <%=cssClassTdStyle %>">
@@ -260,7 +270,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 					
 								if (de.getType().equals("text")) {
 									String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-									String id = "tabella-text-link_" + i;
+									String id = "tabella-text-link_" + i+ "_" +j;
+									String deTextId = id+"_txt";
 						    		// tipo link
 					      			if (!de.getUrl().equals("")) {
 							    		//tooltip
@@ -305,7 +316,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  				tip=de.getToolTip();
 								  				deTip = " title=\"" + tip + "\"";
 								  			}
-								  			%><span class="<%= classSpan %>" ><%= de.getValue() %></span>
+								  			%><span class="<%= classSpan %>"  <%= dataCopy %> id="<%= deTextId%>"><%= de.getValue() %></span>
 								  				
 								  				<a id="<%=id %>" class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" type="button">
 			                						<span class="icon-box">
@@ -321,7 +332,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 											  </script>
 								  			<%
 								  		} else { // visualizzazione normale
-								  			%><a id="<%=id %>" class="<%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>"><%= res %></a>
+								  			 deTextId = id; // fixID
+								  			%><a id="<%=id %>" class="<%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" <%= dataCopy %>><%= res %></a>
 								  			<script type="text/javascript" nonce="<%= randomNonce %>">
 											      $(document).ready(function(){
 														$('#<%=id %>').click(function() {
@@ -341,7 +353,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  				deTip = " title=\"" + tip + "\"";
 								  			}
 										  //getOnClick
-										  %><span id="<%=id %>" class="<%= classSpan %>" <%= deTip %>><%= de.getValue() %></span>
+										  deTextId = id; // fixID
+										  %><span id="<%=id %>" class="<%= classSpan %>" <%= deTip %>  <%= dataCopy %>><%= de.getValue() %></span>
 										  	<script type="text/javascript" nonce="<%= randomNonce %>">
 											      $(document).ready(function(){
 														$('#<%=id %>').click(function() {
@@ -358,9 +371,23 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  				deTip = " title=\"" + tip + "\"";
 								  			}
 										  //string only
-										  %><span class="<%= classSpan %>" <%= deTip %> ><%= de.getValue() %></span><%
+										  %><span class="<%= classSpan %>" <%= deTip %>  <%= dataCopy %> id="<%= deTextId%>"><%= de.getValue() %></span><%
 										}
 							      	}
+					      			if(StringUtils.isNotEmpty(copyToClipboard)){ 
+								  		String deCopyId = "__i_hidden_copy_de_"+i;
+								  		%>
+		                				<span class="copy-box" id="<%= deCopyId%>" title="<%=Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO %>">
+											<i class="material-icons md-18"><%= Costanti.ICON_COPY %></i>
+										</span>
+										
+										<div id="<%= deCopyId%>_message" class="copy-message"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
+										<script type="text/javascript" nonce="<%= randomNonce %>">
+									      	 $(document).ready(function(){
+									      		 setupCopyButtonEvents('<%= deTextId%>', '<%= deCopyId%>', '<%= deCopyId%>_message'); // imposta gestione eventi per visualizzazione tasto copia
+											});
+										</script>
+									<% } 
 								} else { 
 								      // Tipo hidden
 								      if (de.getType().equals("hidden")) {
