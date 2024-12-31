@@ -71,6 +71,7 @@ public class ConnettoreAPIHelper {
 			helpers.put(TipiConnettore.JMS.toString(), new ConnettoreJmsApiHelper());
 			helpers.put(TipiConnettore.NULL.toString(), new ConnettoreNullApiHelper());
 			helpers.put(TipiConnettore.NULLECHO.toString(), new ConnettoreEchoApiHelper());
+			helpers.put(TipiConnettore.STATUS.toString(), new ConnettoreStatusApiHelper());
 			helpers.put(TipiConnettore.DISABILITATO.toString(), new ConnettoreMessageBoxApiHelper());
 			helpers.put(CUSTOM_KEY, new ConnettorePluginApiHelper());
 		}
@@ -105,6 +106,7 @@ public class ConnettoreAPIHelper {
 			helpersByEnum.put(ConnettoreEnum.JMS, new ConnettoreJmsApiHelper());
 			helpersByEnum.put(ConnettoreEnum.NULL, new ConnettoreNullApiHelper());
 			helpersByEnum.put(ConnettoreEnum.ECHO, new ConnettoreEchoApiHelper());
+			helpersByEnum.put(ConnettoreEnum.STATUS, new ConnettoreStatusApiHelper());
 			helpersByEnum.put(ConnettoreEnum.PLUGIN, new ConnettorePluginApiHelper());
 			helpersByEnum.put(ConnettoreEnum.MESSAGE_BOX, new ConnettoreMessageBoxApiHelper());
 		}

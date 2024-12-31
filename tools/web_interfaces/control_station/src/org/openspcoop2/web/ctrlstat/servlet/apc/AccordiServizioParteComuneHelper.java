@@ -4865,7 +4865,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(tipoprov);
 			
-			if (!this.endPointCheckData(protocollo, false, listExtendedConnettore)) {
+			if (!this.endPointCheckData(null, protocollo, false, listExtendedConnettore)) {
 				return false;
 			}
 
@@ -6416,6 +6416,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 						de.setValue(risorsa.getPath());
 					}
 					de.setToolTip(nomeRisorsa);
+					de.setCopyToClipboard(risorsa.getPath());
 					de.setIdToRemove(nomeRisorsa);
 					if(existsBigDescription==false) {
 						de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());

@@ -474,3 +474,91 @@ function getFilenameFromContentDisposition(xhr) {
     return filename;
 }
 
+
+// Gestione della copia negli appunti
+
+function copyToClipboard(containerId, copyMessageId, event) {
+	// Ottieni il contenuto da copiare utilizzando jQuery e l'attributo data-copy
+    var copyText = $('#' + containerId).attr('data-copy');
+
+    // Crea un elemento temporaneo di input per copiare il testo
+    var textarea = $('<textarea>');
+    $('body').append(textarea);
+    textarea.val(copyText).select();
+    document.execCommand('copy');
+    textarea.remove();
+
+	// Mostra il messaggio di conferma vicino al cursore
+    showCopyMessage(copyMessageId, event);
+}
+
+function showCopyMessage(copyMessageId, event) {
+    var messageDiv = $('#' + copyMessageId);
+	var targetPosition = $(event.currentTarget).position();
+	var targetWidth = $(event.currentTarget).width();
+    messageDiv.css({
+		top: targetPosition.top - 30, // Posiziona il messaggio 30px sopra il button
+		left: targetPosition.left + targetWidth + 10, // Posiziona il messaggio 10px a destra del button
+        visibility: 'visible'
+    });
+
+    // Nascondi il messaggio dopo 2 secondi
+    setTimeout(function() {
+        messageDiv.css({
+            visibility: 'hidden',
+            opacity: 0
+        });
+    }, 2000); // Nascondi il messaggio dopo 2 secondi
+}
+
+// Funzione per gestire il mouseenter con delay
+function handleMouseEnterTriggerElement(buttonId, delay, hideTimeout) {
+    setTimeout(function() {
+        $('#' + buttonId).css('visibility', 'visible');
+    }, delay); // Delay di visibilità
+	
+    clearTimeout(hideTimeout);
+}
+
+// Funzione per gestire il mouseleave con timeout
+function handleMouseLeaveHandler(buttonId, timeout) {
+    var hideTimeout = setTimeout(function() {
+        if (!$('#' + buttonId + ':hover').length) {
+			$('#' + buttonId).css('visibility', 'hidden');
+        }
+    }, timeout); // Timeout per nascondere
+	
+	return hideTimeout;
+}
+
+function setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId) {
+	setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId, 500, 1000);
+}
+
+// Funzione generica per gestire gli eventi del tasto copia
+function setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId, delay, hideTimeoutDelay) {
+	var hideTimeout;
+	
+    $('#' + triggerElementId).on('mouseenter', function() {
+        handleMouseEnterTriggerElement(buttonId, delay, hideTimeout);
+    });
+
+    $('#' + triggerElementId).on('mouseleave', function() {
+        hideTimeout = handleMouseLeaveHandler(buttonId, hideTimeoutDelay);
+    });
+
+    $('#' + buttonId).on('mouseenter', function() {
+		$('#' + buttonId).css('visibility', 'visible');
+        clearTimeout(hideTimeout); // Cancella il timeout
+    });
+
+    $('#' + buttonId).on('mouseleave', function() {
+		hideTimeout = handleMouseLeaveHandler(buttonId, hideTimeoutDelay); // Rinnova il timeout
+    });
+
+    $('#' + buttonId).on('click', function(event) {
+        copyToClipboard(triggerElementId, copyMessageId, event);
+    });
+}
+   
+   

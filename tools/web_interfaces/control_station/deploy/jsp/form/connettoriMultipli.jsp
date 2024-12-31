@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
+<%@page import="java.text.MessageFormat"%>
 <%@page import="org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation"%>
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti"%>
@@ -696,6 +697,7 @@ function inizializzaSelectFiltro(){
 													  	String classInput= de.getStyleClass();
 													  	String labelStyleClass= de.getLabelStyleClass();
 													  	String deHiddenId = "__i_hidden_lbl_de_"+z+"_"+i;
+													  	String deCopyId = "__i_hidden_copy_de_"+z+"_"+i;
 													  	
 													  	String stile=null;
 													  	//per ogni entry:
@@ -704,6 +706,8 @@ function inizializzaSelectFiltro(){
 													  	} else {
 														    stile = "even";
 													  	}
+													  	
+														String copyToClipboard = de.getCopyToClipboard();
 														
 													  	if (type.equals("hidden")) {
 												    		%>
@@ -740,6 +744,15 @@ function inizializzaSelectFiltro(){
 																		}
 																		textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
 																	}
+																	
+																	String deTextId = rowName+"_txt";
+																	String dataCopy = "";
+																	
+																	// valore da copiare negli appunti
+																	if(StringUtils.isNotEmpty(copyToClipboard)){
+																		dataCopy = " data-copy=\"" + copyToClipboard + "\"";		
+//						 												classSpanNoEdit = "	 spanNoEdit-copy-box";
+																	}
 										            				
 										            				%>
 										                			<tr class="">
@@ -756,10 +769,22 @@ function inizializzaSelectFiltro(){
 																			   				<input id="<%=hiddenIdRemove %>" type="hidden" name="selectcheckbox" value="<%=idToRemoveTab %>"/>
 																			   			<%
 																					}%>
-												                				<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %> ><%= textValNoEdit %></span>
+												                				<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %>  <%= dataCopy %> id="<%= deTextId%>"><%= textValNoEdit %></span>
 												                				<% if(firstText){%>
 													                				<input type="hidden" name="<%= deName %>" id="<%= deName %>"  value="<%= de.getValue() %>"/>
 											                					<% } %>
+											                					<% if(StringUtils.isNotEmpty(copyToClipboard)){ %>
+													                				<span class="copy-box" id="<%= deCopyId%>" title="<%=MessageFormat.format(Costanti.ICON_COPY_TOOLTIP_CON_PARAMETRO, deLabel) %>">
+																						<i class="material-icons md-18"><%= Costanti.ICON_COPY %></i>
+																					</span>
+																					
+							        												<div id="<%= deCopyId%>_message" class="copy-message"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
+																					<script type="text/javascript" nonce="<%= randomNonce %>">
+																				      	 $(document).ready(function(){
+																				      		 setupCopyButtonEvents('<%= deTextId%>', '<%= deCopyId%>', '<%= deCopyId%>_message'); // imposta gestione eventi per visualizzazione tasto copia
+																						});
+																					</script>
+																				<% } %>
 																			<% 
 																				if(!de.getImage().isEmpty()){
 																					for(int idxLink =0; idxLink < de.getImage().size() ; idxLink ++ ){

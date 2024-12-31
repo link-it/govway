@@ -111,6 +111,11 @@ public class CostantiConfigurazioni {
 	public static final String LABEL_INPUT_FILE = "InputFile";
 	public static final String LABEL_OUTPUT_FILE_HEADER = "OutputFile (Header)";
 	public static final String LABEL_OUTPUT_FILE = "OutputFile";
+	public static final String LABEL_STATUS_RESPONSE_TYPE = "Tipo Risposta";
+	public static final String LABEL_STATUS_PERIOD = "Verifica Statistica";
+	public static final String LABEL_STATUS_PERIOD_VALUE = "Intervallo Osservazione";
+	public static final String LABEL_STATUS_TEST_CONNECTIVITY = "Verifica Connettività";
+	public static final String LABEL_STATUS_STAT_LIFETIME = "Cache Life Time";
 	public static final String LABEL_USERNAME = "Username";
 	public static final String LABEL_NOME = "Nome";
 	public static final String LABEL_CONNECTION_FACTORY = "Connection Factory";

@@ -91,10 +91,15 @@ public class JsonSerializer {
 			jsonProblem.put(ProblemConstants.CLAIM_INSTANCE, problem.getInstance());
 		}	
 		
+		processCustom(problem, jsonProblem);
+		
+		return jsonProblem;
+	}
+	private void processCustom(ProblemRFC7807 problem, ObjectNode jsonProblem) throws UtilsException {
 		if(problem.getCustom()!=null && !problem.getCustom().isEmpty()) {
 			Iterator<String> it = problem.getCustom().keySet().iterator();
 			while (it.hasNext()) {
-				String claimName = (String) it.next();
+				String claimName = it.next();
 				Object o = problem.getCustom().get(claimName);
 				if(o!=null) {
 					if(o instanceof String) {
@@ -115,7 +120,5 @@ public class JsonSerializer {
 				}
 			}
 		}
-		
-		return jsonProblem;
 	}
 }

@@ -114,6 +114,7 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoreStatusParams;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
@@ -2019,7 +2020,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String protocollo, String userLogin,
 			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper, String nomeSAServer,
 			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
-			String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws Exception {
+			String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
+			ConnettoreStatusParams connettoreStatusParams) throws Exception {
 	
 		if(autenticazioneToken && nomeSA!=null) {
 			// nop: eliminare questo if se viene usato uno dei parametri
@@ -2095,6 +2097,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
 					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					listExtendedConnettore);
 		}
 		boolean addSpecSicurezza = false;
@@ -2564,7 +2567,8 @@ public class AccordiServizioParteSpecificaUtilities {
 			String userLogin,
 			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper,
 			String identificazioneAttributiStato, String [] attributeAuthoritySelezionate, String attributeAuthorityAttributi,
-			String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue) throws Exception {
+			String apiKeyHeader, String apiKeyValue, String appIdHeader, String appIdValue,
+			ConnettoreStatusParams connettoreStatusParams) throws Exception {
 	
 		if(autenticazioneHttp!=null && autenticazioneToken) {
 			// nop: rimuovere questo if se viene usato un qualche parametro
@@ -2622,6 +2626,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					tokenPolicy,
 					apiKeyHeader, apiKeyValue, appIdHeader, appIdValue,
+					connettoreStatusParams,
 					listExtendedConnettore);
 		}
 		

@@ -1,0 +1,13 @@
+{
+    "connettore": {
+        "tipo": "status",
+        "risposta": "json",
+        "verifica_connettivita": false,
+        "debug": false,
+        "verifica_statistica": {
+            "frequenza": "settimanale",
+            "intervallo": 34,
+            "cache_life_time": 130
+        }
+    }
+}

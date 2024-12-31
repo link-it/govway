@@ -81,6 +81,7 @@ import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULL;
 import org.openspcoop2.pdd.core.connettori.ConnettoreNULLEcho;
+import org.openspcoop2.pdd.core.connettori.ConnettoreStatus;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.web.monitor.core.report.Templates;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
@@ -2238,6 +2239,22 @@ public class ConfigurazioniCsvExporter {
 		}
 		else if(TipiConnettore.NULLECHO.getNome().equals(connettore.getTipo())){
 			mapProperties.put(2, ConnettoreNULLEcho.LOCATION);
+		}
+		else if(TipiConnettore.STATUS.getNome().equals(connettore.getTipo())){
+			mapProperties.put(2, ConnettoreStatus.LOCATION);
+			StringBuilder sb = new StringBuilder();
+			sb.append(CostantiConfigurazioni.LABEL_STATUS_RESPONSE_TYPE).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_RESPONSE_TYPE, connettore.getPropertyList())).append("\n");
+			sb.append(CostantiConfigurazioni.LABEL_STATUS_TEST_CONNECTIVITY).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_TEST_CONNECTIVITY, connettore.getPropertyList())).append("\n");
+			
+			if (ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_PERIOD, connettore.getPropertyList()) != null) {
+				sb.append(CostantiConfigurazioni.LABEL_STATUS_PERIOD).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_PERIOD, connettore.getPropertyList())).append("\n");
+				sb.append(CostantiConfigurazioni.LABEL_STATUS_PERIOD_VALUE).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_PERIOD_VALUE, connettore.getPropertyList())).append("\n");
+
+			}
+			if (ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_STAT_LIFETIME, connettore.getPropertyList()) != null)
+				sb.append(CostantiConfigurazioni.LABEL_STATUS_STAT_LIFETIME).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_STATUS_STAT_LIFETIME, connettore.getPropertyList())).append("\n");
+			
+			mapProperties.put(17, sb.toString());
 		}
 		else if(integrationManager!=null && StatoFunzionalita.ABILITATO.equals(integrationManager)) {
 			
