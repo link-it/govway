@@ -1,3 +1,15 @@
+2024-12-31  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità #1546
+	Migliorata l'usabilità con la funzionalità di copia negli appunti al passaggio del mouse su campi specifici, come ad esempio "URL Invocazione" e "Connettore" delle erogazioni.
+
+2024-12-31  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità #1553
+	Nella sezione "runtime" è stata introdotta la possibilità di effettuare un refresh della pagina che mantiene l'utente nella posizione specifica della sezione aggiornata.
+
 2024-12-21  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore, GovWayConsole]

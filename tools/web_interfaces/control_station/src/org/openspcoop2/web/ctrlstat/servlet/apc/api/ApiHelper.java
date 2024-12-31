@@ -878,6 +878,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			}
 			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
 			de.setToolTip(as.getDescrizione());
+			de.setCopyToClipboard(as.getDescrizione());
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
 			de.setIcon(ApiCostanti.APC_API_ICONA_MODIFICA_API);
 			

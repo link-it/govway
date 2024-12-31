@@ -208,6 +208,8 @@ for (int i = 0; i < dati.size(); i++) {
   	String classInput= de.getStyleClass();
   	String labelStyleClass= de.getLabelStyleClass();
   	DataElementInfo deInfo = de.getInfo();
+  	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+  	boolean refresh = de.isRefresh();
 	
     	if (type.equals("hidden")) {
     		%><input type="hidden" name="<%= deName  %>" value="<%= de.getValue()  %>"/><%
@@ -222,6 +224,9 @@ for (int i = 0; i < dati.size(); i++) {
     			String titoloComandoApertura = "";
     			String cssClassLegend = "";
     			String cssClassFieldset = "";
+    			if(refresh){
+    				cssClassTitle = "navigatorAnchorRefresh";
+    			}
     			if(gestioneAperturaFieldset) {
     				titoloComandoApertura = " title=\""+ Costanti.TOOLTIP_VISUALIZZA_FIELDSET +"\"";
     				cssClassTitle = "navigatorAnchorClosable";
@@ -253,10 +258,23 @@ for (int i = 0; i < dati.size(); i++) {
 	    				<fieldset id="<%= deName  %>__fieldset" class="<%=cssClassFieldset %>">
 	    					<legend class="<%=cssClassLegend %>">
 	    						<%
-	    							if(gestioneAperturaFieldset){
+	    							if(gestioneAperturaFieldset || refresh){
 	    						%>
 	    							<span class="<%=cssClassTitle %>">
-	    								<i class="material-icons md-16" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
+		    							<%
+		    							if(gestioneAperturaFieldset){
+		    							%>
+	    									<i class="material-icons md-16" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
+	    							    <%
+		    							}
+		    	    					%>
+		    	    					<%
+		    							if(refresh){
+		    							%>
+	    									<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+	    							    <%
+		    							}
+		    	    					%>
 	    							</span>
 	    						<%
 	    							}
@@ -329,6 +347,25 @@ for (int i = 0; i < dati.size(); i++) {
 	    						<%
 	    							}
 	    						%>
+	    						<%
+    							if(refresh){
+    								String chiamataEventoPostback = Costanti.POSTBACK_VIA_POST_FUNCTION_PREFIX;
+			      					chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_START;
+			      					chiamataEventoPostback+=rowName;
+			      					chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END;
+    								
+    							%>
+   									<script type="text/javascript" nonce="<%= randomNonce %>">
+			        					$(document).ready(function() {	
+			        						// lancio il postback
+											$('#<%= deName  %>__icon_refresh').click(function() {
+												<%= visualizzaAjaxStatus %><%= chiamataEventoPostback %>;
+											});
+										});
+				        			</script>
+   							    <%
+    							}
+    	    					%>
 	    					<div id="<%= titleDivId  %>">
 	    			<%
 	    			fieldsetOpen = true;
@@ -346,6 +383,9 @@ for (int i = 0; i < dati.size(); i++) {
     				String cssClassTitle = "navigatorAnchor";
         			String titoloComandoApertura = "";
         			String cssClassSubtitle = "";
+					if(refresh){
+						cssClassSubtitle = "";
+        			}
         			if(gestioneAperturaSubTitle) {
         				titoloComandoApertura = " title=\""+ Costanti.TOOLTIP_VISUALIZZA_SUBTITLE +"\"";
         				cssClassTitle = "navigatorAnchorClosable";
@@ -371,16 +411,46 @@ for (int i = 0; i < dati.size(); i++) {
 						if(gestioneAperturaSubTitle){
 	  						%>
 	    				<span class="subtitleGroup">
+	    					<%
+   							if(gestioneAperturaSubTitle){
+   							%>
 	       					<span class="subtitleAnchor">
 	       						<i class="material-icons md-16" id="<%= deName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>"><%= Costanti.ICON_VISUALIZZA_SUBTITLE%></i>
 	       					</span>
-	       					<a id="<%= deName  %>__anchor" name="<%=rowName %>" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>"><%=deLabel %></a>
+	       					<%
+   							}
+   	    					%>
+	       					<%
+  							if(refresh){
+  							%>
+	       					<span class="subtitleRefresh">
+								<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+	       					</span>
+	       					<%
+   							}
+   	    					%>
+							<a id="<%= deName  %>__anchor" name="<%=rowName %>" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>"><%=deLabel %></a>
 	       				</span>
 	       				<%
 							} else {
 						%>
 	        			<div class="subtitle <%= labelStyleClass %>">
-	        				<span class="subtitle"><a name="<%=rowName %>"  class="<%=cssClassTitle %>" ><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
+	        				<%
+  							if(refresh){
+  							%>
+  								<span class="subtitle">
+									<span class="subtitleRefresh">
+										<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
+									</span>
+									<a name="<%=rowName %>"  class="<%=cssClassTitle %>" ><%=deLabel %></a>
+								</span>
+	       					<%
+   							} else {
+   	    					%>
+   	    						<span class="subtitle"><a name="<%=rowName %>"  class="<%=cssClassTitle %>" ><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
+   	    					<%
+   							}
+   	    					%>
 	        			</div>
 	        			<%
 							}
@@ -457,6 +527,25 @@ for (int i = 0; i < dati.size(); i++) {
        				<%
 						}
 					%>
+					<%
+						if(refresh){
+							String chiamataEventoPostback = Costanti.POSTBACK_VIA_POST_FUNCTION_PREFIX;
+     						chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_START;
+     						chiamataEventoPostback+=rowName;
+     						chiamataEventoPostback+=Costanti.POSTBACK_FUNCTION_WITH_PARAMETER_END;
+								
+					%>
+						<script type="text/javascript" nonce="<%= randomNonce %>">
+       					$(document).ready(function() {	
+       						// lancio il postback
+							$('#<%= deName  %>__icon_refresh').click(function() {
+								<%= visualizzaAjaxStatus %><%= chiamataEventoPostback %>;
+							});
+						});
+        			</script>
+				    <%
+					}
+   					%>
        			</div>
        			<%
        			
@@ -480,7 +569,6 @@ for (int i = 0; i < dati.size(); i++) {
 	        			<%
 	        		} else { // else note
 	        			if (type.equals("link")){
-	        				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 	        				String deLabelLink = !de.getLabelLink().equals("") ? de.getLabelLink() : "&nbsp;";
 	        				classSpanNoEdit = de.getStyleClass(); // gestione override classe di default 24/03/2021
 	        				
@@ -589,8 +677,6 @@ for (int i = 0; i < dati.size(); i++) {
 											  			deTarget = " target=\""+ image.getTarget() +"\"";
 											  		}
 										  			
-											  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
-											  		
 											  		if (!image.getUrl().equals("")) {
 											  			image.addParameter(new Parameter(Costanti.PARAMETER_PREV_TAB_KEY, tabSessionKey));
 													}
@@ -965,7 +1051,6 @@ for (int i = 0; i < dati.size(); i++) {
 		                            			<%
 		                            		} else { // else textarea || textarea-noedit
 		                            			if (type.equals("button")){
-		                            				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 		                            				String id = "form-btn-link_" + i;
 		                            				%>
 		                                			<div class="prop">
@@ -1002,7 +1087,6 @@ for (int i = 0; i < dati.size(); i++) {
 		                                    	      		} else {
 		                                    	          		%><input id="<%=id %>" size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  <%= multipleFiles  %> />
 													  		<% if(!de.getOnChange().equals("")){ 
-													  			String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 													  			String changeHandler = visualizzaAjaxStatus + "postVersion_" + de.getOnChange();
 													  		%>
 												      		<script type="text/javascript" nonce="<%= randomNonce %>">
@@ -1042,7 +1126,6 @@ for (int i = 0; i < dati.size(); i++) {
 		                                      						String selValNoEdit = (de.getSelected() != "") ? de.getSelected() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 		                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span></div><%
 		                               							} else {
-		                               								String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 																	String selTitle = (de.getToolTip()!=null && !de.getToolTip().equals("")) ? ("title='"+de.getToolTip()+"'") : " ";
 		                               								String selId = "select_" + i;
 		                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selTitle %> class="<%= classInput %>"><%
@@ -1119,7 +1202,6 @@ for (int i = 0; i < dati.size(); i++) {
 			                                      						String selValNoEdit = (de.getSelezionatiAsString() != "") ? de.getSelezionatiAsString() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 			                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span></div><%
 			                               							} else {
-			                               							 	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 			                               								String selSize = " size='"+de.getRows()+"' ";
 			                               								String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
 			                               								String selId = "select_" + i;
@@ -1205,7 +1287,6 @@ for (int i = 0; i < dati.size(); i++) {
 			                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 			                                            				<%
 			                                            				String id = "form-checkbox-link_" + i;
-			                                            				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 								    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
 								    									String disVal = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") ? "disabled=\"disabled\"" : "";
 								    									String controlSetClass = deInfo != null ? "controlset-cb-info" : "controlset";
@@ -1371,7 +1452,6 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String idPwdViewInnerLock = idPwd + "_lock_view_inner";
 			                        							   						String hiddenLockName = Costanti.PARAMETER_LOCK_PREFIX + deName;
 			                        							   						String hiddenLockId = Costanti.PARAMETER_LOCK_PREFIX + idPwd;
-			                        							   						String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 			                        							   						DataElementPassword dePwd = de.getPassword();
 			                        							   						boolean lockReadOnly = dePwd.isLockReadOnly();
 			                        							   						boolean forzaVisualizzazioneInputUtente = dePwd.isLockForzaVisualizzazioneInputUtente();

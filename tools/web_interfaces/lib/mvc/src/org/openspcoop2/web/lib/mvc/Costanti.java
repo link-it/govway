@@ -378,6 +378,9 @@ public class Costanti {
 	public static final String INFO_BUTTON_ICON_WHITE = "&#xE88F;"; // info_outline
 	public static final String ICON_DIALOG_HEADER = "&#xE8B2;"; // report_problem
 	public static final String ICON_COPY = "&#xE14D;"; // "content_copy" 
+	public static final String ICON_COPY_TOOLTIP = "Copia";
+	public static final String ICON_COPY_TOOLTIP_CON_PARAMETRO = "Copia {0}";
+	public static final String ICON_COPY_ESITO_OPERAZIONE = "Copiato negli appunti";
 	public static final String ICON_USO = "&#xE880;"; // "find_in_page" //"location_searching"
 	public static final String ICON_USO_INFO = INFO_BUTTON_ICON; //"info"
 	
@@ -457,6 +460,8 @@ public class Costanti {
 	public static final String ICON_VISIBILITY_LOCK = "&#xF653;"; // visibility_lock
 	public static final String ICONA_VISIBILITY_LOCK_TOOLTIP = "Visualizza informazione cifrata";
 	
+	public static final String ICONA_REFRESH_SEZIONE = "&#xE863;"; // autorenew
+	public static final String ICONA_REFRESH_SEZIONE_TOOLTIP = "Refresh";
 	
 	public static final int LUNGHEZZA_LABEL_TABS = 30;
 	public static final int LUNGHEZZA_RIGA_TESTO_TABELLA = 150;

@@ -41,7 +41,8 @@ fieldset {
 	color: ${a.color} !important;
 }
 
-.navigatorAnchorClosable {
+.navigatorAnchorClosable,
+.navigatorAnchorRefresh {
 	cursor: pointer;
 	text-decoration: none;
     padding-left: 0px;
@@ -52,18 +53,21 @@ fieldset {
 	font-size: 16px;
 }
 
-span.navigatorAnchorClosable{
+span.navigatorAnchorClosable,
+span.navigatorAnchorRefresh{
 	vertical-align: middle;
 }
 
-legend.navigatorAnchorClosable  {
+legend.navigatorAnchorClosable,
+legend.navigatorAnchorRefresh  {
 	cursor: pointer;
 	text-decoration: none;
     padding-left: 4px;
     padding-right: 10px;
 }
 
-.navigatorAnchorClosable:hover {
+.navigatorAnchorClosable:hover,
+.navigatorAnchorRefresh:hover  {
 	cursor: pointer;
 	text-decoration: none;
 	color: ${a.color} !important;
@@ -1562,24 +1566,28 @@ div.intervalInnerDiv label {
 	padding-left: 0px;
 }
 
-.subtitleAnchor {
+.subtitleAnchor,
+.subtitleRefresh {
 	cursor: pointer;
 	text-decoration: none;
     padding-left: 0px;
     padding-right: 0px;
 }
 
-span.subtitleAnchor {
+span.subtitleAnchor,
+span.subtitleRefresh {
 	vertical-align: middle;
 }
 
-.subtitleAnchor:hover {
+.subtitleAnchor:hover,
+.subtitleRefresh:hover {
 	cursor: pointer;
 	text-decoration: none;
 	color: ${a.color} !important;
 }
 
-.subtitle span > a.subtitleAnchor {
+.subtitle span > a.subtitleAnchor,
+.subtitle span > a.subtitleRefresh {
 	font-size: 16px;
     font-weight: bold;
     margin-left: 0px;
@@ -2663,4 +2671,30 @@ li.protocolloItem {
     vertical-align: bottom;
     color: ${p.note.color};
 }
+
+/* copia del contenuto di una casella di testo */
+.copy-box {
+	margin-left: 8px;
+    position: absolute;
+    display: inline-block;
+    cursor: pointer;
+    visibility: hidden; 
+    transition: visibility 0s linear 0.3s; /* transizione per la dissolvenza */
+}
+
+.copy-message {
+	font-family: 'Roboto';
+	font-size: 14px;
+	color: ${body.color};
+	background-color: ${paginacorrente.background.color};
+	border: 1px solid ${input.border.color} ;
+    position: absolute;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    visibility: hidden;
+    transition: visibility 0s linear 0.5s;
+}
+
+
 

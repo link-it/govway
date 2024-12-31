@@ -2100,6 +2100,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
 			de.setToolTip(gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione());
+			de.setCopyToClipboard(gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione());
 			
 			List<Parameter> listParametersServizioModificaDescrizione = new ArrayList<>();
 			listParametersServizioModificaDescrizione.addAll(listaParametriChange);
@@ -2192,6 +2193,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE, listParametersUrlInvocazione.toArray(new Parameter[1]));
 			de.setImage(image);
+			if(!urlInvocazione.equals("-")) {
+				de.setCopyToClipboard(urlInvocazione);
+			}
 			dati.add(de);
 			
 			boolean visualizzaConnettore = true;
@@ -2320,6 +2324,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					}
 				}
 				
+				de.setCopyToClipboard(this.getClipBoardUrlConnettore(sa,is));
 				dati.add(de);
 			}
 			
@@ -2439,6 +2444,9 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			
 			de.setImage(image);
+			if(!urlInvocazione.equals("-")) {
+				de.setCopyToClipboard(urlInvocazioneAPI);
+			}
 			dati.add(de);
 			
 			
@@ -2502,6 +2510,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					
 					de.setValue(formatInfoForView(urlConnettore));
 					de.setToolTip(tooltipConnettore);
+					de.setCopyToClipboard(this.getClipBoardUrlConnettore(connettore));
 					
 					List<Parameter> listParametersConnettore = new ArrayList<>();
 					listParametersConnettore.add(pId);

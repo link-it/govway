@@ -17845,6 +17845,35 @@ public class ConsoleHelper implements IConsoleHelper {
 		return sbCon.toString();
 	}
 	
+	public String getClipBoardUrlConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is) throws DriverControlStationException {
+		
+		if(sa==null) {
+			throw new DriverControlStationException("Param sa is null");
+		}
+		
+		StringBuilder sbCon = new StringBuilder();
+		sbCon.append(this.getClipBoardUrlConnettore(is));
+		return sbCon.toString();
+	}
+	
+	public String getClipBoardUrlConnettore(org.openspcoop2.core.config.InvocazioneServizio is) throws DriverControlStationException {
+		
+		if(is==null) {
+			throw new DriverControlStationException("Param is is null");
+		}
+		
+		// la parte che aggiungeva MessageBox e' stata eliminata
+		return this.getLabelConnettoreInternal(is.getConnettore(), false, false, false);
+	}
+	public String getClipBoardUrlConnettore(org.openspcoop2.core.registry.Connettore connettore) throws DriverControlStationException {
+		
+		if(connettore==null) {
+			throw new DriverControlStationException("Param connettore is null");
+		}
+		
+		return this.getLabelConnettoreInternal(connettore.mappingIntoConnettoreConfigurazione(), false, false, false);
+	}
+	
 	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) throws DriverControlStationException {
 		
 		if(sa==null) {
@@ -17883,6 +17912,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.getLabelConnettore(connettore.mappingIntoConnettoreConfigurazione(), addExtInfo, tooltip);
 	}
 	public String getLabelConnettore(org.openspcoop2.core.config.Connettore connettore, boolean addExtInfo, boolean tooltip) throws DriverControlStationException {
+		return getLabelConnettoreInternal(connettore, addExtInfo, tooltip, true);
+	}
+	private String getLabelConnettoreInternal(org.openspcoop2.core.config.Connettore connettore, boolean addExtInfo, boolean tooltip, boolean addPrefix) throws DriverControlStationException {
 		
 		if(connettore==null) {
 			throw new DriverControlStationException("Param connettore is null");
@@ -17905,7 +17937,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		if(tipoC!=null) {
 			labelC = tipoC.getLabel();
 		}
-		String tipoLabel = "[" + labelC + "] ";
+		String tipoLabel = addPrefix ? "[" + labelC + "] " : "";
 		if ((connettore.getCustom()!=null && connettore.getCustom()) && 
 				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_HTTPS) && 
 				!connettore.getTipo().equals(CostantiDB.CONNETTORE_TIPO_FILE) &&
@@ -17915,7 +17947,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 		if(tipo.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_TYPE_CUSTOM)) {
 			if(this.connettoriCore.isConfigurazionePluginsEnabled()) {
-				tipoLabel = "[" + TipiConnettore.CUSTOM.getLabel() + "] ";
+				tipoLabel = addPrefix ? "[" + TipiConnettore.CUSTOM.getLabel() + "] " : "";
 				Plugin plugin = null;
 				try {
 					plugin = this.confCore.getPlugin(TipoPlugin.CONNETTORE,connettore.getTipo(), false);
