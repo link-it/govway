@@ -531,6 +531,10 @@ function handleMouseLeaveHandler(buttonId, timeout) {
 	return hideTimeout;
 }
 
+function setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId) {
+	setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId, 500, 1000);
+}
+
 // Funzione generica per gestire gli eventi del tasto copia
 function setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId, delay, hideTimeoutDelay) {
 	var hideTimeout;
@@ -544,6 +548,7 @@ function setupCopyButtonEvents(triggerElementId, buttonId, copyMessageId, delay,
     });
 
     $('#' + buttonId).on('mouseenter', function() {
+		$('#' + buttonId).css('visibility', 'visible');
         clearTimeout(hideTimeout); // Cancella il timeout
     });
 

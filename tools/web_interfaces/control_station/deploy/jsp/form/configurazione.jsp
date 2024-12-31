@@ -774,7 +774,7 @@ function inizializzaSelectFiltro(){
 						        												<div id="<%= deCopyId%>_message" class="copy-message"><%=Costanti.ICON_COPY_ESITO_OPERAZIONE %></div>
 																				<script type="text/javascript" nonce="<%= randomNonce %>">
 																			      	 $(document).ready(function(){
-																			      		 setupCopyButtonEvents('<%= deTextId%>', '<%= deCopyId%>', '<%= deCopyId%>_message	', 200, 1000); // imposta gestione timeout per visualizzazione tasto copia
+																			      		 setupCopyButtonEvents('<%= deTextId%>', '<%= deCopyId%>', '<%= deCopyId%>_message'); // imposta gestione eventi per visualizzazione tasto copia
 																					});
 																				</script>
 																			<% } %>

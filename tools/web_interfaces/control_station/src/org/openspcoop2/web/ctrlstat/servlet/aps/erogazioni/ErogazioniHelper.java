@@ -2110,6 +2110,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
 			de.setToolTip(gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione());
+			de.setCopyToClipboard(gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione());
 			
 			List<Parameter> listParametersServizioModificaDescrizione = new ArrayList<>();
 			listParametersServizioModificaDescrizione.addAll(listaParametriChange);
@@ -2333,7 +2334,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					}
 				}
 				
-				de.setCopyToClipboard(urlConnettore);
+				de.setCopyToClipboard(this.getClipBoardUrlConnettore(sa,is,false));
 				dati.add(de);
 			}
 			
@@ -2519,7 +2520,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					
 					de.setValue(formatInfoForView(urlConnettore));
 					de.setToolTip(tooltipConnettore);
-					de.setCopyToClipboard(urlConnettore);
+					de.setCopyToClipboard(this.getClipBoardUrlConnettore(connettore, false, false));
 					
 					List<Parameter> listParametersConnettore = new ArrayList<>();
 					listParametersConnettore.add(pId);

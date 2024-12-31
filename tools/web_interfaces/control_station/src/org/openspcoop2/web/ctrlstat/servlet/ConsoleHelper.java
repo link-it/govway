@@ -18067,6 +18067,35 @@ public class ConsoleHelper implements IConsoleHelper {
 		return sbCon.toString();
 	}
 	
+	public String getClipBoardUrlConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) throws DriverControlStationException {
+		
+		if(sa==null) {
+			throw new DriverControlStationException("Param sa is null");
+		}
+		
+		StringBuilder sbCon = new StringBuilder();
+		sbCon.append(this.getClipBoardUrlConnettore(is, addExtInfo, false));
+		return sbCon.toString();
+	}
+	
+	public String getClipBoardUrlConnettore(org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo, boolean tooltip) throws DriverControlStationException {
+		
+		if(is==null) {
+			throw new DriverControlStationException("Param is is null");
+		}
+		
+		// la parte che aggiungeva MessageBox e' stata eliminata
+		return this.getLabelConnettore(is.getConnettore(), addExtInfo, tooltip);
+	}
+	public String getClipBoardUrlConnettore(org.openspcoop2.core.registry.Connettore connettore, boolean addExtInfo, boolean tooltip) throws DriverControlStationException {
+		
+		if(connettore==null) {
+			throw new DriverControlStationException("Param connettore is null");
+		}
+		
+		return this.getLabelConnettore(connettore.mappingIntoConnettoreConfigurazione(), addExtInfo, tooltip);
+	}
+	
 	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is, boolean addExtInfo) throws DriverControlStationException {
 		
 		if(sa==null) {

@@ -8934,6 +8934,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
 					de.setToolTip(descrizioneOrig);
+					de.setCopyToClipboard(descrizioneOrig);
 										
 					image = new DataElementImage();
 					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneDescrizione, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
@@ -8953,7 +8954,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setValue(urlConnettore);
 				String tooltipConnettore = this.getTooltipConnettore(sa,is,true);
 				de.setToolTip(tooltipConnettore);
-				de.setCopyToClipboard(urlConnettore);
+				de.setCopyToClipboard(this.getClipBoardUrlConnettore(sa,is,false));
 				
 				image = new DataElementImage();
 				

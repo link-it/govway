@@ -185,6 +185,11 @@ function postVersion_postBack(dataElementName) {
     	 document.form.action=navigationAnchor;
     }*/
     if(navigationAnchor!=null){
+		var indexNavigatorAnchor = newActionUrl.indexOf('#');
+		if (indexNavigatorAnchor >0){
+			newActionUrl = newActionUrl.split('#')[0];
+		}
+		
     	newActionUrl += navigationAnchor;
     }
     document.form.action=newActionUrl
