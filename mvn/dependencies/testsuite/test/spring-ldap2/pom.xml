@@ -17,7 +17,7 @@
 
 		<jar.group.name>spring-ldap2</jar.group.name>
 		
-		<spring-ldap.version>2.4.2</spring-ldap.version>
+		<spring-ldap.version>2.4.4</spring-ldap.version>
 
 	</properties>
 

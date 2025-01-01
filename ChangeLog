@@ -1,3 +1,9 @@
+2025-01-01  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolta la seguente vulnerabilità relative ai jar di terza parte:
+	- CVE-2024-38829: aggiornata libreria 'org.springframework.ldap:*' alla versione 2.4.4
+
 2024-12-31  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]
@@ -42,7 +48,7 @@
 	* [GovWayCore]
 	Risolto Bug #1548
 	Risolta la seguente vulnerabilità relative ai jar di terza parte:
-	- CVE-2024-47535 aggiornata libreria 'io.netty:*' alla versione 4.1.115
+	- CVE-2024-47535: aggiornata libreria 'io.netty:*' alla versione 4.1.115
 
 2024-11-09  Andrea Poli <apoli@link.it>
 

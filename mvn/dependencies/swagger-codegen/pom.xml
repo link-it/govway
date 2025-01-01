@@ -17,16 +17,16 @@
 
 		<jar.group.name>swagger-codegen</jar.group.name>
 		
-		<swagger.codegen.cli.version>3.0.46-gov4j-1</swagger.codegen.cli.version>
+		<swagger.codegen.cli.gov4j.version>3.0.46-gov4j-1</swagger.codegen.cli.gov4j.version>
 
 	</properties>
 
 	<dependencies>
 	
 		<dependency>
-			<groupId>io.swagger.codegen.v3</groupId>
+			<groupId>org.gov4j.thirdparty.io.swagger.codegen.v3</groupId>
 			<artifactId>swagger-codegen-cli</artifactId>
-			<version>${swagger.codegen.cli.version}</version>
+			<version>${swagger.codegen.cli.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

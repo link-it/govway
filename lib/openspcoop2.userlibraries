@@ -226,9 +226,9 @@
         <archive path="/op2_3.4.dev/lib/spring/spring-orm-6.1.14.jar"/>
         <archive path="/op2_3.4.dev/lib/spring/spring-jdbc-6.1.14.jar"/>
        	<!-- spring-ldap -->
-        <archive path="/op2_3.4.dev/lib/spring-ldap/spring-ldap-core-3.2.7.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring-ldap/spring-ldap-ldif-core-3.2.7.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring-ldap/spring-ldap-test-3.2.7.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring-ldap/spring-ldap-core-3.2.10.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring-ldap/spring-ldap-ldif-core-3.2.10.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring-ldap/spring-ldap-test-3.2.10.jar"/>
 	<!-- spring-security -->
 	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-core-6.3.4.jar"/>
 	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-web-6.3.4.jar"/>
