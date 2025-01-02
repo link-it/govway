@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2024 Link.it srl (https://link.it).
+ * Copyright (c) 2005-2025 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -46,6 +46,9 @@ import jakarta.xml.bind.annotation.XmlType;
  * </simpleType>
  * }</pre>
  * 
+ * @author Pintori Giuliano (pintori@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
  */
 @XmlType(name = "diagnostica_serialization_type", namespace = "http://www.openspcoop2.org/web/monitor/transazioni/core/manifest")
 @XmlEnum

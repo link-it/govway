@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  *
- * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2025 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -103,7 +103,8 @@ public class StringBufferCheck {
 					jumpCheck = true;
 				else if( f.getAbsolutePath().indexOf("tools/web_interfaces/monitor/src/src_core/org/openspcoop2/web/monitor/core/utils/MessageManager.java")!= -1 )
 					jumpCheck = true;
-				
+				else if( f.getAbsolutePath().indexOf("tools/web_interfaces/lib/mvc/src/org/openspcoop2/web/lib/mvc/security/SecurityWrappedHttpServletRequest.java")!= -1 )
+					jumpCheck = true;
 
 				String TODO = "METTERE QUA EVENTUALE NUOVO PATH";
 				//if(!printTODO){		

@@ -2,7 +2,7 @@
  * GovWay - A customizable API Gateway 
  * https://govway.org
  *
- * Copyright (c) 2005-2024 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2025 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -173,6 +173,10 @@ public class JavaDocCheck {
 				else if( f.getAbsolutePath().indexOf("protocolli/trasparente/testsuite/example/server/RPCLiteralExample/src/org/openspcoop2/example/server/rpc/literal/skeleton")!= -1)
 					jumpCheck = true;
 				else if( f.getAbsolutePath().indexOf("protocolli/trasparente/testsuite/example/server/RPCLiteralExample/src/org/openspcoop2/example/server/rpc/literal/skeleton_namespace_ridefinito")!= -1)
+					jumpCheck = true;
+				else if( f.getAbsolutePath().contains("example/pdd/client/Benchmark/fileToSend/request.html") )
+					jumpCheck = true;
+				else if( f.getAbsolutePath().contains("example/pdd/client/PD_Invoker/fileToSend/request.html")  )
 					jumpCheck = true;
 
 				String TODO = "METTERE QUA EVENTUALE NUOVO PATH";
