@@ -2444,7 +2444,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
 			
 			de.setImage(image);
-			if(!urlInvocazione.equals("-")) {
+			if(!urlInvocazioneAPI.equals("-")) {
 				de.setCopyToClipboard(urlInvocazioneAPI);
 			}
 			dati.add(de);
