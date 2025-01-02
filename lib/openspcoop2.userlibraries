@@ -117,11 +117,11 @@
 	<archive path="/op2_3.4.dev/lib/json/jettison-1.5.4.jar"/>
 	<!-- log -->
         <archive path="/op2_3.4.dev/lib/log/slf4j-api-2.0.16-gov4j-1.jar"/>
-	<archive path="/op2_3.4.dev/lib/log/log4j-1.2-api-2.23.1.jar"/>
-        <archive path="/op2_3.4.dev/lib/log/log4j-api-2.23.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/log/log4j-core-2.23.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/log/log4j-slf4j2-impl-2.23.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/log/log4j-jcl-2.23.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/log/log4j-1.2-api-2.24.3.jar"/>
+        <archive path="/op2_3.4.dev/lib/log/log4j-api-2.24.3.jar"/>
+	<archive path="/op2_3.4.dev/lib/log/log4j-core-2.24.3.jar"/>
+	<archive path="/op2_3.4.dev/lib/log/log4j-slf4j2-impl-2.24.3.jar"/>
+	<archive path="/op2_3.4.dev/lib/log/log4j-jcl-2.24.3.jar"/>
 	<!-- lucene -->
         <archive path="/op2_3.4.dev/lib/lucene/lucene-core-9.12.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/lucene/lucene-codecs-9.12.0.jar"/>
