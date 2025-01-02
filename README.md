@@ -1,4 +1,5 @@
 # GovWay - API Gateway per la Pubblica Amministrazione
+[![Quality Gate Status](https://jenkins.link.it/govway-sonarqube-badge)](https://jenkins.link.it/govway-sonarqube/dashboard?id=govway)
 [![Build Status](https://jenkins.link.it/govway/buildStatus/icon?job=GovWay&style=plastic)](https://jenkins.link.it/govway/job/GovWay/)
 [![Docker](https://github.com/link-it/govway/blob/master/resources/images/docker.svg)](https://hub.docker.com/r/linkitaly/govway)
 [![Documentation Status](https://readthedocs.org/projects/govway/badge/?version=latest&style=plastic)](https://govway.readthedocs.io/it/latest/?badge=latest)
