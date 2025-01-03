@@ -472,6 +472,57 @@ And match response == read('error-bodies/iat-in-the-future-response.json')
 And match header GovWay-Transaction-ErrorType == 'InteroperabilityInvalidResponse'
 
 
+@nbf-future-request
+Scenario: L'elemento nbf del token della fruizione (richiesta) contiene una data futura (di 8 secondi; tolleranza di GovWay 5) e l'erogazione si arrabbia. Il token viene generato tramite una trasformazione
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01nbfFuture/v1'
+And path 'none'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'nbf-future-request'
+And header GovWay-TestSuite-NbfFutureConfigValue =  '8' 
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 400
+And match response == read('error-bodies/nbf-future-in-request.json')
+
+@low-nbf-future-request
+Scenario: L'elemento nbf del token della fruizione (richiesta) contiene una data futura (di 2 secondi; tolleranza di GovWay 5) e l'erogazione non si arrabbia. Il token viene generato tramite una trasformazione
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01nbfFuture/v1'
+And path 'none'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'low-nbf-future-request'
+And header GovWay-TestSuite-NbfFutureConfigValue =  '2' 
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('response.json')
+
+@nbf-future-response
+Scenario: L'elemento nbf del token dell'erogazione (risposta) contiene una data futura (di 8 secondi; tolleranza di GovWay 5) e la fruizione si arrabbia. Il token viene generato tramite una trasformazione
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01nbfFuture/v1'
+And path 'response'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'nbf-future-response'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 502
+And match response == read('error-bodies/nbf-future-in-response.json')
+
+@low-nbf-future-response
+Scenario: L'elemento nbf del token dell'erogazione (risposta) contiene una data futura (di 2 secondi; tolleranza di GovWay 5) e la fruizione non si arrabbia. Il token viene generato tramite una trasformazione
+
+Given url govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01nbfFuture/v1'
+And path 'response'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'low-nbf-future-response'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+When method post
+Then status 200
+And match response == read('response.json')
+
+
 @applicativo-non-autorizzato
 Scenario: Viene utilizzato l'identificativo di un applicativo non autorizzato dalla erogazione
 

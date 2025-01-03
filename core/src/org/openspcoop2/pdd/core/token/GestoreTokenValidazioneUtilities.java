@@ -1498,6 +1498,21 @@ public class GestoreTokenValidazioneUtilities {
 		
 		return !checkNow.before(exp);
 	}
+	public static boolean isFuture(Date now, Date nbf) throws TokenException {
+		
+		Date checkNow = now;
+		Long tolerance = null;
+		try {
+			tolerance = OpenSPCoop2Properties.getInstance().getGestioneTokenNbfTimeCheckToleranceMilliseconds();
+		}catch(Exception e) {
+			throw new TokenException(e.getMessage(),e);
+		}
+		if(tolerance!=null && tolerance.longValue()>0) {
+			checkNow = new Date(now.getTime() + tolerance.longValue());
+		}
+		
+		return !nbf.before(checkNow);
+	}
 	
 	static void validazioneInformazioniToken(EsitoGestioneToken esitoGestioneToken, PolicyGestioneToken policyGestioneToken, boolean saveErrorInCache) throws TokenException, CoreException {
 		
@@ -1541,29 +1556,33 @@ public class GestoreTokenValidazioneUtilities {
 		}
 			
 		if(esitoGestioneToken.isValido() &&
-			esitoGestioneToken.getInformazioniToken().getNbf()!=null &&			
+			esitoGestioneToken.getInformazioniToken().getNbf()!=null) {
+			
+			boolean future = isFuture(now, esitoGestioneToken.getInformazioniToken().getNbf());
+			
 			/*
 			 *   The "nbf" (not before) claim identifies the time before which the JWT
 			 *   MUST NOT be accepted for processing.  The processing of the "nbf"
 			 *   claim requires that the current date/time MUST be after or equal to
 			 *   the not-before date/time listed in the "nbf" claim. 
 			 **/
-			!esitoGestioneToken.getInformazioniToken().getNbf().before(now)
-			){
-			esitoGestioneToken.setTokenNotUsableBefore();
-			esitoGestioneToken.setDateValide(false);
-			SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(GestoreToken.DATE_FORMAT);
-			esitoGestioneToken.setDetails("Token not usable before "+sdf.format(esitoGestioneToken.getInformazioniToken().getNbf()));
-			if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
-				esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
-    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
-    					esitoGestioneToken.getDetails()));  
+			
+			if(future){
+				esitoGestioneToken.setTokenNotUsableBefore();
+				esitoGestioneToken.setDateValide(false);
+				SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(GestoreToken.DATE_FORMAT);
+				esitoGestioneToken.setDetails("Token not usable before "+sdf.format(esitoGestioneToken.getInformazioniToken().getNbf()));
+				if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+	    					esitoGestioneToken.getDetails()));  
+				}
+				else {
+					esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+							false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+							esitoGestioneToken.getDetails()));
+				} 
 			}
-			else {
-				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
-						false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
-						esitoGestioneToken.getDetails()));
-			} 
 		}
 		
 		if(esitoGestioneToken.isValido() &&
@@ -1596,7 +1615,7 @@ public class GestoreTokenValidazioneUtilities {
 			}
 			
 			Long future = OpenSPCoop2Properties.getInstance().getGestioneTokenIatTimeCheckFutureToleranceMilliseconds();
-			if(future!=null) {
+			if(future!=null && future.longValue()>0) {
 				Date futureMax = new Date((DateManager.getTimeMillis() + future.longValue()));
 				if(esitoGestioneToken.getInformazioniToken().getIat().after(futureMax)) {
 					esitoGestioneToken.setTokenInTheFuture();

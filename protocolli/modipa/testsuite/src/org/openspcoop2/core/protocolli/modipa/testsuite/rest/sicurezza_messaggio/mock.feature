@@ -49,6 +49,7 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
   isTest('doppi-header-audience-richiesta-differente-valore-audienceAsArray') ||
   isTest('doppi-header-audience-richiesta-differente-valore-audienceAsArrayMultipleValues') ||
 	isTest('low-ttl-erogazione') || isTest('low-iat-ttl-erogazione') || isTest('iat-future-response') || 
+	isTest('low-nbf-future-request') || 
 	isTest('custom-claims') || isTest('custom-claims-sub-iss-clientid-empty') || 
 	isTest('manomissione-token-risposta') || 
 	isTest('connettivita-base-idar02') || 
@@ -73,6 +74,17 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
+Scenario: isTest('nbf-future-response') 
+
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+    * def responseHeaders = { GovWay-TestSuite-NbfFutureConfigValue: "8" }
+    
+Scenario: isTest('low-nbf-future-response')
+
+    * def responseStatus = 200
+    * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+    * def responseHeaders = { GovWay-TestSuite-NbfFutureConfigValue: "2" }    
 
 Scenario: isTest('applicativo-non-autorizzato')
 

@@ -104,7 +104,9 @@ public class IntrospectionTest extends ConfigLoader {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
 		
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
-		String tokenInvalid = buildJWT_dates(false, false, false, false, // tutte buone, elimino la risposta introspection dopo 
+		String tokenInvalid = buildJWT_dates(false, null, 
+				false, null,
+				false, // tutte buone, elimino la risposta introspection dopo 
 				mapExpectedTokenInfo);
 		
 		Map<String, String> headers = new HashMap<>();
@@ -163,7 +165,9 @@ public class IntrospectionTest extends ConfigLoader {
 		
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		Map<String, String> headers = new HashMap<>();
-		headers.put("test-introspection", buildJWT_dates(true, false, false, false, 
+		headers.put("test-introspection", buildJWT_dates(true, null, 
+				false, null,
+				false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
 		
@@ -187,12 +191,40 @@ public class IntrospectionTest extends ConfigLoader {
 		
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		Map<String, String> headers = new HashMap<>();
-		headers.put("test-introspection", buildJWT_dates(false, true, false, false, 
+		headers.put("test-introspection", buildJWT_dates(false, 8000l, // tolleranza a 5secondi 
+				false, null,
+				false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
 		
 		Utilities._test(logCore, tipoServizio, validazione, "success", headers,  null,
 				"Token valid in the future; iat time '%' is in the future",
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void iatInTheFutureTolerance() throws Exception {
+		iatInTheFutureTolerance(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void iatInTheFutureToleranceFruizione() throws Exception {
+		iatInTheFutureTolerance(TipoServizio.FRUIZIONE);
+	}
+	private void iatInTheFutureTolerance(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-introspection", buildJWT_dates(false, 2000l, // tolleranza a 5secondi 
+				false, null,
+				false, 
+				mapExpectedTokenInfo));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, tipoServizio, validazione, "success", headers,  null,
+				null,
 				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
@@ -211,12 +243,66 @@ public class IntrospectionTest extends ConfigLoader {
 		
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		Map<String, String> headers = new HashMap<>();
-		headers.put("test-introspection", buildJWT_dates(false, false, true, false, 
+		headers.put("test-introspection", buildJWT_dates(false, null, 
+				true, null,
+				false, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
 		
 		Utilities._test(logCore, tipoServizio, validazione, "success", headers,  null,
 				"Token not usable before %",
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void nbfInTheFuture() throws Exception {
+		nbfInTheFuture(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void nbfInTheFutureFruizione() throws Exception {
+		nbfInTheFuture(TipoServizio.FRUIZIONE);
+	}
+	private void nbfInTheFuture(TipoServizio tipoServizio) throws Exception {
+				
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-introspection", buildJWT_dates(false, null,
+				false, 8000l, // tolleranza a 5secondi 
+				false, 
+				mapExpectedTokenInfo));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, tipoServizio, validazione, "success", headers,  null,
+				"Token not usable before %",
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
+	}
+	
+	@Test
+	public void nbfInTheFutureTolerance() throws Exception {
+		nbfInTheFutureTolerance(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void nbfInTheFutureToleranceFruizione() throws Exception {
+		nbfInTheFutureTolerance(TipoServizio.FRUIZIONE);
+	}
+	private void nbfInTheFutureTolerance(TipoServizio tipoServizio) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-introspection", buildJWT_dates(false, null,
+				false, 2000l, // tolleranza a 5secondi 
+				false, 
+				mapExpectedTokenInfo));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, tipoServizio, validazione, "success", headers,  null,
+				null,
 				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
 	
@@ -235,7 +321,9 @@ public class IntrospectionTest extends ConfigLoader {
 		
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		Map<String, String> headers = new HashMap<>();
-		headers.put("test-introspection", buildJWT_dates(false, false, false, true, 
+		headers.put("test-introspection", buildJWT_dates(false, null, 
+				false, null,
+				true, 
 				mapExpectedTokenInfo));
 		headers.put("test-username", Utilities.username);
 		
@@ -872,7 +960,9 @@ public class IntrospectionTest extends ConfigLoader {
 						true, true, true,
 						false,true,false,
 						false,
-						false, false, false, false,
+						false, null, 
+						false, null,
+						false,
 						true, 
 						false, false, 
 						false, false,
@@ -984,7 +1074,9 @@ public class IntrospectionTest extends ConfigLoader {
 				true, true, true,
 				false,true,false,
 				false,
-				false, false, false, false,
+				false, null, 
+				false, null,
+				false,
 				false, 
 				false, false, 
 				true, false,
@@ -1052,7 +1144,9 @@ public class IntrospectionTest extends ConfigLoader {
 						true, true, true,
 						false,true,false,
 						false,
-						false, false, false, false,
+						false, null, 
+						false, null,
+						false,
 						true, 
 						false, false, 
 						false, false,
@@ -1179,7 +1273,9 @@ public class IntrospectionTest extends ConfigLoader {
 				true, true, true,
 				false,true,false,
 				false,
-				false, false, false, false,
+				false, null, 
+				false, null,
+				false,
 				false, 
 				false, false, 
 				true, false,
@@ -1454,7 +1550,9 @@ public class IntrospectionTest extends ConfigLoader {
 				true, true, true,
 				true, true, true,
 				false,
-				false, false, false, false,
+				false, null, 
+				false, null,
+				false,
 				false, 
 				false, false,
 				false, false,
@@ -1467,7 +1565,9 @@ public class IntrospectionTest extends ConfigLoader {
 				scope1, scope2, scope3,
 				true, true, true,
 				false,
-				false, false, false, false,
+				false, null, 
+				false, null,
+				false,
 				false, 
 				false, false,
 				false, false,
@@ -1480,20 +1580,26 @@ public class IntrospectionTest extends ConfigLoader {
 				true, true, true,
 				role1, role2, role3,
 				false,
-				false, false, false, false,
+				false, null, 
+				false, null,
+				false,
 				false, 
 				false, false,
 				false, false,
 				mapExpectedTokenInfo);
 	}
-	private static String buildJWT_dates(boolean invalidIat, boolean futureIat, boolean invalidNbf, boolean invalidExp,
+	private static String buildJWT_dates(boolean invalidIat, Long futureIat, 
+			boolean invalidNbf, Long futureNbf,
+			boolean invalidExp,
 			List<String> mapExpectedTokenInfo) throws Exception {
 		return buildJWT(true,
 				true, true, true, true, true,
 				true, true, true,
 				true, true, true,
 				false,
-				invalidIat, futureIat, invalidNbf, invalidExp,
+				invalidIat, futureIat, 
+				invalidNbf, futureNbf,
+				invalidExp,
 				false, 
 				false, false,
 				false, false,
@@ -1506,7 +1612,9 @@ public class IntrospectionTest extends ConfigLoader {
 				true, true, true,
 				true, true, true,
 				false,
-				false, false, false, false,
+				false, null, 
+				false, null,
+				false,
 				invalidClientId, 
 				false, invalidAudience, 
 				invalidUsername, invalidClaimCheNonDeveEsistere,
@@ -1519,7 +1627,9 @@ public class IntrospectionTest extends ConfigLoader {
 				true, true, true,
 				true, true, true,
 				false,
-				false, false, false, false,
+				false, null, 
+				false, null,
+				false,
 				false, 
 				true, invalidAudience, 
 				false, false,
@@ -1531,7 +1641,9 @@ public class IntrospectionTest extends ConfigLoader {
 			boolean scope1, boolean scope2, boolean scope3,
 			boolean role1, boolean role2, boolean role3,
 			boolean signWithSoggetto1,
-			boolean invalidIat, boolean futureIat, boolean invalidNbf, boolean invalidExp,
+			boolean invalidIat, Long futureIat, 
+			boolean invalidNbf, Long futureNbf, 
+			boolean invalidExp,
 			boolean invalidClientId, 
 			boolean singleValueNoArrayAudience,boolean invalidAudience, 
 			boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
@@ -1542,7 +1654,9 @@ public class IntrospectionTest extends ConfigLoader {
 				requiredClaims_username, requiredClaims_eMail, 
 				scope1, scope2, scope3, 
 				role1, role2, role3, 
-				invalidIat, futureIat, invalidNbf, invalidExp, 
+				invalidIat, futureIat, 
+				invalidNbf, futureNbf,
+				invalidExp, 
 				invalidClientId, 
 				singleValueNoArrayAudience, invalidAudience, 
 				invalidUsername, invalidClaimCheNonDeveEsistere, 

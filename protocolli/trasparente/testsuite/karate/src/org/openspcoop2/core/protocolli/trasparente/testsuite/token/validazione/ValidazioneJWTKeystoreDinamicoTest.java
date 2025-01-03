@@ -231,8 +231,9 @@ public class ValidazioneJWTKeystoreDinamicoTest extends ConfigLoader {
 		boolean role2 = true;
 		boolean role3 = true;
 		boolean invalidIat = false; 
-		boolean futureIat = false;
+		Long futureIat = null;
 		boolean invalidNbf = false; 
+		Long futureNbf = null;
 		boolean invalidExp = false;
 		boolean invalidClientId = false;
 		boolean singleValueNoArrayAudience = false;
@@ -246,7 +247,9 @@ public class ValidazioneJWTKeystoreDinamicoTest extends ConfigLoader {
 				requiredClaimsUsername, requiredClaimsEMail, 
 				scope1, scope2, scope3, 
 				role1, role2, role3, 
-				invalidIat, futureIat, invalidNbf, invalidExp, 
+				invalidIat, futureIat, 
+				invalidNbf, futureNbf,
+				invalidExp, 
 				invalidClientId, 
 				singleValueNoArrayAudience, invalidAudience, 
 				invalidUsername, invalidClaimCheNonDeveEsistere, 
