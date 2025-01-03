@@ -2640,8 +2640,19 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try {
 				org.openapi4j.schema.validator.v3.ValidationOptions.VALIDATE_BASE64_VALUES=propertiesReader.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateBase64Values();
 				org.openapi4j.parser.validation.v3.OpenApi3Validator.VALIDATE_URI_REFERENCE_AS_URL = propertiesReader.isValidazioneContenutiApplicativiOpenApiOpenapi4jValidateUriReferenceAsUrl();
+				org.openapi4j.schema.validator.v3.FormatValidator.setDateTimeAllowLowerCaseTZ(propertiesReader.isValidazioneContenutiApplicativiOpenApiDateTimeAllowLowerCaseTZ());
+				org.openapi4j.schema.validator.v3.FormatValidator.setDateTimeAllowSpaceSeparator(propertiesReader.isValidazioneContenutiApplicativiOpenApiDateTimeAllowSpaceSeparator());
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Configurazione libreria di validazione openapi4j");
+				return;
+			}
+			
+			// Libreria di validazione generica delle dae
+			try {
+				DateUtils.setDateTimeAllowLowerCaseTZ(propertiesReader.isValidazioneContenutiApplicativiOpenApiDateTimeAllowLowerCaseTZ());
+				DateUtils.setDateTimeAllowSpaceSeparator(propertiesReader.isValidazioneContenutiApplicativiOpenApiDateTimeAllowSpaceSeparator());
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Configurazione libreria di validazione DateUtils");
 				return;
 			}
 

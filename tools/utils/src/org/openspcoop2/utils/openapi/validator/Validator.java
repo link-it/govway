@@ -1586,25 +1586,25 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			}
 			else if("date-time".equalsIgnoreCase(type)){
 				try {
-					DateUtils.validateDateTimeAsRFC3339_sec5_6(value);
+					DateUtils.validateDateTimeAsRFC3339Sec56(value);
 				}catch(Throwable e){
 					throw new ValidatorException(e.getMessage(),e);
 				}
 			}
 			else if("date".equalsIgnoreCase(type)){
 				try {
-					DateUtils.validateDateAsRFC3339_sec5_6(value);
+					DateUtils.validateDateAsRFC3339Sec56(value);
 				}catch(Throwable e){
 					throw new ValidatorException(e.getMessage(),e);
 				}
 			}
-//			else if("time".equalsIgnoreCase(type)){
-//				try {
-//					DateUtils.validateTimeAsRFC3339_sec5_6(value);
-//				}catch(Throwable e){
-//					throw new ValidatorException(e.getMessage(),e);
-//				}
-//			}
+			/**else if("time".equalsIgnoreCase(type)){
+				try {
+					DateUtils.validateTimeAsRFC3339Sec56(value);
+				}catch(Throwable e){
+					throw new ValidatorException(e.getMessage(),e);
+				}
+			}*/
 			
 			if(typeRestriction!=null) {
 				

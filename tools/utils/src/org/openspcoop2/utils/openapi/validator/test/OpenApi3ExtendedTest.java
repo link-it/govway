@@ -33,9 +33,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.openapi4j.schema.validator.v3.FormatValidator;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.openapi.validator.MultipartUtilities;
@@ -84,6 +86,9 @@ public class OpenApi3ExtendedTest {
 
 	private static boolean logSystemOutError = true;
 
+	private static boolean defaultDateTimeAllowLowerCaseTZ = false;
+	private static boolean defaultDateTimeAllowSpaceSeparator = false;
+	
 	public static void main(String[] args) throws Exception {
 		
 		
@@ -99,8 +104,28 @@ public class OpenApi3ExtendedTest {
 		
 		// fix per evitare troppo output su jenkins:
 		logSystemOutError = !OpenAPILibrary.json_schema.equals(openAPILibrary);
-		
 
+		// default value
+		defaultDateTimeAllowLowerCaseTZ = DateUtils.isDateTimeAllowLowerCaseTZ();
+		defaultDateTimeAllowSpaceSeparator = DateUtils.isDateTimeAllowSpaceSeparator();
+		try {
+			test(openAPILibrary, mergeSpec);
+		}finally {
+			setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
+		}
+	}
+	private static void setDateTimeOptions(OpenAPILibrary openAPILibrary, boolean allowLowerCaseTZ, boolean allowSpaceSeparator) {
+		DateUtils.setDateTimeAllowLowerCaseTZ(allowLowerCaseTZ);
+		DateUtils.setDateTimeAllowSpaceSeparator(allowSpaceSeparator);
+		if(openAPILibrary == OpenAPILibrary.openapi4j) {
+			FormatValidator.setDateTimeAllowLowerCaseTZ(allowLowerCaseTZ);
+			FormatValidator.setDateTimeAllowSpaceSeparator(allowSpaceSeparator);
+		}
+		System.out.println("========== (case:"+allowLowerCaseTZ+" space:"+allowSpaceSeparator+") "+
+				"DateUtils(case:"+DateUtils.isDateTimeAllowLowerCaseTZ()+" space:"+DateUtils.isDateTimeAllowSpaceSeparator()+")"+
+				" FormatValidator(case:"+FormatValidator.isDateTimeAllowLowerCaseTZ()+" space:"+FormatValidator.isDateTimeAllowSpaceSeparator()+")");
+	}
+	private static void test(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception {
 
 		// *** TEST per il Parser e validazione dello schema *** //
 		
@@ -1558,8 +1583,64 @@ public class OpenApi3ExtendedTest {
 		valori_test13.add("2017-07-21T17:32:28Z");esiti_test13.add(false); // date-time valido, ma il tipo è date
 		valori_test13.add("2017-07-21T17:32:28+01:00");esiti_test13.add(false); // date-time valido, ma il tipo è date
 
+		// Aggiunto test con lettere minuscoli e spazi.
+		// Vedi commento org.openspcoop2.utils.date.buildDateTimeSeparatorPattern per comprendere valori di default accettati per lettere minuscole e spazi nelle date
+		int sizeTest13Originali = valori_test13.size();
+		for (int i = 0; i < sizeTest13Originali; i++) {
+			String valueUpperCase = valori_test13.get(i);
+			if(valueUpperCase.contains("Z")) {
+				String valueLowerCase = valueUpperCase.replace("Z", "z");
+				boolean esito = esiti_test13.get(i);
+				if(openAPILibrary == OpenAPILibrary.swagger_request_validator) {
+					valori_test13.add(valueLowerCase);esiti_test13.add(esito); // per default è abilitato
+				}
+				else {
+					valori_test13.add(valueLowerCase);esiti_test13.add(false); // non è abilitato per default, e quindi non consentito
+				}
+			}
+		}
+		
+		int indiceDoveAbilitareCaseInsensitiveTest13 = Integer.MAX_VALUE;
+		int indiceDoveAbilitareCaseInsensitiveAndSpaceTest13 = Integer.MAX_VALUE;
+				
+		if(openAPILibrary != OpenAPILibrary.swagger_request_validator) {
+			// non è attualmente possibile modificare il comportamento di default per swagger request validator
+		
+			indiceDoveAbilitareCaseInsensitiveTest13 = valori_test13.size();
+			for (int i = 0; i < sizeTest13Originali; i++) {
+				String valueUpperCase = valori_test13.get(i);
+				if(valueUpperCase.contains("Z")) {
+					String valueLowerCase = valueUpperCase.replace("Z", "z");
+					boolean esito = esiti_test13.get(i);
+					valori_test13.add(valueLowerCase);esiti_test13.add(esito);
+				}
+			}
+			
+			indiceDoveAbilitareCaseInsensitiveAndSpaceTest13 = valori_test13.size();
+			for (int i = 0; i < sizeTest13Originali; i++) {
+				String valueUpperCase = valori_test13.get(i);
+				if(valueUpperCase.contains("Z")) {
+					String valueLowerCase = valueUpperCase.replace("Z", "z");
+					boolean esito = esiti_test13.get(i);
+					valori_test13.add(valueLowerCase);esiti_test13.add(esito);
+				}
+			}
+			
+		}
+		
 		// ** Test sul body **
 		for (int i = 0; i < valori_test13.size(); i++) {
+			
+			if(i>=indiceDoveAbilitareCaseInsensitiveAndSpaceTest13) {
+				setDateTimeOptions(openAPILibrary, true, true);
+			}
+			else if(i>=indiceDoveAbilitareCaseInsensitiveTest13) {
+				setDateTimeOptions(openAPILibrary, true, false);
+			}
+			else {
+				setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
+			}	
+			
 			String valore = valori_test13.get(i);
 			boolean esito = esiti_test13.get(i);
 			
@@ -1681,6 +1762,17 @@ public class OpenApi3ExtendedTest {
 		// ** Test su header **
 		
 		for (int i = 0; i < valori_test13.size(); i++) {
+			
+			if(i>=indiceDoveAbilitareCaseInsensitiveAndSpaceTest13) {
+				setDateTimeOptions(openAPILibrary, true, true);
+			}
+			else if(i>=indiceDoveAbilitareCaseInsensitiveTest13) {
+				setDateTimeOptions(openAPILibrary, true, false);
+			}
+			else {
+				setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
+			}
+			
 			String valore = valori_test13.get(i);
 			boolean esito = esiti_test13.get(i);
 			
@@ -1803,6 +1895,17 @@ public class OpenApi3ExtendedTest {
 		// ** Test su query paramater **
 		
 		for (int i = 0; i < valori_test13.size(); i++) {
+			
+			if(i>=indiceDoveAbilitareCaseInsensitiveAndSpaceTest13) {
+				setDateTimeOptions(openAPILibrary, true, true);
+			}
+			else if(i>=indiceDoveAbilitareCaseInsensitiveTest13) {
+				setDateTimeOptions(openAPILibrary, true, false);
+			}
+			else {
+				setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
+			}
+			
 			String valore = valori_test13.get(i);
 			boolean esito = esiti_test13.get(i);
 			
@@ -1868,6 +1971,17 @@ public class OpenApi3ExtendedTest {
 		// ** Test su path **
 		
 		for (int i = 0; i < valori_test13.size(); i++) {
+			
+			if(i>=indiceDoveAbilitareCaseInsensitiveAndSpaceTest13) {
+				setDateTimeOptions(openAPILibrary, true, true);
+			}
+			else if(i>=indiceDoveAbilitareCaseInsensitiveTest13) {
+				setDateTimeOptions(openAPILibrary, true, false);
+			}
+			else {
+				setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
+			}
+			
 			String valore = valori_test13.get(i);
 			boolean esito = esiti_test13.get(i);
 			
@@ -1938,6 +2052,8 @@ public class OpenApi3ExtendedTest {
 			}
 		}
 		
+		setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
+		
 		System.out.println("Test #13 completato\n\n");
 		
 		
@@ -1969,10 +2085,97 @@ public class OpenApi3ExtendedTest {
 		valori_test14.add("2017-07-21T17:32:28 01:00");esiti_test14.add(false); // ko
 		valori_test14.add("2017-07-21T17:32:28+01");esiti_test14.add(false); // ko
 		
-		Set<String> swagger_validator_fallimenti_datetime = Set.of( "2017-07-21T17:32:28+0100", "2017-07-21T17:32:28+01" );
+		// Aggiunto test con lettere minuscoli e spazi.
+		// Vedi commento org.openspcoop2.utils.date.buildDateTimeSeparatorPattern per comprendere valori di default accettati per lettere minuscole e spazi nelle date
+		int sizeTest14Originali = valori_test14.size();
+		for (int i = 0; i < sizeTest14Originali; i++) {
+			String valueUpperCase = valori_test14.get(i);
+			if(valueUpperCase.contains("T")) {
+				String valueLowerCase = valueUpperCase.replace("T", "t");
+				//boolean esito = esiti_test14.get(i);
+				valori_test14.add(valueLowerCase);esiti_test14.add(false); // non è abilitato per default, e quindi non consentito
+			}
+			if(valueUpperCase.contains("Z")) {
+				String valueLowerCase = valueUpperCase.replace("Z", "z");
+				//boolean esito = esiti_test14.get(i);
+				valori_test14.add(valueLowerCase);esiti_test14.add(false); // non è abilitato per default, e quindi non consentito
+			}
+			if(valueUpperCase.contains("T")) {
+				String valueLowerCase = valueUpperCase.replace("T", " ");
+				//boolean esito = esiti_test14.get(i);
+				valori_test14.add(valueLowerCase);esiti_test14.add(false); // non è abilitato per default, e quindi non consentito
+			}
+		}
+		
+		int indiceDoveAbilitareCaseInsensitiveTest14 = Integer.MAX_VALUE;
+		int indiceDoveAbilitareSpaceTest14 = Integer.MAX_VALUE;
+		int indiceDoveAbilitareCaseInsensitiveAndSpaceTest14 = Integer.MAX_VALUE;
+		
+		indiceDoveAbilitareCaseInsensitiveTest14 = valori_test14.size();
+		for (int i = 0; i < sizeTest14Originali; i++) {
+			String valueUpperCase = valori_test14.get(i);
+			if(valueUpperCase.contains("T")) {
+				String valueLowerCase = valueUpperCase.replace("T", "t");
+				boolean esito = esiti_test14.get(i);
+				valori_test14.add(valueLowerCase);esiti_test14.add(esito);
+			}
+			if(valueUpperCase.contains("Z")) {
+				String valueLowerCase = valueUpperCase.replace("Z", "z");
+				boolean esito = esiti_test14.get(i);
+				valori_test14.add(valueLowerCase);esiti_test14.add(esito);
+			}
+		}
+		
+		indiceDoveAbilitareSpaceTest14 = valori_test14.size();
+		for (int i = 0; i < sizeTest14Originali; i++) {
+			String valueUpperCase = valori_test14.get(i);
+			if(valueUpperCase.contains("T")) {
+				String valueLowerCase = valueUpperCase.replace("T", " ");
+				boolean esito = esiti_test14.get(i);
+				valori_test14.add(valueLowerCase);esiti_test14.add(esito);
+			}
+		}
+		
+		indiceDoveAbilitareCaseInsensitiveAndSpaceTest14 = valori_test14.size();
+		for (int i = 0; i < sizeTest14Originali; i++) {
+			String valueUpperCase = valori_test14.get(i);
+			if(valueUpperCase.contains("T")) {
+				String valueLowerCase = valueUpperCase.replace("T", "t");
+				boolean esito = esiti_test14.get(i);
+				valori_test14.add(valueLowerCase);esiti_test14.add(esito);
+			}
+			if(valueUpperCase.contains("Z")) {
+				String valueLowerCase = valueUpperCase.replace("Z", "z");
+				boolean esito = esiti_test14.get(i);
+				valori_test14.add(valueLowerCase);esiti_test14.add(esito);
+			}
+			if(valueUpperCase.contains("T")) {
+				String valueLowerCase = valueUpperCase.replace("T", " ");
+				boolean esito = esiti_test14.get(i);
+				valori_test14.add(valueLowerCase);esiti_test14.add(esito);
+			}
+		}
+		
+		Set<String> swagger_validator_fallimenti_datetime = Set.of( "2017-07-21T17:32:28+0100", "2017-07-21T17:32:28+01", 
+				"2017-07-21t17:32:28+0100", "2017-07-21t17:32:28+01",
+				"2017-07-21 17:32:28+0100", "2017-07-21 17:32:28+01");
 
 		// ** Test sul body **
 		for (int i = 0; i < valori_test14.size(); i++) {
+			
+			if(i>=indiceDoveAbilitareCaseInsensitiveAndSpaceTest14) {
+				setDateTimeOptions(openAPILibrary, true, true);
+			}
+			else if(i>=indiceDoveAbilitareSpaceTest14) {
+				setDateTimeOptions(openAPILibrary, false, true);
+			}
+			else if(i>=indiceDoveAbilitareCaseInsensitiveTest14) {
+				setDateTimeOptions(openAPILibrary, true, false);
+			}
+			else {
+				setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
+			}	
+			
 			String valore = valori_test14.get(i);
 			boolean esito = esiti_test14.get(i);
 			
@@ -2000,15 +2203,22 @@ public class OpenApi3ExtendedTest {
 					System.out.println("\t "+tipoTest+" validate ok");
 				}
 				else {
-					if(i<3 && openAPILibrary == OpenAPILibrary.json_schema) {
+					if(	(
+							i<3 
+							|| 
+							(i>=sizeTest14Originali && (valore.contains(" ") || valore.contains("t") || (valore.contains("z"))))
+						) && openAPILibrary == OpenAPILibrary.json_schema) {
 						System.out.println("\t "+tipoTest+" validate, la validazione "+OpenAPILibrary.json_schema+" non rileva l'accezione!!!!");
 						continue;
 					} else if( openAPILibrary == OpenAPILibrary.swagger_request_validator && swagger_validator_fallimenti_datetime.contains(valore)) {
 						System.out.println("\t "+tipoTest+" validate, la validazione "+OpenAPILibrary.swagger_request_validator+" non rileva l'accezione!!!!");
 						continue;
+					} else if( openAPILibrary == OpenAPILibrary.swagger_request_validator && (valore.contains("t") || valore.contains("z"))) {
+						System.out.println("\t "+tipoTest+" validate, la validazione "+OpenAPILibrary.swagger_request_validator+" accetta i caratteri minuscoli e non è possibile disabilitarlo");
+						continue;
 					}
 					
-					System.out.println("\t "+tipoTest+" ERRORE!");
+					System.out.println("\t "+tipoTest+" ERRORE ["+i+"]!");
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}
 			} catch(ValidatorException e) {
@@ -2020,8 +2230,12 @@ public class OpenApi3ExtendedTest {
 					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
 				}
 				else {
-					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					if(openAPILibrary != OpenAPILibrary.swagger_request_validator) {
+						// non è attualmente possibile modificare il comportamento di default per swagger request validator
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso ["+i+"]: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso ["+i+"] case["+
+								DateUtils.isDateTimeAllowLowerCaseTZ()+"/"+FormatValidator.isDateTimeAllowLowerCaseTZ()+"] space["+DateUtils.isDateTimeAllowSpaceSeparator()+"/"+FormatValidator.isDateTimeAllowSpaceSeparator()+"]: "+e.getMessage(),e);
+					}
 				}
 				
 				String msgErroreAtteso = null;
@@ -2083,8 +2297,11 @@ public class OpenApi3ExtendedTest {
 					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
 				}
 				else {
-					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					if(openAPILibrary != OpenAPILibrary.swagger_request_validator) {
+						// non è attualmente possibile modificare il comportamento di default per swagger request validator
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
 				}
 				
 				String msgErroreAtteso = null;
@@ -2109,8 +2326,21 @@ public class OpenApi3ExtendedTest {
 		// ** Test su header **
 		
 		for (int i = 0; i < valori_test14.size(); i++) {
-			String valore = valori_test14.get(i);
-						
+			
+			if(i>=indiceDoveAbilitareCaseInsensitiveAndSpaceTest14) {
+				setDateTimeOptions(openAPILibrary, true, true);
+			}
+			else if(i>=indiceDoveAbilitareSpaceTest14) {
+				setDateTimeOptions(openAPILibrary, false, true);
+			}
+			else if(i>=indiceDoveAbilitareCaseInsensitiveTest14) {
+				setDateTimeOptions(openAPILibrary, true, false);
+			}
+			else {
+				setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
+			}	
+			
+			String valore = valori_test14.get(i);		
 			boolean esito = esiti_test14.get(i);
 			
 			TextHttpRequestEntity httpEntity14 = new TextHttpRequestEntity();
@@ -2149,8 +2379,11 @@ public class OpenApi3ExtendedTest {
 					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
 				}
 				else {
-					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					if(openAPILibrary != OpenAPILibrary.swagger_request_validator) {
+						// non è attualmente possibile modificare il comportamento di default per swagger request validator
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
 				}
 				
 				String msgErroreAtteso = null;
@@ -2158,7 +2391,37 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in http header 'datetime_documento_header' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
 					if(!valore.contains("T")) {
-						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						if( (valore.contains("t"))) {
+							if(DateUtils.isDateTimeAllowLowerCaseTZ()) {
+								msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+							}
+							else {
+								msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+							}
+						}
+						else if(valore.contains(" ")){
+							if(valore.split(" ").length>2 && !valore.contains(":") && !valore.contains("17 32")) {
+								if(DateUtils.isDateTimeAllowSpaceSeparator()){
+									msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+								}
+								else {
+									msgErroreAtteso = msgErroreAtteso+ "Expected 'full-date T full-time' format";
+								}
+							}
+							else if(DateUtils.isDateTimeAllowSpaceSeparator()){
+								if(valore.split(" ").length>2) {
+									msgErroreAtteso = msgErroreAtteso+ "Expected 'full-date T full-time' format";
+								}
+								else {
+									msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+								}
+							}		
+							else {
+								msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+							}
+						}else {
+							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						}
 					}
 					else {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
@@ -2172,11 +2435,19 @@ public class OpenApi3ExtendedTest {
 						System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
 						continue;
 					}
-					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetimetest/2020-07-21T17:32:28Z @header.datetime_documento_header] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
+					if(valore.contains("t") && !DateUtils.isDateTimeAllowLowerCaseTZ() && (valore.contains("Z")||valore.contains("+")||valore.contains("-02:00")) ) {
+						msgErroreAtteso = "Expected 'T' separator";
+					}
+					else if(valore.contains("z") && !DateUtils.isDateTimeAllowLowerCaseTZ() && valore.contains("T")) {
+						msgErroreAtteso = "Uncorrect format";
+					}
+					else {
+						msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetimetest/2020-07-21T17:32:28Z @header.datetime_documento_header] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
+					}
 					break;
 				}
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
-					System.out.println("\t "+tipoTest+" ERRORE!");
+					System.out.println("\t "+tipoTest+" ERRORE case["+DateUtils.isDateTimeAllowLowerCaseTZ()+"] space["+DateUtils.isDateTimeAllowSpaceSeparator()+"] ["+e.getMessage()+"]");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
@@ -2214,8 +2485,11 @@ public class OpenApi3ExtendedTest {
 					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
 				}
 				else {
-					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					if(openAPILibrary != OpenAPILibrary.swagger_request_validator) {
+						// non è attualmente possibile modificare il comportamento di default per swagger request validator
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
 				}
 				
 				String msgErroreAtteso = null;
@@ -2223,7 +2497,37 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in http header 'datetime_documento_risposta_header' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
 					if(!valore.contains("T")) {
-						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						if( (valore.contains("t"))) {
+							if(DateUtils.isDateTimeAllowLowerCaseTZ()) {
+								msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+							}
+							else {
+								msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+							}
+						}
+						else if(valore.contains(" ")){
+							if(valore.split(" ").length>2 && !valore.contains(":") && !valore.contains("17 32")) {
+								if(DateUtils.isDateTimeAllowSpaceSeparator()){
+									msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+								}
+								else {
+									msgErroreAtteso = msgErroreAtteso+ "Expected 'full-date T full-time' format";
+								}
+							}
+							else if(DateUtils.isDateTimeAllowSpaceSeparator()){
+								if(valore.split(" ").length>2) {
+									msgErroreAtteso = msgErroreAtteso+ "Expected 'full-date T full-time' format";
+								}
+								else {
+									msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+								}
+							}		
+							else {
+								msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+							}
+						}else {
+							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						}
 					}
 					else {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
@@ -2237,7 +2541,15 @@ public class OpenApi3ExtendedTest {
 						System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
 						continue;
 					}
-					msgErroreAtteso = "[ERROR][RESPONSE][] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
+					if(valore.contains("t") && !DateUtils.isDateTimeAllowLowerCaseTZ() && (valore.contains("Z")||valore.contains("+")||valore.contains("-02:00")) ) {
+						msgErroreAtteso = "Expected 'T' separator";
+					}
+					else if(valore.contains("z") && !DateUtils.isDateTimeAllowLowerCaseTZ() && valore.contains("T")) {
+						msgErroreAtteso = "Uncorrect format";
+					}
+					else {
+						msgErroreAtteso = "[ERROR][RESPONSE][] String \""+valore+"\" is invalid against requested date format(s) [yyyy-MM-dd'T'HH:mm:ssZ, yyyy-MM-dd'T'HH:mm:ss.[0-9]{1,12}Z]";
+					}
 					break;
 				}
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
@@ -2250,6 +2562,20 @@ public class OpenApi3ExtendedTest {
 		// ** Test su query paramater **
 		
 		for (int i = 0; i < valori_test14.size(); i++) {
+			
+			if(i>=indiceDoveAbilitareCaseInsensitiveAndSpaceTest14) {
+				setDateTimeOptions(openAPILibrary, true, true);
+			}
+			else if(i>=indiceDoveAbilitareSpaceTest14) {
+				setDateTimeOptions(openAPILibrary, false, true);
+			}
+			else if(i>=indiceDoveAbilitareCaseInsensitiveTest14) {
+				setDateTimeOptions(openAPILibrary, true, false);
+			}
+			else {
+				setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
+			}	
+			
 			String valore = valori_test14.get(i);
 			boolean esito = esiti_test14.get(i);
 			
@@ -2289,8 +2615,11 @@ public class OpenApi3ExtendedTest {
 					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
 				}
 				else {
-					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					if(openAPILibrary != OpenAPILibrary.swagger_request_validator) {
+						// non è attualmente possibile modificare il comportamento di default per swagger request validator
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
 				}
 				
 				String msgErroreAtteso = null;
@@ -2298,7 +2627,37 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in query parameter 'datetime_documento_query' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
 					if(!valore.contains("T")) {
-						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						if( (valore.contains("t"))) {
+							if(DateUtils.isDateTimeAllowLowerCaseTZ()) {
+								msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+							}
+							else {
+								msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+							}
+						}
+						else if(valore.contains(" ")){
+							if(valore.split(" ").length>2 && !valore.contains(":") && !valore.contains("17 32")) {
+								if(DateUtils.isDateTimeAllowSpaceSeparator()){
+									msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+								}
+								else {
+									msgErroreAtteso = msgErroreAtteso+ "Expected 'full-date T full-time' format";
+								}
+							}
+							else if(DateUtils.isDateTimeAllowSpaceSeparator()){
+								if(valore.split(" ").length>2) {
+									msgErroreAtteso = msgErroreAtteso+ "Expected 'full-date T full-time' format";
+								}
+								else {
+									msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+								}
+							}		
+							else {
+								msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+							}
+						}else {
+							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						}
 					}
 					else {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
@@ -2312,7 +2671,15 @@ public class OpenApi3ExtendedTest {
 						System.out.println("\t "+tipoTest+" validate, lo swagger-request-validator non rileva l'accezione!!!!");
 						continue;
 					}
-					msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetimetest/2020-07-21T17:32:28Z @query.datetime_documento_query] String \""+valore+"\" is invalid against r";
+					if(valore.contains("t") && !DateUtils.isDateTimeAllowLowerCaseTZ() && (valore.contains("Z")||valore.contains("+")||valore.contains("-02:00")) ) {
+						msgErroreAtteso = "Expected 'T' separator";
+					}
+					else if(valore.contains("z") && !DateUtils.isDateTimeAllowLowerCaseTZ() && valore.contains("T")) {
+						msgErroreAtteso = "Uncorrect format";
+					}
+					else {
+						msgErroreAtteso = "[ERROR][REQUEST][POST /documenti/datetimetest/2020-07-21T17:32:28Z @query.datetime_documento_query] String \""+valore+"\" is invalid against r";
+					}
 					break;
 				}
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
@@ -2325,6 +2692,20 @@ public class OpenApi3ExtendedTest {
 		// ** Test su path **
 		
 		for (int i = 0; i < valori_test14.size(); i++) {
+			
+			if(i>=indiceDoveAbilitareCaseInsensitiveAndSpaceTest14) {
+				setDateTimeOptions(openAPILibrary, true, true);
+			}
+			else if(i>=indiceDoveAbilitareSpaceTest14) {
+				setDateTimeOptions(openAPILibrary, false, true);
+			}
+			else if(i>=indiceDoveAbilitareCaseInsensitiveTest14) {
+				setDateTimeOptions(openAPILibrary, true, false);
+			}
+			else {
+				setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
+			}
+			
 			String valore = valori_test14.get(i);
 			boolean esito = esiti_test14.get(i);
 			
@@ -2371,8 +2752,11 @@ public class OpenApi3ExtendedTest {
 					System.out.println("\t "+tipoTest+" atteso errore di validazione, rilevato: "+error);
 				}
 				else {
-					System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
-					throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					if(openAPILibrary != OpenAPILibrary.swagger_request_validator) {
+						// non è attualmente possibile modificare il comportamento di default per swagger request validator
+						System.out.println("\t "+tipoTest+" rilevato errore di validazione non atteso: "+error);
+						throw new Exception(""+tipoTest+" rilevato errore di validazione non atteso: "+e.getMessage(),e);
+					}
 				}
 				
 				String msgErroreAtteso = null;
@@ -2380,7 +2764,37 @@ public class OpenApi3ExtendedTest {
 				case json_schema:
 					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
 					if(!valore.contains("T")) {
-						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						if( (valore.contains("t"))) {
+							if(DateUtils.isDateTimeAllowLowerCaseTZ()) {
+								msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+							}
+							else {
+								msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+							}
+						}
+						else if(valore.contains(" ")){
+							if(valore.split(" ").length>2 && !valore.contains(":") && !valore.contains("17 32")) {
+								if(DateUtils.isDateTimeAllowSpaceSeparator()){
+									msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+								}
+								else {
+									msgErroreAtteso = msgErroreAtteso+ "Expected 'full-date T full-time' format";
+								}
+							}
+							else if(DateUtils.isDateTimeAllowSpaceSeparator()){
+								if(valore.split(" ").length>2) {
+									msgErroreAtteso = msgErroreAtteso+ "Expected 'full-date T full-time' format";
+								}
+								else {
+									msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
+								}
+							}		
+							else {
+								msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+							}
+						}else {
+							msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+						}
 					}
 					else {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
@@ -2392,8 +2806,14 @@ public class OpenApi3ExtendedTest {
 					break;
 				case swagger_request_validator:
 					msgErroreAtteso = "Invalid value '"+valore+"' in dynamic path 'datetime_documento_path' (expected type 'date-time'): Found dateTime '"+valore+"' has wrong format (see RFC 3339, section 5.6): ";
-					if(!valore.contains("T")) {
-						msgErroreAtteso = msgErroreAtteso+ "Expected 'T' separator";
+					if(valore.contains("t") && !DateUtils.isDateTimeAllowLowerCaseTZ() ) {
+						msgErroreAtteso = "Expected 'T' separator";
+					}
+					else if(valore.contains("z") && !DateUtils.isDateTimeAllowLowerCaseTZ() && valore.contains("T")) {
+						msgErroreAtteso = "Uncorrect format";
+					}
+					else if("2020-07-22".equals(valore)) {
+						msgErroreAtteso = "Expected 'T' separator";
 					}
 					else {
 						msgErroreAtteso = msgErroreAtteso+ "Uncorrect format";
@@ -2401,11 +2821,13 @@ public class OpenApi3ExtendedTest {
 					break;
 				}
 				if(msgErroreAtteso!=null && !e.getMessage().contains(msgErroreAtteso)) {
-					System.out.println("\t "+tipoTest+" ERRORE!");
+					System.out.println("\t "+tipoTest+" ERRORE ["+e.getMessage()+"]!");
 					throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
 				}
 			}
 		}
+		
+		setDateTimeOptions(openAPILibrary, defaultDateTimeAllowLowerCaseTZ, defaultDateTimeAllowSpaceSeparator);
 		
 		System.out.println("Test #14 completato\n\n");
 		

@@ -236,25 +236,94 @@ public class DateUtils {
 		
 	}
 	
-	private static final String DATETIME_PATTERN = "^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])[tT ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([zZ]|[+-]\\d{2}:\\d{2})$";
-	public static void validateDateTimeAsRFC3339_sec5_6(String dateTime) throws UtilsException {
+	/**
+	 * https://datatracker.ietf.org/doc/html/rfc3339#section-5.6
+	 * 
+	 * Secondo RFC 3339 Sezione 5.6, i caratteri T e Z sono case-sensitive, e quindi devono essere rispettivamente in maiuscolo. Inoltre, l'uso dello spazio al posto del carattere T per separare la data e l'ora non è permesso in una rappresentazione conforme a RFC 3339.
+	 * 
+	 * Uso di "T" e "Z" maiuscole e minuscole
+	 * Per ABNF e ISO 8601: L'RFC chiarisce che sia l'ABNF (usato per definire la sintassi) sia la specifica ISO 8601 permettono l'uso delle lettere minuscole "t" e "z" come alternative alle maiuscole "T" e "Z".
+	 * Comunque sia le applicazioni che generano timestamp conformi a RFC 3339 dovrebbero preferibilmente utilizzare le lettere maiuscole "T" e "Z" per garantire maggiore compatibilità e aderenza alle convenzioni comuni.
+	 * 
+	 * L'ultima nota evidenzia che ISO 8601 consente di usare uno spazio al posto della "T" come separatore tra la data e l'ora, ma RFC 3339 non prevede questa opzione.
+	 * Quindi per rispettare rigorosamente l'RFC 3339, deve essere usate la "T" (o eventualmente "t").
+	 * Tuttavia, in altri contesti o per migliorare la leggibilità, potrebbe essere accettabile usare uno spazio, ma ciò è fuori dall'ambito strettamente RFC 3339.
+	 */
+	private static boolean dateTimeAllowLowerCaseTZ = false;
+	private static boolean dateTimeAllowSpaceSeparator = false;
+	public static boolean isDateTimeAllowLowerCaseTZ() {
+		return dateTimeAllowLowerCaseTZ;
+	}
+	public static void setDateTimeAllowLowerCaseTZ(boolean dateTimeAllowLowerCaseTZ) {
+		DateUtils.dateTimeAllowLowerCaseTZ = dateTimeAllowLowerCaseTZ;
+	}
+	public static boolean isDateTimeAllowSpaceSeparator() {
+		return dateTimeAllowSpaceSeparator;
+	}
+	public static void setDateTimeAllowSpaceSeparator(boolean dateTimeAllowSpaceSeparator) {
+		DateUtils.dateTimeAllowSpaceSeparator = dateTimeAllowSpaceSeparator;
+	}
+	private static String buildDateTimeSeparatorPattern(boolean dateTimeAllowLowerCase, boolean dateTimeAllowSpaceSeparator) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("T");
+		if(dateTimeAllowLowerCase) {
+			sb.append("t");	
+		}
+		if(dateTimeAllowSpaceSeparator) {
+			sb.append(" ");	
+		}
+		return sb.toString();
+	}
+	private static String buildTimeZonePattern(boolean dateTimeAllowLowerCase) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Z");
+		if(dateTimeAllowLowerCase) {
+			sb.append("z");	
+		}
+		return sb.toString();
+	}
+	
+	private static final String RFC3339_56_ERROR = "' has wrong format (see RFC 3339, section 5.6): ";
+	private static final String UNCORRECT_FORMAT = "Uncorrect format";
+	
+	private static final String DATETIME_PATTERN_SEPARATOR = "tT ";
+	private static final String DATETIME_PATTERN_TIMEZONE = "zZ";
+	private static final String DATETIME_PATTERN = "^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])["+DATETIME_PATTERN_SEPARATOR+"]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(["+DATETIME_PATTERN_TIMEZONE+"]|[+-]\\d{2}:\\d{2})$";
+	public static void validateDateTimeAsRFC3339Sec56(String dateTime) throws UtilsException {
+		validateDateTimeAsRFC3339Sec56(dateTime, DateUtils.dateTimeAllowLowerCaseTZ, DateUtils.dateTimeAllowSpaceSeparator);
+	}
+	public static void validateDateTimeAsRFC3339Sec56(String dateTime, boolean allowLowerCaseTZ, boolean allowSpaceSeparator) throws UtilsException {
 		// RFC 3339, section 5.6
 		// es 2017-07-21T17:32:28Z
 		String fullDate = null;
 		String fullTime = null;
 		try {
 			// date-time = full-date "T" full-time
-			if(dateTime.contains("T")==false) {
-				throw new Exception("Expected 'T' separator");
+			String separator = null;
+			if(!dateTime.contains("T")) {
+				if(allowLowerCaseTZ && dateTime.contains("t")) {
+					separator="t";
+				}
+				else if(allowSpaceSeparator && dateTime.contains(" ")) {
+					separator=" ";
+				}
+				else {
+					throw new UtilsException("Expected 'T' separator");
+				}
 			}
-			String [] split = dateTime.split("T");
+			else {
+				separator="T";
+			}
+			String [] split = dateTime.split(separator);
 			if(split==null || split.length!=2) {
-				throw new Exception("Expected 'full-date T full-time' format");
+				throw new UtilsException("Expected 'full-date T full-time' format");
 			}
 			
 			// check regexp
-			if(_isMatch(dateTime, DATETIME_PATTERN)==false) {
-				throw new Exception("Uncorrect format");
+			String dateTimePattern = DATETIME_PATTERN.replace(DATETIME_PATTERN_SEPARATOR, buildDateTimeSeparatorPattern(allowLowerCaseTZ, allowSpaceSeparator));
+			dateTimePattern = dateTimePattern.replace(DATETIME_PATTERN_TIMEZONE, buildTimeZonePattern(allowLowerCaseTZ));
+			if(!isMatchEngine(dateTime, dateTimePattern)) {
+				throw new UtilsException(UNCORRECT_FORMAT);
 			}
 			
 			// full-date = date-fullyear "-" date-month "-" date-mday
@@ -263,17 +332,17 @@ public class DateUtils {
 			// date-mday       = 2DIGIT  ; 01-28, 01-29, 01-30, 01-31 based on month/year
 			fullDate = split[0];
 			fullTime = split[1];
-		}catch(Throwable e){
-			throw new UtilsException("Found dateTime '"+dateTime+"' has wrong format (see RFC 3339, section 5.6): "+e.getMessage(),e);
+		}catch(Exception e){
+			throw new UtilsException("Found dateTime '"+dateTime+RFC3339_56_ERROR+e.getMessage(),e);
 		}
 		
-		validateDateAsRFC3339_sec5_6(fullDate);
-		validateTimeAsRFC3339_sec5_6(fullTime);
+		validateDateAsRFC3339Sec56(fullDate);
+		validateTimeAsRFC3339Sec56(fullTime);
 	}
 	
 	private static final String FULL_DATE_FORMAT = "yyyy-MM-dd";
 	private static final String DATE_PATTERN = "^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])$";
-	public static void validateDateAsRFC3339_sec5_6(String fullDate) throws UtilsException {
+	public static void validateDateAsRFC3339Sec56(String fullDate) throws UtilsException {
 		// RFC 3339, section 5.6
 		// es 2017-07-21
 		try {
@@ -282,29 +351,35 @@ public class DateUtils {
 			// date-month      = 2DIGIT  ; 01-12
 			// date-mday       = 2DIGIT  ; 01-28, 01-29, 01-30, 01-31 based on month/year
 			if(fullDate==null || "".equals(fullDate)) {
-				throw new Exception("undefined");
+				throw new UtilsException("undefined");
 			}
 			// check regexp
-			if(_isMatch(fullDate, DATE_PATTERN)==false) {
-				throw new Exception("Uncorrect format");
+			if(!isMatchEngine(fullDate, DATE_PATTERN)) {
+				throw new UtilsException(UNCORRECT_FORMAT);
 			}
-			try {
-				SimpleDateFormat sdf = new SimpleDateFormat(FULL_DATE_FORMAT);
-				Date d = sdf.parse(fullDate);
-				d.toString();
-			}catch(Exception e) {
-				throw new Exception("uncorrect format: "+e.getMessage(),e);
-			}
-		}catch(Throwable e){
-			throw new UtilsException("Found date '"+fullDate+"' has wrong format (see RFC 3339, section 5.6): "+e.getMessage(),e);
+			validateDateAsRFC3339Sec56WithSimpleDateFormat(fullDate);
+		}catch(Exception e){
+			throw new UtilsException("Found date '"+fullDate+RFC3339_56_ERROR+e.getMessage(),e);
+		}
+	}
+	private static void validateDateAsRFC3339Sec56WithSimpleDateFormat(String fullDate) throws UtilsException {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat(FULL_DATE_FORMAT);
+			Date d = sdf.parse(fullDate);
+			d.toString();
+		}catch(Exception e) {
+			throw new UtilsException("uncorrect format: "+e.getMessage(),e);
 		}
 	}
 	
 	private static final String FULL_TIME_FORMAT_SECONDS = "HH:mm:ss.SSS";
 	private static final String FULL_TIME_FORMAT_WITHOUT_SECONDS = "HH:mm:ss";
 	private static final String FULL_TIME_FORMAT_OFFSET = "HH:mm";
-	private static final String TIME_PATTERN = "^\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([zZ]|[+-]\\d{2}:\\d{2})$";
-	public static void validateTimeAsRFC3339_sec5_6(String fullTime) throws UtilsException {
+	private static final String TIME_PATTERN = "^\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(["+DATETIME_PATTERN_TIMEZONE+"]|[+-]\\d{2}:\\d{2})$";
+	public static void validateTimeAsRFC3339Sec56(String fullTime) throws UtilsException {
+		validateTimeAsRFC3339Sec56(fullTime, DateUtils.dateTimeAllowLowerCaseTZ);
+	}
+	public static void validateTimeAsRFC3339Sec56(String fullTime, boolean allowLowerCaseTZ) throws UtilsException {
 		// RFC 3339, section 5.6
 		// es 17:32:28Z
 		try {
@@ -317,84 +392,94 @@ public class DateUtils {
 			// time-offset     = "Z" / time-numoffset
 			// time-numoffset  = ("+" / "-") time-hour ":" time-minute
 			if(fullTime==null || "".equals(fullTime)) {
-				throw new Exception("undefined");
+				throw new UtilsException("undefined");
 			}
 			if(fullTime.length()<9) {
-				throw new Exception("too short");
+				throw new UtilsException("too short");
 			}
 			// check regexp
-			if(_isMatch(fullTime, TIME_PATTERN)==false) {
-				throw new Exception("Uncorrect format");
+			String timePattern = TIME_PATTERN.replace(DATETIME_PATTERN_TIMEZONE, buildTimeZonePattern(allowLowerCaseTZ));
+			if(!isMatchEngine(fullTime, timePattern)) {
+				throw new UtilsException(UNCORRECT_FORMAT);
 			}
-			String partialTime = null;
-			if(fullTime.endsWith("Z")) {
-				partialTime = fullTime.substring(0, fullTime.length()-1);
+			String partialTime = validateTimeAsRFC3339Sec56PartialTime(fullTime);
+			if(partialTime==null || "".equals(partialTime)) {
+				throw new UtilsException("undefined partial time");
+			}
+			validateTimeAsRFC3339Sec56WithSimpleDateFormaPartialTime(partialTime);
+			
+		}catch(Exception e){
+			throw new UtilsException("Found time '"+fullTime+RFC3339_56_ERROR+e.getMessage(),e);
+		}
+	}
+	private static String validateTimeAsRFC3339Sec56PartialTime(String fullTime) throws UtilsException {
+		String partialTime = null;
+		if(fullTime.endsWith("Z") || fullTime.endsWith("z")) {
+			partialTime = fullTime.substring(0, fullTime.length()-1);
+		}
+		else {
+			if(!fullTime.contains("+") && !fullTime.contains("-")) {
+				throw new UtilsException("expected '(\"+\" / \"-\") or \"Z\" time-offset character");
+			}
+			String offset = null;
+			String [] splitFullTime = null;
+			if(fullTime.contains("+")) {
+				splitFullTime = fullTime.split("\\+");
 			}
 			else {
-				if(fullTime.contains("+")==false && fullTime.contains("-")==false) {
-					throw new Exception("expected '(\"+\" / \"-\") or \"Z\" time-offset character");
-				}
-				String offset = null;
-				String [] splitFullTime = null;
-				if(fullTime.contains("+")) {
-					splitFullTime = fullTime.split("\\+");
-				}
-				else {
-					splitFullTime = fullTime.split("-");
-				}
-				if(splitFullTime==null || splitFullTime.length!=2) {
-					throw new Exception("expected partial-time time-offset");
-				}
-				partialTime = splitFullTime[0];
-				offset = splitFullTime[1];
-				
-				if(offset==null || "".equals(fullTime)) {
-					throw new Exception("undefined offset time");
-				}
-				try {
-					SimpleDateFormat sdf = new SimpleDateFormat(FULL_TIME_FORMAT_OFFSET);
-					Date d = sdf.parse(offset);
-					d.toString();
-				}catch(Exception e) {
-					throw new Exception("uncorrect offset format: "+e.getMessage(),e);
-				}
+				splitFullTime = fullTime.split("-");
 			}
+			if(splitFullTime==null || splitFullTime.length!=2) {
+				throw new UtilsException("expected partial-time time-offset");
+			}
+			partialTime = splitFullTime[0];
+			offset = splitFullTime[1];
 			
-			if(partialTime==null || "".equals(partialTime)) {
-				throw new Exception("undefined partial time");
+			if(offset==null || "".equals(fullTime)) {
+				throw new UtilsException("undefined offset time");
 			}
-			try {
-				SimpleDateFormat sdf = null;
-				if(partialTime.contains(".")) {
-					sdf = new SimpleDateFormat(FULL_TIME_FORMAT_SECONDS);
-				}
-				else {
-					sdf = new SimpleDateFormat(FULL_TIME_FORMAT_WITHOUT_SECONDS);
-				}
-				Date d = sdf.parse(partialTime);
-				d.toString();
-			}catch(Exception e) {
-				throw new Exception("uncorrect offset format: "+e.getMessage(),e);
+			validateTimeAsRFC3339Sec56WithSimpleDateFormatOffset(offset);
+		}
+		return partialTime;
+	}
+	private static void validateTimeAsRFC3339Sec56WithSimpleDateFormatOffset(String offset) throws UtilsException {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat(FULL_TIME_FORMAT_OFFSET);
+			Date d = sdf.parse(offset);
+			d.toString();
+		}catch(Exception e) {
+			throw new UtilsException("uncorrect offset format: "+e.getMessage(),e);
+		}
+	}
+	private static void validateTimeAsRFC3339Sec56WithSimpleDateFormaPartialTime(String partialTime) throws UtilsException {
+		try {
+			SimpleDateFormat sdf = null;
+			if(partialTime.contains(".")) {
+				sdf = new SimpleDateFormat(FULL_TIME_FORMAT_SECONDS);
 			}
-			
-		}catch(Throwable e){
-			throw new UtilsException("Found time '"+fullTime+"' has wrong format (see RFC 3339, section 5.6): "+e.getMessage(),e);
+			else {
+				sdf = new SimpleDateFormat(FULL_TIME_FORMAT_WITHOUT_SECONDS);
+			}
+			Date d = sdf.parse(partialTime);
+			d.toString();
+		}catch(Exception e) {
+			throw new UtilsException("uncorrect offset format: "+e.getMessage(),e);
 		}
 	}
 	
-	private static boolean _isMatch(String contenuto, String pattern) throws Exception{
+	private static boolean isMatchEngine(String contenuto, String pattern) throws UtilsException{
 		
 		if( (pattern == null) || (pattern.length() == 0))
-			throw new Exception("Pattern di ricerca non fornito");
+			throw new UtilsException("Pattern di ricerca non fornito");
 		if( (contenuto == null) || (contenuto.length() == 0))
-			throw new Exception("Contenuto su cui effettuare una ricerca non fornita");
+			throw new UtilsException("Contenuto su cui effettuare una ricerca non fornita");
 		
 		try{
 			Pattern p = Pattern.compile(pattern);
 			Matcher matcher = p.matcher(contenuto);
 			return matcher.matches();
 		}catch(Exception e){
-			throw new Exception("isMatch contenuto["+contenuto+"] pattern["+pattern+"] error: "+e.getMessage(),e);
+			throw new UtilsException("isMatch contenuto["+contenuto+"] pattern["+pattern+"] error: "+e.getMessage(),e);
 		}
 	}
 	
