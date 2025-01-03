@@ -841,7 +841,14 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		 *   claim requires that the current date/time MUST be after or equal to
 		 *   the not-before date/time listed in the "nbf" claim. 
 		 **/
-		if(!dateNbf.before(now)){
+		
+		Long future = this.modiProperties.getRestSecurityTokenClaimsNbfTimeCheckToleranceMilliseconds();
+		Date futureMax = now;
+		if(future!=null && future.longValue()>0) {
+			futureMax = new Date((now.getTime() + future.longValue()));
+		}
+		
+		if(!dateNbf.before(futureMax)){
 			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.MESSAGGIO_SCADUTO, 
 					prefix+"Token non utilizzabile prima della data '"+nbf+"'"));
 		}
@@ -899,7 +906,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		else {
 			future = this.modiProperties.getSoapSecurityTokenTimestampCreatedTimeCheckFutureToleranceMilliseconds();
 		}
-		if(future!=null) {
+		if(future!=null && future.longValue()>0) {
 			Date futureMax = new Date((DateManager.getTimeMillis() + future.longValue()));
 			if(dateIat.after(futureMax)) {
 				logError(prefix+"Token creato nel futuro (data creazione: '"+iat+"', data massima futura consentita: '"+DateUtils.getSimpleDateFormatMs().format(futureMax)+"', configurazione ms: '"+future.longValue()+"')");

@@ -2325,6 +2325,7 @@ public class OpenSPCoop2Properties {
 			this.getGestioneTokenIatTimeCheckFutureToleranceMilliseconds();
 			this.isGestioneTokenExpTimeCheck();
 			this.getGestioneTokenExpTimeCheckToleranceMilliseconds();
+			this.getGestioneTokenNbfTimeCheckToleranceMilliseconds();
 			this.getGestioneTokenValidityCheck();
 			this.isGestioneTokenSaveSourceTokenInfo();
 			this.isGestioneTokenSaveTokenInfoValidationFailed();
@@ -24798,6 +24799,34 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getGestioneTokenExpTimeCheckToleranceMilliseconds;
+	}
+	
+	private Boolean getGestioneTokenNbfTimeCheckToleranceMillisecondsRead = null;
+	private Long getGestioneTokenNbfTimeCheckToleranceMilliseconds = null;
+	public Long getGestioneTokenNbfTimeCheckToleranceMilliseconds() throws CoreException{
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.nbf.toleranceMilliseconds";
+		if(this.getGestioneTokenNbfTimeCheckToleranceMillisecondsRead==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.getGestioneTokenNbfTimeCheckToleranceMilliseconds = Long.parseLong(value); // gia' millisecondi
+					if(this.getGestioneTokenNbfTimeCheckToleranceMilliseconds<=0) {
+						// disabilito il controllo
+						this.getGestioneTokenNbfTimeCheckToleranceMilliseconds=null;
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+pName+"' non impostata, errore:"+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}
+			
+			this.getGestioneTokenNbfTimeCheckToleranceMillisecondsRead = true;
+		}
+
+		return this.getGestioneTokenNbfTimeCheckToleranceMilliseconds;
 	}
 	
 	private CertificateValidityCheck getGestioneTokenValidityCheck = null;

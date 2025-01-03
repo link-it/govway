@@ -1,6 +1,13 @@
 2025-01-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Aggiunta funzionalità #1558
+	Aggiunta di un criterio di tolleranza per la validazione del claim 'nbf' nei token di sicurezza ModI e nei token validati tramite Token Policy.
+	La tolleranza predefinita è impostata a 5 secondi, con la possibilità di personalizzarla tramite la configurazione di GovWay.
+
+2025-01-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Risolto Bug #1556
 	La funzionalità di validazione dei contenuti tramite OpenAPI è stata modificata per garantire che i payload contenenti elementi 'date-time' non conformi a RFC 3339 (#section-5.6), 
 	come caratteri minuscoli (t, z) o spazi (' ') al posto del separatore T, vengano rifiutati. 

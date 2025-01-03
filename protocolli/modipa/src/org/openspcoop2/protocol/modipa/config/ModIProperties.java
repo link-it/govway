@@ -305,6 +305,7 @@ public class ModIProperties {
 			getRestSecurityTokenClaimsIatTimeCheckFutureToleranceMilliseconds();
 			isRestSecurityTokenClaimsExpTimeCheck();
 			getRestSecurityTokenClaimsExpTimeCheckToleranceMilliseconds();
+			getRestSecurityTokenClaimsNbfTimeCheckToleranceMilliseconds();
 			getRestSecurityTokenDigestDefaultEncoding();
 			isRestSecurityTokenDigestEncodingChoice();
 			getRestSecurityTokenDigestEncodingAccepted();
@@ -2245,6 +2246,43 @@ public class ModIProperties {
 		}
 
 		return this.getRestSecurityTokenClaimsExpTimeCheckToleranceMilliseconds;
+	}
+	
+	private Boolean getRestSecurityTokenClaimsNbfTimeCheckToleranceMillisecondsReaded = null;
+	private Long getRestSecurityTokenClaimsNbfTimeCheckToleranceMilliseconds = null;
+	public Long getRestSecurityTokenClaimsNbfTimeCheckToleranceMilliseconds() throws ProtocolException{
+
+		if(this.getRestSecurityTokenClaimsNbfTimeCheckToleranceMillisecondsReaded==null){
+			
+			String name = "org.openspcoop2.protocol.modipa.rest.securityToken.claims.nbf.toleranceMilliseconds";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+
+				if (value != null){
+					value = value.trim();
+					long tmp = Long.parseLong(value); // già in millisecondi
+					if(tmp>0) {
+						long maxLongValue = Long.MAX_VALUE;
+						if(tmp>maxLongValue) {
+							this.logWarn(getPrefixValoreIndicatoProprieta(value,name)+getSuffixSuperioreMassimoConsentitoControlloDisabilitato(maxLongValue));
+						}
+						else {
+							this.getRestSecurityTokenClaimsNbfTimeCheckToleranceMilliseconds = tmp;
+						}
+					}
+					else {
+						this.logWarn(getMessaggioVerificaDisabilitata(name));
+					}
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(name, e),e);
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			
+			this.getRestSecurityTokenClaimsNbfTimeCheckToleranceMillisecondsReaded = true;
+		}
+
+		return this.getRestSecurityTokenClaimsNbfTimeCheckToleranceMilliseconds;
 	}
 
 	private DigestEncoding getRestSecurityTokenDigestDefaultEncoding= null;
