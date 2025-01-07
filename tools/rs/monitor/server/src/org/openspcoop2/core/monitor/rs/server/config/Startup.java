@@ -44,6 +44,7 @@ import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -169,6 +170,18 @@ public class Startup implements ServletContextListener {
 				serverProperties = ServerProperties.getInstance();
 			} catch (Exception e) {
 				doError("Errore durante l'inizializzazione del serverProperties",e);
+			}
+			
+			// Inizializzo Controlli connessioni
+			try {
+				Logger logR = Startup.log;
+				ServicesUtils.initCheckConnectionDB(logR, serverProperties.isJdbcCloseConnectionCheckIsClosed(), serverProperties.isJdbcCloseConnectionCheckAutocommit());
+				
+				DBManager.setCheckLogger(logR);
+				DBManager.setCheckIsClosed(serverProperties.isJdbcCloseConnectionCheckIsClosed());
+				DBManager.setCheckAutocommit(serverProperties.isJdbcCloseConnectionCheckAutocommit());
+			} catch (Exception e) {
+				doError("Inizializzazione controlli connessione non riuscita",e);
 			}
 			
 			// Map (environment)

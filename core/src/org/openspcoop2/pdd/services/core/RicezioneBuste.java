@@ -2132,8 +2132,8 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				id = 
 					imbustamento.buildID(idSoggetto, 
 							(String) this.msgContext.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE), 
-							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-							propertiesReader.getGestioneSerializableDB_CheckInterval(),
+							propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+							propertiesReader.getGestioneSerializableDBCheckInterval(),
 							RuoloMessaggio.RICHIESTA);
 			}
 			

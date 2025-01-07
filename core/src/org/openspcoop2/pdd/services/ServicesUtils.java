@@ -42,6 +42,7 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -52,8 +53,10 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
+import org.openspcoop2.generic_project.dao.jdbc.JDBCServiceManagerBase;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
@@ -61,6 +64,7 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
@@ -84,11 +88,13 @@ import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.pdd.services.connector.ConnectorUtils;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorInMessage;
 import org.openspcoop2.pdd.services.connector.messages.ConnectorOutMessage;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.registry.ServiceIdentificationReader;
 import org.openspcoop2.protocol.registry.CachedRegistryReader;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.builder.InformazioniErroriInfrastrutturali;
 import org.openspcoop2.protocol.sdk.config.IProtocolManager;
@@ -101,11 +107,13 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.protocol.utils.IDSerialGenerator;
 import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.TimeoutIOException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.CORSRequestType;
@@ -129,18 +137,20 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ServicesUtils {
+	
+	private ServicesUtils() {}
 
-	private static java.util.Random _rnd = null;
+	private static java.util.Random internalRnd = null;
 	private static synchronized void initRandom() {
-		if(_rnd==null) {
-			_rnd = new SecureRandom();
+		if(internalRnd==null) {
+			internalRnd = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandom() {
-		if(_rnd==null) {
+		if(internalRnd==null) {
 			initRandom();
 		}
-		return _rnd;
+		return internalRnd;
 	}
 	
 	
@@ -190,7 +200,9 @@ public class ServicesUtils {
 				return true;
 			}
 			
-		}catch(Throwable tIgnore) {}
+		}catch(Throwable tIgnore) {
+			// ignore
+		}
 		
 		return false;
 	}
@@ -200,7 +212,9 @@ public class ServicesUtils {
 			if(LimitExceededIOException.isLimitExceededIOException(t) && t.getMessage()!=null && t.getMessage().startsWith(CostantiPdD.PREFIX_LIMITED_RESPONSE)) {
 				return true;
 			}
-		}catch(Throwable tIgnore) {}
+		}catch(Throwable tIgnore) {
+			// ignore
+		}
 		
 		return false;
 	}
@@ -212,7 +226,7 @@ public class ServicesUtils {
 		boolean erroreUtilizzoConnettore = false;
 		if(pddContext!=null){
 			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE);
-			if(o!=null && (o instanceof Boolean)){
+			if(o instanceof Boolean){
 				erroreUtilizzoConnettore = (Boolean) o;
 			}
 		}
@@ -221,7 +235,7 @@ public class ServicesUtils {
 		boolean erroreSOAPFaultServerPortaDelegata = false;
 		if(pddContext!=null){
 			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_SOAP_FAULT_SERVER);
-			if(o!=null && (o instanceof Boolean)){
+			if(o instanceof Boolean){
 				erroreSOAPFaultServerPortaDelegata = (Boolean) o;
 			}
 		}
@@ -230,7 +244,7 @@ public class ServicesUtils {
 		boolean erroreContenutoRichiestaNonRiconosciuto = false;
 		if(pddContext!=null){
 			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO);
-			if(o!=null && (o instanceof Boolean)){
+			if(o instanceof Boolean){
 				erroreContenutoRichiestaNonRiconosciuto = (Boolean) o;
 			}
 		}
@@ -239,7 +253,7 @@ public class ServicesUtils {
 		boolean erroreContenutoRispostaNonRiconosciuto = false;
 		if(pddContext!=null){
 			Object o = pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO);
-			if(o!=null && (o instanceof Boolean)){
+			if(o instanceof Boolean){
 				erroreContenutoRispostaNonRiconosciuto = (Boolean) o;
 			}
 		}
@@ -269,7 +283,7 @@ public class ServicesUtils {
 					if(header == null) return null;
 					
 					List<NameValue> filtri = openspcoopProperties.getBypassFilterMustUnderstandProperties(protocolFactory.getProtocol());
-					if(filtri!=null && filtri.size()>0){
+					if(filtri!=null && !filtri.isEmpty()){
 						return ServicesUtils.checkMustUnderstandHeaderElement(message.getMessageType(),header,filtri);
 					}
 				}
@@ -299,7 +313,7 @@ public class ServicesUtils {
 		
 		try{
 			StringBuilder bfError = new StringBuilder();
-			if(SoapUtils.checkMustUnderstandHeaderElement(messageType, header, filtri, bfError)==false){
+			if(!SoapUtils.checkMustUnderstandHeaderElement(messageType, header, filtri, bfError)){
 				return bfError.toString();
 			}
 			return null;
@@ -311,7 +325,7 @@ public class ServicesUtils {
 	
 	public static String checkSOAPEnvelopeNamespace(OpenSPCoop2SoapMessage message, MessageType messageType) throws MessageException{
 		try {
-			if(SoapUtils.checkSOAPEnvelopeNamespace(message, messageType)==false){
+			if(!SoapUtils.checkSOAPEnvelopeNamespace(message, messageType)){
 				
 				OpenSPCoop2MessageSoapStreamReader reader = message.getSoapReader();
 				String envelopeNamespace = null;
@@ -356,7 +370,7 @@ public class ServicesUtils {
 				}
 				boolean find = false;
 				for (String def : ctDefault) {
-					if(def.toLowerCase().equals(charset.toLowerCase())) {
+					if(def.equalsIgnoreCase(charset)) {
 						find = true;
 						break;
 					}
@@ -383,7 +397,7 @@ public class ServicesUtils {
 
 	
 	public static boolean verificaRispostaRelazioneCodiceTrasporto202(IProtocolFactory<?> protocolFactory,OpenSPCoop2Properties openSPCoopProperties,
-			OpenSPCoop2Message responseMessage,boolean gestioneLatoPortaDelegata) throws Exception{
+			OpenSPCoop2Message responseMessage,boolean gestioneLatoPortaDelegata) throws ProtocolException, MessageException, MessageNotSupportedException {
 		
 		if(responseMessage==null){
 			return false;
@@ -413,14 +427,13 @@ public class ServicesUtils {
 							header = (SOAPHeader) h;
 						}
 						if(h==null || header==null ||  SoapUtils.getFirstNotEmptyChildNode(responseMessage.getFactory(), header,false)==null ){
-							//System.out.println("MESSAGGIO INUTILE");
+							/**System.out.println("MESSAGGIO INUTILE");*/
 							rispostaPresente = false;
 						}else{
-							if(gestioneLatoPortaDelegata){
-								if( protocolManager.isHttpOneWay_PD_HTTPEmptyResponse() == false ) {
-									// E' possibile impostare una opzione che non torni nulla anche in questo caso
-									rispostaPresente = false;
-								}
+							if(gestioneLatoPortaDelegata &&
+								!protocolManager.isHttpOneWay_PD_HTTPEmptyResponse() ) {
+								// E' possibile impostare una opzione che non torni nulla anche in questo caso
+								rispostaPresente = false;
 							}
 						}
 
@@ -433,11 +446,11 @@ public class ServicesUtils {
 				}
 			}
 			else{
-//				OpenSPCoop2RestMessage<?> rest = responseMessage.castAsRest();
-//				if(rest.hasContent()==false){
-//					//System.out.println("MESSAGGIO VUOTO");
-//					rispostaPresente = false;
-//				}
+				/**OpenSPCoop2RestMessage<?> rest = responseMessage.castAsRest();
+				if(rest.hasContent()==false){
+					//System.out.println("MESSAGGIO VUOTO");
+					rispostaPresente = false;
+				}*/
 				rispostaPresente = true; // La gestione del return code in REST è indipendente dal fatto se vi è o meno un contenuto
 			}
 		}
@@ -449,32 +462,30 @@ public class ServicesUtils {
 	
 	public static void setTransferLength(TransferLengthModes transferLengthMode,
 			ConnectorInMessage connectorInMessage, ConnectorOutMessage connectorOutMessage,
-			OpenSPCoop2Message message) throws Exception{
+			OpenSPCoop2Message message) throws ConnectorException, MessageException {
 		String requestProtocoll = connectorInMessage.getProtocol();
 		if(requestProtocoll!=null && requestProtocoll.endsWith("1.1")){
 			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(transferLengthMode)){
 				connectorOutMessage.setHeader(HttpConstants.TRANSFER_ENCODING,HttpConstants.TRANSFER_ENCODING_VALUE_CHUNCKED);
 			}
-			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode)){
-				if(message!=null){
-					message.writeTo(NullOutputStream.INSTANCE, false);
-					connectorOutMessage.setContentLength((int)message.getOutgoingMessageContentLength());
-				}
+			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode) &&
+				message!=null){
+				message.writeTo(NullOutputStream.INSTANCE, false);
+				connectorOutMessage.setContentLength((int)message.getOutgoingMessageContentLength());
 			}
 		}
 	}
 	public static void setTransferLength(TransferLengthModes transferLengthMode,
 			ConnectorInMessage connectorInMessage, ConnectorOutMessage connectorOutMessage,
-			Long length) throws Exception{
+			Long length) throws ConnectorException {
 		String requestProtocoll = connectorInMessage.getProtocol();
 		if(requestProtocoll!=null && requestProtocoll.endsWith("1.1")){
 			if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.equals(transferLengthMode)){
 				connectorOutMessage.setHeader(HttpConstants.TRANSFER_ENCODING,HttpConstants.TRANSFER_ENCODING_VALUE_CHUNCKED);
 			}
-			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode)){
-				if(length!=null){
-					connectorOutMessage.setContentLength(length.intValue());
-				}
+			else if(TransferLengthModes.CONTENT_LENGTH.equals(transferLengthMode) &&
+				length!=null){
+				connectorOutMessage.setContentLength(length.intValue());
 			}
 		}
 	}
@@ -586,7 +597,7 @@ public class ServicesUtils {
 			
 			Object nomePortaObject = pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
 			String nomePorta = null;
-			if(nomePortaObject!=null && nomePortaObject instanceof String) {
+			if(nomePortaObject instanceof String) {
 				nomePorta = (String) nomePortaObject;
 			}
 			
@@ -812,6 +823,27 @@ public class ServicesUtils {
 		}
 		return esito;
 	}
+	
+	public static void initCheckConnectionDB(Logger logR, boolean checkIsClosed, boolean checkAutoCommit) {
+		DriverConfigurazioneDB.setCheckLogger(logR);
+		DriverConfigurazioneDB.setCheckIsClosed(checkIsClosed);
+		DriverConfigurazioneDB.setCheckAutocommit(checkAutoCommit);
+		DriverRegistroServiziDB.setCheckLogger(logR);
+		DriverRegistroServiziDB.setCheckIsClosed(checkIsClosed);
+		DriverRegistroServiziDB.setCheckAutocommit(checkAutoCommit);
+		JDBCServiceManagerBase.setCheckLogger(logR);
+		JDBCServiceManagerBase.setCheckIsClosed(checkIsClosed);
+		JDBCServiceManagerBase.setCheckAutocommit(checkAutoCommit);
+		BasicComponentFactory.setCheckLogger(logR);
+		BasicComponentFactory.setCheckIsClosed(checkIsClosed);
+		BasicComponentFactory.setCheckAutocommit(checkAutoCommit);
+		IDSerialGenerator.setCheckLogger(logR);
+		IDSerialGenerator.setCheckIsClosed(checkIsClosed);
+		IDSerialGenerator.setCheckAutocommit(checkAutoCommit);
+		org.openspcoop2.utils.datasource.DataSource.setCheckLogger(logR);
+		org.openspcoop2.utils.datasource.DataSource.setCheckIsClosed(checkIsClosed);
+		org.openspcoop2.utils.datasource.DataSource.setCheckAutocommit(checkAutoCommit);
+	}
 }
 
 class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
@@ -821,7 +853,7 @@ class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
 		try {
 			this.outMessage.setContentType(type);
 		}catch(Exception e) {
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 	}
 
@@ -830,7 +862,7 @@ class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
 		try {
 			this.outMessage.setHeader(arg0, arg1+"");
 		}catch(Exception e) {
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 	}
 
@@ -839,7 +871,7 @@ class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
 		try {
 			this.outMessage.setHeader(arg0, arg1);
 		}catch(Exception e) {
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 	}
 	
@@ -848,7 +880,7 @@ class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
 		try {
 			this.outMessage.addHeader(arg0, arg1);
 		}catch(Exception e) {
-			throw new RuntimeException(e.getMessage(),e);
+			throw new UtilsRuntimeException(e.getMessage(),e);
 		}
 	}
 
@@ -859,6 +891,4 @@ class ConnectorHttpServletResponse extends WrappedHttpServletResponse {
 		this.outMessage = outMessage;
 	}
 	
-	
-
 }

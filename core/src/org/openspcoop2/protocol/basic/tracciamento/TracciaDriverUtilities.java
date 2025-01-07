@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
@@ -72,6 +73,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class TracciaDriverUtilities {
+	
+	private TracciaDriverUtilities() {}
 
 	public static ISQLQueryObject getSQLQueryObject(String tipoDatabase)throws SQLQueryObjectException{
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
@@ -250,7 +253,7 @@ public class TracciaDriverUtilities {
 					sqlQueryObject.addWhereCondition(CostantiDB.TRACCE+"."+CostantiDB.TRACCE_COLUMN_ID+"="+aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_ID_TRACCIA);
 					sqlQueryObject.addWhereCondition(aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_NAME+"=?");	
 					// BUG: la colonna è un clob: su Oracle si ottiene: ORA-00932: inconsistent datatypes: expected - got CLOB
-					//sqlQueryObject.addWhereCondition(aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE+"=?");
+					/**sqlQueryObject.addWhereCondition(aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE+"=?");*/
 					sqlQueryObject.addWhereLikeCondition(aliasExtInfo+"."+CostantiDB.TRACCE_EXT_PROTOCOL_INFO_COLUMN_VALUE, 
 							filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i]), false, false);
 				}
@@ -295,7 +298,7 @@ public class TracciaDriverUtilities {
 			//limit
 			if(f.getLimit()>0)
 				sqlQueryObject.setLimit(f.getLimit());
-			/*else 
+			/**else 
 				sqlQueryObject.setLimit(1000);*/
 			// Offset
 			if(f.getOffset()>0)
@@ -539,12 +542,12 @@ public class TracciaDriverUtilities {
 					if(pstmt!=null) {
 						pstmt.setString(startIndex++, nomi[i]);
 						// BUG: la colonna value è un TEXT: su Oracle si ottiene: ORA-00932: inconsistent datatypes: expected - got CLOB
-						//pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i]));
+						/**pstmt.setString(startIndex++, filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i]));*/
 					}
 					if(query!=null) {
 						query.replaceFirst("\\?", "'"+nomi[i]+"'");
 						// BUG: la colonna value è un TEXT: su Oracle si ottiene: ORA-00932: inconsistent datatypes: expected - got CLOB
-						//query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i])+"'");
+						/**query.replaceFirst("\\?", "'"+filtro.getInformazioniProtocollo().getProprietaProtocollo(nomi[i])+"'");*/
 					}
 				}
 			}
@@ -623,6 +626,10 @@ public class TracciaDriverUtilities {
 			Logger log,Long id,List<String> properties,
 			ProtocolliRegistrati protocolli) throws DriverTracciamentoException, DriverTracciamentoNotFoundException, SQLQueryObjectException{
 		
+		if(log!=null) {
+			// nop
+		}
+		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		PreparedStatement pstmtLista = null;
@@ -670,33 +677,33 @@ public class TracciaDriverUtilities {
 				}
 				Busta busta = new Busta(tr.getProtocollo());
 				
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_TIPO)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_TIPO))==false) )
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_TIPO)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_TIPO))) )
 					busta.setTipoMittente(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_TIPO));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_NOME)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_NOME))==false) )
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_NOME)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_NOME))) )
 					busta.setMittente(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_NOME));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_IDPORTA)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_IDPORTA))==false) )
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_IDPORTA)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_IDPORTA))) )
 					busta.setIdentificativoPortaMittente(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_IDPORTA));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_INDIRIZZO)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_INDIRIZZO))==false)){
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_INDIRIZZO)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_INDIRIZZO)))){
 					busta.setIndirizzoMittente(rs.getString(CostantiDB.TRACCE_COLUMN_MITTENTE_INDIRIZZO));
 				}
 				
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_TIPO)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_TIPO))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_TIPO)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_TIPO))))
 					busta.setTipoDestinatario(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_TIPO));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_NOME)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_NOME))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_NOME)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_NOME))))
 					busta.setDestinatario(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_NOME));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_IDPORTA)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_IDPORTA))==false) )
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_IDPORTA)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_IDPORTA))) )
 					busta.setIdentificativoPortaDestinatario(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_IDPORTA));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_INDIRIZZO)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_INDIRIZZO))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_INDIRIZZO)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_INDIRIZZO))))
 					busta.setIndirizzoDestinatario(rs.getString(CostantiDB.TRACCE_COLUMN_DESTINATARIO_INDIRIZZO));
 				
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_SA_FRUITORE)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SA_FRUITORE))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_SA_FRUITORE)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SA_FRUITORE))))
 					busta.setServizioApplicativoFruitore(rs.getString(CostantiDB.TRACCE_COLUMN_SA_FRUITORE));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_SA_EROGATORE)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SA_EROGATORE))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_SA_EROGATORE)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SA_EROGATORE))))
 					busta.setServizioApplicativoErogatore(rs.getString(CostantiDB.TRACCE_COLUMN_SA_EROGATORE));
 				
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE))))
 					busta.setProfiloDiCollaborazioneValue(rs.getString(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE_SDK_CONSTANT)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE_SDK_CONSTANT))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE_SDK_CONSTANT)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE_SDK_CONSTANT))))
 					busta.setProfiloDiCollaborazione(ProfiloDiCollaborazione.toProfiloDiCollaborazione(rs.getString(CostantiDB.TRACCE_COLUMN_PROFILO_COLLABORAZIONE_SDK_CONSTANT)));
 				
 				Integer versioneServizioCorrelato = rs.getInt(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_VERSIONE);
@@ -706,12 +713,12 @@ public class TracciaDriverUtilities {
 				if(versioneServizioCorrelato!=null){
 					busta.setVersioneServizioCorrelato(versioneServizioCorrelato);
 				}
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_NOME)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_NOME))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_NOME)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_NOME))))
 					busta.setServizioCorrelato(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_NOME));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_TIPO)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_TIPO))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_TIPO)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_TIPO))))
 					busta.setTipoServizioCorrelato(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_CORRELATO_TIPO));
 				
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_COLLABORAZIONE)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_COLLABORAZIONE))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_COLLABORAZIONE)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_COLLABORAZIONE))))
 					busta.setCollaborazione(rs.getString(CostantiDB.TRACCE_COLUMN_COLLABORAZIONE));
 				
 				Integer versioneServizio = rs.getInt(CostantiDB.TRACCE_COLUMN_SERVIZIO_VERSIONE);
@@ -721,37 +728,34 @@ public class TracciaDriverUtilities {
 				if(versioneServizio!=null){
 					busta.setVersioneServizio(versioneServizio);
 				}
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_NOME)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_NOME))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_NOME)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_NOME))))
 					busta.setServizio(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_NOME));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_TIPO)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_TIPO))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_TIPO)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_TIPO))))
 					busta.setTipoServizio(rs.getString(CostantiDB.TRACCE_COLUMN_SERVIZIO_TIPO));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_AZIONE)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_AZIONE))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_AZIONE)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_AZIONE))))
 					busta.setAzione(rs.getString(CostantiDB.TRACCE_COLUMN_AZIONE));
 				
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO))))
 					busta.setID(rs.getString(CostantiDB.TRACCE_COLUMN_ID_MESSAGGIO));
 				
 				if(rs.getTimestamp(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE)!=null )
 					busta.setOraRegistrazione(rs.getTimestamp(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO))))
 					busta.setTipoOraRegistrazioneValue(rs.getString(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT))))
 					busta.setTipoOraRegistrazione(TipoOraRegistrazione.toTipoOraRegistrazione(rs.getString(CostantiDB.TRACCE_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT)),busta.getTipoOraRegistrazioneValue());
 				
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_RIFERIMENTO_MESSAGGIO)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_RIFERIMENTO_MESSAGGIO))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_RIFERIMENTO_MESSAGGIO)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_RIFERIMENTO_MESSAGGIO))))
 					busta.setRiferimentoMessaggio(rs.getString(CostantiDB.TRACCE_COLUMN_RIFERIMENTO_MESSAGGIO));
 				
 				if(rs.getTimestamp(CostantiDB.TRACCE_COLUMN_SCADENZA)!=null )
 					busta.setScadenza(rs.getTimestamp(CostantiDB.TRACCE_COLUMN_SCADENZA));
 				
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_INOLTRO)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_INOLTRO))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_INOLTRO)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_INOLTRO))))
 					busta.setInoltroValue(rs.getString(CostantiDB.TRACCE_COLUMN_INOLTRO));
-				if(rs.getString(CostantiDB.TRACCE_COLUMN_INOLTRO_SDK_CONSTANT)!=null && ("".equals(rs.getString(CostantiDB.TRACCE_COLUMN_INOLTRO_SDK_CONSTANT))==false))
+				if(rs.getString(CostantiDB.TRACCE_COLUMN_INOLTRO_SDK_CONSTANT)!=null && (!"".equals(rs.getString(CostantiDB.TRACCE_COLUMN_INOLTRO_SDK_CONSTANT))))
 					busta.setInoltro(Inoltro.toInoltro(rs.getString(CostantiDB.TRACCE_COLUMN_INOLTRO_SDK_CONSTANT)),busta.getInoltroValue());
-				if(rs.getInt(CostantiDB.TRACCE_COLUMN_CONFERMA_RICEZIONE)==1)
-					busta.setConfermaRicezione(true);
-				else
-					busta.setConfermaRicezione(false);
+				busta.setConfermaRicezione(rs.getInt(CostantiDB.TRACCE_COLUMN_CONFERMA_RICEZIONE)==1);
 				
 				if(rs.getLong(CostantiDB.TRACCE_COLUMN_SEQUENZA)>0){
 					busta.setSequenza(rs.getLong(CostantiDB.TRACCE_COLUMN_SEQUENZA));
@@ -768,7 +772,7 @@ public class TracciaDriverUtilities {
 				tr.setId(idTraccia);
 				tr.addProperty(TracciaDriver.IDTRACCIA, idTraccia+"");
 				
-				//System.out.println("ID TRACCIA ["+idTraccia+"]");
+				/**System.out.println("ID TRACCIA ["+idTraccia+"]");*/
 				
 				IProtocolFactory<?> protocolFactory = protocolli.getProtocolFactory(tr.getProtocollo());
 				ITraduttore traduttoreProtocollo = protocolFactory.createTraduttore();
@@ -785,31 +789,31 @@ public class TracciaDriverUtilities {
 				while(rsLista.next()){
 					Trasmissione trtr = new Trasmissione();
 					
-					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE))))
 						trtr.setOrigine(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE));
-					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_TIPO)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_TIPO))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_TIPO)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_TIPO))))
 						trtr.setTipoOrigine(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_TIPO));
-					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_INDIRIZZO)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_INDIRIZZO))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_INDIRIZZO)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_INDIRIZZO))))
 						trtr.setIndirizzoOrigine(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_INDIRIZZO));
-					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_IDPORTA)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_IDPORTA))==false)){
+					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_IDPORTA)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_IDPORTA)))){
 						trtr.setIdentificativoPortaOrigine(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORIGINE_IDPORTA));
 					}
 					
-					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE))))
 						trtr.setDestinazione(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE));
-					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_TIPO)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_TIPO))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_TIPO)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_TIPO))))
 						trtr.setTipoDestinazione(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_TIPO));
-					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_INDIRIZZO)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_INDIRIZZO))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_INDIRIZZO)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_INDIRIZZO))))
 						trtr.setIndirizzoDestinazione(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_INDIRIZZO));
-					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_IDPORTA)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_IDPORTA))==false)){
+					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_IDPORTA)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_IDPORTA)))){
 						trtr.setIdentificativoPortaDestinazione(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_DESTINAZIONE_IDPORTA));
 					}
 					
 					if(rsLista.getTimestamp(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE)!=null )
 						trtr.setOraRegistrazione(rsLista.getTimestamp(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE));
-					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO))))
 						trtr.setTempoValue(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO));
-					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT))))
 						trtr.setTempo(TipoOraRegistrazione.toTipoOraRegistrazione(rsLista.getString(CostantiDB.TRACCE_TRASMISSIONI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT)));
 					busta.addTrasmissione(trtr);
 				}
@@ -924,15 +928,15 @@ public class TracciaDriverUtilities {
 				rsLista = pstmtLista.executeQuery();
 				while(rsLista.next()){
 					Riscontro trris = new  Riscontro();
-					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO))))
 						trris.setID(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ID_RISCONTRO));
-					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_RICEVUTA)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_RICEVUTA))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_RICEVUTA)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_RICEVUTA))))
 						trris.setRicevuta(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_RICEVUTA));
 					if(rsLista.getTimestamp(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE)!=null )
 						trris.setOraRegistrazione(rsLista.getTimestamp(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE));
-					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO))))
 						trris.setTipoOraRegistrazioneValue(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO));
-					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT)!=null && ("".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT))==false))
+					if(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT)!=null && (!"".equals(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT))))
 						trris.setTipoOraRegistrazione(TipoOraRegistrazione.toTipoOraRegistrazione(rsLista.getString(CostantiDB.TRACCE_RISCONTRI_COLUMN_ORA_REGISTRAZIONE_TIPO_SDK_CONSTANT)));
 					busta.addRiscontro(trris);
 				}
@@ -994,34 +998,8 @@ public class TracciaDriverUtilities {
 		}catch(Exception e){
 			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
 		}finally{
-			try{
-				if(rsLista!=null) {
-					rsLista.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(pstmtLista!=null) {
-					pstmtLista.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(rs!=null) {
-					rs.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(pstmt!=null) {
-					pstmt.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
+			JDBCUtilities.closeResources(rsLista, pstmtLista);
+			JDBCUtilities.closeResources(rs, pstmt);
 		}
 	} 
 	

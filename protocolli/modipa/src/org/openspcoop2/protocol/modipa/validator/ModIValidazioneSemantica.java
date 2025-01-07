@@ -1299,14 +1299,4 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		}
 	}
 	
-	private void logError(String msg) {
-		if(this.log!=null) {
-			this.log.error(msg);
-		}
-	}
-	private void logError(String msg, Exception e) {
-		if(this.log!=null) {
-			this.log.error(msg,e);
-		}
-	}
 }

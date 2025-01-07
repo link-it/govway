@@ -40,6 +40,7 @@ import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnosticoException;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
 
@@ -52,7 +53,7 @@ import org.openspcoop2.utils.resources.GestoreJNDI;
  * @version $Rev$, $Date$
  */
 public class BasicProducer extends BasicComponentFactory implements IMonitoraggioRisorsa {
-
+	
 	/** Properties */
 	protected Properties appenderProperties;
 		
@@ -61,15 +62,15 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 	protected String datasource = null;
    
 	/** Connessione diretta via JDBC */
-	protected String connectionViaJDBC_url = null;
-	protected String connectionViaJDBC_driverJDBC = null;
-	protected String connectionViaJDBC_username = null;
-	protected String connectionViaJDBC_password = null;
+	protected String connectionViaJDBCUrl = null;
+	protected String connectionViaJDBCDriverJDBC = null;
+	protected String connectionViaJDBCUsername = null;
+	protected String connectionViaJDBCPassword = null;
 
     /** SingleConnection */
 	protected boolean singleConnection = false;
-	protected HashMap<BasicProducerType, Connection> singleConnection_connection_map = new HashMap<>(); 
-	protected HashMap<BasicProducerType, String> singleConnection_source_map = new HashMap<>(); 
+	protected HashMap<BasicProducerType, Connection> singleConnectionConnectionMap = new HashMap<>(); 
+	protected HashMap<BasicProducerType, String> singleConnectionSourceMap = new HashMap<>(); 
 	
 	/** TipoDatabase */
 	protected String tipoDatabase = null; 
@@ -101,101 +102,101 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 	
 	
 
-	protected synchronized void initConnection(DataSource dsA,String dataSourceS)throws Exception{
-		Connection singleConnection_connection = this.singleConnection_connection_map.get(this.producerType);
-    	if(singleConnection_connection==null){
+	protected synchronized void initConnection(DataSource dsA,String dataSourceS)throws ProtocolException{
+		Connection singleConnectionConnection = this.singleConnectionConnectionMap.get(this.producerType);
+    	if(singleConnectionConnection==null){
     		try{
-    			String singleConnection_source = dataSourceS;
-    			singleConnection_connection = dsA.getConnection();
-    			this.singleConnection_connection_map.put(this.producerType, singleConnection_connection);
-    			this.singleConnection_source_map.put(this.producerType, singleConnection_source);
+    			String singleConnectionSource = dataSourceS;
+    			singleConnectionConnection = dsA.getConnection();
+    			this.singleConnectionConnectionMap.put(this.producerType, singleConnectionConnection);
+    			this.singleConnectionSourceMap.put(this.producerType, singleConnectionSource);
     		}catch(Exception e){
-    			 throw new Exception("Inizializzazione single connection (via datasource) non riuscita",e);
+    			 throw new ProtocolException("Inizializzazione single connection (via datasource) non riuscita",e);
     		}
     	}
     }
-	protected synchronized void initConnection(String jdbcUrl,String jdbcDriver,String username, String password)throws Exception{
-		Connection singleConnection_connection = this.singleConnection_connection_map.get(this.producerType);
-    	if(singleConnection_connection==null){
+	protected synchronized void initConnection(String jdbcUrl,String jdbcDriver,String username, String password)throws ProtocolException{
+		Connection singleConnectionConnection = this.singleConnectionConnectionMap.get(this.producerType);
+    	if(singleConnectionConnection==null){
     		try{
-    			String singleConnection_source = "url:"+jdbcUrl+" driver:"+jdbcDriver+" username:"+username+" password:"+password;
+    			String singleConnectionSource = "url:"+jdbcUrl+" driver:"+jdbcDriver+" username:"+username+" password:"+password;
     			if(username==null){
-    				singleConnection_connection = DriverManager.getConnection(jdbcUrl);
+    				singleConnectionConnection = DriverManager.getConnection(jdbcUrl);
     			}
     			else{
-    				singleConnection_connection = DriverManager.getConnection(jdbcUrl,username,password);
+    				singleConnectionConnection = DriverManager.getConnection(jdbcUrl,username,password);
     			}
-    			this.singleConnection_connection_map.put(this.producerType, singleConnection_connection);
-    			this.singleConnection_source_map.put(this.producerType, singleConnection_source);
+    			this.singleConnectionConnectionMap.put(this.producerType, singleConnectionConnection);
+    			this.singleConnectionSourceMap.put(this.producerType, singleConnectionSource);
     		}catch(Exception e){
-    			 throw new Exception("Inizializzazione single connection (via jdbc connection) non riuscita",e);
+    			 throw new ProtocolException("Inizializzazione single connection (via jdbc connection) non riuscita",e);
     		}
     	}
     }
 	protected Connection getConnectionViaJDBC() throws SQLException{
-    	if(this.connectionViaJDBC_username==null){
-			return DriverManager.getConnection(this.connectionViaJDBC_url);
+    	if(this.connectionViaJDBCUsername==null){
+			return DriverManager.getConnection(this.connectionViaJDBCUrl);
 		}
 		else{
-			return DriverManager.getConnection(this.connectionViaJDBC_url,
-					this.connectionViaJDBC_username,this.connectionViaJDBC_password);
+			return DriverManager.getConnection(this.connectionViaJDBCUrl,
+					this.connectionViaJDBCUsername,this.connectionViaJDBCPassword);
 		}
     }
 	
-	protected BasicConnectionResult getConnection(Connection conOpenSPCoopPdD,String methodName) throws Exception{
+	protected BasicConnectionResult getConnection(Connection conOpenSPCoopPdD,String methodName) throws ProtocolException{
 		Connection con = null;
 		BasicConnectionResult cr = new BasicConnectionResult();
 		cr.setReleaseConnection(false);
 		if(this.debug){
-			this.log.info("@@ ["+methodName+"] SINGLE CONNECTION["+this.singleConnection+"] OPEN["+this.openspcoopConnection+"]");
+			this.logInfo("@@ ["+methodName+"] SINGLE CONNECTION["+this.singleConnection+"] OPEN["+this.openspcoopConnection+"]");
 		}
-		if(this.singleConnection==false){
+		if(!this.singleConnection){
 			if(this.openspcoopConnection && conOpenSPCoopPdD!=null){
-				//System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION OPENSPCOOP");
+				/**System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION OPENSPCOOP");*/
 				if(this.debug){
-					this.log.info("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION OPENSPCOOP");
+					this.logInfo("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION OPENSPCOOP");
 				}
 				con = conOpenSPCoopPdD;
 			}else{
 				if(this.ds!=null){
 					try{
 						con = this.ds.getConnection();
-//						if(con == null)
-//							throw new Exception("Connessione non fornita");
+						/**if(con == null)
+							throw new Exception("Connessione non fornita");*/
 						cr.setReleaseConnection(true);
-						//System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION FROM DATASOURCE");
+						/**System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION FROM DATASOURCE");*/
 						if(this.debug){
-							this.log.info("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION FROM DATASOURCE");
+							this.logInfo("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION FROM DATASOURCE");
 						}
 					}catch(Exception e){
-						throw new Exception("Errore durante il recupero di una connessione dal datasource ["+this.datasource+"]: "+e.getMessage());
+						throw new ProtocolException("Errore durante il recupero di una connessione dal datasource ["+this.datasource+"]: "+e.getMessage());
 					}
 				}
 				else{
 					try{
 						con = this.getConnectionViaJDBC();
 						if(con == null)
-							throw new Exception("Connessione non fornita");
+							throw new ProtocolException("Connessione non fornita");
 						cr.setReleaseConnection(true);
-						//System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION VIA JDBC");
+						/**System.out.println("["+methodName+"]@GET_CONNECTION@ USE CONNECTION VIA JDBC");*/
 						if(this.debug){
-							this.log.info("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION VIA JDBC");
+							this.logInfo("@@ ["+methodName+"] GET_CONNECTION, USE CONNECTION VIA JDBC");
 						}
 					}catch(Exception e){
-						throw new Exception("Errore durante il recupero di una connessione via jdbc url["+this.connectionViaJDBC_url+"] driver["+
-								this.connectionViaJDBC_driverJDBC+"] username["+this.connectionViaJDBC_username+"] password["+this.connectionViaJDBC_password
+						throw new ProtocolException("Errore durante il recupero di una connessione via jdbc url["+this.connectionViaJDBCUrl+"] driver["+
+								this.connectionViaJDBCDriverJDBC+"] username["+this.connectionViaJDBCUsername+"] password["+this.connectionViaJDBCPassword
 								+"]: "+e.getMessage());
 					}
 				}
 			}
 		}else{
-			con = this.singleConnection_connection_map.get(this.producerType);
+			con = this.singleConnectionConnectionMap.get(this.producerType);
 			if(con == null){
-				throw new Exception("Connessione (singleConnection enabled) non fornita dalla sorgente ["+this.singleConnection_source_map.get(this.producerType)+"]");
+				throw new ProtocolException("Connessione (singleConnection enabled) non fornita dalla sorgente ["+this.singleConnectionSourceMap.get(this.producerType)+"]");
 			}
-			//System.out.println("["+methodName+"]@GET_CONNECTION@ SINGLE CONNECTION");
+			/**System.out.println("["+methodName+"]@GET_CONNECTION@ SINGLE CONNECTION");*/
 			if(this.debug){
-				this.log.info("@@ ["+methodName+"] GET_CONNECTION, SINGLE CONNECTION");
+				this.logInfo("@@ ["+methodName+"] GET_CONNECTION, SINGLE CONNECTION");
 			}
 		}
 		cr.setConnection(con);
@@ -203,14 +204,14 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 	}
 	protected void releaseConnection(BasicConnectionResult connectionResult,String methodName) throws SQLException{
 		if(this.debug){
-			this.log.info("@@ ["+methodName+"] RELEASE_CONNECTION ["+connectionResult.isReleaseConnection()+"]?");
+			this.logInfo("@@ ["+methodName+"] RELEASE_CONNECTION ["+connectionResult.isReleaseConnection()+"]?");
 		}
 		if(connectionResult.isReleaseConnection()){
-			//System.out.println("["+methodName+"]@RELEASE_CONNECTION@");
+			/**System.out.println("["+methodName+"]@RELEASE_CONNECTION@");*/
 			if(this.debug){
-				this.log.info("@@ ["+methodName+"] RELEASE_CONNECTION effettuato");
+				this.logInfo("@@ ["+methodName+"] RELEASE_CONNECTION effettuato");
 			}
-			connectionResult.getConnection().close();
+			JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionResult.getConnection(), BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 		}
 	}
 	
@@ -240,11 +241,11 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 				
 				this.datasource = this.appenderProperties.getProperty("datasource");
 				if(this.datasource==null){
-					this.connectionViaJDBC_url = this.appenderProperties.getProperty("connectionUrl");
-					if(this.connectionViaJDBC_url==null){
+					this.connectionViaJDBCUrl = this.appenderProperties.getProperty("connectionUrl");
+					if(this.connectionViaJDBCUrl==null){
 						String tmp = this.appenderProperties.getProperty("checkProperties");
 						if(tmp == null || Boolean.valueOf(tmp.trim())) {
-							throw new Exception("Proprietà 'datasource' e 'connectionUrl' non definite (almeno una delle due è obbligatoria)");
+							throw new ProtocolException("Proprietà 'datasource' e 'connectionUrl' non definite (almeno una delle due è obbligatoria)");
 						}
 						else {
 							this.isAlive = false;
@@ -255,12 +256,11 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 				this.tipoDatabase=this.appenderProperties.getProperty("tipoDatabase");
 				// non obbligatorio in msg diagnostico per retrocompatibilità
 				if(this.tipoDatabase==null && tipoDatabaseRequired){
-					throw new Exception("Proprieta' 'tipoDatabase' non definita");
+					throw new ProtocolException("Proprieta' 'tipoDatabase' non definita");
 				}
-				if(this.tipoDatabase!=null){
-					if(!TipiDatabase.isAMember(this.tipoDatabase)){
-						throw new Exception("Proprieta' 'tipoDatabase' presenta un tipo ["+this.tipoDatabase+"] non supportato");
-					}
+				if(this.tipoDatabase!=null &&
+					!TipiDatabase.isAMember(this.tipoDatabase)){
+					throw new ProtocolException("Proprieta' 'tipoDatabase' presenta un tipo ["+this.tipoDatabase+"] non supportato");
 				}
 				
 				String singleConnectionString = this.appenderProperties.getProperty("singleConnection");
@@ -280,20 +280,19 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 				}
 				
 			}else{
-				throw new Exception("Proprietà 'datasource' e 'connectionUrl' non definite (almeno una delle due è obbligatoria)");
+				throw new ProtocolException("Proprietà 'datasource' e 'connectionUrl' non definite (almeno una delle due è obbligatoria)");
 			}
 			
 			// Datasource
 			if(this.datasource!=null){
 				
-				java.util.Properties ctx= new java.util.Properties();
-				ctx = Utilities.readProperties("context-", this.appenderProperties);
+				java.util.Properties ctx = Utilities.readProperties("context-", this.appenderProperties);
 			
 				GestoreJNDI jndi = new GestoreJNDI(ctx);
 				if(this.singleConnection){
-					if(this.singleConnection_connection_map.get(this.producerType)==null){
-						DataSource ds = (DataSource) jndi.lookup(this.datasource);
-						initConnection(ds,this.datasource);
+					if(this.singleConnectionConnectionMap.get(this.producerType)==null){
+						DataSource dsL = (DataSource) jndi.lookup(this.datasource);
+						initConnection(dsL,this.datasource);
 					}
 				}else{
 					this.ds = (DataSource) jndi.lookup(this.datasource);
@@ -303,35 +302,34 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 			
 			
 			// connectionViaJDBC
-			if(this.connectionViaJDBC_url!=null){
+			if(this.connectionViaJDBCUrl!=null){
 				
-				this.connectionViaJDBC_driverJDBC = this.appenderProperties.getProperty("connectionDriver");
-				if(this.connectionViaJDBC_driverJDBC==null){
-					throw new Exception("Proprietà 'connectionDriver' non definita (obbligatoria nella modalita' 'connection via jdbc')");
+				this.connectionViaJDBCDriverJDBC = this.appenderProperties.getProperty("connectionDriver");
+				if(this.connectionViaJDBCDriverJDBC==null){
+					throw new ProtocolException("Proprietà 'connectionDriver' non definita (obbligatoria nella modalita' 'connection via jdbc')");
 				}
 				
-				this.connectionViaJDBC_username = this.appenderProperties.getProperty("connectionUsername");
-				if(this.connectionViaJDBC_username!=null){
-					this.connectionViaJDBC_password = this.appenderProperties.getProperty("connectionPassword");
-					if(this.connectionViaJDBC_password==null){
-						throw new Exception("Proprietà 'connectionPassword' non definita (obbligatoria nella modalita' 'connection via jdbc' se viene definita la proprieta' 'connectionUsername')");
+				this.connectionViaJDBCUsername = this.appenderProperties.getProperty("connectionUsername");
+				if(this.connectionViaJDBCUsername!=null){
+					this.connectionViaJDBCPassword = this.appenderProperties.getProperty("connectionPassword");
+					if(this.connectionViaJDBCPassword==null){
+						throw new ProtocolException("Proprietà 'connectionPassword' non definita (obbligatoria nella modalita' 'connection via jdbc' se viene definita la proprieta' 'connectionUsername')");
 					}
 				}
 				
-				Class.forName(this.connectionViaJDBC_driverJDBC);
+				Class.forName(this.connectionViaJDBCDriverJDBC);
 				
-				if(this.singleConnection){
-					if(this.singleConnection_connection_map.get(this.producerType)==null){
-						initConnection(this.connectionViaJDBC_url,this.connectionViaJDBC_driverJDBC,this.connectionViaJDBC_username,this.connectionViaJDBC_password);
-					}
+				if(this.singleConnection &&
+					this.singleConnectionConnectionMap.get(this.producerType)==null){
+					initConnection(this.connectionViaJDBCUrl,this.connectionViaJDBCDriverJDBC,this.connectionViaJDBCUsername,this.connectionViaJDBCPassword);
 				}
 			}
 			
 			// debug info
-			String debug = this.appenderProperties.getProperty("debug");
-			if(debug!=null){
-				debug = debug.trim();
-				if("true".equals(debug)){
+			String debugS = this.appenderProperties.getProperty("debug");
+			if(debugS!=null){
+				debugS = debugS.trim();
+				if("true".equals(debugS)){
 					this.debug = true;
 				}
 			}
@@ -346,7 +344,7 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 	}
 
 	protected String getSQLStringValue(String value){
-		if(value!=null && ("".equals(value)==false)){
+		if(value!=null && (!"".equals(value))){
 			return value;
 		}
 		else{
@@ -373,7 +371,7 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 	 */
 	@Override
 	public void isAlive() throws CoreException{
-		if(this.isAlive==false) {
+		if(!this.isAlive) {
 			return;
 		}
 		// Verifico la connessione

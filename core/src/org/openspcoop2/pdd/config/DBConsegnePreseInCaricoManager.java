@@ -30,9 +30,12 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.datasource.DataSourceParams;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.slf4j.Logger;
 
@@ -298,8 +301,11 @@ public class DBConsegnePreseInCaricoManager implements IMonitoraggioRisorsa {
 					
 					if(resource.getResource()!=null){
 						Connection connectionDB = (Connection) resource.getResource();
-						if(connectionDB != null && (connectionDB.isClosed()==false)){
-							connectionDB.close();
+						if(connectionDB != null && (!connectionDB.isClosed())){
+							Logger logR = OpenSPCoop2Logger.getLoggerOpenSPCoopResources()!=null ? OpenSPCoop2Logger.getLoggerOpenSPCoopResources() : LoggerWrapperFactory.getLogger(DBConsegnePreseInCaricoManager.class);
+							boolean checkAutocommit = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckAutocommit();
+							boolean checkIsClosed = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckIsClosed();
+							JDBCUtilities.closeConnection(logR, connectionDB, checkAutocommit, checkIsClosed);
 						}
 					}	
 					

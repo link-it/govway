@@ -25,6 +25,7 @@ package org.openspcoop2.core.registry.driver.db;
 
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -117,6 +118,7 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.datasource.DataSourceParams;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.slf4j.Logger;
@@ -150,6 +152,28 @@ IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 	protected boolean atomica = true;
 	public boolean isAtomica() {
 		return this.atomica;
+	}
+	
+	private static Logger checkLogger = null;
+	private static boolean checkIsClosed = true;
+	private static boolean checkAutocommit = true;
+	public static boolean isCheckIsClosed() {
+		return checkIsClosed;
+	}
+	public static void setCheckIsClosed(boolean checkIsClosed) {
+		DriverRegistroServiziDB.checkIsClosed = checkIsClosed;
+	}
+	public static boolean isCheckAutocommit() {
+		return checkAutocommit;
+	}
+	public static void setCheckAutocommit(boolean checkAutocommit) {
+		DriverRegistroServiziDB.checkAutocommit = checkAutocommit;
+	}
+	public static Logger getCheckLogger() {
+		return checkLogger;
+	}
+	public static void setCheckLogger(Logger checkLogger) {
+		DriverRegistroServiziDB.checkLogger = checkLogger;
 	}
 
 	/** Tabella soggetti */
@@ -427,14 +451,15 @@ IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 	public void releaseConnection(Connection con){
 		if (this.atomica) {
 			try {
-				con.close();
+				JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 			} catch (Exception e) {
+				// ignore
 			}
 		}
 	}
 
 
-	Connection getConnectionFromDatasource(String methodName) throws Exception{
+	Connection getConnectionFromDatasource(String methodName) throws SQLException {
 		if(this.datasource instanceof org.openspcoop2.utils.datasource.DataSource){
 			return ((org.openspcoop2.utils.datasource.DataSource)this.datasource).getWrappedConnection(null, "DriverRegistroServizi."+methodName);
 		}
@@ -461,18 +486,7 @@ IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 		}catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::readCustom]: " + se.getMessage(),se);
 		} finally {
-
-			try {
-				if (this.atomica) {
-					this.log.debug("rilascio connessione al db...");
-					if(con!=null) {
-						con.close();
-					}
-				}
-			} catch (Exception e) {
-				// ignore
-			}
-
+			closeConnection(con);
 		}
 	}
 	
@@ -480,9 +494,7 @@ IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 		try {
 			if (conParam==null && this.atomica) {
 				this.log.debug("rilascio connessione al db...");
-				if(con!=null) {
-					con.close();
-				}
+				JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 			}
 		} catch (Exception e) {
 			// ignore
@@ -493,9 +505,7 @@ IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 		try {
 			if (this.atomica) {
 				this.log.debug("rilascio connessioni al db...");
-				if(con!=null) {
-					con.close();
-				}
+				JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 			}
 		} catch (Exception e) {
 			// ignore exception
@@ -509,7 +519,7 @@ IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 				if(con!=null) {
 					con.rollback();
 					con.setAutoCommit(true);
-					con.close();
+					JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 				}
 
 			} else if (!error && this.atomica) {
@@ -517,7 +527,7 @@ IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 				if(con!=null) {
 					con.commit();
 					con.setAutoCommit(true);
-					con.close();
+					JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 				}
 			}
 

@@ -51,6 +51,7 @@ import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
@@ -71,6 +72,7 @@ import org.openspcoop2.utils.xml.XMLDiffOptions;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.config.RegistroServiziRemotoProperties;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB_LIB;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRegistroPluginsReader;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -263,6 +265,23 @@ public class InitListener implements ServletContextListener {
 			InitListener.logInfo("Inizializzazione resources (properties) govwayConsole effettuata con successo.");
 	
 			
+			// Inizializzo Controlli connessioni
+			try {
+				Logger logR = ControlStationLogger.getPddConsoleCoreLogger()!=null ? ControlStationLogger.getPddConsoleCoreLogger() : InitListener.log;
+				ServicesUtils.initCheckConnectionDB(logR, consoleProperties.isJdbcCloseConnectionCheckIsClosed(), consoleProperties.isJdbcCloseConnectionCheckAutocommit());
+				
+				DriverControlStationDB.setCheckLogger(logR);
+				DriverControlStationDB.setCheckIsClosed(consoleProperties.isJdbcCloseConnectionCheckIsClosed());
+				DriverControlStationDB.setCheckAutocommit(consoleProperties.isJdbcCloseConnectionCheckAutocommit());
+				DBManager.setCheckLogger(logR);
+				DBManager.setCheckIsClosed(consoleProperties.isJdbcCloseConnectionCheckIsClosed());
+				DBManager.setCheckAutocommit(consoleProperties.isJdbcCloseConnectionCheckAutocommit());
+			} catch (Exception e) {
+				String msgErrore = "Inizializzazione controlli connessione non riuscita: "+e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+						
 			// Map (environment)
 			try {
 				String mapConfig = consoleProperties.getEnvMapConfig();

@@ -8438,7 +8438,7 @@ public class GestoreMessaggi  {
 					String protocol = null;
 					if(this.protocolFactory!=null)
 						protocol = this.protocolFactory.getProtocol();
-					receiverJMS = new JMSReceiver(this.propertiesReader.getIdentitaPortaDefault(protocol, requestInfo),"ForcedDeleteMessage",this.propertiesReader.singleConnection_NodeReceiver(),this.log,idT);
+					receiverJMS = new JMSReceiver(this.propertiesReader.getIdentitaPortaDefault(protocol, requestInfo),"ForcedDeleteMessage",this.propertiesReader.singleConnectionNodeReceiver(),this.log,idT);
 				}
 				if(Costanti.INBOX.equals(this.tipo)){
 					//	rollback messaggio (eventuale profilo + accesso_pdd)
@@ -8666,8 +8666,8 @@ public class GestoreMessaggi  {
 		Logger logTimers = OpenSPCoop2Logger.getLoggerOpenSPCoopTimers();
 		
 		SemaphoreConfiguration config = new SemaphoreConfiguration();
-		config.setSerializableTimeWaitMs(propertiesReader.getGestioneSerializableDB_AttesaAttiva());
-		config.setSerializableNextIntervalTimeMs(propertiesReader.getGestioneSerializableDB_CheckInterval());
+		config.setSerializableTimeWaitMs(propertiesReader.getGestioneSerializableDBAttesaAttiva());
+		config.setSerializableNextIntervalTimeMs(propertiesReader.getGestioneSerializableDBCheckInterval());
 		config.setMaxLife(maxLife);
 		config.setMaxIdleTime(idleTime);
 		boolean logEvent = propertiesReader.isTimerLockByDatabaseNotifyLogEnabled();

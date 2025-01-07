@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import java.util.concurrent.TimeoutException;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
@@ -43,6 +43,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.UUIDUtilsGenerator;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
+import org.slf4j.Logger;
 
 /**
  * Datasource
@@ -53,7 +54,29 @@ import org.openspcoop2.utils.jdbc.JDBCUtilities;
  */
 public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 
-	private javax.sql.DataSource datasource;
+	static Logger checkLogger = null;
+	static boolean checkIsClosed = true;
+	static boolean checkAutocommit = true;
+	public static boolean isCheckIsClosed() {
+		return checkIsClosed;
+	}
+	public static void setCheckIsClosed(boolean checkIsClosed) {
+		DataSource.checkIsClosed = checkIsClosed;
+	}
+	public static boolean isCheckAutocommit() {
+		return checkAutocommit;
+	}
+	public static void setCheckAutocommit(boolean checkAutocommit) {
+		DataSource.checkAutocommit = checkAutocommit;
+	}
+	public static Logger getCheckLogger() {
+		return checkLogger;
+	}
+	public static void setCheckLogger(Logger checkLogger) {
+		DataSource.checkLogger = checkLogger;
+	}
+	
+	private javax.sql.DataSource wrappedDatasource;
 	private TipiDatabase tipoDatabase;
 	private boolean wrapOriginalMethods;
 	private String uuidDatasource;
@@ -67,16 +90,17 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 	
 	private boolean closed = false;
 
-	private Map<String,org.openspcoop2.utils.datasource.Connection> releasedConnections = new ConcurrentHashMap<String,org.openspcoop2.utils.datasource.Connection>();
+	private Map<String,org.openspcoop2.utils.datasource.Connection> releasedConnections = new ConcurrentHashMap<>();
 	
-	public String[] getJmxStatus() throws UtilsException{	
+	public String[] getJmxStatus() {	
+		String[] sNull = null;
 		if(this.releasedConnections==null || this.releasedConnections.size()<=0)
-			return null;
+			return sNull;
 	
 		org.openspcoop2.utils.datasource.Connection[] list = this.releasedConnections.values().toArray(new org.openspcoop2.utils.datasource.Connection[1]);
 		List<String> listResource = new ArrayList<>();
 		for (int i = 0; i < list.length; i++) {
-			org.openspcoop2.utils.datasource.Connection connection = (org.openspcoop2.utils.datasource.Connection) list[i];
+			org.openspcoop2.utils.datasource.Connection connection = list[i];
 			StringBuilder bf = new StringBuilder();
 			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 			bf.append("(").append(dateformat.format(connection.getDate())).append(") ");
@@ -87,7 +111,7 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 				bf.append("idTransazione:");
 				bf.append(connection.getIdTransazione());
 			}
-			if(connection.getModuloFunzionale()!=null && (connection.getModuloFunzionale() instanceof String)){
+			if(connection.getModuloFunzionale() instanceof String){
 				if(bf.length() > 0){
 					bf.append(" ");
 				}
@@ -97,22 +121,22 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 			
 			listResource.add(bf.toString());
 		}
-		if(listResource.size()>0){
+		if(!listResource.isEmpty()){
 			Collections.sort(listResource);
 			return listResource.toArray(new String[1]);
 		}else
-			return null;
+			return sNull;
 		
 	}
 	
-	public String getInformazioniDatabase() throws Exception{
+	public String getInformazioniDatabase() throws TimeoutException, UtilsException {
 		InformazioniDatabaseChecker versioneBaseDatiChecker = new InformazioniDatabaseChecker(this);
 		return Utilities.execute(5, versioneBaseDatiChecker);
 	}
 	
 	protected DataSource(javax.sql.DataSource datasource, TipiDatabase tipoDatabase, boolean wrapOriginalMethods, String jndiName, String applicativeIdDatasource) throws SQLException{
 		try{
-			this.datasource = datasource;
+			this.wrappedDatasource = datasource;
 			this.tipoDatabase = tipoDatabase;
 			this.wrapOriginalMethods = wrapOriginalMethods;
 			this.uuidDatasource = UUIDUtilsGenerator.newUUID();
@@ -125,13 +149,13 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 		java.sql.Connection connectionTest = null;
 		try{
 			// Prelevo livello di transaction isolation
-			connectionTest = this.datasource.getConnection();
+			connectionTest = this.wrappedDatasource.getConnection();
 			this.transactionIsolationLevelDefault = connectionTest.getTransactionIsolation();
 		}catch(Exception e){
 			throw new SQLException("Test getConnection failed: "+e.getMessage(),e);
 		}finally {
 			if(connectionTest!=null) {
-				connectionTest.close();
+				JDBCUtilities.closeConnection(checkLogger, connectionTest, checkAutocommit, checkIsClosed);
 			}
 		}
 	}
@@ -175,10 +199,12 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 		Collection<org.openspcoop2.utils.datasource.Connection> list = this.releasedConnections.values();
 		Iterator<org.openspcoop2.utils.datasource.Connection> it = list.iterator();
 		while (it.hasNext()) {
-			org.openspcoop2.utils.datasource.Connection connection = (org.openspcoop2.utils.datasource.Connection) it.next();
+			org.openspcoop2.utils.datasource.Connection connection = it.next();
 			try{
 				connection.close();
-			}catch(Exception eclose){}
+			}catch(Exception eclose){
+				// ignore
+			}
 		}
 	}
 	
@@ -217,7 +243,7 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 			throw new SQLException("Shutdown in progress");
 		}
 		try{
-			org.openspcoop2.utils.datasource.Connection c = new org.openspcoop2.utils.datasource.Connection(this.datasource.getConnection(), this.tipoDatabase, 
+			org.openspcoop2.utils.datasource.Connection c = new org.openspcoop2.utils.datasource.Connection(this.wrappedDatasource.getConnection(), this.tipoDatabase, 
 						idTransazione, moduloFunzionale, this.uuidDatasource);
 			this.releasedConnections.put(c.getId(), c);
 			return c;
@@ -261,43 +287,43 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 	
 	@Override
 	public PrintWriter getLogWriter() throws SQLException {
-		return this.datasource.getLogWriter();
+		return this.wrappedDatasource.getLogWriter();
 	}
 
 	@Override
 	public void setLogWriter(PrintWriter pw) throws SQLException {
-		this.datasource.setLogWriter(pw);
+		this.wrappedDatasource.setLogWriter(pw);
 	}
 	
 	@Override
 	public int getLoginTimeout() throws SQLException {
-		return this.datasource.getLoginTimeout();
+		return this.wrappedDatasource.getLoginTimeout();
 	}
 
 	@Override
 	public void setLoginTimeout(int timeout) throws SQLException {
-		this.datasource.setLoginTimeout(timeout);
+		this.wrappedDatasource.setLoginTimeout(timeout);
 	}
 
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
-		if(this.datasource instanceof java.sql.Wrapper){
-			return ((java.sql.Wrapper)this.datasource).unwrap(iface);
+		if(this.wrappedDatasource instanceof java.sql.Wrapper){
+			return ((java.sql.Wrapper)this.wrappedDatasource).unwrap(iface);
 		}
 		return null;
 	}
 
 	@Override
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		if(this.datasource instanceof java.sql.Wrapper){
-			return ((java.sql.Wrapper)this.datasource).isWrapperFor(iface);
+		if(this.wrappedDatasource instanceof java.sql.Wrapper){
+			return ((java.sql.Wrapper)this.wrappedDatasource).isWrapperFor(iface);
 		}
 		return false;
 	}
 
 	@Override
-	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-		return this.datasource.getParentLogger();
+	public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		return this.wrappedDatasource.getParentLogger();
 	}
 	
 
@@ -320,17 +346,17 @@ class InformazioniDatabaseChecker implements Callable<String>{
 			bf.append("TipoDatabase: "+this.dataSource.getTipoDatabase().getNome());
 		}
 		else{
-			throw new Exception("Tipo di Database non disponibile");
+			throw new UtilsException("Tipo di Database non disponibile");
 		}
 
 		Connection c = null; 
 		try{
-			c = (Connection) this.dataSource.getConnection();
+			c = this.dataSource.getConnection();
 
 			JDBCUtilities.addInformazioniDatabaseFromMetaData(c, bf);
 			
 			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili informazioni sul database");
+				throw new UtilsException("Non sono disponibili informazioni sul database");
 			}else{
 				return bf.toString();
 			}

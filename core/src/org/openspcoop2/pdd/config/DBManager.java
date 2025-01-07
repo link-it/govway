@@ -37,10 +37,12 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.UniqueIdentifierException;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.slf4j.Logger;
 
@@ -371,9 +373,10 @@ public class DBManager implements IMonitoraggioRisorsa {
 				
 				if(resource.getResource()!=null){
 					Connection connectionDB = (Connection) resource.getResource();
-					if(connectionDB != null && (!connectionDB.isClosed())){
-						connectionDB.close();
-					}
+					Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopResources()!=null ? OpenSPCoop2Logger.getLoggerOpenSPCoopResources() : LoggerWrapperFactory.getLogger(DBManager.class);
+					boolean checkAutocommit = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckAutocommit();
+					boolean checkIsClosed = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckIsClosed();
+					JDBCUtilities.closeConnection(log, connectionDB, checkAutocommit, checkIsClosed);
 				}
 				if(DBManager.risorseInGestione.containsKey(resource.getId()))
 					DBManager.risorseInGestione.remove(resource.getId());

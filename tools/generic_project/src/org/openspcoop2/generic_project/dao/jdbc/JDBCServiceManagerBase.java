@@ -23,19 +23,21 @@ package org.openspcoop2.generic_project.dao.jdbc;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
 import org.openspcoop2.generic_project.beans.IProjectInfo;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
+import org.slf4j.Logger;
 
 /**
  * JDBCServiceManager
@@ -61,6 +63,14 @@ public class JDBCServiceManagerBase {
 	private String password;
 	private int secondsToRefreshConnection = -1;
 	private Date connectionDate;
+	
+	private void logError(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.error(msg, e);
+		}
+	}
+	
+	private static final String CREATE_ERROR_PREFIX = "Creating failure: ";
 	
 	/** Tipo di costruttore */
 	private JDBCServiceManagerTipoCostruttore tipoCostruttore = null;
@@ -90,15 +100,15 @@ public class JDBCServiceManagerBase {
 			GestoreJNDI gestoreJNDI = new GestoreJNDI(contextJNDI);
 			this.datasource = (DataSource) gestoreJNDI.lookup(jndiName);
 			if(this.datasource == null){
-				throw new Exception("Datasource is null");
+				throw new ServiceException("Datasource is null");
 			}
 			
 			this.jdbcProperties = jdbcProperties;
 			jdbcProperties.getDatabase(); // check tipoDatabase fornito
 						
 		} catch(Exception e) {
-			this.log.error("Creating failure: "+e.getMessage(),e);
-			throw new ServiceException("Creating failure: "+e.getMessage(),e);
+			this.logError(CREATE_ERROR_PREFIX+e.getMessage(),e);
+			throw new ServiceException(CREATE_ERROR_PREFIX+e.getMessage(),e);
 		}
 	}
 	
@@ -124,15 +134,15 @@ public class JDBCServiceManagerBase {
 			
 			this.datasource = ds;
 			if(this.datasource == null){
-				throw new Exception("Datasource is null");
+				throw new ServiceException("Datasource is null");
 			}
 			
 			this.jdbcProperties = jdbcProperties;
 			jdbcProperties.getDatabase(); // check tipoDatabase fornito
 			
 		} catch(Exception e) {
-			this.log.error("Creating failure: "+e.getMessage(),e);
-			throw new ServiceException("Creating failure: "+e.getMessage(),e);
+			this.logError(CREATE_ERROR_PREFIX+e.getMessage(),e);
+			throw new ServiceException(CREATE_ERROR_PREFIX+e.getMessage(),e);
 		}
 	}
 	
@@ -169,17 +179,17 @@ public class JDBCServiceManagerBase {
 			jdbcProperties.getDatabase(); // check tipoDatabase fornito
 			
 		} catch(Exception e) {
-			this.log.error("Creating failure: "+e.getMessage(),e);
-			throw new ServiceException("Creating failure: "+e.getMessage(),e);
+			this.logError(CREATE_ERROR_PREFIX+e.getMessage(),e);
+			throw new ServiceException(CREATE_ERROR_PREFIX+e.getMessage(),e);
 		}
 	}
-	private void setConnection() throws Exception {
+	private void setConnection() throws SQLException {
 		if(this.username!=null){
 			this.connection = DriverManager.getConnection(this.connectionUrl,this.username,this.password);
 		}else{
 			this.connection = DriverManager.getConnection(this.connectionUrl);
 		}
-		/*if(this.connection == null){
+		/**if(this.connection == null){
 			throw new Exception("Connection is null");
 		}*/
 		this.connectionDate = DateManager.getDate();
@@ -194,19 +204,21 @@ public class JDBCServiceManagerBase {
 		}
 		return false;
 	}
-	private void refreshConnection() throws Exception {
+	private void refreshConnection() throws SQLException {
 		if(this.isConnectionExpired()) {
-			this._refreshConnection();
+			this.internalRefreshConnection();
 		}
 	}
-	private synchronized void _refreshConnection() throws Exception {
+	private synchronized void internalRefreshConnection() throws SQLException {
 		if(this.isConnectionExpired()) {
-			//System.out.println("REFRESH (user:"+this.username+" connection-url: "+this.connectionUrl+")");
+			/**System.out.println("REFRESH (user:"+this.username+" connection-url: "+this.connectionUrl+")");*/
 			try {
 				if(this.connection!=null) {
-					this.connection.close();
+					JDBCUtilities.closeConnection(checkLogger, this.connection, checkAutocommit, checkIsClosed);
 				}
-			}catch(Throwable t) {}
+			}catch(Exception t) {
+				// ignore
+			}
 			setConnection();
 		}
 	}
@@ -233,15 +245,15 @@ public class JDBCServiceManagerBase {
 			
 			this.connection = connection;
 			if(this.connection == null){
-				throw new Exception("Connection is null");
+				throw new ServiceException("Connection is null");
 			}
 			
 			this.jdbcProperties = jdbcProperties;
 			jdbcProperties.getDatabase(); // check tipoDatabase fornito
 			
 		} catch(Exception e) {
-			this.log.error("Creating failure: "+e.getMessage(),e);
-			throw new ServiceException("Creating failure: "+e.getMessage(),e);
+			this.logError(CREATE_ERROR_PREFIX+e.getMessage(),e);
+			throw new ServiceException(CREATE_ERROR_PREFIX+e.getMessage(),e);
 		}
 	}
 	
@@ -250,18 +262,10 @@ public class JDBCServiceManagerBase {
 	
 	public void close() throws ServiceException{
 		try{
-			if(this.tipoCostruttore!=null){
-				switch (this.tipoCostruttore) {
-				case CONNECTION_CFG:
-					if(this.connection!=null){
-						//System.out.println("CLOSE (user:"+this.username+" connection-url: "+this.connectionUrl+")");
-						this.connection.close();
-					}
-					break;
-	
-				default:
-					break;
-				}
+			if(this.tipoCostruttore!=null && JDBCServiceManagerTipoCostruttore.CONNECTION_CFG.equals(this.tipoCostruttore) &&
+					this.connection!=null){
+				/**System.out.println("CLOSE (user:"+this.username+" connection-url: "+this.connectionUrl+")");*/
+				JDBCUtilities.closeConnection(checkLogger, this.connection, checkAutocommit, checkIsClosed);
 			}
 		}catch(Exception e){
 			throw new ServiceException("Close failure: "+e.getMessage(),e);
@@ -272,6 +276,28 @@ public class JDBCServiceManagerBase {
 	/* ** Utilities */
 		
 	// Metodi che non devono essere utilizzati dagli sviluppatori jdbc che implementano i metodi veri e propri
+	
+	private static Logger checkLogger = null;
+	private static boolean checkIsClosed = true;
+	private static boolean checkAutocommit = true;
+	public static boolean isCheckIsClosed() {
+		return checkIsClosed;
+	}
+	public static void setCheckIsClosed(boolean checkIsClosed) {
+		JDBCServiceManagerBase.checkIsClosed = checkIsClosed;
+	}
+	public static boolean isCheckAutocommit() {
+		return checkAutocommit;
+	}
+	public static void setCheckAutocommit(boolean checkAutocommit) {
+		JDBCServiceManagerBase.checkAutocommit = checkAutocommit;
+	}
+	public static Logger getCheckLogger() {
+		return checkLogger;
+	}
+	public static void setCheckLogger(Logger checkLogger) {
+		JDBCServiceManagerBase.checkLogger = checkLogger;
+	}
 	
 	protected Connection getConnection() throws ServiceException {
 		try{
@@ -284,7 +310,7 @@ public class JDBCServiceManagerBase {
 				}
 				return this.connection;
 			}else{
-				throw new Exception("ServiceManager not initialized");
+				throw new ServiceException("ServiceManager not initialized");
 			}
 		}catch(Exception e){
 			throw new ServiceException("Get Connection failure: "+e.getMessage(),e);
@@ -297,7 +323,7 @@ public class JDBCServiceManagerBase {
 			}
 			if(this.datasource!=null){
 				// DATASOURCE_*
-				connection.close();
+				JDBCUtilities.closeConnection(checkLogger, connection, checkAutocommit, checkIsClosed);
 			}
 			else if(this.connection!=null){
 				// CONNECTION_*
@@ -306,10 +332,10 @@ public class JDBCServiceManagerBase {
 				// - se ha usato il costruttore fornendo l'oggetto connection, deve fare lui la close sulla clonnection
 				// - se ha usato il costruttore fornendo i dati per creare una connessione (url,username,password) deve chiamare il metodo close del service manager.
 				if(connection.isClosed()){
-					throw new Exception("The connection provided shall not be closed");
+					throw new ServiceException("The connection provided shall not be closed");
 				}
 			}else{
-				throw new Exception("ServiceManager not initialized");
+				throw new ServiceException("ServiceManager not initialized");
 			}
 		}catch(Exception e){
 			throw new ServiceException("Get Connection failure: "+e.getMessage(),e);

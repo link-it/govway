@@ -143,7 +143,7 @@ public class NodeReceiverDB extends AbstractCore implements INodeReceiver{
 				
 				// Prendo la connessione solo se mi serve per la ricerca su database
 				boolean needConnection = false;
-				if(NodeReceiverDB.openspcoopProperties.singleConnection_TransactionManager()==false)
+				if(NodeReceiverDB.openspcoopProperties.singleConnectionTransactionManager()==false)
 					needConnection = true;
 				else if(resource==null)
 					needConnection = true;
@@ -218,7 +218,7 @@ public class NodeReceiverDB extends AbstractCore implements INodeReceiver{
 				if(messaggioPresente==false){
 					
 					//	rilascio e riprendo la connessione ogni checkInterval fino ad un timeout o alla ricezione di un oggetto
-					if( (NodeReceiverDB.openspcoopProperties.singleConnection_NodeReceiver()==false) && (checkOnlyCache==false) ){
+					if( (NodeReceiverDB.openspcoopProperties.singleConnectionNodeReceiver()==false) && (checkOnlyCache==false) ){
 						msgDiag.highDebug("Rilascio connessione per NodeReceiver");
 						dbManager.releaseResource(codicePorta, idModulo, resource);
 					}
@@ -278,7 +278,7 @@ public class NodeReceiverDB extends AbstractCore implements INodeReceiver{
 					}
 					
 					// rilascio e riprendo la connessione ogni checkInterval fino ad un timeout o alla ricezione di un oggetto
-					if( (NodeReceiverDB.openspcoopProperties.singleConnection_NodeReceiver()==false) && (checkOnlyCache==false) ){
+					if( (NodeReceiverDB.openspcoopProperties.singleConnectionNodeReceiver()==false) && (checkOnlyCache==false) ){
 						msgDiag.highDebug("Rilascio connessione per NodeReceiver");
 						dbManager.releaseResource(codicePorta, idModulo, resource);
 					}

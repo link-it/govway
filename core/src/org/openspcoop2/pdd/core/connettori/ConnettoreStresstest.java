@@ -430,8 +430,8 @@ public class ConnettoreStresstest extends ConnettoreBase {
 				idBustaRisposta = 
 					imbustatore.buildID(new IDSoggetto(bustaRichiesta.getTipoDestinatario(), bustaRichiesta.getDestinatario(), dominio), 
 							null, 
-							this.openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),
-							this.openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
+							this.openspcoopProperties.getGestioneSerializableDBAttesaAttiva(),
+							this.openspcoopProperties.getGestioneSerializableDBCheckInterval(),
 							RuoloMessaggio.RISPOSTA);
 			}catch(Exception e){
 				// rilancio

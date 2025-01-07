@@ -30,9 +30,12 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.datasource.DataSourceParams;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.slf4j.Logger;
 
@@ -109,14 +112,14 @@ public class DBConsegneMessageBoxManager implements IMonitoraggioRisorsa {
 	
 	
 	/** Informazione sui proprietari che hanno richiesto una connessione */
-	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione_runtime = new java.util.concurrent.ConcurrentHashMap<String,Resource>();
-	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione_transazioni = new java.util.concurrent.ConcurrentHashMap<String,Resource>();
+	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestioneRuntime = new java.util.concurrent.ConcurrentHashMap<>();
+	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestioneTransazioni = new java.util.concurrent.ConcurrentHashMap<>();
 	
 	public static String[] getStatoRisorse_runtime() throws Exception{	
-		return DBManager.getStatoRisorse(DBConsegneMessageBoxManager.risorseInGestione_runtime);
+		return DBManager.getStatoRisorse(DBConsegneMessageBoxManager.risorseInGestioneRuntime);
 	}
 	public static String[] getStatoRisorse_transazioni() throws Exception{	
-		return DBManager.getStatoRisorse(DBConsegneMessageBoxManager.risorseInGestione_transazioni);
+		return DBManager.getStatoRisorse(DBConsegneMessageBoxManager.risorseInGestioneTransazioni);
 	}
 	
 	
@@ -214,19 +217,19 @@ public class DBConsegneMessageBoxManager implements IMonitoraggioRisorsa {
 	}
 	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione, boolean logError) throws Exception {
 		if(this.dbManagerRuntimePdD!=null) {
-			//System.out.println("id ["+idTransazione+"] prendo da dbManager");
+			/**System.out.println("id ["+idTransazione+"] prendo da dbManager");*/
 			return this.dbManagerRuntimePdD.getResource(idPDD, modulo, idTransazione, logError);
 		}
 		else if(this.dbManagerTransazioni!=null) {
-			//System.out.println("id ["+idTransazione+"] prendo da dbManagerTransazioni");
+			/**System.out.println("id ["+idTransazione+"] prendo da dbManagerTransazioni");*/
 			return this.dbManagerTransazioni.getResource(idPDD, modulo, idTransazione, logError);
 		}
 		else if(this.dbConsegnePreseInCaricoManager!=null) {
-			//System.out.println("id ["+idTransazione+"] prendo da dbManagerTransazioni");
+			/**System.out.println("id ["+idTransazione+"] prendo da dbManagerTransazioni");*/
 			return this.dbConsegnePreseInCaricoManager.getResource(idPDD, modulo, idTransazione, logError);
 		}
 		else {
-			//System.out.println("id ["+idTransazione+"] negozio");
+			/**System.out.println("id ["+idTransazione+"] negozio");*/
 			try {
 				StringBuilder bf = new StringBuilder();
 				if(idPDD!=null) {
@@ -245,10 +248,10 @@ public class DBConsegneMessageBoxManager implements IMonitoraggioRisorsa {
 						idPDD, modulo, idTransazione);	
 				
 				if(this.isIamRuntimeManager()) {
-					DBConsegneMessageBoxManager.risorseInGestione_runtime.put(risorsa.getId(), risorsa);
+					DBConsegneMessageBoxManager.risorseInGestioneRuntime.put(risorsa.getId(), risorsa);
 				}
 				else if(this.isIamTransazioniManager()) {
-					DBConsegneMessageBoxManager.risorseInGestione_transazioni.put(risorsa.getId(), risorsa);
+					DBConsegneMessageBoxManager.risorseInGestioneTransazioni.put(risorsa.getId(), risorsa);
 				}
 				
 				return risorsa;
@@ -288,19 +291,22 @@ public class DBConsegneMessageBoxManager implements IMonitoraggioRisorsa {
 					
 					if(resource.getResource()!=null){
 						Connection connectionDB = (Connection) resource.getResource();
-						if(connectionDB != null && (connectionDB.isClosed()==false)){
-							connectionDB.close();
+						if(connectionDB != null && (!connectionDB.isClosed())){
+							Logger logR = OpenSPCoop2Logger.getLoggerOpenSPCoopResources()!=null ? OpenSPCoop2Logger.getLoggerOpenSPCoopResources() : LoggerWrapperFactory.getLogger(DBConsegneMessageBoxManager.class);
+							boolean checkAutocommit = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckAutocommit();
+							boolean checkIsClosed = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckIsClosed();
+							JDBCUtilities.closeConnection(logR, connectionDB, checkAutocommit, checkIsClosed);
 						}
 					}	
 					
 					if(this.isIamRuntimeManager()) {
-						if(DBConsegneMessageBoxManager.risorseInGestione_runtime.containsKey(resource.getId())) {
-							DBConsegneMessageBoxManager.risorseInGestione_runtime.remove(resource.getId());
+						if(DBConsegneMessageBoxManager.risorseInGestioneRuntime.containsKey(resource.getId())) {
+							DBConsegneMessageBoxManager.risorseInGestioneRuntime.remove(resource.getId());
 						}
 					}
 					else if(this.isIamTransazioniManager()) {
-						if(DBConsegneMessageBoxManager.risorseInGestione_transazioni.containsKey(resource.getId())) {
-							DBConsegneMessageBoxManager.risorseInGestione_transazioni.remove(resource.getId());
+						if(DBConsegneMessageBoxManager.risorseInGestioneTransazioni.containsKey(resource.getId())) {
+							DBConsegneMessageBoxManager.risorseInGestioneTransazioni.remove(resource.getId());
 						}
 					}
 

@@ -624,7 +624,7 @@ public class Sbustamento extends GenericLib{
 
 					// Redirigo Errori presenti nella Busta
 					boolean validazioneConErrori = (errors.size() > 0);
-					if( protocolManager.isIgnoraEccezioniLivelloNonGrave() || (this.propertiesReader.ignoraEccezioniNonGravi_Validazione())){
+					if( protocolManager.isIgnoraEccezioniLivelloNonGrave() || (this.propertiesReader.ignoraEccezioniNonGraviValidazione())){
 						validazioneConErrori = Busta.containsEccezioniGravi(errors);
 					}
 

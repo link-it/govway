@@ -668,8 +668,7 @@ public class DriverConfigurazioneDBUtils {
 			}finally{
 				JDBCUtilities.closeResources(stmtTest);
 				try{
-					if(con!=null)
-						con.close();
+					JDBCUtilities.closeConnection(DriverConfigurazioneDB.getCheckLogger(), con, DriverConfigurazioneDB.isCheckAutocommit(), DriverConfigurazioneDB.isCheckIsClosed());
 				}catch(Exception e){
 					// close
 				}

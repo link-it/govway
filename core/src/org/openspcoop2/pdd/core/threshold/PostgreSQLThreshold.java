@@ -30,12 +30,16 @@ import java.util.Properties;
 import javax.sql.DataSource;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 
 /**
  * Implementazione che definisce un meccanismo di Soglia sullo spazio libero rimasto
@@ -49,8 +53,8 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 
 public class PostgreSQLThreshold implements IThreshold {
 
-	public static OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-	public static String ID_MODULO = "PostgreSQLThreshold";
+	private static OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
+	public static final String ID_MODULO = "PostgreSQLThreshold";
 	
 	
 	/**
@@ -68,7 +72,9 @@ public class PostgreSQLThreshold implements IThreshold {
 	public boolean check(Properties parametri) throws ThresholdException {
 		DBManager dbManager = DBManager.getInstance();
 		Resource resource = null;
-		long Threshold,size=0L,factor=1L;
+		long threshold=-1;
+		long size=0L;
+		long factor=1L;
 		boolean result=false;
 		Statement s=null;
 		ResultSet rs=null;
@@ -97,23 +103,23 @@ public class PostgreSQLThreshold implements IThreshold {
 			datasource = datasource.trim();
 		}
 		
-		String Soglia=valoreSoglia.toLowerCase();
+		String soglia=valoreSoglia.toLowerCase();
 		StringBuilder valore=new StringBuilder();
-		char ch=Soglia.charAt(0);
+		char ch=soglia.charAt(0);
 		int i=1;
 		while (Character.isDigit(ch))
 		{
 			valore.append(ch);
-			if(i<Soglia.length())
-                ch=Soglia.charAt(i++);
+			if(i<soglia.length())
+                ch=soglia.charAt(i++);
 			else
                 ch='f';
 		}
-		if ( Soglia.endsWith("kb") || Soglia.endsWith("k") )
+		if ( soglia.endsWith("kb") || soglia.endsWith("k") )
 			factor=1024L;
-		else if ( Soglia.endsWith("mb") || Soglia.endsWith("m") )
+		else if ( soglia.endsWith("mb") || soglia.endsWith("m") )
 			factor=1024L * 1024L;
-		else if ( Soglia.endsWith("gb") || Soglia.endsWith("g") )
+		else if ( soglia.endsWith("gb") || soglia.endsWith("g") )
 			factor=1024L * 1024L * 1024L;
 		//else
 			//Utilizzo del fattore di default 1
@@ -122,7 +128,7 @@ public class PostgreSQLThreshold implements IThreshold {
 		Connection connection =null;
 		try{
 			if(datasource==null) {
-				resource = getConnection(datasource, dbManager);
+				resource = getConnection(dbManager);
 				connection = (Connection) resource.getResource();
 			}
 			else
@@ -131,51 +137,40 @@ public class PostgreSQLThreshold implements IThreshold {
 			}
 
 			// controllo validita parametro
-			Threshold=Long.parseLong(valore.toString())*factor;
-			if(Threshold<0L)
-				throw new Exception("Valore di soglia negativo");
+			threshold=Long.parseLong(valore.toString())*factor;
+			if(threshold<0L)
+				throw new CoreException("Valore di soglia negativo");
 			
 			//Interrogazione del database
 			s=connection.createStatement();
 			if(!s.execute(query))
-				throw new Exception("Impossibile verficare lo spazio occupato");
+				throw new CoreException("Impossibile verficare lo spazio occupato");
 			
 			rs=s.getResultSet();
 			
 			if(rs==null)
-				throw new Exception("Nessun risultato disponibile per la verifica di soglia");
+				throw new CoreException("Nessun risultato disponibile per la verifica di soglia");
 			if(!rs.next())
-				throw new Exception("Nessun risultato disponibile per la verifica di soglia");
+				throw new CoreException("Nessun risultato disponibile per la verifica di soglia");
 			
 			size=rs.getLong(1);
 			if(size==0)
-				throw new Exception("La quantita' di spazio occupata dai DB e' NULL");
+				throw new CoreException("La quantita' di spazio occupata dai DB e' NULL");
 
 						
-			result=(size<Threshold);
+			result=(size<threshold);
 			
 		}catch(Exception e){
 			throw new ThresholdException("PostgreSQLThreshold error: "+e.getMessage(),e);
 		}finally{
-			try {
-				if(rs!=null) 
-					rs.close();
-			}catch(SQLException ex){
-				// ignore
-			}
-			try {
-				if(s!=null) 
-					s.close();
-			}catch(SQLException ex){
-				// ignore
-			}
+			JDBCUtilities.closeResources(rs, s);
 			rs=null;s=null;
 			try {
 				if(datasource==null)
 					dbManager.releaseResource(PostgreSQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), PostgreSQLThreshold.ID_MODULO, resource);
 				else {
-					if ((connection != null) && (connection.isClosed()==false))
-						connection.close();
+					if ((connection != null) && (!connection.isClosed()))
+						JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connection, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}
 			}catch(SQLException ex){
 				// ignore
@@ -196,20 +191,20 @@ public class PostgreSQLThreshold implements IThreshold {
 		
 	}
 	
-	private Resource getConnection(String datasource, DBManager dbManager) throws Exception {
+	private Resource getConnection(DBManager dbManager) throws CoreException {
 		Resource resource = null;
 		try{
 			resource = dbManager.getResource(PostgreSQLThreshold.properties.getIdentitaPortaDefaultWithoutProtocol(), PostgreSQLThreshold.ID_MODULO,null);
 		}catch(Exception e){
-			throw new Exception("Impossibile ottenere una Risorsa dal DBManager",e);
+			throw new CoreException("Impossibile ottenere una Risorsa dal DBManager",e);
 		}
 		if(resource==null)
-			throw new Exception("Risorsa is null");
+			throw new CoreException("Risorsa is null");
 		if(resource.getResource() == null)
-			throw new Exception("Connessione is null");
+			throw new CoreException("Connessione is null");
 		return resource;
 	}
-	private Connection getConnection(String datasource) throws Exception {
+	private Connection getConnection(String datasource) throws NamingException, SQLException {
 		Context c = new InitialContext();
         DataSource ds= (DataSource)c.lookup(datasource);
         c.close();	

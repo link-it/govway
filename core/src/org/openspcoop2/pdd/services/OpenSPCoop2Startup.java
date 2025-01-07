@@ -880,7 +880,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					" type="+org.openspcoop2.utils.Semaphore.getSemaphoreType()+
 					" fair="+org.openspcoop2.utils.Semaphore.isFair());
 			
-
+			// Inizializzo Controlli connessioni
+			Logger logR = OpenSPCoop2Logger.getLoggerOpenSPCoopResources()!=null ? OpenSPCoop2Logger.getLoggerOpenSPCoopResources() : log;
+			ServicesUtils.initCheckConnectionDB(logR, propertiesReader.isJdbcCloseConnectionCheckIsClosed(), propertiesReader.isJdbcCloseConnectionCheckAutocommit());
 			
 
 
@@ -1627,7 +1629,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				String tipoClass = classNameReader.getRepositoryBuste(propertiesReader.getGestoreRepositoryBuste());
 				repository = (IGestoreRepository) loader.newInstance(tipoClass);
 				org.openspcoop2.protocol.engine.Configurazione.init(
-						propertiesReader.getGestioneSerializableDB_CheckInterval(),
+						propertiesReader.getGestioneSerializableDBCheckInterval(),
 						repository,propertiesReader.getDatabaseType(),logCore);
 			}catch(Exception e){
 				this.logError("Riscontrato errore durante l'inizializzazione della libreria del protocollo: "+e.getMessage());
@@ -2197,8 +2199,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				ConfigurazionePdD configPdD = new ConfigurazionePdD();
 				configPdD.setConfigurationDir(propertiesReader.getRootDirectory());
 				configPdD.setLoader(loader);
-				configPdD.setAttesaAttivaJDBC(propertiesReader.getGestioneSerializableDB_AttesaAttiva());
-				configPdD.setCheckIntervalJDBC(propertiesReader.getGestioneSerializableDB_CheckInterval());
+				configPdD.setAttesaAttivaJDBC(propertiesReader.getGestioneSerializableDBAttesaAttiva());
+				configPdD.setCheckIntervalJDBC(propertiesReader.getGestioneSerializableDBCheckInterval());
 				configPdD.setTipoDatabase(TipiDatabase.toEnumConstant(propertiesReader.getDatabaseType()));
 				configPdD.setLog(logCore);
 				

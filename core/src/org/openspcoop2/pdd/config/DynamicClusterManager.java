@@ -131,8 +131,8 @@ public class DynamicClusterManager {
 
 			boolean updateEffettuato = false;
 			
-			long gestioneSerializableDBattesaAttiva = this.op2Properties.getGestioneSerializableDB_AttesaAttiva();
-			int gestioneSerializableDBcheckInterval = this.op2Properties.getGestioneSerializableDB_CheckInterval();
+			long gestioneSerializableDBattesaAttiva = this.op2Properties.getGestioneSerializableDBAttesaAttiva();
+			int gestioneSerializableDBcheckInterval = this.op2Properties.getGestioneSerializableDBCheckInterval();
 			long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDBattesaAttiva;
 			
 			Exception eLast = null;

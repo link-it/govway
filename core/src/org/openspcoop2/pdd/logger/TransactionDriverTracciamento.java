@@ -68,6 +68,7 @@ import org.openspcoop2.pdd.logger.traccia.CostantiMappingTracciamento;
 import org.openspcoop2.pdd.logger.traccia.InformazioniRecordTraccia;
 import org.openspcoop2.pdd.logger.traccia.MappingRicostruzioneTraccia;
 import org.openspcoop2.pdd.logger.traccia.PopolamentoTracciaUtils;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -90,6 +91,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.slf4j.Logger;
 
 /**     
@@ -365,9 +367,7 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 	private void closeConnection(Connection con) {
 		if(this.connection==null){
 			try{
-				if(con!=null) {
-					con.close();
-				}
+				JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), con, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 			}catch(Exception e){
 				// close
 			}
@@ -884,7 +884,7 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 			try{
 				if(this.connectionOpenViaJDBCInCostructor &&
 					this.connection!=null && !this.connection.isClosed()){
-					this.connection.close();
+					JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), this.connection, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}
 			}catch(Exception e){
 				if(this.log!=null) {
@@ -903,7 +903,7 @@ public class TransactionDriverTracciamento implements ITracciaDriver {
 	private Connection close(Connection con) {
 		try{
 			if(con!=null) {
-				con.close();
+				JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), con, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				con = null;
 			}
 		}catch(Exception e){

@@ -28,6 +28,7 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -47,8 +48,10 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -66,6 +69,17 @@ public class OpenSPCoop2DBConfigurationUtility {
 	private static final String TIPOLOGIA_ELIMINAZIONE_FRUIZIONE = "fruizione";
 	private static final String TIPOLOGIA_ELIMINAZIONE_EROGAZIONE = "erogazione";
 
+	private static void logError(Logger log,String msg, Exception e) {
+		if(log!=null) {
+			log.error(msg, e);
+		}
+	}
+	private static void logDebug(Logger log,String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
 
 		
@@ -73,22 +87,22 @@ public class OpenSPCoop2DBConfigurationUtility {
 		if (args.length  < 4) {
 			String errorMsg = "ERROR, Usage:  java OpenSPCoop2DBConfigurationUtility proprietaAccessoDatabase tipologiaEliminazione(fruzione/erogazione) servizio(tipo/nome) soggettoErogatoreServizio(tipo/nome o *) fruitore(SOLO se tipologia=fruizione) [Logger]";
 			System.err.println(errorMsg);
-			throw new Exception(errorMsg);
+			throw new CoreException(errorMsg);
 		}
 
 		// proprietaAccessoDatabase
 		if(args[0]==null){
-			throw new Exception("Proprieta' per la configurazione dell'accesso al database non fornite");
+			throw new CoreException("Proprieta' per la configurazione dell'accesso al database non fornite");
 		}
 		String proprietaAccessoDatabase = args[0].trim();
 		
 		// tipologiaEliminazione
 		if(args[1]==null){
-			throw new Exception("Tipo di eliminazione non indicata");
+			throw new CoreException("Tipo di eliminazione non indicata");
 		}
 		String tipologiaEliminazione = args[1].trim();
 		if( !OpenSPCoop2DBConfigurationUtility.TIPOLOGIA_ELIMINAZIONE_EROGAZIONE.equals(tipologiaEliminazione) && !OpenSPCoop2DBConfigurationUtility.TIPOLOGIA_ELIMINAZIONE_FRUIZIONE.equals(tipologiaEliminazione) ){
-			throw new Exception("Tipo di eliminazione non gestito");
+			throw new CoreException("Tipo di eliminazione non gestito");
 		}
 		
 		// dati del servizio
@@ -105,12 +119,12 @@ public class OpenSPCoop2DBConfigurationUtility {
 			tipoServizio = tipoNomeServizio.split("/")[0].trim();
 			nomeServizio = tipoNomeServizio.split("/")[1].trim();
 		}catch(Exception e){
-			throw new Exception("Servizio da eliminare non indicato correttamente, atteso: tipo/nome , errore: "+e.getMessage(),e);
+			throw new CoreException("Servizio da eliminare non indicato correttamente, atteso: tipo/nome , errore: "+e.getMessage(),e);
 		}
 		
 		// dati del soggetto erogatore
 		if(args[3]==null){
-			throw new Exception("Soggetto da eliminare non indicato");
+			throw new CoreException("Soggetto da eliminare non indicato");
 		}
 		String tipoNomeSoggetto = args[3].trim();
 		String tipoSoggettoErogatore = null;
@@ -118,15 +132,15 @@ public class OpenSPCoop2DBConfigurationUtility {
 		if("*".equals(tipoNomeSoggetto)){
 			// voglio qualsiasi servizio
 		}
-		else if(tipoNomeSoggetto.contains("/")==false){
-			throw new Exception("Soggetto erogatore del servizio da eliminare non indicato correttamente, atteso: tipo/nome");
+		else if(!tipoNomeSoggetto.contains("/")){
+			throw new CoreException("Soggetto erogatore del servizio da eliminare non indicato correttamente, atteso: tipo/nome");
 		}
 		else{
 			try{
 				tipoSoggettoErogatore = tipoNomeSoggetto.split("/")[0].trim();
 				nomeSoggettoErogatore = tipoNomeSoggetto.split("/")[1].trim();
 			}catch(Exception e){
-				throw new Exception("Soggetto erogatore del servizio da eliminare non indicato correttamente, atteso: tipo/nome , errore: "+e.getMessage(),e);
+				throw new CoreException("Soggetto erogatore del servizio da eliminare non indicato correttamente, atteso: tipo/nome , errore: "+e.getMessage(),e);
 			}
 		}
 		
@@ -139,16 +153,16 @@ public class OpenSPCoop2DBConfigurationUtility {
 			logIndex++;
 			String tipoNomeSoggettoFruitore = args[4].trim();
 			if(tipoNomeSoggettoFruitore==null){
-				throw new Exception("Soggetto fruitore da eliminare non indicato");
+				throw new CoreException("Soggetto fruitore da eliminare non indicato");
 			}
 			else if(tipoNomeSoggettoFruitore.contains("/")==false){
-				throw new Exception("Soggetto fruitore da eliminare non indicato correttamente, atteso: tipo/nome");
+				throw new CoreException("Soggetto fruitore da eliminare non indicato correttamente, atteso: tipo/nome");
 			}
 			try{
 				tipoSoggettoFruitore = tipoNomeSoggettoFruitore.split("/")[0].trim();
 				nomeSoggettoFruitore = tipoNomeSoggettoFruitore.split("/")[1].trim();
 			}catch(Exception e){
-				throw new Exception("Soggetto fruitore da eliminare non indicato correttamente, atteso: tipo/nome , errore: "+e.getMessage(),e);
+				throw new CoreException("Soggetto fruitore da eliminare non indicato correttamente, atteso: tipo/nome , errore: "+e.getMessage(),e);
 			}
 		}
 		
@@ -162,7 +176,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 		}catch(Exception e) {
 			String errorMsg = "Errore durante il caricamento del file di log args"+logIndex+"["+args[logIndex]+"] : "+e.getMessage();
 			System.err.println(errorMsg);
-			throw new Exception(errorMsg);
+			throw new CoreException(errorMsg);
 		}	
 		Logger log = LoggerWrapperFactory.getLogger("gestoreEliminazioneServizio");
 		
@@ -174,8 +188,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 			}
 		}catch(java.io.IOException e) {
 			String errorMsg = "Errore durante il caricamento del file di properties ["+proprietaAccessoDatabase+"] : "+e.getMessage();
-			log.error(errorMsg,e);
-			throw new Exception(errorMsg,e);
+			logError(log,errorMsg,e);
+			throw new CoreException(errorMsg,e);
 		}
 		
 		
@@ -207,7 +221,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 			// Database
 			tipoDatabase = reader.getProperty("openspcoop2.configurazione.db.tipo");
 			if(tipoDatabase==null){
-				throw new Exception("Non e' stato definito il tipo di database per la configurazione");
+				throw new CoreException("Non e' stato definito il tipo di database per la configurazione");
 			}else{
 				tipoDatabase = tipoDatabase.trim();
 			}
@@ -216,7 +230,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 			try{
 				condivisioneDBRegservPddValue = Boolean.parseBoolean(condivisioneDBRegservPdd.trim());
 			}catch(Exception e){
-				throw new Exception("Non e' stato definita o e' definita non correttamente la proprieta' [openspcoop2.configurazione.db.condivisioneDBRegserv]: "+e.getMessage());
+				throw new CoreException("Non e' stato definita o e' definita non correttamente la proprieta' [openspcoop2.configurazione.db.condivisioneDBRegserv]: "+e.getMessage());
 			}
 			
 			String dataSource = reader.getProperty("openspcoop2.configurazione.db.dataSource");
@@ -232,12 +246,12 @@ public class OpenSPCoop2DBConfigurationUtility {
 			}else{
 				connection = reader.getProperty("openspcoop2.configurazione.db.url");
 				if(connection==null){
-					throw new Exception("Non e' stata definita una destinazione ne attraverso un datasource, ne attraverso una connessione diretta");
+					throw new CoreException("Non e' stata definita una destinazione ne attraverso un datasource, ne attraverso una connessione diretta");
 				}
 				connection = connection.trim();
 				driver = reader.getProperty("openspcoop2.configurazione.db.driver");
 				if(driver==null){
-					throw new Exception("Connessione diretta: non e' stato definito il Driver");
+					throw new CoreException("Connessione diretta: non e' stato definito il Driver");
 				}
 				driver = driver.trim();
 				username = reader.getProperty("openspcoop2.configurazione.db.user");
@@ -261,8 +275,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 			
 		}catch(Exception e) {
 			String errorMsg = "Errore durante la lettura del file di properties ["+args[1]+"] : "+e.getMessage();
-			log.error(errorMsg,e);
-			throw new Exception(errorMsg,e);
+			logError(log,errorMsg,e);
+			throw new CoreException(errorMsg,e);
 		}
 		
 		
@@ -282,7 +296,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 			// Database
 			tipoDatabase = reader.getProperty("openspcoop2.registroServizi.db.tipo");
 			if(tipoDatabase==null){
-				throw new Exception("Non e' stato definito il tipo di database per la configurazione");
+				throw new CoreException("Non e' stato definito il tipo di database per la configurazione");
 			}else{
 				tipoDatabase = tipoDatabase.trim();
 			}
@@ -303,12 +317,12 @@ public class OpenSPCoop2DBConfigurationUtility {
 			}else{
 				connection = reader.getProperty("openspcoop2.registroServizi.db.url");
 				if(connection==null){
-					throw new Exception("Non e' stata definita una destinazione ne attraverso un datasource, ne attraverso una connessione diretta");
+					throw new CoreException("Non e' stata definita una destinazione ne attraverso un datasource, ne attraverso una connessione diretta");
 				}
 				connection = connection.trim();
 				driver = reader.getProperty("openspcoop2.registroServizi.db.driver");
 				if(driver==null){
-					throw new Exception("Connessione diretta: non e' stato definito il Driver");
+					throw new CoreException("Connessione diretta: non e' stato definito il Driver");
 				}
 				driver = driver.trim();
 				username = reader.getProperty("openspcoop2.registroServizi.db.user");
@@ -339,8 +353,8 @@ public class OpenSPCoop2DBConfigurationUtility {
 			
 		}catch(Exception e) {
 			String errorMsg = "Errore durante la lettura del file di properties ["+args[1]+"] : "+e.getMessage();
-			log.error(errorMsg,e);
-			throw new Exception(errorMsg,e);
+			logError(log,errorMsg,e);
+			throw new CoreException(errorMsg,e);
 		}
 		
 		
@@ -351,7 +365,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 		
 		try{
 			
-			log.debug("Imposto auto-commit a false");
+			logDebug(log,"Imposto auto-commit a false");
 			connectionConfigurazione.setAutoCommit(false);
 			// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
 			if(!govwayConsoleMode){
@@ -369,7 +383,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 				filtroRicercaServizio.setTipoSoggettoErogatore(tipoSoggettoErogatore);
 				filtroRicercaServizio.setNomeSoggettoErogatore(nomeSoggettoErogatore);
 			}
-			List<IDServizio> idServizi = new ArrayList<IDServizio>();
+			List<IDServizio> idServizi = new ArrayList<>();
 			try{
 				List<IDServizio> idServizio = driverRegistroServizi.getAllIdServizi(filtroRicercaServizio);
 				if(idServizio!=null){
@@ -378,36 +392,36 @@ public class OpenSPCoop2DBConfigurationUtility {
 					}
 				}
 			}catch(DriverRegistroServiziNotFound notFound){
-				log.debug("Ricerca di servizi con filtro ["+filtroRicercaServizio.toString()+"] non ha prodotto risultati: "+notFound.getMessage());
+				logDebug(log,"Ricerca di servizi con filtro ["+filtroRicercaServizio.toString()+"] non ha prodotto risultati: "+notFound.getMessage());
 			}
 			
-			log.debug("Totale servizi da eliminare con tipologia ["+tipologiaEliminazione+"] : "+idServizi.size());
+			logDebug(log,"Totale servizi da eliminare con tipologia ["+tipologiaEliminazione+"] : "+idServizi.size());
 			
 			
 			// Scorro tutti i servizi trovati
-			while(idServizi.size()!=0){
+			while(!idServizi.isEmpty()){
 				
 				IDServizio idServizio = idServizi.remove(0);
-				log.debug("Gestione eliminazione servizio ["+idServizio.toString()+"] ...");
+				logDebug(log,"Gestione eliminazione servizio ["+idServizio.toString()+"] ...");
 				AccordoServizioParteSpecifica asps = driverRegistroServizi.getAccordoServizioParteSpecifica(idServizio);
 				@SuppressWarnings("unused")
 				IDSoggetto soggettoErogatore = new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
-				log.debug("\t dati servizio SoggettoErogatore["+asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore()+"] Tipologia["+asps.getTipologiaServizio().toString()+"] ...");
+				logDebug(log,"\t dati servizio SoggettoErogatore["+asps.getTipoSoggettoErogatore()+"/"+asps.getNomeSoggettoErogatore()+"] Tipologia["+asps.getTipologiaServizio().toString()+"] ...");
 								
 				if(OpenSPCoop2DBConfigurationUtility.TIPOLOGIA_ELIMINAZIONE_FRUIZIONE.equals(tipologiaEliminazione)){
 					
-					log.debug("\t dati Fruitore da eliminare ["+tipoSoggettoFruitore+"/"+nomeSoggettoFruitore+"]");
+					logDebug(log,"\t dati Fruitore da eliminare ["+tipoSoggettoFruitore+"/"+nomeSoggettoFruitore+"]");
 					IDSoggetto soggettoFruitore = new IDSoggetto(tipoSoggettoFruitore,nomeSoggettoFruitore);
-					//org.openspcoop2.core.config.Soggetto soggettoConfig = driverConfigurazione.getSoggetto(soggettoFruitore);
+					/**org.openspcoop2.core.config.Soggetto soggettoConfig = driverConfigurazione.getSoggetto(soggettoFruitore);*/
 					
 					// FRUITORE DAL SERVIZIO (+ mapping fruizioni)
 					if(govwayConsoleMode){
-						log.debug("\t- eliminazione mapping fruizioni ...");
+						logDebug(log,"\t- eliminazione mapping fruizioni ...");
 						DBMappingUtils.deleteMappingFruizione(idServizio, soggettoFruitore, connectionConfigurazione, tipoDatabase);
-						log.debug("\t- eliminazione mapping fruizioni effettuata");
+						logDebug(log,"\t- eliminazione mapping fruizioni effettuata");
 					}
 					
-					log.debug("\t- eliminazione fruizione dal servizio ...");
+					logDebug(log,"\t- eliminazione fruizione dal servizio ...");
 					for (int i = 0; i < asps.sizeFruitoreList(); i++) {
 						Fruitore fr = asps.getFruitore(i);
 						if(fr.getTipo().equals(tipoSoggettoFruitore) && fr.getNome().equals(nomeSoggettoFruitore)){
@@ -416,7 +430,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 						}
 					}
 					driverRegistroServizi.updateAccordoServizioParteSpecifica(asps);
-					log.debug("\t- eliminazione fruizione dal servizio effettuata");
+					logDebug(log,"\t- eliminazione fruizione dal servizio effettuata");
 					
 					
 					// PORTE DELEGATE CON TALE SERVIZIO e con tale fruitore
@@ -424,17 +438,17 @@ public class OpenSPCoop2DBConfigurationUtility {
 					List<PortaDelegata> listaPorteDelegate = 
 						driverConfigurazione.getPorteDelegateWithServizio(asps.getId(), asps.getTipo(), asps.getNome(), asps.getVersione(),
 								asps.getIdSoggetto(), asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
-					List<PortaDelegata> listaPorteDelegateFruitoreDaEliminare = new ArrayList<PortaDelegata>();
-					while(listaPorteDelegate.size()>0){
+					List<PortaDelegata> listaPorteDelegateFruitoreDaEliminare = new ArrayList<>();
+					while(!listaPorteDelegate.isEmpty()){
 						PortaDelegata pd = listaPorteDelegate.remove(0);
 						if(pd.getTipoSoggettoProprietario().equals(tipoSoggettoFruitore) && pd.getNomeSoggettoProprietario().equals(nomeSoggettoFruitore)){
 							listaPorteDelegateFruitoreDaEliminare.add(pd);
 						}
 					}
-					log.debug("\t- eliminazione porte delegate ("+listaPorteDelegateFruitoreDaEliminare.size()+") ...");
-					while(listaPorteDelegateFruitoreDaEliminare.size()>0){
+					logDebug(log,"\t- eliminazione porte delegate ("+listaPorteDelegateFruitoreDaEliminare.size()+") ...");
+					while(!listaPorteDelegateFruitoreDaEliminare.isEmpty()){
 						PortaDelegata pd = listaPorteDelegateFruitoreDaEliminare.remove(0);
-						log.debug("\t\t. porta delegata ("+pd.getNome()+") ...");
+						logDebug(log,"\t\t. porta delegata ("+pd.getNome()+") ...");
 						for (int i = 0; i < pd.sizeServizioApplicativoList(); i++) {
 							String sa = pd.getServizioApplicativo(i).getNome();
 							if(!nomiServiziApplicativi.contains(sa)){
@@ -442,24 +456,24 @@ public class OpenSPCoop2DBConfigurationUtility {
 							}
 						}
 						driverConfigurazione.deletePortaDelegata(pd);
-						log.debug("\t\t. porta delegata ("+pd.getNome()+") eliminata");
+						logDebug(log,"\t\t. porta delegata ("+pd.getNome()+") eliminata");
 					}
-					log.debug("\t- eliminazione porte delegate effettuata");
+					logDebug(log,"\t- eliminazione porte delegate effettuata");
 					
 					
 					// SERVIZI APPLICATIVI
-					log.debug("\t- eliminazione servizi applicativi ("+nomiServiziApplicativi.size()+") ...");
-					while(nomiServiziApplicativi.size()>0){
+					logDebug(log,"\t- eliminazione servizi applicativi ("+nomiServiziApplicativi.size()+") ...");
+					while(!nomiServiziApplicativi.isEmpty()){
 						String nomeSA = nomiServiziApplicativi.remove(0);
-						log.debug("\t\t. servizio applicativo ("+nomeSA+") ...");
+						logDebug(log,"\t\t. servizio applicativo ("+nomeSA+") ...");
 						IDServizioApplicativo idSA = new IDServizioApplicativo();
 						idSA.setIdSoggettoProprietario(soggettoFruitore);
 						idSA.setNome(nomeSA);
 						ServizioApplicativo sa = driverConfigurazione.getServizioApplicativo(idSA);
 						driverConfigurazione.deleteServizioApplicativo(sa);
-						log.debug("\t\t. servizio applicativo ("+nomeSA+") eliminato");
+						logDebug(log,"\t\t. servizio applicativo ("+nomeSA+") eliminato");
 					}
-					log.debug("\t- eliminazione servizi applicativi effettuata");
+					logDebug(log,"\t- eliminazione servizi applicativi effettuata");
 					
 				}
 				else{
@@ -469,22 +483,22 @@ public class OpenSPCoop2DBConfigurationUtility {
 						for (int i = 0; i < asps.sizeFruitoreList(); i++) {
 							Fruitore fr = asps.getFruitore(i);
 							IDSoggetto soggettoFruitore = new IDSoggetto(fr.getTipo(),fr.getNome());
-							log.debug("\t- eliminazione mapping fruizioni ...");
+							logDebug(log,"\t- eliminazione mapping fruizioni ...");
 							DBMappingUtils.deleteMappingFruizione(idServizio, soggettoFruitore, connectionConfigurazione, tipoDatabase);
-							log.debug("\t- eliminazione mapping fruizioni effettuata");
+							logDebug(log,"\t- eliminazione mapping fruizioni effettuata");
 						}
 					}
 						
 													
 					// PORTE DELEGATE
-					List<IDServizioApplicativo> nomiServiziApplicativi = new ArrayList<IDServizioApplicativo>();
+					List<IDServizioApplicativo> nomiServiziApplicativi = new ArrayList<>();
 					List<PortaDelegata> listaPorteDelegate = 
 						driverConfigurazione.getPorteDelegateWithServizio(asps.getId(), asps.getTipo(), asps.getNome(), asps.getVersione(),
 								asps.getIdSoggetto(), asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
-					log.debug("\t- eliminazione porte delegate ("+listaPorteDelegate.size()+") ...");
-					while(listaPorteDelegate.size()>0){
+					logDebug(log,"\t- eliminazione porte delegate ("+listaPorteDelegate.size()+") ...");
+					while(!listaPorteDelegate.isEmpty()){
 						PortaDelegata pd = listaPorteDelegate.remove(0);
-						log.debug("\t\t. porta delegata ("+pd.getNome()+") ...");
+						logDebug(log,"\t\t. porta delegata ("+pd.getNome()+") ...");
 						for (int i = 0; i < pd.sizeServizioApplicativoList(); i++) {
 							String sa = pd.getServizioApplicativo(i).getNome();
 							IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
@@ -495,22 +509,22 @@ public class OpenSPCoop2DBConfigurationUtility {
 							}
 						}
 						driverConfigurazione.deletePortaDelegata(pd);
-						log.debug("\t\t. porta delegata ("+pd.getNome()+") eliminata");
+						logDebug(log,"\t\t. porta delegata ("+pd.getNome()+") eliminata");
 					}
-					log.debug("\t- eliminazione porte delegate effettuata");
+					logDebug(log,"\t- eliminazione porte delegate effettuata");
 					
 					
 					// PORTE APPLICATIVE
 					List<PortaApplicativa> listaPorteApplicative = 
 						driverConfigurazione.getPorteApplicativeWithServizio(asps.getId(), asps.getTipo(), asps.getNome(), asps.getVersione(),
 								asps.getIdSoggetto(), asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore());
-					log.debug("\t- eliminazione porte applicative ("+listaPorteApplicative.size()+") ...");
-					while(listaPorteApplicative.size()>0){
+					logDebug(log,"\t- eliminazione porte applicative ("+listaPorteApplicative.size()+") ...");
+					while(!listaPorteApplicative.isEmpty()){
 						PortaApplicativa pa = listaPorteApplicative.remove(0);
 						IDPortaApplicativa idpa = new IDPortaApplicativa();
 						idpa.setNome(pa.getNome());
 						pa = driverConfigurazione.getPortaApplicativa(idpa); // Leggo tutti i valori (Bug del metodo getPorteApplicativeWithServizio)
-						log.debug("\t\t. porta applicativa ("+pa.getNome()+") ...");
+						logDebug(log,"\t\t. porta applicativa ("+pa.getNome()+") ...");
 						for (int i = 0; i < pa.sizeServizioApplicativoList(); i++) {
 							String sa = pa.getServizioApplicativo(i).getNome();
 							IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
@@ -521,44 +535,44 @@ public class OpenSPCoop2DBConfigurationUtility {
 							}
 						}
 						driverConfigurazione.deletePortaApplicativa(pa);
-						log.debug("\t\t. porta applicativa ("+pa.getNome()+") eliminata");
+						logDebug(log,"\t\t. porta applicativa ("+pa.getNome()+") eliminata");
 					}
-					log.debug("\t- eliminazione porte applicative effettuata");
+					logDebug(log,"\t- eliminazione porte applicative effettuata");
 					
 					
 					// SERVIZI APPLICATIVI
-					log.debug("\t- eliminazione servizi applicativi ("+nomiServiziApplicativi.size()+") ...");
-					while(nomiServiziApplicativi.size()>0){
+					logDebug(log,"\t- eliminazione servizi applicativi ("+nomiServiziApplicativi.size()+") ...");
+					while(!nomiServiziApplicativi.isEmpty()){
 						IDServizioApplicativo idSA = nomiServiziApplicativi.remove(0);
-						log.debug("\t\t. servizio applicativo ("+idSA.toString()+") ...");
+						logDebug(log,"\t\t. servizio applicativo ("+idSA.toString()+") ...");
 						try{
 							ServizioApplicativo sa = driverConfigurazione.getServizioApplicativo(idSA);
 							driverConfigurazione.deleteServizioApplicativo(sa);
-							log.debug("\t\t. servizio applicativo ("+idSA.toString()+") eliminato");
+							logDebug(log,"\t\t. servizio applicativo ("+idSA.toString()+") eliminato");
 						}catch(DriverConfigurazioneNotFound notFound){
-							log.debug("\t\t. servizio applicativo ("+idSA.toString()+") non esiste (puo' darsi che veniva riferito da piu' oggetti, e sia gia' stato eliminato)");
+							logDebug(log,"\t\t. servizio applicativo ("+idSA.toString()+") non esiste (puo' darsi che veniva riferito da piu' oggetti, e sia gia' stato eliminato)");
 						}
 					}
-					log.debug("\t- eliminazione servizi applicativi effettuata");
+					logDebug(log,"\t- eliminazione servizi applicativi effettuata");
 
 					
 					
 					// SERVIZI (mapping erogazioni)
 					if(govwayConsoleMode){
-						log.debug("\t- eliminazione mapping erogazione ...");
+						logDebug(log,"\t- eliminazione mapping erogazione ...");
 						DBMappingUtils.deleteMappingErogazione(idServizio, connectionConfigurazione, tipoDatabase);
-						log.debug("\t- eliminazione mapping erogazione effettuata");
+						logDebug(log,"\t- eliminazione mapping erogazione effettuata");
 					}
 					
 					
 					// SERVIZI 
-					log.debug("\t- eliminazione servizio ...");
+					logDebug(log,"\t- eliminazione servizio ...");
 					driverRegistroServizi.deleteAccordoServizioParteSpecifica(asps);
-					log.debug("\t- eliminazione servizio effettuata");
+					logDebug(log,"\t- eliminazione servizio effettuata");
 					
 					
 					// ACCORDI (SE NON VI SONO ALTRI SERVIZI CHE LO IMPLEMENTANO)
-					log.debug("\t- eliminazione accordo parte comune ...");
+					logDebug(log,"\t- eliminazione accordo parte comune ...");
 					FiltroRicercaServizi filtroAltriServizi = new FiltroRicercaServizi();
 					IDAccordo idAccordoParteComune = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 					filtroAltriServizi.setIdAccordoServizioParteComune(idAccordoParteComune);
@@ -566,7 +580,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 					StringBuilder bfAltriServizi = new StringBuilder();
 					try{
 						List<IDServizio> others = driverRegistroServizi.getAllIdServizi(filtroAltriServizi);
-						if(others!=null && others.size()>0){
+						if(others!=null && !others.isEmpty()){
 							existsAltriServizi = true;
 							for (int i = 0; i < others.size(); i++) {
 								if(bfAltriServizi.length()>0){
@@ -587,27 +601,27 @@ public class OpenSPCoop2DBConfigurationUtility {
 							as.setSoggettoReferente(asr);
 						}
 						driverRegistroServizi.deleteAccordoServizioParteComune(as);
-						log.debug("\t- eliminazione accordo parte comune effettuata");
+						logDebug(log,"\t- eliminazione accordo parte comune effettuata");
 					}
 					else{
-						log.debug("\t- eliminazione accordo parte comune non effettuata poiche' implementato da altri servizi: "+bfAltriServizi.toString());
+						logDebug(log,"\t- eliminazione accordo parte comune non effettuata poiche' implementato da altri servizi: "+bfAltriServizi.toString());
 					}
 					
 				}
 				
-				log.debug("Gestione eliminazione servizio ["+idServizio.toString()+"] completata");
+				logDebug(log,"Gestione eliminazione servizio ["+idServizio.toString()+"] completata");
 			}
 			
 		
 			
 			
-			log.debug("Commit...");
+			logDebug(log,"Commit...");
 			connectionConfigurazione.commit();
 			// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
 			if(!govwayConsoleMode){
 				connectionRegistroServizi.commit();
 			}
-			log.debug("Commit effettuato");
+			logDebug(log,"Commit effettuato");
 			
 		}catch(Exception e){
 			try{
@@ -620,27 +634,41 @@ public class OpenSPCoop2DBConfigurationUtility {
 				}
 			}catch(Exception eRollback){}
 			String errorMsg = "Errore avvenuto durante l'eliminazione: "+e.getMessage(); 
-			log.error(errorMsg,e);
-			throw new Exception(errorMsg,e);
+			logError(log,errorMsg,e);
+			throw new CoreException(errorMsg,e);
 		}finally{
 			try{
 				connectionConfigurazione.setAutoCommit(true);
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
 				if(!govwayConsoleMode){
 					connectionRegistroServizi.setAutoCommit(true);
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 			try{
-				connectionConfigurazione.close();
-			}catch(Exception e){}
+				Logger logR = OpenSPCoop2Logger.getLoggerOpenSPCoopResources()!=null ? OpenSPCoop2Logger.getLoggerOpenSPCoopResources() : LoggerWrapperFactory.getLogger(DBConsegnePreseInCaricoManager.class);
+				boolean checkAutocommit = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckAutocommit();
+				boolean checkIsClosed = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckIsClosed();
+				JDBCUtilities.closeConnection(logR, connectionConfigurazione, checkAutocommit, checkIsClosed);
+			}catch(Exception e){
+				// ignore
+			}
 			try{
 				// NOTA: Se sono in govwayConsoleMode devo usare SOLO 1 connessione (uso quella della configurazione)
 				if(!govwayConsoleMode){
-					connectionRegistroServizi.close();
+					Logger logR = OpenSPCoop2Logger.getLoggerOpenSPCoopResources()!=null ? OpenSPCoop2Logger.getLoggerOpenSPCoopResources() : LoggerWrapperFactory.getLogger(DBConsegnePreseInCaricoManager.class);
+					boolean checkAutocommit = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckAutocommit();
+					boolean checkIsClosed = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckIsClosed();
+					JDBCUtilities.closeConnection(logR, connectionRegistroServizi, checkAutocommit, checkIsClosed);
 				}
-			}catch(Exception e){}
+			}catch(Exception e){
+				// ignore
+			}
 		}
 		
 	}

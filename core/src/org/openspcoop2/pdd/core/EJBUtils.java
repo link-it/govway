@@ -820,8 +820,8 @@ public class EJBUtils {
 
 				idRisposta = 
 					imbustatore.buildID(this.identitaPdD, idTransazione, 
-							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+							this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+							this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 							RuoloMessaggio.RISPOSTA);
 				if(idRisposta == null){
 					throw new Exception("Identificativo non costruito.");
@@ -900,8 +900,8 @@ public class EJBUtils {
 				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 				idSbloccoRicezioneContenutiApplicativi= 
 					imbustatore.buildID(this.identitaPdD, idTransazione, 
-							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+							this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+							this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 							RuoloMessaggio.RISPOSTA);
 				if(idSbloccoRicezioneContenutiApplicativi == null){
 					throw new Exception("Identificativo non costruito.");
@@ -1065,8 +1065,8 @@ public class EJBUtils {
 					Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 					idRisposta = 
 						imbustatore.buildID(this.identitaPdD, idTransazione, 
-								this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-								this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+								this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+								this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 								RuoloMessaggio.RISPOSTA);
 					if(idRisposta == null){
 						throw new Exception("Identificativo non costruito.");
@@ -1157,8 +1157,8 @@ public class EJBUtils {
 				Imbustamento imbustatore = new Imbustamento(this.log,this.protocolFactory,this.openSPCoopState.getStatoRichiesta());
 				String idSbloccoRicezioneContenutiApplicativi= 
 					imbustatore.buildID(this.identitaPdD, idTransazione, 
-							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+							this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+							this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 							RuoloMessaggio.RISPOSTA);
 				if(idSbloccoRicezioneContenutiApplicativi == null){
 					throw new Exception("Identificativo non costruito.");
@@ -2650,8 +2650,8 @@ public class EJBUtils {
 
 		String id_bustaErrore = 
 			imbustatore.buildID(this.identitaPdD, idTransazione, 
-					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+					this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+					this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 					RuoloMessaggio.RISPOSTA);
 
 		//ErroreProcessamentoProtocollo: Header
@@ -2762,8 +2762,8 @@ public class EJBUtils {
 		String id_bustaErrore = 
 			imbustatore.buildID(this.identitaPdD, 
 					(String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE), 
-					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+					this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+					this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 					RuoloMessaggio.RISPOSTA);
 
 		// CodiceErrore (da fare prima di imbustamentoErrore che svuola la lista eccezioni)
@@ -2838,8 +2838,8 @@ public class EJBUtils {
 		Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory,this.openSPCoopState.getStatoRichiesta());
 		String id_bustaErrore = 
 			imbustatore.buildID(this.identitaPdD, idTransazione, 
-					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+					this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+					this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 					RuoloMessaggio.RISPOSTA);
 
 		// CodiceErrore (da fare prima di imbustamentoErrore che svuola la lista eccezioni)
@@ -3084,8 +3084,8 @@ public class EJBUtils {
 		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 		String idSblocco =	
 			imbustatore.buildID(this.identitaPdD, idTransazione, 
-					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+					this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+					this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 					RuoloMessaggio.RISPOSTA);
 		return sendBustaRisposta(idModuloInAttesa,null,MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE)
 				,idSblocco,null,null,null,null);
@@ -3099,8 +3099,8 @@ public class EJBUtils {
 		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 		String idSblocco = 
 			imbustatore.buildID(this.identitaPdD, idTransazione, 
-					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+					this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+					this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 					RuoloMessaggio.RISPOSTA);
 
 		return sendBustaRisposta(idModuloInAttesa,null,msg,idSblocco,null,null,null,null);
@@ -3133,8 +3133,8 @@ public class EJBUtils {
 		org.openspcoop2.protocol.engine.builder.Imbustamento imbustatore = new Imbustamento(this.log, this.protocolFactory, this.openSPCoopState.getStatoRichiesta());
 		String id_busta = 
 			imbustatore.buildID(this.identitaPdD, idTransazione, 
-					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+					this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+					this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 					RuoloMessaggio.RISPOSTA);
 
 		// Aggiungo ID

@@ -21,6 +21,7 @@
 package org.openspcoop2.pdd.config;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.sql.DataSource;
@@ -30,9 +31,13 @@ import org.openspcoop2.core.commons.IMonitoraggioRisorsa;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.datasource.DataSourceParams;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.slf4j.Logger;
 
@@ -45,14 +50,16 @@ import org.slf4j.Logger;
  */
 public class DBTransazioniManager implements IMonitoraggioRisorsa {
 
+	private static final String ID_MODULO = "DBTransazioniManager";
+	
 	private static DBTransazioniManager staticInstanceDBTransazioniManager;
-	public static synchronized void init(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
+	public static synchronized void init(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) {
 		if(staticInstanceDBTransazioniManager==null) {
 			staticInstanceDBTransazioniManager = new DBTransazioniManager(dbManagerRuntimePdD, alog, tipoDatabase);
 		}
 	}
 	public static synchronized void init(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
-			boolean useOp2UtilsDatasource, boolean bindJMX) throws Exception {
+			boolean useOp2UtilsDatasource, boolean bindJMX) throws UtilsException {
 		if(staticInstanceDBTransazioniManager==null) {
 			staticInstanceDBTransazioniManager = new DBTransazioniManager(nomeDataSource, context, alog, tipoDatabase, useOp2UtilsDatasource, bindJMX);
 		}
@@ -71,9 +78,9 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 	
 	
 	/** Informazione sui proprietari che hanno richiesto una connessione */
-	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione = new java.util.concurrent.ConcurrentHashMap<String,Resource>();
+	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione = new java.util.concurrent.ConcurrentHashMap<>();
 	
-	public static String[] getStatoRisorse() throws Exception{	
+	public static String[] getStatoRisorse() {	
 		return DBManager.getStatoRisorse(DBTransazioniManager.risorseInGestione);
 	}
 	
@@ -91,49 +98,57 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 	}
 	private DataSource datasourceTransazioni;
 	
-	private DBTransazioniManager(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) throws Exception {
+	private DBTransazioniManager(DBManager dbManagerRuntimePdD,Logger alog,String tipoDatabase) {
 		this.dbManagerRuntimePdD = dbManagerRuntimePdD;
 		this.log = alog;
 		this.tipoDatabase = tipoDatabase;
 	}
 	private DBTransazioniManager(String nomeDataSource, java.util.Properties context,Logger alog,String tipoDatabase, 
-			boolean useOp2UtilsDatasource, boolean bindJMX) throws Exception {
+			boolean useOp2UtilsDatasource, boolean bindJMX) throws UtilsException {
 		try {
 			this.log = alog;
 			this.tipoDatabase = tipoDatabase;
 			
 			if(useOp2UtilsDatasource){
 				DataSourceParams dsParams = Costanti.getDataSourceParamsPdD(bindJMX, tipoDatabase);
-				try{
-					this.datasourceTransazioni = DataSourceFactory.newInstance(nomeDataSource, context, dsParams);
-				}catch(UtilsAlreadyExistsException exists){
-					this.datasourceTransazioni = DataSourceFactory.getInstance(nomeDataSource); 
-					if(this.datasourceTransazioni==null){
-						throw new Exception("Lookup datasource non riuscita ("+exists.getMessage()+")",exists);
-					}
-				}
+				initDatasource(nomeDataSource, context, dsParams);
 			}
 			else{
 				GestoreJNDI gestoreJNDI = new GestoreJNDI(context);
 				this.datasourceTransazioni = (DataSource) gestoreJNDI.lookup(nomeDataSource);
 			}
 		} catch (Exception ne) {
-			this.log.error("Impossibile instanziare il manager: " + ne.getMessage(),ne);
-			throw ne;
+			String msg = "Impossibile instanziare il manager: " + ne.getMessage();
+			doError(msg, ne);
+		}
+	}
+	private void initDatasource(String nomeDataSource, java.util.Properties context, DataSourceParams dsParams) throws UtilsException {
+		try{
+			this.datasourceTransazioni = DataSourceFactory.newInstance(nomeDataSource, context, dsParams);
+		}catch(UtilsAlreadyExistsException exists){
+			this.datasourceTransazioni = DataSourceFactory.getInstance(nomeDataSource); 
+			if(this.datasourceTransazioni==null){
+				throw new UtilsException("Lookup datasource non riuscita ("+exists.getMessage()+")",exists);
+			}
 		}
 	}
 	
+	private void doError(String msg, Exception e) throws UtilsException {
+		this.log.error(msg,e);
+		throw new UtilsException(msg,e);
+	}
 	
-	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione) throws Exception {
+	
+	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione) throws UtilsException {
 		return this.getResource(idPDD, modulo, idTransazione, true);
 	}
-	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione, boolean logError) throws Exception {
+	public Resource getResource(IDSoggetto idPDD,String modulo,String idTransazione, boolean logError) throws UtilsException {
 		if(this.dbManagerRuntimePdD!=null) {
-			//System.out.println("id ["+idTransazione+"] prendo da dbManager");
+			/**System.out.println("id ["+idTransazione+"] prendo da dbManager");*/
 			return this.dbManagerRuntimePdD.getResource(idPDD, modulo, idTransazione, logError);
 		}
 		else {
-			//System.out.println("id ["+idTransazione+"] negozio");
+			/**System.out.println("id ["+idTransazione+"] negozio");*/
 			try {
 				StringBuilder bf = new StringBuilder();
 				if(idPDD!=null) {
@@ -146,7 +161,7 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 					bf.append(modulo);
 				}
 				if(bf.length()<=0) {
-					bf.append("DBTransazioniManager");
+					bf.append(ID_MODULO);
 				}
 				Resource risorsa = DBManager.buildResource("DBTransactionManager", this.getConnectionFromDatasource(bf.toString(), idTransazione),
 						idPDD, modulo, idTransazione);	
@@ -156,13 +171,14 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 				return risorsa;
 			}
 			catch(Exception e) {
-				this.log.error("Errore durante l'ottenimento di una connessione: "+e.getMessage(),e);
-				throw e;
+				String msg = "Errore durante l'ottenimento di una connessione: "+e.getMessage();
+				doError(msg, e);
+				throw new UtilsException(msg,e);
 			}
 		}
 	}
 	
-	private Connection getConnectionFromDatasource(String methodName, String idTransazione) throws Exception{
+	private Connection getConnectionFromDatasource(String methodName, String idTransazione) throws SQLException{
 		if(this.datasourceTransazioni instanceof org.openspcoop2.utils.datasource.DataSource){
 			return ((org.openspcoop2.utils.datasource.DataSource)this.datasourceTransazioni).getWrappedConnection(idTransazione, "DBTransazioniManager."+methodName);
 		}
@@ -180,23 +196,26 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 				this.dbManagerRuntimePdD.releaseResource(idPDD, modulo, resource, logError);
 			}
 			else {
-				if(resource!=null){
-					
-					if(resource.getResource()!=null){
-						Connection connectionDB = (Connection) resource.getResource();
-						if(connectionDB != null && (connectionDB.isClosed()==false)){
-							connectionDB.close();
-						}
-					}	
-					
-					if(DBTransazioniManager.risorseInGestione.containsKey(resource.getId()))
-						DBTransazioniManager.risorseInGestione.remove(resource.getId());
-				}
+				releaseConnection(resource);
 			}
-
 		}
 		catch(Exception e) {
 			this.log.error("Errore durante il rilascio di una risorsa: "+e.getMessage(),e);
+		}
+	}
+	private void releaseConnection(Resource resource) throws SQLException {
+		if(resource!=null){
+			
+			if(resource.getResource()!=null){
+				Connection connectionDB = (Connection) resource.getResource();
+				Logger logResource = OpenSPCoop2Logger.getLoggerOpenSPCoopResources()!=null ? OpenSPCoop2Logger.getLoggerOpenSPCoopResources() : LoggerWrapperFactory.getLogger(DBTransazioniManager.class);
+				boolean checkAutocommit = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckAutocommit();
+				boolean checkIsClosed = (OpenSPCoop2Properties.getInstance()==null) || OpenSPCoop2Properties.getInstance().isJdbcCloseConnectionCheckIsClosed();
+				JDBCUtilities.closeConnection(logResource, connectionDB, checkAutocommit, checkIsClosed);
+			}	
+			
+			if(DBTransazioniManager.risorseInGestione.containsKey(resource.getId()))
+				DBTransazioniManager.risorseInGestione.remove(resource.getId());
 		}
 	}
 	
@@ -218,19 +237,11 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 			Resource resource = null;
 			Statement stmtTest = null;
 			IDSoggetto idSoggettAlive = new IDSoggetto();
-			idSoggettAlive.setCodicePorta("DBTransazioniManager");
-			idSoggettAlive.setTipo("DBTransazioniManager");
-			idSoggettAlive.setNome("DBTransazioniManager");
+			idSoggettAlive.setCodicePorta(ID_MODULO);
+			idSoggettAlive.setTipo(ID_MODULO);
+			idSoggettAlive.setNome(ID_MODULO);
 			try {
-				try{
-					resource = this.getResource(idSoggettAlive, "CheckIsAlive", null);
-				}catch(Exception e){
-					throw e;
-				}
-				if(resource == null)
-					throw new Exception("Resource is null");
-				if(resource.getResource() == null)
-					throw new Exception("Connessione is null");
+				resource = getResource(idSoggettAlive);
 				Connection con = (Connection) resource.getResource();
 				// test:
 				stmtTest = con.createStatement();
@@ -253,5 +264,18 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 				}
 			}
 		}
+	}
+	private Resource getResource(IDSoggetto idSoggettAlive) throws UtilsException {
+		Resource resource = null;
+		try{
+			resource = this.getResource(idSoggettAlive, "CheckIsAlive", null);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+		if(resource == null)
+			throw new UtilsException("Resource is null");
+		if(resource.getResource() == null)
+			throw new UtilsException("Connessione is null");
+		return resource;
 	}
 }

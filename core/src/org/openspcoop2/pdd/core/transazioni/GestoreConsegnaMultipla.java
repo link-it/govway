@@ -575,8 +575,8 @@ public class GestoreConsegnaMultipla {
 						}
 					}
 					
-					long gestioneSerializableDBAttesaAttiva = openspcoopProperties.getGestioneSerializableDB_AttesaAttiva();
-					int gestioneSerializableDBCheckInterval = openspcoopProperties.getGestioneSerializableDB_CheckInterval();
+					long gestioneSerializableDBAttesaAttiva = openspcoopProperties.getGestioneSerializableDBAttesaAttiva();
+					int gestioneSerializableDBCheckInterval = openspcoopProperties.getGestioneSerializableDBCheckInterval();
 					
 					long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDBAttesaAttiva;
 					
@@ -1010,7 +1010,7 @@ public class GestoreConsegnaMultipla {
 					this.debug,
 					esitoConsegnaMultipla, esitoConsegnaMultiplaInCorso, esitoConsegnaMultiplaFallita, esitoConsegnaMultiplaCompletata, ok,
 					esitoIntegrationManagerSingolo, possibileTerminazioneSingleIntegrationManagerMessage, consegnaInErrore,
-					openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
+					openspcoopProperties.getGestioneSerializableDBAttesaAttiva(),openspcoopProperties.getGestioneSerializableDBCheckInterval(),
 					timeDetails);
 		}
 		return false;

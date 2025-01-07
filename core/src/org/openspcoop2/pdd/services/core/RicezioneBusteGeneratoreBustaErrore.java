@@ -149,8 +149,8 @@ public class RicezioneBusteGeneratoreBustaErrore {
 							integrationFunctionError,
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione, erroreCooperazione,
 							securityPropertiesResponse,messageSecurityContext,
-							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
+							propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+							propertiesReader.getGestioneSerializableDBCheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
 							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),
@@ -161,8 +161,8 @@ public class RicezioneBusteGeneratoreBustaErrore {
 							integrationFunctionError,
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione, erroreIntegrazione,
 							securityPropertiesResponse,messageSecurityContext,
-							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
+							propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+							propertiesReader.getGestioneSerializableDBCheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
 							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),
@@ -172,8 +172,8 @@ public class RicezioneBusteGeneratoreBustaErrore {
 							integrationFunctionError,
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione, error,
 							securityPropertiesResponse,messageSecurityContext,
-							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
+							propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+							propertiesReader.getGestioneSerializableDBCheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
 							parametriGenerazioneBustaErrore.getEccezioneProcessamento(),
@@ -185,8 +185,8 @@ public class RicezioneBusteGeneratoreBustaErrore {
 							integrationFunctionError,
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione,erroreCooperazione,
 							securityPropertiesResponse,messageSecurityContext,
-							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
+							propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+							propertiesReader.getGestioneSerializableDBCheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
 							this.msgContext.getPddContext());
@@ -199,8 +199,8 @@ public class RicezioneBusteGeneratoreBustaErrore {
 							integrationFunctionError,
 							parametriGenerazioneBustaErrore.getBusta(),integrazione, idTransazione,error,
 							securityPropertiesResponse,messageSecurityContext,
-							propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-							propertiesReader.getGestioneSerializableDB_CheckInterval(),profiloGestione,
+							propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+							propertiesReader.getGestioneSerializableDBCheckInterval(),profiloGestione,
 							propertiesReader.getTipoTempoBusta(implementazionePdDMittente),
 							propertiesReader.isGenerazioneListaTrasmissioni(implementazionePdDMittente),
 							this.msgContext.getPddContext());
@@ -465,8 +465,8 @@ public class RicezioneBusteGeneratoreBustaErrore {
 
 			String idBustaRisposta = 
 					imbustatore.buildID(identitaPdD, idTransazione, 
-							properties.getGestioneSerializableDB_AttesaAttiva(),
-							properties.getGestioneSerializableDB_CheckInterval(),
+							properties.getGestioneSerializableDBAttesaAttiva(),
+							properties.getGestioneSerializableDBCheckInterval(),
 							RuoloMessaggio.RISPOSTA);
 			bustaHTTPReply.setID(idBustaRisposta);
 			
@@ -485,8 +485,8 @@ public class RicezioneBusteGeneratoreBustaErrore {
 			
 			String idBustaRisposta = 
 					imbustatore.buildID(identitaPdD, idTransazione, 
-							properties.getGestioneSerializableDB_AttesaAttiva(),
-							properties.getGestioneSerializableDB_CheckInterval(),
+							properties.getGestioneSerializableDBAttesaAttiva(),
+							properties.getGestioneSerializableDBCheckInterval(),
 							RuoloMessaggio.RISPOSTA);
 			List<Eccezione> v = new ArrayList<>();
 			v.add(Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory));
@@ -548,8 +548,8 @@ public class RicezioneBusteGeneratoreBustaErrore {
 				
 				String idBustaRisposta = 
 						imbustatore.buildID(identitaPdD, idTransazione, 
-								properties.getGestioneSerializableDB_AttesaAttiva(),
-								properties.getGestioneSerializableDB_CheckInterval(),
+								properties.getGestioneSerializableDBAttesaAttiva(),
+								properties.getGestioneSerializableDBCheckInterval(),
 								RuoloMessaggio.RISPOSTA);
 				bustaHTTPReply.setID(idBustaRisposta);
 			}
@@ -561,8 +561,8 @@ public class RicezioneBusteGeneratoreBustaErrore {
 				
 				String idBustaRisposta = 
 						imbustatore.buildID(identitaPdD, idTransazione, 
-								properties.getGestioneSerializableDB_AttesaAttiva(),
-								properties.getGestioneSerializableDB_CheckInterval(),
+								properties.getGestioneSerializableDBAttesaAttiva(),
+								properties.getGestioneSerializableDBCheckInterval(),
 								RuoloMessaggio.RISPOSTA);
 				List<Eccezione> v = new ArrayList<>();
 				v.add(Eccezione.getEccezioneValidazione(ErroriCooperazione.IDENTIFICATIVO_MESSAGGIO_GIA_PROCESSATO.getErroreCooperazione(),protocolFactory));

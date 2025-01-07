@@ -234,6 +234,13 @@ public class ConsoleProperties {
 		return i!=null ? i.intValue() : -1;
 	}
 	
+	public boolean isJdbcCloseConnectionCheckIsClosed() throws UtilsException{
+		return this.readBooleanRequiredProperty("jdbc.closeConnection.checkIsClosed");
+	}
+	public boolean isJdbcCloseConnectionCheckAutocommit() throws UtilsException{
+		return this.readBooleanRequiredProperty("jdbc.closeConnection.checkAutocommit");
+	}
+	
 	public Boolean isSinglePdD() throws UtilsException{
 		/**return this.readBooleanRequiredProperty("singlePdD");*/
 		return true;

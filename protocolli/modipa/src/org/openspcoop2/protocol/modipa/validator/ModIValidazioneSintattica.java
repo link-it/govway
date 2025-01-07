@@ -995,10 +995,6 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 		return basicResult;
 	}
 	
-	private void logError(String msg, Exception e) {
-		this.log.error(msg,e);
-	}
-
 	static String buildErrore(List<Eccezione> list, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		return buildErrore(list, 0, protocolFactory);
 	}
