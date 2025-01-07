@@ -1604,8 +1604,8 @@ public class GestoreAutenticazione {
     	
 		// Il semaforo utilizzato prima di effettuare l'update non basta, la modifica potrebbe essere effettuata da più nodi.
 		
-		long gestioneSerializableDB_AttesaAttiva = OpenSPCoop2Properties.getInstance().getGestioneSerializableDB_AttesaAttiva();
-		int gestioneSerializableDB_CheckInterval = OpenSPCoop2Properties.getInstance().getGestioneSerializableDB_CheckInterval();
+		long gestioneSerializableDB_AttesaAttiva = OpenSPCoop2Properties.getInstance().getGestioneSerializableDBAttesaAttiva();
+		int gestioneSerializableDB_CheckInterval = OpenSPCoop2Properties.getInstance().getGestioneSerializableDBCheckInterval();
 		
 		long scadenzaWhile = DateManager.getTimeMillis() + gestioneSerializableDB_AttesaAttiva;
 		

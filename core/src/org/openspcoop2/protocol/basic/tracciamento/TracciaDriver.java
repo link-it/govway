@@ -52,6 +52,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.slf4j.Logger;
@@ -84,6 +85,8 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 
 
 	public static final String IDTRACCIA = "@@@@@-----@@@@-----IDTRACCIA-DB----@@@@@-----@@@@";
+	
+	private static final String TRACCIA_EXCEPTION_PREFIX = "Tracciamento exception: ";
 	
 	/**
 	 * Properties
@@ -120,36 +123,36 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			else
 				this.log = log;
 		} catch (Exception e) {
-			throw new DriverTracciamentoException("Errore durante l'inizializzazione del logger...",e);
+			throw new DriverTracciamentoException("Errore durante l'inizializzazione del logger (datasource params): "+e.getMessage(),e);
 		}
 
 		// Datasource
 		try {
-			this.log.info("Inizializzo DriverLogAnalyzer...");
+			this.log.info("Inizializzo DriverLogAnalyzer (datasource params)");
 			GestoreJNDI gestoreJNDI = new GestoreJNDI(jndiContext);
 			this.datasource = (DataSource) gestoreJNDI.lookup(nomeDataSource);
 			if (this.datasource == null)
-				throw new Exception ("datasource is null");
+				throw new ProtocolException ("datasource is null");
 
 			this.log.info("Inizializzo DriverLogAnalyzer terminata.");
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del datasource...",e);
-			throw new DriverTracciamentoException("Errore durante la ricerca del datasource...",e);
+			this.logError("Errore durante la ricerca del datasource(datasource params): "+e.getMessage(),e);
+			throw new DriverTracciamentoException("Errore durante la ricerca del datasource (datasource params): "+e.getMessage(),e);
 		}
 
 		// ISQLQueryObject
 		try {
-			this.log.info("Inizializzo ISQLQueryObject...");
+			this.log.info("Inizializzo ISQLQueryObject (datasource params)");
 			if (TipiDatabase.isAMember(tipoDatabase)) {
 				this.tipoDatabase = tipoDatabase;				
 			} else {
-				throw new Exception("Tipo database non gestito");
+				throw new ProtocolException("Tipo database non gestito (datasource params)");
 			}
-			this.log.info("Inizializzo ISQLQueryObject terminata.");
+			this.log.info("Inizializzo ISQLQueryObject terminata (datasource params)");
 
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
-			throw new DriverTracciamentoException("Errore durante la ricerca del SQLQueryObject...",e);
+			this.logError("Errore durante la ricerca del SQLQueryObject(datasource params): "+e.getMessage(),e);
+			throw new DriverTracciamentoException("Errore durante la ricerca del SQLQueryObject (datasource params): "+e.getMessage(),e);
 		}
 		
 	}
@@ -169,32 +172,32 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			else
 				this.log = log;
 		} catch (Exception e) {
-			throw new DriverTracciamentoException("Errore durante l'inizializzazione del logger...",e);
+			throw new DriverTracciamentoException("Errore durante l'inizializzazione del logger (datasource): "+e.getMessage(),e);
 		}
 
 		// Datasource
 		try {
 			this.datasource = dataSourceObject;
 			if (this.datasource == null)
-				throw new Exception ("datasource is null");
+				throw new ProtocolException ("datasource is null");
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del datasource...",e);
-			throw new DriverTracciamentoException("Errore durante la ricerca del datasource...",e);
+			this.logError("Errore durante la ricerca del datasource...",e);
+			throw new DriverTracciamentoException("Errore durante la ricerca del datasource (datasource): "+e.getMessage(),e);
 		}
 
 		// ISQLQueryObject
 		try {
-			this.log.info("Inizializzo ISQLQueryObject...");
+			this.log.info("Inizializzo ISQLQueryObject (datasource)");
 			if (TipiDatabase.isAMember(tipoDatabase)) {
 				this.tipoDatabase = tipoDatabase;				
 			} else {
-				throw new Exception("Tipo database non gestito");
+				throw new ProtocolException("Tipo database non gestito (datasource)");
 			}
-			this.log.info("Inizializzo ISQLQueryObject terminata.");
+			this.log.info("Inizializzo ISQLQueryObject terminata (datasource)");
 
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
-			throw new DriverTracciamentoException("Errore durante la ricerca del SQLQueryObject...",e);
+			this.logError("Errore durante la ricerca del SQLQueryObject (datasource): "+e.getMessage(),e);
+			throw new DriverTracciamentoException("Errore durante la ricerca del SQLQueryObject (datasource): "+e.getMessage(),e);
 		}
 	}
 	
@@ -206,7 +209,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		try {
 			this.log = log;
 		} catch (Exception e) {
-			throw new DriverTracciamentoException("Errore durante l'inizializzazione del logger...",e);
+			throw new DriverTracciamentoException("Errore durante l'inizializzazione del logger (connection): "+e.getMessage(),e);
 		}
 
 		// connection
@@ -214,17 +217,17 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		
 		// ISQLQueryObject
 		try {
-			this.log.info("Inizializzo ISQLQueryObject...");
+			this.log.info("Inizializzo ISQLQueryObject (connection)");
 			if (TipiDatabase.isAMember(tipoDatabase)) {
 				this.tipoDatabase = tipoDatabase;				
 			} else {
-				throw new Exception("Tipo database non gestito");
+				throw new ProtocolException("Tipo database non gestito (connection)");
 			}
-			this.log.info("Inizializzo ISQLQueryObject terminata.");
+			this.log.info("Inizializzo ISQLQueryObject terminata (connection)");
 
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
-			throw new DriverTracciamentoException("Errore durante la ricerca del SQLQueryObject...",e);
+			this.logError("Errore durante la ricerca del SQLQueryObject (connection): "+e.getMessage(),e);
+			throw new DriverTracciamentoException("Errore durante la ricerca del SQLQueryObject (connection): "+e.getMessage(),e);
 		}
 
 	}
@@ -239,7 +242,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		try {
 			this.log = log;
 		} catch (Exception e) {
-			throw new DriverTracciamentoException("Errore durante l'inizializzazione del logger...",e);
+			throw new DriverTracciamentoException("Errore durante l'inizializzazione del logger (connectionUrl params): "+e.getMessage(),e);
 		}
 
 		// connection
@@ -254,23 +257,23 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			this.connectionOpenViaJDBCInCostructor = true;
 			
 		} catch (Exception e) {
-			this.log.error("Errore durante l'inizializzazione della connessione...",e);
-			throw new DriverTracciamentoException("Errore durante l'inizializzazione della connessione...",e);
+			this.logError("Errore durante l'inizializzazione della connessione (connectionUrl params): "+e.getMessage(),e);
+			throw new DriverTracciamentoException("Errore durante l'inizializzazione della connessione (connectionUrl params): "+e.getMessage(),e);
 		}
 		
 		// ISQLQueryObject
 		try {
-			this.log.info("Inizializzo ISQLQueryObject...");
+			this.log.info("Inizializzo ISQLQueryObject (connectionUrl params)");
 			if (TipiDatabase.isAMember(tipoDatabase)) {
 				this.tipoDatabase = tipoDatabase;				
 			} else {
-				throw new Exception("Tipo database non gestito");
+				throw new ProtocolException("Tipo database non gestito (connectionUrl params)");
 			}
-			this.log.info("Inizializzo ISQLQueryObject terminata.");
+			this.log.info("Inizializzo ISQLQueryObject terminata (connectionUrl params)");
 
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
-			throw new DriverTracciamentoException("Errore durante la ricerca del SQLQueryObject...",e);
+			this.logError("Errore durante la ricerca del SQLQueryObject (connectionUrl params): "+e.getMessage(),e);
+			throw new DriverTracciamentoException("Errore durante la ricerca del SQLQueryObject (connectionUrl params): "+e.getMessage(),e);
 		}
 
 	}
@@ -316,7 +319,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlQueryObject.createSQLQuery());
 			TracciaDriverUtilities.setValuesSearch(sqlDebug, filtro, 1);
-			this.log.debug("Query: "+sqlDebug);
+			this.logDebug("Query: "+sqlDebug);
 			
 			pstmt = connectionDB.prepareStatement(sql);
 			TracciaDriverUtilities.setValuesSearch(pstmt, filtro, 1);
@@ -328,32 +331,18 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			rs.close();
 			pstmt.close();
 			
-			this.log.debug("Query found "+contatore+" rows");
+			this.logDebug("Query found "+contatore+" rows ");
 			
 			return contatore;
 			
 		}catch(Exception e){
-			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
+			throw new DriverTracciamentoException(TRACCIA_EXCEPTION_PREFIX+e.getMessage(),e);
 		}finally{
+			JDBCUtilities.closeResources(rs, pstmt);
 			try{
-				if(rs!=null) {
-					rs.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(pstmt!=null) {
-					pstmt.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(this.connection==null) {
-					if(connectionDB!=null) {
-						connectionDB.close();
-					}
+				if(this.connection==null &&
+					connectionDB!=null) {
+					JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionDB, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}
 			}catch(Exception eClose){
 				// close
@@ -374,7 +363,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		Connection connectionDB = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		List<Traccia> tracce = new ArrayList<Traccia>();
+		List<Traccia> tracce = new ArrayList<>();
 		
 		try{
 			
@@ -393,7 +382,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlQueryObject.createSQLQuery());
 			TracciaDriverUtilities.setValuesSearch(sqlDebug, filtro, 1);
-			this.log.debug("Query: "+sqlDebug);
+			this.logDebug("Query: "+sqlDebug);
 			
 			pstmt = connectionDB.prepareStatement(sql);
 			TracciaDriverUtilities.setValuesSearch(pstmt, filtro, 1);
@@ -411,9 +400,9 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			rs.close();
 			pstmt.close();
 			
-			this.log.debug("Query found "+tracce.size()+" rows");
+			this.logDebug("Query found "+tracce.size()+" rows");
 			
-			if(tracce.size()>0)
+			if(!tracce.isEmpty())
 				return tracce;
 			else
 				throw new DriverTracciamentoNotFoundException("Non sono state trovate tracce che rispettano i criteri di ricerca impostati");
@@ -421,27 +410,13 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		}catch(DriverTracciamentoNotFoundException e){
 			throw e;
 		}catch(Exception e){
-			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
+			throw new DriverTracciamentoException(TRACCIA_EXCEPTION_PREFIX+e.getMessage(),e);
 		}finally{
+			JDBCUtilities.closeResources(rs, pstmt);
 			try{
-				if(rs!=null) {
-					rs.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(pstmt!=null) {
-					pstmt.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(this.connection==null) {
-					if(connectionDB!=null) {
-						connectionDB.close();
-					}
+				if(this.connection==null &&
+					connectionDB!=null) {
+					JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionDB, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}
 			}catch(Exception eClose){
 				// close
@@ -470,12 +445,12 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlQueryObject.createSQLDelete());
 			TracciaDriverUtilities.setValuesSearch(sqlDebug, filtro, 1);
-			this.log.debug("Delete: "+sqlDebug);
+			this.logDebug("Delete: "+sqlDebug);
 			
 			stmt = con.prepareStatement(sql);
 			TracciaDriverUtilities.setValuesSearch(stmt, filtro, 1);
 			deleted = stmt.executeUpdate();	
-			this.log.debug("Deleted "+deleted+" rows");
+			this.logDebug("Deleted "+deleted+" rows");
 			
 			return deleted;
 			
@@ -487,7 +462,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 					// close
 				}
 			releaseConnection(con);
-			this.log.debug("Tracce Eliminate: " + deleted );
+			this.logDebug("Tracce Eliminate: " + deleted );
 		}
 	}
 	
@@ -509,7 +484,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 	 */
 	@Override
 	public Traccia getTraccia(String idBusta,IDSoggetto codicePorta) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
-		return getTraccia_engine(idBusta,codicePorta,false);
+		return getTracciaEngine(idBusta,codicePorta,false);
 	} 
 	
 	/**
@@ -520,10 +495,10 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 	 */
 	@Override
 	public Traccia getTraccia(String idBusta,IDSoggetto codicePorta,boolean ricercaIdBustaComeRiferimentoMessaggio) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
-		return getTraccia_engine(idBusta,codicePorta,ricercaIdBustaComeRiferimentoMessaggio);
+		return getTracciaEngine(idBusta,codicePorta,ricercaIdBustaComeRiferimentoMessaggio);
 	} 
 	
-	private Traccia getTraccia_engine(String idBusta,IDSoggetto codicePorta,boolean rifMsg) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
+	private Traccia getTracciaEngine(String idBusta,IDSoggetto codicePorta,boolean rifMsg) throws DriverTracciamentoException, DriverTracciamentoNotFoundException{
 		
 		Connection connectionDB = null;
 		PreparedStatement pstmt = null;
@@ -596,27 +571,13 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		}catch(DriverTracciamentoNotFoundException d){
 			throw d;
 		}catch(Exception e){
-			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
+			throw new DriverTracciamentoException(TRACCIA_EXCEPTION_PREFIX+e.getMessage(),e);
 		}finally{
+			JDBCUtilities.closeResources(rs, pstmt);
 			try{
-				if(rs!=null) {
-					rs.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(pstmt!=null) {
-					pstmt.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(this.connection==null) {
-					if(connectionDB!=null) {
-						connectionDB.close();
-					}
+				if(this.connection==null &&
+					connectionDB!=null) {
+					JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionDB, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}
 			}catch(Exception eClose){
 				// close
@@ -678,27 +639,13 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		}catch(DriverTracciamentoNotFoundException d){
 			throw d;
 		}catch(Exception e){
-			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
+			throw new DriverTracciamentoException(TRACCIA_EXCEPTION_PREFIX+e.getMessage(),e);
 		}finally{
+			JDBCUtilities.closeResources(rs, pstmt);
 			try{
-				if(rs!=null) {
-					rs.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(pstmt!=null) {
-					pstmt.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(this.connection==null) {
-					if(connectionDB!=null) {
-						connectionDB.close();
-					}
+				if(this.connection==null &&
+					connectionDB!=null) {
+					JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionDB, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}
 			}catch(Exception eClose){
 				// close
@@ -743,7 +690,7 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 					}
 				}
 			}else{
-				throw new Exception("Properties di ricerca non fornite");
+				throw new ProtocolException("Properties di ricerca non fornite");
 			}
 			sqlQueryObject.addWhereCondition(CostantiDB.TRACCE_COLUMN_TIPO_MESSAGGIO+"=?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -780,27 +727,13 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 		}catch(DriverTracciamentoNotFoundException d){
 			throw d;
 		}catch(Exception e){
-			throw new DriverTracciamentoException("Tracciamento exception: "+e.getMessage(),e);
+			throw new DriverTracciamentoException(TRACCIA_EXCEPTION_PREFIX+e.getMessage(),e);
 		}finally{
+			JDBCUtilities.closeResources(rs, pstmt);
 			try{
-				if(rs!=null) {
-					rs.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(pstmt!=null) {
-					pstmt.close();
-				}
-			}catch(Exception eClose){
-				// close
-			}
-			try{
-				if(this.connection==null) {
-					if(connectionDB!=null) {
-						connectionDB.close();
-					}
+				if(this.connection==null &&
+					connectionDB!=null) {
+					JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionDB, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}
 			}catch(Exception eClose){
 				// close
@@ -817,10 +750,9 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 	@Override
 	public void close() throws DriverTracciamentoException {
 		try{
-			if(this.connectionOpenViaJDBCInCostructor){
-				if(this.connection!=null && this.connection.isClosed()==false){
-					this.connection.close();
-				}
+			if(this.connectionOpenViaJDBCInCostructor &&
+				this.connection!=null && !this.connection.isClosed()){
+				JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), this.connection, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 			}
 		}catch(Exception e){
 			throw new DriverTracciamentoException(e.getMessage(),e);
@@ -836,11 +768,10 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 	/* ------------- UTILITY INTERNE -------------------------- */
 	
 	
-	private void checkConnection(Connection connectionDB) throws Exception {
-		if(connectionDB==null) {
-			if(this.connection==null) {
-				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+	private void checkConnection(Connection connectionDB) throws ProtocolException {
+		if(connectionDB==null &&
+			this.connection==null) {
+			throw new ProtocolException("Connection non ottenuta dal datasource["+this.datasource+"]");
 		}
 	}
 
@@ -871,10 +802,9 @@ public class TracciaDriver extends BasicComponentFactory implements ITracciaDriv
 	 */
 	public void releaseConnection(java.sql.Connection connectionDB) {
 		try {
-			if (connectionDB != null) {
-				connectionDB.close();
-			}
+			JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionDB, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 		} catch (SQLException e) {
+			// ignore
 		}
 	}
 

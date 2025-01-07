@@ -120,6 +120,7 @@ import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
 import org.openspcoop2.utils.datasource.DataSourceParams;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.slf4j.Logger;
@@ -166,6 +167,28 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		return this.atomica;
 	}
 
+	private static Logger checkLogger = null;
+	private static boolean checkIsClosed = true;
+	private static boolean checkAutocommit = true;
+	public static boolean isCheckIsClosed() {
+		return checkIsClosed;
+	}
+	public static void setCheckIsClosed(boolean checkIsClosed) {
+		DriverConfigurazioneDB.checkIsClosed = checkIsClosed;
+	}
+	public static boolean isCheckAutocommit() {
+		return checkAutocommit;
+	}
+	public static void setCheckAutocommit(boolean checkAutocommit) {
+		DriverConfigurazioneDB.checkAutocommit = checkAutocommit;
+	}
+	public static Logger getCheckLogger() {
+		return checkLogger;
+	}
+	public static void setCheckLogger(Logger checkLogger) {
+		DriverConfigurazioneDB.checkLogger = checkLogger;
+	}
+	
 	/** Logger utilizzato per debug. */
 	protected org.slf4j.Logger log = null;
 	void logDebug(String msg) {
@@ -495,7 +518,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					// nop
 				}
 				/**System.out.println("RELEASE ["+methodName+"]");*/
-				con.close();
+				JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 			} catch (Exception e) {
 				// ignore
 			}
@@ -544,9 +567,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			if (conParam==null && this.atomica) {
 				this.log.debug("rilascio connessione al db...");
-				if(con!=null) {
-					con.close();
-				}
+				JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 			}
 		} catch (Exception e) {
 			// ignore
@@ -557,9 +578,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			if (this.atomica) {
 				this.log.debug("rilascio connessioni al db...");
-				if(con!=null) {
-					con.close();
-				}
+				JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 			}
 		} catch (Exception e) {
 			// ignore exception
@@ -573,7 +592,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(con!=null) {
 					con.rollback();
 					con.setAutoCommit(true);
-					con.close();
+					JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 				}
 
 			} else if (!error && this.atomica) {
@@ -581,7 +600,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(con!=null) {
 					con.commit();
 					con.setAutoCommit(true);
-					con.close();
+					JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 				}
 			}
 

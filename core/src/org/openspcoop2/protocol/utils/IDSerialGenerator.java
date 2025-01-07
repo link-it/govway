@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 
 /**
  * IDSerialGenerator
@@ -44,18 +45,18 @@ public class IDSerialGenerator {
 
 	// ** STATIC INIT *** //
 
-	static private DataSource datasourcePdD = null;
-	static public synchronized void init(DataSource ds){
+	private static DataSource datasourcePdD = null;
+	public static synchronized void init(DataSource ds){
 		if(IDSerialGenerator.datasourcePdD==null){
 			IDSerialGenerator.datasourcePdD = ds;
 		}
 	}
-	//	public static DataSource getDatasourcePdD() {
-	//		return IDCounterGenerator.datasourcePdD;
-	//	}
-	//	public static void setDatasourcePdD(DataSource datasourcePdD) {
-	//		IDCounterGenerator.datasourcePdD = datasourcePdD;
-	//	}
+	/**	public static DataSource getDatasourcePdD() {
+			return IDCounterGenerator.datasourcePdD;
+		}
+		public static void setDatasourcePdD(DataSource datasourcePdD) {
+			IDCounterGenerator.datasourcePdD = datasourcePdD;
+		}*/
 	private static Connection getConnectionPdD() throws SQLException, ProtocolException{
 		if(IDSerialGenerator.datasourcePdD==null){
 			throw new ProtocolException("IDSerialGenerator non inizializzato");
@@ -63,10 +64,31 @@ public class IDSerialGenerator {
 		return IDSerialGenerator.datasourcePdD.getConnection();
 	}
 	private static void releaseConnectionPdD(Connection con) throws SQLException{
-		if(con!=null)
-			con.close();
+		JDBCUtilities.closeConnection(IDSerialGenerator.getCheckLogger(), con, IDSerialGenerator.isCheckAutocommit(), IDSerialGenerator.isCheckIsClosed());
 	}
 
+	static Logger checkLogger = null;
+	static boolean checkIsClosed = true;
+	static boolean checkAutocommit = true;
+	public static boolean isCheckIsClosed() {
+		return checkIsClosed;
+	}
+	public static void setCheckIsClosed(boolean checkIsClosed) {
+		IDSerialGenerator.checkIsClosed = checkIsClosed;
+	}
+	public static boolean isCheckAutocommit() {
+		return checkAutocommit;
+	}
+	public static void setCheckAutocommit(boolean checkAutocommit) {
+		IDSerialGenerator.checkAutocommit = checkAutocommit;
+	}
+	public static Logger getCheckLogger() {
+		return checkLogger;
+	}
+	public static void setCheckLogger(Logger checkLogger) {
+		IDSerialGenerator.checkLogger = checkLogger;
+	}
+	
 	// ** STATIC INIT *** //
 
 
@@ -96,17 +118,15 @@ public class IDSerialGenerator {
 		Connection conDB = null;
 		boolean conDBFromDatasource = false;
 		try{
-			if(this.state!=null){
-				if(this.state instanceof StateMessage){
-					StateMessage state = (StateMessage) this.state;
-					if(state.getConnectionDB()!=null && state.getConnectionDB().isClosed()==false){
-						//System.out.println("PRESA DALLO STATO");
-						conDB = state.getConnectionDB();
-					}
+			if(this.state instanceof StateMessage){
+				StateMessage stateMsg = (StateMessage) this.state;
+				if(stateMsg.getConnectionDB()!=null && !stateMsg.getConnectionDB().isClosed()){
+					/**System.out.println("PRESA DALLO STATO");*/
+					conDB = stateMsg.getConnectionDB();
 				}
 			}
 			if(conDB==null){
-				//System.out.println("PRESA DAL DATASOURCE");
+				/**System.out.println("PRESA DAL DATASOURCE");*/
 				conDB = IDSerialGenerator.getConnectionPdD();
 				conDBFromDatasource = true;
 			}
@@ -134,7 +154,7 @@ public class IDSerialGenerator {
 				if(this.log!=null) {
 					this.log.error("Rilascio connessione non riuscito: "+e.getMessage(),e);
 				}
-				//throw new ProtocolException("Rilascio connessione non riuscito: "+e.getMessage(),e);
+				/**throw new ProtocolException("Rilascio connessione non riuscito: "+e.getMessage(),e);*/
 			}
 
 		}

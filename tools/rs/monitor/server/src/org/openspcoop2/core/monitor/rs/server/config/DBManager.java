@@ -29,6 +29,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.slf4j.Logger;
 
 /**
@@ -41,6 +42,28 @@ import org.slf4j.Logger;
  */
 public class DBManager {
 
+	private static Logger checkLogger = null;
+	private static boolean checkIsClosed = true;
+	private static boolean checkAutocommit = true;
+	public static boolean isCheckIsClosed() {
+		return checkIsClosed;
+	}
+	public static void setCheckIsClosed(boolean checkIsClosed) {
+		DBManager.checkIsClosed = checkIsClosed;
+	}
+	public static boolean isCheckAutocommit() {
+		return checkAutocommit;
+	}
+	public static void setCheckAutocommit(boolean checkAutocommit) {
+		DBManager.checkAutocommit = checkAutocommit;
+	}
+	public static Logger getCheckLogger() {
+		return checkLogger;
+	}
+	public static void setCheckLogger(Logger checkLogger) {
+		DBManager.checkLogger = checkLogger;
+	}
+	
 	/** Logger utilizzato per debug. */
 	private static Logger log = null;
 
@@ -289,9 +312,7 @@ public class DBManager {
 	 */
 	public void releaseConnectionConfig(java.sql.Connection connectionDB) {
 		try {
-			if (connectionDB != null) {
-				connectionDB.close();
-			}
+			JDBCUtilities.closeConnection(checkLogger, connectionDB, checkAutocommit, checkIsClosed);
 		} catch (SQLException e) {
 			DBManager.log.error("closeConnection config db", e);
 		}
@@ -325,9 +346,7 @@ public class DBManager {
 	 */
 	public void releaseConnectionTracce(java.sql.Connection connectionDB) {
 		try {
-			if (connectionDB != null) {
-				connectionDB.close();
-			}
+			JDBCUtilities.closeConnection(checkLogger, connectionDB, checkAutocommit, checkIsClosed);
 		} catch (SQLException e) {
 			DBManager.log.error("closeConnection tracce db", e);
 		}
@@ -361,9 +380,7 @@ public class DBManager {
 	 */
 	public void releaseConnectionStatistiche(java.sql.Connection connectionDB) {
 		try {
-			if (connectionDB != null) {
-				connectionDB.close();
-			}
+			JDBCUtilities.closeConnection(checkLogger, connectionDB, checkAutocommit, checkIsClosed);
 		} catch (SQLException e) {
 			DBManager.log.error("closeConnection statistiche db", e);
 		}

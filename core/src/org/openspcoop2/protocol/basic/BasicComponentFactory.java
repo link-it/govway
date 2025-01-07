@@ -34,6 +34,28 @@ import org.slf4j.Logger;
  */
 public class BasicComponentFactory implements IComponentFactory {
 
+	private static Logger checkLogger = null;
+	private static boolean checkIsClosed = true;
+	private static boolean checkAutocommit = true;
+	public static boolean isCheckIsClosed() {
+		return checkIsClosed;
+	}
+	public static void setCheckIsClosed(boolean checkIsClosed) {
+		BasicComponentFactory.checkIsClosed = checkIsClosed;
+	}
+	public static boolean isCheckAutocommit() {
+		return checkAutocommit;
+	}
+	public static void setCheckAutocommit(boolean checkAutocommit) {
+		BasicComponentFactory.checkAutocommit = checkAutocommit;
+	}
+	public static Logger getCheckLogger() {
+		return checkLogger;
+	}
+	public static void setCheckLogger(Logger checkLogger) {
+		BasicComponentFactory.checkLogger = checkLogger;
+	}
+
 	protected Logger log;
 	protected IProtocolFactory<?> protocolFactory;
 	
@@ -48,6 +70,26 @@ public class BasicComponentFactory implements IComponentFactory {
 	
 	public Logger getLog() {
 		return this.log;
+	}
+	public void logError(String msg) {
+		if(this.log!=null) {
+			this.log.error(msg);
+		}
+	}
+	public void logError(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.error(msg, e);
+		}
+	}
+	public void logInfo(String msg) {
+		if(this.log!=null) {
+			this.log.info(msg);
+		}
+	}
+	public void logDebug(String msg) {
+		if(this.log!=null) {
+			this.log.debug(msg);
+		}
 	}
 	
 	@Override

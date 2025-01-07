@@ -47,6 +47,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.StringWrapper;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.slf4j.Logger;
@@ -74,6 +75,9 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 	public DiagnosticDriver(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory);
 	}
+	
+	private static final String QUERY_PREFIX = "Query : ";
+	private static final String ROWS_SUFFIX = " rows";
 
 	
 	public static final String IDDIAGNOSTICI = "@@@@@-----@@@@-----IDDIAGNOSTICI-DB----@@@@@-----@@@@";
@@ -102,7 +106,7 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 			else
 				this.log = log;
 		} catch (Exception e) {
-			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione del logger...",e);
+			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione del logger (datasource params): "+e.getMessage(),e);
 		}
 
 		// Datasource
@@ -111,27 +115,27 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 			GestoreJNDI gestoreJNDI = new GestoreJNDI(jndiProperties);
 			this.datasource = (DataSource) gestoreJNDI.lookup(nomeDataSource);
 			if (this.datasource == null)
-				throw new Exception ("datasource is null");
+				throw new DriverMsgDiagnosticiException ("datasource is null");
 
 			this.log.info("Inizializzo DriverLogAnalyzer terminata.");
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del datasource...",e);
-			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del datasource...",e);
+			this.logError("Errore durante la ricerca del datasource (datasource params): "+e.getMessage(),e);
+			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del datasource (datasource params): "+e.getMessage(),e);
 		}
 
 		// ISQLQueryObject
 		try {
-			this.log.info("Inizializzo ISQLQueryObject...");
+			this.log.info("Inizializzo ISQLQueryObject (datasource params)");
 			if (TipiDatabase.isAMember(tipoDatabase)) {
 				this.tipoDatabase = tipoDatabase;				
 			} else {
-				throw new Exception("Tipo database non gestito");
+				throw new DriverMsgDiagnosticiException("Tipo database non gestito (datasource params)");
 			}
-			this.log.info("Inizializzo ISQLQueryObject terminata.");
+			this.log.info("Inizializzo ISQLQueryObject terminata (datasource params)");
 
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
-			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del SQLQueryObject...",e);
+			this.logError("Errore durante la ricerca del SQLQueryObject (datasource params): "+e.getMessage(),e);
+			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del SQLQueryObject (datasource params): "+e.getMessage(),e);
 		}
 	}
 	
@@ -147,32 +151,32 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 			else
 				this.log = log;
 		} catch (Exception e) {
-			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione del logger...",e);
+			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione del logger (datasource): "+e.getMessage(),e);
 		}
 
 		// Datasource
 		try {
 			this.datasource = dataSourceObject;
 			if (this.datasource == null)
-				throw new Exception ("datasource is null");
+				throw new DriverMsgDiagnosticiException ("datasource is null");
 		} catch (Exception e) {
-			this.log.error("Errore durante l'assegnamento del datasource...",e);
-			throw new DriverMsgDiagnosticiException("Errore durante l'assegnamento del datasource...",e);
+			this.logError("Errore durante l'assegnamento del datasource (datasource): "+e.getMessage(),e);
+			throw new DriverMsgDiagnosticiException("Errore durante l'assegnamento del datasource (datasource): "+e.getMessage(),e);
 		}
 
 		// ISQLQueryObject
 		try {
-			this.log.info("Inizializzo ISQLQueryObject...");
+			this.log.info("Inizializzo ISQLQueryObject (datasource)");
 			if (TipiDatabase.isAMember(tipoDatabase)) {
 				this.tipoDatabase = tipoDatabase;				
 			} else {
-				throw new Exception("Tipo database non gestito");
+				throw new DriverMsgDiagnosticiException("Tipo database non gestito (datasource)");
 			}
-			this.log.info("Inizializzo ISQLQueryObject terminata.");
+			this.log.info("Inizializzo ISQLQueryObject terminata (datasource)");
 
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
-			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del SQLQueryObject...",e);
+			this.logError("Errore durante la ricerca del SQLQueryObject (datasource): "+e.getMessage(),e);
+			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del SQLQueryObject (datasource): "+e.getMessage(),e);
 		}
 	}
 	
@@ -181,7 +185,7 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 		try {
 			this.log = log;
 		} catch (Exception e) {
-			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione del logger...",e);
+			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione del logger (connection): "+e.getMessage(),e);
 		}
 
 		// connection
@@ -189,17 +193,17 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 		
 		// ISQLQueryObject
 		try {
-			this.log.info("Inizializzo ISQLQueryObject...");
+			this.log.info("Inizializzo ISQLQueryObject (connection)");
 			if (TipiDatabase.isAMember(tipoDatabase)) {
 				this.tipoDatabase = tipoDatabase;				
 			} else {
-				throw new Exception("Tipo database non gestito");
+				throw new DriverMsgDiagnosticiException("Tipo database non gestito (connection)");
 			}
-			this.log.info("Inizializzo ISQLQueryObject terminata.");
+			this.log.info("Inizializzo ISQLQueryObject terminata (connection)");
 
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
-			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del SQLQueryObject...",e);
+			this.logError("Errore durante la ricerca del SQLQueryObject (connection): "+e.getMessage(),e);
+			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del SQLQueryObject (connection): "+e.getMessage(),e);
 		}
 	}
 	
@@ -209,7 +213,7 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 		try {
 			this.log = log;
 		} catch (Exception e) {
-			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione del logger...",e);
+			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione del logger (connectionUrl params): "+e.getMessage(),e);
 		}
 
 		// connection
@@ -224,23 +228,23 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 			this.connectionOpenViaJDBCInCostructor = true;
 			
 		} catch (Exception e) {
-			this.log.error("Errore durante l'inizializzazione della connessione...",e);
-			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione della connessione...",e);
+			this.logError("Errore durante l'inizializzazione della connessione (connectionUrl params): "+e.getMessage(),e);
+			throw new DriverMsgDiagnosticiException("Errore durante l'inizializzazione della connessione (connectionUrl params): "+e.getMessage(),e);
 		}
 				
 		// ISQLQueryObject
 		try {
-			this.log.info("Inizializzo ISQLQueryObject...");
+			this.log.info("Inizializzo ISQLQueryObject (connectionUrl params)");
 			if (TipiDatabase.isAMember(tipoDatabase)) {
 				this.tipoDatabase = tipoDatabase;				
 			} else {
-				throw new Exception("Tipo database non gestito");
+				throw new DriverMsgDiagnosticiException("Tipo database non gestito (connectionUrl params)");
 			}
-			this.log.info("Inizializzo ISQLQueryObject terminata.");
+			this.log.info("Inizializzo ISQLQueryObject terminata (connectionUrl params)");
 
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
-			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del SQLQueryObject...",e);
+			this.logError("Errore durante la ricerca del SQLQueryObject (connectionUrl params): "+e.getMessage(),e);
+			throw new DriverMsgDiagnosticiException("Errore durante la ricerca del SQLQueryObject (connectionUrl params): "+e.getMessage(),e);
 		}
 	}
 
@@ -265,27 +269,27 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 	public int countMessaggiDiagnostici(FiltroRicercaDiagnostici filtro) throws DriverMsgDiagnosticiException{
 		PreparedStatement stmt = null;
 		ResultSet rs=null;
-		Connection con = null;
+		Connection connectionDB = null;
 		boolean closeConnection = true;
 		ISQLQueryObject sqlObj =  null;
 		int countDiagnostici = 0;
 		try{
 			if(this.con!=null){
-				con=this.con;
+				connectionDB=this.con;
 				closeConnection=false;
 			}else{
-				con = this.datasource.getConnection();
+				connectionDB = this.datasource.getConnection();
 			}
-			checkConnection(con);
+			checkConnection(connectionDB);
 
 			sqlObj = DiagnosticDriverUtilities.createSQLQueryObj_countMessaggiDiagnostici(filtro, this.tipoDatabase);
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
 			DiagnosticDriverUtilities.setValues_countMessaggiDiagnostici(filtro, sqlDebug, 1);
-			this.log.debug("Query : "+sqlDebug);
+			this.logDebug(QUERY_PREFIX+sqlDebug);
 			
 			String sql = sqlObj.createSQLQuery();
-			stmt=con.prepareStatement(sql);
+			stmt=connectionDB.prepareStatement(sql);
 			DiagnosticDriverUtilities.setValues_countMessaggiDiagnostici(filtro, stmt, 1);
 
 			rs=stmt.executeQuery();
@@ -295,7 +299,7 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 				
 			}
 			
-			this.log.debug("Query found "+countDiagnostici+" rows");
+			this.logDebug("Query found "+countDiagnostici+ROWS_SUFFIX);
 			
 			return countDiagnostici;
 			
@@ -304,24 +308,10 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 		}catch (Exception e) {
 			throw new DriverMsgDiagnosticiException(e);
 		}finally{
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				// ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				// ignore
-			}
-			
+			JDBCUtilities.closeResources(rs, stmt);
 			if(closeConnection){
 				try{
-					if(con!=null) {
-						con.close();
-					}
+					JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionDB, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}catch (Exception e) {
 					// ignore
 				}
@@ -341,27 +331,27 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 		throws DriverMsgDiagnosticiException, DriverMsgDiagnosticiNotFoundException{
 		PreparedStatement stmt = null;
 		ResultSet rs=null;
-		Connection con = null;
+		Connection connectionDB = null;
 		boolean closeConnection = true;
 		ISQLQueryObject sqlObj =  null;
 		try{
-			ArrayList<MsgDiagnostico> listaMSGDiagnostici = new ArrayList<MsgDiagnostico>();
+			ArrayList<MsgDiagnostico> listaMSGDiagnostici = new ArrayList<>();
 			if(this.con!=null){
-				con=this.con;
+				connectionDB=this.con;
 				closeConnection=false;
 			}else{
-				con = this.datasource.getConnection();
+				connectionDB = this.datasource.getConnection();
 			}
-			checkConnection(con);
+			checkConnection(connectionDB);
 			
 			sqlObj = DiagnosticDriverUtilities.createSQLQueryObj_searchMessaggiDiagnostici(filtro, this.tipoDatabase);
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLQuery());
 			DiagnosticDriverUtilities.setValues_searchMessaggiDiagnostici(filtro, sqlDebug, 1);
-			this.log.debug("Query : "+sqlDebug);
+			this.logDebug(QUERY_PREFIX+sqlDebug);
 			
 			String sql = sqlObj.createSQLQuery();
-			stmt=con.prepareStatement(sql);
+			stmt=connectionDB.prepareStatement(sql);
 			DiagnosticDriverUtilities.setValues_searchMessaggiDiagnostici(filtro, stmt, 1);
 
 			rs=stmt.executeQuery();
@@ -369,45 +359,29 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 				
 				long idMsgDiagnostico = rs.getLong("idMsgDiagnostico");
 				MsgDiagnostico msgDiag = 
-					DiagnosticDriverUtilities.getMsgDiagnostico(con, this.tipoDatabase, 
+					DiagnosticDriverUtilities.getMsgDiagnostico(connectionDB, this.tipoDatabase, 
 							this.log, idMsgDiagnostico, this.propertiesMsgDiagnostici);
 				listaMSGDiagnostici.add(msgDiag);
 			}
 			rs.close();
 			stmt.close();
 			
-			this.log.debug("Query found "+listaMSGDiagnostici.size()+" rows");
+			this.logDebug("Query found "+listaMSGDiagnostici.size()+ROWS_SUFFIX);
 			
-			if(listaMSGDiagnostici.size()>0)
+			if(!listaMSGDiagnostici.isEmpty())
 				return listaMSGDiagnostici;
 			else
 				throw new DriverMsgDiagnosticiNotFoundException("Non sono stati trovati diagnostici che rispettano il filtro impostato");
 			
-		}catch (DriverMsgDiagnosticiNotFoundException e) {
-			throw e;
-		}catch (DriverMsgDiagnosticiException e) {
+		}catch (DriverMsgDiagnosticiNotFoundException | DriverMsgDiagnosticiException e) {
 			throw e;
 		}catch (Exception e) {
 			throw new DriverMsgDiagnosticiException(e);
 		}finally{
-			try{
-				if(rs!=null) 
-					rs.close();
-			}catch (Exception e) {
-				// ignore
-			}
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				// ignore
-			}
-			
+			JDBCUtilities.closeResources(rs, stmt);
 			if(closeConnection){
 				try{
-					if(con!=null) {
-						con.close();
-					}
+					JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionDB, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}catch (Exception e) {
 					// ignore
 				}
@@ -427,33 +401,33 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 	public int deleteMessaggiDiagnostici(FiltroRicercaDiagnostici filter) throws DriverMsgDiagnosticiException{
 		PreparedStatement stmt = null;
 		int deleted = 0; 
-		Connection con = null;
+		Connection connectionDB = null;
 		boolean closeConnection = true;
 		ISQLQueryObject sqlObj =  null;
 		try{
 			if(this.con!=null){
-				con=this.con;
+				connectionDB=this.con;
 				closeConnection=false;
 			}else{
-				con = this.datasource.getConnection();
+				connectionDB = this.datasource.getConnection();
 			}
-			checkConnection(con);
+			checkConnection(connectionDB);
 			
 			sqlObj = DiagnosticDriverUtilities.createSQLQueryObj_deleteMessaggiDiagnostici(filter, this.tipoDatabase);
 			
 			StringWrapper sqlDebug = new StringWrapper(sqlObj.createSQLDelete());
 			DiagnosticDriverUtilities.setValues_deleteMessaggiDiagnostici(filter, sqlDebug, 1);
-			this.log.debug("Query : "+sqlDebug);
+			this.logDebug(QUERY_PREFIX+sqlDebug);
 			
 			String sql = sqlObj.createSQLDelete();
-			stmt=con.prepareStatement(sql);
+			stmt=connectionDB.prepareStatement(sql);
 			DiagnosticDriverUtilities.setValues_deleteMessaggiDiagnostici(filter, stmt, 1);
 			
 			deleted = stmt.executeUpdate();		
 			
 			stmt.close();
 			
-			this.log.debug("Deleted "+deleted+" rows");
+			this.logDebug("Deleted "+deleted+ROWS_SUFFIX);
 			
 			return deleted;
 			
@@ -462,17 +436,10 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 		}catch (Exception e) {
 			throw new DriverMsgDiagnosticiException(e);
 		}finally{
-			try{
-				if(stmt!=null) 
-					stmt.close();
-			}catch (Exception e) {
-				// ignore
-			}
+			JDBCUtilities.closeResources(stmt);
 			if(closeConnection){
 				try{
-					if(con!=null) {
-						con.close();
-					}
+					JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionDB, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}catch (Exception e) {
 					// ignore
 				}
@@ -497,10 +464,9 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 	@Override
 	public void close() throws DriverMsgDiagnosticiException {
 		try{
-			if(this.connectionOpenViaJDBCInCostructor){
-				if(this.con!=null && this.con.isClosed()==false){
-					this.con.close();
-				}
+			if(this.connectionOpenViaJDBCInCostructor &&
+				this.con!=null && !this.con.isClosed()){
+				JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), this.con, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 			}
 		}catch(Exception e){
 			throw new DriverMsgDiagnosticiException(e.getMessage(),e);
@@ -523,11 +489,10 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 	
 	/* ------------- UTILITY INTERNE -------------------------- */
 
-	private void checkConnection(Connection con) throws Exception {
-		if(con==null) {
-			if(this.con==null) {
-				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
-			}
+	private void checkConnection(Connection con) throws DriverMsgDiagnosticiException {
+		if(con==null &&
+			this.con==null) {
+			throw new DriverMsgDiagnosticiException("Connection non ottenuta dal datasource["+this.datasource+"]");
 		}
 	}
 	
@@ -558,10 +523,9 @@ public class DiagnosticDriver extends BasicComponentFactory implements IDiagnost
 	 */
 	public void releaseConnection(java.sql.Connection connectionDB) {
 		try {
-			if (connectionDB != null) {
-				connectionDB.close();
-			}
+			JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), connectionDB, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 		} catch (SQLException e) {
+			// ignore
 		}
 	}
 

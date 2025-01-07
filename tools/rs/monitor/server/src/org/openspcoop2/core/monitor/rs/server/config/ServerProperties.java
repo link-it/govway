@@ -189,6 +189,15 @@ public class ServerProperties  {
 		return this.readProperty(true, "protocolloDefault");
 	}
 	
+	public boolean isJdbcCloseConnectionCheckIsClosed() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(true, "jdbc.closeConnection.checkIsClosed");
+		return this.parse(b, true);
+	}
+	public boolean isJdbcCloseConnectionCheckAutocommit() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(true, "jdbc.closeConnection.checkAutocommit");
+		return this.parse(b, true);
+	}
+	
 	public boolean isFindall404() throws UtilsException {
 		return Boolean.parseBoolean(this.readProperty(true, "findall_404"));
 	}

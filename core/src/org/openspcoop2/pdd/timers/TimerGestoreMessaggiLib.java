@@ -227,7 +227,7 @@ public class TimerGestoreMessaggiLib  {
 			// filtroJMS
 			JMSReceiver receiverJMS = null;
 			if(CostantiConfigurazione.COMUNICAZIONE_INFRASTRUTTURALE_JMS.equals(this.propertiesReader.getNodeReceiver()))
-				receiverJMS = new JMSReceiver(this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),"ForcedDeleteMessage",this.propertiesReader.singleConnection_NodeReceiver(),this.logTimer, null);
+				receiverJMS = new JMSReceiver(this.propertiesReader.getIdentitaPortaDefaultWithoutProtocol(),"ForcedDeleteMessage",this.propertiesReader.singleConnectionNodeReceiver(),this.logTimer, null);
 
 			// Messaggi da eliminare 
 			GestoreMessaggi gestoreMsgSearch = new GestoreMessaggi(openspcoopstate, true,this.logTimer,this.msgDiag, null);
@@ -923,8 +923,8 @@ public class TimerGestoreMessaggiLib  {
 					GestoreMessaggi.acquireLock(
 							this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
 							this.msgDiag, causaCorrelazioniApplicativeScadute, 
-							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(), 
-							this.propertiesReader.getGestioneSerializableDB_CheckInterval());
+							this.propertiesReader.getGestioneSerializableDBAttesaAttiva(), 
+							this.propertiesReader.getGestioneSerializableDBCheckInterval());
 	
 					correlazioniScadute = gestoreCorrelazioneApplicativa.getCorrelazioniScadute(this.limit,this.logQuery,this.orderByQuery);
 					this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER_GESTORE_MESSAGGI_TIPO_RICERCA_MSG_DA_ELIMINARE,"CorrelazioniApplicative");
@@ -1020,8 +1020,8 @@ public class TimerGestoreMessaggiLib  {
 						GestoreMessaggi.acquireLock(
 								this.semaphore, connectionDB, this.timerLockCorrelazioneApplicativa,
 								this.msgDiag, causaCorrelazioniApplicativeScaduteRispettoOraRegistrazione, 
-								this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(), 
-								this.propertiesReader.getGestioneSerializableDB_CheckInterval());
+								this.propertiesReader.getGestioneSerializableDBAttesaAttiva(), 
+								this.propertiesReader.getGestioneSerializableDBCheckInterval());
 	
 						correlazioniScaduteRispettoOraRegistrazione = gestoreCorrelazioneApplicativa.getCorrelazioniScaduteRispettoOraRegistrazione(this.limit, this.scadenzaCorrelazioneApplicativa, 
 								this.logQuery,this.orderByQuery,this.filtraCorrelazioniApplicativeScaduteRispettoOraRegistrazione_escludiCorrelazioniConScadenzaImpostata);

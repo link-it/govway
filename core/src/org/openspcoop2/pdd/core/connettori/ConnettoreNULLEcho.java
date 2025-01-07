@@ -518,8 +518,8 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 						idBustaRisposta = 
 							imbustatore.buildID(new IDSoggetto(busta.getTipoDestinatario(), busta.getDestinatario(), dominio), 
 									null, 
-									this.openspcoopProperties.getGestioneSerializableDB_AttesaAttiva(),
-									this.openspcoopProperties.getGestioneSerializableDB_CheckInterval(),
+									this.openspcoopProperties.getGestioneSerializableDBAttesaAttiva(),
+									this.openspcoopProperties.getGestioneSerializableDBCheckInterval(),
 									RuoloMessaggio.RISPOSTA);
 					}catch(Exception e){
 						// rilancio

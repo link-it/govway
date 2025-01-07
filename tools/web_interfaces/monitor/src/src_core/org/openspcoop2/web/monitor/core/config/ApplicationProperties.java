@@ -374,4 +374,13 @@ public class ApplicationProperties {
 		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
 		return this.parse(b, false);
 	}
+	
+	public boolean isJdbcCloseConnectionCheckIsClosed() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(true, "jdbc.closeConnection.checkIsClosed");
+		return this.parse(b, true);
+	}
+	public boolean isJdbcCloseConnectionCheckAutocommit() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(true, "jdbc.closeConnection.checkAutocommit");
+		return this.parse(b, true);
+	}
 }

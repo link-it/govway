@@ -781,7 +781,7 @@ public class OpenSPCoop2Properties {
 			this.getNodeReceiverTimeoutRicezioneBuste();
 			this.getNodeReceiverCheckInterval();
 			this.getNodeReceiverCheckDBInterval();
-			this.singleConnection_NodeReceiver();
+			this.singleConnectionNodeReceiver();
 
 			if( this.getNodeSender()==null ){
 				return false;
@@ -959,10 +959,10 @@ public class OpenSPCoop2Properties {
 				this.getAcknowledgeModeSessioneConnectionFactory();
 
 				// TransactionManager (Warning)
-				this.getTransactionManager_AttesaAttiva();
-				this.getTransactionManager_CheckDBInterval();
-				this.getTransactionManager_CheckInterval();
-				this.singleConnection_TransactionManager();
+				this.getTransactionManagerAttesaAttiva();
+				this.getTransactionManagerCheckDBInterval();
+				this.getTransactionManagerCheckInterval();
+				this.singleConnectionTransactionManager();
 			}
 
 			//	Timer EJB
@@ -1094,8 +1094,10 @@ public class OpenSPCoop2Properties {
 			
 			
 			// Gestione Serializable DB (Warning)
-			this.getGestioneSerializableDB_AttesaAttiva();
-			this.getGestioneSerializableDB_CheckInterval();
+			this.getGestioneSerializableDBAttesaAttiva();
+			this.getGestioneSerializableDBCheckInterval();
+			this.isJdbcCloseConnectionCheckIsClosed();
+			this.isJdbcCloseConnectionCheckAutocommit();
 
 			// GestioneErrore
 			ProprietaErroreApplicativo paError = getProprietaGestioneErrorePD_engine(null,true);
@@ -1728,7 +1730,7 @@ public class OpenSPCoop2Properties {
 			this.isGestioneConsegnaInOrdine(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.isGestioneElementoCollaborazione(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.isGestioneRiscontri(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
-			this.ignoraEccezioniNonGravi_Validazione();
+			this.ignoraEccezioniNonGraviValidazione();
 			this.isForceSoapPrefixCompatibilitaOpenSPCoopV1();
 			this.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 			this.isValidazioneIDBustaCompleta(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
@@ -10531,28 +10533,28 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce l'indicazione se il NodeReceiver deve essere utilizzato in single connection
 	 * 
 	 */
-	private Boolean singleConnection_nodeReceiver_value = null;
-	public boolean singleConnection_NodeReceiver(){
+	private Boolean singleConnectionNodeReceiverValue = null;
+	public boolean singleConnectionNodeReceiver(){
 
-		if(this.singleConnection_nodeReceiver_value==null){
+		if(this.singleConnectionNodeReceiverValue==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.nodeReceiver.singleConnection"); 
 
 				if(value!=null){
 					value = value.trim();
-					this.singleConnection_nodeReceiver_value = Boolean.parseBoolean(value);
+					this.singleConnectionNodeReceiverValue = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.singleConnection' non impostata, viene utilizzato il default=false");
-					this.singleConnection_nodeReceiver_value = false;
+					this.singleConnectionNodeReceiverValue = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.nodeReceiver.singleConnection' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				this.singleConnection_nodeReceiver_value = false;
+				this.singleConnectionNodeReceiverValue = false;
 			}
 		}
 
-		return this.singleConnection_nodeReceiver_value;
+		return this.singleConnectionNodeReceiverValue;
 
 	}
 
@@ -10665,9 +10667,9 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce l'intervallo in millisecondi di attesa attiva effettuato dal Transaction Manager (Default 2 minuti)
 	 *  * 
 	 */
-	private Long transactionManager_AttesaAttiva = null;
-	public long getTransactionManager_AttesaAttiva() {	
-		if(this.transactionManager_AttesaAttiva==null){
+	private Long transactionManagerAttesaAttiva = null;
+	public long getTransactionManagerAttesaAttiva() {	
+		if(this.transactionManagerAttesaAttiva==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.attesaAttiva");
@@ -10675,18 +10677,18 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					long time = java.lang.Long.parseLong(name);
-					this.transactionManager_AttesaAttiva = time*1000;
+					this.transactionManagerAttesaAttiva = time*1000;
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.attesaAttiva' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA);
-					this.transactionManager_AttesaAttiva = CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA;
+					this.transactionManagerAttesaAttiva = CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.attesaAttiva' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
-				this.transactionManager_AttesaAttiva = CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA;
+				this.transactionManagerAttesaAttiva = CostantiPdD.TRANSACTION_MANAGER_ATTESA_ATTIVA;
 			}    
 		}
 
-		return this.transactionManager_AttesaAttiva;
+		return this.transactionManagerAttesaAttiva;
 	}
 
 	/**
@@ -10695,9 +10697,9 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce Intervallo maggiore per frequenza di check nell'attesa attiva effettuata dal TransactionManager, in millisecondi
 	 * 
 	 */
-	private Integer transactionManager_CheckInterval = null;
-	public int getTransactionManager_CheckInterval() {	
-		if(this.transactionManager_CheckInterval==null){
+	private Integer transactionManagerCheckInterval = null;
+	public int getTransactionManagerCheckInterval() {	
+		if(this.transactionManagerCheckInterval==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.check");
@@ -10705,18 +10707,18 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					int time = java.lang.Integer.parseInt(name);
-					this.transactionManager_CheckInterval = time;
+					this.transactionManagerCheckInterval = time;
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.check' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL);
-					this.transactionManager_CheckInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL;
+					this.transactionManagerCheckInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.check' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
-				this.transactionManager_CheckInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL;
+				this.transactionManagerCheckInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_INTERVAL;
 			}  
 		}
 
-		return this.transactionManager_CheckInterval;
+		return this.transactionManagerCheckInterval;
 	}
 
 	/**
@@ -10725,9 +10727,9 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce intervallo di check su DB effettuata dal TransactionManager, in caso di cache attiva
 	 * 
 	 */
-	private Integer transactionManager_CheckDBInterval = null;
-	public int getTransactionManager_CheckDBInterval() {	
-		if(this.transactionManager_CheckDBInterval==null){
+	private Integer transactionManagerCheckDBInterval = null;
+	public int getTransactionManagerCheckDBInterval() {	
+		if(this.transactionManagerCheckDBInterval==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.checkDB");
@@ -10735,18 +10737,18 @@ public class OpenSPCoop2Properties {
 				if(name!=null){
 					name = name.trim();
 					int time = java.lang.Integer.parseInt(name);
-					this.transactionManager_CheckDBInterval = time;
+					this.transactionManagerCheckDBInterval = time;
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.checkDB' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL);
-					this.transactionManager_CheckDBInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL;
+					this.transactionManagerCheckDBInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.checkDB' non impostata, viene utilizzato il default="+CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL+", errore:"+e.getMessage(),e);
-				this.transactionManager_CheckDBInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL;
+				this.transactionManagerCheckDBInterval = CostantiPdD.TRANSACTION_MANAGER_CHECK_DB_INTERVAL;
 			}  
 		}
 
-		return this.transactionManager_CheckDBInterval;
+		return this.transactionManagerCheckDBInterval;
 	}
 
 
@@ -10756,28 +10758,28 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce l'indicazione se il TransactionManager deve essere utilizzato in single connection
 	 * 
 	 */
-	private Boolean singleConnection_TransactionManager_value = null;
-	public boolean singleConnection_TransactionManager(){
+	private Boolean singleConnectionTransactionManagerValue = null;
+	public boolean singleConnectionTransactionManager(){
 
-		if(this.singleConnection_TransactionManager_value==null){
+		if(this.singleConnectionTransactionManagerValue==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.core.TransactionManager.singleConnection"); 
 
 				if(value!=null){
 					value = value.trim();
-					this.singleConnection_TransactionManager_value = Boolean.parseBoolean(value);
+					this.singleConnectionTransactionManagerValue = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.singleConnection' non impostata, viene utilizzato il default=false");
-					this.singleConnection_TransactionManager_value = false;
+					this.singleConnectionTransactionManagerValue = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.core.TransactionManager.singleConnection' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				this.singleConnection_TransactionManager_value = false;
+				this.singleConnectionTransactionManagerValue = false;
 			}
 		}
 
-		return this.singleConnection_TransactionManager_value;
+		return this.singleConnectionTransactionManagerValue;
 
 	}
 
@@ -10794,27 +10796,27 @@ public class OpenSPCoop2Properties {
 	 * @return Restituisce l'intervallo di Attesa attiva di default effettuata per la gestione del livello serializable nel DB, in millisecondi 
 	 * 
 	 */
-	private Long gestioneSerializableDB_AttesaAttiva = null;
-	public long getGestioneSerializableDB_AttesaAttiva() {	
-		if(this.gestioneSerializableDB_AttesaAttiva==null){
+	private Long gestioneSerializableDBAttesaAttiva = null;
+	public long getGestioneSerializableDBAttesaAttiva() {	
+		if(this.gestioneSerializableDBAttesaAttiva==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.jdbc.serializable.attesaAttiva");
 				if (name != null) {
 					name = name.trim();
 					long time = java.lang.Long.parseLong(name);
-					this.gestioneSerializableDB_AttesaAttiva = time*1000;
+					this.gestioneSerializableDBAttesaAttiva = time*1000;
 				} else {
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jdbc.serializable.attesaAttiva' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA);
-					this.gestioneSerializableDB_AttesaAttiva =  Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
+					this.gestioneSerializableDBAttesaAttiva =  Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jdbc.serializable.attesaAttiva' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
-				this.gestioneSerializableDB_AttesaAttiva = Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
+				this.gestioneSerializableDBAttesaAttiva = Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
 			}   
 		}
 
-		return this.gestioneSerializableDB_AttesaAttiva;
+		return this.gestioneSerializableDBAttesaAttiva;
 	}
 
 	/**
@@ -10822,30 +10824,80 @@ public class OpenSPCoop2Properties {
 	 * 
 	 * @return Restituisce Intervallo maggiore per frequenza di check nell'attesa attiva effettuata per la gestione del livello serializable nel DB, in millisecondi
 	 */
-	private Integer gestioneSerializableDB_CheckInterval = null;
-	public int getGestioneSerializableDB_CheckInterval() {	
-		if(this.gestioneSerializableDB_CheckInterval==null){
+	private Integer gestioneSerializableDBCheckInterval = null;
+	public int getGestioneSerializableDBCheckInterval() {	
+		if(this.gestioneSerializableDBCheckInterval==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.jdbc.serializable.check");
 				if (name != null){
 					name = name.trim();
 					int time = java.lang.Integer.parseInt(name);
-					this.gestioneSerializableDB_CheckInterval = time;
+					this.gestioneSerializableDBCheckInterval = time;
 				} else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jdbc.serializable.check' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL);
-					this.gestioneSerializableDB_CheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
+					this.gestioneSerializableDBCheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jdbc.serializable.check' non impostata, viene utilizzato il default="+Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
-				this.gestioneSerializableDB_CheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
+				this.gestioneSerializableDBCheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
 			}    
 		}
 
-		return this.gestioneSerializableDB_CheckInterval;
+		return this.gestioneSerializableDBCheckInterval;
 	}
 
+	private Boolean isJdbcCloseConnectionCheckIsClosed = null;
+	public boolean isJdbcCloseConnectionCheckIsClosed(){
 
+		if(this.isJdbcCloseConnectionCheckIsClosed==null){
+			String pName = "org.openspcoop2.pdd.jdbc.closeConnection.checkIsClosed";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isJdbcCloseConnectionCheckIsClosed = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isJdbcCloseConnectionCheckIsClosed = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isJdbcCloseConnectionCheckIsClosed = true;
+			}
+		}
+
+		return this.isJdbcCloseConnectionCheckIsClosed;
+
+	}
+	
+	private Boolean isJdbcCloseConnectionCheckAutocommit = null;
+	public boolean isJdbcCloseConnectionCheckAutocommit(){
+
+		if(this.isJdbcCloseConnectionCheckAutocommit==null){
+			String pName = "org.openspcoop2.pdd.jdbc.closeConnection.checkAutocommit";
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if(value!=null){
+					value = value.trim();
+					this.isJdbcCloseConnectionCheckAutocommit = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isJdbcCloseConnectionCheckAutocommit = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isJdbcCloseConnectionCheckAutocommit = true;
+			}
+		}
+
+		return this.isJdbcCloseConnectionCheckAutocommit;
+
+	}
 
 
 
@@ -10938,10 +10990,7 @@ public class OpenSPCoop2Properties {
 					CostantiConfigurazione.TRUE.equalsIgnoreCase(tipo) || 
 					CostantiConfigurazione.FALSE.equalsIgnoreCase(tipo)  ) 
 			){
-				if(CostantiConfigurazione.TRUE.equalsIgnoreCase(tipo))
-					return true;
-				else 
-					return false;
+				return CostantiConfigurazione.TRUE.equalsIgnoreCase(tipo);
 			}
 		}
 
@@ -10974,27 +11023,27 @@ public class OpenSPCoop2Properties {
 	 * @return Indicazione se ritenere una busta malformata se la validazione ha rilevato eccezioni di livello non gravi
 	 * 
 	 */
-	private Boolean ignoraEccezioniNonGravi_Validazione = null;
-	public boolean ignoraEccezioniNonGravi_Validazione(){
-		if(this.ignoraEccezioniNonGravi_Validazione==null){
+	private Boolean ignoraEccezioniNonGraviValidazione = null;
+	public boolean ignoraEccezioniNonGraviValidazione(){
+		if(this.ignoraEccezioniNonGraviValidazione==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi"); 
 
 				if (value != null){
 					value = value.trim();
-					this.ignoraEccezioniNonGravi_Validazione = Boolean.parseBoolean(value);
+					this.ignoraEccezioniNonGraviValidazione = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi' non impostata, viene utilizzato il default=false");
-					this.ignoraEccezioniNonGravi_Validazione = false;
+					this.ignoraEccezioniNonGraviValidazione = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("Proprieta' di openspcoop 'org.openspcoop2.protocol.validazione.ignoraEccezioniNonGravi' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				this.ignoraEccezioniNonGravi_Validazione = false;
+				this.ignoraEccezioniNonGraviValidazione = false;
 			}
 		}
 
-		return this.ignoraEccezioniNonGravi_Validazione;
+		return this.ignoraEccezioniNonGraviValidazione;
 	}
 	
 	/**

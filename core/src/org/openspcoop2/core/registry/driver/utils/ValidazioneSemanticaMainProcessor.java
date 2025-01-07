@@ -35,6 +35,7 @@ import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -205,8 +206,7 @@ public class ValidazioneSemanticaMainProcessor {
 					
 				}finally{
 					try{
-						if(connectionDB!=null)
-							connectionDB.close();
+						JDBCUtilities.closeConnection(DriverRegistroServiziDB.getCheckLogger(), connectionDB, DriverRegistroServiziDB.isCheckAutocommit(), DriverRegistroServiziDB.isCheckIsClosed());
 					}catch(Exception e){
 						// close
 					}

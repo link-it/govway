@@ -50,6 +50,8 @@ import org.slf4j.Logger;
  */
 public class DiagnosticDriverUtilities {
 	
+	private DiagnosticDriverUtilities() {}
+	
 	public static ISQLQueryObject createSQLQueryObj_searchMessaggiDiagnostici(FiltroRicercaDiagnosticiConPaginazione filter,String tipoDatabase) throws SQLQueryObjectException{
 		return DiagnosticDriverUtilities.createSQLQueryObj(filter, tipoDatabase, DiagnosticSearchType.MSGDIAGNOSTICI);
 	}
@@ -166,7 +168,7 @@ public class DiagnosticDriverUtilities {
 		if(DiagnosticDriverUtilities.isDefined(filter.getApplicativo())){
 			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_APPLICATIVO+"=?");
 		}
-		else if(DiagnosticDriverUtilities.isDefined(filter.getCheckApplicativoIsNull()) && filter.getCheckApplicativoIsNull()){
+		else if(DiagnosticDriverUtilities.isDefined(filter.getCheckApplicativoIsNull()) && filter.getCheckApplicativoIsNull()!=null && filter.getCheckApplicativoIsNull().booleanValue()){
 			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_APPLICATIVO+" is null");
 		}
 		
@@ -195,7 +197,7 @@ public class DiagnosticDriverUtilities {
 			//limit
 			if(f.getLimit()>0)
 				sqlQueryObject.setLimit(f.getLimit());
-			/*else 
+			/**else 
 				sqlQueryObject.setLimit(1000);*/
 			// Offset
 			if(f.getOffset()>0)
@@ -224,8 +226,11 @@ public class DiagnosticDriverUtilities {
 		return DiagnosticDriverUtilities.setValuesSearch(filter, object,startIndex, DiagnosticSearchType.DELETE_MSGDIAGNOSTICI);
 	}
 		
-	private static int setValuesSearch(FiltroRicercaDiagnostici filter,Object object,int startIndex, DiagnosticSearchType tipoRicerca) throws SQLQueryObjectException, SQLException{
+	private static int setValuesSearch(FiltroRicercaDiagnostici filter,Object object,int startIndex, DiagnosticSearchType tipoRicerca) throws SQLException{
 		
+		if(tipoRicerca!=null) {
+			// nop
+		}
 		
 		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		
@@ -352,7 +357,7 @@ public class DiagnosticDriverUtilities {
 			if(query!=null)
 				query.replaceFirst("\\?","'"+filter.getApplicativo()+"'");
 		}
-		else if(DiagnosticDriverUtilities.isDefined(filter.getCheckApplicativoIsNull()) && filter.getCheckApplicativoIsNull()){
+		else if(DiagnosticDriverUtilities.isDefined(filter.getCheckApplicativoIsNull()) && filter.getCheckApplicativoIsNull()!=null && filter.getCheckApplicativoIsNull().booleanValue()){
 			// nop
 		}
 		
@@ -380,13 +385,14 @@ public class DiagnosticDriverUtilities {
 	
 	
 	public static MsgDiagnostico getMsgDiagnostico(Connection c,String tipoDatabase, 
-			Logger log,long id,List<String> properties) throws Exception{
+			Logger log,long id,List<String> properties) throws SQLQueryObjectException, SQLException {
 		
 		ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 		sqlQueryObject.addFromTable(CostantiDB.MSG_DIAGNOSTICI);
 		sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID+"=?");
 		
-		log.debug("Eseguo query : "+sqlQueryObject.createSQLQuery().replaceFirst("\\?", id+""));
+		String msgD = "Eseguo query : "+sqlQueryObject.createSQLQuery().replaceFirst("\\?", id+"");
+		log.debug(msgD);
 		PreparedStatement stmt=null;
 		ResultSet rs= null;
 		try{
@@ -439,7 +445,7 @@ public class DiagnosticDriverUtilities {
 			}
 			else{
 				
-				throw new Exception("MsgDiagnostico con id["+id+"] non trovato");
+				throw new SQLQueryObjectException("MsgDiagnostico con id["+id+"] non trovato");
 				
 			}
 		}finally{
@@ -472,7 +478,7 @@ public class DiagnosticDriverUtilities {
 		return v!=null;
 	}
 	protected static boolean isDefined(List<?> v){
-		return v!=null && v.size()>0;
+		return v!=null && !v.isEmpty();
 	}
 	protected static boolean isDefined(Date v){
 		return v!=null;

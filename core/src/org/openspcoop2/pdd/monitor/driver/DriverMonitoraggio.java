@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +51,12 @@ import org.openspcoop2.pdd.monitor.constants.CostantiMonitoraggio;
 import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
 import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -85,6 +88,16 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 
 	/** Logger utilizzato per info. */
 	private Logger log = null;
+	private void logError(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.error(msg, e);
+		}
+	}
+	private void logDebug(String msg) {
+		if(this.log!=null) {
+			this.log.debug(msg);
+		}
+	}
 
 	/**
 	 * Properties
@@ -115,12 +128,12 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			InitialContext initCtx = new InitialContext(prop);
 			this.datasource = (DataSource) initCtx.lookup(nomeDataSource);
 			if (this.datasource == null)
-				throw new Exception ("datasource is null");
+				throw new DriverMonitoraggioException ("datasource is null");
 
 			initCtx.close();
 			this.log.info("Inizializzo DriverMonitoraggioDB terminata.");
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del datasource...",e);
+			this.logError("Errore durante la ricerca del datasource...",e);
 			throw new DriverMonitoraggioException("Errore durante la ricerca del datasource...",e);
 		}
 
@@ -130,13 +143,13 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			if (TipiDatabase.isAMember(tipoDatabase)) {
 				this.tipoDatabase = tipoDatabase;				
 			} else {
-				throw new Exception("Tipo database non gestito");
+				throw new DriverMonitoraggioException("Tipo database non gestito");
 			}
 
 			this.log.info("Inizializzo ISQLQueryObject terminata.");
 
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
+			this.logError("Errore durante la ricerca del SQLQueryObject...",e);
 			throw new DriverMonitoraggioException("Errore durante la ricerca del SQLQueryObject("+tipoDatabase+")...",e);
 		}
 	}
@@ -170,7 +183,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			checkConnection(this.globalConnection);
 			this.log.info("Inizializzo DriverMonitoraggioDB terminata.");
 		} catch (Exception e) {
-			this.log.error("Errore durante l'inizializzazione della connessione...",e);
+			this.logError("Errore durante l'inizializzazione della connessione...",e);
 			throw new DriverMonitoraggioException("Errore durante l'inizializzazione della connessione...",e);
 		}
 
@@ -180,32 +193,32 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			if (TipiDatabase.isAMember(tipoDatabase)) {
 				this.tipoDatabase = tipoDatabase;				
 			} else {
-				throw new Exception("Tipo database non gestito");
+				throw new DriverMonitoraggioException("Tipo database non gestito");
 			}
 
 			this.log.info("Inizializzo ISQLQueryObject terminata.");
 
 		} catch (Exception e) {
-			this.log.error("Errore durante la ricerca del SQLQueryObject...",e);
+			this.logError("Errore durante la ricerca del SQLQueryObject...",e);
 			throw new DriverMonitoraggioException("Errore durante la ricerca del SQLQueryObject("+tipoDatabase+")...",e);
 		}
 	}
 
 
-	private static Connection initConnection(String connectionUrl, String username, String password) throws Exception {
+	private static Connection initConnection(String connectionUrl, String username, String password) throws SQLException {
 		if(username!=null){
 			return DriverManager.getConnection(connectionUrl,username,password);
 		}else{
 			return DriverManager.getConnection(connectionUrl);
 		}
 	}
-	private static void checkConnection(Connection con) throws Exception {
+	private static void checkConnection(Connection con) throws DriverMonitoraggioException {
 		if(con == null){
-			throw new Exception("Connection is null");
+			throw new DriverMonitoraggioException("Connection is null");
 		}
 	}
 	
-	private Connection getConnection() throws Exception {
+	private Connection getConnection() throws SQLException {
 		if (this.datasource!=null)
 			return this.datasource.getConnection();
 		else
@@ -213,8 +226,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 	}
 	private void releaseConnection(Connection con) {
 		try{
-			if(this.datasource!=null && con!=null)
-				con.close();
+			if(this.datasource!=null && con!=null) {
+				JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), con, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
+			}
 		}catch(Exception e){
 			// close
 		}
@@ -238,14 +252,14 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			// Ottengo connessione
 			con = getConnection();
 			if(con==null)
-				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+				throw new DriverMonitoraggioException("Connection non ottenuta dal datasource["+this.datasource+"]");
 
 			StatoPdd statoPdD = new StatoPdd();
 			java.sql.Timestamp now = DateManager.getTimestamp();
-			java.sql.Timestamp data_registrazione_limite = null;
+			java.sql.Timestamp dataRegistrazioneLimite = null;
 			//	FILTRO d) Soglia (ora_registrazione piu' vecchia di NOW-search.getSoglia()) Soglia in Minuti
 			if(search.getSoglia()!=-1){
-				data_registrazione_limite = new java.sql.Timestamp(DateManager.getTimeMillis()-(search.getSoglia()*1000*60));
+				dataRegistrazioneLimite = new java.sql.Timestamp(DateManager.getTimeMillis()-(search.getSoglia()*1000*60));
 			}
 
 
@@ -254,22 +268,22 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			long totaleMessaggiDuplicati = -1;
 			sqlQueryObject = this.newSQLQueryObjectStatoRichiestePendenti(search);
 			pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
-			int param_index = 0;
+			int paramIndex = 0;
 			if(search.getSoglia()!=-1)
-				pstmt.setTimestamp(++param_index, data_registrazione_limite);
+				pstmt.setTimestamp(++paramIndex, dataRegistrazioneLimite);
 			List<BustaSoggetto> filtroSoggetti = search.getSoggettoList();
 			if(filtroSoggetti!=null){			
 				for(int k=0; k<filtroSoggetti.size(); k++){
 
 					// fruitore
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 
 					// OR
 
 					// erogatore
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 				}
 			}
 			rs = pstmt.executeQuery();
@@ -283,8 +297,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}
 			rs.close();
 			pstmt.close();
-			this.log.debug("query["+sqlQueryObject+"] totaleMessaggi:"+totaleMessaggi);
-			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggi");
+			this.logDebug("query["+sqlQueryObject+"] totaleMessaggi:"+totaleMessaggi);
+			this.logDebug("Soglia ["+search.getSoglia()+"] ["+dataRegistrazioneLimite+"] totaleMessaggi");
 
 			if(totaleMessaggi>0){
 
@@ -295,21 +309,21 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 						sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO='"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
 					}
 					pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
-					param_index = 0;
+					paramIndex = 0;
 					if(search.getSoglia()!=-1)
-						pstmt.setTimestamp(++param_index, data_registrazione_limite);
+						pstmt.setTimestamp(++paramIndex, dataRegistrazioneLimite);
 					if(filtroSoggetti!=null){
 						for(int k=0; k<filtroSoggetti.size(); k++){
 
 							// fruitore
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 
 							// OR
 
 							// erogatore
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 						}
 					}
 					rs = pstmt.executeQuery();
@@ -323,8 +337,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					}
 					rs.close();
 					pstmt.close();
-					this.log.debug("query["+sqlQueryObject+"] totaleMessaggiInConsegna:"+statoPdD.getNumMsgInConsegna());
-					this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggiInConsegna");
+					this.logDebug("query["+sqlQueryObject+"] totaleMessaggiInConsegna:"+statoPdD.getNumMsgInConsegna());
+					this.logDebug("Soglia ["+search.getSoglia()+"] ["+dataRegistrazioneLimite+"] totaleMessaggiInConsegna");
 				}
 
 				// Messaggi in Spedizione
@@ -335,21 +349,21 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 								GestoreMessaggi.MESSAGGI+".PROPRIETARIO='InoltroRisposte'");
 					}
 					pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
-					param_index = 0;
+					paramIndex = 0;
 					if(search.getSoglia()!=-1)
-						pstmt.setTimestamp(++param_index, data_registrazione_limite);
+						pstmt.setTimestamp(++paramIndex, dataRegistrazioneLimite);
 					if(filtroSoggetti!=null){
 						for(int k=0; k<filtroSoggetti.size(); k++){
 
 							// fruitore
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 
 							// OR
 
 							// erogatore
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 						}
 					}
 					rs = pstmt.executeQuery();
@@ -363,8 +377,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					}
 					rs.close();
 					pstmt.close();
-					this.log.debug("query["+sqlQueryObject+"] totaleMessaggiInSpedizione:"+statoPdD.getNumMsgInSpedizione());
-					this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggiInSpedizione");
+					this.logDebug("query["+sqlQueryObject+"] totaleMessaggiInSpedizione:"+statoPdD.getNumMsgInSpedizione());
+					this.logDebug("Soglia ["+search.getSoglia()+"] ["+dataRegistrazioneLimite+"] totaleMessaggiInSpedizione");
 				}
 
 				// Messaggi ne in Spedizione, ne in Consegna (PROCESSAMENTO) 
@@ -376,21 +390,21 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 								GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
 					}
 					pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
-					param_index = 0;
+					paramIndex = 0;
 					if(search.getSoglia()!=-1)
-						pstmt.setTimestamp(++param_index, data_registrazione_limite);
+						pstmt.setTimestamp(++paramIndex, dataRegistrazioneLimite);
 					if(filtroSoggetti!=null){
 						for(int k=0; k<filtroSoggetti.size(); k++){
 
 							// fruitore
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 
 							// OR
 
 							// erogatore
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-							pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+							pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 						}
 					}
 					rs = pstmt.executeQuery();
@@ -404,19 +418,18 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					}
 					rs.close();
 					pstmt.close();
-					this.log.debug("query["+sqlQueryObject+"] totaleMessaggiInProcessamento:"+statoPdD.getNumMsgInProcessamento());
-					this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggiInProcessamento");
+					this.logDebug("query["+sqlQueryObject+"] totaleMessaggiInProcessamento:"+statoPdD.getNumMsgInProcessamento());
+					this.logDebug("Soglia ["+search.getSoglia()+"] ["+dataRegistrazioneLimite+"] totaleMessaggiInProcessamento");
 				}
 
 			}
 
 			// MessaggiDuplicati
-			// TODO: Filtro con num duplicati
-			this.log.debug("Calcolo numero pacchetti duplicati...");
+			this.logDebug("Calcolo numero pacchetti duplicati...");
 			sqlQueryObject = this.newSQLQueryPacchettiDuplicati(search);
 			pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
 			if(search.getSoglia()!=-1)
-				pstmt.setTimestamp(1, data_registrazione_limite);
+				pstmt.setTimestamp(1, dataRegistrazioneLimite);
 			rs = pstmt.executeQuery();
 			if(rs.next()){
 				totaleMessaggiDuplicati = rs.getLong("numduplicati");
@@ -424,34 +437,23 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}
 			rs.close();
 			pstmt.close();
-			this.log.debug("query["+sqlQueryObject.toString()+"] totaleMessaggiDuplicati:"+totaleMessaggiDuplicati);
-			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggiDuplicati");
+			this.logDebug("query["+sqlQueryObject.toString()+"] totaleMessaggiDuplicati:"+totaleMessaggiDuplicati);
+			this.logDebug("Soglia ["+search.getSoglia()+"] ["+dataRegistrazioneLimite+"] totaleMessaggiDuplicati");
 
 
 			return statoPdD;
 
 		}catch(Exception e){
 			if(sqlQueryObject!=null){
-				this.log.error("getStatoRichiestePendenti error SQL["+sqlQueryObject.toString()+"]",e);
+				this.logError("getStatoRichiestePendenti error SQL["+sqlQueryObject.toString()+"]",e);
 				throw new DriverMonitoraggioException("getStatoRichiestePendenti error SQL["+sqlQueryObject.toString()+"]: "+e.getMessage(),e);
 			}else{
-				this.log.error("getStatoRichiestePendenti error",e);
+				this.logError("getStatoRichiestePendenti error",e);
 				throw new DriverMonitoraggioException("getStatoRichiestePendenti error: "+e.getMessage(),e);
 			}
 
 		}finally{
-			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				if(pstmt!=null)
-					pstmt.close();
-			}catch(Exception e){
-				// close
-			}
+			JDBCUtilities.closeResources(rs, pstmt);
 			releaseConnection(con);
 		}
 	}
@@ -471,7 +473,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			// Ottengo connessione
 			con = getConnection();
 			if(con==null)
-				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+				throw new DriverMonitoraggioException("Connection non ottenuta dal datasource["+this.datasource+"]");
 
 			// TotaleMessaggi
 			long totaleMessaggi = 0;
@@ -483,12 +485,12 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}
 			rs.close();
 			pstmt.close();
-			this.log.debug("query["+query+"] totaleMessaggi:"+totaleMessaggi);
+			this.logDebug("query["+query+"] totaleMessaggi:"+totaleMessaggi);
 
 			return totaleMessaggi;
 
 		}catch(Exception e){
-			this.log.error("getTotaleMessaggiInGestione error",e);
+			this.logError("getTotaleMessaggiInGestione error",e);
 			throw new DriverMonitoraggioException("getStatoRichiestePendenti error: "+e.getMessage(),e);
 		}finally{
 			try{
@@ -527,12 +529,12 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			// Ottengo connessione
 			con = getConnection();
 			if(con==null)
-				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+				throw new DriverMonitoraggioException("Connection non ottenuta dal datasource["+this.datasource+"]");
 
-			java.sql.Timestamp data_registrazione_limite = null;
+			java.sql.Timestamp dataRegistrazioneLimite = null;
 			//	FILTRO d) Soglia (ora_registrazione piu' vecchia di NOW-search.getSoglia()) Soglia in Minuti
 			if(search.getSoglia()!=-1){
-				data_registrazione_limite = new java.sql.Timestamp(DateManager.getTimeMillis()-(search.getSoglia()*1000*60));
+				dataRegistrazioneLimite = new java.sql.Timestamp(DateManager.getTimeMillis()-(search.getSoglia()*1000*60));
 			}
 
 			// TotaleMessaggi: Il totale dei messaggi non deve subire influenze di offset/limit
@@ -541,22 +543,22 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			search.setOffset(-1);
 			sqlQueryObject = this.newSQLQueryObjectStatoRichiestePendenti(search);
 			pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
-			int param_index = 0;
+			int paramIndex = 0;
 			if(search.getSoglia()!=-1)
-				pstmt.setTimestamp(++param_index, data_registrazione_limite);
+				pstmt.setTimestamp(++paramIndex, dataRegistrazioneLimite);
 			List<BustaSoggetto> filtroSoggetti = search.getSoggettoList();
 			if(filtroSoggetti!=null){
 				for(int k=0; k<filtroSoggetti.size(); k++){
 
 					// fruitore
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 
 					// OR
 
 					// erogatore
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 				}
 			}
 			rs = pstmt.executeQuery();
@@ -565,35 +567,24 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}
 			rs.close();
 			pstmt.close();
-			this.log.debug("query["+sqlQueryObject+"] totaleMessaggi:"+totaleMessaggi);
-			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] totaleMessaggi");
+			this.logDebug("query["+sqlQueryObject+"] totaleMessaggi:"+totaleMessaggi);
+			this.logDebug("Soglia ["+search.getSoglia()+"] ["+dataRegistrazioneLimite+"] totaleMessaggi");
 
 			return totaleMessaggi;
 
 		}catch(Exception e){
 			if(sqlQueryObject!=null){
-				this.log.error("getListaRichiestePendenti error SQL["+sqlQueryObject.toString()+"]",e);
+				this.logError("getListaRichiestePendenti error SQL["+sqlQueryObject.toString()+"]",e);
 				throw new DriverMonitoraggioException("getListaRichiestePendenti error SQL["+sqlQueryObject.toString()+"]: "+e.getMessage(),e);
 			}else{
-				this.log.error("getListaRichiestePendenti error",e);
+				this.logError("getListaRichiestePendenti error",e);
 				throw new DriverMonitoraggioException("getListaRichiestePendenti error: "+e.getMessage(),e);
 			}
 		}finally{
 			// ripristino valori offset/limit
 			search.setLimit(oldLimit);
 			search.setOffset(oldOffset);
-			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				if(pstmt!=null)
-					pstmt.close();
-			}catch(Exception e){
-				// close
-			}
+			JDBCUtilities.closeResources(rs, pstmt);
 			releaseConnection(con);
 		}
 	}
@@ -615,12 +606,12 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			// Ottengo connessione
 			con = getConnection();
 			if(con==null)
-				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+				throw new DriverMonitoraggioException("Connection non ottenuta dal datasource["+this.datasource+"]");
 
-			java.sql.Timestamp data_registrazione_limite = null;
+			java.sql.Timestamp dataRegistrazioneLimite = null;
 			//	FILTRO d) Soglia (ora_registrazione piu' vecchia di NOW-search.getSoglia()) Soglia in Minuti
 			if(search.getSoglia()!=-1){
-				data_registrazione_limite = new java.sql.Timestamp(DateManager.getTimeMillis()-(search.getSoglia()*1000*60));
+				dataRegistrazioneLimite = new java.sql.Timestamp(DateManager.getTimeMillis()-(search.getSoglia()*1000*60));
 			}
 
 			List<BustaSoggetto> filtroSoggetti = search.getSoggettoList();
@@ -628,28 +619,28 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			// Query
 			sqlQueryObject = this.newSQLQueryObjectListaRichiestePendenti(search);
 			pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
-			int param_index = 0;
+			int paramIndex = 0;
 			if(search.getSoglia()!=-1)
-				pstmt.setTimestamp(++param_index, data_registrazione_limite);
+				pstmt.setTimestamp(++paramIndex, dataRegistrazioneLimite);
 			if(filtroSoggetti!=null){
 				for(int k=0; k<filtroSoggetti.size(); k++){
 
 					// fruitore
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 
 					// OR
 
 					// erogatore
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 				}
 			}
 			rs = pstmt.executeQuery();
-			List<Messaggio> msgs = new ArrayList<Messaggio>();
+			List<Messaggio> msgs = new ArrayList<>();
 
-			this.log.debug("query["+sqlQueryObject+"] listaMessaggi");
-			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] listaMessaggi");
+			this.logDebug("query["+sqlQueryObject+"] listaMessaggi");
+			this.logDebug("Soglia ["+search.getSoglia()+"] ["+dataRegistrazioneLimite+"] listaMessaggi");
 			
 			while(rs.next()){
 				Messaggio m = new Messaggio();
@@ -740,13 +731,13 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					checkSA = true;
 				}					
 				if(checkSA){
-					this.log.debug("Raccolgo informazioni dei servizi applicativi...");
+					this.logDebug("Raccolgo informazioni dei servizi applicativi...");
 					String sqlQuerySA = "SELECT * FROM "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI +
 							" WHERE ID_MESSAGGIO=?";
 					pstmt = con.prepareStatement(sqlQuerySA);
 					pstmt.setString(1, msgs.get(i).getIdMessaggio());
 					rs = pstmt.executeQuery();
-					List<ServizioApplicativoConsegna> sconsegna = new ArrayList<ServizioApplicativoConsegna>();
+					List<ServizioApplicativoConsegna> sconsegna = new ArrayList<>();
 					while(rs.next()){
 						ServizioApplicativoConsegna datiConsegna = new ServizioApplicativoConsegna();
 						if(rs.getInt("SBUSTAMENTO_SOAP")==1)
@@ -779,7 +770,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					rs.close();
 					pstmt.close();
 
-					if(sconsegna.size()>0){
+					if(!sconsegna.isEmpty()){
 						msgs.get(i).getDettaglio().setServizioApplicativoConsegnaList(sconsegna);
 					}
 
@@ -791,7 +782,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					if(search.getBusta()!=null && search.getBusta().isAttesaRiscontro()){
 						msgs.get(i).getBustaInfo().setAttesaRiscontro(true);
 					}else{
-						this.log.debug("Raccolgo informazioni per attesa riscontro...");
+						this.logDebug("Raccolgo informazioni per attesa riscontro...");
 						String sqlQueryRiscontro = "SELECT * FROM "+Costanti.RISCONTRI_DA_RICEVERE +
 								" WHERE ID_MESSAGGIO=?";
 						pstmt = con.prepareStatement(sqlQueryRiscontro);
@@ -809,25 +800,14 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 
 		}catch(Exception e){
 			if(sqlQueryObject!=null){
-				this.log.error("getListaRichiestePendenti error SQL["+sqlQueryObject.toString()+"]",e);
+				this.logError("getListaRichiestePendenti error SQL["+sqlQueryObject.toString()+"]",e);
 				throw new DriverMonitoraggioException("getListaRichiestePendenti error SQL["+sqlQueryObject.toString()+"]: "+e.getMessage(),e);
 			}else{
-				this.log.error("getListaRichiestePendenti error",e);
+				this.logError("getListaRichiestePendenti error",e);
 				throw new DriverMonitoraggioException("getListaRichiestePendenti error: "+e.getMessage(),e);
 			}
 		}finally{
-			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				if(pstmt!=null)
-					pstmt.close();
-			}catch(Exception e){
-				// close
-			}
+			JDBCUtilities.closeResources(rs, pstmt);
 			releaseConnection(con);
 		}
 	}
@@ -847,27 +827,27 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			// Ottengo connessione
 			con = getConnection();
 			if(con==null)
-				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+				throw new DriverMonitoraggioException("Connection non ottenuta dal datasource["+this.datasource+"]");
 
 			// Raccolta valori chiave
 			// TIPO
 			String tipoMessaggio = tipo;
 			// Ricerco tipoMessaggio se non presenti 
 			if(tipoMessaggio==null){
-				this.log.debug("Ricerco tipo messaggio...");
+				this.logDebug("Ricerco tipo messaggio...");
 				FilterSearch filtro = new FilterSearch();
 				filtro.setIdMessaggio(idMessaggio);
 				List<Messaggio> lista = this.getListaRichiestePendenti(filtro);
-				if(lista==null || lista.size()<=0){
+				if(lista==null || lista.isEmpty()){
 					return false; // messaggio non presente
 				}
 				if(lista.get(0).getDettaglio()==null ||
 						lista.get(0).getDettaglio().getTipo()==null){
-					throw new Exception("Tipo messaggio non identificato per l'id: "+idMessaggio);
+					throw new DriverMonitoraggioException("Tipo messaggio non identificato per l'id: "+idMessaggio);
 				}
 				tipoMessaggio = lista.get(0).getDettaglio().getTipo();
 			}
-			this.log.debug("Messaggio con id("+idMessaggio+") da eliminare possiede tipo: "+tipoMessaggio);
+			this.logDebug("Messaggio con id("+idMessaggio+") da eliminare possiede tipo: "+tipoMessaggio);
 
 			if(Costanti.OUTBOX.equals(tipoMessaggio)){
 				// Elimino eventuali riscontri
@@ -876,9 +856,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				pstmt.setString(1, idMessaggio);
 				int operation = pstmt.executeUpdate();
 				if(operation>0){
-					this.log.debug("Attesa riscontro per "+idMessaggio+" eliminato");
+					this.logDebug("Attesa riscontro per "+idMessaggio+" eliminato");
 				}else{
-					this.log.debug("Attesa riscontro per "+idMessaggio+" non esistente");
+					this.logDebug("Attesa riscontro per "+idMessaggio+" non esistente");
 				}
 				pstmt.close();
 
@@ -889,9 +869,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				pstmt.setString(2, tipoMessaggio);
 				operation = pstmt.executeUpdate();
 				if(operation>0){
-					this.log.debug("ProfiloAsincrono per "+idMessaggio+" eliminato");
+					this.logDebug("ProfiloAsincrono per "+idMessaggio+" eliminato");
 				}else{
-					this.log.debug("ProfiloAsincrono per "+idMessaggio+" non esistente");
+					this.logDebug("ProfiloAsincrono per "+idMessaggio+" non esistente");
 				}
 				pstmt.close();
 			}
@@ -906,23 +886,18 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			boolean result = false;
 			if(operation>0){
 				result = true;
-				this.log.debug("Messaggio "+idMessaggio+" eliminato");
+				this.logDebug("Messaggio "+idMessaggio+" eliminato");
 			}else{
-				this.log.debug("Messaggio "+idMessaggio+" non esistente");
+				this.logDebug("Messaggio "+idMessaggio+" non esistente");
 			}
 			pstmt.close();
 			return result;
 
 		}catch(Exception e){
-			this.log.error("deleteMessaggio error",e);
+			this.logError("deleteMessaggio error",e);
 			throw new DriverMonitoraggioException("deleteMessaggio error: "+e.getMessage());
 		}finally{
-			try{
-				if(pstmt!=null)
-					pstmt.close();
-			}catch(Exception e){
-				// close
-			}
+			JDBCUtilities.closeResources(pstmt);
 			releaseConnection(con);
 		}
 	}
@@ -935,27 +910,27 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			// Ottengo connessione
 			con = getConnection();
 			if(con==null)
-				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+				throw new DriverMonitoraggioException("Connection non ottenuta dal datasource["+this.datasource+"]");
 
 			// Raccolta valori chiave
 			// TIPO
 			String tipoMessaggio = tipo;
 			// Ricerco tipoMessaggio se non presenti 
 			if(tipoMessaggio==null){
-				this.log.debug("Ricerco tipo messaggio...");
+				this.logDebug("Ricerco tipo messaggio...");
 				FilterSearch filtro = new FilterSearch();
 				filtro.setIdMessaggio(idMessaggio);
 				List<Messaggio> lista = this.getListaRichiestePendenti(filtro);
-				if(lista==null || lista.size()<=0){
+				if(lista==null || lista.isEmpty()){
 					return false; // messaggio non presente
 				}
 				if(lista.get(0).getDettaglio()==null ||
 						lista.get(0).getDettaglio().getTipo()==null){
-					throw new Exception("Tipo messaggio non identificato per l'id: "+idMessaggio);
+					throw new DriverMonitoraggioException("Tipo messaggio non identificato per l'id: "+idMessaggio);
 				}
 				tipoMessaggio = lista.get(0).getDettaglio().getTipo();
 			}
-			this.log.debug("Messaggio con id("+idMessaggio+") da eliminare possiede tipo: "+tipoMessaggio);
+			this.logDebug("Messaggio con id("+idMessaggio+") da eliminare possiede tipo: "+tipoMessaggio);
 
 			if(Costanti.OUTBOX.equals(tipoMessaggio)){
 				// Aggiorno messaggio
@@ -968,9 +943,9 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				boolean result = false;
 				if(operation>0){
 					result = true;
-					this.log.debug("Messaggio "+idMessaggio+" aggiornato");
+					this.logDebug("Messaggio "+idMessaggio+" aggiornato");
 				}else{
-					this.log.debug("Messaggio "+idMessaggio+" non aggiornato");
+					this.logDebug("Messaggio "+idMessaggio+" non aggiornato");
 				}
 				pstmt.close();
 				return result;	
@@ -986,16 +961,16 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				boolean result = false;
 				if(operation>0){
 					result = true;
-					this.log.debug("Messaggio "+idMessaggio+" aggiornato");
+					this.logDebug("Messaggio "+idMessaggio+" aggiornato");
 				}else{
-					this.log.debug("Messaggio "+idMessaggio+" non aggiornato");
+					this.logDebug("Messaggio "+idMessaggio+" non aggiornato");
 				}
 				pstmt.close();
 				return result;	
 			}
 
 		}catch(Exception e){
-			this.log.error("deleteMessaggio error",e);
+			this.logError("deleteMessaggio error",e);
 			throw new DriverMonitoraggioException("deleteMessaggio error: "+e.getMessage());
 		}finally{
 			try{
@@ -1019,7 +994,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 	 */
 	@Override
 	public long deleteRichiestePendenti(FilterSearch search) throws DriverMonitoraggioException{
-		return _richiestePendenti(search, true);
+		return richiestePendentiEngine(search, true);
 	}
 	
 	/**
@@ -1031,10 +1006,10 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 	 */
 	@Override
 	public long aggiornaDataRispedizioneRichiestePendenti(FilterSearch search) throws DriverMonitoraggioException{
-		return _richiestePendenti(search, false);
+		return richiestePendentiEngine(search, false);
 	}
 	
-	private long _richiestePendenti(FilterSearch search, boolean delete) throws DriverMonitoraggioException{
+	private long richiestePendentiEngine(FilterSearch search, boolean delete) throws DriverMonitoraggioException{
 		
 		String nomeMetodo = delete? "deleteRichiestePendenti":"aggiornaDataRispedizioneRichiestePendenti";
 		
@@ -1046,39 +1021,39 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			// Ottengo connessione
 			con = getConnection();
 			if(con==null)
-				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+				throw new DriverMonitoraggioException("Connection non ottenuta dal datasource["+this.datasource+"]");
 
-			java.sql.Timestamp data_registrazione_limite = null;
+			java.sql.Timestamp dataRegistrazioneLimite = null;
 			//	FILTRO d) Soglia (ora_registrazione piu' vecchia di NOW-search.getSoglia()) Soglia in Minuti
 			if(search.getSoglia()!=-1){
-				data_registrazione_limite = new java.sql.Timestamp(DateManager.getTimeMillis()-(search.getSoglia()*1000*60));
+				dataRegistrazioneLimite = new java.sql.Timestamp(DateManager.getTimeMillis()-(search.getSoglia()*1000*60));
 			}
 			// Query
 			sqlQueryObject = this.newSQLQueryObjectListaRichiestePendenti(search);
 			pstmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
-			int param_index = 0;
+			int paramIndex = 0;
 			if(search.getSoglia()!=-1)
-				pstmt.setTimestamp(++param_index, data_registrazione_limite);
+				pstmt.setTimestamp(++paramIndex, dataRegistrazioneLimite);
 			List<BustaSoggetto> filtroSoggetti = search.getSoggettoList();
 			if(filtroSoggetti!=null){
 				for(int k=0; k<filtroSoggetti.size(); k++){
 
 					// fruitore
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 
 					// OR
 
 					// erogatore
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getTipo());
-					pstmt.setString(++param_index, filtroSoggetti.get(k).getNome());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getTipo());
+					pstmt.setString(++paramIndex, filtroSoggetti.get(k).getNome());
 				}
 			}
 			rs = pstmt.executeQuery();
-			List<Messaggio> msgs = new ArrayList<Messaggio>();
+			List<Messaggio> msgs = new ArrayList<>();
 
-			this.log.debug("query["+sqlQueryObject+"] listaMessaggi");
-			this.log.debug("Soglia ["+search.getSoglia()+"] ["+data_registrazione_limite+"] listaMessaggi");
+			this.logDebug("query["+sqlQueryObject+"] listaMessaggi");
+			this.logDebug("Soglia ["+search.getSoglia()+"] ["+dataRegistrazioneLimite+"] listaMessaggi");
 
 			while(rs.next()){
 				Messaggio m = new Messaggio();
@@ -1096,7 +1071,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			Timestamp now = DateManager.getTimestamp();
 			
 			long numeroMsg = 0;
-			while(msgs.size()>0){
+			while(!msgs.isEmpty()){
 				Messaggio msgForDelete = msgs.remove(0);
 				if(delete) {
 					if(this.deleteMessaggio(msgForDelete.getIdMessaggio(), msgForDelete.getDettaglio().getTipo())) {
@@ -1110,35 +1085,24 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				}
 			}
 			if(delete) {
-				this.log.debug("eliminati "+numeroMsg+" messaggi");
+				this.logDebug("eliminati "+numeroMsg+" messaggi");
 			}
 			else {
-				this.log.debug("aggiornati "+numeroMsg+" messaggi");
+				this.logDebug("aggiornati "+numeroMsg+" messaggi");
 			}
 
 			return numeroMsg;
 
 		}catch(Exception e){
 			if(sqlQueryObject!=null){
-				this.log.error(nomeMetodo+" error SQL["+sqlQueryObject.toString()+"]",e);
+				this.logError(nomeMetodo+" error SQL["+sqlQueryObject.toString()+"]",e);
 				throw new DriverMonitoraggioException(nomeMetodo+" error SQL["+sqlQueryObject.toString()+"]: "+e.getMessage(),e);
 			}else{
-				this.log.error(nomeMetodo+" error",e);
+				this.logError(nomeMetodo+" error",e);
 				throw new DriverMonitoraggioException(nomeMetodo+" error: "+e.getMessage(),e);
 			}
 		}finally{
-			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				if(pstmt!=null)
-					pstmt.close();
-			}catch(Exception e){
-				// close
-			}
+			JDBCUtilities.closeResources(rs, pstmt);
 			releaseConnection(con);
 		}
 	}
@@ -1157,16 +1121,16 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			// Ottengo connessione
 			con = getConnection();
 			if(con==null)
-				throw new Exception("Connection non ottenuta dal datasource["+this.datasource+"]");
+				throw new DriverMonitoraggioException("Connection non ottenuta dal datasource["+this.datasource+"]");
 
 			// Query
 			sqlQuery = this.newSQLQueryStatoConsegneAsincrone(filtro);
-			//System.out.println("QUERY: "+sqlQuery);
+			/**System.out.println("QUERY: "+sqlQuery);*/
 			pstmt = con.prepareStatement(sqlQuery);
 			rs = pstmt.executeQuery();
 			StatoConsegneAsincrone stati = new StatoConsegneAsincrone();
 
-			this.log.debug("query["+sqlQuery+"] getStatoConsegneAsincrone");
+			this.logDebug("query["+sqlQuery+"] getStatoConsegneAsincrone");
 			
 			while(rs.next()){
 				StatoConsegnaAsincrona stato = new StatoConsegnaAsincrona();
@@ -1195,31 +1159,20 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			rs.close();
 			pstmt.close();
 
-			this.log.debug("trovati "+stati.size()+" stati");
+			this.logDebug("trovati "+stati.size()+" stati");
 	
 			return stati;
 
 		}catch(Exception e){
 			if(sqlQuery!=null){
-				this.log.error(nomeMetodo+" error SQL["+sqlQuery+"]",e);
+				this.logError(nomeMetodo+" error SQL["+sqlQuery+"]",e);
 				throw new DriverMonitoraggioException(nomeMetodo+" error SQL["+sqlQuery+"]: "+e.getMessage(),e);
 			}else{
-				this.log.error(nomeMetodo+" error",e);
+				this.logError(nomeMetodo+" error",e);
 				throw new DriverMonitoraggioException(nomeMetodo+" error: "+e.getMessage(),e);
 			}
 		}finally{
-			try{
-				if(rs!=null)
-					rs.close();
-			}catch(Exception e){
-				// close
-			}
-			try{
-				if(pstmt!=null)
-					pstmt.close();
-			}catch(Exception e){
-				// close
-			}
+			JDBCUtilities.closeResources(rs, pstmt);
 			releaseConnection(con);
 		}
 		
@@ -1243,7 +1196,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 
 		// FROM TABLE
 		sqlQueryObject.addFromTable(GestoreMessaggi.MESSAGGI);
-		if( (search.getMessagePattern()!=null) && ("".equals(search.getMessagePattern())==false) ){
+		if( (search.getMessagePattern()!=null) && (!"".equals(search.getMessagePattern())) ){
 			sqlQueryObject.addFromTable(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
 		}
 		if( (search.getBusta()!=null) ){
@@ -1251,26 +1204,26 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			if(search.getBusta().isAttesaRiscontro()){
 				sqlQueryObject.addFromTable(Costanti.RISCONTRI_DA_RICEVERE);
 			}
-		}else if(search.getSoggettoList()!=null && search.getSoggettoList().size()>0){
+		}else if(search.getSoggettoList()!=null && !search.getSoggettoList().isEmpty()){
 			sqlQueryObject.addFromTable(Costanti.REPOSITORY);
 		}
 
 		// Condizione per legare le tabelle
-		String legameTabelleSQL_MSG_ID = GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO="+GestoreMessaggi.DEFINIZIONE_MESSAGGI+".ID_MESSAGGIO";
-		String legameTabelleSQL_MSG_TIPO = GestoreMessaggi.MESSAGGI+".TIPO="+GestoreMessaggi.DEFINIZIONE_MESSAGGI+".TIPO";
-		String legameTabelleSQL_BUSTA_ID = GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO="+Costanti.REPOSITORY+".ID_MESSAGGIO";
-		String legameTabelleSQL_BUSTA_TIPO = GestoreMessaggi.MESSAGGI+".TIPO="+Costanti.REPOSITORY+".TIPO";
-		String legameTabelleSQL_RISCONTRO = GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO="+Costanti.RISCONTRI_DA_RICEVERE+".ID_MESSAGGIO";
-		if( (search.getMessagePattern()!=null) && ("".equals(search.getMessagePattern())==false) ){
-			sqlQueryObject.addWhereCondition(true,legameTabelleSQL_MSG_ID,legameTabelleSQL_MSG_TIPO);
+		String legameTabelleSQLMsgId = GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO="+GestoreMessaggi.DEFINIZIONE_MESSAGGI+".ID_MESSAGGIO";
+		String legameTabelleSQLMsgTipo = GestoreMessaggi.MESSAGGI+".TIPO="+GestoreMessaggi.DEFINIZIONE_MESSAGGI+".TIPO";
+		String legameTabelleSQLBustaId = GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO="+Costanti.REPOSITORY+".ID_MESSAGGIO";
+		String legameTabelleSQLBustaTipo = GestoreMessaggi.MESSAGGI+".TIPO="+Costanti.REPOSITORY+".TIPO";
+		String legameTabelleSQLRiscontro = GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO="+Costanti.RISCONTRI_DA_RICEVERE+".ID_MESSAGGIO";
+		if( (search.getMessagePattern()!=null) && (!"".equals(search.getMessagePattern())) ){
+			sqlQueryObject.addWhereCondition(true,legameTabelleSQLMsgId,legameTabelleSQLMsgTipo);
 		}
 		if(search.getBusta()!=null){
-			sqlQueryObject.addWhereCondition(true,legameTabelleSQL_BUSTA_ID,legameTabelleSQL_BUSTA_TIPO);
-		}else if(search.getSoggettoList()!=null && search.getSoggettoList().size()>0){
-			sqlQueryObject.addWhereCondition(true,legameTabelleSQL_BUSTA_ID,legameTabelleSQL_BUSTA_TIPO);
+			sqlQueryObject.addWhereCondition(true,legameTabelleSQLBustaId,legameTabelleSQLBustaTipo);
+		}else if(search.getSoggettoList()!=null && !search.getSoggettoList().isEmpty()){
+			sqlQueryObject.addWhereCondition(true,legameTabelleSQLBustaId,legameTabelleSQLBustaTipo);
 		}
 		if(search.getBusta()!=null && search.getBusta().isAttesaRiscontro()){
-			sqlQueryObject.addWhereCondition(legameTabelleSQL_RISCONTRO);
+			sqlQueryObject.addWhereCondition(legameTabelleSQLRiscontro);
 		}
 
 
@@ -1304,20 +1257,20 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 					sqlQueryObject.addSelectField(GestoreMessaggi.MESSAGGI,key);
 				}
 			}
-			if( (search.getMessagePattern()!=null) && ("".equals(search.getMessagePattern())==false) ){
+			if( (search.getMessagePattern()!=null) && (!"".equals(search.getMessagePattern())) ){
 				// Tabella OpenSPCoop.sql.DefinizioneMessaggi
 // Queste due colonne non servono: altrimenti si ottiene un errore column ambiguously defined.
 // se in futuro serviranno, utilizzare degli alias
-//				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"ID_MESSAGGIO");
-//				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"TIPO");
+				/**sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"ID_MESSAGGIO");
+				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"TIPO");*/
 				sqlQueryObject.addSelectField(GestoreMessaggi.DEFINIZIONE_MESSAGGI,"MSG_BYTES");
 			}	
 			if(search.getBusta()!=null){
 				// Tabella Libreria.sql.Repository
 // Queste due colonne non servono: altrimenti si ottiene un errore column ambiguously defined.
 // se in futuro serviranno, utilizzare degli alias
-//				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"ID_MESSAGGIO");
-//				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO");
+				/**sqlQueryObject.addSelectField(Costanti.REPOSITORY,"ID_MESSAGGIO");
+				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO");*/
 				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO_MITTENTE");
 				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"MITTENTE");
 				sqlQueryObject.addSelectField(Costanti.REPOSITORY,"TIPO_DESTINATARIO");
@@ -1333,7 +1286,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 				// Tabella Libreria.sql.RiscontriDaRicevere
 // Queste due colonne non servono: altrimenti si ottiene un errore column ambiguously defined.
 // se in futuro serviranno, utilizzare degli alias
-//				sqlQueryObject.addSelectField(Costanti.RISCONTRI_DA_RICEVERE,"ID_MESSAGGIO");
+				/**sqlQueryObject.addSelectField(Costanti.RISCONTRI_DA_RICEVERE,"ID_MESSAGGIO");*/
 			}
 
 		}
@@ -1342,19 +1295,19 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		sqlQueryObject.setANDLogicOperator(true);
 
 		// Order By OraRegistrazione
-		if(statoRichieste==false){
+		if(!statoRichieste){
 			sqlQueryObject.addOrderBy(GestoreMessaggi.MESSAGGI+".ORA_REGISTRAZIONE");
 			sqlQueryObject.setSortType(false); // DESC
 		}
 
 		// Proprietario non deve essere GestoreMessaggi, a meno che il filtro non richieda proprio questo
-		if( (search.getStato()==null) || ("".equals(search.getStato().getValue())) || ((StatoMessaggio.CANCELLATO.equals(search.getStato())==false)) )
+		if( (search.getStato()==null) || ("".equals(search.getStato().getValue())) || (!StatoMessaggio.CANCELLATO.equals(search.getStato())) )
 			sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
 
 		// Filtri:
 
 		// a) StatoMessaggio
-		if( (search.getStato()!=null) && ("".equals(search.getStato().getValue())==false) ){
+		if( (search.getStato()!=null) && (!"".equals(search.getStato().getValue())) ){
 			if(StatoMessaggio.CONSEGNA.equals(search.getStato())){
 				sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".PROPRIETARIO='"+ConsegnaContenutiApplicativi.ID_MODULO+"'");
 			}else if(StatoMessaggio.SPEDIZIONE.equals(search.getStato())){
@@ -1373,10 +1326,10 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		}
 
 		// b) idMessaggio e propertiesRicerca
-		if( (search.getIdMessaggio()!=null) && ("".equals(search.getIdMessaggio())==false) ){
+		if( (search.getIdMessaggio()!=null) && (!"".equals(search.getIdMessaggio())) ){
 			sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO='"+search.getIdMessaggio()+"'");
 		}
-		if( (search.getProprietaList()!=null) && (search.getProprietaList().size()>0) ){
+		if( (search.getProprietaList()!=null) && (!search.getProprietaList().isEmpty()) ){
 			List<Proprieta> proprietaList = search.getProprietaList();
 			for (Proprieta proprieta : proprietaList) {
 				sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+"."+proprieta.getNome()+"='"+proprieta.getValore()+"'");	
@@ -1384,10 +1337,10 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		}
 
 		// c) MessagePattern e CorrelazioneApplicativa
-		if( (search.getMessagePattern()!=null) && ("".equals(search.getMessagePattern())==false) ){
+		if( (search.getMessagePattern()!=null) && (!"".equals(search.getMessagePattern())) ){
 			sqlQueryObject.addWhereLikeCondition(GestoreMessaggi.DEFINIZIONE_MESSAGGI+".MSG_BYTES",search.getMessagePattern(),true,true);
 		}
-		if( (search.getCorrelazioneApplicativa()!=null) && ("".equals(search.getCorrelazioneApplicativa())==false) ){
+		if( (search.getCorrelazioneApplicativa()!=null) && (!"".equals(search.getCorrelazioneApplicativa())) ){
 			sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".CORRELAZIONE_APPLICATIVA='"+search.getCorrelazioneApplicativa()+"'");
 		}
 
@@ -1396,7 +1349,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			sqlQueryObject.addWhereCondition(GestoreMessaggi.MESSAGGI+".ora_registrazione<=?");
 		}
 
-		if(statoRichieste==false){
+		if(!statoRichieste){
 			// e) limit
 			if(search.getLimit()!=-1){
 				sqlQueryObject.setLimit((int)search.getLimit());
@@ -1413,30 +1366,30 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 
 			// mittente
 			if(search.getBusta().getMittente()!=null){
-				if( (search.getBusta().getMittente().getTipo()!=null) && ("".equals(search.getBusta().getMittente().getTipo())==false) ){
+				if( (search.getBusta().getMittente().getTipo()!=null) && (!"".equals(search.getBusta().getMittente().getTipo())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".TIPO_MITTENTE='"+search.getBusta().getMittente().getTipo()+"'");
 				}
-				if( (search.getBusta().getMittente().getNome()!=null) && ("".equals(search.getBusta().getMittente().getNome())==false) ){
+				if( (search.getBusta().getMittente().getNome()!=null) && (!"".equals(search.getBusta().getMittente().getNome())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".MITTENTE='"+search.getBusta().getMittente().getNome()+"'");
 				}
 			}
 
 			// destinatario
 			if(search.getBusta().getDestinatario()!=null){
-				if( (search.getBusta().getDestinatario().getTipo()!=null) && ("".equals(search.getBusta().getDestinatario().getTipo())==false) ){
+				if( (search.getBusta().getDestinatario().getTipo()!=null) && (!"".equals(search.getBusta().getDestinatario().getTipo())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".TIPO_DESTINATARIO='"+search.getBusta().getDestinatario().getTipo()+"'");
 				}
-				if( (search.getBusta().getDestinatario().getNome()!=null) && ("".equals(search.getBusta().getDestinatario().getNome())==false) ){
+				if( (search.getBusta().getDestinatario().getNome()!=null) && (!"".equals(search.getBusta().getDestinatario().getNome())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".DESTINATARIO='"+search.getBusta().getDestinatario().getNome()+"'");
 				}
 			}
 
 			// servizio
 			if(search.getBusta().getServizio()!=null){
-				if( (search.getBusta().getServizio().getTipo()!=null) && ("".equals(search.getBusta().getServizio().getTipo())==false) ){
+				if( (search.getBusta().getServizio().getTipo()!=null) && (!"".equals(search.getBusta().getServizio().getTipo())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".TIPO_SERVIZIO='"+search.getBusta().getServizio().getTipo()+"'");
 				}
-				if( (search.getBusta().getServizio().getNome()!=null) && ("".equals(search.getBusta().getServizio().getNome())==false) ){
+				if( (search.getBusta().getServizio().getNome()!=null) && (!"".equals(search.getBusta().getServizio().getNome())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".SERVIZIO='"+search.getBusta().getServizio().getNome()+"'");
 				}
 				if( (search.getBusta().getServizio().getVersione()!=null) && (search.getBusta().getServizio().getVersione().intValue()>0) ){
@@ -1445,28 +1398,28 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}
 
 			// azione
-			if( (search.getBusta().getAzione()!=null) && ("".equals(search.getBusta().getAzione())==false) ){
+			if( (search.getBusta().getAzione()!=null) && (!"".equals(search.getBusta().getAzione())) ){
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".AZIONE='"+search.getBusta().getAzione()+"'");
 			}
 
 			// profiloCollaborazione
-			if( (search.getBusta().getProfiloCollaborazione()!=null) && ("".equals(search.getBusta().getProfiloCollaborazione())==false) ){
+			if( (search.getBusta().getProfiloCollaborazione()!=null) && (!"".equals(search.getBusta().getProfiloCollaborazione())) ){
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".PROFILO_DI_COLLABORAZIONE='"+search.getBusta().getProfiloCollaborazione()+"'");
 			}
 
 			// riferimentoMessaggio
-			if( (search.getBusta().getRiferimentoMessaggio()!=null) && ("".equals(search.getBusta().getRiferimentoMessaggio())==false) ){
+			if( (search.getBusta().getRiferimentoMessaggio()!=null) && (!"".equals(search.getBusta().getRiferimentoMessaggio())) ){
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".RIFERIMENTO_MESSAGGIO='"+search.getBusta().getRiferimentoMessaggio()+"'");
 			}
 
 			// Collaborazione
-			if( (search.getBusta().getCollaborazione()!=null) && ("".equals(search.getBusta().getCollaborazione())==false) ){
+			if( (search.getBusta().getCollaborazione()!=null) && (!"".equals(search.getBusta().getCollaborazione())) ){
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".COLLABORAZIONE='"+search.getBusta().getCollaborazione()+"'");
 			}
 
 		}
 
-		if(search.getSoggettoList()!=null && search.getSoggettoList().size()>0){
+		if(search.getSoggettoList()!=null && !search.getSoggettoList().isEmpty()){
 
 			List<BustaSoggetto> filtroSoggetti = search.getSoggettoList();
 			StringBuilder query = new StringBuilder();
@@ -1511,7 +1464,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		// Filtri:
 
 		// a) idMessaggio
-		if( (search.getIdMessaggio()!=null) && ("".equals(search.getIdMessaggio())==false) ){
+		if( (search.getIdMessaggio()!=null) && (!"".equals(search.getIdMessaggio())) ){
 			sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".ID_MESSAGGIO='"+search.getIdMessaggio()+"'");
 		}
 
@@ -1526,30 +1479,30 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 
 			// mittente
 			if(search.getBusta().getMittente()!=null){
-				if( (search.getBusta().getMittente().getTipo()!=null) && ("".equals(search.getBusta().getMittente().getTipo())==false) ){
+				if( (search.getBusta().getMittente().getTipo()!=null) && (!"".equals(search.getBusta().getMittente().getTipo())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".TIPO_MITTENTE='"+search.getBusta().getMittente().getTipo()+"'");
 				}
-				if( (search.getBusta().getMittente().getNome()!=null) && ("".equals(search.getBusta().getMittente().getNome())==false) ){
+				if( (search.getBusta().getMittente().getNome()!=null) && (!"".equals(search.getBusta().getMittente().getNome())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".MITTENTE='"+search.getBusta().getMittente().getNome()+"'");
 				}
 			}
 
 			// destinatario
 			if(search.getBusta().getDestinatario()!=null){
-				if( (search.getBusta().getDestinatario().getTipo()!=null) && ("".equals(search.getBusta().getDestinatario().getTipo())==false) ){
+				if( (search.getBusta().getDestinatario().getTipo()!=null) && (!"".equals(search.getBusta().getDestinatario().getTipo())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".TIPO_DESTINATARIO='"+search.getBusta().getDestinatario().getTipo()+"'");
 				}
-				if( (search.getBusta().getDestinatario().getNome()!=null) && ("".equals(search.getBusta().getDestinatario().getNome())==false) ){
+				if( (search.getBusta().getDestinatario().getNome()!=null) && (!"".equals(search.getBusta().getDestinatario().getNome())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".DESTINATARIO='"+search.getBusta().getDestinatario().getNome()+"'");
 				}
 			}
 
 			// servizio
 			if(search.getBusta().getServizio()!=null){
-				if( (search.getBusta().getServizio().getTipo()!=null) && ("".equals(search.getBusta().getServizio().getTipo())==false) ){
+				if( (search.getBusta().getServizio().getTipo()!=null) && (!"".equals(search.getBusta().getServizio().getTipo())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".TIPO_SERVIZIO='"+search.getBusta().getServizio().getTipo()+"'");
 				}
-				if( (search.getBusta().getServizio().getNome()!=null) && ("".equals(search.getBusta().getServizio().getNome())==false) ){
+				if( (search.getBusta().getServizio().getNome()!=null) && (!"".equals(search.getBusta().getServizio().getNome())) ){
 					sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".SERVIZIO='"+search.getBusta().getServizio().getNome()+"'");
 				}
 				if( (search.getBusta().getServizio().getVersione()!=null) && (search.getBusta().getServizio().getVersione().intValue()>0) ){
@@ -1558,22 +1511,22 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 			}
 
 			// azione
-			if( (search.getBusta().getAzione()!=null) && ("".equals(search.getBusta().getAzione())==false) ){
+			if( (search.getBusta().getAzione()!=null) && (!"".equals(search.getBusta().getAzione())) ){
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".AZIONE='"+search.getBusta().getAzione()+"'");
 			}
 
 			// profiloCollaborazione
-			if( (search.getBusta().getProfiloCollaborazione()!=null) && ("".equals(search.getBusta().getProfiloCollaborazione())==false) ){
+			if( (search.getBusta().getProfiloCollaborazione()!=null) && (!"".equals(search.getBusta().getProfiloCollaborazione())) ){
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".PROFILO_DI_COLLABORAZIONE='"+search.getBusta().getProfiloCollaborazione()+"'");
 			}
 
 			// riferimentoMessaggio
-			if( (search.getBusta().getRiferimentoMessaggio()!=null) && ("".equals(search.getBusta().getRiferimentoMessaggio())==false) ){
+			if( (search.getBusta().getRiferimentoMessaggio()!=null) && (!"".equals(search.getBusta().getRiferimentoMessaggio())) ){
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".RIFERIMENTO_MESSAGGIO='"+search.getBusta().getRiferimentoMessaggio()+"'");
 			}
 
 			// Collaborazione
-			if( (search.getBusta().getCollaborazione()!=null) && ("".equals(search.getBusta().getCollaborazione())==false) ){
+			if( (search.getBusta().getCollaborazione()!=null) && (!"".equals(search.getBusta().getCollaborazione())) ){
 				sqlQueryObject.addWhereCondition(Costanti.REPOSITORY+".COLLABORAZIONE='"+search.getBusta().getCollaborazione()+"'");
 			}
 
@@ -1585,8 +1538,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 	
 	private String newSQLQueryStatoConsegneAsincrone(FiltroStatoConsegnaAsincrona filtro) throws SQLQueryObjectException{
 
-		String ALIAS_TABLE_SERVIZI_APPLICATIVI = "sa";
-		String ALIAS_TABLE_MESSAGGI = "m";
+		String aliasTableServiziApplicativi = "sa";
+		String aliasTableMessaggi = "m";
 		
 		// ** InCoda **
 		
@@ -1608,26 +1561,26 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		
 		ISQLQueryObject sqlQueryObjectCoda = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 		
-		sqlQueryObjectCoda.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,ALIAS_TABLE_SERVIZI_APPLICATIVI);
-		sqlQueryObjectCoda.addFromTable(GestoreMessaggi.MESSAGGI,ALIAS_TABLE_MESSAGGI);
+		sqlQueryObjectCoda.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,aliasTableServiziApplicativi);
+		sqlQueryObjectCoda.addFromTable(GestoreMessaggi.MESSAGGI,aliasTableMessaggi);
 		
 		sqlQueryObjectCoda.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA);
 		sqlQueryObjectCoda.addSelectCountField(StatoConsegnaAsincrona.ALIAS_IN_CODA);
 		sqlQueryObjectCoda.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_VECCHIO);
 		sqlQueryObjectCoda.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_RECENTE);
-		sqlQueryObjectCoda.addSelectMinField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_CODA_VECCHIO);
-		sqlQueryObjectCoda.addSelectMaxField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_CODA_RECENTE);
+		sqlQueryObjectCoda.addSelectMinField(aliasTableServiziApplicativi, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_CODA_VECCHIO);
+		sqlQueryObjectCoda.addSelectMaxField(aliasTableServiziApplicativi, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_CODA_RECENTE);
 		sqlQueryObjectCoda.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX);
 		sqlQueryObjectCoda.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_VECCHIO);
 		sqlQueryObjectCoda.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_RECENTE);
 		sqlQueryObjectCoda.addSelectAliasField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO,StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
 		
 		sqlQueryObjectCoda.setANDLogicOperator(true);
-		sqlQueryObjectCoda.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ATTESA_ESITO+"=0");
-		sqlQueryObjectCoda.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ERRORE_PROCESSAMENTO_COMPACT+"='"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"'");
-		sqlQueryObjectCoda.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO_CONSEGNA+"='"+GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE+"'");
-		sqlQueryObjectCoda.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO+"="+ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO);
-		sqlQueryObjectCoda.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO+"<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
+		sqlQueryObjectCoda.addWhereCondition(aliasTableServiziApplicativi+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ATTESA_ESITO+"=0");
+		sqlQueryObjectCoda.addWhereCondition(aliasTableServiziApplicativi+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ERRORE_PROCESSAMENTO_COMPACT+"='"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"'");
+		sqlQueryObjectCoda.addWhereCondition(aliasTableServiziApplicativi+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO_CONSEGNA+"='"+GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE+"'");
+		sqlQueryObjectCoda.addWhereCondition(aliasTableMessaggi+"."+GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO+"="+aliasTableServiziApplicativi+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO);
+		sqlQueryObjectCoda.addWhereCondition(aliasTableMessaggi+"."+GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO+"<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
 		
 		sqlQueryObjectCoda.addGroupBy(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
 		
@@ -1652,13 +1605,13 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		
 		ISQLQueryObject sqlQueryObjectRiconsegna = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 		
-		sqlQueryObjectRiconsegna.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,ALIAS_TABLE_SERVIZI_APPLICATIVI);
-		sqlQueryObjectRiconsegna.addFromTable(GestoreMessaggi.MESSAGGI,ALIAS_TABLE_MESSAGGI);
+		sqlQueryObjectRiconsegna.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,aliasTableServiziApplicativi);
+		sqlQueryObjectRiconsegna.addFromTable(GestoreMessaggi.MESSAGGI,aliasTableMessaggi);
 		
 		sqlQueryObjectRiconsegna.addSelectCountField(StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA);
 		sqlQueryObjectRiconsegna.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA);
-		sqlQueryObjectRiconsegna.addSelectMinField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_VECCHIO);
-		sqlQueryObjectRiconsegna.addSelectMaxField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_RECENTE);
+		sqlQueryObjectRiconsegna.addSelectMinField(aliasTableServiziApplicativi, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_VECCHIO);
+		sqlQueryObjectRiconsegna.addSelectMaxField(aliasTableServiziApplicativi, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA_RECENTE);
 		sqlQueryObjectRiconsegna.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA_VECCHIO);
 		sqlQueryObjectRiconsegna.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA_RECENTE);
 		sqlQueryObjectRiconsegna.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX);
@@ -1667,11 +1620,11 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		sqlQueryObjectRiconsegna.addSelectAliasField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO,StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
 		
 		sqlQueryObjectRiconsegna.setANDLogicOperator(true);
-		sqlQueryObjectRiconsegna.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ATTESA_ESITO+"=0");
-		sqlQueryObjectRiconsegna.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ERRORE_PROCESSAMENTO_COMPACT+"<>'"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"'");
-		sqlQueryObjectRiconsegna.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO_CONSEGNA+"='"+GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE+"'");
-		sqlQueryObjectRiconsegna.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO+"="+ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO);
-		sqlQueryObjectRiconsegna.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO+"<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
+		sqlQueryObjectRiconsegna.addWhereCondition(aliasTableServiziApplicativi+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ATTESA_ESITO+"=0");
+		sqlQueryObjectRiconsegna.addWhereCondition(aliasTableServiziApplicativi+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ERRORE_PROCESSAMENTO_COMPACT+"<>'"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"'");
+		sqlQueryObjectRiconsegna.addWhereCondition(aliasTableServiziApplicativi+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO_CONSEGNA+"='"+GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE+"'");
+		sqlQueryObjectRiconsegna.addWhereCondition(aliasTableMessaggi+"."+GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO+"="+aliasTableServiziApplicativi+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO);
+		sqlQueryObjectRiconsegna.addWhereCondition(aliasTableMessaggi+"."+GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO+"<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
 		
 		sqlQueryObjectRiconsegna.addGroupBy(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
 		
@@ -1694,8 +1647,8 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		
 		ISQLQueryObject sqlQueryObjectMessageBox = SQLObjectFactory.createSQLQueryObject(this.tipoDatabase);
 		
-		sqlQueryObjectMessageBox.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,ALIAS_TABLE_SERVIZI_APPLICATIVI);
-		sqlQueryObjectMessageBox.addFromTable(GestoreMessaggi.MESSAGGI,ALIAS_TABLE_MESSAGGI);
+		sqlQueryObjectMessageBox.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,aliasTableServiziApplicativi);
+		sqlQueryObjectMessageBox.addFromTable(GestoreMessaggi.MESSAGGI,aliasTableMessaggi);
 		
 		sqlQueryObjectMessageBox.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_RICONSEGNA);
 		sqlQueryObjectMessageBox.addSelectAliasField(getIntZeroValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA);
@@ -1704,21 +1657,21 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		sqlQueryObjectMessageBox.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA_VECCHIO);
 		sqlQueryObjectMessageBox.addSelectAliasField(getNullTimestampValue(),StatoConsegnaAsincrona.ALIAS_IN_CODA_RECENTE);
 		sqlQueryObjectMessageBox.addSelectCountField(StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX);
-		sqlQueryObjectMessageBox.addSelectMinField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_VECCHIO);
-		sqlQueryObjectMessageBox.addSelectMaxField(ALIAS_TABLE_SERVIZI_APPLICATIVI, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_RECENTE);
+		sqlQueryObjectMessageBox.addSelectMinField(aliasTableServiziApplicativi, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_VECCHIO);
+		sqlQueryObjectMessageBox.addSelectMaxField(aliasTableServiziApplicativi, GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ORA_REGISTRAZIONE, StatoConsegnaAsincrona.ALIAS_IN_MESSAGE_BOX_RECENTE);
 		sqlQueryObjectMessageBox.addSelectAliasField(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_SERVIZIO_APPLICATIVO,StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
 		
 		sqlQueryObjectMessageBox.setANDLogicOperator(true);
-		sqlQueryObjectMessageBox.addWhereCondition(ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO_CONSEGNA+"='"+GestoreMessaggi.CONSEGNA_TRAMITE_INTEGRATION_MANAGER+"'");
-		sqlQueryObjectMessageBox.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO+"="+ALIAS_TABLE_SERVIZI_APPLICATIVI+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO);
-		sqlQueryObjectMessageBox.addWhereCondition(ALIAS_TABLE_MESSAGGI+"."+GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO+"<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
+		sqlQueryObjectMessageBox.addWhereCondition(aliasTableServiziApplicativi+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_TIPO_CONSEGNA+"='"+GestoreMessaggi.CONSEGNA_TRAMITE_INTEGRATION_MANAGER+"'");
+		sqlQueryObjectMessageBox.addWhereCondition(aliasTableMessaggi+"."+GestoreMessaggi.MESSAGGI_COLUMN_ID_MESSAGGIO+"="+aliasTableServiziApplicativi+"."+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI_COLUMN_ID_MESSAGGIO);
+		sqlQueryObjectMessageBox.addWhereCondition(aliasTableMessaggi+"."+GestoreMessaggi.MESSAGGI_COLUMN_PROPRIETARIO+"<>'"+TimerGestoreMessaggi.ID_MODULO+"'");
 		
 		sqlQueryObjectMessageBox.addGroupBy(StatoConsegnaAsincrona.ALIAS_SERVIZIO_APPLICATIVO);
 
 		
 		// ** UNION **
 		
-		/*
+		/**
 		 * select CURRENT_TIMESTAMP as now, 
 		 * max(inRiconsegna) as inRiconsegna, max(inCoda) as inCoda, 
 		 * min(vecchioInRiconsegna) as vecchioInRiconsegna, max(recenteInRiconsegna) as recenteInRiconsegna, 

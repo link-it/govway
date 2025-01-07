@@ -42,6 +42,7 @@ import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -368,7 +369,16 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			throw new UtilsRuntimeException(msgErrore,e);
 		}
 
-
+		
+		// Inizializzo Controlli connessioni
+		try {
+			Logger logR = LoggerManager.getPddMonitorCoreLogger()!=null ? LoggerManager.getPddMonitorCoreLogger() : AbstractConsoleStartupListener.log;
+			ServicesUtils.initCheckConnectionDB(logR, appProperties.isJdbcCloseConnectionCheckIsClosed(), appProperties.isJdbcCloseConnectionCheckAutocommit());
+		} catch (Exception e) {
+			String msgErrore = "Inizializzazione controlli connessione non riuscita: "+e.getMessage();
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
+		}
 		
 		
 		// Map (environment)

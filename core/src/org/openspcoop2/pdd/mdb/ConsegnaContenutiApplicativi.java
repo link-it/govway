@@ -1489,8 +1489,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				idMessageResponse = 
 					imbustatore.buildID(identitaPdD, 
 							(String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE),
-							this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-							this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
+							this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+							this.propertiesReader.getGestioneSerializableDBCheckInterval(),
 							RuoloMessaggio.RISPOSTA);
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e, "imbustatore.buildID(idMessageResponse)");
@@ -1611,8 +1611,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					try{
 						ordineConsegna = new ConsegnaInOrdine(openspcoopstate.getStatoRichiesta(),protocolFactory);
 						if(ordineConsegna.isConsegnaInOrdine(bustaRichiesta, 
-								this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
-								this.propertiesReader.getGestioneSerializableDB_CheckInterval()) == false){
+								this.propertiesReader.getGestioneSerializableDBAttesaAttiva(),
+								this.propertiesReader.getGestioneSerializableDBCheckInterval()) == false){
 							// congelamento busta
 							msgDiag.addKeyword(CostantiPdD.KEY_SEQUENZA_ATTESA, ordineConsegna.getSequenzaAttesa()+"");
 							if(ordineConsegna.getSequenzaAttesa()>bustaRichiesta.getSequenza()){

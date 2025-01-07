@@ -49,6 +49,7 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.pdd.logger.diagnostica.ConvertitoreCodiceDiagnostici;
 import org.openspcoop2.pdd.logger.diagnostica.InformazioniRecordDiagnostici;
+import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
@@ -64,6 +65,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.slf4j.Logger;
 
 /**     
@@ -437,7 +439,7 @@ public class TransactionDriverMsgDiagnostici implements IDiagnosticDriver {
 			try{
 				if(this.connectionOpenViaJDBCInCostructor &&
 					this.connection!=null && !this.connection.isClosed()){
-					this.connection.close();
+					JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), this.connection, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				}
 			}catch(Exception e){
 				if(this.log!=null) {
@@ -456,7 +458,7 @@ public class TransactionDriverMsgDiagnostici implements IDiagnosticDriver {
 	private Connection close(Connection con) {
 		try{
 			if(con!=null) {
-				con.close();
+				JDBCUtilities.closeConnection(BasicComponentFactory.getCheckLogger(), con, BasicComponentFactory.isCheckAutocommit(), BasicComponentFactory.isCheckIsClosed());
 				con = null;
 			}
 		}catch(Exception e){

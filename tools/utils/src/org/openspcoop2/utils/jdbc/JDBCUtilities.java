@@ -44,6 +44,8 @@ import org.slf4j.Logger;
  */
 
 public class JDBCUtilities {
+	
+	private JDBCUtilities() {}
 
 	/**
 	 * Chiude tutte le PreparedStatement presenti nella tabella hash.
@@ -64,7 +66,8 @@ public class JDBCUtilities {
 				try{
 					pstmt.close();
 				}catch(Exception e){
-					log.debug("Utilities.closePreparedStatement error: Riscontrato errore durante la chiusura della PreparedStatement ["+key+"]: "+e);
+					String msg = "Utilities.closePreparedStatement error: Riscontrato errore durante la chiusura della PreparedStatement ["+key+"]: "+e;
+					log.debug(msg, e);
 				}
 				tablePstmt.remove(key);
 			}
@@ -86,26 +89,26 @@ public class JDBCUtilities {
 			}
 			java.util.Collections.sort(listKeys);
 
-//			System.out.println("---------- ("+listKeys.size()+") ------------");
-//			for(int i=0; i<listKeys.size(); i++ ) {
-//				String key = listKeys.get(i);
-//				System.out.println("Pos["+i+"]: "+key);
-//			}
+			/**System.out.println("---------- ("+listKeys.size()+") ------------");
+			for(int i=0; i<listKeys.size(); i++ ) {
+				String key = listKeys.get(i);
+				System.out.println("Pos["+i+"]: "+key);
+			}*/
 			
 			for(int i=0; i<listKeys.size(); i++ ) {
 				String key = listKeys.get(i);
 				PreparedStatement pstmt = tablePstmt.get(key);
-				//System.out.println("EXECUTE["+i+"]: "+key);
+				/**System.out.println("EXECUTE["+i+"]: "+key);*/
 				try{
 					pstmt.execute();
 				}catch(Exception e){
-					//System.out.println("ERRORE: "+key);
+					/**System.out.println("ERRORE: "+key);*/
 					throw new UtilsException("Utilities.executePreparedStatement error: Riscontrato errore durante l'esecuzione della PreparedStatement ["+key+"]: "+e,e);
 				}
 				try{
 					pstmt.close();
 				}catch(Exception e){
-					//System.out.println("ERRORE: "+key);
+					/**System.out.println("ERRORE: "+key);*/
 					throw new UtilsException("Utilities.executePreparedStatement error: Riscontrato errore durante la chiusura della PreparedStatement ["+key+"]: "+e,e);
 				}
 				tablePstmt.remove(key);
@@ -122,12 +125,15 @@ public class JDBCUtilities {
 	 */
 	public static void addPreparedStatement(Map<String,PreparedStatement> pstmtSorgente, 
 			Map<String,PreparedStatement> pstmtDestinazione,Logger log) throws UtilsException{ 
+		if(log!=null) {
+			// nop
+		}
 		if(pstmtSorgente!=null && !pstmtSorgente.isEmpty()){
 			for (String key : pstmtSorgente.keySet()) {
-				if(pstmtDestinazione.containsKey(key)==false){
+				if(!pstmtDestinazione.containsKey(key)){
 					pstmtDestinazione.put(key,pstmtSorgente.get(key));
 				}else{
-					//log.debug("Prepared Statement ["+key+"] gia' presente");
+					/**log.debug("Prepared Statement ["+key+"] gia' presente");*/
 					try{
 						PreparedStatement pstmt = pstmtSorgente.get(key);
 						pstmt.close();
@@ -143,14 +149,14 @@ public class JDBCUtilities {
 	
 	
 	public static void setSQLStringValue(PreparedStatement pstmt,int index,String value) throws SQLException{
-		if(value!=null && ("".equals(value)==false))
+		if(value!=null && (!"".equals(value)))
 			pstmt.setString(index,value);
 		else
 			pstmt.setString(index,null);
 	}
 	
 	
-	private static int SQL_SERVER_TRANSACTION_SNAPSHOT = 4096;
+	private static final int SQL_SERVER_TRANSACTION_SNAPSHOT = 4096;
 	
 	public static boolean isTransactionIsolationNone(int transactionIsolationLevel){
 		return transactionIsolationLevel == java.sql.Connection.TRANSACTION_NONE;
@@ -184,7 +190,7 @@ public class JDBCUtilities {
 	}
 	public static void setTransactionIsolationSerializable(TipiDatabase tipoDatabase,Connection connection) throws SQLException{
 		if(tipoDatabase!=null && TipiDatabase.SQLSERVER.equals(tipoDatabase)){ 
-			connection.setTransactionIsolation(JDBCUtilities.SQL_SERVER_TRANSACTION_SNAPSHOT); //4096 corresponds to SQLServerConnection.TRANSACTION_SNAPSHOT }
+			connection.setTransactionIsolation(JDBCUtilities.SQL_SERVER_TRANSACTION_SNAPSHOT); /**4096 corresponds to SQLServerConnection.TRANSACTION_SNAPSHOT }*/
 		}
 		else{ 
 			connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); 
@@ -197,116 +203,142 @@ public class JDBCUtilities {
 	
 	public static void addInformazioniDatabaseFromMetaData(Connection c, StringBuilder bf) throws SQLException{
 		
-		try{
-			DatabaseMetaData dbMetaDati = c.getMetaData();
-			if(dbMetaDati!=null){
+		DatabaseMetaData dbMetaDati = c.getMetaData();
+		if(dbMetaDati!=null){
 
-				if(bf.length()>0){
-					bf.append("\n");
-				}
-
-				try {
-					String productName = dbMetaDati.getDatabaseProductName();
-					bf.append("DatabaseProductName: "+productName);
-					bf.append("\n");
-				} catch (SQLException e) {
-				}
-
-				try {
-					String productVersion = dbMetaDati.getDatabaseProductVersion();
-					bf.append("DatabaseProductVersion: "+productVersion);
-					bf.append("\n");
-				} catch (SQLException e) {
-				}
-
-				try {
-					int v = dbMetaDati.getDatabaseMajorVersion();
-					bf.append("DatabaseMajorVersion: "+v);
-					bf.append("\n");
-				} catch (SQLException e) {
-				}
-
-				try {
-					int v = dbMetaDati.getDatabaseMinorVersion();
-					bf.append("DatabaseMinorVersion: "+v);
-					bf.append("\n");
-				} catch (SQLException e) {
-				}
-
-				try {
-					String driverName = dbMetaDati.getDriverName();
-					bf.append("DriverName: "+driverName);
-					bf.append("\n");
-				} catch (SQLException e) {
-				}
-
-				try {
-					String productVersion = dbMetaDati.getDriverVersion();
-					bf.append("DriverVersion: "+productVersion);
-					bf.append("\n");
-				} catch (SQLException e) {
-				}
-
-				int v = dbMetaDati.getDriverMajorVersion();
-				bf.append("DriverMajorVersion: "+v);
+			if(bf.length()>0){
 				bf.append("\n");
-				
-				v = dbMetaDati.getDriverMinorVersion();
-				bf.append("DriverMinorVersion: "+v);
-				bf.append("\n");
-
-				try {
-					v = dbMetaDati.getJDBCMajorVersion();
-					bf.append("JDBCMajorVersion: "+v);
-					bf.append("\n");
-				} catch (SQLException e) {
-				}
-
-				try {
-					v = dbMetaDati.getJDBCMinorVersion();
-					bf.append("JDBCMinorVersion: "+v);
-					bf.append("\n");
-				} catch (SQLException e) {
-				}
-
-				try {
-					String username = dbMetaDati.getUserName();
-					bf.append("Username: "+username);
-					bf.append("\n");
-				} catch (SQLException e) {
-				}
-
-				try {
-					ResultSet catalogs = dbMetaDati.getCatalogs();
-					int size = 0;
-					while (catalogs.next()) {
-						size++;
-					}
-					
-					catalogs = dbMetaDati.getCatalogs();
-					int index = 0;
-					while (catalogs.next()) {
-						if(size==1){
-							bf.append("Catalog: " + catalogs.getString(1) );
-						}
-						else{
-							bf.append("Catalogs["+index+"]: " + catalogs.getString(1) );
-						}
-						bf.append("\n");
-						index++;
-					}
-					catalogs.close();
-				} catch (SQLException e) {
-				}
-
 			}
 
-		}finally{
+			try {
+				String productName = dbMetaDati.getDatabaseProductName();
+				bf.append("DatabaseProductName: "+productName);
+				bf.append("\n");
+			} catch (SQLException e) {
+				// ignore
+			}
+
+			try {
+				String productVersion = dbMetaDati.getDatabaseProductVersion();
+				bf.append("DatabaseProductVersion: "+productVersion);
+				bf.append("\n");
+			} catch (SQLException e) {
+				// ignore
+			}
+
+			try {
+				int v = dbMetaDati.getDatabaseMajorVersion();
+				bf.append("DatabaseMajorVersion: "+v);
+				bf.append("\n");
+			} catch (SQLException e) {
+				// ignore
+			}
+
+			try {
+				int v = dbMetaDati.getDatabaseMinorVersion();
+				bf.append("DatabaseMinorVersion: "+v);
+				bf.append("\n");
+			} catch (SQLException e) {
+				// ignore
+			}
+
+			addInformazioniDatabaseFromMetaDataDriver(dbMetaDati, bf);
+
+			try {
+				String username = dbMetaDati.getUserName();
+				bf.append("Username: "+username);
+				bf.append("\n");
+			} catch (SQLException e) {
+				// ignore
+			}
+
+			addInformazioniDatabaseFromMetaDataCatalog(dbMetaDati, bf);
+
 		}
 
 	}
+	private static void addInformazioniDatabaseFromMetaDataDriver(DatabaseMetaData dbMetaDati, StringBuilder bf) throws SQLException{
+		try {
+			String driverName = dbMetaDati.getDriverName();
+			bf.append("DriverName: "+driverName);
+			bf.append("\n");
+		} catch (SQLException e) {
+			// ignore
+		}
+
+		try {
+			String productVersion = dbMetaDati.getDriverVersion();
+			bf.append("DriverVersion: "+productVersion);
+			bf.append("\n");
+		} catch (SQLException e) {
+			// ignore
+		}
+
+		int v = dbMetaDati.getDriverMajorVersion();
+		bf.append("DriverMajorVersion: "+v);
+		bf.append("\n");
+		
+		v = dbMetaDati.getDriverMinorVersion();
+		bf.append("DriverMinorVersion: "+v);
+		bf.append("\n");
+		
+		try {
+			v = dbMetaDati.getJDBCMajorVersion();
+			bf.append("JDBCMajorVersion: "+v);
+			bf.append("\n");
+		} catch (SQLException e) {
+			// ignore
+		}
+
+		try {
+			v = dbMetaDati.getJDBCMinorVersion();
+			bf.append("JDBCMinorVersion: "+v);
+			bf.append("\n");
+		} catch (SQLException e) {
+			// ignore
+		}
+	}
+	private static void addInformazioniDatabaseFromMetaDataCatalog(DatabaseMetaData dbMetaDati, StringBuilder bf) throws SQLException{
+		try {
+			ResultSet catalogs = dbMetaDati.getCatalogs();
+			int size = 0;
+			while (catalogs.next()) {
+				size++;
+			}
+			
+			catalogs = dbMetaDati.getCatalogs();
+			int index = 0;
+			while (catalogs.next()) {
+				if(size==1){
+					bf.append("Catalog: " + catalogs.getString(1) );
+				}
+				else{
+					bf.append("Catalogs["+index+"]: " + catalogs.getString(1) );
+				}
+				bf.append("\n");
+				index++;
+			}
+			catalogs.close();
+		} catch (SQLException e) {
+			// ignore
+		}
+	}
 	
 	public static void closeResources(ResultSet rs, PreparedStatement stm) {
+		try{
+			if(rs!=null) 
+				rs.close();
+		}catch (Exception e) {
+			//ignore
+		}
+		try{
+			if(stm!=null) 
+				stm.close();
+		}catch (Exception e) {
+			//ignore
+		}
+	}
+	public static void closeResources(ResultSet rs, Statement stm) {
 		try{
 			if(rs!=null) 
 				rs.close();
@@ -334,6 +366,31 @@ public class JDBCUtilities {
 				stm.close();
 		}catch (Exception e) {
 			//ignore
+		}
+	}
+	
+	
+	public static void closeConnection(Logger log, Connection connectionDB, boolean checkAutocommit, boolean checkIsClosed) throws SQLException {
+		if(connectionDB!=null) {
+			if(checkAutocommit) {
+				if(!connectionDB.getAutoCommit()) {
+					String msg = "Connection detected in transaction mode";
+					log.error(msg,new UtilsException(msg)); // aggiungo eccezione per registrare lo stack trace della chiamata e vedere dove viene chiamato il metodo
+					connectionDB.setAutoCommit(true);
+				}
+				else {
+					// nop
+				}
+			}
+			if(checkIsClosed) {
+				if(connectionDB.isClosed()) {
+					String msg = "Connection already closed detected";
+					log.error(msg,new UtilsException(msg)); // aggiungo eccezione per registrare lo stack trace della chiamata e vedere dove viene chiamato il metodo
+				}
+				else {
+					connectionDB.close();
+				}
+			}
 		}
 	}
 }

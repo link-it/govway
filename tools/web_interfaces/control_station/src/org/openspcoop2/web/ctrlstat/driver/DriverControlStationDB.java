@@ -95,6 +95,7 @@ import org.openspcoop2.monitor.engine.alarm.wrapper.ConfigurazioneAllarmeHistory
 import org.openspcoop2.protocol.engine.archive.UtilitiesMappingFruizioneErogazione;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.utils.BooleanNullable;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
@@ -120,6 +121,28 @@ import org.slf4j.Logger;
  */
 public class DriverControlStationDB  {
 
+	private static Logger checkLogger = null;
+	private static boolean checkIsClosed = true;
+	private static boolean checkAutocommit = true;
+	public static boolean isCheckIsClosed() {
+		return checkIsClosed;
+	}
+	public static void setCheckIsClosed(boolean checkIsClosed) {
+		DriverControlStationDB.checkIsClosed = checkIsClosed;
+	}
+	public static boolean isCheckAutocommit() {
+		return checkAutocommit;
+	}
+	public static void setCheckAutocommit(boolean checkAutocommit) {
+		DriverControlStationDB.checkAutocommit = checkAutocommit;
+	}
+	public static Logger getCheckLogger() {
+		return checkLogger;
+	}
+	public static void setCheckLogger(Logger checkLogger) {
+		DriverControlStationDB.checkLogger = checkLogger;
+	}
+	
 	/*  F I E L D S P R I V A T I */
 
 	/** Indicazione di una corretta creazione */
@@ -287,8 +310,8 @@ public class DriverControlStationDB  {
 	private void releaseConnection(Connection con) {
 		try {
 			if (this.atomica) {
-				this.logDebug("rilascio connessioni al db...");
-				con.close();
+				this.logDebug("rilascio connessione al db...");
+				JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 			}
 		} catch (Exception e) {
 			// ignore exception
@@ -572,15 +595,7 @@ public class DriverControlStationDB  {
 			} catch (Exception e) {
 				// ignore
 			}
-			try {
-				if (this.atomica) {
-					this.logDebug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 
 	}
@@ -798,15 +813,7 @@ public class DriverControlStationDB  {
 			} catch (Exception e) {
 				// ignore
 			}
-			try {
-				if (this.atomica) {
-					this.logDebug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	
@@ -1180,7 +1187,7 @@ public class DriverControlStationDB  {
 				if(con!=null) {
 					con.rollback();
 					con.setAutoCommit(true);
-					con.close();
+					JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 				}
 
 			} else if (!error && this.atomica) {
@@ -1188,7 +1195,7 @@ public class DriverControlStationDB  {
 				if(con!=null) {
 					con.commit();
 					con.setAutoCommit(true);
-					con.close();
+					JDBCUtilities.closeConnection(checkLogger, con, checkAutocommit, checkIsClosed);
 				}
 			}
 		} catch (Exception e) {
@@ -1688,15 +1695,7 @@ public class DriverControlStationDB  {
 			} catch (Exception e) {
 				// ignore
 			}
-			try {
-				if (this.atomica) {
-					this.logDebug("rilascio connessioni al db...");
-					con.close();
-				}
-
-			} catch (Exception e) {
-				// ignore exception
-			}
+			releaseConnection(con);
 		}
 	}
 	

@@ -180,6 +180,7 @@ import org.openspcoop2.utils.crypt.CryptType;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
@@ -5965,8 +5966,7 @@ public class ControlStationCore {
 					throw new DriverControlStationException("Inizializzazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
 				}finally{
 					try{
-						if(con!=null)
-							con.close();
+						JDBCUtilities.closeConnection(DriverControlStationDB.getCheckLogger(), con, DriverControlStationDB.isCheckAutocommit(), DriverControlStationDB.isCheckIsClosed());
 					}catch(Exception e){
 						// close
 					}
@@ -6003,8 +6003,7 @@ public class ControlStationCore {
 				throw new DriverControlStationException("Aggiornamento configurazione auditManager non riuscita (LetturaConfigurazione): "+e.getMessage(),e);
 			}finally{
 				try{
-					if(con!=null)
-						con.close();
+					JDBCUtilities.closeConnection(DriverControlStationDB.getCheckLogger(), con, DriverControlStationDB.isCheckAutocommit(), DriverControlStationDB.isCheckIsClosed());
 				}catch(Exception e){
 					// close
 				}

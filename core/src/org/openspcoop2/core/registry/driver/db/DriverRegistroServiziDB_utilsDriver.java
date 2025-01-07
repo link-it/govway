@@ -738,8 +738,7 @@ public class DriverRegistroServiziDB_utilsDriver {
 			}finally{
 				JDBCUtilities.closeResources(stmtTest);
 				try{
-					if(con!=null)
-						con.close();
+					JDBCUtilities.closeConnection(DriverRegistroServiziDB.getCheckLogger(), con, DriverRegistroServiziDB.isCheckAutocommit(), DriverRegistroServiziDB.isCheckIsClosed());
 				}catch(Exception e){
 					// close
 				}

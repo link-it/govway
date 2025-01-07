@@ -786,7 +786,7 @@ public class PddMonitorProperties {
 	public boolean isMultipartRequestCache() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("abilitaMultipartRequestCache.enabled", true, true));
 	}
-	
+		
 	// Abilita il cluster dinamico
 	public boolean isClusterDinamico() throws UtilsException{
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();

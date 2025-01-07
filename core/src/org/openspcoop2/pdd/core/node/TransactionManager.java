@@ -107,7 +107,7 @@ public class TransactionManager {
 		openspcoopstate.setStatoRichiesta(state);
 		GestoreMessaggi msg = new GestoreMessaggi(openspcoopstate, true,idBusta,tipo,msgDiag,null);
 		
-		long scadenzaWhile = DateManager.getTimeMillis() + properties.getTransactionManager_AttesaAttiva();
+		long scadenzaWhile = DateManager.getTimeMillis() + properties.getTransactionManagerAttesaAttiva();
 
 		
 		try{
@@ -125,7 +125,7 @@ public class TransactionManager {
 				// La cache puo' cmq svuotarsi velocemente se la dimensione e' troppo piccola rispetto al numero di msg in parallelo gestiti.
 				// Quindi ogni 20 volte (se checkInterval=500 ogni 10 secondi) viene controllato anche il database, oltre alla cache.
 				boolean checkOnlyCache = properties.isAbilitataCacheGestoreMessaggi();
-				if(refreshOnlyCacheCount==(properties.getTransactionManager_CheckDBInterval())){
+				if(refreshOnlyCacheCount==(properties.getTransactionManagerCheckDBInterval())){
 					msgDiag.highDebug("Re-inizializzo contatore refreshOnlyCacheCount");
 					refreshOnlyCacheCount = 1;
 					checkOnlyCache = false;
@@ -133,10 +133,10 @@ public class TransactionManager {
 				
 				msgDiag.highDebug("Transaction su IDM["+idModulo+"] IDBusta["+idBusta+"] Tipo["+
 						tipo+"] IDJMS["+idJMS+"] SA["+servizioApplicativo+"] ancora interval["
-						+properties.getTransactionManager_CheckInterval()+"]  millisecondi "+(scadenzaWhile-DateManager.getTimeMillis()));
+						+properties.getTransactionManagerCheckInterval()+"]  millisecondi "+(scadenzaWhile-DateManager.getTimeMillis()));
 				
 				boolean needConnection = false;
-				if(properties.singleConnection_TransactionManager()==false)
+				if(properties.singleConnectionTransactionManager()==false)
 					needConnection = true;
 				else if(resource==null)
 					needConnection = true;
@@ -177,18 +177,18 @@ public class TransactionManager {
 					//       messaggio verra' eliminato!
 					msgDiag.highDebug("Messaggio per il modulo ["+idModulo+"]: Attesa attiva, modulo precendente [Punto di inizio]");
 					// Attesa attiva del modulo:
-					if((properties.singleConnection_TransactionManager()==false) && (checkOnlyCache==false)){
+					if((properties.singleConnectionTransactionManager()==false) && (checkOnlyCache==false)){
 						msgDiag.highDebug("Rilascio connessione per TransactionManager");
 						dbManager.releaseResource(dominio,idModuloTransaction,resource);
 					}
 					//try {
 						//Utilities.sleep((new java.util.Random()).nextInt(properties.getTransactionManager_CheckInterval())); // random da 0ms a TransactionManagerCheckInterval ms
 					//}catch(Exception eRandom){}
-					Utilities.sleep(properties.getTransactionManager_CheckInterval());
+					Utilities.sleep(properties.getTransactionManagerCheckInterval());
 				}
 				else if(proprietarioMessaggio.equals(idModulo)){
 					msgDiag.highDebug("Messaggio per il modulo ["+idModulo+"]: proprietario["+proprietarioMessaggio+"] OK");
-					if( (properties.singleConnection_TransactionManager() && (resource!=null) ) || (checkOnlyCache==false) ){
+					if( (properties.singleConnectionTransactionManager() && (resource!=null) ) || (checkOnlyCache==false) ){
 						msgDiag.highDebug("Rilascio connessione per TransactionManager");
 						dbManager.releaseResource(dominio,idModuloTransaction,resource);
 					}
@@ -196,7 +196,7 @@ public class TransactionManager {
 				}
 				else if( TransactionManager.isModuloPrecedente(idModulo,proprietarioMessaggio,false) == false ){
 					msgDiag.highDebug("Messaggio per il modulo ["+idModulo+"]: proprietario["+proprietarioMessaggio+"], scarta");
-					if( (properties.singleConnection_TransactionManager() && (resource!=null) ) || (checkOnlyCache==false) ){
+					if( (properties.singleConnectionTransactionManager() && (resource!=null) ) || (checkOnlyCache==false) ){
 						msgDiag.highDebug("Rilascio connessione per TransactionManager");
 						dbManager.releaseResource(dominio,idModuloTransaction,resource);
 					}
@@ -247,16 +247,16 @@ public class TransactionManager {
 
 					msgDiag.highDebug("Messaggio per il modulo ["+idModulo+"]: Attesa attiva, modulo precedente["+proprietarioMessaggio+"]");
 					// Attesa attiva del modulo:
-					if( properties.singleConnection_TransactionManager()==false ){
+					if( properties.singleConnectionTransactionManager()==false ){
 						msgDiag.highDebug("Rilascio connessione per TransactionManager");
 						dbManager.releaseResource(dominio,idModuloTransaction,resource);
 					}
-					Utilities.sleep(properties.getTransactionManager_CheckInterval());
+					Utilities.sleep(properties.getTransactionManagerCheckInterval());
 				}
 
 			}
 
-			if( properties.singleConnection_TransactionManager() ){
+			if( properties.singleConnectionTransactionManager() ){
 				msgDiag.highDebug("Rilascio connessione per TransactionManager");
 				dbManager.releaseResource(dominio,idModuloTransaction,resource);
 			}

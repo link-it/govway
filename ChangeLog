@@ -1,3 +1,12 @@
+2025-01-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1559
+	Aggiunto controllo dello stato della connessione al rilascio al datasource:
+	- verifica la presenza di transazioni aperte (autoCommit disabilitato);
+	- effettua il log dello stack trace per identificare la classe responsabile;
+        - richiama `setAutoCommit(true)` per ripristinare lo stato corretto.
+
 2025-01-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

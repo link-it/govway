@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.config.driver.xml.DriverConfigurazioneXML;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
@@ -202,8 +203,7 @@ public class ValidazioneSemanticaMainProcessor {
 					
 				}finally{
 					try{
-						if(connectionDB!=null)
-							connectionDB.close();
+						JDBCUtilities.closeConnection(DriverConfigurazioneDB.getCheckLogger(), connectionDB, DriverConfigurazioneDB.isCheckAutocommit(), DriverConfigurazioneDB.isCheckIsClosed());
 					}catch(Exception e){
 						// close
 					}
