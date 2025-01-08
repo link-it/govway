@@ -1253,9 +1253,9 @@ public class LocalForwardEngine {
 							IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT.equals(integrationFunctionError)
 					)
 					) {
-				boolean isEnabled = this.propertiesReader.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed();
-				Integer retryAfterSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed();
-				Integer retryAfterBackOffSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed();
+				boolean isEnabled = this.propertiesReader.isEnabledServiceUnavailableRetryAfterPAConnectionFailed();
+				Integer retryAfterSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSecondsPAConnectionFailed();
+				Integer retryAfterBackOffSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSecondsRandomBackoffPAConnectionFailed();
 				if(	isEnabled &&
 					retryAfterSeconds!=null && retryAfterSeconds>0) {
 					int seconds = retryAfterSeconds;

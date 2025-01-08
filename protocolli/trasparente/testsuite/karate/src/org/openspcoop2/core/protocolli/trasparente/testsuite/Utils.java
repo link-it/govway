@@ -132,9 +132,12 @@ public class Utils {
 		matchEchoFaultResponseRest(jsonResp, log);
 	}
 	public static void matchEchoFaultResponseRest(JSONObject jsonResp, Logger log) throws Exception {
+		matchEchoFaultResponseRest(jsonResp, 500, log);
+	}
+	public static void matchEchoFaultResponseRest(JSONObject jsonResp, int status, Logger log) throws Exception {
 		JsonPathExpressionEngine jsonPath = new JsonPathExpressionEngine();
 
-		assertEquals("https://httpstatuses.com/500", jsonPath.getStringMatchPattern(jsonResp, "$.type").get(0));
+		assertEquals("https://httpstatuses.com/"+status, jsonPath.getStringMatchPattern(jsonResp, "$.type").get(0));
 		assertEquals("Internal Server Error", jsonPath.getStringMatchPattern(jsonResp, "$.title").get(0));
 		assertEquals("Problem ritornato dalla servlet di trace, esempio di OpenSPCoop", jsonPath.getStringMatchPattern(jsonResp, "$.detail").get(0));
 	}

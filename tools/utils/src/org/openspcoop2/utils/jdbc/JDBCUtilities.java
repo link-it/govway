@@ -30,6 +30,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
@@ -373,24 +374,36 @@ public class JDBCUtilities {
 	public static void closeConnection(Logger log, Connection connectionDB, boolean checkAutocommit, boolean checkIsClosed) throws SQLException {
 		if(connectionDB!=null) {
 			if(checkAutocommit) {
-				if(!connectionDB.getAutoCommit()) {
-					String msg = "Connection detected in transaction mode";
-					log.error(msg,new UtilsException(msg)); // aggiungo eccezione per registrare lo stack trace della chiamata e vedere dove viene chiamato il metodo
-					connectionDB.setAutoCommit(true);
-				}
-				else {
-					// nop
-				}
+				checkAutocommit(log, connectionDB);
 			}
 			if(checkIsClosed) {
-				if(connectionDB.isClosed()) {
-					String msg = "Connection already closed detected";
-					log.error(msg,new UtilsException(msg)); // aggiungo eccezione per registrare lo stack trace della chiamata e vedere dove viene chiamato il metodo
-				}
-				else {
-					connectionDB.close();
-				}
+				checkIsClosed(log, connectionDB);
 			}
+		}
+	}
+	private static void checkAutocommit(Logger log, Connection connectionDB) throws SQLException {
+		if(!connectionDB.getAutoCommit()) {
+			String msg = "Connection detected in transaction mode";
+			if(log==null) {
+				log = LoggerWrapperFactory.getLogger(JDBCUtilities.class);
+			}
+			log.error(msg,new UtilsException(msg)); // aggiungo eccezione per registrare lo stack trace della chiamata e vedere dove viene chiamato il metodo
+			connectionDB.setAutoCommit(true);
+		}
+		else {
+			// nop
+		}
+	}
+	private static void checkIsClosed(Logger log, Connection connectionDB) throws SQLException {
+		if(connectionDB.isClosed()) {
+			String msg = "Connection already closed detected";
+			if(log==null) {
+				log = LoggerWrapperFactory.getLogger(JDBCUtilities.class);
+			}
+			log.error(msg,new UtilsException(msg)); // aggiungo eccezione per registrare lo stack trace della chiamata e vedere dove viene chiamato il metodo
+		}
+		else {
+			connectionDB.close();
 		}
 	}
 }

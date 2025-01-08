@@ -471,7 +471,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	//        Vedi commento in java doc della classe.
 	
 	@Override
-	protected void _registerStartRequest_incrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
+	protected void internalRegisterStartRequestIncrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
 		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
 			this.lockActiveRequestCounterGetAndSum.acquireThrowRuntime("_registerStartRequest_incrementActiveRequestCounter");
 			try {
@@ -495,7 +495,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	
 	
 	@Override
-	protected void _updateDatiStartRequestApplicabile_incrementRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
+	protected void internalUpdateDatiStartRequestApplicabileIncrementRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
 		this.lockRequestCounterGetAndSum.acquireThrowRuntime("_updateDatiStartRequestApplicabile_incrementRequestCounter");
 		try {
 			// prendo il valore. Non esiste un unico incrementAndGet
@@ -514,7 +514,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	
 	
 	@Override
-	protected void _registerEndRequest_decrementActiveRequestCounter() {
+	protected void internalRegisterEndRequestDecrementActiveRequestCounter() {
 		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
 			this.lockActiveRequestCounterGetAndSum.acquireThrowRuntime("_updateDatiStartRequestApplicabile_incrementRequestCounter");
 			try {
@@ -530,7 +530,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		}
 	}
 	@Override
-	protected void _registerEndRequest_incrementDegradoPrestazionaleRequestCounter() {
+	protected void internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter() {
 		this.lockDegradoPrestazionaleRequestCounterGetAndSum.acquireThrowRuntime("_registerEndRequest_incrementDegradoPrestazionaleRequestCounter");
 		try {
 			super.policyDegradoPrestazionaleRequestCounter = this.distributedPolicyDegradoPrestazionaleRequestCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
@@ -541,7 +541,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		}
 	}
 	@Override
-	protected void _registerEndRequest_incrementDegradoPrestazionaleCounter(long latenza) {
+	protected void internalRegisterEndRequestIncrementDegradoPrestazionaleCounter(long latenza) {
 		this.lockDegradoPrestazionaleCounterGetAndSum.acquireThrowRuntime("_registerEndRequest_incrementDegradoPrestazionaleCounter");
 		try {
 			super.policyDegradoPrestazionaleCounter = this.distributedPolicyDegradoPrestazionaleCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
@@ -554,7 +554,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	
 	
 	@Override
-	protected void _updateDatiEndRequestApplicabile_incrementRequestCounter() {
+	protected void internalUpdateDatiEndRequestApplicabileIncrementRequestCounter() {
 		this.lockRequestCounterGetAndSum.acquireThrowRuntime("_updateDatiEndRequestApplicabile_incrementRequestCounter");
 		try {
 			super.policyRequestCounter = this.distributedPolicyRequestCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
@@ -565,7 +565,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		}
 	}
 	@Override
-	protected void _updateDatiEndRequestApplicabile_decrementRequestCounter() {
+	protected void internalUpdateDatiEndRequestApplicabileDecrementRequestCounter() {
 		this.lockRequestCounterGetAndSum.acquireThrowRuntime("_updateDatiEndRequestApplicabile_incrementRequestCounter");
 		try {
 			super.policyRequestCounter = this.distributedPolicyRequestCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
@@ -576,11 +576,11 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		}
 	}
 	@Override
-	protected void _updateDatiEndRequestApplicabile_incrementDenyRequestCounter() {
+	protected void internalUpdateDatiEndRequestApplicabileIncrementDenyRequestCounter() {
 		this.distributedPolicyDenyRequestCounter.increment();
 	}
 	@Override
-	protected void _updateDatiEndRequestApplicabile_incrementCounter(long v) {
+	protected void internalUpdateDatiEndRequestApplicabileIncrementCounter(long v) {
 		this.lockCounterGetAndSum.acquireThrowRuntime("_updateDatiEndRequestApplicabile_incrementCounter");
 		try {
 			super.policyCounter = this.distributedPolicyCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet

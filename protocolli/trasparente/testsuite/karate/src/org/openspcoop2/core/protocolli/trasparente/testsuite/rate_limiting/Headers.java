@@ -66,6 +66,10 @@ public class Headers {
 	public static final String FailedOrFaultLimit = "GovWay-RateLimit-RequestFailedOrFault-Limit";
 	public static final String FailedOrFaultRemaining = "GovWay-RateLimit-RequestFailedOrFault-Remaining";
 	
+	public static final String RequestSuccesfulOrFaultReset = "GovWay-RateLimit-RequestSuccessfulOrFault-Reset";
+	public static final String RequestSuccesfulOrFaultLimit = "GovWay-RateLimit-RequestSuccessfulOrFault-Limit";
+	public static final String RequestSuccesfulOrFaultRemaining = "GovWay-RateLimit-RequestSuccessfulOrFault-Remaining";
+	
 	public static final String AvgTimeResponseReset = "GovWay-RateLimit-AvgTimeResponse-Reset";
 	public static final String AvgTimeResponseLimit = "GovWay-RateLimit-AvgTimeResponse-Limit";
 	

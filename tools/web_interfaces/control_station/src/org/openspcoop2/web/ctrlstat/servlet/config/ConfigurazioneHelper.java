@@ -8865,6 +8865,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 					//labelSogliaColonna =ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_ESTESA;
 					labelSogliaColonna =ConfigurazioneCostanti.LABEL_POLICY_INFORMAZIONI_SOGLIA_NUMERO;
 					break;
@@ -10436,6 +10437,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 				bfSuggerimentoDescrizione.append("La policy conteggia il numero di richieste fallite o che veicolano un fault applicativo; raggiunto il limite, ogni successiva richiesta viene bloccata");
 				break;
+			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
+				bfSuggerimentoDescrizione.append("La policy conteggia il numero di richieste completate con successo o che veicolano un fault applicativo; raggiunto il limite, ogni successiva richiesta viene bloccata");
+				break;
 			}
 		}
 		
@@ -10558,6 +10562,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						case NUMERO_RICHIESTE_FALLITE:
 						case NUMERO_FAULT_APPLICATIVI:
 						case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 							return TipoFinestra.CORRENTE;
 						case TEMPO_MEDIO_RISPOSTA:
 							return TipoFinestra.PRECEDENTE;
@@ -10581,6 +10586,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						case NUMERO_RICHIESTE_FALLITE:
 						case NUMERO_FAULT_APPLICATIVI:
 						case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 							return TipoFinestra.CORRENTE;
 						case TEMPO_MEDIO_RISPOSTA:
 							return TipoFinestra.SCORREVOLE;
@@ -11166,6 +11172,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
 			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI_NOTE);
 			break; 
+		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
+			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+			de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_O_FAULT_APPLICATIVI_NOTE);
+			break;
 		}
 		if(editMode || editOnlyValueMode) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -12881,7 +12891,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 	}
 	
-	private TipoRisorsa getTipoRisorsa(String valoreRisorsa, String valoreEsiti) throws Exception {
+	private TipoRisorsa getTipoRisorsa(String valoreRisorsa, String valoreEsiti) throws DriverControlStationException, NotFoundException {
 		
 		if(CostantiControlStation.USE_SELECT_LIST_SEPARATE_METRICHE) {
 		
@@ -12898,6 +12908,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				}
 				else if(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT.equals(valoreEsiti)) {
 					tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI;
+				}
+				else if(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK_FAULT.equals(valoreEsiti)) {
+					tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI;
 				}
 				else {
 					tipoRisorsaSelezionata = TipoRisorsa.NUMERO_RICHIESTE;
@@ -12966,6 +12979,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			case NUMERO_FAULT_APPLICATIVI:
 			case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
+			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_NUMERO_RICHIESTE;
 			case OCCUPAZIONE_BANDA:
 				return ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_MODALITA_RISORSA_OCCUPAZIONE_BANDA;
@@ -12992,7 +13006,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		return this.getDataElementValueRisorsaEsiti(tipo);
 	}
-	public String getDataElementValueRisorsaEsiti(TipoRisorsa tipoRisorsa) throws Exception {
+	public String getDataElementValueRisorsaEsiti(TipoRisorsa tipoRisorsa) throws DriverControlStationException {
 		if(CostantiControlStation.USE_SELECT_LIST_SEPARATE_METRICHE) {
 			switch (tipoRisorsa) {
 			case NUMERO_RICHIESTE_FALLITE:
@@ -13003,6 +13017,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT;
 			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO:
 				return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK;
+			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
+				return ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK_FAULT;
 			case NUMERO_RICHIESTE:
 			case OCCUPAZIONE_BANDA:
 			case TEMPO_MEDIO_RISPOSTA:
@@ -13771,6 +13787,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
 					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_FALLITE_O_FAULT_NOTE);
+					break;
+				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
+					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE);
+					de.setNote(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_POLICY_SOGLIA_VALORE_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_O_FAULT_NOTE);
 					break;
 				}
 			}

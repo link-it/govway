@@ -54,6 +54,9 @@ do
 	elif [ "${risorsa}" == "NumeroRichiesteFalliteOFaultApplicativi" ]
 	then
 		descrizione="La policy conteggia il numero di richieste fallite o che veicolano un fault applicativo; raggiunto il limite, ogni successiva richiesta viene bloccata"
+	elif [ "${risorsa}" == "NumeroRichiesteCompletateConSuccessoOFaultApplicativi" ]
+	then
+		descrizione="La policy conteggia il numero di richieste completate con successo o che veicolano un fault applicativo; raggiunto il limite, ogni successiva richiesta viene bloccata"
 	fi
 
 	if [ "${richiesteSimultanee}" == "false" -a "${risorsa}" != "DimensioneMassimaMessaggio" ]

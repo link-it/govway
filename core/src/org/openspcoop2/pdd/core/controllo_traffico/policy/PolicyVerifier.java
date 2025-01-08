@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -80,6 +81,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class PolicyVerifier {
+	
+	private PolicyVerifier() {}
 
 	private static List<String> listClusterNodes = null;
 	public static List<String> getListClusterNodes() {
@@ -97,7 +100,7 @@ public class PolicyVerifier {
 			MsgDiagnostico msgDiag, 
 			Transaction tr,
 			DatiTransazione datiTransazione, boolean isPddCongestionata, DatiTempiRisposta tempiRisposta,
-			List<Boolean> pddContext_policyApplicabile, List<Boolean> pddContext_policyViolata,
+			List<Boolean> pddContextPolicyApplicabile, List<Boolean> pddContextPolicyViolata,
 			IState state) throws Exception{
 				
 		RequestInfo requestInfo = null;
@@ -131,7 +134,7 @@ public class PolicyVerifier {
 					if(uniqueIdMap==null) {
 						uniqueIdMap = UniqueIdentifierUtilities.getUniqueId(activePolicy.getInstanceConfiguration());
 					}
-					//System.out.println("RIPULISCO in '"+tipo+"' ["+uniqueIdMap+"] !!!");
+					/**System.out.println("RIPULISCO in '"+tipo+"' ["+uniqueIdMap+"] !!!");*/
 					GestorePolicyAttive.getInstance(tipo).removeActiveThreadsPolicyUnsafe(uniqueIdMap);
 				}
 			}
@@ -154,11 +157,11 @@ public class PolicyVerifier {
 		
 		
 		boolean violazionePolicy = false;
-		boolean violazionePolicy_warningOnly = false;
+		boolean violazionePolicyWarningOnly = false;
 		Date dataEventoPolicyViolated = null;
 		String descriptionPolicyViolated = null; // non è definibile una descrizione, poichè si riferisce ad un evento qualsiasi di questo tipo
 	
-		//System.out.println("ATTUALI THREADS: "+counter);
+		/**System.out.println("ATTUALI THREADS: "+counter);*/
 	
 		try{
 		
@@ -181,21 +184,20 @@ public class PolicyVerifier {
 			String descrizioneNonApplicabile = null;
 			
 			// verifico che il sistema risulti congestionato prima di applicare la policy
-			if(risultatoVerificaPolicy.isApplicabilitaCongestione()){
+			if(risultatoVerificaPolicy.isApplicabilitaCongestione() &&
 				
-				if(isPddCongestionata==false){
+				!isPddCongestionata){
 					
-					isApplicabile = false;
-					
-					Object oThreshold = pddContext.getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD);
-					if(oThreshold!=null){
-						descrizioneNonApplicabile = msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_ALL, 
-								GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA);
-					}
-					else{
-						descrizioneNonApplicabile = msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_ALL, 
-								GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA_CONTROLLO_DISABILITATO);
-					}
+				isApplicabile = false;
+				
+				Object oThreshold = pddContext.getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD);
+				if(oThreshold!=null){
+					descrizioneNonApplicabile = msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_ALL, 
+							GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA);
+				}
+				else{
+					descrizioneNonApplicabile = msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_ALL, 
+							GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA_CONTROLLO_DISABILITATO);
 				}
 				
 			}
@@ -278,8 +280,8 @@ public class PolicyVerifier {
 			String descrizioneStatoAllarmeRilevato = null;
 			if(isApplicabile && risultatoVerificaPolicy.isApplicabilitaStatoAllarme()){
 				
-				if(((ConfigurazioneGatewayControlloTraffico)activePolicy.getConfigurazioneControlloTraffico()).isNotifierEnabled()==false){
-					throw new Exception("Modulo Allarmi non abilitato. La Policy deve essere applicata condizionalmente allo stato di un allarme");
+				if(!((ConfigurazioneGatewayControlloTraffico)activePolicy.getConfigurazioneControlloTraffico()).isNotifierEnabled()){
+					throw new CoreException("Modulo Allarmi non abilitato. La Policy deve essere applicata condizionalmente allo stato di un allarme");
 				}
 				
 				RisultatoStato statoAttuale = null;
@@ -329,18 +331,18 @@ public class PolicyVerifier {
 					now = datiCollezionatiReaded.getCloneDate(); // Data in cui sono stati prelevati gli intervalli.
 				}
 				
-				pddContext_policyApplicabile.add(true);
+				pddContextPolicyApplicabile.add(true);
 			}
 			else{
-				pddContext_policyApplicabile.add(false);
+				pddContextPolicyApplicabile.add(false);
 			}
 			
 			// resoconto finale
-			if(isApplicabile==false){
+			if(!isApplicabile){
 				risultatoVerificaPolicy.setNonApplicabile(true);
 				risultatoVerificaPolicy.setDescrizione(descrizioneNonApplicabile);
 								
-				pddContext_policyViolata.add(false);
+				pddContextPolicyViolata.add(false);
 				
 				return risultatoVerificaPolicy;
 			}
@@ -376,6 +378,7 @@ public class PolicyVerifier {
 					case NUMERO_RICHIESTE_FALLITE:
 					case NUMERO_FAULT_APPLICATIVI:
 					case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+					case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 						gestioneClusterSupportata = true;
 						break;
 						
@@ -408,9 +411,9 @@ public class PolicyVerifier {
 					// La quota indicata verra suddivisa per difetto, e se la divisione non consente di avere un numero maggiore di 0 viene associato il valore 1 ad ogni nodo.
 					long resto = -1;
 					if(!policyConfiguration.isLOCAL_DIVIDED_BY_NODES_limit_roundingDown()) {
-						resto = valoreSoglia % ((long)listClusterNodes.size());
+						resto = valoreSoglia % (listClusterNodes.size());
 					}
-					valoreSoglia = valoreSoglia / ((long)listClusterNodes.size());
+					valoreSoglia = valoreSoglia / (listClusterNodes.size());
 					if(policyConfiguration.isLOCAL_DIVIDED_BY_NODES_limit_roundingDown()) {
 						if(valoreSoglia<=0) {
 							valoreSoglia = 1;
@@ -422,7 +425,7 @@ public class PolicyVerifier {
 						}
 					}
 					
-					valoreSogliaComplessivoCluster = valoreSoglia * ((long)listClusterNodes.size());
+					valoreSogliaComplessivoCluster = valoreSoglia * (listClusterNodes.size());
 					
 				}
 				else {
@@ -445,13 +448,14 @@ public class PolicyVerifier {
 			case NUMERO_RICHIESTE_FALLITE:
 			case NUMERO_FAULT_APPLICATIVI:
 			case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 				
 				if(activePolicy.getConfigurazionePolicy().isSimultanee()){
 					
 					long valoreAttuale = datiCollezionatiReaded.getActiveRequestCounter();
 					if(gestioneClusterSupportata) {
 						//  Gli header 'RateLimit-Remaining' verranno valorizzati per difetto rispetto al numero di nodi attivi.
-						risultatoVerificaPolicy.setActualValue(valoreAttuale*((long)listClusterNodes.size()));
+						risultatoVerificaPolicy.setActualValue(valoreAttuale*(listClusterNodes.size()));
 						risultatoVerificaPolicy.setMaxValue(valoreSogliaComplessivoCluster);
 					}
 					else {
@@ -461,10 +465,10 @@ public class PolicyVerifier {
 					if(datiCollezionatiReaded.getRightDateWindowCurrentInterval()!=null) {
 						risultatoVerificaPolicy.setMsBeforeResetCounters(datiCollezionatiReaded.getRightDateWindowCurrentInterval().getTime()-DateManager.getTimeMillis());
 					}
-					if(!(valoreAttuale<=valoreSoglia)){
+					if(valoreAttuale>valoreSoglia){
 						
-						//System.out.println("@@@addThread ERR NUMERO_RICHIESTE SIMULTANEE ["+datiCollezionatiReaded.getActiveRequestCounter()+"]<=["+valoreSoglia
-						//	+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");
+						/**System.out.println("@@@addThread ERR NUMERO_RICHIESTE SIMULTANEE ["+datiCollezionatiReaded.getActiveRequestCounter()+"]<=["+valoreSoglia
+							+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");*/
 						
 						rilevataViolazione = true;
 						risultatoVerificaPolicy.
@@ -505,6 +509,7 @@ public class PolicyVerifier {
 								case NUMERO_RICHIESTE_FALLITE:
 								case NUMERO_FAULT_APPLICATIVI:
 								case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+								case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 									// se sono in uno tra questi 4 casi il contatore delle richieste in essere viene incrementato solo dopo aver consegnato la risposta (check esito).
 									// poichè però il controllo sotto è con <= devo considerare la richiesta in essere con '+1'
 									// altrimenti se ad es. il limite è 3, e sono già passate in passato 3 richieste, la 4 passa.
@@ -535,7 +540,7 @@ public class PolicyVerifier {
 							
 					if(gestioneClusterSupportata) {
 						//  Gli header 'RateLimit-Remaining' verranno valorizzati per difetto rispetto al numero di nodi attivi.
-						risultatoVerificaPolicy.setActualValue(valoreAttuale*((long)listClusterNodes.size()));
+						risultatoVerificaPolicy.setActualValue(valoreAttuale*(listClusterNodes.size()));
 						risultatoVerificaPolicy.setMaxValue(valoreSogliaComplessivoCluster);
 					}
 					else {
@@ -552,10 +557,10 @@ public class PolicyVerifier {
 						}
 					}
 					
-					if(!(valoreAttuale<=valoreSoglia)){
+					if(valoreAttuale>valoreSoglia){
 						
-						//System.out.println("@@@addThread ERR NUMERO_RICHIESTE ["+valoreAttuale+"]<=["+valoreSoglia
-						//	+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");
+						/**System.out.println("@@@addThread ERR NUMERO_RICHIESTE ["+valoreAttuale+"]<=["+valoreSoglia
+							+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");*/
 						
 						rilevataViolazione = true;
 						
@@ -582,6 +587,9 @@ public class PolicyVerifier {
 								break;
 							case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 								codeDiagnostico = GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI;
+								break;
+							case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
+								codeDiagnostico = GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_O_FAULT_APPLICATIVI;
 								break;
 							default:
 								// non può succedere
@@ -640,7 +648,7 @@ public class PolicyVerifier {
 							state, requestInfo, protocolFactory);
 					valoreAttuale = risultatoStatistico.getRisultato();
 					checkDate = risultatoStatistico.getDateCheck();
-					/*System.out.println("LETTO DA STATISTICA "+activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico()+
+					/**System.out.println("LETTO DA STATISTICA "+activePolicy.getConfigurazionePolicy().getTipoIntervalloOsservazioneStatistico()+
 							" check("+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(checkDate)+") intervallo '"+
 							DateUtils.getSimpleDateFormatMs().format(leftDate)+"'-'"+
 							DateUtils.getSimpleDateFormatMs().format(rightDate)+"': "+valoreAttuale);*/
@@ -660,10 +668,10 @@ public class PolicyVerifier {
 					}
 				}
 				
-				if(!(kb<=valoreSoglia)){ 
+				if(kb>valoreSoglia){ 
 					
-					//System.out.println("@@@addThread ERR OCCUPAZIONE BANDA ["+kb+"]<=["+valoreSoglia
-					//	+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");
+					/**System.out.println("@@@addThread ERR OCCUPAZIONE BANDA ["+kb+"]<=["+valoreSoglia
+						+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");*/
 					
 					rilevataViolazione = true;
 					
@@ -717,7 +725,7 @@ public class PolicyVerifier {
 					}
 				}
 				else{
-					throw new Exception("Risorsa non utilizzabile con campionamento statistico");
+					throw new CoreException("Risorsa non utilizzabile con campionamento statistico");
 				}
 						
 				long secondi = DatiCollezionati.translateToSeconds(valoreAttuale);
@@ -734,10 +742,10 @@ public class PolicyVerifier {
 					}
 				}
 				
-				if(!(secondi<=valoreSoglia)){ 
+				if(secondi>valoreSoglia){ 
 					
-					//System.out.println("@@@addThread ERR TEMPO COMPLESSIVO ["+secondi+"]<=["+valoreSoglia
-					//	+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");
+					/**System.out.println("@@@addThread ERR TEMPO COMPLESSIVO ["+secondi+"]<=["+valoreSoglia
+						+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");*/
 					
 					rilevataViolazione = true;
 					
@@ -814,10 +822,10 @@ public class PolicyVerifier {
 					}
 				}
 				
-				if(!(valoreAttuale<=valoreSoglia)){
+				if(valoreAttuale>valoreSoglia){
 					
-					//System.out.println("@@@addThread ERR TEMPO MEDIO ["+valoreAttuale+"]<=["+valoreSoglia
-					//	+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");
+					/**System.out.println("@@@addThread ERR TEMPO MEDIO ["+valoreAttuale+"]<=["+valoreSoglia
+						+"] WarningOnly["+risultatoVerificaPolicy.isWarningOnly()+"]");*/
 					
 					rilevataViolazione = true;
 					
@@ -849,7 +857,7 @@ public class PolicyVerifier {
 					tipoEvento = TipoEvento.RATE_LIMITING_POLICY_API;
 				}
 				if(risultatoVerificaPolicy.isWarningOnly()){
-					violazionePolicy_warningOnly = true;
+					violazionePolicyWarningOnly = true;
 					tr.addEventoGestione(tipoEvento.getValue()
 							+"_"+
 							CodiceEventoControlloTraffico.VIOLAZIONE_WARNING_ONLY.getValue()
@@ -871,14 +879,14 @@ public class PolicyVerifier {
 				// arricchisco descrizioni con eventuali descrizioni sulla applicabilità
 				if(descrizioneDegradoPrestazionaleRilevato!=null){
 					String separatore = "\n";
-					if(risultatoVerificaPolicy.getDescrizione().endsWith(".")==false){
+					if(!risultatoVerificaPolicy.getDescrizione().endsWith(".")){
 						separatore = ".\n";
 					}
 					risultatoVerificaPolicy.setDescrizione(risultatoVerificaPolicy.getDescrizione()+separatore+descrizioneDegradoPrestazionaleRilevato);
 				}
 				if(descrizioneStatoAllarmeRilevato!=null){
 					String separatore = "\n";
-					if(risultatoVerificaPolicy.getDescrizione().endsWith(".")==false){
+					if(!risultatoVerificaPolicy.getDescrizione().endsWith(".")){
 						separatore = ".\n";
 					}
 					risultatoVerificaPolicy.setDescrizione(risultatoVerificaPolicy.getDescrizione()+separatore+descrizioneStatoAllarmeRilevato);
@@ -887,7 +895,7 @@ public class PolicyVerifier {
 			
 			risultatoVerificaPolicy.setViolata(rilevataViolazione);
 			
-			pddContext_policyViolata.add(rilevataViolazione);
+			pddContextPolicyViolata.add(rilevataViolazione);
 			
 			return risultatoVerificaPolicy;
 				
@@ -903,14 +911,14 @@ public class PolicyVerifier {
 			// Si vuole un evento per ogni soggetto che viola la policy
 			String idPolicyConGruppo = null;
 			String configurazione = null;
-			if(violazionePolicy || violazionePolicy_warningOnly) {
+			if(violazionePolicy || violazionePolicyWarningOnly) {
 				
-				String API = null;
+				String idAPI = null;
 				if(policyAPI) {
-					API = getIdAPI(activePolicy, protocolFactory, configPdDManager, requestInfo);
+					idAPI = getIdAPI(activePolicy, protocolFactory, configPdDManager, requestInfo);
 				}
 				
-				idPolicyConGruppo = PolicyUtilities.buildIdConfigurazioneEventoPerPolicy(activePolicy, datiGroupBy, API);
+				idPolicyConGruppo = PolicyUtilities.buildIdConfigurazioneEventoPerPolicy(activePolicy, datiGroupBy, idAPI);
 				configurazione = PolicyUtilities.buildConfigurazioneEventoPerPolicy(activePolicy, policyGlobale);
 				
 			}
@@ -927,7 +935,7 @@ public class PolicyVerifier {
 						idPolicyConGruppo, configurazione,
 						dataEventoPolicyViolated, descriptionPolicyViolated); 
 			}
-			if(violazionePolicy_warningOnly){
+			if(violazionePolicyWarningOnly){
 				CategoriaEventoControlloTraffico tipoEvento = null;
 				if(policyGlobale) {
 					tipoEvento = CategoriaEventoControlloTraffico.POLICY_GLOBALE_WARNING_ONLY;
@@ -944,11 +952,11 @@ public class PolicyVerifier {
 
 	}
 	
-	public static String getIdAPI(ActivePolicy activePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo) throws Exception {
+	public static String getIdAPI(ActivePolicy activePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo) throws ProtocolException, DriverConfigurazioneException {
 		AttivazionePolicy attivazionePolicy = activePolicy.getInstanceConfiguration();
 		return getIdAPI(attivazionePolicy, protocolFactory, configPdDManager, requestInfo);
 	}
-	public static String getIdAPI(AttivazionePolicy attivazionePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo) throws Exception {
+	public static String getIdAPI(AttivazionePolicy attivazionePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo) throws ProtocolException, DriverConfigurazioneException {
 		PorteNamingUtils namingUtils = new PorteNamingUtils(protocolFactory);
 		
 		String api = null;

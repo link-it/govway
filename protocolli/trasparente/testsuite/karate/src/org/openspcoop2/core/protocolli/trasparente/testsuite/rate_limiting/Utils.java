@@ -188,6 +188,9 @@ public class Utils {
 	public static void matchEchoFaultResponseRest(JSONObject jsonResp) throws Exception {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.matchEchoFaultResponseRest(jsonResp, logRateLimiting);
 	}
+	public static void matchEchoFaultResponseRest(JSONObject jsonResp, int status) throws Exception {
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.matchEchoFaultResponseRest(jsonResp, status, logRateLimiting);
+	}
 	
 	public static void matchApiUnavaliableSoap(String idTransazione, Element element) throws DynamicException {
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.matchApiUnavaliableSoap(idTransazione, element, logRateLimiting);
@@ -395,6 +398,7 @@ public class Utils {
 								!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE.equals(tipoRisorsa) &&
 								!TipoRisorsaPolicyAttiva.NUMERO_FAULT_APPLICATIVI.equals(tipoRisorsa) &&
 								!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO.equals(tipoRisorsa) &&
+								!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI.equals(tipoRisorsa) &&
 								!TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE.equals(tipoRisorsa)) {
 							throw t;
 						}

@@ -53,31 +53,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ConfigurazioneGenerale }
+     * Create an instance of {@link TempiRispostaFruizione }
      */
-    public ConfigurazioneGenerale createConfigurazioneGenerale() {
-        return new ConfigurazioneGenerale();
-    }
-
-    /**
-     * Create an instance of {@link ElencoIdPolicyAttive }
-     */
-    public ElencoIdPolicyAttive createElencoIdPolicyAttive() {
-        return new ElencoIdPolicyAttive();
-    }
-
-    /**
-     * Create an instance of {@link TempiRispostaErogazione }
-     */
-    public TempiRispostaErogazione createTempiRispostaErogazione() {
-        return new TempiRispostaErogazione();
-    }
-
-    /**
-     * Create an instance of {@link Cache }
-     */
-    public Cache createCache() {
-        return new Cache();
+    public TempiRispostaFruizione createTempiRispostaFruizione() {
+        return new TempiRispostaFruizione();
     }
 
     /**
@@ -88,10 +67,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ConfigurazioneRateLimiting }
+     * Create an instance of {@link Cache }
      */
-    public ConfigurazioneRateLimiting createConfigurazioneRateLimiting() {
-        return new ConfigurazioneRateLimiting();
+    public Cache createCache() {
+        return new Cache();
     }
 
     /**
@@ -102,17 +81,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ConfigurazionePolicy }
+     * Create an instance of {@link ElencoIdPolicyAttive }
      */
-    public ConfigurazionePolicy createConfigurazionePolicy() {
-        return new ConfigurazionePolicy();
-    }
-
-    /**
-     * Create an instance of {@link AttivazionePolicy }
-     */
-    public AttivazionePolicy createAttivazionePolicy() {
-        return new AttivazionePolicy();
+    public ElencoIdPolicyAttive createElencoIdPolicyAttive() {
+        return new ElencoIdPolicyAttive();
     }
 
     /**
@@ -123,38 +95,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AttivazionePolicyRaggruppamento }
+     * Create an instance of {@link ConfigurazioneGenerale }
      */
-    public AttivazionePolicyRaggruppamento createAttivazionePolicyRaggruppamento() {
-        return new AttivazionePolicyRaggruppamento();
-    }
-
-    /**
-     * Create an instance of {@link ElencoPolicy }
-     */
-    public ElencoPolicy createElencoPolicy() {
-        return new ElencoPolicy();
-    }
-
-    /**
-     * Create an instance of {@link TempiRispostaFruizione }
-     */
-    public TempiRispostaFruizione createTempiRispostaFruizione() {
-        return new TempiRispostaFruizione();
-    }
-
-    /**
-     * Create an instance of {@link ElencoIdPolicy }
-     */
-    public ElencoIdPolicy createElencoIdPolicy() {
-        return new ElencoIdPolicy();
-    }
-
-    /**
-     * Create an instance of {@link AttivazionePolicyFiltro }
-     */
-    public AttivazionePolicyFiltro createAttivazionePolicyFiltro() {
-        return new AttivazionePolicyFiltro();
+    public ConfigurazioneGenerale createConfigurazioneGenerale() {
+        return new ConfigurazioneGenerale();
     }
 
     /**
@@ -165,10 +109,66 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ElencoPolicy }
+     */
+    public ElencoPolicy createElencoPolicy() {
+        return new ElencoPolicy();
+    }
+
+    /**
+     * Create an instance of {@link TempiRispostaErogazione }
+     */
+    public TempiRispostaErogazione createTempiRispostaErogazione() {
+        return new TempiRispostaErogazione();
+    }
+
+    /**
+     * Create an instance of {@link AttivazionePolicy }
+     */
+    public AttivazionePolicy createAttivazionePolicy() {
+        return new AttivazionePolicy();
+    }
+
+    /**
      * Create an instance of {@link ConfigurazioneRateLimitingProprieta }
      */
     public ConfigurazioneRateLimitingProprieta createConfigurazioneRateLimitingProprieta() {
         return new ConfigurazioneRateLimitingProprieta();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazionePolicy }
+     */
+    public ConfigurazionePolicy createConfigurazionePolicy() {
+        return new ConfigurazionePolicy();
+    }
+
+    /**
+     * Create an instance of {@link ElencoIdPolicy }
+     */
+    public ElencoIdPolicy createElencoIdPolicy() {
+        return new ElencoIdPolicy();
+    }
+
+    /**
+     * Create an instance of {@link AttivazionePolicyRaggruppamento }
+     */
+    public AttivazionePolicyRaggruppamento createAttivazionePolicyRaggruppamento() {
+        return new AttivazionePolicyRaggruppamento();
+    }
+
+    /**
+     * Create an instance of {@link AttivazionePolicyFiltro }
+     */
+    public AttivazionePolicyFiltro createAttivazionePolicyFiltro() {
+        return new AttivazionePolicyFiltro();
+    }
+
+    /**
+     * Create an instance of {@link ConfigurazioneRateLimiting }
+     */
+    public ConfigurazioneRateLimiting createConfigurazioneRateLimiting() {
+        return new ConfigurazioneRateLimiting();
     }
 
 

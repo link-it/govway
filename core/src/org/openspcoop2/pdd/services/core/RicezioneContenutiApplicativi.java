@@ -2093,13 +2093,13 @@ public class RicezioneContenutiApplicativi {
 				OpenSPCoop2Message errorOpenSPCoopMsg = this.generatoreErrore.build(pddContext,integrationFunctionError,
 						errore,serviceIsEnabledExceptionProcessamento,null);
 				if(IntegrationFunctionError.API_SUSPEND.equals(integrationFunctionError) &&
-						propertiesReader.isEnabledServiceUnavailableRetryAfter_pd_suspend() && 
-						propertiesReader.getServiceUnavailableRetryAfterSeconds_pd_suspend()!=null &&
-						propertiesReader.getServiceUnavailableRetryAfterSeconds_pd_suspend()>0) {
-					int seconds = propertiesReader.getServiceUnavailableRetryAfterSeconds_pd_suspend();
-					if(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend()!=null &&
-							propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend()>0) {
-						seconds = seconds + ServicesUtils.getRandom().nextInt(propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend());
+						propertiesReader.isEnabledServiceUnavailableRetryAfterPDSuspend() && 
+						propertiesReader.getServiceUnavailableRetryAfterSecondsPDSuspend()!=null &&
+						propertiesReader.getServiceUnavailableRetryAfterSecondsPDSuspend()>0) {
+					int seconds = propertiesReader.getServiceUnavailableRetryAfterSecondsPDSuspend();
+					if(propertiesReader.getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend()!=null &&
+							propertiesReader.getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend()>0) {
+						seconds = seconds + ServicesUtils.getRandom().nextInt(propertiesReader.getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend());
 					}
 					errorOpenSPCoopMsg.forceTransportHeader(HttpConstants.RETRY_AFTER, seconds+"");
 				}

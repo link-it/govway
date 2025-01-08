@@ -5549,6 +5549,9 @@ public class ErogazioniApiHelper {
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 					criteri.setMetrica(RateLimitingCriteriMetricaEnum.NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI);
 					break;
+				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
+					criteri.setMetrica(RateLimitingCriteriMetricaEnum.NUMERO_RICHIESTE_OK_O_FAULT_APPLICATIVI);
+					break;
 				case DIMENSIONE_MASSIMA_MESSAGGIO:
 					criteri.setMetrica(RateLimitingCriteriMetricaEnum.DIMENSIONE_MASSIMA);
 					dimensioneMessaggio = true;
@@ -5711,6 +5714,9 @@ public class ErogazioniApiHelper {
 			break;
 		case NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI:
 			tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI;
+			break;
+		case NUMERO_RICHIESTE_OK_O_FAULT_APPLICATIVI:
+			tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI;
 			break;
 		case DIMENSIONE_MASSIMA:
 			tipoRisorsaPolicyAttiva = TipoRisorsaPolicyAttiva.DIMENSIONE_MASSIMA_MESSAGGIO;

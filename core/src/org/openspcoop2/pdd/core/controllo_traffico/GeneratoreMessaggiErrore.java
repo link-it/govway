@@ -44,6 +44,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class GeneratoreMessaggiErrore {
+	
+	private GeneratoreMessaggiErrore() {}
 
 	
 	// identificativi diagnostici parziali per policy violate
@@ -56,6 +58,7 @@ public class GeneratoreMessaggiErrore {
 	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE = "controlloTraffico.policy.violata.risorsaNumeroRichiesteFallite";
 	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_FAULT_APPLICATIVI = "controlloTraffico.policy.violata.risorsaNumeroFaultApplicativi";
 	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI= "controlloTraffico.policy.violata.risorsaNumeroRichiesteFalliteOFaultApplicativi";
+	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_VIOLATA_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_O_FAULT_APPLICATIVI = "controlloTraffico.policy.violata.risorsaNumeroRichiesteCompletateConSuccessoOFaultApplicativi";
 	
 	// identificativi diagnostici parziali per applicabilità policy
 	public static final String MSG_DIAGNOSTICO_INTERCEPTOR_POLICY_APPLICABILITA_PDD_NON_CONGESTIONATA = "controlloTraffico.policy.applicabilita.nonCongestionato";
@@ -142,6 +145,7 @@ public class GeneratoreMessaggiErrore {
 	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_FAULT_APPLICATIVI_CODE = "CP08";
 	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI_CODE = "CP09";
 	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_DIMENSIONE_MASSIMA_MESSAGGIO_CODE = "CP10";
+	private static final String CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_O_FAULT_APPLICATIVI_CODE = "CP11";
 	private static final String APPLICABILITA_CONGESTIONE_CODE = "-CC";
 	private static final String APPLICABILITA_DEGRADO_CODE = "-DP";
 	private static final String APPLICABILITA_STATO_ALLARME_CODE = "-SA";
@@ -153,13 +157,13 @@ public class GeneratoreMessaggiErrore {
 	public static final MapKey<String> PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE = org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE;
 	
 	private static final String PDD_CONTEXT_VALUE_GENERIC_ERROR = "controlloTrafficoGenericError";
-	public static void addPddContextInfo_ControlloTrafficoGenericError(PdDContext pddContext){
+	public static void addPddContextInfoControlloTrafficoGenericError(PdDContext pddContext){
 		pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_GENERIC_ERROR);
 	}
 	
 	private static final String PDD_CONTEXT_VALUE_MAX_THREADS_VIOLATO = "controlloTrafficoNumeroMassimoRichiesteSimultaneeViolato";
 	private static final String PDD_CONTEXT_VALUE_MAX_THREADS_VIOLATO_WARNING_ONLY = "controlloTrafficoNumeroMassimoRichiesteSimultaneeViolatoWarningOnly";
-	public static void addPddContextInfo_ControlloTrafficoMaxThreadsViolated(PdDContext pddContext, boolean warningOnly){
+	public static void addPddContextInfoControlloTrafficoMaxThreadsViolated(PdDContext pddContext, boolean warningOnly){
 		if(warningOnly){
 			pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_MAX_THREADS_VIOLATO_WARNING_ONLY);
 		}
@@ -170,10 +174,10 @@ public class GeneratoreMessaggiErrore {
 	
 	private static final String PDD_CONTEXT_VALUE_POLICY_VIOLATA = "controlloTrafficoRateLimitingPolicyViolata";
 	private static final String PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY = "controlloTrafficoRateLimitingPolicyViolataWarningOnly";
-	public static void addPddContextInfo_ControlloTrafficoPolicyViolated(PdDContext pddContext, boolean warningOnly){
-		addContextInfo_ControlloTrafficoPolicyViolated(pddContext, warningOnly);
+	public static void addPddContextInfoControlloTrafficoPolicyViolated(PdDContext pddContext, boolean warningOnly){
+		addContextInfoControlloTrafficoPolicyViolated(pddContext, warningOnly);
 	}
-	public static void addContextInfo_ControlloTrafficoPolicyViolated(Context context, boolean warningOnly){
+	public static void addContextInfoControlloTrafficoPolicyViolated(Context context, boolean warningOnly){
 		if(warningOnly){
 			context.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY);
 		}
@@ -270,6 +274,10 @@ public class GeneratoreMessaggiErrore {
 	public static HandlerException getErroreProcessamento(Exception e, 
 			PdDContext pddContext){
 				
+		if(pddContext!=null) {
+			// nop
+		}
+		
 		HandlerException he = new HandlerException( SISTEMA_NON_DISPONIBILE + " [" + ERRORE_PROCESSAMENTO_CODE + "]" , e);
 		he.setCustomizedResponse(true);
 		he.setCustomizedResponseAs4xxCode(false);
@@ -281,6 +289,10 @@ public class GeneratoreMessaggiErrore {
 	
 	public static HandlerException getMaxThreadsViolated(String messaggioErroreInChiaro, boolean erroreGenerico, 
 			PdDContext pddContext){
+		
+		if(pddContext!=null) {
+			// nop
+		}
 		
 		HandlerException he =  null;
 		
@@ -302,17 +314,21 @@ public class GeneratoreMessaggiErrore {
 	public static HandlerException getControlloTrafficoPolicyViolated(List<RisultatoVerificaPolicy> policyViolate, boolean erroreGenerico, 
 			PdDContext pddContext){
 		
+		if(pddContext!=null) {
+			// nop
+		}
+		
 		HandlerException he =  null;
 		
 		StringBuilder bf = new StringBuilder();
-		if(erroreGenerico==false){
+		if(!erroreGenerico){
 			bf.append("Rilevate "+policyViolate.size()+" policy violate:\n");
 		}
-		boolean limitExceeded_conditionalCongestion = false; 
-		boolean limitExceeded_conditionalDeteriorationPerformance = false; 
+		boolean limitExceededConditionalCongestion = false; 
+		boolean limitExceededConditionalDeteriorationPerformance = false; 
 		boolean limitExceeded = false; 
-		boolean tooManyRequests_conditionalCongestion = false; 
-		boolean tooManyRequests_conditionalDeteriorationPerformance = false; 
+		boolean tooManyRequestsConditionalCongestion = false; 
+		boolean tooManyRequestsConditionalDeteriorationPerformance = false; 
 		boolean tooManyRequests = false; 
 				
 		for (int i = 0; i < policyViolate.size(); i++) {
@@ -321,13 +337,13 @@ public class GeneratoreMessaggiErrore {
 			if(!risultato.isErroreGenerico()) {
 				if(risultato.isSimultanee()) {
 					if(risultato.isApplicabilitaCongestione()) {
-						tooManyRequests_conditionalCongestion = true;
+						tooManyRequestsConditionalCongestion = true;
 					}
 					else if(risultato.isApplicabilitaDegradoPrestazionale()) {
-						tooManyRequests_conditionalDeteriorationPerformance = true;
+						tooManyRequestsConditionalDeteriorationPerformance = true;
 					}
 					else if(risultato.isApplicabilitaStatoAllarme()) {
-						tooManyRequests_conditionalDeteriorationPerformance = true; // TODO IntegrationFunctionError apposito
+						tooManyRequestsConditionalDeteriorationPerformance = true; // fare IntegrationFunctionError apposito
 					}
 					else {
 						tooManyRequests = true;
@@ -335,13 +351,13 @@ public class GeneratoreMessaggiErrore {
 				}
 				else {
 					if(risultato.isApplicabilitaCongestione()) {
-						limitExceeded_conditionalCongestion = true;
+						limitExceededConditionalCongestion = true;
 					}
 					else if(risultato.isApplicabilitaDegradoPrestazionale()) {
-						limitExceeded_conditionalDeteriorationPerformance = true;
+						limitExceededConditionalDeteriorationPerformance = true;
 					}
 					else if(risultato.isApplicabilitaStatoAllarme()) {
-						limitExceeded_conditionalDeteriorationPerformance = true; // TODO IntegrationFunctionError apposito
+						limitExceededConditionalDeteriorationPerformance = true; // fare IntegrationFunctionError apposito
 					}
 					else {
 						limitExceeded = true;
@@ -399,19 +415,19 @@ public class GeneratoreMessaggiErrore {
 			// prevale poiche' il client non potra rispedire
 			he.setIntegrationFunctionError(IntegrationFunctionError.LIMIT_EXCEEDED);
 		}
-		else if(limitExceeded_conditionalCongestion) {
+		else if(limitExceededConditionalCongestion) {
 			he.setIntegrationFunctionError(IntegrationFunctionError.LIMIT_EXCEEDED_CONDITIONAL_CONGESTION);
 		}
-		else if(limitExceeded_conditionalDeteriorationPerformance) {
+		else if(limitExceededConditionalDeteriorationPerformance) {
 			he.setIntegrationFunctionError(IntegrationFunctionError.LIMIT_EXCEEDED_CONDITIONAL_DETERIORATION_PERFORMANCE);
 		}
 		else if(tooManyRequests) {
 			he.setIntegrationFunctionError(IntegrationFunctionError.TOO_MANY_REQUESTS);
 		}
-		else if(tooManyRequests_conditionalCongestion) {
+		else if(tooManyRequestsConditionalCongestion) {
 			he.setIntegrationFunctionError(IntegrationFunctionError.TOO_MANY_REQUESTS_CONDITIONAL_CONGESTION);
 		}
-		else if(tooManyRequests_conditionalDeteriorationPerformance) {
+		else if(tooManyRequestsConditionalDeteriorationPerformance) {
 			he.setIntegrationFunctionError(IntegrationFunctionError.TOO_MANY_REQUESTS_CONDITIONAL_DETERIORATION_PERFORMANCE);
 		}
 		else {
@@ -464,6 +480,9 @@ public class GeneratoreMessaggiErrore {
 			case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI_CODE);
 				break;
+			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
+				bf.append(CONTROLLO_TRAFFICO_POLICY_VIOLATED_NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_O_FAULT_APPLICATIVI_CODE);
+				break;
 			}
 			
 			if(risultato.isApplicabilitaCongestione()){
@@ -495,7 +514,7 @@ public class GeneratoreMessaggiErrore {
 			if(includiDescrizioneErrore) {
 				he.setResponseContentType(HttpConstants.CONTENT_TYPE_HTML);
 				
-				String tipo = CostantiControlloTraffico.HTML_429_TOO_MANY_REQUESTS_ERROR;
+				String tipo = null;
 				if(he.getIntegrationFunctionError()!=null) {
 					switch (he.getIntegrationFunctionError()) {
 					case LIMIT_EXCEEDED:
@@ -509,8 +528,12 @@ public class GeneratoreMessaggiErrore {
 						tipo = CostantiControlloTraffico.HTML_429_TOO_MANY_REQUESTS_ERROR;
 						break;
 					default:
+						tipo = CostantiControlloTraffico.HTML_429_TOO_MANY_REQUESTS_ERROR;
 						break;
 					}
+				}
+				else {
+					tipo = CostantiControlloTraffico.HTML_429_TOO_MANY_REQUESTS_ERROR;
 				}
 				
 				String msgErrore = null;
@@ -520,13 +543,13 @@ public class GeneratoreMessaggiErrore {
 				if(he.getIntegrationFunctionError()!=null) {
 					functionError = he.getIntegrationFunctionError();
 				}
-//				if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
-//					genericDetails = true;
-//				}
+				/**if(!genericDetails && erroriProperties.isForceGenericDetails(functionError)) {
+					genericDetails = true;
+				}*/
 				if (Costanti.isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS()) {
 					genericDetails = false;
 				}
-				if(!genericDetails && he!=null) {
+				if(!genericDetails) {
 					msgErrore = he.getMessage();
 				}
 				else {
@@ -567,7 +590,7 @@ public class GeneratoreMessaggiErrore {
 			he.setResponseCode("500");
 			break;
 		case FAULT:
-			if(includiDescrizioneErrore==false) {
+			if(!includiDescrizioneErrore) {
 				he.setCustomizedResponse(false);
 			}
 			break;

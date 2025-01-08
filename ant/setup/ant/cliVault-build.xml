@@ -284,6 +284,11 @@
 					<param name="token" value="#logger.govway_vault_core.appenderRef.stdout.ref"/>
 					<param name="value" value="logger.govway_vault_core.appenderRef.stdout.ref"/>
 				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="#logger.org_govway.appenderRef.stdout.ref"/>
+					<param name="value" value="logger.org_govway.appenderRef.stdout.ref"/>
+				</antcall>
 			</then>
 		</if>
 	</target>

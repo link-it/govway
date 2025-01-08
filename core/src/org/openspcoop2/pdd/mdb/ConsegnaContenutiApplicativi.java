@@ -3329,7 +3329,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								pddContext.removeObject(LimitedInputStream.ERROR_MSG_KEY);
 								pddContext.removeObject(LimitedInputStream.EXCEPTION_KEY);
 							}
-							else if(this.propertiesReader.isServiceUnavailable_ReadTimedOut(motivoErroreConsegna)){
+							else if(this.propertiesReader.isServiceUnavailableReadTimedOut(motivoErroreConsegna)){
 								integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
 							}
 						}

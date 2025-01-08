@@ -193,7 +193,7 @@ public class ServicesUtils {
 				e = (java.net.SocketTimeoutException) Utilities.getInnerInstanceException(t, java.net.SocketTimeoutException.class, true);
 			}
 			
-			if(e!=null && e.getMessage()!=null && OpenSPCoop2Properties.getInstance().isServiceUnavailable_ReadTimedOut(e.getMessage())){
+			if(e!=null && e.getMessage()!=null && OpenSPCoop2Properties.getInstance().isServiceUnavailableReadTimedOut(e.getMessage())){
 				return true;
 			}
 			else if(TimeoutIOException.isTimeoutIOException(t) && t.getMessage()!=null && t.getMessage().startsWith(CostantiPdD.PREFIX_TIMEOUT_RESPONSE)) {

@@ -408,6 +408,9 @@ Di seguito vengono descritti i test del package 'rate_limiting':
 
 - 'numero_richieste_completate_con_successo', verifica policy definite con metriche basate sul numero di richieste completate con successo in un intervallo
   ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.numero_richieste_completate_con_successo
+  
+- 'numero_richieste_completate_con_successo_o_fault', verifica policy definite con metriche basate sul numero di richieste completate con successo o fault in un intervallo
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.numero_richieste_completate_con_successo_o_fault
 
 - 'dimensione_messaggi', verifica policy definite con metriche basate sulla dimensione massima delle richieste e delle risposte
   ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi -Dtest=RestTest

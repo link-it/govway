@@ -32,6 +32,7 @@ import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -40,6 +41,8 @@ import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.security.ProviderUtils;
+import org.openspcoop2.web.ctrlstat.core.DBManager;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.slf4j.Logger;
 
 /**
@@ -153,6 +156,9 @@ public class VaultTools {
 		/**String confDir = null;*/ // non sembra servire
 		String protocolloDefault = vaultProperties.getProtocolloDefault();
 		
+		// Inizializzo Controlli connessioni
+		disableCheckSingleConnectionDataSource();
+		
 		// Map (environment)
 		initMap(vaultProperties);
 		
@@ -228,6 +234,22 @@ public class VaultTools {
 			logCoreInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
 		}catch(Exception e){
 			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	private static void disableCheckSingleConnectionDataSource() throws CoreException {
+		// Inizializzo Controlli connessioni
+		try {
+			Logger logR = logCore;
+			ServicesUtils.initCheckConnectionDB(logR, false, false);
+			
+			DriverControlStationDB.setCheckLogger(logR);
+			DriverControlStationDB.setCheckIsClosed(false);
+			DriverControlStationDB.setCheckAutocommit(false);
+			DBManager.setCheckLogger(logR);
+			DBManager.setCheckIsClosed(false);
+			DBManager.setCheckAutocommit(false);
+		} catch (Exception e) {
+			doError("Inizializzazione controlli connessione non riuscita",e);
 		}
 	}
 	private static void initMap(VaultProperties loaderProperties) throws CoreException {

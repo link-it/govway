@@ -161,12 +161,12 @@ public abstract class AbstractErrorGenerator {
 		IntegrationErrorReturnConfiguration configR = config.getErrorReturnConfig();
 		boolean portaDelegata = (this instanceof RicezioneContenutiApplicativiInternalErrorGenerator);
 		if(portaDelegata) {
-			configR.setRetryAfterSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSeconds_pd());
-			configR.setRetryRandomBackoffSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd());
+			configR.setRetryAfterSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSecondsPD());
+			configR.setRetryRandomBackoffSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSecondsRandomBackoffPD());
 		}
 		else {
-			configR.setRetryAfterSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSeconds_pa());
-			configR.setRetryRandomBackoffSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa());
+			configR.setRetryAfterSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSecondsPA());
+			configR.setRetryRandomBackoffSeconds(this.openspcoopProperties.getServiceUnavailableRetryAfterSecondsRandomBackoffPA());
 		}
 		return configR;
 	}
