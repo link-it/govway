@@ -213,7 +213,7 @@ public class PreInRequestHandlerGestioneControlloTraffico {
 						context.getLogCore().error(e.getMessage(),e);
 					}
 					
-					GeneratoreMessaggiErrore.addPddContextInfo_ControlloTrafficoGenericError(context.getPddContext());
+					GeneratoreMessaggiErrore.addPddContextInfoControlloTrafficoGenericError(context.getPddContext());
 					
 					throw GeneratoreMessaggiErrore.getErroreProcessamento(e,context.getPddContext());
 				}

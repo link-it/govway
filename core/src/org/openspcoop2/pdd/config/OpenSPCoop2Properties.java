@@ -2626,6 +2626,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit();
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimit();
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit();
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimit();
 				
 				// header limit windows
 				this.getControlloTrafficoNumeroRichiesteHeaderLimitWindows();
@@ -2636,6 +2637,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows();
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows();
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows();
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitWindows();
 				
 				// header remaining
 				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining();
@@ -2646,6 +2648,7 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining();
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining();
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining();
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemaining();
 				
 				// header reset
 				this.getControlloTrafficoNumeroRichiesteHeaderReset();
@@ -2656,9 +2659,10 @@ public class OpenSPCoop2Properties {
 				this.getControlloTrafficoNumeroRichiesteFalliteHeaderReset();
 				this.getControlloTrafficoNumeroFaultApplicativiHeaderReset();
 				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset();
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset();
 				
 				this.getControlloTrafficoRetryAfterHeader();
-				this.getControlloTrafficoRetryAfterHeader_randomBackoff();
+				this.getControlloTrafficoRetryAfterHeaderRandomBackoff();
 			}
 			
 			// Allarmi
@@ -2667,27 +2671,27 @@ public class OpenSPCoop2Properties {
 			}
 			
 			// Service Unavailable
-			this.getServiceUnavailableRetryAfterSeconds_pd();
-			this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd();
-			this.getServiceUnavailableRetryAfterSeconds_pa();
-			this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa();
-			if(this.isEnabledServiceUnavailableRetryAfter_pd_suspend()) {
-				this.getServiceUnavailableRetryAfterSeconds_pd_suspend();
-				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend();
+			this.getServiceUnavailableRetryAfterSecondsPD();
+			this.getServiceUnavailableRetryAfterSecondsRandomBackoffPD();
+			this.getServiceUnavailableRetryAfterSecondsPA();
+			this.getServiceUnavailableRetryAfterSecondsRandomBackoffPA();
+			if(this.isEnabledServiceUnavailableRetryAfterPDSuspend()) {
+				this.getServiceUnavailableRetryAfterSecondsPDSuspend();
+				this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend();
 			}
-			if(this.isEnabledServiceUnavailableRetryAfter_pa_suspend()) {
-				this.getServiceUnavailableRetryAfterSeconds_pa_suspend();
-				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend();
+			if(this.isEnabledServiceUnavailableRetryAfterPASuspend()) {
+				this.getServiceUnavailableRetryAfterSecondsPASuspend();
+				this.getServiceUnavailableRetryAfterSecondsRandomBackoffPASuspend();
 			}
-			if(this.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed()) {
-				this.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed();
-				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed();
+			if(this.isEnabledServiceUnavailableRetryAfterPDConnectionFailed()) {
+				this.getServiceUnavailableRetryAfterSecondsPDConnectionFailed();
+				this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDConnectionFailed();
 			}
-			if(this.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed()) {
-				this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed();
-				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed();
+			if(this.isEnabledServiceUnavailableRetryAfterPAConnectionFailed()) {
+				this.getServiceUnavailableRetryAfterSecondsPAConnectionFailed();
+				this.getServiceUnavailableRetryAfterSecondsRandomBackoffPAConnectionFailed();
 			}
-			this.isServiceUnavailable_ReadTimedOut("");
+			this.isServiceUnavailableReadTimedOut("");
 			
 			// Statistiche
 			if(this.isStatisticheGenerazioneEnabled()) {
@@ -31565,9 +31569,9 @@ public class OpenSPCoop2Properties {
 	// Limit
 	
 	private String [] getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit = null;
-	private Boolean getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimitRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimitRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.limit");
@@ -31579,7 +31583,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimit_read = true;
+				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderLimitRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.limit': "+e.getMessage(),e);
@@ -31591,9 +31595,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroRichiesteHeaderLimit = null;
-	private Boolean getControlloTrafficoNumeroRichiesteHeaderLimit_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteHeaderLimitRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteHeaderLimit() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteHeaderLimit_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteHeaderLimitRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit");
@@ -31605,7 +31609,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteHeaderLimit_read = true;
+				this.getControlloTrafficoNumeroRichiesteHeaderLimitRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
@@ -31617,9 +31621,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoOccupazioneBandaHeaderLimit = null;
-	private Boolean getControlloTrafficoOccupazioneBandaHeaderLimit_read = null;
+	private Boolean getControlloTrafficoOccupazioneBandaHeaderLimitRead = null;
 	public String [] getControlloTrafficoOccupazioneBandaHeaderLimit() throws CoreException {	
-		if(this.getControlloTrafficoOccupazioneBandaHeaderLimit_read==null){
+		if(this.getControlloTrafficoOccupazioneBandaHeaderLimitRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit");
@@ -31631,7 +31635,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoOccupazioneBandaHeaderLimit_read = true;
+				this.getControlloTrafficoOccupazioneBandaHeaderLimitRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit': "+e.getMessage(),e);
@@ -31643,9 +31647,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoTempoComplessivoRispostaHeaderLimit = null;
-	private Boolean getControlloTrafficoTempoComplessivoRispostaHeaderLimit_read = null;
+	private Boolean getControlloTrafficoTempoComplessivoRispostaHeaderLimitRead = null;
 	public String [] getControlloTrafficoTempoComplessivoRispostaHeaderLimit() throws CoreException {	
-		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderLimit_read==null){
+		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit");
@@ -31657,7 +31661,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoTempoComplessivoRispostaHeaderLimit_read = true;
+				this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit': "+e.getMessage(),e);
@@ -31669,9 +31673,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoTempoMedioRispostaHeaderLimit = null;
-	private Boolean getControlloTrafficoTempoMedioRispostaHeaderLimit_read = null;
+	private Boolean getControlloTrafficoTempoMedioRispostaHeaderLimitRead = null;
 	public String [] getControlloTrafficoTempoMedioRispostaHeaderLimit() throws CoreException {	
-		if(this.getControlloTrafficoTempoMedioRispostaHeaderLimit_read==null){
+		if(this.getControlloTrafficoTempoMedioRispostaHeaderLimitRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit");
@@ -31683,7 +31687,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoTempoMedioRispostaHeaderLimit_read = true;
+				this.getControlloTrafficoTempoMedioRispostaHeaderLimitRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit': "+e.getMessage(),e);
@@ -31695,9 +31699,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit = null;
-	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit");
@@ -31709,7 +31713,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimit_read = true;
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit': "+e.getMessage(),e);
@@ -31721,9 +31725,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroRichiesteFalliteHeaderLimit = null;
-	private Boolean getControlloTrafficoNumeroRichiesteFalliteHeaderLimit_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteFalliteHeaderLimitRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteFalliteHeaderLimit() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit");
@@ -31735,7 +31739,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimit_read = true;
+				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit': "+e.getMessage(),e);
@@ -31747,9 +31751,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroFaultApplicativiHeaderLimit = null;
-	private Boolean getControlloTrafficoNumeroFaultApplicativiHeaderLimit_read = null;
+	private Boolean getControlloTrafficoNumeroFaultApplicativiHeaderLimitRead = null;
 	public String [] getControlloTrafficoNumeroFaultApplicativiHeaderLimit() throws CoreException {	
-		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderLimit_read==null){
+		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit");
@@ -31761,7 +31765,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimit_read = true;
+				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit': "+e.getMessage(),e);
@@ -31773,9 +31777,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit = null;
-	private Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit");
@@ -31787,7 +31791,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit_read = true;
+				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit': "+e.getMessage(),e);
@@ -31797,15 +31801,40 @@ public class OpenSPCoop2Properties {
 
 		return this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit;
 	}	
-	
+		
+	private String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimit = null;
+	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitRead = null;
+	public String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimit() throws CoreException {	
+		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccessoOFaultApplicativi.header.limit");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimit = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimit.length; i++) {
+						this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimit[i]=this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimit[i].trim();
+					}
+				}
+				
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitRead = true;
+				
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccessoOFaultApplicativi.header.limit': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimit;
+	}	
 	
 	
 	// Windows
 	
 	private Boolean getControlloTrafficoNumeroRichiesteHeaderLimitWindows = null;
-	private Boolean getControlloTrafficoNumeroRichiesteHeaderLimitWindows_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteHeaderLimitWindowsRead = null;
 	public Boolean getControlloTrafficoNumeroRichiesteHeaderLimitWindows() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteHeaderLimitWindows_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteHeaderLimitWindowsRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit.windows");
@@ -31814,7 +31843,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoNumeroRichiesteHeaderLimitWindows = Boolean.valueOf(name);
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteHeaderLimitWindows_read = true;
+				this.getControlloTrafficoNumeroRichiesteHeaderLimitWindowsRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit.windows': "+e.getMessage(),e);
@@ -31826,9 +31855,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private Boolean getControlloTrafficoOccupazioneBandaHeaderLimitWindows = null;
-	private Boolean getControlloTrafficoOccupazioneBandaHeaderLimitWindows_read = null;
+	private Boolean getControlloTrafficoOccupazioneBandaHeaderLimitWindowsRead = null;
 	public Boolean getControlloTrafficoOccupazioneBandaHeaderLimitWindows() throws CoreException {	
-		if(this.getControlloTrafficoOccupazioneBandaHeaderLimitWindows_read==null){
+		if(this.getControlloTrafficoOccupazioneBandaHeaderLimitWindowsRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit.windows");
@@ -31837,7 +31866,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoOccupazioneBandaHeaderLimitWindows = Boolean.valueOf(name);
 				}
 				
-				this.getControlloTrafficoOccupazioneBandaHeaderLimitWindows_read = true;
+				this.getControlloTrafficoOccupazioneBandaHeaderLimitWindowsRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.limit.windows': "+e.getMessage(),e);
@@ -31849,9 +31878,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private Boolean getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows = null;
-	private Boolean getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows_read = null;
+	private Boolean getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindowsRead = null;
 	public Boolean getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows() throws CoreException {	
-		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows_read==null){
+		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindowsRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit.windows");
@@ -31860,7 +31889,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows = Boolean.valueOf(name);
 				}
 				
-				this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindows_read = true;
+				this.getControlloTrafficoTempoComplessivoRispostaHeaderLimitWindowsRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.limit.windows': "+e.getMessage(),e);
@@ -31872,9 +31901,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private Boolean getControlloTrafficoTempoMedioRispostaHeaderLimitWindows = null;
-	private Boolean getControlloTrafficoTempoMedioRispostaHeaderLimitWindows_read = null;
+	private Boolean getControlloTrafficoTempoMedioRispostaHeaderLimitWindowsRead = null;
 	public Boolean getControlloTrafficoTempoMedioRispostaHeaderLimitWindows() throws CoreException {	
-		if(this.getControlloTrafficoTempoMedioRispostaHeaderLimitWindows_read==null){
+		if(this.getControlloTrafficoTempoMedioRispostaHeaderLimitWindowsRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit.windows");
@@ -31883,7 +31912,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoTempoMedioRispostaHeaderLimitWindows = Boolean.valueOf(name);
 				}
 				
-				this.getControlloTrafficoTempoMedioRispostaHeaderLimitWindows_read = true;
+				this.getControlloTrafficoTempoMedioRispostaHeaderLimitWindowsRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.limit.windows': "+e.getMessage(),e);
@@ -31895,9 +31924,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows = null;
-	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindowsRead = null;
 	public Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindowsRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit.windows");
@@ -31906,7 +31935,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows = Boolean.valueOf(name);
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindows_read = true;
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderLimitWindowsRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.limit.windows': "+e.getMessage(),e);
@@ -31918,9 +31947,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private Boolean getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows = null;
-	private Boolean getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindowsRead = null;
 	public Boolean getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindowsRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit.windows");
@@ -31929,7 +31958,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows = Boolean.valueOf(name);
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindows_read = true;
+				this.getControlloTrafficoNumeroRichiesteFalliteHeaderLimitWindowsRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.limit.windows': "+e.getMessage(),e);
@@ -31941,9 +31970,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private Boolean getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows = null;
-	private Boolean getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows_read = null;
+	private Boolean getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindowsRead = null;
 	public Boolean getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows() throws CoreException {	
-		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows_read==null){
+		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindowsRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit.windows");
@@ -31952,7 +31981,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows = Boolean.valueOf(name);
 				}
 				
-				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindows_read = true;
+				this.getControlloTrafficoNumeroFaultApplicativiHeaderLimitWindowsRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
@@ -31964,9 +31993,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows = null;
-	private Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindowsRead = null;
 	public Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindowsRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit.windows");
@@ -31975,7 +32004,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows = Boolean.valueOf(name);
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows_read = true;
+				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindowsRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
@@ -31986,14 +32015,36 @@ public class OpenSPCoop2Properties {
 		return this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows;
 	}	
 	
+	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitWindows = null;
+	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitWindowsRead = null;
+	public Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitWindows() throws CoreException {	
+		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitWindowsRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccessoOFaultApplicativi.header.limit.windows");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitWindows = Boolean.valueOf(name);
+				}
+				
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitWindowsRead = true;
+				
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccessoOFaultApplicativi.header.limit.windows': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitWindows;
+	}	
 
 	
 	// Remaining
 	
 	private String [] getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining = null;
-	private Boolean getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemainingRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemainingRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.remaining");
@@ -32005,7 +32056,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemaining_read = true;
+				this.getControlloTrafficoNumeroRichiesteSimultaneeHeaderRemainingRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteSimultanee.header.remaining': "+e.getMessage(),e);
@@ -32017,9 +32068,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroRichiesteHeaderRemaining = null;
-	private Boolean getControlloTrafficoNumeroRichiesteHeaderRemaining_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteHeaderRemainingRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteHeaderRemaining() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteHeaderRemaining_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteHeaderRemainingRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.remaining");
@@ -32031,7 +32082,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteHeaderRemaining_read = true;
+				this.getControlloTrafficoNumeroRichiesteHeaderRemainingRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.remaining': "+e.getMessage(),e);
@@ -32043,9 +32094,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoOccupazioneBandaHeaderRemaining = null;
-	private Boolean getControlloTrafficoOccupazioneBandaHeaderRemaining_read = null;
+	private Boolean getControlloTrafficoOccupazioneBandaHeaderRemainingRead = null;
 	public String [] getControlloTrafficoOccupazioneBandaHeaderRemaining() throws CoreException {	
-		if(this.getControlloTrafficoOccupazioneBandaHeaderRemaining_read==null){
+		if(this.getControlloTrafficoOccupazioneBandaHeaderRemainingRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.remaining");
@@ -32057,7 +32108,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoOccupazioneBandaHeaderRemaining_read = true;
+				this.getControlloTrafficoOccupazioneBandaHeaderRemainingRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.remaining': "+e.getMessage(),e);
@@ -32069,9 +32120,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoTempoComplessivoRispostaHeaderRemaining = null;
-	private Boolean getControlloTrafficoTempoComplessivoRispostaHeaderRemaining_read = null;
+	private Boolean getControlloTrafficoTempoComplessivoRispostaHeaderRemainingRead = null;
 	public String [] getControlloTrafficoTempoComplessivoRispostaHeaderRemaining() throws CoreException {	
-		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderRemaining_read==null){
+		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderRemainingRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.remaining");
@@ -32083,7 +32134,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoTempoComplessivoRispostaHeaderRemaining_read = true;
+				this.getControlloTrafficoTempoComplessivoRispostaHeaderRemainingRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.remaining': "+e.getMessage(),e);
@@ -32095,9 +32146,9 @@ public class OpenSPCoop2Properties {
 	}
 		
 	private String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining = null;
-	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemainingRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemainingRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.remaining");
@@ -32109,7 +32160,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemaining_read = true;
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderRemainingRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
@@ -32121,9 +32172,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining = null;
-	private Boolean getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteFalliteHeaderRemainingRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderRemainingRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.remaining");
@@ -32135,7 +32186,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteFalliteHeaderRemaining_read = true;
+				this.getControlloTrafficoNumeroRichiesteFalliteHeaderRemainingRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.remaining': "+e.getMessage(),e);
@@ -32147,9 +32198,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroFaultApplicativiHeaderRemaining = null;
-	private Boolean getControlloTrafficoNumeroFaultApplicativiHeaderRemaining_read = null;
+	private Boolean getControlloTrafficoNumeroFaultApplicativiHeaderRemainingRead = null;
 	public String [] getControlloTrafficoNumeroFaultApplicativiHeaderRemaining() throws CoreException {	
-		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining_read==null){
+		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderRemainingRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.remaining");
@@ -32161,7 +32212,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroFaultApplicativiHeaderRemaining_read = true;
+				this.getControlloTrafficoNumeroFaultApplicativiHeaderRemainingRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.remaining': "+e.getMessage(),e);
@@ -32173,9 +32224,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining = null;
-	private Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemainingRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemainingRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.remaining");
@@ -32187,7 +32238,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining_read = true;
+				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemainingRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteNonCompletateConSuccesso.header.remaining': "+e.getMessage(),e);
@@ -32198,6 +32249,32 @@ public class OpenSPCoop2Properties {
 		return this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining;
 	}
 	
+	private String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemaining = null;
+	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemainingRead = null;
+	public String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemaining() throws CoreException {	
+		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemainingRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccessoOFaultApplicativi.header.remaining");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemaining = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemaining.length; i++) {
+						this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemaining[i]=this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemaining[i].trim();
+					}
+				}
+				
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemainingRead = true;
+				
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccessoOFaultApplicativi.header.remaining': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemaining;
+	}
+	
 
 	
 	
@@ -32205,9 +32282,9 @@ public class OpenSPCoop2Properties {
 	// Reset
 	
 	private String [] getControlloTrafficoNumeroRichiesteHeaderReset = null;
-	private Boolean getControlloTrafficoNumeroRichiesteHeaderReset_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteHeaderResetRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteHeaderReset() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteHeaderReset_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteHeaderResetRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.reset");
@@ -32219,7 +32296,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteHeaderReset_read = true;
+				this.getControlloTrafficoNumeroRichiesteHeaderResetRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.reset': "+e.getMessage(),e);
@@ -32231,9 +32308,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoOccupazioneBandaHeaderReset = null;
-	private Boolean getControlloTrafficoOccupazioneBandaHeaderReset_read = null;
+	private Boolean getControlloTrafficoOccupazioneBandaHeaderResetRead = null;
 	public String [] getControlloTrafficoOccupazioneBandaHeaderReset() throws CoreException {	
-		if(this.getControlloTrafficoOccupazioneBandaHeaderReset_read==null){
+		if(this.getControlloTrafficoOccupazioneBandaHeaderResetRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.reset");
@@ -32245,7 +32322,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoOccupazioneBandaHeaderReset_read = true;
+				this.getControlloTrafficoOccupazioneBandaHeaderResetRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.occupazioneBanda.header.reset': "+e.getMessage(),e);
@@ -32257,9 +32334,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoTempoComplessivoRispostaHeaderReset = null;
-	private Boolean getControlloTrafficoTempoComplessivoRispostaHeaderReset_read = null;
+	private Boolean getControlloTrafficoTempoComplessivoRispostaHeaderResetRead = null;
 	public String [] getControlloTrafficoTempoComplessivoRispostaHeaderReset() throws CoreException {	
-		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderReset_read==null){
+		if(this.getControlloTrafficoTempoComplessivoRispostaHeaderResetRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.reset");
@@ -32271,7 +32348,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoTempoComplessivoRispostaHeaderReset_read = true;
+				this.getControlloTrafficoTempoComplessivoRispostaHeaderResetRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoComplessivoRisposta.header.reset': "+e.getMessage(),e);
@@ -32283,9 +32360,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoTempoMedioRispostaHeaderReset = null;
-	private Boolean getControlloTrafficoTempoMedioRispostaHeaderReset_read = null;
+	private Boolean getControlloTrafficoTempoMedioRispostaHeaderResetRead = null;
 	public String [] getControlloTrafficoTempoMedioRispostaHeaderReset() throws CoreException {	
-		if(this.getControlloTrafficoTempoMedioRispostaHeaderReset_read==null){
+		if(this.getControlloTrafficoTempoMedioRispostaHeaderResetRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.reset");
@@ -32297,7 +32374,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoTempoMedioRispostaHeaderReset_read = true;
+				this.getControlloTrafficoTempoMedioRispostaHeaderResetRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.tempoMedioRisposta.header.reset': "+e.getMessage(),e);
@@ -32309,9 +32386,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset = null;
-	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderResetRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderResetRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.reset");
@@ -32323,7 +32400,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderReset_read = true;
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoHeaderResetRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccesso.header.reset': "+e.getMessage(),e);
@@ -32335,9 +32412,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroRichiesteFalliteHeaderReset = null;
-	private Boolean getControlloTrafficoNumeroRichiesteFalliteHeaderReset_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteFalliteHeaderResetRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteFalliteHeaderReset() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderReset_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteFalliteHeaderResetRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.reset");
@@ -32349,7 +32426,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteFalliteHeaderReset_read = true;
+				this.getControlloTrafficoNumeroRichiesteFalliteHeaderResetRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFallite.header.reset': "+e.getMessage(),e);
@@ -32361,9 +32438,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroFaultApplicativiHeaderReset = null;
-	private Boolean getControlloTrafficoNumeroFaultApplicativiHeaderReset_read = null;
+	private Boolean getControlloTrafficoNumeroFaultApplicativiHeaderResetRead = null;
 	public String [] getControlloTrafficoNumeroFaultApplicativiHeaderReset() throws CoreException {	
-		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderReset_read==null){
+		if(this.getControlloTrafficoNumeroFaultApplicativiHeaderResetRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.reset");
@@ -32375,7 +32452,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroFaultApplicativiHeaderReset_read = true;
+				this.getControlloTrafficoNumeroFaultApplicativiHeaderResetRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroFaultApplicativi.header.reset': "+e.getMessage(),e);
@@ -32387,9 +32464,9 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset = null;
-	private Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset_read = null;
+	private Boolean getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderResetRead = null;
 	public String [] getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset() throws CoreException {	
-		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset_read==null){
+		if(this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderResetRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.reset");
@@ -32401,7 +32478,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset_read = true;
+				this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderResetRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteFalliteOFaultApplicativi.header.reset': "+e.getMessage(),e);
@@ -32410,16 +32487,42 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset;
-	}	
+	}
+	
+	private String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset = null;
+	private Boolean getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderResetRead = null;
+	public String [] getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset() throws CoreException {	
+		if(this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderResetRead==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccessoOFaultApplicativi.header.reset");
+				if(name!=null){
+					name = name.trim();
+					this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset = name.split(",");
+					for (int i = 0; i < this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset.length; i++) {
+						this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset[i]=this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset[i].trim();
+					}
+				}
+				
+				this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderResetRead = true;
+				
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.controlloTraffico.numeroRichiesteCompletateConSuccessoOFaultApplicativi.header.reset': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset;
+	}
 	
 	
 	
 	// Header Retry After
 	
 	private String [] getControlloTrafficoRetryAfterHeader = null;
-	private Boolean getControlloTrafficoRetryAfterHeader_read = null;
+	private Boolean getControlloTrafficoRetryAfterHeaderRead = null;
 	public String [] getControlloTrafficoRetryAfterHeader() throws CoreException {	
-		if(this.getControlloTrafficoRetryAfterHeader_read==null){
+		if(this.getControlloTrafficoRetryAfterHeaderRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter");
@@ -32431,7 +32534,7 @@ public class OpenSPCoop2Properties {
 					}
 				}
 				
-				this.getControlloTrafficoRetryAfterHeader_read = true;
+				this.getControlloTrafficoRetryAfterHeaderRead = true;
 				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.numeroRichieste.header.limit': "+e.getMessage(),e);
@@ -32442,26 +32545,26 @@ public class OpenSPCoop2Properties {
 		return this.getControlloTrafficoRetryAfterHeader;
 	}
 		
-	private Integer getControlloTrafficoRetryAfterHeader_randomBackoff = null;
-	public Integer getControlloTrafficoRetryAfterHeader_randomBackoff() {	
-		if(this.getControlloTrafficoRetryAfterHeader_randomBackoff==null){
+	private Integer getControlloTrafficoRetryAfterHeaderRandomBackoff = null;
+	public Integer getControlloTrafficoRetryAfterHeaderRandomBackoff() {	
+		if(this.getControlloTrafficoRetryAfterHeaderRandomBackoff==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getControlloTrafficoRetryAfterHeader_randomBackoff = Integer.parseInt(name);
+					this.getControlloTrafficoRetryAfterHeaderRandomBackoff = Integer.parseInt(name);
 				}
 				else {
-					this.getControlloTrafficoRetryAfterHeader_randomBackoff = 0;
+					this.getControlloTrafficoRetryAfterHeaderRandomBackoff = 0;
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.policyViolate.retryAfter.randomBackoff.seconds': "+e.getMessage(),e);
-				this.getControlloTrafficoRetryAfterHeader_randomBackoff = 0;
+				this.getControlloTrafficoRetryAfterHeaderRandomBackoff = 0;
 			}    
 		}
 
-		return this.getControlloTrafficoRetryAfterHeader_randomBackoff;
+		return this.getControlloTrafficoRetryAfterHeaderRandomBackoff;
 	}
 	
 	
@@ -32521,99 +32624,99 @@ public class OpenSPCoop2Properties {
 	
 	/* ------------- Service Unavailable ---------------------*/
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_pd = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_pd() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_pd==null){
+	private Integer getServiceUnavailableRetryAfterSecondsPD = null;
+	public Integer getServiceUnavailableRetryAfterSecondsPD() {	
+		if(this.getServiceUnavailableRetryAfterSecondsPD==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_pd = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsPD = Integer.parseInt(name);
 				}
 				else {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.seconds', default:60 : "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_pd = 60;
+				this.getServiceUnavailableRetryAfterSecondsPD = 60;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_pd;
+		return this.getServiceUnavailableRetryAfterSecondsPD;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pd() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd==null){
+	private Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPD = null;
+	public Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPD() {	
+		if(this.getServiceUnavailableRetryAfterSecondsRandomBackoffPD==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPD = Integer.parseInt(name);
 				}
 				else {
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = 0;
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPD = 0;
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.randomBackoff.seconds': "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd = 0;
+				this.getServiceUnavailableRetryAfterSecondsRandomBackoffPD = 0;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd;
+		return this.getServiceUnavailableRetryAfterSecondsRandomBackoffPD;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_pa = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_pa() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_pa==null){
+	private Integer getServiceUnavailableRetryAfterSecondsPA = null;
+	public Integer getServiceUnavailableRetryAfterSecondsPA() {	
+		if(this.getServiceUnavailableRetryAfterSecondsPA==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_pa = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsPA = Integer.parseInt(name);
 				}
 				else {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.seconds', default:60 : "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_pa = 60;
+				this.getServiceUnavailableRetryAfterSecondsPA = 60;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_pa;
+		return this.getServiceUnavailableRetryAfterSecondsPA;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pa() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa==null){
+	private Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPA = null;
+	public Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPA() {	
+		if(this.getServiceUnavailableRetryAfterSecondsRandomBackoffPA==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPA = Integer.parseInt(name);
 				}
 				else {
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = 0;
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPA = 0;
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.randomBackoff.seconds': "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa = 0;
+				this.getServiceUnavailableRetryAfterSecondsRandomBackoffPA = 0;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa;
+		return this.getServiceUnavailableRetryAfterSecondsRandomBackoffPA;
 	}
 	
 	
 	
-	private Boolean isEnabledServiceUnavailableRetryAfter_pd_suspend = null;
-	public boolean isEnabledServiceUnavailableRetryAfter_pd_suspend() {	
-		if(this.isEnabledServiceUnavailableRetryAfter_pd_suspend==null){
+	private Boolean isEnabledServiceUnavailableRetryAfterPDSuspend = null;
+	public boolean isEnabledServiceUnavailableRetryAfterPDSuspend() {	
+		if(this.isEnabledServiceUnavailableRetryAfterPDSuspend==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled");
@@ -32622,63 +32725,63 @@ public class OpenSPCoop2Properties {
 					name="true";
 				}
 				name = name.trim();
-				this.isEnabledServiceUnavailableRetryAfter_pd_suspend = Boolean.parseBoolean(name);
+				this.isEnabledServiceUnavailableRetryAfterPDSuspend = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
-				this.isEnabledServiceUnavailableRetryAfter_pd_suspend = true;
+				this.isEnabledServiceUnavailableRetryAfterPDSuspend = true;
 			}    
 		}
 
-		return this.isEnabledServiceUnavailableRetryAfter_pd_suspend;
+		return this.isEnabledServiceUnavailableRetryAfterPDSuspend;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_pd_suspend = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_pd_suspend() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_pd_suspend==null){
+	private Integer getServiceUnavailableRetryAfterSecondsPDSuspend = null;
+	public Integer getServiceUnavailableRetryAfterSecondsPDSuspend() {	
+		if(this.getServiceUnavailableRetryAfterSecondsPDSuspend==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_pd_suspend = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsPDSuspend = Integer.parseInt(name);
 				}
 				else {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.seconds', default:60 : "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_pd_suspend = 60;
+				this.getServiceUnavailableRetryAfterSecondsPDSuspend = 60;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_pd_suspend;
+		return this.getServiceUnavailableRetryAfterSecondsPDSuspend;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend==null){
+	private Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend = null;
+	public Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend() {	
+		if(this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend = Integer.parseInt(name);
 				}
 				else {
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend = 0;
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend = 0;
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.suspend.randomBackoff.seconds': "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend = 0;
+				this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend = 0;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_suspend;
+		return this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDSuspend;
 	}
 	
-	private Boolean isEnabledServiceUnavailableRetryAfter_pa_suspend = null;
-	public boolean isEnabledServiceUnavailableRetryAfter_pa_suspend() {	
-		if(this.isEnabledServiceUnavailableRetryAfter_pa_suspend==null){
+	private Boolean isEnabledServiceUnavailableRetryAfterPASuspend = null;
+	public boolean isEnabledServiceUnavailableRetryAfterPASuspend() {	
+		if(this.isEnabledServiceUnavailableRetryAfterPASuspend==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled");
@@ -32687,63 +32790,63 @@ public class OpenSPCoop2Properties {
 					name="true";
 				}
 				name = name.trim();
-				this.isEnabledServiceUnavailableRetryAfter_pa_suspend = Boolean.parseBoolean(name);
+				this.isEnabledServiceUnavailableRetryAfterPASuspend = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
-				this.isEnabledServiceUnavailableRetryAfter_pa_suspend = true;
+				this.isEnabledServiceUnavailableRetryAfterPASuspend = true;
 			}    
 		}
 
-		return this.isEnabledServiceUnavailableRetryAfter_pa_suspend;
+		return this.isEnabledServiceUnavailableRetryAfterPASuspend;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_pa_suspend = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_pa_suspend() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_pa_suspend==null){
+	private Integer getServiceUnavailableRetryAfterSecondsPASuspend = null;
+	public Integer getServiceUnavailableRetryAfterSecondsPASuspend() {	
+		if(this.getServiceUnavailableRetryAfterSecondsPASuspend==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_pa_suspend = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsPASuspend = Integer.parseInt(name);
 				}
 				else {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.seconds', default:60 : "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_pa_suspend = 60;
+				this.getServiceUnavailableRetryAfterSecondsPASuspend = 60;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_pa_suspend;
+		return this.getServiceUnavailableRetryAfterSecondsPASuspend;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend==null){
+	private Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPASuspend = null;
+	public Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPASuspend() {	
+		if(this.getServiceUnavailableRetryAfterSecondsRandomBackoffPASuspend==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPASuspend = Integer.parseInt(name);
 				}
 				else {
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend = 0;
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPASuspend = 0;
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.suspend.randomBackoff.seconds': "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend = 0;
+				this.getServiceUnavailableRetryAfterSecondsRandomBackoffPASuspend = 0;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_suspend;
+		return this.getServiceUnavailableRetryAfterSecondsRandomBackoffPASuspend;
 	}
 	
-	private Boolean isEnabledServiceUnavailableRetryAfter_pd_connectionFailed = null;
-	public boolean isEnabledServiceUnavailableRetryAfter_pd_connectionFailed() {	
-		if(this.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed==null){
+	private Boolean isEnabledServiceUnavailableRetryAfterPDConnectionFailed = null;
+	public boolean isEnabledServiceUnavailableRetryAfterPDConnectionFailed() {	
+		if(this.isEnabledServiceUnavailableRetryAfterPDConnectionFailed==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled");
@@ -32752,63 +32855,63 @@ public class OpenSPCoop2Properties {
 					name="true";
 				}
 				name = name.trim();
-				this.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed = Boolean.parseBoolean(name);
+				this.isEnabledServiceUnavailableRetryAfterPDConnectionFailed = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
-				this.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed = true;
+				this.isEnabledServiceUnavailableRetryAfterPDConnectionFailed = true;
 			}    
 		}
 
-		return this.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed;
+		return this.isEnabledServiceUnavailableRetryAfterPDConnectionFailed;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_pd_connectionFailed = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_pd_connectionFailed() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed==null){
+	private Integer getServiceUnavailableRetryAfterSecondsPDConnectionFailed = null;
+	public Integer getServiceUnavailableRetryAfterSecondsPDConnectionFailed() {	
+		if(this.getServiceUnavailableRetryAfterSecondsPDConnectionFailed==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsPDConnectionFailed = Integer.parseInt(name);
 				}
 				else {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.seconds', default:60 : "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed = 60;
+				this.getServiceUnavailableRetryAfterSecondsPDConnectionFailed = 60;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed;
+		return this.getServiceUnavailableRetryAfterSecondsPDConnectionFailed;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed==null){
+	private Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPDConnectionFailed = null;
+	public Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPDConnectionFailed() {	
+		if(this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDConnectionFailed==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDConnectionFailed = Integer.parseInt(name);
 				}
 				else {
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed = 0;
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDConnectionFailed = 0;
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pd.connectionFailed.randomBackoff.seconds': "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed = 0;
+				this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDConnectionFailed = 0;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed;
+		return this.getServiceUnavailableRetryAfterSecondsRandomBackoffPDConnectionFailed;
 	}
 	
-	private Boolean isEnabledServiceUnavailableRetryAfter_pa_connectionFailed = null;
-	public boolean isEnabledServiceUnavailableRetryAfter_pa_connectionFailed() {	
-		if(this.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed==null){
+	private Boolean isEnabledServiceUnavailableRetryAfterPAConnectionFailed = null;
+	public boolean isEnabledServiceUnavailableRetryAfterPAConnectionFailed() {	
+		if(this.isEnabledServiceUnavailableRetryAfterPAConnectionFailed==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled");
@@ -32817,81 +32920,65 @@ public class OpenSPCoop2Properties {
 					name="true";
 				}
 				name = name.trim();
-				this.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed = Boolean.parseBoolean(name);
+				this.isEnabledServiceUnavailableRetryAfterPAConnectionFailed = Boolean.parseBoolean(name);
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.enabled', viene utilizzato il default=true : "+e.getMessage(),e);
-				this.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed = true;
+				this.isEnabledServiceUnavailableRetryAfterPAConnectionFailed = true;
 			}    
 		}
 
-		return this.isEnabledServiceUnavailableRetryAfter_pa_connectionFailed;
+		return this.isEnabledServiceUnavailableRetryAfterPAConnectionFailed;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_pa_connectionFailed = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_pa_connectionFailed() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed==null){
+	private Integer getServiceUnavailableRetryAfterSecondsPAConnectionFailed = null;
+	public Integer getServiceUnavailableRetryAfterSecondsPAConnectionFailed() {	
+		if(this.getServiceUnavailableRetryAfterSecondsPAConnectionFailed==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsPAConnectionFailed = Integer.parseInt(name);
 				}
 				else {
 					throw new CoreException(PROPRIETA_NON_DEFINITA);
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.seconds', default:60 : "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed = 60;
+				this.getServiceUnavailableRetryAfterSecondsPAConnectionFailed = 60;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_pa_connectionFailed;
+		return this.getServiceUnavailableRetryAfterSecondsPAConnectionFailed;
 	}
 	
-	private Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed = null;
-	public Integer getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed() {	
-		if(this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed==null){
+	private Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPAConnectionFailed = null;
+	public Integer getServiceUnavailableRetryAfterSecondsRandomBackoffPAConnectionFailed() {	
+		if(this.getServiceUnavailableRetryAfterSecondsRandomBackoffPAConnectionFailed==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.randomBackoff.seconds");
 				if(name!=null){
 					name = name.trim();
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed = Integer.parseInt(name);
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPAConnectionFailed = Integer.parseInt(name);
 				}
 				else {
-					this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed = 0;
+					this.getServiceUnavailableRetryAfterSecondsRandomBackoffPAConnectionFailed = 0;
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.retryAfter.pa.connectionFailed.randomBackoff.seconds': "+e.getMessage(),e);
-				this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed = 0;
+				this.getServiceUnavailableRetryAfterSecondsRandomBackoffPAConnectionFailed = 0;
 			}    
 		}
 
-		return this.getServiceUnavailableRetryAfterSeconds_randomBackoff_pa_connectionFailed;
+		return this.getServiceUnavailableRetryAfterSecondsRandomBackoffPAConnectionFailed;
 	}
 	
 	
 	private List<String> isReadTimedOut = null;
-	public boolean isServiceUnavailable_ReadTimedOut(String msg) {	
+	public boolean isServiceUnavailableReadTimedOut(String msg) {	
 		if(this.isReadTimedOut==null){
-			try{ 
-				Properties p = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.readTimedOut.");
-				this.isReadTimedOut = new ArrayList<>();
-				if(p!=null && !p.isEmpty()) {
-					Iterator<Object> it = p.values().iterator();
-					while (it.hasNext()) {
-						Object o = it.next();
-						if(o instanceof String) {
-							String s = (String) o;
-							this.isReadTimedOut.add(s);
-						}
-					}
-				}
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.error.': "+e.getMessage(),e);
-				this.isReadTimedOut = new ArrayList<>();
-			}    
+			initServiceUnavailableReadTimedOut();
 		}
 
 		if(!this.isReadTimedOut.isEmpty()) {
@@ -32903,6 +32990,25 @@ public class OpenSPCoop2Properties {
 		}
 		
 		return false;
+	}
+	private void initServiceUnavailableReadTimedOut() {	
+		try{ 
+			Properties p = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.serviceUnavailable.readTimedOut.");
+			this.isReadTimedOut = new ArrayList<>();
+			if(p!=null && !p.isEmpty()) {
+				Iterator<Object> it = p.values().iterator();
+				while (it.hasNext()) {
+					Object o = it.next();
+					if(o instanceof String) {
+						String s = (String) o;
+						this.isReadTimedOut.add(s);
+					}
+				}
+			}
+		} catch(java.lang.Exception e) {
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.serviceUnavailable.error.': "+e.getMessage(),e);
+			this.isReadTimedOut = new ArrayList<>();
+		}   
 	}
 	
 	

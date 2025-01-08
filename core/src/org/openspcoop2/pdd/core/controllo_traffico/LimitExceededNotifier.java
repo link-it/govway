@@ -55,7 +55,7 @@ public class LimitExceededNotifier implements ILimitExceededNotifier{
 	@Override
 	public void notify(long count) {
 		if(this.context!=null) {
-			GeneratoreMessaggiErrore.addContextInfo_ControlloTrafficoPolicyViolated(this.context, false);
+			GeneratoreMessaggiErrore.addContextInfoControlloTrafficoPolicyViolated(this.context, false);
 			
 			registraEvento();
 		}

@@ -50,6 +50,8 @@ import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.DBManager;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.security.InputSanitizerProperties;
 import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
@@ -170,6 +172,13 @@ public class Startup implements ServletContextListener {
 			try {
 				Logger logR = Startup.log;
 				ServicesUtils.initCheckConnectionDB(logR, serverProperties.isJdbcCloseConnectionCheckIsClosed(), serverProperties.isJdbcCloseConnectionCheckAutocommit());
+				
+				DriverControlStationDB.setCheckLogger(logR);
+				DriverControlStationDB.setCheckIsClosed(serverProperties.isJdbcCloseConnectionCheckIsClosed());
+				DriverControlStationDB.setCheckAutocommit(serverProperties.isJdbcCloseConnectionCheckAutocommit());
+				DBManager.setCheckLogger(logR);
+				DBManager.setCheckIsClosed(serverProperties.isJdbcCloseConnectionCheckIsClosed());
+				DBManager.setCheckAutocommit(serverProperties.isJdbcCloseConnectionCheckAutocommit());
 			} catch (Exception e) {
 				doError("Inizializzazione controlli connessione non riuscita",e);
 			}

@@ -83,19 +83,33 @@ Header HTTP utilizzati nelle Policy di Rate Limiting
      GovWay-RateLimit-TimeResponseQuota-Reset      Numero di secondi mancante alla prossima finestra temporale
      ============================================  ==================================================================================
 
-- **Numero Richieste Completate con Successo, Fallite o con Fault Applicativi** (:numref:`headerGwRateLimitingMetricaNumeroRichiesteEsito`)
+- **Numero Richieste Completate con Successo o con Fault Applicativi** (:numref:`headerGwRateLimitingMetricaNumeroRichiesteEsitoOk`)
 
   .. table:: Header HTTP relativi alla metrica 'Numero Richieste Completate con Successo, Fallite o con Fault Applicativi'
-     :widths: 50 50 50 50 50
-     :name: headerGwRateLimitingMetricaNumeroRichiesteEsito
+     :widths: 50 50 50
+     :name: headerGwRateLimitingMetricaNumeroRichiesteEsitoOk
 
-     =============================================  ========================================  =======================================  =================================================  ==============================================================================
-     Header HTTP metrica 'Completate con Successo'  Header HTTP metrica 'Fallite'             Header HTTP metrica 'Fault Applicativi'  Header HTTP metrica 'Fallite e Fault Applicativi'  Descrizione
-     =============================================  ========================================  =======================================  =================================================  ==============================================================================
-     GovWay-RateLimit-RequestSuccessful-Limit       GovWay-RateLimit-RequestFailed-Limit      GovWay-RateLimit-Fault-Limit             GovWay-RateLimit-RequestFailedOrFault-Limit        Numero di richieste consentite nell'intervallo temporale configurato 
-     GovWay-RateLimit-RequestSuccessful-Remaining   GovWay-RateLimit-RequestFailed-Remaining  GovWay-RateLimit-Fault-Remaining         GovWay-RateLimit-RequestFailedOrFault-Remaining    Numero di richieste ancora effettuabili nella finestra temporale in corso
-     GovWay-RateLimit-RequestSuccessful-Reset       GovWay-RateLimit-RequestFailed-Reset      GovWay-RateLimit-Fault-Reset             GovWay-RateLimit-RequestFailedOrFault-Reset        Numero di secondi mancante alla prossima finestra temporale
-     =============================================  ========================================  =======================================  =================================================  ==============================================================================
+     =============================================  =================================================================  ==============================================================================
+     Header HTTP metrica 'Completate con Successo'  Header HTTP metrica 'Completate con Successo e Fault Applicativi'  Descrizione
+     =============================================  =================================================================  ==============================================================================
+     GovWay-RateLimit-RequestSuccessful-Limit       GovWay-RateLimit-RequestSuccessfulOrFault-Limit                    Numero di richieste consentite nell'intervallo temporale configurato 
+     GovWay-RateLimit-RequestSuccessful-Remaining   GovWay-RateLimit-RequestSuccessfulOrFault-Remaining                Numero di richieste ancora effettuabili nella finestra temporale in corso
+     GovWay-RateLimit-RequestSuccessful-Reset       GovWay-RateLimit-RequestSuccessfulOrFault-Reset                    Numero di secondi mancante alla prossima finestra temporale
+     =============================================  =================================================================  ==============================================================================
+
+- **Numero Richieste Fallite o con Fault Applicativi** (:numref:`headerGwRateLimitingMetricaNumeroRichiesteEsitoKo`)
+
+  .. table:: Header HTTP relativi alla metrica 'Numero Richieste Completate con Successo, Fallite o con Fault Applicativi'
+     :widths: 50 50 50 50
+     :name: headerGwRateLimitingMetricaNumeroRichiesteEsitoKo
+
+     ========================================  =======================================  =================================================  ==============================================================================
+     Header HTTP metrica 'Fallite'             Header HTTP metrica 'Fault Applicativi'  Header HTTP metrica 'Fallite e Fault Applicativi'  Descrizione
+     ========================================  =======================================  =================================================  ==============================================================================
+     GovWay-RateLimit-RequestFailed-Limit      GovWay-RateLimit-Fault-Limit             GovWay-RateLimit-RequestFailedOrFault-Limit        Numero di richieste consentite nell'intervallo temporale configurato 
+     GovWay-RateLimit-RequestFailed-Remaining  GovWay-RateLimit-Fault-Remaining         GovWay-RateLimit-RequestFailedOrFault-Remaining    Numero di richieste ancora effettuabili nella finestra temporale in corso
+     GovWay-RateLimit-RequestFailed-Reset      GovWay-RateLimit-Fault-Reset             GovWay-RateLimit-RequestFailedOrFault-Reset        Numero di secondi mancante alla prossima finestra temporale
+     ========================================  =======================================  =================================================  ==============================================================================
 
 
 

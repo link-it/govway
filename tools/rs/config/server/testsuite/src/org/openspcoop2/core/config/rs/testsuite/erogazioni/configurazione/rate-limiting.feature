@@ -23,7 +23,7 @@ Background:
 * def policy = read('classpath:bodies/rate-limiting-policy-erogazione.json')
 * def policy_update = read('classpath:bodies/rate-limiting-policy-erogazione-update.json')
 
-* def policy_types = [ 'numero-richieste', 'occupazione-banda', 'tempo-medio-risposta', 'tempo-complessivo-risposta', 'numero-richieste-ok', 'numero-richieste-fallite', 'numero-fault-applicativi', 'numero-richieste-fallite-o-fault-applicativi' ]
+* def policy_types = [ 'numero-richieste', 'occupazione-banda', 'tempo-medio-risposta', 'tempo-complessivo-risposta', 'numero-richieste-ok', 'numero-richieste-fallite', 'numero-fault-applicativi', 'numero-richieste-fallite-o-fault-applicativi', 'numero-richieste-ok-o-fault-applicativi' ]
 * def policy_intervalli = [ 'minuti', 'orario', 'giornaliero' ]
 * def build_data = 
     """

@@ -3502,7 +3502,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 								this.pddContext.removeObject(LimitedInputStream.ERROR_MSG_KEY);
 								this.pddContext.removeObject(LimitedInputStream.EXCEPTION_KEY);
 							}
-							else if(this.propertiesReader.isServiceUnavailable_ReadTimedOut(this.motivoErroreConsegna)){
+							else if(this.propertiesReader.isServiceUnavailableReadTimedOut(this.motivoErroreConsegna)){
 								integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
 							}
 						}

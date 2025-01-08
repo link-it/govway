@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.constants.TipoBanda;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
@@ -287,19 +288,19 @@ public class DatiCollezionati implements Serializable {
 	}
 	
 	public DatiCollezionati newInstance() {
-		return _newInstance(false); // se servisse avere una immagine con i dati remoti, usare la clone con il boolean.
+		return internalNewInstance(false); // se servisse avere una immagine con i dati remoti, usare la clone con il boolean.
 	}
 	public DatiCollezionati newInstance(boolean readRemoteInfo) {
-		return _newInstance(readRemoteInfo); 
+		return internalNewInstance(readRemoteInfo); 
 	}
-	private DatiCollezionati _newInstance(boolean readRemoteInfo) {
-		Date updatePolicyDate = new Date(this.updatePolicyDate.getTime());
-		Date gestorePolicyConfigDate = null;
+	private DatiCollezionati internalNewInstance(boolean readRemoteInfo) {
+		Date updatePolicyDateCheck = new Date(this.updatePolicyDate.getTime());
+		Date gestorePolicyConfigDateCheck = null;
 		if(this.gestorePolicyConfigDate!=null) {
-			gestorePolicyConfigDate = new Date(this.gestorePolicyConfigDate.getTime());
+			gestorePolicyConfigDateCheck = new Date(this.gestorePolicyConfigDate.getTime());
 		}
 		
-		DatiCollezionati dati = new DatiCollezionati(updatePolicyDate, gestorePolicyConfigDate);
+		DatiCollezionati dati = new DatiCollezionati(updatePolicyDateCheck, gestorePolicyConfigDateCheck);
 		
 		return setValuesIn(dati, readRemoteInfo);
 	}
@@ -413,6 +414,11 @@ public class DatiCollezionati implements Serializable {
 		return dati;
 	}
 	
+	private static final String OCCUPAZIONE_BANDA_KB_INFO = " kb (";
+	private static final String OCCUPAZIONE_BANDA_BYTES_INFO = " bytes)";
+	private static final String TEMPO_COMPLESSIVO_RISPOSTA_SECONDI_INFO = " secondi (";
+	private static final String TEMPO_COMPLESSIVO_RISPOSTA_MILLISECONDI_INFO = " ms)";
+	private static final String TEMPO_MEDIO_RISPOSTA_MILLISECONDI_INFO = " ms";
 		
 	@Override
 	public String toString(){
@@ -426,8 +432,8 @@ public class DatiCollezionati implements Serializable {
 		// tipo di risorsa
 		String nomeRisorsa = null;
 		if(this.tipoRisorsa!=null){
-//			bf.append("Risorsa: ");
-//			bf.append(this.tipoRisorsa.getValue());
+			/**bf.append("Risorsa: ");
+			bf.append(this.tipoRisorsa.getValue());*/
 			nomeRisorsa = this.tipoRisorsa.getValue();
 		}
 		
@@ -469,7 +475,7 @@ public class DatiCollezionati implements Serializable {
 			if(this.policyRealtime!=null){
 				bf.append("\n");
 				bf.append("\tModalità di Controllo: ");
-				if(this.policyRealtime){
+				if(this.policyRealtime!=null && this.policyRealtime.booleanValue()){
 					bf.append("realtime");
 				}
 				else{
@@ -540,24 +546,25 @@ public class DatiCollezionati implements Serializable {
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 				case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 					bf.append(getPolicyCounter);
 					break;
 				case OCCUPAZIONE_BANDA:
 					bf.append(DatiCollezionati.translateToKb(getPolicyCounter));
-					bf.append(" kb (");
+					bf.append(OCCUPAZIONE_BANDA_KB_INFO);
 					bf.append(getPolicyCounter);
-					bf.append(" bytes)");
+					bf.append(OCCUPAZIONE_BANDA_BYTES_INFO);
 					break;
 				case TEMPO_COMPLESSIVO_RISPOSTA:
 					bf.append(DatiCollezionati.translateToSeconds(getPolicyCounter));
-					bf.append(" secondi (");
+					bf.append(TEMPO_COMPLESSIVO_RISPOSTA_SECONDI_INFO);
 					bf.append(getPolicyCounter);
-					bf.append(" ms)");
+					bf.append(TEMPO_COMPLESSIVO_RISPOSTA_MILLISECONDI_INFO);
 					break;
 				case TEMPO_MEDIO_RISPOSTA:
 					bf.append(getPolicyCounter);
-					bf.append(" ms");
+					bf.append(TEMPO_MEDIO_RISPOSTA_MILLISECONDI_INFO);
 					break;
 				}
 			}
@@ -576,24 +583,25 @@ public class DatiCollezionati implements Serializable {
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 				case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 					bf.append(avg.longValue());	
 					break;
 				case OCCUPAZIONE_BANDA:
 					bf.append(DatiCollezionati.translateToKb(avg.longValue()));
-					bf.append(" kb (");
+					bf.append(OCCUPAZIONE_BANDA_KB_INFO);
 					bf.append(avg.longValue());
-					bf.append(" bytes)");
+					bf.append(OCCUPAZIONE_BANDA_BYTES_INFO);
 					break;
 				case TEMPO_COMPLESSIVO_RISPOSTA:
 					bf.append(DatiCollezionati.translateToSeconds(avg.longValue()));
-					bf.append(" secondi (");
+					bf.append(TEMPO_COMPLESSIVO_RISPOSTA_SECONDI_INFO);
 					bf.append(avg.longValue());
-					bf.append(" ms)");
+					bf.append(TEMPO_COMPLESSIVO_RISPOSTA_MILLISECONDI_INFO);
 					break;
 				case TEMPO_MEDIO_RISPOSTA:
 					bf.append(avg.longValue());	
-					bf.append(" ms");
+					bf.append(TEMPO_MEDIO_RISPOSTA_MILLISECONDI_INFO);
 					break;
 				}
 			}
@@ -635,24 +643,25 @@ public class DatiCollezionati implements Serializable {
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 				case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 					bf.append(this.oldPolicyCounter);
 					break;
 				case OCCUPAZIONE_BANDA:
 					bf.append(DatiCollezionati.translateToKb(this.oldPolicyCounter));
-					bf.append(" kb (");
+					bf.append(OCCUPAZIONE_BANDA_KB_INFO);
 					bf.append(this.oldPolicyCounter);
-					bf.append(" bytes)");
+					bf.append(OCCUPAZIONE_BANDA_BYTES_INFO);
 					break;
 				case TEMPO_COMPLESSIVO_RISPOSTA:
 					bf.append(DatiCollezionati.translateToSeconds(this.oldPolicyCounter));
-					bf.append(" secondi (");
+					bf.append(TEMPO_COMPLESSIVO_RISPOSTA_SECONDI_INFO);
 					bf.append(this.oldPolicyCounter);
-					bf.append(" ms)");
+					bf.append(TEMPO_COMPLESSIVO_RISPOSTA_MILLISECONDI_INFO);
 					break;
 				case TEMPO_MEDIO_RISPOSTA:
 					bf.append(this.oldPolicyCounter);
-					bf.append(" ms");
+					bf.append(TEMPO_MEDIO_RISPOSTA_MILLISECONDI_INFO);
 					break;
 				}
 			}
@@ -672,24 +681,25 @@ public class DatiCollezionati implements Serializable {
 				case NUMERO_RICHIESTE_FALLITE:
 				case NUMERO_FAULT_APPLICATIVI:
 				case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+				case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 				case DIMENSIONE_MASSIMA_MESSAGGIO: // non viene usata
 					bf.append(oldAvg.longValue());	
 					break;
 				case OCCUPAZIONE_BANDA:
 					bf.append(DatiCollezionati.translateToKb(oldAvg.longValue()));	
-					bf.append(" kb (");
+					bf.append(OCCUPAZIONE_BANDA_KB_INFO);
 					bf.append(oldAvg.longValue());
-					bf.append(" bytes)");
+					bf.append(OCCUPAZIONE_BANDA_BYTES_INFO);
 					break;
 				case TEMPO_COMPLESSIVO_RISPOSTA:
 					bf.append(DatiCollezionati.translateToSeconds(oldAvg.longValue()));	
-					bf.append(" secondi (");
+					bf.append(TEMPO_COMPLESSIVO_RISPOSTA_SECONDI_INFO);
 					bf.append(oldAvg.longValue());
-					bf.append(" ms)");
+					bf.append(TEMPO_COMPLESSIVO_RISPOSTA_MILLISECONDI_INFO);
 					break;
 				case TEMPO_MEDIO_RISPOSTA:
 					bf.append(oldAvg.longValue());	
-					bf.append(" ms");
+					bf.append(TEMPO_MEDIO_RISPOSTA_MILLISECONDI_INFO);
 					break;
 				}
 			}
@@ -698,13 +708,12 @@ public class DatiCollezionati implements Serializable {
 			}
 		}
 		
-		if(oldExists==false && 
+		if(!oldExists && 
 				this.policyDateWindowInterval!=null &&
-				TipoFinestra.PRECEDENTE.equals(this.policyDateWindowInterval)){
-			if(this.policyRealtime!=null && this.policyRealtime){
-				bf.append("\n");
-				bf.append("\tIntervallo Precedente - Dati non ancora disponibili");
-			}
+				TipoFinestra.PRECEDENTE.equals(this.policyDateWindowInterval)&&
+				this.policyRealtime!=null && this.policyRealtime.booleanValue()){
+			bf.append("\n");
+			bf.append("\tIntervallo Precedente - Dati non ancora disponibili");
 		}
 		
 		
@@ -719,7 +728,7 @@ public class DatiCollezionati implements Serializable {
 			if(this.policyDegradoPrestazionaleRealtime!=null){
 				bf.append("\n");
 				bf.append("\tModalità di Controllo: ");
-				if(this.policyDegradoPrestazionaleRealtime){
+				if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime.booleanValue()){
 					bf.append("realtime");
 				}
 				else{
@@ -827,13 +836,12 @@ public class DatiCollezionati implements Serializable {
 			bf.append(" ms");
 		}
 		
-		if(oldDegradoPrestazionaleExists==false && 
+		if(!oldDegradoPrestazionaleExists && 
 				this.policyDegradoPrestazionaleDateWindowInterval!=null &&
-				TipoFinestra.PRECEDENTE.equals(this.policyDegradoPrestazionaleDateWindowInterval)){
-			if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-				bf.append("\n");
-				bf.append("\tIntervallo Precedente - Dati non ancora disponibili");
-			}
+				TipoFinestra.PRECEDENTE.equals(this.policyDegradoPrestazionaleDateWindowInterval) &&
+			this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime.booleanValue()){
+			bf.append("\n");
+			bf.append("\tIntervallo Precedente - Dati non ancora disponibili");
 		}
 		
 
@@ -850,6 +858,7 @@ public class DatiCollezionati implements Serializable {
 		case NUMERO_RICHIESTE_FALLITE:
 		case NUMERO_FAULT_APPLICATIVI:
 		case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 			return true;
 		case OCCUPAZIONE_BANDA:
 		case TEMPO_COMPLESSIVO_RISPOSTA:
@@ -867,6 +876,7 @@ public class DatiCollezionati implements Serializable {
 		case NUMERO_RICHIESTE_FALLITE:
 		case NUMERO_FAULT_APPLICATIVI:
 		case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
 			return true;
 		case NUMERO_RICHIESTE:
 		case OCCUPAZIONE_BANDA:
@@ -885,8 +895,8 @@ public class DatiCollezionati implements Serializable {
 			this.policyRequestCounter = 0l;
 			this.policyDenyRequestCounter = 0l;
 			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
-				//SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-				//System.out.println("Resetto policy counter a zero per intervallo d["+dateformat.format(d)+"]");
+				/**SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
+				System.out.println("Resetto policy counter a zero per intervallo d["+dateformat.format(d)+"]");*/
 				this.policyCounter = 0l;
 			}
 		}
@@ -902,7 +912,12 @@ public class DatiCollezionati implements Serializable {
 		
 	}
 	
-
+	protected void logDebug(Logger log, String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
+	
 	protected void checkPolicyCounterForDate(Logger log, ActivePolicy activePolicy){
 		
 		if(this.policyDate==null){
@@ -924,7 +939,7 @@ public class DatiCollezionati implements Serializable {
 			boolean after = now.after(rightInterval);
 			if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 				SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-				log.debug("checkPolicyCounterForDate now["+dateformat.format(now)+"] after policyDate["+dateformat.format(rightInterval)+"]: "+after+"");
+				logDebug(log,"checkPolicyCounterForDate now["+dateformat.format(now)+"] after policyDate["+dateformat.format(rightInterval)+"]: "+after+"");
 			}
 			if(after){
 				
@@ -944,13 +959,13 @@ public class DatiCollezionati implements Serializable {
 				
 				Date dRight = DateUtils.convertToRightInterval(d, this.policyDateTypeInterval);
 				dRight = DatiCollezionati.incrementDate(dRight, this.policyDateTypeInterval, this.policyDateInterval, this.policyDateCurrentInterval);
-				//Date dRight = DateUtils.incrementDate(d, this.policyDateTypeInterval, this.policyDateInterval);
-				//dRight = DateUtils.convertToRightInterval(dRight, this.policyDateTypeInterval);
+				/**Date dRight = DateUtils.incrementDate(d, this.policyDateTypeInterval, this.policyDateInterval);
+				dRight = DateUtils.convertToRightInterval(dRight, this.policyDateTypeInterval);*/
 				
 				boolean before = dRight.before(now);
 				if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-					log.debug("checkPolicyCounterForDate Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
+					logDebug(log,"checkPolicyCounterForDate Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 							dateformat.format(now)+"]: "+before);
 				}
 				while(before){
@@ -972,13 +987,13 @@ public class DatiCollezionati implements Serializable {
 					
 					dRight = DateUtils.convertToRightInterval(d, this.policyDateTypeInterval);
 					dRight = DatiCollezionati.incrementDate(dRight, this.policyDateTypeInterval, this.policyDateInterval, this.policyDateCurrentInterval);
-					//dRight = DateUtils.incrementDate(d, this.policyDateTypeInterval, this.policyDateInterval);
-					//dRight = DateUtils.convertToRightInterval(dRight, this.policyDateTypeInterval);
+					/**dRight = DateUtils.incrementDate(d, this.policyDateTypeInterval, this.policyDateInterval);
+					dRight = DateUtils.convertToRightInterval(dRight, this.policyDateTypeInterval);*/
 					
 					before = dRight.before(now);
 					if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 						SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-						log.debug("checkPolicyCounterForDate Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
+						logDebug(log,"checkPolicyCounterForDate Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 								dateformat.format(now)+"]: "+before);
 					}
 				}
@@ -1015,7 +1030,7 @@ public class DatiCollezionati implements Serializable {
 			boolean after = now.after(rightInterval);
 			if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 				SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-				log.debug("checkPolicyCounterForDateDegradoPrestazionale now["+dateformat.format(now)+"] after policyDate["+dateformat.format(rightInterval)+"]: "+after+"");
+				logDebug(log,"checkPolicyCounterForDateDegradoPrestazionale now["+dateformat.format(now)+"] after policyDate["+dateformat.format(rightInterval)+"]: "+after+"");
 			}
 			if(after){
 				
@@ -1035,7 +1050,7 @@ public class DatiCollezionati implements Serializable {
 				boolean before = dRight.before(now);
 				if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-					log.debug("checkPolicyCounterForDateDegradoPrestazionale Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
+					logDebug(log,"checkPolicyCounterForDateDegradoPrestazionale Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 							dateformat.format(now)+"]: "+before);
 				}
 				while(before){
@@ -1057,7 +1072,7 @@ public class DatiCollezionati implements Serializable {
 					before = dRight.before(now);
 					if(activePolicy.getConfigurazioneControlloTraffico().isDebug()){
 						SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-						log.debug("checkPolicyCounterForDateDegradoPrestazionale Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
+						logDebug(log,"checkPolicyCounterForDateDegradoPrestazionale Increment d["+dateformat.format(d)+"] dRight["+dateformat.format(dRight)+"] before now["+
 								dateformat.format(now)+"]: "+before);
 					}
 				}
@@ -1073,7 +1088,7 @@ public class DatiCollezionati implements Serializable {
 		this.resetCounters(null);
 		
 		this.manuallyResetPolicyTimeMillis = DateManager.getTimeMillis();
-		//System.out.println("IMPOSTO RESET MANUALE ("+this.manuallyResetPolicyTimeMillis+") IN ["+this.toString()+"]");
+		/**System.out.println("IMPOSTO RESET MANUALE ("+this.manuallyResetPolicyTimeMillis+") IN ["+this.toString()+"]");*/
 		
 	}
 	// Questo metodo viene invocato quando viene rilevata una modifica ai valori di soglia di una policy e quindi viene aggiornata l'updatePolicyDate
@@ -1125,14 +1140,14 @@ public class DatiCollezionati implements Serializable {
 		}
 		
 		if(this.getPolicyDateWindowInterval()!=null && 
-				TipoFinestra.SCORREVOLE.equals(this.getPolicyDateWindowInterval())==false){
+				!TipoFinestra.SCORREVOLE.equals(this.getPolicyDateWindowInterval())){
 			
 			this.checkPolicyCounterForDate(log,activePolicy);
 			
 		}
 		
 		if(this.getPolicyDegradoPrestazionaleDateWindowInterval()!=null && 
-				TipoFinestra.SCORREVOLE.equals(this.getPolicyDegradoPrestazionaleDateWindowInterval())==false){
+				!TipoFinestra.SCORREVOLE.equals(this.getPolicyDegradoPrestazionaleDateWindowInterval())){
 			
 			this.checkPolicyCounterForDateDegradoPrestazionale(log,activePolicy);
 
@@ -1142,17 +1157,20 @@ public class DatiCollezionati implements Serializable {
 	
 	
 	private boolean skipBecauseManuallyResetAfterStartRequest(String source, Map<Object> ctx) {
+		if(source!=null) {
+			// nop
+		}
 		if(this.manuallyResetPolicyTimeMillis!=null && ctx!=null) {
 			Object o = ctx.get(START_PROCESS_REQUEST_TIME_MS);
 			if(o==null) {
 				// transazione gestita precedentemente al reset dei contatori
-				//System.out.println("@"+source+" RILEVATO RESET '"+this.manuallyResetPolicyTimeMillis+"', trovato in ctx 'NULL'");
+				/**System.out.println("@"+source+" RILEVATO RESET '"+this.manuallyResetPolicyTimeMillis+"', trovato in ctx 'NULL'");*/
 				return true;
 			}
 			Long l = (Long) o;
 			if(l.longValue() < this.manuallyResetPolicyTimeMillis.longValue()) {
 				// transazione gestita precedentemente al reset dei contatori
-				//System.out.println("@"+source+" RILEVATO RESET '"+this.manuallyResetPolicyTimeMillis+"', trovato in ctx una data minore '"+l+"'");
+				/**System.out.println("@"+source+" RILEVATO RESET '"+this.manuallyResetPolicyTimeMillis+"', trovato in ctx una data minore '"+l+"'");*/
 				return true;
 			}
 		}
@@ -1161,7 +1179,7 @@ public class DatiCollezionati implements Serializable {
 	
 	
 	
-	protected void _registerStartRequest_incrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
+	protected void internalRegisterStartRequestIncrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
 		this.activeRequestCounter++;
 		if(datiCollezionatiPerPolicyVerifier!=null) {
 			datiCollezionatiPerPolicyVerifier.activeRequestCounter = this.activeRequestCounter;
@@ -1176,34 +1194,34 @@ public class DatiCollezionati implements Serializable {
 			this.initDatiIniziali(activePolicy);
 		}
 		
-		_registerStartRequest_incrementActiveRequestCounter(datiCollezionatiPerPolicyVerifier);
+		internalRegisterStartRequestIncrementActiveRequestCounter(datiCollezionatiPerPolicyVerifier);
 		
 		if(this.getPolicyDateWindowInterval()!=null && 
-				TipoFinestra.SCORREVOLE.equals(this.getPolicyDateWindowInterval())==false){
+				!TipoFinestra.SCORREVOLE.equals(this.getPolicyDateWindowInterval())){
 			
 			this.checkPolicyCounterForDate(log,activePolicy);
 						
 		}
 
 		if(this.getPolicyDegradoPrestazionaleDateWindowInterval()!=null && 
-				TipoFinestra.SCORREVOLE.equals(this.getPolicyDegradoPrestazionaleDateWindowInterval())==false){
+				!TipoFinestra.SCORREVOLE.equals(this.getPolicyDegradoPrestazionaleDateWindowInterval())){
 			
 			this.checkPolicyCounterForDateDegradoPrestazionale(log,activePolicy);
 			
-			//if(this.policyDegradoPrestazionaleRealtime){
+			/**if(this.policyDegradoPrestazionaleRealtime){
 			// Essendo il degrado un tempo medio anche il numero di richieste lo devo incrementare quando aggiungo anche la latenza, 
 			// senno poi la divisione (per l'avg) rispetto al numero di richieste è falsata
 			// poiche' tengo conto anche delle richieste in corso, nonostante per queste non disponga ancora nella latenza
-			// }
+			}*/
 		}
 		
 		if(this.manuallyResetPolicyTimeMillis!=null && ctx!=null) {
 			ctx.put(START_PROCESS_REQUEST_TIME_MS, DateManager.getTimeMillis());
-			//System.out.println("IMPOSTATO IN CONTESTO: '"+DateManager.getTimeMillis()+"'");
+			/**System.out.println("IMPOSTATO IN CONTESTO: '"+DateManager.getTimeMillis()+"'");*/
 		}
 	}
 	
-	protected void _updateDatiStartRequestApplicabile_incrementRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
+	protected void internalUpdateDatiStartRequestApplicabileIncrementRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
 		this.policyRequestCounter++;
 		if(datiCollezionatiPerPolicyVerifier!=null) {
 			datiCollezionatiPerPolicyVerifier.policyRequestCounter = this.policyRequestCounter;
@@ -1214,24 +1232,27 @@ public class DatiCollezionati implements Serializable {
 	}
 	public boolean updateDatiStartRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<Object> ctx, DatiCollezionati datiCollezionatiPerPolicyVerifier){
 		
+		if(log!=null) {
+			// nop
+		}
+		
 		if(skipBecauseManuallyResetAfterStartRequest("updateDatiStartRequestApplicabile", ctx)) {
 			return false;
 		}
 		
 		if(this.getPolicyDateWindowInterval()!=null && 
-				TipoFinestra.SCORREVOLE.equals(this.getPolicyDateWindowInterval())==false){
-			
-			if(this.policyRealtime){
+				!TipoFinestra.SCORREVOLE.equals(this.getPolicyDateWindowInterval()) &&
+				(this.policyRealtime!=null && this.policyRealtime.booleanValue() &&
 				// il contatore delle richieste lo tengo per qualsiasi tipo di risorsa
 				// Pero' per il tempo medio lo devo incrementare quando aggiungo anche la latenza, senno poi la divisione (per l'avg) rispetto al numero di richieste è falsata
 				// poiche' tengo conto anche delle richieste in corso, nonostante per queste non disponga ancora nella latenza
 				// Lo stesso per le richieste che dipendono dall'esito devo incrementarle solo quando conosco l'esito della transazione
-				if( (TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(activePolicy.getTipoRisorsaPolicy()) == false) &&
-						isRisorsaContaNumeroRichiesteDipendentiEsito(activePolicy.getTipoRisorsaPolicy())==false){
-					_updateDatiStartRequestApplicabile_incrementRequestCounter(datiCollezionatiPerPolicyVerifier);
-					return true;
-				}
-			}
+				( (!TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(activePolicy.getTipoRisorsaPolicy())) &&
+						!isRisorsaContaNumeroRichiesteDipendentiEsito(activePolicy.getTipoRisorsaPolicy()))
+				)
+			){
+			internalUpdateDatiStartRequestApplicabileIncrementRequestCounter(datiCollezionatiPerPolicyVerifier);
+			return true;
 			
 		}
 		
@@ -1239,22 +1260,25 @@ public class DatiCollezionati implements Serializable {
 
 	}
 	
-	protected void _registerEndRequest_decrementActiveRequestCounter() {
+	protected void internalRegisterEndRequestDecrementActiveRequestCounter() {
 		this.activeRequestCounter--;
 	}
-	protected void _registerEndRequest_incrementDegradoPrestazionaleRequestCounter() {
+	protected void internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter() {
 		this.policyDegradoPrestazionaleRequestCounter++;
 	}
-	protected void _registerEndRequest_incrementDegradoPrestazionaleCounter(long latenza) {
+	protected void internalRegisterEndRequestIncrementDegradoPrestazionaleCounter(long latenza) {
 		this.policyDegradoPrestazionaleCounter = this.policyDegradoPrestazionaleCounter + latenza;
 	}
 	public void registerEndRequest(Logger log, ActivePolicy activePolicy, Map<Object> ctx, MisurazioniTransazione dati){
 		
+		if(log!=null) {
+			// nop
+		}
 		if(this.creationDate==null){
 			return; // non inizializzato?
 		}
 		
-		_registerEndRequest_decrementActiveRequestCounter();
+		internalRegisterEndRequestDecrementActiveRequestCounter();
 				
 		// Il decrement delle richieste attive deve comunque essere attuato poichè il reset dei contatori non insiste sul numero di richieste attive
 		if(skipBecauseManuallyResetAfterStartRequest("registerEndRequest", ctx)) {
@@ -1283,30 +1307,33 @@ public class DatiCollezionati implements Serializable {
 			}
 			
 			if(found){
-				_registerEndRequest_incrementDegradoPrestazionaleRequestCounter();
-				_registerEndRequest_incrementDegradoPrestazionaleCounter(latenza);
+				internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter();
+				internalRegisterEndRequestIncrementDegradoPrestazionaleCounter(latenza);
 			}
 			
 		}
 	}
 	
-	protected void _updateDatiEndRequestApplicabile_incrementRequestCounter() {
+	protected void internalUpdateDatiEndRequestApplicabileIncrementRequestCounter() {
 		this.policyRequestCounter++;
 	}
-	protected void _updateDatiEndRequestApplicabile_decrementRequestCounter() {
+	protected void internalUpdateDatiEndRequestApplicabileDecrementRequestCounter() {
 		this.policyRequestCounter--;
 	}
-	protected void _updateDatiEndRequestApplicabile_incrementDenyRequestCounter() {
+	protected void internalUpdateDatiEndRequestApplicabileIncrementDenyRequestCounter() {
 		this.policyDenyRequestCounter++;
 	}
-	protected void _updateDatiEndRequestApplicabile_incrementCounter(long v) {
+	protected void internalUpdateDatiEndRequestApplicabileIncrementCounter(long v) {
 		this.policyCounter = this.policyCounter + v;
 	}
 	public void updateDatiEndRequestApplicabile(Logger log, ActivePolicy activePolicy, Map<Object> ctx,
 			MisurazioniTransazione dati,
-			List<Integer> esitiCodeOk, List<Integer> esitiCodeKo_senzaFaultApplicativo, List<Integer> esitiCodeFaultApplicativo, 
+			List<Integer> esitiCodeOk, List<Integer> esitiCodeKoSenzaFaultApplicativo, List<Integer> esitiCodeFaultApplicativo, 
 			boolean isViolata) throws PolicyException{
 		
+		if(log!=null) {
+			// nop
+		}
 		if(skipBecauseManuallyResetAfterStartRequest("updateDatiEndRequestApplicabile", ctx)) {
 			return;
 		}
@@ -1323,13 +1350,13 @@ public class DatiCollezionati implements Serializable {
             }
             
             if(foundEsitoDeny){
-            	if( (TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(activePolicy.getTipoRisorsaPolicy()) == false) &&
-						isRisorsaContaNumeroRichiesteDipendentiEsito(activePolicy.getTipoRisorsaPolicy())==false){          		
-            		_updateDatiEndRequestApplicabile_decrementRequestCounter(); // l'avevo incrementato nello start
+            	if( (!TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(activePolicy.getTipoRisorsaPolicy())) &&
+						!isRisorsaContaNumeroRichiesteDipendentiEsito(activePolicy.getTipoRisorsaPolicy())){          		
+            		internalUpdateDatiEndRequestApplicabileDecrementRequestCounter(); // l'avevo incrementato nello start
             	}
             	if(isViolata) {
             		// Aumento solamente il contatore della policy la quale ha bloccato la transazione
-            		_updateDatiEndRequestApplicabile_incrementDenyRequestCounter();
+            		internalUpdateDatiEndRequestApplicabileIncrementDenyRequestCounter();
             	}
 				return; // non incremento alcun contatore.
 			}
@@ -1353,25 +1380,31 @@ public class DatiCollezionati implements Serializable {
 			case NUMERO_RICHIESTE_FALLITE:
 			case NUMERO_FAULT_APPLICATIVI:
 			case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
+			case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:				
 				
 				List<Integer> esitiAppartenentiGruppo = null;
 				try {
 					if(TipoRisorsa.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO.equals(activePolicy.getTipoRisorsaPolicy())) {
-						//esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeOk();
+						/**esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeOk();*/
 						esitiAppartenentiGruppo = esitiCodeOk;
 					}
 					else if(TipoRisorsa.NUMERO_RICHIESTE_FALLITE.equals(activePolicy.getTipoRisorsaPolicy())) {
-						//esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeKo_senzaFaultApplicativo();
-						esitiAppartenentiGruppo = esitiCodeKo_senzaFaultApplicativo;
+						/**esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeKo_senzaFaultApplicativo();*/
+						esitiAppartenentiGruppo = esitiCodeKoSenzaFaultApplicativo;
 					}
 					else if(TipoRisorsa.NUMERO_FAULT_APPLICATIVI.equals(activePolicy.getTipoRisorsaPolicy())) {
-						//esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeFaultApplicativo();
+						/**esitiAppartenentiGruppo = EsitiProperties.getInstance(log).getEsitiCodeFaultApplicativo();*/
 						esitiAppartenentiGruppo = esitiCodeFaultApplicativo;
 					}
+					else if(TipoRisorsa.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI.equals(activePolicy.getTipoRisorsaPolicy())) {
+						esitiAppartenentiGruppo = new ArrayList<>();
+						esitiAppartenentiGruppo.addAll(esitiCodeKoSenzaFaultApplicativo);
+						esitiAppartenentiGruppo.addAll(esitiCodeFaultApplicativo);
+					}
 					else {
-						// NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI
-						esitiAppartenentiGruppo = new ArrayList<Integer>();
-						esitiAppartenentiGruppo.addAll(esitiCodeKo_senzaFaultApplicativo);
+						// NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI
+						esitiAppartenentiGruppo = new ArrayList<>();
+						esitiAppartenentiGruppo.addAll(esitiCodeOk);
 						esitiAppartenentiGruppo.addAll(esitiCodeFaultApplicativo);
 					}
 				}catch(Exception e) {
@@ -1379,7 +1412,7 @@ public class DatiCollezionati implements Serializable {
 				}
 				for (int esitoAppartenenteGruppo : esitiAppartenentiGruppo) {
 					if(dati.getEsitoTransazione() == esitoAppartenenteGruppo){
-						_updateDatiEndRequestApplicabile_incrementRequestCounter();
+						internalUpdateDatiEndRequestApplicabileIncrementRequestCounter();
 						break;
 					}
 				}
@@ -1388,10 +1421,10 @@ public class DatiCollezionati implements Serializable {
 			case OCCUPAZIONE_BANDA:
 				
 				// viene misurata la banda "generata" dalle applicazioni
-				//System.out.println("Incremento banda da "+this.policyCounter);
+				/**System.out.println("Incremento banda da "+this.policyCounter);*/
 				long banda = this.getBanda(activePolicy.getConfigurazionePolicy().getValoreTipoBanda(), dati);
-				_updateDatiEndRequestApplicabile_incrementCounter(banda);
-				//System.out.println("Incremento banda a "+this.policyCounter);
+				internalUpdateDatiEndRequestApplicabileIncrementCounter(banda);
+				/**System.out.println("Incremento banda a "+this.policyCounter);*/
 								
 				break;
 	
@@ -1411,16 +1444,16 @@ public class DatiCollezionati implements Serializable {
 				for (int esitoValido : esitiValidi) {
 					if(dati.getEsitoTransazione() == esitoValido){
 						long latenza = this.getLatenza(activePolicy.getConfigurazionePolicy().getValoreTipoLatenza(), dati);
-						//System.out.println("Incremento tempo da "+this.policyCounter);
-						_updateDatiEndRequestApplicabile_incrementCounter(latenza);
-						//System.out.println("Incremento tempo a "+this.policyCounter);
+						/**System.out.println("Incremento tempo da "+this.policyCounter);*/
+						internalUpdateDatiEndRequestApplicabileIncrementCounter(latenza);
+						/**System.out.println("Incremento tempo a "+this.policyCounter);*/
 						found = true;
 						break;
 					}
 				}
 			
 				if(found && TipoRisorsa.TEMPO_MEDIO_RISPOSTA.equals(activePolicy.getTipoRisorsaPolicy())){
-					_updateDatiEndRequestApplicabile_incrementRequestCounter(); 
+					internalUpdateDatiEndRequestApplicabileIncrementRequestCounter(); 
 				}
 				
 				break;
@@ -1459,8 +1492,7 @@ public class DatiCollezionati implements Serializable {
 		
 		long bandaInterna = 0;
 		long bandaEsterna = 0;
-		switch (dati.getTipoPdD()) {
-		case DELEGATA:
+		if(TipoPdD.DELEGATA.equals(dati.getTipoPdD())) {
 			if(dati.getRichiestaIngressoBytes()!=null && dati.getRichiestaIngressoBytes()>0){
 				bandaInterna = bandaInterna + dati.getRichiestaIngressoBytes().longValue();
 			}
@@ -1474,8 +1506,7 @@ public class DatiCollezionati implements Serializable {
 			if(dati.getRispostaIngressoBytes()!=null && dati.getRispostaIngressoBytes()>0){
 				bandaEsterna = bandaEsterna + dati.getRispostaIngressoBytes().longValue();
 			}
-			break;
-		default:
+		}else{
 			if(dati.getRichiestaIngressoBytes()!=null && dati.getRichiestaIngressoBytes()>0){
 				bandaEsterna = bandaEsterna + dati.getRichiestaIngressoBytes().longValue();
 			}
@@ -1489,7 +1520,6 @@ public class DatiCollezionati implements Serializable {
 			if(dati.getRispostaIngressoBytes()!=null && dati.getRispostaIngressoBytes()>0){
 				bandaInterna = bandaInterna + dati.getRispostaIngressoBytes().longValue();
 			}
-			break;
 		}
 		
 		
@@ -1521,6 +1551,9 @@ public class DatiCollezionati implements Serializable {
 		return getActiveRequestCounter(false);
 	}
 	protected Long getActiveRequestCounter(boolean readRemoteInfo) {
+		if(readRemoteInfo) {
+			// nop
+		}
 		return this.activeRequestCounter;
 	}
 	public Date getCreationDate() {
@@ -1545,12 +1578,18 @@ public class DatiCollezionati implements Serializable {
 		return getPolicyRequestCounter(false);
 	}
 	protected Long getPolicyRequestCounter(boolean readRemoteInfo) {
+		if(readRemoteInfo) {
+			// nop
+		}
 		return this.policyRequestCounter;
 	}
 	public Long getPolicyCounter() {
 		return getPolicyCounter(false);
 	}
 	protected Long getPolicyCounter(boolean readRemoteInfo) {
+		if(readRemoteInfo) {
+			// nop
+		}
 		return this.policyCounter;
 	}
 	@Deprecated
@@ -1580,6 +1619,9 @@ public class DatiCollezionati implements Serializable {
 		return doubleValue;
 	}
 	protected Long getPolicyDenyRequestCounter(boolean readRemoteInfo) {
+		if(readRemoteInfo) {
+			// nop
+		}
 		return this.policyDenyRequestCounter;
 	}
 	public Date getLeftDateWindowCurrentInterval() {
@@ -1655,7 +1697,7 @@ public class DatiCollezionati implements Serializable {
 	public Date getRightDateWindowSlidingInterval(Date now) {
 		if(this.policyDateTypeInterval!=null && this.policyDateCurrentInterval!=null){
 			Date d = DateUtils.convertToRightInterval(now, this.policyDateTypeInterval);
-			if(this.policyDateCurrentInterval==false){
+			if(!this.policyDateCurrentInterval.booleanValue()){
 				d = DateUtils.incrementDate(d, this.policyDateTypeInterval, -1);
 			}
 			return d;
@@ -1668,9 +1710,15 @@ public class DatiCollezionati implements Serializable {
 		return this.policyDegradoPrestazionaleDate;
 	}
 	protected Long getPolicyDegradoPrestazionaleRequestCounter(boolean readRemoteInfo) {
+		if(readRemoteInfo) {
+			// nop
+		}
 		return this.policyDegradoPrestazionaleRequestCounter;
 	}
 	protected Long getPolicyDegradoPrestazionaleCounter(boolean readRemoteInfo) {
+		if(readRemoteInfo) {
+			// nop
+		}
 		return this.policyDegradoPrestazionaleCounter;
 	}
 	public Double getPolicyDegradoPrestazionaleAvgValue(){
@@ -1761,7 +1809,7 @@ public class DatiCollezionati implements Serializable {
 	public Date getDegradoPrestazionaleRightDateWindowSlidingInterval(Date now) {
 		if(this.policyDegradoPrestazionaleDateTypeInterval!=null && this.policyDegradoPrestazionaleDateCurrentInterval!=null){
 			Date d = DateUtils.convertToRightInterval(now, this.policyDegradoPrestazionaleDateTypeInterval);
-			if(this.policyDegradoPrestazionaleDateCurrentInterval==false){
+			if(!this.policyDegradoPrestazionaleDateCurrentInterval.booleanValue()){
 				d = DateUtils.incrementDate(d, this.policyDegradoPrestazionaleDateTypeInterval, -1);
 			}
 			return d;
@@ -2093,17 +2141,17 @@ public class DatiCollezionati implements Serializable {
 		return bf.toString();
 	}
 	
-	public static DatiCollezionati deserialize(String s) throws Exception{
+	public static DatiCollezionati deserialize(String s) throws CoreException{
 		DatiCollezionati dati = new DatiCollezionati(null, null);
 		String [] tmp = s.split("\n");
 		if(tmp==null){
-			throw new Exception("Wrong Format");
+			throw new CoreException("Wrong Format");
 		}
 		int oldLength = 27;
 		int dataPolicyLength = oldLength +1;
 		int dataConfigPolicyLength = dataPolicyLength +1;
 		if(tmp.length!=oldLength && tmp.length!=dataPolicyLength && tmp.length!=dataConfigPolicyLength){
-			throw new Exception("Wrong Format (size: "+tmp.length+")");
+			throw new CoreException("Wrong Format (size: "+tmp.length+")");
 		}
 		for (int i = 0; i < tmp.length; i++) {
 			

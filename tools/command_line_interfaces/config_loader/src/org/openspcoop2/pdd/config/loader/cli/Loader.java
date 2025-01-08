@@ -45,6 +45,7 @@ import org.openspcoop2.monitor.engine.dynamic.PluginLoader;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.protocol.basic.registry.ConfigIntegrationReader;
 import org.openspcoop2.protocol.basic.registry.RegistryReader;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -72,6 +73,8 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.DBManager;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiveEngine;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ArchiviCore;
 import org.slf4j.Logger;
@@ -170,6 +173,8 @@ public class Loader {
 			
 			logCoreDebug("Raccolta parametri terminata");
 			
+			// Inizializzo Controlli connessioni
+			disableCheckSingleConnectionDataSource();
 			
 			// Map (environment)
 			initMap(loaderProperties);
@@ -422,6 +427,22 @@ public class Loader {
 			logCoreInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
 		}catch(Exception e){
 			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	private static void disableCheckSingleConnectionDataSource() throws CoreException {
+		// Inizializzo Controlli connessioni
+		try {
+			Logger logR = logSql;
+			ServicesUtils.initCheckConnectionDB(logR, false, false);
+			
+			DriverControlStationDB.setCheckLogger(logR);
+			DriverControlStationDB.setCheckIsClosed(false);
+			DriverControlStationDB.setCheckAutocommit(false);
+			DBManager.setCheckLogger(logR);
+			DBManager.setCheckIsClosed(false);
+			DBManager.setCheckAutocommit(false);
+		} catch (Exception e) {
+			doError("Inizializzazione controlli connessione non riuscita",e);
 		}
 	}
 	private static void initMap(LoaderProperties loaderProperties) throws CoreException {

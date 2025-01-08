@@ -12725,6 +12725,7 @@ components:
       - "numero-richieste-fallite"
       - "numero-fault-applicativi"
       - "numero-richieste-fallite-o-fault-applicativi"
+      - "numero-richieste-ok-o-fault-applicativi"
     RateLimitingCriteriIntervalloEnum:
       type: "string"
       example: "giornaliero"

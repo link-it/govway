@@ -1,3 +1,9 @@
+2025-01-08 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1560
+	Aggiunta una nuova metrica utilizzabile nelle politiche di Rate Limiting: "Numero completato con successo o fault applicativo"
+	
 2025-01-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

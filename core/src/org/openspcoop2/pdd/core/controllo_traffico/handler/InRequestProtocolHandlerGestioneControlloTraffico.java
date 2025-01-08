@@ -696,8 +696,8 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 										sec = sec + getRandom().nextInt(policyConfigurationHeaderHttp.getForceHttpHeaders_retryAfter_backoff());
 									}
 									else {
-										if(op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff()!=null && op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff()>0) {
-											sec = sec + getRandom().nextInt(op2Properties.getControlloTrafficoRetryAfterHeader_randomBackoff());
+										if(op2Properties.getControlloTrafficoRetryAfterHeaderRandomBackoff()!=null && op2Properties.getControlloTrafficoRetryAfterHeaderRandomBackoff()>0) {
+											sec = sec + getRandom().nextInt(op2Properties.getControlloTrafficoRetryAfterHeaderRandomBackoff());
 										}
 									}
 								}
@@ -753,7 +753,7 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 					if(policyViolate>0 || policyInErrore>0){
 						msgDiag.logPersonalizzato(GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_ERRORE);
 						
-						GeneratoreMessaggiErrore.addPddContextInfo_ControlloTrafficoPolicyViolated(context.getPddContext(), false);
+						GeneratoreMessaggiErrore.addPddContextInfoControlloTrafficoPolicyViolated(context.getPddContext(), false);
 						
 						HandlerException he = GeneratoreMessaggiErrore.getControlloTrafficoPolicyViolated(policyBloccanti,
 								configurazioneControlloTraffico.isErroreGenerico(), context.getPddContext());
@@ -763,7 +763,7 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 					}
 					else if(policyViolateWarningOnly>0){
 						
-						GeneratoreMessaggiErrore.addPddContextInfo_ControlloTrafficoPolicyViolated(context.getPddContext(), true);
+						GeneratoreMessaggiErrore.addPddContextInfoControlloTrafficoPolicyViolated(context.getPddContext(), true);
 						
 						msgDiag.logPersonalizzato(GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_SUCCESSO);
 						
@@ -779,7 +779,7 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 			}
 			catch(Exception e){
 					
-				GeneratoreMessaggiErrore.addPddContextInfo_ControlloTrafficoGenericError(context.getPddContext());
+				GeneratoreMessaggiErrore.addPddContextInfoControlloTrafficoGenericError(context.getPddContext());
 				
 				throw GeneratoreMessaggiErrore.getErroreProcessamento(e, context.getPddContext());
 
@@ -951,6 +951,10 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimit();
 							windows = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderLimitWindows();
 							break;
+						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimit();
+							windows = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderLimitWindows();
+							break;
 						}
 						
 						if(policyConfigurationPorta.isForceHttpHeaders_limit_no_windows()) {
@@ -1043,6 +1047,9 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 						case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderRemaining();
 							break;
+						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderRemaining();
+							break;
 						}
 						if(headers!=null && headers.length>0) {
 							for (String header : headers) {
@@ -1097,6 +1104,9 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 							break;
 						case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 							headers = op2Properties.getControlloTrafficoNumeroRichiesteFalliteOFaultApplicativiHeaderReset();
+							break;
+						case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:
+							headers = op2Properties.getControlloTrafficoNumeroRichiesteCompletateConSuccessoOFaultApplicativiHeaderReset();
 							break;
 						}
 						

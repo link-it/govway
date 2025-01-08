@@ -31,6 +31,7 @@ import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.core.constants.TipoPdD;
@@ -52,6 +53,7 @@ import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
@@ -68,7 +70,11 @@ import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
+import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
@@ -81,6 +87,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
@@ -130,6 +137,21 @@ public class DatiStatisticiDAOManager  {
 	private boolean checkState = false;
 	
 	private Logger log;
+	private void logDebug(String msg) {
+		if(this.log!=null) {
+			this.log.debug(msg);
+		}
+	}
+	private void logDebug(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.debug(msg,e);
+		}
+	}
+	private void logError(String msg, Exception e) {
+		if(this.log!=null) {
+			this.log.error(msg,e);
+		}
+	}
 	
 	private DatiStatisticiDAOManager(ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico) throws CoreException{
 		try{
@@ -155,11 +177,13 @@ public class DatiStatisticiDAOManager  {
 			this.daoFactoryServiceManagerPropertiesStatistiche.setDatabaseType(this.tipoDatabase);
 			
 			this.dbStatisticheManager = DBStatisticheManager.getInstance();
-			if(this.dbStatisticheManager.useRuntimePdD()) {
-				this.checkState = true;
-    		}
-			else if(this.dbStatisticheManager.useTransazioni() &&
-				DBTransazioniManager.getInstance().useRuntimePdD()) {
+			if(this.dbStatisticheManager.useRuntimePdD() 
+					||
+				(	
+						this.dbStatisticheManager.useTransazioni() &&
+						DBTransazioniManager.getInstance().useRuntimePdD()
+				)
+					){
 				this.checkState = true;
 			}
 			
@@ -171,10 +195,15 @@ public class DatiStatisticiDAOManager  {
     	
     }
 	
+	private static final String RISORSA_DB_NON_DISPONIBILE = "Risorsa al database non disponibile";
+	private static final String CONNESSIONE_DB_NON_DISPONIBILE = "Connessione non disponibile";
+	private static final String MODEL_UNKNOWN = "Model unknown";
+	private static final String DAO_UNKNOWN = "DAO unknown";
+	
 	
 	/* ********************** NUMERO ESISTI *************************** */
 	public RisultatoStatistico readNumeroEsiti(String key, TipoPeriodoStatistico tipoPeriodo, Integer periodLength, 
-			Date endDate,  List<Integer> esiti, IDServizio servizio, IDSoggetto mittente, List<String> ignoreOperations, DatiTransazione datiTransazione, IState state) throws Exception {
+			Date endDate,  List<Integer> esiti, IDServizio servizio, IDSoggetto mittente, List<String> ignoreOperations, DatiTransazione datiTransazione, IState state) throws CoreException {
 		Resource r = null;
     	boolean useConnectionRuntime = false;
 		IDSoggetto dominio = datiTransazione.getDominio();
@@ -183,26 +212,24 @@ public class DatiStatisticiDAOManager  {
     	try{
 			
     		Connection con = null;
-			if(this.checkState) {
-				if(state!=null) {
-					if(state instanceof StateMessage) {
-						StateMessage s = (StateMessage) state;
-						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
-							con = s.getConnectionDB();
-							useConnectionRuntime = true;
-						}
-					}
+			if(this.checkState &&
+				state!=null &&
+				state instanceof StateMessage) {
+				StateMessage s = (StateMessage) state;
+				if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+					con = s.getConnectionDB();
+					useConnectionRuntime = true;
 				}
 			}
-			if(useConnectionRuntime==false){
+			if(!useConnectionRuntime){
 				r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
 				if(r==null){
-					throw new Exception("Risorsa al database non disponibile");
+					throw new CoreException(RISORSA_DB_NON_DISPONIBILE);
 				}
 				con = (Connection) r.getResource();
 			}
 			if(con == null)
-				throw new Exception("Connessione non disponibile");	
+				throw new CoreException(CONNESSIONE_DB_NON_DISPONIBILE);	
 			
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
@@ -239,10 +266,10 @@ public class DatiStatisticiDAOManager  {
 			Date startDate = c.getTime();
 			
 			if(model==null) {
-				throw new Exception("Model unknown");
+				throw new CoreException(MODEL_UNKNOWN);
 			}
 			if(dao==null) {
-				throw new Exception("DAO unknown");
+				throw new CoreException(DAO_UNKNOWN);
 			}
 			
 			IExpression expression = dao.newExpression();
@@ -275,7 +302,7 @@ public class DatiStatisticiDAOManager  {
 			try{
 				Object result = dao.aggregate(expression, ff);
 				if(result!=null && this.isKnownType(result) ){
-					this.log.debug("NumeroRichiesteFound ["+result.getClass().getName()+"]: "+result);
+					this.logDebug("NumeroRichiesteFound ["+result.getClass().getName()+"]: "+result);
 					Long l = this.translateType(result);
 					if(l!=null) {
 						risultato.setRisultato(l.longValue());
@@ -286,22 +313,22 @@ public class DatiStatisticiDAOManager  {
 				}
 				else{
 					if(result!=null){
-						this.log.debug("NumeroRichiesteNotFound ["+result.getClass().getName()+"]: "+result);
+						this.logDebug("NumeroRichiesteNotFound ["+result.getClass().getName()+"]: "+result);
 					}else{
-						this.log.debug("NumeroRichiesteNotFound, result is null");
+						this.logDebug("NumeroRichiesteNotFound, result is null");
 					}
 					risultato.setRisultato(0);
 				}
 			}catch(NotFoundException notFound){
-				this.log.debug("NumeroRichiesteNotFound:"+notFound.getMessage(),notFound);
+				this.logDebug("NumeroRichiesteNotFound:"+notFound.getMessage(),notFound);
 				risultato.setRisultato(0);
 			}
 			
 			return risultato;
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la raccolta dei dati statisti (" + key + "): "+e.getMessage(),e);
-			throw e;
+			this.logError("Errore durante la raccolta dei dati statisti (" + key + "): "+e.getMessage(),e);
+			throw new CoreException(e.getMessage(),e);
 		}finally {
 			try{
 				if(!useConnectionRuntime && r != null) {
@@ -318,7 +345,7 @@ public class DatiStatisticiDAOManager  {
     		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
     		IState state,
 			RequestInfo requestInfo,
-			IProtocolFactory<?> protocolFactory) throws Exception{
+			IProtocolFactory<?> protocolFactory) throws CoreException {
 	
     	Resource r = null;
     	boolean useConnectionRuntime = false;
@@ -328,26 +355,24 @@ public class DatiStatisticiDAOManager  {
     	try{
 			
     		Connection con = null;
-			if(this.checkState) {
-				if(state!=null) {
-					if(state instanceof StateMessage) {
-						StateMessage s = (StateMessage) state;
-						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
-							con = s.getConnectionDB();
-							useConnectionRuntime = true;
-						}
-					}
+			if(this.checkState &&
+				state!=null &&
+				state instanceof StateMessage) {
+				StateMessage s = (StateMessage) state;
+				if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+					con = s.getConnectionDB();
+					useConnectionRuntime = true;
 				}
 			}
-			if(useConnectionRuntime==false){
+			if(!useConnectionRuntime){
 				r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
 				if(r==null){
-					throw new Exception("Risorsa al database non disponibile");
+					throw new CoreException(RISORSA_DB_NON_DISPONIBILE);
 				}
 				con = (Connection) r.getResource();
 			}
 			if(con == null)
-				throw new Exception("Connessione non disponibile");	
+				throw new CoreException(CONNESSIONE_DB_NON_DISPONIBILE);	
     		
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
@@ -393,10 +418,10 @@ public class DatiStatisticiDAOManager  {
 				}
 			}
 			if(model==null) {
-				throw new Exception("Model unknown");
+				throw new CoreException(MODEL_UNKNOWN);
 			}
 			if(dao==null) {
-				throw new Exception("DAO unknown");
+				throw new CoreException(DAO_UNKNOWN);
 			}
 			
 			IExpression expression = this.createWhereExpressionNumeroRichieste(dao, model, tipoRisorsa, leftInterval, rightInterval, 
@@ -412,8 +437,8 @@ public class DatiStatisticiDAOManager  {
 			try{
 				Object result = dao.aggregate(expression, ff);
 				if(result!=null && this.isKnownType(result) ){
-					//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
-					this.log.debug("NumeroRichiesteFound ["+result.getClass().getName()+"]: "+result);
+					/**System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");*/
+					this.logDebug("NumeroRichiesteFound ["+result.getClass().getName()+"]: "+result);
 					Long l = this.translateType(result);
 					if(l!=null) {
 						risultato.setRisultato(l.longValue());
@@ -424,31 +449,32 @@ public class DatiStatisticiDAOManager  {
 				}
 				else{
 					if(result!=null){
-						//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
-						this.log.debug("NumeroRichiesteNotFound ["+result.getClass().getName()+"]: "+result);
+						/**System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");*/
+						this.logDebug("NumeroRichiesteNotFound ["+result.getClass().getName()+"]: "+result);
 					}else{
-						this.log.debug("NumeroRichiesteNotFound, result is null");
+						this.logDebug("NumeroRichiesteNotFound, result is null");
 					}
 					risultato.setRisultato(0);
 				}
 			}catch(NotFoundException notFound){
-				this.log.debug("NumeroRichiesteNotFound:"+notFound.getMessage(),notFound);
+				this.logDebug("NumeroRichiesteNotFound:"+notFound.getMessage(),notFound);
 				risultato.setRisultato(0);
 			}
 			
 			return risultato;
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la raccolta dei dati statisti (key:"+key+"): "+e.getMessage(),e);
-			throw e;
+			this.logError("Errore durante la raccolta dei dati statisti (key:"+key+"): "+e.getMessage(),e);
+			throw new CoreException(e.getMessage(),e);
 		}finally {
 			try{
-				if(useConnectionRuntime==false) {
-					if(r!=null) {
-						this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
-					}
+				if(!useConnectionRuntime &&
+					r!=null) {
+					this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 		}
     	
 	}
@@ -462,7 +488,7 @@ public class DatiStatisticiDAOManager  {
 			IDUnivocoGroupByPolicy groupByPolicy,
 			AttivazionePolicyFiltro filtro,
 			IState state,
-			RequestInfo requestInfo) throws Exception {
+			RequestInfo requestInfo) throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException, ProtocolException, DriverRegistroServiziException, DriverConfigurazioneException {
     	
     	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocolFactory, protocollo, groupByPolicy, filtro, state, requestInfo);
 
@@ -488,7 +514,7 @@ public class DatiStatisticiDAOManager  {
     		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
     		IState state,
 			RequestInfo requestInfo,
-			IProtocolFactory<?> protocolFactory) throws Exception{
+			IProtocolFactory<?> protocolFactory) throws CoreException {
 	
     	Resource r = null;
     	boolean useConnectionRuntime = false;
@@ -497,26 +523,24 @@ public class DatiStatisticiDAOManager  {
     	String idTransazione = datiTransazione.getIdTransazione();
     	try{
     		Connection con = null;
-			if(this.checkState) {
-				if(state!=null) {
-					if(state instanceof StateMessage) {
-						StateMessage s = (StateMessage) state;
-						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
-							con = s.getConnectionDB();
-							useConnectionRuntime = true;
-						}
-					}
+			if(this.checkState &&
+				state!=null &&
+				state instanceof StateMessage) {
+				StateMessage s = (StateMessage) state;
+				if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+					con = s.getConnectionDB();
+					useConnectionRuntime = true;
 				}
 			}
-			if(useConnectionRuntime==false){
+			if(!useConnectionRuntime){
 				r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
 				if(r==null){
-					throw new Exception("Risorsa al database non disponibile");
+					throw new CoreException(RISORSA_DB_NON_DISPONIBILE);
 				}
 				con = (Connection) r.getResource();
 			}
 			if(con == null)
-				throw new Exception("Connessione non disponibile");	
+				throw new CoreException(CONNESSIONE_DB_NON_DISPONIBILE);	
 
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
@@ -563,10 +587,10 @@ public class DatiStatisticiDAOManager  {
 			}
 			
 			if(model==null) {
-				throw new Exception("Model unknown");
+				throw new CoreException(MODEL_UNKNOWN);
 			}
 			if(dao==null) {
-				throw new Exception("DAO unknown");
+				throw new CoreException(DAO_UNKNOWN);
 			}
 			
 			IExpression expression = this.createWhereExpressionBanda(dao, model, tipoRisorsa, leftInterval, rightInterval, 
@@ -594,8 +618,8 @@ public class DatiStatisticiDAOManager  {
 			try{
 				Object result = dao.aggregate(expression, ff);
 				if(result!=null && this.isKnownType(result) ){
-					//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
-					this.log.debug("BandaFound ["+result.getClass().getName()+"]: "+result);
+					/**System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");*/
+					this.logDebug("BandaFound ["+result.getClass().getName()+"]: "+result);
 					Long l = this.translateType(result);
 					if(l!=null) {
 						risultato.setRisultato(l.longValue());
@@ -606,31 +630,32 @@ public class DatiStatisticiDAOManager  {
 				}
 				else{
 					if(result!=null){
-						//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
-						this.log.debug("BandaNotFound ["+result.getClass().getName()+"]: "+result);
+						/**System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");*/
+						this.logDebug("BandaNotFound ["+result.getClass().getName()+"]: "+result);
 					}else{
-						this.log.debug("BandaNotFound, result is null");
+						this.logDebug("BandaNotFound, result is null");
 					}
 					risultato.setRisultato(0);
 				}
 			}catch(NotFoundException notFound){
-				this.log.debug("BandaNotFound:"+notFound.getMessage(),notFound);
+				this.logDebug("BandaNotFound:"+notFound.getMessage(),notFound);
 				risultato.setRisultato(0);
 			}
 			
 			return risultato;
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la raccolta dei dati statisti (key:"+key+"): "+e.getMessage(),e);
-			throw e;
+			this.logError("Errore durante la raccolta dei dati statisti (key:"+key+"): "+e.getMessage(),e);
+			throw new CoreException(e.getMessage(),e);
 		}finally {
 			try{
-				if(useConnectionRuntime==false) {
-					if(r!=null) {
-						this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
-					}
+				if(!useConnectionRuntime &&
+					r!=null) {
+					this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 		}
     	
 	}
@@ -644,7 +669,7 @@ public class DatiStatisticiDAOManager  {
 			IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
 			TipoBanda tipoBanda,
 			IState state,
-			RequestInfo requestInfo) throws Exception {
+			RequestInfo requestInfo) throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException, ProtocolException, DriverRegistroServiziException, DriverConfigurazioneException {
     	
     	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocolFactory, protocollo, groupByPolicy, filtro, state, requestInfo);
 
@@ -674,7 +699,7 @@ public class DatiStatisticiDAOManager  {
     		DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
     		IState state,
 			RequestInfo requestInfo,
-			IProtocolFactory<?> protocolFactory) throws Exception{
+			IProtocolFactory<?> protocolFactory) throws CoreException {
 	
     	Resource r = null;
     	boolean useConnectionRuntime = false;
@@ -683,26 +708,24 @@ public class DatiStatisticiDAOManager  {
     	String idTransazione = datiTransazione.getIdTransazione();
     	try{
     		Connection con = null;
-			if(this.checkState) {
-				if(state!=null) {
-					if(state instanceof StateMessage) {
-						StateMessage s = (StateMessage) state;
-						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
-							con = s.getConnectionDB();
-							useConnectionRuntime = true;
-						}
-					}
+			if(this.checkState &&
+				state!=null &&
+				state instanceof StateMessage) {
+				StateMessage s = (StateMessage) state;
+				if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+					con = s.getConnectionDB();
+					useConnectionRuntime = true;
 				}
 			}
-			if(useConnectionRuntime==false){
+			if(!useConnectionRuntime){
 				r = this.dbStatisticheManager.getResource(dominio, idModulo, idTransazione);
 				if(r==null){
-					throw new Exception("Risorsa al database non disponibile");
+					throw new CoreException(RISORSA_DB_NON_DISPONIBILE);
 				}
 				con = (Connection) r.getResource();
 			}
 			if(con == null)
-				throw new Exception("Connessione non disponibile");	
+				throw new CoreException(CONNESSIONE_DB_NON_DISPONIBILE);	
 
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(),
@@ -752,10 +775,10 @@ public class DatiStatisticiDAOManager  {
 			}
 			
 			if(model==null) {
-				throw new Exception("Model unknown");
+				throw new CoreException(MODEL_UNKNOWN);
 			}
 			if(dao==null) {
-				throw new Exception("DAO unknown");
+				throw new CoreException(DAO_UNKNOWN);
 			}
 			
 			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)dao).getFieldConverter(); 
@@ -766,16 +789,16 @@ public class DatiStatisticiDAOManager  {
 			FunctionField ff = null;
 			switch (tipoLatenza) {
 			case PORTA:
-				//ff = new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza");
+				/**ff = new  FunctionField(model.LATENZA_PORTA, Function.AVG, "somma_latenza");*/
 				ff = StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_PORTA, model.NUMERO_TRANSAZIONI, "somma_latenza");
 				break;
 			case SERVIZIO:
-				//ff = new  FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza");
+				/**ff = new  FunctionField(model.LATENZA_SERVIZIO, Function.AVG, "somma_latenza");*/
 				ff = StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_SERVIZIO, model.NUMERO_TRANSAZIONI, "somma_latenza");
 				break;
 			case TOTALE:
 			default:
-				//ff = new  FunctionField(model.LATENZA_TOTALE, Function.AVG, "somma_latenza");
+				/**ff = new  FunctionField(model.LATENZA_TOTALE, Function.AVG, "somma_latenza");*/
 				ff = StatisticheUtils.calcolaMedia(fieldConverter, model.LATENZA_TOTALE, model.NUMERO_TRANSAZIONI, "somma_latenza");
 				break;
 			}
@@ -831,15 +854,15 @@ public class DatiStatisticiDAOManager  {
 						risultato.setRisultato(risultatoPesato);
 					}
 					else {
-						this.log.debug("LatenzaNotFound");
+						this.logDebug("LatenzaNotFound");
 						risultato.setRisultato(0);
 					}
 				}
 				else {
 					Object result = dao.aggregate(expression, ff);
 					if(result!=null && this.isKnownType(result) ){
-						//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
-						this.log.debug("LatenzaFound ["+result.getClass().getName()+"]: "+result);
+						/**System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");*/
+						this.logDebug("LatenzaFound ["+result.getClass().getName()+"]: "+result);
 						Long l = this.translateType(result);
 						if(l!=null) {
 							risultato.setRisultato(l.longValue());
@@ -850,32 +873,33 @@ public class DatiStatisticiDAOManager  {
 					}
 					else{
 						if(result!=null){
-							//System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");
-							this.log.debug("LatenzaNotFound ["+result.getClass().getName()+"]: "+result);
+							/**System.out.println("RITORNO OGGETTO LETTO DA DB CON CHIAVE ["+key+"]: ["+result+"] ["+result.getClass().getName()+"]");*/
+							this.logDebug("LatenzaNotFound ["+result.getClass().getName()+"]: "+result);
 						}else{
-							this.log.debug("LatenzaNotFound, result is null");
+							this.logDebug("LatenzaNotFound, result is null");
 						}
 						risultato.setRisultato(0);
 					}
 				}
 			}catch(NotFoundException notFound){
-				this.log.debug("LatenzaNotFound:"+notFound.getMessage(),notFound);
+				this.logDebug("LatenzaNotFound:"+notFound.getMessage(),notFound);
 				risultato.setRisultato(0);
 			}
 			
 			return risultato;
 			
 		}catch(Exception e){
-			this.log.error("Errore durante la raccolta dei dati statisti (key:"+key+"): "+e.getMessage(),e);
-			throw e;
+			this.logError("Errore durante la raccolta dei dati statisti (key:"+key+"): "+e.getMessage(),e);
+			throw new CoreException(e.getMessage(),e);
 		}finally {
 			try{
-				if(useConnectionRuntime==false) {
-					if(r!=null) {
-						this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
-					}
+				if(!useConnectionRuntime &&
+					r!=null) {
+					this.dbStatisticheManager.releaseResource(dominio, idModulo, r);
 				}
-			}catch(Exception eClose){}
+			}catch(Exception eClose){
+				// ignore
+			}
 		}
     	
 	}
@@ -889,7 +913,7 @@ public class DatiStatisticiDAOManager  {
 			IDUnivocoGroupByPolicy groupByPolicy, AttivazionePolicyFiltro filtro,
 			TipoLatenza tipoLatenza,
 			IState state,
-			RequestInfo requestInfo) throws Exception {
+			RequestInfo requestInfo) throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException, ProtocolException, DriverRegistroServiziException, DriverConfigurazioneException {
     	
     	IExpression expr = this.createWhereExpression(dao, model, tipoRisorsa, dataInizio, dataFine, tipoPdDTransazioneInCorso, protocolFactory, protocollo, groupByPolicy, filtro, state, requestInfo);
 
@@ -941,7 +965,7 @@ public class DatiStatisticiDAOManager  {
 			IDUnivocoGroupByPolicy groupByPolicy,
 			AttivazionePolicyFiltro filtro,
 			IState state,
-			RequestInfo requestInfo) throws Exception {
+			RequestInfo requestInfo) throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException, ProtocolException, DriverRegistroServiziException, DriverConfigurazioneException  {
 
 		IExpression expr = null;
 
@@ -989,6 +1013,13 @@ public class DatiStatisticiDAOManager  {
 		case NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI:
 			expr.in(model.ESITO, EsitiProperties.getInstance(this.daoFactoryLogger,protocolFactory).getEsitiCodeKo());
 			break;
+		case NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI:{
+			List<Integer> esitiAppartenentiGruppo = new ArrayList<>();
+			esitiAppartenentiGruppo.addAll(EsitiProperties.getInstance(this.daoFactoryLogger,protocolFactory).getEsitiCodeOk());
+			esitiAppartenentiGruppo.addAll(EsitiProperties.getInstance(this.daoFactoryLogger,protocolFactory).getEsitiCodeFaultApplicativo());
+			expr.in(model.ESITO, esitiAppartenentiGruppo);
+			break;
+		}
 		}
 		
 		
@@ -1002,19 +1033,18 @@ public class DatiStatisticiDAOManager  {
 		// Tipo Porta
 		TipoPorta tipoPortaStat = null;
 		TipoPdD tipoPdD = groupByPolicy.getRuoloPortaAsTipoPdD();
-		if(tipoPdD==null) {
+		if(tipoPdD==null &&
 			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
-			if(filtro!=null && filtro.isEnabled()){
-				if(filtro.getRuoloPorta()!=null && !"".equals(filtro.getRuoloPorta().getValue()) && 
-						!RuoloPolicy.ENTRAMBI.equals(filtro.getRuoloPorta())){				
-					if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
-						tipoPdD = TipoPdD.DELEGATA;
-					}
-					if(RuoloPolicy.APPLICATIVA.equals(filtro.getRuoloPorta())){
-						tipoPdD = TipoPdD.APPLICATIVA;
-					}
-					
-				}
+			(filtro!=null && filtro.isEnabled() &&
+				(filtro.getRuoloPorta()!=null && !"".equals(filtro.getRuoloPorta().getValue()) && 
+						!RuoloPolicy.ENTRAMBI.equals(filtro.getRuoloPorta()))
+				)
+			){				
+			if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
+				tipoPdD = TipoPdD.DELEGATA;
+			}
+			if(RuoloPolicy.APPLICATIVA.equals(filtro.getRuoloPorta())){
+				tipoPdD = TipoPdD.APPLICATIVA;
 			}
 		}
 		if(tipoPdD!=null){
@@ -1039,29 +1069,30 @@ public class DatiStatisticiDAOManager  {
 		// mittente
 		IDSoggetto fruitore = groupByPolicy.getFruitoreIfDefined();
 		List<IDSoggetto> fruitoriByRuolo = null;
-		if(fruitore==null) {
+		if(fruitore==null &&
 			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
-			if(filtro!=null && filtro.isEnabled()){
-				if(filtro.getTipoFruitore()!=null && !"".equals(filtro.getTipoFruitore()) &&
-						filtro.getNomeFruitore()!=null && !"".equals(filtro.getNomeFruitore())){
-					fruitore = new IDSoggetto(filtro.getTipoFruitore(), filtro.getNomeFruitore());
-				}
-				else if(filtro.getRuoloFruitore()!=null && !"".equals(filtro.getRuoloFruitore())){
-					/*
-					 * Se policyGlobale:
-					 *    si controlla sia il fruitore che l'applicativo. Basta che uno sia soddisfatto.
-					 * else
-					 * 	  nel caso di delegata si controlla solo l'applicativo.
-					 *    nel caso di applicativa entrambi, e basta che uno sia soddisfatto.
-					 **/
-					if(policyGlobale || TipoPdD.APPLICATIVA.equals(tipoPdD)){
-						RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
-						FiltroRicercaSoggetti filtroRicerca = new FiltroRicercaSoggetti();
-						IDRuolo idRuolo = new IDRuolo(filtro.getRuoloFruitore());
-						filtroRicerca.setIdRuolo(idRuolo);
-						try {
-							fruitoriByRuolo = registroManager.getAllIdSoggetti(filtroRicerca, null);
-						}catch(DriverRegistroServiziNotFound notFound) {}
+			filtro!=null && filtro.isEnabled()){
+			if(filtro.getTipoFruitore()!=null && !"".equals(filtro.getTipoFruitore()) &&
+					filtro.getNomeFruitore()!=null && !"".equals(filtro.getNomeFruitore())){
+				fruitore = new IDSoggetto(filtro.getTipoFruitore(), filtro.getNomeFruitore());
+			}
+			else if(filtro.getRuoloFruitore()!=null && !"".equals(filtro.getRuoloFruitore())){
+				/*
+				 * Se policyGlobale:
+				 *    si controlla sia il fruitore che l'applicativo. Basta che uno sia soddisfatto.
+				 * else
+				 * 	  nel caso di delegata si controlla solo l'applicativo.
+				 *    nel caso di applicativa entrambi, e basta che uno sia soddisfatto.
+				 **/
+				if(policyGlobale || TipoPdD.APPLICATIVA.equals(tipoPdD)){
+					RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
+					FiltroRicercaSoggetti filtroRicerca = new FiltroRicercaSoggetti();
+					IDRuolo idRuolo = new IDRuolo(filtro.getRuoloFruitore());
+					filtroRicerca.setIdRuolo(idRuolo);
+					try {
+						fruitoriByRuolo = registroManager.getAllIdSoggetti(filtroRicerca, null);
+					}catch(DriverRegistroServiziNotFound notFound) {
+						// ignore
 					}
 				}
 			}
@@ -1071,7 +1102,7 @@ public class DatiStatisticiDAOManager  {
 			expr.equals(model.MITTENTE, fruitore.getNome());
 		}
 		else if (fruitoriByRuolo!=null && !fruitoriByRuolo.isEmpty()) {
-			List<IExpression> l = new ArrayList<IExpression>();
+			List<IExpression> l = new ArrayList<>();
 			for (IDSoggetto soggetto : fruitoriByRuolo) {
 				IExpression exprSoggetto = dao.newExpression();
 				exprSoggetto.equals(model.TIPO_MITTENTE, soggetto.getTipo());
@@ -1085,21 +1116,22 @@ public class DatiStatisticiDAOManager  {
 		// destinatario
 		IDSoggetto erogatore = groupByPolicy.getErogatoreIfDefined();
 		List<IDSoggetto> erogatoriByRuolo = null;
-		if(erogatore==null) {
+		if(erogatore==null &&
 			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
-			if(filtro!=null && filtro.isEnabled()){
-				if(filtro.getTipoErogatore()!=null && !"".equals(filtro.getTipoErogatore()) &&
-						filtro.getNomeErogatore()!=null && !"".equals(filtro.getNomeErogatore())){
-					erogatore = new IDSoggetto(filtro.getTipoErogatore(), filtro.getNomeErogatore());
-				}
-				else if(filtro.getRuoloErogatore()!=null && !"".equals(filtro.getRuoloErogatore())){
-					RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
-					FiltroRicercaSoggetti filtroRicerca = new FiltroRicercaSoggetti();
-					IDRuolo idRuolo = new IDRuolo(filtro.getRuoloErogatore());
-					filtroRicerca.setIdRuolo(idRuolo);
-					try {
-						erogatoriByRuolo = registroManager.getAllIdSoggetti(filtroRicerca, null);
-					}catch(DriverRegistroServiziNotFound notFound) {}
+			filtro!=null && filtro.isEnabled()){
+			if(filtro.getTipoErogatore()!=null && !"".equals(filtro.getTipoErogatore()) &&
+					filtro.getNomeErogatore()!=null && !"".equals(filtro.getNomeErogatore())){
+				erogatore = new IDSoggetto(filtro.getTipoErogatore(), filtro.getNomeErogatore());
+			}
+			else if(filtro.getRuoloErogatore()!=null && !"".equals(filtro.getRuoloErogatore())){
+				RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
+				FiltroRicercaSoggetti filtroRicerca = new FiltroRicercaSoggetti();
+				IDRuolo idRuolo = new IDRuolo(filtro.getRuoloErogatore());
+				filtroRicerca.setIdRuolo(idRuolo);
+				try {
+					erogatoriByRuolo = registroManager.getAllIdSoggetti(filtroRicerca, null);
+				}catch(DriverRegistroServiziNotFound notFound) {
+					// ignore
 				}
 			}
 		}
@@ -1108,7 +1140,7 @@ public class DatiStatisticiDAOManager  {
 			expr.equals(model.DESTINATARIO, erogatore.getNome());
 		}
 		else if (erogatoriByRuolo!=null && !erogatoriByRuolo.isEmpty()) {
-			List<IExpression> l = new ArrayList<IExpression>();
+			List<IExpression> l = new ArrayList<>();
 			for (IDSoggetto soggetto : erogatoriByRuolo) {
 				IExpression exprSoggetto = dao.newExpression();
 				exprSoggetto.equals(model.TIPO_DESTINATARIO, soggetto.getTipo());
@@ -1122,64 +1154,67 @@ public class DatiStatisticiDAOManager  {
 		// servizio
 		IDServizio idServizio = groupByPolicy.getServizioIfDefined();
 		List<IDServizio> idServiziByTag = null;
-		if(idServizio==null) {
+		if(idServizio==null &&
 			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
-			if(filtro!=null && filtro.isEnabled()){
-				if(filtro.getTipoServizio()!=null && !"".equals(filtro.getTipoServizio()) &&
-						filtro.getNomeServizio()!=null && !"".equals(filtro.getNomeServizio()) &&
-						filtro.getVersioneServizio()!=null){
-					idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(filtro.getTipoServizio(), filtro.getNomeServizio(), null, null, filtro.getVersioneServizio().intValue());
-				}
-				else if(!policyGlobale && filtro.getNomePorta()!=null && !"".equals(filtro.getNomePorta()) && filtro.getRuoloPorta()!=null) {
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
-					if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
-						IDPortaDelegata idPD = new IDPortaDelegata();
-						idPD.setNome(filtro.getNomePorta());
-						PortaDelegata pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
-						if(pd!=null && pd.getServizio()!=null && pd.getSoggettoErogatore()!=null) {
-							idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
-									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
-									pd.getServizio().getVersione());
-						}
-					}
-					else {
-						IDPortaApplicativa idPA = new IDPortaApplicativa();
-						idPA.setNome(filtro.getNomePorta());
-						PortaApplicativa pa = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
-						if(pa!=null && pa.getServizio()!=null) {
-							idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
-									pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
-									pa.getServizio().getVersione());
-						}
+			filtro!=null && filtro.isEnabled()){
+			if(filtro.getTipoServizio()!=null && !"".equals(filtro.getTipoServizio()) &&
+					filtro.getNomeServizio()!=null && !"".equals(filtro.getNomeServizio()) &&
+					filtro.getVersioneServizio()!=null){
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(filtro.getTipoServizio(), filtro.getNomeServizio(), null, null, filtro.getVersioneServizio().intValue());
+			}
+			else if(!policyGlobale && filtro.getNomePorta()!=null && !"".equals(filtro.getNomePorta()) && filtro.getRuoloPorta()!=null) {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+				if(RuoloPolicy.DELEGATA.equals(filtro.getRuoloPorta())){
+					IDPortaDelegata idPD = new IDPortaDelegata();
+					idPD.setNome(filtro.getNomePorta());
+					PortaDelegata pd = configurazionePdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
+					if(pd!=null && pd.getServizio()!=null && pd.getSoggettoErogatore()!=null) {
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+								pd.getServizio().getVersione());
 					}
 				}
-				else if(filtro.getTag()!=null && !"".equals(filtro.getTag())){
-					RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
-					FiltroRicercaAccordi filtroRicercaAccordi = new FiltroRicercaAccordi(); 
-					filtroRicercaAccordi.setIdGruppo(new IDGruppo(filtro.getTag()));
-					List<IDAccordo> lIdAccordi = null;
-					try {
-						lIdAccordi = registroManager.getAllIdAccordiServizioParteComune(filtroRicercaAccordi, null);
-					}catch(DriverRegistroServiziNotFound notFound) {}
-					if(lIdAccordi!=null && !lIdAccordi.isEmpty()) {
-						for (IDAccordo idAccordoByTag : lIdAccordi) {
-							FiltroRicercaServizi filtroRicerca = new FiltroRicercaServizi();
-							filtroRicerca.setIdAccordoServizioParteComune(idAccordoByTag);
-							if(erogatore!=null) {
-								filtroRicerca.setTipoSoggettoErogatore(erogatore.getTipo());
-								filtroRicerca.setNomeSoggettoErogatore(erogatore.getNome());
+				else {
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(filtro.getNomePorta());
+					PortaApplicativa pa = configurazionePdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
+					if(pa!=null && pa.getServizio()!=null) {
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(pa.getServizio().getTipo(), pa.getServizio().getNome(), 
+								pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario(), 
+								pa.getServizio().getVersione());
+					}
+				}
+			}
+			else if(filtro.getTag()!=null && !"".equals(filtro.getTag())){
+				RegistroServiziManager registroManager = RegistroServiziManager.getInstance(state);
+				FiltroRicercaAccordi filtroRicercaAccordi = new FiltroRicercaAccordi(); 
+				filtroRicercaAccordi.setIdGruppo(new IDGruppo(filtro.getTag()));
+				List<IDAccordo> lIdAccordi = null;
+				try {
+					lIdAccordi = registroManager.getAllIdAccordiServizioParteComune(filtroRicercaAccordi, null);
+				}catch(DriverRegistroServiziNotFound notFound) {
+					// ignore
+				}
+				if(lIdAccordi!=null && !lIdAccordi.isEmpty()) {
+					for (IDAccordo idAccordoByTag : lIdAccordi) {
+						FiltroRicercaServizi filtroRicerca = new FiltroRicercaServizi();
+						filtroRicerca.setIdAccordoServizioParteComune(idAccordoByTag);
+						if(erogatore!=null) {
+							filtroRicerca.setTipoSoggettoErogatore(erogatore.getTipo());
+							filtroRicerca.setNomeSoggettoErogatore(erogatore.getNome());
+						}
+						List<IDServizio> lIdServizi = null;
+						try {
+							lIdServizi = registroManager.getAllIdServizi(filtroRicerca, null);
+						}catch(DriverRegistroServiziNotFound notFound) {
+							// ignore
+						}
+						if(lIdServizi!=null && !lIdServizi.isEmpty()) {
+							if(idServiziByTag==null) {
+								idServiziByTag = new ArrayList<>();
 							}
-							List<IDServizio> lIdServizi = null;
-							try {
-								lIdServizi = registroManager.getAllIdServizi(filtroRicerca, null);
-							}catch(DriverRegistroServiziNotFound notFound) {}
-							if(lIdServizi!=null && !lIdServizi.isEmpty()) {
-								if(idServiziByTag==null) {
-									idServiziByTag = new ArrayList<IDServizio>();
-								}
-								for (IDServizio idServizioByTag : lIdServizi) {
-									idServiziByTag.add(idServizioByTag);
-								}
+							for (IDServizio idServizioByTag : lIdServizi) {
+								idServiziByTag.add(idServizioByTag);
 							}
 						}
 					}
@@ -1192,7 +1227,7 @@ public class DatiStatisticiDAOManager  {
 			expr.equals(model.VERSIONE_SERVIZIO, idServizio.getVersione());
 		}
 		else if (idServiziByTag!=null && !idServiziByTag.isEmpty()) {
-			List<IExpression> l = new ArrayList<IExpression>();
+			List<IExpression> l = new ArrayList<>();
 			for (IDServizio idServizioByTag : idServiziByTag) {
 				IExpression exprServizio = dao.newExpression();
 				exprServizio.and();
@@ -1208,21 +1243,18 @@ public class DatiStatisticiDAOManager  {
 		
 		// protocollo
 		String protocolloGroupBy = groupByPolicy.getProtocolloIfDefined();
-		if(protocolloGroupBy==null) {
+		if(protocolloGroupBy==null &&
 			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
-			if(filtro!=null && filtro.isEnabled()){
-				if(filtro.getProtocollo()!=null && !"".equals(filtro.getProtocollo())){
-					protocolloGroupBy = filtro.getProtocollo();
-				}
-			}
+			filtro!=null && filtro.isEnabled() &&
+			filtro.getProtocollo()!=null && !"".equals(filtro.getProtocollo())){
+			protocolloGroupBy = filtro.getProtocollo();
 		}
-		if(protocolloGroupBy!=null){
-			if(fruitore==null && erogatore==null && idServizio==null){
-				// il tipo se è definito uno dei 3 elementi è insito nell'elemento stesso
-				List<String> listaTipiSoggetto = ProtocolFactoryManager.getInstance().getOrganizationTypes().get(protocolloGroupBy);
-				expr.in(model.TIPO_MITTENTE, listaTipiSoggetto);
-				expr.in(model.TIPO_DESTINATARIO, listaTipiSoggetto);
-			}
+		if(protocolloGroupBy!=null &&
+			fruitore==null && erogatore==null && idServizio==null){
+			// il tipo se è definito uno dei 3 elementi è insito nell'elemento stesso
+			List<String> listaTipiSoggetto = ProtocolFactoryManager.getInstance().getOrganizationTypes().get(protocolloGroupBy);
+			expr.in(model.TIPO_MITTENTE, listaTipiSoggetto);
+			expr.in(model.TIPO_DESTINATARIO, listaTipiSoggetto);
 		}
 		
 		// azione
@@ -1232,51 +1264,51 @@ public class DatiStatisticiDAOManager  {
 		}
 		else {
 			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
-			if(filtro!=null && filtro.isEnabled()){
-				if(filtro.getAzione()!=null && !"".equals(filtro.getAzione()) && idServizio!=null){
-					String [] tmp = filtro.getAzione().split(",");
-					List<String> azioneList = new ArrayList<>();
-					if(tmp!=null && tmp.length>0) {
-						for (String az : tmp) {
-							azioneList.add(az);
-						}
+			if(filtro!=null && filtro.isEnabled() &&
+				filtro.getAzione()!=null && !"".equals(filtro.getAzione()) && idServizio!=null){
+				String [] tmp = filtro.getAzione().split(",");
+				List<String> azioneList = new ArrayList<>();
+				if(tmp!=null && tmp.length>0) {
+					for (String az : tmp) {
+						azioneList.add(az);
 					}
-					expr.in(model.AZIONE, azioneList);
 				}
+				expr.in(model.AZIONE, azioneList);
 			}
 		}
 		
 		// Servizio Applicativo
-		//if(TipoPdD.DELEGATA.equals(tipoPdDTransazioneInCorso)){
+		/**if(TipoPdD.DELEGATA.equals(tipoPdDTransazioneInCorso)){*/
 			
 		// servizioApplicativoFruitore
 		String servizioApplicativoFruitore = groupByPolicy.getServizioApplicativoFruitoreIfDefined();
 		List<IDServizioApplicativo> servizioApplicativoFruitoreByRuolo = null;
-		if(servizioApplicativoFruitore==null) {
+		if(servizioApplicativoFruitore==null &&
 			// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
-			if(filtro!=null && filtro.isEnabled()){
-				if(filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore())){
-					servizioApplicativoFruitore = filtro.getServizioApplicativoFruitore();
+			filtro!=null && filtro.isEnabled()){
+			if(filtro.getServizioApplicativoFruitore()!=null && !"".equals(filtro.getServizioApplicativoFruitore())){
+				servizioApplicativoFruitore = filtro.getServizioApplicativoFruitore();
+			}
+			else if(filtro.getRuoloFruitore()!=null && !"".equals(filtro.getRuoloFruitore())){
+				/*
+				 * Se policyGlobale:
+				 *    si controlla sia il fruitore che l'applicativo. Basta che uno sia soddisfatto.
+				 * else
+				 * 	  nel caso di delegata si controlla solo l'applicativo.
+				 *    nel caso di applicativa entrambi, e basta che uno sia soddisfatto.
+				 **/
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+				FiltroRicercaServiziApplicativi filtroRicerca = new FiltroRicercaServiziApplicativi();
+				IDRuolo idRuolo = new IDRuolo(filtro.getRuoloFruitore());
+				filtroRicerca.setIdRuolo(idRuolo);
+				List<IDServizioApplicativo> list = null;
+				try {
+					list = configurazionePdDManager.getAllIdServiziApplicativi(filtroRicerca);
+				}catch(DriverConfigurazioneNotFound notFound) {
+					// ignore
 				}
-				else if(filtro.getRuoloFruitore()!=null && !"".equals(filtro.getRuoloFruitore())){
-					/*
-					 * Se policyGlobale:
-					 *    si controlla sia il fruitore che l'applicativo. Basta che uno sia soddisfatto.
-					 * else
-					 * 	  nel caso di delegata si controlla solo l'applicativo.
-					 *    nel caso di applicativa entrambi, e basta che uno sia soddisfatto.
-					 **/
-					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
-					FiltroRicercaServiziApplicativi filtroRicerca = new FiltroRicercaServiziApplicativi();
-					IDRuolo idRuolo = new IDRuolo(filtro.getRuoloFruitore());
-					filtroRicerca.setIdRuolo(idRuolo);
-					List<IDServizioApplicativo> list = null;
-					try {
-						list = configurazionePdDManager.getAllIdServiziApplicativi(filtroRicerca);
-					}catch(DriverConfigurazioneNotFound notFound) {}
-					if(list!=null && !list.isEmpty()) {
-						servizioApplicativoFruitoreByRuolo = list;
-					}
+				if(list!=null && !list.isEmpty()) {
+					servizioApplicativoFruitoreByRuolo = list;
 				}
 			}
 		}
@@ -1284,7 +1316,7 @@ public class DatiStatisticiDAOManager  {
 			expr.equals(model.SERVIZIO_APPLICATIVO, servizioApplicativoFruitore);
 		}
 		else if (servizioApplicativoFruitoreByRuolo!=null && !servizioApplicativoFruitoreByRuolo.isEmpty()) {
-			List<IExpression> l = new ArrayList<IExpression>();
+			List<IExpression> l = new ArrayList<>();
 			for (IDServizioApplicativo idServizioApplicativo : servizioApplicativoFruitoreByRuolo) {
 				IExpression exprServizioApplicativo = dao.newExpression();
 				exprServizioApplicativo.and();
@@ -1296,19 +1328,18 @@ public class DatiStatisticiDAOManager  {
 			expr.or(l.toArray(new IExpression[l.size()]));
 		}
 			
-		//}
+		
 		
 		if(TipoPdD.APPLICATIVA.equals(tipoPdDTransazioneInCorso)){
 			
 			// servizioApplicativoErogatore
 			String servizioApplicativoErogatore = groupByPolicy.getServizioApplicativoErogatoreIfDefined();
-			if(servizioApplicativoErogatore==null) {
+			if(servizioApplicativoErogatore==null &&
 				// se è stato applicato un filtro, devo prelevare solo le informazioni statistiche che hanno un match non il filtro
-				if(filtro!=null && filtro.isEnabled()){
-					if(filtro.getServizioApplicativoErogatore()!=null && !"".equals(filtro.getServizioApplicativoErogatore())){
-						servizioApplicativoErogatore = filtro.getServizioApplicativoErogatore();
-					}
-				}
+				(filtro!=null && filtro.isEnabled() &&
+					filtro.getServizioApplicativoErogatore()!=null && !"".equals(filtro.getServizioApplicativoErogatore()))
+				){
+				servizioApplicativoErogatore = filtro.getServizioApplicativoErogatore();
 			}
 			if(servizioApplicativoErogatore!=null){
 				expr.equals(model.SERVIZIO_APPLICATIVO, servizioApplicativoErogatore);

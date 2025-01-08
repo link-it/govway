@@ -456,7 +456,7 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 
 	
 	@Override
-	protected void _registerStartRequest_incrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
+	protected void internalRegisterStartRequestIncrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
 		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
 			if(datiCollezionatiPerPolicyVerifier!=null) {
 				super.activeRequestCounter = datiCollezionatiPerPolicyVerifier.setAndGetActiveRequestCounter(this.distributedActiveRequestCounterForCheck.incrementAndGet());
@@ -472,7 +472,7 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 	
 	
 	@Override
-	protected void _updateDatiStartRequestApplicabile_incrementRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
+	protected void internalUpdateDatiStartRequestApplicabileIncrementRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
 		if(datiCollezionatiPerPolicyVerifier!=null) {
 			super.policyRequestCounter = datiCollezionatiPerPolicyVerifier.setAndGetPolicyRequestCounter(this.distributedPolicyRequestCounter.incrementAndGet());
 		}
@@ -483,7 +483,7 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 	
 	
 	@Override
-	protected void _registerEndRequest_decrementActiveRequestCounter() {
+	protected void internalRegisterEndRequestDecrementActiveRequestCounter() {
 		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
 			super.activeRequestCounter = this.distributedActiveRequestCounterForCheck.decrementAndGet();
 		}
@@ -492,30 +492,30 @@ public class DatiCollezionatiDistributedRedisAtomicLong extends DatiCollezionati
 		}
 	}
 	@Override
-	protected void _registerEndRequest_incrementDegradoPrestazionaleRequestCounter() {
+	protected void internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter() {
 		super.policyDegradoPrestazionaleRequestCounter = this.distributedPolicyDegradoPrestazionaleRequestCounter.incrementAndGet();
 	}
 	@Override
-	protected void _registerEndRequest_incrementDegradoPrestazionaleCounter(long latenza) {
+	protected void internalRegisterEndRequestIncrementDegradoPrestazionaleCounter(long latenza) {
 		super.policyDegradoPrestazionaleCounter = this.distributedPolicyDegradoPrestazionaleCounter.addAndGet(latenza);
 	}
 	
 
 	
 	@Override
-	protected void _updateDatiEndRequestApplicabile_incrementRequestCounter() {
+	protected void internalUpdateDatiEndRequestApplicabileIncrementRequestCounter() {
 		super.policyRequestCounter = this.distributedPolicyRequestCounter.incrementAndGet();
 	}
 	@Override
-	protected void _updateDatiEndRequestApplicabile_decrementRequestCounter() {
+	protected void internalUpdateDatiEndRequestApplicabileDecrementRequestCounter() {
 		super.policyRequestCounter = this.distributedPolicyRequestCounter.decrementAndGet();
 	}
 	@Override
-	protected void _updateDatiEndRequestApplicabile_incrementDenyRequestCounter() {
+	protected void internalUpdateDatiEndRequestApplicabileIncrementDenyRequestCounter() {
 		this.distributedPolicyDenyRequestCounter.incrementAndGetAsync();
 	}
 	@Override
-	protected void _updateDatiEndRequestApplicabile_incrementCounter(long v) {
+	protected void internalUpdateDatiEndRequestApplicabileIncrementCounter(long v) {
 		super.policyCounter = this.distributedPolicyCounter.addAndGet(v);
 	}
 

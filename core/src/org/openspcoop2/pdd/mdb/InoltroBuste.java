@@ -4023,9 +4023,9 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 																(this.responseMessage!=null ? this.responseMessage.getParseException() : null));
 								
 								// Retry-After
-								boolean isEnabled = this.propertiesReader.isEnabledServiceUnavailableRetryAfter_pd_connectionFailed();
-								Integer retryAfterSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_pd_connectionFailed();
-								Integer retryAfterBackOffSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSeconds_randomBackoff_pd_connectionFailed();
+								boolean isEnabled = this.propertiesReader.isEnabledServiceUnavailableRetryAfterPDConnectionFailed();
+								Integer retryAfterSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSecondsPDConnectionFailed();
+								Integer retryAfterBackOffSeconds = this.propertiesReader.getServiceUnavailableRetryAfterSecondsRandomBackoffPDConnectionFailed();
 								if(	isEnabled &&
 									retryAfterSeconds!=null && retryAfterSeconds>0) {
 									int seconds = retryAfterSeconds;
@@ -5745,7 +5745,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			this.pddContext.removeObject(TimeoutInputStream.EXCEPTION_KEY);
 		}
 		else if(this.eccezioneProcessamentoConnettore!=null && this.motivoErroreConsegna!=null &&
-			this.propertiesReader.isServiceUnavailable_ReadTimedOut(this.motivoErroreConsegna)){
+			this.propertiesReader.isServiceUnavailableReadTimedOut(this.motivoErroreConsegna)){
 			integrationFunctionError = IntegrationFunctionError.ENDPOINT_REQUEST_TIMED_OUT;
 		}
 		return integrationFunctionError;

@@ -329,6 +329,7 @@
 			<xsd:enumeration value="NumeroRichiesteCompletateConSuccesso"/>
 			<xsd:enumeration value="NumeroFaultApplicativi"/>
 			<xsd:enumeration value="NumeroRichiesteFalliteOFaultApplicativi"/>
+			<xsd:enumeration value="NumeroRichiesteCompletateConSuccessoOFaultApplicativi"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 

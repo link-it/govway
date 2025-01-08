@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 
 /**     
  *  TipoRisorsaPolicyAttiva
@@ -43,7 +44,8 @@ public enum TipoRisorsaPolicyAttiva implements IEnumeration , Serializable , Clo
 	NUMERO_RICHIESTE_FALLITE (TipoRisorsa.NUMERO_RICHIESTE_FALLITE.getValue()),
 	NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO (TipoRisorsa.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO.getValue()),
 	NUMERO_FAULT_APPLICATIVI (TipoRisorsa.NUMERO_FAULT_APPLICATIVI.getValue()),
-	NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI (TipoRisorsa.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI.getValue());
+	NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI (TipoRisorsa.NUMERO_RICHIESTE_FALLITE_OFAULT_APPLICATIVI.getValue()),
+	NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI (TipoRisorsa.NUMERO_RICHIESTE_COMPLETATE_CON_SUCCESSO_OFAULT_APPLICATIVI.getValue());
 	
 	
 	/** Value */
@@ -102,21 +104,36 @@ public enum TipoRisorsaPolicyAttiva implements IEnumeration , Serializable , Clo
 	
 	/** compatibility with the generated bean (reflection) */
 	public boolean equals(Object object,List<String> fieldsNotCheck){
-		if( !(object instanceof TipoRisorsaPolicyAttiva) ){
-			throw new RuntimeException("Wrong type: "+object.getClass().getName());
+		if(fieldsNotCheck!=null) {
+			// nop
 		}
-		return this.equals(((TipoRisorsaPolicyAttiva)object));
+		if( !(object instanceof TipoRisorsaPolicyAttiva) ){
+			throw new UtilsRuntimeException("Wrong type: "+object.getClass().getName());
+		}
+		return this.equals((object));
 	}
 	public String toString(boolean reportHTML){
+		if(reportHTML) {
+			// nop
+		}
 		return toString();
 	}
   	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
-  		return toString();
+  		if(reportHTML || fieldsNotIncluded!=null) {
+			// nop
+		}
+		return toString();
   	}
   	public String diff(Object object,StringBuilder bf,boolean reportHTML){
+  		if(reportHTML || object!=null) {
+  			// nop
+  		}
 		return bf.toString();
 	}
 	public String diff(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){
+		if(reportHTML || object!=null || fieldsNotIncluded!=null) {
+  			// nop
+  		}
 		return bf.toString();
 	}
 	

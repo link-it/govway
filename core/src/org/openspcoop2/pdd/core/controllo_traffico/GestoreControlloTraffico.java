@@ -176,7 +176,7 @@ public class GestoreControlloTraffico {
 				dataEventoMaxThreadsViolated = DateManager.getDate();
 				
 				if(pddContext!=null) {
-					GeneratoreMessaggiErrore.addPddContextInfo_ControlloTrafficoMaxThreadsViolated(pddContext,warningOnly);
+					GeneratoreMessaggiErrore.addPddContextInfoControlloTrafficoMaxThreadsViolated(pddContext,warningOnly);
 				}
 				
 				String msgDiagnostico = null;
