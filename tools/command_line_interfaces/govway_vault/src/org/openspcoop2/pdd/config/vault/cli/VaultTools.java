@@ -41,8 +41,6 @@ import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.security.ProviderUtils;
-import org.openspcoop2.web.ctrlstat.core.DBManager;
-import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.slf4j.Logger;
 
 /**
@@ -241,13 +239,6 @@ public class VaultTools {
 		try {
 			Logger logR = logCore;
 			ServicesUtils.initCheckConnectionDB(logR, false, false);
-			
-			DriverControlStationDB.setCheckLogger(logR);
-			DriverControlStationDB.setCheckIsClosed(false);
-			DriverControlStationDB.setCheckAutocommit(false);
-			DBManager.setCheckLogger(logR);
-			DBManager.setCheckIsClosed(false);
-			DBManager.setCheckAutocommit(false);
 		} catch (Exception e) {
 			doError("Inizializzazione controlli connessione non riuscita",e);
 		}
