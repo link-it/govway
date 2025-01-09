@@ -417,8 +417,57 @@ public class Loader {
 		try{
 			ic.bind(jndiName, ds);
 		}catch(javax.naming.NameAlreadyBoundException already){
+			logSql.debug("Bind failed: "+already.getMessage(),already);
 			//	capita in caso di più threads
 		}
+		
+		// Creazione su tomcat (per db audit appender)
+		boolean notFoundJava = false;
+		try {
+		    ic.createSubcontext("java:");
+		}
+		catch (javax.naming.NameNotFoundException notFound) {
+			// il contesto java: non esiste
+			notFoundJava = true;
+			logSql.debug("CreateSubcontex java notFound: "+notFound.getMessage(),notFound);
+		}
+		catch (javax.naming.NameAlreadyBoundException already) {
+			logSql.debug("CreateSubcontext java failed: "+already.getMessage(),already);
+		    // Il contesto esiste già, nessuna azione necessaria
+		}
+		try {
+		    ic.createSubcontext("java:/comp");
+		}
+		catch (javax.naming.NameNotFoundException notFound) {
+			// il contesto java: non esiste
+			notFoundJava = true;
+			logSql.debug("CreateSubcontex comp notFound: "+notFound.getMessage(),notFound);
+		}
+		catch (javax.naming.NameAlreadyBoundException already) {
+			logSql.debug("CreateSubcontext comp failed: "+already.getMessage(),already);
+		    // Il contesto esiste già, nessuna azione necessaria
+		}
+		try {
+		    ic.createSubcontext("java:/comp/env");
+		}
+		catch (javax.naming.NameNotFoundException notFound) {
+			// il contesto java: non esiste
+			notFoundJava = true;
+			logSql.debug("CreateSubcontext comp/env notFound: "+notFound.getMessage(),notFound);
+		}
+		catch (javax.naming.NameAlreadyBoundException already) {
+			logSql.debug("CreateSubcontext comp/env failed: "+already.getMessage(),already);
+		    // Il contesto esiste già, nessuna azione necessaria
+		}
+		if(!notFoundJava) {
+			try {
+			    ic.bind("java:/comp/env/"+jndiName, ds);
+			} catch (javax.naming.NameAlreadyBoundException already) {
+				logSql.debug("Bind comp failed: "+already.getMessage(),already);
+				// capita in caso di più threads
+			}
+		}
+		
 		return ic;
 	}
 	private static void initBouncyCastle() throws CoreException {
