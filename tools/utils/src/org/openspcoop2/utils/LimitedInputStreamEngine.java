@@ -86,24 +86,33 @@ public class LimitedInputStreamEngine extends FilterInputStream {
 		}
 		if (this.count > this.limitBytes) {
 			
-			//System.out.println("Raggiunto limite dopo aver letto: "+this.count);
+			/**System.out.println("Raggiunto limite dopo aver letto: "+this.count);*/
 			
-			String errorMsg = this.prefixError+LimitedInputStream.ERROR_MSG;
-			if(this.ctx!=null) {
-				this.ctx.put(LimitedInputStream.ERROR_MSG_KEY, errorMsg);
-			}
-			LimitExceededIOException exc = new LimitExceededIOException(errorMsg);
-			if(this.ctx!=null) {
-				this.ctx.put(LimitedInputStream.EXCEPTION_KEY, exc);
-			}
-			
-			if(this.notifier!=null) {
-				this.notifier.notify(this.count);
-			}
-			
-			throw exc;
+			payloadTooLarge(this.prefixError, this.ctx, this.notifier, this.count);
 			
 		}
+	}
+	public static void payloadTooLarge(String prefixError, Map<Object> ctx, ILimitExceededNotifier notifier, long count) throws LimitExceededIOException {
+		limitExceeded(prefixError, LimitedInputStream.ERROR_PAYLOAD_TOO_LARGE_MSG, false, ctx, notifier, count);
+	}
+	public static void contentLenghtLimitExceeded(String prefixError, Map<Object> ctx, ILimitExceededNotifier notifier, long count) throws LimitExceededIOException {
+		limitExceeded(prefixError, LimitedInputStream.ERROR_CONTENT_LENGTH_EXCEEDED_MSG, true, ctx, notifier, count);
+	}
+	private static void limitExceeded(String prefixError, String error, boolean contentLengthExceeded, Map<Object> ctx, ILimitExceededNotifier notifier, long count) throws LimitExceededIOException {
+		String errorMsg = prefixError+error;
+		if(ctx!=null) {
+			ctx.put(LimitedInputStream.ERROR_MSG_KEY, errorMsg);
+		}
+		LimitExceededIOException exc = new LimitExceededIOException(errorMsg);
+		if(ctx!=null) {
+			ctx.put(LimitedInputStream.EXCEPTION_KEY, exc);
+		}
+		
+		if(notifier!=null) {
+			notifier.notify(count, contentLengthExceeded);
+		}
+		
+		throw exc;
 	}
 
 	@Override

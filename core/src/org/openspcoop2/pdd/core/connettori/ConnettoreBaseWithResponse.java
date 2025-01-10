@@ -39,6 +39,7 @@ import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.controllo_traffico.DimensioneMessaggiUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
 import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutConfigurationUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutContextParam;
@@ -60,7 +61,9 @@ import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.TransportResponseContext;
+import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * ConnettoreBaseWithResponse
@@ -128,6 +131,14 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		if(this.isResponse!=null && this.useLimitedInputStream &&
 			this.limitBytes!=null && this.limitBytes.getSogliaKb()>0) {
 			LimitExceededNotifier notifier = new LimitExceededNotifier(this.getPddContext(), this.limitBytes, this.logger.getLogger());
+			
+			if(this.limitBytes.isUseContentLengthHeader()) {
+				List<String> l = TransportUtils.getValues(this.propertiesTrasportoRisposta, HttpConstants.CONTENT_LENGTH);
+				if(l!=null && !l.isEmpty()) {
+					DimensioneMessaggiUtils.verifyByContentLength(this.logger.getLogger(), l, this.limitBytes, notifier, this.getPddContext(), DimensioneMessaggiUtils.RESPONSE);
+				}
+			}
+			
 			long limitBytes = this.limitBytes.getSogliaKb()*1024; // trasformo kb in bytes
 			this.isResponse = new LimitedInputStream(this.isResponse, limitBytes, 
 					CostantiPdD.PREFIX_LIMITED_RESPONSE,

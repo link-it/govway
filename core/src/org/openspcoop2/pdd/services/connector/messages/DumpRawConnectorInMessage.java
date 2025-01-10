@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
+import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
@@ -105,6 +106,10 @@ public class DumpRawConnectorInMessage implements ConnectorInMessage {
 	@Override
 	public void disableLimitedStream() {
 		// nop
+	}
+	@Override
+	public void checkContentLengthLimit() throws LimitExceededIOException {
+		this.connectorInMessage.checkContentLengthLimit(); // devo controllarlo sulla chiamata http
 	}
 	
 	@Override

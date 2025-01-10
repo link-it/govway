@@ -30,6 +30,6 @@ package org.openspcoop2.utils;
  */
 public interface ILimitExceededNotifier {
 
-	public void notify(long count);
+	public void notify(long count, boolean contentLengthExceeded);
 	
 }

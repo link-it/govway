@@ -22,8 +22,15 @@ package org.openspcoop2.pdd.core.controllo_traffico;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -34,14 +41,18 @@ import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.UniqueIdentifierUtilities;
 import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsaPolicyAttiva;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.InterceptorPolicyUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyFiltroApplicativoUtilities;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyVerifier;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.slf4j.Logger;
@@ -55,10 +66,18 @@ import org.slf4j.Logger;
  */
 public class DimensioneMessaggiConfigurationUtils {
 
+	private DimensioneMessaggiConfigurationUtils() {}
+	
+	private static void logDebug(Logger log, String msg) {
+		if(log!=null) {
+			log.debug(msg);
+		}
+	}
+	
 	public static SoglieDimensioneMessaggi readSoglieDimensioneMessaggi(TipoPdD tipoPdD, String nomePorta, 
 			DatiTransazione datiTransazione, Logger log,
 			URLProtocolContext urlProtocolContext, RequestInfo requestInfo, PdDContext pddContext,
-			IProtocolFactory<?> protocolFactory) throws Exception {
+			IProtocolFactory<?> protocolFactory) throws CoreException {
 		
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		ConfigurazioneGatewayControlloTraffico configurazioneControlloTraffico =  op2Properties.getConfigurazioneControlloTraffico();
@@ -91,7 +110,9 @@ public class DimensioneMessaggiConfigurationUtils {
 					try {
 						mapPolicyAttiveAPI = configPdDManager.getElencoIdPolicyAttiveAPIDimensioneMessaggio(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache(),
 								tipoPdD, nomePorta);
-					}catch(DriverConfigurazioneNotFound notFound) {}
+					}catch(DriverConfigurazioneNotFound notFound) {
+						// ignore
+					}
 					if(mapPolicyAttiveAPI!=null && !mapPolicyAttiveAPI.isEmpty()) {
 						Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttiveAPI.keySet().iterator();
 						while (it.hasNext()) {
@@ -108,11 +129,13 @@ public class DimensioneMessaggiConfigurationUtils {
 				Map<TipoRisorsaPolicyAttiva, ElencoIdPolicyAttive> mapPolicyAttiveGlobali = null;
 				try {
 					mapPolicyAttiveGlobali = configPdDManager.getElencoIdPolicyAttiveGlobaliDimensioneMessaggio(configurazioneControlloTraffico.isPolicyReadedWithDynamicCache());
-				}catch(DriverConfigurazioneNotFound notFound) {}
+				}catch(DriverConfigurazioneNotFound notFound) {
+					// ignore
+				}
 				if(mapPolicyAttiveGlobali!=null && !mapPolicyAttiveGlobali.isEmpty()) {
 					Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttiveGlobali.keySet().iterator();
 					while (it.hasNext()) {
-						TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = (TipoRisorsaPolicyAttiva) it.next();
+						TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = it.next();
 						ElencoIdPolicyAttive elencoPolicyAttiveGlobali = mapPolicyAttiveGlobali.get(tipoRisorsaPolicyAttiva);
 						
 						if(mapPolicyAttive.containsKey(tipoRisorsaPolicyAttiva)) {
@@ -133,7 +156,7 @@ public class DimensioneMessaggiConfigurationUtils {
 				}
 			}
 		}catch(Exception e){
-			throw new Exception("Configurazione non disponibile: "+e.getMessage(), e);
+			throw new CoreException("Configurazione non disponibile: "+e.getMessage(), e);
 		}
 		
 		try{
@@ -142,15 +165,15 @@ public class DimensioneMessaggiConfigurationUtils {
 				int policyTotali = 0;
 				int policyDisabilitate = 0;
 				int policyFiltrate = 0;
-				//int policyNonApplicabili = 0;
+				/**int policyNonApplicabili = 0;*/
 				int policyRispettate = 0;
-				//int policyViolate = 0;
-				//int policyViolateWarningOnly = 0;
+				/**int policyViolate = 0;*/
+				/**int policyViolateWarningOnly = 0;*/
 				int policyInErrore = 0;
 				
 				Iterator<TipoRisorsaPolicyAttiva> it = mapPolicyAttive.keySet().iterator();
 				while (it.hasNext()) {
-					TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = (TipoRisorsaPolicyAttiva) it.next();
+					TipoRisorsaPolicyAttiva tipoRisorsaPolicyAttiva = it.next();
 					
 					if(!TipoRisorsaPolicyAttiva.DIMENSIONE_MASSIMA_MESSAGGIO.equals(tipoRisorsaPolicyAttiva)) {
 						// non dovrebbe capitare mai
@@ -184,10 +207,10 @@ public class DimensioneMessaggiConfigurationUtils {
 										}
 									}
 								}catch(DriverConfigurazioneNotFound notFound) {
-									throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente: "+notFound.getMessage(),notFound);
+									throw new CoreException("Istanza di Policy con id ["+idActive.getNome()+"] non esistente: "+notFound.getMessage(),notFound);
 								}
 								if(attivazionePolicy==null){
-									throw new Exception("Istanza di Policy con id ["+idActive.getNome()+"] non esistente?");
+									throw new CoreException("Istanza di Policy con id ["+idActive.getNome()+"] non esistente?");
 								}
 								String alias = PolicyUtilities.getNomeActivePolicy(attivazionePolicy.getAlias(), attivazionePolicy.getIdActivePolicy());
 								
@@ -207,7 +230,7 @@ public class DimensioneMessaggiConfigurationUtils {
 												message, urlProtocolContext, soapActionParam, pddContext,
 												null);
 
-										if(valorePresente==null || valorePresente.equals(attivazionePolicy.getFiltro().getInformazioneApplicativaValore())==false){
+										if(valorePresente==null || !valorePresente.equals(attivazionePolicy.getFiltro().getInformazioneApplicativaValore())){
 											
 											policyFiltrate++;
 											
@@ -215,7 +238,7 @@ public class DimensioneMessaggiConfigurationUtils {
 											if(valorePresente==null){
 												valorePresente = "n.d.";
 											}
-											log.debug("Filtro Applicativo atteso ["+
+											logDebug(log,"Filtro Applicativo atteso ["+
 													attivazionePolicy.getFiltro().getInformazioneApplicativaValore()+"] differente da quello estratto dalla transazione ["+
 													valorePresente+"]");
 											
@@ -256,10 +279,10 @@ public class DimensioneMessaggiConfigurationUtils {
 													}
 												}
 											}catch(DriverConfigurazioneNotFound notFound) {
-												throw new Exception("Policy con id ["+idActive.getIdPolicy()+"] non esistente: "+notFound.getMessage(),notFound);
+												throw new CoreException("Policy con id ["+idActive.getIdPolicy()+"] non esistente: "+notFound.getMessage(),notFound);
 											}
 											if(configurazionePolicy==null){
-												throw new Exception("Policy con id ["+idActive.getIdPolicy()+"] non esistente?");
+												throw new CoreException("Policy con id ["+idActive.getIdPolicy()+"] non esistente?");
 											}
 										
 											if(configurazionePolicy.getValore2()!=null) {
@@ -272,27 +295,27 @@ public class DimensioneMessaggiConfigurationUtils {
 										
 										if(sogliaRichiesta>0) {
 											boolean updateRichiesta = false;
-											if(soglie.getRichiesta()==null) {
-												updateRichiesta = true;
-											}
-											else if(sogliaRichiesta<soglie.getRichiesta().getSogliaKb()) {
+											if(soglie.getRichiesta()==null 
+													||
+													(sogliaRichiesta<soglie.getRichiesta().getSogliaKb())
+													) {
 												updateRichiesta = true;
 											}
 											if(updateRichiesta) {
-												soglie.setRichiesta(build(sogliaRichiesta, attivazionePolicy, protocolFactory, configPdDManager, requestInfo));
+												soglie.setRichiesta(build(sogliaRichiesta, attivazionePolicy, protocolFactory, configPdDManager, requestInfo, tipoPdD, nomePorta));
 											}
 										}
 										
 										if(sogliaRisposta>0) {
 											boolean updateRisposta = false;
-											if(soglie.getRisposta()==null) {
-												updateRisposta = true;
-											}
-											else if(sogliaRisposta<soglie.getRisposta().getSogliaKb()) {
+											if(soglie.getRisposta()==null
+													||
+													(sogliaRisposta<soglie.getRisposta().getSogliaKb())
+													) {
 												updateRisposta = true;
 											}
 											if(updateRisposta) {
-												soglie.setRisposta(build(sogliaRisposta, attivazionePolicy, protocolFactory, configPdDManager, requestInfo));
+												soglie.setRisposta(build(sogliaRisposta, attivazionePolicy, protocolFactory, configPdDManager, requestInfo, tipoPdD, nomePorta));
 											}
 										}
 										
@@ -311,13 +334,13 @@ public class DimensioneMessaggiConfigurationUtils {
 									
 									// Emetto Diagnostico Policy Filtrata
 									if(policyRispettataCheRichiedeBreak) {
-										log.debug("[policy: "+alias+"] "+GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK);
+										logDebug(log,"[policy: "+alias+"] "+GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK);
 									}
 									else if(policyViolataBreak) {
-										log.debug("[policy: "+alias+"] "+GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK_VIOLATA);
+										logDebug(log,"[policy: "+alias+"] "+GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO_BREAK_VIOLATA);
 									}
 									else {
-										log.debug("[policy: "+alias+"] "+GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO_FILTRO+ PolicyUtilities.toStringFilter(attivazionePolicy.getFiltro()));
+										logDebug(log,"[policy: "+alias+"] "+GeneratoreMessaggiErrore.TEMPLATE_POLICY_FILTRATA_MOTIVO_FILTRO+ PolicyUtilities.toStringFilter(attivazionePolicy.getFiltro()));
 									}
 									
 								}
@@ -328,7 +351,7 @@ public class DimensioneMessaggiConfigurationUtils {
 								policyDisabilitate++;
 								
 								// Emetto Diagnostico Policy Disabilitata
-								log.debug("[policy: "+idActive.getNome()+"] policy disabilitata");
+								logDebug(log,"[policy: "+idActive.getNome()+"] policy disabilitata");
 								
 							}
 							
@@ -345,46 +368,102 @@ public class DimensioneMessaggiConfigurationUtils {
 				
 				}
 			
-				log.debug("Valutazione policy totali["+policyTotali+"] disabilitate["+policyDisabilitate+"] filtrate["+policyFiltrate+"] utilizzate["+policyRispettate+"] inErrore["+policyInErrore+"]");
+				logDebug(log,"Valutazione policy totali["+policyTotali+"] disabilitate["+policyDisabilitate+"] filtrate["+policyFiltrate+"] utilizzate["+policyRispettate+"] inErrore["+policyInErrore+"]");
 								
 			}
 		}catch(Exception e){
-			throw new Exception("Errore durante l'identificazione dei limiti sulla dimensione dei messaggi: "+e.getMessage(), e);
+			throw new CoreException("Errore durante l'identificazione dei limiti sulla dimensione dei messaggi: "+e.getMessage(), e);
 		}
 		
-		if(soglie!=null) {
-			if(soglie.getRichiesta()==null || soglie.getRisposta()==null) {
-				soglie = null;
-			}
+		if(soglie!=null &&
+			(soglie.getRichiesta()==null || soglie.getRisposta()==null) 
+			){
+			soglie = null;
 		}
 		
 		return soglie;
 	}
 	
-	private static SogliaDimensioneMessaggio build(long sogliaKb, AttivazionePolicy attivazionePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo) throws Exception {
+	private static SogliaDimensioneMessaggio build(long sogliaKb, AttivazionePolicy attivazionePolicy, IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo,
+			TipoPdD tipoPdD, String nomePorta) throws ProtocolException, DriverConfigurazioneException {
 		SogliaDimensioneMessaggio soglia = new SogliaDimensioneMessaggio();
 		soglia.setSogliaKb(sogliaKb);
-		if(attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().getEnabled() &&
+		
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		soglia.setUseContentLengthHeader(op2Properties.isLimitedInputStreamUseContentLength());
+		soglia.setUseContentLengthHeaderAcceptZeroValue(op2Properties.isLimitedInputStreamUseContentLengthAcceptZeroValue());
+		
+		boolean policyPorta = attivazionePolicy.getFiltro()!=null && attivazionePolicy.getFiltro().getEnabled() &&
 				attivazionePolicy.getFiltro().getNomePorta()!=null &&
-				attivazionePolicy.getFiltro().getRuoloPorta()!=null) {
-			soglia.setPolicyGlobale(false);
-		}
-		else {
-			soglia.setPolicyGlobale(true);
-		}
+				attivazionePolicy.getFiltro().getRuoloPorta()!=null;
+		soglia.setPolicyGlobale(!policyPorta);
+
 		soglia.setNomePolicy(PolicyUtilities.getNomeActivePolicy(attivazionePolicy.getAlias(), attivazionePolicy.getIdActivePolicy()));
 		
 		String idPolicyConGruppo = null;
 		String configurazione = null;
-		String API = null;
+		String idAPI = null;
 		if(!soglia.isPolicyGlobale()) {
-			API = PolicyVerifier.getIdAPI(attivazionePolicy, protocolFactory, configPdDManager, requestInfo);
+			idAPI = PolicyVerifier.getIdAPI(attivazionePolicy, protocolFactory, configPdDManager, requestInfo);
 		}
-		idPolicyConGruppo = PolicyUtilities.buildIdConfigurazioneEventoPerPolicy(attivazionePolicy, null, API);
+		idPolicyConGruppo = PolicyUtilities.buildIdConfigurazioneEventoPerPolicy(attivazionePolicy, null, idAPI);
 		configurazione = PolicyUtilities.buildConfigurazioneEventoPerPolicy(attivazionePolicy, soglia.isPolicyGlobale());
 		soglia.setIdPolicyConGruppo(idPolicyConGruppo);
 		soglia.setConfigurazione(configurazione);
 		
+		IDPortaDelegata idPD = null;
+		IDPortaApplicativa idPA = null;
+		if(tipoPdD!=null && nomePorta!=null && StringUtils.isNotEmpty(nomePorta)) {
+			if(TipoPdD.DELEGATA.equals(tipoPdD)) {
+				idPD = new IDPortaDelegata();
+				idPD.setNome(nomePorta);
+			}
+			else {
+				idPA = new IDPortaApplicativa();
+				idPA.setNome(nomePorta);
+			}
+		}
+		else if(policyPorta) {
+			if(org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy.DELEGATA.equals(attivazionePolicy.getFiltro().getRuoloPorta())) {
+				idPD = new IDPortaDelegata();
+				idPD.setNome(attivazionePolicy.getFiltro().getNomePorta());
+			}
+			else {
+				idPA = new IDPortaApplicativa();
+				idPA.setNome(attivazionePolicy.getFiltro().getNomePorta());
+			}
+		}
+		
+		List<Proprieta> listP = null;
+		if(idPD!=null) {
+			listP = readProperties(idPD, configPdDManager, requestInfo);
+		}
+		else {
+			listP = readProperties(idPA, configPdDManager, requestInfo);
+		}
+		
+		if(listP!=null && !listP.isEmpty()) {
+			soglia.setUseContentLengthHeader(CostantiProprieta.isRateLimitingUseHttpContentLength(listP, soglia.isUseContentLengthHeader()));
+			soglia.setUseContentLengthHeaderAcceptZeroValue(CostantiProprieta.isRateLimitingUseHttpContentLengthAcceptZeroValue(listP, soglia.isUseContentLengthHeaderAcceptZeroValue()));
+		}
+		
 		return soglia;
 	}
+	private static List<Proprieta> readProperties(IDPortaDelegata idPD, ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo) throws DriverConfigurazioneException {
+		List<Proprieta> listP = null;
+		PortaDelegata pd = configPdDManager.getPortaDelegataSafeMethod(idPD, requestInfo);
+		if(pd!=null) {
+			listP = pd.getProprieta();
+		}
+		return listP;
+	}
+	private static List<Proprieta> readProperties(IDPortaApplicativa idPA, ConfigurazionePdDManager configPdDManager, RequestInfo requestInfo) throws DriverConfigurazioneException {
+		List<Proprieta> listP = null;
+		PortaApplicativa pa = configPdDManager.getPortaApplicativaSafeMethod(idPA, requestInfo);
+		if(pa!=null) {
+			listP = pa.getProprieta();
+		}
+		return listP;
+	}
+	
 }

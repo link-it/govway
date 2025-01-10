@@ -76,7 +76,9 @@ public class ParseExceptionUtils {
 			}
 		}
 		
-		if(LimitExceededIOException.isLimitExceededIOException(e) || Utilities.existsInnerMessageException(e, LimitedInputStream.ERROR_MSG, true)) {
+		if(LimitExceededIOException.isLimitExceededIOException(e) || 
+				Utilities.existsInnerMessageException(e, LimitedInputStream.ERROR_PAYLOAD_TOO_LARGE_MSG, true) || 
+				Utilities.existsInnerMessageException(e, LimitedInputStream.ERROR_CONTENT_LENGTH_EXCEEDED_MSG, true)) {
 			
 			Throwable limitedException = null;
 			if(e instanceof LimitExceededIOException) {
@@ -85,8 +87,14 @@ public class ParseExceptionUtils {
 			else {
 				limitedException = Utilities.getInnerInstanceException(e, LimitExceededIOException.class, false);
 			}
-			if(limitedException==null && Utilities.existsInnerMessageException(e, LimitedInputStream.ERROR_MSG, true)) {
-				Throwable exceptionMessageLimitExceeded = Utilities.getInnerMessageException(e, LimitedInputStream.ERROR_MSG, true);
+			if(limitedException==null && Utilities.existsInnerMessageException(e, LimitedInputStream.ERROR_PAYLOAD_TOO_LARGE_MSG, true)) {
+				Throwable exceptionMessageLimitExceeded = Utilities.getInnerMessageException(e, LimitedInputStream.ERROR_PAYLOAD_TOO_LARGE_MSG, true);
+				if(exceptionMessageLimitExceeded!=null) {
+					limitedException = new LimitExceededIOException(exceptionMessageLimitExceeded.getMessage(), exceptionMessageLimitExceeded);
+				}
+			}
+			if(limitedException==null && Utilities.existsInnerMessageException(e, LimitedInputStream.ERROR_CONTENT_LENGTH_EXCEEDED_MSG, true)) {
+				Throwable exceptionMessageLimitExceeded = Utilities.getInnerMessageException(e, LimitedInputStream.ERROR_CONTENT_LENGTH_EXCEEDED_MSG, true);
 				if(exceptionMessageLimitExceeded!=null) {
 					limitedException = new LimitExceededIOException(exceptionMessageLimitExceeded.getMessage(), exceptionMessageLimitExceeded);
 				}

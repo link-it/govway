@@ -53,7 +53,7 @@ public class LimitExceededNotifier implements ILimitExceededNotifier{
 	}
 	
 	@Override
-	public void notify(long count) {
+	public void notify(long count, boolean contentLengthExceeded) {
 		if(this.context!=null) {
 			GeneratoreMessaggiErrore.addContextInfoControlloTrafficoPolicyViolated(this.context, false);
 			
@@ -70,7 +70,11 @@ public class LimitExceededNotifier implements ILimitExceededNotifier{
 			tipoEvento = CategoriaEventoControlloTraffico.POLICY_API;
 		}
 		
-		String descriptionPolicyViolated = "Rilevato messaggio con una dimensione più grande di quella consentita (soglia:"+this.soglia.getSogliaKb()+" kb)";
+		String descriptionPolicyViolated =
+				contentLengthExceeded ?
+				"Rilevato messaggio con dimensione indicata nel Content-Length superiore al limite consentito" :
+				"Rilevato messaggio con dimensione superiore al limite consentito";
+		descriptionPolicyViolated+=" (soglia:"+this.soglia.getSogliaKb()+" kb)";
 			
 		try {
 			NotificatoreEventi.getInstance().log(tipoEvento, 

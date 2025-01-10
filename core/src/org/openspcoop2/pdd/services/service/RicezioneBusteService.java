@@ -205,6 +205,8 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 				if(this.openSPCoopProperties.isConnettoriUseLimitedInputStream()) {
 					SogliaDimensioneMessaggio soglia = new SogliaDimensioneMessaggio();
 					soglia.setSogliaKb(this.openSPCoopProperties.getLimitedInputStreamThresholdKb());
+					soglia.setUseContentLengthHeader(this.openSPCoopProperties.isLimitedInputStreamUseContentLength());
+					soglia.setUseContentLengthHeaderAcceptZeroValue(this.openSPCoopProperties.isLimitedInputStreamUseContentLengthAcceptZeroValue());
 					soglia.setPolicyGlobale(true);
 					soglia.setNomePolicy(CostantiPdD.GOVWAY_CORE);
 					soglia.setIdPolicyConGruppo(CostantiPdD.GOVWAY_CORE);
@@ -682,6 +684,10 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 			NotifierInputStreamParams notifierInputStreamParams = preInRequestContext.getNotifierInputStreamParams();
 			this.context.setNotifierInputStreamParams(notifierInputStreamParams);
 			
+			// Controllo Content Length se attiva una policy di rate limiting
+			this.req.checkContentLengthLimit();
+			
+			// Lettura richiesta con il dump
 			if(this.dumpRaw!=null && this.dumpRaw.isActiveDumpRichiesta()){
 				this.dumpRaw.serializeRequest(((DumpRawConnectorInMessage)this.req), true, notifierInputStreamParams);
 				this.dataIngressoRichiesta = this.req.getDataIngressoRichiesta();
