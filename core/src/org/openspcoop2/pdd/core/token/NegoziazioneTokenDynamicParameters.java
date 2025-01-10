@@ -31,8 +31,6 @@ import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.mvc.properties.provider.ProviderException;
-import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -201,7 +199,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 
 	public NegoziazioneTokenDynamicParameters(Map<String, Object> dynamicMap, 
 			PdDContext pddContext, RequestInfo requestInfo, Busta busta, IState state, IProtocolFactory<?> protocolFactory,
-			PolicyNegoziazioneToken policyNegoziazioneToken) throws TokenException, DynamicException, ProviderException, ProviderValidationException, ProtocolException {
+			PolicyNegoziazioneToken policyNegoziazioneToken) throws TokenException, DynamicException, ProtocolException {
 		super(dynamicMap, pddContext, requestInfo);
 						
 		this.policyNegoziazioneToken = policyNegoziazioneToken;
@@ -265,13 +263,43 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 					
 					ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 					
+					TokenException te = null;
 					this.idApplicativoRichiedente = new IDServizioApplicativo();
 					this.idApplicativoRichiedente.setNome(busta.getServizioApplicativoFruitore());
 					this.idApplicativoRichiedente.setIdSoggettoProprietario(new IDSoggetto(busta.getTipoMittente(), busta.getMittente()));
 					try {
 						this.applicativoRichiedente = configurazionePdDManager.getServizioApplicativo(this.idApplicativoRichiedente, this.getRequestInfo());
 					}catch(Exception t) {
-						throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO+": "+t.getMessage(),t);
+						te = new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO+": "+t.getMessage(),t);
+					}
+					
+					TokenException teToken = null;
+					if(this.applicativoRichiedente==null) {
+						// provo a vedere se l'applicativo fruitore è stato identificato tramite autenticazione token
+						IDServizioApplicativo idServizioApplicativoToken = null;
+				    	if(pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+				    		idServizioApplicativoToken = (IDServizioApplicativo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+				    	}
+				    	if(idServizioApplicativoToken!=null) {
+				    		try {
+				    			this.idApplicativoRichiedente = idServizioApplicativoToken;
+								this.applicativoRichiedente = configurazionePdDManager.getServizioApplicativo(this.idApplicativoRichiedente, this.getRequestInfo());
+							}catch(Exception t) {
+								teToken = new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO+": "+t.getMessage(),t);
+							}
+				    	}
+					}
+					
+					if(this.applicativoRichiedente==null) {
+						if(te!=null) {
+							throw te;
+						}
+						else if(teToken!=null) {
+							throw teToken;
+						}
+						else {
+							throw new TokenException(prefixError+ERRORE_RICHIEDE_AUTENTICAZIONE_IDENTIFICAZIONE_APPLICATIVO);
+						}
 					}
 					
 					if(!org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {

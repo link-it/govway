@@ -508,5 +508,18 @@ Then status 400
 
 
 
+@negoziazioneOk-autenticazione-token-applicativo-fruitore
+Scenario: Test negoziazione ok tramite una fruizione tramite un servizio applicativo fruitore che viene identificato tramite una token policy interna
 
+# NOTA: il token viene prodotto tramite una trasformazione presente nella risorsa generaToken che poi cortocircuita sulla fruizione che richiede un token internoss
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenAutenticazioneApplicativoTramiteToken/v1"
+And path 'generaToken'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
 

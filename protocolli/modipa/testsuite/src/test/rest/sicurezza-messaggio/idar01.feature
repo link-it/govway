@@ -896,3 +896,21 @@ And match header Authorization == '#notpresent'
 * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
 * match tidMessaggio == client_token.payload.jti
 
+
+
+
+@autenticazione-token-applicativo-fruitore
+Scenario: Test connettività in cui il servizio applicativo fruitore viene identificato tramite una token policy interna
+
+# NOTA: il token viene prodotto tramite una trasformazione presente nella risorsa generaToken che poi cortocircuita sulla fruizione che richiede un token interno
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR01AutenticazioneApplicativoTramiteToken/v1"
+And path 'generaToken'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'autenticazione-token-applicativo-fruitore'
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
