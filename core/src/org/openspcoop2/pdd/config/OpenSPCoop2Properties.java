@@ -1461,6 +1461,8 @@ public class OpenSPCoop2Properties {
 			// Connettore (Warning)
 			if(this.isConnettoriUseLimitedInputStream()) {
 				this.getLimitedInputStreamThresholdKb();
+				this.isLimitedInputStreamUseContentLength();
+				this.isLimitedInputStreamUseContentLengthAcceptZeroValue();
 			}
 			this.isConnettoriUseTimeoutInputStream();
 			this.getConnectionTimeout_consegnaContenutiApplicativi();
@@ -14188,6 +14190,52 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getLimitedInputStreamThreshold;
+	}
+	
+	private Boolean isLimitedInputStreamUseContentLength = null;
+	public boolean isLimitedInputStreamUseContentLength() {	
+		if(this.isLimitedInputStreamUseContentLength==null){
+			String pName = "org.openspcoop2.pdd.connettori.limitedInputStream.useContentLength";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isLimitedInputStreamUseContentLength = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isLimitedInputStreamUseContentLength = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isLimitedInputStreamUseContentLength = true;
+			}  
+		}
+
+		return this.isLimitedInputStreamUseContentLength;
+	}
+	
+	private Boolean isLimitedInputStreamUseContentLengthAcceptZeroValue = null;
+	public boolean isLimitedInputStreamUseContentLengthAcceptZeroValue() {	
+		if(this.isLimitedInputStreamUseContentLengthAcceptZeroValue==null){
+			String pName = "org.openspcoop2.pdd.connettori.limitedInputStream.useContentLength.acceptZeroValue";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isLimitedInputStreamUseContentLengthAcceptZeroValue = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isLimitedInputStreamUseContentLengthAcceptZeroValue = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isLimitedInputStreamUseContentLengthAcceptZeroValue = true;
+			}  
+		}
+
+		return this.isLimitedInputStreamUseContentLengthAcceptZeroValue;
 	}
 	
 	private Boolean isConnettoriUseTimeoutInputStream = null;

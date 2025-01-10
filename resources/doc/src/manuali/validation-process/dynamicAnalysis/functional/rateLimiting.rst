@@ -33,8 +33,7 @@ Evidenze disponibili in:
 - `risultati dei test del gruppo 'rate_limiting.numero_richieste_fault' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingNumeroRichiesteFault/html/>`_
 - `risultati dei test del gruppo 'rate_limiting.numero_richieste_completate_con_successo' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingNumeroRichiesteCompletateSuccesso/html/>`_
 - `risultati dei test del gruppo 'rate_limiting.numero_richieste_completate_con_successo_o_fault' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingNumeroRichiesteCompletateSuccessoOFault/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.dimensione_messaggi per API Rest' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingDimensioneMessaggiREST/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.dimensione_messaggi per API Soap' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingDimensioneMessaggiSOAP/html/>`_  
+- `risultati dei test del gruppo 'rate_limiting.dimensione_messaggi' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingDimensioneMessaggi/html/>`_
 - `risultati dei test del gruppo 'rate_limiting.occupazione_banda' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingOccupazioneBanda/html/>`_
 - `risultati dei test del gruppo 'rate_limiting.tempo_complessivo_risposta' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingTempoComplessivoRisposta/html/>`_
 - `risultati dei test del gruppo 'rate_limiting.tempo_medio_risposta' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingTempoMedioRisposta/html/>`_

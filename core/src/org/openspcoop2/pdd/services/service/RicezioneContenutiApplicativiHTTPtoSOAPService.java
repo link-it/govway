@@ -181,6 +181,8 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				if(openSPCoopProperties.isConnettoriUseLimitedInputStream()) {
 					SogliaDimensioneMessaggio soglia = new SogliaDimensioneMessaggio();
 					soglia.setSogliaKb(openSPCoopProperties.getLimitedInputStreamThresholdKb());
+					soglia.setUseContentLengthHeader(openSPCoopProperties.isLimitedInputStreamUseContentLength());
+					soglia.setUseContentLengthHeaderAcceptZeroValue(openSPCoopProperties.isLimitedInputStreamUseContentLengthAcceptZeroValue());
 					soglia.setPolicyGlobale(true);
 					soglia.setNomePolicy("GovWayCore");
 					soglia.setIdPolicyConGruppo("GovWayCore");
@@ -616,6 +618,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			NotifierInputStreamParams notifierInputStreamParams = preInRequestContext.getNotifierInputStreamParams();
 			context.setNotifierInputStreamParams(notifierInputStreamParams);
 			
+			// Controllo Content Length se attiva una policy di rate limiting
+			req.checkContentLengthLimit();
+			
+			// Lettura richiesta con il dump
 			if(dumpRaw!=null && dumpRaw.isActiveDumpRichiesta()){
 				dumpRaw.serializeRequest(((DumpRawConnectorInMessage)req), false, notifierInputStreamParams);
 				dataIngressoRichiesta = req.getDataIngressoRichiesta();

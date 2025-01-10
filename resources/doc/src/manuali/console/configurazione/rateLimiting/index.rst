@@ -26,3 +26,4 @@ traffico:
     policy
     statistiche
     filtriRaggruppamentiPersonalizzati
+    dimensioneMessaggiConfAvanzata.rst

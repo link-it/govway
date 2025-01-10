@@ -40,6 +40,7 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.controllo_traffico.DimensioneMessaggiUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.LimitExceededNotifier;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaDimensioneMessaggio;
 import org.openspcoop2.pdd.core.controllo_traffico.SogliaReadTimeout;
@@ -55,15 +56,18 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
+import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LimitedInputStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TimeoutInputStream;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
 
 /**
@@ -99,6 +103,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	
 	private SogliaReadTimeout requestReadTimeout;
 	private SogliaDimensioneMessaggio requestLimitSize;
+	private boolean requestLimitSizeDisabled = false;
 	
 	private boolean useDiagnosticInputStream;
 	private MsgDiagnostico msgDiagnostico;
@@ -178,14 +183,14 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 		}
 	}
 	@Override
-	public void setRequestLimitedStream(SogliaDimensioneMessaggio requestLimitSize) {
+	public void setRequestLimitedStream(SogliaDimensioneMessaggio requestLimitSize) {		
 		this.requestLimitSize = requestLimitSize;
 		if(this._limitedIS!=null && this.requestLimitSize!=null && this.requestLimitSize.getSogliaKb()>0) {
 			try {
 				long limitBytes = this.requestLimitSize.getSogliaKb()*1024; // trasformo kb in bytes
 				this._limitedIS.updateThreshold(limitBytes);
 			}catch(Exception e) {
-				throw new RuntimeException(e.getMessage(),e); // non dovrebbe mai succedere essendo chiamato il metodo solo se la soglia e' maggiore di 0
+				throw new UtilsRuntimeException(e.getMessage(),e); // non dovrebbe mai succedere essendo chiamato il metodo solo se la soglia e' maggiore di 0
 			}
 			LimitExceededNotifier notifier = new LimitExceededNotifier(this.context, this.requestLimitSize, this.log);
 			this._limitedIS.updateNotifier(notifier);
@@ -195,6 +200,20 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 	public void disableLimitedStream() {
 		if(this._limitedIS!=null) {
 			this._limitedIS.disableCheck();
+		}
+		this.requestLimitSizeDisabled = true;
+	}
+	@Override
+	public void checkContentLengthLimit() throws LimitExceededIOException {
+		// !NOTA!
+		// devo comunque verificare l'input stream per evitare che una informazione sbagliata nell'header faccia superare la policy
+		// quindi questo controllo non è alternativo a quello sullo stream
+		if(!this.requestLimitSizeDisabled && this.requestLimitSize!=null && this.requestLimitSize.getSogliaKb()>0 && this.requestLimitSize.isUseContentLengthHeader()) {
+			List<String> l = TransportUtils.getHeaderValues(this.req, HttpConstants.CONTENT_LENGTH);
+			if(l!=null && !l.isEmpty()) {
+				LimitExceededNotifier notifier = new LimitExceededNotifier(this.context, this.requestLimitSize, this.log);
+				DimensioneMessaggiUtils.verifyByContentLength(this.log, l, this.requestLimitSize, notifier, this.context, DimensioneMessaggiUtils.REQUEST);
+			}
 		}
 	}
 	@Override

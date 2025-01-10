@@ -53,7 +53,7 @@
 		# Consentono di far passare i parametri url dal client al backend della erogazione
 		org.openspcoop2.pdd.soap.urlParameters.forward.enable=true
 		org.openspcoop2.pdd.soap.urlParameters.blackList.internal=*
-		org.openspcoop2.pdd.soap.urlParameters.whiteList=fault*,returnCode,sleep,reply*,GovWay-TestSuite-*
+		org.openspcoop2.pdd.soap.urlParameters.whiteList=fault*,returnCode,sleep,reply*,GovWay-TestSuite-*,forceContentLength
 		# Token - Integrazione
 		org.openspcoop2.pdd.integrazione.trasporto.pd.set.request.enabled.tipoMittenteToken=true
 		org.openspcoop2.pdd.integrazione.trasporto.pd.set.request.enabled.mittenteToken=true
@@ -413,8 +413,13 @@ Di seguito vengono descritti i test del package 'rate_limiting':
   ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.numero_richieste_completate_con_successo_o_fault
 
 - 'dimensione_messaggi', verifica policy definite con metriche basate sulla dimensione massima delle richieste e delle risposte
-  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi -Dtest=RestTest
-  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi -Dtest=SoapTest
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi
+  oppure eseguirli singolarmente per verificarli localmente, visto che impiegano del tempo:
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi -Dtest=RestChunkedTest
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi -Dtest=RestContentLengthTest
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi -Dtest=SoapChunkedTest
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi -Dtest=SoapContentLengthTest
+  ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.dimensione_messaggi -Dtest=RestCheckHeaderContenLengthDisabledTest
 
 - 'occupazione_banda', verifica policy definite con metriche basate sull'occupazine di banda in un intervallo
   ant run_test -Ddelete=false -Dload=false -Dpackage=rate_limiting.occupazione_banda

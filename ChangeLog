@@ -1,3 +1,9 @@
+2025-01-10 Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1561
+	Aggiunto il controllo basato sul valore dell'header HTTP 'Content-Length' per filtrare i messaggi secondo le policy di rate limiting per dimensione.
+
 2025-01-08 Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

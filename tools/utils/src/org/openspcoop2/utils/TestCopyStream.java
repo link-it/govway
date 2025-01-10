@@ -231,7 +231,10 @@ public class TestCopyStream {
 			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
 				System.out.println("["+src+"->Buffer]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
 			}
-			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_MSG)) {
+			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_PAYLOAD_TOO_LARGE_MSG)) {
+				System.out.println("["+src+"->Buffer]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
+			}
+			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_CONTENT_LENGTH_EXCEEDED_MSG)) {
 				System.out.println("["+src+"->Buffer]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
 			}
 			else {
@@ -298,7 +301,10 @@ public class TestCopyStream {
 			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
 				System.out.println("["+src+"->File]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
 			}
-			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_MSG)) {
+			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_PAYLOAD_TOO_LARGE_MSG)) {
+				System.out.println("["+src+"->File]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
+			}
+			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_CONTENT_LENGTH_EXCEEDED_MSG)) {
 				System.out.println("["+src+"->File]["+method+"] eccezione attesa ricevuta: "+e.getMessage());
 			}
 			else {
@@ -349,7 +355,10 @@ public class TestCopyStream {
 			if(expectedTimeout && e.getMessage().equals(TimeoutInputStream.ERROR_MSG)) {
 				System.out.println("["+src+"->File][COPY-FILE] eccezione attesa ricevuta: "+e.getMessage());
 			}
-			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_MSG)) {
+			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_PAYLOAD_TOO_LARGE_MSG)) {
+				System.out.println("["+src+"->File][COPY-FILE] eccezione attesa ricevuta: "+e.getMessage());
+			}
+			else if(expectedLimitExceeded && e.getMessage().equals(LimitedInputStream.ERROR_CONTENT_LENGTH_EXCEEDED_MSG)) {
 				System.out.println("["+src+"->File][COPY-FILE] eccezione attesa ricevuta: "+e.getMessage());
 			}
 			else {

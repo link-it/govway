@@ -54,6 +54,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
+import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
@@ -195,6 +196,10 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	}
 	@Override
 	public void disableLimitedStream() {
+		// nop
+	}
+	@Override
+	public void checkContentLengthLimit() throws LimitExceededIOException {
 		// nop
 	}
 

@@ -70,6 +70,8 @@ public class HttpRequest extends AbstractHttp {
 	
 	private boolean hostnameVerifier = false; // nelle versioni precedenti era configurato disabilitato direttamente in HttpUtilities
 	
+	private boolean forceTransferEncodingChunked = false;
+	
 	// throttling send bytes every ms
 	private Integer throttlingSendMs;
 	private Integer throttlingSendByte;
@@ -371,5 +373,13 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setProxyPassword(String proxyPassword) {
 		this.proxyPassword = proxyPassword;
+	}
+	
+	public boolean isForceTransferEncodingChunked() {
+		return this.forceTransferEncodingChunked;
+	}
+
+	public void setForceTransferEncodingChunked(boolean forceTransferEncodingChunked) {
+		this.forceTransferEncodingChunked = forceTransferEncodingChunked;
 	}
 }

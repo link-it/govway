@@ -54,6 +54,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.Utilities;
@@ -129,28 +130,27 @@ public class ServletTestService extends HttpServlet {
 			null, null, false);
 	}
 	
-	private static String getParameter_checkWhiteList(HttpServletRequest request, List<String> whitePropertiesList, String parameter) {
+	private static String getParameterCheckWhiteList(HttpServletRequest request, List<String> whitePropertiesList, String parameter) {
 		String value = request.getParameter(parameter);
 		if(value!=null) {
 			value = value.trim();
 			value = UriUtils.decode(value, org.openspcoop2.utils.resources.Charset.UTF_8.getValue());
 		}
-		if(whitePropertiesList!=null) {
-			if(whitePropertiesList.contains(parameter)==false) {
-				return null;
-			}
+		if(whitePropertiesList!=null &&
+			!whitePropertiesList.contains(parameter)) {
+			return null;
 		}
 		return value;
 	}
-	private static List<String> getParameters_checkWhiteList(HttpServletRequest request, List<String> whitePropertiesList, String parameter) {
+	private static List<String> getParametersCheckWhiteList(HttpServletRequest request, List<String> whitePropertiesList, String parameter) {
+		List<String> lnull = null;
 		List<String> l = new ArrayList<>();
 		String [] values = request.getParameterValues(parameter);
 		if(values!=null && values.length>0) {
 			
-			if(whitePropertiesList!=null) {
-				if(whitePropertiesList.contains(parameter)==false) {
-					return null;
-				}
+			if(whitePropertiesList!=null &&
+				!whitePropertiesList.contains(parameter)) {
+				return lnull;
 			}
 			
 			for (String value : values) {
@@ -167,18 +167,18 @@ public class ServletTestService extends HttpServlet {
 	}
 	private static void checkHttpServletRequestParameter(HttpServletRequest request, List<String> whitePropertiesList) throws ServletException{
 		
-		String checkEqualsHttpMethod = getParameter_checkWhiteList(request, whitePropertiesList, "checkEqualsHttpMethod");
+		String checkEqualsHttpMethod = getParameterCheckWhiteList(request, whitePropertiesList, "checkEqualsHttpMethod");
 		if(checkEqualsHttpMethod!=null){
 			checkEqualsHttpMethod = checkEqualsHttpMethod.trim();
-			if(checkEqualsHttpMethod.equals(request.getMethod())==false){
+			if(!checkEqualsHttpMethod.equals(request.getMethod())){
 				throw new ServletException("Ricevuta una richiesta con metodo http ["+request.getMethod()+"] differente da quella attesa ["+checkEqualsHttpMethod+"]");
 			}
 		}
 		
-		String existsHttpHeaders = getParameter_checkWhiteList(request, whitePropertiesList, "existsHttpHeaders");
+		String existsHttpHeaders = getParameterCheckWhiteList(request, whitePropertiesList, "existsHttpHeaders");
 		if(existsHttpHeaders!=null){
 			existsHttpHeaders = existsHttpHeaders.trim();
-			if(existsHttpHeaders.contains(",")==false) {
+			if(!existsHttpHeaders.contains(",")) {
 				List<String> v = TransportUtils.getHeaderValues(request, existsHttpHeaders);
 				if(v==null || v.isEmpty()){
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza header ("+existsHttpHeaders+"). Header non presente");
@@ -198,10 +198,10 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		
-		String notExistsHttpHeaders = getParameter_checkWhiteList(request, whitePropertiesList, "notExistsHttpHeaders");
+		String notExistsHttpHeaders = getParameterCheckWhiteList(request, whitePropertiesList, "notExistsHttpHeaders");
 		if(notExistsHttpHeaders!=null){
 			notExistsHttpHeaders = notExistsHttpHeaders.trim();
-			if(notExistsHttpHeaders.contains(",")==false) {
+			if(!notExistsHttpHeaders.contains(",")) {
 				List<String> v = TransportUtils.getHeaderValues(request, notExistsHttpHeaders);
 				if(v!=null && !v.isEmpty()){
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza header ("+notExistsHttpHeaders+"). Header presente");
@@ -221,10 +221,10 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		
-		String existsQueryParameters = getParameter_checkWhiteList(request, whitePropertiesList, "existsQueryParameters");
+		String existsQueryParameters = getParameterCheckWhiteList(request, whitePropertiesList, "existsQueryParameters");
 		if(existsQueryParameters!=null){
 			existsQueryParameters = existsQueryParameters.trim();
-			if(existsQueryParameters.contains(",")==false) {
+			if(!existsQueryParameters.contains(",")) {
 				List<String> v = TransportUtils.getParameterValues(request, existsQueryParameters);
 				if(v==null || v.isEmpty()){
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza query parameter ("+existsQueryParameters+"). Parametro non presente");
@@ -244,10 +244,10 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		
-		String notExistsQueryParameters = getParameter_checkWhiteList(request, whitePropertiesList, "notExistsQueryParameters");
+		String notExistsQueryParameters = getParameterCheckWhiteList(request, whitePropertiesList, "notExistsQueryParameters");
 		if(notExistsQueryParameters!=null){
 			notExistsQueryParameters = notExistsQueryParameters.trim();
-			if(notExistsQueryParameters.contains(",")==false) {
+			if(!notExistsQueryParameters.contains(",")) {
 				List<String> v = TransportUtils.getParameterValues(request, notExistsQueryParameters);
 				if(v!=null && !v.isEmpty()){
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza query parameter ("+notExistsQueryParameters+"). Parametro presente");
@@ -267,10 +267,10 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		
-		String existsCookies = getParameter_checkWhiteList(request, whitePropertiesList, "existsCookies");
+		String existsCookies = getParameterCheckWhiteList(request, whitePropertiesList, "existsCookies");
 		if(existsCookies!=null){
 			existsCookies = existsCookies.trim();
-			if(existsCookies.contains(",")==false) {
+			if(!existsCookies.contains(",")) {
 				String v = TransportUtils.getCookie(request, existsCookies);
 				if(v==null){
 					throw new ServletException("Ricevuta una richiesta di verifica esistenza cookie ("+existsCookies+"). Cookie non presente");
@@ -290,10 +290,10 @@ public class ServletTestService extends HttpServlet {
 			}
 		}
 		
-		String notExistsCookies = getParameter_checkWhiteList(request, whitePropertiesList, "notExistsCookies");
+		String notExistsCookies = getParameterCheckWhiteList(request, whitePropertiesList, "notExistsCookies");
 		if(notExistsCookies!=null){
 			notExistsCookies = notExistsCookies.trim();
-			if(notExistsCookies.contains(",")==false) {
+			if(!notExistsCookies.contains(",")) {
 				String v = TransportUtils.getCookie(request, notExistsCookies);
 				if(v!=null){
 					throw new ServletException("Ricevuta una richiesta di verifica non esistenza cookie ("+notExistsCookies+"). Cookie presente");
@@ -317,10 +317,10 @@ public class ServletTestService extends HttpServlet {
 		
 		
 		
-		String checkEqualsHttpHeader = getParameter_checkWhiteList(request, whitePropertiesList, "checkEqualsHttpHeader");
+		String checkEqualsHttpHeader = getParameterCheckWhiteList(request, whitePropertiesList, "checkEqualsHttpHeader");
 		if(checkEqualsHttpHeader!=null){
 			checkEqualsHttpHeader = checkEqualsHttpHeader.trim();
-			if(checkEqualsHttpHeader.contains(":")==false){
+			if(!checkEqualsHttpHeader.contains(":")){
 				throw new ServletException("Ricevuta una richiesta di verifica header non conforme (pattern nome:valore)");
 			}
 			String [] split = checkEqualsHttpHeader.split(":");
@@ -345,15 +345,15 @@ public class ServletTestService extends HttpServlet {
 			if(v==null){
 				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Header ["+key+"] non presente");
 			}
-			if(v.equals(valore)==false){
+			if(!v.equals(valore)){
 				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso '"+valore+"'");
 			}
 		}
 		
-		String checkEqualsQueryParameter = getParameter_checkWhiteList(request, whitePropertiesList, "checkEqualsQueryParameter");
+		String checkEqualsQueryParameter = getParameterCheckWhiteList(request, whitePropertiesList, "checkEqualsQueryParameter");
 		if(checkEqualsQueryParameter!=null){
 			checkEqualsQueryParameter = checkEqualsQueryParameter.trim();
-			if(checkEqualsQueryParameter.contains(":")==false){
+			if(!checkEqualsQueryParameter.contains(":")){
 				throw new ServletException("Ricevuta una richiesta di verifica query parameter non conforme (pattern nome:valore)");
 			}
 			String [] split = checkEqualsQueryParameter.split(":");
@@ -378,15 +378,15 @@ public class ServletTestService extends HttpServlet {
 			if(v==null){
 				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Parametro ["+key+"] non presente");
 			}
-			if(v.equals(valore)==false){
+			if(!v.equals(valore)){
 				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso '"+valore+"'");
 			}
 		}
 		
-		String checkEqualsCookie = getParameter_checkWhiteList(request, whitePropertiesList, "checkEqualsCookie");
+		String checkEqualsCookie = getParameterCheckWhiteList(request, whitePropertiesList, "checkEqualsCookie");
 		if(checkEqualsCookie!=null){
 			checkEqualsCookie = checkEqualsCookie.trim();
-			if(checkEqualsCookie.contains(":")==false){
+			if(!checkEqualsCookie.contains(":")){
 				throw new ServletException("Ricevuta una richiesta di verifica cookie non conforme (pattern nome:valore)");
 			}
 			String [] split = checkEqualsCookie.split(":");
@@ -411,12 +411,12 @@ public class ServletTestService extends HttpServlet {
 			if(v==null){
 				throw new ServletException("Ricevuta una richiesta di verifica cookie ("+key+":"+valore+"). Cookie ["+key+"] non presente");
 			}
-			if(v.equals(valore)==false){
+			if(!v.equals(valore)){
 				throw new ServletException("Ricevuta una richiesta di verifica cookie ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso '"+valore+"'");
 			}
 		}
 		
-		String checkCORS = getParameter_checkWhiteList(request, whitePropertiesList, "CORS");
+		String checkCORS = getParameterCheckWhiteList(request, whitePropertiesList, "CORS");
 		if(checkCORS!=null){
 			checkCORS = checkCORS.trim();
 			if("true".equalsIgnoreCase(checkCORS)) {
@@ -446,6 +446,10 @@ public class ServletTestService extends HttpServlet {
 		
 	}
 	
+	private static void systemOut(String msg) {
+		System.out.println(msg);
+	}
+	
 	public void doEngine(HttpServletRequest req, HttpServletResponse res, boolean oneway, Properties headerRisposta)
 	throws ServletException, IOException {
 
@@ -459,9 +463,9 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// Autenticazione Basic
-			String basicUsername = getParameter_checkWhiteList(req, this.whitePropertiesList, "basicUsername");
-			String basicPassword = getParameter_checkWhiteList(req, this.whitePropertiesList, "basicPassword");
-			String basicWWWAuthenticateDomain = getParameter_checkWhiteList(req, this.whitePropertiesList, "basicDomain");
+			String basicUsername = getParameterCheckWhiteList(req, this.whitePropertiesList, "basicUsername");
+			String basicPassword = getParameterCheckWhiteList(req, this.whitePropertiesList, "basicPassword");
+			String basicWWWAuthenticateDomain = getParameterCheckWhiteList(req, this.whitePropertiesList, "basicDomain");
 			if(basicUsername!=null && basicPassword!=null) {
 				HttpServletTransportRequestContext rc = new HttpServletTransportRequestContext(req, this.log);
 				if(rc.getCredential()==null ||
@@ -473,7 +477,7 @@ public class ServletTestService extends HttpServlet {
 					if(this.log!=null) {
 						this.log.error(msgError);
 					}else {
-						System.out.println("ERRORE TestService: "+msgError);
+						systemOut("ERRORE TestService: "+msgError);
 					}
 					if(basicWWWAuthenticateDomain!=null) {
 						res.setHeader(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE,
@@ -493,21 +497,21 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// Cookie
-			String cookie = getParameter_checkWhiteList(req, this.whitePropertiesList, "cookie");
+			String cookie = getParameterCheckWhiteList(req, this.whitePropertiesList, "cookie");
 			boolean foundCookie = false;
 			if(cookie!=null) {
 				Cookie [] cookies = req.getCookies();
 				if(cookies!=null && cookies.length>0) {
 					for (int i = 0; i < cookies.length; i++) {
 						if(cookie.equals(cookies[i].getName())) {
-							System.out.println("name: "+cookies[i].getName());
-							System.out.println("path: "+cookies[i].getPath());
-							System.out.println("domain: "+cookies[i].getDomain());
-							System.out.println("comment: "+cookies[i].getComment());
-							System.out.println("maxAge: "+cookies[i].getMaxAge());
-							System.out.println("secure: "+cookies[i].getSecure());
-							System.out.println("value: "+cookies[i].getValue());
-							System.out.println("version: "+cookies[i].getVersion());
+							systemOut("name: "+cookies[i].getName());
+							systemOut("path: "+cookies[i].getPath());
+							systemOut("domain: "+cookies[i].getDomain());
+							systemOut("comment: "+cookies[i].getComment());
+							systemOut("maxAge: "+cookies[i].getMaxAge());
+							systemOut("secure: "+cookies[i].getSecure());
+							systemOut("value: "+cookies[i].getValue());
+							systemOut("version: "+cookies[i].getVersion());
 							foundCookie = true;
 							break;
 						}
@@ -515,7 +519,7 @@ public class ServletTestService extends HttpServlet {
 				}
 			}
 			
-			if(cookie!=null && foundCookie==false) {
+			if(cookie!=null && !foundCookie) {
 				Cookie newCookie = new Cookie(cookie, UUIDUtilsGenerator.newUUID());
 				newCookie.setMaxAge(5 * 60); // 5 minuti
 				res.addCookie(newCookie);
@@ -527,11 +531,11 @@ public class ServletTestService extends HttpServlet {
 			
 			// SetCookie
 			// Imposta come SetCookie il valore degli header indicati nella richiesta
-			String setCookie = getParameter_checkWhiteList(req, this.whitePropertiesList, "setCookie");
+			String setCookie = getParameterCheckWhiteList(req, this.whitePropertiesList, "setCookie");
 			if(setCookie!=null) {
 				setCookie = setCookie.trim();
 				List<String> hdr = new ArrayList<>();
-				if(setCookie.contains(",")==false) {
+				if(!setCookie.contains(",")) {
 					hdr.add(setCookie);
 				}
 				else {
@@ -580,7 +584,7 @@ public class ServletTestService extends HttpServlet {
 			if(req.getHeader("Transfer-Encoding")!=null){
 				chunkedValue = req.getHeader("Transfer-Encoding");
 			}else if(req.getHeader("transfer-encoding")!=null){
-				chunkedValue = req.getHeader("Transfer-Encoding");
+				chunkedValue = req.getHeader("transfer-encoding");
 			}
 			if(chunkedValue!=null){
 				chunkedValue = chunkedValue.trim();
@@ -589,11 +593,18 @@ public class ServletTestService extends HttpServlet {
 				}
 			}
 			
-			
+			// force content length
+			String forceContentLengthOption = getParameterCheckWhiteList(req, this.whitePropertiesList, "forceContentLength");
+			boolean forceContentLength = false;
+			if(forceContentLengthOption!=null){
+				forceContentLengthOption = forceContentLengthOption.trim();
+				if("true".equals(forceContentLengthOption))
+					forceContentLength = true;
+			}
 			
 			
 			// opzioni redirect
-			String redirectOptions = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirect");
+			String redirectOptions = getParameterCheckWhiteList(req, this.whitePropertiesList, "redirect");
 			boolean redirect = false;
 			if(redirectOptions!=null){
 				redirectOptions = redirectOptions.trim();
@@ -604,65 +615,65 @@ public class ServletTestService extends HttpServlet {
 				Map<String, List<String>> p = new HashMap<>();
 				
 				Integer returnCode = 307;
-				String returnCodeOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectReturnCode");
+				String returnCodeOpt = getParameterCheckWhiteList(req, this.whitePropertiesList, "redirectReturnCode");
 				if(returnCodeOpt!=null) {
 					returnCode = Integer.parseInt(returnCodeOpt.trim());
 					TransportUtils.addParameter(p, "redirectReturnCode", returnCode+"");
 				}
 				
 				String protocol = "http";
-				String protocolOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectProtocol");
+				String protocolOpt = getParameterCheckWhiteList(req, this.whitePropertiesList, "redirectProtocol");
 				if(protocolOpt!=null) {
 					protocol = protocolOpt.trim();
 					TransportUtils.addParameter(p, "redirectProtocol", protocol);
 				}
 				
 				String host = "localhost";
-				String hostOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectHost");
+				String hostOpt = getParameterCheckWhiteList(req, this.whitePropertiesList, "redirectHost");
 				if(hostOpt!=null) {
 					host = hostOpt.trim();
 					TransportUtils.addParameter(p, "redirectHost", host);
 				}
 				
 				String port = "8080";
-				String portOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectPort");
+				String portOpt = getParameterCheckWhiteList(req, this.whitePropertiesList, "redirectPort");
 				if(portOpt!=null) {
 					port = portOpt.trim();
 					TransportUtils.addParameter(p, "redirectPort", port);
 				}
 				
 				String contesto = req.getRequestURI();
-				String contestoOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectContext");
+				String contestoOpt = getParameterCheckWhiteList(req, this.whitePropertiesList, "redirectContext");
 				if(contestoOpt!=null) {
 					contesto = contestoOpt.trim();
-					if(contesto.startsWith("/")==false) {
+					if(!contesto.startsWith("/")) {
 						contesto = "/" + contesto;
 					}
 					TransportUtils.addParameter(p, "redirectContext", contesto);
 				}
 				
 				Integer maxHop = 1;
-				String maxOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectMaxHop");
+				String maxOpt = getParameterCheckWhiteList(req, this.whitePropertiesList, "redirectMaxHop");
 				if(maxOpt!=null) {
 					maxHop = Integer.parseInt(maxOpt.trim());
 					TransportUtils.addParameter(p, "redirectMaxHop", maxHop+"");
 				}
 				
 				Integer hop = 1;
-				String hopOpt = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectHop");
+				String hopOpt = getParameterCheckWhiteList(req, this.whitePropertiesList, "redirectHop");
 				if(hopOpt!=null) {
 					hop = Integer.parseInt(hopOpt.trim());
 					TransportUtils.addParameter(p, "redirectHop", hop+"");
 				}
 				
 				boolean absoluteUrl = true;
-				String absoluteUrlParam = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectAbsoluteUrl");
+				String absoluteUrlParam = getParameterCheckWhiteList(req, this.whitePropertiesList, "redirectAbsoluteUrl");
 				if(absoluteUrlParam!=null) {
 					absoluteUrl = Boolean.parseBoolean(absoluteUrlParam.trim());
 					TransportUtils.addParameter(p, "redirectAbsoluteUrl", absoluteUrlParam+"");
 				}
 				
-				String headerLocationName = getParameter_checkWhiteList(req, this.whitePropertiesList, "redirectHeaderLocation");
+				String headerLocationName = getParameterCheckWhiteList(req, this.whitePropertiesList, "redirectHeaderLocation");
 				if(headerLocationName!=null) {
 					headerLocationName = headerLocationName.trim();
 				}
@@ -697,7 +708,7 @@ public class ServletTestService extends HttpServlet {
 					
 
 			// opzioni connettore
-			String fault = getParameter_checkWhiteList(req, this.whitePropertiesList, "fault");
+			String fault = getParameterCheckWhiteList(req, this.whitePropertiesList, "fault");
 			String faultActor = "OpenSPCoopTrace";
 			String faultSoapVersion = null;
 			String faultNamespaceCode = "http://www.openspcoop2.org/example";
@@ -705,27 +716,27 @@ public class ServletTestService extends HttpServlet {
 			String faultMessage = "Fault ritornato dalla servlet di trace, esempio di OpenSPCoop";
 			if(fault!=null && fault.equalsIgnoreCase("true")){
 				
-				if(getParameter_checkWhiteList(req, this.whitePropertiesList, "faultActor")!=null)
-					faultActor = getParameter_checkWhiteList(req, this.whitePropertiesList, "faultActor");
+				if(getParameterCheckWhiteList(req, this.whitePropertiesList, "faultActor")!=null)
+					faultActor = getParameterCheckWhiteList(req, this.whitePropertiesList, "faultActor");
 				
-				if(getParameter_checkWhiteList(req, this.whitePropertiesList, "faultSoapVersion")!=null)
-					faultSoapVersion = getParameter_checkWhiteList(req, this.whitePropertiesList, "faultSoapVersion");
+				if(getParameterCheckWhiteList(req, this.whitePropertiesList, "faultSoapVersion")!=null)
+					faultSoapVersion = getParameterCheckWhiteList(req, this.whitePropertiesList, "faultSoapVersion");
 				
-				if(getParameter_checkWhiteList(req, this.whitePropertiesList, "faultCode")!=null)
-					faultCode = getParameter_checkWhiteList(req, this.whitePropertiesList, "faultCode");
+				if(getParameterCheckWhiteList(req, this.whitePropertiesList, "faultCode")!=null)
+					faultCode = getParameterCheckWhiteList(req, this.whitePropertiesList, "faultCode");
 				
-				if(getParameter_checkWhiteList(req, this.whitePropertiesList, "faultNamespaceCode")!=null)
-					faultNamespaceCode = getParameter_checkWhiteList(req, this.whitePropertiesList, "faultNamespaceCode");
+				if(getParameterCheckWhiteList(req, this.whitePropertiesList, "faultNamespaceCode")!=null)
+					faultNamespaceCode = getParameterCheckWhiteList(req, this.whitePropertiesList, "faultNamespaceCode");
 				
-				if(getParameter_checkWhiteList(req, this.whitePropertiesList, "faultMessage")!=null)
-					faultMessage = getParameter_checkWhiteList(req, this.whitePropertiesList, "faultMessage");
+				if(getParameterCheckWhiteList(req, this.whitePropertiesList, "faultMessage")!=null)
+					faultMessage = getParameterCheckWhiteList(req, this.whitePropertiesList, "faultMessage");
 			}
 			
 			
 			
 			
 			// problem detail
-			String problem = getParameter_checkWhiteList(req, this.whitePropertiesList, "problem");
+			String problem = getParameterCheckWhiteList(req, this.whitePropertiesList, "problem");
 			byte[] problemDetailSerialization = null;
 			String problemDetailContentType = null;
 			int problemDetailStatus = -1;
@@ -733,7 +744,7 @@ public class ServletTestService extends HttpServlet {
 				ProblemRFC7807 problemRFC7807 = new ProblemRFC7807();
 				
 				int status = 500;
-				String problemStatus = getParameter_checkWhiteList(req, this.whitePropertiesList, "problemStatus");
+				String problemStatus = getParameterCheckWhiteList(req, this.whitePropertiesList, "problemStatus");
 				if(problemStatus!=null) {
 					status = Integer.valueOf(problemStatus);
 					problemRFC7807.setStatus(status);
@@ -741,28 +752,28 @@ public class ServletTestService extends HttpServlet {
 				problemDetailStatus = status;
 				
 				String title = HttpUtilities.getHttpReason(status);
-				String problemTitle = getParameter_checkWhiteList(req, this.whitePropertiesList, "problemTitle");
+				String problemTitle = getParameterCheckWhiteList(req, this.whitePropertiesList, "problemTitle");
 				if(problemTitle!=null) {
 					title = problemTitle;
 				}
 				problemRFC7807.setTitle(title);
 				
 				String type = String.format("https://httpstatuses.com/%d", status);
-				String problemType = getParameter_checkWhiteList(req, this.whitePropertiesList, "problemType");
+				String problemType = getParameterCheckWhiteList(req, this.whitePropertiesList, "problemType");
 				if(problemType!=null) {
 					type = problemType;
 				}
 				problemRFC7807.setType(type);
 				
 				String detail = "Problem ritornato dalla servlet di trace, esempio di OpenSPCoop";
-				String problemDetail = getParameter_checkWhiteList(req, this.whitePropertiesList, "problemDetail");
+				String problemDetail = getParameterCheckWhiteList(req, this.whitePropertiesList, "problemDetail");
 				if(problemDetail!=null) {
 					detail = problemDetail;
 				}
 				problemRFC7807.setDetail(detail);
 				
 				String serializationType = "json";
-				String problemSerializationType = getParameter_checkWhiteList(req, this.whitePropertiesList, "problemSerializationType");
+				String problemSerializationType = getParameterCheckWhiteList(req, this.whitePropertiesList, "problemSerializationType");
 				if(problemSerializationType!=null) {
 					serializationType = problemSerializationType;
 				}
@@ -783,92 +794,91 @@ public class ServletTestService extends HttpServlet {
 			boolean echoFormUrlEncoded = false;
 			StringBuilder sbEchoFormUrlEncoded = new StringBuilder();
 			String contentTypeEchoFormUrlEncoded = null;
-			String _form_urlencoded = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncoded");
-			if(_form_urlencoded!=null && _form_urlencoded.equalsIgnoreCase("true")){
-				if(req.getContentType()!=null && ContentTypeUtilities.isMatch(this.log, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED, req.getContentType())) {
-					Enumeration<String> en = req.getParameterNames();
-					if(en!=null) {
-						
-						String tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedPrefix");
-						String prefix = null;
-						if(tmp!=null && !"".equals(tmp)) {
-							prefix = tmp;
-						}
-						
-						String wrapKep="";
-						tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedWrapKey");
-						if(tmp!=null && !"".equals(tmp)) {
-							wrapKep = tmp;
-						}
-						
-						String wrapValue="";
-						tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedWrapValue");
-						if(tmp!=null && !"".equals(tmp)) {
-							wrapValue = tmp;
-						}
-						
-						String separatorKeyValue="=";
-						tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedSeparatorKeyValue");
-						if(tmp!=null && !"".equals(tmp)) {
-							separatorKeyValue = tmp;
-						}
-						
-						String separator="&";
-						tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedSeparator");
-						if(tmp!=null && !"".equals(tmp)) {
-							separator = tmp;
-						}
-						
-						while (en.hasMoreElements()) {
-							String key = (String) en.nextElement();
-							if(key!=null && !key.startsWith("replyFormUrlEncoded")) {
-								
-								tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncoded_ignoreParam_"+key);
-								if("true".equals(tmp)) {
-									continue;
-								}
-															
-								String value = req.getParameter(key);
-								if(value!=null) {
-									
-									tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncoded_renameParam_"+key);
-									if(tmp!=null && !"".equals(tmp)) {
-										key=tmp;
-									}
-									
-									if(sbEchoFormUrlEncoded.length()>0) {
-										sbEchoFormUrlEncoded.append(separator);
-									}
-									else {
-										if(prefix!=null) {
-											sbEchoFormUrlEncoded.append(prefix);
-										}
-									}
-									sbEchoFormUrlEncoded.append(wrapKep);
-									sbEchoFormUrlEncoded.append(key);
-									sbEchoFormUrlEncoded.append(wrapKep);
-									sbEchoFormUrlEncoded.append(separatorKeyValue);
-									sbEchoFormUrlEncoded.append(wrapValue);
-									sbEchoFormUrlEncoded.append(value);
-									sbEchoFormUrlEncoded.append(wrapValue);
-								}
-							}
-						}
-						
-						tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedSuffix");
-						if(tmp!=null && !"".equals(tmp)) {
-							sbEchoFormUrlEncoded.append(tmp);
-						}
-						
-						echoFormUrlEncoded = sbEchoFormUrlEncoded.length()>0;
-						if(echoFormUrlEncoded) {
-							contentTypeEchoFormUrlEncoded = req.getContentType();
-							tmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedContentType");
-							if(tmp!=null && !"".equals(tmp)) {
-								contentTypeEchoFormUrlEncoded = tmp;
-							}
+			String formUrlencoded = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyFormUrlEncoded");
+			if(formUrlencoded!=null && formUrlencoded.equalsIgnoreCase("true") &&
+				req.getContentType()!=null && ContentTypeUtilities.isMatch(this.log, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED, req.getContentType())) {
+				Enumeration<String> en = req.getParameterNames();
+				if(en!=null) {
+					
+					String tmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedPrefix");
+					String prefix = null;
+					if(tmp!=null && !"".equals(tmp)) {
+						prefix = tmp;
+					}
+					
+					String wrapKep="";
+					tmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedWrapKey");
+					if(tmp!=null && !"".equals(tmp)) {
+						wrapKep = tmp;
+					}
+					
+					String wrapValue="";
+					tmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedWrapValue");
+					if(tmp!=null && !"".equals(tmp)) {
+						wrapValue = tmp;
+					}
+					
+					String separatorKeyValue="=";
+					tmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedSeparatorKeyValue");
+					if(tmp!=null && !"".equals(tmp)) {
+						separatorKeyValue = tmp;
+					}
+					
+					String separator="&";
+					tmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedSeparator");
+					if(tmp!=null && !"".equals(tmp)) {
+						separator = tmp;
+					}
+					
+					while (en.hasMoreElements()) {
+						String key = en.nextElement();
+						if(key!=null && !key.startsWith("replyFormUrlEncoded")) {
 							
+							tmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyFormUrlEncoded_ignoreParam_"+key);
+							if("true".equals(tmp)) {
+								continue;
+							}
+														
+							String value = req.getParameter(key);
+							if(value!=null) {
+								
+								tmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyFormUrlEncoded_renameParam_"+key);
+								if(tmp!=null && !"".equals(tmp)) {
+									key=tmp;
+								}
+								
+								if(sbEchoFormUrlEncoded.length()>0) {
+									sbEchoFormUrlEncoded.append(separator);
+								}
+								else {
+									if(prefix!=null) {
+										sbEchoFormUrlEncoded.append(prefix);
+									}
+								}
+								sbEchoFormUrlEncoded.append(wrapKep);
+								sbEchoFormUrlEncoded.append(key);
+								sbEchoFormUrlEncoded.append(wrapKep);
+								sbEchoFormUrlEncoded.append(separatorKeyValue);
+								sbEchoFormUrlEncoded.append(wrapValue);
+								sbEchoFormUrlEncoded.append(value);
+								sbEchoFormUrlEncoded.append(wrapValue);
+							}
 						}
+					}
+					
+					tmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedSuffix");
+					if(tmp!=null && !"".equals(tmp)) {
+						sbEchoFormUrlEncoded.append(tmp);
+					}
+					
+					echoFormUrlEncoded = sbEchoFormUrlEncoded.length()>0;
+					if(echoFormUrlEncoded) {
+						contentTypeEchoFormUrlEncoded = req.getContentType();
+						tmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyFormUrlEncodedContentType");
+						if(tmp!=null && !"".equals(tmp)) {
+							contentTypeEchoFormUrlEncoded = tmp;
+						}
+						
 					}
 				}
 			}
@@ -876,14 +886,14 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// opzioni tunnel SOAP
-			String tunnelSoap = getParameter_checkWhiteList(req, this.whitePropertiesList, "govway_soap_tunnel");
+			String tunnelSoap = getParameterCheckWhiteList(req, this.whitePropertiesList, "govway_soap_tunnel");
 			boolean tunnel = false;
 			if(tunnelSoap!=null){
 				tunnelSoap = tunnelSoap.trim();
 				if("true".equals(tunnelSoap))
 					tunnel = true;
 			}
-			String tunnelSoapMimeType = getParameter_checkWhiteList(req, this.whitePropertiesList, "govway_soap_tunnel_mime");
+			String tunnelSoapMimeType = getParameterCheckWhiteList(req, this.whitePropertiesList, "govway_soap_tunnel_mime");
 			if(tunnelSoapMimeType!=null){
 				tunnelSoapMimeType = tunnelSoapMimeType.trim();
 			}
@@ -893,15 +903,16 @@ public class ServletTestService extends HttpServlet {
 
 			// opzione returnCode
 			int returnCode = 200;
-			String returnCodeString = getParameter_checkWhiteList(req, this.whitePropertiesList, "returnCode");
+			String returnCodeString = getParameterCheckWhiteList(req, this.whitePropertiesList, "returnCode");
 			if(returnCodeString!=null){
 				try{
 					returnCode = Integer.parseInt(returnCodeString.trim());
 				}catch(Exception e){
-					if(this.log!=null)
-						this.log.warn("ERRORE TestService (param returnCode): "+e.toString());
-					else
-						System.out.println("ERRORE TestService (param returnCode): "+e.toString());
+					if(this.log!=null) {
+						String warn = "ERRORE TestService (param returnCode): "+e.toString();
+						this.log.warn(warn);
+					}else
+						systemOut("ERRORE TestService (param returnCode): "+e.toString());
 				}
 			}
 			
@@ -910,7 +921,7 @@ public class ServletTestService extends HttpServlet {
 			
 			// opzione replace
 			// formato: old:new[,old:new,....,old:new]
-			String replace = getParameter_checkWhiteList(req, this.whitePropertiesList, "replace");
+			String replace = getParameterCheckWhiteList(req, this.whitePropertiesList, "replace");
 			Map<String, String> replaceMap = new HashMap<>();
 			if(replace!=null){
 				// volutamente non faccio il trim
@@ -920,28 +931,28 @@ public class ServletTestService extends HttpServlet {
 						if(list[i].contains(":")){
 							String [] tmp = list[i].split(":");
 							if(tmp==null || tmp.length!=2){
-								throw new Exception("Opzione replace con valore errato ["+list[i]+"] (caso1 iter"+i+"), formato atteso: old:new[,old:new,....,old:new]");
+								throw new MessageException("Opzione replace con valore errato ["+list[i]+"] (caso1 iter"+i+"), formato atteso: old:new[,old:new,....,old:new]");
 							}
 							else{
 								replaceMap.put(tmp[0], tmp[1]);
 							}
 						}
 						else{
-							throw new Exception("Opzione replace con valore errato ["+list[i]+"] (caso2 iter"+i+"), formato atteso: old:new[,old:new,....,old:new]");
+							throw new MessageException("Opzione replace con valore errato ["+list[i]+"] (caso2 iter"+i+"), formato atteso: old:new[,old:new,....,old:new]");
 						}	
 					}
 				}else{
 					if(replace.contains(":")){
 						String [] tmp = replace.split(":");
 						if(tmp==null || tmp.length!=2){
-							throw new Exception("Opzione replace con valore errato ["+replace+"] (caso1), formato atteso: old:new[,old:new,....,old:new]");
+							throw new MessageException("Opzione replace con valore errato ["+replace+"] (caso1), formato atteso: old:new[,old:new,....,old:new]");
 						}
 						else{
 							replaceMap.put(tmp[0], tmp[1]);
 						}
 					}
 					else{
-						throw new Exception("Opzione replace con valore errato ["+replace+"] (caso2), formato atteso: old:new[,old:new,....,old:new]");
+						throw new MessageException("Opzione replace con valore errato ["+replace+"] (caso2), formato atteso: old:new[,old:new,....,old:new]");
 					}
 				}
 			}
@@ -953,11 +964,11 @@ public class ServletTestService extends HttpServlet {
 			
 			// opzione returnHttpHeader
 			Map<String, List<String>> headers = new HashMap<>();
-			List<String> returnHeadersString = getParameters_checkWhiteList(req, this.whitePropertiesList, "returnHttpHeader");
+			List<String> returnHeadersString = getParametersCheckWhiteList(req, this.whitePropertiesList, "returnHttpHeader");
 			if(returnHeadersString!=null && !returnHeadersString.isEmpty()){
 				for (String returnHeaderString : returnHeadersString) {
 					returnHeaderString = returnHeaderString.trim();
-					if(returnHeaderString.contains(":")==false){
+					if(!returnHeaderString.contains(":")){
 						throw new ServletException("Ricevuta una richiesta di generazione header di risposta non conforme (pattern nome:valore)");
 					}
 					String [] split = returnHeaderString.split(":");
@@ -980,7 +991,7 @@ public class ServletTestService extends HttpServlet {
 					}
 					
 					boolean checkMultiValue = true;
-					String returnHttpHeaderSingleValue = getParameter_checkWhiteList(req, this.whitePropertiesList, "returnHttpHeaderSingleValue");
+					String returnHttpHeaderSingleValue = getParameterCheckWhiteList(req, this.whitePropertiesList, "returnHttpHeaderSingleValue");
 					if(returnHttpHeaderSingleValue!=null) {
 						boolean b = Boolean.valueOf(returnHttpHeaderSingleValue);
 						if(b) {
@@ -1006,7 +1017,7 @@ public class ServletTestService extends HttpServlet {
 				}
 			}
 			
-			String checkCORS = getParameter_checkWhiteList(req, this.whitePropertiesList, "CORS");
+			String checkCORS = getParameterCheckWhiteList(req, this.whitePropertiesList, "CORS");
 			if(checkCORS!=null){
 				checkCORS = checkCORS.trim();
 				if("true".equalsIgnoreCase(checkCORS)) {
@@ -1033,19 +1044,19 @@ public class ServletTestService extends HttpServlet {
 			
 			// opzione reply Info
 			
-			String replyHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyHttpHeader");
+			String replyHeaderString = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyHttpHeader");
 			if(replyHeaderString!=null && !"".equals(replyHeaderString)) {
 				String [] tmp = replyHeaderString.split(",");
 				if(tmp!=null && tmp.length>0) {
 					
 					String replyPrefix = "";
-					String replyPrefixHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyPrefixHttpHeader");
+					String replyPrefixHeaderString = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyPrefixHttpHeader");
 					if(replyPrefixHeaderString!=null && !"".equals(replyPrefixHeaderString)) {
 						replyPrefix = replyPrefixHeaderString;
 					}
 					
 					boolean base64Reply = false;
-					String replyBase64HeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyHttpHeaderBase64Encoded");
+					String replyBase64HeaderString = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyHttpHeaderBase64Encoded");
 					if(replyBase64HeaderString!=null && "true".equals(replyBase64HeaderString)) {
 						base64Reply = true;
 					}
@@ -1068,13 +1079,13 @@ public class ServletTestService extends HttpServlet {
 				}
 			}
 			
-			String replyQueryParameterAsHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyQueryParameter");
+			String replyQueryParameterAsHeaderString = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyQueryParameter");
 			if(replyQueryParameterAsHeaderString!=null && !"".equals(replyQueryParameterAsHeaderString)) {
 				String [] tmp = replyQueryParameterAsHeaderString.split(",");
 				if(tmp!=null && tmp.length>0) {
 					
 					String replyPrefix = "";
-					String replyPrefixHeaderString = getParameter_checkWhiteList(req, this.whitePropertiesList, "replyPrefixQueryParameter");
+					String replyPrefixHeaderString = getParameterCheckWhiteList(req, this.whitePropertiesList, "replyPrefixQueryParameter");
 					if(replyPrefixHeaderString!=null && !"".equals(replyPrefixHeaderString)) {
 						replyPrefix = replyPrefixHeaderString;
 					}
@@ -1095,17 +1106,17 @@ public class ServletTestService extends HttpServlet {
 			// opzioni throttling
 			Integer throttlingBytes = null;
 			Integer throttlingMs = null;
-			String throttlingTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "throttlingBytes");
+			String throttlingTmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "throttlingBytes");
 			if(throttlingTmp!=null){
 				throttlingTmp = throttlingTmp.trim();
 				throttlingBytes = Integer.valueOf(throttlingTmp);
 			}
-			throttlingTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "throttlingMs");
+			throttlingTmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "throttlingMs");
 			if(throttlingTmp!=null){
 				throttlingTmp = throttlingTmp.trim();
 				throttlingMs = Integer.valueOf(throttlingTmp);
 			}
-			String throttlingType = getParameter_checkWhiteList(req, this.whitePropertiesList, "throttlingType");
+			String throttlingType = getParameterCheckWhiteList(req, this.whitePropertiesList, "throttlingType");
 			boolean sendThrottling = false;
 			boolean receiveThrottling = false;
 			if(throttlingBytes!=null && throttlingBytes>0 && 
@@ -1133,7 +1144,7 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// opzioni debug
-			String debugTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "debug");
+			String debugTmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "debug");
 			boolean debug = true;
 			if(debugTmp!=null){
 				debugTmp = debugTmp.trim();
@@ -1145,14 +1156,14 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// opzioni save msg
-			String logMessageTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "logMessage");
+			String logMessageTmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "logMessage");
 			boolean logMessage = false;
 			if(logMessageTmp!=null){
 				logMessageTmp = logMessageTmp.trim();
 				if("true".equals(logMessageTmp))
 					logMessage = true;
 			}
-			String saveMessageDir = getParameter_checkWhiteList(req, this.whitePropertiesList, "saveMessageDir");
+			String saveMessageDir = getParameterCheckWhiteList(req, this.whitePropertiesList, "saveMessageDir");
 			if(saveMessageDir!=null){
 				saveMessageDir = saveMessageDir.trim();
 			}
@@ -1160,7 +1171,7 @@ public class ServletTestService extends HttpServlet {
 			boolean consumeRequest = true; 
 			// default lascio true senno si blocca per il discorso di bufferizzazione di wildfly
 			// lo streaming funziona solamente se abbiamo messaggi piccoli che possono sfruttare i buffer ad es. di wildfly (10mb circa)
-			String consumeRequestTmp = getParameter_checkWhiteList(req, this.whitePropertiesList, "consumeRequest");
+			String consumeRequestTmp = getParameterCheckWhiteList(req, this.whitePropertiesList, "consumeRequest");
 			if(consumeRequestTmp!=null){
 				consumeRequestTmp = consumeRequestTmp.trim();
 				consumeRequest = Boolean.valueOf(consumeRequestTmp);
@@ -1197,7 +1208,7 @@ public class ServletTestService extends HttpServlet {
 						outStr = new DumpByteArrayOutputStream(this.thresholdRequestDump, this.repositoryRequestDump, null, "RichiestaTestService");
 					}
 					CopyStream.copy(sin, outStr);
-					/*while( (read = sin.read()) != -1) {
+					/**while( (read = sin.read()) != -1) {
 						outStr.write(read);
 					}
 					*/
@@ -1235,13 +1246,13 @@ public class ServletTestService extends HttpServlet {
 			if(saveMessageDir!=null){
 				File dir = new File(saveMessageDir);
 				if(dir.exists()==false){
-					throw new Exception("Directory ["+dir.getAbsolutePath()+"] doesn't exists");
+					throw new MessageException("Directory ["+dir.getAbsolutePath()+"] doesn't exists");
 				}
 				if(dir.canWrite()==false){
-					throw new Exception("Directory ["+dir.getAbsolutePath()+"] without write permission");
+					throw new MessageException("Directory ["+dir.getAbsolutePath()+"] without write permission");
 				}
 				if(dir.canRead()==false){
-					throw new Exception("Directory ["+dir.getAbsolutePath()+"] without read permission");
+					throw new MessageException("Directory ["+dir.getAbsolutePath()+"] without read permission");
 				}
 				String ext = "bin";
 				try{
@@ -1279,7 +1290,7 @@ public class ServletTestService extends HttpServlet {
 						
 			
 			// sleep
-			String sleep = getParameter_checkWhiteList(req, this.whitePropertiesList, "sleep");
+			String sleep = getParameterCheckWhiteList(req, this.whitePropertiesList, "sleep");
 			if(sleep!=null){
 				int millisecond = Integer.parseInt(sleep);
 				if(millisecond>1000){
@@ -1304,8 +1315,8 @@ public class ServletTestService extends HttpServlet {
 			
 			
 			// sleep in intervallo
-			String min = getParameter_checkWhiteList(req, this.whitePropertiesList, "sleepMin");
-			String max = getParameter_checkWhiteList(req, this.whitePropertiesList, "sleepMax");
+			String min = getParameterCheckWhiteList(req, this.whitePropertiesList, "sleepMin");
+			String max = getParameterCheckWhiteList(req, this.whitePropertiesList, "sleepMax");
 			if(max!=null){
 				int maxSleep = Integer.parseInt((String)max);
 				int minSleep = 0;
@@ -1455,14 +1466,14 @@ public class ServletTestService extends HttpServlet {
 				
 				String contentTypeRisposta = contentTypeRichiesta;
 				
-				String fileDestinazione = getParameter_checkWhiteList(req, this.whitePropertiesList, "destFile");
-				String fileResponse = getParameter_checkWhiteList(req, this.whitePropertiesList, "response");
+				String fileDestinazione = getParameterCheckWhiteList(req, this.whitePropertiesList, "destFile");
+				String fileResponse = getParameterCheckWhiteList(req, this.whitePropertiesList, "response");
 				if(fileResponse==null) {
-					fileResponse = getParameter_checkWhiteList(req, this.whitePropertiesList, "op"); // alias per response, in modo da rendere meno evidente l'operazione
+					fileResponse = getParameterCheckWhiteList(req, this.whitePropertiesList, "op"); // alias per response, in modo da rendere meno evidente l'operazione
 				}
-				String responseContent = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContent");
-				String responseContentByHeader = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContentByHeader");
-				String responseContentByParameter = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContentByParameter");
+				String responseContent = getParameterCheckWhiteList(req, this.whitePropertiesList, "responseContent");
+				String responseContentByHeader = getParameterCheckWhiteList(req, this.whitePropertiesList, "responseContentByHeader");
+				String responseContentByParameter = getParameterCheckWhiteList(req, this.whitePropertiesList, "responseContentByParameter");
 				ByteArrayOutputStream boutStaticFile = null;
 				if(fileDestinazione!=null || fileResponse!=null){
 					
@@ -1476,7 +1487,7 @@ public class ServletTestService extends HttpServlet {
 						fileResponse = fileResponse.trim();
 						path = fileResponse;
 						if(this.repositoryResponseFiles==null) {
-							throw new Exception("Property 'response' non utilizzabile se non viene definito un repository dei files");
+							throw new MessageException("Property 'response' non utilizzabile se non viene definito un repository dei files");
 						}
 						File f = new File(this.repositoryResponseFiles,fileResponse);
 						path = f.getAbsolutePath();
@@ -1490,9 +1501,9 @@ public class ServletTestService extends HttpServlet {
 					boutStaticFile.close();
 					fin.close();
 					
-					String fileDestinazioneContentType = getParameter_checkWhiteList(req, this.whitePropertiesList, "destFileContentType");
+					String fileDestinazioneContentType = getParameterCheckWhiteList(req, this.whitePropertiesList, "destFileContentType");
 					if(fileDestinazioneContentType==null) {
-						fileDestinazioneContentType = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContentType");
+						fileDestinazioneContentType = getParameterCheckWhiteList(req, this.whitePropertiesList, "responseContentType");
 					}
 					if(fileDestinazioneContentType!=null){
 						fileDestinazioneContentType = fileDestinazioneContentType.trim();
@@ -1508,13 +1519,13 @@ public class ServletTestService extends HttpServlet {
 						byte[] a = boutStaticFile.toByteArray();
 						if(MultipartUtils.messageWithAttachment(a)){
 							
-							String fileDestinazioneMultipartParameterType = getParameter_checkWhiteList(req, this.whitePropertiesList, "destFileContentTypeMultipartParameterType");
+							String fileDestinazioneMultipartParameterType = getParameterCheckWhiteList(req, this.whitePropertiesList, "destFileContentTypeMultipartParameterType");
 							if(fileDestinazioneMultipartParameterType!=null) {
 								contentTypeRisposta = fileDestinazioneMultipartParameterType.trim();
 							}
 							
 							String subType = "related";
-							String fileDestinazioneMultipartSubType = getParameter_checkWhiteList(req, this.whitePropertiesList, "destFileContentTypeMultipartSubType");
+							String fileDestinazioneMultipartSubType = getParameterCheckWhiteList(req, this.whitePropertiesList, "destFileContentTypeMultipartSubType");
 							if(fileDestinazioneMultipartSubType!=null) {
 								subType = fileDestinazioneMultipartSubType;
 							}
@@ -1522,7 +1533,7 @@ public class ServletTestService extends HttpServlet {
 							String IDfirst  = MultipartUtils.firstContentID(a);
 							String boundary = MultipartUtils.findBoundary(a);
 							if(boundary==null){
-								throw new Exception("Errore avvenuto durante la lettura del boundary associato al multipart message.");
+								throw new MessageException("Errore avvenuto durante la lettura del boundary associato al multipart message.");
 							}
 							if(IDfirst==null)
 								contentTypeRisposta = "multipart/"+subType+"; type=\""+contentTypeRisposta+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
@@ -1549,7 +1560,7 @@ public class ServletTestService extends HttpServlet {
 					else {
 						String v = TransportUtils.getHeaderFirstValue(req, responseContentByHeader);
 						if(v==null || StringUtils.isEmpty(v)) {
-							throw new Exception("Header '"+responseContentByHeader+"' not found");
+							throw new MessageException("Header '"+responseContentByHeader+"' not found");
 						}
 						if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(responseContentByHeader)) {
 							if(v.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BEARER)) {
@@ -1561,7 +1572,7 @@ public class ServletTestService extends HttpServlet {
 					boutStaticFile.flush();
 					boutStaticFile.close();
 					
-					String responseContentType = getParameter_checkWhiteList(req, this.whitePropertiesList, "responseContentType");
+					String responseContentType = getParameterCheckWhiteList(req, this.whitePropertiesList, "responseContentType");
 					if(responseContentType!=null){
 						responseContentType = responseContentType.trim();
 						contentTypeRisposta = responseContentType;
@@ -1579,10 +1590,10 @@ public class ServletTestService extends HttpServlet {
 					}
 				}
 				
-				//System.out.println("CHUNKED: "+chunked);
+				/**systemOut("CHUNKED: "+chunked);*/
 				
 				// modalita'
-				if(chunked){
+				if(!forceContentLength && chunked){
 					res.setHeader("Transfer-Encoding","chunked");
 					if(debug) {
 						this.log.info("Response send with Transfer-Encoding: chunked");
@@ -1591,10 +1602,13 @@ public class ServletTestService extends HttpServlet {
 				else{
 					if(boutStaticFile!=null){
 						res.setContentLength(boutStaticFile.size());
+						forceContentLength = false;
 					}else if(contenutoRichiesta!=null && contenutoRichiesta.length>0) {
 						res.setContentLength(contenutoRichiesta.length);
+						forceContentLength = false;
 					}else if(dumpByteArrayOutputStreamRichiesta!=null) {
 						res.setContentLength(dumpByteArrayOutputStreamRichiesta.size());
+						forceContentLength = false;
 					}
 					else{
 						// web server default
@@ -1648,7 +1662,7 @@ public class ServletTestService extends HttpServlet {
 							contenutoInteroDaSpedire = contenutoRichiesta;
 						}
 					}else if(dumpByteArrayOutputStreamRichiesta!=null) {
-						throw new Exception("Throttling unsupported with request messege bigger than threshold ("+Utilities.convertBytesToFormatString(this.thresholdRequestDump)+")");
+						throw new MessageException("Throttling unsupported with request messege bigger than threshold ("+Utilities.convertBytesToFormatString(this.thresholdRequestDump)+")");
 					}
 					else{
 						byte[] contenutoRequest = null;
@@ -1666,6 +1680,9 @@ public class ServletTestService extends HttpServlet {
 						}
 					}
 					if(contenutoInteroDaSpedire!=null && contenutoInteroDaSpedire.length>0) {
+						if(forceContentLength) {
+							res.setContentLength(contenutoInteroDaSpedire.length);
+						}
 						int lengthSendContent = contenutoInteroDaSpedire.length;
 						for (int i = 0; i < lengthSendContent; ) {
 							int length = throttlingBytes;
@@ -1684,19 +1701,33 @@ public class ServletTestService extends HttpServlet {
 				}
 				else {
 					if(boutStaticFile!=null){
-						res.getOutputStream().write(boutStaticFile.toByteArray());
+						byte [] resp = boutStaticFile.toByteArray();
+						if(forceContentLength) {
+							res.setContentLength(resp.length);
+						}
+						res.getOutputStream().write(resp);
 					}else if(contenutoRichiesta!=null && contenutoRichiesta.length>0) {
 						if(replaceMap!=null && replaceMap.size()>0){
-							res.getOutputStream().write(this.replace(contenutoRichiesta, replaceMap));
+							byte [] resp = this.replace(contenutoRichiesta, replaceMap);
+							if(forceContentLength) {
+								res.setContentLength(resp.length);
+							}
+							res.getOutputStream().write(resp);
 						}
 						else{
+							if(forceContentLength) {
+								res.setContentLength(contenutoRichiesta.length);
+							}
 							res.getOutputStream().write(contenutoRichiesta);
 						}
 					}else if(dumpByteArrayOutputStreamRichiesta!=null) {
 						if(replaceMap!=null && replaceMap.size()>0){
-							throw new Exception("Replace unsupported with request messege bigger than threshold ("+Utilities.convertBytesToFormatString(this.thresholdRequestDump)+")");
+							throw new MessageException("Replace unsupported with request messege bigger than threshold ("+Utilities.convertBytesToFormatString(this.thresholdRequestDump)+")");
 						}
 						else {
+							if(forceContentLength) {
+								res.setContentLength(dumpByteArrayOutputStreamRichiesta.size());
+							}
 							try(FileInputStream fin = new FileInputStream(dumpByteArrayOutputStreamRichiesta.getSerializedFile())){
 								CopyStream.copy(fin, res.getOutputStream());
 							}
@@ -1711,18 +1742,37 @@ public class ServletTestService extends HttpServlet {
 							else {
 								contenutoRequest = Utilities.getAsByteArray(req.getInputStream());
 							}
-							res.getOutputStream().write(this.replace(contenutoRequest, replaceMap));
+							byte [] resp = this.replace(contenutoRequest, replaceMap);
+							if(forceContentLength) {
+								res.setContentLength(resp.length);
+							}
+							res.getOutputStream().write(resp);
 						}
 						else{
 							if(receiveThrottling) {
 								byte[] contenutoRequest = this.readThrottling(req.getInputStream(), throttlingBytes, throttlingMs);
+								if(forceContentLength) {
+									res.setContentLength(contenutoRequest.length);
+								}
 								res.getOutputStream().write(contenutoRequest);
 							}
 							else {
-								//FileSystemUtilities.copy(req.getInputStream(), res.getOutputStream());
-								InputStream is = req.getInputStream();
-								OutputStream out = res.getOutputStream();
-								CopyStream.copy(is, out);
+								if(forceContentLength) {
+									byte [] resp = Utilities.getAsByteArray(req.getInputStream(), false);
+									if(resp!=null && resp.length>0) {
+										res.setContentLength(resp.length);
+										res.getOutputStream().write(resp);
+									}
+									else {
+										res.setContentLength(0);
+									}
+								}
+								else {
+									//FileSystemUtilities.copy(req.getInputStream(), res.getOutputStream());
+									InputStream is = req.getInputStream();
+									OutputStream out = res.getOutputStream();
+									CopyStream.copy(is, out);
+								}
 							}
 						}
 					}
@@ -1737,7 +1787,7 @@ public class ServletTestService extends HttpServlet {
 			if(this.log!=null) {
 				this.log.error("TestService: "+e.getMessage(),e);
 			}else {
-				System.out.println("ERRORE TestService: "+e.toString());
+				systemOut("ERRORE TestService: "+e.toString());
 				e.printStackTrace(System.out);
 			}
 			if(this.genericError) {
@@ -1851,9 +1901,9 @@ public class ServletTestService extends HttpServlet {
 			String oldValue = (String) it.next();
 			String newValue = map.get(oldValue);
 			s = s.replaceAll(oldValue, newValue);
-			//System.out.println("oldValue ["+oldValue+"] replacewith["+map.get(oldValue)+"] ["+s+"]");
+			//systemOut("oldValue ["+oldValue+"] replacewith["+map.get(oldValue)+"] ["+s+"]");
 		}
-		//System.out.println("OTTENUTO ["+s+"]");
+		//systemOut("OTTENUTO ["+s+"]");
 		return s.getBytes();
 	}
 

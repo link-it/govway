@@ -2415,7 +2415,7 @@ public class HttpUtilities {
 			if(request.getMethod()==null){
 				throw new UtilsException("HttpMethod required");
 			}
-			if(sendThrottling) {
+			if(sendThrottling || request.isForceTransferEncodingChunked()) {
 				httpConn.setChunkedStreamingMode(0);
 			}
 			setStream(httpConn, request.getMethod(), contentType);

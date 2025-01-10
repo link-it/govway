@@ -41,7 +41,21 @@ public class SogliaDimensioneMessaggio implements Serializable {
 	private String nomePolicy;
 	private String idPolicyConGruppo;
 	private String configurazione;
+	private boolean useContentLengthHeader = true;
+	private boolean useContentLengthHeaderAcceptZeroValue = true;
 	
+	public boolean isUseContentLengthHeader() {
+		return this.useContentLengthHeader;
+	}
+	public void setUseContentLengthHeader(boolean useContentLengthHeader) {
+		this.useContentLengthHeader = useContentLengthHeader;
+	}
+	public boolean isUseContentLengthHeaderAcceptZeroValue() {
+		return this.useContentLengthHeaderAcceptZeroValue;
+	}
+	public void setUseContentLengthHeaderAcceptZeroValue(boolean useContentLengthHeaderAcceptZeroValue) {
+		this.useContentLengthHeaderAcceptZeroValue = useContentLengthHeaderAcceptZeroValue;
+	}
 	public boolean isPolicyGlobale() {
 		return this.policyGlobale;
 	}

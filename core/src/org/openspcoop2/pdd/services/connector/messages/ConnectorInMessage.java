@@ -35,6 +35,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.IDService;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
+import org.openspcoop2.utils.LimitExceededIOException;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
@@ -61,6 +62,7 @@ public interface ConnectorInMessage {
 	
 	public void setRequestLimitedStream(SogliaDimensioneMessaggio requestLimitSize);
 	public void disableLimitedStream();
+	public void checkContentLengthLimit() throws LimitExceededIOException;
 	
 	public void updateRequestInfo(RequestInfo requestInfo) throws ConnectorException;
 	public RequestInfo getRequestInfo();

@@ -1070,6 +1070,22 @@ public class CostantiProprieta {
 	
 	
 	
+	// ****  RATE LIMITING *****
+	
+	public static final String RATE_LIMITING_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String RATE_LIMITING_VALUE_DISABLED = VALUE_DISABLED;
+	
+	private static final String RATE_LIMITING_USE_HTTP_CONTENT_LENGTH = "rateLimiting.useHttpContentLength";
+	private static final String RATE_LIMITING_USE_HTTP_CONTENT_LENGTH_ACCEPT_ZERO_VALUE = "rateLimiting.useHttpContentLength.acceptZeroValue";
+		
+	public static boolean isRateLimitingUseHttpContentLength(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, RATE_LIMITING_USE_HTTP_CONTENT_LENGTH, defaultValue, RATE_LIMITING_VALUE_ENABLED, RATE_LIMITING_VALUE_DISABLED);
+	}
+	public static boolean isRateLimitingUseHttpContentLengthAcceptZeroValue(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, RATE_LIMITING_USE_HTTP_CONTENT_LENGTH_ACCEPT_ZERO_VALUE, defaultValue, RATE_LIMITING_VALUE_ENABLED, RATE_LIMITING_VALUE_DISABLED);
+	}
+	
+	
 	
 	
 	// ****  MODI *****
