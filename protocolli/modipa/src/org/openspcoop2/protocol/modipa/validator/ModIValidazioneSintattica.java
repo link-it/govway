@@ -182,6 +182,17 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					
 					sa = configIntegrationReader.getServizioApplicativo(idSA);
 				}
+				if(!request && sa==null) {
+					// provo a vedere se autenticato tramite autenticazione token
+					IDServizioApplicativo idServizioApplicativoToken = null;
+			    	if(this.context!=null && this.context.containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+			    		idServizioApplicativoToken = (IDServizioApplicativo) this.context.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+			    	}
+			    	if(idServizioApplicativoToken!=null) {
+			    		idSA = idServizioApplicativoToken;
+			    		sa = configIntegrationReader.getServizioApplicativo(idSA);
+			    	}
+				}
 				
 				ModIValidazioneSintatticaRest validatoreSintatticoRest = null;
 				ModIValidazioneSintatticaSoap validatoreSintatticoSoap = null;

@@ -160,6 +160,17 @@ public class ModIImbustamento {
 				idSA.setNome(busta.getServizioApplicativoFruitore());
 				sa = configIntegrationReader.getServizioApplicativo(idSA);
 			}
+			if(MessageRole.REQUEST.equals(messageRole) && sa==null) {
+				// provo a vedere se autenticato tramite autenticazione token
+				IDServizioApplicativo idServizioApplicativoToken = null;
+		    	if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN)) {
+		    		idServizioApplicativoToken = (IDServizioApplicativo) context.getObject(org.openspcoop2.core.constants.Costanti.ID_APPLICATIVO_TOKEN);
+		    	}
+		    	if(idServizioApplicativoToken!=null) {
+		    		idSA = idServizioApplicativoToken;
+		    		sa = configIntegrationReader.getServizioApplicativo(idSA);
+		    	}
+			}
 			
 			String azione = busta.getAzione();
 			String nomePortType = asps.getPortType();

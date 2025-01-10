@@ -1,5 +1,16 @@
 2025-01-10 Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, ProtocolloModIPA]
+	Risolto Bug #1528
+	Risolta anomalia presente nella funzionalità ModI di imbustamento delle fruizioni per applicativi identificati tramite autenticazione interna di tipo 'token'.
+	In caso di token generati senza PDND, veniva erroneamente segnalato l'errore:
+	   "Il profilo di sicurezza richiesto 'idam01' richiede l'identificazione di un applicativo".
+	Con una negoziazione del token tramite PDND, veniva segnalato l'errore:
+	  "Il tipo di keystore indicato nella token policy 'PDND' richiede l'autenticazione e l'identificazione di un applicativo fruitore: Servizio applicativo anonimo".
+	Ora il keystore definito nell'applicativo viene correttamente utilizzato senza generare indicazioni di applicativo non identificato.
+
+2025-01-10 Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Aggiunta funzionalità #1561
 	Aggiunto il controllo basato sul valore dell'header HTTP 'Content-Length' per filtrare i messaggi secondo le policy di rate limiting per dimensione.

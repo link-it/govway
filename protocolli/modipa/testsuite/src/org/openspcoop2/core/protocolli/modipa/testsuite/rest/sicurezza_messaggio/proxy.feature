@@ -976,6 +976,55 @@ Scenario: isTest('keystore-definito-applicativo')
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+    
+    
+Scenario: isTest('autenticazione-token-applicativo-fruitore')
+
+    * def client_fruitore_autenticazione_token_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01AutenticazioneInternaViaToken',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01AutenticazioneInternaViaToken'
+        }
+    })
+    """
+
+    * call checkToken ({token: requestHeaders.Authorization[0], match_to: client_fruitore_autenticazione_token_match })
+
+    * def request_token = decodeToken(requestHeaders['Authorization'][0])
+    * def request_id = get request_token $.payload.jti
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR01/v1')
+        
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01AutenticazioneInternaViaToken',
+            client_id: 'RestBlockingIDAR01/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR01/v1'
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders.Authorization[0], match_to: server_token_match  })
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders.Authorization[0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders.Authorization[0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)    
 
 
 ##############################

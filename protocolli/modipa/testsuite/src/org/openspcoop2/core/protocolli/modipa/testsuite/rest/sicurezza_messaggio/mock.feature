@@ -65,7 +65,8 @@ Scenario: isTest('connettivita-base') || isTest('connettivita-base-default-trust
 	isTest('keystore-ridefinito-fruizione') || isTest('keystore-ridefinito-fruizione-applicativo-no-keystore') || 
 	isTest('keystore-ridefinito-fruizione-archivio') ||
 	isTest('keystore-ridefinito-fruizione-x5u') ||
-	isTest('keystore-definito-applicativo')
+	isTest('keystore-definito-applicativo') ||
+	isTest('autenticazione-token-applicativo-fruitore')
     
     # Controllo che al server non siano arrivate le informazioni di sicurezza
     * match requestHeaders['Authorization'] == '#notpresent'
