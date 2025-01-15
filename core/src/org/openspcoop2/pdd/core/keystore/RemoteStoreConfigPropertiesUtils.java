@@ -91,6 +91,8 @@ public class RemoteStoreConfigPropertiesUtils {
 	public static final String PROPERTY_MULTITENANT_BASEURL_PLACEHOLDER = "multiTenant.baseUrl.placeholder";
 	public static final String PROPERTY_MULTITENANT_BASEURL_TENANT_STRING = "multiTenant.baseUrl.tenantString";
 	
+	public static final String PROPERTY_MULTITENANT_BASE_URL_PREFIX = "multiTenant.baseUrl.";
+
 	public static final String PROPERTY_MULTITENANT_HTTP_BASIC_USERNAME_PREFIX = "multiTenant.http.username.";
 	public static final String PROPERTY_MULTITENANT_HTTP_BASIC_PASSWORD_PREFIX = "multiTenant.http.password.";
 
@@ -217,13 +219,26 @@ public class RemoteStoreConfigPropertiesUtils {
 	
 	private static void setMultitenant(RemoteStoreConfig config, List<String> multi, Properties p, PropertiesReader pReader) throws KeystoreException {
 		config.setMultitenant(true);
-		config.setBaseUrlMultitenantDefaultString(getProperty(p, PROPERTY_MULTITENANT_BASEURL_DEFAULT_STRING, true));
-		config.setBaseUrlMultitenantPlaceholder(getProperty(p, PROPERTY_MULTITENANT_BASEURL_PLACEHOLDER, true));
-		config.setBaseUrlMultitenantTenantString(getProperty(p, PROPERTY_MULTITENANT_BASEURL_TENANT_STRING, true));
+		
+		String defaultS = getProperty(p, PROPERTY_MULTITENANT_BASEURL_DEFAULT_STRING, false);
+		boolean requiredMultitenantBaseUrlConfig = StringUtils.isNotEmpty(defaultS);
+		config.setBaseUrlMultitenantDefaultString(defaultS);
+		config.setBaseUrlMultitenantPlaceholder(getProperty(p, PROPERTY_MULTITENANT_BASEURL_PLACEHOLDER, requiredMultitenantBaseUrlConfig));
+		config.setBaseUrlMultitenantTenantString(getProperty(p, PROPERTY_MULTITENANT_BASEURL_TENANT_STRING, requiredMultitenantBaseUrlConfig));
 		
 		for (String tenant : multi) {
+			setMultitenantBaseUrl(config, tenant, p);
 			setMultitenantHttpBasic(config, tenant, p);
 			setMultitenantHttp(config, tenant, pReader);
+		}
+	}
+	private static void setMultitenantBaseUrl(RemoteStoreConfig config, String tenant, Properties p) throws KeystoreException {
+		String baseUrl = getProperty(p, PROPERTY_MULTITENANT_BASE_URL_PREFIX+tenant, false);
+		if(baseUrl!=null) {
+			if(config.getMultiTenantBaseUrl()==null) {
+				config.setMultiTenantBaseUrl(new HashMap<>());
+			}
+			config.getMultiTenantBaseUrl().put(tenant, baseUrl);
 		}
 	}
 	private static void setMultitenantHttpBasic(RemoteStoreConfig config, String tenant, Properties p) throws KeystoreException {

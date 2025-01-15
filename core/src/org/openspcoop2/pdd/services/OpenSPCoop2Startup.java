@@ -226,7 +226,6 @@ import org.openspcoop2.utils.certificate.CertificateFactory;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
-import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -3804,27 +3803,22 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				OpenSPCoop2Startup.logStartupInfo("PDND ClientId details max life minutes: "+RemoteStoreProviderDriver.getClientDetailsMaxLifeMinutes());
 				
 				
-				RemoteStoreConfig remoteStoreConfig = null;
-				RemoteKeyType remoteKeyType = RemoteKeyType.JWK;
+				List<PDNDConfig> listRemoteConfig = null;
 				try {
-					PDNDConfig c = PDNDConfigUtilities.getRemoteStoreConfig(propertiesReader);
-					if(c!=null) {
-						remoteStoreConfig = c.getRemoteStoreConfig();
-						remoteKeyType = c.getRemoteKeyType();
-					}
+					listRemoteConfig = PDNDConfigUtilities.getRemoteStoreConfig(propertiesReader);
 				}catch(Exception e){
 					String msgError = "Inizializzazione thread per la gestione delle chiavi PDND non riuscita: "+e.getMessage();
 					msgDiag.logStartupError(e,msgError);
 					return;
 				}
 				
-				if(remoteStoreConfig!=null && propertiesReader.isGestoreChiaviPDNDEnabled()) {
+				if(listRemoteConfig!=null && !listRemoteConfig.isEmpty() && propertiesReader.isGestoreChiaviPDNDEnabled()) {
 					
 					OpenSPCoop2Startup.this.threadGestoreChiaviPDNDEnabled = true;
 					
 					try{
 						OpenSPCoop2Startup.this.threadGestoreChiaviPDND = 
-								new TimerGestoreChiaviPDND(propertiesReader.getGestoreChiaviPDNDeventsKeysTimerIntervalloSecondi(), remoteStoreConfig);
+								new TimerGestoreChiaviPDND(propertiesReader.getGestoreChiaviPDNDeventsKeysTimerIntervalloSecondi(), listRemoteConfig);
 						OpenSPCoop2Startup.this.threadGestoreChiaviPDND.start();
 						TimerGestoreChiaviPDNDLib.setState( TimerState.ENABLED );
 					}catch(Exception e){
@@ -3833,7 +3827,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					
 					try{
 						OpenSPCoop2Startup.this.threadGestoreCacheChiaviPDND = 
-								new TimerGestoreCacheChiaviPDND(propertiesReader.getGestoreChiaviPDNDcacheKeysTimerIntervalloSecondi(), remoteStoreConfig, remoteKeyType);
+								new TimerGestoreCacheChiaviPDND(propertiesReader.getGestoreChiaviPDNDcacheKeysTimerIntervalloSecondi(), listRemoteConfig);
 						OpenSPCoop2Startup.this.threadGestoreCacheChiaviPDND.start();
 						TimerGestoreCacheChiaviPDNDLib.setState( TimerState.ENABLED );
 					}catch(Exception e){

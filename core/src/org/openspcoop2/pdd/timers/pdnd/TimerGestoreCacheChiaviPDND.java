@@ -21,6 +21,9 @@
 package org.openspcoop2.pdd.timers.pdnd;
 
 
+import java.util.List;
+
+import org.openspcoop2.pdd.config.PDNDConfig;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -28,8 +31,6 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.timers.TimerException;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
-import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
 
@@ -55,13 +56,12 @@ public class TimerGestoreCacheChiaviPDND extends BaseThread{
 	}
 	private MsgDiagnostico msgDiag = null;
 	
-	private RemoteStoreConfig remoteStore;
-	private RemoteKeyType remoteKeyType;
+	private List<PDNDConfig> remoteStores;
 	
 	
 	
 	/** Costruttore */
-	public TimerGestoreCacheChiaviPDND(long timeout, RemoteStoreConfig remoteStore, RemoteKeyType remoteKeyType) throws TimerException{
+	public TimerGestoreCacheChiaviPDND(long timeout, List<PDNDConfig> remoteStores) throws TimerException{
 	
 		// Aspetto inizializzazione di OpenSPCoop (aspetto mezzo minuto e poi segnalo errore)
 		int attesa = 90;
@@ -89,8 +89,7 @@ public class TimerGestoreCacheChiaviPDND extends BaseThread{
 		this.msgDiag.logPersonalizzato("avvioInCorso");
 		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
 		
-		this.remoteStore = remoteStore;
-		this.remoteKeyType = remoteKeyType;
+		this.remoteStores = remoteStores;
 		
 		this.setTimeout((int)timeout);
 		String sec = "secondi";
@@ -106,18 +105,37 @@ public class TimerGestoreCacheChiaviPDND extends BaseThread{
 	public void process(){
 		
 		try{
-			// Prendo la gestione
-			TimerGestoreCacheChiaviPDNDLib timer = 
-				new TimerGestoreCacheChiaviPDNDLib(this.logTimer, this.msgDiag, 
-						this.remoteStore, this.remoteKeyType);
 			
-			timer.check();
-			
+			if(this.remoteStores!=null && !this.remoteStores.isEmpty()) {
+				for (PDNDConfig remoteStore : this.remoteStores) {
+					
+					String remoteStoreName = remoteStore.getRemoteStoreConfig().getStoreName();
+					this.msgDiag.addKeyword(CostantiPdD.KEY_REMOTE_STORE, remoteStoreName);
+					
+					process(remoteStoreName, remoteStore);
+				}
+			}
+						
 		}catch(Exception e){
 			this.msgDiag.logErroreGenerico(e,"TimerGestoreCacheChiaviPDNDLib.check()");
 			this.logError("Errore generale: "+e.getMessage(),e);
 		}
 		
+	}
+	private void process(String remoteStoreName, PDNDConfig remoteStore){
+		try{
+			
+			// Prendo la gestione
+			TimerGestoreCacheChiaviPDNDLib timer = 
+				new TimerGestoreCacheChiaviPDNDLib(this.logTimer, this.msgDiag, 
+						remoteStore.getRemoteStoreConfig() , remoteStore.getRemoteKeyType());
+			
+			timer.check();	
+		
+		}catch(Exception e){
+			this.msgDiag.logErroreGenerico(e,"TimerGestoreCacheChiaviPDNDLib.check("+remoteStoreName+")");
+			this.logError("Errore generale ("+remoteStoreName+"): "+e.getMessage(),e);
+		}
 	}
 	
 }

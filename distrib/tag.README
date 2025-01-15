@@ -1,5 +1,7 @@
 Per creare una tag version:
 
+0. Immagine docker, aggiornare ultima versione tomcat.
+
 1. (PVersion) Inserire la corretta versione in tools/utils/src/org/openspcoop2/utils/Costanti.java
 
 2. (PVersion) Inserire la versione del rilascio in ChangeLog

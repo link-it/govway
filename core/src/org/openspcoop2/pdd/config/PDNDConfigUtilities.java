@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +30,6 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.ModIUtils;
-import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
@@ -48,27 +48,32 @@ public class PDNDConfigUtilities {
 	
 	private PDNDConfigUtilities() {}
 
-	public static PDNDConfig getRemoteStoreConfig(OpenSPCoop2Properties propertiesReader) throws ProtocolException, CoreException {
-		RemoteStoreConfig remoteStoreConfig = null;
-		RemoteKeyType remoteKeyType = RemoteKeyType.JWK;
+	public static List<PDNDConfig> getRemoteStoreConfig(OpenSPCoop2Properties propertiesReader) throws ProtocolException, CoreException {
 		List<RemoteStoreConfig> listRSC = ModIUtils.getRemoteStoreConfig();
+		List<PDNDConfig> l = null;
 		if(listRSC!=null && !listRSC.isEmpty()) {
-			String pdndName = propertiesReader.getGestoreChiaviPDNDRemoteStoreName();
+			List<String> pdndNames = propertiesReader.getGestoreChiaviPDNDRemoteStoreName();
+			boolean all = propertiesReader.isGestoreChiaviPDNDEventiCheckAllStores();
 			for (RemoteStoreConfig r : listRSC) {
-				if(pdndName.equals(r.getStoreName())) {
-					remoteStoreConfig = r;
-					remoteKeyType = ModIUtils.getRemoteKeyType(pdndName);
-					break;
+				if(all || pdndNames.contains(r.getStoreName())) {
+					String pdndName = r.getStoreName();
+					PDNDConfig c = new PDNDConfig();
+					c.setRemoteKeyType(ModIUtils.getRemoteKeyType(pdndName));
+					c.setRemoteStoreConfig(r);
+					if(l==null) {
+						l = new ArrayList<>();
+					}
+					l.add(c);
 				}
 			}
 		}
-		if(remoteStoreConfig!=null) {
-			PDNDConfig c = new PDNDConfig();
-			c.setRemoteKeyType(remoteKeyType);
-			c.setRemoteStoreConfig(remoteStoreConfig);
-			return c;
+		if(l!=null && !l.isEmpty()) {
+			return l;
 		}
-		return null;
+		else {
+			 l = null;
+		}
+		return l;
 	}
 	
 	private static final String URL_CHAR_DELIMITER = "/"; 

@@ -74,6 +74,9 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 			cloned.baseUrl = cloned.baseUrl.replace(this.baseUrlMultitenantDefaultString, newString);
 			
 		}
+		else {
+			cloned.baseUrl = RemoteStoreConfigMultiTenantUtils.getMultitenant(this.multiTenantBaseUrl, tenant, cloned.baseUrl);
+		}
 		
 		cloned.idMode = this.idMode;
 		cloned.parameterName = this.parameterName!=null ? (this.parameterName+"") : null;

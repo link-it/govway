@@ -30,6 +30,8 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 
 - :ref:`modipa_sicurezza_avanzate_pdndRateLimiting`: le politiche di rate limiting consentono di conteggiare le richieste o filtrare anche rispetto alle informazioni prelevate dalla PDND.
 
+- :ref:`modipa_sicurezza_avanzate_pdndConfAvanzata`: fornisce aspetti avanzati di configurazione dell'integrazione con la PDND.
+
 
 .. toctree::
         :maxdepth: 2
@@ -46,4 +48,5 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 	intermediario
 	pdndFailed
 	pdndRateLimiting
+	pdndConfAvanzate/index
 

@@ -328,7 +328,7 @@ public class ConsoleProperties {
 	
 	public List<String> getPolicyGestioneTokenPDND() throws UtilsException{
 		List<String> l = new ArrayList<>();
-		String p = this.readProperty(false, "policyGestioneToken.policy");
+		String p = this.readProperty(false, "policyGestioneToken.pdnd");
 		if(p!=null && !"".equals(p.trim())){
 			String [] tmp = p.trim().split(",");
 			for (int i = 0; i < tmp.length; i++) {
@@ -337,6 +337,9 @@ public class ConsoleProperties {
 			}
 		}
 		return l;
+	}
+	public boolean isPolicyGestioneTokenUseAllPDNDStoresAsPolicyPDND() throws UtilsException{
+		return this.readBooleanRequiredProperty("policyGestioneToken.pdnd.useAllPDNDStores");
 	}
 	
 	public PropertiesSourceConfiguration getAttributeAuthorityPropertiesSourceConfiguration() throws UtilsException {

@@ -285,6 +285,21 @@ public class OpenSPCoop2Properties {
 	}*/
 	
 
+	private static void initSplitValues(List<String> l, String value, boolean addEmpty) {
+		if(value.contains(",")) {
+			String [] tmp = value.split(",");
+			if(tmp!=null && tmp.length>0) {
+				for (String s : tmp) {
+					if(s!=null && (!"".equals(s.trim()) || addEmpty) ) {
+						l.add(s.trim());
+					}
+				}
+			}
+		}
+		else {
+			l.add(value);
+		}
+	}
 	
 	/** Copia Statica */
 	private static OpenSPCoop2Properties openspcoopProperties = null;
@@ -2738,6 +2753,7 @@ public class OpenSPCoop2Properties {
 				isGestoreChiaviPDNDEventiUpdate();
 				isGestoreChiaviPDNDEventiDelete();
 				getGestoreChiaviPDNDRemoteStoreName();
+				isGestoreChiaviPDNDEventiCheckAllStores();
 				getGestoreChiaviPDNDkeysMaxLifeMinutes();
 				getGestoreChiaviPDNDkeysPath();
 				getGestoreChiaviPDNDeventsKeysPath();
@@ -4241,21 +4257,7 @@ public class OpenSPCoop2Properties {
 					resourceTmp = resourceTmp.trim();
 					
 					List<String> lResources = new ArrayList<>();
-					if(resourceTmp.contains(",")) {
-						String [] tmp = resourceTmp.split(",");
-						for (int i = 0; i < tmp.length; i++) {
-							String r = tmp[i];
-							if(r!=null) {
-								r = r.trim();
-								if(!"".equals(r)) {
-									lResources.add(r);
-								}
-							}
-						}
-					}
-					else {
-						lResources.add(resourceTmp);
-					}
+					initSplitValues(lResources, resourceTmp, false);
 					
 					this.configPreLoadingLocale = new ArrayList<>();
 					
@@ -6416,7 +6418,7 @@ public class OpenSPCoop2Properties {
 	private List<String> getTimerConsegnaContenutiApplicativiCode = null;
 	private boolean getTimerConsegnaContenutiApplicativiCodeRead = false;
 	public List<String> getTimerConsegnaContenutiApplicativiCode() {	
-		if(this.getTimerConsegnaContenutiApplicativiCodeRead == false){
+		if(!this.getTimerConsegnaContenutiApplicativiCodeRead){
 			try{ 
 
 				String name = null;
@@ -6475,7 +6477,7 @@ public class OpenSPCoop2Properties {
 	private List<String> getTimerConsegnaContenutiApplicativiPriorita = null;
 	private boolean getTimerConsegnaContenutiApplicativiPrioritaRead = false;
 	public List<String> getTimerConsegnaContenutiApplicativiPriorita() {	
-		if(this.getTimerConsegnaContenutiApplicativiPrioritaRead == false){
+		if(!this.getTimerConsegnaContenutiApplicativiPrioritaRead){
 			try{ 
 
 				String name = null;
@@ -6505,7 +6507,7 @@ public class OpenSPCoop2Properties {
 		return this.getTimerConsegnaContenutiApplicativiPriorita;
 	}
 	
-	private HashMap<String, ConfigurazionePriorita> getTimerConsegnaContenutiApplicativiConfigurazionePriorita = new HashMap<String, ConfigurazionePriorita>();
+	private HashMap<String, ConfigurazionePriorita> getTimerConsegnaContenutiApplicativiConfigurazionePriorita = new HashMap<>();
 	public ConfigurazionePriorita getTimerConsegnaContenutiApplicativiConfigurazionePriorita(String nome) {
 		
 		ConfigurazionePriorita conf = this.getTimerConsegnaContenutiApplicativiConfigurazionePriorita.get(nome);
@@ -9659,15 +9661,15 @@ public class OpenSPCoop2Properties {
 	private void initBypassFilterMustUnderstandProperties(){
 		if(this.mapGetBypassFilterMustUnderstandProperties==null){
 			
-			this.mapGetBypassFilterMustUnderstandProperties = new HashMap<String, List<NameValue>>();
+			this.mapGetBypassFilterMustUnderstandProperties = new HashMap<>();
 			
-			List<NameValue> resultList = new ArrayList<NameValue>();
+			List<NameValue> resultList = new ArrayList<>();
 			try{ 
 				java.util.Properties tmpP = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.services.BypassMustUnderstandHandler.header.");
 				if(tmpP!=null && tmpP.size()>0){
 					Enumeration<Object> keys = tmpP.keys();
 					while (keys.hasMoreElements()) {
-						Object object = (Object) keys.nextElement();
+						Object object = keys.nextElement();
 						if(object instanceof String){
 							String key = (String) object;
 							String localName = key;
@@ -9692,17 +9694,17 @@ public class OpenSPCoop2Properties {
 				// aggiungo i bypass specifici dei protocolli
 				Enumeration<String> protocolli = ProtocolFactoryManager.getInstance().getProtocolFactories().keys();
 				while (protocolli.hasMoreElements()) {
-					String protocollo = (String) protocolli.nextElement();
+					String protocollo = protocolli.nextElement();
 					IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactories().get(protocollo);
 					IProtocolConfiguration pc = pf.createProtocolConfiguration();
 					List<BypassMustUnderstandCheck> list = pc.getBypassMustUnderstandCheck();
 					
-					List<NameValue> resultListForProtocol = new ArrayList<NameValue>();
-					if(resultList!=null && resultList.size()>0){
+					List<NameValue> resultListForProtocol = new ArrayList<>();
+					if(resultList!=null && !resultList.isEmpty()){
 						resultListForProtocol.addAll(resultList);
 					}
 					
-					if(list!=null && list.size()>0){
+					if(list!=null && !list.isEmpty()){
 						for (Iterator<?> iterator = list.iterator(); iterator.hasNext();) {
 							BypassMustUnderstandCheck bypassMustUnderstandCheck = (BypassMustUnderstandCheck) iterator.next();
 							
@@ -9826,19 +9828,7 @@ public class OpenSPCoop2Properties {
 					}
 					else {
 						List<String> l = new ArrayList<>();
-						if(value.contains(",")) {
-							String [] tmp = value.split(",");
-							if(tmp!=null && tmp.length>0) {
-								for (String s : tmp) {
-									if(s!=null && !"".equals(s)) {
-										l.add(s);
-									}
-								}
-							}
-						}
-						else {
-							l.add(value);
-						}
+						initSplitValues(l, value, false);
 						if(!l.isEmpty()) {
 							this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = true;
 							this.listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap = l;
@@ -9860,10 +9850,11 @@ public class OpenSPCoop2Properties {
 		return this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap;
 	}
 	public List<String> getControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap(){
+		List<String> lNull = null;
 		if(isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap()) {
 			return this.listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiSoap;
 		}
-		return null;
+		return lNull;
 	}
 	
 	private Boolean isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest= null;
@@ -9881,19 +9872,7 @@ public class OpenSPCoop2Properties {
 					}
 					else {
 						List<String> l = new ArrayList<>();
-						if(value.contains(",")) {
-							String [] tmp = value.split(",");
-							if(tmp!=null && tmp.length>0) {
-								for (String s : tmp) {
-									if(s!=null && !"".equals(s)) {
-										l.add(s);
-									}
-								}
-							}
-						}
-						else {
-							l.add(value);
-						}
+						initSplitValues(l, value, false);
 						if(!l.isEmpty()) {
 							this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = true;
 							this.listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest = l;
@@ -9915,10 +9894,11 @@ public class OpenSPCoop2Properties {
 		return this.isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest;
 	}
 	public List<String> getControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest(){
+		List<String> lNull = null;
 		if(isControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest()) {
 			return this.listControlloCharsetContentTypeAbilitatoRicezioneContenutiApplicativiRest;
 		}
-		return null;
+		return lNull;
 	}
 	
 	private Boolean isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap= null;
@@ -9936,19 +9916,7 @@ public class OpenSPCoop2Properties {
 					}
 					else {
 						List<String> l = new ArrayList<>();
-						if(value.contains(",")) {
-							String [] tmp = value.split(",");
-							if(tmp!=null && tmp.length>0) {
-								for (String s : tmp) {
-									if(s!=null && !"".equals(s)) {
-										l.add(s);
-									}
-								}
-							}
-						}
-						else {
-							l.add(value);
-						}
+						initSplitValues(l, value, false);
 						if(!l.isEmpty()) {
 							this.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = true;
 							this.listControlloCharsetContentTypeAbilitatoRicezioneBusteSoap = l;
@@ -9970,10 +9938,11 @@ public class OpenSPCoop2Properties {
 		return this.isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap;
 	}
 	public List<String> getControlloCharsetContentTypeAbilitatoRicezioneBusteSoap(){
+		List<String> lNull = null;
 		if(isControlloCharsetContentTypeAbilitatoRicezioneBusteSoap()) {
 			return this.listControlloCharsetContentTypeAbilitatoRicezioneBusteSoap;
 		}
-		return null;
+		return lNull;
 	}
 	
 	private Boolean isControlloCharsetContentTypeAbilitatoRicezioneBusteRest= null;
@@ -9991,19 +9960,7 @@ public class OpenSPCoop2Properties {
 					}
 					else {
 						List<String> l = new ArrayList<>();
-						if(value.contains(",")) {
-							String [] tmp = value.split(",");
-							if(tmp!=null && tmp.length>0) {
-								for (String s : tmp) {
-									if(s!=null && !"".equals(s)) {
-										l.add(s);
-									}
-								}
-							}
-						}
-						else {
-							l.add(value);
-						}
+						initSplitValues(l, value, false);
 						if(!l.isEmpty()) {
 							this.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest = true;
 							this.listControlloCharsetContentTypeAbilitatoRicezioneBusteRest = l;
@@ -10025,10 +9982,11 @@ public class OpenSPCoop2Properties {
 		return this.isControlloCharsetContentTypeAbilitatoRicezioneBusteRest;
 	}
 	public List<String> getControlloCharsetContentTypeAbilitatoRicezioneBusteRest(){
+		List<String> lNull = null;
 		if(isControlloCharsetContentTypeAbilitatoRicezioneBusteRest()) {
 			return this.listControlloCharsetContentTypeAbilitatoRicezioneBusteRest;
 		}
-		return null;
+		return lNull;
 	}
 	
 	private Boolean isPrintInfoCertificate= null;
@@ -11733,7 +11691,7 @@ public class OpenSPCoop2Properties {
 	private String[] tipoIntegrazionePD = null;
 	private boolean tipoIntegrazionePDRead = false;
 	public String[] getTipoIntegrazionePD() {
-		if(this.tipoIntegrazionePDRead == false){
+		if(!this.tipoIntegrazionePDRead){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pd"); 
 				if(value==null)
@@ -11759,7 +11717,7 @@ public class OpenSPCoop2Properties {
 	private String[] tipoIntegrazionePA = null;
 	private boolean tipoIntegrazionePARead = false;
 	public String[] getTipoIntegrazionePA() {
-		if(this.tipoIntegrazionePARead == false){
+		if(!this.tipoIntegrazionePARead){
 			try{ 
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pa");
 				if(value==null)
@@ -11782,14 +11740,14 @@ public class OpenSPCoop2Properties {
 	 * 
 	 * @return  Restituisce l'elenco dei tipi di integrazione da gestire lato PortaDelegata specifici per protocollo
 	 */
-	private Map<String, String[]> tipoIntegrazionePD_perProtocollo = new HashMap<String, String[]>();
-	private Map<String, Boolean> tipoIntegrazionePD_perProtocollo_notExists = new HashMap<String, Boolean>();
+	private Map<String, String[]> tipoIntegrazionePD_perProtocollo = new HashMap<>();
+	private Map<String, Boolean> tipoIntegrazionePD_perProtocollo_notExists = new HashMap<>();
 	public String[] getTipoIntegrazionePD(String protocollo) {
 		
 		if( 
-			(this.tipoIntegrazionePD_perProtocollo.containsKey(protocollo)==false) 
+			(!this.tipoIntegrazionePD_perProtocollo.containsKey(protocollo)) 
 			&&
-			(this.tipoIntegrazionePD_perProtocollo_notExists.containsKey(protocollo)==false) 
+			(!this.tipoIntegrazionePD_perProtocollo_notExists.containsKey(protocollo)) 
 		){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pd."+protocollo); 
@@ -11819,14 +11777,14 @@ public class OpenSPCoop2Properties {
 	 * 
 	 * @return  Restituisce l'elenco dei tipi di integrazione da gestire lato PortaApplicativa specifici per protocollo
 	 */
-	private Map<String, String[]> tipoIntegrazionePA_perProtocollo = new HashMap<String, String[]>();
-	private Map<String, Boolean> tipoIntegrazionePA_perProtocollo_notExists = new HashMap<String, Boolean>();
+	private Map<String, String[]> tipoIntegrazionePA_perProtocollo = new HashMap<>();
+	private Map<String, Boolean> tipoIntegrazionePA_perProtocollo_notExists = new HashMap<>();
 	public String[] getTipoIntegrazionePA(String protocollo) {
 		
 		if( 
-			(this.tipoIntegrazionePA_perProtocollo.containsKey(protocollo)==false) 
+			(!this.tipoIntegrazionePA_perProtocollo.containsKey(protocollo)) 
 			&&
-			(this.tipoIntegrazionePA_perProtocollo_notExists.containsKey(protocollo)==false) 
+			(!this.tipoIntegrazionePA_perProtocollo_notExists.containsKey(protocollo)) 
 		){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.integrazione.tipo.pa."+protocollo); 
@@ -12133,7 +12091,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties(pName);
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12177,7 +12135,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pd.read.enabled.");
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12221,7 +12179,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties(pName);
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12270,7 +12228,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.trasporto.pa.read.enabled.");
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12367,7 +12325,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pd.set.request.enabled.");
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12401,7 +12359,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pd.read.enabled.");
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12435,7 +12393,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pa.set.request.enabled.");
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12469,7 +12427,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.urlBased.pa.read.enabled.");
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12576,7 +12534,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties(pName);
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12620,7 +12578,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pd.read.enabled.");
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12663,7 +12621,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties(pName);
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -12712,7 +12670,7 @@ public class OpenSPCoop2Properties {
 			try{ 
 
 				prop = this.reader.readPropertiesConvertEnvProperties("org.openspcoop2.pdd.integrazione.soap.pa.read.enabled.");
-				Map<String, Boolean> _tmp = new HashMap<String, Boolean>();
+				Map<String, Boolean> _tmp = new HashMap<>();
 				Iterator<?> it = prop.keySet().iterator();
 				while (it.hasNext()) {
 					Object object = (Object) it.next();
@@ -26888,7 +26846,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesBlackListInternalUrlParameters() {	
 		if(this.getSOAPServicesBlackListInternalUrlParametersRead==null){
 			try{ 
-				this.getSOAPServicesBlackListInternalUrlParametersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesBlackListInternalUrlParametersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.blackList.internal");
 				if(name!=null){
@@ -26914,7 +26872,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesBlackListUrlParameters() {	
 		if(this.getSOAPServicesBlackListUrlParametersRead==null){
 			try{ 
-				this.getSOAPServicesBlackListUrlParametersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesBlackListUrlParametersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.blackList");
 				if(name!=null){
@@ -26940,7 +26898,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesWhiteListUrlParameters() {	
 		if(this.getSOAPServicesWhiteListUrlParametersRead==null){
 			try{ 
-				this.getSOAPServicesWhiteListUrlParametersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesWhiteListUrlParametersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.urlParameters.whiteList");
 				if(name!=null){
@@ -27033,7 +26991,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesBlackListBothInternalHeaders() {	
 		if(this.getSOAPServicesBlackListBothInternalHeadersRead==null){
 			try{ 
-				this.getSOAPServicesBlackListBothInternalHeadersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesBlackListBothInternalHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.both");
 				if(name!=null){
@@ -27059,7 +27017,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesBlackListRequestInternalHeaders() {	
 		if(this.getSOAPServicesBlackListRequestInternalHeadersRead==null){
 			try{ 
-				this.getSOAPServicesBlackListRequestInternalHeadersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesBlackListRequestInternalHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.request");
 				if(name!=null){
@@ -27085,7 +27043,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesBlackListResponseInternalHeaders() {	
 		if(this.getSOAPServicesBlackListResponseInternalHeadersRead==null){
 			try{ 
-				this.getSOAPServicesBlackListResponseInternalHeadersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesBlackListResponseInternalHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.internal.response");
 				if(name!=null){
@@ -27111,7 +27069,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesBlackListBothHeaders() {	
 		if(this.getSOAPServicesBlackListBothHeadersRead==null){
 			try{ 
-				this.getSOAPServicesBlackListBothHeadersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesBlackListBothHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.both");
 				if(name!=null){
@@ -27137,7 +27095,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesBlackListRequestHeaders() {	
 		if(this.getSOAPServicesBlackListRequestHeadersRead==null){
 			try{ 
-				this.getSOAPServicesBlackListRequestHeadersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesBlackListRequestHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.request");
 				if(name!=null){
@@ -27163,7 +27121,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesBlackListResponseHeaders() {	
 		if(this.getSOAPServicesBlackListResponseHeadersRead==null){
 			try{ 
-				this.getSOAPServicesBlackListResponseHeadersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesBlackListResponseHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.blackList.response");
 				if(name!=null){
@@ -27189,7 +27147,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesWhiteListBothHeaders() {	
 		if(this.getSOAPServicesWhiteListBothHeadersRead==null){
 			try{ 
-				this.getSOAPServicesWhiteListBothHeadersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesWhiteListBothHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.both");
 				if(name!=null){
@@ -27215,7 +27173,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesWhiteListRequestHeaders() {	
 		if(this.getSOAPServicesWhiteListRequestHeadersRead==null){
 			try{ 
-				this.getSOAPServicesWhiteListRequestHeadersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesWhiteListRequestHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.request");
 				if(name!=null){
@@ -27241,7 +27199,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getSOAPServicesWhiteListResponseHeaders() {	
 		if(this.getSOAPServicesWhiteListResponseHeadersRead==null){
 			try{ 
-				this.getSOAPServicesWhiteListResponseHeadersList = new ArrayList<MapKey<String>>();
+				this.getSOAPServicesWhiteListResponseHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.soap.headers.whiteList.response");
 				if(name!=null){
@@ -27781,7 +27739,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesBlackListInternalUrlParameters() {	
 		if(this.getRESTServicesBlackListInternalUrlParametersRead==null){
 			try{ 
-				this.getRESTServicesBlackListInternalUrlParametersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesBlackListInternalUrlParametersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.blackList.internal");
 				if(name!=null){
@@ -27807,7 +27765,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesBlackListUrlParameters() {	
 		if(this.getRESTServicesBlackListUrlParametersRead==null){
 			try{ 
-				this.getRESTServicesBlackListUrlParametersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesBlackListUrlParametersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.blackList");
 				if(name!=null){
@@ -27833,7 +27791,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesWhiteListUrlParameters() {	
 		if(this.getRESTServicesWhiteListUrlParametersRead==null){
 			try{ 
-				this.getRESTServicesWhiteListUrlParametersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesWhiteListUrlParametersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.urlParameters.whiteList");
 				if(name!=null){
@@ -27926,7 +27884,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesBlackListBothInternalHeaders() {	
 		if(this.getRESTServicesBlackListBothInternalHeadersRead==null){
 			try{ 
-				this.getRESTServicesBlackListBothInternalHeadersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesBlackListBothInternalHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.both");
 				if(name!=null){
@@ -27952,7 +27910,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesBlackListRequestInternalHeaders() {	
 		if(this.getRESTServicesBlackListRequestInternalHeadersRead==null){
 			try{ 
-				this.getRESTServicesBlackListRequestInternalHeadersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesBlackListRequestInternalHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.request");
 				if(name!=null){
@@ -27978,7 +27936,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesBlackListResponseInternalHeaders() {	
 		if(this.getRESTServicesBlackListResponseInternalHeadersRead==null){
 			try{ 
-				this.getRESTServicesBlackListResponseInternalHeadersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesBlackListResponseInternalHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.internal.response");
 				if(name!=null){
@@ -28004,7 +27962,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesBlackListBothHeaders() {	
 		if(this.getRESTServicesBlackListBothHeadersRead==null){
 			try{ 
-				this.getRESTServicesBlackListBothHeadersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesBlackListBothHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.both");
 				if(name!=null){
@@ -28030,7 +27988,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesBlackListRequestHeaders() {	
 		if(this.getRESTServicesBlackListRequestHeadersRead==null){
 			try{ 
-				this.getRESTServicesBlackListRequestHeadersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesBlackListRequestHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.request");
 				if(name!=null){
@@ -28056,7 +28014,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesBlackListResponseHeaders() {	
 		if(this.getRESTServicesBlackListResponseHeadersRead==null){
 			try{ 
-				this.getRESTServicesBlackListResponseHeadersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesBlackListResponseHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.blackList.response");
 				if(name!=null){
@@ -28082,7 +28040,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesWhiteListBothHeaders() {	
 		if(this.getRESTServicesWhiteListBothHeadersRead==null){
 			try{ 
-				this.getRESTServicesWhiteListBothHeadersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesWhiteListBothHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.both");
 				if(name!=null){
@@ -28108,7 +28066,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesWhiteListRequestHeaders() {	
 		if(this.getRESTServicesWhiteListRequestHeadersRead==null){
 			try{ 
-				this.getRESTServicesWhiteListRequestHeadersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesWhiteListRequestHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.request");
 				if(name!=null){
@@ -28134,7 +28092,7 @@ public class OpenSPCoop2Properties {
 	private List<MapKey<String>> getRESTServicesWhiteListResponseHeaders() {	
 		if(this.getRESTServicesWhiteListResponseHeadersRead==null){
 			try{ 
-				this.getRESTServicesWhiteListResponseHeadersList = new ArrayList<MapKey<String>>();
+				this.getRESTServicesWhiteListResponseHeadersList = new ArrayList<>();
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.rest.headers.whiteList.response");
 				if(name!=null){
@@ -28157,7 +28115,7 @@ public class OpenSPCoop2Properties {
 	
 	private List<String> getRESTServicesBlackListHeaders(boolean request) {	
 		
-		List<MapKey<String>> blackList = new ArrayList<MapKey<String>>();
+		List<MapKey<String>> blackList = new ArrayList<>();
 		List<MapKey<String>> tmp = this.getRESTServicesBlackListBothInternalHeaders();
 		this._list_add(tmp, blackList);
 		tmp = this.getRESTServicesBlackListBothHeaders();
@@ -33830,8 +33788,8 @@ public class OpenSPCoop2Properties {
 		return this.isGestoreChiaviPDNDEventiDelete;
 	}
 	
-	private String getGestoreChiaviPDNDRemoteStoreName = null;
-	public String getGestoreChiaviPDNDRemoteStoreName() throws CoreException {	
+	private List<String> getGestoreChiaviPDNDRemoteStoreName = null;
+	public List<String> getGestoreChiaviPDNDRemoteStoreName() throws CoreException {	
 		if(this.getGestoreChiaviPDNDRemoteStoreName==null){
 			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.remoteStore.name";
 			try{ 
@@ -33841,7 +33799,10 @@ public class OpenSPCoop2Properties {
 					throw new CoreException("Proprieta' non impostata");
 				}
 				name = name.trim();
-				this.getGestoreChiaviPDNDRemoteStoreName = name;
+				this.getGestoreChiaviPDNDRemoteStoreName = new ArrayList<>();
+				
+				initSplitValues(this.getGestoreChiaviPDNDRemoteStoreName, name, false);
+				
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
@@ -33849,6 +33810,28 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getGestoreChiaviPDNDRemoteStoreName;
+	}
+	
+	private Boolean isGestoreChiaviPDNDEventiCheckAllStores = null;
+	public boolean isGestoreChiaviPDNDEventiCheckAllStores() {	
+		if(this.isGestoreChiaviPDNDEventiCheckAllStores==null){
+			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.remoteStore.checkAllStores";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isGestoreChiaviPDNDEventiCheckAllStores = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, true));
+				this.isGestoreChiaviPDNDEventiCheckAllStores = true;
+			}    
+		}
+
+		return this.isGestoreChiaviPDNDEventiCheckAllStores;
 	}
 	
 	private Integer getGestoreChiaviPDNDkeysMaxLifeMinutes = null;
