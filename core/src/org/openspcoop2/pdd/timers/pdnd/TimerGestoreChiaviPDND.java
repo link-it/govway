@@ -21,7 +21,12 @@
 package org.openspcoop2.pdd.timers.pdnd;
 
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.config.PDNDConfig;
 import org.openspcoop2.pdd.config.PDNDConfigUtilities;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -30,7 +35,6 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.timers.TimerException;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
 
@@ -60,13 +64,13 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 	/** OpenSPCoop2Properties */
 	private OpenSPCoop2Properties op2Properties = null;
 	
-	private RemoteStoreConfig remoteStore;
-	private String urlCheckEventi;
+	private List<PDNDConfig> remoteStores;
+	private Map<String, String> mapUrlCheckEventi;
 	
 	
 	
 	/** Costruttore */
-	public TimerGestoreChiaviPDND(long timeout, RemoteStoreConfig remoteStore) throws TimerException{
+	public TimerGestoreChiaviPDND(long timeout, List<PDNDConfig> remoteStores) throws TimerException{
 	
 		// Aspetto inizializzazione di OpenSPCoop (aspetto mezzo minuto e poi segnalo errore)
 		int attesa = 90;
@@ -103,16 +107,10 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 			throw new TimerException(msgErrore,e);
 		}
 		
-		this.remoteStore = remoteStore;
+		this.remoteStores = remoteStores;
 		
-		try {
-			this.urlCheckEventi = PDNDConfigUtilities.buildUrlCheckEventi(this.remoteStore, this.op2Properties);
-		} catch (Exception e) {
-			this.msgDiag.logErroreGenerico(e,"InizializzazioneTimer");
-			String msgErrore = "Riscontrato errore durante l'inizializzazione della configurazione del timer: "+e.getMessage();
-			this.logError(msgErrore,e);
-			throw new TimerException(msgErrore,e);
-		}
+		initMapUrlCheckEventi();
+		
 
 		this.setTimeout((int)timeout);
 		String sec = "secondi";
@@ -124,24 +122,60 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
 	}
 	
+	private void initMapUrlCheckEventi() throws TimerException {
+		if(this.remoteStores!=null && !this.remoteStores.isEmpty()) {
+			for (PDNDConfig pdndConfig : this.remoteStores) {
+				String remoteStoreName = pdndConfig.getRemoteStoreConfig().getStoreName();
+				try {
+					String urlCheckEventi = PDNDConfigUtilities.buildUrlCheckEventi(pdndConfig.getRemoteStoreConfig(), this.op2Properties);
+					if(this.mapUrlCheckEventi==null) {
+						this.mapUrlCheckEventi = new HashMap<>();
+					}
+					this.mapUrlCheckEventi.put(remoteStoreName, urlCheckEventi);
+				} catch (Exception e) {
+					this.msgDiag.logErroreGenerico(e,"InizializzazioneTimer");
+					String msgErrore = "Riscontrato errore durante l'inizializzazione della configurazione del timer: "+e.getMessage();
+					this.logError(msgErrore,e);
+					throw new TimerException(msgErrore,e);
+				}
+			}
+		}
+	}
 
 	@Override
 	public void process(){
 		
 		try{
-			// Prendo la gestione
-			TimerGestoreChiaviPDNDLib timer = 
-				new TimerGestoreChiaviPDNDLib(this.logTimer, this.msgDiag, 
-						this.remoteStore, this.urlCheckEventi,
-						this.getTimeout());
+			if(this.remoteStores!=null && !this.remoteStores.isEmpty()) {
+				for (PDNDConfig remoteStore : this.remoteStores) {
 			
-			timer.check();
+					String remoteStoreName = remoteStore.getRemoteStoreConfig().getStoreName();
+					this.msgDiag.addKeyword(CostantiPdD.KEY_REMOTE_STORE, remoteStoreName);
+					
+					String urlCheckEventi = this.mapUrlCheckEventi.get(remoteStoreName);
+					
+					process(remoteStoreName, remoteStore, urlCheckEventi);
+				}
+			}
 			
 		}catch(Exception e){
 			this.msgDiag.logErroreGenerico(e,"TimerGestoreChiaviPDNDLib.check()");
 			this.logError("Errore generale: "+e.getMessage(),e);
 		}
 		
+	}
+	private void process(String remoteStoreName, PDNDConfig remoteStore, String urlCheckEventi){
+		try {
+			TimerGestoreChiaviPDNDLib timer = 
+					new TimerGestoreChiaviPDNDLib(this.logTimer, this.msgDiag, 
+							remoteStore.getRemoteStoreConfig(), urlCheckEventi,
+							this.getTimeout());
+				
+			timer.check();
+		}catch(Exception e){
+			this.msgDiag.logErroreGenerico(e,"TimerGestoreChiaviPDNDLib.check("+remoteStoreName+")");
+			this.logError("Errore generale: "+e.getMessage(),e);
+		}
 	}
 	
 }

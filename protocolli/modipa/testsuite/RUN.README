@@ -188,7 +188,12 @@ Prerequisiti:
 
 	org.openspcoop2.pdd.gestoreChiaviPDND.enabled=true
 	org.openspcoop2.pdd.gestoreChiaviPDND.remoteStore.name=PDNDSimulato
+	org.openspcoop2.pdd.gestoreChiaviPDND.remoteStore.checkAllStores=false
 	org.openspcoop2.pdd.gestorePDND.clientInfo.enabled=true
+
++ Nel file /etc/govway/console_local.properties abilitare le seguenti proprietà (per retrocompatibilità nei test):
+
+	policyGestioneToken.pdnd.useAllPDNDStores=false
 
 + Copiare nella cartella dell'application server che serve il contenuto statico, i ExampleClient1.crt, ExampleClient2.crt ed ExampleServer.crt, utilizzati
 	nei test per verificare il riferimento x509 x5u. Ad esempio per wildfly:

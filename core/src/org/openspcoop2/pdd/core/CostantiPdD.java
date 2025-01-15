@@ -849,6 +849,9 @@ public class CostantiPdD {
     /** Costante che identifica una keyword per rappresentare l'identificatore di un Timer */
     public static final String KEY_TIMER = "@ID_TIMER@";
     
+    /** Costante che identifica una keyword per rappresentare l'identificatore di un repository delle chiavi */
+    public static final String KEY_REMOTE_STORE = "@ID_REMOTE_STORE@";
+    
     /** Costante che identifica una keyword per rappresentare il numero di messaggi inoltrati */
     public static final String KEY_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI_NUMERO_MESSAGGI_INOLTRATI = "@NUMERO_MESSAGGI_INOLTRATI@";
     

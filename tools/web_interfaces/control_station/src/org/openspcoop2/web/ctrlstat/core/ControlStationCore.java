@@ -166,6 +166,7 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -174,6 +175,7 @@ import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.CryptType;
@@ -912,6 +914,21 @@ public class ControlStationCore {
 			return this.policyGestioneTokenPDND.get(0);
 		}
 		return null;
+	}
+	private void initPolicyGestioneTokenPDND() {
+		try {
+			List<RemoteStoreConfig> listRSC = ModIUtils.getRemoteStoreConfig();
+			if(listRSC!=null && !listRSC.isEmpty()) {
+				this.policyGestioneTokenPDND = new ArrayList<>();
+				for (RemoteStoreConfig r : listRSC) {
+					if(!this.policyGestioneTokenPDND.contains(r.getTokenPolicy())) {
+						this.policyGestioneTokenPDND.add(r.getTokenPolicy());
+					}
+				}
+			}
+		}catch(Exception e) {
+			ControlStationCore.logError("Errore di inizializzazione policy 'PDND': "+e.getMessage(), e);
+		}
 	}
 	
 	/** AttributeAuthority PropertiesSourceConfiguration */
@@ -3081,6 +3098,9 @@ public class ControlStationCore {
 			this.policyGestioneTokenPropertiesSourceConfiguration = consoleProperties.getPolicyGestioneTokenPropertiesSourceConfiguration();
 			this.isPolicyGestioneTokenVerificaCertificati = consoleProperties.isPolicyGestioneTokenVerificaCertificati();
 			this.policyGestioneTokenPDND = consoleProperties.getPolicyGestioneTokenPDND();
+			if(consoleProperties.isPolicyGestioneTokenUseAllPDNDStoresAsPolicyPDND() && isProfiloModIPAEnabled()) {
+				initPolicyGestioneTokenPDND();
+			}
 			this.attributeAuthorityPropertiesSourceConfiguration = consoleProperties.getAttributeAuthorityPropertiesSourceConfiguration();
 			this.isAttributeAuthorityVerificaCertificati = consoleProperties.isAttributeAuthorityVerificaCertificati(); 
 			this.isControlloTrafficoPolicyGlobaleGroupByApi = consoleProperties.isControlloTrafficoPolicyGlobaleGroupByApi();
@@ -8314,6 +8334,21 @@ public class ControlStationCore {
 	public boolean isProfiloModIPA(String protocollo) {
 		try {
 			return protocollo!=null && protocollo.equals(CostantiLabel.MODIPA_PROTOCOL_NAME);
+		}catch(Throwable t) {
+			return false;
+		}
+	}
+	
+	public boolean isProfiloModIPAEnabled() {
+		try {
+			Enumeration<String> en = ProtocolFactoryManager.getInstance().getProtocolNames();
+			while (en.hasMoreElements()) {
+				String protocollo = (String) en.nextElement();
+				if(protocollo.equals(CostantiLabel.MODIPA_PROTOCOL_NAME)) {
+					return true;
+				}
+			}
+			return false;
 		}catch(Throwable t) {
 			return false;
 		}

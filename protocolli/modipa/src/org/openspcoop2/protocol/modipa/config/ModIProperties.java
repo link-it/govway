@@ -799,10 +799,51 @@ public class ModIProperties {
 					throw new ProtocolException(debugPrefix+" non trovata");
 				}
 				RemoteStoreConfig config = RemoteStoreConfigPropertiesUtils.read(p, null);
+				forceBaseUrlPDNDEndsWithKeys(rsc, config);
 				this.remoteStoreConfig.add(config);
 				
 				readKeyType(p, debugPrefix, config);
 			}
+		}
+	}
+	private void forceBaseUrlPDNDEndsWithKeys(String rsc, RemoteStoreConfig config) {
+		if(isForceBaseUrlPDNDEndsWithKeys(rsc)) {
+			String baseUrl = config.getBaseUrl();
+			config.setBaseUrl(normalizeBaseUrlApiPDNDKeys(baseUrl));
+			
+			if(config.getMultiTenantBaseUrl()!=null && !config.getMultiTenantBaseUrl().isEmpty()) {
+				Map<String, String> multiTenantBaseUrlNormalized = new HashMap<>();
+				for (Map.Entry<String,String> entry : config.getMultiTenantBaseUrl().entrySet()) {
+					String baseUrlTenant = entry.getValue();
+					multiTenantBaseUrlNormalized.put(entry.getKey(), normalizeBaseUrlApiPDNDKeys(baseUrlTenant));
+				}
+				config.setMultiTenantBaseUrl(multiTenantBaseUrlNormalized);
+			}
+		}
+	}
+	private String normalizeBaseUrlApiPDNDKeys(String baseUrl) {
+		if(!baseUrl.endsWith("/keys")) {
+			if(!baseUrl.endsWith("/")) {
+				baseUrl+="/";
+			}
+			baseUrl+="keys";
+		}
+		return baseUrl;
+	}
+	private boolean isForceBaseUrlPDNDEndsWithKeys(String rsc) {
+		String propertyPrefix = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore."+rsc+"."+
+				RemoteStoreConfigPropertiesUtils.PROPERTY_STORE_URL+".forceEndsWithKeys";
+		try{  
+			boolean force = true;
+			String value = this.reader.getValueConvertEnvProperties(propertyPrefix); 
+			if (value != null){
+				value = value.trim();
+				force = "false".equals(value);
+			}
+			return force;			
+		}catch(java.lang.Exception e) {
+			this.logWarn("Proprietà '"+propertyPrefix+"' non impostata; viene forzato il suffisso /keys");
+			return true;
 		}
 	}
 	

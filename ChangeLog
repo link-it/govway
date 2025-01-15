@@ -1,3 +1,12 @@
+2025-01-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA, Documentazione]
+	Aggiunta funzionalità #1563
+	Migliorata gestione della registrazione di molteplici repository delle chiavi PDND e/o utilizzo di client interop differenti in ambiente Multi-Tenant:
+	- l'introduzione di molteplici repository vengono automaticamente utilizzati nella console di gestione e nei timer dedicati alla gestione delle interazioni con la PDND;
+	- la proprietà 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.pdnd.baseUrl' può adesso essere definita con la sola base url senza il suffisso '/keys';
+	- rivista configurazione multitenant.
+	
 2025-01-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

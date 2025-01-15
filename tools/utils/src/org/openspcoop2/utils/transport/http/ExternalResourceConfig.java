@@ -68,6 +68,7 @@ public class ExternalResourceConfig {
 	protected Map<String, String> queryParameters;
 	
 	// multi-tenant
+	protected Map<String, String> multiTenantBaseUrl;
 	protected Map<String, String> multiTenantBasicUsername;
 	protected Map<String, String> multiTenantBasicPassword;
 	protected Map<String, Map<String, String>> multiTenantHeaders;
@@ -218,6 +219,14 @@ public class ExternalResourceConfig {
 
 	public void setQueryParameters(Map<String, String> queryParameters) {
 		this.queryParameters = queryParameters;
+	}
+
+	public Map<String, String> getMultiTenantBaseUrl() {
+		return this.multiTenantBaseUrl;
+	}
+
+	public void setMultiTenantBaseUrl(Map<String, String> multiTenantBaseUrl) {
+		this.multiTenantBaseUrl = multiTenantBaseUrl;
 	}
 	
 	public Map<String, String> getMultiTenantBasicUsername() {
