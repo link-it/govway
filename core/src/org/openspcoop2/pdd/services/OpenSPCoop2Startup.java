@@ -2758,9 +2758,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			/* ----------- Directory ------------ */
+			FileSystemMkdirConfig configMkdir = null;
 			try{
 				
-				FileSystemMkdirConfig configMkdir = new FileSystemMkdirConfig();
+				configMkdir = new FileSystemMkdirConfig();
 				configMkdir.setCheckCanWrite(true);
 				configMkdir.setCheckCanRead(true);
 				configMkdir.setCheckCanExecute(false);
@@ -2768,9 +2769,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// logDir (sarebbe meglio se fosse creata dall'utente)
 				List<File> listFiles = OpenSPCoop2Logger.getLogDirs();
-				if(listFiles!=null && listFiles.size()>0) {
+				if(listFiles!=null && !listFiles.isEmpty()) {
 					for (File file : listFiles) {
-						if(file.exists()==false){
+						if(!file.exists()){
 							// Il Log può non funzionare
 							String msg = "WARNING: Log dir ["+file.getAbsolutePath()+"] non trovata. La directory verrà creata ma è possibile che serva un ulteriore riavvio dell'Application Server";
 							log.warn(msg);
@@ -2899,8 +2900,31 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// HazelcastManager
 				if(propertiesReader.isHazelcastEngineEnabled()) {
+					setSystemProperties(org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Costanti.SECURITY_RECOMMENDATIONS, 
+							propertiesReader.isHazelcastSecurityRecommendationsEnabled() ? 
+									org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Costanti.SECURITY_RECOMMENDATIONS_ENABLED :
+									org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Costanti.SECURITY_RECOMMENDATIONS_DISABLED);
+					
+					boolean diag = propertiesReader.isHazelcastDiagnosticsEnabled();
+					setSystemProperties(org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Costanti.DIAGNOSTICS, 
+							diag ? 
+									org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Costanti.DIAGNOSTICS_ENABLED :
+									org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Costanti.DIAGNOSTICS_DISABLED);
+					if(diag) {
+						try{
+							File hazelcastDiagnosticDir = propertiesReader.getHazelcastDiagnosticsDirectory();
+							FileSystemUtilities.mkdir(hazelcastDiagnosticDir, configMkdir);
+							setSystemProperties(org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Costanti.DIAGNOSTICS_DIRECTORY, hazelcastDiagnosticDir.getAbsolutePath());
+							setSystemProperties(org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Costanti.DIAGNOSTICS_DIRECTORY_MAX_ROLLED_FILE_COUNT, propertiesReader.getHazelcastDiagnosticsMaxRolledFileCount()+"");
+							setSystemProperties(org.openspcoop2.pdd.core.controllo_traffico.policy.driver.hazelcast.Costanti.DIAGNOSTICS_DIRECTORY_MAX_FILE_SIZE_MB, propertiesReader.getHazelcastDiagnosticsMaxFileSizeMb()+"");
+						}catch(Exception e){
+							msgDiag.logStartupError(e,"Inizializzazione Hazelcast diagnostic configuration");
+							return;
+						}
+					}
+					
 					try{
-						Map<PolicyGroupByActiveThreadsType,String> config = new HashMap<PolicyGroupByActiveThreadsType, String>();
+						Map<PolicyGroupByActiveThreadsType,String> config = new HashMap<>();
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_MAP, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath());
 						config.put(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE, propertiesReader.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath());
@@ -4073,6 +4097,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 		}
 
+	}
+	
+	private static void setSystemProperties(String propName, String propValue) {
+		System.setProperty(propName, propValue);
+		OpenSPCoop2Startup.logStartupInfo("Hazelcast - '"+propName+"': "+System.getProperty(propName));
 	}
 	
 	public static void startTimerClusterDinamicoThread() throws Exception {

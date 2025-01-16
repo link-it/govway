@@ -35,7 +35,6 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.BuilderDatiColl
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.cp.IAtomicLong;
 
 /**
  * Scelgo questa implementazione, dove la versione distribuita eredita da DatiCollezionati e replica
@@ -61,38 +60,38 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 
 	private static final long serialVersionUID = 1L;
 	
-	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedAtomicLong");
+	private final transient org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedAtomicLong");
 	
-	private final HazelcastInstance hazelcast;
+	private final transient HazelcastInstance hazelcast;
 	private final IDUnivocoGroupByPolicyMapId groupByPolicyMapId;
-	private final int groupByPolicyMapId_hashCode;
+	private final int groupByPolicyMapIdHashCode;
 	
 	// data di registrazione/aggiornamento policy
 	
 	// final: sono i contatori che non dipendono da una finestra temporale
 	
-	protected final IAtomicLong distributedUpdatePolicyDate; // data di ultima modifica della policy
-	protected final IAtomicLong distributedPolicyDate; // intervallo corrente su cui vengono costruiti gli altri contatori
+	protected final transient DatoAtomicLong distributedUpdatePolicyDate; // data di ultima modifica della policy
+	protected final transient DatoAtomicLong distributedPolicyDate; // intervallo corrente su cui vengono costruiti gli altri contatori
 	
-	protected IAtomicLong distributedPolicyRequestCounter; // numero di richieste effettuato nell'intervallo
-	protected IAtomicLong distributedPolicyCounter; // utilizzato per tempi o banda
+	protected transient DatoAtomicLong distributedPolicyRequestCounter; // numero di richieste effettuato nell'intervallo
+	protected transient DatoAtomicLong distributedPolicyCounter; // utilizzato per tempi o banda
 	
-	protected final IAtomicLong distributedPolicyDegradoPrestazionaleDate; // intervallo corrente su cui vengono costruiti gli altri contatori
-	protected IAtomicLong distributedPolicyDegradoPrestazionaleRequestCounter; // numero di richieste effettuato nell'intervallo
-	protected IAtomicLong distributedPolicyDegradoPrestazionaleCounter; // contatore del degrado
+	protected final transient DatoAtomicLong distributedPolicyDegradoPrestazionaleDate; // intervallo corrente su cui vengono costruiti gli altri contatori
+	protected transient DatoAtomicLong distributedPolicyDegradoPrestazionaleRequestCounter; // numero di richieste effettuato nell'intervallo
+	protected transient DatoAtomicLong distributedPolicyDegradoPrestazionaleCounter; // contatore del degrado
 	
-	protected final boolean distribuitedActiveRequestCounter_policyRichiesteSimultanee;
-	protected final IAtomicLong distributedActiveRequestCounterForStats; // numero di richieste simultanee
-	protected IAtomicLong distributedActiveRequestCounterForCheck; // numero di richieste simultanee
+	protected final transient boolean distribuitedActiveRequestCounterPolicyRichiesteSimultanee;
+	protected final transient DatoAtomicLong distributedActiveRequestCounterForStats; // numero di richieste simultanee
+	protected transient DatoAtomicLong distributedActiveRequestCounterForCheck; // numero di richieste simultanee
 	
-	protected IAtomicLong distributedPolicyDenyRequestCounter; // policy bloccate
+	protected transient DatoAtomicLong distributedPolicyDenyRequestCounter; // policy bloccate
 	
 	// I contatori da eliminare 
 	// Se si effettua il drop di un contatore quando si rileva il cambio di intervallo, potrebbe succedere che in un altro nodo del cluster che sta effettuando la fase di 'end'
 	// non rilevi più il contatore e di fatto quindi lo riprende partenzo da 0. Poi a sua volta capisce il cambio di intervallo e lo rielimina.
 	// per questo motivo, il drop viene effettuato al secondo cambio di intervallo, e ad ogni cambio i contatori vengono collezionati nel cestino
-	private List<IAtomicLong> cestino_policyCounters = new ArrayList<IAtomicLong>();
-	private List<IAtomicLong> cestino_policyCountersDegradoPrestazionale = new ArrayList<IAtomicLong>();
+	private transient List<DatoAtomicLong> cestinoPolicyCounters = new ArrayList<>();
+	private transient List<DatoAtomicLong> cestinoPolicyCountersDegradoPrestazionale = new ArrayList<>();
 		
 	private boolean initialized = false;
 
@@ -101,7 +100,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	
 		this.hazelcast = hazelcast;
 		this.groupByPolicyMapId = groupByPolicyMapId;
-		this.groupByPolicyMapId_hashCode = this.groupByPolicyMapId.hashCode();
+		this.groupByPolicyMapIdHashCode = this.groupByPolicyMapId.hashCode();
 		
 		this.initDatiIniziali(activePolicy);
 		this.checkDate(log, activePolicy); // inizializza le date se ci sono
@@ -111,9 +110,9 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		
 		this.distributedPolicyDegradoPrestazionaleDate = this.initPolicyDegradoPrestazionaleDate();
 		
-		this.distribuitedActiveRequestCounter_policyRichiesteSimultanee = activePolicy.getConfigurazionePolicy().isSimultanee() &&
+		this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee = activePolicy.getConfigurazionePolicy().isSimultanee() &&
 				TipoControlloPeriodo.REALTIME.equals(activePolicy.getConfigurazionePolicy().getModalitaControllo());
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			this.distributedActiveRequestCounterForCheck = initActiveRequestCounters();
 			this.distributedActiveRequestCounterForStats = null;
 		}
@@ -132,10 +131,9 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		// se updatePolicyDate è > this.distributedUpdatePolicyDate.get() allora resetto i contatori del cluster e setto la nuova data distribuita.
 		// Questo per via di come funziona l'aggiornamento delle policy: i datiCollezionati correnti per una map<IDUnivoco..., DatiCollezionati> vengono cancellati e reinizializzati.
 		// Per gli altri nodi in esecuzione, la updatePolicyDate locale resta sempre la stessa, ma non viene usata.
-		if(this.policyRealtime!=null && this.policyRealtime){
-			if (updatePolicyDate != null && this.distributedUpdatePolicyDate!=null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
-				this.resetCounters(updatePolicyDate);
-			}
+		if(this.policyRealtime!=null && this.policyRealtime &&
+			updatePolicyDate != null && this.distributedUpdatePolicyDate!=null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
+			this.resetCounters(updatePolicyDate);
 		}
 		
 		this.initialized = true;
@@ -144,21 +142,25 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	public DatiCollezionatiDistributedAtomicLong(Logger log, DatiCollezionati dati, HazelcastInstance hazelcast, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
 		super(dati.getUpdatePolicyDate(), dati.getGestorePolicyConfigDate());
 		
+		if(log!=null) {
+			// nop
+		}
+		
 		// Inizializzo il padre con i valori in RAM, dopo uso 'super' per essere  sicuro di usare quelli
 		dati.setValuesIn(this, false);
 		
 		this.hazelcast = hazelcast;
 		this.groupByPolicyMapId = groupByPolicyMapId;
-		this.groupByPolicyMapId_hashCode = this.groupByPolicyMapId.hashCode();
+		this.groupByPolicyMapIdHashCode = this.groupByPolicyMapId.hashCode();
 		
 		this.distributedPolicyDate = this.initPolicyDate();
 		this.distributedUpdatePolicyDate = this.initUpdatePolicyDate();
 		
 		this.distributedPolicyDegradoPrestazionaleDate = this.initPolicyDegradoPrestazionaleDate();
 		
-		this.distribuitedActiveRequestCounter_policyRichiesteSimultanee = activePolicy.getConfigurazionePolicy().isSimultanee() &&
+		this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee = activePolicy.getConfigurazionePolicy().isSimultanee() &&
 				TipoControlloPeriodo.REALTIME.equals(activePolicy.getConfigurazionePolicy().getModalitaControllo());
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			this.distributedActiveRequestCounterForCheck = initActiveRequestCounters();
 			this.distributedActiveRequestCounterForStats = null;
 		}
@@ -197,7 +199,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 				
 				Long getActiveRequestCounter = super.getActiveRequestCounter(true);
 				if (getActiveRequestCounter!=null && getActiveRequestCounter != 0) {
-					if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+					if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 						this.distributedActiveRequestCounterForCheck.set(getActiveRequestCounter);
 					}
 					else {
@@ -216,64 +218,68 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		}
 		
 		// Se non ho la policyDegradoPrestazionaleDate, non considero il resto delle informazioni, che senza di essa non hanno senso.
-		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-			if (super.getPolicyDegradoPrestazionaleDate() != null) {
+		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime &&
+			super.getPolicyDegradoPrestazionaleDate() != null) {
 				
-				// Imposto i contatori distribuiti solo se nel frattempo non l'ha fatto un altro thread del cluster.
-				if (this.distributedPolicyDegradoPrestazionaleDate!=null && this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(0, super.getPolicyDegradoPrestazionaleDate().getTime())) {
-					
-					Long degradoPrestazionaleTime = super.getPolicyDegradoPrestazionaleDate().getTime();
-					initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
-					
-					Long getPolicyDegradoPrestazionaleRequestCounter = super.getPolicyDegradoPrestazionaleRequestCounter(true);
-					if (getPolicyDegradoPrestazionaleRequestCounter != null) {
-						this.distributedPolicyDegradoPrestazionaleRequestCounter.addAndGet(getPolicyDegradoPrestazionaleRequestCounter);
-					}
-					
-					Long getPolicyDegradoPrestazionaleCounter = super.getPolicyDegradoPrestazionaleCounter(true);
-					if (getPolicyDegradoPrestazionaleCounter != null) {
-						this.distributedPolicyDegradoPrestazionaleCounter.addAndGet(getPolicyDegradoPrestazionaleCounter);
-					}
-					
-				}  else {
-					
-					Long degradoPrestazionaleTime = this.distributedPolicyDegradoPrestazionaleDate!=null ? this.distributedPolicyDegradoPrestazionaleDate.get() : null;
-					initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
-					
+			// Imposto i contatori distribuiti solo se nel frattempo non l'ha fatto un altro thread del cluster.
+			if (this.distributedPolicyDegradoPrestazionaleDate!=null && this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(0, super.getPolicyDegradoPrestazionaleDate().getTime())) {
+				
+				Long degradoPrestazionaleTime = super.getPolicyDegradoPrestazionaleDate().getTime();
+				initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
+				
+				Long getPolicyDegradoPrestazionaleRequestCounter = super.getPolicyDegradoPrestazionaleRequestCounter(true);
+				if (getPolicyDegradoPrestazionaleRequestCounter != null) {
+					this.distributedPolicyDegradoPrestazionaleRequestCounter.addAndGet(getPolicyDegradoPrestazionaleRequestCounter);
 				}
+				
+				Long getPolicyDegradoPrestazionaleCounter = super.getPolicyDegradoPrestazionaleCounter(true);
+				if (getPolicyDegradoPrestazionaleCounter != null) {
+					this.distributedPolicyDegradoPrestazionaleCounter.addAndGet(getPolicyDegradoPrestazionaleCounter);
+				}
+				
+			}  else {
+				
+				Long degradoPrestazionaleTime = this.distributedPolicyDegradoPrestazionaleDate!=null ? this.distributedPolicyDegradoPrestazionaleDate.get() : null;
+				initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
+				
 			}
+			
 		}
 		
 		this.initialized = true;
 	}
 
-	private IAtomicLong initPolicyDate() {
+	private DatoAtomicLong initPolicyDate() {
 		if(this.policyRealtime!=null && this.policyRealtime){
-			return this.hazelcast.getCPSubsystem().getAtomicLong(this.groupByPolicyMapId_hashCode+
+			return new DatoAtomicLong(this.hazelcast, 
+					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
-	private IAtomicLong initUpdatePolicyDate() {
+	private DatoAtomicLong initUpdatePolicyDate() {
 		if(this.policyRealtime!=null && this.policyRealtime){
-			return this.hazelcast.getCPSubsystem().getAtomicLong(this.groupByPolicyMapId_hashCode+
+			return new DatoAtomicLong(this.hazelcast, 
+					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_UPDATE_POLICY_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
-	private IAtomicLong initPolicyDegradoPrestazionaleDate() {
+	private DatoAtomicLong initPolicyDegradoPrestazionaleDate() {
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-			return this.hazelcast.getCPSubsystem().getAtomicLong(this.groupByPolicyMapId_hashCode+
+			return new DatoAtomicLong(this.hazelcast,
+					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DEGRADO_PRESTAZIONALE_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
 	
-	private IAtomicLong initActiveRequestCounters() {
-		return this.hazelcast.getCPSubsystem().getAtomicLong(this.groupByPolicyMapId_hashCode+
+	private DatoAtomicLong initActiveRequestCounters() {
+		return new DatoAtomicLong(this.hazelcast,
+				this.groupByPolicyMapIdHashCode+
 				BuilderDatiCollezionatiDistributed.DISTRUBUITED_ACTIVE_REQUEST_COUNTER+
 				(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 	}
@@ -282,30 +288,30 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 
 		if(this.policyRealtime!=null && this.policyRealtime){
 						
-			this.distributedPolicyRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-					this.groupByPolicyMapId_hashCode+
+			this.distributedPolicyRequestCounter = new DatoAtomicLong(this.hazelcast, 
+					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_REQUEST_COUNTER+
 					policyDate+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
-			//System.out.println("INIT DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] cout-> ["+this.distributedPolicyRequestCounter.getName()+"]");
+			/**System.out.println("INIT DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] cout-> ["+this.distributedPolicyRequestCounter.getName()+"]");*/
 			
-			this.distributedPolicyDenyRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-					this.groupByPolicyMapId_hashCode+
+			this.distributedPolicyDenyRequestCounter = new DatoAtomicLong(this.hazelcast, 
+					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DENY_REQUEST_COUNTER+
 					policyDate+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
-			//System.out.println("INIT DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] cout-> ["+this.distributedPolicyDenyRequestCounter.getName()+"]");
+			/**System.out.println("INIT DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] cout-> ["+this.distributedPolicyDenyRequestCounter.getName()+"]");*/
 			
 			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
-				this.distributedPolicyCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-						this.groupByPolicyMapId_hashCode+
+				this.distributedPolicyCounter = new DatoAtomicLong(this.hazelcast,
+						this.groupByPolicyMapIdHashCode+
 						BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_COUNTER+
 						policyDate+
 						BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
 						(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
-				//System.out.println("INIT DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] cout-> ["+this.distributedPolicyCounter.getName()+"]");
+				/**System.out.println("INIT DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] cout-> ["+this.distributedPolicyCounter.getName()+"]");*/
 			}
 		}
 	}
@@ -313,15 +319,15 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	private void initPolicyCountersDegradoPrestazionale(Long policyDate) {
 		
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-			this.distributedPolicyDegradoPrestazionaleCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-					this.groupByPolicyMapId_hashCode+
+			this.distributedPolicyDegradoPrestazionaleCounter = new DatoAtomicLong(this.hazelcast,
+					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_COUNTER+
 					policyDate+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 			
-			this.distributedPolicyDegradoPrestazionaleRequestCounter = this.hazelcast.getCPSubsystem().getAtomicLong(
-					this.groupByPolicyMapId_hashCode+
+			this.distributedPolicyDegradoPrestazionaleRequestCounter = new DatoAtomicLong(this.hazelcast,
+					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_REQUEST_COUNTER+
 					policyDate+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
@@ -338,7 +344,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 			
 			this.lock.acquireThrowRuntime("resetPolicyCounterForDate");
 			try {
-				//System.out.println("RESET");
+				/**System.out.println("RESET");*/
 				long policyDate = date.getTime();
 				long actual = this.distributedPolicyDate.get();
 				long actualSuper = super.policyDate!=null ? super.policyDate.getTime() : -1;
@@ -348,30 +354,30 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					// Potrà capitare che il cestino di un nodo non venga svuotato se si entra sempre sull'altro, cmq sia rimarrà 1 cestino con dei contatori di 1 intervallo.
 					// Non appena ci entra poi li distruggerà.
 					
-					//System.out.println("RESET ENTRO!");
+					/**System.out.println("RESET ENTRO!");*/
 					
 					// effettuo il drop creati due intervalli indietro
-					if(!this.cestino_policyCounters.isEmpty()) {
-						for (IAtomicLong iAtomicLong : this.cestino_policyCounters) {
-							//System.out.println("DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] destroy ["+iAtomicLong.getName()+"]");
+					if(!this.cestinoPolicyCounters.isEmpty()) {
+						for (DatoAtomicLong iAtomicLong : this.cestinoPolicyCounters) {
+							/**System.out.println("DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] destroy ["+iAtomicLong.getName()+"]");*/
 							iAtomicLong.destroy();
 						}
-						this.cestino_policyCounters.clear();
+						this.cestinoPolicyCounters.clear();
 					}
 					
 					if(this.distributedPolicyRequestCounter!=null || this.distributedPolicyDenyRequestCounter!=null || this.distributedPolicyCounter!=null) {
 						// conservo precedenti contatori
 						if(this.distributedPolicyRequestCounter!=null) {
-							this.cestino_policyCounters.add(this.distributedPolicyRequestCounter);
-							//System.out.println("SALVO IN CESTINO DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] c ["+this.distributedPolicyRequestCounter.getName()+"]");
+							this.cestinoPolicyCounters.add(this.distributedPolicyRequestCounter);
+							/**System.out.println("SALVO IN CESTINO DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] c ["+this.distributedPolicyRequestCounter.getName()+"]");*/
 						}
 						if(this.distributedPolicyDenyRequestCounter!=null) {
-							this.cestino_policyCounters.add(this.distributedPolicyDenyRequestCounter);
-							//System.out.println("SALVO IN CESTINO DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] c ["+this.distributedPolicyDenyRequestCounter.getName()+"]");
+							this.cestinoPolicyCounters.add(this.distributedPolicyDenyRequestCounter);
+							/**System.out.println("SALVO IN CESTINO DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] c ["+this.distributedPolicyDenyRequestCounter.getName()+"]");*/
 						}
 						if(this.distributedPolicyCounter!=null) {
-							this.cestino_policyCounters.add(this.distributedPolicyCounter);
-							//System.out.println("SALVO IN CESTINO DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] c ["+this.distributedPolicyCounter.getName()+"]");
+							this.cestinoPolicyCounters.add(this.distributedPolicyCounter);
+							/**System.out.println("SALVO IN CESTINO DATA["+org.openspcoop2.utils.date.DateManager.getDate()+"]["+org.openspcoop2.utils.date.DateManager.getTimeMillis()+"] c ["+this.distributedPolicyCounter.getName()+"]");*/
 						}
 					}
 															
@@ -414,20 +420,20 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 					// Non appena ci entra poi li distruggerà.
 					
 					// effettuo il drop creati due intervalli indietro
-					if(!this.cestino_policyCountersDegradoPrestazionale.isEmpty()) {
-						for (IAtomicLong iAtomicLong : this.cestino_policyCountersDegradoPrestazionale) {
+					if(!this.cestinoPolicyCountersDegradoPrestazionale.isEmpty()) {
+						for (DatoAtomicLong iAtomicLong : this.cestinoPolicyCountersDegradoPrestazionale) {
 							iAtomicLong.destroy();
 						}
-						this.cestino_policyCountersDegradoPrestazionale.clear();
+						this.cestinoPolicyCountersDegradoPrestazionale.clear();
 					}
 					
 					if(this.distributedPolicyRequestCounter!=null || this.distributedPolicyDenyRequestCounter!=null || this.distributedPolicyCounter!=null) {
 						// conservo precedenti contatori
 						if(this.distributedPolicyDegradoPrestazionaleCounter!=null) {
-							this.cestino_policyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleCounter);
+							this.cestinoPolicyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleCounter);
 						}
 						if(this.distributedPolicyDegradoPrestazionaleRequestCounter!=null) {
-							this.cestino_policyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleRequestCounter);
+							this.cestinoPolicyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleRequestCounter);
 						}
 					}
 															
@@ -485,7 +491,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	
 	@Override
 	protected void internalRegisterStartRequestIncrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			if(datiCollezionatiPerPolicyVerifier!=null) {
 				super.activeRequestCounter = datiCollezionatiPerPolicyVerifier.setAndGetActiveRequestCounter(this.distributedActiveRequestCounterForCheck.incrementAndGet());
 			}
@@ -512,7 +518,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	
 	@Override
 	protected void internalRegisterEndRequestDecrementActiveRequestCounter() {
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			super.activeRequestCounter = this.distributedActiveRequestCounterForCheck.decrementAndGet();
 		}
 		else {
@@ -590,7 +596,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 	
 	@Override
 	public Long getActiveRequestCounter(boolean readRemoteInfo) {
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			if(readRemoteInfo) {
 				return this.distributedActiveRequestCounterForCheck.get();	
 			}

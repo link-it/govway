@@ -147,9 +147,9 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(this.debug);
 		this.logSql = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTrafficoSql(this.debug);
 		
-		this.transactionMode = this._op2Properties.isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction();
-		this.attesaAttivaJDBC = this._op2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva();
-		this.checkIntervalloJDBC = this._op2Properties.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval();
+		this.transactionMode = this._op2Properties.isControlloTrafficoGestorePolicyInMemoryDatabaseUseTransaction();
+		this.attesaAttivaJDBC = this._op2Properties.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBAttesaAttiva();
+		this.checkIntervalloJDBC = this._op2Properties.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBCheckInterval();
 				
 	}
 	
