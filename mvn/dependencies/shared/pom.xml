@@ -41,7 +41,7 @@
 		<xmlunit.version>2.10.0</xmlunit.version>
 		<ehcache.version>3.10.8</ehcache.version>
 		<rhino.version>1.7.15</rhino.version>
-		<hazelcast.version>5.3.5</hazelcast.version>
+		<hazelcast.version>5.3.8</hazelcast.version>
 		<hibernate.version>6.6.0.Final</hibernate.version>
 		<jboss-logging.version>3.6.0.Final</jboss-logging.version>
 		<urlrewritefilter.version>5.1.3</urlrewritefilter.version>

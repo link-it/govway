@@ -43,7 +43,7 @@ import com.hazelcast.core.HazelcastInstance;
  * nella ram del nodo locale, evitando così che il PolicyVerifier o altre classi che utilizzano i DatiCollezionatiDistributed vadano 
  * a fare richieste remote, ottenendo valori che non sono quelli che ci si aspettava dopo la richiesta.
  * 
- *  CP_SUBSYSTEM (https://docs.hazelcast.com/imdg/4.2/cp-subsystem/cp-subsystem)
+ *  CP_SUBSYSTEM (https://docs.hazelcast.com/hazelcast/5.3/cp-subsystem/cp-subsystem)
  *	Sottosistema hazelcast che garantisce consistenza e partizionamento per gli IAtomicLong e altri oggetti distribuiti (Non le MAP)
  *	Richide almeno tre nodi nel cluster.
  * - Strong Consistency: La vista dei dati è la stessa per tutti i nodi del cluster, garantida dal sistema CP

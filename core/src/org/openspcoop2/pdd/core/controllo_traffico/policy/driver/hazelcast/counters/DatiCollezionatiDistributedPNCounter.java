@@ -46,7 +46,7 @@ import com.hazelcast.core.HazelcastInstance;
  * 
  * 	The updates to the counter are applied locally when invoked on a CRDT replica.
  * 
- *  https://docs.hazelcast.com/imdg/latest/data-structures/pn-counter
+ *  https://docs.hazelcast.com/hazelcast/5.3/data-structures/pn-counter
  *
  * Attenzione:	Nel caso si diminuisse il numero delle repliche per il PNCounter, che di default è a INTEGER.MAX_VALUE per cui ogni membro ha la sua replica, 
  *	gli aggiornamenti potrebbero non raggiungere il membro che ha fatto partire la modifica, sollevando una ConsistencyLostException.
