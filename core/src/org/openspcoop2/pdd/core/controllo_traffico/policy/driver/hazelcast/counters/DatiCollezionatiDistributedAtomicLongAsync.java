@@ -54,7 +54,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	
 	@Override
 	protected void internalRegisterStartRequestIncrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			if(datiCollezionatiPerPolicyVerifier!=null) {
 				this.distributedActiveRequestCounterForCheck.incrementAndGetAsync();
 				super.activeRequestCounter = datiCollezionatiPerPolicyVerifier.setAndGetActiveRequestCounter(this.distributedActiveRequestCounterForCheck.get());
@@ -83,7 +83,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	
 	@Override
 	protected void internalRegisterEndRequestDecrementActiveRequestCounter() {
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			this.distributedActiveRequestCounterForCheck.decrementAndGet();
 		}
 		else {
@@ -119,7 +119,7 @@ public class DatiCollezionatiDistributedAtomicLongAsync extends DatiCollezionati
 	
 	@Override
 	public Long getActiveRequestCounter(boolean readRemoteInfo) {
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			return this.distributedActiveRequestCounterForCheck.get();
 		}
 		else {

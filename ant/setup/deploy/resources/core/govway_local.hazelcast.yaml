@@ -108,3 +108,8 @@ hazelcast:
       #discovery-strategies:
       #  discovery-strategy:
       #    ...
+      
+  # Configurazione CP Subsystem
+  # Per una documentazione degli elementi si consiglia di consultare la documentazione di Hazelcast: https://docs.hazelcast.com/hazelcast/5.3/cp-subsystem/configuration
+  #cp-subsystem:
+  #  cp-member-count: 3     

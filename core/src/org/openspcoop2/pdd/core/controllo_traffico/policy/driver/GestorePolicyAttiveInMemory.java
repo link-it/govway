@@ -157,7 +157,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			
 			boolean throwInitializingException = true;
 			if(isStartupGovWay) {
-				throwInitializingException = OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady();
+				throwInitializingException = OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady();
 			}
 			
 			try {

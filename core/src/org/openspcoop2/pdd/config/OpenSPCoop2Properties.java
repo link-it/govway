@@ -2586,13 +2586,13 @@ public class OpenSPCoop2Properties {
 					@SuppressWarnings("unused")
 					PolicyGroupByActiveThreadsType type = this.getControlloTrafficoGestorePolicyInMemoryType();
 					
-					this.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_remaining_zeroValue();
-					this.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_roundingDown();
-					this.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_normalizedQuota();
+					this.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodesRemainingZeroValue();
+					this.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodesLimitRoundingDown();
+					this.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodesLimitNormalizedQuota();
 
-					isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction();
-					getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva();
-					getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval();
+					isControlloTrafficoGestorePolicyInMemoryDatabaseUseTransaction();
+					getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBAttesaAttiva();
+					getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBCheckInterval();
 					
 					//case HAZELCAST:
 					if(isHazelcastEngineEnabled()) {
@@ -2617,13 +2617,22 @@ public class OpenSPCoop2Properties {
 						getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath();
 						getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath();
+						
+						isHazelcastSecurityRecommendationsEnabled();
+						if(isHazelcastDiagnosticsEnabled()) {
+							getHazelcastDiagnosticsDirectory();
+							getHazelcastDiagnosticsMaxRolledFileCount();
+							getHazelcastDiagnosticsMaxFileSizeMb();
+						}
+						getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailover();
+						getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailoverCheckEveryMs();
 					}
 					
 					// case REDIS
 					if(isRedisEngineEnabled()) {
 						getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl();
 						isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy();
-						isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady();
+						isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady();
 					}
 					
 					if(isHazelcastEngineEnabled() || isRedisEngineEnabled()) {
@@ -30861,101 +30870,101 @@ public class OpenSPCoop2Properties {
 		return this.isControlloTrafficoGestorePolicyInMemoryRemoteCountersUseLocalLock;
 	}
 	
-	private Boolean isControlloTrafficoGestioneCluster_remaining_zeroValue = null;
-	public boolean isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_remaining_zeroValue(){
+	private Boolean isControlloTrafficoGestioneClusterRemainingZeroValue = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodesRemainingZeroValue(){
 		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.remaining.zeroValue";
-		if(this.isControlloTrafficoGestioneCluster_remaining_zeroValue==null){
+		if(this.isControlloTrafficoGestioneClusterRemainingZeroValue==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
-					this.isControlloTrafficoGestioneCluster_remaining_zeroValue = Boolean.parseBoolean(value);
+					this.isControlloTrafficoGestioneClusterRemainingZeroValue = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isControlloTrafficoGestioneCluster_remaining_zeroValue = false;
+					this.isControlloTrafficoGestioneClusterRemainingZeroValue = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isControlloTrafficoGestioneCluster_remaining_zeroValue = false;
+				this.isControlloTrafficoGestioneClusterRemainingZeroValue = false;
 			}
 		}
-		return this.isControlloTrafficoGestioneCluster_remaining_zeroValue;
+		return this.isControlloTrafficoGestioneClusterRemainingZeroValue;
 	}
 	
-	private Boolean isControlloTrafficoGestioneCluster_limit_roundingDown = null;
-	public boolean isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_roundingDown(){
+	private Boolean isControlloTrafficoGestioneClusterLimitRoundingDown = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodesLimitRoundingDown(){
 		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.limit.roundingDown";
-		if(this.isControlloTrafficoGestioneCluster_limit_roundingDown==null){
+		if(this.isControlloTrafficoGestioneClusterLimitRoundingDown==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
-					this.isControlloTrafficoGestioneCluster_limit_roundingDown = Boolean.parseBoolean(value);
+					this.isControlloTrafficoGestioneClusterLimitRoundingDown = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isControlloTrafficoGestioneCluster_limit_roundingDown = true;
+					this.isControlloTrafficoGestioneClusterLimitRoundingDown = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isControlloTrafficoGestioneCluster_limit_roundingDown = true;
+				this.isControlloTrafficoGestioneClusterLimitRoundingDown = true;
 			}
 		}
-		return this.isControlloTrafficoGestioneCluster_limit_roundingDown;
+		return this.isControlloTrafficoGestioneClusterLimitRoundingDown;
 	}
 	
-	private Boolean isControlloTrafficoGestioneCluster_limit_normalizedQuota = null;
-	public boolean isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_normalizedQuota(){
+	private Boolean isControlloTrafficoGestioneClusterLimitNormalizedQuota = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodesLimitNormalizedQuota(){
 		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.LOCAL_DIVIDED_BY_NODES.limit.normalizedQuota";
-		if(this.isControlloTrafficoGestioneCluster_limit_normalizedQuota==null){
+		if(this.isControlloTrafficoGestioneClusterLimitNormalizedQuota==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
-					this.isControlloTrafficoGestioneCluster_limit_normalizedQuota = Boolean.parseBoolean(value);
+					this.isControlloTrafficoGestioneClusterLimitNormalizedQuota = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isControlloTrafficoGestioneCluster_limit_normalizedQuota = false;
+					this.isControlloTrafficoGestioneClusterLimitNormalizedQuota = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isControlloTrafficoGestioneCluster_limit_normalizedQuota = false;
+				this.isControlloTrafficoGestioneClusterLimitNormalizedQuota = false;
 			}
 		}
-		return this.isControlloTrafficoGestioneCluster_limit_normalizedQuota;
+		return this.isControlloTrafficoGestioneClusterLimitNormalizedQuota;
 	}
 	
-	private Boolean getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = null;
-	public boolean isControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction() {
-		if(this.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction==null){
+	private Boolean getControlloTrafficoGestorePolicyInMemoryDatabaseUseTransaction = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryDatabaseUseTransaction() {
+		if(this.getControlloTrafficoGestorePolicyInMemoryDatabaseUseTransaction==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.DATABASE.useTransaction";
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if (name != null) {
 					name = name.trim();
-					this.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = Boolean.valueOf(name);
+					this.getControlloTrafficoGestorePolicyInMemoryDatabaseUseTransaction = Boolean.valueOf(name);
 				} else {
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction =  true;
+					this.getControlloTrafficoGestorePolicyInMemoryDatabaseUseTransaction =  true;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction = true;
+				this.getControlloTrafficoGestorePolicyInMemoryDatabaseUseTransaction = true;
 			}   
 		}
 
-		return this.getControlloTrafficoGestorePolicyInMemoryDatabase_useTransaction;
+		return this.getControlloTrafficoGestorePolicyInMemoryDatabaseUseTransaction;
 	}
 	
-	private Long getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva = null;
-	public long getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva() {	
-		if(this.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva==null){
+	private Long getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBAttesaAttiva = null;
+	public long getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBAttesaAttiva() {	
+		if(this.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBAttesaAttiva==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.DATABASE.serializable.attesaAttiva";
 			try{ 
 				String name = null;
@@ -30963,23 +30972,23 @@ public class OpenSPCoop2Properties {
 				if (name != null) {
 					name = name.trim();
 					long time = java.lang.Long.parseLong(name);
-					this.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva = time*1000;
+					this.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBAttesaAttiva = time*1000;
 				} else {
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA));
-					this.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva =  Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
+					this.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBAttesaAttiva =  Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA),e);
-				this.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva = Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
+				this.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBAttesaAttiva = Costanti.GESTIONE_SERIALIZABLE_ATTESA_ATTIVA;
 			}   
 		}
 
-		return this.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_AttesaAttiva;
+		return this.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBAttesaAttiva;
 	}
 
-	private Integer getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval = null;
-	public int getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval() {	
-		if(this.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval==null){
+	private Integer getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBCheckInterval = null;
+	public int getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBCheckInterval() {	
+		if(this.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBCheckInterval==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.DATABASE.serializable.check";
 			try{ 
 				String name = null;
@@ -30987,18 +30996,18 @@ public class OpenSPCoop2Properties {
 				if (name != null){
 					name = name.trim();
 					int time = java.lang.Integer.parseInt(name);
-					this.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval = time;
+					this.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBCheckInterval = time;
 				} else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName,Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL));
-					this.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
+					this.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBCheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName,e,Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL),e);
-				this.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
+				this.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBCheckInterval = Costanti.GESTIONE_SERIALIZABLE_CHECK_INTERVAL;
 			}    
 		}
 
-		return this.getControlloTrafficoGestorePolicyInMemoryDatabase_serializableDB_CheckInterval;
+		return this.getControlloTrafficoGestorePolicyInMemoryDatabaseSerializableDBCheckInterval;
 	}
 
 	private Boolean isHazelcastEngineEnabled = null;
@@ -31024,11 +31033,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	
-	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPath_read = null;
+	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPathRead = null;
 	private String getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPath = null;
 	public String getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPath() throws CoreException {
 		
-		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPath_read==null){
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPathRead==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_MAP.config";
 
 			try{  
@@ -31039,7 +31048,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPath = value;
 				}
 				
-				this.getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPath_read = true;
+				this.getControlloTrafficoGestorePolicyInMemoryHazelCastMapConfigPathRead = true;
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
@@ -31052,11 +31061,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	
-	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath_read = null;
+	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPathRead = null;
 	private String getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath = null;
 	public String getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath() throws CoreException {
 		
-		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath_read==null){
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPathRead==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_PNCOUNTER.config";
 
 			try{  
@@ -31067,7 +31076,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath = value;
 				}
 				
-				this.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPath_read = true;
+				this.getControlloTrafficoGestorePolicyInMemoryHazelCastPNCounterConfigPathRead = true;
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
@@ -31080,11 +31089,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	
-	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath_read = null;
+	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPathRead = null;
 	private String getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath = null;
 	public String getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath() throws CoreException {
 		
-		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath_read==null){
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPathRead==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_ATOMIC_LONG.config";
 
 			try{  
@@ -31095,7 +31104,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath = value;
 				}
 				
-				this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPath_read = true;
+				this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongConfigPathRead = true;
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
@@ -31109,11 +31118,11 @@ public class OpenSPCoop2Properties {
 	
 	
 	
-	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath_read = null;
+	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPathRead = null;
 	private String getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath = null;
 	public String getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath() throws CoreException {
 		
-		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath_read==null){
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPathRead==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_ATOMIC_LONG_ASYNC.config";
 
 			try{  
@@ -31124,7 +31133,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath = value;
 				}
 				
-				this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPath_read = true;
+				this.getControlloTrafficoGestorePolicyInMemoryHazelCastAtomicLongAsyncConfigPathRead = true;
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
@@ -31138,11 +31147,11 @@ public class OpenSPCoop2Properties {
 	
 	
 		
-	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath_read = null;
+	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPathRead = null;
 	private String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath = null;
 	public String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath() throws CoreException {
 		
-		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath_read==null){
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPathRead==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_NEAR_CACHE.config";
 
 			try{  
@@ -31153,7 +31162,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath = value;
 				}
 
-				this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath_read = true;
+				this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPathRead = true;
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
@@ -31165,11 +31174,11 @@ public class OpenSPCoop2Properties {
 		return this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheConfigPath;		
 	}
 	
-	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath_read = null;
+	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPathRead = null;
 	private String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath = null;
 	public String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath() throws CoreException {
 		
-		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath_read==null){
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPathRead==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP.config";
 
 			try{  
@@ -31180,7 +31189,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath = value;
 				}
 
-				this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath_read = true;
+				this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPathRead = true;
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
@@ -31192,11 +31201,11 @@ public class OpenSPCoop2Properties {
 		return this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeSyncMapConfigPath;		
 	}
 	
-	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath_read = null;
+	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPathRead = null;
 	private String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath = null;
 	public String getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath() throws CoreException {
 		
-		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath_read==null){
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPathRead==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.config";
 
 			try{  
@@ -31207,7 +31216,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath = value;
 				}
 
-				this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath_read = true;
+				this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPathRead = true;
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
@@ -31219,11 +31228,11 @@ public class OpenSPCoop2Properties {
 		return this.getControlloTrafficoGestorePolicyInMemoryHazelCastNearCacheUnsafeAsyncMapConfigPath;		
 	}
 	
-	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath_read = null;
+	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPathRead = null;
 	private String getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath = null;
 	public String getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath() throws CoreException {
 		
-		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath_read==null){
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPathRead==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_REPLICATED_MAP.config";
 
 			try{  
@@ -31234,7 +31243,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath = value;
 				}
 
-				this.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPath_read = true;
+				this.getControlloTrafficoGestorePolicyInMemoryHazelCastReplicatedMapConfigPathRead = true;
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
@@ -31247,11 +31256,11 @@ public class OpenSPCoop2Properties {
 	}
 	
 	
-	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastLocalConfigPath_read = null;
+	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastLocalConfigPathRead = null;
 	private String getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath = null;
 	public String getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath() throws CoreException {
 		
-		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalConfigPath_read==null){
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalConfigPathRead==null){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST_LOCAL_CACHE.config";
 
 			try{  
@@ -31262,7 +31271,7 @@ public class OpenSPCoop2Properties {
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalCacheConfigPath = value;
 				}
 
-				this.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalConfigPath_read = true;
+				this.getControlloTrafficoGestorePolicyInMemoryHazelCastLocalConfigPathRead = true;
 				
 			}catch(java.lang.Exception e) {
 				String msgError = "Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage();
@@ -31309,7 +31318,7 @@ public class OpenSPCoop2Properties {
 				if(name==null) {
 					throw new CoreException(NON_DEFINITA);
 				}
-				else if(name!=null){
+				else {
 					name = name.trim();
 					this.getControlloTrafficoGestorePolicyInMemoryHazelCastGroupId = name;
 				}
@@ -31323,36 +31332,39 @@ public class OpenSPCoop2Properties {
 	}
 	
 	private File getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig = null;
-	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig_read = null;
+	private Boolean getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfigRead = null;
 	public File getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig() throws CoreException {
 		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.sharedConfig";
-		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig_read==null){
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name!=null) {
-					name = name.trim();
-					this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig = new File(name);
-					if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.exists()) {
-						if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.isFile()==false) {
-							throw newCoreExceptionNotFile(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig,false);
-						}
-						if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.canRead()==false) {
-							throw newCoreExceptionCannotRead(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig,false);
-						}
-					}
-					else {
-						this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig=null;
-					}
-				}
-			}catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
-				throw new CoreException(e.getMessage(),e);
-			}
-			this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig_read = true;
+		if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfigRead==null){
+			initControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfigEngine(pName);
 		}
 
 		return this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig;
+	}
+	private void initControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfigEngine(String pName) throws CoreException {
+		try{ 
+			String name = null;
+			name = this.reader.getValueConvertEnvProperties(pName);
+			if(name!=null) {
+				name = name.trim();
+				this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig = new File(name);
+				if(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.exists()) {
+					if(!this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.isFile()) {
+						throw newCoreExceptionNotFile(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig,false);
+					}
+					if(!this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig.canRead()) {
+						throw newCoreExceptionCannotRead(this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig,false);
+					}
+				}
+				else {
+					this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfig=null;
+				}
+			}
+		}catch(java.lang.Exception e) {
+			this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+			throw new CoreException(e.getMessage(),e);
+		}
+		this.getControlloTrafficoGestorePolicyInMemoryHazelCastSharedConfigRead = true;
 	}
 
 	private Integer getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval = null;	
@@ -31378,7 +31390,174 @@ public class OpenSPCoop2Properties {
 
 		return this.getControlloTrafficoGestorePolicyInMemoryHazelcastLocalCacheUpdateInterval;
 	}
+	
+	private Boolean isHazelcastSecurityRecommendationsEnabled = null;
+	public boolean isHazelcastSecurityRecommendationsEnabled() {	
+		if(this.isHazelcastSecurityRecommendationsEnabled==null){
+			String pName = "org.openspcoop2.pdd.hazelcast.security.recommendations";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isHazelcastSecurityRecommendationsEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, true));
+				this.isHazelcastSecurityRecommendationsEnabled = true;
+			}    
+		}
 
+		return this.isHazelcastSecurityRecommendationsEnabled;
+	}
+	
+	private Boolean isHazelcastDiagnosticsEnabled = null;
+	public boolean isHazelcastDiagnosticsEnabled() {	
+		if(this.isHazelcastDiagnosticsEnabled==null){
+			String pName = "org.openspcoop2.pdd.hazelcast.diagnostics.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isHazelcastDiagnosticsEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, true));
+				this.isHazelcastDiagnosticsEnabled = true;
+			}    
+		}
+
+		return this.isHazelcastDiagnosticsEnabled;
+	}
+	
+	private File getHazelcastDiagnosticsDirectory = null;
+	public File getHazelcastDiagnosticsDirectory() throws CoreException {	
+		if(this.getHazelcastDiagnosticsDirectory==null){
+			String pName = "org.openspcoop2.pdd.hazelcast.diagnostics.directory";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Hazelcast diagnostics dir non impostata");
+				}
+				name = name.trim();
+				this.getHazelcastDiagnosticsDirectory = new File(name);
+				checkHazelcastDiagnosticsDirectory();
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore per la directory della diagnostica di hazelcast ("+pName+"): "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getHazelcastDiagnosticsDirectory;
+	}
+	private void checkHazelcastDiagnosticsDirectory() throws CoreException {	
+		if(this.getHazelcastDiagnosticsDirectory.exists()) {
+			if(!this.getHazelcastDiagnosticsDirectory.isDirectory()) {
+				throw newCoreExceptionNotDir(this.getHazelcastDiagnosticsDirectory,true);
+			}
+			if(!this.getHazelcastDiagnosticsDirectory.canRead()) {
+				throw newCoreExceptionCannotRead(this.getHazelcastDiagnosticsDirectory, true);
+			}
+			if(!this.getHazelcastDiagnosticsDirectory.canWrite()) {
+				throw newCoreExceptionCannotWrite(this.getHazelcastDiagnosticsDirectory, true);
+			}
+		}
+		else {
+			// viene creata automaticamente
+		}
+	}
+	
+	private Integer getHazelcastDiagnosticsMaxRolledFileCount = null;
+	public int getHazelcastDiagnosticsMaxRolledFileCount() throws CoreException {	
+		if(this.getHazelcastDiagnosticsMaxRolledFileCount==null){
+			String pName = "org.openspcoop2.pdd.hazelcast.diagnostics.max.rolled.file.count";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Hazelcast diagnostics max.rolled.file.count config not found");
+				}
+				name = name.trim();
+				this.getHazelcastDiagnosticsMaxRolledFileCount = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura delle configurazione diagnostica di hazelcast ("+pName+"): "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getHazelcastDiagnosticsMaxRolledFileCount;
+	}
+	
+	private Integer getHazelcastDiagnosticsMaxFileSizeMb = null;
+	public int getHazelcastDiagnosticsMaxFileSizeMb() throws CoreException {	
+		if(this.getHazelcastDiagnosticsMaxFileSizeMb==null){
+			String pName = "org.openspcoop2.pdd.hazelcast.diagnostics.max.file.size.mb";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Hazelcast diagnostics max.rolled.file.count config not found");
+				}
+				name = name.trim();
+				this.getHazelcastDiagnosticsMaxFileSizeMb = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura delle configurazione diagnostica di hazelcast ("+pName+"): "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getHazelcastDiagnosticsMaxFileSizeMb;
+	}
+	
+	private Integer getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailover = null;
+	public int getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailover() {	
+		if(this.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailover==null){
+			String pName = "org.openspcoop2.pdd.hazelcast.CPSubsystem.distributedObjectDestroyedException.failover";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, -1));
+					name="-1";
+				}
+				name = name.trim();
+				this.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailover = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, -1));
+				this.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailover = -1;
+			}    
+		}
+
+		return this.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailover;
+	}
+	
+	private Integer getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailoverCheckEveryMs = null;
+	public int getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailoverCheckEveryMs() {	
+		if(this.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailoverCheckEveryMs==null){
+			String pName = "org.openspcoop2.pdd.hazelcast.CPSubsystem.distributedObjectDestroyedException.failover.checkEveryMs";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, 500));
+					name="500";
+				}
+				name = name.trim();
+				this.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailoverCheckEveryMs = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, 500));
+				this.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailoverCheckEveryMs = 500;
+			}    
+		}
+
+		return this.getHazelcastCPSubsystemDistributedObjectDestroyedExceptionFailoverCheckEveryMs;
+	}
 	
 	private Boolean isRedisEngineEnabled = null;
 	public boolean isRedisEngineEnabled() {	
@@ -31405,7 +31584,7 @@ public class OpenSPCoop2Properties {
 	private List<String> getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl = null;
 	private boolean getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrlRead = false;
 	public List<String> getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrl() throws CoreException {	
-		if(this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrlRead == false){
+		if(!this.getControlloTrafficoGestorePolicyInMemoryRedisConnectionUrlRead){
 			String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.connectionUrl";
 			try{ 
 
@@ -31464,29 +31643,29 @@ public class OpenSPCoop2Properties {
 		return this.isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy;
 	}
 	
-	private Boolean isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady = null;
-	public Boolean isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady() {
+	private Boolean isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady = null;
+	public Boolean isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady() {
 		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.startupGovWay.throwExceptionIfRedisNotReady";
 		
-		if(this.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady==null){
+		if(this.isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if(value!=null){
 					value = value.trim();
-					this.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady = Boolean.parseBoolean(value);
+					this.isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady = false;
+					this.isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady = false;
+				this.isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady = false;
 			}
 		}
 		
-		return this.isControlloTrafficoGestorePolicyInMemoryRedis_throwExceptionIfRedisNotReady;
+		return this.isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady;
 	}
 	
 	
@@ -31514,10 +31693,10 @@ public class OpenSPCoop2Properties {
 		return this.getControlloTrafficoGestorePolicyWSUrl;
 	}
 		
-	private Boolean getControlloTrafficoNotifyImpl_read = null;
+	private Boolean getControlloTrafficoNotifyImplRead = null;
 	private INotify getControlloTrafficoNotifyImpl = null;
 	public INotify getControlloTrafficoNotifyImpl(Loader loaderOpenSPCoop) throws CoreException {	
-		if(this.getControlloTrafficoNotifyImpl_read==null){
+		if(this.getControlloTrafficoNotifyImplRead==null){
 			try{ 
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.notifier.implementation");
@@ -31529,7 +31708,7 @@ public class OpenSPCoop2Properties {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.notifier.implementation': "+e.getMessage(),e);
 				throw new CoreException(e.getMessage(),e);
 			}  
-			this.getControlloTrafficoNotifyImpl_read = true;
+			this.getControlloTrafficoNotifyImplRead = true;
 		}
 
 		return this.getControlloTrafficoNotifyImpl;
@@ -31543,21 +31722,7 @@ public class OpenSPCoop2Properties {
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.fileSystemRecovery.repository");
 				if(name!=null){
 					name = name.trim();
-					this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository = new File(name);
-					if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.exists()) {
-						if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.isDirectory()==false) {
-							throw newCoreExceptionNotDir(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository, true);
-						}
-						if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.canRead()==false) {
-							throw newCoreExceptionCannotRead(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository, true);
-						}
-						if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.canWrite()==false) {
-							throw newCoreExceptionCannotWrite(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository, true);
-						}
-					}
-					else {
-						// viene creata automaticamente
-					}
+					initControlloTrafficoGestorePolicyFileSystemRecoveryRepository(name);
 				}
 			} catch(java.lang.Exception e) {
 				this.logError("Riscontrato errore durante la lettura della proprietà di govway 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.fileSystemRecovery.repository': "+e.getMessage(),e);
@@ -31566,6 +31731,23 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository;
+	}
+	private void initControlloTrafficoGestorePolicyFileSystemRecoveryRepository(String name) throws CoreException {	
+		this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository = new File(name);
+		if(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.exists()) {
+			if(!this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.isDirectory()) {
+				throw newCoreExceptionNotDir(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository, true);
+			}
+			if(!this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.canRead()) {
+				throw newCoreExceptionCannotRead(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository, true);
+			}
+			if(!this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository.canWrite()) {
+				throw newCoreExceptionCannotWrite(this.getControlloTrafficoGestorePolicyFileSystemRecoveryRepository, true);
+			}
+		}
+		else {
+			// viene creata automaticamente
+		}
 	}
 	
 	
@@ -33005,8 +33187,7 @@ public class OpenSPCoop2Properties {
 				Iterator<Object> it = p.values().iterator();
 				while (it.hasNext()) {
 					Object o = it.next();
-					if(o instanceof String) {
-						String s = (String) o;
+					if(o instanceof String s) {
 						this.isReadTimedOut.add(s);
 					}
 				}

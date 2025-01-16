@@ -77,13 +77,13 @@ public class PolicyConfiguration extends AbstractPolicyConfiguration implements 
 			break;
 		case LOCAL_DIVIDED_BY_NODES:
 			if(this.getEngineLOCAL_DIVIDED_BY_NODES_remaining_zeroValue()==null) {
-				this.setLOCAL_DIVIDED_BY_NODES_remaining_zeroValue(op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_remaining_zeroValue());
+				this.setLOCAL_DIVIDED_BY_NODES_remaining_zeroValue(op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodesRemainingZeroValue());
 			}
 			if(this.getEngineLOCAL_DIVIDED_BY_NODES_limit_roundingDown()==null) {
-				this.setLOCAL_DIVIDED_BY_NODES_limit_roundingDown(op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_roundingDown());
+				this.setLOCAL_DIVIDED_BY_NODES_limit_roundingDown(op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodesLimitRoundingDown());
 			}
 			if(this.getEngineLOCAL_DIVIDED_BY_NODES_limit_normalizedQuota()==null) {
-				this.setLOCAL_DIVIDED_BY_NODES_limit_normalizedQuota(op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodes_limit_normalizedQuota());
+				this.setLOCAL_DIVIDED_BY_NODES_limit_normalizedQuota(op2Properties.isControlloTrafficoGestorePolicyInMemoryLocalDividedByNodesLimitNormalizedQuota());
 			}
 			break;
 		case DATABASE:

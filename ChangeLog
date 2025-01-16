@@ -1,3 +1,12 @@
+2025-01-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1564
+	Nella funzionalitò di controllo del traffico con sincronizzazione distribuita tramite hazelcast, 
+	è stato aggiunto un meccanismo di failover applicativo per la gestione dell'eccezione 'DistributedObjectDestroyedException' che può avvenire in casi limite 
+	durante l'utilizzo di AtomicLong e PNCounter in configurazioni del cluster senza CP Subsystem.
+	Nell'intervento è stato reso configurabile il sistema di diagnostica di hazelcast e la validazione della configurazione utilizzata. 
+	
 2025-01-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloModIPA, Documentazione]

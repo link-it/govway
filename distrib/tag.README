@@ -143,6 +143,8 @@ Per creare una tag version:
 
 23. Verificare licenze in 'third-party-licenses' siano tutte aggiornate alle versioni delle lib utilizzate
 
-24. !!! NOTA !!! Quando si effettua il commit pre-rilascio usare il messaggio 'Predisposto rilascio <versione>'; sarà usato da jenkins per collezionare le evidenze.
+24. Verificare che i riferimenti alla documentazione di hazelcast 'https://docs.hazelcast.com/' siano quelli relativi alla major.minor in uso
 
-25. (PVersion) Creazione versione tag
+25. !!! NOTA !!! Quando si effettua il commit pre-rilascio usare il messaggio 'Predisposto rilascio <versione>'; sarà usato da jenkins per collezionare le evidenze.
+
+26. (PVersion) Creazione versione tag
