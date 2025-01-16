@@ -242,7 +242,7 @@
 	<archive path="/op2_3.3.dev/lib/shared/ehcache-3.10.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/rhino-1.7.14.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/hibernate-core-6.1.4.Final.jar"/>
-	<archive path="/op2_3.3.dev/lib/shared/hazelcast-5.3.5.jar"/>
+	<archive path="/op2_3.3.dev/lib/shared/hazelcast-5.3.8.jar"/>
 	<!-- spring -->
         <archive path="/op2_3.3.dev/lib/spring/spring-web-5.3.39-gov4j-1.jar"/>
         <archive path="/op2_3.3.dev/lib/spring/spring-tx-5.3.39.jar"/>

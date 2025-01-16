@@ -5,12 +5,12 @@ hazelcast:
   # a tutte le istanze di hazelcast verrà applicata la configurazione di rete di seguito.
 
   # You can create clusters using the cluster-name configuration element.
-  # See: https://docs.hazelcast.com/hazelcast/5.1/clusters/creating-clusters
+  # See: https://docs.hazelcast.com/hazelcast/5.3/clusters/creating-clusters
   #
   # Se definita sovrascrive il valore indicato nella proprietà 'org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.HAZELCAST.group_id' in govway_local.properties
   #cluster-name: govway
   
-  # Per una documentazione degli elementi si consiglia di consultare la documentazione di Hazelcast: https://docs.hazelcast.com/hazelcast/5.1/clusters/network-configuration
+  # Per una documentazione degli elementi si consiglia di consultare la documentazione di Hazelcast: https://docs.hazelcast.com/hazelcast/5.3/clusters/network-configuration
   # La documentazione sotto riportata è stata estratta dalla documentazione 'network-configuration' sopra indicata.
   network:
     
@@ -44,23 +44,23 @@ hazelcast:
     join:
 
       # By default, Hazelcast tries to automatically detect a member’s runtime environment and apply rules to help members discover each other in those environments.
-      # !!! NOTE !!! Auto Detection is not recommended for production. See: https://docs.hazelcast.com/hazelcast/5.1/clusters/discovery-mechanisms
+      # !!! NOTE !!! Auto Detection is not recommended for production. See: https://docs.hazelcast.com/hazelcast/5.3/clusters/discovery-mechanisms
       #
       auto-detection:
         enabled: true
 
       # The multicast element includes parameters to fine tune the multicast join mechanism.
-      # See https://docs.hazelcast.com/hazelcast/5.1/clusters/discovery-mechanisms#multicast e https://docs.hazelcast.com/hazelcast/5.1/clusters/network-configuration#multicast-element
+      # See https://docs.hazelcast.com/hazelcast/5.3/clusters/discovery-mechanisms#multicast e https://docs.hazelcast.com/hazelcast/5.3/clusters/network-configuration#multicast-element
       multicast:
         enabled: false
       # ...
 
-      # The tcp-ip element includes parameters to fine tune the TCP/IP join mechanism: https://docs.hazelcast.com/hazelcast/5.1/clusters/network-configuration#tcp-ip-element
+      # The tcp-ip element includes parameters to fine tune the TCP/IP join mechanism: https://docs.hazelcast.com/hazelcast/5.3/clusters/network-configuration#tcp-ip-element
       #enabled: Specifies whether the TCP/IP discovery is enabled or not. Values can be true or false.
       #required-member: IP address of the required member. Cluster is only formed if the member with this IP address is found.
       #member: IP address(es) of one or more well known members. Once members are connected to these well known ones, all member addresses are communicated with each other. 
       #        You can also give comma separated IP addresses using the members element.
-      #        ! NOTE ! tcp-ip element also accepts the interface parameter. See the Interfaces element description: https://docs.hazelcast.com/hazelcast/5.1/clusters/network-configuration#interfaces
+      #        ! NOTE ! tcp-ip element also accepts the interface parameter. See the Interfaces element description: https://docs.hazelcast.com/hazelcast/5.3/clusters/network-configuration#interfaces
       # connection-timeout-seconds: Defines the connection timeout in seconds. This is the maximum amount of time Hazelcast is going to try to connect to a well known member before giving up. 
       #                             Setting it to a too low value could mean that a member is not able to connect to a cluster. 
       #                             Setting it to a too high value means that member startup could slow down because of longer timeouts, for example when a well known member is not up. 
@@ -80,31 +80,31 @@ hazelcast:
         #  - <HOSTNAMEN>:GOVWAY_INSTANCE_PORT
 
       # The aws element includes parameters to allow the members to form a cluster on the Amazon EC2 and ECS environments.
-      # For details, see Deploying a Cluster on Amazon AWS: https://docs.hazelcast.com/hazelcast/5.1/deploy/deploying-on-aws
+      # For details, see Deploying a Cluster on Amazon AWS: https://docs.hazelcast.com/hazelcast/5.3/deploy/deploying-on-aws
       aws:
         enabled: false
       # ...
 
       # The azure element includes parameters to allow the members to form a cluster on the Azure VM machines.
-      # For details, see Deploying a Cluster on Microsoft Azure: https://docs.hazelcast.com/hazelcast/5.1/deploy/deploying-on-azure
+      # For details, see Deploying a Cluster on Microsoft Azure: https://docs.hazelcast.com/hazelcast/5.3/deploy/deploying-on-azure
       azure:
         enabled: false
       # ...
 
       # The gcp element includes parameters to allow the members to form a cluster on the GCP Compute VM instances.
-      # For details, see Deploying a Cluster on Google Cloud Platform: https://docs.hazelcast.com/hazelcast/5.1/deploy/deploying-on-gcp
+      # For details, see Deploying a Cluster on Google Cloud Platform: https://docs.hazelcast.com/hazelcast/5.3/deploy/deploying-on-gcp
       gcp:
         enabled: false
       # ...
 
       # The kubernetes element includes parameters to allow the members to form a cluster on the Kubernetes environment.
-      # For details, see Deploying on Kubernetes: https://docs.hazelcast.com/hazelcast/5.1/deploy/deploying-in-kubernetes
+      # For details, see Deploying on Kubernetes: https://docs.hazelcast.com/hazelcast/5.3/deploy/deploying-in-kubernetes
       kubernetes:
         enabled: false
       # ...
 
       # The discovery-strategies element configures internal or external discovery strategies based on the Hazelcast Discovery SPI. 
-      # For further information, see the Discovery SPI section and the vendor documentation of the used discovery strategy: https://docs.hazelcast.com/hazelcast/5.1/extending-hazelcast/discovery-spi
+      # For further information, see the Discovery SPI section and the vendor documentation of the used discovery strategy: https://docs.hazelcast.com/hazelcast/5.3/extending-hazelcast/discovery-spi
       #discovery-strategies:
       #  discovery-strategy:
       #    ...
