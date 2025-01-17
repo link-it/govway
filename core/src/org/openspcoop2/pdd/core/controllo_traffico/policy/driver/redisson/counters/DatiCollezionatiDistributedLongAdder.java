@@ -29,8 +29,6 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId
 import org.openspcoop2.core.controllo_traffico.beans.IDatiCollezionatiDistributed;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.BuilderDatiCollezionatiDistributed;
-import org.redisson.api.RAtomicLong;
-import org.redisson.api.RLongAdder;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 
@@ -54,17 +52,17 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	
 	private static final long serialVersionUID = 1L;
 	
-	private final org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder");
+	private final transient org.openspcoop2.utils.Semaphore lock = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder");
 	
-	private final org.openspcoop2.utils.Semaphore lockActiveRequestCounterGetAndSum = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder_ActiveRequestCounterGetAndSum");
-	private final org.openspcoop2.utils.Semaphore lockRequestCounterGetAndSum = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder_RequestCounterGetAndSum");
-	private final org.openspcoop2.utils.Semaphore lockCounterGetAndSum = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder_CounterGetAndSum");
-	private final org.openspcoop2.utils.Semaphore lockDegradoPrestazionaleRequestCounterGetAndSum = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder_DegradoPrestazionaleRequestCounterGetAndSum");
-	private final org.openspcoop2.utils.Semaphore lockDegradoPrestazionaleCounterGetAndSum = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder_DegradoPrestazionaleCounterGetAndSum");
+	private final transient org.openspcoop2.utils.Semaphore lockActiveRequestCounterGetAndSum = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder_ActiveRequestCounterGetAndSum");
+	private final transient org.openspcoop2.utils.Semaphore lockRequestCounterGetAndSum = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder_RequestCounterGetAndSum");
+	private final transient org.openspcoop2.utils.Semaphore lockCounterGetAndSum = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder_CounterGetAndSum");
+	private final transient org.openspcoop2.utils.Semaphore lockDegradoPrestazionaleRequestCounterGetAndSum = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder_DegradoPrestazionaleRequestCounterGetAndSum");
+	private final transient org.openspcoop2.utils.Semaphore lockDegradoPrestazionaleCounterGetAndSum = new org.openspcoop2.utils.Semaphore("DatiCollezionatiDistributedLongAdder_DegradoPrestazionaleCounterGetAndSum");
 	
-	private final RedissonClient redisson;
+	private final transient RedissonClient redisson;
 	private final IDUnivocoGroupByPolicyMapId groupByPolicyMapId;
-	private final int groupByPolicyMapId_hashCode;
+	private final int groupByPolicyMapIdHashCode;
 
 	// data di registrazione/aggiornamento policy
 	
@@ -72,28 +70,28 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 
 	// sono rimasti AtomicLong le date
 
-	private final RAtomicLong distributedUpdatePolicyDate; // data di ultima modifica della policy
-	private final RAtomicLong distributedPolicyDate; // intervallo corrente su cui vengono costruiti gli altri contatori	
+	private final transient DatoRAtomicLong distributedUpdatePolicyDate; // data di ultima modifica della policy
+	private final transient DatoRAtomicLong distributedPolicyDate; // intervallo corrente su cui vengono costruiti gli altri contatori	
 	
-	private RLongAdder distributedPolicyRequestCounter; // numero di richieste effettuato nell'intervallo
-	private RLongAdder distributedPolicyCounter;  // utilizzato per tempi o banda
+	private transient DatoRLongAdder distributedPolicyRequestCounter; // numero di richieste effettuato nell'intervallo
+	private transient DatoRLongAdder distributedPolicyCounter;  // utilizzato per tempi o banda
 	
-	private final RAtomicLong distributedPolicyDegradoPrestazionaleDate; // intervallo corrente su cui vengono costruiti gli altri contatori
-	private RLongAdder distributedPolicyDegradoPrestazionaleRequestCounter; // numero di richieste effettuato nell'intervallo
-	private RLongAdder distributedPolicyDegradoPrestazionaleCounter; // contatore del degrado
+	private final transient DatoRAtomicLong distributedPolicyDegradoPrestazionaleDate; // intervallo corrente su cui vengono costruiti gli altri contatori
+	private transient DatoRLongAdder distributedPolicyDegradoPrestazionaleRequestCounter; // numero di richieste effettuato nell'intervallo
+	private transient DatoRLongAdder distributedPolicyDegradoPrestazionaleCounter; // contatore del degrado
 	
-	private final boolean distribuitedActiveRequestCounter_policyRichiesteSimultanee;
-	private final RLongAdder distributedActiveRequestCounterForStats; // numero di richieste simultanee
-	private RLongAdder distributedActiveRequestCounterForCheck; // numero di richieste simultanee
+	private final boolean distribuitedActiveRequestCounterPolicyRichiesteSimultanee;
+	private final transient DatoRLongAdder distributedActiveRequestCounterForStats; // numero di richieste simultanee
+	private transient DatoRLongAdder distributedActiveRequestCounterForCheck; // numero di richieste simultanee
 	
-	private RLongAdder distributedPolicyDenyRequestCounter; // policy bloccate
+	private transient DatoRLongAdder distributedPolicyDenyRequestCounter; // policy bloccate
 	
 	// I contatori da eliminare 
 	// Se si effettua il drop di un contatore quando si rileva il cambio di intervallo, potrebbe succedere che in un altro nodo del cluster che sta effettuando la fase di 'end'
 	// non rilevi più il contatore e di fatto quindi lo riprende partenzo da 0. Poi a sua volta capisce il cambio di intervallo e lo rielimina.
 	// per questo motivo, il drop viene effettuato al secondo cambio di intervallo, e ad ogni cambio i contatori vengono collezionati nel cestino
-	private List<RLongAdder> cestino_policyCounters = new ArrayList<RLongAdder>();
-	private List<RLongAdder> cestino_policyCountersDegradoPrestazionale = new ArrayList<RLongAdder>();
+	private transient List<DatoRLongAdder> cestinoPolicyCounters = new ArrayList<>();
+	private transient List<DatoRLongAdder> cestinoPolicyCountersDegradoPrestazionale = new ArrayList<>();
 	
 	private boolean initialized = false;
 
@@ -106,7 +104,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		String configDate = BuilderDatiCollezionatiDistributed.DISTRUBUITED_SUFFIX_CONFIG_DATE+
 				(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1);
 		
-		return "longadder-"+this.groupByPolicyMapId_hashCode+"-"+name+t+configDate+"-rl"; // non modificare inizio e fine
+		return "longadder-"+this.groupByPolicyMapIdHashCode+"-"+name+t+configDate+"-rl"; // non modificare inizio e fine
 	}
 		
 	public DatiCollezionatiDistributedLongAdder(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, RedissonClient  redisson, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
@@ -114,7 +112,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	
 		this.redisson = redisson;
 		this.groupByPolicyMapId = groupByPolicyMapId;
-		this.groupByPolicyMapId_hashCode = this.groupByPolicyMapId.hashCode();
+		this.groupByPolicyMapIdHashCode = this.groupByPolicyMapId.hashCode();
 		
 		this.initDatiIniziali(activePolicy);
 		this.checkDate(log, activePolicy); // inizializza le date se ci sono
@@ -124,9 +122,9 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		
 		this.distributedPolicyDegradoPrestazionaleDate = this.initPolicyDegradoPrestazionaleDate();
 
-		this.distribuitedActiveRequestCounter_policyRichiesteSimultanee = activePolicy.getConfigurazionePolicy().isSimultanee() &&
+		this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee = activePolicy.getConfigurazionePolicy().isSimultanee() &&
 				TipoControlloPeriodo.REALTIME.equals(activePolicy.getConfigurazionePolicy().getModalitaControllo());
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			this.distributedActiveRequestCounterForCheck = this.initActiveRequestCounters();
 			this.distributedActiveRequestCounterForStats = null;
 		}
@@ -145,10 +143,9 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		// se updatePolicyDate è > this.distributedUpdatePolicyDate.get() allora resetto i contatori del cluster e setto la nuova data distribuita.
 		// Questo per via di come funziona l'aggiornamento delle policy: i datiCollezionati correnti per una map<IDUnivoco..., DatiCollezionati> vengono cancellati e reinizializzati.
 		// Per gli altri nodi in esecuzione, la updatePolicyDate locale resta sempre la stessa, ma non viene usata.
-		if(this.policyRealtime!=null && this.policyRealtime){
-			if (updatePolicyDate != null && this.distributedUpdatePolicyDate!=null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
-				this.resetCounters(updatePolicyDate);
-			}
+		if(this.policyRealtime!=null && this.policyRealtime &&
+			updatePolicyDate != null && this.distributedUpdatePolicyDate!=null && this.distributedUpdatePolicyDate.get() < updatePolicyDate.getTime()) {
+			this.resetCounters(updatePolicyDate);
 		}
 		
 		this.initialized = true;
@@ -158,21 +155,25 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	public DatiCollezionatiDistributedLongAdder(Logger log, DatiCollezionati dati, RedissonClient redisson, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
 		super(dati.getUpdatePolicyDate(), dati.getGestorePolicyConfigDate());
 		
+		if(log!=null) {
+			// nop
+		}
+		
 		// Inizializzo il padre
 		dati.setValuesIn(this, false);
 		
 		this.redisson = redisson;
 		this.groupByPolicyMapId = groupByPolicyMapId;
-		this.groupByPolicyMapId_hashCode = this.groupByPolicyMapId.hashCode();
+		this.groupByPolicyMapIdHashCode = this.groupByPolicyMapId.hashCode();
 		
 		this.distributedPolicyDate = this.initPolicyDate();
 		this.distributedUpdatePolicyDate = this.initUpdatePolicyDate();
 		
 		this.distributedPolicyDegradoPrestazionaleDate = this.initPolicyDegradoPrestazionaleDate();
 
-		this.distribuitedActiveRequestCounter_policyRichiesteSimultanee = activePolicy.getConfigurazionePolicy().isSimultanee() &&
+		this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee = activePolicy.getConfigurazionePolicy().isSimultanee() &&
 				TipoControlloPeriodo.REALTIME.equals(activePolicy.getConfigurazionePolicy().getModalitaControllo());
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			this.distributedActiveRequestCounterForCheck = this.initActiveRequestCounters();
 			this.distributedActiveRequestCounterForStats = null;
 		}
@@ -184,7 +185,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		if (super.getPolicyDate() != null) {
 
 			// Non serve: essendo già persistente, si va a sommare un dato gia' esistente
-			/*
+			/**
 			
 			// Se ci sono altri nodi che stanno andando, la distributedPolicyDate DEVE essere != 0 
 			// Se la policyDate è a zero vuol dire che questo è il primo nodo del cluster che sta inizializzando la policy per mezzo di un backup e che su tutto il cluster
@@ -228,69 +229,71 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 				Long polDate = this.distributedPolicyDegradoPrestazionaleDate!=null ? this.distributedPolicyDegradoPrestazionaleDate.get() : null;
 				initPolicyCounters(polDate);
 				
-			//}
+			/**}*/
 		}
 		
 		// Se non ho la policyDegradoPrestazionaleDate, non considero il resto delle informazioni, che senza di essa non hanno senso.
-		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-			if (super.getPolicyDegradoPrestazionaleDate() != null) {
+		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime &&
+			super.getPolicyDegradoPrestazionaleDate() != null) {
 				
-				// Non serve: essendo già persistente, si va a sommare un dato gia' esistente
-				/*
-				// Imposto i contatori distribuiti solo se nel frattempo non l'ha fatto un altro thread del cluster.
-				if (this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(0, super.getPolicyDegradoPrestazionaleDate().getTime())) {
-					
-					Long degradoPrestazionaleTime = super.getPolicyDegradoPrestazionaleDate().getTime();
-					initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
-									
-					Long getPolicyDegradoPrestazionaleRequestCounter = super.getPolicyDegradoPrestazionaleRequestCounter(true);
-					if (getPolicyDegradoPrestazionaleRequestCounter != null) {
-						this.distributedPolicyDegradoPrestazionaleRequestCounter.add(getPolicyDegradoPrestazionaleRequestCounter);
-					}
-					
-					Long getPolicyDegradoPrestazionaleCounter = super.getPolicyDegradoPrestazionaleCounter(true);
-					if (getPolicyDegradoPrestazionaleCounter != null) {
-						this.distributedPolicyDegradoPrestazionaleCounter.add(getPolicyDegradoPrestazionaleCounter);
-					}
-				}  else {
-				*/	
-					Long degradoPrestazionaleTime = this.distributedPolicyDate!=null ? this.distributedPolicyDate.get() : null;
-					initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
-					
-				//}
-			}
+			// Non serve: essendo già persistente, si va a sommare un dato gia' esistente
+			/**
+			// Imposto i contatori distribuiti solo se nel frattempo non l'ha fatto un altro thread del cluster.
+			if (this.distributedPolicyDegradoPrestazionaleDate.compareAndSet(0, super.getPolicyDegradoPrestazionaleDate().getTime())) {
+				
+				Long degradoPrestazionaleTime = super.getPolicyDegradoPrestazionaleDate().getTime();
+				initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
+								
+				Long getPolicyDegradoPrestazionaleRequestCounter = super.getPolicyDegradoPrestazionaleRequestCounter(true);
+				if (getPolicyDegradoPrestazionaleRequestCounter != null) {
+					this.distributedPolicyDegradoPrestazionaleRequestCounter.add(getPolicyDegradoPrestazionaleRequestCounter);
+				}
+				
+				Long getPolicyDegradoPrestazionaleCounter = super.getPolicyDegradoPrestazionaleCounter(true);
+				if (getPolicyDegradoPrestazionaleCounter != null) {
+					this.distributedPolicyDegradoPrestazionaleCounter.add(getPolicyDegradoPrestazionaleCounter);
+				}
+			}  else {
+			*/	
+				Long degradoPrestazionaleTime = this.distributedPolicyDate!=null ? this.distributedPolicyDate.get() : null;
+				initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
+				
+			/**}*/
 		}
 		
 		this.initialized = true;
 	}
 	
-	private RAtomicLong initPolicyDate() {
+	private DatoRAtomicLong initPolicyDate() {
 		if(this.policyRealtime!=null && this.policyRealtime){
-			return this.redisson.getAtomicLong(this.groupByPolicyMapId_hashCode+
+			return new DatoRAtomicLong(this.redisson,
+					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
-	private RAtomicLong initUpdatePolicyDate() {
+	private DatoRAtomicLong initUpdatePolicyDate() {
 		if(this.policyRealtime!=null && this.policyRealtime){
-			return this.redisson.getAtomicLong(this.groupByPolicyMapId_hashCode+
+			return new DatoRAtomicLong(this.redisson,
+					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_UPDATE_POLICY_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
-	private RAtomicLong initPolicyDegradoPrestazionaleDate() {
+	private DatoRAtomicLong initPolicyDegradoPrestazionaleDate() {
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-			return this.redisson.getAtomicLong(this.groupByPolicyMapId_hashCode+
+			return new DatoRAtomicLong(this.redisson,
+					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DEGRADO_PRESTAZIONALE_DATE+
 					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
 		}
 		return null;
 	}
 	
-	private RLongAdder initActiveRequestCounters() {
-		return this.redisson.getLongAdder(
+	private DatoRLongAdder initActiveRequestCounters() {
+		return new DatoRLongAdder(this.redisson,
 				getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_ACTIVE_REQUEST_COUNTER,
 						(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1)));
 	}
@@ -299,12 +302,15 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 
 		if(this.policyRealtime!=null && this.policyRealtime){
 						
-			this.distributedPolicyRequestCounter = this.redisson.getLongAdder(this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_REQUEST_COUNTER,policyDate));
+			this.distributedPolicyRequestCounter = new DatoRLongAdder(this.redisson,
+					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_REQUEST_COUNTER,policyDate));
 			
-			this.distributedPolicyDenyRequestCounter = this.redisson.getLongAdder(this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DENY_REQUEST_COUNTER,policyDate));
+			this.distributedPolicyDenyRequestCounter = new DatoRLongAdder(this.redisson,
+					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DENY_REQUEST_COUNTER,policyDate));
 			
 			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
-				this.distributedPolicyCounter = this.redisson.getLongAdder(this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_COUNTER,policyDate));
+				this.distributedPolicyCounter = new DatoRLongAdder(this.redisson,
+						this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_COUNTER,policyDate));
 			}
 		}
 		
@@ -313,9 +319,11 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	private void initPolicyCountersDegradoPrestazionale(Long policyDate) {
 		
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
-			this.distributedPolicyDegradoPrestazionaleCounter = this.redisson.getLongAdder(this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_COUNTER,policyDate));
+			this.distributedPolicyDegradoPrestazionaleCounter = new DatoRLongAdder(this.redisson,
+					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_COUNTER,policyDate));
 
-			this.distributedPolicyDegradoPrestazionaleRequestCounter = this.redisson.getLongAdder(this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_REQUEST_COUNTER,policyDate));
+			this.distributedPolicyDegradoPrestazionaleRequestCounter = new DatoRLongAdder(this.redisson,
+					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_REQUEST_COUNTER,policyDate));
 
 		}	
 		
@@ -339,23 +347,23 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 					// Non appena ci entra poi li distruggerà.
 					
 					// effettuo il drop creati due intervalli indietro
-					if(!this.cestino_policyCounters.isEmpty()) {
-						for (RLongAdder rLongAdder : this.cestino_policyCounters) {
+					if(!this.cestinoPolicyCounters.isEmpty()) {
+						for (DatoRLongAdder rLongAdder : this.cestinoPolicyCounters) {
 							rLongAdder.destroy();
 						}
-						this.cestino_policyCounters.clear();
+						this.cestinoPolicyCounters.clear();
 					}
 					
 					if(this.distributedPolicyRequestCounter!=null || this.distributedPolicyDenyRequestCounter!=null || this.distributedPolicyCounter!=null) {
 						// conservo precedenti contatori
 						if(this.distributedPolicyRequestCounter!=null) {
-							this.cestino_policyCounters.add(this.distributedPolicyRequestCounter);
+							this.cestinoPolicyCounters.add(this.distributedPolicyRequestCounter);
 						}
 						if(this.distributedPolicyDenyRequestCounter!=null) {
-							this.cestino_policyCounters.add(this.distributedPolicyDenyRequestCounter);
+							this.cestinoPolicyCounters.add(this.distributedPolicyDenyRequestCounter);
 						}
 						if(this.distributedPolicyCounter!=null) {
-							this.cestino_policyCounters.add(this.distributedPolicyCounter);
+							this.cestinoPolicyCounters.add(this.distributedPolicyCounter);
 						}
 					}
 										
@@ -397,20 +405,20 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 					// Non appena ci entra poi li distruggerà.
 					
 					// effettuo il drop creati due intervalli indietro
-					if(!this.cestino_policyCountersDegradoPrestazionale.isEmpty()) {
-						for (RLongAdder pnCounter : this.cestino_policyCountersDegradoPrestazionale) {
+					if(!this.cestinoPolicyCountersDegradoPrestazionale.isEmpty()) {
+						for (DatoRLongAdder pnCounter : this.cestinoPolicyCountersDegradoPrestazionale) {
 							pnCounter.destroy();
 						}
-						this.cestino_policyCountersDegradoPrestazionale.clear();
+						this.cestinoPolicyCountersDegradoPrestazionale.clear();
 					}
 					
 					if(this.distributedPolicyRequestCounter!=null || this.distributedPolicyDenyRequestCounter!=null || this.distributedPolicyCounter!=null) {
 						// conservo precedenti contatori
 						if(this.distributedPolicyDegradoPrestazionaleCounter!=null) {
-							this.cestino_policyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleCounter);
+							this.cestinoPolicyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleCounter);
 						}
 						if(this.distributedPolicyDegradoPrestazionaleRequestCounter!=null) {
-							this.cestino_policyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleRequestCounter);
+							this.cestinoPolicyCountersDegradoPrestazionale.add(this.distributedPolicyDegradoPrestazionaleRequestCounter);
 						}
 					}
 										
@@ -472,8 +480,8 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	
 	@Override
 	protected void internalRegisterStartRequestIncrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
-			this.lockActiveRequestCounterGetAndSum.acquireThrowRuntime("_registerStartRequest_incrementActiveRequestCounter");
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
+			this.lockActiveRequestCounterGetAndSum.acquireThrowRuntime("internalRegisterStartRequestIncrementActiveRequestCounter");
 			try {
 				// prendo il valore. Non esiste un unico incrementAndGet
 				if(datiCollezionatiPerPolicyVerifier!=null) {
@@ -485,7 +493,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 				this.distributedActiveRequestCounterForCheck.increment();
 				super.activeRequestCounter++;
 			}finally {
-				this.lockActiveRequestCounterGetAndSum.release("_registerStartRequest_incrementActiveRequestCounter");
+				this.lockActiveRequestCounterGetAndSum.release("internalRegisterStartRequestIncrementActiveRequestCounter");
 			}
 		}
 		else {
@@ -496,7 +504,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	
 	@Override
 	protected void internalUpdateDatiStartRequestApplicabileIncrementRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
-		this.lockRequestCounterGetAndSum.acquireThrowRuntime("_updateDatiStartRequestApplicabile_incrementRequestCounter");
+		this.lockRequestCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiStartRequestApplicabileIncrementRequestCounter");
 		try {
 			// prendo il valore. Non esiste un unico incrementAndGet
 			if(datiCollezionatiPerPolicyVerifier!=null) {
@@ -508,21 +516,21 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 			this.distributedPolicyRequestCounter.increment();
 			super.policyRequestCounter++;
 		}finally {
-			this.lockRequestCounterGetAndSum.release("_updateDatiStartRequestApplicabile_incrementRequestCounter");
+			this.lockRequestCounterGetAndSum.release("internalUpdateDatiStartRequestApplicabileIncrementRequestCounter");
 		}
 	}
 	
 	
 	@Override
 	protected void internalRegisterEndRequestDecrementActiveRequestCounter() {
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
-			this.lockActiveRequestCounterGetAndSum.acquireThrowRuntime("_updateDatiStartRequestApplicabile_incrementRequestCounter");
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
+			this.lockActiveRequestCounterGetAndSum.acquireThrowRuntime("internalRegisterEndRequestDecrementActiveRequestCounter");
 			try {
 				super.activeRequestCounter = this.distributedActiveRequestCounterForCheck.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 				this.distributedActiveRequestCounterForCheck.decrement();
 				super.activeRequestCounter--;
 			}finally {
-				this.lockActiveRequestCounterGetAndSum.release("_updateDatiStartRequestApplicabile_incrementRequestCounter");
+				this.lockActiveRequestCounterGetAndSum.release("internalRegisterEndRequestDecrementActiveRequestCounter");
 			}
 		}
 		else {
@@ -531,48 +539,48 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	}
 	@Override
 	protected void internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter() {
-		this.lockDegradoPrestazionaleRequestCounterGetAndSum.acquireThrowRuntime("_registerEndRequest_incrementDegradoPrestazionaleRequestCounter");
+		this.lockDegradoPrestazionaleRequestCounterGetAndSum.acquireThrowRuntime("internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter");
 		try {
 			super.policyDegradoPrestazionaleRequestCounter = this.distributedPolicyDegradoPrestazionaleRequestCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 			this.distributedPolicyDegradoPrestazionaleRequestCounter.increment();
 			super.policyDegradoPrestazionaleRequestCounter++;
 		}finally {
-			this.lockDegradoPrestazionaleRequestCounterGetAndSum.release("_registerEndRequest_incrementDegradoPrestazionaleRequestCounter");
+			this.lockDegradoPrestazionaleRequestCounterGetAndSum.release("internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter");
 		}
 	}
 	@Override
 	protected void internalRegisterEndRequestIncrementDegradoPrestazionaleCounter(long latenza) {
-		this.lockDegradoPrestazionaleCounterGetAndSum.acquireThrowRuntime("_registerEndRequest_incrementDegradoPrestazionaleCounter");
+		this.lockDegradoPrestazionaleCounterGetAndSum.acquireThrowRuntime("internalRegisterEndRequestIncrementDegradoPrestazionaleCounter");
 		try {
 			super.policyDegradoPrestazionaleCounter = this.distributedPolicyDegradoPrestazionaleCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 			this.distributedPolicyDegradoPrestazionaleCounter.add(latenza);
 			super.policyDegradoPrestazionaleCounter++;
 		}finally {
-			this.lockDegradoPrestazionaleCounterGetAndSum.release("_registerEndRequest_incrementDegradoPrestazionaleRequestCounter");
+			this.lockDegradoPrestazionaleCounterGetAndSum.release("internalRegisterEndRequestIncrementDegradoPrestazionaleCounter");
 		}
 	}
 	
 	
 	@Override
 	protected void internalUpdateDatiEndRequestApplicabileIncrementRequestCounter() {
-		this.lockRequestCounterGetAndSum.acquireThrowRuntime("_updateDatiEndRequestApplicabile_incrementRequestCounter");
+		this.lockRequestCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiEndRequestApplicabileIncrementRequestCounter");
 		try {
 			super.policyRequestCounter = this.distributedPolicyRequestCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 			this.distributedPolicyRequestCounter.increment();
 			super.policyRequestCounter++;
 		}finally {
-			this.lockRequestCounterGetAndSum.release("_updateDatiEndRequestApplicabile_incrementRequestCounter");
+			this.lockRequestCounterGetAndSum.release("internalUpdateDatiEndRequestApplicabileIncrementRequestCounter");
 		}
 	}
 	@Override
 	protected void internalUpdateDatiEndRequestApplicabileDecrementRequestCounter() {
-		this.lockRequestCounterGetAndSum.acquireThrowRuntime("_updateDatiEndRequestApplicabile_incrementRequestCounter");
+		this.lockRequestCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiEndRequestApplicabileDecrementRequestCounter");
 		try {
 			super.policyRequestCounter = this.distributedPolicyRequestCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 			this.distributedPolicyRequestCounter.decrement();
 			super.policyRequestCounter--;
 		}finally {
-			this.lockRequestCounterGetAndSum.release("_updateDatiEndRequestApplicabile_incrementRequestCounter");
+			this.lockRequestCounterGetAndSum.release("internalUpdateDatiEndRequestApplicabileDecrementRequestCounter");
 		}
 	}
 	@Override
@@ -581,13 +589,13 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	}
 	@Override
 	protected void internalUpdateDatiEndRequestApplicabileIncrementCounter(long v) {
-		this.lockCounterGetAndSum.acquireThrowRuntime("_updateDatiEndRequestApplicabile_incrementCounter");
+		this.lockCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiEndRequestApplicabileIncrementCounter");
 		try {
 			super.policyCounter = this.distributedPolicyCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 			this.distributedPolicyCounter.add(v);
 			super.policyCounter+=v;
 		}finally {
-			this.lockCounterGetAndSum.release("_updateDatiEndRequestApplicabile_incrementCounter");
+			this.lockCounterGetAndSum.release("internalUpdateDatiEndRequestApplicabileIncrementCounter");
 		}
 	}
 	
@@ -638,7 +646,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	
 	@Override
 	public Long getActiveRequestCounter(boolean readRemoteInfo) {
-		if(this.distribuitedActiveRequestCounter_policyRichiesteSimultanee){
+		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
 			if(readRemoteInfo) {
 				return this.distributedActiveRequestCounterForCheck.sum();
 			}

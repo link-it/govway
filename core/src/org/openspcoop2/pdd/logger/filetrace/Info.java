@@ -2384,7 +2384,8 @@ public class Info {
 	}
 	public java.lang.String getRequester(String defaultValue) {
 		DatiMittente datiMittente = this.convertToDatiMittenteEngine();
-		return correctValue(InfoMittenteFormatUtils.getRichiedente(datiMittente), defaultValue);
+		boolean notUseBase64option = false; // perchè i valori ritornati da convertToDatiMittenteEngine sono gia' codificati in base64
+		return correctValue(InfoMittenteFormatUtils.getRichiedente(datiMittente), defaultValue, true, notUseBase64option);
 	}
 	
 	public java.lang.String getIpRequester() {
