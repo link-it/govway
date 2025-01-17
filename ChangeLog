@@ -1,3 +1,10 @@
+2025-01-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA]
+	Risolto Bug #1565
+	Risolto un problema nella funzionalità 'FileTrace' per la registrazione delle transazioni, dove l'informazione 'requester', 
+	se registrata con l'opzione 'logBase64', veniva codificata in Base64 due volte.
+
 2025-01-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
