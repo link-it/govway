@@ -90,7 +90,7 @@ public class DiagnosticSerializer extends BasicComponentFactory implements org.o
 			logAndThrowError(e, "DiagnosticSerializer.toElement error");
 		}
 		finally{
-			if(tmpId!=null && msgDiag!=null){
+			if(tmpId!=null){
 				msgDiag.addProperty(DiagnosticDriver.IDDIAGNOSTICI, tmpId);
 			}
 		}
@@ -123,37 +123,27 @@ public class DiagnosticSerializer extends BasicComponentFactory implements org.o
 				tmpId = msgDiag.removeProperty(DiagnosticDriver.IDDIAGNOSTICI); // non deve essere serializzato
 			}
 			
-			switch (tipoSerializzazione) {
-				case XML:
-				case DEFAULT:
-					
-					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					XMLUtils.generateMessaggioDiagnostico(msgDiag.getMessaggioDiagnostico(),bout,this.prettyDocument,this.omitXmlDeclaration);
-					bout.flush();
-					bout.close();
-					ret = bout;
-					break;
-	
-				case JSON:
-					
-					bout = new ByteArrayOutputStream();
-					String s = XMLUtils.generateMessaggioDiagnosticoAsJson(msgDiag.getMessaggioDiagnostico(),this.prettyDocument);
-					bout.write(s.getBytes());
-					bout.flush();
-					bout.close();
-					ret = bout;
-					break;
+			if(TipoSerializzazione.JSON.equals(tipoSerializzazione)) {
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				String s = XMLUtils.generateMessaggioDiagnosticoAsJson(msgDiag.getMessaggioDiagnostico(),this.prettyDocument);
+				bout.write(s.getBytes());
+				bout.flush();
+				bout.close();
+				ret = bout;
 			}
-			
-			if(ret==null) {
-				throw new ProtocolException("Tipo ["+tipoSerializzazione+"] Non gestito");
+			else {
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				XMLUtils.generateMessaggioDiagnostico(msgDiag.getMessaggioDiagnostico(),bout,this.prettyDocument,this.omitXmlDeclaration);
+				bout.flush();
+				bout.close();
+				ret = bout;
 			}
 			
 		} catch(Exception e) {
 			logAndThrowError(e, "DiagnosticSerializer.toString error");
 		}
 		finally{
-			if(tmpId!=null && msgDiag!=null){
+			if(tmpId!=null){
 				msgDiag.addProperty(DiagnosticDriver.IDDIAGNOSTICI, tmpId);
 			}
 		}
@@ -164,5 +154,30 @@ public class DiagnosticSerializer extends BasicComponentFactory implements org.o
 	@Override
 	public XMLRootElement getXMLRootElement() throws ProtocolException {
 		return new DiagnosticXMLRootElement();
+	}
+	
+	public MsgDiagnostico toMsgDiagnostico(String msgDiag, TipoSerializzazione tipoSerializzazione)  throws ProtocolException{
+		try {
+			if(TipoSerializzazione.JSON.equals(tipoSerializzazione)) {
+				return new MsgDiagnostico(XMLUtils.toMessaggioDiagnosticoFromJson(msgDiag));
+			}
+			else {
+				return new MsgDiagnostico(XMLUtils.toMessaggioDiagnosticoFromXml(msgDiag));
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	public MsgDiagnostico toMsgDiagnostico(byte[] msgDiag, TipoSerializzazione tipoSerializzazione)  throws ProtocolException{
+		try {
+			if(TipoSerializzazione.JSON.equals(tipoSerializzazione)) {
+				return new MsgDiagnostico(XMLUtils.toMessaggioDiagnosticoFromJson(msgDiag));
+			}
+			else {
+				return new MsgDiagnostico(XMLUtils.toMessaggioDiagnosticoFromXml(msgDiag));
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 	}
 }

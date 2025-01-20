@@ -226,30 +226,20 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 		
 			org.openspcoop2.core.tracciamento.Traccia tracciaBase = this.toTraccia(traccia);
 			
-			switch (tipoSerializzazione) {
-				case XML:
-				case DEFAULT:
-					
-					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					org.openspcoop2.core.tracciamento.utils.XMLUtils.generateTraccia(tracciaBase,bout,this.prettyDocument,this.omitXmlDeclaration);
-					bout.flush();
-					bout.close();
-					ret =  bout;
-					break;
-	
-				case JSON:
-					
-					bout = new ByteArrayOutputStream();
-					String s = org.openspcoop2.core.tracciamento.utils.XMLUtils.generateTracciaAsJson(tracciaBase,this.prettyDocument);
-					bout.write(s.getBytes());
-					bout.flush();
-					bout.close();
-					ret =  bout;
-					break;
+			if(TipoSerializzazione.JSON.equals(tipoSerializzazione)) {
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				String s = org.openspcoop2.core.tracciamento.utils.XMLUtils.generateTracciaAsJson(tracciaBase,this.prettyDocument);
+				bout.write(s.getBytes());
+				bout.flush();
+				bout.close();
+				ret =  bout;
 			}
-			
-			if(ret==null) {
-				throw new ProtocolException("Tipo ["+tipoSerializzazione+"] Non gestito");
+			else {
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				org.openspcoop2.core.tracciamento.utils.XMLUtils.generateTraccia(tracciaBase,bout,this.prettyDocument,this.omitXmlDeclaration);
+				bout.flush();
+				bout.close();
+				ret =  bout;
 			}
 			
 		} catch(Exception e) {
@@ -257,6 +247,31 @@ public class TracciaSerializer extends BasicComponentFactory implements org.open
 		}
 		
 		return ret;
+	}
+	
+	public Traccia toTraccia(String msgDiag, TipoSerializzazione tipoSerializzazione)  throws ProtocolException{
+		try {
+			if(TipoSerializzazione.JSON.equals(tipoSerializzazione)) {
+				return new Traccia(org.openspcoop2.core.tracciamento.utils.XMLUtils.toTracciaFromJson(msgDiag));
+			}
+			else {
+				return new Traccia(org.openspcoop2.core.tracciamento.utils.XMLUtils.toTracciaFromXml(msgDiag));
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	public Traccia toTraccia(byte[] msgDiag, TipoSerializzazione tipoSerializzazione)  throws ProtocolException{
+		try {
+			if(TipoSerializzazione.JSON.equals(tipoSerializzazione)) {
+				return new Traccia(org.openspcoop2.core.tracciamento.utils.XMLUtils.toTracciaFromJson(msgDiag));
+			}
+			else {
+				return new Traccia(org.openspcoop2.core.tracciamento.utils.XMLUtils.toTracciaFromXml(msgDiag));
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
 	}
 
 	

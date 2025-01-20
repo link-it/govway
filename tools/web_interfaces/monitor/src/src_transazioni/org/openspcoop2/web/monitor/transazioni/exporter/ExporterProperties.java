@@ -31,7 +31,9 @@ import java.util.Date;
  */
 public class ExporterProperties {
 	private boolean exportTracce;
+	private boolean exportTracceUseProtocolSerialization = false; // il formato esportato sarà comune per qualsiasi protocollo (in modo da ricostruirli in fase di import)
 	private boolean exportDiagnostici;
+	private boolean exportDiagnosticiUseProtocolSerialization = false; // il formato esportato sarà comune per qualsiasi protocollo (in modo da ricostruirli in fase di import)
 	private boolean exportContenuti;
 	private boolean enableHeaderInfo;
 	private boolean enableConsegneInfo;
@@ -116,5 +118,17 @@ public class ExporterProperties {
 	}
 	public void setUseCount(boolean useCount) {
 		this.useCount = useCount;
+	}
+	public boolean isExportTracceUseProtocolSerialization() {
+		return this.exportTracceUseProtocolSerialization;
+	}
+	public void setExportTracceUseProtocolSerialization(boolean exportTracceUseProtocolSerialization) {
+		this.exportTracceUseProtocolSerialization = exportTracceUseProtocolSerialization;
+	}
+	public boolean isExportDiagnosticiUseProtocolSerialization() {
+		return this.exportDiagnosticiUseProtocolSerialization;
+	}
+	public void setExportDiagnosticiUseProtocolSerialization(boolean exportDiagnosticiUseProtocolSerialization) {
+		this.exportDiagnosticiUseProtocolSerialization = exportDiagnosticiUseProtocolSerialization;
 	}
 }
