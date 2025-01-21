@@ -78,12 +78,12 @@ public class DBLoginDAO implements ILoginDAO {
 	private transient DriverConfigurazioneDB driverConfigDB = null;
 
 	private transient ICrypt passwordManager;
-	private transient ICrypt passwordManager_backwardCompatibility;
+	private transient ICrypt passwordManagerBackwardCompatibility;
 	
 	public void setPasswordManager(CryptConfig config) throws UtilsException {
 		this.passwordManager = CryptFactory.getCrypt(log, config);
 		if(config.isBackwardCompatibility()) {
-			this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
+			this.passwordManagerBackwardCompatibility = CryptFactory.getOldMD5Crypt(log);
 		}
 	}
 	
@@ -108,11 +108,9 @@ public class DBLoginDAO implements ILoginDAO {
 			CryptConfig config = new CryptConfig(pddMonitorProperties.getUtentiPassword());
 			this.passwordManager = CryptFactory.getCrypt(log, config);
 			if(config.isBackwardCompatibility()) {
-				this.passwordManager_backwardCompatibility = CryptFactory.getOldMD5Crypt(log);
+				this.passwordManagerBackwardCompatibility = CryptFactory.getOldMD5Crypt(log);
 			}
 			
-		} catch (ServiceException | NotImplementedException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
 		} catch (Exception e) {
 			DBLoginDAO.log.error(e.getMessage(), e);
 		}
@@ -150,11 +148,6 @@ public class DBLoginDAO implements ILoginDAO {
 			
 			this.driverConfigDB = new DriverConfigurazioneDB(con, DBLoginDAO.log, tipoDatabase);
 
-		} catch (ServiceException e) {
-
-			DBLoginDAO.log.error(e.getMessage(), e);
-		} catch (NotImplementedException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
 		} catch (Exception e) {
 			DBLoginDAO.log.error(e.getMessage(), e);
 		}
@@ -171,8 +164,8 @@ public class DBLoginDAO implements ILoginDAO {
 			User u = this.utenteDAO.getUser(username);
 			
 			boolean trovato = this.passwordManager.check(pwd, u.getPassword());
-			if(!trovato && this.passwordManager_backwardCompatibility!=null) {
-				trovato = this.passwordManager_backwardCompatibility.check(pwd, u.getPassword());
+			if(!trovato && this.passwordManagerBackwardCompatibility!=null) {
+				trovato = this.passwordManagerBackwardCompatibility.check(pwd, u.getPassword());
 			}
 			
 			return trovato;
@@ -180,8 +173,7 @@ public class DBLoginDAO implements ILoginDAO {
 			DBLoginDAO.log.debug(e.getMessage(), e);
 			return false;
 		} catch (DriverUsersDBException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
-			throw new ServiceException(e);
+			throw serviceException(e);
 		}
 	}
 
@@ -210,8 +202,7 @@ public class DBLoginDAO implements ILoginDAO {
 			this.utenteDAO.updateUser(user);
 			
 		} catch (DriverUsersDBException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
-			throw new ServiceException(e);
+			throw serviceException(e);
 		}
 	}
 	
@@ -225,8 +216,7 @@ public class DBLoginDAO implements ILoginDAO {
 
 			this.utenteDAO.saveProtocolloUtilizzatoPddMonitor(user.getLogin(), user.getProtocolloSelezionatoPddMonitor());
 		} catch (DriverUsersDBException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
-			throw new ServiceException(e);
+			throw serviceException(e);
 		}
 	}
 	
@@ -240,8 +230,7 @@ public class DBLoginDAO implements ILoginDAO {
 
 			this.utenteDAO.saveSoggettoUtilizzatoPddMonitor(user.getLogin(), user.getSoggettoSelezionatoPddMonitor());
 		} catch (DriverUsersDBException e) {
-			DBLoginDAO.log.error(e.getMessage(), e);
-			throw new ServiceException(e);
+			throw serviceException(e);
 		}
 	}
 	
@@ -264,11 +253,11 @@ public class DBLoginDAO implements ILoginDAO {
 			User u = this.utenteDAO.getUser(username);
 
 			// check consistenza spostato dentro il metodo setutente
-			//			int foundSoggetti = u.getSoggetti() != null ? u.getSoggetti().size() : 0;
+			/**			int foundSoggetti = u.getSoggetti() != null ? u.getSoggetti().size() : 0;
 			//			int foundServizi = u.getServizi() !=  null ? u.getServizi().size() : 0;
 			//			
 			//			boolean admin = (foundServizi + foundSoggetti) == 0;
-			//			boolean operatore = (foundServizi + foundSoggetti) > 0;
+			//			boolean operatore = (foundServizi + foundSoggetti) > 0;*/
 
 			UserDetailsBean details = new UserDetailsBean();
 			details.setUtente(u,check);
@@ -279,8 +268,7 @@ public class DBLoginDAO implements ILoginDAO {
 			log.error(e.getMessage(), e);
 			throw  e; 
 		} catch (DriverUsersDBException e) {
-			log.error(e.getMessage(), e);
-			throw new ServiceException(e); 
+			throw serviceException(e);
 		}
 	}
 	
@@ -289,8 +277,7 @@ public class DBLoginDAO implements ILoginDAO {
 		try {
 			return this.driverConfigDB.getConfigurazioneGenerale();
 		} catch (DriverConfigurazioneException | DriverConfigurazioneNotFound e) {
-			log.error(e.getMessage(), e);
-			throw new ServiceException(e); 
+			throw serviceException(e);
 		}
 	}
 	
@@ -319,5 +306,10 @@ public class DBLoginDAO implements ILoginDAO {
 			}
 		}
 		return null;
+	}
+	
+	private ServiceException serviceException(Exception e) {
+		DBLoginDAO.log.error(e.getMessage(), e);
+		return new ServiceException(e);
 	}
 }

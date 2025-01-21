@@ -275,7 +275,6 @@ public class DriverRegistroServiziDB_pddDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsPortaDominio");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsPortaDominio] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -414,7 +413,6 @@ public class DriverRegistroServiziDB_pddDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("getTipoPortaDominio");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getTipoPortaDominio] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -880,15 +878,13 @@ public class DriverRegistroServiziDB_pddDriver {
 		String queryString;
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<PortaDominio> lista = new ArrayList<PortaDominio>();
+		ArrayList<PortaDominio> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteDominioWithSubject");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -933,14 +929,13 @@ public class DriverRegistroServiziDB_pddDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 }

@@ -81,7 +81,6 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("getServizioFruitore");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioWithSoggettoAccordoServCorr] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -153,7 +152,6 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("getServizioFruitoreSoggettoFruitoreID");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioFruitoreSoggettoFruitoreID] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -197,7 +195,6 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("getServizioFruitoreServizioID");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioFruitoreServizioID] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -241,13 +238,11 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		boolean trovatoServ = false;
-		boolean error = false;
-
+		
 		try {
 			if (this.driver.atomica) {
 				try {
 					con = this.driver.getConnectionFromDatasource("existFruizioniWithoutConnettore");
-					con.setAutoCommit(false);
 				} catch (Exception e) {
 					throw new DriverRegistroServiziException("Exception accedendo al datasource :" + e.getMessage(), e);
 
@@ -297,12 +292,11 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 
 			return trovatoServ;
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverRegistroServiziException("Errore durante existFruizioniWithoutConnettore: " + qe.getMessage(), qe);
 		} finally {
 			JDBCUtilities.closeResources(rs, stm);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -314,12 +308,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		boolean trovatoServ = false;
-		boolean error = false;
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existFruizioniServizioWithoutConnettore");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("Exception accedendo al datasource :" + e.getMessage(), e);
 
@@ -366,12 +358,11 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 
 			return trovatoServ;
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverRegistroServiziException("Errore durante existFruizioniServizioWithoutConnettore: " + qe.getMessage(), qe);
 		} finally {
 			JDBCUtilities.closeResources(rs, stm);
 			
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -854,7 +845,6 @@ public class DriverRegistroServiziDB_accordiParteSpecificaFruitoreDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("getIdServizioFruitore");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getIdServizioFruitore] Exception accedendo al datasource :" + e.getMessage(),e);
 

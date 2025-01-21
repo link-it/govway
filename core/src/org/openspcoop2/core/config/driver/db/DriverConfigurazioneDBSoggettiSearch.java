@@ -96,7 +96,6 @@ public class DriverConfigurazioneDBSoggettiSearch {
 		this.driver.logDebug("filtroProprietaValore : " + filtroProprietaValore);
 		
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<Soggetto> lista = new ArrayList<>();
@@ -104,7 +103,6 @@ public class DriverConfigurazioneDBSoggettiSearch {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("soggettiList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException(getPrefixError(nomeMetodo)+"Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -239,12 +237,11 @@ public class DriverConfigurazioneDBSoggettiSearch {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo)+"Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -262,7 +259,6 @@ public class DriverConfigurazioneDBSoggettiSearch {
 		offset = ricerca.getIndexIniziale(idLista);
 		
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<Soggetto> lista = new ArrayList<>();
@@ -270,7 +266,6 @@ public class DriverConfigurazioneDBSoggettiSearch {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("soggettiWithServiziList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException(getPrefixError(nomeMetodo)+"Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -343,12 +338,11 @@ public class DriverConfigurazioneDBSoggettiSearch {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException(getPrefixError(nomeMetodo)+"Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	

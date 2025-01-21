@@ -365,15 +365,13 @@ public class DriverConfigurazioneDB_routingTableDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<RoutingTableDestinazione> lista = new ArrayList<RoutingTableDestinazione>();
+		ArrayList<RoutingTableDestinazione> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("routingList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -477,14 +475,13 @@ public class DriverConfigurazioneDB_routingTableDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 }

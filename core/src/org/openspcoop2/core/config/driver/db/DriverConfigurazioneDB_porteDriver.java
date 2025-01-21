@@ -89,14 +89,12 @@ public class DriverConfigurazioneDB_porteDriver {
 		String nomeTabella = portaDelegata ? CostantiDB.PORTE_DELEGATE_CACHE_REGOLE : CostantiDB.PORTE_APPLICATIVE_CACHE_REGOLE;
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -107,7 +105,7 @@ public class DriverConfigurazioneDB_porteDriver {
 
 		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
-		List<ResponseCachingConfigurazioneRegola> lista = new ArrayList<ResponseCachingConfigurazioneRegola>();
+		List<ResponseCachingConfigurazioneRegola> lista = new ArrayList<>();
 		try {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -206,14 +204,13 @@ public class DriverConfigurazioneDB_porteDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return lista;
@@ -233,7 +230,6 @@ public class DriverConfigurazioneDB_porteDriver {
 	
 	private boolean existsResponseCachingConfigurazioneRegolaEngine(long idPA, Integer statusMin, Integer statusMax, boolean fault,String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -242,7 +238,6 @@ public class DriverConfigurazioneDB_porteDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -299,14 +294,13 @@ public class DriverConfigurazioneDB_porteDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -546,7 +540,6 @@ public class DriverConfigurazioneDB_porteDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 

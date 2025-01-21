@@ -10445,12 +10445,13 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public List<String> getHostnames(String gruppo, int refreshSecondsInterval){
 		Connection con = null;
+		List<String> lNull = null;
 		try {
 			con = this.driverConfigurazioneDB.getConnection("StatisticheGiornaliereService.getHostnames");
 			return DynamicClusterManager.getHostnames(con, this.driverConfigurazioneDB.getTipoDB(), gruppo, refreshSecondsInterval);
 		}catch (Exception e) {
 			StatisticheGiornaliereService.logError(e.getMessage(), e);
-			return null;
+			return lNull;
 		}finally {
 			try {
 				this.driverConfigurazioneDB.releaseConnection(con);

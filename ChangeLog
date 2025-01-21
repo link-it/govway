@@ -1,3 +1,9 @@
+2025-01-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1566
+	In alcuni casi limite, i driver per l'accesso al database delle configurazioni restituivano al pool una connessione con l'opzione autoCommit disabilitata.
+
 2025-01-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloModIPA]

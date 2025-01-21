@@ -790,7 +790,6 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsSoggetto(idSoggetto)");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -865,7 +864,6 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsSoggetto(longId)");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -912,7 +910,6 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsSoggetto(codiceIPA)");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -962,7 +959,6 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("getSoggetto(codiceIPA)");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1024,7 +1020,6 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("getCodiceIPA(idSoggetto)");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsSoggetto] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1326,7 +1321,6 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		String queryString;
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<String> lista = new ArrayList<>();
@@ -1334,7 +1328,6 @@ public class DriverRegistroServiziDB_soggettiDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("nomiProprietaSoggetti");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverRegistroServiziDB::nomiProprietaSoggetti] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1371,12 +1364,11 @@ public class DriverRegistroServiziDB_soggettiDriver {
 			}
 			return lista;
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverRegistroServiziDB::nomiProprietaSoggetti] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	

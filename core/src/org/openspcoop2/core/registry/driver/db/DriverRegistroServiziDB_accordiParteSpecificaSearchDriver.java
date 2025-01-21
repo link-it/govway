@@ -82,7 +82,6 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		this.driver.logDebug("search : " + search);
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 		ArrayList<AccordoServizioParteSpecifica> lista = new ArrayList<AccordoServizioParteSpecifica>();
@@ -90,7 +89,6 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("serviziList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -229,14 +227,13 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -587,7 +584,6 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		Connection con = null;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		boolean error = false;
 		ArrayList<AccordoServizioParteSpecifica> serviziList = new ArrayList<>();
 
 		String aliasSoggettiFruitori = "soggettoFruitore";
@@ -878,7 +874,6 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("soggettiServizioList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1949,14 +1944,13 @@ public class DriverRegistroServiziDB_accordiParteSpecificaSearchDriver {
 			return serviziList;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 }

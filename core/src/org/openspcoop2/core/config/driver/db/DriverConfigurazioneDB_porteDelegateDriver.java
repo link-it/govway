@@ -1674,7 +1674,6 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 	protected List<String> porteDelegateRateLimitingValoriUnivoci(String pName) throws DriverConfigurazioneException {
 		
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<String> lista = new ArrayList<>();
@@ -1682,7 +1681,6 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteDelegateRateLimitingValoriUnivoci");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteDelegateRateLimitingValoriUnivoci] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1716,12 +1714,11 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteDelegateRateLimitingValoriUnivoci] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1730,7 +1727,6 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 		String queryString;
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<String> lista = new ArrayList<>();
@@ -1739,7 +1735,6 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("nomiProprietaPD");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::nomiProprietaPD] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1802,12 +1797,11 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 
 			return lista;
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::nomiProprietaPD] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1816,15 +1810,13 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 		String queryString;
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<PortaDelegata> lista = new ArrayList<PortaDelegata>();
+		ArrayList<PortaDelegata> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteDelegateWithSoggettoErogatoreList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1855,14 +1847,13 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -1871,15 +1862,13 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 		String queryString;
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<PortaDelegata> lista = new ArrayList<PortaDelegata>();
+		ArrayList<PortaDelegata> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteDelegateWithTipoNomeErogatoreList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1913,14 +1902,13 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -2158,15 +2146,13 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 		String nomeMetodo = "getPorteDelegateBySoggetto";
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<PortaDelegata> lista = new ArrayList<PortaDelegata>();
+		ArrayList<PortaDelegata> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2198,12 +2184,11 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -2498,15 +2483,13 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 		String nomeMetodo = "getPorteDelegateByPolicyGestioneToken";
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<PortaDelegata> lista = new ArrayList<PortaDelegata>();
+		ArrayList<PortaDelegata> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2538,12 +2521,11 @@ public class DriverConfigurazioneDB_porteDelegateDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	

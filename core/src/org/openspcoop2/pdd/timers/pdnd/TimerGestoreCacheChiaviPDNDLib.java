@@ -193,7 +193,7 @@ public class TimerGestoreCacheChiaviPDNDLib {
 		String method = TimerGestoreCacheChiaviPDND.ID_MODULO+".getIdStore";
     	try{
 
-			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method);
 			if(conConfigurazione == null) {
 				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
 			}
@@ -252,7 +252,7 @@ public class TimerGestoreCacheChiaviPDNDLib {
 		String method = TimerGestoreCacheChiaviPDND.ID_MODULO+".existsRemoteStoreKey_"+idStore+"_"+kid;
     	try{
 
-			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method);
 			if(conConfigurazione == null) {
 				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
 			}

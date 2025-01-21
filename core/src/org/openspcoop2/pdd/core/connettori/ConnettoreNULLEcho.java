@@ -491,13 +491,14 @@ public class ConnettoreNULLEcho extends ConnettoreBaseWithResponse {
 							}catch(Exception er){
 								// ignore
 							}
+							state.closePreparedStatement(); // Chiude le PreparedStatement aperte(e non eseguite) per il save del Msg
+						}finally {
 							// Ripristino connessione
 							try{
 								connectionDB.setAutoCommit(true);
 							}catch(Exception er){
 								// ignore
 							}
-							state.closePreparedStatement(); // Chiude le PreparedStatement aperte(e non eseguite) per il save del Msg
 						}
 					
 					}

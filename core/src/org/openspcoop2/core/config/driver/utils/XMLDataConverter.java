@@ -1038,15 +1038,6 @@ public class XMLDataConverter {
 								
 							}
 						}finally {
-							try {
-								if(driver.isAtomica()) {
-									if(con!=null) {
-										con.commit();
-									}
-								}
-							}catch(Throwable t) {
-								// ignore
-							}
 							driver.releaseConnection(con);
 						}
 					}
@@ -1090,11 +1081,6 @@ public class XMLDataConverter {
 							this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato per nomeDelegante.");
 						}
 					}finally {
-						try {
-							if(driver.isAtomica()) {
-								con.commit();
-							}
-						}catch(Throwable t) {}
 						driver.releaseConnection(con);
 					}
 				}
@@ -1194,11 +1180,6 @@ public class XMLDataConverter {
 								
 							}
 						}finally {
-							try {
-								if(driver.isAtomica()) {
-									con.commit();
-								}
-							}catch(Throwable t) {}
 							driver.releaseConnection(con);
 						}
 					}
@@ -1251,11 +1232,6 @@ public class XMLDataConverter {
 							this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato per nomeDelegante.");
 						}
 					}finally {
-						try {
-							if(driver.isAtomica()) {
-								con.commit();
-							}
-						}catch(Throwable t) {}
 						driver.releaseConnection(con);
 					}
 				}
@@ -1491,13 +1467,6 @@ public class XMLDataConverter {
 								this.log.info("Eliminazione mapping di fruizione tra Porta delegata ["+pd.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] eliminato.");
 							}
 						}finally {
-							try {
-								if(driver.isAtomica()) {
-									if(con!=null) {
-										con.commit();
-									}
-								}
-							}catch(Throwable t) {}
 							driver.releaseConnection(con);
 						}
 					}
@@ -1539,11 +1508,6 @@ public class XMLDataConverter {
 								this.log.info("Eliminazione mapping di erogazione tra Porta Applicativa ["+pa.getNome()+"] e servizio ["+idServizio+"] eliminato.");
 							}
 						}finally {
-							try {
-								if(driver.isAtomica()) {
-									con.commit();
-								}
-							}catch(Throwable t) {}
 							driver.releaseConnection(con);
 						}
 					}

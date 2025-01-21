@@ -59,7 +59,6 @@ public class DriverConfigurazioneDB_protocolPropertiesDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsProtocolProperty");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("DriverConfigurazioneDB::existsProtocolProperty] Exception accedendo al datasource :" + e.getMessage());
 

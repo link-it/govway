@@ -420,7 +420,9 @@ public class UtilitiesMappingFruizioneErogazione  {
 			}finally{
 				try{
 					this.driverRegistroServizi.releaseConnection(con);
-				}catch(Throwable t){}
+				}catch(Exception t){
+					// ignore
+				}
 			}
 			
 			String nomeMapping = null;
@@ -538,11 +540,6 @@ public class UtilitiesMappingFruizioneErogazione  {
 						this.log.info("Creazione mapping di erogazione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta Applicativa ["+paDefault.getNome()+"] e servizio ["+idServizio+"] creato delegante.");
 					}finally{
 						try{
-							if(this.driverConfigurazione.isAtomica()) {
-								con.commit();
-							}
-						}catch(Throwable t){}
-						try{
 							this.driverRegistroServizi.releaseConnection(con);
 						}catch(Throwable t){}
 					}
@@ -580,7 +577,9 @@ public class UtilitiesMappingFruizioneErogazione  {
 			}finally{
 				try{
 					this.driverRegistroServizi.releaseConnection(con);
-				}catch(Throwable t){}
+				}catch(Exception t){
+					// ignore
+				}
 			}
 			
 			String nomeMapping = null;
@@ -689,13 +688,10 @@ public class UtilitiesMappingFruizioneErogazione  {
 						this.log.info("Creazione mapping di fruizione di default (nome:"+mapping.getNome()+" default:"+mapping.isDefault()+") tra Porta delegata ["+pdDefault.getNome()+"], fruitore ["+idFruitore+"] e servizio ["+idServizio+"] creato delegante.");
 					}finally{
 						try{
-							if(this.driverConfigurazione.isAtomica()) {
-								con.commit();
-							}
-						}catch(Throwable t){}
-						try{
 							this.driverRegistroServizi.releaseConnection(con);
-						}catch(Throwable t){}
+						}catch(Exception t){
+							// ignore
+						}
 					}
 				}
 				

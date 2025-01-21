@@ -72,7 +72,6 @@ public class DriverRegistroServiziDB_documentiDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsDocumento");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsDocumento] Exception accedendo al datasource :" + e.getMessage(),e);
 

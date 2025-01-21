@@ -2950,7 +2950,6 @@ public class DriverConfigurazioneDB_configDriver {
 		String nomeMetodo = "existsResponseCachingConfigurazioneRegola";
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -2958,7 +2957,6 @@ public class DriverConfigurazioneDB_configDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsResponseCachingConfigurazioneRegola");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -3017,14 +3015,13 @@ public class DriverConfigurazioneDB_configDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -3032,7 +3029,6 @@ public class DriverConfigurazioneDB_configDriver {
 		String nomeMetodo = "existsResponseCachingConfigurazioneRegola";
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -3040,7 +3036,6 @@ public class DriverConfigurazioneDB_configDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsResponseCachingConfigurazioneRegola");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -3074,14 +3069,13 @@ public class DriverConfigurazioneDB_configDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -3089,7 +3083,6 @@ public class DriverConfigurazioneDB_configDriver {
 		String nomeMetodo = "existsCanale";
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -3097,7 +3090,6 @@ public class DriverConfigurazioneDB_configDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -3131,14 +3123,13 @@ public class DriverConfigurazioneDB_configDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -3146,7 +3137,6 @@ public class DriverConfigurazioneDB_configDriver {
 		String nomeMetodo = "existsCanaleNodo";
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -3154,7 +3144,6 @@ public class DriverConfigurazioneDB_configDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -3188,14 +3177,13 @@ public class DriverConfigurazioneDB_configDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	

@@ -118,6 +118,7 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 			ConfigurazionePdDConnectionResource cr = null;
 			try{
 				cr = this.getConnection(connectionPdD, "ControlloTraffico.getConfigurazionePolicyRateLimitingGlobali");
+								
 				org.openspcoop2.core.controllo_traffico.dao.IServiceManager sm = 
 						(org.openspcoop2.core.controllo_traffico.dao.IServiceManager) DAOFactory.getInstance(this.log).
 						getServiceManager(org.openspcoop2.core.controllo_traffico.utils.ProjectInfo.getInstance(),
@@ -351,15 +352,10 @@ public class ConfigurazionePdD_controlloTraffico extends AbstractConfigurazioneP
 			IPaginatedExpression expression = search.newPaginatedExpression();
 			expression.limit(100000); // non dovrebbero esistere tante regole
 			List<IdPolicy> list = search.findAllIds(expression);
-			if(list!=null && list.size()>0){
+			if(list!=null && !list.isEmpty()){
 				elencoIdPolicy.setIdPolicyList(list);
 			}
 			return elencoIdPolicy;
-		}
-		catch(NotFoundException e) {
-			String errorMsg = "ElencoIdPolicy del Controllo del Traffico non trovata: "+e.getMessage();
-			this.log.debug(errorMsg,e);
-			throw new DriverConfigurazioneNotFound(errorMsg,e);
 		}
 		catch(Exception e){
 			String errorMsg = "Errore durante la lettura dell'ElencoIdPolicy del Controllo del Traffico: "+e.getMessage();

@@ -69,7 +69,6 @@ public class DriverRegistroServiziDB_protocolPropertiesDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsProtocolProperty");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsProtocolProperty] Exception accedendo al datasource :" + e.getMessage());
 

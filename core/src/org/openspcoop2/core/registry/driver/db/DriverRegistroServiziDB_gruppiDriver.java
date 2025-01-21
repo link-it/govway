@@ -381,7 +381,6 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsGruppo");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsGruppo] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -508,7 +507,6 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		}
 				
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 		ArrayList<Gruppo> lista = new ArrayList<>();
@@ -516,7 +514,6 @@ public class DriverRegistroServiziDB_gruppiDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("gruppiList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -632,14 +629,13 @@ public class DriverRegistroServiziDB_gruppiDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		

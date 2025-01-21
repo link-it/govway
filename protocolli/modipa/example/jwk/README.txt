@@ -21,6 +21,9 @@ mkdir -p jwk_public_keys
 ./generaJWK.sh ../../../../core/dist ../../../../lib ../keys/xca/ExampleExternalClient2.crt jwk_public_keys/KID-ExampleExternalClient2.jwk KID-ExampleExternalClient2
 ./generaJWK.sh ../../../../core/dist ../../../../lib ../keys/xca/ExampleExternalClient3.crt jwk_public_keys/KID-ExampleExternalClient3.jwk KID-ExampleExternalClient3
 ./generaJWK.sh ../../../../core/dist ../../../../lib ../keys/xca/ExampleExternalClient4.crt jwk_public_keys/KID-ExampleExternalClient4.jwk KID-ExampleExternalClient4
+./generaJWK.sh ../../../../core/dist ../../../../lib ../keys/xca/ExampleClient1.crt jwk_public_keys/KID-MultitenantApplicativoBlockingIDA01.jwk KID-MultitenantApplicativoBlockingIDA01
+./generaJWK.sh ../../../../core/dist ../../../../lib ../keys/xca/ExampleClient3.crt jwk_public_keys/KID-MultitenantApplicativoBlockingIDA01ExampleClient3.jwk KID-MultitenantApplicativoBlockingIDA01ExampleClient3
+./generaJWK.sh ../../../../core/dist ../../../../lib trasparente_keys/testJWKrsapubkey.pem jwk_public_keys/KID-MultitenantApplicativoBlockingJWK.jwk KID-MultitenantApplicativoBlockingJWK
 
 ./generaTrustStoreJWK.sh jwk_public_keys/ truststore_certificati.jwk
 

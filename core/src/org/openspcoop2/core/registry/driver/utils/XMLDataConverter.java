@@ -1066,6 +1066,9 @@ public class XMLDataConverter {
 						Connection con = null;
 						try {
 							con = driver.getConnection("XMLDataConverter.mappingErogazioneFruizione");
+							if(con.getAutoCommit()) {
+								con.setAutoCommit(false);
+							}
 							this.log.info("Servizio "+uri+" (mappingErogazione) eliminazione in corso...");							
 							if(this.gestoreCRUD.existsAccordoServizioParteSpecifica(idServizio)){
 								// elimino anche tutti i mapping fruitori
@@ -1081,14 +1084,20 @@ public class XMLDataConverter {
 								DBMappingUtils.deleteMappingErogazione(idServizio, true, con, driver.getTipoDB()); // elimina anche le porte applicative
 							}
 							this.log.info("Servizio "+uri+" (mappingErogazione) eliminazione completata");
-						}finally {
+						}
+						finally {
 							try {
-								if(driver.isAtomica()) {
-									if(con!=null) {
-										con.commit();
-									}
+								if(con!=null) {
+									con.commit();
 								}
-							}catch(Throwable t) {
+							}catch(Exception t) {
+								// ignore
+							}
+							try {
+								if(con!=null) {
+									con.setAutoCommit(true);
+								}
+							}catch(Exception t) {
 								// ignore
 							}
 							driver.releaseConnection(con);

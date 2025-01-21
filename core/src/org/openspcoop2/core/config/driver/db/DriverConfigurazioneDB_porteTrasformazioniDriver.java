@@ -88,7 +88,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		offset = ricerca.getIndexIniziale(idLista);
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		PreparedStatement stm1 = null;
@@ -101,7 +100,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -112,7 +110,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 
 		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
-		List<TrasformazioneRegola> lista = new ArrayList<TrasformazioneRegola>();
+		List<TrasformazioneRegola> lista = new ArrayList<>();
 		try {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -405,7 +403,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
@@ -414,7 +411,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			JDBCUtilities.closeResources(rs0, stm0);
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return lista;
@@ -431,7 +428,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		String nomeMetodo = "azioneUsataInTrasformazioni";
 		
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 
@@ -441,7 +437,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -484,14 +479,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return false;
@@ -522,7 +516,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> applicativi,
 			String nomeMetodo, boolean portaDelegata, boolean interpretaNullList) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -533,7 +526,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -679,14 +671,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return regola;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -704,7 +695,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private TrasformazioneRegola getEngineTrasformazione(long idPorta, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -713,7 +703,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -753,14 +742,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return regola;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -897,7 +885,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private boolean _existsTrasformazione(long idPorta, String azioni, String pattern, String contentType, String connettori, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -906,7 +893,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -975,14 +961,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1000,7 +985,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private boolean _existsTrasformazione(long idPorta, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -1009,7 +993,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1046,14 +1029,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1081,7 +1063,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		offset = ricerca.getIndexIniziale(idLista);
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
@@ -1091,7 +1072,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1102,7 +1082,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 
 		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
-		List<TrasformazioneRegolaRisposta> lista = new ArrayList<TrasformazioneRegolaRisposta>();
+		List<TrasformazioneRegolaRisposta> lista = new ArrayList<>();
 		try {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -1203,14 +1183,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return lista;
@@ -1230,7 +1209,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private TrasformazioneRegolaRisposta getEngineTrasformazioneRisposta(long idPorta, long idTrasformazione, Integer statusMin, Integer statusMax, String pattern, String contentType, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet rs =null;
 		String queryString;
@@ -1240,7 +1218,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1326,14 +1303,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return risposta;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1351,7 +1327,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private TrasformazioneRegolaRisposta getEngineTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet rs =null;
 		String queryString;
@@ -1361,7 +1336,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1422,14 +1396,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return risposta;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1540,7 +1513,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private boolean _existsTrasformazioneRisposta(long idPorta, long idTrasformazione, Integer statusMin, Integer statusMax, String pattern, String contentType, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -1550,7 +1522,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1624,14 +1595,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1649,7 +1619,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private boolean _existsTrasformazioneRisposta(long idPorta, long idTrasformazione, String nome, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -1659,7 +1628,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1701,14 +1669,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1735,7 +1702,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		offset = ricerca.getIndexIniziale(idLista);
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
@@ -1747,7 +1713,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1758,7 +1723,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 
 		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
-		List<TrasformazioneRegolaApplicabilitaServizioApplicativo> lista = new ArrayList<TrasformazioneRegolaApplicabilitaServizioApplicativo>();
+		List<TrasformazioneRegolaApplicabilitaServizioApplicativo> lista = new ArrayList<>();
 		try {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -1859,14 +1824,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return lista;
@@ -1888,7 +1852,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		offset = ricerca.getIndexIniziale(idLista);
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
@@ -1898,7 +1861,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1909,7 +1871,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 
 		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
-		List<TrasformazioneRegolaApplicabilitaSoggetto> lista = new ArrayList<TrasformazioneRegolaApplicabilitaSoggetto>();
+		List<TrasformazioneRegolaApplicabilitaSoggetto> lista = new ArrayList<>();
 		try {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -2004,14 +1966,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return lista;
@@ -2041,7 +2002,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		offset = ricerca.getIndexIniziale(idLista);
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
@@ -2052,7 +2012,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2063,7 +2022,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 
 		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
-		List<TrasformazioneRegolaParametro> lista = new ArrayList<TrasformazioneRegolaParametro>();
+		List<TrasformazioneRegolaParametro> lista = new ArrayList<>();
 		try {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -2173,14 +2132,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return lista;
@@ -2200,7 +2158,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private boolean _existsTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -2211,7 +2168,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2261,14 +2217,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -2286,7 +2241,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private TrasformazioneRegolaParametro getEngineTrasformazioneRispostaHeader(long idPorta, long idTrasformazione, long idTrasformazioneRisposta,  String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet rs =null;
 		String queryString;
@@ -2297,7 +2251,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2357,14 +2310,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return parametro;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -2391,7 +2343,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		offset = ricerca.getIndexIniziale(idLista);
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
@@ -2401,7 +2352,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2412,7 +2362,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 
 		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
-		List<TrasformazioneRegolaParametro> lista = new ArrayList<TrasformazioneRegolaParametro>();
+		List<TrasformazioneRegolaParametro> lista = new ArrayList<>();
 		try {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -2513,14 +2463,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return lista;
@@ -2540,7 +2489,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private boolean _existsTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -2550,7 +2498,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2596,14 +2543,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -2621,7 +2567,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private TrasformazioneRegolaParametro getEngineTrasformazioneRichiestaHeader(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet rs =null;
 		String queryString;
@@ -2631,7 +2576,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2687,14 +2631,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return parametro;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -2721,7 +2664,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		offset = ricerca.getIndexIniziale(idLista);
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
@@ -2731,7 +2673,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2742,7 +2683,7 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 
 		this.driver.logDebug("operazione this.driver.atomica = " + this.driver.atomica);
 
-		List<TrasformazioneRegolaParametro> lista = new ArrayList<TrasformazioneRegolaParametro>();
+		List<TrasformazioneRegolaParametro> lista = new ArrayList<>();
 		try {
 			
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.driver.tipoDB);
@@ -2838,14 +2779,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return lista;
@@ -2865,7 +2805,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private boolean _existsTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		String queryString;
@@ -2875,7 +2814,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2921,14 +2859,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return count > 0;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -2946,7 +2883,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 	
 	private TrasformazioneRegolaParametro getEngineTrasformazioneRichiestaUrlParameter(long idPorta, long idTrasformazione, String nome, String tipo, boolean checkTipo, String nomeMetodo, boolean portaDelegata) throws DriverConfigurazioneException {
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet rs =null;
 		String queryString;
@@ -2956,7 +2892,6 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -3012,14 +2947,13 @@ public class DriverConfigurazioneDB_porteTrasformazioniDriver {
 			return parametro;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 }

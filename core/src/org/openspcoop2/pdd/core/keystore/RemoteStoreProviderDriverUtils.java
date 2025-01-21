@@ -104,7 +104,7 @@ public class RemoteStoreProviderDriverUtils {
 		
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("createRemoteStore", false);
+			con = driverConfigurazioneDB.getConnection("createRemoteStore");
 			return createRemoteStore(con, driverConfigurazioneDB.getTipoDB(), remoteStoreConfig);
 		}
 		catch(Exception e) {
@@ -144,7 +144,7 @@ public class RemoteStoreProviderDriverUtils {
 	public static long getIdRemoteStore(DriverConfigurazioneDB driverConfigurazioneDB, RemoteStoreConfig remoteStoreConfig) throws KeystoreException {
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("getIdRemoteStore", false);
+			con = driverConfigurazioneDB.getConnection("getIdRemoteStore");
 			return getIdRemoteStore(con, driverConfigurazioneDB.getTipoDB(), remoteStoreConfig);
 		}
 		catch(Exception e) {
@@ -192,7 +192,7 @@ public class RemoteStoreProviderDriverUtils {
 	public static RemoteStore getRemoteStore(DriverConfigurazioneDB driverConfigurazioneDB, RemoteStoreConfig remoteStoreConfig, boolean throwExceptionNotFound) throws KeystoreException {
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("getRemoteStore", false);
+			con = driverConfigurazioneDB.getConnection("getRemoteStore");
 			return getRemoteStore(con, driverConfigurazioneDB.getTipoDB(), remoteStoreConfig, throwExceptionNotFound);
 		}
 		catch(Exception e) {
@@ -245,7 +245,7 @@ public class RemoteStoreProviderDriverUtils {
 	public static int updateRemoteStore(DriverConfigurazioneDB driverConfigurazioneDB, long idStore, String lastEventId) throws KeystoreException {
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("updateRemoteStore", false);
+			con = driverConfigurazioneDB.getConnection("updateRemoteStore");
 			return updateRemoteStore(con, driverConfigurazioneDB.getTipoDB(), idStore, lastEventId);
 		}
 		catch(Exception e) {
@@ -297,7 +297,7 @@ public class RemoteStoreProviderDriverUtils {
 	public static List<RemoteStore> getRemoteStores(DriverConfigurazioneDB driverConfigurazioneDB) throws KeystoreException {
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("getRemoteStores", false);
+			con = driverConfigurazioneDB.getConnection("getRemoteStores");
 			return getRemoteStores(con, driverConfigurazioneDB.getTipoDB());
 		}
 		catch(Exception e) {
@@ -353,7 +353,7 @@ public class RemoteStoreProviderDriverUtils {
 		Connection con = null;
 		PreparedStatement updateStmt = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("addRemoteStoreKey", false);
+			con = driverConfigurazioneDB.getConnection("addRemoteStoreKey");
 			
 			checkParams(idStore, kid, key);
 			
@@ -410,7 +410,7 @@ public class RemoteStoreProviderDriverUtils {
 	private static int updateRemoteStoreKeyEngine(DriverConfigurazioneDB driverConfigurazioneDB, long idStore, String kid, byte[] key, boolean invalid) throws KeystoreException {
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection(invalid ? "invalidRemoteStoreKey" : "updateRemoteStoreKey", false);
+			con = driverConfigurazioneDB.getConnection(invalid ? "invalidRemoteStoreKey" : "updateRemoteStoreKey");
 			return updateRemoteStoreKeyEngine(con, driverConfigurazioneDB.getTipoDB(), idStore, kid, key, invalid);
 		}
 		catch(Exception e) {
@@ -473,7 +473,7 @@ public class RemoteStoreProviderDriverUtils {
 	public static int deleteRemoteStoreKey(DriverConfigurazioneDB driverConfigurazioneDB, long idStore, String kid) throws KeystoreException {
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("deleteRemoteStoreKey", false);
+			con = driverConfigurazioneDB.getConnection("deleteRemoteStoreKey");
 			return deleteRemoteStoreKey(con, driverConfigurazioneDB.getTipoDB(), idStore, kid);
 		}
 		catch(Exception e) {
@@ -514,7 +514,7 @@ public class RemoteStoreProviderDriverUtils {
 		PreparedStatement selectStmt = null;
 		ResultSet selectRS = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("getRemoteStoreKey", false);
+			con = driverConfigurazioneDB.getConnection("getRemoteStoreKey");
 			
 			checkParams(idStore, kid);
 			
@@ -559,7 +559,7 @@ public class RemoteStoreProviderDriverUtils {
 		
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("existsRemoteStoreKey", false);
+			con = driverConfigurazioneDB.getConnection("existsRemoteStoreKey");
 			return existsRemoteStoreKey(con, driverConfigurazioneDB.getTipoDB(), idStore, kid, checkDates);
 		}
 		catch(Exception e) {
@@ -623,7 +623,7 @@ public class RemoteStoreProviderDriverUtils {
 		
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("getRemoteStoreClientDetails", false);
+			con = driverConfigurazioneDB.getConnection("getRemoteStoreClientDetails");
 			
 			return getRemoteStoreClientDetails(con, driverConfigurazioneDB.getTipoDB(), idStore, kid, log,
 					createEntryIfNotExists);
@@ -736,7 +736,7 @@ public class RemoteStoreProviderDriverUtils {
 	public static int updateRemoteStoreClientDetails(DriverConfigurazioneDB driverConfigurazioneDB, long idStore, String kid, RemoteStoreClientDetails clientDetails) throws KeystoreException {
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("updateRemoteStoreClientDetails", false);
+			con = driverConfigurazioneDB.getConnection("updateRemoteStoreClientDetails");
 			return updateRemoteStoreClientDetails(con, driverConfigurazioneDB.getTipoDB(), idStore, kid, clientDetails);
 		}
 		catch(Exception e) {
@@ -823,7 +823,7 @@ public class RemoteStoreProviderDriverUtils {
 	public static List<RemoteStoreKeyEntry> getRemoteStoreKeyEntries(Logger log, DriverConfigurazioneDB driverConfigurazioneDB, ISearch ricerca, long idRemoteStore) throws KeystoreException {
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("getRemoteStoreKeyEntries", false);
+			con = driverConfigurazioneDB.getConnection("getRemoteStoreKeyEntries");
 			return getRemoteStoreKeyEntries(log, con, driverConfigurazioneDB.getTipoDB(), ricerca, idRemoteStore);
 		}
 		catch(Exception e) {
@@ -960,7 +960,7 @@ public class RemoteStoreProviderDriverUtils {
 	public static int deleteRemoteStoreKeyEntry(DriverConfigurazioneDB driverConfigurazioneDB, long idRemoteStore, long idEntry) throws KeystoreException {
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("deleteRemoteStoreKeyEntry", false);
+			con = driverConfigurazioneDB.getConnection("deleteRemoteStoreKeyEntry");
 			return deleteRemoteStoreKeyEntry(con, driverConfigurazioneDB.getTipoDB(), idRemoteStore, idEntry);
 		}
 		catch(Exception e) {
@@ -997,7 +997,7 @@ public class RemoteStoreProviderDriverUtils {
 	public static RemoteStoreKeyEntry getRemoteStoreKeyEntry(Logger log, DriverConfigurazioneDB driverConfigurazioneDB, long idRemoteStoreKey) throws KeystoreException, KeystoreNotFoundException {
 		Connection con = null;
 		try {
-			con = driverConfigurazioneDB.getConnection("getRemoteStoreKeyEntry", false);
+			con = driverConfigurazioneDB.getConnection("getRemoteStoreKeyEntry");
 			return getRemoteStoreKeyEntry(log, con, driverConfigurazioneDB.getTipoDB(), idRemoteStoreKey);
 		}
 		catch(Exception e) {
