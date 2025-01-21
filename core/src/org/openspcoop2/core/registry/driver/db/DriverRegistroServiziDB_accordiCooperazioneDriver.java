@@ -671,7 +671,6 @@ public class DriverRegistroServiziDB_accordiCooperazioneDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoCooperazione");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::createAccordoServizio] Exception accedendo al datasource :" + e.getMessage(),e);
 

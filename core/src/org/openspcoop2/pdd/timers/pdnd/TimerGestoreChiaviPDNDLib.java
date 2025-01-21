@@ -265,7 +265,7 @@ public class TimerGestoreChiaviPDNDLib {
 		String method = TimerGestoreChiaviPDND.ID_MODULO+".acquireLock";
     	try{
 
-			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method);
 			if(conConfigurazione == null) {
 				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
 			}
@@ -290,7 +290,7 @@ public class TimerGestoreChiaviPDNDLib {
 		String method = TimerGestoreChiaviPDND.ID_MODULO+".releaseSafeLock";
     	try{
 
-			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method);
 			if(conConfigurazione == null) {
 				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
 			}
@@ -409,7 +409,7 @@ public class TimerGestoreChiaviPDNDLib {
 		String method = TimerGestoreChiaviPDND.ID_MODULO+".readRemoteStoreDbImage";
     	try{
 
-			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method);
 			if(conConfigurazione == null) {
 				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
 			}
@@ -546,7 +546,7 @@ public class TimerGestoreChiaviPDNDLib {
 		String method = TimerGestoreChiaviPDND.ID_MODULO+".gestioneEvento_"+kid;
     	try{
 
-			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method);
 			if(conConfigurazione == null) {
 				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
 			}
@@ -596,7 +596,7 @@ public class TimerGestoreChiaviPDNDLib {
 		String method = TimerGestoreChiaviPDND.ID_MODULO+".updateRemoteStore_"+idStore+"_"+lastEventId;
     	try{
 
-			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method, false);
+			conConfigurazione = driverConfigurazioneDbGestoreConnection.getConnection(method);
 			if(conConfigurazione == null) {
 				throw new TimerException(TimerGestoreChiaviPDND.CONNESSIONE_NON_DISPONIBILE);	
 			}

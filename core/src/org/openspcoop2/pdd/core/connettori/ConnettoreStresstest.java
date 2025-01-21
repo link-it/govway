@@ -392,13 +392,14 @@ public class ConnettoreStresstest extends ConnettoreBase {
 						}catch(Exception er){
 							// ignore
 						}
+						state.closePreparedStatement(); // Chiude le PreparedStatement aperte(e non eseguite) per il save del Msg
+					}finally {
 						// Ripristino connessione
 						try{
 							connectionDB.setAutoCommit(true);
 						}catch(Exception er){
 							// ignore
 						}
-						state.closePreparedStatement(); // Chiude le PreparedStatement aperte(e non eseguite) per il save del Msg
 					}
 					protocolHeader.append("<eGov_IT:ProfiloCollaborazione>"+traduttore.toString(bustaRichiesta.getProfiloDiCollaborazione())+"</eGov_IT:ProfiloCollaborazione>");
 				}

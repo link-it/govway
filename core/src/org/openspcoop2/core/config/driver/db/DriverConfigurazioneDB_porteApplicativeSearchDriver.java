@@ -93,14 +93,12 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -189,14 +187,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return listIdRuoli;
@@ -215,14 +212,12 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -311,14 +306,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		return listIdScope;
@@ -337,15 +331,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stm=null;
 		ResultSet rs=null;
-		ArrayList<PortaApplicativa> lista = new ArrayList<PortaApplicativa>();
+		ArrayList<PortaApplicativa> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteAppList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppList] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -427,13 +419,12 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stm);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 
 	}
@@ -468,15 +459,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		this.driver.logDebug("filterProtocolli : " + filterProtocolli);
 		
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stm=null;
 		ResultSet rs=null;
-		ArrayList<PortaApplicativa> lista = new ArrayList<PortaApplicativa>();
+		ArrayList<PortaApplicativa> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteAppList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppList] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -587,13 +576,12 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stm);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 
 	}
@@ -614,7 +602,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<Proprieta> lista = new ArrayList<>();
@@ -622,7 +609,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteAppPropList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -719,12 +705,11 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -741,7 +726,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<Proprieta> lista = new ArrayList<>();
@@ -749,7 +733,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteApplicativeAutorizzazioneCustomPropList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -848,12 +831,11 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -873,7 +855,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<Proprieta> lista = new ArrayList<>();
@@ -881,7 +862,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteApplicativeAutorizzazioneCustomPropList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -980,12 +960,11 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1002,7 +981,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<Proprieta> lista = new ArrayList<>();
@@ -1010,7 +988,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteApplicativeAutorizzazioneCustomPropList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1109,12 +1086,11 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1134,15 +1110,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<PortaApplicativaAzione> lista = new ArrayList<PortaApplicativaAzione>();
+		ArrayList<PortaApplicativaAzione> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteAppPropList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1221,12 +1195,11 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -1243,16 +1216,14 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		PreparedStatement stmt1=null;
 		ResultSet risultato=null;
-		ArrayList<ServizioApplicativo> lista = new ArrayList<ServizioApplicativo>();
+		ArrayList<ServizioApplicativo> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteAppServizioApplicativoList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1364,7 +1335,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
@@ -1372,7 +1342,7 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			JDBCUtilities.closeResources(risultato, stmt);
 			JDBCUtilities.closeResources(stmt1);
 			
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1389,16 +1359,14 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		PreparedStatement stmt1=null;
 		ResultSet risultato=null;
-		ArrayList<PortaApplicativaAutorizzazioneSoggetto> lista = new ArrayList<PortaApplicativaAutorizzazioneSoggetto>();
+		ArrayList<PortaApplicativaAutorizzazioneSoggetto> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteAppSoggettoList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1467,14 +1435,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 			JDBCUtilities.closeResources(stmt1);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1505,16 +1472,14 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		search = (org.openspcoop2.core.constants.Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		PreparedStatement stmt1=null;
 		ResultSet risultato=null;
-		ArrayList<PortaApplicativaAutorizzazioneServizioApplicativo> lista = new ArrayList<PortaApplicativaAutorizzazioneServizioApplicativo>();
+		ArrayList<PortaApplicativaAutorizzazioneServizioApplicativo> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteAppServiziApplicativiAutorizzatiTokenList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1591,14 +1556,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 			JDBCUtilities.closeResources(stmt1);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -1616,15 +1580,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<MessageSecurityFlowParameter> lista = new ArrayList<MessageSecurityFlowParameter>();
+		ArrayList<MessageSecurityFlowParameter> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteAppMessageSecurityRequestList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1721,14 +1683,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -1746,15 +1707,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<MessageSecurityFlowParameter> lista = new ArrayList<MessageSecurityFlowParameter>();
+		ArrayList<MessageSecurityFlowParameter> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteAppMessageSecurityResponseList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1852,13 +1811,12 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 
 	}
@@ -1877,15 +1835,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<CorrelazioneApplicativaElemento> lista = new ArrayList<CorrelazioneApplicativaElemento>();
+		ArrayList<CorrelazioneApplicativaElemento> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteApplicativeCorrelazioneApplicativaList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1976,14 +1932,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -2003,15 +1958,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<CorrelazioneApplicativaRispostaElemento> lista = new ArrayList<CorrelazioneApplicativaRispostaElemento>();
+		ArrayList<CorrelazioneApplicativaRispostaElemento> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
-				con = (Connection) this.driver.getConnectionFromDatasource("porteApplicativeCorrelazioneApplicativaRispostaList");
-				con.setAutoCommit(false);
+				con = this.driver.getConnectionFromDatasource("porteApplicativeCorrelazioneApplicativaRispostaList");
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2102,14 +2055,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -2302,15 +2254,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<MtomProcessorFlowParameter> lista = new ArrayList<MtomProcessorFlowParameter>();
+		ArrayList<MtomProcessorFlowParameter> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2410,14 +2360,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -2435,15 +2384,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		ArrayList<MtomProcessorFlowParameter> lista = new ArrayList<MtomProcessorFlowParameter>();
+		ArrayList<MtomProcessorFlowParameter> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource(nomeMetodo);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2543,14 +2490,13 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -2570,7 +2516,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<Proprieta> lista = new ArrayList<>();
@@ -2578,7 +2523,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteApplicativeConnettoriMultipliConfigPropList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteApplicativeConnettoriMultipliConfigPropList] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2654,12 +2598,11 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteApplicativeConnettoriMultipliConfigPropList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -2679,7 +2622,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 
 
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		ArrayList<Proprieta> lista = new ArrayList<>();
@@ -2687,7 +2629,6 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("porteApplicativeAutorizzazioneCustomPropList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -2763,12 +2704,11 @@ public class DriverConfigurazioneDB_porteApplicativeSearchDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::porteAppPropList] Errore : " + qe.getMessage(),qe);
 		} finally {
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 }

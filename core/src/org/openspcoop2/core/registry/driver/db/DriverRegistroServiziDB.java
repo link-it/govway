@@ -436,7 +436,6 @@ IDriverWS ,IMonitoraggioRisorsa, IDriverBYOKConfig{
 		if (this.atomica) {
 			try {
 				con = this.getConnectionFromDatasource(methodName);
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getConnection] Exception accedendo al datasource :" + e.getMessage(),e);
 

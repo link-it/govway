@@ -123,6 +123,17 @@ Prerequisiti:
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.readTimeout=15000
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.connectTimeout=10000
 	
+		# Configurazione MultiTenant
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.multiTenant=DemoSoggettoErogatore2
+		# Volutamente senza suffisso /keys per provare anche questo aspetto
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.multiTenant.baseUrl.DemoSoggettoErogatore2=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore2/simulazione-api-pdnd/v1/keys
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.multiTenant.http.username.DemoSoggettoErogatore2=DemoSoggettoErogatore2ClientAPIPDND
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.multiTenant.http.password.DemoSoggettoErogatore2=123456
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.multiTenant.http.header.DemoSoggettoErogatore2.test-pdnd-1=valore1header
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.multiTenant.http.header.DemoSoggettoErogatore2.test-pdnd-2=valore2header
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.multiTenant.http.queryParameter.DemoSoggettoErogatore2.test_pdnd_1=valore1query
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client.multiTenant.http.queryParameter.DemoSoggettoErogatore2.test_pdnd_2=valore2query
+	
 		# Tipo di certificato recuperato
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.keyType=jwk
 
@@ -130,10 +141,22 @@ Prerequisiti:
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.name=PDNDSimulatoRecuperoInfoClient2
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.label=PDND-Simulato-RecuperoInfoClient2
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.tokenPolicy=SimulazionePDND-JWK-RecuperoInfoClient2
-		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.baseUrl=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/simulazione-api-pdnd/v1/keys
+		# Volutamente senza suffisso /keys per provare anche questo aspetto
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.baseUrl=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/simulazione-api-pdnd/v1
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.keyId.mode=URL_SUFFIX
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.readTimeout=15000
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.connectTimeout=10000
+		
+		# Configurazione MultiTenant
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.multiTenant=DemoSoggettoErogatore2
+		# Volutamente senza suffisso /keys per provare anche questo aspetto
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.multiTenant.baseUrl.DemoSoggettoErogatore2=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore2/simulazione-api-pdnd/v1/
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.multiTenant.http.username.DemoSoggettoErogatore2=DemoSoggettoErogatore2ClientAPIPDND
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.multiTenant.http.password.DemoSoggettoErogatore2=123456
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.multiTenant.http.header.DemoSoggettoErogatore2.test-pdnd-1=valore1header
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.multiTenant.http.header.DemoSoggettoErogatore2.test-pdnd-2=valore2header
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.multiTenant.http.queryParameter.DemoSoggettoErogatore2.test_pdnd_1=valore1query
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client2.multiTenant.http.queryParameter.DemoSoggettoErogatore2.test_pdnd_2=valore2query
 
 		# Tipo di certificato recuperato
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-client-error.keyType=jwk

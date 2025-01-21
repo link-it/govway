@@ -428,7 +428,6 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsRuolo");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsRuolo] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -789,15 +788,13 @@ public class DriverRegistroServiziDB_ruoliDriver {
 		this.driver.logDebug("filterServizioApplicativo : " + filterServizioApplicativo);
 		
 		Connection con = null;
-		boolean error = false;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
-		ArrayList<Ruolo> lista = new ArrayList<Ruolo>();
+		ArrayList<Ruolo> lista = new ArrayList<>();
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("ruoliList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1333,14 +1330,13 @@ public class DriverRegistroServiziDB_ruoliDriver {
 			}
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 		
 		

@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.config;
 
 import java.sql.Connection;
 
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.slf4j.Logger;
 
@@ -56,7 +57,7 @@ public class AbstractConfigurazionePdDConnectionResourceManager {
 	
 	// IMPL
 	
-	protected ConfigurazionePdDConnectionResource getConnection(Connection connectionPdD, String methodName) throws Exception{
+	protected ConfigurazionePdDConnectionResource getConnection(Connection connectionPdD, String methodName) throws DriverConfigurazioneException {
 		ConfigurazionePdDConnectionResource cr = new ConfigurazionePdDConnectionResource();
 		if(connectionPdD!=null && this.useConnectionPdD){
 			cr.connectionDB = connectionPdD;

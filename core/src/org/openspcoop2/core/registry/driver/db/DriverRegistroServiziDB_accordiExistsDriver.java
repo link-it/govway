@@ -56,7 +56,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComune(idAccordo)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComune] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -104,7 +103,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 			if (this.driver.atomica) {
 				try {
 					connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComune(longId)");
-					connection.setAutoCommit(false);
 				} catch (Exception e) {
 					throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComune] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -148,7 +146,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComuneAzione(nome,idAccordo)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneAzione] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -185,7 +182,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComuneAzione(nome,longId)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneAzione] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -240,7 +236,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComuneAzione(longId)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneAzione] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -282,7 +277,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComunePorttype(nome,idAccordo)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttype] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -317,7 +311,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComuneOperation(longId)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneOperation] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -372,7 +365,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComunePorttype(nome,longId)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttype] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -424,7 +416,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComunePorttypeOperation(nome,idPortType)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttypeOperation] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -461,7 +452,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComunePorttypeOperation(nome,longId)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComunePorttypeOperation] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -520,7 +510,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComuneResource(nome,idAccordo)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneResource] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -569,7 +558,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioParteComuneResource(httpMethod,path,idAccordo)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioParteComuneResource] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -645,7 +633,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioResourceResponse(idRisorsa,httpStatus)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioResourceResponse] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -695,7 +682,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioResourceRepresentation(idRisorsa,isRequest,idResponse,mediaType)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioResourceRepresentation] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -750,7 +736,6 @@ public class DriverRegistroServiziDB_accordiExistsDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("existsAccordoServizioResourceRepresentation(idRisorsa,isRequest,idResponse,tipo,nome)");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::existsAccordoServizioResourceRepresentation] Exception accedendo al datasource :" + e.getMessage(),e);
 

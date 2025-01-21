@@ -32,6 +32,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReaderInUso;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.slf4j.Logger;
 
 /**
@@ -48,6 +49,7 @@ public class ConfigIntegrationReaderInUso implements IConfigIntegrationReaderInU
 	private Logger log;
 	
 	public ConfigIntegrationReaderInUso() {
+		// nop
 	}
 
 
@@ -68,7 +70,7 @@ public class ConfigIntegrationReaderInUso implements IConfigIntegrationReaderInU
 			try {
 				connection = driverDB.getConnection("inUso(IDServizioApplicativo)");
 				
-				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<>();
 				
 				boolean normalizeObjectIds = true;
 				return DBOggettiInUsoUtils.isServizioApplicativoInUso(connection, driverDB.getTipoDB(), idServizioApplicativo, whereIsInUso, true, normalizeObjectIds, verificaRuoli);
@@ -82,7 +84,7 @@ public class ConfigIntegrationReaderInUso implements IConfigIntegrationReaderInU
 			}
 		}
 		else {
-			throw new RuntimeException("Not Implemented");
+			throw new UtilsRuntimeException("Not Implemented");
 		}
 	}
 	
@@ -94,7 +96,7 @@ public class ConfigIntegrationReaderInUso implements IConfigIntegrationReaderInU
 			try {
 				connection = driverDB.getConnection("getDettagliInUso(IDServizioApplicativo)");
 				
-				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
+				Map<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<>();
 				
 				boolean normalizeObjectIds = true;
 				boolean inUso = DBOggettiInUsoUtils.isServizioApplicativoInUso(connection, driverDB.getTipoDB(), idServizioApplicativo, whereIsInUso, true, normalizeObjectIds, verificaRuoli);
@@ -113,7 +115,7 @@ public class ConfigIntegrationReaderInUso implements IConfigIntegrationReaderInU
 			}
 		}
 		else {
-			throw new RuntimeException("Not Implemented");
+			throw new UtilsRuntimeException("Not Implemented");
 		}
 	}
 

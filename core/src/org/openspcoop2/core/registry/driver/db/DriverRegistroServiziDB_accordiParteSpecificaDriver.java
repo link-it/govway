@@ -554,12 +554,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		String tipoProprietario = erogatore.getTipo();
 
 		Connection con = null;
-		boolean error = false;
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsAccordoServizioParteSpecifica");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("Exception accedendo al datasource :" + e.getMessage(), e);
 
@@ -574,11 +572,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			long idS = DBUtils.getIdServizio(nomeServizio, tipoServizio, versioneServizio, nomeProprietario, tipoProprietario, con, false,this.driver.tipoDB);
 			return idS > 0;
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverRegistroServiziException("Errore durante existsAccordoServizioParteSpecifica : " + qe.getMessage(), qe);
 		} finally {
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 
@@ -590,7 +587,6 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsAccordoServizioParteSpecifica(longId)");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::existsAccordoServizioParteSpecifica] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -644,7 +640,6 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		if (this.driver.atomica) {
 			try {
 				connection = this.driver.getConnectionFromDatasource("getEngineServizioWithSoggettoAccordoServCorrPT");
-				connection.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getServizioWithSoggettoAccordoServCorr] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -773,12 +768,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		boolean trovatoServ = false;
-		boolean error = false;
 
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("existsSoggettoServiziWithoutConnettore");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("Exception accedendo al datasource :" + e.getMessage(), e);
 
@@ -810,14 +803,13 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 
 			return trovatoServ;
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverRegistroServiziException("Errore durante existsSoggettoServiziWithoutConnettore: " + qe.getMessage(), qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(rs, stm);
 			
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
@@ -1512,12 +1504,10 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 		Connection con = null;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
-		boolean error = false;
-		ArrayList<AccordoServizioParteSpecifica> lista = new ArrayList<AccordoServizioParteSpecifica>();
+		ArrayList<AccordoServizioParteSpecifica> lista = new ArrayList<>();
 		if (this.driver.atomica) {
 			try {
 				con = this.driver.getConnectionFromDatasource("serviziWithIdAccordoList");
-				con.setAutoCommit(false);
 			} catch (Exception e) {
 				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
 
@@ -1546,14 +1536,13 @@ public class DriverRegistroServiziDB_accordiParteSpecificaDriver {
 			return lista;
 
 		} catch (Exception qe) {
-			error = true;
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
 		} finally {
 
 			//Chiudo statement and resultset
 			JDBCUtilities.closeResources(risultato, stmt);
 
-			this.driver.closeConnection(error,con);
+			this.driver.closeConnection(con);
 		}
 	}
 	
