@@ -47,7 +47,7 @@
 			<include name="joda-time-2.12.7.jar"/>
                 </fileset>
                 <fileset dir="${required_lib}/cxf" >
-                        <include name="asm-9.7.jar"/>
+                        <include name="asm-9.7.1.jar"/>
                 </fileset>
 	</path>
 	<path id="karate_testsuite_dist_govway_java11" >
