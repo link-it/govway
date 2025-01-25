@@ -603,6 +603,19 @@ org.openspcoop2.pdd.cluster_id.hash.enabled=true
 # 2: permette di avere 100 macchine (da 0 a 99)
 org.openspcoop2.pdd.cluster_id.numeric.dinamico.cifre=CIFREIDMESSAGGIO]]></replacevalue>
 				</replace>
+				<!-- Viene sostituito dai Docker.* file -->
+				<antcall target="set_property">
+				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
+					<param name="token" value="org.openspcoop2.pdd.idGenerator"/>
+					<param name="value" value="COMMENTOUUID"/>
+				</antcall>
+				<replace file="${dist}/cfg/${govway_local_properties_name}">
+							<replacetoken>org.openspcoop2.pdd.idGenerator=COMMENTOUUID</replacetoken>
+							<replacevalue><![CDATA[# ================================================
+# Configurazione UUID Algorithm
+org.openspcoop2.pdd.idGenerator=UUIDv1
+# ================================================]]></replacevalue>
+				</replace>
 				<antcall target="replace_token">
 				    <param name="file" value="${dist}/cfg/${govway_local_properties_name}"/>
 					<param name="token" value="IDENTIFICATIVOGRUPPO"/>
