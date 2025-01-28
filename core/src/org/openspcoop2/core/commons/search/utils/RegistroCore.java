@@ -68,8 +68,12 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.exception.ExpressionException;
+import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.LikeMode;
@@ -399,16 +403,15 @@ public class RegistroCore {
 	
 	public static Map<String,String> getEngineAzioni(JDBCServiceManager manager, List<String> protocolli, String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio, String input) throws Exception{
 		
-		List<String> list = new ArrayList<>();
-		Map<String,String> mapAzioni = new HashMap<>();
+		
 			
 		// Localizzo Accordi di Servizio Parte Comune dalle Parti Specifiche
-		List<IdPortType> idPortTypes = new ArrayList<IdPortType>();
+		List<IdPortType> idPortTypes = new ArrayList<>();
 		IAccordoServizioParteSpecificaServiceSearch aspsServiceSearch = manager.getAccordoServizioParteSpecificaServiceSearch();
 		IPaginatedExpression pag = aspsServiceSearch.newPaginatedExpression();
 		pag.and();
 		
-		if(protocolli!=null && protocolli.size()>0){
+		if(protocolli!=null && !protocolli.isEmpty()){
 			List<String> types = new ArrayList<>();
 			for (String protocollo : protocolli) {
 				types.addAll(ProtocolFactoryReflectionUtils.getServiceTypes(protocollo));
@@ -433,8 +436,10 @@ public class RegistroCore {
 					AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME,
 					AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE,
 					AccordoServizioParteSpecifica.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.SERVICE_BINDING);
-		}catch(NotFoundException notFound){}
-		if(result!=null && result.size()>0){
+		}catch(NotFoundException notFound){
+			//donothing
+		}
+		if(result!=null && !result.isEmpty()){
 			for (Map<String, Object> map : result) {
 				
 				IdPortType idPortType = new IdPortType();
@@ -483,8 +488,16 @@ public class RegistroCore {
 			}
 		}
 		
+		return getEngineAzioni(manager, input, idPortTypes);
+	}
+
+	private static Map<String, String> getEngineAzioni(JDBCServiceManager manager, String input, List<IdPortType> idPortTypes)
+			throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+		List<String> list = new ArrayList<>();
+		Map<String,String> mapAzioni = new HashMap<>();
+		
 		// Localizzo Azioni dagli Accordi Implementati
-		if(idPortTypes!=null && idPortTypes.size()>0){
+		if(idPortTypes!=null && !idPortTypes.isEmpty()){
 			for (IdPortType idPortType : idPortTypes) {
 				
 				ServiceBinding serviceBinding = ServiceBinding.valueOf(idPortType.getIdAccordoServizioParteComune().getServiceBinding().toUpperCase());
@@ -514,14 +527,16 @@ public class RegistroCore {
 					List<Map<String, Object>> resultAzioni = null;
 					try{
 						resultAzioni = aspcResourceServiceSearch.select(pagResources, true, Resource.model().NOME, Resource.model().HTTP_METHOD, Resource.model().PATH);
-					}catch(NotFoundException notFound){}
-					if(resultAzioni!=null && resultAzioni.size()>0){
+					}catch(NotFoundException notFound){
+						//donothing
+					}
+					if(resultAzioni!=null && !resultAzioni.isEmpty()){
 						for (Map<String, Object> azione : resultAzioni) {
 							String az = (String) azione.get(Resource.model().NOME.getFieldName());
 							String httpmethod = (String) azione.get(Resource.model().HTTP_METHOD.getFieldName());
 							String path = (String) azione.get(Resource.model().PATH.getFieldName());
 							String label = httpmethod + " " + path;
-							if(list.contains(az)==false){
+							if(!list.contains(az)){
 								list.add(az);
 								mapAzioni.put(az,label); 
 							}
@@ -552,11 +567,13 @@ public class RegistroCore {
 						List<Object> resultAzioni = null;
 						try{
 							resultAzioni = portTypeAzioneServiceSearch.select(pagAzioni, true, Operation.model().NOME);
-						}catch(NotFoundException notFound){}
-						if(resultAzioni!=null && resultAzioni.size()>0){
+						}catch(NotFoundException notFound){
+							//donothing
+						}
+						if(resultAzioni!=null && !resultAzioni.isEmpty()){
 							for (Object azione : resultAzioni) {
 								String az = (String) azione;
-								if(list.contains(az)==false){
+								if(!list.contains(az)){
 									list.add(az);
 									mapAzioni.put(az, az); 
 								}
@@ -584,11 +601,13 @@ public class RegistroCore {
 						List<Object> resultAzioni = null;
 						try{
 							resultAzioni = aspcAzioneServiceSearch.select(pagAzioni, true, AccordoServizioParteComuneAzione.model().NOME);
-						}catch(NotFoundException notFound){}
-						if(resultAzioni!=null && resultAzioni.size()>0){
+						}catch(NotFoundException notFound){
+							//donothing
+						}
+						if(resultAzioni!=null && !resultAzioni.isEmpty()){
 							for (Object azione : resultAzioni) {
 								String az = (String) azione;
-								if(list.contains(az)==false){
+								if(!list.contains(az)){
 									list.add(az);
 									mapAzioni.put(az, az); 
 								}
@@ -612,6 +631,71 @@ public class RegistroCore {
 		
 		return mapAzioniReturn;
 	}
+	
+	public static Map<String,String> getAzioniFromAPIConLabel(JDBCServiceManager manager, String protocollo, String nomeAccordo, String tipoReferente, String nomeReferente, Integer versioneAccordo, String input) throws Exception{
+		List<String> protocolli = null;
+		if(protocollo!=null) {
+			protocolli = new ArrayList<>();
+			protocolli.add(protocollo);
+		}
+		List<IdPortType> idPortTypes = new ArrayList<>();
+		
+		IAccordoServizioParteComuneServiceSearch accordoServizioParteComuneServiceSearch = manager.getAccordoServizioParteComuneServiceSearch();
+		IPaginatedExpression pagExpr = accordoServizioParteComuneServiceSearch.newPaginatedExpression();
+		pagExpr.and();
+
+		pagExpr.equals(AccordoServizioParteComune.model().ID_REFERENTE.TIPO, tipoReferente).and().equals(AccordoServizioParteComune.model().ID_REFERENTE.NOME, nomeReferente);
+		pagExpr.equals(AccordoServizioParteComune.model().VERSIONE, versioneAccordo).and().equals(AccordoServizioParteComune.model().NOME, nomeAccordo);
+		
+		pagExpr.sortOrder(SortOrder.ASC);
+		pagExpr.addOrder(AccordoServizioParteComune.model().ID_REFERENTE.TIPO);
+		pagExpr.addOrder(AccordoServizioParteComune.model().ID_REFERENTE.NOME);
+		pagExpr.addOrder(AccordoServizioParteComune.model().NOME);
+		pagExpr.addOrder(AccordoServizioParteComune.model().VERSIONE);
+
+		List<AccordoServizioParteComune> listAccordi = accordoServizioParteComuneServiceSearch.findAll(pagExpr);
+		
+		for (AccordoServizioParteComune accordoServizioParteComune : listAccordi) {
+			IdPortType idPortType = new IdPortType();
+			
+			IdSoggetto idSoggettoReferente = new IdSoggetto();
+			idSoggettoReferente.setTipo(accordoServizioParteComune.getIdReferente().getTipo());
+			idSoggettoReferente.setNome(accordoServizioParteComune.getIdReferente().getNome());
+			
+			String serviceBindingAccordo = accordoServizioParteComune.getServiceBinding();
+			
+			IdAccordoServizioParteComune idAccordo = new IdAccordoServizioParteComune();
+			idAccordo.setNome(accordoServizioParteComune.getNome());
+			idAccordo.setVersione(accordoServizioParteComune.getVersione());
+			idAccordo.setIdSoggetto(idSoggettoReferente);
+			idAccordo.setServiceBinding(serviceBindingAccordo);
+			idPortType.setIdAccordoServizioParteComune(idAccordo);
+			
+			idPortTypes.add(idPortType);
+		}
+		
+		Map<String,String> mapAzioni = getEngineAzioni(manager, input, idPortTypes);
+		
+		//convert map to a List
+		List<Entry<String, String>> list = new LinkedList<>(mapAzioni.entrySet());
+
+		//sorting the list with a comparator
+		Collections.sort(list, new Comparator<Entry<String, String>>() {
+			@Override
+			public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+				return (o1.getValue()).compareTo(o2.getValue());
+			}
+		});
+
+		//convert sortedMap back to Map
+		Map<String, String> sortedMap = new LinkedHashMap<>();
+		for (Entry<String, String> entry : list) {
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+		
+		return sortedMap;
+	}
+	
 	
 	public static List<IDServizioApplicativo> getServiziApplicativiErogatori(JDBCServiceManager manager, String protocollo, 
 			String tipoSoggettoErogatore, String nomeSoggettoErogatore, String tipoServizio, String nomeServizio, Integer versioneServizio,

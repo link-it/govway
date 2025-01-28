@@ -224,6 +224,16 @@ public interface IDynamicUtilsService {
 	
 	public int countAzioniFromServizio(String tipoProtocollo,String tipoServizio ,String nomeServizio,String tipoErogatore , String nomeErogatore, Integer versioneServizio, String val);
  
+	/****
+	 * 
+	 * Restituisce l'elenco delle azioni corrispondenti al servizio selezionato
+	 * 
+	 * @param nomeServizio
+	 * @return Azione dell'Accordo trovate
+	 */
+	public Map<String, String> findAzioniFromAPI(String tipoProtocollo, String nome, String tipoReferente, String nomeReferente, Integer versione, String val);
+
+	
 	/***
 	 * 
 	 * Restituisce il port type associato al servizio passato come parametro
