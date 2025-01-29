@@ -52,7 +52,8 @@ public class DbUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(DbUtils.class);
 
-    public final JdbcTemplate jdbc;
+    private JdbcTemplate jdbc = null;
+    private DriverManagerDataSource dataSource = null;
     
     public final TipiDatabase tipoDatabase;
 
@@ -68,106 +69,116 @@ public class DbUtils {
         else {
         	this.tipoDatabase = TipiDatabase.DEFAULT;
         }
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(driver);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
-        this.jdbc = new JdbcTemplate(dataSource);
+        this.dataSource = new DriverManagerDataSource();
+        this.dataSource.setDriverClassName(driver);
+        this.dataSource.setUrl(url);
+        this. dataSource.setUsername(username);
+        this.dataSource.setPassword(password);
+        this.jdbc = new JdbcTemplate(this.dataSource);
         logger.info("init jdbc template: {}", url);
+    }
+    private JdbcTemplate getJdbcTemplate() {
+    	//return new JdbcTemplate(this.dataSource);
+    	return this.jdbc;
     }
 
     public Object readValue(String query) {
         try {
-        	return this.jdbc.queryForObject(query, Object.class);
+        	return getJdbcTemplate().queryForObject(query, Object.class);
         }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
     		// riprovo dopo 1 secondo
     		Utilities.sleep(1000);
-    		return this.jdbc.queryForObject(query, Object.class);
+    		return getJdbcTemplate().queryForObject(query, Object.class);
     	}
     }
     public <T> T readValue(String query, Class<T> classObject) {
     	 try {
-         	return this.jdbc.queryForObject(query, classObject);
+         	return getJdbcTemplate().queryForObject(query, classObject);
     	 }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
      		// riprovo dopo 1 secondo
      		Utilities.sleep(1000);
-     		return this.jdbc.queryForObject(query, classObject);
+     		return getJdbcTemplate().queryForObject(query, classObject);
      	}
     }
     public Object readValue(String query, Object... args) {
     	 try {
-         	 return this.jdbc.queryForObject(query, Object.class, args);
+         	 return getJdbcTemplate().queryForObject(query, Object.class, args);
     	 }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
      		// riprovo dopo 1 secondo
      		Utilities.sleep(1000);
-     		return this.jdbc.queryForObject(query, Object.class, args);
+     		return getJdbcTemplate().queryForObject(query, Object.class, args);
      	}
     }
     public <T> T readValue(String query, Class<T> classObject, Object... args) {
     	 try {
-         	 return this.jdbc.queryForObject(query, classObject, args);
+         	 return getJdbcTemplate().queryForObject(query, classObject, args);
     	 }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
      		// riprovo dopo 1 secondo
      		Utilities.sleep(1000);
-     		return this.jdbc.queryForObject(query, classObject, args);
+     		return getJdbcTemplate().queryForObject(query, classObject, args);
      	}
     }
     
     public <T> T readValueArray(String query, Class<T> classObject, Object[] args) {
     	 try {
-         	return this.jdbc.queryForObject(query, classObject, args);
+         	return getJdbcTemplate().queryForObject(query, classObject, args);
     	 }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
      		// riprovo dopo 1 secondo
      		Utilities.sleep(1000);
-     		return this.jdbc.queryForObject(query, classObject, args);
+     		return getJdbcTemplate().queryForObject(query, classObject, args);
      	}
     }
     
     /*public <T> T readValue(String query, Class<T> classObject, Object[] args) {
          try {
-        	return this.jdbc.queryForObject(query, classObject, args);
+        	return getJdbcTemplate().queryForObject(query, classObject, args);
         }catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
     		// riprovo dopo 1 secondo
     		Utilities.sleep(1000);
-    		return this.jdbc.queryForObject(query, classObject, args);
+    		return getJdbcTemplate().queryForObject(query, classObject, args);
     	}
     }*/
     
     
 
     public Map<String, Object> readRow(String query) {
+    	return readRow(query, false, false);
+    }
+    public Map<String, Object> readRow(String query, boolean addOriginalColumnName, boolean addUpperCaseColumnName) {
     	Map<String, Object> mapReaded = null;
     	try {
-    		mapReaded = this.jdbc.queryForMap(query);
+    		mapReaded = getJdbcTemplate().queryForMap(query);
     	}catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
     		// riprovo dopo 1 secondo
     		Utilities.sleep(1000);
-    		mapReaded = this.jdbc.queryForMap(query);
+    		mapReaded = getJdbcTemplate().queryForMap(query);
     	}
-    	return this.formatResult(mapReaded);
+    	return this.formatResult(mapReaded,addOriginalColumnName,addUpperCaseColumnName);
     }
 
     public List<Map<String, Object>> readRows(String query, Object... args) {
+    	return readRowsCustomResults(query, false, false, args);
+    }
+    public List<Map<String, Object>> readRowsCustomResults(String query, boolean addOriginalColumnName, boolean addUpperCaseColumnName, Object... args) {
     	List<Map<String, Object>> listReaded = null;
     	try {
-    		listReaded = this.jdbc.queryForList(query, args);
+    		listReaded = getJdbcTemplate().queryForList(query, args);
     	}catch(org.springframework.jdbc.CannotGetJdbcConnectionException getExc) {
     		// riprovo dopo 1 secondo
     		Utilities.sleep(1000);
-    		listReaded = this.jdbc.queryForList(query, args);
+    		listReaded = getJdbcTemplate().queryForList(query, args);
     	}
     	if(listReaded!=null && !listReaded.isEmpty()) {
     		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
     		for (Map<String, Object> mapReaded : listReaded) {
-				list.add(this.formatResult(mapReaded));
+				list.add(this.formatResult(mapReaded,addOriginalColumnName,addUpperCaseColumnName));
 			}
     		return list;
     	}
     	return null;
     }
 
-    private Map<String, Object> formatResult(Map<String, Object> mapReaded){
+    private Map<String, Object> formatResult(Map<String, Object> mapReaded, boolean addOriginalColumnName, boolean addUpperCaseColumnName){
     	if(mapReaded!=null && !mapReaded.isEmpty()) {
     		Map<String, Object> map = new HashMap<>();
     		for (String colonna : mapReaded.keySet()) {
@@ -175,9 +186,21 @@ public class DbUtils {
 				if(value instanceof java.math.BigDecimal) {
 					java.math.BigDecimal bd = (java.math.BigDecimal) value;
 					map.put(colonna.toLowerCase(), bd.intValue());
+					if(addUpperCaseColumnName && !map.containsKey(colonna.toUpperCase())) {
+						map.put(colonna.toUpperCase(), bd.intValue());
+					}
+					if(addOriginalColumnName && !map.containsKey(colonna)) {
+						map.put(colonna, bd.intValue());
+					}
 				}
 				else {
 					map.put(colonna.toLowerCase(), value);
+					if(addUpperCaseColumnName && !map.containsKey(colonna.toUpperCase())) {
+						map.put(colonna.toUpperCase(), value);
+					}
+					if(addOriginalColumnName && !map.containsKey(colonna)) {
+						map.put(colonna, value);
+					}
 				}
 			}
     		return map;
@@ -186,11 +209,11 @@ public class DbUtils {
     }
     
     public int update(String query) {
-        return this.jdbc.update(query);
+        return getJdbcTemplate().update(query);
     }
     
     public int update(String query, Object ...args) {
-        return this.jdbc.update(query, args);
+        return getJdbcTemplate().update(query, args);
     }
     
     public long getIdErogazione(String erogatore, String erogazione) {

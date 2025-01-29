@@ -39,6 +39,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.Common;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.SavedMessage;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
@@ -206,7 +207,12 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		
 		String query = "select CONTENT_TYPE, RESPONSE_CONTENT_TYPE from DEFINIZIONE_MESSAGGI where ID_MESSAGGIO='"+msgId+"' AND TIPO='INBOX'";
 		if(expectedRequest) {
-			query+=" AND "+buildCondition("MSG_BYTES", false)+" AND "+buildCondition("MSG_CONTEXT", false)+"";
+			if(SavedMessage.REST_CONTENT_TYPE_EMPTY.equals(expectedRequestContentType)) {
+				query+=" AND "+buildCondition("MSG_BYTES", true)+" AND "+buildCondition("MSG_CONTEXT", false)+"";
+			}
+			else {
+				query+=" AND "+buildCondition("MSG_BYTES", false)+" AND "+buildCondition("MSG_CONTEXT", false)+"";
+			}
 		}
 		else {
 			query+=" AND "+buildCondition("MSG_BYTES", true)+"";
@@ -215,7 +221,12 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 			query+=" AND "+buildCondition("RESPONSE_MSG_BYTES", false)+" AND "+buildCondition("RESPONSE_MSG_CONTEXT", false)+"";
 		}
 		else {
-			query+=" AND "+buildCondition("RESPONSE_MSG_BYTES", true)+" AND "+buildCondition("RESPONSE_MSG_CONTEXT", true)+"";
+			if(SavedMessage.REST_CONTENT_TYPE_EMPTY.equals(expectedResponseContentType)) {
+				query+=" AND "+buildCondition("RESPONSE_MSG_BYTES", true)+" AND "+buildCondition("RESPONSE_MSG_CONTEXT", false)+"";
+			}
+			else {
+				query+=" AND "+buildCondition("RESPONSE_MSG_BYTES", true)+" AND "+buildCondition("RESPONSE_MSG_CONTEXT", true)+"";
+			}
 		}
 		if(expectedTransactionContext) {
 			query+=" AND "+buildCondition("TRANSACTION_CONTEXT", false)+"";
@@ -225,6 +236,7 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		}
 		ConfigLoader.getLoggerCore().info("Checking stato messaggi runtime:  " + msgId);
 		ConfigLoader.getLoggerCore().info("Query: " + query);
+		ConfigLoader.getLoggerCore().info("expectedTransactionContext: " + expectedTransactionContext);
 		Map<String, Object> map = null;
 		try {		
 			List<Map<String, Object>> readRows = ConfigLoader.getDbUtils().readRows(query);
@@ -259,10 +271,12 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 			}
 		}catch(Exception e) {
 			
-			String queryDebug = "select CONTENT_TYPE, RESPONSE_CONTENT_TYPE, MSG_BYTES, RESPONSE_MSG_BYTES , TRANSACTION_CONTEXT from DEFINIZIONE_MESSAGGI where ID_MESSAGGIO='"+msgId+"' AND TIPO='INBOX'";
+			ConfigLoader.getLoggerCore().error("ERRORE: "+e.getMessage(),e);
+			
+			String queryDebug = "select CONTENT_TYPE, RESPONSE_CONTENT_TYPE, MSG_BYTES, MSG_CONTEXT, RESPONSE_MSG_BYTES , RESPONSE_MSG_CONTEXT, TRANSACTION_CONTEXT from DEFINIZIONE_MESSAGGI where ID_MESSAGGIO='"+msgId+"' AND TIPO='INBOX'";
 			ConfigLoader.getLoggerCore().info("Checking DEBUG prima di sollevare errore per stato messaggi runtime:  " + msgId);
 			ConfigLoader.getLoggerCore().info("Query DEBUG: " + queryDebug);
-			List<Map<String, Object>> readRows = ConfigLoader.getDbUtils().readRows(queryDebug);
+			List<Map<String, Object>> readRows = ConfigLoader.getDbUtils().readRowsCustomResults(queryDebug, true, true);
 			if(readRows==null || readRows.isEmpty()) {
 				ConfigLoader.getLoggerCore().info("Query DEBUG: no results");
 			}
@@ -273,7 +287,9 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 					sb.append("CONTENT_TYPE='").append(map.get("CONTENT_TYPE")).append("' ");
 					sb.append("RESPONSE_CONTENT_TYPE='").append(map.get("RESPONSE_CONTENT_TYPE")).append("' ");
 					sb.append("MSG_BYTES='").append(map.get("MSG_BYTES")!=null).append("' ");
+					sb.append("MSG_CONTEXT='").append(map.get("MSG_CONTEXT")!=null).append("' ");
 					sb.append("RESPONSE_MSG_BYTES='").append(map.get("RESPONSE_MSG_BYTES")!=null).append("' ");
+					sb.append("RESPONSE_MSG_CONTEXT='").append(map.get("RESPONSE_MSG_CONTEXT")!=null).append("' ");
 					sb.append("TRANSACTION_CONTEXT='").append(map.get("TRANSACTION_CONTEXT")!=null).append("' ");
 					ConfigLoader.getLoggerCore().info(sb.toString());
 				}
@@ -295,8 +311,31 @@ public class RestNotificheRisposteTest extends ConfigLoader{
 		
 		assertEquals(expectedRequest ? expectedRequestContentType : "____EMPTY____", ctRequest);
 		
-		assertEquals(expectedResponse ? expectedResponseContentType : null, ctResponse);
+		if(SavedMessage.REST_CONTENT_TYPE_EMPTY.equals(expectedResponseContentType)) {
+			assertEquals(SavedMessage.REST_CONTENT_TYPE_EMPTY, ctResponse);
+		}
+		else {
+			assertEquals(expectedResponse ? expectedResponseContentType : null, ctResponse);
+		}
 		
+	}
+	
+	
+	
+	public static void checkRuntimeNotExists(String msgId) throws Exception {
+		
+		String query = "select CONTENT_TYPE, RESPONSE_CONTENT_TYPE from DEFINIZIONE_MESSAGGI, MESSAGGI where DEFINIZIONE_MESSAGGI.ID_MESSAGGIO='"+msgId+"'"+
+				" AND DEFINIZIONE_MESSAGGI.TIPO='INBOX' AND MESSAGGI.ID_MESSAGGIO='"+msgId+"' AND MESSAGGI.TIPO='INBOX' AND MESSAGGI.PROPRIETARIO<>'GestoreMessaggi'";
+		
+		ConfigLoader.getLoggerCore().info("Checking stato messaggi runtime:  " + msgId);
+		ConfigLoader.getLoggerCore().info("Query: " + query);
+		List<Map<String, Object>> readRows = ConfigLoader.getDbUtils().readRows(query);
+		if(readRows!=null && !readRows.isEmpty()) {
+				
+			throw new Exception("Non attesa riga con id '"+msgId+"'");
+				
+		}
+	
 	}
 
 	

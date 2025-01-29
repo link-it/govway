@@ -98,7 +98,7 @@ public class SavedMessage implements java.io.Serializable {
 		return this.internalLog;
 	}
 
-	protected static final String REST_CONTENT_TYPE_EMPTY = "____EMPTY____";
+	public static final String REST_CONTENT_TYPE_EMPTY = "____EMPTY____";
 	
 	private static final String MSG_BYTES = "_bytes.bin";
 	private static final String MSG_CONTEXT = "_context.bin";
@@ -479,17 +479,17 @@ public class SavedMessage implements java.io.Serializable {
 	 * 
 	 */
 	public OpenSPCoop2Message read(boolean isRichiesta, boolean portaDiTipoStateless, Date oraRegistrazione) throws UtilsException {
-		 return readEngine(isRichiesta, portaDiTipoStateless, oraRegistrazione, false, null);
+		 return readEngine(isRichiesta, portaDiTipoStateless, oraRegistrazione, false, true, null);
 	}
-	public OpenSPCoop2Message readResponse(Date oraRegistrazione) throws UtilsException {
-		 return readEngine(false, false, oraRegistrazione, true, null);
+	public OpenSPCoop2Message readResponse(Date oraRegistrazione, boolean throwExceptionIfNotExists) throws UtilsException {
+		 return readEngine(false, false, oraRegistrazione, true, throwExceptionIfNotExists, null);
 	}
 	public Context readTransactionContext(Date oraRegistrazione) throws UtilsException {
 		Context c = new Context();
-		readEngine(false, false, oraRegistrazione, false, c);
+		readEngine(false, false, oraRegistrazione, false, true, c);
 		return c;
 	}
-	private OpenSPCoop2Message readEngine(boolean isRichiesta, boolean portaDiTipoStateless, Date oraRegistrazione, boolean readResponseField, Context readTransactionContext) throws UtilsException {
+	private OpenSPCoop2Message readEngine(boolean isRichiesta, boolean portaDiTipoStateless, Date oraRegistrazione, boolean readResponseField, boolean throwExceptionIfNotExists, Context readTransactionContext) throws UtilsException {
 
 		if( !portaDiTipoStateless ) {
 
@@ -497,7 +497,7 @@ public class SavedMessage implements java.io.Serializable {
 					((StateMessage)this.openspcoopstate.getStatoRichiesta()).getConnectionDB() :
 						((StateMessage)this.openspcoopstate.getStatoRisposta()).getConnectionDB();
 
-			return readMessage(oraRegistrazione, readResponseField, readTransactionContext, connectionDB);
+			return readMessage(oraRegistrazione, readResponseField, throwExceptionIfNotExists, readTransactionContext, connectionDB);
 
 		}else { /** if ( portaDiTipoStateless ){ */
 			if (isRichiesta) return	((OpenSPCoopStateless)this.openspcoopstate).getRichiestaMsg();
@@ -505,10 +505,10 @@ public class SavedMessage implements java.io.Serializable {
 		}
 	}
 
-	private OpenSPCoop2Message readMessage(Date oraRegistrazione, boolean readResponseField, Context readTransactionContext, Connection connectionDB) throws UtilsException {
+	private OpenSPCoop2Message readMessage(Date oraRegistrazione, boolean readResponseField, boolean throwExceptionIfNotExists, Context readTransactionContext, Connection connectionDB) throws UtilsException {
 		
 		if(readTransactionContext!=null && this.saveOnFS) {
-			fillTransactionContextFromFileSystem(readTransactionContext);
+			fillTransactionContextFromFileSystem(readTransactionContext, true); // il transactionContext deve esistere sempre
 			return null;	
 		}
 		
@@ -523,7 +523,7 @@ public class SavedMessage implements java.io.Serializable {
 			initPreparedStatement(oraRegistrazione, pstmt);
 			rs = pstmt.executeQuery();
 			
-			msg = readMessage(rs, readResponseField, readTransactionContext);
+			msg = readMessage(rs, readResponseField, throwExceptionIfNotExists, readTransactionContext);
 
 			rs.close();
 			pstmt.close();
@@ -549,7 +549,7 @@ public class SavedMessage implements java.io.Serializable {
 		return msg;
 	}
 	
-	private void fillTransactionContextFromFileSystem(Context readTransactionContext) throws UtilsException {
+	private void fillTransactionContextFromFileSystem(Context readTransactionContext, boolean throwExceptionIfNotExists) throws UtilsException {
 		String saveDir = getBaseDir();
 		checkInizializzazioneWorkingDir(saveDir);
 		
@@ -557,10 +557,12 @@ public class SavedMessage implements java.io.Serializable {
 		try{
 		
 			// Lettura Message Context
-			isContext = readTransactionContextBytes(saveDir, null);
+			isContext = readTransactionContextBytes(saveDir, throwExceptionIfNotExists, null);
 								
 			// CostruzioneMessaggio
-			fillTransactionContext(readTransactionContext, isContext);
+			if(isContext!=null) {
+				fillTransactionContext(readTransactionContext, isContext);
+			}
 			
 		}catch(Exception e){
 			try{
@@ -640,41 +642,60 @@ public class SavedMessage implements java.io.Serializable {
 		return null;
 	}
 
-	private InputStream readContextBytes(String saveDir, boolean readResponseField, ResultSet rs) throws UtilsException, FileNotFoundException, SQLException {
+	private InputStream readBytesCheckNullable(String tipo, File fileCheckContext, boolean throwExceptionIfNotExists) throws UtilsException, FileNotFoundException {
+		if(!fileCheckContext.exists()){
+			if(throwExceptionIfNotExists) {
+				String errorMsg = "Il messaggio ("+tipo+") non risulta gia' registrato ("+fileCheckContext.getAbsolutePath()+").";		
+				throw new UtilsException(errorMsg);
+			}
+			else {
+				return null;
+			}
+		}
+		return new FileInputStream(fileCheckContext);
+	}
+	private InputStream readBytesCheckNullable(String tipo, byte[]content, boolean throwExceptionIfNotExists) throws UtilsException {
+		if(content==null) {
+			if(throwExceptionIfNotExists) {
+				String errorMsg = "Il messaggio ("+tipo+") non risulta gia' registrato.";		
+				throw new UtilsException(errorMsg);
+			}
+			else {
+				return null;
+			}
+		}
+		return new java.io.ByteArrayInputStream(content);
+	}
+	
+	private InputStream readContextBytes(String saveDir, boolean readResponseField, boolean throwExceptionIfNotExists, ResultSet rs) throws UtilsException, FileNotFoundException, SQLException {
 		if(this.saveOnFS){
 			// READ FROM FILE SYSTEM
 			String pathContext = saveDir + (readResponseField ? this.keyMsgResponseContext : this.keyMsgContext);
 			File fileCheckContext = new File(pathContext);
-			if(!fileCheckContext.exists()){
-				String errorMsg = "Il messaggio (contesto) non risulta gia' registrato ("+pathContext+").";		
-				throw new UtilsException(errorMsg);
-			}	   
-			return new FileInputStream(pathContext);
+			return readBytesCheckNullable("context", fileCheckContext, throwExceptionIfNotExists) ;
 		}else{
 			// READ FROM DB
 			this.checkInizializzazioneAdapter();
-			return new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,3));
+			byte[]content = this.adapter.getBinaryData(rs,3);
+			return readBytesCheckNullable("context", content, throwExceptionIfNotExists);
 		}
 	}
 	
-	private InputStream readTransactionContextBytes(String saveDir, ResultSet rs) throws UtilsException, FileNotFoundException, SQLException {
+	private InputStream readTransactionContextBytes(String saveDir, boolean throwExceptionIfNotExists, ResultSet rs) throws UtilsException, FileNotFoundException, SQLException {
 		if(this.saveOnFS){
 			// READ FROM FILE SYSTEM
 			String pathContext = saveDir + this.keyMsgTransactionContext;
 			File fileCheckContext = new File(pathContext);
-			if(!fileCheckContext.exists()){
-				String errorMsg = "Il messaggio (transaction context) non risulta gia' registrato ("+pathContext+").";		
-				throw new UtilsException(errorMsg);
-			}	   
-			return new FileInputStream(pathContext);
+			return readBytesCheckNullable("transaction context", fileCheckContext, throwExceptionIfNotExists) ;
 		}else{
 			// READ FROM DB
 			this.checkInizializzazioneAdapter();
-			return new java.io.ByteArrayInputStream(this.adapter.getBinaryData(rs,1));
+			byte[]content = this.adapter.getBinaryData(rs,1);
+			return readBytesCheckNullable("transaction context", content, throwExceptionIfNotExists);
 		}
 	}
 	
-	private OpenSPCoop2Message readMessage(ResultSet rs, boolean readResponseField, Context readTransactionContext) throws UtilsException, SQLException {
+	private OpenSPCoop2Message readMessage(ResultSet rs, boolean readResponseField, boolean throwExceptionIfNotExists, Context readTransactionContext) throws UtilsException, SQLException {
 		if(rs==null){
 			String errorMsg = "ResultSet is null?";		
 			throw new UtilsException(errorMsg);
@@ -686,23 +707,25 @@ public class SavedMessage implements java.io.Serializable {
 
 		OpenSPCoop2Message msg = null;
 		if(readTransactionContext!=null) {
-			fillTransactionContext(rs, readTransactionContext);
+			fillTransactionContext(rs, readTransactionContext, true); // il transactionContext deve esistere sempre
 		}
 		else {
-			msg = readMessage(rs, readResponseField);
+			msg = readMessage(rs, readResponseField, throwExceptionIfNotExists);
 		}
 		return msg;
 	}
 	
-	private void fillTransactionContext(ResultSet rs, Context readTransactionContext) throws UtilsException {
+	private void fillTransactionContext(ResultSet rs, Context readTransactionContext, boolean throwExceptionIfNotExists) throws UtilsException {
 		InputStream isContext = null;
 		try{
 		
 			// Lettura Message Context
-			isContext = readTransactionContextBytes(null, rs);
+			isContext = readTransactionContextBytes(null, throwExceptionIfNotExists, rs);
 								
 			// CostruzioneMessaggio
-			fillTransactionContext(readTransactionContext, isContext);
+			if(isContext!=null) {
+				fillTransactionContext(readTransactionContext, isContext);
+			}
 			
 		}catch(Exception e){
 			try{
@@ -715,7 +738,7 @@ public class SavedMessage implements java.io.Serializable {
 		}
 	}
 	
-	private OpenSPCoop2Message readMessage(ResultSet rs, boolean readResponseField) throws UtilsException, SQLException {
+	private OpenSPCoop2Message readMessage(ResultSet rs, boolean readResponseField, boolean throwExceptionIfNotExists) throws UtilsException, SQLException {
 		String saveDir = null;
 		if(this.saveOnFS){
 			// READ FROM FILE SYSTEM
@@ -729,7 +752,11 @@ public class SavedMessage implements java.io.Serializable {
 		try{
 		
 			// Lettura Message Context
-			isContext = readContextBytes(saveDir, readResponseField, rs);
+			isContext = readContextBytes(saveDir, readResponseField, throwExceptionIfNotExists, rs);
+			if(isContext==null) {
+				// viene lanciata una eccezione prima se throwExceptionIfNotExists
+				return null;
+			}
 			
 			// ContentType
 			String columnContentType = readResponseField ? "RESPONSE_CONTENT_TYPE" : "CONTENT_TYPE";

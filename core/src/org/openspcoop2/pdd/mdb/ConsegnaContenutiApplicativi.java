@@ -104,6 +104,7 @@ import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneG
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MessaggioDaNotificare;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
+import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
@@ -795,6 +796,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		// Recupero informazioni behaviour
 		TipoBehaviour behaviourType = null;
 		boolean salvaRispostaPerNotifiche = false;
+		MessaggioDaNotificare tipiMessaggiNotificabili = null;
 		String identificativoMessaggioDoveSalvareLaRisposta = null; 
 		MessaggioDaNotificare tipoMessaggioDaNotificare_notificaAsincrona = null;
 		boolean transactionContext_notificaAsincrona = false;
@@ -840,7 +842,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					if(transazioneApplicativoServer==null) {
 						List<String> serviziApplicativiAbilitatiForwardTo = readServiziApplicativiAbilitatiForwardTo(pddContext);
 						if(serviziApplicativiAbilitatiForwardTo!=null && !serviziApplicativiAbilitatiForwardTo.isEmpty()) {
-							MessaggioDaNotificare tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(pa, serviziApplicativiAbilitatiForwardTo);
+							tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(pa, serviziApplicativiAbilitatiForwardTo);
 							if(tipiMessaggiNotificabili!=null && 
 									(
 											MessaggioDaNotificare.RISPOSTA.equals(tipiMessaggiNotificabili)
@@ -1236,11 +1238,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
 						break;
 					case RISPOSTA:
-						consegnaMessagePrimaTrasformazione = msgRequest.getResponseMessage(true);
+						consegnaMessagePrimaTrasformazione = msgRequest.getResponseMessage(true, true); //se deve essere consegnata solamente la risposta, questa deve esistere
 						break;
 					case ENTRAMBI:
 						consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
-						consegnaResponseMessagePrimaTrasformazione = msgRequest.getResponseMessage(false);
+						consegnaResponseMessagePrimaTrasformazione = msgRequest.getResponseMessage(false, false); // secondo parametro false perchè la risposta può non esserci (es. vuota o errore di connessione) ma è stato indicato di inviare una notifica
 						break;
 					}
 				}
@@ -1658,11 +1660,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
 								break;
 							case RISPOSTA:
-								consegnaMessagePrimaTrasformazione = msgRequest.getResponseMessage(true);
+								consegnaMessagePrimaTrasformazione = msgRequest.getResponseMessage(true, true);  //se deve essere consegnata solamente la risposta, questa deve esistere
 								break;
 							case ENTRAMBI:
 								consegnaMessagePrimaTrasformazione = msgRequest.getMessage();
-								consegnaResponseMessagePrimaTrasformazione = msgRequest.getResponseMessage(false);
+								consegnaResponseMessagePrimaTrasformazione = msgRequest.getResponseMessage(false, false); // secondo parametro false perchè la risposta può non esserci (es. vuota o errore di connessione) ma è stato indicato di inviare una notifica
 								break;
 							}
 						}
@@ -2686,8 +2688,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 			
 			
-			
-			if(salvaRispostaPerNotifiche) {
+			if(salvaRispostaPerNotifiche && responseMessage!=null) {
 				try {
 					msgDiag.mediumDebug("Conservazione della risposta per il gestore delle notifiche");
 					
@@ -3147,6 +3148,28 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 
 
+			/* ------------------------- Gestione Notifica ---------------------------- */
+			if(salvaRispostaPerNotifiche && responseMessage==null && MessaggioDaNotificare.RISPOSTA.equals(tipiMessaggiNotificabili)) {
+				try{
+					ConnettoreException e = null;
+					if(consegnaMessageTrasformato!=null && ServiceBinding.SOAP.equals(consegnaMessageTrasformato.getServiceBinding()) && !errorConsegna){
+						e = new ConnettoreException("Non essendo presente un payload nella risposta restituita dal backend, il salvataggio della risposta non può essere completato e nessuna notifica verrà generata");
+					}
+					else {
+						e = new ConnettoreException("Causa indisponibilità del backend, il salvataggio della risposta non può essere completato e nessuna notifica verrà generata");
+					}
+					msgDiag.addKeywordErroreProcessamento(e, "Conservazione risposta fallita");
+					msgDiag.logErroreGenerico(e,"Notifiche");
+					String msgErroreR = "Conservazione risposta fallita: "+e.getMessage();
+					this.log.error(msgErroreR,e);
+					pddContext.put(CostantiPdD.CONNETTORE_MULTIPLO_CONSEGNA_NOTIFICA_DISABILITATA, e);
+				}catch (Exception e){
+					this.log.error("Errore Salvataggio informazione di notifica disabilitata",e);
+				}
+			}
+			
+			
+			
 
 
 
