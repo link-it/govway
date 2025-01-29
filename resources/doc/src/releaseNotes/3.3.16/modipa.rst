@@ -1,7 +1,7 @@
 Miglioramenti al Profilo di Interoperabilità 'ModI'
 ------------------------------------------------------
 
-Migliorata la gestione della registrazione di molteplici repository delle chiavi PDND e/o utilizzo di client interop differenti in ambiente Multi-Tenant:
+Migliorata la gestione della registrazione di repository multipli delle chiavi PDND e/o di utilizzo di client interop differenti in ambiente Multi-Tenant:
 
 - i repository multipli vengono ora rilevati automaticamente nella console di gestione e nei timer dedicati alla gestione delle interazioni con la PDND, eliminando la necessità di attivazione manuale nelle configurazioni dei vari tool;
 - la proprietà 'remoteStore.pdnd.baseUrl' può ora essere definita utilizzando esclusivamente la base URL, senza il suffisso '/keys';
@@ -14,7 +14,7 @@ Migliorata la gestione della registrazione di molteplici repository delle chiavi
 
   "Il profilo di sicurezza richiesto 'idam01' richiede l'identificazione di un applicativo".
 
-- con una negoziazione del token tramite PDND:
+- in caso di negoziazione del token tramite PDND:
 
   "Il tipo di keystore indicato nella token policy 'PDND' richiede l'autenticazione e l'identificazione di un applicativo fruitore: Servizio applicativo anonimo".
 
