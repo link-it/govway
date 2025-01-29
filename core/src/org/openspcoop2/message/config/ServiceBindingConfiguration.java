@@ -271,7 +271,9 @@ public class ServiceBindingConfiguration implements Serializable {
 			TransportRequestContext transportContext, 
 			String contentType, Integer status) throws MessageException{
 		return this.getMessageType(serviceBinding, MessageRole.RESPONSE, 
-				transportContext.getProtocolWebContext(), transportContext.getFunction(), transportContext.getFunctionParameters(), 
+				transportContext!=null ? transportContext.getProtocolWebContext() : null, 
+				transportContext!=null ? transportContext.getFunction() : null, 
+				transportContext!=null ? transportContext.getFunctionParameters() : null, 
 				contentType, status);
 	}
 	public MessageType getMessageType(ServiceBinding serviceBinding, MessageRole messageRole, 

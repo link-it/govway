@@ -990,6 +990,7 @@ public class CostantiPdD {
     }
     
     public static final MapKey<String> CONNETTORE_MULTIPLO_SELEZIONATO = Map.newMapKey("CONNETTORE_MULTIPLO_SELEZIONATO");
+    public static final MapKey<String> CONNETTORE_MULTIPLO_CONSEGNA_NOTIFICA_DISABILITATA = Map.newMapKey("CONNETTORE_MULTIPLO_CONSEGNA_NOTIFICA_DISABILITATA");
     
     
     public static final MapKey<String> FILTRO_DUPLICATI_TEST = Map.newMapKey("FILTRO_DUPLICATI_TEST");

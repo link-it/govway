@@ -278,6 +278,17 @@ public class TransazioneUtilities {
 					schedulaNotificheDopoConsegnaSincrona = true;
 				}
 			}
+			if(schedulaNotificheDopoConsegnaSincrona && info.getContext()!=null) {
+				Exception e = null;
+				Object oException = info.getContext().getObject(CostantiPdD.CONNETTORE_MULTIPLO_CONSEGNA_NOTIFICA_DISABILITATA );
+				if (oException instanceof Exception){
+					e = (Exception) oException;
+				}
+				if(e!=null) {
+					// log effettuato in consegna contenuti
+					schedulaNotificheDopoConsegnaSincrona = false;
+				}
+			}
 			
 
 			if(times!=null) {

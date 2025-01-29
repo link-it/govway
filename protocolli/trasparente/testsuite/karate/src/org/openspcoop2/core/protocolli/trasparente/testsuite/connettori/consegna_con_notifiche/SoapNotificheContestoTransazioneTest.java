@@ -229,14 +229,4 @@ public class SoapNotificheContestoTransazioneTest extends ConfigLoader{
 		
 	}
 
-
-//	
-//	OK FINIRE I TEST:
-//		
-//		- RICHIESTA SENZA CONTESTO DEVE FALLIRE!
-//		
-//		- RISPOSTA E ENTRAMBI
-//		
-//		- SOAP
-	
 }

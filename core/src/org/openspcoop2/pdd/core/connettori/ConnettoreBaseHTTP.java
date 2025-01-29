@@ -576,6 +576,14 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 								this.requestMsg.getTransportRequestContext()!=null) {
 								interfaceName = this.requestMsg.getTransportRequestContext().getInterfaceName();
 							}
+							if(interfaceName==null) {
+								if(this.pa!=null) {
+									interfaceName = this.pa.getNome();
+								}
+								else if(this.pd!=null) {
+									interfaceName = this.pd.getNome();
+								}
+							}
 						}
 						 
 						if(this.proxyPassReverseUsePrefixProtocol) {

@@ -2635,10 +2635,10 @@ public class GestoreMessaggi  {
 	}
 
 	
-	public OpenSPCoop2Message getResponseMessage(boolean updateTransportRequest) throws GestoreMessaggiException{
-		return getResponseMessage(null, updateTransportRequest);
+	public OpenSPCoop2Message getResponseMessage(boolean updateTransportRequest, boolean throwExceptionIfNotExists) throws GestoreMessaggiException{
+		return getResponseMessage(null, updateTransportRequest, throwExceptionIfNotExists);
 	}
-	public OpenSPCoop2Message getResponseMessage(Date oraRegistrazione, boolean updateTransportRequest) throws GestoreMessaggiException{
+	public OpenSPCoop2Message getResponseMessage(Date oraRegistrazione, boolean updateTransportRequest, boolean throwExceptionIfNotExists) throws GestoreMessaggiException{
 
 		//		if (openspcoopstate instanceof OpenSPCoopStateless) {
 		//			if (isRichiesta) return ((OpenSPCoopStateless)openspcoopstate).getRichiestaMsg() ;
@@ -2655,7 +2655,7 @@ public class GestoreMessaggi  {
 		SavedMessage soapMsg = null;
 		try{
 			soapMsg = new SavedMessage(idBustaSearch, this.openspcoopstate, this.tipo,this.workDir,GestoreMessaggi.adapter,this.log);
-			msg = soapMsg.readResponse(oraRegistrazione);
+			msg = soapMsg.readResponse(oraRegistrazione, throwExceptionIfNotExists);
 		}catch(Exception e){
 			String errorMsg = "GESTORE_MESSAGGI, getMessage "+this.tipo+"/"+this.idBusta+": "+e.getMessage();
 			this.log.error(errorMsg,e);

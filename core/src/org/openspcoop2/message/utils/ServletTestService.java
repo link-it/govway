@@ -343,11 +343,19 @@ public class ServletTestService extends HttpServlet {
 			
 			String v = TransportUtils.getHeaderFirstValue(request, key);
 			if(v==null){
-				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Header ["+key+"] non presente");
+				if(!"header-non-atteso".equals(valore)) {
+					throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Header ["+key+"] non presente");
+				}
 			}
-			if(!v.equals(valore)){
-				throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso '"+valore+"'");
+			else {
+				if("header-non-atteso".equals(valore)) {
+					throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). L'header risulta presente e valorizzato con ["+v+"]");
+				}
+				else if(!v.equals(valore)){
+					throw new ServletException("Ricevuta una richiesta di verifica header ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso '"+valore+"'");
+				}
 			}
+			
 		}
 		
 		String checkEqualsQueryParameter = getParameterCheckWhiteList(request, whitePropertiesList, "checkEqualsQueryParameter");
@@ -376,10 +384,17 @@ public class ServletTestService extends HttpServlet {
 			
 			String v = TransportUtils.getParameterFirstValue(request, key);
 			if(v==null){
-				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Parametro ["+key+"] non presente");
+				if(!"param-non-atteso".equals(valore)) {
+					throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Parametro ["+key+"] non presente");
+				}
 			}
-			if(!v.equals(valore)){
-				throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso '"+valore+"'");
+			else {
+				if("param-non-atteso".equals(valore)) {
+					throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Il parametro risulta presente e valorizzato con ["+v+"]");
+				}
+				else if(!v.equals(valore)){
+					throw new ServletException("Ricevuta una richiesta di verifica query parameter ("+key+":"+valore+"). Valore ["+v+"] differente da quello atteso '"+valore+"'");
+				}
 			}
 		}
 		

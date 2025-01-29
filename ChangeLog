@@ -1,3 +1,10 @@
+2025-01-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1572
+	Il processo di consegna di una notifica asincrona con salvataggio della risposta, in presenza di errori di connessione, 
+	generava un'anomalia che causa una ripetizione infinita della consegna delle notifiche.
+
 2025-01-22  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

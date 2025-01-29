@@ -105,6 +105,7 @@ import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneG
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MessaggioDaNotificare;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
+import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.core.connettori.GestoreErroreConnettore;
@@ -398,6 +399,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 	
 	private boolean portaDiTipoStateless = false;
 	private boolean salvaRispostaPerNotifiche = false;
+	private MessaggioDaNotificare tipiMessaggiNotificabili = null;
 
 	private LocalForwardEngine localForwardEngine = null;
 	private boolean localForward = false;
@@ -996,12 +998,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 					if(this.transazioneApplicativoServer==null) {
 						List<String> serviziApplicativiAbilitatiForwardTo = readServiziApplicativiAbilitatiForwardTo();
 						if(serviziApplicativiAbilitatiForwardTo!=null && !serviziApplicativiAbilitatiForwardTo.isEmpty()) {
-							MessaggioDaNotificare tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(this.pa, serviziApplicativiAbilitatiForwardTo);
-							if(tipiMessaggiNotificabili!=null && 
+							this.tipiMessaggiNotificabili = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.readMessaggiNotificabili(this.pa, serviziApplicativiAbilitatiForwardTo);
+							if(this.tipiMessaggiNotificabili!=null && 
 									(
-											MessaggioDaNotificare.RISPOSTA.equals(tipiMessaggiNotificabili)
+											MessaggioDaNotificare.RISPOSTA.equals(this.tipiMessaggiNotificabili)
 											||
-											MessaggioDaNotificare.ENTRAMBI.equals(tipiMessaggiNotificabili)
+											MessaggioDaNotificare.ENTRAMBI.equals(this.tipiMessaggiNotificabili)
 											)) {
 								this.salvaRispostaPerNotifiche = true;
 								this.identificativoMessaggioDoveSalvareLaRisposta = CostantiPdD.PREFIX_MESSAGGIO_CONNETTORE_MULTIPLO+0+CostantiPdD.SEPARATOR_MESSAGGIO_CONNETTORE_MULTIPLO+this.idMessaggioConsegna;
@@ -1389,11 +1391,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 						this.consegnaMessagePrimaTrasformazione = this.msgRequest.getMessage();
 						break;
 					case RISPOSTA:
-						this.consegnaMessagePrimaTrasformazione = this.msgRequest.getResponseMessage(true);
+						this.consegnaMessagePrimaTrasformazione = this.msgRequest.getResponseMessage(true, true); //se deve essere consegnata solamente la risposta, questa deve esistere
 						break;
 					case ENTRAMBI:
 						this.consegnaMessagePrimaTrasformazione = this.msgRequest.getMessage();
-						consegnaResponseMessagePrimaTrasformazione = this.msgRequest.getResponseMessage(false);
+						consegnaResponseMessagePrimaTrasformazione = this.msgRequest.getResponseMessage(false, false); // secondo parametro false perchè la risposta può non esserci (es. vuota o errore di connessione) ma è stato indicato di inviare una notifica
 						break;
 					}
 				}
@@ -1809,11 +1811,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 								this.consegnaMessagePrimaTrasformazione = this.msgRequest.getMessage();
 								break;
 							case RISPOSTA:
-								this.consegnaMessagePrimaTrasformazione = this.msgRequest.getResponseMessage(true);
+								this.consegnaMessagePrimaTrasformazione = this.msgRequest.getResponseMessage(true, true);  //se deve essere consegnata solamente la risposta, questa deve esistere
 								break;
 							case ENTRAMBI:
 								this.consegnaMessagePrimaTrasformazione = this.msgRequest.getMessage();
-								consegnaResponseMessagePrimaTrasformazione = this.msgRequest.getResponseMessage(false);
+								consegnaResponseMessagePrimaTrasformazione = this.msgRequest.getResponseMessage(false, false); // secondo parametro false perchè la risposta può non esserci (es. vuota o errore di connessione) ma è stato indicato di inviare una notifica
 								break;
 							}
 						}
@@ -2862,7 +2864,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			
 			
 			
-			if(this.salvaRispostaPerNotifiche) {
+			if(this.salvaRispostaPerNotifiche && this.responseMessage!=null) {
 				try {
 					this.msgDiag.mediumDebug("Conservazione della risposta per il gestore delle notifiche");
 					
@@ -3316,6 +3318,28 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 
 
 
+			/* ------------------------- Gestione Notifica ---------------------------- */
+			if(this.salvaRispostaPerNotifiche && this.responseMessage==null && MessaggioDaNotificare.RISPOSTA.equals(this.tipiMessaggiNotificabili)) {
+				try{
+					ConnettoreException e = null;
+					if(this.consegnaMessageTrasformato!=null && ServiceBinding.SOAP.equals(this.consegnaMessageTrasformato.getServiceBinding()) && !this.errorConsegna){
+						e = new ConnettoreException("Non essendo presente un payload nella risposta restituita dal backend, il salvataggio della risposta non può essere completato e nessuna notifica verrà generata");
+					}
+					else {
+						e = new ConnettoreException("Causa indisponibilità del backend, il salvataggio della risposta non può essere completato e nessuna notifica verrà generata");
+					}
+					this.msgDiag.addKeywordErroreProcessamento(e, "Conservazione risposta fallita");
+					this.msgDiag.logErroreGenerico(e,"Notifiche");
+					String msgErroreR = "Conservazione risposta fallita: "+e.getMessage();
+					this.log.error(msgErroreR,e);
+					this.pddContext.put(CostantiPdD.CONNETTORE_MULTIPLO_CONSEGNA_NOTIFICA_DISABILITATA, e);
+				}catch (Exception e){
+					this.log.error("Errore Salvataggio informazione di notifica disabilitata",e);
+				}
+			}
+			
+			
+			
 
 
 
