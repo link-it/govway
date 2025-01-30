@@ -22,7 +22,9 @@ Sono state risolte le seguenti vulnerabilità relative alle librerie di terza pa
 
 Sono stati risolti i seguenti bug:
 
-- risolta anomalia presente nella funzionalità 'FileTrace' per la registrazione delle transazioni, dove l'informazione 'requester', se registrata con l'opzione 'logBase64', veniva codificata in Base64 due volte.
+- risolta anomalia presente nella funzionalità 'FileTrace' per la registrazione delle transazioni, dove l'informazione 'requester', se registrata con l'opzione 'logBase64', veniva codificata in Base64 due volte;
+
+- quando la funzionalità di proxy pass reverse per gli header HTTP è attiva, se un header Location contiene un'URL con query parameter che non corrisponde a quella del connettore (e quindi non viene tradotta), l'header veniva inoltrato al client senza i query parameters.
 
 Per la console di gestione sono stati risolti i seguenti bug:
 

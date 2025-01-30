@@ -345,7 +345,7 @@ public class RestUtilities {
 			
 //			System.out.println("ProxyPass nop redirect["+redirectLocationUrl+"] relative["+rRelative+"] absolute["+r+"]");
 			
-			return redirectLocationUrl;
+			return redirectLocationUrlParam;
 		}
 	}
 

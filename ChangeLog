@@ -1,3 +1,11 @@
+2025-01-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1573
+	Quando la funzionalità di proxy pass reverse per gli header HTTP è attiva, 
+	se un header Location contiene un'URL con query parameter che non corrisponde a quella del connettore (e quindi non viene tradotta), 
+	l'header veniva inoltrato al client senza i query parameters.
+
 2025-01-30  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]
