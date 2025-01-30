@@ -908,7 +908,7 @@ public class GestoreConsegnaMultipla {
 							
 						}
 						else {
-							setErroreInvocazione(transazioneApplicativoServer, esitiProperties, context);
+							setErroreInvocazione(transazioneApplicativoServer, esitiProperties, context, code);
 						}
 					}
 					else {
@@ -917,7 +917,7 @@ public class GestoreConsegnaMultipla {
 							transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.OK));
 						}
 						else {
-							setErroreInvocazione(transazioneApplicativoServer, esitiProperties, context);
+							setErroreInvocazione(transazioneApplicativoServer, esitiProperties, context, -1);
 						}
 					}
 				}
@@ -927,7 +927,7 @@ public class GestoreConsegnaMultipla {
 						transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(EsitoTransazioneName.OK));
 					}
 					else {
-						setErroreInvocazione(transazioneApplicativoServer, esitiProperties, context);
+						setErroreInvocazione(transazioneApplicativoServer, esitiProperties, context, -1);
 					}
 				}
 			}
@@ -939,7 +939,7 @@ public class GestoreConsegnaMultipla {
 		
 	}
 	
-	private void setErroreInvocazione(TransazioneApplicativoServer transazioneApplicativoServer, EsitiProperties esitiProperties, Context context) throws ProtocolException {
+	private void setErroreInvocazione(TransazioneApplicativoServer transazioneApplicativoServer, EsitiProperties esitiProperties, Context context, int code) throws ProtocolException {
 		EsitoTransazioneName name = EsitoTransazioneName.ERRORE_INVOCAZIONE;
 		if(context!=null &&
 				context.containsKey(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE)
@@ -960,6 +960,17 @@ public class GestoreConsegnaMultipla {
 				}
 			}
 			
+		}
+		else {
+			if(code>299 && code<=399) {
+				name = EsitoTransazioneName.HTTP_3xx;
+			}
+			else if(code>399 && code<=499) {
+				name = EsitoTransazioneName.HTTP_4xx;
+			}
+			else if(code>499 && code<=599) {
+				name = EsitoTransazioneName.HTTP_5xx;
+			}
 		}
 		
 		transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(name));

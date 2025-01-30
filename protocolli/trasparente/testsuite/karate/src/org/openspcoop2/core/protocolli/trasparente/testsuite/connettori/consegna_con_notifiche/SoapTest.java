@@ -1560,7 +1560,7 @@ public class SoapTest extends ConfigLoader {
 		String formatoFault = "";
 		for (var response : responses2Ko) {
 			CommonConsegnaMultipla.withBackoff( () -> checkStatoConsegna(response, ESITO_CONSEGNA_MULTIPLA_IN_CORSO, 1));
-			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(response, setConnettoriAbilitatiKo.iterator().next(), CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE, 404, fault, formatoFault);
+			CommonConsegnaMultipla.checkSchedulingConnettoreInCorso(response, setConnettoriAbilitatiKo.iterator().next(), CommonConsegnaMultipla.ESITO_4XX, 404, fault, formatoFault);
 		}
 
 	}

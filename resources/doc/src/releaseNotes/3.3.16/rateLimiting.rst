@@ -1,9 +1,9 @@
 Miglioramenti alla funzionalità di RateLimiting
 ------------------------------------------------------------
 
-Aggiunta una nuova metrica utilizzabile nelle politiche di Rate Limiting: "Numero completato con successo o fault applicativo".
+Aggiunta una nuova metrica utilizzabile nelle politiche di Rate Limiting: "Numero Richieste Completate con Successo o Fault Applicativi".
 
-Inoltre il controllo attuato dalla policy di rate limiting per dimensione messaggio è stato esteso per considerare anche il valore dell'header HTTP 'Content-Length' se presente.
+Inoltre il controllo attuato dalla policy di rate limiting per dimensione messaggio è stato ottimizzato per utilizzare il valore dell'header HTTP 'Content-Length' se presente.
 
-Infine nella funzionalitò di controllo del traffico con sincronizzazione distribuita tramite hazelcast, è stato aggiunto un meccanismo di failover applicativo per la gestione dell'eccezione 'DistributedObjectDestroyedException' che può avvenire in casi limite durante l'utilizzo di AtomicLong e PNCounter in configurazioni del cluster senza CP Subsystem. Nell'intervento è stato reso configurabile il sistema di diagnostica di hazelcast e la validazione della configurazione utilizzata. 
+Infine nella funzionalità di controllo del traffico con sincronizzazione distribuita tramite hazelcast, è stato introdotto un meccanismo di recupero in caso di eccezione 'DistributedObjectDestroyedException' che può avvenire in casi limite in configurazioni del cluster che non utilizzano il CP Subsystem. Nell'intervento è stato reso configurabile il sistema di diagnostica di hazelcast e la validazione della configurazione utilizzata.
 
