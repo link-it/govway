@@ -697,8 +697,19 @@ public class CommonConsegnaMultipla {
 			int esitoNotifica;
 			if (requestAndExpectation.tipoFault != TipoFault.NESSUNO) {
 				esitoNotifica = ESITO_ERRORE_APPLICATIVO;				
-			} else if (isEsitoErrore(requestAndExpectation.statusCodePrincipale)) {			
-				esitoNotifica = ESITO_ERRORE_INVOCAZIONE;
+			} else if (isEsitoErrore(requestAndExpectation.statusCodePrincipale)) {
+				if(is5XX(requestAndExpectation.statusCodePrincipale)) {
+					esitoNotifica = ESITO_5XX;
+				}
+				else if(is4XX(requestAndExpectation.statusCodePrincipale)) {
+					esitoNotifica = ESITO_4XX;
+				}
+				else if(is3XX(requestAndExpectation.statusCodePrincipale)) {
+					esitoNotifica = ESITO_3XX;
+				}
+				else {
+					esitoNotifica = ESITO_ERRORE_INVOCAZIONE;
+				}
 			} else {
 				esitoNotifica = esitoConsegnaFromStatusCode(requestAndExpectation.statusCodePrincipale);
 			}
