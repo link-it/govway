@@ -320,7 +320,7 @@
 						<phase>initialize</phase> <!-- fase successiva a validate -->
 						<configuration>
 							<target name="delete">
-								<delete file="${project.basedir}/../../../lib/${jar.group.name}/commons-jcs3-core-${commons-jcs3-core.version}.jar" failonerror="true"/>
+								<delete file="${project.basedir}/../../../lib/${jar.group.name}/commons-jcs3-core-${commons.jcs3-core.version}.jar" failonerror="true"/>
 							</target>
 						</configuration>
 						<goals>
