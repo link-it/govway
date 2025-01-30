@@ -124,20 +124,24 @@ public class SoapTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_relative_location_gestioneProxyPassDisabilitata() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.EROGAZIONE,"disabled","",HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.EROGAZIONE,"disabled","",HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.EROGAZIONE,"disabled","",HttpConstants.REDIRECT_LOCATION);
 	}
 	@Test
 	public void fruizione_relative_location_gestioneProxyPassDisabilitata() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.FRUIZIONE,"disabled","",HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.FRUIZIONE,"disabled","",HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.FRUIZIONE,"disabled","",HttpConstants.REDIRECT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_relative_contentLocation_gestioneProxyPassDisabilitata() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.EROGAZIONE,"disabled","",HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.EROGAZIONE,"disabled","",HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.EROGAZIONE,"disabled","",HttpConstants.CONTENT_LOCATION);
 	}
 	@Test
 	public void fruizione_relative_contentLocation_gestioneProxyPassDisabilitata() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.FRUIZIONE,"disabled","",HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.FRUIZIONE,"disabled","",HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.FRUIZIONE,"disabled","",HttpConstants.CONTENT_LOCATION);
 	}
 	
 	// relative location (custom)
@@ -207,36 +211,60 @@ public class SoapTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_absolute_location_noMatchRequestUri() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.REDIRECT_LOCATION);
 		
-		RestTest._location_nonTradotta(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.REDIRECT_LOCATION);
 		
-		RestTest._location_nonTradotta(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.REDIRECT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.REDIRECT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.REDIRECT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.REDIRECT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_location_noMatchRequestUri() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.REDIRECT_LOCATION);
 		
-		RestTest._location_nonTradotta(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.REDIRECT_LOCATION);
 		
-		RestTest._location_nonTradotta(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.REDIRECT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.REDIRECT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.REDIRECT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.REDIRECT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_absolute_contentLocation_noMatchRequestUri() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.CONTENT_LOCATION);
 		
-		RestTest._location_nonTradotta(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.CONTENT_LOCATION);
 		
-		RestTest._location_nonTradotta(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.CONTENT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.CONTENT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.CONTENT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.EROGAZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.CONTENT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_contentLocation_noMatchRequestUri() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.CONTENT_LOCATION);
 		
-		RestTest._location_nonTradotta(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.CONTENT_LOCATION);
 		
-		RestTest._location_nonTradotta(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.CONTENT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_2,HttpConstants.CONTENT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_3,HttpConstants.CONTENT_LOCATION);
+		
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.FRUIZIONE,"end-without-slash",RestTest.REQUEST_URI_4,HttpConstants.CONTENT_LOCATION);
 	}
 
 	
@@ -245,20 +273,24 @@ public class SoapTest extends ConfigLoader {
 	
 	@Test
 	public void erogazione_absolute_location_gestioneProxyPassDisabilitata() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.EROGAZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.EROGAZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.EROGAZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_location_gestioneProxyPassDisabilitata() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.FRUIZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.FRUIZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.FRUIZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.REDIRECT_LOCATION);
 	}
 	
 	@Test
 	public void erogazione_absolute_contentLocation_gestioneProxyPassDisabilitata() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.EROGAZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.EROGAZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.EROGAZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.CONTENT_LOCATION);
 	}
 	@Test
 	public void fruizione_absolute_contentLocation_gestioneProxyPassDisabilitata() throws Exception {
-		RestTest._location_nonTradotta(false, TipoServizio.FRUIZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_conParametri(false, TipoServizio.FRUIZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.CONTENT_LOCATION);
+		RestTest._location_nonTradotta_senzaParametri(false, TipoServizio.FRUIZIONE,"disabled",RestTest.REQUEST_URI,HttpConstants.CONTENT_LOCATION);
 	}
 	
 	
