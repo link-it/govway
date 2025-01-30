@@ -177,7 +177,7 @@
 				 	</ui:include>
 					
 		
-					<c:if test="#{sf_showAzioni and !empty sf_servizio}">
+					<c:if test="#{sf_showAzioni and sf_bean.visualizzaFiltroAzioni}">
 						<ui:include src="/stat/includes/searchFormStatistichePersonalizzateFiltroAzione.xhtml">
 							<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
 							<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />

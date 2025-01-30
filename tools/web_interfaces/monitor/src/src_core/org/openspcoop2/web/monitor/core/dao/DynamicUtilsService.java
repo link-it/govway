@@ -754,6 +754,27 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			return this.driver.countAzioniFromServizio(tipoProtocollo, tipoServizio , nomeServizio, tipoErogatore ,  nomeErogatore,  versioneServizio, val);
 		}
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, String> findAzioniFromAPI(String tipoProtocollo, String nome, String tipoReferente, String nomeReferente, Integer versione, String val){
+		if(AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione!=null) {
+			String key = buildKey(tipoProtocollo, nome, tipoReferente, nomeReferente, versione, "VAL:"+ val);
+			String methodName = "findAzioniFromAPI";
+			try {
+				return (Map<String, String>) AbstractConsoleStartupListener.dynamicUtilsServiceCache_datiConfigurazione.getObjectCache(this.driver, AbstractConsoleStartupListener.debugCache_datiConfigurazione, key, methodName, 
+						new Class<?>[] {String.class, String.class,String.class, String.class, Integer.class, String.class },
+						tipoProtocollo, nome, tipoReferente, nomeReferente, versione, val);
+			}catch(Throwable e) {
+				log.error("Cache Access Error (method:"+methodName+" key:"+key+"): "+e.getMessage(),e);
+				return null;
+			}
+		}
+		else {
+			return this.driver.findAzioniFromAPI(tipoProtocollo, nome, tipoReferente, nomeReferente, versione, val);
+		}
+	}
  
 
 	

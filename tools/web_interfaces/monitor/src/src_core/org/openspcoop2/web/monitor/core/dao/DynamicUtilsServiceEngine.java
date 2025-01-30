@@ -1111,6 +1111,24 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		// Implementazione inefficiente
 		return this.findAzioniFromServizio(tipoProtocollo,tipoServizio, nomeServizio,tipoErogatore,nomeErogatore,versioneServizio,val).size();
 	}
+	
+	@Override
+	public Map<String, String> findAzioniFromAPI(String tipoProtocollo, String nomeAccordo, String tipoReferente, String nomeReferente, Integer versioneAccordo, String val) {
+		log.debug("Get Lista Azioni from API [nomeAccordo: " + nomeAccordo + "]");
+
+		try {
+			Map<String, String> azioniConLabel = RegistroCore.getAzioniFromAPIConLabel((JDBCServiceManager) this.utilsServiceManager, tipoProtocollo, nomeAccordo, tipoReferente, nomeReferente, versioneAccordo,val);
+			
+			return azioniConLabel;
+ 
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		} 
+
+		return new HashMap<>();
+
+	}
+	
 
 	@Override
 	public List<Object> findElencoServiziApplicativi(String tipoProtocollo,Soggetto soggetto, boolean trasporto, boolean token) {
@@ -2547,7 +2565,16 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		if(StringUtils.isNotEmpty(nomeSoggetto ) && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggetto))
 			paExpr.and().equals(PortaApplicativa.model().ID_SOGGETTO.NOME, nomeSoggetto);
 		if(StringUtils.isNotEmpty(val)) {
-			paExpr.ilike(PortaApplicativa.model().ID_SOGGETTO.NOME, val.toLowerCase(), LikeMode.ANYWHERE);
+			if(StringUtils.isNotEmpty(nomeSoggetto) && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggetto)) {
+				paExpr.and().ilike(PortaApplicativa.model().NOME_SERVIZIO, val.toLowerCase(), LikeMode.ANYWHERE);
+			} else {
+				IExpression likeExpr = this.portaApplicativaDAO.newExpression();
+				
+				likeExpr.ilike(PortaApplicativa.model().ID_SOGGETTO.NOME, val.toLowerCase(), LikeMode.ANYWHERE)
+					.or().ilike(PortaApplicativa.model().NOME_SERVIZIO, val.toLowerCase(), LikeMode.ANYWHERE);
+				
+				paExpr.and(likeExpr);
+			}
 		}
 		
 		// Se ho selezionato un servizio, oppure se non ho selezionato niente 
@@ -2798,7 +2825,16 @@ public class DynamicUtilsServiceEngine implements IDynamicUtilsService{
 		if(StringUtils.isNotEmpty(nomeSoggetto ) && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggetto))
 			pdExpr.and().equals(PortaDelegata.model().ID_SOGGETTO.NOME, nomeSoggetto);
 		if(StringUtils.isNotEmpty(val)) {
-			pdExpr.ilike(PortaDelegata.model().ID_SOGGETTO.NOME, val.toLowerCase(), LikeMode.ANYWHERE);
+			if(StringUtils.isNotEmpty(nomeSoggetto) && !Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(nomeSoggetto)) {
+				pdExpr.and().ilike(PortaDelegata.model().NOME_SERVIZIO, val.toLowerCase(), LikeMode.ANYWHERE);
+			} else {
+				IExpression likeExpr = this.portaDelegataDAO.newExpression();
+				
+				likeExpr.ilike(PortaDelegata.model().ID_SOGGETTO.NOME, val.toLowerCase(), LikeMode.ANYWHERE)
+					.or().ilike(PortaDelegata.model().NOME_SERVIZIO, val.toLowerCase(), LikeMode.ANYWHERE);
+				
+				pdExpr.and(likeExpr);
+			}
 		}
 		
 		if(StringUtils.isNotEmpty(nomeErogatore ))

@@ -84,7 +84,17 @@ public class TransazioniHelper {
 		if (filtro_api == null)
 			return;
 		
-		if ( !StringUtils.isEmpty(filtro_api.getNome()) || filtro_api.getVersione() != null || !StringUtils.isEmpty(azione) || !StringUtils.isEmpty(filtro_api.getTipo())) {
+		boolean checkAzione = true;
+		if(filtro_api instanceof FiltroApiSoggetti) {
+			FiltroApiSoggetti f = (FiltroApiSoggetti) filtro_api;
+			if(f.getApiImplementata()!=null) {
+				checkAzione = false;
+			}
+		}
+		
+		if ( !StringUtils.isEmpty(filtro_api.getNome()) || filtro_api.getVersione() != null || 
+				(checkAzione && !StringUtils.isEmpty(azione)) || 
+				!StringUtils.isEmpty(filtro_api.getTipo())) {
 			
 			if (StringUtils.isEmpty(filtro_api.getNome())) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Filtro Api incompleto. Specificare il nome della API");

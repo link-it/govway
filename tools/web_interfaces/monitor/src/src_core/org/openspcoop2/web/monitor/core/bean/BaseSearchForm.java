@@ -2755,4 +2755,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			}
 		}
 	}
+	
+	public boolean isVisualizzaFiltroAzioni () {
+		return StringUtils.isNotBlank(this.getNomeServizio()) || StringUtils.isNotBlank(this.getApi());
+	}
 }

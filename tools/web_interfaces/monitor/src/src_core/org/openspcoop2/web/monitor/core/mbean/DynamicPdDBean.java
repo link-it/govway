@@ -222,26 +222,41 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		if(this.search==null){
 			return new ArrayList<SelectItem>();
 		}
-		if(this.search.getNomeServizio()==null){
+		if(this.search.getApi() == null && this.search.getNomeServizio()==null){
 			return new ArrayList<SelectItem>();
 		}
 		if (this.search != null
-				&& StringUtils.isBlank(this.search.getNomeServizio()))
+				&& StringUtils.isBlank(this.search.getNomeServizio()) && StringUtils.isBlank(this.search.getApi())) {
 			return new ArrayList<SelectItem>();
+		}
 
 		if(!this.azioniSelectItemsWidthCheck){
 			this.azioni = new ArrayList<SelectItem>();
 			try {
 				String tipoProtocollo = this.search.getProtocollo();
-				IDServizio idServizio = Utility.parseServizioSoggetto(this.search.getNomeServizio());
 
-				String nomeServizio = idServizio.getNome();
-				String tipoServizio = idServizio.getTipo();
-				String nomeErogatore = idServizio.getSoggettoErogatore().getNome();
-				String tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
-				Integer versioneServizio = idServizio.getVersione();
-
-				this.azioni = this.dynamicUtils.getListaSelectItemsAzioniFromServizio(tipoProtocollo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio,input);
+				//ricerca per API
+				if(StringUtils.isNotBlank(this.search.getApi())) {
+					String api = this.search.getApi();
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(api);
+					
+					String nome = idAccordo.getNome();
+					Integer versione = idAccordo.getVersione();
+					String tipoReferente = idAccordo.getSoggettoReferente().getTipo();
+					String nomeReferente = idAccordo.getSoggettoReferente().getNome();
+	
+					this.azioni = this.dynamicUtils.getListaSelectItemsAzioniFromAPI(tipoProtocollo, nome, tipoReferente, nomeReferente, versione,input);
+				} else if(StringUtils.isNotBlank(this.search.getNomeServizio())) { 				// ricerca per servizio
+					IDServizio idServizio = Utility.parseServizioSoggetto(this.search.getNomeServizio());
+	
+					String nomeServizio = idServizio.getNome();
+					String tipoServizio = idServizio.getTipo();
+					String nomeErogatore = idServizio.getSoggettoErogatore().getNome();
+					String tipoErogatore = idServizio.getSoggettoErogatore().getTipo();
+					Integer versioneServizio = idServizio.getVersione();
+	
+					this.azioni = this.dynamicUtils.getListaSelectItemsAzioniFromServizio(tipoProtocollo, tipoServizio, nomeServizio, tipoErogatore, nomeErogatore, versioneServizio,input);
+				}
 
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);

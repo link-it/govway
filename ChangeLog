@@ -1,3 +1,11 @@
+2025-01-30  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #1570
+	È stato corretto il comportamento del filtro di ricerca per risorse/azioni nelle sezioni Transazioni e Statistiche.
+	In precedenza, il filtro appariva solo se veniva selezionata un'implementazione di API.
+	Ora il filtro viene mostrato anche quando viene selezionata un'API generica, permettendo la selezione di risorse e azioni senza dover scegliere un'implementazione specifica.
+
 2025-01-29  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

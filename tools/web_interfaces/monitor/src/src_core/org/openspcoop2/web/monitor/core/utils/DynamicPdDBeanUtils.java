@@ -471,6 +471,47 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 		return azioni;
 	}
+	
+	/***
+	 * 
+	 * Restituisce la lista delle select items  per le azioni
+	 * 
+	 * @return Lista delle SelectItems per le Azioni trovate
+	 */
+	public List<SelectItem> getListaSelectItemsAzioniFromAPI(String tipoProtocollo, String nomeAccordo,  String tipoReferente, String nomeReferente,Integer versioneAccordo, String val){
+		List<SelectItem> azioni = new ArrayList<>();
+
+		try{
+			Map<String, String>  map = this.findAzioniFromAPI(tipoProtocollo, nomeAccordo, tipoReferente, nomeReferente, versioneAccordo,val);
+			for (String azione : map.keySet()) {
+				SelectItem item = new SelectItem(azione,map.get(azione));
+				azioni.add(item);
+			}
+		}catch(Exception e){}
+
+		return azioni;
+	}
+	
+	/***
+	 * 
+	 * Restituisce l'elenco delle Azioni dell'Accordo di servizio passato come parametro
+	 * 
+	 * La Mappa contiene
+	 * Nome Azione
+	 * 
+	 * @return Azioni dell'Accordo di servizio
+	 */
+	public Map<String, String> findAzioniFromAPI(String tipoProtocollo, String nome, String tipoReferente, String nomeReferente, Integer versione, String val){
+		Map<String, String>  map = new HashMap<>();
+
+		this.logDebug("Get Lista Azioni from API [nome: " + nome + "]");
+		try{
+			map = this.dynamicUtilsService.findAzioniFromAPI(tipoProtocollo, nome, tipoReferente, nomeReferente, versione,val);
+		}catch(Exception e){
+			this.logError("Si e' verificato un errore durante la ricerca Azioni per l'accordo "+nome+ "]",e);
+		}
+		return map;
+	}
 
 
 	/***
