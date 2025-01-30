@@ -227,7 +227,7 @@
 						<ui:param name="sf_labelServizio" value="#{sf_labelServizio}" />
 				 	</ui:include>
 		
-				 	<a4j:outputPanel id="filtriRicercaServizioAzione" layout="block" rendered="#{sf_showAzioni and !empty sf_servizio}">
+				 	<a4j:outputPanel id="filtriRicercaServizioAzione" layout="block" rendered="#{sf_showAzioni and sf_bean.visualizzaFiltroAzioni}">
 						<ui:include src="/stat/includes/searchFormStatisticheFiltroAzione.xhtml">
 							<ui:param name="outOfRegionToRefresh" value="#{outOfRegionToRefresh}"/>
 							<ui:param name="sf_nomeMittente" value="#{sf_nomeMittente}" />

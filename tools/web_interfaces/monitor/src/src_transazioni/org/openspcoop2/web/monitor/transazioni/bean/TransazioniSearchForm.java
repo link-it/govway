@@ -1590,4 +1590,10 @@ Context, Cloneable {
 	public List<String> getElencoFieldRicercaDaIgnorare() {
 		return elencoFieldsRicercaDaIgnorare;
 	}
+	
+	@Override
+	public boolean isVisualizzaFiltroAzioni () {
+		// sf_bean.tipoRicercaSPCoop != 'im' and !empty sf_servizio
+		return !"im".equals(this.getTipoRicercaSPCoop()) && super.isVisualizzaFiltroAzioni();
+	}
 }
