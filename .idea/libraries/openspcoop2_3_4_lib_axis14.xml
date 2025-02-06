@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="openspcoop2_3.4_lib_axis14">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/axis14/wss4j-1.5.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/opensaml-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/neethi-2.0.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/addressing-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/axis-saaj-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/axis-jaxrpc-1.4-gov4j-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/axis-ant-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/axis-1.4-gov4j-jk1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/jakarta.activation-1.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

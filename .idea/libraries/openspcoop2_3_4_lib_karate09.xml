@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="openspcoop2_3.4_lib_karate09">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/testsuite/karate09/karate-core-0.9.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/testsuite/karate09/karate-apache-0.9.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/testsuite/karate09/karate-junit4-0.9.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/testsuite/karate09/picocli-4.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

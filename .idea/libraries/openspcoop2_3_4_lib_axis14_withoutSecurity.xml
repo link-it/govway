@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="openspcoop2_3.4_lib_axis14_withoutSecurity">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/axis14/axis-saaj-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/axis-jaxrpc-1.4-gov4j-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/axis-ant-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/axis14/axis-1.4-gov4j-jk1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

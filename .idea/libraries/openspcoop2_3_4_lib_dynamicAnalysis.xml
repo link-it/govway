@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="openspcoop2_3.4_lib_dynamicAnalysis">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/dynamicAnalysis/zap-clientapi-1.14.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

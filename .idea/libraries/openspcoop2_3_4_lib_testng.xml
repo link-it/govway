@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="openspcoop2_3.4_lib_testng">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/testsuite/testng/testng-7.10.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/testsuite/testng/jcommander-1.82.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/testsuite/testng/guice-5.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

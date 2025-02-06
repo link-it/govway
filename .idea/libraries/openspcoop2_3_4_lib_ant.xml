@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="openspcoop2_3.4_lib_ant">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/antinstaller/ant-1.10.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/git/org.eclipse.jgit-6.10.0.202406032230-r.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

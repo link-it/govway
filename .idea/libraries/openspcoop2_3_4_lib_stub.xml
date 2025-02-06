@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="openspcoop2_3.4_lib_stub">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/stub/cxf/openspcoop2_integrationManagerStub_cxf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stub/cxf/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stub/cxf/openspcoop2_protocol-modipa-soap-blocking-stub-cxf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stub/cxf/openspcoop2_protocol-modipa-soap-nonBlocking-push-server-stub-cxf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stub/cxf/openspcoop2_protocol-modipa-soap-nonBlocking-push-client-stub-cxf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stub/cxf/openspcoop2_protocol-modipa-soap-nonBlocking-pull-stub-cxf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stub/cxf/openspcoop2_protocol-modipa-rest-blocking-stub-cxf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stub/cxf/openspcoop2_protocol-modipa-rest-nonBlocking-push-server-stub-cxf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stub/cxf/openspcoop2_protocol-modipa-rest-nonBlocking-push-client-stub-cxf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/stub/cxf/openspcoop2_protocol-modipa-rest-nonBlocking-pull-stub-cxf.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

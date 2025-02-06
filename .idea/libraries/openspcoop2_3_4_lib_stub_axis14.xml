@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="openspcoop2_3.4_lib_stub_axis14">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/stub/axis14/openspcoop2_integrationManagerStub_axis14.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

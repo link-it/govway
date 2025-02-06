@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="openspcoop2_3.4_lib_apacheds">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/testsuite/apacheds/apacheds-all-2.0.0.AM27-gov4j-1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

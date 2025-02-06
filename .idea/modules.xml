@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/op2_3.4.dev.iml" filepath="$PROJECT_DIR$/op2_3.4.dev.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tools/ant_task/git_status/op2_3.4.dev_ant.git_status.iml" filepath="$PROJECT_DIR$/tools/ant_task/git_status/op2_3.4.dev_ant.git_status.iml" />
+      <module fileurl="file://$PROJECT_DIR$/protocolli/modipa/testsuite/op2_3.4.dev_protocolli.modipa.testsuite.iml" filepath="$PROJECT_DIR$/protocolli/modipa/testsuite/op2_3.4.dev_protocolli.modipa.testsuite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/protocolli/spcoop/testsuite/op2_3.4.dev_protocolli.spcoop.testsuite.iml" filepath="$PROJECT_DIR$/protocolli/spcoop/testsuite/op2_3.4.dev_protocolli.spcoop.testsuite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/protocolli/trasparente/testsuite/op2_3.4.dev_protocolli.trasparente.testsuite.iml" filepath="$PROJECT_DIR$/protocolli/trasparente/testsuite/op2_3.4.dev_protocolli.trasparente.testsuite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/protocolli/trasparente/testsuite/karate/op2_3.4.dev_protocolli.trasparente.testsuite.karate.iml" filepath="$PROJECT_DIR$/protocolli/trasparente/testsuite/karate/op2_3.4.dev_protocolli.trasparente.testsuite.karate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/testsuite/op2_3.4.dev_testsuite.iml" filepath="$PROJECT_DIR$/testsuite/op2_3.4.dev_testsuite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tools/zap/op2_3.4.dev_testsuite.zap.iml" filepath="$PROJECT_DIR$/tools/zap/op2_3.4.dev_testsuite.zap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tools/command_line_interfaces/govway_vault/testsuite/op2_3.4.dev_tools.cli.vault.testsuite.iml" filepath="$PROJECT_DIR$/tools/command_line_interfaces/govway_vault/testsuite/op2_3.4.dev_tools.cli.vault.testsuite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tools/rs/config/server/testsuite/op2_3.4.dev_tools.rs.config.server.testsuite.iml" filepath="$PROJECT_DIR$/tools/rs/config/server/testsuite/op2_3.4.dev_tools.rs.config.server.testsuite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tools/rs/monitor/server/testsuite/op2_3.4.dev_tools.rs.monitor.server.testsuite.iml" filepath="$PROJECT_DIR$/tools/rs/monitor/server/testsuite/op2_3.4.dev_tools.rs.monitor.server.testsuite.iml" />
+    </modules>
+  </component>
+</project>

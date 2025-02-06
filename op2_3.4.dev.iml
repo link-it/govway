@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/bin" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/core/deploy/deploy_web/web_app/WEB-INF" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/core/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/distrib/check" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/example/pdd/client/Benchmark/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/example/pdd/client/IntegrationManagerClient/cxf/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/example/pdd/client/JMSReceiver/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/example/pdd/client/JMXClient/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/example/pdd/client/PA_Invoker/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/example/pdd/client/PD_Invoker/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/example/pdd/server/testService/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/as4/example/domibusClient/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/as4/example/domibusJMSClient/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/as4/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/modipa/example/rest/blocking/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/modipa/example/rest/nonBlocking/pull/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/modipa/example/rest/nonBlocking/push/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/modipa/example/soap/blocking/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/modipa/example/soap/nonBlocking/pull/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/modipa/example/soap/nonBlocking/push/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/modipa/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/sdi/example/client/RicezioneFatture_v1.0/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/sdi/example/client/TrasmissioneFatture_v1.0/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/sdi/example/server/SdIRiceviFile_v1.0/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/sdi/example/server/SdIRiceviNotifica_v1.0/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/sdi/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/spcoop/example/tutorial/asincronoAsimmetrico/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/spcoop/example/tutorial/asincronoSimmetrico/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/spcoop/example/tutorial/oneway/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/spcoop/example/tutorial/sincrono/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/spcoop/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/trasparente/example/server/MTOMExample/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/trasparente/example/tutorial/oneway/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/trasparente/example/tutorial/sincrono/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/protocolli/trasparente/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/batch/runtime-repository/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/batch/statistiche/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/command_line_interfaces/config_loader/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/command_line_interfaces/govway_vault/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/command_line_interfaces/monitor_pdd/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/connection_pool/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/generic_project/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/rs/config/server/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/rs/monitor/server/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/rs/traccia/server/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/utils/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/web_interfaces/control_station/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/web_interfaces/lib/audit/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/web_interfaces/lib/mvc/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/web_interfaces/lib/users/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/web_interfaces/monitor/deploy/pages" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/web_interfaces/monitor/src/src_allarmi" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/web_interfaces/monitor/src/src_core" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/web_interfaces/monitor/src/src_eventi" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/web_interfaces/monitor/src/src_stat" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tools/web_interfaces/monitor/src/src_transazioni" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="library" name="openspcoop2_3.4_lib" level="project" />
+    <orderEntry type="library" name="openspcoop2_3.4_lib_stub" level="project" />
+    <orderEntry type="library" name="openspcoop2_3.4_lib_impl" level="project" />
+    <orderEntry type="library" name="openspcoop2_3.4_lib_testng" level="project" />
+    <orderEntry type="library" name="openspcoop2_3.4_lib_apacheds" level="project" />
+  </component>
+</module>
