@@ -27,9 +27,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -57,6 +65,7 @@ import org.apache.logging.log4j.core.config.yaml.YamlConfigurationFactory;
  *
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -376,5 +385,305 @@ public class LoggerWrapperFactory {
 		/**System.out.println("APPEND LOG ["+configUri+"] FINE");*/
 		
 	}
+	
+	
+	private static String readProperty(Properties loggerProperties, 
+			String propName, Map<String, String> applicationEnv, String defaultValue) {
+		String value = System.getenv(applicationEnv.get(propName));
+		if (value != null)
+			return value;
+		
+		value = System.getenv(Costanti.ENV_LOG.get(propName));
+		if (value != null)
+			return value;
+		
+		value = loggerProperties.getProperty(propName);
+		if (value != null)
+			return value;
+		
+		return defaultValue;
+	}
+	
+	
+	private static Set<String> getLoggersIdByName(Properties loggerProperties, List<String> loggerNames) {
+		Set<String> enabledLoggers = new HashSet<>(loggerNames);
+		Set<String> loggersId = new HashSet<>();
+		boolean enabledAll = enabledLoggers.contains(Boolean.TRUE.toString());
+		
+		if (enabledLoggers.contains(Boolean.FALSE.toString()) && enabledLoggers.size() == 1)
+			return loggersId;
+		
+		for (Map.Entry<Object, Object> p : loggerProperties.entrySet()) {
+			String key = p.getKey().toString().trim();
+			
+			
+			if (key.startsWith("logger.") && key.endsWith(".name")) {
+				String value = p.getValue().toString().trim();
+				
+				if (enabledAll || enabledLoggers.contains(value)) {
+					String loggerId = key.substring(0, key.length() - ".name".length());
+					loggersId.add(loggerId);
+				}
+			}
+		}
+		
+		return loggersId;
+	}
+	
+	private static Set<String> getLoggersIdByName(Properties loggerProperties, String propName, Map<String, String> applicationEnv) {
+		List<String> enabledList = List.of(readProperty(loggerProperties, propName, applicationEnv, "false").split(","));
+		enabledList = enabledList.stream().map(String::trim).collect(Collectors.toList());
+		return getLoggersIdByName(loggerProperties, enabledList);
+	}
+	
+	
+	private static Set<String> getAppendersIdByName(Properties loggerProperties, Set<String> appenderNames) {
+		Set<String> appenderIds = new HashSet<>();
+		for (Map.Entry<Object, Object> p : loggerProperties.entrySet()) {
+			String key = p.getKey().toString().trim();
+			
+			
+			if (key.startsWith("appender.") 
+					&& key.endsWith(".name")
+					&& appenderNames.contains(p.getValue().toString().trim())) {
+				
+					String appenderId = key.substring(0, key.length() - ".name".length());
+					appenderIds.add(appenderId);
+				}
+			
+		}
+		
+		return appenderIds;
+	}
+	
+	private static Set<String> getAppenderIdByLoggerName(Properties loggerProperties, String propName, Map<String, String> applicationEnv) {
+		Set<String> loggerIds = getLoggersIdByName(loggerProperties, propName, applicationEnv);
+		Set<String> appenderNames = new HashSet<>();
+		
+		if (loggerIds.isEmpty())
+			return Set.of();
+		
+		for (Map.Entry<Object, Object> p : loggerProperties.entrySet()) {
+			String key = p.getKey().toString().trim();
+			
+			
+			if (key.startsWith("logger.") && key.endsWith(".ref")) {
+				String loggerId = key.substring(0, key.indexOf(".appenderRef"));
+				if (loggerIds.contains(loggerId)) {
+					appenderNames.add(p.getValue().toString().trim());
+				}
+			}
+		}
+		
+		return getAppendersIdByName(loggerProperties, appenderNames);
+	}
+	
+	
+	/**
+	 * Applica le patch necessarie per far utilizzare ai logger indicati lo stdout come appender
+	 * @param loggerProperties
+	 * @param applicationEnv
+	 * @param vars
+	 * @return
+	 */
+	private static final Pattern LOG_VARIABLE_PATTERN = Pattern.compile("%\\{([^\\}]+)\\}");
+	private static Properties patchLoggersStdout(Properties loggerProperties, Map<String, String> applicationEnv, Map<String, String> vars) {
+		Set<String> loggerIds = getLoggersIdByName(loggerProperties, 
+				Costanti.PROP_ENABLE_STDOUT, 
+				applicationEnv);
+		
+		for (String loggerId : loggerIds) {
+			loggerProperties.put(loggerId + ".appenderRef.stdout.ref", "STDOUT");
+		}
+		
+		for (Map.Entry<Object, Object> p : loggerProperties.entrySet()) {
+			String key = p.getKey().toString().trim();
+			if (key.startsWith("appender.")
+					&& key.endsWith(".layout.pattern")) {
+				String value = p.getValue().toString().trim();
+				Matcher matcher = LOG_VARIABLE_PATTERN.matcher(value);
+				
+				value = matcher.replaceAll(m -> {
+					String out = vars.get(m.group(1).trim());
+					return Objects.requireNonNullElse(out, m.group());
+				});
+				
+				p.setValue(value);
+			}
+			
+		}
+		
+		return loggerProperties;
+	}
+	
+	/**
+	 * Applica le patch necessarie per formattare in JSON l'output dei vari logger indicati
+	 * @param loggerProperties
+	 * @param applicationEnv
+	 * @param vars
+	 * @return
+	 */
+	private static Properties patchLoggersJSON(Properties loggerProperties, Map<String, String> applicationEnv, Map<String, String> vars) {
+		Set<String> appenderIds = getAppenderIdByLoggerName(
+				loggerProperties, 
+				Costanti.PROP_ENABLE_JSON, 
+				applicationEnv);
+		
+		String jsonTemplate = readProperty(loggerProperties, 
+				Costanti.PROP_ENABLE_JSON_TEMPLATE,
+				applicationEnv,
+				"classpath:JsonLayout.json");
+		if (jsonTemplate != null) {
+			for (String appenderId : appenderIds) {
+				loggerProperties.remove(appenderId + ".layout.type");
+				loggerProperties.remove(appenderId + ".layout.pattern");
+				loggerProperties.put(appenderId + ".layout.type", "JsonTemplateLayout");
+				loggerProperties.put(appenderId + ".layout.eventTemplateUri", jsonTemplate.trim());
+			}
+		}
+		
+		Set<String> patchedAppenderIds = new HashSet<>();
+		for (Map.Entry<Object, Object> p : loggerProperties.entrySet()) {
+			String key = p.getKey().toString().trim();
+			
+			if (key.startsWith("appender")
+					&& key.endsWith(".layout.type")) {
+				String value = p.getValue().toString().trim();
+				if (!value.equals("JsonTemplateLayout"))
+					continue;
+				
+				String appenderId = key.substring(0, key.length() - ".layout.type".length());
+				if (patchedAppenderIds.contains(appenderId))
+					continue;
+					
+				int counter = 0;
+				final String TEMPLATE_ADDITIONAL_FIELD = "%s.layout.eventTemplateAdditionalField[%d]";
+				while(counter < 1000 && loggerProperties.contains(String.format(TEMPLATE_ADDITIONAL_FIELD, appenderId, counter) + ".key")) {
+					counter++;
+				}
+				for (Map.Entry<String, String> variable : vars.entrySet()) {
+					loggerProperties.put(String.format(TEMPLATE_ADDITIONAL_FIELD, appenderId, counter) + ".type", "EventTemplateAdditionalField");
+					loggerProperties.put(String.format(TEMPLATE_ADDITIONAL_FIELD, appenderId, counter) + ".key", variable.getKey());
+					loggerProperties.put(String.format(TEMPLATE_ADDITIONAL_FIELD, appenderId, counter) + ".value", variable.getValue());
+				}
+					
+				patchedAppenderIds.add(appenderId);
+			}
+		}
+		
+		return loggerProperties;
+	}
+	
+	
+	private static String clusterIdEnv;
+	private static String clusterIdStrategy;
+	private static Set<String> clusterId;
+	
+
+	/**
+	 * Modifica il percorso di un file aggiungendo un identificativo univoco del
+	 * nodo
+	 * @param filePath percorso originario del file
+	 * @param id id della risorsa da modificare
+	 * @return
+	 */
+	public static String applyClusterIdStrategy(String filePath, String id) {
+		if (clusterId.contains(id) || clusterId.contains(Boolean.TRUE.toString()))
+			return applyClusterIdStrategy(filePath);
+		return filePath;
+	}
+	
+	private static String applyClusterIdStrategy(String filePath) {
+		Path oldPath = Path.of(filePath);
+		String fileName = oldPath.getFileName().toString();
+		Path dir = oldPath.getParent();
+		
+		if (clusterIdStrategy.equals(Costanti.LOG_CLUSTERID_STRATEGY_FILENAME)) {
+			int index = fileName.lastIndexOf('.');
+			index = index == -1 ? fileName.length() : index;
+			String name = fileName.substring(0, index);
+			String extension = fileName.substring(index);
+			fileName = name + "." + clusterIdEnv + extension;
+		} else if (clusterIdStrategy.equals(Costanti.LOG_CLUSTERID_STRATEGY_DIRECTORY)) {
+			dir = dir.resolve(clusterIdEnv);
+		}
+		
+		return (dir.resolve(fileName).toString());
+	}
+	
+	/**
+	 * Inserisce le informazioni relative al cluster Id nel path del file di log,
+	 * usato per condividere lo stesso file system da nodi diversi mantenendo log separati
+	 * @param loggerProperties proprieta dei logger
+	 * @param applicationEnv mappa contenente le variabile d'ambiente delle applicazioni
+	 * @return
+	 */
+	private static Properties patchClusterIdPath(Properties loggerProperties, Map<String, String> applicationEnv) {
+		clusterIdEnv = readProperty(loggerProperties, 
+				Costanti.PROP_ENABLE_LOG_CLUSTERID_ENV, 
+				applicationEnv, null);
+		clusterIdEnv = clusterIdEnv == null ? System.getenv("HOSTNAME") : clusterIdEnv;
+		if (clusterIdEnv == null)
+			return loggerProperties;
+		
+		clusterId = List.of(readProperty(loggerProperties, 
+				Costanti.PROP_ENABLE_LOG_CLUSTERID, 
+				applicationEnv,
+				Boolean.FALSE.toString()).split(","))
+				.stream()
+				.map(String::trim)
+				.collect(Collectors.toSet());
+		
+		Set<String> appenderIds = LoggerWrapperFactory.getAppenderIdByLoggerName(loggerProperties, 
+				Costanti.PROP_ENABLE_LOG_CLUSTERID, 
+				applicationEnv);
+		
+		if (appenderIds.isEmpty())
+			return loggerProperties;
+		
+		clusterIdStrategy = readProperty(loggerProperties, 
+				Costanti.PROP_ENABLE_LOG_CLUSTERID_STRATEGY, 
+				applicationEnv,
+				Costanti.LOG_CLUSTERID_STRATEGY_DIRECTORY);
+		clusterIdStrategy = clusterIdStrategy.trim();
+		
+		for (Map.Entry<Object, Object> p : loggerProperties.entrySet()) {
+			String key = p.getKey().toString().trim();
+			String appenderId = null;
+			
+			if (key.startsWith("appender.")) {
+				if (key.endsWith(".fileName"))
+					appenderId = key.substring(0, key.length() - ".fileName".length());
+				if (key.endsWith(".filePattern"))
+					appenderId = key.substring(0, key.length() - ".filePattern".length());
+			}
+			
+			if (appenderId != null && appenderIds.contains(appenderId)) {
+					String value = p.getValue().toString().trim();
+					p.setValue(applyClusterIdStrategy(value));
+			}
+			
+		}
+		
+		
+		return loggerProperties;
+	}
+	
+	/**
+	 * Aggiorna i logger per usufruire di tutti i servizi pilotati tramite variabili d'ambiente
+	 * o proprieta nei vari file log4j2.properties, le varie proprieta sono presenti nella classe
+	 * org.openspcoop2.utils.Costanti
+	 * @param loggerProperties
+	 * @param propertyToEnv
+	 * @param vars
+	 * @return
+	 */
+	public static Properties patchLoggers(Properties loggerProperties, Map<String, String> propertyToEnv, Map<String, String> vars) {
+		patchClusterIdPath(loggerProperties, propertyToEnv);
+		patchLoggersStdout(loggerProperties, propertyToEnv, vars);
+		patchLoggersJSON(loggerProperties, propertyToEnv, vars);
+		return loggerProperties;
+	}
+
 
 }
