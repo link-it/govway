@@ -992,6 +992,12 @@
 			<param name="token" value="org.openspcoop2.pdd.hazelcast.diagnostics.directory"/>
 			<param name="value" value="${log_dir}/hazelcast"/>
 		</antcall>
+		<!-- XSD BUILD_SCHEMA DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.openspcoop2.pdd.validazioneContenutiApplicativi.xsd.buildSchema.serializeXSDCollection.dir"/>
+			<param name="value" value="${log_dir}/xsdCollection"/>
+		</antcall>		
 
 		<!-- OTHER -->
 		<if>

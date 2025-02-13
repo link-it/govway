@@ -159,6 +159,7 @@ import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.ADDITIONAL;
 import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
 import org.openspcoop2.utils.openapi.validator.OpenAPILibrary;
 import org.openspcoop2.utils.resources.Charset;
+import org.openspcoop2.utils.resources.FileSystemMkdirConfig;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.CertificateValidityCheck;
@@ -22511,6 +22512,57 @@ public class OpenSPCoop2Properties {
 		return this.isValidazioneContenutiApplicativiXsdBuildSchemaErrorSerializeXSDCollection;
 	}
 	
+	private File getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir = null;
+	private Boolean getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDirRead = null;
+	public File getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir() throws CoreException{
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.xsd.buildSchema.serializeXSDCollection.dir";
+		if(this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDirRead==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir = new File(value);
+					checkValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir();
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore per la directory che deve collezionare gli xsd schema ("+pName+"): "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}
+			
+			this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDirRead = true;
+		}
+
+		return this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir;
+	}
+	private void checkValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir() throws CoreException, UtilsException {	
+		if(this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir.exists()) {
+			if(!this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir.isDirectory()) {
+				throw newCoreExceptionNotDir(this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir,true);
+			}
+			if(!this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir.canRead()) {
+				throw newCoreExceptionCannotRead(this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir, true);
+			}
+			if(!this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir.canWrite()) {
+				throw newCoreExceptionCannotWrite(this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir, true);
+			}
+		}
+		else {
+			FileSystemMkdirConfig configMkdir = new FileSystemMkdirConfig();
+			configMkdir.setCheckCanWrite(true);
+			configMkdir.setCheckCanRead(true);
+			configMkdir.setCheckCanExecute(false);
+			configMkdir.setCrateParentIfNotExists(true);
+			FileSystemUtilities.mkdir(this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir, configMkdir);
+		}
+	}
+	
+	
+	
+	
+		
 	private Boolean isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione = null;
 	public boolean isValidazioneContenutiApplicativiRpcLiteralXsiTypeGestione(){
 
