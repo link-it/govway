@@ -8774,8 +8774,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				List<DataElement> e = new ArrayList<>();
 				
-				Parameter pIdTAb = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, ""+idTabP);
-				Parameter pIdConnTab = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, ""+idTab);
+				Parameter pIdConnTab = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, ""+tab);
 				Parameter pNomePaSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA, paSA.getNome());
 				
 				// nome e stato
@@ -8852,7 +8851,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 				DataElementImage image = new DataElementImage();
 				
-				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pIdConnTab, pConfigurazioneDatiGenerali,
+				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTab, pIdConnTab, pConfigurazioneDatiGenerali,
 						pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM	);
 				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME));
 				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
@@ -8862,7 +8861,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				if(descrizioneEmpty) {
 					
 					image = new DataElementImage();
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneDescrizione, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTab,pConfigurazioneDescrizione, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.AGGIUNGI_DESCRIZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE));
 					image.setImage(CostantiControlStation.ICONA_AGGIUNGI_DESCRIZIONE);
 					
@@ -8877,7 +8876,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 						Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
 						image = new DataElementImage();
-						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, pIdSogg, pIdPorta,pIdAsps,  pNomePaSA, pIdTAb, pIdConnTab, pAbilita,
+						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, pIdSogg, pIdPorta,pIdAsps,  pNomePaSA, pIdTab, pIdConnTab, pAbilita,
 								pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 						image.setToolTip(statoMapping);
 						image.setImage(statoPA ? CostantiControlStation.ICONA_MODIFICA_TOGGLE_ON : CostantiControlStation.ICONA_MODIFICA_TOGGLE_OFF);
@@ -8887,7 +8886,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (schedulingPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
 							Parameter pScheduling = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SCHEDULING,  "true");
 							image = new DataElementImage();
-							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, pIdSogg, pIdPorta,pIdAsps,  pNomePaSA, pIdTAb, pIdConnTab, pAbilita,
+							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, pIdSogg, pIdPorta,pIdAsps,  pNomePaSA, pIdTab, pIdConnTab, pAbilita,
 									pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM,
 									pScheduling);
 							image.setToolTip(statoScheduling);
@@ -8918,7 +8917,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setCopyToClipboard(descrizioneOrig);
 										
 					image = new DataElementImage();
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneDescrizione, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTab,pConfigurazioneDescrizione, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE));
 					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 					
@@ -8939,7 +8938,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				image = new DataElementImage();
 				
-				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pIdConnTab, pConfigurazioneConnettore, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
+				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTab, pIdConnTab, pConfigurazioneConnettore, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE));
 				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 				
@@ -8950,7 +8949,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				if(checkConnettore) {
 					long idConnettore = connettore.getId();
 					image = new DataElementImage();
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, pIdSogg, pIdPorta, pIdAsps, pIdTAb, pIdConnTab, 
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, pIdSogg, pIdPorta, pIdAsps, pIdTab, pIdConnTab, 
 							new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""),
 							pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE));
@@ -8988,7 +8987,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					image = new DataElementImage();
 					
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pIdConnTab, pConfigurazioneFiltro,pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTab, pIdConnTab, pConfigurazioneFiltro,pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI));
 					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 					
@@ -9011,7 +9010,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					image = new DataElementImage();
 					
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pIdConnTab, pAccessoDaAPS);
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTab, pIdConnTab, pAccessoDaAPS);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE));
 					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 					
@@ -9031,7 +9030,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					image = new DataElementImage();
 					
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_LIST,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pIdConnTab);
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_LIST,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTab, pIdConnTab);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA));
 					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 					
@@ -9124,7 +9123,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					image = new DataElementImage();
 					
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pIdConnTab, pAccessoDaAPS);
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE,pIdSogg, pIdPorta, pIdAsps, pNomePaSA, pIdTab, pIdConnTab, pAccessoDaAPS);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, label));
 					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 					
