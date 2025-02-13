@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.utils.SemaphoreLock;
+
 /**
  * IDSerialGeneratorBuffer
  *
@@ -64,7 +66,7 @@ public class IDSerialGeneratorBuffer {
 	protected static String nextValue(Class<?> cIdSerialGenerator,String relativeInfo){
 		String key = getKey(cIdSerialGenerator, relativeInfo);
 		//synchronized(buffer){
-		semaphore.acquireThrowRuntime("nextValue");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("nextValue");
 		try {
 			if(buffer.size()<=0 || !buffer.containsKey(key)){
 				return null;
@@ -84,14 +86,14 @@ public class IDSerialGeneratorBuffer {
 				}
 			}
 		}finally {
-			semaphore.release("nextValue");
+			semaphore.release(lock, "nextValue");
 		}
 	}
 	
 	protected static void putAll(List<String> valuesGenerated,Class<?> cIdSerialGenerator,String relativeInfo){
 		String key = getKey(cIdSerialGenerator, relativeInfo);
 		//synchronized(buffer){
-		semaphore.acquireThrowRuntime("putAll");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("putAll");
 		try {
 			List<String> l = null;
 			if(buffer.containsKey(key)){
@@ -105,26 +107,26 @@ public class IDSerialGeneratorBuffer {
 			}
 			l.addAll(valuesGenerated);	
 		}finally {
-			semaphore.release("putAll");
+			semaphore.release(lock, "putAll");
 		}
 	}
 	
 	protected static void clearBuffer(){
 		//synchronized(buffer){
-		semaphore.acquireThrowRuntime("clearBuffer");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("clearBuffer");
 		try {
 			if(buffer!=null && buffer.size()>0){
 				buffer.clear();
 			}
 		}finally {
-			semaphore.release("clearBuffer");
+			semaphore.release(lock, "clearBuffer");
 		}
 	}
 	
 	protected static void clearBuffer(Class<?> cIdSerialGenerator){
 		String prefix = getPrefix(cIdSerialGenerator);
 		//synchronized(buffer){
-		semaphore.acquireThrowRuntime("clearBuffer_class");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("clearBuffer_class");
 		try {
 			if(buffer!=null && buffer.size()>0){
 				List<String> remove = new ArrayList<>();
@@ -138,7 +140,7 @@ public class IDSerialGeneratorBuffer {
 				}
 			}
 		}finally {
-			semaphore.release("clearBuffer_class");
+			semaphore.release(lock, "clearBuffer_class");
 		}
 	}
 

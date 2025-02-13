@@ -55,6 +55,7 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -528,7 +529,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 	}
 	private void _checkMap(Connection con) throws PolicyException {
 		
-		this.getLockCheckMap().acquireThrowRuntime("checkMap");
+		SemaphoreLock lock = this.getLockCheckMap().acquireThrowRuntime("checkMap");
 		try {
 
 			if(!this.mapExists) {
@@ -777,7 +778,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 			}
 			
 		}finally {
-			this.getLockCheckMap().release("checkMap");
+			this.getLockCheckMap().release(lock, "checkMap");
 		}
 	}
 	

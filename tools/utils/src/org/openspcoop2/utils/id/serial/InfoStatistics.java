@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 
 /**
@@ -53,7 +54,7 @@ public class InfoStatistics {
 	
 	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("InfoStatistics");
 	public void addErrorSerializableAccess(Throwable e){
-		this.semaphore.acquireThrowRuntime("addErrorSerializableAccess");
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("addErrorSerializableAccess");
 		try {
 			Throwable msgE = Utilities.getInnerNotEmptyMessageException(e);
 			String msg = null;
@@ -78,7 +79,7 @@ public class InfoStatistics {
 				this._occurs.put(msg, occur);
 			}
 		}finally {
-			this.semaphore.release("addErrorSerializableAccess");
+			this.semaphore.release(lock, "addErrorSerializableAccess");
 		}
 	}
 	

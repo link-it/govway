@@ -40,6 +40,7 @@ import org.apache.wss4j.common.saml.bean.Version;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.KeystoreConstants;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 
 /**
@@ -56,13 +57,13 @@ public class SAMLBuilderConfig {
 	private static Map<String, SAMLBuilderConfig> samlCacheConfig = new ConcurrentHashMap<>();
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("SAMLBuilderConfig");
 	private static void addSamlConfig(String propertiesName,SAMLBuilderConfig p){
-		semaphore.acquireThrowRuntime("addSamlConfig");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("addSamlConfig");
 		try {
 			if(!samlCacheConfig.containsKey(propertiesName)){
 				samlCacheConfig.put(propertiesName, p);
 			}
 		}finally {
-			semaphore.release("addSamlConfig");
+			semaphore.release(lock, "addSamlConfig");
 		}
 	}
 	public static SAMLBuilderConfig getSamlConfig(String properties, RequestInfo requestInfo) throws IOException {

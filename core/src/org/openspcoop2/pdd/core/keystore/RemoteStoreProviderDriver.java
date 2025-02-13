@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.timers.TimerException;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDEvent;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -191,8 +192,9 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 		}
 		
 		org.openspcoop2.utils.Semaphore semaphore = getLockStore(this.remoteStoreConfig.getStoreName());
+		SemaphoreLock lock = null;
 		try {
-			semaphore.acquire("readKey");
+			lock = semaphore.acquire("readKey");
 		}catch(Exception e) {
 			throw new KeystoreException(e.getMessage(),e);
 		}
@@ -222,7 +224,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 		}catch(Exception e) {
 			throw new KeystoreException(e.getMessage(),e);
 		}finally {
-			semaphore.release("readKey");
+			semaphore.release(lock, "readKey");
 		}
 		
 	}
@@ -359,8 +361,9 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 		}
 		
 		org.openspcoop2.utils.Semaphore semaphore = getLockStore(this.remoteStoreConfig.getStoreName());
+		SemaphoreLock lock = null;
 		try {
-			semaphore.acquire("readClientDetails");
+			lock = semaphore.acquire("readClientDetails");
 		}catch(Exception e) {
 			throw new KeystoreException(e.getMessage(),e);
 		}
@@ -401,7 +404,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 		}catch(Exception e) {
 			throw new KeystoreException(e.getMessage(),e);
 		}finally {
-			semaphore.release("readClientDetails");
+			semaphore.release(lock, "readClientDetails");
 		}
 		
 	}

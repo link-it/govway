@@ -1,3 +1,9 @@
+2025-02-13  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayCore]
+	Aggiunta funzionalità #1575
+	Le funzionalità di lock basate su semafori sono state estese con uno scheduler che permette il rilascio automatico del lock dopo un timeout configurabile.
+
 2025-02-04  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.16

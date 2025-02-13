@@ -23,6 +23,7 @@ package org.openspcoop2.core.registry.rest;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.rest.api.Api;
 
 /**
@@ -61,11 +62,11 @@ public class AccordoServizioWrapper implements java.io.Serializable, Cloneable{
 	}
 	
 	public void updateApi(Api api) {
-		this.getSemaphore().acquireThrowRuntime("updateAPI");
+		SemaphoreLock lock = this.getSemaphore().acquireThrowRuntime("updateAPI");
 		try {
 			this.api = api;
 		}finally {
-			this.getSemaphore().release("updateAPI");
+			this.getSemaphore().release(lock, "updateAPI");
 		}
 	}
 

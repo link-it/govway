@@ -117,6 +117,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -2266,7 +2267,7 @@ public class ConfigurazionePdD  {
 			ConfigurazionePdDType tipoConfigurazione,
 			Class<?>[] classArgoments, Object[] values) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 
-		semaphore_getObjectCache.acquireThrowRuntime("getObjectCache");
+		SemaphoreLock lock = semaphore_getObjectCache.acquireThrowRuntime("getObjectCache");
 		DriverConfigurazioneNotFound dNotFound = null;
 		Object obj = null;
 		try{
@@ -2336,7 +2337,7 @@ public class ConfigurazionePdD  {
 			else
 				throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
 		}finally {
-			semaphore_getObjectCache.release("getObjectCache");
+			semaphore_getObjectCache.release(lock, "getObjectCache");
 		}
 
 		if(dNotFound!=null){
@@ -3053,7 +3054,7 @@ public class ConfigurazionePdD  {
 
 		Template template = null;
 		
-		semaphore_getTemplateTrasformazionePD.acquireThrowRuntime(nomeMetodo);
+		SemaphoreLock lock = semaphore_getTemplateTrasformazionePD.acquireThrowRuntime(nomeMetodo);
 		try {
 			
 			if(this.cache!=null) {
@@ -3090,7 +3091,7 @@ public class ConfigurazionePdD  {
 			}
 			
 		}finally {
-			semaphore_getTemplateTrasformazionePD.release(nomeMetodo);
+			semaphore_getTemplateTrasformazionePD.release(lock, nomeMetodo);
 		}
 
 		return template;
@@ -3147,7 +3148,7 @@ public class ConfigurazionePdD  {
 
 		Template template = null;
 		
-		semaphore_getTemplateTrasformazionePD.acquireThrowRuntime(nomeMetodo);
+		SemaphoreLock lock = semaphore_getTemplateTrasformazionePD.acquireThrowRuntime(nomeMetodo);
 		try {
 			
 			if(this.cache!=null) {
@@ -3190,7 +3191,7 @@ public class ConfigurazionePdD  {
 			}
 			
 		}finally {
-			semaphore_getTemplateTrasformazionePD.release(nomeMetodo);
+			semaphore_getTemplateTrasformazionePD.release(lock, nomeMetodo);
 		}
 
 		return template;
@@ -3911,7 +3912,7 @@ public class ConfigurazionePdD  {
 
 		Template template = null;
 		
-		semaphore_getTemplateTrasformazionePA.acquireThrowRuntime(nomeMetodo);
+		SemaphoreLock lock = semaphore_getTemplateTrasformazionePA.acquireThrowRuntime(nomeMetodo);
 		try {
 			
 			if(this.cache!=null) {
@@ -3948,7 +3949,7 @@ public class ConfigurazionePdD  {
 			}
 			
 		}finally {
-			semaphore_getTemplateTrasformazionePA.release(nomeMetodo);
+			semaphore_getTemplateTrasformazionePA.release(lock, nomeMetodo);
 		}
 
 		return template;
@@ -4004,7 +4005,7 @@ public class ConfigurazionePdD  {
 
 		Template template = null;
 		
-		semaphore_getTemplateTrasformazionePA.acquireThrowRuntime(nomeMetodo);
+		SemaphoreLock lock = semaphore_getTemplateTrasformazionePA.acquireThrowRuntime(nomeMetodo);
 		try {
 			
 			if(this.cache!=null) {
@@ -4047,7 +4048,7 @@ public class ConfigurazionePdD  {
 			}
 			
 		}finally {
-			semaphore_getTemplateTrasformazionePA.release(nomeMetodo);
+			semaphore_getTemplateTrasformazionePA.release(lock, nomeMetodo);
 		}
 
 		return template;
@@ -5503,7 +5504,7 @@ public class ConfigurazionePdD  {
 
 		Template template = null;
 		
-		semaphore_getTemplateTrasformazione.acquireThrowRuntime(nomeMetodo);
+		SemaphoreLock lock = semaphore_getTemplateTrasformazione.acquireThrowRuntime(nomeMetodo);
 		try {
 			
 			if(this.cache!=null) {
@@ -5540,7 +5541,7 @@ public class ConfigurazionePdD  {
 			}
 			
 		}finally {
-			semaphore_getTemplateTrasformazione.release(nomeMetodo);
+			semaphore_getTemplateTrasformazione.release(lock, nomeMetodo);
 		}
 
 		return template;
@@ -5596,7 +5597,7 @@ public class ConfigurazionePdD  {
 
 		Template template = null;
 		
-		semaphore_getTemplateTrasformazione.acquireThrowRuntime(nomeMetodo);
+		SemaphoreLock lock = semaphore_getTemplateTrasformazione.acquireThrowRuntime(nomeMetodo);
 		try {
 			
 			if(this.cache!=null) {
@@ -5639,7 +5640,7 @@ public class ConfigurazionePdD  {
 			}
 			
 		}finally {
-			semaphore_getTemplateTrasformazione.release(nomeMetodo);
+			semaphore_getTemplateTrasformazione.release(lock, nomeMetodo);
 		}
 
 		return template;
@@ -6358,7 +6359,7 @@ public class ConfigurazionePdD  {
 			Connection connectionPdD,
 			IDServizio idServizio) throws DriverConfigurazioneException{
 
-		semaphore_getMappingErogazionePortaApplicativaListCache.acquireThrowRuntime("getMappingErogazionePortaApplicativaListCache");
+		SemaphoreLock lock = semaphore_getMappingErogazionePortaApplicativaListCache.acquireThrowRuntime("getMappingErogazionePortaApplicativaListCache");
 		List<MappingErogazionePortaApplicativa> obj = null;
 		try{
 
@@ -6414,7 +6415,7 @@ public class ConfigurazionePdD  {
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
 		}finally {
-			semaphore_getMappingErogazionePortaApplicativaListCache.release("getMappingErogazionePortaApplicativaListCache");
+			semaphore_getMappingErogazionePortaApplicativaListCache.release(lock, "getMappingErogazionePortaApplicativaListCache");
 		}
 
 		return obj;
@@ -6485,7 +6486,7 @@ public class ConfigurazionePdD  {
 			Connection connectionPdD,
 			IDSoggetto idFruitore, IDServizio idServizio) throws DriverConfigurazioneException{
 
-		semaphore_getMappingFruizionePortaDelegataListCache.acquireThrowRuntime("getMappingFruizionePortaDelegataListCache");
+		SemaphoreLock lock = semaphore_getMappingFruizionePortaDelegataListCache.acquireThrowRuntime("getMappingFruizionePortaDelegataListCache");
 		List<MappingFruizionePortaDelegata> obj = null;
 		try{
 
@@ -6541,7 +6542,7 @@ public class ConfigurazionePdD  {
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
 		}finally {
-			semaphore_getMappingFruizionePortaDelegataListCache.release("getMappingFruizionePortaDelegataListCache");
+			semaphore_getMappingFruizionePortaDelegataListCache.release(lock, "getMappingFruizionePortaDelegataListCache");
 		}
 
 		return obj;
@@ -6622,7 +6623,7 @@ public class ConfigurazionePdD  {
 	private static org.openspcoop2.utils.Semaphore semaphore_isForwardProxyEnabledCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_ForwardProxy");
 	private boolean isForwardProxyEnabledCache(String keyCache) throws DriverConfigurazioneException{
 
-		semaphore_isForwardProxyEnabledCache.acquireThrowRuntime("isForwardProxyEnabledCache");
+		SemaphoreLock lock = semaphore_isForwardProxyEnabledCache.acquireThrowRuntime("isForwardProxyEnabledCache");
 		boolean obj = false;
 		try{
 
@@ -6675,7 +6676,7 @@ public class ConfigurazionePdD  {
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
 		}finally {
-			semaphore_isForwardProxyEnabledCache.release("isForwardProxyEnabledCache");
+			semaphore_isForwardProxyEnabledCache.release(lock, "isForwardProxyEnabledCache");
 		}
 
 		return obj;
@@ -6752,7 +6753,7 @@ public class ConfigurazionePdD  {
 	private static org.openspcoop2.utils.Semaphore semaphore_getForwardProxyConfigCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_ForwardProxyConfig");
 	private ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio, IDGenericProperties policy, RequestInfo requestInfo) throws DriverConfigurazioneException{
 
-		semaphore_getForwardProxyConfigCache.acquireThrowRuntime("getForwardProxyConfigCache");
+		SemaphoreLock lock = semaphore_getForwardProxyConfigCache.acquireThrowRuntime("getForwardProxyConfigCache");
 		ForwardProxy obj = null;
 		try{
 
@@ -6808,7 +6809,7 @@ public class ConfigurazionePdD  {
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
 		}finally {
-			semaphore_getForwardProxyConfigCache.release("getForwardProxyConfigCache");
+			semaphore_getForwardProxyConfigCache.release(lock, "getForwardProxyConfigCache");
 		}
 
 		return obj;
@@ -6868,7 +6869,7 @@ public class ConfigurazionePdD  {
 	private static org.openspcoop2.utils.Semaphore semaphore_getContentFileCache = new org.openspcoop2.utils.Semaphore("ConfigurazionePdD_ContentFile");
 	private ContentFile getContentFileCache(String keyCache, File file) throws DriverConfigurazioneException{
 
-		semaphore_getContentFileCache.acquireThrowRuntime("getContentFileCache");
+		SemaphoreLock lock = semaphore_getContentFileCache.acquireThrowRuntime("getContentFileCache");
 		ContentFile obj = null;
 		try{
 
@@ -6924,7 +6925,7 @@ public class ConfigurazionePdD  {
 		}catch(Exception e){
 			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
 		}finally {
-			semaphore_getContentFileCache.release("getContentFileCache");
+			semaphore_getContentFileCache.release(lock, "getContentFileCache");
 		}
 
 		return obj;

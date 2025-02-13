@@ -30,6 +30,7 @@ import java.util.List;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
@@ -420,11 +421,11 @@ public abstract class AbstractXPathExpressionEngine {
 						try{
 							if(reader!=null) {
 								//synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) { // vedi test TestBugFWK005ParseXerces
-								lockObjectForBugFWK005ParseXerces.acquire("concat_openspcoopEvaluate");
+								SemaphoreLock lock = lockObjectForBugFWK005ParseXerces.acquire("concat_openspcoopEvaluate");
 								try {
 									result = expression.evaluate(new org.xml.sax.InputSource(reader));
 								}finally {
-									lockObjectForBugFWK005ParseXerces.release("concat_openspcoopEvaluate");
+									lockObjectForBugFWK005ParseXerces.release(lock, "concat_openspcoopEvaluate");
 								}
 							}
 							else { 
@@ -522,11 +523,11 @@ public abstract class AbstractXPathExpressionEngine {
 				try{
 					if(reader!=null) {
 						//synchronized (AbstractXPathExpressionEngine.synchronizedObjectForBugFWK005ParseXerces) { // vedi test TestBugFWK005ParseXerces
-						lockObjectForBugFWK005ParseXerces.acquire("standardEvaluate");
+						SemaphoreLock lock = lockObjectForBugFWK005ParseXerces.acquire("standardEvaluate");
 						try {
 							result = expression.evaluate(new org.xml.sax.InputSource(reader),returnType.getValore());
 						}finally {
-							lockObjectForBugFWK005ParseXerces.release("standardEvaluate");
+							lockObjectForBugFWK005ParseXerces.release(lock, "standardEvaluate");
 						}
 					}else{
 						result = expression.evaluate(this.readXPathElement(contenutoAsElement),returnType.getValore());

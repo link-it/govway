@@ -27,6 +27,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
@@ -76,11 +77,11 @@ public class StatisticsCollection {
 	/* ***** UPDATE STATO ******* */
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("StatisticsCollection");
 	public static void update(Statistic stat){
-		semaphore.acquireThrowRuntime("update");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("update");
 		try {
 			updateEngine(stat);
 		}finally {
-			semaphore.release("update");
+			semaphore.release(lock, "update");
 		}
 	}
 	private static void updateEngine(Statistic stat){

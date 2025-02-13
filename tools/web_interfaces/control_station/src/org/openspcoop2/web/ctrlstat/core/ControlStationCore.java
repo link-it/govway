@@ -171,6 +171,7 @@ import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.SortedMap;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
@@ -5958,15 +5959,15 @@ public class ControlStationCore {
 	private static AuditAppender auditManager = null;
 	private static Semaphore semaphoreAuditLock = new Semaphore("ControlStationCoreAudit");
 	public static void clearAuditManager(){
-		ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("clearAuditManager");
+		SemaphoreLock lock = ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("clearAuditManager");
 		try {
 			ControlStationCore.auditManager = null;	
 		}finally {
-			ControlStationCore.semaphoreAuditLock.release("clearAuditManager");
+			ControlStationCore.semaphoreAuditLock.release(lock, "clearAuditManager");
 		}
 	}
 	private static synchronized void initializeAuditManager(String tipoDatabase) throws DriverControlStationException{
-		ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("initializeAuditManager");
+		SemaphoreLock lock = ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("initializeAuditManager");
 		try {
 			if(ControlStationCore.auditManager==null){
 				ControlStationCore.auditManager= new AuditAppender();
@@ -5999,14 +6000,14 @@ public class ControlStationCore {
 				}
 			}
 		}finally {
-			ControlStationCore.semaphoreAuditLock.release("initializeAuditManager");
+			ControlStationCore.semaphoreAuditLock.release(lock, "initializeAuditManager");
 		}
 	}
 	public static synchronized void updateAuditManagerConfiguration(String tipoDatabase) throws DriverControlStationException{
 		if(ControlStationCore.auditManager==null){
 			throw new DriverControlStationException("AuditManager non inizializzato");
 		}
-		ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("updateAuditManagerConfiguration");
+		SemaphoreLock lock = ControlStationCore.semaphoreAuditLock.acquireThrowRuntime("updateAuditManagerConfiguration");
 		try {
 			Connection con = null;
 			org.openspcoop2.web.lib.audit.dao.Configurazione configurazioneAuditing = null;
@@ -6035,7 +6036,7 @@ public class ControlStationCore {
 				throw new DriverControlStationException("Aggiornamento configurazione auditManager non riuscita: "+e.getMessage(),e);
 			}
 		}finally {
-			ControlStationCore.semaphoreAuditLock.release("updateAuditManagerConfiguration");
+			ControlStationCore.semaphoreAuditLock.release(lock, "updateAuditManagerConfiguration");
 		}
 	}
 	private static void checkAuditDBAppender(org.openspcoop2.web.lib.audit.dao.Configurazione configurazioneAuditing,String tipoDatabase){
@@ -6901,11 +6902,11 @@ public class ControlStationCore {
 		}
 	}
 	public static void invalidateConfigurazioneGeneraleEngine() {
-		ControlStationCore.configurazioneInstanceSemaphore.acquireThrowRuntime("invalidateConfigurazioneGenerale");
+		SemaphoreLock lock = ControlStationCore.configurazioneInstanceSemaphore.acquireThrowRuntime("invalidateConfigurazioneGenerale");
 		try {
 			ControlStationCore.configurazioneInstance=null;
 		}finally {
-			ControlStationCore.configurazioneInstanceSemaphore.release("invalidateConfigurazioneGenerale");
+			ControlStationCore.configurazioneInstanceSemaphore.release(lock, "invalidateConfigurazioneGenerale");
 		}
 	}
 	public Configurazione getConfigurazioneGenerale() throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
@@ -6916,11 +6917,11 @@ public class ControlStationCore {
 	}
 	private void initSyncConfigurazioneGenerale() throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		if(ControlStationCore.configurazioneInstance==null) {
-			ControlStationCore.configurazioneInstanceSemaphore.acquireThrowRuntime("initConfigurazioneGenerale");
+			SemaphoreLock lock = ControlStationCore.configurazioneInstanceSemaphore.acquireThrowRuntime("initConfigurazioneGenerale");
 			try {
 				initConfigurazioneGenerale();
 			}finally {
-				ControlStationCore.configurazioneInstanceSemaphore.release("initConfigurazioneGenerale");
+				ControlStationCore.configurazioneInstanceSemaphore.release(lock, "initConfigurazioneGenerale");
 			}
 		}
 	}

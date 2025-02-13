@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -538,7 +539,7 @@ public class GestoreLoadBalancerCaching {
     		
 			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 			//synchronized (GestoreLoadBalancerCaching.cache) {
-			GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getLoadBalancerPool", idTransazione);
+			SemaphoreLock lock = GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getLoadBalancerPool", idTransazione);
 			try {
 				
 				response = 
@@ -577,7 +578,7 @@ public class GestoreLoadBalancerCaching {
 					throw new BehaviourException("Metodo (getLoadBalancerPool) non è riuscito a costruire un pool");
 				}
 			}finally {
-				GestoreLoadBalancerCaching.lock.release("getLoadBalancerPool", idTransazione);
+				GestoreLoadBalancerCaching.lock.release(lock, "getLoadBalancerPool", idTransazione);
 			}
     	}
     	
@@ -687,7 +688,7 @@ public class GestoreLoadBalancerCaching {
     		
 			String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 			//synchronized (GestoreLoadBalancerCaching.cache) {
-			GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getNomeConnettore", idTransazione);
+			SemaphoreLock lock = GestoreLoadBalancerCaching.lock.acquireThrowRuntime("getNomeConnettore", idTransazione);
 			try {
 				
 				response = 
@@ -777,7 +778,7 @@ public class GestoreLoadBalancerCaching {
 				return stickyConnector.getConnector();
 
 			}finally {
-				GestoreLoadBalancerCaching.lock.release("getNomeConnettore", idTransazione);
+				GestoreLoadBalancerCaching.lock.release(lock, "getNomeConnettore", idTransazione);
 			}
     	}
     	

@@ -41,6 +41,7 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Map;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
@@ -102,7 +103,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 
 	@Override
 	public void initMap(java.util.Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
-		this.getLock().acquireThrowRuntime("initMap");
+		SemaphoreLock slock = this.getLock().acquireThrowRuntime("initMap");
 		try {
 			if(map!=null && !map.isEmpty()) {
 				for (IDUnivocoGroupByPolicy datiGroupBy : map.keySet()) {
@@ -114,7 +115,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 			}
 		}
 		finally {
-			this.getLock().release("initMap");
+			this.getLock().release(slock, "initMap");
 		}
 	}
 
@@ -122,28 +123,28 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 	@Override
 	public void resetCounters(){
 
-		this.getLock().acquireThrowRuntime("resetCounters");
+		SemaphoreLock slock = this.getLock().acquireThrowRuntime("resetCounters");
 		try {
 			if(this.mapActiveThreads.size()>0){
 				Iterator<DatiCollezionati> datiCollezionati = this.mapActiveThreads.values().iterator();
 				while (datiCollezionati.hasNext()) {
-					DatiCollezionati item = (DatiCollezionati) datiCollezionati.next();
+					DatiCollezionati item = datiCollezionati.next();
 					item.resetCounters();
 				}
 			}
 		}
 		finally {
-			this.getLock().release("resetCounters");
+			this.getLock().release(slock, "resetCounters");
 		}
 	}
 	
 	
 	@Override
 	public void remove() throws UtilsException {
-		this.getLock().acquireThrowRuntime("remove");
+		SemaphoreLock slock = this.getLock().acquireThrowRuntime("remove");
 
 		try {
-			List<IDUnivocoGroupByPolicy> deleteList = new ArrayList<IDUnivocoGroupByPolicy>();
+			List<IDUnivocoGroupByPolicy> deleteList = new ArrayList<>();
 			for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
 				if(datiGroupBy instanceof IDUnivocoGroupByPolicyMapId){
 					IDUnivocoGroupByPolicyMapId mapId = (IDUnivocoGroupByPolicyMapId) datiGroupBy;
@@ -159,7 +160,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 			}
 			
 		} 	finally {
-			this.getLock().release("remove");
+			this.getLock().release(slock, "remove");
 		}
 	}
 
@@ -169,7 +170,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 
 		DatiCollezionati datiCollezionati;
 
-		this.getLock().acquireThrowRuntime("registerStartRequest");
+		SemaphoreLock slock = this.getLock().acquireThrowRuntime("registerStartRequest");
 		try {
 			IDUnivocoGroupByPolicyMapId datiGroupByMapId = augmentIDUnivoco(datiGroupBy);
 			datiCollezionati = this.mapActiveThreads.get(datiGroupByMapId);
@@ -184,22 +185,22 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 				this.mapActiveThreads.put(datiGroupByMapId, datiCollezionati); // registro nuova immagine
 			}
 			// La gestione dell'else è stata spostata dentro il costruttore degli oggetti DatiCollezionatiDistributedXXXX
-//			else {
+/**			else {
 //				if(datiCollezionati.getUpdatePolicyDate()!=null) {
 //					if(!datiCollezionati.getUpdatePolicyDate().equals(this.activePolicy.getInstanceConfiguration().getUpdateTime())) {
 //						// data aggiornata
 //						datiCollezionati.resetCounters(this.activePolicy.getInstanceConfiguration().getUpdateTime());
 //					}
 //				}
-//			}
+//			}*/
 						
 			// incremento il numero di thread
 			datiCollezionati.registerStartRequest(log, this.activePolicy, ctx);
 
-			return (DatiCollezionati) datiCollezionati.newInstance();
+			return datiCollezionati.newInstance();
 		}
 		finally {
-			this.getLock().release("registerStartRequest");
+			this.getLock().release(slock, "registerStartRequest");
 		}
 
 	}
@@ -208,7 +209,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 	@Override
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, String idTransazione, IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx) throws PolicyException,PolicyNotFoundException{
 
-		this.getLock().acquireThrowRuntime("updateDatiStartRequestApplicabile");
+		SemaphoreLock slock = this.getLock().acquireThrowRuntime("updateDatiStartRequestApplicabile");
 
 		try {
 			IDUnivocoGroupByPolicyMapId datiGroupByMapId = augmentIDUnivoco(datiGroupBy);
@@ -222,12 +223,12 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 
 			// mi salvo fuori dal synchronized l'attuale stato
 			if(updated) {
-				return (DatiCollezionati) datiCollezionati.newInstance();
+				return datiCollezionati.newInstance();
 			}
 
 		}
 		finally {
-			this.getLock().release("updateDatiStartRequestApplicabile");
+			this.getLock().release(slock, "updateDatiStartRequestApplicabile");
 		}
 
 		return null;
@@ -238,7 +239,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 	public void registerStopRequest(Logger log, String idTransazione,IDUnivocoGroupByPolicy datiGroupBy, Map<Object> ctx, 
 			MisurazioniTransazione dati, boolean isApplicabile, boolean isViolata) throws PolicyException,PolicyNotFoundException{
 
-		this.getLock().acquireThrowRuntime("registerStopRequest");
+		SemaphoreLock slock = this.getLock().acquireThrowRuntime("registerStopRequest");
 		try {
 			IDUnivocoGroupByPolicyMapId datiGroupByMapId = augmentIDUnivoco(datiGroupBy);
 			DatiCollezionati datiCollezionati =  this.mapActiveThreads.get(datiGroupByMapId);
@@ -250,23 +251,23 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 			if(isApplicabile){
 
 				List<Integer> esitiCodeOk = null;
-				List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
+				List<Integer> esitiCodeKoSenzaFaultApplicativo = null;
 				List<Integer> esitiCodeFaultApplicativo = null;
 				try {
 					EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,dati.getProtocollo());
 					esitiCodeOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
-					esitiCodeKo_senzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+					esitiCodeKoSenzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 					esitiCodeFaultApplicativo = esitiProperties.getEsitiCodeFaultApplicativo();
 				}catch(Exception e) {
 					throw new PolicyException(e.getMessage(),e);
 				}
 				datiCollezionati.updateDatiEndRequestApplicabile(log, this.activePolicy, ctx, dati,
-						esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo, isViolata);
+						esitiCodeOk,esitiCodeKoSenzaFaultApplicativo, esitiCodeFaultApplicativo, isViolata);
 			}
 
 		}
 		finally {
-			this.getLock().release("registerStopRequest");
+			this.getLock().release(slock, "registerStopRequest");
 		}
 
 	}
@@ -279,7 +280,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 	@Override
 	public long getActiveThreads(IDUnivocoGroupByPolicy filtro){
 
-		this.getLock().acquireThrowRuntime("getActiveThreads");
+		SemaphoreLock slock = this.getLock().acquireThrowRuntime("getActiveThreads");
 		try {
 			long counter = 0l;
 
@@ -287,7 +288,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 				for (IDUnivocoGroupByPolicy datiGroupBy : this.mapActiveThreads.keySet()) {
 	
 					if(filtro!=null){
-						IDUnivocoGroupBy<IDUnivocoGroupByPolicy> idAstype = (IDUnivocoGroupBy<IDUnivocoGroupByPolicy>) datiGroupBy;
+						IDUnivocoGroupBy<IDUnivocoGroupByPolicy> idAstype = datiGroupBy;
 						if(!idAstype.match(filtro)){
 							continue;
 						}
@@ -300,7 +301,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 			return counter;
 		}
 		finally {
-			this.getLock().release("getActiveThreads");
+			this.getLock().release(slock, "getActiveThreads");
 		}
 
 	}
@@ -309,7 +310,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 	@Override
 	public String printInfos(Logger log, String separatorGroups) throws UtilsException{
 
-		this.getLock().acquireThrowRuntime("printInfos");
+		SemaphoreLock slock = this.getLock().acquireThrowRuntime("printInfos");
 		try {
 			StringBuilder bf = new StringBuilder();
 			if(this.mapActiveThreads!=null && !this.mapActiveThreads.isEmpty()) {
@@ -335,7 +336,7 @@ public class PolicyGroupByActiveThreadsDistributedCountersWithLock implements Se
 			}
 		}
 		finally {
-			this.getLock().release("printInfos");
+			this.getLock().release(slock, "printInfos");
 		}
 
 	}

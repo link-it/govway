@@ -49,6 +49,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.Stato;
@@ -541,7 +542,7 @@ public class LoginBean extends AbstractLoginBean {
 
 	public List<MenuModalitaItem> getVociMenuModalita() {
 		
-		this.vociMenuModalita_semaphore.acquireThrowRuntime("getVociMenuModalita");
+		SemaphoreLock lock = this.vociMenuModalita_semaphore.acquireThrowRuntime("getVociMenuModalita");
 		try {
 			
 			this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
@@ -587,7 +588,7 @@ public class LoginBean extends AbstractLoginBean {
 		
 			return this.vociMenuModalita;
 		}finally {
-			this.vociMenuModalita_semaphore.release("getVociMenuModalita");
+			this.vociMenuModalita_semaphore.release(lock, "getVociMenuModalita");
 		}
 	}
 	
@@ -928,7 +929,7 @@ public class LoginBean extends AbstractLoginBean {
 
 	public List<MenuModalitaItem> getVociMenuSoggetto() {
 		
-		this.vociMenuSoggetto_semaphore.acquireThrowRuntime("getVociMenuSoggetto"); 
+		SemaphoreLock lock = this.vociMenuSoggetto_semaphore.acquireThrowRuntime("getVociMenuSoggetto"); 
 		try{
 		
 			this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
@@ -1032,13 +1033,13 @@ public class LoginBean extends AbstractLoginBean {
 			return this.vociMenuSoggetto;
 			
 		}finally {
-			this.vociMenuSoggetto_semaphore.release("getVociMenuSoggetto"); 
+			this.vociMenuSoggetto_semaphore.release(lock, "getVociMenuSoggetto"); 
 		}
 	}
 	
 	public int getWidthVociMenuSoggetto() {
 		
-		this.vociMenuSoggetto_semaphore.acquireThrowRuntime("getWidthVociMenuSoggetto"); 
+		SemaphoreLock lock = this.vociMenuSoggetto_semaphore.acquireThrowRuntime("getWidthVociMenuSoggetto"); 
 		try{
 		
 			if(this.vociMenuSoggetto.isEmpty())
@@ -1054,7 +1055,7 @@ public class LoginBean extends AbstractLoginBean {
 			return 44 + max;
 			
 		}finally {
-			this.vociMenuSoggetto_semaphore.release("getWidthVociMenuSoggetto"); 
+			this.vociMenuSoggetto_semaphore.release(lock, "getWidthVociMenuSoggetto"); 
 		}
 	}
 

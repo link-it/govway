@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.openspcoop2.utils.SemaphoreLock;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -101,46 +102,46 @@ public class JSONUtils extends AbstractUtils {
 		}
 	}
 	private static void initMapper()  {
-		semaphore.acquireThrowRuntime("initMapper");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("initMapper");
 		try {
 			if(internalMapper==null){
 				initSyncMapper();
 			}
 		}finally {
-			semaphore.release("initMapper");
+			semaphore.release(lock, "initMapper");
 		}
 	}
 	public static void setMapperTimeZone(TimeZone timeZone) {
 		if(internalMapper==null){
 			initMapper();
 		}
-		semaphore.acquireThrowRuntime("setMapperTimeZone");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("setMapperTimeZone");
 		try {
 			internalMapper.setTimeZone(timeZone);
 		}finally {
-			semaphore.release("setMapperTimeZone");
+			semaphore.release(lock, "setMapperTimeZone");
 		}
 	}
 	public static void registerJodaModule() {
 		if(internalMapper==null){
 			initMapper();
 		}
-		semaphore.acquireThrowRuntime("registerJodaModule");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("registerJodaModule");
 		try {
 			internalMapper.registerModule(new JodaModule());
 		}finally {
-			semaphore.release("registerJodaModule");
+			semaphore.release(lock, "registerJodaModule");
 		}
 	}
 	public static void registerJavaTimeModule() {
 		if(internalMapper==null){
 			initMapper();
 		}
-		semaphore.acquireThrowRuntime("registerJavaTimeModule");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("registerJavaTimeModule");
 		try {
 			internalMapper.registerModule(new JavaTimeModule());
 		}finally {
-			semaphore.release("registerJavaTimeModule");
+			semaphore.release(lock, "registerJavaTimeModule");
 		}
 	}
 	

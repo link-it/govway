@@ -25,6 +25,7 @@ import java.util.Date;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -349,7 +350,7 @@ public class GestoreCacheResponseCaching {
 			}
 			
 			//synchronized (cache) {
-			lock_cache.acquire("save");
+			SemaphoreLock lock = lock_cache.acquire("save");
 			try {
 				
 				o = cache.get(digestKey);
@@ -382,7 +383,7 @@ public class GestoreCacheResponseCaching {
 				}
 				
 			}finally {
-				lock_cache.release("save");
+				lock_cache.release(lock, "save");
 			}
 
 		}
@@ -437,7 +438,7 @@ public class GestoreCacheResponseCaching {
 			}
 			
 			//synchronized (cache) {
-			lock_cache.acquire("readByUUID");
+			SemaphoreLock lock = lock_cache.acquire("readByUUID");
 			try {
 				
 				oDigest = cache.get(uuidKey);
@@ -470,7 +471,7 @@ public class GestoreCacheResponseCaching {
 				return responseCached;
 				
 			}finally {
-				lock_cache.release("readByUUID");
+				lock_cache.release(lock, "readByUUID");
 			}
 
 		}
@@ -502,7 +503,7 @@ public class GestoreCacheResponseCaching {
 			}
 						
 			//synchronized (cache) {
-			lock_cache.acquire("removeByUUID");
+			SemaphoreLock lock = lock_cache.acquire("removeByUUID");
 			try {
 				
 				oDigest = cache.get(uuidKey);
@@ -524,7 +525,7 @@ public class GestoreCacheResponseCaching {
 				cache.remove(digestKey);
 				
 			}finally{
-				lock_cache.release("removeByUUID");
+				lock_cache.release(lock, "removeByUUID");
 			}
 
 		}
@@ -567,7 +568,7 @@ public class GestoreCacheResponseCaching {
 			}
 						
 			//synchronized (cache) {
-			lock_cache.acquire("readByDigest");
+			SemaphoreLock lock = lock_cache.acquire("readByDigest");
 			try {
 				
 				response = 
@@ -592,7 +593,7 @@ public class GestoreCacheResponseCaching {
 				return responseCached;
 				
 			}finally {
-				lock_cache.release("readByDigest");
+				lock_cache.release(lock, "readByDigest");
 			}
 
 		}

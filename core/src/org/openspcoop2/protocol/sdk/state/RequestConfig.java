@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteApplicative;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteDelegate;
 import org.openspcoop2.utils.BooleanNullable;
+import org.openspcoop2.utils.SemaphoreLock;
 
 
 /**
@@ -549,14 +550,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphore();
 		}
 		
-		this.semaphore.acquireThrowRuntime("setAsWrapperSoap", idTransazione);
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setAsWrapperSoap", idTransazione);
 		try {
 			if(this.asWrapperSoap==null) {
 				this.asWrapperSoap = new HashMap<>(2);
 			}
 			this.asWrapperSoap.put(keyASWrapper, asWrapperSoap);
 		}finally {
-			this.semaphore.release("setAsWrapperSoap", idTransazione);
+			this.semaphore.release(lock, "setAsWrapperSoap", idTransazione);
 		}
 	}
 	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAsWrapperRest(InformationApiSource infoWsdlSource,boolean buildSchemaXSD,boolean processIncludeForOpenApi,boolean readDatiRegistro) {
@@ -573,14 +574,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphore();
 		}
 		
-		this.semaphore.acquireThrowRuntime("setAsWrapperRest", idTransazione);
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setAsWrapperRest", idTransazione);
 		try {
 			if(this.asWrapperRest==null) {
 				this.asWrapperRest = new HashMap<>(2);
 			}
 			this.asWrapperRest.put(keyASWrapper, asWrapperRest);
 		}finally {
-			this.semaphore.release("setAsWrapperRest", idTransazione);
+			this.semaphore.release(lock, "setAsWrapperRest", idTransazione);
 		}
 	}
 	
@@ -621,14 +622,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreAllegatoApi();
 		}
 		
-		this.semaphoreAllegatoApi.acquireThrowRuntime("addAllegatoApi", idTransazione);
+		SemaphoreLock lock = this.semaphoreAllegatoApi.acquireThrowRuntime("addAllegatoApi", idTransazione);
 		try {
 			if(this.allegatoApi==null) {
 				this.allegatoApi = new HashMap<>(3);
 			}
 			this.allegatoApi.put(key, documento);
 		}finally {
-			this.semaphoreAllegatoApi.release("addAllegatoApi", idTransazione);
+			this.semaphoreAllegatoApi.release(lock, "addAllegatoApi", idTransazione);
 		}
 	}
 	public Documento getAllegatoApi(String key) {
@@ -649,14 +650,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreAllegatoServizio();
 		}
 		
-		this.semaphoreAllegatoServizio.acquireThrowRuntime("addAllegatoServizio", idTransazione);
+		SemaphoreLock lock = this.semaphoreAllegatoServizio.acquireThrowRuntime("addAllegatoServizio", idTransazione);
 		try {
 			if(this.allegatoServizio==null) {
 				this.allegatoServizio = new HashMap<>(3);
 			}
 			this.allegatoServizio.put(key, documento);
 		}finally {
-			this.semaphoreAllegatoServizio.release("addAllegatoServizio", idTransazione);
+			this.semaphoreAllegatoServizio.release(lock, "addAllegatoServizio", idTransazione);
 		}
 	}
 	public Documento getAllegatoServizio(String key) {
@@ -703,14 +704,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphore();
 		}
 		
-		this.semaphore.acquireThrowRuntime("addServizioApplicativoErogatore", idTransazione);
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("addServizioApplicativoErogatore", idTransazione);
 		try {
 			if(this.serviziApplicativiErogatore==null) {
 				this.serviziApplicativiErogatore = new HashMap<>(5);
 			}		
 			this.serviziApplicativiErogatore.put(sa.getNome(), sa);
 		}finally {
-			this.semaphore.release("addServizioApplicativoErogatore", idTransazione);
+			this.semaphore.release(lock, "addServizioApplicativoErogatore", idTransazione);
 		}
 	}
 	public ServizioApplicativo getServizioApplicativoErogatore(String nome) {
@@ -748,7 +749,7 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphorePorteApplicativeByFiltroRicerca();
 		}
 		
-		this.semaphorePorteApplicativeByFiltroRicerca.acquireThrowRuntime("addPorteApplicativeByFiltroRicerca", idTransazione);
+		SemaphoreLock lock = this.semaphorePorteApplicativeByFiltroRicerca.acquireThrowRuntime("addPorteApplicativeByFiltroRicerca", idTransazione);
 		try {
 			if(this.listPorteApplicativeByFiltroRicerca==null) {
 				this.listPorteApplicativeByFiltroRicerca=new HashMap<>(3);
@@ -756,7 +757,7 @@ public class RequestConfig implements java.io.Serializable {
 			String keyCache = filtro.toString();
 			this.listPorteApplicativeByFiltroRicerca.put(keyCache, list);
 		}finally {
-			this.semaphorePorteApplicativeByFiltroRicerca.release("addPorteApplicativeByFiltroRicerca", idTransazione);
+			this.semaphorePorteApplicativeByFiltroRicerca.release(lock, "addPorteApplicativeByFiltroRicerca", idTransazione);
 		}
 	}
 	
@@ -820,7 +821,7 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphorePorteDelegateByFiltroRicerca();
 		}
 		
-		this.semaphorePorteDelegateByFiltroRicerca.acquireThrowRuntime("addPorteDelegateByFiltroRicerca", idTransazione);
+		SemaphoreLock lock = this.semaphorePorteDelegateByFiltroRicerca.acquireThrowRuntime("addPorteDelegateByFiltroRicerca", idTransazione);
 		try {
 			if(this.listPorteDelegateByFiltroRicerca==null) {
 				this.listPorteDelegateByFiltroRicerca=new HashMap<>(3);
@@ -828,7 +829,7 @@ public class RequestConfig implements java.io.Serializable {
 			String keyCache = filtro.toString();
 			this.listPorteDelegateByFiltroRicerca.put(keyCache, list);
 		}finally {
-			this.semaphorePorteDelegateByFiltroRicerca.release("addPorteDelegateByFiltroRicerca", idTransazione);
+			this.semaphorePorteDelegateByFiltroRicerca.release(lock, "addPorteDelegateByFiltroRicerca", idTransazione);
 		}
 	}
 	
@@ -952,14 +953,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphore();
 		}
 		
-		this.semaphore.acquireThrowRuntime("addRuolo", idTransazione);
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("addRuolo", idTransazione);
 		try {
 			if(this.ruolo==null) {
 				this.ruolo=new HashMap<>(3);
 			}
 			this.ruolo.put(key, ruolo);
 		}finally {
-			this.semaphore.release("addRuolo", idTransazione);
+			this.semaphore.release(lock, "addRuolo", idTransazione);
 		}
 	}
 	public Ruolo getRuolo(String key) {
@@ -982,14 +983,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphore();
 		}
 		
-		this.semaphore.acquireThrowRuntime("addScope", idTransazione);
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("addScope", idTransazione);
 		try {
 			if(this.scope==null) {
 				this.scope=new HashMap<>(3);
 			}
 			this.scope.put(key, scope);
 		}finally {
-			this.semaphore.release("addScope", idTransazione);
+			this.semaphore.release(lock, "addScope", idTransazione);
 		}
 	}
 	public Scope getScope(String key) {
@@ -1025,14 +1026,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphore();
 		}
 		
-		this.semaphore.acquireThrowRuntime("addForwardProxy", idTransazione);
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("addForwardProxy", idTransazione);
 		try {
 			if(this.forwardProxy==null) {
 				this.forwardProxy=new HashMap<>(3);
 			}
 			this.forwardProxy.put(key, fp);
 		}finally {
-			this.semaphore.release("addForwardProxy", idTransazione);
+			this.semaphore.release(lock, "addForwardProxy", idTransazione);
 		}
 	}
 	public Serializable getForwardProxy(String key) {
@@ -1072,7 +1073,7 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreCredenziali();
 		}
 		
-		this.semaphoreCredenziali.acquireThrowRuntime("addCredenzialeMittente", idTransazione);
+		SemaphoreLock lock = this.semaphoreCredenziali.acquireThrowRuntime("addCredenzialeMittente", idTransazione);
 		try {
 			if(this.mapCredenziali==null) {
 				this.mapCredenziali = new EnumMap<>(TipoCredenzialeMittente.class);
@@ -1093,7 +1094,7 @@ public class RequestConfig implements java.io.Serializable {
 				}
 			}
 		}finally {
-			this.semaphoreCredenziali.release("addCredenzialeMittente", idTransazione);
+			this.semaphoreCredenziali.release(lock, "addCredenzialeMittente", idTransazione);
 		}
 	}
 	
@@ -1109,14 +1110,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphorePolicy();
 		}
 		
-		this.semaphorePolicy.acquireThrowRuntime("addPolicyValidazioneToken", idTransazione);
+		SemaphoreLock lock = this.semaphorePolicy.acquireThrowRuntime("addPolicyValidazioneToken", idTransazione);
 		try {
 			if(this.policyValidazioneToken==null) {
 				this.policyValidazioneToken = new HashMap<>(3);
 			}
 			this.policyValidazioneToken.put(key, fp);
 		}finally {
-			this.semaphorePolicy.release("addPolicyValidazioneToken", idTransazione);
+			this.semaphorePolicy.release(lock, "addPolicyValidazioneToken", idTransazione);
 		}
 	}
 	public Serializable getPolicyValidazioneToken(String key) {
@@ -1140,14 +1141,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphorePolicy();
 		}
 		
-		this.semaphorePolicy.acquireThrowRuntime("addPolicyNegoziazioneToken", idTransazione);
+		SemaphoreLock lock = this.semaphorePolicy.acquireThrowRuntime("addPolicyNegoziazioneToken", idTransazione);
 		try {
 			if(this.policyNegoziazioneToken==null) {
 				this.policyNegoziazioneToken = new HashMap<>(3);
 			}
 			this.policyNegoziazioneToken.put(key, fp);
 		}finally {
-			this.semaphorePolicy.release("addPolicyNegoziazioneToken", idTransazione);
+			this.semaphorePolicy.release(lock, "addPolicyNegoziazioneToken", idTransazione);
 		}
 	}
 	public Serializable getPolicyNegoziazioneToken(String key) {
@@ -1170,14 +1171,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphorePolicy();
 		}
 		
-		this.semaphorePolicy.acquireThrowRuntime("addAttributeAuthority", idTransazione);
+		SemaphoreLock lock = this.semaphorePolicy.acquireThrowRuntime("addAttributeAuthority", idTransazione);
 		try {
 			if(this.attributeAuthority==null) {
 				this.attributeAuthority = new HashMap<>(3);
 			}
 			this.attributeAuthority.put(key, fp);
 		}finally {
-			this.semaphorePolicy.release("addAttributeAuthority", idTransazione);
+			this.semaphorePolicy.release(lock, "addAttributeAuthority", idTransazione);
 		}
 	}
 	public Serializable getAttributeAuthority(String key) {
@@ -1208,14 +1209,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addMerlinTruststore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addMerlinTruststore", idTransazione);
 		try {
 			if(this.merlinTruststore==null) {
 				this.merlinTruststore = new HashMap<>(3);
 			}
 			this.merlinTruststore.put(key, merlinTruststore);
 		}finally {
-			this.semaphoreStore.release("addMerlinTruststore", idTransazione);
+			this.semaphoreStore.release(lock, "addMerlinTruststore", idTransazione);
 		}
 	}
 	public Serializable getMerlinTruststore(String key) {
@@ -1232,14 +1233,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addMerlinKeystore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addMerlinKeystore", idTransazione);
 		try {
 			if(this.merlinKeystore==null) {
 				this.merlinKeystore = new HashMap<>(3);
 			}
 			this.merlinKeystore.put(key, merlinKeystore);
 		}finally {
-			this.semaphoreStore.release("addMerlinKeystore", idTransazione);
+			this.semaphoreStore.release(lock, "addMerlinKeystore", idTransazione);
 		}
 	}
 	public Serializable getMerlinKeystore(String key) {
@@ -1257,14 +1258,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addSymmetricKeystore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addSymmetricKeystore", idTransazione);
 		try {
 			if(this.symmetricKeystore==null) {
 				this.symmetricKeystore = new HashMap<>(3);
 			}
 			this.symmetricKeystore.put(key, symmetricKeystore);
 		}finally {
-			this.semaphoreStore.release("addSymmetricKeystore", idTransazione);
+			this.semaphoreStore.release(lock, "addSymmetricKeystore", idTransazione);
 		}
 	}
 	public Serializable getSymmetricKeystore(String key) {
@@ -1282,14 +1283,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addMultiKeystore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addMultiKeystore", idTransazione);
 		try {
 			if(this.multiKeystore==null) {
 				this.multiKeystore = new HashMap<>(3);
 			}
 			this.multiKeystore.put(key, multiKeystore);
 		}finally {
-			this.semaphoreStore.release("addMultiKeystore", idTransazione);
+			this.semaphoreStore.release(lock, "addMultiKeystore", idTransazione);
 		}
 	}
 	public Serializable getMultiKeystore(String key) {
@@ -1307,14 +1308,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addJWKSetStore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addJWKSetStore", idTransazione);
 		try {
 			if(this.jwkSetStore==null) {
 				this.jwkSetStore = new HashMap<>(3);
 			}
 			this.jwkSetStore.put(key, jwkSetStore);
 		}finally {
-			this.semaphoreStore.release("addJWKSetStore", idTransazione);
+			this.semaphoreStore.release(lock, "addJWKSetStore", idTransazione);
 		}
 	}
 	public Serializable getJWKSetStore(String key) {
@@ -1332,14 +1333,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addKeyPairStore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addKeyPairStore", idTransazione);
 		try {
 			if(this.keyPairStore==null) {
 				this.keyPairStore = new HashMap<>(3);
 			}
 			this.keyPairStore.put(key, keyPairStore);
 		}finally {
-			this.semaphoreStore.release("addKeyPairStore", idTransazione);
+			this.semaphoreStore.release(lock, "addKeyPairStore", idTransazione);
 		}
 	}
 	public Serializable getKeyPairStore(String key) {
@@ -1357,14 +1358,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addPublicKeyStore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addPublicKeyStore", idTransazione);
 		try {
 			if(this.publicKeyStore==null) {
 				this.publicKeyStore = new HashMap<>(3);
 			}
 			this.publicKeyStore.put(key, publicKeyStore);
 		}finally {
-			this.semaphoreStore.release("addPublicKeyStore", idTransazione);
+			this.semaphoreStore.release(lock, "addPublicKeyStore", idTransazione);
 		}
 	}
 	public Serializable getPublicKeyStore(String key) {
@@ -1382,14 +1383,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addSecretKeyStore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addSecretKeyStore", idTransazione);
 		try {
 			if(this.secretKeyStore==null) {
 				this.secretKeyStore = new HashMap<>(3);
 			}
 			this.secretKeyStore.put(key, secretKeyStore);
 		}finally {
-			this.semaphoreStore.release("addSecretKeyStore", idTransazione);
+			this.semaphoreStore.release(lock, "addSecretKeyStore", idTransazione);
 		}
 	}
 	public Serializable getSecretKeyStore(String key) {
@@ -1410,14 +1411,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addRemoteStore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addRemoteStore", idTransazione);
 		try {
 			if(this.remoteStore==null) {
 				this.remoteStore = new HashMap<>(3);
 			}
 			this.remoteStore.put(key, remoteStore);
 		}finally {
-			this.semaphoreStore.release("addRemoteStore", idTransazione);
+			this.semaphoreStore.release(lock, "addRemoteStore", idTransazione);
 		}
 	}
 	public Serializable getRemoteStore(String key) {
@@ -1443,14 +1444,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addRemoteStoreClientInfo", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addRemoteStoreClientInfo", idTransazione);
 		try {
 			if(this.remoteStoreClientInfo==null) {
 				this.remoteStoreClientInfo = new HashMap<>(3);
 			}
 			this.remoteStoreClientInfo.put(key, remoteStore);
 		}finally {
-			this.semaphoreStore.release("addRemoteStoreClientInfo", idTransazione);
+			this.semaphoreStore.release(lock, "addRemoteStoreClientInfo", idTransazione);
 		}
 	}
 	public Serializable getRemoteStoreClientInfo(String key) {
@@ -1473,14 +1474,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addHttpStore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addHttpStore", idTransazione);
 		try {
 			if(this.httpStore==null) {
 				this.httpStore = new HashMap<>(3);
 			}
 			this.httpStore.put(key, httpStore);
 		}finally {
-			this.semaphoreStore.release("addHttpStore", idTransazione);
+			this.semaphoreStore.release(lock, "addHttpStore", idTransazione);
 		}
 	}
 	public Serializable getHttpStore(String key) {
@@ -1498,14 +1499,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addBYOKStore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addBYOKStore", idTransazione);
 		try {
 			if(this.byokStore==null) {
 				this.byokStore = new HashMap<>(3);
 			}
 			this.byokStore.put(key, byokStore);
 		}finally {
-			this.semaphoreStore.release("addBYOKStore", idTransazione);
+			this.semaphoreStore.release(lock, "addBYOKStore", idTransazione);
 		}
 	}
 	public Serializable getBYOKStore(String key) {
@@ -1523,14 +1524,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addCRLCertstore", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addCRLCertstore", idTransazione);
 		try {
 			if(this.crlCertstore==null) {
 				this.crlCertstore = new HashMap<>(3);
 			}
 			this.crlCertstore.put(key, crlCertstore);
 		}finally {
-			this.semaphoreStore.release("addCRLCertstore", idTransazione);
+			this.semaphoreStore.release(lock, "addCRLCertstore", idTransazione);
 		}
 	}
 	public Serializable getCRLCertstore(String key) {
@@ -1548,14 +1549,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addSSLSocketFactory", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addSSLSocketFactory", idTransazione);
 		try {
 			if(this.sslSocketFactory==null) {
 				this.sslSocketFactory = new HashMap<>(3);
 			}
 			this.sslSocketFactory.put(key, sslSocketFactory);
 		}finally {
-			this.semaphoreStore.release("addSSLSocketFactory", idTransazione);
+			this.semaphoreStore.release(lock, "addSSLSocketFactory", idTransazione);
 		}
 	}
 	public Serializable getSSLSocketFactory(String key) {
@@ -1573,14 +1574,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addSSLConfigProps", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addSSLConfigProps", idTransazione);
 		try {
 			if(this.sslConfigProps==null) {
 				this.sslConfigProps = new HashMap<>(3);
 			}
 			this.sslConfigProps.put(key, resource);
 		}finally {
-			this.semaphoreStore.release("addSSLConfigProps", idTransazione);
+			this.semaphoreStore.release(lock, "addSSLConfigProps", idTransazione);
 		}
 	}
 	public Serializable getSSLConfigProps(String key) {
@@ -1601,14 +1602,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addExternalResource", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addExternalResource", idTransazione);
 		try {
 			if(this.externalResource==null) {
 				this.externalResource = new HashMap<>(3);
 			}
 			this.externalResource.put(key, resource);
 		}finally {
-			this.semaphoreStore.release("addExternalResource", idTransazione);
+			this.semaphoreStore.release(lock, "addExternalResource", idTransazione);
 		}
 	}
 	public Serializable getExternalResource(String key) {
@@ -1629,14 +1630,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreStore();
 		}
 		
-		this.semaphoreStore.acquireThrowRuntime("addOCSPResponse", idTransazione);
+		SemaphoreLock lock = this.semaphoreStore.acquireThrowRuntime("addOCSPResponse", idTransazione);
 		try {
 			if(this.ocspResponse==null) {
 				this.ocspResponse = new HashMap<>(3);
 			}
 			this.ocspResponse.put(key, resource);
 		}finally {
-			this.semaphoreStore.release("addOCSPResponse", idTransazione);
+			this.semaphoreStore.release(lock, "addOCSPResponse", idTransazione);
 		}
 	}
 	public Serializable getOCSPResponse(String key) {
@@ -1659,14 +1660,14 @@ public class RequestConfig implements java.io.Serializable {
 			initSemaphoreTemplate();
 		}
 		
-		this.semaphoreTemplate.acquireThrowRuntime("addTemplate", idTransazione);
+		SemaphoreLock lock = this.semaphoreTemplate.acquireThrowRuntime("addTemplate", idTransazione);
 		try {
 			if(this.template==null) {
 				this.template = new HashMap<>(3);
 			}
 			this.template.put(key, fp);
 		}finally {
-			this.semaphoreTemplate.release("addTemplate", idTransazione);
+			this.semaphoreTemplate.release(lock, "addTemplate", idTransazione);
 		}
 	}
 	public Serializable getTemplate(String key) {

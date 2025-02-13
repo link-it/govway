@@ -30,6 +30,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.slf4j.Logger;
 
@@ -83,7 +84,7 @@ public class SoggettiConfig {
 				return false;
 			}
 			
-			semaphore.acquire("existsIdentificativoPorta");
+			SemaphoreLock lock = semaphore.acquire("existsIdentificativoPorta");
 			try {
 				// controllo se non fosse gia' stato riaggiunto da un altro thread
 				
@@ -95,7 +96,7 @@ public class SoggettiConfig {
 				
 				return true;
 			}finally {
-				semaphore.release("existsIdentificativoPorta");
+				semaphore.release(lock, "existsIdentificativoPorta");
 			}
 			
 		} 

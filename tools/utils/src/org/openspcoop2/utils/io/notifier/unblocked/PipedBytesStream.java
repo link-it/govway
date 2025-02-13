@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
 
@@ -109,14 +110,14 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 				}
 			} else {
 				boolean wait = false;
-				this.lockPIPE.acquireThrowRuntime("readWaitBytes");
+				SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("readWaitBytes");
 				try {
 					if(this.stop==false && !readBytesPending()) {
 						this.asyncReadTask = new CompletableFuture<Boolean>();
 						wait = true;
 					}
 				}finally {
-					this.lockPIPE.release("readWaitBytes");
+					this.lockPIPE.release(lock, "readWaitBytes");
 				}
 				
 				if(wait) {
@@ -213,7 +214,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 	//			System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] BYTES AVAILABLE FROM PRECEDENT BUFFERING IS NULL ...");
 	//			System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC ...");
 				//synchronized (this.semaphore) {
-				this.lockPIPE.acquireThrowRuntime("read");
+				SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("read");
 				try {
 	//				System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] CHUNKS ... " + this.chunkList.size() );
 	//				System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] Next-Byte for write ... " + this.indexNextByteReceivedForWrite );
@@ -231,7 +232,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 						this.asyncWriteTask.complete(true);
 					}
 				} finally {
-					this.lockPIPE.release("read");
+					this.lockPIPE.release(lock, "read");
 				}
 	//			System.out.println("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC OK");
 			}
@@ -286,7 +287,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 		try {
 			if ( this.stop == false ) {
 	
-				this.lockPIPE.acquireThrowRuntime("close");
+				SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("close");
 				try {
 					if ( this.indexNextByteReceivedForWrite > 0 ) {
 						byte[] lastChunk = new byte[ this.indexNextByteReceivedForWrite ];
@@ -297,7 +298,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 					this.bytesReading = null;
 					this.stop = true;
 				}finally{
-					this.lockPIPE.release("close");
+					this.lockPIPE.release(lock, "close");
 				}
 			}
 			if(this.asyncWriteTask!=null) {
@@ -332,7 +333,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 				}
 			} else {
 				boolean wait = false;
-				this.lockPIPE.acquireThrowRuntime("writeWaitEmptyBuffer");
+				SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("writeWaitEmptyBuffer");
 				try {
 					if ( readBytesPending() && this.chunkList.size() >= MAX_QUEUE ) {
 						if ( this.stop == false ) {
@@ -341,7 +342,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 						}
 					}
 				}finally{
-					this.lockPIPE.release("writeWaitEmptyBuffer");
+					this.lockPIPE.release(lock, "writeWaitEmptyBuffer");
 				}
 				if(wait) {
 					try {
@@ -389,7 +390,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 					
 			//this.log.debug("########### WRITE byte SYNC ...");
 			//synchronized (this.semaphore) {
-			this.lockPIPE.acquireThrowRuntime("write(b)");
+			SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("write(b)");
 			try {
 				this.bytesReading[ this.indexNextByteReceivedForWrite++ ] = b;
 				if ( this.indexNextByteReceivedForWrite == this.bytesReading.length ) {
@@ -403,7 +404,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 				//this.log.debug("########### WRITE byte SYNC OK");
 	//			System.out.println("########### WRITE byte SYNC OK ADD[1] SIZE_ATTUALE["+ this.indexNextByteReceivedForWrite + " - " + this.chunkList.size()+"]");
 			}finally{
-				this.lockPIPE.release("write(b)");
+				this.lockPIPE.release(lock, "write(b)");
 			}
 			
 		}
@@ -431,7 +432,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 					
 			//this.log.debug("########### WRITE byte ["+b.length+"] SYNC ...");
 			//synchronized (this.semaphore) {
-			this.lockPIPE.acquireThrowRuntime("write(b[])");
+			SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("write(b[])");
 			try {
 				int offset = 0;
 				int bytesNum = b.length;
@@ -454,7 +455,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 				//this.log.debug("########### WRITE byte ["+b.length+"] SYNC OK");
 	//			System.out.println("########### WRITE byte SYNC OK ADD["+b.length+"] SIZE_ATTUALE["+ this.indexNextByteReceivedForWrite + " - " + this.chunkList.size()+"]");
 			}finally {
-				this.lockPIPE.release("write(b[])");
+				this.lockPIPE.release(lock, "write(b[])");
 			}
 			
 		}
@@ -482,7 +483,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 					
 			//this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" SYNC ...");
 			//synchronized (this.semaphore) {
-			this.lockPIPE.acquireThrowRuntime("write(b[],off,len)");
+			SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("write(b[],off,len)");
 			try {
 				int offset = off;
 				int bytesNum = len;
@@ -505,7 +506,7 @@ public class PipedBytesStream extends IPipedUnblockedStream {
 				//this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" SYNC OK");
 	//			System.out.println("########### WRITE byte SYNC OK ADD["+b.length+"] SIZE_ATTUALE["+ this.indexNextByteReceivedForWrite + " - " + this.chunkList.size()+"]");
 			}finally {
-				this.lockPIPE.release("write(b[],off,len)");
+				this.lockPIPE.release(lock, "write(b[],off,len)");
 			}
 			
 		}

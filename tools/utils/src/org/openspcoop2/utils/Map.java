@@ -44,49 +44,50 @@ public class Map<T> extends HashMap<MapKey<String>, T> implements Serializable {
 
 	
 	private static int uniqueIndex = 0;
-	private static org.openspcoop2.utils.Semaphore semaphore_getUniqueSerialNumber = new org.openspcoop2.utils.Semaphore("Map");
+	/**private static org.openspcoop2.utils.Semaphore semaphore_getUniqueSerialNumber = new org.openspcoop2.utils.Semaphore("Map");*/
 	private static int getUniqueIndex(){
-		semaphore_getUniqueSerialNumber.acquireThrowRuntime("getUniqueIndex");
-		try {
+		// la sincronizzazione non sembra servire perchè la chiamata a questo metodo viene fatta esclusivamente dal metodo sottostante che è già sotto semaforo.
+		/**SemaphoreLock lock = semaphore_getUniqueSerialNumber.acquireThrowRuntime("getUniqueIndex");*/
+		/**try {*/
 			
 			if((Map.uniqueIndex+1) > Integer.MAX_VALUE){
-				throw new RuntimeException("Max id reached");
+				throw new UtilsRuntimeException("Max id reached");
 			} 
 			Map.uniqueIndex++;
 			return Map.uniqueIndex;
 			
-		}finally {
-			semaphore_getUniqueSerialNumber.release("getUniqueIndex");
-		}
+		/**}finally {
+			semaphore_getUniqueSerialNumber.release(lock, "getUniqueIndex");
+		}*/
 	}
 	
 	
-	private static HashMap<String, MapKey<String>> _internal_map = new HashMap<String, MapKey<String>>();
+	private static HashMap<String, MapKey<String>> internalMap = new HashMap<>();
 		
-	private static org.openspcoop2.utils.Semaphore semaphore_newMapKey = new org.openspcoop2.utils.Semaphore("Map");
-	private static MapKey<String> _newMapKey(String key){
-		semaphore_newMapKey.acquireThrowRuntime("newMapKey");
+	private static org.openspcoop2.utils.Semaphore semaphoreNewMapKey = new org.openspcoop2.utils.Semaphore("Map");
+	private static MapKey<String> internalNewMapKey(String key){
+		SemaphoreLock lock = semaphoreNewMapKey.acquireThrowRuntime("newMapKey");
 		try {
-			if(_internal_map.containsKey(key)==false) {
+			if(!internalMap.containsKey(key)) {
 				int uniqueIndex = getUniqueIndex();
-				MapKey<String> mapKey = new MapKey<String>(key, uniqueIndex);
-				_internal_map.put(key, mapKey);
+				MapKey<String> mapKey = new MapKey<>(key, uniqueIndex);
+				internalMap.put(key, mapKey);
 				return mapKey;
 			}
 			else {
-				return _internal_map.get(key);
+				return internalMap.get(key);
 			}
 		}finally {
-			semaphore_newMapKey.release("newMapKey");
+			semaphoreNewMapKey.release(lock, "newMapKey");
 		}
 	}
 	
 	public static MapKey<String> newMapKey(String key) {
-		if(_internal_map.containsKey(key)==false) {
-			 return _newMapKey(key);
+		if(!internalMap.containsKey(key)) {
+			 return internalNewMapKey(key);
 		}
 		else {
-			return _internal_map.get(key);
+			return internalMap.get(key);
 		}
 	}
 	
@@ -102,7 +103,7 @@ public class Map<T> extends HashMap<MapKey<String>, T> implements Serializable {
 	public T addObject(MapKey<String> key,T value){
 		if(key!=null && value!=null) {
 			if(value instanceof MapKey<?>) {
-				throw new RuntimeException("Add object of type 'MapKey<>' in the map not allowed");
+				throw new UtilsRuntimeException("Add object of type 'MapKey<>' in the map not allowed");
 			}
 			return super.put(key, value);
 		}
@@ -182,7 +183,7 @@ public class Map<T> extends HashMap<MapKey<String>, T> implements Serializable {
 			return getObject(Map.newMapKey((String)key));
 		}
 		else {
-			throw new RuntimeException("Object key '"+key.getClass().getName()+"' unsopported");
+			throw new UtilsRuntimeException("Object key '"+key.getClass().getName()+"' unsopported");
 		}
 	}
 	@Override
@@ -219,7 +220,7 @@ public class Map<T> extends HashMap<MapKey<String>, T> implements Serializable {
 			return removeObject(Map.newMapKey((String)key));
 		}
 		else {
-			throw new RuntimeException("Object key '"+key.getClass().getName()+"' unsopported");
+			throw new UtilsRuntimeException("Object key '"+key.getClass().getName()+"' unsopported");
 		}
 	}
 	@Deprecated
@@ -234,7 +235,7 @@ public class Map<T> extends HashMap<MapKey<String>, T> implements Serializable {
 	public List<MapKey<String>> keys(){
 		List<MapKey<String>> keys = null;
 		if(!this.isEmpty()) {
-			keys = new ArrayList<MapKey<String>>();
+			keys = new ArrayList<>();
 			for (MapKey<String> key : super.keySet()) {
 				keys.add(key);
 			}
@@ -271,7 +272,7 @@ public class Map<T> extends HashMap<MapKey<String>, T> implements Serializable {
 			return this.containsKey(Map.newMapKey((String)key));
 		}
 		else {
-			throw new RuntimeException("Object key '"+key.getClass().getName()+"' unsopported");
+			throw new UtilsRuntimeException("Object key '"+key.getClass().getName()+"' unsopported");
 		}
 	}
 	

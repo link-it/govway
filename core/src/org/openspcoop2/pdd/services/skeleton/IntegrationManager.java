@@ -95,6 +95,7 @@ import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.IUniqueIdentifier;
@@ -144,13 +145,13 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			this.propertiesReader = OpenSPCoop2Properties.getInstance();
 			this.className = ClassNameProperties.getInstance();
 			this.inizializzato = true;
-			semaphore.acquireThrowRuntime("init");
+			SemaphoreLock lock = semaphore.acquireThrowRuntime("init");
 			try {
 				if(!IntegrationManager.staticInitialized){
 					IntegrationManager.staticInitialized = true;
 				}
 			}finally {
-				semaphore.release("init");
+				semaphore.release(lock, "init");
 			}
 		}
 	}

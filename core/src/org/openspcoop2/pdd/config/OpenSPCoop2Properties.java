@@ -138,6 +138,7 @@ import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.SemaphoreType;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
@@ -2076,6 +2077,7 @@ public class OpenSPCoop2Properties {
 			
 			// semaphore
 			this.getSemaphoreTimeoutMS();
+			this.getSemaphoreHoldTimeoutMS();
 			this.isSemaphoreDebug();
 			this.getSemaphoreType();
 			this.isSemaphoreFair();
@@ -21809,17 +21811,42 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getSemaphoreTimeoutMS = Long.parseLong(value);
 				}else{
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=-1");
-					this.getSemaphoreTimeoutMS = -1l;
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Semaphore.DEFAULT_LOCK_ACQUISITION_TIMEOUT_MS);
+					this.getSemaphoreTimeoutMS = Semaphore.DEFAULT_LOCK_ACQUISITION_TIMEOUT_MS;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=1-, errore:"+e.getMessage(),e);
-				this.getSemaphoreTimeoutMS = -1l;
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Semaphore.DEFAULT_LOCK_ACQUISITION_TIMEOUT_MS+", errore:"+e.getMessage(),e);
+				this.getSemaphoreTimeoutMS = Semaphore.DEFAULT_LOCK_ACQUISITION_TIMEOUT_MS;
 			}
 		}
 
 		return this.getSemaphoreTimeoutMS;
+	}
+	
+	private Long getSemaphoreHoldTimeoutMS = null;
+	public long getSemaphoreHoldTimeoutMS(){
+
+		String pName = "org.openspcoop2.pdd.semaphore.hold.timeoutMS";
+		if(this.getSemaphoreHoldTimeoutMS==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.getSemaphoreHoldTimeoutMS = Long.parseLong(value);
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Semaphore.DEFAULT_LOCK_HOLD_TIMEOUT_MS);
+					this.getSemaphoreHoldTimeoutMS = Semaphore.DEFAULT_LOCK_HOLD_TIMEOUT_MS;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+Semaphore.DEFAULT_LOCK_HOLD_TIMEOUT_MS+", errore:"+e.getMessage(),e);
+				this.getSemaphoreHoldTimeoutMS = Semaphore.DEFAULT_LOCK_HOLD_TIMEOUT_MS;
+			}
+		}
+
+		return this.getSemaphoreHoldTimeoutMS;
 	}
 	
 	private Boolean isSemaphoreDebug = null;

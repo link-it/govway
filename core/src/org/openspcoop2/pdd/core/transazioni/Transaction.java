@@ -36,6 +36,8 @@ import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.utils.SemaphoreLock;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.date.DateUtils;
 
 /**     
@@ -47,6 +49,8 @@ import org.openspcoop2.utils.date.DateUtils;
  */
 public class Transaction {
 
+	private static final String TRANSACION_DELETED = "Transaction eliminata";
+	
 	private boolean gestioneStateful = false;
 	private String id = null;
 	private String originator = null;
@@ -64,12 +68,11 @@ public class Transaction {
 	private Boolean deleted = false;
 	public void setDeleted() {
 		if(this.gestioneStateful) {
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setDeleted");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setDeleted");
 			try {
 				this.deleted = true;	
 			}finally {
-				this.semaphore.release("setDeleted");
+				this.semaphore.release(lock, "setDeleted");
 			}
 		}
 		else {
@@ -90,12 +93,12 @@ public class Transaction {
 	private Traccia tracciaRisposta;
 	
 	/** Messaggi diagnostici */
-	private List<MsgDiagnostico> msgDiagnostici = new ArrayList<MsgDiagnostico>();
+	private List<MsgDiagnostico> msgDiagnostici = new ArrayList<>();
 	
 	/** DumpMessaggi */
-	private List<Messaggio> messaggi = new ArrayList<Messaggio>();
-	private List<TipoMessaggio> messaggi_body_onlyLogFileTrace = new ArrayList<TipoMessaggio>();
-	private List<TipoMessaggio> messaggi_headers_onlyLogFileTrace = new ArrayList<TipoMessaggio>();
+	private List<Messaggio> messaggi = new ArrayList<>();
+	private List<TipoMessaggio> messaggiBodyOnlyLogFileTrace = new ArrayList<>();
+	private List<TipoMessaggio> messaggiHeadersOnlyLogFileTrace = new ArrayList<>();
 	
 	/** Scenario di cooperazione */
 	private String scenarioCooperazione;
@@ -146,7 +149,7 @@ public class Transaction {
 	private String stato = null;
 	
 	/** Contenuti della Transazione */
-	private List<TransactionResource> risorse = new ArrayList<TransactionResource>();
+	private List<TransactionResource> risorse = new ArrayList<>();
 	private TransactionServiceLibrary transactionServiceLibrary;
 	
 	/** EventiGestione */
@@ -205,11 +208,11 @@ public class Transaction {
 	public List<Messaggio> getMessaggi() {
 		return this.messaggi;
 	}
-	public List<TipoMessaggio> getMessaggi_body_onlyLogFileTrace() {
-		return this.messaggi_body_onlyLogFileTrace;
+	public List<TipoMessaggio> getMessaggiBodyOnlyLogFileTrace() {
+		return this.messaggiBodyOnlyLogFileTrace;
 	}
-	public List<TipoMessaggio> getMessaggi_headers_onlyLogFileTrace() {
-		return this.messaggi_headers_onlyLogFileTrace;
+	public List<TipoMessaggio> getMessaggiHeadersOnlyLogFileTrace() {
+		return this.messaggiHeadersOnlyLogFileTrace;
 	}
 	
 	public int sizeMessaggi(){
@@ -328,15 +331,14 @@ public class Transaction {
 	
 	public void setRequestInfo(RequestInfo requestInfo) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setRequestInfo");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setRequestInfo");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.requestInfo = requestInfo;
 			}finally {
-				this.semaphore.release("setRequestInfo");
+				this.semaphore.release(lock, "setRequestInfo");
 			}
 		}else{
 			this.requestInfo = requestInfo;
@@ -345,15 +347,14 @@ public class Transaction {
 	
 	public void setUrlInvocazione(String urlInvocazione) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setUrlInvocazione");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setUrlInvocazione");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.urlInvocazione = urlInvocazione;
 			}finally {
-				this.semaphore.release("setUrlInvocazione");
+				this.semaphore.release(lock, "setUrlInvocazione");
 			}
 		}else{
 			this.urlInvocazione = urlInvocazione;
@@ -362,15 +363,14 @@ public class Transaction {
 	
 	public void setTracciaRichiesta(Traccia tracciaRichiesta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setTracciaRichiesta");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setTracciaRichiesta");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.tracciaRichiesta = tracciaRichiesta;
 			}finally {
-				this.semaphore.release("setTracciaRichiesta");
+				this.semaphore.release(lock, "setTracciaRichiesta");
 			}
 		}else{
 			this.tracciaRichiesta = tracciaRichiesta;
@@ -379,15 +379,14 @@ public class Transaction {
 
 	public void setTracciaRisposta(Traccia tracciaRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setTracciaRisposta");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setTracciaRisposta");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.tracciaRisposta = tracciaRisposta;
 			}finally {
-				this.semaphore.release("setTracciaRisposta");
+				this.semaphore.release(lock, "setTracciaRisposta");
 			}
 		}else{
 			this.tracciaRisposta = tracciaRisposta;
@@ -396,61 +395,58 @@ public class Transaction {
 	
 	public void addMsgDiagnostico(MsgDiagnostico msgDiag) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("addMsgDiagnostico");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("addMsgDiagnostico");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.msgDiagnostici.add(msgDiag);
 			}finally {
-				this.semaphore.release("addMsgDiagnostico");
+				this.semaphore.release(lock, "addMsgDiagnostico");
 			}
 		}else{
 			this.msgDiagnostici.add(msgDiag);
 		}
 	}
 	
-	public void addMessaggio(Messaggio messaggio, boolean onlyLogFileTrace_headers,  boolean onlyLogFileTrace_body) throws TransactionDeletedException {
+	public void addMessaggio(Messaggio messaggio, boolean onlyLogFileTraceHeaders,  boolean onlyLogFileTraceBody) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("addMessaggio");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("addMessaggio");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.messaggi.add(messaggio);
-				if(onlyLogFileTrace_headers) {
-					this.messaggi_headers_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
+				if(onlyLogFileTraceHeaders) {
+					this.messaggiHeadersOnlyLogFileTrace.add(messaggio.getTipoMessaggio());
 				}
-				if(onlyLogFileTrace_body) {
-					this.messaggi_body_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
+				if(onlyLogFileTraceBody) {
+					this.messaggiBodyOnlyLogFileTrace.add(messaggio.getTipoMessaggio());
 				}
 			}finally {
-				this.semaphore.release("addMessaggio");
+				this.semaphore.release(lock, "addMessaggio");
 			}
 		}else{
 			this.messaggi.add(messaggio);
-			if(onlyLogFileTrace_headers) {
-				this.messaggi_headers_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
+			if(onlyLogFileTraceHeaders) {
+				this.messaggiHeadersOnlyLogFileTrace.add(messaggio.getTipoMessaggio());
 			}
-			if(onlyLogFileTrace_body) {
-				this.messaggi_body_onlyLogFileTrace.add(messaggio.getTipoMessaggio());
+			if(onlyLogFileTraceBody) {
+				this.messaggiBodyOnlyLogFileTrace.add(messaggio.getTipoMessaggio());
 			}
 		}
 	}
 
 	public void setScenarioCooperazione(String scenarioCooperazione) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setScenarioCooperazione");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setScenarioCooperazione");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.scenarioCooperazione = scenarioCooperazione;
 			}finally {
-				this.semaphore.release("setScenarioCooperazione");
+				this.semaphore.release(lock, "setScenarioCooperazione");
 			}
 		}else{
 			this.scenarioCooperazione = scenarioCooperazione;
@@ -459,15 +455,14 @@ public class Transaction {
 	
 	public void setCodiceTrasportoRichiesta(String codiceTrasportoRichiesta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setCodiceTrasportoRichiesta");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setCodiceTrasportoRichiesta");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.codiceTrasportoRichiesta = codiceTrasportoRichiesta;
 			}finally {
-				this.semaphore.release("setCodiceTrasportoRichiesta");
+				this.semaphore.release(lock, "setCodiceTrasportoRichiesta");
 			}
 		}else{
 			this.codiceTrasportoRichiesta = codiceTrasportoRichiesta;
@@ -476,15 +471,14 @@ public class Transaction {
 	
 	public void setLocation(String location) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setLocation");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setLocation");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.location = location;
 			}finally {
-				this.semaphore.release("setLocation");
+				this.semaphore.release(lock, "setLocation");
 			}
 		}else{
 			this.location = location;
@@ -493,15 +487,14 @@ public class Transaction {
 	
 	public void setTipoConnettore(String tipoConnettore) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setTipoConnettore");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setTipoConnettore");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.tipoConnettore = tipoConnettore;
 			}finally {
-				this.semaphore.release("setTipoConnettore");
+				this.semaphore.release(lock, "setTipoConnettore");
 			}
 		}else{
 			this.tipoConnettore = tipoConnettore;
@@ -510,15 +503,14 @@ public class Transaction {
 	
 	public void setCredenziali(String credenziali) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setCredenziali");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setCredenziali");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.credenziali = credenziali;
 			}finally {
-				this.semaphore.release("setCredenziali");
+				this.semaphore.release(lock, "setCredenziali");
 			}
 		}else{
 			this.credenziali = credenziali;
@@ -527,15 +519,14 @@ public class Transaction {
 
 	public void setFaultIntegrazione(String fault) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setFaultIntegrazione");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setFaultIntegrazione");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.faultIntegrazione = fault;
 			}finally {
-				this.semaphore.release("setFaultIntegrazione");
+				this.semaphore.release(lock, "setFaultIntegrazione");
 			}
 		}else{
 			this.faultIntegrazione = fault;
@@ -544,15 +535,14 @@ public class Transaction {
 	
 	public void setFormatoFaultIntegrazione(String formatoFault) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setFormatoFaultIntegrazione");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setFormatoFaultIntegrazione");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.formatoFaultIntegrazione = formatoFault;
 			}finally {
-				this.semaphore.release("setFormatoFaultIntegrazione");
+				this.semaphore.release(lock, "setFormatoFaultIntegrazione");
 			}
 		}else{
 			this.formatoFaultIntegrazione = formatoFault;
@@ -561,15 +551,14 @@ public class Transaction {
 	
 	public void setFaultCooperazione(String fault) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setFaultCooperazione");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setFaultCooperazione");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.faultCooperazione = fault;
 			}finally {
-				this.semaphore.release("setFaultCooperazione");
+				this.semaphore.release(lock, "setFaultCooperazione");
 			}
 		}else{
 			this.faultCooperazione = fault;
@@ -578,15 +567,14 @@ public class Transaction {
 	
 	public void setFormatoFaultCooperazione(String formatoFault) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setFormatoFaultCooperazione");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setFormatoFaultCooperazione");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.formatoFaultCooperazione = formatoFault;
 			}finally {
-				this.semaphore.release("setFormatoFaultCooperazione");
+				this.semaphore.release(lock, "setFormatoFaultCooperazione");
 			}
 		}else{
 			this.formatoFaultCooperazione = formatoFault;
@@ -595,15 +583,14 @@ public class Transaction {
 
 	public void setDataAccettazioneRichiesta(Date dataAccettazioneRichiesta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setDataAccettazioneRichiesta");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setDataAccettazioneRichiesta");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.dataAccettazioneRichiesta = dataAccettazioneRichiesta;
 			}finally {
-				this.semaphore.release("setDataAccettazioneRichiesta");
+				this.semaphore.release(lock, "setDataAccettazioneRichiesta");
 			}
 		}else{
 			this.dataAccettazioneRichiesta = dataAccettazioneRichiesta;
@@ -612,15 +599,14 @@ public class Transaction {
 	
 	public void setDataIngressoRichiesta(Date dataIngressoRichiesta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setDataIngressoRichiesta");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setDataIngressoRichiesta");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.dataIngressoRichiesta = dataIngressoRichiesta;
 			}finally {
-				this.semaphore.release("setDataIngressoRichiesta");
+				this.semaphore.release(lock, "setDataIngressoRichiesta");
 			}
 		}else{
 			this.dataIngressoRichiesta = dataIngressoRichiesta;
@@ -629,15 +615,14 @@ public class Transaction {
 
 	public void setDataUscitaRichiesta(Date dataUscitaRichiesta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setDataUscitaRichiesta");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setDataUscitaRichiesta");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.dataUscitaRichiesta = dataUscitaRichiesta;
 			}finally {
-				this.semaphore.release("setDataUscitaRichiesta");
+				this.semaphore.release(lock, "setDataUscitaRichiesta");
 			}
 		}else{
 			this.dataUscitaRichiesta = dataUscitaRichiesta;
@@ -646,15 +631,14 @@ public class Transaction {
 	
 	public void setDataRichiestaInoltrata(Date dataRichiestaInoltrata) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setDataRichiestaInoltrata");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setDataRichiestaInoltrata");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.dataRichiestaInoltrata = dataRichiestaInoltrata;
 			}finally {
-				this.semaphore.release("setDataRichiestaInoltrata");
+				this.semaphore.release(lock, "setDataRichiestaInoltrata");
 			}
 		}else{
 			this.dataRichiestaInoltrata = dataRichiestaInoltrata;
@@ -663,15 +647,14 @@ public class Transaction {
 
 	public void setDataAccettazioneRisposta(Date dataAccettazioneRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setDataAccettazioneRisposta");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setDataAccettazioneRisposta");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.dataAccettazioneRisposta = dataAccettazioneRisposta;
 			}finally {
-				this.semaphore.release("setDataAccettazioneRisposta");
+				this.semaphore.release(lock, "setDataAccettazioneRisposta");
 			}
 		}else{
 			this.dataAccettazioneRisposta = dataAccettazioneRisposta;
@@ -680,15 +663,14 @@ public class Transaction {
 	
 	public void setDataIngressoRisposta(Date dataIngressoRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setDataIngressoRisposta");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setDataIngressoRisposta");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.dataIngressoRisposta = dataIngressoRisposta;
 			}finally {
-				this.semaphore.release("setDataIngressoRisposta");
+				this.semaphore.release(lock, "setDataIngressoRisposta");
 			}
 		}else{
 			this.dataIngressoRisposta = dataIngressoRisposta;
@@ -697,15 +679,14 @@ public class Transaction {
 
 	public void setDataUscitaRisposta(Date dataUscitaRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setDataUscitaRisposta");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setDataUscitaRisposta");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.dataUscitaRisposta = dataUscitaRisposta;
 			}finally {
-				this.semaphore.release("setDataUscitaRisposta");
+				this.semaphore.release(lock, "setDataUscitaRisposta");
 			}
 		}else{
 			this.dataUscitaRisposta = dataUscitaRisposta;
@@ -715,15 +696,14 @@ public class Transaction {
 	public void setCorrelazioneApplicativaRisposta(
 			String correlazioneApplicativaRisposta) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setCorrelazioneApplicativaRisposta");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setCorrelazioneApplicativaRisposta");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.correlazioneApplicativaRisposta = correlazioneApplicativaRisposta;
 			}finally {
-				this.semaphore.release("setCorrelazioneApplicativaRisposta");
+				this.semaphore.release(lock, "setCorrelazioneApplicativaRisposta");
 			}
 		}else{
 			this.correlazioneApplicativaRisposta = correlazioneApplicativaRisposta;
@@ -732,15 +712,14 @@ public class Transaction {
 	
 	public void addServizioApplicativoErogatore(String servizioApplicativoErogatore) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("addServizioApplicativoErogatore");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("addServizioApplicativoErogatore");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.serviziApplicativiErogatore.add(servizioApplicativoErogatore);
 			}finally {
-				this.semaphore.release("addServizioApplicativoErogatore");
+				this.semaphore.release(lock, "addServizioApplicativoErogatore");
 			}
 		}else{
 			this.serviziApplicativiErogatore.add(servizioApplicativoErogatore);
@@ -749,18 +728,17 @@ public class Transaction {
 	
 	public void addEventoGestione(String evento) throws TransactionDeletedException {
 		if(evento.contains(",")){
-			throw new RuntimeException("EventoGestione ["+evento+"] non deve contenere il carattere ','");
+			throw new UtilsRuntimeException("EventoGestione ["+evento+"] non deve contenere il carattere ','");
 		}
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("addEventoGestione");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("addEventoGestione");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.eventiGestione.add(evento);
 			}finally {
-				this.semaphore.release("addEventoGestione");
+				this.semaphore.release(lock, "addEventoGestione");
 			}
 		}else{
 			this.eventiGestione.add(evento);
@@ -769,15 +747,14 @@ public class Transaction {
 	
 	public void setInformazioniToken(InformazioniToken informazioniToken) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setInformazioniToken");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setInformazioniToken");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.informazioniToken = informazioniToken;
 			}finally {
-				this.semaphore.release("setInformazioniToken");
+				this.semaphore.release(lock, "setInformazioniToken");
 			}
 		}else{
 			this.informazioniToken = informazioniToken;
@@ -786,15 +763,14 @@ public class Transaction {
 	
 	public void setInformazioniAttributi(InformazioniAttributi informazioniAttributi) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setInformazioniAttributi");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setInformazioniAttributi");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.informazioniAttributi = informazioniAttributi;
 			}finally {
-				this.semaphore.release("setInformazioniAttributi");
+				this.semaphore.release(lock, "setInformazioniAttributi");
 			}
 		}else{
 			this.informazioniAttributi = informazioniAttributi;
@@ -803,15 +779,14 @@ public class Transaction {
 	
 	public void setInformazioniNegoziazioneToken(InformazioniNegoziazioneToken informazioniNegoziazioneToken) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setInformazioniNegoziazioneToken");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setInformazioniNegoziazioneToken");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.informazioniNegoziazioneToken = informazioniNegoziazioneToken;
 			}finally {
-				this.semaphore.release("setInformazioniNegoziazioneToken");
+				this.semaphore.release(lock, "setInformazioniNegoziazioneToken");
 			}
 		}else{
 			this.informazioniNegoziazioneToken = informazioniNegoziazioneToken;
@@ -820,15 +795,14 @@ public class Transaction {
 	
 	public void setCredenzialiMittente(CredenzialiMittente credenzialiMittente) throws TransactionDeletedException {
 		if(this.gestioneStateful){
-			//synchronized (this.semaphore) {
-			this.semaphore.acquireThrowRuntime("setCredenzialiMittente");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setCredenzialiMittente");
 			try {
-				if(this.deleted){
-					throw new TransactionDeletedException("Transaction eliminata");
+				if(this.deleted!=null && this.deleted.booleanValue()){
+					throw new TransactionDeletedException(TRANSACION_DELETED);
 				}
 				this.credenzialiMittente = credenzialiMittente;
 			}finally {
-				this.semaphore.release("setCredenzialiMittente");
+				this.semaphore.release(lock, "setCredenzialiMittente");
 			}
 		}else{
 			this.credenzialiMittente = credenzialiMittente;
@@ -970,11 +944,11 @@ public class Transaction {
 		if(this.messaggi!=null && !this.messaggi.isEmpty()) {
 			sb.append("\n").append("messaggi: ").append(this.messaggi.size());
 		}
-		if(this.messaggi_headers_onlyLogFileTrace!=null && !this.messaggi_headers_onlyLogFileTrace.isEmpty()) {
-			sb.append("\n").append("messaggi_headers_onlyLogFileTrace: ").append(this.messaggi_headers_onlyLogFileTrace.size());
+		if(this.messaggiHeadersOnlyLogFileTrace!=null && !this.messaggiHeadersOnlyLogFileTrace.isEmpty()) {
+			sb.append("\n").append("messaggi_headers_onlyLogFileTrace: ").append(this.messaggiHeadersOnlyLogFileTrace.size());
 		}
-		if(this.messaggi_body_onlyLogFileTrace!=null && !this.messaggi_body_onlyLogFileTrace.isEmpty()) {
-			sb.append("\n").append("messaggi_body_onlyLogFileTrace: ").append(this.messaggi_body_onlyLogFileTrace.size());
+		if(this.messaggiBodyOnlyLogFileTrace!=null && !this.messaggiBodyOnlyLogFileTrace.isEmpty()) {
+			sb.append("\n").append("messaggi_body_onlyLogFileTrace: ").append(this.messaggiBodyOnlyLogFileTrace.size());
 		}
 		
 		if(this.scenarioCooperazione!=null) {
@@ -1035,11 +1009,11 @@ public class Transaction {
 		
 		if(this.eventiGestione!=null && !this.eventiGestione.isEmpty()) {
 			StringBuilder sbEventi = new StringBuilder();
-			for (String id : this.eventiGestione) {
+			for (String idEventoGestione : this.eventiGestione) {
 				if(sbEventi.length()>0) {
 					sbEventi.append(", ");
 				}
-				sbEventi.append(id);
+				sbEventi.append(idEventoGestione);
 			}
 			sb.append("\n").append("eventiGestione: ").append(sbEventi.toString());
 		}

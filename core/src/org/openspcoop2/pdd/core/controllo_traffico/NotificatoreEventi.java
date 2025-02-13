@@ -47,6 +47,7 @@ import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
@@ -176,8 +177,8 @@ public class NotificatoreEventi {
 		
 		switch (evento) {
 		
-		case LIMITE_GLOBALE_RICHIESTE_SIMULTANEE:
-			lock.acquire("log_"+evento.name());
+		case LIMITE_GLOBALE_RICHIESTE_SIMULTANEE:{
+			SemaphoreLock slock = lock.acquire("log_"+evento.name());
 			try {
 				if(this.inMemoryLastMaxRequests.datiConsumatiThread){
 					if(date==null)
@@ -191,12 +192,12 @@ public class NotificatoreEventi {
 					this.inMemoryLastMaxRequests.datiConsumatiThread=false;
 				}
 			}finally {
-				lock.release("log_"+evento.name());
+				lock.release(slock, "log_"+evento.name());
 			}
 			break;
-			
-		case LIMITE_GLOBALE_RICHIESTE_SIMULTANEE_WARNING_ONLY:
-			lock.acquire("log_"+evento.name());
+		}
+		case LIMITE_GLOBALE_RICHIESTE_SIMULTANEE_WARNING_ONLY:{
+			SemaphoreLock slock = lock.acquire("log_"+evento.name());
 			try {
 				if(this.inMemoryLastMaxRequestsWarningOnly.datiConsumatiThread){
 					if(date==null)
@@ -210,12 +211,12 @@ public class NotificatoreEventi {
 					this.inMemoryLastMaxRequestsWarningOnly.datiConsumatiThread=false;
 				}
 			}finally {
-				lock.release("log_"+evento.name());
+				lock.release(slock, "log_"+evento.name());
 			}
 			break;
-			
-		case CONGESTIONE_PORTA_DOMINIO:
-			lock.acquire("log_"+evento.name());
+		}
+		case CONGESTIONE_PORTA_DOMINIO:{
+			SemaphoreLock slock = lock.acquire("log_"+evento.name());
 			try {
 				if(this.inMemoryLastPddCongestionata.datiConsumatiThread){
 					if(date==null)
@@ -229,15 +230,15 @@ public class NotificatoreEventi {
 					this.inMemoryLastPddCongestionata.datiConsumatiThread=false;
 				}
 			}finally {
-				lock.release("log_"+evento.name());
+				lock.release(slock, "log_"+evento.name());
 			}
 			break;
-			
-		case POLICY_GLOBALE:
+		}
+		case POLICY_GLOBALE:{
 			if(idPolicy==null){
 				throw new CoreException(ID_POLICY_NON_FORNITA);
 			}
-			lock.acquire("log_"+evento.name());
+			SemaphoreLock slock = lock.acquire("log_"+evento.name());
 			try {
 				if(!this.inMemoryLastPolicyGlobaliViolated.containsKey(idPolicy)){
 					this.inMemoryLastPolicyGlobaliViolated.put(idPolicy, new DatiEventoGenerico());
@@ -259,15 +260,15 @@ public class NotificatoreEventi {
 					inMemoryLastPolicyGlobaleViolatedPolicy.datiConsumatiThread=false;
 				}
 			}finally {
-				lock.release("log_"+evento.name());
+				lock.release(slock, "log_"+evento.name());
 			}
 			break;
-			
-		case POLICY_GLOBALE_WARNING_ONLY:
+		}
+		case POLICY_GLOBALE_WARNING_ONLY:{
 			if(idPolicy==null){
 				throw new CoreException(ID_POLICY_NON_FORNITA);
 			}
-			lock.acquire("log_"+evento.name());
+			SemaphoreLock slock = lock.acquire("log_"+evento.name());
 			try {
 				if(!this.inMemoryLastPolicyGlobaliViolatedWarningOnly.containsKey(idPolicy)){
 					this.inMemoryLastPolicyGlobaliViolatedWarningOnly.put(idPolicy, new DatiEventoGenerico());
@@ -289,16 +290,16 @@ public class NotificatoreEventi {
 					inMemoryLastPolicyGlobaleViolatedWarningOnlyPolicy.datiConsumatiThread=false;
 				}
 			}finally {
-				lock.release("log_"+evento.name());
+				lock.release(slock, "log_"+evento.name());
 			}
 			break;
+		}
 			
-			
-		case POLICY_API:
+		case POLICY_API:{
 			if(idPolicy==null){
 				throw new CoreException(ID_POLICY_NON_FORNITA);
 			}
-			lock.acquire("log_"+evento.name());
+			SemaphoreLock slock = lock.acquire("log_"+evento.name());
 			try {
 				if(!this.inMemoryLastPolicyAPIViolated.containsKey(idPolicy)){
 					this.inMemoryLastPolicyAPIViolated.put(idPolicy, new DatiEventoGenerico());
@@ -320,15 +321,15 @@ public class NotificatoreEventi {
 					inMemoryLastPolicyAPIViolatedPolicy.datiConsumatiThread=false;
 				}
 			}finally {
-				lock.release("log_"+evento.name());
+				lock.release(slock, "log_"+evento.name());
 			}
 			break;
-			
-		case POLICY_API_WARNING_ONLY:
+		}
+		case POLICY_API_WARNING_ONLY:{
 			if(idPolicy==null){
 				throw new CoreException(ID_POLICY_NON_FORNITA);
 			}
-			lock.acquire("log_"+evento.name());
+			SemaphoreLock slock = lock.acquire("log_"+evento.name());
 			try {
 				if(!this.inMemoryLastPolicyAPIViolatedWarningOnly.containsKey(idPolicy)){
 					this.inMemoryLastPolicyAPIViolatedWarningOnly.put(idPolicy, new DatiEventoGenerico());
@@ -350,15 +351,15 @@ public class NotificatoreEventi {
 					inMemoryLastPolicyAPIViolatedWarningOnlyPolicy.datiConsumatiThread=false;
 				}
 			}finally {
-				lock.release("log_"+evento.name());
+				lock.release(slock, "log_"+evento.name());
 			}
 			break;
-			
-		case TIMEOUT_CONNESSIONE:
+		}
+		case TIMEOUT_CONNESSIONE:{
 			if(idPolicy==null){
 				throw new CoreException(ID_POLICY_NON_FORNITA);
 			}
-			lock.acquire("log_"+evento.name());
+			SemaphoreLock slock = lock.acquire("log_"+evento.name());
 			try {
 				if(!this.inMemoryLastTimeoutConnessione.containsKey(idPolicy)){
 					this.inMemoryLastTimeoutConnessione.put(idPolicy, new DatiEventoGenerico());
@@ -380,15 +381,15 @@ public class NotificatoreEventi {
 					inMemoryLastTimeoutConnessioneRead.datiConsumatiThread=false;
 				}
 			}finally {
-				lock.release("log_"+evento.name());
+				lock.release(slock, "log_"+evento.name());
 			}
 			break;
-			
-		case TIMEOUT_RICHIESTA:
+		}
+		case TIMEOUT_RICHIESTA:{
 			if(idPolicy==null){
 				throw new CoreException(ID_POLICY_NON_FORNITA);
 			}
-			lock.acquire("log_"+evento.name());
+			SemaphoreLock slock = lock.acquire("log_"+evento.name());
 			try {
 				if(!this.inMemoryLastTimeoutRichiesta.containsKey(idPolicy)){
 					this.inMemoryLastTimeoutRichiesta.put(idPolicy, new DatiEventoGenerico());
@@ -410,15 +411,15 @@ public class NotificatoreEventi {
 					inMemoryLastTimeoutRichiestaRead.datiConsumatiThread=false;
 				}
 			}finally {
-				lock.release("log_"+evento.name());
+				lock.release(slock, "log_"+evento.name());
 			}
 			break;
-			
-		case TIMEOUT_RISPOSTA:
+		}
+		case TIMEOUT_RISPOSTA:{
 			if(idPolicy==null){
 				throw new CoreException(ID_POLICY_NON_FORNITA);
 			}
-			lock.acquire("log_"+evento.name());
+			SemaphoreLock slock = lock.acquire("log_"+evento.name());
 			try {
 				if(!this.inMemoryLastTimeoutRisposta.containsKey(idPolicy)){
 					this.inMemoryLastTimeoutRisposta.put(idPolicy, new DatiEventoGenerico());
@@ -440,10 +441,10 @@ public class NotificatoreEventi {
 					inMemoryLastTimeoutRispostaRead.datiConsumatiThread=false;
 				}
 			}finally {
-				lock.release("log_"+evento.name());
+				lock.release(slock, "log_"+evento.name());
 			}
 			break;
-			
+		}
 
 
 		default:
@@ -495,7 +496,7 @@ public class NotificatoreEventi {
 		Map<String, DatiEventoGenerico> localInMemoryLastPolicyAPIViolated = new HashMap<>();
 		Map<String, DatiEventoGenerico> localInMemoryLastPolicyAPIViolatedWarningOnly = new HashMap<>();
 		Date newInterval = null;
-		lock.acquire("process");
+		SemaphoreLock slock = lock.acquire("process");
 		try {
 			
 			localInMemoryLastMaxRequests = this.inMemoryLastMaxRequests.readAndConsume();
@@ -526,7 +527,7 @@ public class NotificatoreEventi {
 
 			newInterval = DateManager.getDate();
 		}finally {
-			lock.release("process");
+			lock.release(slock, "process");
 		}
 
 		
@@ -673,7 +674,7 @@ public class NotificatoreEventi {
 		// TH_*
 		Map<String, DatiEventoGenerico> localInMemoryLastTimeoutConnessione = new HashMap<>();
 		Date newInterval = null;
-		lock.acquire("processConnectionTimeout");
+		SemaphoreLock slock = lock.acquire("processConnectionTimeout");
 		try {
 			if(this.inMemoryLastTimeoutConnessione!=null && this.inMemoryLastTimeoutConnessione.size()>0){
 				for (Map.Entry<String,DatiEventoGenerico> entry : this.inMemoryLastTimeoutConnessione.entrySet()) {
@@ -683,7 +684,7 @@ public class NotificatoreEventi {
 
 			newInterval = DateManager.getDate();
 		}finally {
-			lock.release("processConnectionTimeout");
+			lock.release(slock, "processConnectionTimeout");
 		}
 
 		
@@ -733,7 +734,7 @@ public class NotificatoreEventi {
 		// TH_*
 		Map<String, DatiEventoGenerico> localInMemoryLastTimeoutRichiesta = new HashMap<>();
 		Date newInterval = null;
-		lock.acquire("processRequestReadTimeout");
+		SemaphoreLock slock = lock.acquire("processRequestReadTimeout");
 		try {
 			if(this.inMemoryLastTimeoutRichiesta!=null && this.inMemoryLastTimeoutRichiesta.size()>0){
 				for (Map.Entry<String,DatiEventoGenerico> entry : this.inMemoryLastTimeoutRichiesta.entrySet()) {
@@ -743,7 +744,7 @@ public class NotificatoreEventi {
 
 			newInterval = DateManager.getDate();
 		}finally {
-			lock.release("processRequestReadTimeout");
+			lock.release(slock, "processRequestReadTimeout");
 		}
 
 		
@@ -793,7 +794,7 @@ public class NotificatoreEventi {
 		// TH_*
 		Map<String, DatiEventoGenerico> localInMemoryLastTimeoutRisposta = new HashMap<>();
 		Date newInterval = null;
-		lock.acquire("processReadTimeout");
+		SemaphoreLock slock = lock.acquire("processReadTimeout");
 		try {
 			if(this.inMemoryLastTimeoutRisposta!=null && this.inMemoryLastTimeoutRisposta.size()>0){
 				for (Map.Entry<String,DatiEventoGenerico> entry : this.inMemoryLastTimeoutRisposta.entrySet()) {
@@ -803,7 +804,7 @@ public class NotificatoreEventi {
 
 			newInterval = DateManager.getDate();
 		}finally {
-			lock.release("processReadTimeout");
+			lock.release(slock, "processReadTimeout");
 		}
 
 		

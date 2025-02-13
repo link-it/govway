@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.openapi.validator.swagger.SwaggerValidatorUtils;
 import org.openspcoop2.utils.rest.ProcessingException;
 import org.openspcoop2.utils.rest.api.Api;
@@ -82,7 +83,7 @@ public class SwaggerRequestValidatorOpenAPI implements Serializable {
 		if(this.openApiSwagger!=null) {
 			return;
 		}
-		this.semaphore.acquireThrowRuntime("init");
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("init");
 		try {
 			// Parsing
 			SwaggerParseResult result;
@@ -148,7 +149,7 @@ public class SwaggerRequestValidatorOpenAPI implements Serializable {
 			this.openApiSwagger = result.getOpenAPI();
 			
 		}finally {
-			this.semaphore.release("init");
+			this.semaphore.release(lock, "init");
 		}
 	}
 	

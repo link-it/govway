@@ -23,6 +23,7 @@ import java.security.SecureRandom;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateEngineType;
 import org.openspcoop2.utils.date.DateManager;
@@ -46,7 +47,7 @@ public class IDUtilities {
 		return getUniqueSerialNumber(methodName, null);
 	}
 	public static long getUniqueSerialNumber(String methodName, String idTransazione){
-		semaphore_getUniqueSerialNumber.acquireThrowRuntime(methodName, idTransazione);
+		SemaphoreLock lock = semaphore_getUniqueSerialNumber.acquireThrowRuntime(methodName, idTransazione);
 		try {
 			
 			if((IDUtilities.uniqueSerialNumber+1) > Long.MAX_VALUE){
@@ -56,7 +57,7 @@ public class IDUtilities {
 			return IDUtilities.uniqueSerialNumber;
 			
 		}finally {
-			semaphore_getUniqueSerialNumber.release(methodName, idTransazione);
+			semaphore_getUniqueSerialNumber.release(lock, methodName, idTransazione);
 		}
 	}
 	
@@ -94,24 +95,24 @@ public class IDUtilities {
 		return IDUtilities.generateDateTime(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
 	}
 	public static String generateDateTime(DateEngineType type, String format, int syncMs) {
-		semaphore_generateDateTime.acquireThrowRuntime("generateDateTime");
+		SemaphoreLock lock = semaphore_generateDateTime.acquireThrowRuntime("generateDateTime");
 		try {
 			Utilities.sleep(syncMs);
 			return DateUtils.getTimeFormatter(type, format).format(DateManager.getDate());
 		}finally {
-			semaphore_generateDateTime.release("generateDateTime");
+			semaphore_generateDateTime.release(lock, "generateDateTime");
 		}
 	}
 	public static String generateDateTime_ISO_8601_TZ(String format, int syncMs) {
 		return IDUtilities.generateDateTime_ISO_8601_TZ(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
 	}
 	public static String generateDateTime_ISO_8601_TZ(DateEngineType type, String format, int syncMs) {
-		semaphore_generateDateTime.acquireThrowRuntime("generateDateTime_ISO_8601_TZ");
+		SemaphoreLock lock = semaphore_generateDateTime.acquireThrowRuntime("generateDateTime_ISO_8601_TZ");
 		try {
 			Utilities.sleep(syncMs);
 			return DateUtils.getDateTimeFormatter_ISO_8601_TZ(type, format).format(DateManager.getDate());
 		}finally {
-			semaphore_generateDateTime.release("generateDateTime_ISO_8601_TZ");
+			semaphore_generateDateTime.release(lock, "generateDateTime_ISO_8601_TZ");
 		}
 	}
 }

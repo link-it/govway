@@ -23,6 +23,7 @@ package org.openspcoop2.utils.cache;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.date.DateManager;
 
 /**
@@ -165,11 +166,11 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 		ElementDateInfo<K> oldestInfo = this.elementInfos[ this.startIx ];
 		if ( oldestInfo!=null && oldestInfo.getTimeMillis() <= timeMillis ) {
 
-			this.semaphore.acquireThrowRuntime("cleanUpExtraTime");
+			SemaphoreLock lock = this.semaphore.acquireThrowRuntime("cleanUpExtraTime");
 			try {
 				cleanUpExtraTime();
 			}finally {
-				this.semaphore.release("cleanUpExtraTime");
+				this.semaphore.release(lock, "cleanUpExtraTime");
 			}
 			
 		}
@@ -257,7 +258,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 
 	@Override
 	public V put( K key, V value ) {
-		this.semaphore.acquireThrowRuntime("put");
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("put");
 		try {
 			if ( this.maxLifeTime > 0 )
 				cleanUpExtraTime();
@@ -271,14 +272,14 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 			}
 			return res;
 		}finally {
-			this.semaphore.release("put");
+			this.semaphore.release(lock, "put");
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public V remove( Object key ) {
-		this.semaphore.acquireThrowRuntime("remove");
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("remove");
 		try {
 			if ( this.maxLifeTime > 0 )
 				cleanUpExtraTime();
@@ -287,7 +288,7 @@ public class LimitedHashMap<K,V> extends ConcurrentHashMap<K, V> {
 				removeElementInfo( (K)key );
 			return res;
 		}finally {
-			this.semaphore.release("remove");
+			this.semaphore.release(lock, "remove");
 		}
 	}
 

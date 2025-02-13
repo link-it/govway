@@ -23,6 +23,7 @@ package org.openspcoop2.utils.cache;
 import java.lang.reflect.Method;
 
 import org.slf4j.Logger;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -314,7 +315,7 @@ public abstract class AbstractCacheWrapper {
 		}
 		
 		//synchronized(this.cache){
-		this.lockCache.acquireThrowRuntime("duplicateObjectCache");
+		SemaphoreLock lock = this.lockCache.acquireThrowRuntime("duplicateObjectCache");
 		try {
 			
 //			if(debug){
@@ -340,7 +341,7 @@ public abstract class AbstractCacheWrapper {
 				}
 			}
 		}finally {
-			this.lockCache.release("duplicateObjectCache");
+			this.lockCache.release(lock, "duplicateObjectCache");
 		}
 		
 	}
@@ -417,7 +418,7 @@ public abstract class AbstractCacheWrapper {
 			}
 			
 			//synchronized(this.cache){
-			this.lockCache.acquire("getObjectCache");
+			SemaphoreLock lock = this.lockCache.acquire("getObjectCache");
 			try {
 				
 				try{
@@ -511,7 +512,7 @@ public abstract class AbstractCacheWrapper {
 				}
 				
 			}finally {
-				this.lockCache.release("getObjectCache");
+				this.lockCache.release(lock, "getObjectCache");
 			}
 		}
 		

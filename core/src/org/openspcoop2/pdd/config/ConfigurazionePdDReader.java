@@ -215,6 +215,7 @@ import org.openspcoop2.security.message.jose.JOSEUtils;
 import org.openspcoop2.security.message.utils.SecurityUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.NameValue;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeystoreParams;
@@ -8255,13 +8256,13 @@ public class ConfigurazionePdDReader {
 			}
 			else {
 				//synchronized (ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap) {
-				semaphore_erroreConnettoreCooperazione.acquireThrowRuntime("getGestioneErroreConnettoreComponenteCooperazione");
+				SemaphoreLock lock = semaphore_erroreConnettoreCooperazione.acquireThrowRuntime("getGestioneErroreConnettoreComponenteCooperazione");
 				try {				
 					if(!ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap.containsKey(key)) {
 						ConfigurazionePdDReader.gestioneErroreConnettoreComponenteCooperazioneMap.put(key, gestione);
 					}
 				}finally {
-					semaphore_erroreConnettoreCooperazione.release("getGestioneErroreConnettoreComponenteCooperazione");
+					semaphore_erroreConnettoreCooperazione.release(lock, "getGestioneErroreConnettoreComponenteCooperazione");
 				}
 			}
 			
@@ -8327,13 +8328,13 @@ public class ConfigurazionePdDReader {
 			}
 			else {
 				//synchronized (ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap) {
-				semaphore_erroreConnettoreIntegrazione.acquireThrowRuntime("getGestioneErroreConnettoreComponenteIntegrazione");
+				SemaphoreLock lock = semaphore_erroreConnettoreIntegrazione.acquireThrowRuntime("getGestioneErroreConnettoreComponenteIntegrazione");
 				try {
 					if(!ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap.containsKey(key)) {
 						ConfigurazionePdDReader.gestioneErroreConnettoreComponenteIntegrazioneMap.put(key, gestione);
 					}
 				}finally {
-					semaphore_erroreConnettoreIntegrazione.release("getGestioneErroreConnettoreComponenteIntegrazione");
+					semaphore_erroreConnettoreIntegrazione.release(lock, "getGestioneErroreConnettoreComponenteIntegrazione");
 				}
 			}
 		}

@@ -51,6 +51,7 @@ import org.openspcoop2.protocol.sdk.state.RequestFruitore;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.RequestRateLimitingConfig;
 import org.openspcoop2.protocol.sdk.state.RequestThreadContext;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -1431,7 +1432,7 @@ public class GestoreRichieste {
 		String idTransazione = requestInfo.getIdTransazione();
 		
 		if(cacheApi!=null && requestInfo.getPreRequestConfig()!=null && !requestInfo.getPreRequestConfig().isCached()) {
-			lockCache.acquire("savePreRequestConfig", idTransazione);
+			SemaphoreLock lock = lockCache.acquire("savePreRequestConfig", idTransazione);
 			try {
 				String key = requestInfo.getPreRequestConfig().getKey();
 				org.openspcoop2.utils.cache.CacheResponse response = 
@@ -1448,12 +1449,12 @@ public class GestoreRichieste {
 				}
 				
 			}finally {
-				lockCache.release("savePreRequestConfig", idTransazione);
+				lockCache.release(lock, "savePreRequestConfig", idTransazione);
 			}
 		}
 		
 		if(cacheApi!=null && requestInfo.getRequestConfig()!=null && !requestInfo.getRequestConfig().isCached()) {
-			lockCache.acquire("saveRequestConfig", idTransazione);
+			SemaphoreLock lock = lockCache.acquire("saveRequestConfig", idTransazione);
 			try {
 				String key = requestInfo.getRequestConfig().getKey();
 				org.openspcoop2.utils.cache.CacheResponse response = 
@@ -1470,12 +1471,12 @@ public class GestoreRichieste {
 				}
 				
 			}finally {
-				lockCache.release("saveRequestConfig", idTransazione);
+				lockCache.release(lock, "saveRequestConfig", idTransazione);
 			}
 		}
 		
 		if(cacheRateLimiting!=null && requestInfo.getRequestRateLimitingConfig()!=null && !requestInfo.getRequestRateLimitingConfig().isCached()) {
-			lockCache_rateLimiting.acquire("saveRequestRateLimitingConfig", idTransazione);
+			SemaphoreLock lock = lockCache_rateLimiting.acquire("saveRequestRateLimitingConfig", idTransazione);
 			try {
 				String key = requestInfo.getRequestConfig().getKey();
 				org.openspcoop2.utils.cache.CacheResponse response = 
@@ -1492,7 +1493,7 @@ public class GestoreRichieste {
 				}
 				
 			}finally {
-				lockCache_rateLimiting.release("saveRequestRateLimitingConfig", idTransazione);
+				lockCache_rateLimiting.release(lock, "saveRequestRateLimitingConfig", idTransazione);
 			}
 		}
 		
@@ -1722,7 +1723,7 @@ public class GestoreRichieste {
 		}
 		
 		if(!requestFruitore.isCached()) {
-			lockCache_fruitori.acquire("saveRequestFruitore", idTransazione);
+			SemaphoreLock lock = lockCache_fruitori.acquire("saveRequestFruitore", idTransazione);
 			try {
 				org.openspcoop2.utils.cache.CacheResponse response = 
 						(org.openspcoop2.utils.cache.CacheResponse) cacheFruitori.get(key);
@@ -1738,7 +1739,7 @@ public class GestoreRichieste {
 				}
 				
 			}finally {
-				lockCache_fruitori.release("saveRequestFruitore", idTransazione);
+				lockCache_fruitori.release(lock, "saveRequestFruitore", idTransazione);
 			}
 		}
 		

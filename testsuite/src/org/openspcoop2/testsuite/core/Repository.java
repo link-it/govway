@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SemaphoreLock;
 
 /**
  * Repository degli id utilizzati nelle istanze di profili non asincroni.
@@ -46,19 +47,19 @@ public class Repository {
 	}
 
 	public int add(String id){
-		this.semaphore.acquireThrowRuntime("add");
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("add");
 		try {
 			this.vet.add(id);
 			//System.out.println("ADD (size:"+this.vet.size()+") indexOf("+this.vet.indexOf(id)+") index("+this.index+")");
 			return this.vet.indexOf(id);
 		}finally {
-			this.semaphore.release("add");
+			this.semaphore.release(lock, "add");
 		}
 	}
 
 
 	public String getNext(){
-		this.semaphore.acquireThrowRuntime("getNext");
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("getNext");
 		String str;
 		try{
 			//System.out.println("GET NEXT (size:"+this.vet.size()+") index("+this.index+") ...");
@@ -71,18 +72,18 @@ public class Repository {
 			return null;
 		}
 		finally {
-			this.semaphore.release("add");
+			this.semaphore.release(lock, "add");
 		}
 		return str;
 	}
 	
 	public void setIndex(int i){
-		this.semaphore.acquireThrowRuntime("setIndex");
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("setIndex");
 		try {
 			//System.out.println("SET INDEX (size:"+this.vet.size()+") index("+i+") ...");
 			this.index = i;
 		}finally {
-			this.semaphore.release("setIndex");
+			this.semaphore.release(lock, "setIndex");
 		}
 	}
 

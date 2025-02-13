@@ -95,6 +95,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
@@ -635,7 +636,7 @@ public class GestoreAutenticazione {
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutenticazione.semaphoreAutenticazionePD) {
 				org.openspcoop2.utils.Semaphore lockAutenticazionePD = getLockAutenticazionePD(tipoAutenticazione);
-				lockAutenticazionePD.acquire("verificaAutenticazionePortaDelegata", idTransazione);
+				SemaphoreLock lock = lockAutenticazionePD.acquire("verificaAutenticazionePortaDelegata", idTransazione);
 				try {
 					
 					response = 
@@ -678,7 +679,7 @@ public class GestoreAutenticazione {
 						throw new AutenticazioneException("Metodo (GestoreAutenticazione.autenticazionePortaDelegata.process) ha ritornato un valore di esito null");
 					}
 				}finally{
-					lockAutenticazionePD.release("verificaAutenticazionePortaDelegata", idTransazione);
+					lockAutenticazionePD.release(lock, "verificaAutenticazionePortaDelegata", idTransazione);
 				}
 	    	}
     	}finally {
@@ -724,7 +725,7 @@ public class GestoreAutenticazione {
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				//synchronized (GestoreAutenticazione.semaphoreAutenticazionePA) {
 				org.openspcoop2.utils.Semaphore lockAutenticazionePA = getLockAutenticazionePA(tipoAutenticazione);
-				lockAutenticazionePA.acquire("verificaAutenticazionePortaApplicativa", idTransazione);
+				SemaphoreLock lock = lockAutenticazionePA.acquire("verificaAutenticazionePortaApplicativa", idTransazione);
 				try {
 					
 					response = 
@@ -767,7 +768,7 @@ public class GestoreAutenticazione {
 						throw new AutenticazioneException("Metodo (GestoreAutenticazione.autenticazionePortaApplicativa.process) ha ritornato un valore di esito null");
 					}
 				}finally {
-					lockAutenticazionePA.release("verificaAutenticazionePortaApplicativa", idTransazione);
+					lockAutenticazionePA.release(lock, "verificaAutenticazionePortaApplicativa", idTransazione);
 				}
 	    	}
     	}finally {
@@ -1364,7 +1365,7 @@ public class GestoreAutenticazione {
 			}
     		
 			//synchronized (GestoreAutenticazione.semaphoreCredenzialiMittente) {
-			GestoreAutenticazione.lockCredenzialiMittente.acquire("getCredenzialeMittente", idTransazione);
+			SemaphoreLock lock = GestoreAutenticazione.lockCredenzialiMittente.acquire("getCredenzialeMittente", idTransazione);
 			try {
 				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
@@ -1405,7 +1406,7 @@ public class GestoreAutenticazione {
 					throw new AutenticazioneException("Metodo (GestoreAutenticazione.getCredenzialeMittente) ha ritornato un valore di esito null");
 				}
 			}finally {
-				GestoreAutenticazione.lockCredenzialiMittente.release("getCredenzialeMittente", idTransazione);
+				GestoreAutenticazione.lockCredenzialiMittente.release(lock, "getCredenzialeMittente", idTransazione);
 			}
     	}
     }
@@ -1516,14 +1517,14 @@ public class GestoreAutenticazione {
     		Date scadenzaEntry,
     		AbstractSearchCredenziale searchCredential, AbstractCredenziale credential,
     		Logger log) throws Exception {
-    	GestoreAutenticazione.lockCredenzialiMittenteCreazione.acquire("createCredenzialeMittente");
+    	SemaphoreLock lock = GestoreAutenticazione.lockCredenzialiMittenteCreazione.acquire("createCredenzialeMittente");
     	try {
     		return  GestoreAutenticazione._createCredenzialeMittente(credenzialeMittentiService,
     	    		scadenzaEntry,
     	    		searchCredential, credential,
     	    		log);
     	}finally {
-    		GestoreAutenticazione.lockCredenzialiMittenteCreazione.release("createCredenzialeMittente");
+    		GestoreAutenticazione.lockCredenzialiMittenteCreazione.release(lock, "createCredenzialeMittente");
     	}
     }
 //    private static synchronized CredenzialeMittente createCredenzialeMittente(ICredenzialeMittenteService credenzialeMittentiService,
@@ -1615,7 +1616,7 @@ public class GestoreAutenticazione {
 			int conflict = 0;
 			try{
 				
-				GestoreAutenticazione.lockCredenzialiMittenteAggiornamento.acquire("updateDataCredenzialeMittente");
+				SemaphoreLock lock = GestoreAutenticazione.lockCredenzialiMittenteAggiornamento.acquire("updateDataCredenzialeMittente");
 				try {
 					CredenzialeMittente c = GestoreAutenticazione._updateDataCredenzialeMittente(credenzialeMittentiService,
 							scadenzaEntry, credenziale);
@@ -1625,7 +1626,7 @@ public class GestoreAutenticazione {
 					return c;
 	    		
 				}finally {
-		    		GestoreAutenticazione.lockCredenzialiMittenteAggiornamento.release("updateDataCredenzialeMittente");
+		    		GestoreAutenticazione.lockCredenzialiMittenteAggiornamento.release(lock, "updateDataCredenzialeMittente");
 		    	}
 		    		
 			} catch(Throwable e) {

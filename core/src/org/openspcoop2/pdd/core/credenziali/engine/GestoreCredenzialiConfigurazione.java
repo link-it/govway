@@ -29,6 +29,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**     
@@ -46,8 +47,9 @@ public class GestoreCredenzialiConfigurazione {
 	private static void initConfigurazione(boolean fruizione, IDSoggetto idSoggetto) throws GestoreCredenzialiException {
 		String key = getKey(fruizione, idSoggetto);
 		if(!configurazione.containsKey(key)) {
+			SemaphoreLock lock = null; 
 			try {
-				semaphore.acquire("initConfig");
+				lock = semaphore.acquire("initConfig");
 			}catch(Exception e) {
 				throw new GestoreCredenzialiException(e.getMessage(),e);
 			}
@@ -55,7 +57,7 @@ public class GestoreCredenzialiConfigurazione {
 				GestoreCredenzialiConfigurazione instance = new GestoreCredenzialiConfigurazione(fruizione, idSoggetto);
 				configurazione.put(key, instance);
 			}finally {
-				semaphore.release("initConfig");
+				semaphore.release(lock, "initConfig");
 			}
 		}
 	}

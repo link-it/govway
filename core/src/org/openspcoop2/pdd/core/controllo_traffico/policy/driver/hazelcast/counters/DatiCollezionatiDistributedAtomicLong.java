@@ -32,6 +32,7 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId
 import org.openspcoop2.core.controllo_traffico.beans.IDatiCollezionatiDistributed;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.BuilderDatiCollezionatiDistributed;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -342,7 +343,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 
 		if(this.initialized) {
 			
-			this.lock.acquireThrowRuntime("resetPolicyCounterForDate");
+			SemaphoreLock slock = this.lock.acquireThrowRuntime("resetPolicyCounterForDate");
 			try {
 				/**System.out.println("RESET");*/
 				long policyDate = date.getTime();
@@ -393,7 +394,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 				}
 				
 			}finally {
-				this.lock.release("resetPolicyCounterForDate");
+				this.lock.release(slock, "resetPolicyCounterForDate");
 			}
 			
 		}
@@ -408,7 +409,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 		
 		if(this.initialized) {
 			
-			this.lock.acquireThrowRuntime("resetPolicyCounterForDateDegradoPrestazionale");
+			SemaphoreLock slock = this.lock.acquireThrowRuntime("resetPolicyCounterForDateDegradoPrestazionale");
 			try {
 				long policyDate = date.getTime();
 				long actual = this.distributedPolicyDegradoPrestazionaleDate.get();
@@ -449,7 +450,7 @@ public class DatiCollezionatiDistributedAtomicLong extends DatiCollezionati impl
 				}
 				
 			}finally {
-				this.lock.release("resetPolicyCounterForDateDegradoPrestazionale");
+				this.lock.release(slock, "resetPolicyCounterForDateDegradoPrestazionale");
 			}	
 		}
 		else {
