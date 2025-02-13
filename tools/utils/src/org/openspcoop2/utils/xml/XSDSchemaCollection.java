@@ -53,6 +53,7 @@ public class XSDSchemaCollection {
 
 	private static boolean serializeXSDSchemiBuildSchemaSuccessDefault = false;
 	private static boolean serializeXSDSchemiBuildSchemaErrorDefault = true;
+	private static File serializeXSDSchemiBuildSchemaDefaultDir = null; 
 	public static boolean isSerializeXSDSchemiBuildSchemaSuccessDefault() {
 		return serializeXSDSchemiBuildSchemaSuccessDefault;
 	}
@@ -65,6 +66,12 @@ public class XSDSchemaCollection {
 	public static void setSerializeXSDSchemiBuildSchemaErrorDefault(boolean serializeXSDSchemiBuildSchemaErrorDefault) {
 		XSDSchemaCollection.serializeXSDSchemiBuildSchemaErrorDefault = serializeXSDSchemiBuildSchemaErrorDefault;
 	}
+	public static File getSerializeXSDSchemiBuildSchemaDefaultDir() {
+		return serializeXSDSchemiBuildSchemaDefaultDir;
+	}
+	public static void setSerializeXSDSchemiBuildSchemaDefaultDir(File serializeXSDSchemiBuildSchemaDefaultDir) {
+		XSDSchemaCollection.serializeXSDSchemiBuildSchemaDefaultDir = serializeXSDSchemiBuildSchemaDefaultDir;
+	}
 	
 	private byte[] schemaRoot;
 	private Map<String, byte[]> resources;
@@ -72,10 +79,12 @@ public class XSDSchemaCollection {
 		
 	private boolean serializeXSDSchemiBuildSchemaSuccess = false;
 	private boolean serializeXSDSchemiBuildSchemaError = true;
+	private File serializeXSDSchemiBuildSchemaDir = null; 
 	
 	public XSDSchemaCollection() {
 		this.serializeXSDSchemiBuildSchemaSuccess = isSerializeXSDSchemiBuildSchemaSuccessDefault();
 		this.serializeXSDSchemiBuildSchemaError = isSerializeXSDSchemiBuildSchemaErrorDefault();
+		this.serializeXSDSchemiBuildSchemaDir = getSerializeXSDSchemiBuildSchemaDefaultDir();
 	}
 	
 	public boolean isSerializeXSDSchemiBuildSchemaSuccess() {
@@ -90,6 +99,13 @@ public class XSDSchemaCollection {
 	public void setSerializeXSDSchemiBuildSchemaError(boolean serializeXSDSchemiBuildSchemaErrror) {
 		this.serializeXSDSchemiBuildSchemaError = serializeXSDSchemiBuildSchemaErrror;
 	}
+	public File getSerializeXSDSchemiBuildSchemaDir() {
+		return this.serializeXSDSchemiBuildSchemaDir;
+	}
+	public void setSerializeXSDSchemiBuildSchemaDir(File serializeXSDSchemiBuildSchemaDir) {
+		this.serializeXSDSchemiBuildSchemaDir = serializeXSDSchemiBuildSchemaDir;
+	}
+	
 	public byte[] getSchemaRoot() {
 		return this.schemaRoot;
 	}
@@ -203,7 +219,7 @@ public class XSDSchemaCollection {
 			}
 			
 			try{
-				this.buildSchemaEngine(log,false,false);
+				this.buildSchemaEngine(log,false,false,null);
 			}catch(Throwable e){
 				log.error("Costruzione Struttura degli Schemi XSD fallita: "+e.getMessage(),e);
 				nomeFile = "BuildSchemaFailed.txt";
@@ -235,9 +251,9 @@ public class XSDSchemaCollection {
 	 * @throws XMLException
 	 */
 	public Schema buildSchema(Logger logger) throws XMLException {
-		return this.buildSchemaEngine(logger, this.serializeXSDSchemiBuildSchemaSuccess, this.serializeXSDSchemiBuildSchemaError);
+		return this.buildSchemaEngine(logger, this.serializeXSDSchemiBuildSchemaSuccess, this.serializeXSDSchemiBuildSchemaError, this.serializeXSDSchemiBuildSchemaDir);
 	}
-	private Schema buildSchemaEngine(Logger logger, boolean serializeXSDSchemiBuildSchemaSuccess, boolean serializeXSDSchemiBuildSchemaErrror) throws XMLException {
+	private Schema buildSchemaEngine(Logger logger, boolean serializeXSDSchemiBuildSchemaSuccess, boolean serializeXSDSchemiBuildSchemaError, File serializeXSDSchemiBuildSchemaDir) throws XMLException {
 		
 		// Creo XSDResolver con le risorse localizzate e procedo con la validazione
 		XSDResourceResolver resourceResolver = new XSDResourceResolver(this.resources);
@@ -254,15 +270,15 @@ public class XSDSchemaCollection {
 			/**ValidatoreXSD validatoreXSD = new ValidatoreXSD(this.logger,resourceResolver,new ByteArrayInputStream(schemaPerValidazione));*/
 
 			if(serializeXSDSchemiBuildSchemaSuccess){
-				debugPrintXSDSchemi(this.schemaRoot, resourceResolver, logger, true);
+				debugPrintXSDSchemi(this.schemaRoot, resourceResolver, logger, true, serializeXSDSchemiBuildSchemaDir);
 			}
 
 			return validatoreXSD.getSchema();
 
 		}catch (Exception e) {
 
-			if(serializeXSDSchemiBuildSchemaErrror){
-				debugPrintXSDSchemi(this.schemaRoot, resourceResolver, logger, false);
+			if(serializeXSDSchemiBuildSchemaError){
+				debugPrintXSDSchemi(this.schemaRoot, resourceResolver, logger, false, serializeXSDSchemiBuildSchemaDir);
 			}
 
 			throw new XMLException("Riscontrato errore durante l'inizializzazione dello schema: "+e.getMessage(),e);
@@ -270,10 +286,16 @@ public class XSDSchemaCollection {
 		
 	}
 	
-	private void debugPrintXSDSchemi(byte[]schemaPerValidazione,XSDResourceResolver resourceResolver,Logger logger, boolean success){
+	private void debugPrintXSDSchemi(byte[]schemaPerValidazione,XSDResourceResolver resourceResolver,Logger logger, boolean success, File serializeXSDSchemiBuildSchemaDir){
 		try{
 			FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
-			File dir = Files.createTempDirectory("xsd_dir_", attr).toFile();
+			File dir = null;
+			if(serializeXSDSchemiBuildSchemaDir!=null) {
+				dir = Files.createTempDirectory(serializeXSDSchemiBuildSchemaDir.toPath(), "xsd_dir_", attr).toFile();
+			}
+			else {
+				dir = Files.createTempDirectory("xsd_dir_", attr).toFile();
+			}
 			boolean dirCreate = dir.exists();
 			/**System.out.println("FILE?["+dir.getAbsolutePath()+"] ["+dirCreate+"] ["+dir.isDirectory()+"]");*/
 			dirCreate = dirCreate && dir.isDirectory();

@@ -1,4 +1,12 @@
-2025-01-30  Giuliano Pintori <pintori@link.it>
+2025-02-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1577
+	In caso di fallimento nella costruzione dello schema XSD, la collezione degli schemi veniva serializzata nella directory `/tmp`, 
+	causando potenziali problemi di esaurimento dello spazio nella partizione temporanea.
+	Ora la collezione degli schemi viene registrata in una directory interna alla directory di log associata a GovWay, migliorando la gestione dello spazio e facilitando il debug.
+
+2025-02-13  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]
 	Risolto Bug #1576

@@ -2618,9 +2618,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try {
 				XSDSchemaCollection.setSerializeXSDSchemiBuildSchemaSuccessDefault(propertiesReader.isValidazioneContenutiApplicativiXsdBuildSchemaSuccessSerializeXSDCollection());
 				XSDSchemaCollection.setSerializeXSDSchemiBuildSchemaErrorDefault(propertiesReader.isValidazioneContenutiApplicativiXsdBuildSchemaErrorSerializeXSDCollection());
+				XSDSchemaCollection.setSerializeXSDSchemiBuildSchemaDefaultDir(propertiesReader.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir());
+								
 				XSDSchemaCollection s = new XSDSchemaCollection();
 				OpenSPCoop2Startup.logStartupInfo("XSDSchemaCollection buildSchemaSuccess:"+s.isSerializeXSDSchemiBuildSchemaSuccess());
 				OpenSPCoop2Startup.logStartupInfo("XSDSchemaCollection buildSchemaError:"+s.isSerializeXSDSchemiBuildSchemaError());
+				OpenSPCoop2Startup.logStartupInfo("XSDSchemaCollection buildSchemaDir:"+s.getSerializeXSDSchemiBuildSchemaDir());
 			}catch(Exception e){
 				msgDiag.logStartupError(e,"Configurazione libreria di validazione xsd");
 				return;
