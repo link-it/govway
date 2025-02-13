@@ -42,6 +42,7 @@ import org.openspcoop2.core.commons.search.IdAccordoServizioParteComuneGruppo;
 import org.openspcoop2.core.commons.search.IdPortType;
 import org.openspcoop2.core.commons.search.IdSoggetto;
 import org.openspcoop2.core.commons.search.Operation;
+import org.openspcoop2.core.commons.search.PortType;
 import org.openspcoop2.core.commons.search.PortaApplicativa;
 import org.openspcoop2.core.commons.search.PortaDelegata;
 import org.openspcoop2.core.commons.search.Resource;
@@ -656,22 +657,32 @@ public class RegistroCore {
 		List<AccordoServizioParteComune> listAccordi = accordoServizioParteComuneServiceSearch.findAll(pagExpr);
 		
 		for (AccordoServizioParteComune accordoServizioParteComune : listAccordi) {
-			IdPortType idPortType = new IdPortType();
-			
 			IdSoggetto idSoggettoReferente = new IdSoggetto();
 			idSoggettoReferente.setTipo(accordoServizioParteComune.getIdReferente().getTipo());
 			idSoggettoReferente.setNome(accordoServizioParteComune.getIdReferente().getNome());
-			
+
 			String serviceBindingAccordo = accordoServizioParteComune.getServiceBinding();
-			
+
 			IdAccordoServizioParteComune idAccordo = new IdAccordoServizioParteComune();
 			idAccordo.setNome(accordoServizioParteComune.getNome());
 			idAccordo.setVersione(accordoServizioParteComune.getVersione());
 			idAccordo.setIdSoggetto(idSoggettoReferente);
 			idAccordo.setServiceBinding(serviceBindingAccordo);
-			idPortType.setIdAccordoServizioParteComune(idAccordo);
 			
-			idPortTypes.add(idPortType);
+			List<PortType> portTypes = accordoServizioParteComune.getPortType();
+			
+			if(portTypes != null && !portTypes.isEmpty()) {
+				for (PortType portType : portTypes) {
+					IdPortType idPortType = new IdPortType();
+					idPortType.setNome(portType.getNome());
+					idPortType.setIdAccordoServizioParteComune(idAccordo);
+					idPortTypes.add(idPortType);
+				}
+			} else {
+				IdPortType idPortType = new IdPortType();
+				idPortType.setIdAccordoServizioParteComune(idAccordo);
+				idPortTypes.add(idPortType);
+			}
 		}
 		
 		Map<String,String> mapAzioni = getEngineAzioni(manager, input, idPortTypes);

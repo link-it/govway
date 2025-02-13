@@ -1,3 +1,10 @@
+2025-01-30  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #1576
+	È stato corretto un comportamento anomalo nel filtro di ricerca delle azioni per le API SOAP nelle sezioni "Transazioni" e "Statistiche", che impediva la selezione delle azioni. 
+	Il filtro funzionava correttamente per le API di tipo REST.
+
 2025-02-13  Andrea Poli <apoli@link.it>
 
 	* [Utils, GovWayCore]
