@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
@@ -92,7 +93,7 @@ public class YAMLUtils extends AbstractUtils {
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("JSONUtils");
 	private static YAMLMapper internalMapper;
 	private static synchronized void initMapper()  {
-		semaphore.acquireThrowRuntime("initMapper");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("initMapper");
 		try {
 			if(internalMapper==null){
 				internalMapper = new YAMLMapper();
@@ -108,40 +109,40 @@ public class YAMLUtils extends AbstractUtils {
 				internalMapper.addMixIn(io.swagger.v3.oas.models.media.MediaType.class, io.swagger.v3.core.jackson.mixin.MediaTypeMixin.class);
 			}
 		}finally {
-			semaphore.release("initMapper");
+			semaphore.release(lock, "initMapper");
 		}
 	}
 	public static void setMapperTimeZone(TimeZone timeZone) {
 		if(internalMapper==null){
 			initMapper();
 		}
-		semaphore.acquireThrowRuntime("setMapperTimeZone");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("setMapperTimeZone");
 		try {
 			internalMapper.setTimeZone(timeZone);
 		}finally {
-			semaphore.release("setMapperTimeZone");
+			semaphore.release(lock, "setMapperTimeZone");
 		}
 	}
 	public static void registerJodaModule() {
 		if(internalMapper==null){
 			initMapper();
 		}
-		semaphore.acquireThrowRuntime("registerJodaModule");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("registerJodaModule");
 		try {
 			internalMapper.registerModule(new JodaModule());
 		}finally {
-			semaphore.release("registerJodaModule");
+			semaphore.release(lock, "registerJodaModule");
 		}
 	}
 	public static void registerJavaTimeModule() {
 		if(internalMapper==null){
 			initMapper();
 		}
-		semaphore.acquireThrowRuntime("registerJavaTimeModule");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("registerJavaTimeModule");
 		try {
 			internalMapper.registerModule(new JavaTimeModule());
 		}finally {
-			semaphore.release("registerJavaTimeModule");
+			semaphore.release(lock, "registerJavaTimeModule");
 		}
 	}
 	

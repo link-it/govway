@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -66,7 +67,7 @@ public class NTPDate implements IDate {
 				return NTPDate.time.get(key);
 			}else{
 				//synchronized(NTPDate.time){
-				semaphore.acquire("getDateCached");
+				SemaphoreLock lock = semaphore.acquire("getDateCached");
 				try {
 					if(NTPDate.time.containsKey(key)){
 						//System.out.println("NOW ["+key+"] from cache sync");
@@ -80,7 +81,7 @@ public class NTPDate implements IDate {
 						return d;
 					}
 				}finally {
-					semaphore.release("getDateCached");
+					semaphore.release(lock, "getDateCached");
 				}
 			}
 		}

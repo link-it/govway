@@ -55,6 +55,7 @@ import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
@@ -186,7 +187,7 @@ public class InitListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		
-		semaphoreInitListener.acquireThrowRuntime("contextInitialized");
+		SemaphoreLock lock = semaphoreInitListener.acquireThrowRuntime("contextInitialized");
 		try {
 			
 			if(InitListener.initialized) {
@@ -605,7 +606,7 @@ public class InitListener implements ServletContextListener {
 			
 			InitListener.setInitialized(true);
 		}finally {
-			semaphoreInitListener.release("contextInitialized");
+			semaphoreInitListener.release(lock, "contextInitialized");
 		}
 	}
 

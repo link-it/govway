@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.RegistroPlugins;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
@@ -85,7 +86,7 @@ public class PluginManager {
 		
 		boolean update = false;
 		
-		this.lockExpire.acquire("updateExpireDate");
+		SemaphoreLock lock = this.lockExpire.acquire("updateExpireDate");
 		try {
 			if(this.expireDate==null || nowDate.after(this.expireDate)) {
 				this.expireDate = new Date(nowDate.getTime()+(this.expireSeconds*1000));
@@ -94,7 +95,7 @@ public class PluginManager {
 				// gli altri thread che entrano in questo metodo trovano la lor nowDate inferiore ad expireDate
 			}
 		}finally {
-			this.lockExpire.release("updateExpireDate");
+			this.lockExpire.release(lock, "updateExpireDate");
 		}
 		
 		if(update) {
@@ -110,7 +111,7 @@ public class PluginManager {
 	
 	private void update(Logger log, RegistroPlugins pluginsParam) throws UtilsException {
 		
-		this.lockImage.acquire("update");
+		SemaphoreLock lock = this.lockImage.acquire("update");
 		try {
 			
 			RegistroPlugins plugins = null;
@@ -230,7 +231,7 @@ public class PluginManager {
 			this.pluginsImageSwitchOld = null;
 					
 		}finally {
-			this.lockImage.release("update");
+			this.lockImage.release(lock, "update");
 		}
 		
 	}
@@ -238,7 +239,7 @@ public class PluginManager {
 	public void close() {
 		
 		// Chiusura di tutti
-		this.lockImage.acquireThrowRuntime("close");
+		SemaphoreLock lock = this.lockImage.acquireThrowRuntime("close");
 		try {
 			
 			if(this.pluginsImage!=null && this.pluginsImage.plugins.size()>0) {
@@ -263,7 +264,7 @@ public class PluginManager {
 			}
 			
 		}finally {
-			this.lockImage.release("close");
+			this.lockImage.release(lock, "close");
 		}
 	}
 	

@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.constants.RegistroTipo;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.resources.Loader;
@@ -242,7 +243,7 @@ public class XMLDataConverterMainProcessor {
 	private static boolean reset(boolean b){
 		if(b){
 			// Se si desidera la reset, controllo se e' gia stata effettuata
-			semaphoreResetEffettuata.acquireThrowRuntime("reset");
+			SemaphoreLock lock = semaphoreResetEffettuata.acquireThrowRuntime("reset");
 			try {
 				if(XMLDataConverterMainProcessor.resetEffettuata==false){
 					XMLDataConverterMainProcessor.resetEffettuata=true;
@@ -252,7 +253,7 @@ public class XMLDataConverterMainProcessor {
 					return false;
 				}
 			}finally {
-				semaphoreResetEffettuata.release("reset");
+				semaphoreResetEffettuata.release(lock, "reset");
 			}
 		}
 		return false;

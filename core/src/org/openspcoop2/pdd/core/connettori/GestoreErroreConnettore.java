@@ -50,6 +50,7 @@ import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
@@ -102,7 +103,7 @@ public class GestoreErroreConnettore {
 		}else{
 
 			//synchronized (gestioneErroreDefaultComponenteIntegrazioneMap) {
-			semaphore.acquireThrowRuntime("getGestioneErroreDefaultComponenteIntegrazione");
+			SemaphoreLock lock = semaphore.acquireThrowRuntime("getGestioneErroreDefaultComponenteIntegrazione");
 			try {
 
 				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.containsKey(key)){
@@ -139,7 +140,7 @@ public class GestoreErroreConnettore {
 				return gestione;
 
 			}finally{
-				semaphore.release("getGestioneErroreDefaultComponenteIntegrazione");
+				semaphore.release(lock, "getGestioneErroreDefaultComponenteIntegrazione");
 			}
 		}
 	}
@@ -153,7 +154,7 @@ public class GestoreErroreConnettore {
 		}else{
 
 			//synchronized (gestioneErroreDefaultComponenteCooperazioneMap) {
-			semaphore.acquireThrowRuntime("getGestioneErroreDefaultComponenteCooperazione");
+			SemaphoreLock lock = semaphore.acquireThrowRuntime("getGestioneErroreDefaultComponenteCooperazione");
 			try {
 
 				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.containsKey(key)){
@@ -234,7 +235,7 @@ public class GestoreErroreConnettore {
 				return gestione;
 
 			}finally {
-				semaphore.release("getGestioneErroreDefaultComponenteCooperazione");
+				semaphore.release(lock, "getGestioneErroreDefaultComponenteCooperazione");
 			}
 		}
 	}

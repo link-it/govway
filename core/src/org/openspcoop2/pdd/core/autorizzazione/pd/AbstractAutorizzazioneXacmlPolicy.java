@@ -34,6 +34,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.xacml.MarshallUtilities;
 import org.openspcoop2.utils.xacml.ResultCombining;
 import org.openspcoop2.utils.xacml.ResultUtilities;
@@ -76,7 +77,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 		return this.xacmlRequest;
 	}
 	private void initXacmlRequest(DatiInvocazionePortaDelegata datiInvocazione, Logger log) throws AutorizzazioneException{
-		this.semaphore.acquireThrowRuntime("initXacmlRequest");
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("initXacmlRequest");
 		try {
 			if(this.xacmlRequest==null){
 		    	this.policyKey = "http://govway.org/out/"+datiInvocazione.getIdPD().getNome();
@@ -86,7 +87,7 @@ abstract class AbstractAutorizzazioneXacmlPolicy extends AbstractAutorizzazioneB
 				this.log.debug("XACML-Request (idPolicy:"+this.policyKey+"): "+this.xacmlRequestAsString);
 			}
 		}finally {
-			this.semaphore.release("initXacmlRequest");
+			this.semaphore.release(lock, "initXacmlRequest");
 		}
 	}
 	

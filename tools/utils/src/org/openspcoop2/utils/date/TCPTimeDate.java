@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.net.time.TimeTCPClient;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -76,7 +77,7 @@ public class TCPTimeDate implements IDate {
 					return TCPTimeDate.time.get(key);
 				}else{
 					//synchronized(TCPTimeDate.time){
-					semaphore.acquire("getDateCached");
+					SemaphoreLock lock = semaphore.acquire("getDateCached");
 					try {
 						if(TCPTimeDate.time.containsKey(key)){
 							//System.out.println("NOW ["+key+"] from cache sync");
@@ -90,7 +91,7 @@ public class TCPTimeDate implements IDate {
 							return d;
 						}
 					}finally {
-						semaphore.release("getDateCached");
+						semaphore.release(lock, "getDateCached");
 					}
 				}	
 			}

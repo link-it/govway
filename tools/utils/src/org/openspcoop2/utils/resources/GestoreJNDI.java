@@ -29,6 +29,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
@@ -80,11 +81,11 @@ public class GestoreJNDI {
 			/**System.out.println("-------------------------------- LOCAL LOOKUP ["+fullPath+"]");*/
 			
 			Object o = null;
-			semaphore.acquireThrowRuntime("lookup");
+			SemaphoreLock lock = semaphore.acquireThrowRuntime("lookup");
 			try {
 				o = localTreeJNDI.get(fullPath);
 			}finally {
-				semaphore.release("lookup");
+				semaphore.release(lock, "lookup");
 			}
 			if(o==null){
 				throw new UtilsException("LocalResource ["+fullPath+"] not found");
@@ -138,11 +139,11 @@ public class GestoreJNDI {
 			/**System.out.println("-------------------------------- LOCAL UNBIND ["+fullPath+"]");*/
 			
 			Object o = null;
-			semaphore.acquireThrowRuntime("unbind");
+			SemaphoreLock lock = semaphore.acquireThrowRuntime("unbind");
 			try {
 				o = localTreeJNDI.remove(fullPath);
 			}finally {
-				semaphore.release("unbind");
+				semaphore.release(lock, "unbind");
 			}
 			String msg = "LocalResource ["+fullPath+"] not found";
 			if(log!=null)
@@ -226,7 +227,7 @@ public class GestoreJNDI {
 			
 			/**System.out.println("-------------------------------- LOCAL BIND ["+fullPath+"]");*/
 			
-			semaphore.acquireThrowRuntime("bind");
+			SemaphoreLock lock = semaphore.acquireThrowRuntime("bind");
 			try {
 				
 				if(localTreeJNDI.containsKey(fullPath)){
@@ -241,7 +242,7 @@ public class GestoreJNDI {
 				localTreeJNDI.put(fullPath, toBind);
 				return true;
 			}finally {
-				semaphore.release("bind");
+				semaphore.release(lock, "bind");
 			}
 			
 		}

@@ -30,6 +30,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.json.JsonPathNotFoundException;
 import org.openspcoop2.utils.json.JsonPathNotValidException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -126,7 +127,7 @@ public class PatternExtractor {
 	}
 	private org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("PatternExtractor");
 	private void _init() throws DynamicException {
-		this.semaphore.acquireThrowRuntime("init");
+		SemaphoreLock slock = this.semaphore.acquireThrowRuntime("init");
 		try {
 			if(!this.messageContent_initialized) {
 				if(this.messageContent!=null) {
@@ -160,7 +161,7 @@ public class PatternExtractor {
 				this.messageContent_initialized = true;
 			}
 		}finally {
-			this.semaphore.release("init");
+			this.semaphore.release(slock, "init");
 		}
 	}
 	
@@ -171,7 +172,7 @@ public class PatternExtractor {
 		}
 	}
 	private void _refreshContent() {
-		this.semaphore.acquireThrowRuntime("refreshContent");
+		SemaphoreLock slock = this.semaphore.acquireThrowRuntime("refreshContent");
 		// effettuo il refresh, altrimenti le regole xpath applicate sulla richiesta, nel flusso di risposta (es. header http della risposta) non funzionano.
 		try {
 			this.refresh = true;
@@ -182,7 +183,7 @@ public class PatternExtractor {
 		}catch(Exception e){
 			this.log.error("Refresh fallito: "+e.getMessage(),e);
 		}finally {
-			this.semaphore.release("refreshContent");
+			this.semaphore.release(slock, "refreshContent");
 		}
 	}
 	

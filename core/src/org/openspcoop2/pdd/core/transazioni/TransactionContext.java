@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 
 /**     
@@ -231,14 +232,14 @@ public class TransactionContext {
 	
 	private static org.openspcoop2.utils.Semaphore semaphoreIdentificativoProtocollo = new org.openspcoop2.utils.Semaphore("TransactionContext.idProtocollo");
 	public static void registraIdentificativoProtocollo(String idBusta, String idTransazione) throws UtilsException{
-		semaphoreIdentificativoProtocollo.acquire("registraIdentificativoProtocollo_"+idBusta, idTransazione);
+		SemaphoreLock lock = semaphoreIdentificativoProtocollo.acquire("registraIdentificativoProtocollo_"+idBusta, idTransazione);
 		try {
 			if(idBustaFiltroDuplicati.contains(idBusta)){
 				throw new UtilsException("DUPLICATA");
 			}
 			idBustaFiltroDuplicati.add(idBusta);
 		}finally{
-			semaphoreIdentificativoProtocollo.release("registraIdentificativoProtocollo_"+idBusta, idTransazione);
+			semaphoreIdentificativoProtocollo.release(lock, "registraIdentificativoProtocollo_"+idBusta, idTransazione);
 		}
 	}
 	public static boolean containsIdentificativoProtocollo(String idBusta){

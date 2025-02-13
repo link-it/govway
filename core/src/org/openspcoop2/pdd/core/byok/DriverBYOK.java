@@ -38,6 +38,7 @@ import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.BYOKLocalEncrypt;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.byok.BYOKCostanti;
 import org.openspcoop2.utils.certificate.byok.BYOKInstance;
@@ -99,7 +100,7 @@ public class DriverBYOK implements IDriverBYOK {
 		return this.dynamicMapForSecurityPolicy.get(securityPolicy);
 	}
 	private void initDynamicMap(String securityPolicy) throws UtilsException {
-		this.semaphoreDynamicMap.acquire("initDynamicMap");
+		SemaphoreLock lock = this.semaphoreDynamicMap.acquire("initDynamicMap");
 		try {
 			if(!this.dynamicMapForSecurityPolicy.containsKey(securityPolicy)) {
 				Map<String, Object> mDefault = this.dynamicMapForSecurityPolicy.get(this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy);
@@ -112,7 +113,7 @@ public class DriverBYOK implements IDriverBYOK {
 				this.dynamicMapForSecurityPolicy.put(securityPolicy, mNew);
 			}
 		}finally {
-			this.semaphoreDynamicMap.release("initDynamicMap");
+			this.semaphoreDynamicMap.release(lock, "initDynamicMap");
 		}
 	}
 	

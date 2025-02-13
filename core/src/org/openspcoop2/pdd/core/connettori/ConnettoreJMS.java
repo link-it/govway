@@ -46,6 +46,7 @@ import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -632,14 +633,14 @@ public class ConnettoreJMS extends ConnettoreBase {
 	 */
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("ConnettoreJMS");
 	public void putDestination(String key,Destination destination){
-		semaphore.acquireThrowRuntime("putDestination");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("putDestination");
 		try{
 			ConnettoreJMS.locations.put(key,destination);
 		}catch(Exception e){
 			this.logger.error("ERROR INSERT CODA IN CACHE: "+e.getMessage(),e);
 			//possibile inserimento della stessa coda....
 		}finally {
-			semaphore.release("putDestination");
+			semaphore.release(lock, "putDestination");
 		}
 	}
 

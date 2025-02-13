@@ -73,6 +73,7 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.security.message.jose.JOSEUtils;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -1272,7 +1273,7 @@ public class GestoreToken {
 				
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				org.openspcoop2.utils.Semaphore lockDynamicDiscovery = getLockDynamicDiscovery(policyName);
-				lockDynamicDiscovery.acquire("dynamicDiscovery", idTransazione);
+				SemaphoreLock lock = lockDynamicDiscovery.acquire("dynamicDiscovery", idTransazione);
 				try {
 					
 					response = 
@@ -1315,7 +1316,7 @@ public class GestoreToken {
 						}
 					}
 				}finally {
-					lockDynamicDiscovery.release("dynamicDiscovery", idTransazione);
+					lockDynamicDiscovery.release(lock, "dynamicDiscovery", idTransazione);
 				}
 			}
     	}
@@ -1374,7 +1375,7 @@ public class GestoreToken {
 			if(esitoGestioneToken==null) {
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				org.openspcoop2.utils.Semaphore lockJWT = getLockJWT(policyName);
-				lockJWT.acquire("validazioneJWTToken", idTransazione);
+				SemaphoreLock lock = lockJWT.acquire("validazioneJWTToken", idTransazione);
 				try {
 					
 					response = 
@@ -1421,7 +1422,7 @@ public class GestoreToken {
 						}
 					}
 				}finally {
-					lockJWT.release("validazioneJWTToken", idTransazione);
+					lockJWT.release(lock, "validazioneJWTToken", idTransazione);
 				}
 			}
     	}
@@ -1498,7 +1499,7 @@ public class GestoreToken {
 				
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				org.openspcoop2.utils.Semaphore lockIntrospection = getLockIntrospection(policyName);
-				lockIntrospection.acquire("introspectionToken", idTransazione);
+				SemaphoreLock lock = lockIntrospection.acquire("introspectionToken", idTransazione);
 				try {
 					
 					response = 
@@ -1541,7 +1542,7 @@ public class GestoreToken {
 						}
 					}
 				}finally {
-					lockIntrospection.release("introspectionToken", idTransazione);
+					lockIntrospection.release(lock, "introspectionToken", idTransazione);
 				}
 			}
     	}
@@ -1604,7 +1605,7 @@ public class GestoreToken {
 			if(esitoGestioneToken==null) {
 				String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 				org.openspcoop2.utils.Semaphore lockUserInfo = getLockUserInfo(policyName);
-				lockUserInfo.acquire("userInfoToken", idTransazione);
+				SemaphoreLock lock = lockUserInfo.acquire("userInfoToken", idTransazione);
 				try {
 					
 					response = 
@@ -1647,7 +1648,7 @@ public class GestoreToken {
 						}
 					}
 				}finally {
-					lockUserInfo.release("userInfoToken", idTransazione);
+					lockUserInfo.release(lock, "userInfoToken", idTransazione);
 				}
 			}
     	}
@@ -1966,7 +1967,7 @@ public class GestoreToken {
     		
 			if(esitoNegoziazioneToken==null) {
 				org.openspcoop2.utils.Semaphore lockNegoziazione = getLockNegoziazione(policyName);
-				lockNegoziazione.acquire("endpointToken", idTransazione);
+				SemaphoreLock lock = lockNegoziazione.acquire("endpointToken", idTransazione);
 				try {
 					
 					response = 
@@ -2043,7 +2044,7 @@ public class GestoreToken {
 					
 				}finally {
 					// fine synchronized
-					lockNegoziazione.release("endpointToken", idTransazione);
+					lockNegoziazione.release(lock, "endpointToken", idTransazione);
 				}
 			}
 			else {
@@ -2058,7 +2059,7 @@ public class GestoreToken {
 					if(!esitoNegoziazioneToken.isValido() && !esitoNegoziazioneToken.isDateValide()) {
 						
 						org.openspcoop2.utils.Semaphore lockNegoziazione = getLockNegoziazione(policyName);
-						lockNegoziazione.acquire("removeToken", idTransazione);
+						SemaphoreLock lock = lockNegoziazione.acquire("removeToken", idTransazione);
 						try {
 							// DEVO riavviare la negoziazione poichè è scaduto
 							GestoreToken.cacheGestioneToken.remove(keyCache);
@@ -2066,7 +2067,7 @@ public class GestoreToken {
 							/** System.out.println("Riavvia negoziazione"); */
 						}finally {
 							// fine synchronized
-							lockNegoziazione.release("removeToken", idTransazione);
+							lockNegoziazione.release(lock, "removeToken", idTransazione);
 						}
 					}
 				}
@@ -2207,7 +2208,7 @@ public class GestoreToken {
 			if(esitoRecuperoAttributi==null) {
 			
 				org.openspcoop2.utils.Semaphore lockAttributeAuthority = getLockAttributeAuthority(aaName);
-				lockAttributeAuthority.acquire("readAttributes", idTransazione);
+				SemaphoreLock lock = lockAttributeAuthority.acquire("readAttributes", idTransazione);
 				try {
 					
 					response = 
@@ -2297,7 +2298,7 @@ public class GestoreToken {
 					
 				} finally{
 					// fine synchronized
-					lockAttributeAuthority.release("readAttributes", idTransazione);
+					lockAttributeAuthority.release(lock, "readAttributes", idTransazione);
 				}
 			}
 			else {
@@ -2311,14 +2312,14 @@ public class GestoreToken {
 							dynamicParameters);
 					if(!esitoRecuperoAttributi.isValido() && !esitoRecuperoAttributi.isDateValide()) {
 						org.openspcoop2.utils.Semaphore lockAttributeAuthority = getLockAttributeAuthority(aaName);
-						lockAttributeAuthority.acquire("removeAttributes", idTransazione);
+						SemaphoreLock lock = lockAttributeAuthority.acquire("removeAttributes", idTransazione);
 						try {
 							// DEVO riavviare la negoziazione poichè è scaduto
 							GestoreToken.cacheAttributeAuthority.remove(keyCache);
 							riavviaNegoziazione = true;
 						} finally{
 							// fine synchronized
-							lockAttributeAuthority.release("removeAttributes", idTransazione);
+							lockAttributeAuthority.release(lock, "removeAttributes", idTransazione);
 						}
 					}
 				}
@@ -2422,7 +2423,7 @@ public class GestoreToken {
     		
     		
 			org.openspcoop2.utils.Semaphore lockNegoziazione = getLockGenericToken(funzione);
-			lockNegoziazione.acquireThrowRuntime("putTokenCacheItem", item.getIdTransazione());
+			SemaphoreLock lock = lockNegoziazione.acquireThrowRuntime("putTokenCacheItem", item.getIdTransazione());
 			try {
 				
 				// per gestire concorrenza
@@ -2459,7 +2460,7 @@ public class GestoreToken {
 				
 			}finally {
 				// fine synchronized
-				lockNegoziazione.release("putTokenCacheItem", item.getIdTransazione());
+				lockNegoziazione.release(lock, "putTokenCacheItem", item.getIdTransazione());
 			}
 
 		}

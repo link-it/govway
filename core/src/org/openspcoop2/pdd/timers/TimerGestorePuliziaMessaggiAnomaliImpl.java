@@ -40,6 +40,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
 
@@ -212,7 +213,7 @@ public class TimerGestorePuliziaMessaggiAnomaliImpl implements SessionBean, Time
 			}else{
 				// Viene sempre richiamato ejbCreate() e quindi la variabile deployFromOpenSPCoop è sempre null.
 				// La single instance viene gestiti quindi con un lock
-				SEMAPHORE.acquireThrowRuntime("ejbTimeout");
+				SemaphoreLock lock = SEMAPHORE.acquireThrowRuntime("ejbTimeout");
 				try {
 					if(LOCK){
 						this.msgDiag.logPersonalizzato("precedenteEsecuzioneInCorso.stopTimer");
@@ -232,7 +233,7 @@ public class TimerGestorePuliziaMessaggiAnomaliImpl implements SessionBean, Time
 						}
 					}
 				}finally {
-					SEMAPHORE.release("ejbTimeout");
+					SEMAPHORE.release(lock, "ejbTimeout");
 				}
 			}
 		}
@@ -286,11 +287,11 @@ public class TimerGestorePuliziaMessaggiAnomaliImpl implements SessionBean, Time
 			}
 						
 		}finally{
-			SEMAPHORE.acquireThrowRuntime("ejbTimeoutCheck2");
+			SemaphoreLock lock = SEMAPHORE.acquireThrowRuntime("ejbTimeoutCheck2");
 			try {
 				LOCK = false;
 			}finally {
-				SEMAPHORE.release("ejbTimeoutCheck2");
+				SEMAPHORE.release(lock, "ejbTimeoutCheck2");
 			}	
 		}
 		

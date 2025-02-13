@@ -65,6 +65,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.redisson.Rediss
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -186,8 +187,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 		
 		String uniqueIdMap = UniqueIdentifierUtilities.getUniqueId(activePolicy.getInstanceConfiguration());
 				
-		//synchronized (this.mapActiveThreadsPolicy) {
-		this.lock.acquireThrowRuntime("getActiveThreadsPolicy(ActivePolicy)");
+		/**synchronized (this.mapActiveThreadsPolicy) {*/
+		SemaphoreLock slock = this.lock.acquireThrowRuntime("getActiveThreadsPolicy(ActivePolicy)");
 		try {
 			
 			if(this.isStop){
@@ -195,25 +196,25 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			}
 			
 			IPolicyGroupByActiveThreadsInMemory active = null;
-			//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] contains["+this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)+"]...");
+			/**System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] contains["+this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)+"]...");*/
 			if(this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)){
 				active = this.mapActiveThreadsPolicy.get(uniqueIdMap);
-				//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] GET");
+				/**System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] GET");*/
 			}
 			else{
 				active = newPolicyGroupByActiveThreadsInMemory(activePolicy, uniqueIdMap, datiTransazione, state);
 				this.mapActiveThreadsPolicy.put(uniqueIdMap, active);
-				//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] CREATE");
+				/**System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] CREATE");*/
 			}
 			return active;
 		}finally {
-			this.lock.release("getActiveThreadsPolicy(ActivePolicy)");
+			this.lock.release(slock, "getActiveThreadsPolicy(ActivePolicy)");
 		}
 	}
 	@Override
 	public IPolicyGroupByActiveThreads getActiveThreadsPolicy(String uniqueIdMap) throws PolicyShutdownException,PolicyException,PolicyNotFoundException { // usata per la remove
-		//synchronized (this.mapActiveThreadsPolicy) {
-		this.lock.acquireThrowRuntime("getActiveThreadsPolicy(uniqueIdMap)");
+		/**synchronized (this.mapActiveThreadsPolicy) {*/
+		SemaphoreLock slock = this.lock.acquireThrowRuntime("getActiveThreadsPolicy(uniqueIdMap)");
 		try {
 			
 			if(this.isStop){
@@ -221,24 +222,24 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			}
 			
 			IPolicyGroupByActiveThreads active = null;
-			//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] contains["+this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)+"]...");
+			/**System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] contains["+this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)+"]...");*/
 			if(this.mapActiveThreadsPolicy.containsKey(uniqueIdMap)){
 				active = this.mapActiveThreadsPolicy.get(uniqueIdMap);
-				//System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] GET");
+				/**System.out.println("@@@ getActiveThreadsPolicy["+uniqueIdMap+"] GET");*/
 			}
 			else{
 				throw new PolicyNotFoundException("ActivePolicy ["+uniqueIdMap+"] notFound");
 			}
 			return active;
 		}finally{
-			this.lock.release("getActiveThreadsPolicy(uniqueIdMap)");
+			this.lock.release(slock, "getActiveThreadsPolicy(uniqueIdMap)");
 		}
 	}
 	
 	@Override
 	public long sizeActivePolicyThreads(boolean sum) throws PolicyShutdownException,PolicyException{
-		//synchronized (this.mapActiveThreadsPolicy) {
-		this.lock.acquireThrowRuntime("sizeActivePolicyThreads");
+		/**synchronized (this.mapActiveThreadsPolicy) {*/
+		SemaphoreLock slock = this.lock.acquireThrowRuntime("sizeActivePolicyThreads");
 		try {
 			
 			if(this.isStop){
@@ -257,14 +258,14 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				return this.mapActiveThreadsPolicy.size();
 			}
 		}finally {
-			this.lock.release("sizeActivePolicyThreads");
+			this.lock.release(slock, "sizeActivePolicyThreads");
 		}
 	}
 	
 	@Override
 	public String printKeysPolicy(String separator) throws PolicyShutdownException, PolicyException{
-		//synchronized (this.mapActiveThreadsPolicy) {
-		this.lock.acquireThrowRuntime("printKeysPolicy");
+		/**synchronized (this.mapActiveThreadsPolicy) {*/
+		SemaphoreLock slock = this.lock.acquireThrowRuntime("printKeysPolicy");
 		try {
 			
 			if(this.isStop){
@@ -285,7 +286,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			}
 			return bf.toString();
 		}finally {
-			this.lock.release("printKeysPolicy");
+			this.lock.release(slock, "printKeysPolicy");
 		}
 	}
 	
@@ -301,8 +302,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	@Override
 	public void removeActiveThreadsPolicy(String idActivePolicy) throws PolicyShutdownException, PolicyException{
-		//synchronized (this.mapActiveThreadsPolicy) {
-		this.lock.acquireThrowRuntime("removeActiveThreadsPolicy");
+		/**synchronized (this.mapActiveThreadsPolicy) {*/
+		SemaphoreLock slock = this.lock.acquireThrowRuntime("removeActiveThreadsPolicy");
 		try {
 			
 			if(this.isStop){
@@ -313,7 +314,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				this.mapActiveThreadsPolicy.remove(idActivePolicy);
 			}
 		}finally {
-			this.lock.release("removeActiveThreadsPolicy");
+			this.lock.release(slock, "removeActiveThreadsPolicy");
 		}
 	}
 	
@@ -335,8 +336,8 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	
 	@Override
 	public void removeAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException{
-		//synchronized (this.mapActiveThreadsPolicy) {
-		this.lock.acquireThrowRuntime("removeAllActiveThreadsPolicy");
+		/**synchronized (this.mapActiveThreadsPolicy) {*/
+		SemaphoreLock slock = this.lock.acquireThrowRuntime("removeAllActiveThreadsPolicy");
 		try {
 			
 			if(this.isStop){
@@ -345,14 +346,14 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			
 			this.mapActiveThreadsPolicy.clear();
 		}finally {
-			this.lock.release("removeAllActiveThreadsPolicy");
+			this.lock.release(slock, "removeAllActiveThreadsPolicy");
 		}
 	}
 	
 	@Override
 	public void resetCountersActiveThreadsPolicy(String idActivePolicy) throws PolicyShutdownException, PolicyException{
-		//synchronized (this.mapActiveThreadsPolicy) {
-		this.lock.acquireThrowRuntime("resetCountersActiveThreadsPolicy");
+		/**synchronized (this.mapActiveThreadsPolicy) {*/
+		SemaphoreLock slock = this.lock.acquireThrowRuntime("resetCountersActiveThreadsPolicy");
 		try {
 			
 			if(this.isStop){
@@ -363,14 +364,14 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				this.mapActiveThreadsPolicy.get(idActivePolicy).resetCounters();
 			}
 		}finally {
-			this.lock.release("resetCountersActiveThreadsPolicy");
+			this.lock.release(slock, "resetCountersActiveThreadsPolicy");
 		}
 	}
 	
 	@Override
 	public void resetCountersAllActiveThreadsPolicy() throws PolicyShutdownException, PolicyException{
-		//synchronized (this.mapActiveThreadsPolicy) {
-		this.lock.acquireThrowRuntime("resetCountersAllActiveThreadsPolicy");
+		/**synchronized (this.mapActiveThreadsPolicy) {*/
+		SemaphoreLock slock = this.lock.acquireThrowRuntime("resetCountersAllActiveThreadsPolicy");
 		try {
 			
 			if(this.isStop){
@@ -383,14 +384,14 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				}
 			}
 		}finally {
-			this.lock.release("resetCountersAllActiveThreadsPolicy");
+			this.lock.release(slock, "resetCountersAllActiveThreadsPolicy");
 		}
 	}
 	
 	public Set<Entry<String, IPolicyGroupByActiveThreadsInMemory>> entrySet() throws PolicyShutdownException, PolicyException{
 		Set<Entry<String, IPolicyGroupByActiveThreadsInMemory>> activeThreadsPolicies;
 		
-		this.lock.acquireThrowRuntime("updateLocalCacheMap");
+		SemaphoreLock slock = this.lock.acquireThrowRuntime("updateLocalCacheMap");
 		try {
 			
 			if(this.isStop){
@@ -398,7 +399,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			}
 			activeThreadsPolicies = this.mapActiveThreadsPolicy.entrySet();
 		} finally {
-			this.lock.release("updateLocalCacheMap");
+			this.lock.release(slock, "updateLocalCacheMap");
 		}
 		
 		return activeThreadsPolicies;
@@ -417,9 +418,10 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 	@Override
 	public void serialize(OutputStream out) throws PolicyException{
 				
-		//synchronized (this.mapActiveThreadsPolicy) {
+		/**synchronized (this.mapActiveThreadsPolicy) {*/
+		SemaphoreLock slock = null;
 		try {
-			this.lock.acquireThrowRuntime("serialize");
+			slock = this.lock.acquireThrowRuntime("serialize");
 			
 			if(this.isStop){
 				throw new PolicyException("Already serialized");
@@ -566,16 +568,17 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			}
 
 		}finally {
-			this.lock.release("serialize");
+			this.lock.release(slock, "serialize");
 		}
 	}
 	
 	@Override
 	public void initialize(InputStream in,ConfigurazioneControlloTraffico configurazioneControlloTraffico) throws PolicyException{
 		
-		//synchronized (this.mapActiveThreadsPolicy) {
+		/**synchronized (this.mapActiveThreadsPolicy) {*/
+		SemaphoreLock slock = null;
 		try {
-			this.lock.acquireThrowRuntime("initialize");
+			slock = this.lock.acquireThrowRuntime("initialize");
 			
 			if(in==null){
 				return;
@@ -753,19 +756,19 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			
 
 		}finally {
-			this.lock.release("initialize");
+			this.lock.release(slock, "initialize");
 		}
 	}
 	
 	@Override
 	public void cleanOldActiveThreadsPolicy() throws PolicyException{
-		this.lock.acquireThrowRuntime("cleanOldActiveThreadsPolicy");
+		SemaphoreLock slock =this.lock.acquireThrowRuntime("cleanOldActiveThreadsPolicy");
 		try {
 			if(this.mapActiveThreadsPolicy!=null && !this.mapActiveThreadsPolicy.isEmpty()) {
 				for (String uniqueIdMap : this.mapActiveThreadsPolicy.keySet()) {
 					for (PolicyGroupByActiveThreadsType tipo : GestorePolicyAttive.getTipiGestoriAttivi()) {
 						if(!tipo.equals(this.type)) {
-							//System.out.println("======== RIPULISCO DALLA PARTENZA in '"+tipo+"' ["+uniqueIdMap+"] !!!");
+							/**System.out.println("======== RIPULISCO DALLA PARTENZA in '"+tipo+"' ["+uniqueIdMap+"] !!!");*/
 							GestorePolicyAttive.getInstance(tipo).removeActiveThreadsPolicyUnsafe(uniqueIdMap);
 						}
 					}
@@ -775,7 +778,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 			throw new PolicyException(e.getMessage(),e);
 		}	
 		finally {
-			this.lock.release("cleanOldActiveThreadsPolicy");
+			this.lock.release(slock, "cleanOldActiveThreadsPolicy");
 		}
 	}
 	

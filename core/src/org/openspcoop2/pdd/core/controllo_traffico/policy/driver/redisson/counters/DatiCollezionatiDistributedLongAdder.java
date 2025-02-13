@@ -29,6 +29,7 @@ import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicyMapId
 import org.openspcoop2.core.controllo_traffico.beans.IDatiCollezionatiDistributed;
 import org.openspcoop2.core.controllo_traffico.constants.TipoControlloPeriodo;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.BuilderDatiCollezionatiDistributed;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 
@@ -335,7 +336,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	protected void resetPolicyCounterForDate(Date date) {
 		
 		if(this.initialized) {
-			this.lock.acquireThrowRuntime("resetPolicyCounterForDate");
+			SemaphoreLock slock = this.lock.acquireThrowRuntime("resetPolicyCounterForDate");
 			try {
 				long policyDate = date.getTime();
 				long actual = this.distributedPolicyDate.get();
@@ -379,7 +380,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 				}
 				
 			}finally {
-				this.lock.release("resetPolicyCounterForDate");
+				this.lock.release(slock, "resetPolicyCounterForDate");
 			}
 		}
 		else {
@@ -393,7 +394,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		
 		if(this.initialized) {
 			
-			this.lock.acquireThrowRuntime("resetPolicyCounterForDateDegradoPrestazionale");
+			SemaphoreLock slock = this.lock.acquireThrowRuntime("resetPolicyCounterForDateDegradoPrestazionale");
 			try {
 				long policyDate = date.getTime();
 				long actual = this.distributedPolicyDate.get();
@@ -434,7 +435,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 				}
 				
 			}finally {
-				this.lock.release("resetPolicyCounterForDateDegradoPrestazionale");
+				this.lock.release(slock, "resetPolicyCounterForDateDegradoPrestazionale");
 			}
 		}
 		else {
@@ -481,7 +482,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	@Override
 	protected void internalRegisterStartRequestIncrementActiveRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
 		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
-			this.lockActiveRequestCounterGetAndSum.acquireThrowRuntime("internalRegisterStartRequestIncrementActiveRequestCounter");
+			SemaphoreLock slock = this.lockActiveRequestCounterGetAndSum.acquireThrowRuntime("internalRegisterStartRequestIncrementActiveRequestCounter");
 			try {
 				// prendo il valore. Non esiste un unico incrementAndGet
 				if(datiCollezionatiPerPolicyVerifier!=null) {
@@ -493,7 +494,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 				this.distributedActiveRequestCounterForCheck.increment();
 				super.activeRequestCounter++;
 			}finally {
-				this.lockActiveRequestCounterGetAndSum.release("internalRegisterStartRequestIncrementActiveRequestCounter");
+				this.lockActiveRequestCounterGetAndSum.release(slock, "internalRegisterStartRequestIncrementActiveRequestCounter");
 			}
 		}
 		else {
@@ -504,7 +505,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	
 	@Override
 	protected void internalUpdateDatiStartRequestApplicabileIncrementRequestCounter(DatiCollezionati datiCollezionatiPerPolicyVerifier) {
-		this.lockRequestCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiStartRequestApplicabileIncrementRequestCounter");
+		SemaphoreLock slock = this.lockRequestCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiStartRequestApplicabileIncrementRequestCounter");
 		try {
 			// prendo il valore. Non esiste un unico incrementAndGet
 			if(datiCollezionatiPerPolicyVerifier!=null) {
@@ -516,7 +517,7 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 			this.distributedPolicyRequestCounter.increment();
 			super.policyRequestCounter++;
 		}finally {
-			this.lockRequestCounterGetAndSum.release("internalUpdateDatiStartRequestApplicabileIncrementRequestCounter");
+			this.lockRequestCounterGetAndSum.release(slock, "internalUpdateDatiStartRequestApplicabileIncrementRequestCounter");
 		}
 	}
 	
@@ -524,13 +525,13 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	@Override
 	protected void internalRegisterEndRequestDecrementActiveRequestCounter() {
 		if(this.distribuitedActiveRequestCounterPolicyRichiesteSimultanee){
-			this.lockActiveRequestCounterGetAndSum.acquireThrowRuntime("internalRegisterEndRequestDecrementActiveRequestCounter");
+			SemaphoreLock slock = this.lockActiveRequestCounterGetAndSum.acquireThrowRuntime("internalRegisterEndRequestDecrementActiveRequestCounter");
 			try {
 				super.activeRequestCounter = this.distributedActiveRequestCounterForCheck.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 				this.distributedActiveRequestCounterForCheck.decrement();
 				super.activeRequestCounter--;
 			}finally {
-				this.lockActiveRequestCounterGetAndSum.release("internalRegisterEndRequestDecrementActiveRequestCounter");
+				this.lockActiveRequestCounterGetAndSum.release(slock, "internalRegisterEndRequestDecrementActiveRequestCounter");
 			}
 		}
 		else {
@@ -539,48 +540,48 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	}
 	@Override
 	protected void internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter() {
-		this.lockDegradoPrestazionaleRequestCounterGetAndSum.acquireThrowRuntime("internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter");
+		SemaphoreLock slock = this.lockDegradoPrestazionaleRequestCounterGetAndSum.acquireThrowRuntime("internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter");
 		try {
 			super.policyDegradoPrestazionaleRequestCounter = this.distributedPolicyDegradoPrestazionaleRequestCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 			this.distributedPolicyDegradoPrestazionaleRequestCounter.increment();
 			super.policyDegradoPrestazionaleRequestCounter++;
 		}finally {
-			this.lockDegradoPrestazionaleRequestCounterGetAndSum.release("internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter");
+			this.lockDegradoPrestazionaleRequestCounterGetAndSum.release(slock, "internalRegisterEndRequestIncrementDegradoPrestazionaleRequestCounter");
 		}
 	}
 	@Override
 	protected void internalRegisterEndRequestIncrementDegradoPrestazionaleCounter(long latenza) {
-		this.lockDegradoPrestazionaleCounterGetAndSum.acquireThrowRuntime("internalRegisterEndRequestIncrementDegradoPrestazionaleCounter");
+		SemaphoreLock slock = this.lockDegradoPrestazionaleCounterGetAndSum.acquireThrowRuntime("internalRegisterEndRequestIncrementDegradoPrestazionaleCounter");
 		try {
 			super.policyDegradoPrestazionaleCounter = this.distributedPolicyDegradoPrestazionaleCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 			this.distributedPolicyDegradoPrestazionaleCounter.add(latenza);
 			super.policyDegradoPrestazionaleCounter++;
 		}finally {
-			this.lockDegradoPrestazionaleCounterGetAndSum.release("internalRegisterEndRequestIncrementDegradoPrestazionaleCounter");
+			this.lockDegradoPrestazionaleCounterGetAndSum.release(slock, "internalRegisterEndRequestIncrementDegradoPrestazionaleCounter");
 		}
 	}
 	
 	
 	@Override
 	protected void internalUpdateDatiEndRequestApplicabileIncrementRequestCounter() {
-		this.lockRequestCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiEndRequestApplicabileIncrementRequestCounter");
+		SemaphoreLock slock = this.lockRequestCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiEndRequestApplicabileIncrementRequestCounter");
 		try {
 			super.policyRequestCounter = this.distributedPolicyRequestCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 			this.distributedPolicyRequestCounter.increment();
 			super.policyRequestCounter++;
 		}finally {
-			this.lockRequestCounterGetAndSum.release("internalUpdateDatiEndRequestApplicabileIncrementRequestCounter");
+			this.lockRequestCounterGetAndSum.release(slock, "internalUpdateDatiEndRequestApplicabileIncrementRequestCounter");
 		}
 	}
 	@Override
 	protected void internalUpdateDatiEndRequestApplicabileDecrementRequestCounter() {
-		this.lockRequestCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiEndRequestApplicabileDecrementRequestCounter");
+		SemaphoreLock slock = this.lockRequestCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiEndRequestApplicabileDecrementRequestCounter");
 		try {
 			super.policyRequestCounter = this.distributedPolicyRequestCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 			this.distributedPolicyRequestCounter.decrement();
 			super.policyRequestCounter--;
 		}finally {
-			this.lockRequestCounterGetAndSum.release("internalUpdateDatiEndRequestApplicabileDecrementRequestCounter");
+			this.lockRequestCounterGetAndSum.release(slock, "internalUpdateDatiEndRequestApplicabileDecrementRequestCounter");
 		}
 	}
 	@Override
@@ -589,13 +590,13 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	}
 	@Override
 	protected void internalUpdateDatiEndRequestApplicabileIncrementCounter(long v) {
-		this.lockCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiEndRequestApplicabileIncrementCounter");
+		SemaphoreLock slock = this.lockCounterGetAndSum.acquireThrowRuntime("internalUpdateDatiEndRequestApplicabileIncrementCounter");
 		try {
 			super.policyCounter = this.distributedPolicyCounter.sum(); // prendo il valore. Non esiste un unico incrementAndGet
 			this.distributedPolicyCounter.add(v);
 			super.policyCounter+=v;
 		}finally {
-			this.lockCounterGetAndSum.release("internalUpdateDatiEndRequestApplicabileIncrementCounter");
+			this.lockCounterGetAndSum.release(slock, "internalUpdateDatiEndRequestApplicabileIncrementCounter");
 		}
 	}
 	

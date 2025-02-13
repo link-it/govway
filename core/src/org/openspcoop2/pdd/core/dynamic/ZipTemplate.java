@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.io.Entry;
 import org.openspcoop2.utils.io.ZipUtilities;
 
@@ -75,15 +76,16 @@ public class ZipTemplate implements Serializable {
 	
 	private void initTemplateFreeMarker() throws DynamicException{
 		if(this.templateFreeMarker==null) {
+			SemaphoreLock lock = null; 
 			try {
-				this.getLock().acquire("initTemplateFreeMarker");
+				lock = this.getLock().acquire("initTemplateFreeMarker");
 			}catch(Throwable t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			try {
 				this.templateFreeMarker = buildTemplate(Costanti.ZIP_INDEX_ENTRY_FREEMARKER);
 			}finally {
-				this.getLock().release("initTemplateFreeMarker");
+				this.getLock().release(lock, "initTemplateFreeMarker");
 			}
 		}
 	}
@@ -96,15 +98,16 @@ public class ZipTemplate implements Serializable {
 	
 	private void initTemplateVelocity() throws DynamicException{
 		if(this.templateVelocity==null) {
+			SemaphoreLock lock = null;
 			try {
-				this.getLock().acquire("initTemplateVelocity");
+				lock = this.getLock().acquire("initTemplateVelocity");
 			}catch(Throwable t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			try {
 				this.templateVelocity = buildTemplate(Costanti.ZIP_INDEX_ENTRY_VELOCITY);
 			}finally {
-				this.getLock().release("initTemplateVelocity");
+				this.getLock().release(lock, "initTemplateVelocity");
 			}
 		}
 	}

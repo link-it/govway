@@ -57,6 +57,7 @@ import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.parser.validation.v3.OpenApi3Validator;
 import org.openapi4j.schema.validator.ValidationData;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.json.AbstractUtils;
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
@@ -180,7 +181,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 
 		// la sincronizzazione sull'API serve per evitare che venga inizializzati più volte in maniera concorrente l'API
 		//synchronized (api) {
-		this.semaphore.acquireThrowRuntime("init");
+		SemaphoreLock lock = this.semaphore.acquireThrowRuntime("init");
 		try {
 					
 			this.api = api;
@@ -889,7 +890,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 			}
 			
 		}finally {
-			this.semaphore.release("init");
+			this.semaphore.release(lock, "init");
 		}
 	}
 

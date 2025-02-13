@@ -44,6 +44,7 @@ import org.openspcoop2.protocol.sdk.state.FunctionContextsCustom;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -79,7 +80,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 		}
 	}
 	private static void initSecrets() {
-		semaphoreCheckSecrets.acquireThrowRuntime("initSecrets");
+		SemaphoreLock lock = semaphoreCheckSecrets.acquireThrowRuntime("initSecrets");
 		try {
 			if(!checkSecrets) {
 				BYOKMapProperties secretsProperties = BYOKMapProperties.getInstance();
@@ -100,7 +101,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 				checkSecrets = true;
 			}
 		}finally {
-			semaphoreCheckSecrets.release("initSecrets");
+			semaphoreCheckSecrets.release(lock, "initSecrets");
 		}
 	}
 	

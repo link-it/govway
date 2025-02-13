@@ -30,6 +30,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -76,12 +77,12 @@ public class GestoreControlloTraffico {
 			long syncActiveThreads = 0l;
 			boolean syncPddCongestionata = false;
 			//synchronized (this.semaphore) {
-			this.lock.acquireThrowRuntime("getStatoControlloTraffico", idTransazione);
+			SemaphoreLock lock = this.lock.acquireThrowRuntime("getStatoControlloTraffico", idTransazione);
 			try {
 				syncActiveThreads = this.activeThreads;
 				syncPddCongestionata = this.pddCongestionata;
 			}finally {
-				this.lock.release("getStatoControlloTraffico", idTransazione);
+				this.lock.release(lock, "getStatoControlloTraffico", idTransazione);
 			}
 			StatoTraffico stato = new StatoTraffico();
 			stato.setActiveThreads(syncActiveThreads);
@@ -120,7 +121,7 @@ public class GestoreControlloTraffico {
 			boolean pddCongestionataSync = false; 
 			
 			//synchronized (this.semaphore) {
-			this.lock.acquire("addThread", idTransazione);
+			SemaphoreLock lock = this.lock.acquire("addThread", idTransazione);
 			try {
 				activeThreadsSyncBeforeIncrement = this.activeThreads;
 				//System.out.println("@@@addThread CONTROLLO ["+this.activeThreads+"]<["+maxThreads+"] ("+(!(this.activeThreads<maxThreads))+")");
@@ -158,7 +159,7 @@ public class GestoreControlloTraffico {
 				}
 				//System.out.println("@@@addThread (dopo): "+this.activeThreads);
 			}finally {
-				this.lock.release("addThread", idTransazione);
+				this.lock.release(lock, "addThread", idTransazione);
 			}
 			
 			HandlerException he = null;
@@ -260,7 +261,7 @@ public class GestoreControlloTraffico {
 		}
 		long maxThreadsPrimitive = maxThreadsObj.longValue();
 		int thresholdPrimitive = (thresholdObj!=null ? thresholdObj.intValue() : 0);
-		this.lock.acquire("removeThread", idTransazione);
+		SemaphoreLock lock = this.lock.acquire("removeThread", idTransazione);
 		try {
 			this.activeThreads--;
 			
@@ -275,18 +276,18 @@ public class GestoreControlloTraffico {
 			
 			//System.out.println("@@@removeThread (dopo): "+this.activeThreads);
 		}finally {
-			this.lock.release("removeThread", idTransazione);
+			this.lock.release(lock, "removeThread", idTransazione);
 		}
 	}
 	
 	public long sizeActiveThreads(){
 		//synchronized (this.semaphore) {
-		this.lock.acquireThrowRuntime("sizeActiveThreads");
+		SemaphoreLock lock = this.lock.acquireThrowRuntime("sizeActiveThreads");
 		try {
 			//System.out.println("@@@SIZE: "+this.activeThreads);
 			return this.activeThreads;
 		}finally {
-			this.lock.release("sizeActiveThreads");
+			this.lock.release(lock, "sizeActiveThreads");
 		}
 	}
 	
@@ -294,7 +295,7 @@ public class GestoreControlloTraffico {
 		//synchronized (this.semaphore) {
 		long maxThreadsPrimitive = maxThreadsObj.longValue();
 		int thresholdPrimitive = (thresholdObj!=null ? thresholdObj.intValue() : 0);
-		this.lock.acquireThrowRuntime("isPortaDominioCongestionata");
+		SemaphoreLock lock = this.lock.acquireThrowRuntime("isPortaDominioCongestionata");
 		try {
 			if(thresholdObj!=null){
 				this.pddCongestionata = this._isPddCongestionata(maxThreadsPrimitive, thresholdPrimitive); // refresh per evitare che l'ultimo thread abbia lasciato attivo il controllo
@@ -304,7 +305,7 @@ public class GestoreControlloTraffico {
 			}
 			return this.pddCongestionata;
 		}finally {
-			this.lock.release("isPortaDominioCongestionata");
+			this.lock.release(lock, "isPortaDominioCongestionata");
 		}
 	}
 	

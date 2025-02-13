@@ -96,6 +96,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.cache.Cache;
@@ -1475,7 +1476,7 @@ public class RegistroServizi  {
 			Connection connectionPdD,
 			Class<?>[] classArgoments, Object[] values) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
-		semaphore_getObjectCache.acquireThrowRuntime("getObjectCache");		
+		SemaphoreLock lock = semaphore_getObjectCache.acquireThrowRuntime("getObjectCache");		
 		DriverRegistroServiziNotFound dNotFound = null;
 		Object obj = null;
 		try{
@@ -1546,7 +1547,7 @@ public class RegistroServizi  {
 			else
 				throw new DriverRegistroServiziException("RegistroServizi, Algoritmo di Cache fallito: "+e.getMessage(),e);
 		}finally {
-			semaphore_getObjectCache.release("getObjectCache");
+			semaphore_getObjectCache.release(lock, "getObjectCache");
 		}
 
 		if(dNotFound!=null){
@@ -3124,7 +3125,7 @@ public class RegistroServizi  {
 	private org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper getAccordoServizioSoapCache(String keyCache,IDServizio idService,
 			InformationApiSource infoWsdlSource,String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD,boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
-		semaphore_getAccordoServizioSoapCache.acquireThrowRuntime("getAccordoServizioSoapCache");
+		SemaphoreLock lock = semaphore_getAccordoServizioSoapCache.acquireThrowRuntime("getAccordoServizioSoapCache");
 		DriverRegistroServiziNotFound dNotFound = null;
 		org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper obj = null;
 		try{
@@ -3198,7 +3199,7 @@ public class RegistroServizi  {
 			else
 				throw new DriverRegistroServiziException("RegistroServizi, Algoritmo di Cache fallito: "+e.getMessage(),e);
 		}finally {
-			semaphore_getAccordoServizioSoapCache.release("getAccordoServizioSoapCache");
+			semaphore_getAccordoServizioSoapCache.release(lock, "getAccordoServizioSoapCache");
 		}
 
 		if(dNotFound!=null){
@@ -3516,7 +3517,7 @@ public class RegistroServizi  {
 	private org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioRestCache(String keyCache,IDServizio idService,
 			InformationApiSource infoWsdlSource,String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD, boolean processIncludeForOpenApi, boolean readDatiRegistro) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
-		semaphore_getAccordoServizioRestCache.acquireThrowRuntime("getAccordoServizioRestCache");
+		SemaphoreLock lock = semaphore_getAccordoServizioRestCache.acquireThrowRuntime("getAccordoServizioRestCache");
 		DriverRegistroServiziNotFound dNotFound = null;
 		org.openspcoop2.core.registry.rest.AccordoServizioWrapper obj = null;
 		try{
@@ -3590,7 +3591,7 @@ public class RegistroServizi  {
 			else
 				throw new DriverRegistroServiziException("RegistroServizi, Algoritmo di Cache fallito: "+e.getMessage(),e);
 		}finally {
-			semaphore_getAccordoServizioRestCache.release("getAccordoServizioRestCache");
+			semaphore_getAccordoServizioRestCache.release(lock, "getAccordoServizioRestCache");
 		}
 
 		if(dNotFound!=null){
@@ -3915,7 +3916,7 @@ public class RegistroServizi  {
 	private org.openspcoop2.core.registry.constants.ServiceBinding getServiceBindingCache(String keyCache,IDServizio idService,
 			String nomeRegistro,Connection connectionPdD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
-		semaphore_getServiceBindingCache.acquireThrowRuntime("getServiceBindingCache");
+		SemaphoreLock lock = semaphore_getServiceBindingCache.acquireThrowRuntime("getServiceBindingCache");
 		DriverRegistroServiziNotFound dNotFound = null;
 		org.openspcoop2.core.registry.constants.ServiceBinding obj = null;
 		try{
@@ -3986,7 +3987,7 @@ public class RegistroServizi  {
 			else
 				throw new DriverRegistroServiziException("RegistroServizi, Algoritmo di Cache fallito: "+e.getMessage(),e);
 		}finally {
-			semaphore_getServiceBindingCache.release("getServiceBindingCache");
+			semaphore_getServiceBindingCache.release(lock, "getServiceBindingCache");
 		}
 
 		if(dNotFound!=null){
@@ -4168,7 +4169,7 @@ public class RegistroServizi  {
 	private static org.openspcoop2.utils.Semaphore semaphore_pushGenericObject = new org.openspcoop2.utils.Semaphore("RegistroServizi_GenericObject");
 	private Serializable _pushGenericObject(String keyObject, Serializable object) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 		
-		semaphore_pushGenericObject.acquireThrowRuntime("_pushGenericObject");
+		SemaphoreLock lock = semaphore_pushGenericObject.acquireThrowRuntime("_pushGenericObject");
 		try {
 		
 			// Raccolta dati
@@ -4203,7 +4204,7 @@ public class RegistroServizi  {
 			return object; 
 			
 		}finally {
-			semaphore_pushGenericObject.release("_pushGenericObject");
+			semaphore_pushGenericObject.release(lock, "_pushGenericObject");
 		}
 		
 	}

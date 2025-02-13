@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.utils.SemaphoreLock;
 
 /**
  * Template
@@ -133,8 +134,9 @@ public class Template implements Serializable {
 	
 	private void initTemplateFreeMarker() throws DynamicException{
 		if(this.templateFreeMarker==null) {
+			SemaphoreLock lock = null; 
 			try {
-				this.getLock().acquire("initTemplateFreeMarker");
+				lock = this.getLock().acquire("initTemplateFreeMarker");
 			}catch(Throwable t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
@@ -142,7 +144,7 @@ public class Template implements Serializable {
 				this.correctClassBackwardCompatibility();
 				this.templateFreeMarker = DynamicUtils.buildFreeMarkerTemplate(this);
 			}finally {
-				this.getLock().release("initTemplateFreeMarker");
+				this.getLock().release(lock, "initTemplateFreeMarker");
 			}
 		}
 	}
@@ -155,8 +157,9 @@ public class Template implements Serializable {
 	
 	private void initTemplateVelocity() throws DynamicException{
 		if(this.templateVelocity==null) {
+			SemaphoreLock lock = null;
 			try {
-				this.getLock().acquire("initTemplateVelocity");
+				lock = this.getLock().acquire("initTemplateVelocity");
 			}catch(Throwable t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
@@ -164,7 +167,7 @@ public class Template implements Serializable {
 				this.correctClassBackwardCompatibility();
 				this.templateVelocity = DynamicUtils.buildVelocityTemplate(this);
 			}finally {
-				this.getLock().release("initTemplateVelocity");
+				this.getLock().release(lock, "initTemplateVelocity");
 			}
 		}
 	}
@@ -177,15 +180,16 @@ public class Template implements Serializable {
 	
 	private void initTemplateZip() throws DynamicException{
 		if(this.templateZip==null) {
+			SemaphoreLock lock = null;
 			try {
-				this.getLock().acquire("initTemplateZip");
+				lock = this.getLock().acquire("initTemplateZip");
 			}catch(Throwable t) {
 				throw new DynamicException(t.getMessage(),t);
 			}
 			try {
 				this.templateZip = new ZipTemplate(this.name, this.template);
 			}finally {
-				this.getLock().release("initTemplateZip");
+				this.getLock().release(lock, "initTemplateZip");
 			}
 		}
 	}

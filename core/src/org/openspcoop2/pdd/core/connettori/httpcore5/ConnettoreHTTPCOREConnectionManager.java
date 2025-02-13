@@ -52,6 +52,7 @@ import org.openspcoop2.pdd.core.connettori.AbstractConnettoreConnectionConfig;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHttpPoolParams;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.resources.Loader;
@@ -114,8 +115,9 @@ public class ConnettoreHTTPCOREConnectionManager {
 			ConnettoreHTTPCOREConnectionConfig connectionConfig, ConnettoreLogger logger) throws ConnettoreException {
 		
 		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
+		SemaphoreLock lock = null;
 		try {
-			semaphorePoolingConnectionManager.acquire("initPoolingConnectionManager",idTransazione);
+			lock = semaphorePoolingConnectionManager.acquire("initPoolingConnectionManager",idTransazione);
 		}catch(Exception t) {
 			throw new ConnettoreException(t.getMessage(),t);
 		}
@@ -184,7 +186,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 				}
 			}
 		}finally {
-			semaphorePoolingConnectionManager.release("initPoolingConnectionManager",idTransazione);
+			semaphorePoolingConnectionManager.release(lock, "initPoolingConnectionManager",idTransazione);
 		}
 		
 	}
@@ -272,8 +274,9 @@ public class ConnettoreHTTPCOREConnectionManager {
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException {
 		String key = connectionConfig.toKeyConnection();
 		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
+		SemaphoreLock lock = null;
 		try {
-			semaphoreConnection.acquire("initConnection",idTransazione);
+			lock = semaphoreConnection.acquire("initConnection",idTransazione);
 		}catch(Exception t) {
 			throw new ConnettoreException(t.getMessage(),t);
 		}
@@ -286,7 +289,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 				mapConnection.put(key, resource);
 			}
 		}finally {
-			semaphoreConnection.release("initConnection",idTransazione);
+			semaphoreConnection.release(lock, "initConnection",idTransazione);
 		}
 	}
 	private static ConnettoreHTTPCOREConnection update(ConnettoreHTTPCOREConnectionConfig connectionConfig,SSLSocketFactory sslSocketFactory,
@@ -295,8 +298,9 @@ public class ConnettoreHTTPCOREConnectionManager {
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException {
 		String key = connectionConfig.toKeyConnection();
 		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
+		SemaphoreLock lock = null;
 		try {
-			semaphoreConnection.acquire("updateConnection",idTransazione);
+			lock = semaphoreConnection.acquire("updateConnection",idTransazione);
 		}catch(Exception t) {
 			throw new ConnettoreException(t.getMessage(),t);
 		}
@@ -312,7 +316,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			mapConnection.put(key, resource);
 			return resource;
 		}finally {
-			semaphoreConnection.release("updateConnection",idTransazione);
+			semaphoreConnection.release(lock, "updateConnection",idTransazione);
 		}
 	}
 

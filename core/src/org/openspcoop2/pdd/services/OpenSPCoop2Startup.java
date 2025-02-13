@@ -870,12 +870,18 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			}
 			
 			// Inizializzo Semaphore
-			org.openspcoop2.utils.Semaphore.setTIMEOUT_MS(propertiesReader.getSemaphoreTimeoutMS());
-			org.openspcoop2.utils.Semaphore.setDEBUG(propertiesReader.isSemaphoreDebug());
+			org.openspcoop2.utils.Semaphore.setDefaultLockAcquisitionTimeoutMs(propertiesReader.getSemaphoreTimeoutMS());
+			org.openspcoop2.utils.Semaphore.setDefaultLockHoldTimeoutMs(propertiesReader.getSemaphoreHoldTimeoutMS());
+			if(propertiesReader.getSemaphoreHoldTimeoutMS()>0) {
+				org.openspcoop2.utils.SemaphoreLock.initScheduledExecutorService();
+			}
+			org.openspcoop2.utils.Semaphore.setDefaultDebug(propertiesReader.isSemaphoreDebug());
 			org.openspcoop2.utils.Semaphore.setSemaphoreType(propertiesReader.getSemaphoreType());
 			org.openspcoop2.utils.Semaphore.setFair(propertiesReader.isSemaphoreFair());
-			OpenSPCoop2Startup.logStartupInfo("Impostazione semaphore timeoutMS="+org.openspcoop2.utils.Semaphore.getTIMEOUT_MS()+
-					" debug="+org.openspcoop2.utils.Semaphore.isDEBUG()+
+			OpenSPCoop2Startup.logStartupInfo("Impostazione semaphore acquisitionTimeoutMs="+org.openspcoop2.utils.Semaphore.getDefaultLockAcquisitionTimeoutMs()+
+					" holdTimeoutMs="+org.openspcoop2.utils.Semaphore.getDefaultLockHoldTimeoutMs()+
+					" scheduledExecutorServiceEnabled="+org.openspcoop2.utils.SemaphoreLock.isInitializedScheduledExecutorService()+
+					" debug="+org.openspcoop2.utils.Semaphore.isDefaultDebug()+
 					" type="+org.openspcoop2.utils.Semaphore.getSemaphoreType()+
 					" fair="+org.openspcoop2.utils.Semaphore.isFair());
 			
@@ -913,7 +919,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			RequestThreadContext.setLog(OpenSPCoop2Logger.getLoggerOpenSPCoopConnettori());
 
-			
+			org.openspcoop2.utils.Semaphore.setLogDebug(OpenSPCoop2Logger.getLoggerOpenSPCoopResources());
 			
 			
 
@@ -4747,6 +4753,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		// *** Hazelcast ***
 		if(properties!=null && properties.isControlloTrafficoEnabled()){
 			HazelcastManager.close();
+		}
+		
+		// *** Semaphore **
+		try{
+			org.openspcoop2.utils.SemaphoreLock.releaseScheduledExecutorService();
+		}catch(Throwable e){
+			// ignore
 		}
 		
 		// Attendo qualche secondo

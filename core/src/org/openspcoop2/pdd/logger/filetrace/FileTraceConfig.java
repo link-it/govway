@@ -38,6 +38,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -55,37 +56,37 @@ public class FileTraceConfig {
 	private static final org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("FileTraceConfig");
 
 	public static void init(InputStream is, String fileNamePath, boolean globale) throws CoreException {
-		semaphore.acquireThrowRuntime("init_InputStream");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("init_InputStream");
 		try {
 			if(!staticInstanceMap.containsKey(fileNamePath)){
 				FileTraceConfig instance = new FileTraceConfig(is, globale);
 				staticInstanceMap.put(fileNamePath, instance);
 			}
 		}finally {
-			semaphore.release("init_InputStream");
+			semaphore.release(lock, "init_InputStream");
 		}
 	}
 	public static void init(File file, boolean globale) throws CoreException {
-		semaphore.acquireThrowRuntime("init_File");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("init_File");
 		try {
 			if(!staticInstanceMap.containsKey(file.getAbsolutePath())){
 				FileTraceConfig instance = new FileTraceConfig(file, globale);
 				staticInstanceMap.put(file.getAbsolutePath(), instance);
 			}
 		}finally {
-			semaphore.release("init_File");
+			semaphore.release(lock, "init_File");
 		}
 	}
 	public static void update(File file, boolean globale) throws CoreException {
-		semaphore.acquireThrowRuntime("update");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("update");
 		try {
 			updateWithoutSynchronizedEngine(file, globale);
 		}finally {
-			semaphore.release("update_File");
+			semaphore.release(lock, "update_File");
 		}
 	}
 	public static void resetFileTraceAssociatePorte()  {
-		semaphore.acquireThrowRuntime("resetFileTraceAssociatePorte");
+		SemaphoreLock lock = semaphore.acquireThrowRuntime("resetFileTraceAssociatePorte");
 		try {
 			if(!staticInstanceMap.isEmpty()) {
 				List<String> removeEntries = new ArrayList<>();
@@ -104,7 +105,7 @@ public class FileTraceConfig {
 				}
 			}
 		}finally {
-			semaphore.release("resetFileTraceAssociatePorte");
+			semaphore.release(lock, "resetFileTraceAssociatePorte");
 		}
 	}
 	private static void updateWithoutSynchronizedEngine(File file, boolean globale) throws CoreException {

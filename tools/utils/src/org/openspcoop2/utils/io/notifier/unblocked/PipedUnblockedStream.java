@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
 
@@ -97,14 +98,14 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 			}
 			else {
 				boolean wait = false;
-				this.lockPIPE.acquireThrowRuntime("readWaitBytes");
+				SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("readWaitBytes");
 				try {
 					if(!this.stop && this.bout!=null && this.bout.size()==0) {
 						this.asyncReadTask = new CompletableFuture<>();
 						wait = true;
 					}
 				}finally {
-					this.lockPIPE.release("readWaitBytes");
+					this.lockPIPE.release(lock, "readWaitBytes");
 				}
 				
 				if(wait) {
@@ -228,7 +229,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 			if(this.bytesReceived==null){
 				/**this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] BYTES AVAILABLE FROM PRECEDENT BUFFERING IS NULL ...");*/
 				/**this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC ...");*/
-				this.lockPIPE.acquireThrowRuntime("read");
+				SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("read");
 				try {
 					/**this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC A1 ...");*/
 					this.bout.flush();
@@ -244,7 +245,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 						this.asyncWriteTask.complete(true);
 					}
 				}finally {
-					this.lockPIPE.release("read");
+					this.lockPIPE.release(lock, "read");
 				}
 				/**this.log.debug("########### READ b["+b.length+"] off["+off+"] len["+len+"] SYNC OK");*/
 			}
@@ -357,7 +358,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 	@Override
 	public void close() throws IOException {	
 		try {
-			this.lockPIPE.acquireThrowRuntime("close");
+			SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("close");
 			try {
 				if(!this.stop){
 					if(this.bout.size()<=0 ){
@@ -368,7 +369,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 					this.stop = true;
 				}
 			}finally{
-				this.lockPIPE.release("close");
+				this.lockPIPE.release(lock, "close");
 			}
 			if(this.asyncWriteTask!=null) {
 				/**System.out.println("["+this.source+"] CLOSE for WRITE COMPLETE");*/
@@ -407,7 +408,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 			}
 			else {
 				boolean wait = false;
-				this.lockPIPE.acquireThrowRuntime("writeWaitEmptyBuffer");
+				SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("writeWaitEmptyBuffer");
 				try {
 					if(this.bout.size()>this.sizeBuffer &&
 						!this.stop && this.bout.size()>0 ) {
@@ -415,7 +416,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 						wait = true;
 					}
 				}finally{
-					this.lockPIPE.release("writeWaitEmptyBuffer");
+					this.lockPIPE.release(lock, "writeWaitEmptyBuffer");
 				}
 				if(wait) {
 					asyncWriteGet();
@@ -466,7 +467,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 			this.writeWaitEmptyBuffer();
 					
 			/**this.log.debug("########### WRITE byte SYNC ...");*/
-			this.lockPIPE.acquireThrowRuntime("write(b)");
+			SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("write(b)");
 			try {
 				this.bout.write(b);
 				if(this.asyncReadTask!=null) {
@@ -476,7 +477,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 				/**this.log.debug("########### WRITE byte SYNC OK");*/
 				/**System.out.println("########### WRITE byte SYNC OK ADD[1] SIZE_ATTUALE["+this.bout.size()+"]");*/
 			}finally{
-				this.lockPIPE.release("write(b)");
+				this.lockPIPE.release(lock, "write(b)");
 			}
 			
 		}
@@ -503,7 +504,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 			this.writeWaitEmptyBuffer();
 					
 			/**this.log.debug("########### WRITE byte ["+b.length+"] SYNC ...");*/
-			this.lockPIPE.acquireThrowRuntime("write(b[])");
+			SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("write(b[])");
 			try {
 				this.bout.write(b);
 				if(this.asyncReadTask!=null) {
@@ -513,7 +514,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 				/**this.log.debug("########### WRITE byte ["+b.length+"] SYNC OK");*/
 				/**System.out.println("########### WRITE byte SYNC OK ADD["+b.length+"] SIZE_ATTUALE["+this.bout.size()+"]");*/
 			}finally {
-				this.lockPIPE.release("write(b[])");
+				this.lockPIPE.release(lock, "write(b[])");
 			}
 			
 		}
@@ -540,7 +541,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 			this.writeWaitEmptyBuffer();
 					
 			/**this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" SYNC ...");*/
-			this.lockPIPE.acquireThrowRuntime("write(b[],off,len)");
+			SemaphoreLock lock = this.lockPIPE.acquireThrowRuntime("write(b[],off,len)");
 			try {
 				this.bout.write(b, off, len);
 				if(this.asyncReadTask!=null) {
@@ -550,7 +551,7 @@ public class PipedUnblockedStream extends IPipedUnblockedStream {
 				/**this.log.debug("########### WRITE byte ["+b.length+"] off:"+off+" len:"+len+" SYNC OK");*/
 				/**System.out.println("########### WRITE byte SYNC OK ADD["+b.length+"] SIZE_ATTUALE["+this.bout.size()+"]");*/
 			}finally {
-				this.lockPIPE.release("write(b[],off,len)");
+				this.lockPIPE.release(lock, "write(b[],off,len)");
 			}
 			
 		}

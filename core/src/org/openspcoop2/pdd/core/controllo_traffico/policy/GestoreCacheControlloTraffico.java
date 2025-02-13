@@ -47,6 +47,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
@@ -409,7 +410,7 @@ public class GestoreCacheControlloTraffico {
 			}
 			
     		String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
-    		lockNumeroEsiti.acquire("readNumeroEsitiInCache", idTransazione);
+    		SemaphoreLock lock = lockNumeroEsiti.acquire("readNumeroEsitiInCache", idTransazione);
 			try {
     			
 				// se e' attiva una cache provo ad utilizzarla
@@ -459,7 +460,7 @@ public class GestoreCacheControlloTraffico {
 					}
 				}
 			}finally {
-				lockNumeroEsiti.release("readNumeroEsitiInCache", idTransazione);
+				lockNumeroEsiti.release(lock, "readNumeroEsitiInCache", idTransazione);
 			}
 
 		}
@@ -555,7 +556,7 @@ public class GestoreCacheControlloTraffico {
 			
     		String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
 			//synchronized (semaphoreNumeroRichieste) {
-    		lockNumeroRichieste.acquire("readNumeroRichiesteInCache", idTransazione);
+    		SemaphoreLock lock = lockNumeroRichieste.acquire("readNumeroRichiesteInCache", idTransazione);
 			try {
     			
 				// se e' attiva una cache provo ad utilizzarla
@@ -605,7 +606,7 @@ public class GestoreCacheControlloTraffico {
 					}
 				}
 			}finally {
-				lockNumeroRichieste.release("readNumeroRichiesteInCache", idTransazione);
+				lockNumeroRichieste.release(lock, "readNumeroRichiesteInCache", idTransazione);
 			}
 
 		}
@@ -708,7 +709,7 @@ public class GestoreCacheControlloTraffico {
 			
 			String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
 			//synchronized (semaphoreOccupazioneBanda) {
-			lockOccupazioneBanda.acquire("readOccupazioneBandaInCache", idTransazione);
+			SemaphoreLock lock = lockOccupazioneBanda.acquire("readOccupazioneBandaInCache", idTransazione);
 			try {
     			
 				// se e' attiva una cache provo ad utilizzarla
@@ -759,7 +760,7 @@ public class GestoreCacheControlloTraffico {
 				}
 				
 			}finally {
-				lockOccupazioneBanda.release("readOccupazioneBandaInCache", idTransazione);
+				lockOccupazioneBanda.release(lock, "readOccupazioneBandaInCache", idTransazione);
 			}
 
 		}
@@ -863,7 +864,7 @@ public class GestoreCacheControlloTraffico {
 			
 			String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
 			//synchronized (semaphoreLatenza) {
-			lockLatenza.acquire("readLatenzaInCache", idTransazione);
+			SemaphoreLock lock = lockLatenza.acquire("readLatenzaInCache", idTransazione);
 			try {
 				
 				// se e' attiva una cache provo ad utilizzarla
@@ -914,7 +915,7 @@ public class GestoreCacheControlloTraffico {
 				}
 				
 			}finally {
-				lockLatenza.release("readLatenzaInCache", idTransazione);
+				lockLatenza.release(lock, "readLatenzaInCache", idTransazione);
 			}
 
 		}
@@ -986,7 +987,7 @@ public class GestoreCacheControlloTraffico {
 			
 			String idTransazione = datiTransazione!=null ? datiTransazione.getIdTransazione() : null;
 			//synchronized (semaphoreStato) {
-			lockStato.acquire("getStatoInCache", idTransazione);
+			SemaphoreLock lock = lockStato.acquire("getStatoInCache", idTransazione);
 			try {
 				
 				// se e' attiva una cache provo ad utilizzarla
@@ -1033,7 +1034,7 @@ public class GestoreCacheControlloTraffico {
 				}
 				
 			}finally {
-				lockStato.release("getStatoInCache", idTransazione);
+				lockStato.release(lock, "getStatoInCache", idTransazione);
 			}
 
 		}
