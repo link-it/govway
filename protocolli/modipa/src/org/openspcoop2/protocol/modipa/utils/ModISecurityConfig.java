@@ -493,22 +493,8 @@ public class ModISecurityConfig {
 				this.audience = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE);
 			}
 			
-			// 2. Provo ad utilizzare il clientId presente nel token
-			if(this.audience==null &&
-				bustaRichiesta!=null) {
-				this.audience = bustaRichiesta.getProperty(rest ? 
-						ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID :
-						ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_FROM);
-			}
-			
-			// 3. Provo ad utilizzare il sub presente nel token
-			if(this.audience==null &&
-				bustaRichiesta!=null) {
-				this.audience = bustaRichiesta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT);
-			}
-			
-			// Nel caso di sorgente non locale, ripeto i punti 2 e 3 per il token ricevuto
-			if(kidMode) {
+			// 2-3 via token. Nel caso di sorgente non locale, effettuo la ricerca dei punti 2 e 3 sotto attuata per i token firmati dal mittente però sul token oauth (pdnd)
+			if(this.audience==null && kidMode) {
 				// guardo 
 				boolean sicurezzaToken = context!=null && context.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
 				if(sicurezzaToken) {
@@ -528,6 +514,20 @@ public class ModISecurityConfig {
 				}
 			}
 			
+			// 2. Provo ad utilizzare il clientId presente nel token
+			if(this.audience==null &&
+				bustaRichiesta!=null) {
+				this.audience = bustaRichiesta.getProperty(rest ? 
+						ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID :
+						ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_SOAP_WSA_FROM);
+			}
+			
+			// 3. Provo ad utilizzare il sub presente nel token
+			if(this.audience==null &&
+				bustaRichiesta!=null) {
+				this.audience = bustaRichiesta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT);
+			}
+						
 			// 4. Utilizzo quello di default associato al 'sa' se identificato
 			if(this.audience==null && 
 				sa!=null) {

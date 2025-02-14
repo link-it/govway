@@ -667,7 +667,8 @@ Scenario: isTest('connettivita-base-idar04-jwk-ApplicativoBlockingIDA01') ||
 		isTest('assenza-header-digest-risposta-idar04-pdnd') ||
 		isTest('idar04-token-risposta-jwk') ||
 		isTest('idar04-token-risposta-pdnd') ||
-		isTest('audience-differenti-ok-idar04-jwk') 
+		isTest('audience-differenti-ok-idar04-jwk') ||
+		isTest('connettivita-base-idar04-audience-response-custom') 
 
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
     * def responseStatus = 200
