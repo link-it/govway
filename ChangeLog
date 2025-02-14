@@ -1,3 +1,10 @@
+2025-02-14  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto Bug #1578
+	La configurazione della risposta che prevedeva la personalizzazione del claim 'aud' veniva ignorata, 
+	impedendo l'assegnazione del valore configurato nei token di risposta generati.
+
 2025-02-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

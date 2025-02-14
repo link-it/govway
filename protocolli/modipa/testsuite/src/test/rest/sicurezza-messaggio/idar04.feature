@@ -1005,3 +1005,99 @@ Examples:
 
 
 
+
+
+
+
+
+
+@audience-response-custom
+Scenario Outline: Test in cui viene modificata l'audience della risposta <tipo-test> (<descrizione>)
+
+# Svuoto la cache per evitare che venga generato lo stesso token in questo test usato già in altri
+* call reset_cache_token ({ })
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR04AudienceRispostaCustom/v1"
+And path 'resources', 1, 'M'
+And request read('request.json')
+And header GovWay-TestSuite-Test-ID = 'connettivita-base-idar04-audience-response-custom'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+And header IDAR04TestHeader = "TestHeaderRequest"
+And header simulazionepdnd-username = '<username>'
+And header simulazionepdnd-password = '<password>'
+And header simulazionepdnd-purposeId = '<purposeId>'
+And header simulazionepdnd-audience = 'RestBlockingIDAR04AudienceRispostaCustom/v1'
+
+When method post
+Then status 200
+And match response == read('response.json')
+And match header Authorization == '#notpresent'
+
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Token'][0], "AGID")
+* def server_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Token'][0], "AGID")
+* def request_digest = get client_token $.payload.signed_headers..digest
+* def response_digest = get server_token $.payload.signed_headers..digest
+
+* def clientIdExpected = '<clientId>'
+* def subExpected = '<username>'
+* def issExpected = 'DemoSoggettoFruitore'
+
+* def other_checks_authorization_richiesta = 
+"""
+([
+])
+"""
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: request_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json; charset=UTF-8' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-idar04testheader', value: 'TestHeaderRequest' },
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' },
+    { name: 'ProfiloSicurezzaMessaggio-Subject', value: subExpected },
+    { name: 'ProfiloSicurezzaMessaggio-Issuer', value: issExpected },
+    { name: 'ProfiloSicurezzaMessaggio-ClientId', value: clientIdExpected }
+])
+"""
+
+* def clientIdResponseExpected = 'ExampleServerJWK'
+* def subResponseExpected = 'RestBlockingIDAR04AudienceRispostaCustom/v1'
+* def issResponseExpected = 'DemoSoggettoErogatore'
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-digest', value: response_digest[0] },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-content-type', value: 'application/json' },
+    { name: 'ProfiloSicurezzaMessaggioSignedHeader-idar04testheader', value: 'TestHeaderResponse' },
+    { name: 'GenerazioneTokenIDAuth', value: 'Authorization OAuth' },
+    { name: 'ProfiloSicurezzaMessaggio-Subject', value: subResponseExpected },
+    { name: 'ProfiloSicurezzaMessaggio-Issuer', value: issResponseExpected },
+    { name: 'ProfiloSicurezzaMessaggio-ClientId', value: clientIdResponseExpected },
+    { name: 'ProfiloSicurezzaMessaggio-Audience', value: 'ValoreCustomPerLaRisposta' }
+])
+"""
+
+* def kidRequest = '<kid>'
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_token.payload.jti })
+* call check_traccia_kid ({ tid: tid, tipo: 'Richiesta', token: client_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', traceMessageId:client_token.payload.jti })
+* call check_traccia_kid ({ tid: tid, tipo: 'Risposta', token: server_token, kid: 'KID-ExampleServer', profilo_sicurezza: 'IDAR0401', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_token.payload.jti })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia_kid_solo_oauth ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_authorization_richiesta, profilo_interazione: 'crud', token_auth: 'Authorization OAuth', traceMessageId:client_token.payload.jti })
+* call check_traccia_kid ({ tid: tid, tipo: 'Richiesta', token: client_token, kid: kidRequest, profilo_sicurezza: 'IDAR0401', other_checks: other_checks_richiesta, profilo_interazione: 'crud', traceMessageId:client_token.payload.jti })
+* call check_traccia_kid ({ tid: tid, tipo: 'Risposta', token: server_token, kid: 'KID-ExampleServer', profilo_sicurezza: 'IDAR0401', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_token.payload.jti
+
+Examples:
+| tipo-keystore-client | username | password | purposeId | kid | clientId |
+| pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01 | KID-ApplicativoBlockingIDA01 | DemoSoggettoFruitore/ApplicativoBlockingIDA01 |
