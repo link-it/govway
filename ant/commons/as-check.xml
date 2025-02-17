@@ -44,7 +44,7 @@
 			<elseif>
 				<matches string="${as}" pattern="tomcat.*"/>
 				<then>
-					<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 10.x (tomcat10)"/>
+					<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 10.x (tomcat10), 11.x (tomcat11)"/>
 					<if>
 						<equals arg1="${as}" arg2="tomcat"/>
 						<then>
@@ -55,6 +55,7 @@
 						<not>
 							<or>
 								<equals arg1="${as}" arg2="tomcat10"/>
+								<equals arg1="${as}" arg2="tomcat11"/>
 							</or>
 						</not>
 						<then>
