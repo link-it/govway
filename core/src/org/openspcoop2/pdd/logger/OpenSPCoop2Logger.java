@@ -71,6 +71,7 @@ import org.slf4j.Logger;
  * </ul>
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -211,6 +212,8 @@ public class OpenSPCoop2Logger {
 		return OpenSPCoop2Logger.loggerOpenSPCoopConsoleStartupAgganciatoLog;
 	}
 	
+	private static final String APP_NAME = "govway";
+	
 	private static List<String> filesCheck;
 	private static void initializeLogDirs(Properties p, boolean append){
 		
@@ -283,6 +286,9 @@ public class OpenSPCoop2Logger {
 				}
 			}
 			
+			LoggerWrapperFactory.patchLoggers(loggerProperties,  
+					org.openspcoop2.utils.Costanti.ENV_LOG_GOVWAY,
+					Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, APP_NAME));
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			initializeLogDirs(loggerProperties, false);
 			
@@ -346,7 +352,13 @@ public class OpenSPCoop2Logger {
 						rootDirectory, loggerProperties, objectProperties);
 				
 			}
-
+			
+			
+			
+			LoggerWrapperFactory.patchLoggers(loggerProperties, 
+					org.openspcoop2.utils.Costanti.ENV_LOG_GOVWAY,
+					Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, APP_NAME));
+			
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			initializeLogDirs(loggerProperties, false);
 			
@@ -833,6 +845,9 @@ public class OpenSPCoop2Logger {
 					}
 					logConsole.info("Protocol '"+protocol+"': Log4j config append");
 					if(loggerPropertiesProtocolAdjunct!=null) {
+						LoggerWrapperFactory.patchLoggers(loggerPropertiesProtocolAdjunct,  
+								org.openspcoop2.utils.Costanti.ENV_LOG_GOVWAY,
+								Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, APP_NAME));
 						LoggerWrapperFactory.setLogConfiguration(loggerPropertiesProtocolAdjunct,true);
 						initializeLogDirs(loggerPropertiesProtocolAdjunct, true);
 					}

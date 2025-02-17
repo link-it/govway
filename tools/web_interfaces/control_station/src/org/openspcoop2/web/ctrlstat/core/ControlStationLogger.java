@@ -22,6 +22,7 @@ package org.openspcoop2.web.ctrlstat.core;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ import org.openspcoop2.web.ctrlstat.costanti.TipoProperties;
  * ControlStationLogger
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -107,6 +109,10 @@ public class ControlStationLogger {
 				//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
 			}
 		}
+
+		LoggerWrapperFactory.patchLoggers(loggerProperties, 
+				org.openspcoop2.utils.Costanti.ENV_LOG_CONSOLE,
+				Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, "govwayConsole"));
 
 		if(appendActualConfiguration){
 			System.out.println("[govwayConsole] Attendo inizializzazione GovWay prima di appender la configurazione Log4J ...");

@@ -72,6 +72,7 @@ import org.slf4j.Logger;
  * AbstractConsoleStartupListener
  * 
  * @author Pintori Giuliano (pintori@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  *
@@ -337,6 +338,10 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 				}
 			}
 
+			LoggerWrapperFactory.patchLoggers(loggerProperties, 
+					org.openspcoop2.utils.Costanti.ENV_LOG_MONITOR,
+					Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, "govwayMonitor"));
+			
 			// inizializzo il logger
 			if(appendActualConfiguration){
 				System.out.println("[govwayMonitor] Attendo inizializzazione GovWay prima di appender la configurazione Log4J ...");

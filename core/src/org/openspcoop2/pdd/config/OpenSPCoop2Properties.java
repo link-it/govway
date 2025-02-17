@@ -19938,7 +19938,7 @@ public class OpenSPCoop2Properties {
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
-				name = name.trim();
+				name = LoggerWrapperFactory.applyClusterIdStrategy(name.trim(), "dumpBinario");
 				this.getDumpBinarioRepository = new File(name);
 				checkDumpBinarioRepository();
 			} catch(java.lang.Exception e) {
@@ -20053,7 +20053,7 @@ public class OpenSPCoop2Properties {
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
-				name = name.trim();
+				name = LoggerWrapperFactory.applyClusterIdStrategy(name.trim(), "dumpNonRealTime");
 				this.getDumpNonRealtimeRepository = new File(name);
 				checkDumpNonRealtimeRepository();
 			} catch(java.lang.Exception e) {
@@ -22523,6 +22523,7 @@ public class OpenSPCoop2Properties {
 
 				if (value != null){
 					value = value.trim();
+					value = LoggerWrapperFactory.applyClusterIdStrategy(value, "xsdCollection");
 					this.getValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir = new File(value);
 					checkValidazioneContenutiApplicativiXsdBuildSchemaSerializeXSDCollectionDir();
 				}
@@ -29107,7 +29108,7 @@ public class OpenSPCoop2Properties {
 				if(name==null){
 					throw new CoreException("Proprieta' non impostata");
 				}
-				name = name.trim();
+				name = LoggerWrapperFactory.applyClusterIdStrategy(name.trim(), "resources");
 				this.getFileSystemRecoveryRepository = new File(name);
 				checkFileSystemRecoveryRepository();
 			} catch(java.lang.Exception e) {
@@ -30410,7 +30411,7 @@ public class OpenSPCoop2Properties {
 				if(name==null){
 					throw new CoreException("Hazelcast diagnostics dir non impostata");
 				}
-				name = name.trim();
+				name = LoggerWrapperFactory.applyClusterIdStrategy(name.trim(), "hazelcast");
 				this.getHazelcastDiagnosticsDirectory = new File(name);
 				checkHazelcastDiagnosticsDirectory();
 			} catch(java.lang.Exception e) {
@@ -30686,7 +30687,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.controlloTraffico.gestorePolicy.fileSystemRecovery.repository");
 				if(name!=null){
-					name = name.trim();
+					name = LoggerWrapperFactory.applyClusterIdStrategy(name.trim(), "controlloTraffico");
 					initControlloTrafficoGestorePolicyFileSystemRecoveryRepository(name);
 				}
 			} catch(java.lang.Exception e) {
