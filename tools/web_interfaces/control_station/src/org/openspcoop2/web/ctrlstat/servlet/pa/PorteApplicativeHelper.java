@@ -8634,6 +8634,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			// preparo i dati
 			List<List<DataElement>> dati = new ArrayList<>();
 			
+			@SuppressWarnings("unused")
 			int idTab = 0;
 			
 /**			if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {

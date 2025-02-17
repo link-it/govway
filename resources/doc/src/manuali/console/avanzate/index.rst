@@ -27,4 +27,5 @@ Funzionalità Avanzate
 	password
 	info_confidenziali
 	byokNodiManager
+	logger/index.rst
 	health_check
