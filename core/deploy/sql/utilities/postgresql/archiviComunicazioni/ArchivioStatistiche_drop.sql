@@ -32,3 +32,4 @@ DROP SEQUENCE seq_stat_giorni_contenuti;
 DROP SEQUENCE seq_statistiche_giornaliere;
 DROP SEQUENCE seq_stat_orarie_contenuti;
 DROP SEQUENCE seq_statistiche_orarie;
+DROP SEQUENCE seq_statistiche;

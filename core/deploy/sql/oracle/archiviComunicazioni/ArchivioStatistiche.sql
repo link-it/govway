@@ -1,13 +1,31 @@
+CREATE SEQUENCE seq_statistiche MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 NOCYCLE;
+
 CREATE TABLE statistiche
 (
 	tipo VARCHAR2(255) NOT NULL,
 	data_ultima_generazione TIMESTAMP NOT NULL,
 	-- fk/pk columns
+	id NUMBER NOT NULL,
 	-- check constraints
 	CONSTRAINT chk_statistiche_1 CHECK (tipo IN ('StatisticheOrarie','StatisticheGiornaliere','StatisticheSettimanali','StatisticheMensili')),
 	-- unique constraints
-	CONSTRAINT unique_statistiche_1 UNIQUE (tipo)
+	CONSTRAINT unique_statistiche_1 UNIQUE (tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_statistiche PRIMARY KEY (id)
 );
+
+CREATE TRIGGER trg_statistiche
+BEFORE
+insert on statistiche
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_statistiche.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
 
 
 -- STATISTICHE ORARIE

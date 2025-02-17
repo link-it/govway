@@ -1,6 +1,14 @@
 2025-02-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Aggiunta funzionalità #1580
+	(https://github.com/link-it/govway/issues/191)
+	Arricchite tabelle 'statistiche' e 'transazioni_info' con una colonna 'id' definita come primary key.
+
+2025-02-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1581
 	Risolta la seguente vulnerabilità relative ai jar di terza parte:
 	- CVE-2025-25193: aggiornata libreria 'io.netty:*' alla versione 4.1.118.Final
 

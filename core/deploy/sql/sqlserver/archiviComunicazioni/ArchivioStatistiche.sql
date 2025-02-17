@@ -3,11 +3,16 @@ CREATE TABLE statistiche
 	tipo VARCHAR(255) NOT NULL,
 	data_ultima_generazione DATETIME2 NOT NULL,
 	-- fk/pk columns
+	id BIGINT IDENTITY,
 	-- check constraints
 	CONSTRAINT chk_statistiche_1 CHECK (tipo IN ('StatisticheOrarie','StatisticheGiornaliere','StatisticheSettimanali','StatisticheMensili')),
 	-- unique constraints
-	CONSTRAINT unique_statistiche_1 UNIQUE (tipo)
+	CONSTRAINT unique_statistiche_1 UNIQUE (tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_statistiche PRIMARY KEY (id)
 );
+
+
 
 
 -- STATISTICHE ORARIE

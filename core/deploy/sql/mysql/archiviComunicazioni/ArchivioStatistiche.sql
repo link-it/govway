@@ -4,11 +4,16 @@ CREATE TABLE statistiche
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_ultima_generazione TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- fk/pk columns
+	id BIGINT AUTO_INCREMENT,
 	-- check constraints
 	CONSTRAINT chk_statistiche_1 CHECK (tipo IN ('StatisticheOrarie','StatisticheGiornaliere','StatisticheSettimanali','StatisticheMensili')),
 	-- unique constraints
-	CONSTRAINT unique_statistiche_1 UNIQUE (tipo)
+	CONSTRAINT unique_statistiche_1 UNIQUE (tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_statistiche PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
+
+
 
 
 -- STATISTICHE ORARIE

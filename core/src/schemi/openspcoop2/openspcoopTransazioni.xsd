@@ -2241,7 +2241,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 					</linkit:interface>
 				    <linkit:sql-table-mapping name="transazioni_info" sequence-cycle="true"
 				    	comment="Contiene informazioni generiche (come date di elaborazioni di batch) sulle transazioni">
-						<linkit:sql-table-primary-key generate="false" generate-id="false"/>
+						<!-- <linkit:sql-table-primary-key generate="false" generate-id="false"/> issue https://github.com/link-it/govway/issues/191 -->
 						<linkit:sql-table-unique create-index="false">
 							<linkit:sql-table-unique-field name="tipo"/>
 						</linkit:sql-table-unique>

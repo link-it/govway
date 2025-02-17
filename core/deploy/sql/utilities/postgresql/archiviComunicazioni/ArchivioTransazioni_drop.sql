@@ -47,5 +47,6 @@ DROP SEQUENCE seq_dump_messaggi;
 DROP SEQUENCE seq_transazioni_classe_esiti;
 DROP SEQUENCE seq_transazioni_esiti;
 DROP SEQUENCE seq_transazioni_export;
+DROP SEQUENCE seq_transazioni_info;
 DROP SEQUENCE seq_transazioni_sa;
 DROP SEQUENCE seq_credenziale_mittente;
