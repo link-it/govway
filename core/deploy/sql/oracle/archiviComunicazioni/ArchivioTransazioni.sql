@@ -293,14 +293,32 @@ end;
 
 
 
+CREATE SEQUENCE seq_transazioni_info MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;
+
 CREATE TABLE transazioni_info
 (
 	tipo VARCHAR2(255) NOT NULL,
 	data TIMESTAMP NOT NULL,
 	-- fk/pk columns
+	id NUMBER NOT NULL,
 	-- unique constraints
-	CONSTRAINT unique_transazioni_info_1 UNIQUE (tipo)
+	CONSTRAINT unique_transazioni_info_1 UNIQUE (tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_info PRIMARY KEY (id)
 );
+
+CREATE TRIGGER trg_transazioni_info
+BEFORE
+insert on transazioni_info
+for each row
+begin
+   IF (:new.id IS NULL) THEN
+      SELECT seq_transazioni_info.nextval INTO :new.id
+                FROM DUAL;
+   END IF;
+end;
+/
+
 
 
 CREATE SEQUENCE seq_transazioni_export MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;

@@ -259,9 +259,14 @@ CREATE TABLE transazioni_info
 	tipo VARCHAR(255) NOT NULL,
 	data TIMESTAMP NOT NULL,
 	-- fk/pk columns
+	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 CYCLE NO CACHE),
 	-- unique constraints
-	CONSTRAINT unique_transazioni_info_1 UNIQUE (tipo)
+	CONSTRAINT unique_transazioni_info_1 UNIQUE (tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_info PRIMARY KEY (id)
 );
+
+
 
 
 CREATE TABLE transazioni_export

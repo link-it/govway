@@ -257,14 +257,21 @@ CREATE INDEX index_transazioni_sa_1 ON transazioni_sa (id_transazione);
 
 
 
+CREATE SEQUENCE seq_transazioni_info start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
+
 CREATE TABLE transazioni_info
 (
 	tipo VARCHAR(255) NOT NULL,
 	data TIMESTAMP NOT NULL,
 	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_transazioni_info') NOT NULL,
 	-- unique constraints
-	CONSTRAINT unique_transazioni_info_1 UNIQUE (tipo)
+	CONSTRAINT unique_transazioni_info_1 UNIQUE (tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_transazioni_info PRIMARY KEY (id)
 );
+
+
 
 
 CREATE SEQUENCE seq_transazioni_export start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;

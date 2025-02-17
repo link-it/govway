@@ -1,13 +1,20 @@
+CREATE SEQUENCE seq_statistiche start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
+
 CREATE TABLE statistiche
 (
 	tipo VARCHAR(255) NOT NULL,
 	data_ultima_generazione TIMESTAMP NOT NULL,
 	-- fk/pk columns
+	id BIGINT DEFAULT nextval('seq_statistiche') NOT NULL,
 	-- check constraints
 	CONSTRAINT chk_statistiche_1 CHECK (tipo IN ('StatisticheOrarie','StatisticheGiornaliere','StatisticheSettimanali','StatisticheMensili')),
 	-- unique constraints
-	CONSTRAINT unique_statistiche_1 UNIQUE (tipo)
+	CONSTRAINT unique_statistiche_1 UNIQUE (tipo),
+	-- fk/pk keys constraints
+	CONSTRAINT pk_statistiche PRIMARY KEY (id)
 );
+
+
 
 
 -- STATISTICHE ORARIE
