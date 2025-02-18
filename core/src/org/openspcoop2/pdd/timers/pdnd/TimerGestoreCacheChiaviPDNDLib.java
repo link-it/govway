@@ -148,6 +148,7 @@ public class TimerGestoreCacheChiaviPDNDLib {
 		
 		boolean enabled = TimerState.ENABLED.equals(TimerGestoreCacheChiaviPDNDLib.state);
 		if(!enabled) {
+			this.msgDiag.addKeyword(CostantiPdD.KEY_REMOTE_STORE, "-");
 			emitDiagnosticLog("disabilitato");
 			return;
 		}

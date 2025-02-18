@@ -613,8 +613,11 @@ public class LoggerWrapperFactory {
 	 * @return
 	 */
 	public static String applyClusterIdStrategy(String filePath, String id) {
-		if (clusterId.contains(id) || clusterId.contains(Boolean.TRUE.toString()))
+		if (clusterId!=null &&
+				(clusterId.contains(id) || clusterId.contains(Boolean.TRUE.toString()))
+				) {
 			return applyClusterIdStrategy(filePath);
+		}
 		return filePath;
 	}
 	

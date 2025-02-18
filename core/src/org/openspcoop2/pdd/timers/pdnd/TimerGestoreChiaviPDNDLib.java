@@ -205,6 +205,7 @@ public class TimerGestoreChiaviPDNDLib {
 		
 		boolean enabled = TimerState.ENABLED.equals(TimerGestoreChiaviPDNDLib.state);
 		if(!enabled) {
+			this.msgDiag.addKeyword(CostantiPdD.KEY_REMOTE_STORE, "-");
 			emitDiagnosticLog("disabilitato");
 			return;
 		}
