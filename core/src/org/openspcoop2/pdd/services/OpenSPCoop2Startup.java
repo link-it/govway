@@ -3837,9 +3837,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND);
 					
 					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, TimerGestoreChiaviPDND.ID_MODULO);
+					msgDiag.addKeyword(CostantiPdD.KEY_REMOTE_STORE, "-");
 					msgDiag.logPersonalizzato("disabilitato");
 					
 					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, TimerGestoreCacheChiaviPDND.ID_MODULO);
+					msgDiag.addKeyword(CostantiPdD.KEY_REMOTE_STORE, "-");
 					msgDiag.logPersonalizzato("disabilitato");
 					
 					msgDiag.setPrefixMsgPersonalizzati(null);
