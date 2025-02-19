@@ -1,3 +1,10 @@
+2025-02-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità #1583
+	(https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1583)
+	Aggiunto il suffisso '.rollingFile' ai RollingFile appender in monitor.log4j2.properties per uniformarli agli altri file di configurazione log4j del progetto.
+
 2025-02-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
