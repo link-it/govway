@@ -14,12 +14,21 @@
 	<target name="-war_govwayConfigApiRS">
 		
 		<if>
-			<matches string="${as}" pattern="wildfly.*"/>
+			<equals arg1="${as}" arg2="wildfly35" />
 			<then>
-				<copy file="${src_govwayConfigApiRS}/WEB-INF/${jboss_deployment_structure}.wildfly" 
-					tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+				<copy file="${src_govwayConfigApiRS}/WEB-INF/${jboss_deployment_structure}.wildfly35" tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
 			</then>
- 		</if>
+			<elseif>
+				<or>
+					<equals arg1="${as}" arg2="wildfly27" />
+					<equals arg1="${as}" arg2="wildfly28" />
+					<equals arg1="${as}" arg2="wildfly29" />
+				</or>
+				<then>
+					<copy file="${src_govwayConfigApiRS}/WEB-INF/${jboss_deployment_structure}.wildfly27" tofile="${tmp_jboss_conf}/${jboss_deployment_structure}" />
+				</then>
+			</elseif>
+		</if>
 	
 		<!-- DataSource Properties -->
 		<delete dir="${build_govwayConfigApiRS}/properties" />

@@ -1,0 +1,62 @@
+<jboss-deployment-structure>
+	<!-- Make sub deployments isolated by default, so they cannot see each others classes without a Class-Path entry -->
+	<ear-subdeployments-isolated>false</ear-subdeployments-isolated>
+	<!-- This corresponds to the top level deployment. For a war this is the war's module, for an ear -->
+	<!-- This is the top level ear module, which contains all the classes in the EAR's lib folder     -->
+	<deployment>
+		<!-- 
+			Indicazione di BouncyCastle tra le risorse disponibili (necessario per il Security Provider su jboss 7)
+			Utile per keystore di tipo P12 per non far scaturire un errore simile al seguente:
+			Message-Security(Sender): Security processing failed. ; error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC
+		-->
+		<resources>
+			<resource-root path="lib/bcprov-jdk18on-1.78.1.jar" use-physical-code-source="true"/>
+			<resource-root path="lib/bcpkix-jdk18on-1.78.1.jar" use-physical-code-source="true"/>
+			<resource-root path="lib/bcutil-jdk18on-1.78.1.jar" use-physical-code-source="true"/>
+		</resources>
+		<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
+		<exclude-subsystems>
+			<subsystem name="webservices" />
+			<subsystem name="jaxrs" />
+			<subsystem name="jsf" />
+			<subsystem name="logging"/>
+		</exclude-subsystems>
+		<exclusions>
+			<!-- BC_PEM
+			    Utilizzando PKCS12 e CRL in formato PEM, nell'application server JBoss EAP 7.3 (all'ultimo patch level) si otteneva il seguente errore:
+			    "java.lang.NoClassDefFoundError: org/bouncycastle/util/encoders/Base64
+			     at org.bouncycastle.jcajce.provider.asymmetric.x509.PEMUtil.readPEMObject()"
+			<module name="org.bouncycastle"/>
+			BC_PEM -->
+
+			<module name="org.eclipse.angus.mail"/>
+			<module name="org.eclipse.angus.activation"/>
+		</exclusions>
+		<!-- start export dependencies
+		<dependencies>
+			<system export="true">
+				<paths>
+					<path name="sun/reflect"/>
+					<path name="sun/misc"/>
+					<path name="com/sun/net/httpserver"/>
+				</paths>
+			</system>
+		</dependencies>
+		end export dependencies -->
+	</deployment>
+	<sub-deployment name="govway.war">
+		<exclusions>
+		</exclusions>
+	</sub-deployment>
+	<!-- NOTA: non inserire commenti dentro il sub-deployment di govwaySec -->
+	<!-- start govwaySec -->
+	<sub-deployment name="govwaySec.war">
+		<exclusions>
+		</exclusions>
+	</sub-deployment>	
+	<!-- end govwaySec -->
+	<sub-deployment name="govway.jar">
+		<exclusions>
+		</exclusions>
+	</sub-deployment>
+</jboss-deployment-structure>

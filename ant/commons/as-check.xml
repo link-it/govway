@@ -21,7 +21,7 @@
 		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
 			<then>
-				<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 27.x (wildfly27), 28.x (wildfly28) e 29.x (wildfly29)"/>
+				<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 27.x (wildfly27), 28.x (wildfly28), 29.x (wildfly29) e 35.x (wildfly35)"/>
 				<if>
 					<equals arg1="${as}" arg2="jboss"/>
 					<then>
@@ -34,6 +34,7 @@
 							<equals arg1="${as}" arg2="wildfly27"/>
 							<equals arg1="${as}" arg2="wildfly28"/>
 							<equals arg1="${as}" arg2="wildfly29"/>
+							<equals arg1="${as}" arg2="wildfly35"/>
 						</or>
 					</not>
 					<then>

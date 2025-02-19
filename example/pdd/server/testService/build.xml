@@ -136,12 +136,23 @@
 		<mkdir dir="${build}/example" />
 		
 		<if>
-			<matches string="${as}" pattern="wildfly.*"/>
+			<equals arg1="${as}" arg2="wildfly35" />
 			<then>
-				<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly" 
-						tofile="${build}/example/${jboss_deployment_structure}" />
+				<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly35" 
+					tofile="${build}/example/${jboss_deployment_structure}" />
 			</then>
- 		</if>
+			<elseif>
+				<or>
+					<equals arg1="${as}" arg2="wildfly27" />
+					<equals arg1="${as}" arg2="wildfly28" />
+					<equals arg1="${as}" arg2="wildfly29" />
+				</or>
+				<then>
+					<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly27" 
+						tofile="${build}/example/${jboss_deployment_structure}" />
+				</then>
+			</elseif>
+		</if>
 		
 		<war destfile="${dist}/TestService.war" webxml="${src}/WEB-INF/web.xml">
 			<webinf dir="${build}/example">

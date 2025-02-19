@@ -1817,6 +1817,7 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 								<matches string="${as}" pattern="wildfly27"/>
 								<matches string="${as}" pattern="wildfly28"/>
 								<matches string="${as}" pattern="wildfly29"/>
+								<matches string="${as}" pattern="wildfly35"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
@@ -1868,6 +1869,7 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 								<matches string="${as}" pattern="wildfly27"/>
 								<matches string="${as}" pattern="wildfly28"/>
 								<matches string="${as}" pattern="wildfly29"/>
+								<matches string="${as}" pattern="wildfly35"/>
 							</or>
 							<then>
 								<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">

@@ -180,11 +180,22 @@
 		</if>
 		
 		<if>
-			<matches string="${as}" pattern="wildfly.*"/>
+			<equals arg1="${as}" arg2="wildfly35" />
 			<then>
-				<copy file="${src_govwayConsole}/WEB-INF/${jboss_deployment_structure}.wildfly" tofile="${build_govwayConsole}/tmp/${jboss_deployment_structure}" />
+				<copy file="${src_govwayConsole}/WEB-INF/${jboss_deployment_structure}.wildfly35" tofile="${build_govwayConsole}/tmp/${jboss_deployment_structure}" />
 			</then>
+			<elseif>
+				<or>
+					<equals arg1="${as}" arg2="wildfly27" />
+					<equals arg1="${as}" arg2="wildfly28" />
+					<equals arg1="${as}" arg2="wildfly29" />
+				</or>
+				<then>
+					<copy file="${src_govwayConsole}/WEB-INF/${jboss_deployment_structure}.wildfly27" tofile="${build_govwayConsole}/tmp/${jboss_deployment_structure}" />
+				</then>
+			</elseif>
 		</if>
+
 		<!-- Copia della configurazione cookie same site -->
 		<if>
 			<matches string="${as}" pattern="wildfly.*"/>
