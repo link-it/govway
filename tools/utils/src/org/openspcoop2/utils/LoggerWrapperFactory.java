@@ -622,9 +622,18 @@ public class LoggerWrapperFactory {
 	}
 	
 	private static String applyClusterIdStrategy(String filePath) {
+		if(filePath==null) {
+			return null;
+		}
 		Path oldPath = Path.of(filePath);
+		if(oldPath==null || oldPath.getFileName()==null) {
+			return null;
+		}
 		String fileName = oldPath.getFileName().toString();
 		Path dir = oldPath.getParent();
+		if(dir==null) {
+			return null;
+		}
 		
 		if (clusterIdStrategy.equals(Costanti.LOG_CLUSTERID_STRATEGY_FILENAME)) {
 			int index = fileName.lastIndexOf('.');
