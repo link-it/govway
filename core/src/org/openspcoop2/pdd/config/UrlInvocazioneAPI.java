@@ -130,7 +130,8 @@ public class UrlInvocazioneAPI implements Serializable {
 		if(analizeProxyPassRules) {
 			Map<String, ConfigurazioneUrlInvocazioneRegola> regole = new HashMap<>();
 			for (ConfigurazioneUrlInvocazioneRegola check : configurazioneUrlInvocazione.getRegolaList()) {
-				regole.put(check.getPosizione()+"", check);
+				String paddedNumber = String.format("%010d", check.getPosizione());
+				regole.put(paddedNumber, check);
 			}
 			if(regole.size()>0) {
 				List<String> posizioni = new ArrayList<>();
