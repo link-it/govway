@@ -206,6 +206,7 @@ import org.slf4j.Logger;
  *
  * @author Poli Andrea (apoli@link.it)
  * @author Tronci Fabio (tronci@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -2618,7 +2619,11 @@ public class InoltroBuste extends GenericLib{
 
 
 			
-			
+			// ------------- aggiungo gli Headers peer -----------------
+			List<Proprieta> props = List.of();
+			if (pd != null)
+				props = pd.getProprieta();
+			this.addHeadersPeer(pddContext, transportResponseContext, props);
 			
 
 			

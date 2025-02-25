@@ -192,6 +192,7 @@ import org.w3c.dom.Node;
  *
  * @author Poli Andrea (apoli@link.it)
  * @author Tronci Fabio (tronci@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 
@@ -2648,8 +2649,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 
 			
-			
-			
+			// ------------- aggiungo gli Headers peer -----------------
+			this.addHeadersPeer(pddContext, transportResponseContext, proprietaPorta);	
 			
 			
 			msgDiag.mediumDebug("Aggiungo informazioni di integrazione dinamica della risposta nel contesto ...");

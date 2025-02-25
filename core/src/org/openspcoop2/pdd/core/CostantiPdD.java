@@ -959,6 +959,10 @@ public class CostantiPdD {
     
     
     public static final MapKey<String> FILTRO_DUPLICATI_TEST = Map.newMapKey("FILTRO_DUPLICATI_TEST");
+    
+    
+    /* Costanti per Headers Peer */
+    public static final MapKey<String> EXTRA_HEADERS_RESPONSE = Map.newMapKey("MAPPA_HEADERS_EXTRA_RISPOSTA");
 }
 
 
