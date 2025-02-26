@@ -25,8 +25,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.wsdl.Import;
 
@@ -176,7 +178,7 @@ public class RegistroOpenSPCoopUtilities {
 								//System.out.println("DA WSDL AGGIUNGO WSDL DEFINITORIO");
 								xsd.write("\n".getBytes());
 								risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getByteWsdlDefinitorio(), 
-										xsd, wsdlElement,prefixForWSDL, true, namespaceImport, 1);
+										xsd, wsdlElement,prefixForWSDL, true, namespaceImport);
 							}
 						}
 						else if(location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
@@ -188,7 +190,7 @@ public class RegistroOpenSPCoopUtilities {
 									//System.out.println("DA WSDL AGGIUNGO ALLEGATO");
 									xsd.write("\n".getBytes());
 									risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
-											xsd, wsdlElement,prefixForWSDL, true, namespaceImport, 1);
+											xsd, wsdlElement,prefixForWSDL, true, namespaceImport);
 									break;
 								}
 							}
@@ -202,7 +204,7 @@ public class RegistroOpenSPCoopUtilities {
 									//System.out.println("DA WSDL AGGIUNGO SPECIFICA SEMIFORMALE");
 									xsd.write("\n".getBytes());
 									risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
-											xsd, wsdlElement,prefixForWSDL, true, namespaceImport, 1);
+											xsd, wsdlElement,prefixForWSDL, true, namespaceImport);
 									break;
 								}
 							}
@@ -239,7 +241,7 @@ public class RegistroOpenSPCoopUtilities {
 								//System.out.println("DA WSDL AGGIUNGO WSDL DEFINITORIO");
 								xsd.write("\n".getBytes());
 								risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getByteWsdlDefinitorio(), 
-										xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
+										xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD);
 							}
 						}
 						else if(location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
@@ -251,7 +253,7 @@ public class RegistroOpenSPCoopUtilities {
 									//System.out.println("DA WSDL AGGIUNGO ALLEGATO");
 									xsd.write("\n".getBytes());
 									risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
-											xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
+											xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD);
 									break;
 								}
 							}
@@ -265,7 +267,7 @@ public class RegistroOpenSPCoopUtilities {
 									//System.out.println("DA WSDL AGGIUNGO SPECIFICA SEMIFORMALE");
 									xsd.write("\n".getBytes());
 									risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
-											xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD, 1);
+											xsd, wsdlElement,prefixForWSDL, false, targetNamespaceXSD);
 									break;
 								}
 							}
@@ -800,7 +802,14 @@ public class RegistroOpenSPCoopUtilities {
 	
 	/** Risoluzione import include */
 	private void risoluzioneImportIncludeInXSD(boolean firstIteration, AccordoServizioParteComune parteComuneNormalizzata,byte[] documentXSD,ByteArrayOutputStream xsd,
-			Element wsdlElement,HashMap<String,String> prefixForWSDL,boolean docImportato,String targetNamespaceParent,int profondita)throws DriverRegistroServiziException{
+			Element wsdlElement,HashMap<String,String> prefixForWSDL,boolean docImportato,String targetNamespaceParent)throws DriverRegistroServiziException{
+		risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, documentXSD, xsd,
+				 wsdlElement, prefixForWSDL, docImportato, targetNamespaceParent, new HashSet<>(), 1);
+		
+	}
+	/** Risoluzione import include */
+	private void risoluzioneImportIncludeInXSD(boolean firstIteration, AccordoServizioParteComune parteComuneNormalizzata,byte[] documentXSD,ByteArrayOutputStream xsd,
+			Element wsdlElement,HashMap<String,String> prefixForWSDL,boolean docImportato,String targetNamespaceParent,Set<String> observedLocations, int profondita)throws DriverRegistroServiziException{
 		try{
 			
 			//System.out.println("\n\n===============================================");
@@ -830,6 +839,9 @@ public class RegistroOpenSPCoopUtilities {
 				}catch(Exception e){
 					// ignore
 				}
+				
+				if (observedLocations.contains(location))
+					continue;
 				//System.out.println("Import XSD ["+this.wsdlUtilities.getAttributeValue(n,"namespace")+"] ["+location+"]");
 				//System.out.println("IMPORT ["+location+"]");
 				if(location!=null && location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
@@ -840,8 +852,9 @@ public class RegistroOpenSPCoopUtilities {
 						if(location.equals(file)){
 							//System.out.println("AGGIUNGO ALLEGATO INTERNO");
 							xsd.write("\n".getBytes());
+							observedLocations.add(location);
 							risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
-									xsd, wsdlElement,prefixForWSDL, true, targetNamespace, (profondita+1));
+									xsd, wsdlElement,prefixForWSDL, true, targetNamespace, observedLocations, (profondita+1));
 							break;
 						}
 					}
@@ -854,8 +867,9 @@ public class RegistroOpenSPCoopUtilities {
 						if(location.equals(file)){
 							//System.out.println("AGGIUNGO SPECIFICA SEMIFORMALE");
 							xsd.write("\n".getBytes());
+							observedLocations.add(location);
 							risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
-									xsd, wsdlElement,prefixForWSDL, true, targetNamespace, (profondita+1));
+									xsd, wsdlElement,prefixForWSDL, true, targetNamespace, observedLocations, (profondita+1));
 							break;
 						}
 					}
@@ -877,6 +891,9 @@ public class RegistroOpenSPCoopUtilities {
 				}catch(Exception e){
 					// ignore
 				}
+				
+				if (observedLocations.contains(location))
+					continue;
 				//System.out.println("Include XSD ["+this.wsdlUtilities.getAttributeValue(n,"namespace")+"] ["+location+"]");
 				//System.out.println("INCLUDE ["+location+"]");
 				if(location!=null && location.startsWith(CostantiRegistroServizi.ALLEGATI_DIR)){
@@ -887,8 +904,9 @@ public class RegistroOpenSPCoopUtilities {
 						if(location.equals(file)){
 							//System.out.println("AGGIUNGO ALLEGATO INTERNO");
 							xsd.write("\n".getBytes());
+							observedLocations.add(location);
 							risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getAllegato(j).getByteContenuto(), 
-									xsd, wsdlElement,prefixForWSDL, false, targetNamespace, (profondita+1));
+									xsd, wsdlElement,prefixForWSDL, false, targetNamespace, observedLocations, (profondita+1));
 							break;
 						}
 					}
@@ -901,8 +919,9 @@ public class RegistroOpenSPCoopUtilities {
 						if(location.equals(file)){
 							//System.out.println("AGGIUNGO SPECIFICA SEMIFORMALE");
 							xsd.write("\n".getBytes());
+							observedLocations.add(location);
 							risoluzioneImportIncludeInXSD(firstIteration, parteComuneNormalizzata, parteComuneNormalizzata.getSpecificaSemiformale(j).getByteContenuto(), 
-									xsd, wsdlElement,prefixForWSDL, false, targetNamespace, (profondita+1));
+									xsd, wsdlElement,prefixForWSDL, false, targetNamespace, observedLocations, (profondita+1));
 							break;
 						}
 					}
@@ -912,7 +931,7 @@ public class RegistroOpenSPCoopUtilities {
 			}
 			
 			
-			if(firstIteration==false) {
+			if(!firstIteration) {
 			
 				// Rimuovo tutti gli import/include precedentemente aggiunti direttamente nel types del wsdl
 				this.xsdUtils.removeImportsAndIncludes(doc);
