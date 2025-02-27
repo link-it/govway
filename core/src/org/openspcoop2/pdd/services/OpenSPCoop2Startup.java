@@ -142,6 +142,7 @@ import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InitContext;
+import org.openspcoop2.pdd.core.integrazione.peer.RegexpPeerHeaderDescriptor;
 import org.openspcoop2.pdd.core.jmx.AccessoRegistroServizi;
 import org.openspcoop2.pdd.core.jmx.ConfigurazioneSistema;
 import org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay;
@@ -986,7 +987,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					CostantiPdD.OPENSPCOOP2_CACHE_DEFAULT_PROPERTIES_NAME,
 					propertiesReader.getRootDirectory(), cacheP, 
 					CostantiPdD.OPENSPCOOP2_LOCAL_HOME, CostantiPdD.OPENSPCOOP2_CACHE_PROPERTIES, CostantiPdD.OPENSPCOOP2_CACHE_LOCAL_PATH);
-			if(isInitializeCache == false){
+			// inizializzo cache per gli headers peer
+			try {
+				RegexpPeerHeaderDescriptor.initCache(propertiesReader.getHeadersPeerRegexpCacheSize());
+			} catch (CoreException e) {
+				isInitializeCache = false;
+			}
+			if(!isInitializeCache){
 				this.logError("Riscontrato errore durante l'inizializzazione della cache di OpenSPCoop.");
 				return;
 			}

@@ -1,18 +1,40 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * https://govway.org
+ * 
+ * Copyright (c) 2005-2025 Link.it srl (https://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package org.openspcoop2.pdd.core.integrazione.peer;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.cache.Cache;
-import org.openspcoop2.utils.cache.CacheAlgorithm;
-import org.openspcoop2.utils.cache.CacheType;
 import org.openspcoop2.utils.regexp.RegExpException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
@@ -31,32 +53,40 @@ public class RegexpPeerHeaderDescriptor implements PeerHeaderDescriptor {
 	
 	
 	// cache utilizzata per non dover ricompilare i pattern ad ogni richiesta
-	private static Cache compiledCache;
+	private static ConcurrentMap<String, Pattern> compiledCache;
+	private static Queue<String> lruRecord;
+	private static int cacheSize;
+	
 	private static final Semaphore lockCache = new Semaphore("PeerHeaderPatternLock");
-	public static void initCache(CacheType type, int cacheSize) throws UtilsException {
-		compiledCache = new Cache(type, "PeerHeaderPatternCache");
-		compiledCache.setCacheSize(cacheSize);
-		compiledCache.setCacheAlgoritm(CacheAlgorithm.LRU);
+	public static void initCache(int cacheSize) {
+		RegexpPeerHeaderDescriptor.cacheSize = cacheSize;
+		RegexpPeerHeaderDescriptor.lruRecord = new LinkedList<>();
+		RegexpPeerHeaderDescriptor.compiledCache = new ConcurrentHashMap<>();
 	}
 	
 	
 	public RegexpPeerHeaderDescriptor(String key, String value) {
 		this.headerName = key;
-		
 		if (compiledCache != null) {
 			
 			// cerco prima il valore del pattern nella cache
-			this.pattern = (Pattern) compiledCache.get(value);
+			this.pattern = compiledCache.get(value);
 			if (this.pattern == null) {
 				try {
 					
 					// se il valore non e' in cache entro in un blocco sincronizzato
 					SemaphoreLock lock = lockCache.acquire("RegexpPeerHeaderDescriptor");
 					try {
-						this.pattern = (Pattern) compiledCache.get(value);
+						this.pattern = compiledCache.get(value);
 						if (this.pattern == null) {
 							this.pattern = RegularExpressionEngine.createPatternEngine("^" + value + "$");
 							compiledCache.put(value, this.pattern);
+							
+							if (compiledCache.size() > cacheSize) {
+								String firstElement = lruRecord.remove();
+								compiledCache.remove(firstElement);
+							}
+							lruRecord.add(value);
 						}
 					} finally {
 						lockCache.release(lock, "RegexpPeerHeaderDescriptor");

@@ -179,7 +179,6 @@ import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfigura
 import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.dynamic.Template;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
-import org.openspcoop2.pdd.core.integrazione.peer.RegexpPeerHeaderDescriptor;
 import org.openspcoop2.pdd.core.token.AbstractPolicyToken;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
@@ -1182,9 +1181,6 @@ public class ConfigurazionePdDReader {
 
 			// Server J2EE
 			this.serverJ2EE = this.openspcoopProperties.isServerJ2EE();
-
-			// inizializzo cache per gli headers peer
-			RegexpPeerHeaderDescriptor.initCache(cacheType, this.openspcoopProperties.getHeadersPeerRegexpCacheSize());
 			
 			ConfigurazionePdDReader.initialize = true;
 		}catch(Exception e){
