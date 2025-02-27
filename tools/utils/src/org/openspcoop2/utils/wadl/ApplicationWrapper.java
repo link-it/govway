@@ -23,6 +23,7 @@ package org.openspcoop2.utils.wadl;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jvnet.ws.wadl.ast.ApplicationNode;
@@ -43,12 +44,12 @@ public class ApplicationWrapper {
 
 	private ApplicationNode applicationNode;
 	private Map<String, byte[]> resources = new HashMap<String, byte[]>();
-	private Map<String, String> mappingNamespaceLocations = new HashMap<>();
+	private Map<String, List<String>> mappingNamespaceLocations = new HashMap<>();
 	private AbstractXMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
 	
 	public ApplicationWrapper(ApplicationNode applicationNode,
-			Map<String, byte[]> resources, Map<String, String> mappingNamespaceLocations,
+			Map<String, byte[]> resources, Map<String, List<String>> mappingNamespaceLocations,
 			AbstractXMLUtils xmlUtils){
 		this.applicationNode = applicationNode;
 		this.resources = resources;
@@ -65,7 +66,7 @@ public class ApplicationWrapper {
 		return this.resources;
 	}
 
-	public Map<String, String> getMappingNamespaceLocations() {
+	public Map<String, List<String>> getMappingNamespaceLocations() {
 		return this.mappingNamespaceLocations;
 	}
 	

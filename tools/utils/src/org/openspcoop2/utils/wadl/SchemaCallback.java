@@ -23,6 +23,7 @@ package org.openspcoop2.utils.wadl;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.utils.Utilities;
@@ -48,7 +49,7 @@ public class SchemaCallback implements org.jvnet.ws.wadl.ast.WadlAstBuilder.Sche
 	 **/
 	
 	private Map<String, byte[]> resources = new HashMap<String, byte[]>();
-	private Map<String, String> mappingNamespaceLocations = new HashMap<>();
+	private Map<String, List<String>> mappingNamespaceLocations = new HashMap<>();
 	private Logger log;
 	private AbstractXMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
@@ -109,7 +110,7 @@ public class SchemaCallback implements org.jvnet.ws.wadl.ast.WadlAstBuilder.Sche
 		return this.resources;
 	}
 
-	public Map<String, String> getMappingNamespaceLocations() {
+	public Map<String, List<String>> getMappingNamespaceLocations() {
 		return this.mappingNamespaceLocations;
 	}
 	

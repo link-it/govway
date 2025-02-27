@@ -222,8 +222,7 @@ public class WADLUtilities {
 				}
 			}
 			ApplicationNode appNode = reader.readWADL(file.getAbsolutePath());
-			ApplicationWrapper ap = new ApplicationWrapper(appNode, reader.getResources(), reader.getMappingNamespaceLocations(), this.xmlUtils);
-			return ap;
+			return new ApplicationWrapper(appNode, reader.getResources(), reader.getMappingNamespaceLocations(), this.xmlUtils);
 		}catch(Exception e){
 			throw new WADLException("Lettura del wadl non riuscita (File): "+e.getMessage(),e);
 		}

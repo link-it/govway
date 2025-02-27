@@ -90,7 +90,7 @@ public class WadlTest {
 		}
         System.out.println("Namespaces:");
         for (String namespace : callback.getMappingNamespaceLocations().keySet()) {
-			String key = callback.getMappingNamespaceLocations().get(namespace);
+			String key = String.join(", ", callback.getMappingNamespaceLocations().get(namespace));
 			System.out.println("Schema ["+key+"]: "+namespace);
 		}  
         
