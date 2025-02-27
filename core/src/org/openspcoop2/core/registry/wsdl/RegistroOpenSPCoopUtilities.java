@@ -55,6 +55,7 @@ import org.w3c.dom.Node;
  *
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author Burlon Tommaso (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -818,15 +819,17 @@ public class RegistroOpenSPCoopUtilities {
 			Element docElement = doc.getDocumentElement();
 			String targetNamespace = null;
 			
-			
+			// controllo che non venga importato il namespace xml di default con un prefix diverso da "xml"
+			if (this.xsdUtils.isXSDSchema(doc)) {
+				targetNamespace = this.xsdUtils.getTargetNamespace(doc);
+				if (targetNamespace != null && targetNamespace.equals("http://www.w3.org/XML/1998/namespace"))
+					return;
+			}
 			
 			//System.out.println("Risoluzione dei prefissi .....");
 			// Risoluzione prefix da inserire nel wsdl ed eliminazione attributi negli schemi
 			String uniquePrefix = "_p"+profondita+"_n"+IDUtilities.getUniqueSerialNumber("risoluzioneImportIncludeInXSD")+"_";
 			targetNamespace = this.wsdlUtilities.normalizzazioneSchemaPerInserimentoInWsdl(docElement, wsdlElement, prefixForWSDL, uniquePrefix, docImportato, targetNamespaceParent);
-			
-
-			
 			
 			// Risoluzione ricorsiva degli import presenti nel xsd
 			List<Node> importIntoXSD = this.xsdUtils.readImports(doc);
