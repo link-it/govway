@@ -584,7 +584,7 @@ public class XSDUtils {
 	
 	// BUILD SCHEMA COLLECTION
 		
-	public XSDSchemaCollection buildSchemaCollection(Map<String, byte[]> resources,Map<String, String> mappingNamespaceLocations,Logger logger) throws XMLException {
+	public XSDSchemaCollection buildSchemaCollection(Map<String, byte[]> resources,Map<String, List<String>> mappingNamespaceLocations,Logger logger) throws XMLException {
 
 		// ---------  Check esistenza almeno 1 schema --------- 
 		if(resources.size()==0){
@@ -603,8 +603,7 @@ public class XSDUtils {
 			int indexSystemId = 1;
 			for (String targetNamespace : mappingNamespaceLocations.keySet()) {
 				
-				String locations = mappingNamespaceLocations.get(targetNamespace);
-				String [] splitLocations = locations.split(" ");
+				List<String> splitLocations = mappingNamespaceLocations.get(targetNamespace);
 
 				/* 
 				 * Motivo
@@ -721,8 +720,8 @@ public class XSDUtils {
 				 *  		   solo dopo gli import 'normali'. 
 				 **/
 
-				if(splitLocations.length==1){
-					bfImportNormali.append("\t<xsd:import namespace=\""+targetNamespace+"\" schemaLocation=\""+splitLocations[0]+"\" />\n");
+				if(splitLocations.size()==1){
+					bfImportNormali.append("\t<xsd:import namespace=\""+targetNamespace+"\" schemaLocation=\""+splitLocations.get(0)+"\" />\n");
 				}
 				else{
 					String systemIdNewSchema = "System_OpenSPCoop_Id_"+indexSystemId+".xsd";
@@ -732,17 +731,17 @@ public class XSDUtils {
 					// Creo schema che contiene tutti gli schemi con stesso target namespace e registro la nuova risorsa 
 					StringBuilder bfStessoNamespace = new StringBuilder();
 					bfStessoNamespace.append("<xsd:schema targetNamespace=\""+targetNamespace+"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n");
-					for(int i=0;i<splitLocations.length;i++){
+					for(int i=0;i<splitLocations.size();i++){
 
 						// Devo includere uno schema solo se questo non e' gia' a sua volta incluso o importato da un altro schema con stesso namespace.
 						// Altrimenti ottengo un errore simile al seguente:
 						//  A schema cannot contain two global components with the same name; this schema contains two occurrences of ....
 						boolean findImportInclude = false;
-						for(int j=0;j<splitLocations.length;j++){
+						for(int j=0;j<splitLocations.size();j++){
 							if(j==i){
 								continue; // salto me stesso
 							}
-							byte [] xsd = resources.get(splitLocations[j]);
+							byte [] xsd = resources.get(splitLocations.get(j));
 							Document d = this.xmlUtils.newDocument(xsd);
 
 							List<Node> imports = this.readImports(d);
@@ -754,7 +753,7 @@ public class XSDUtils {
 											//System.out.println("IMPORT: "+schemaLocation);
 											String baseLocation = getBaseNameXSDLocation(schemaLocation);
 											//System.out.println("IMPORT-BASE: "+baseLocation);
-											if(splitLocations[i].equals(baseLocation)){
+											if(splitLocations.get(i).equals(baseLocation)){
 												findImportInclude = true;
 												break;
 											}
@@ -775,7 +774,7 @@ public class XSDUtils {
 											//System.out.println("INCLUDE: "+schemaLocation);
 											String baseLocation = getBaseNameXSDLocation(schemaLocation);
 											//System.out.println("INCLUDE-BASE: "+baseLocation);
-											if(splitLocations[i].equals(baseLocation)){
+											if(splitLocations.get(i).equals(baseLocation)){
 												findImportInclude = true;
 												break;
 											}
@@ -789,7 +788,7 @@ public class XSDUtils {
 						}
 
 						if(findImportInclude==false)
-							bfStessoNamespace.append("\t<xsd:include schemaLocation=\""+splitLocations[i]+"\" />\n");
+							bfStessoNamespace.append("\t<xsd:include schemaLocation=\""+splitLocations.get(i)+"\" />\n");
 					}
 					bfStessoNamespace.append("</xsd:schema>");
 					//System.out.println("NUOVA REGISTRAZIONE PER ["+systemIdNewSchema+"] ["+bfStessoNamespace.toString()+"]");
@@ -822,20 +821,11 @@ public class XSDUtils {
 	
 	// UTILITIES GENERICHE
 	
-	public void registraMappingNamespaceLocations(byte[] resource,String location,Map<String, String> mappingNamespaceLocations) throws XMLException {
+	public void registraMappingNamespaceLocations(byte[] resource,String location,Map<String, List<String>> mappingNamespaceLocations) throws XMLException {
 		String targetNamespaceXSD = this.getTargetNamespace(resource);
 		if(targetNamespaceXSD!=null){
-			//System.out.println("ADD MAPPING PER ["+targetNamespaceXSD+"]...");
-			if(mappingNamespaceLocations.containsKey(targetNamespaceXSD)){
-				String locationGiaAssociataTargetNamespace = mappingNamespaceLocations.remove(targetNamespaceXSD);
-				String newValue = locationGiaAssociataTargetNamespace+" "+location;
-				mappingNamespaceLocations.put(targetNamespaceXSD, newValue);
-				//System.out.println("ADJUNCT a ["+locationGiaAssociataTargetNamespace+"], new: ["+newValue+"]");
-			}
-			else{
-				mappingNamespaceLocations.put(targetNamespaceXSD, location);
-				//System.out.println("FIRST ADD");
-			}
+			mappingNamespaceLocations.computeIfAbsent(targetNamespaceXSD, k -> new ArrayList<>())
+				.add(location);
 		}
 	}
 	
