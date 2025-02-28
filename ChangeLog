@@ -1,6 +1,18 @@
 2025-02-28  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore]
+	Risolto Bug #1584
+	In presenza di schemi XSD associati a un'API SOAP con un grafo di import ciclico, l'applicazione andava in out of memory a causa della mancata gestione corretta di tale situazione.
+	Le specifiche 'W3C XML Schema 1.1' (https://www.w3.org/TR/xmlschema11-1/#compound-schema) evidenziano esplicitamente questa casistica, sottolineando che:
+	'Informally: cycles of <include> elements are legal, and processors should guard against infinite loops.'.
+	Nell'intervento sono state risolta anche altre due problematiche:
+	- in presenza di allegati contenenti uno spazio nel nome del file la validazione dei contenuti falliva;
+	- risolta l'anomalia "The prefix "xml" cannot be bound to any namespace other than its usual namespace; neither can the namespace for "xml" be bound to any prefix other than "xml"."
+	  che poteva accadere durante una validazione 'wsdl' se l'API contenente lo schema 'http://www.w3.org/XML/1998/namespace' tra gli allegati caricati.
+
+2025-02-28  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore]
 	Aggiunta funzionalità #1582
 	È stata introdotta una funzionalità che consente di restituire al client gli header generati dal backend aventi lo stesso prefisso GovWay-*, relativi a identificativi o indicazioni di rate limiting.
 	Questa funzionalità risulta particolarmente utile negli scenari di fruizione ModI o SPCoop, in cui anche la parte erogatrice è esposta tramite GovWay.

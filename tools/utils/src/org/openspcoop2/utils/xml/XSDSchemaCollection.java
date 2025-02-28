@@ -30,6 +30,7 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -75,7 +76,7 @@ public class XSDSchemaCollection {
 	
 	private byte[] schemaRoot;
 	private Map<String, byte[]> resources;
-	private Map<String, String> mappingNamespaceLocations;
+	private Map<String, List<String>> mappingNamespaceLocations;
 		
 	private boolean serializeXSDSchemiBuildSchemaSuccess = false;
 	private boolean serializeXSDSchemiBuildSchemaError = true;
@@ -118,10 +119,10 @@ public class XSDSchemaCollection {
 	public void setResources(Map<String, byte[]> resources) {
 		this.resources = resources;
 	}
-	public Map<String, String> getMappingNamespaceLocations() {
+	public Map<String, List<String>> getMappingNamespaceLocations() {
 		return this.mappingNamespaceLocations;
 	}
-	public void setMappingNamespaceLocations(Map<String, String> mappingNamespaceLocations) {
+	public void setMappingNamespaceLocations(Map<String, List<String>> mappingNamespaceLocations) {
 		this.mappingNamespaceLocations = mappingNamespaceLocations;
 	}
 	
@@ -190,13 +191,12 @@ public class XSDSchemaCollection {
 					String namespaceFound = null;
 					String locationFound = null;
 					for (String namespace : this.mappingNamespaceLocations.keySet()) {
-						String location = this.mappingNamespaceLocations.get(namespace);
-						String [] split = location.split(" ");
+						List<String> split = this.mappingNamespaceLocations.get(namespace);
 						if(split!=null){
-						for (int i = 0; i < split.length; i++) {
-							if(split[i]!=null && split[i].equals(nomeFile)){
+						for (int i = 0; i < split.size(); i++) {
+							if(split.get(i) != null && split.get(i).equals(nomeFile)){
 								namespaceFound = namespace;
-								locationFound = location;
+								locationFound = split.get(i);
 								break;
 							}
 						}

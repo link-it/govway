@@ -22,6 +22,7 @@ package org.openspcoop2.utils.wadl;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -122,7 +123,7 @@ public class WADLReader {
 		return this.schemaCallback.getResources();
 	}
 
-	public Map<String, String> getMappingNamespaceLocations() {
+	public Map<String, List<String>> getMappingNamespaceLocations() {
 		return this.schemaCallback.getMappingNamespaceLocations();
 	}
 }
