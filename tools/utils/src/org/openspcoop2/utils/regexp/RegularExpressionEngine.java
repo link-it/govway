@@ -342,16 +342,25 @@ public class RegularExpressionEngine {
 	public static List<String> getAllStringMatchPattern(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
 		return RegularExpressionEngine.getAllStringPatternEngine(contenuto,pattern,true,compileModes);
 	}
+	public static List<String> getAllStringMatchPattern(String contenuto, Pattern pattern) throws RegExpException,RegExpNotFoundException{
+		return RegularExpressionEngine.getAllStringPatternEngine(contenuto,pattern,true);
+	}
+	
 	public static List<String> getAllStringFindPattern(String contenuto, String pattern) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
 		return RegularExpressionEngine.getAllStringPatternEngine(contenuto,pattern,false,(RegularExpressionPatternCompileMode[])null);
 	}
 	public static List<String> getAllStringFindPattern(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
 		return RegularExpressionEngine.getAllStringPatternEngine(contenuto,pattern,false,compileModes);
 	}
+	public static List<String> getAllStringFindPattern(String contenuto, Pattern pattern) throws RegExpException,RegExpNotFoundException{
+		return RegularExpressionEngine.getAllStringPatternEngine(contenuto,pattern,false);
+	}
+	
 	private static List<String> getAllStringPatternEngine(String contenuto, String pattern, boolean usingMatch, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		
 		Pattern p = validateEngine(pattern, compileModes);
-		
+		return getAllStringPatternEngine(contenuto, p, usingMatch);
+	}
+	private static List<String> getAllStringPatternEngine(String contenuto, Pattern p, boolean usingMatch) throws RegExpException,RegExpNotFoundException{
 		if( (contenuto == null) || (contenuto.length() == 0))
 			throw new RegExpNotFoundException(CONTENUTO_NON_FORNITO);
 			
@@ -372,7 +381,7 @@ public class RegularExpressionEngine {
 		}catch(RegExpNotFoundException ex){
 			throw ex;
 		}catch(Exception e){
-			throw getErrorMessage("getAllStringMatchPattern", contenuto, pattern, e);
+			throw getErrorMessage("getAllStringMatchPattern", contenuto, p.toString(), e);
 		}
 	}
 	private static List<String> getAllStringPatternEngineMatch(Matcher matcher) throws RegExpNotFoundException{
@@ -425,15 +434,25 @@ public class RegularExpressionEngine {
 	public static String getStringMatchPattern(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
 		return RegularExpressionEngine.getStringPatternEngine(contenuto, pattern, true, compileModes);
 	}
+	public static String getStringMatchPattern(String contenuto, Pattern pattern) throws RegExpException,RegExpNotFoundException{
+		return RegularExpressionEngine.getStringPatternEngine(contenuto, pattern, true);
+	}
+	
 	public static String getStringFindPattern(String contenuto, String pattern) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
 		return RegularExpressionEngine.getStringPatternEngine(contenuto, pattern, false, (RegularExpressionPatternCompileMode[])null);
 	}
 	public static String getStringFindPattern(String contenuto, String pattern, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
 		return RegularExpressionEngine.getStringPatternEngine(contenuto, pattern, false, compileModes);
 	}
+	public static String getStringFindPattern(String contenuto, Pattern pattern) throws RegExpException,RegExpNotFoundException{
+		return RegularExpressionEngine.getStringPatternEngine(contenuto, pattern, false);
+	}
+	
 	private static String getStringPatternEngine(String contenuto, String pattern, boolean usingMatch, RegularExpressionPatternCompileMode ... compileModes) throws RegExpException,RegExpNotValidException,RegExpNotFoundException{
-		
 		Pattern p = validateEngine(pattern, compileModes);
+		return getStringPatternEngine(contenuto, p, usingMatch);
+	}
+	private static String getStringPatternEngine(String contenuto, Pattern p, boolean usingMatch) throws RegExpException,RegExpNotFoundException{
 		
 		if( (contenuto == null) || (contenuto.length() == 0))
 			throw new RegExpNotFoundException(CONTENUTO_NON_FORNITO);
@@ -465,7 +484,7 @@ public class RegularExpressionEngine {
 		}catch(RegExpNotFoundException ex){
 			throw ex;
 		}catch(Exception e){
-			throw getErrorMessage("getStringMatchPattern", contenuto, pattern, e);
+			throw getErrorMessage("getStringMatchPattern", contenuto, p.toString(), e);
 		}
 	}
 
@@ -537,7 +556,7 @@ public class RegularExpressionEngine {
 	
 	/* UTILITY */
 	
-	private static  Pattern createPatternEngine(String pattern,RegularExpressionPatternCompileMode ... compileModes){
+	public static  Pattern createPatternEngine(String pattern,RegularExpressionPatternCompileMode ... compileModes){
 		Pattern p = null;
 		if(compileModes!=null && compileModes.length>0){
 			int mode = compileModes[0].getPatternCompileMode();

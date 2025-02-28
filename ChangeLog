@@ -1,3 +1,11 @@
+2025-02-28  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1582
+	È stata introdotta una funzionalità che consente di restituire al client gli header generati dal backend aventi lo stesso prefisso GovWay-*, relativi a identificativi o indicazioni di rate limiting.
+	Questa funzionalità risulta particolarmente utile negli scenari di fruizione ModI o SPCoop, in cui anche la parte erogatrice è esposta tramite GovWay.
+	In tali contesti, permette al client di ricevere gli identificativi generati dalla parte erogatrice, migliorando la tracciabilità e la gestione delle richieste.
+
 2025-02-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]

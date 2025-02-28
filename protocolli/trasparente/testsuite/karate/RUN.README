@@ -571,6 +571,9 @@ Di seguito vengono descritti i test del package 'integrazione':
 
 - 'identificazione_azione', verifica la corretta identificazione dell'azione in erogazioni o fruizioni con url non corrette
    ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.identificazione_azione
+   
+- 'peer', verifica che al client siano restituiti correttamente, come header 'peer', eventuali header generati dal backend contenenti identificativi o indicazioni di rate limiting
+   ant run_test -Ddelete=false -Dload=false -Dpackage=integrazione.peer
 
 Di seguito vengono descritti i test del package 'autenticazione':
 

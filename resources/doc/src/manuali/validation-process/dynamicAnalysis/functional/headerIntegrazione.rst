@@ -17,6 +17,8 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 - `integrazione.identificazione_azione <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/integrazione/identificazione_azione>`_; verifica l'identificazione dell'azione basata sulla url per le API SOAP.
 
+- `integrazione.peer <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/integrazione/peer>`_; verifica che al client siano restituiti correttamente, come header 'peer', eventuali header generati dal backend contenenti identificativi o indicazioni di rate limiting.
+
 Evidenze disponibili in:
 
 - `risultati dei test del gruppo 'integrazione.autenticazione' <https://jenkins.link.it/govway-testsuite/trasparente_karate/IntegrazioneAutenticazione/html/>`_
@@ -24,6 +26,7 @@ Evidenze disponibili in:
 - `risultati dei test del gruppo 'integrazione.accept' <https://jenkins.link.it/govway-testsuite/trasparente_karate/IntegrazioneAccept/html/>`_
 - `risultati dei test del gruppo 'integrazione.json' <https://jenkins.link.it/govway-testsuite/trasparente_karate/IntegrazioneJson/html/>`_ 
 - `risultati dei test del gruppo 'integrazione.identificazione_azione' <https://jenkins.link.it/govway-testsuite/trasparente_karate/IntegrazioneIdentificazioneAzione/html/>`_ 
+- `risultati dei test del gruppo 'integrazione.peer' <https://jenkins.link.it/govway-testsuite/trasparente_karate/IntegrazionePeer/html/>`_ 
 
 Sono inoltre disponibili ulteriori test realizzati tramite il tool `TestNG <https://testng.org/doc/>`_ i cui sorgenti sono disponibili in `protocolli/spcoop/testsuite/src <https://github.com/link-it/govway/tree/master/protocolli/spcoop/testsuite/src/org/openspcoop2/protocol/spcoop/testsuite/units/integrazione>`_ relativamente ai seguenti gruppi:
 

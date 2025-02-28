@@ -192,6 +192,7 @@ import org.w3c.dom.Node;
  *
  * @author Poli Andrea (apoli@link.it)
  * @author Tronci Fabio (tronci@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 
@@ -2621,6 +2622,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						this.log.error("Avvenuto errore durante il controllo del charset della risposta (Content-Type: "+ct+"): "+t.getMessage(),t);
 					}
 					
+					// ------------- aggiungo gli Headers peer -----------------
+					if(transportResponseContext!=null) {
+						this.addHeadersPeer(pddContext, transportResponseContext, proprietaPorta);
+					}
+					
 				} catch (Exception e) {
 					msgDiag.addKeywordErroreProcessamento(e, "Analisi risposta fallita");
 					msgDiag.logErroreGenerico(e,"AnalisiRispostaConnettore");
@@ -2647,9 +2653,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				}
 			}
 
-			
-			
-			
+				
 			
 			
 			msgDiag.mediumDebug("Aggiungo informazioni di integrazione dinamica della risposta nel contesto ...");
