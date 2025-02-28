@@ -7,9 +7,21 @@
 	<servlet>
 		<servlet-name>RicercheUpload</servlet-name>
 		<servlet-class>org.openspcoop2.web.monitor.core.servlet.UploadServlet</servlet-class>
+		<init-param>
+            <param-name>fileUploadBeanName</param-name>
+            <param-value>fileUploadBean</param-value>
+        </init-param>
 	</servlet>
 	<servlet>
 		<servlet-name>RicercheExporter</servlet-name>
 		<servlet-class>org.openspcoop2.web.monitor.core.servlet.RicercheExporter</servlet-class>
 	</servlet>
 	
+	<servlet>
+		<servlet-name>ArchizioZipUpload</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.core.servlet.UploadServlet</servlet-class>
+		<init-param>
+            <param-name>fileUploadBeanName</param-name>
+            <param-value>archivioZipUploadBean</param-value>
+        </init-param>
+	</servlet>

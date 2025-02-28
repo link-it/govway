@@ -128,6 +128,13 @@ public class Costanti {
 	
 	/* costanti properties file messages_it.properties*/ 
 	
+	public static final String SEARCH_BUTTON_NUOVA_RICERCA_LABEL_KEY = "commons.search.button.nuovaRicerca.label";
+	public static final String SEARCH_BUTTON_CERCA_LABEL_KEY = "commons.search.button.cerca.label";
+	public static final String SEARCH_BUTTON_RIPULISCI_LABEL_KEY = "commons.search.button.ripulisci.label";
+	public static final String SEARCH_BUTTON_FILTRA_RISULTATI_LABEL_KEY = "commons.search.button.filtraRisultati.label";
+	public static final String SEARCH_BUTTON_AGGIORNA_CRITERI_RICERCA_LABEL_KEY = "commons.search.button.aggiornaCriteriRicerca.label"; 
+	public static final String SEARCH_BUTTON_ANALIZZA_ARCHIVIO_LABEL_KEY = "commons.search.button.analizzaArchivio.label";
+	
 	public static final String DATA_LABEL_KEY = "commons.data.label";
 	public static final String ESITO_LABEL_KEY = "commons.esito.label";
 	public static final String DESCRIZIONE_LABEL_KEY = "commons.descrizione.label";
@@ -235,7 +242,8 @@ public class Costanti {
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITTENTE_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.label";
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_LABEL_KEY = "transazioni.search.tipoRicerca.id.label";
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_BASE_LABEL_KEY = "transazioni.search.tipoRicerca.temporale.ricercaTemporale.label"; 
-	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_LIBERA_LABEL_KEY = "transazioni.search.tipoRicerca.temporale.ricercaLibera.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_LIBERA_LABEL_KEY = "transazioni.search.tipoRicerca.temporale.ricercaLibera.label";
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_ESAMINA_ARCHIVIO_ZIP_LABEL_KEY = "transazioni.search.tipoRicerca.temporale.esaminaArchivioZip.label"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_TOKEN_INFO_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.ricercaTokenInfo.label"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_SOGGETTO_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.ricercaSoggetto.label"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_APPLICATIVO_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.ricercaApplicativo.label"; 

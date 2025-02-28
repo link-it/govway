@@ -37,6 +37,6 @@
 	</bean>
 	
 	<!-- FileUplaoad Bean -->
-	<bean id="fileUploadBean" class="org.openspcoop2.web.monitor.core.bean.FileUploadBean" scope="session" />
+	<bean id="fileUploadBean" class="org.openspcoop2.web.monitor.core.ricerche.RicercheFileUploadBean" scope="session" />
 </beans>
 

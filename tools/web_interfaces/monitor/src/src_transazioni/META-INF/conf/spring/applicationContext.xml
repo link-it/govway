@@ -10,6 +10,7 @@
 
 	<bean id="searchFormTransazioni" class="org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm" scope="session">
 		<property name="periodoDefault" value="Ultima settimana"/>
+		<property name="archivioZip" ref="archivioZipUploadBean"/>
 	</bean>
 	<bean id="searchFormDiagnostici" class="org.openspcoop2.web.monitor.core.bean.BaseSearchForm" scope="session"/>
 
@@ -20,6 +21,9 @@
 	</bean>
 	
 	<bean id="transazioniApplicativoServerService" class="org.openspcoop2.web.monitor.transazioni.dao.TransazioniApplicativoServerService" scope="request"/>
+	
+	<!-- Archivio Zip FileUplaoad Bean -->
+	<bean id="archivioZipUploadBean" class="org.openspcoop2.web.monitor.transazioni.bean.ArchivioZipFileUploadBean" scope="session" />
 	
 </beans>
 

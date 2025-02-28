@@ -267,7 +267,7 @@ public class SingleFileExporter implements IExporter{
 					if(listConsegne!=null && !listConsegne.isEmpty()) {
 						for (TransazioneApplicativoServerBean tAS : listConsegne) {
 							
-							String connettoreNome = ZIPUtils.convertNameToSistemaOperativoCompatible(tAS.getConnettoreNome()!=null ? tAS.getConnettoreNome() : "Default");
+							String connettoreNome = ZIPUtils.convertNameToSistemaOperativoCompatible(tAS.getNomeConnettoreDirectoryInArchivioZip());
 							String dirConsegna = dir+connettoreNome+File.separator;
 							
 							this.zip.putNextEntry(new ZipEntry(dirConsegna+"manifest.xml"));

@@ -11,3 +11,7 @@
 		<servlet-name>RicercheExporter</servlet-name>
 		<url-pattern>/ricercheExporter</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ArchizioZipUpload</servlet-name>
+		<url-pattern>/archivioZipUpload</url-pattern>
+	</servlet-mapping>

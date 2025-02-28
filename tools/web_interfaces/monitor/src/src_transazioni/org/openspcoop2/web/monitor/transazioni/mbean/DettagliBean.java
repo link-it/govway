@@ -26,13 +26,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
@@ -49,6 +48,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
+import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
@@ -75,6 +75,9 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 /**
  * DettagliBean
  * 
@@ -86,6 +89,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class DettagliBean extends
 PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
+	private static final String PROPERTY_ID_TRANSAZIONE = "id_transazione";
 	/**
 	 * 
 	 */
@@ -288,7 +292,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			// devo impostare solo l'idtransazione
 			// filter.setIdEgov(this.diagnosticiBean.getIdEgov());
 			Map<String, String> properties = new HashMap<>();
-			properties.put("id_transazione", this.dettaglio.getIdTransazione());
+			properties.put(PROPERTY_ID_TRANSAZIONE, this.dettaglio.getIdTransazione());
 
 			Traccia tracciaRichiesta = null;
 			Traccia tracciaRisposta = null;
@@ -558,7 +562,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			
 		try {
 			Map<String, String> properties = new HashMap<>();
-			properties.put("id_transazione", this.idTransazione);
+			properties.put(PROPERTY_ID_TRANSAZIONE, this.idTransazione);
 			boolean notNull = false;
 			
 			ServiceBinding tipoApi = null;
@@ -571,13 +575,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 				}
 			}
 			
-			if (!this.isRisposta) {
-				this.tracciaRichiesta = new TracciaBean(this.driver.getTraccia(RuoloMessaggio.RICHIESTA, properties),tipoApi);
-				notNull = this.tracciaRichiesta!=null;
-			} else {
-				this.tracciaRisposta = new TracciaBean(this.driver.getTraccia(RuoloMessaggio.RISPOSTA, properties),tipoApi);
-				notNull = this.tracciaRisposta!=null;
-			}
+			notNull = readTraccia(properties, tipoApi);
 
 			if (notNull && this.protocolFactory == null) {
 				try {
@@ -601,6 +599,29 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		else{
 			return this.tracciaRisposta;
 		}
+	}
+	private boolean readTraccia(Map<String, String> properties, ServiceBinding tipoApi) throws DriverTracciamentoException, DriverTracciamentoNotFoundException {
+		boolean notNull;
+		
+		// se ho caricato un archivio ricerco le tracce relative alla transazione all'interno dell'archivio
+		if(this.transazioniService.getSearch().isRicercaArchivioZip()) {
+			if (!this.isRisposta) {
+				this.tracciaRichiesta = this.transazioniService.getSearch().getArchivioZipManager().getMapTransazioni().get(properties.get(PROPERTY_ID_TRANSAZIONE)).getTraccia(RuoloMessaggio.RICHIESTA);
+				notNull = this.tracciaRichiesta!=null;
+			} else {
+				this.tracciaRisposta = this.transazioniService.getSearch().getArchivioZipManager().getMapTransazioni().get(properties.get(PROPERTY_ID_TRANSAZIONE)).getTraccia(RuoloMessaggio.RISPOSTA);
+				notNull = this.tracciaRisposta!=null;
+			}
+		} else {
+			if (!this.isRisposta) {
+				this.tracciaRichiesta = new TracciaBean(this.driver.getTraccia(RuoloMessaggio.RICHIESTA, properties),tipoApi);
+				notNull = this.tracciaRichiesta!=null;
+			} else {
+				this.tracciaRisposta = new TracciaBean(this.driver.getTraccia(RuoloMessaggio.RISPOSTA, properties),tipoApi);
+				notNull = this.tracciaRisposta!=null;
+			}	
+		}
+		return notNull;
 	}
 	
  	public boolean getHasDumpRichiestaIngresso() {
@@ -1286,6 +1307,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		this.diagnosticiBean.setIdEgov(this.idEgov);
 		this.diagnosticiBean.setIdentificativoPorta(this.identificativoPorta);
 		this.diagnosticiBean.setIdTransazione(this.idTransazione);
+		this.diagnosticiBean.setUsaInformazioniArchivio(this.transazioniService.getSearch().isRicercaArchivioZip());
 		
 		TransazioneBean trBean = this.getDettaglio();
 		if(trBean!=null) {
@@ -1297,9 +1319,25 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 				EsitoTransazioneName esitoTransactionName = esitiProperties.getEsitoTransazioneName(trBean.getEsito());
 				if(EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
 					this.diagnosticiBean.setForceNomeServizioApplicativoNull(true);
+//					
+//					if(this.transazioniService.getSearch().isRicercaArchivioZip()) {
+//						this.diagnosticiBean.setDiagnostici(this.transazioniService.getSearch().getArchivioZipManager()
+//								.getMapTransazioni().get(this.idTransazione).getConsegne().get(this.idTransazione).getDiagnostici());
+//					}
+					if(this.transazioniService.getSearch().isRicercaArchivioZip()) {
+						this.diagnosticiBean.setTransazioniApplicativoServer(this.transazioniService.getSearch().getArchivioZipManager()
+		                		.getMapTransazioni().get(this.idTransazione).getConsegne().values().stream().map(c -> c.getTransazioneApplicativoServerBean()).collect(Collectors.toList()));
+					}
 				}
 				else {
 					this.diagnosticiBean.setForceNomeServizioApplicativoNull(false);
+				}
+				
+				if(this.transazioniService.getSearch().isRicercaArchivioZip()) {
+					List<MsgDiagnostico> diagnostici = this.transazioniService.getSearch().getArchivioZipManager().getMapTransazioni().get(this.idTransazione).getDiagnostici();
+					if(diagnostici != null && !diagnostici.isEmpty()) {
+						this.diagnosticiBean.getDiagnostici().addAll(diagnostici);
+					}
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(e.getMessage(),e);
@@ -1331,5 +1369,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		this.exportContenutiMultipart = exportContenutiMultipart;
 	}
 	
-	
+	public boolean isVisualizzaLinkEsporta() {
+		return this.transazioniService.getSearch().isShowButtonEsporta();
+	}
 }

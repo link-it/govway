@@ -838,4 +838,7 @@ public class DettagliDumpMultipart extends PdDBaseBean<Transazione, String, ITra
 	public void setExportContenutiMultipart(Boolean exportContenutiMultipart) {
 		this.exportContenutiMultipart = exportContenutiMultipart;
 	}
+	public boolean isVisualizzaLinkEsporta() {
+		return this.service.getSearch().isShowButtonEsporta();
+	}
 }

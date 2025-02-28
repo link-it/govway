@@ -80,7 +80,7 @@
 						<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="jsonPnl2" rendered="#{dettagliBean.visualizzaTokenInfo}">
 							<pre class="brush: json; toolbar: false;">#{dettagliBean.prettyTokenInfo}</pre>
 						</a4j:outputPanel>
-						<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">
+						<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{dettagliBean.visualizzaLinkEsporta and not empty dettagliBean.dettaglio.tokenInfo}">
 				      		<a4j:outputPanel layout="block" styleClass="buttonrowlista">
 				      			 <a4j:htmlCommandLink id="jsonTokenInfo-iconLink" action="#{dettagliBean.downloadTokenInfo}" styleClass="icon-compress" target="_blank" value="Download"/>
 				      		</a4j:outputPanel>

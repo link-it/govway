@@ -33,7 +33,7 @@ import org.apache.commons.fileupload2.jakarta.JakartaServletDiskFileUpload;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
-import org.openspcoop2.web.monitor.core.bean.FileUploadBean;
+import org.openspcoop2.web.monitor.core.bean.BaseFileUploadBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
@@ -68,9 +68,12 @@ public class UploadServlet extends HttpServlet {
 	
 	public static final String ID_TO_DELETE_PARAM_NAME= "id";
 	
+	private String fileUploadBeanName = "fileUploadBean";
+	
 	@Override
 	public void init() throws ServletException {
 		super.init();
+		this.fileUploadBeanName = this.getInitParameter("fileUploadBeanName");
 		UploadServlet.log.debug("Init Servlet UploadServlet completato.");
 	}
 
@@ -90,7 +93,7 @@ public class UploadServlet extends HttpServlet {
 				throw new CoreException("Context is null");
 			}
 			
-			FileUploadBean fileUploadBean = (FileUploadBean)context.getBean("fileUploadBean");
+			BaseFileUploadBean fileUploadBean = (BaseFileUploadBean)context.getBean(this.fileUploadBeanName);
 			Map<String, UploadItem> mapElementiRicevuti = fileUploadBean.getMapElementiRicevuti();
 			Map<String, String> mapChiaviElementi = fileUploadBean.getMapChiaviElementi();
 	
@@ -203,7 +206,7 @@ public class UploadServlet extends HttpServlet {
 				throw new CoreException("Context is null");
 			}
 			
-			FileUploadBean fileUploadBean = (FileUploadBean)context.getBean("fileUploadBean");
+			BaseFileUploadBean fileUploadBean = (BaseFileUploadBean)context.getBean("fileUploadBean");
 			Map<String, UploadItem> mapElementiRicevuti = fileUploadBean.getMapElementiRicevuti();
 			Map<String, String> mapChiaviElementi = fileUploadBean.getMapChiaviElementi();
 

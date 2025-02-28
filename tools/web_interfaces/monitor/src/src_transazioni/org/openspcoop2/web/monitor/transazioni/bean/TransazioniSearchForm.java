@@ -36,6 +36,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
@@ -76,6 +77,8 @@ import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
+import org.openspcoop2.web.monitor.transazioni.core.ArchivioZipManager;
+import org.openspcoop2.web.monitor.transazioni.core.exception.ArchivioZipException;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.datamodel.TransazioniDM;
 import org.richfaces.model.Ordering;
@@ -144,6 +147,10 @@ Context, Cloneable {
 	private boolean visualizzaLiveCustomEnabled = false;
 	private boolean visualizzaLiveCustomColonnaRuoloTransazioneEnabled = false;
 	private boolean visualizzaConsegneMultipleCustomEnabled = false;
+	
+	private ArchivioZipFileUploadBean archivioZip = null;
+	private String idFiles= null;
+	private ArchivioZipManager archivioZipManager = new ArchivioZipManager();
 	
 	private static List<String> elencoFieldsRicercaDaIgnorare = new ArrayList<>();	
 	
@@ -319,6 +326,10 @@ Context, Cloneable {
 		
 		this.setBackRicerca(false);
 		
+		//elimina file caricati
+		this.archivioZip.clear();
+		this.archivioZipManager.clear();
+		
 		return null;
 	}
 
@@ -386,6 +397,9 @@ Context, Cloneable {
 		
 		this.executeQuery = false;
 		
+		//elimina file caricati
+		this.archivioZip.clear();
+		this.archivioZipManager.clear();
 	}
 
 
@@ -418,6 +432,8 @@ Context, Cloneable {
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_BASE_BREADCUMP_KEY);
 			case RICERCA_LIBERA:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_LIBERA_BREADCUMP_KEY);
+			case ESAMINA_ARCHIVIO_ZIP:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_ESAMINA_ARCHIVIO_ZIP_BREADCUMP_KEY);
 				
 			case MITTENTE_TOKEN_INFO:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_TOKEN_INFO_BREADCUMP_KEY);
@@ -477,6 +493,7 @@ Context, Cloneable {
 			case ID_APPLICATIVO_BASE:
 			case ID_MESSAGGIO:
 			case ID_TRANSAZIONE:
+			case ESAMINA_ARCHIVIO_ZIP:
 			default:
 				return false;
 			}
@@ -490,6 +507,7 @@ Context, Cloneable {
 			switch (t) { 
 			case ANDAMENTO_TEMPORALE:
 			case RICERCA_LIBERA:
+			case ESAMINA_ARCHIVIO_ZIP:
 			case MITTENTE_TOKEN_INFO:
 			case MITTENTE_SOGGETTO:
 			case MITTENTE_APPLICATIVO:
@@ -514,6 +532,7 @@ Context, Cloneable {
 			switch (t) { 
 			case ANDAMENTO_TEMPORALE:
 			case RICERCA_LIBERA:
+			case ESAMINA_ARCHIVIO_ZIP:
 				return false;
 				
 			case MITTENTE_TOKEN_INFO:
@@ -561,10 +580,38 @@ Context, Cloneable {
 					ID_MESSAGGIO,
 					ID_TRANSAZIONE:
 					return super.isTipologiaRicercaEntrambiEnabled(); // non viene visualizzata l'informazione
+				
+				case ESAMINA_ARCHIVIO_ZIP: 
+					return false; // non viene visualizzata l'informazione
 				}
 			}
 			return super.isTipologiaRicercaEntrambiEnabled();
 		}
+	}
+	
+	public boolean isShowDatiTransazionePanel() {
+		if(this.getModalitaRicercaStorico() != null) {
+			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+			switch (t) { 
+			case ANDAMENTO_TEMPORALE:
+			case RICERCA_LIBERA:
+			case ESAMINA_ARCHIVIO_ZIP:
+			case MITTENTE_TOKEN_INFO:
+			case MITTENTE_SOGGETTO:
+			case MITTENTE_APPLICATIVO:
+			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
+			case MITTENTE_INDIRIZZO_IP:
+			case ID_APPLICATIVO_AVANZATA:
+				return true;
+				
+			case ID_APPLICATIVO_BASE:
+			case ID_MESSAGGIO:
+			case ID_TRANSAZIONE:
+			default:
+				return false;
+			}
+		}
+		return false;
 	}
 	
 	@Override
@@ -985,6 +1032,14 @@ Context, Cloneable {
 					case ID_TRANSAZIONE:
 						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdTransazione())){
 							MessageUtils.addErrorMsg("Indicare un identificativo transazione");
+							return null;
+						}
+						break;
+					case ESAMINA_ARCHIVIO_ZIP:
+						try {
+							this.archivioZipManager.leggiArchivio(this.archivioZip);
+						}catch (ArchivioZipException e) {
+							MessageUtils.addErrorMsg(e.getMessage());
 							return null;
 						}
 						break;
@@ -1572,6 +1627,7 @@ Context, Cloneable {
 		return ricerchePresenti && !ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue().equals(this.getModalitaRicercaStorico()) 
 				&& !ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue().equals(this.getModalitaRicercaStorico()) 
 				&& !ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE.getValue().equals(this.getModalitaRicercaStorico())
+				&& !ModalitaRicercaTransazioni.ESAMINA_ARCHIVIO_ZIP.getValue().equals(this.getModalitaRicercaStorico())
 //				 && !Costanti.PERIODO_LIVE.equals(this.getPeriodo())
 				;
 	}
@@ -1582,6 +1638,7 @@ Context, Cloneable {
 		return !ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue().equals(this.getModalitaRicercaStorico()) 
 				&& !ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue().equals(this.getModalitaRicercaStorico()) 
 				&& !ModalitaRicercaTransazioni.ID_APPLICATIVO_BASE.getValue().equals(this.getModalitaRicercaStorico())
+				&& !ModalitaRicercaTransazioni.ESAMINA_ARCHIVIO_ZIP.getValue().equals(this.getModalitaRicercaStorico())
 //				 && !Costanti.PERIODO_LIVE.equals(this.getPeriodo())
 				 ;
 	}
@@ -1590,4 +1647,68 @@ Context, Cloneable {
 	public List<String> getElencoFieldRicercaDaIgnorare() {
 		return elencoFieldsRicercaDaIgnorare;
 	}
+	
+	public ArchivioZipFileUploadBean getArchivioZip() {
+		return this.archivioZip;
+	}
+	public void setArchivioZip(ArchivioZipFileUploadBean archivioZip) {
+		this.archivioZip = archivioZip;
+		this.archivioZip.setSearch(this);
+	}
+
+	public String getIdFiles() {
+		return this.idFiles;
+	}
+
+	public void setIdFiles(String idFiles) {
+		this.idFiles = idFiles;
+	}
+
+	public void clearIdFiles() {
+		this.setIdFiles("");
+		this.archivioZipManager.clear();
+	}
+	
+	public String getButtonFiltraLabel() {
+		if(ModalitaRicercaTransazioni.ESAMINA_ARCHIVIO_ZIP.getValue().equals(this.getModalitaRicercaStorico())){
+			return MessageManager.getInstance().getMessageFromResourceBundle(Costanti.SEARCH_BUTTON_ANALIZZA_ARCHIVIO_LABEL_KEY);
+		}
+		
+		if(this.isAggiornamentoDatiAbilitato() && this.isShowButtonNuovaRicerca()) {
+			return MessageManager.getInstance().getMessageFromResourceBundle(Costanti.SEARCH_BUTTON_NUOVA_RICERCA_LABEL_KEY);	
+		} 
+		return MessageManager.getInstance().getMessageFromResourceBundle(Costanti.SEARCH_BUTTON_CERCA_LABEL_KEY);
+	}
+
+	public ArchivioZipManager getArchivioZipManager() {
+		return this.archivioZipManager;
+	}
+
+	public void setArchivioZipManager(ArchivioZipManager archivioZipManager) {
+		this.archivioZipManager = archivioZipManager;
+	}
+	
+	public boolean isRicercaArchivioZip() {
+		if(!this.isLive() && StringUtils.isNotEmpty(this.getModalitaRicercaStorico())) {
+			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+			return ModalitaRicercaTransazioni.ESAMINA_ARCHIVIO_ZIP.equals(t);	
+		}
+		return false;
+	}
+
+	public boolean isShowButtonAggiorna() {
+		if(ModalitaRicercaTransazioni.ESAMINA_ARCHIVIO_ZIP.getValue().equals(this.getModalitaRicercaStorico())){
+			return false;
+		}
+		
+		return !this.isLive() && this.isAggiornamentoDatiAbilitato() && this.isShowButtonNuovaRicerca();
+	}
+
+//	public void setShowButtonAggiorna(boolean showButtonAggiorna) {}
+
+	public boolean isShowButtonEsporta() {
+		return !this.isRicercaArchivioZip();
+	}
+
+//	public void setShowButtonEsporta(boolean showButtonEsporta) {}
 }

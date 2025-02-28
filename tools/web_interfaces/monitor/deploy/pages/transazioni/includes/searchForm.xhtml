@@ -13,6 +13,16 @@
 			
 			<input type="hidden" id="_csrfFormSearchTransazioni" name="_csrf" value="#{loginBean.csrf}"/>
 			
+			<a4j:outputPanel id="esaminaArchivioZipCtr" layout="block" rendered="#{sf_bean.modalitaRicercaStorico == 'esaminaArchivioZip'}">
+	
+				<div class="subtitle">
+					<h:outputText id="esaminaArchivioZipCtrSubTitle" value="#{msg['transazioni.search.sezioneFiltroEsaminaArchivioZip.label']}" styleClass="subtitle"/>
+				</div>
+				
+				<link:fileUpload id="formFile" loginBean="#{loginBean}" mBean="#{sf_bean}" fileUploadBean="#{sf_bean.archivioZip}"
+					label="" required="true" />
+			</a4j:outputPanel>
+			
 			<a4j:outputPanel id="idModalitaRicercaPnl" layout="block" 
 				rendered="#{
 					(sf_bean.periodo == 'Live') 
@@ -287,7 +297,7 @@
 			</a4j:outputPanel>
 						
 			<a4j:outputPanel id="filtriRicercaTransazione" layout="block" 
-				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.showRicercaPanel)}">
+				rendered="#{sf_bean.periodo == 'Live' or (sf_bean.showDatiTransazionePanel)}">
 					
 				<div class="subtitle">
 					<h:outputText id="idDatiTransazione" value="#{msg['transazioni.search.sezioneFiltroEsito.label']}" styleClass="subtitle"/>

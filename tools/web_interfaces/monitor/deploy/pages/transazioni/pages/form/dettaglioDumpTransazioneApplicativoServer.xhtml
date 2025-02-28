@@ -117,9 +117,9 @@
 					</a4j:outputPanel>
 					<a4j:outputPanel layout="block" styleClass="buttonrow" rendered="#{not empty dettagliDump.dumpMessaggio.body or (not empty dettagliDump.dumpMessaggio.contentLength and dettagliDump.dumpMessaggio.contentLength>0)}">
 			      		<a4j:outputPanel layout="block" styleClass="#{dettagliDump.visualizzaMessaggio ? 'buttonrowlista' : 'buttonrowlistaLeft'}">
-			      			 <a4j:htmlCommandLink id="body-iconLink" action="#{dettagliDump.downloadMessaggio}" styleClass="icon-compress" target="_blank" value="Download" rendered="#{not dettagliDump.visualizzaContenutiMultipartButton}"/>
+			      			 <a4j:htmlCommandLink id="body-iconLink" action="#{dettagliDump.downloadMessaggio}" styleClass="icon-compress" target="_blank" value="Download" rendered="#{dettagliDump.visualizzaLinkEsporta and not dettagliDump.visualizzaContenutiMultipartButton}"/>
 			      			 
-			      			 <a4j:htmlCommandLink id="bodyMultipart-iconLink" styleClass="icon-compress" value="Download" rendered="#{dettagliDump.visualizzaContenutiMultipartButton}"
+			      			 <a4j:htmlCommandLink id="bodyMultipart-iconLink" styleClass="icon-compress" value="Download" rendered="#{dettagliDump.visualizzaLinkEsporta and dettagliDump.visualizzaContenutiMultipartButton}"
 			      				 onclick="preparaFormModale('#{dettagliDump.tipoMessaggio}'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
 			      			 </a4j:htmlCommandLink>
 			      			 
@@ -183,7 +183,7 @@
 								</h:outputText>
 							</rich:column>
 							<rich:column id="colDownload">
-								<a4j:htmlCommandLink id="iconLink" title="#{allegato.contentId}" action="#{dettagliDump.download}" target="_blank"  value="Download">
+								<a4j:htmlCommandLink id="iconLink" title="#{allegato.contentId}" action="#{dettagliDump.download}" target="_blank"  value="Download" rendered="#{dettagliDump.visualizzaLinkEsporta}">
 									<f:setPropertyActionListener value="#{allegato}" target="#{dettagliDump.selectedAttachment}" />
 									<f:setPropertyActionListener value="#{dettagliDump.tipoMessaggio}" target="#{dettagliDump.tipoMessaggio}" />
 									<f:setPropertyActionListener value="false" target="#{dettagliDump.base64Decode}" />
@@ -191,7 +191,7 @@
 								<h:outputLabel value="&#160;&#160;" />
 								<a4j:htmlCommandLink id="iconLink2" title="#{allegato.contentId}" action="#{dettagliDump.download}" 
 									target="_blank"  value="[Decodifica Base64]"
-									rendered="#{allegato.base64}">
+									rendered="#{dettagliDump.visualizzaLinkEsporta and allegato.base64}">
 									<f:setPropertyActionListener value="#{allegato}" target="#{dettagliDump.selectedAttachment}" />
 									<f:setPropertyActionListener value="#{dettagliDump.tipoMessaggio}" target="#{dettagliDump.tipoMessaggio}" />
 									<f:setPropertyActionListener value="true" target="#{dettagliDump.base64Decode}" />
@@ -200,7 +200,7 @@
 						</rich:dataTable>
 						<a4j:outputPanel layout="block" styleClass="buttonrow">
 				      		<div class="buttonrowlista">
-				      			 <a4j:htmlCommandLink id="all-iconLink" action="#{dettagliDump.downloadAll}" styleClass="icon-compress" target="_blank" value="Download All"/>
+				      			 <a4j:htmlCommandLink id="all-iconLink" action="#{dettagliDump.downloadAll}" styleClass="icon-compress" target="_blank" value="Download All" rendered="#{dettagliDump.visualizzaLinkEsporta}" />
 				      		</div>
 				      	</a4j:outputPanel>
 				</h:form>

@@ -35,8 +35,8 @@
 	                    	<f:setPropertyActionListener value="#{false}" target="#{dettagliBean.isRisposta}"/>
 	                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                     	</a4j:htmlCommandLink>
-                    	<h:outputLabel value="&#160;|&#160;" />	 
-                    	<h:commandLink id="exportTracce-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveTracce}">
+                    	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliBean.visualizzaLinkEsporta}" />	 
+                    	<h:commandLink id="exportTracce-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveTracce}" rendered="${dettagliBean.visualizzaLinkEsporta}" >
                     		<f:setPropertyActionListener value="#{false}" target="#{dettagliBean.isRisposta}"/>
 							<h:outputText id="outEsportaReq" value="Esporta" />
 						</h:commandLink>
@@ -84,8 +84,8 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />
-                   	<h:commandLink id="exportDumpMessaggiReqIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliBean.visualizzaLinkEsporta}"  />
+                   	<h:commandLink id="exportDumpMessaggiReqIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="${dettagliBean.visualizzaLinkEsporta}" >
                    		<f:setPropertyActionListener value="RichiestaIngresso" target="#{dettagliBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpMessaggiReqIngresso" value="Esporta" />
 					</h:commandLink>
@@ -106,12 +106,12 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpBinarioReqIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="#{not dettagliBean.hasDumpBinarioMultipartRichiestaIngresso}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliBean.visualizzaLinkEsporta}" />	 
+                   	<h:commandLink id="exportDumpBinarioReqIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="${dettagliBean.visualizzaLinkEsporta and not dettagliBean.hasDumpBinarioMultipartRichiestaIngresso}">
                    		<f:setPropertyActionListener value="RichiestaIngressoDumpBinario" target="#{dettagliBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpBinarioReqIngresso" value="Esporta" />
 					</h:commandLink>
-					<h:commandLink id="exportDumpBinarioMultipartReqIngresso-iconLink" styleClass="icon-compress" rendered="#{dettagliBean.hasDumpBinarioMultipartRichiestaIngresso}"
+					<h:commandLink id="exportDumpBinarioMultipartReqIngresso-iconLink" styleClass="icon-compress" rendered="${dettagliBean.visualizzaLinkEsporta and dettagliBean.hasDumpBinarioMultipartRichiestaIngresso}"
                    		onclick="preparaFormModale('RichiestaIngressoDumpBinario'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
 						<h:outputText id="outEsportaDumpBinarioMultipartReqIngresso" value="Esporta" />
 					</h:commandLink>
@@ -151,8 +151,8 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpMessaggiReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliBean.visualizzaLinkEsporta}"  />	 
+                   	<h:commandLink id="exportDumpMessaggiReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="${dettagliBean.visualizzaLinkEsporta}" >
                    		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpMessaggiReqUscita" value="Esporta" />
 					</h:commandLink>
@@ -173,12 +173,12 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpBinarioReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="#{not dettagliBean.hasDumpBinarioMultipartRichiestaUscita}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliBean.visualizzaLinkEsporta}" />	 
+                   	<h:commandLink id="exportDumpBinarioReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="${dettagliBean.visualizzaLinkEsporta and not dettagliBean.hasDumpBinarioMultipartRichiestaUscita}">
                    		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpBinarioReqUscita" value="Esporta" />
 					</h:commandLink>
-					<h:commandLink id="exportDumpBinarioMultipartReqUscita-iconLink" styleClass="icon-compress" rendered="#{dettagliBean.hasDumpBinarioMultipartRichiestaUscita}"
+					<h:commandLink id="exportDumpBinarioMultipartReqUscita-iconLink" styleClass="icon-compress" rendered="${dettagliBean.visualizzaLinkEsporta and dettagliBean.hasDumpBinarioMultipartRichiestaUscita}"
                    		onclick="preparaFormModale('RichiestaUscitaDumpBinario'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
 						<h:outputText id="outEsportaDumpBinarioMultipartReqIngresso" value="Esporta" />
 					</h:commandLink>
@@ -290,8 +290,8 @@
                     	<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportTracce-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveTracce}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliBean.visualizzaLinkEsporta}" />	 
+                   	<h:commandLink id="exportTracce-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveTracce}" rendered="${dettagliBean.visualizzaLinkEsporta}" >
                     	<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
 						<h:outputText id="outEsportaResp" value="Esporta" />
 					</h:commandLink>
@@ -374,8 +374,8 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpMessaggiResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliBean.visualizzaLinkEsporta}" />	 
+                   	<h:commandLink id="exportDumpMessaggiResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="${dettagliBean.visualizzaLinkEsporta}" >
                    		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpMessaggiResIngresso" value="Esporta" />
 					</h:commandLink>
@@ -396,12 +396,12 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpBinarioResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="#{not dettagliBean.hasDumpBinarioMultipartRispostaIngresso}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliBean.visualizzaLinkEsporta}"  />	 
+                   	<h:commandLink id="exportDumpBinarioResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="${dettagliBean.visualizzaLinkEsporta and not dettagliBean.hasDumpBinarioMultipartRispostaIngresso}">
                    		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpBinarioResIngresso" value="Esporta" />
 					</h:commandLink>
-					<h:commandLink id="exportDumpBinarioMultipartResIngresso-iconLink" styleClass="icon-compress" rendered="#{dettagliBean.hasDumpBinarioMultipartRispostaIngresso}"
+					<h:commandLink id="exportDumpBinarioMultipartResIngresso-iconLink" styleClass="icon-compress" rendered="${dettagliBean.visualizzaLinkEsporta and dettagliBean.hasDumpBinarioMultipartRispostaIngresso}"
                    		onclick="preparaFormModale('RispostaIngressoDumpBinario'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
 						<h:outputText id="outEsportaDumpBinarioMultipartReqIngresso" value="Esporta" />
 					</h:commandLink>
@@ -485,8 +485,8 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpMessaggiResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliBean.visualizzaLinkEsporta}"  />	 
+                   	<h:commandLink id="exportDumpMessaggiResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="${dettagliBean.visualizzaLinkEsporta}" >
                    		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpMessaggiResUscita" value="Esporta" />
 					</h:commandLink>
@@ -507,12 +507,12 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpBinarioResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="#{not dettagliBean.hasDumpBinarioMultipartRispostaUscita}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliBean.visualizzaLinkEsporta}" />	 
+                   	<h:commandLink id="exportDumpBinarioResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}" rendered="${dettagliBean.visualizzaLinkEsporta and not dettagliBean.hasDumpBinarioMultipartRispostaUscita}">
                    		<f:setPropertyActionListener value="RispostaUscitaDumpBinario" target="#{dettagliBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpBinarioResUscita" value="Esporta" />
 					</h:commandLink>
-                   	<h:commandLink id="exportDumpBinarioMultipartResUscita-iconLink" styleClass="icon-compress" rendered="#{dettagliBean.hasDumpBinarioMultipartRispostaUscita}"
+                   	<h:commandLink id="exportDumpBinarioMultipartResUscita-iconLink" styleClass="icon-compress" rendered="${dettagliBean.visualizzaLinkEsporta and dettagliBean.hasDumpBinarioMultipartRispostaUscita}"
                    		onclick="preparaFormModale('RispostaUscitaDumpBinario'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
 						<h:outputText id="outEsportaDumpBinarioMultipartReqUscita" value="Esporta" />
 					</h:commandLink>

@@ -1477,7 +1477,7 @@ public class UtilityTransazioni {
 		return res;
 	}
 
-	private static String escapeXmlValue(String value) {
+	public static String escapeXmlValue(String value) {
 		return StringEscapeUtils.escapeXml(value);
 	}
 	

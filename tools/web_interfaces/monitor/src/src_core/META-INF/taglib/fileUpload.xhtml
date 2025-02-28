@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+	<f:loadBundle var="msg" basename="messages" />
+
+	<c:if test="#{empty id}">
+		<c:set var="id" value="form-file" />
+	</c:if>
+	
+	<c:if test="#{empty label}">
+		<c:set var="label" value="" />
+	</c:if>
+	
+	<c:if test="#{empty required}">
+		<c:set var="required" value="false" />
+	</c:if>
+	
+	<c:if test="#{empty fileUploadBean}">
+		<c:set var="fileUploadBean" value="#{mBean.fileUploadBean}" />
+	</c:if>
+	
+	<link:prop label="#{label}" required="#{required}">
+		<input id="#{id}" size="50" type="file" name="theFile" class="inputLinkLong" multiple="multiple"/>
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
+			jQuery(document).ready(function(){
+				jQuery('##{id}').change(function() {
+					#{id}_startUploads();
+				});
+			});
+		 </script>
+	     <h:inputHidden value="#{mBean.idFiles}" id="#{id}_idFilesValidi" /> 
+	     
+		<a4j:outputPanel layout="block" rendered="#{fileUploadBean.visualizzaComandiEliminaFile}" id="#{id}_infoFileCaricatoPanel">
+			<c:forEach items="#{fileUploadBean.mapChiaviElementi}" var="entry">
+				<a4j:outputPanel layout="block" styleClass="prop">
+			 		<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />	
+		 			<a4j:outputPanel layout="block" styleClass="divNoEdit">
+			   			<span class="spanNoEdit"><i id="form-file-identificativo-file-caricato">#{entry.value}</i></span>
+			   			<a id="#{id}-delete-cmd_#{entry.key}" class="text-action-link " title="Rimuovi #{entry.value}" target="_self" href="#" type="button">
+				      		<span class="icon-box">
+				        		<i class="material-icons md-16">delete</i>
+				      		</span>
+				      		<script type="text/javascript" nonce="#{_csp_random_nonce}">
+				            	jQuery(document).ready(function(){
+									var fileId = '#{entry.key}';
+									var jQueryFileId = '##{id}-delete-cmd_'+fileId;
+				                    jQuery(jQueryFileId).click(function() {
+				                    	#{id}_cancellaFileSelezionato(fileId);
+				                    });
+				          	     });
+				            </script>
+    					</a>
+	      			</a4j:outputPanel>
+				</a4j:outputPanel>
+			</c:forEach>
+		</a4j:outputPanel>
+	</link:prop>
+</ui:composition>

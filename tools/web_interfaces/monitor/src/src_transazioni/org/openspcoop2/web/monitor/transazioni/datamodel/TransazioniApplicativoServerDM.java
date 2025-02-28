@@ -23,6 +23,7 @@ package org.openspcoop2.web.monitor.transazioni.datamodel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 
@@ -65,11 +66,16 @@ public class TransazioniApplicativoServerDM extends BaseDataModel<Long, Transazi
 				int limit = ((SequenceRange)range).getRows();
 
 				this.wrappedKeys = new ArrayList<Long>();
-				this.getDataProvider().setProtocollo(this.diagnosticiBean.getProtocollo());
-				this.getDataProvider().setIdTransazione(this.diagnosticiBean.getIdTransazione());
 				
-				List<TransazioneApplicativoServerBean> list = this.getDataProvider().findAll(start, limit);
+				List<TransazioneApplicativoServerBean> list = null;
+				if (this.diagnosticiBean.isUsaInformazioniArchivio()) {
+					list = this.diagnosticiBean.getTransazioniApplicativoServer().stream().skip(start).limit(limit).collect(Collectors.toList());
+				} else {
+					this.getDataProvider().setProtocollo(this.diagnosticiBean.getProtocollo());
+					this.getDataProvider().setIdTransazione(this.diagnosticiBean.getIdTransazione());
 				
+					list = this.getDataProvider().findAll(start, limit);
+				}
 				for (TransazioneApplicativoServerBean r : list) {
 					this.wrappedData.put(r.getId(), r);
 					this.wrappedKeys.add(r.getId());
@@ -86,10 +92,13 @@ public class TransazioniApplicativoServerDM extends BaseDataModel<Long, Transazi
 	public int getRowCount() {
 		try {
 			if (this.rowCount == null) {
-				
-				this.getDataProvider().setProtocollo(this.diagnosticiBean.getProtocollo());
-				this.getDataProvider().setIdTransazione(this.diagnosticiBean.getIdTransazione());
-				this.rowCount = this.getDataProvider().totalCount();
+				if (this.diagnosticiBean.isUsaInformazioniArchivio()) {
+					this.rowCount = this.diagnosticiBean.getTransazioniApplicativoServer().size();
+				} else {
+					this.getDataProvider().setProtocollo(this.diagnosticiBean.getProtocollo());
+					this.getDataProvider().setIdTransazione(this.diagnosticiBean.getIdTransazione());
+					this.rowCount = this.getDataProvider().totalCount();
+				}
 			}
 		} catch (Exception e) {
 			TransazioniApplicativoServerDM.log.error(e.getMessage(), e);
