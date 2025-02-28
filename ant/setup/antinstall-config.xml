@@ -143,10 +143,11 @@
         <large-select defaultValue="wildfly27" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly27" text="WildFly 27-29"/>
-           
+		<option value="wildfly27" text="WildFly 27-28"/>                
+		<option value="wildfly35" text="WildFly 35" />
+
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
-            	<option value="tomcat10" text="Apache Tomcat 10"/>
+            	<option value="tomcat10" text="Apache Tomcat 10-11"/>
 
         </large-select>
         
@@ -183,8 +184,9 @@
         <large-select defaultValue="wildfly27" property="antinstaller_as" displayText="Application Server">
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
-		<option value="wildfly27" text="WildFly 27-29"/>
-           
+		<option value="wildfly27" text="WildFly 27-28"/>
+		<option value="wildfly35" text="WildFly 35" />
+
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
 		<option value="tomcat10" text="Apache Tomcat 10"/> 
 

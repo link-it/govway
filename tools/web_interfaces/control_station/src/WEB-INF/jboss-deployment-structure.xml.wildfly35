@@ -1,0 +1,16 @@
+<jboss-deployment-structure>
+	<deployment>
+		<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
+		<exclude-subsystems>
+			<subsystem name="webservices" />
+			<subsystem name="jaxrs" />
+			<subsystem name="jsf" />
+			<!-- se si elimina, spuntano i warning <subsystem name="weld" /> -->
+			<subsystem name="logging"/>
+		</exclude-subsystems>
+		<exclusions>
+			<module name="org.eclipse.angus.mail"/>
+			<module name="org.eclipse.angus.activation"/>
+		</exclusions>
+	</deployment>
+</jboss-deployment-structure>

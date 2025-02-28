@@ -28,11 +28,15 @@
 			<!-- <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class> -->
 			<!-- <driver-class>com.ibm.db2.jcc.DB2Driver</driver-class> -->
 
-			<!-- Credenziali -->
+			<!-- Credenziali (wildfly 2x) 
 			<security>
 				<user-name>govway</user-name>
 				<password>govway</password>
 			</security>
+			-->
+			<!-- Credenziali (wildfly 3x) 
+			<security user-name="govway" password="govway"/>	
+			-->		
 
 			<!-- Livello di Isolamento delle Transazioni -->
 			<transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
