@@ -1005,6 +1005,10 @@ public class CostantiPdD {
     public static final String GOVWAY_CORE_ERRORE_GENERAZIONE_DIAGNOSTICO = "Errore generazione diagnostico";
     public static final String GOVWAY_CORE_ERRORE_GENERALE = "ErroreGenerale";
     
+    
+    /* Costanti per Headers Peer */
+    public static final MapKey<String> EXTRA_HEADERS_RESPONSE = Map.newMapKey("MAPPA_HEADERS_EXTRA_RISPOSTA");
+    
 }
 
 

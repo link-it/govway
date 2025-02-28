@@ -1181,7 +1181,7 @@ public class ConfigurazionePdDReader {
 
 			// Server J2EE
 			this.serverJ2EE = this.openspcoopProperties.isServerJ2EE();
-
+			
 			ConfigurazionePdDReader.initialize = true;
 		}catch(Exception e){
 			if(this.logger!=null)

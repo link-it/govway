@@ -212,6 +212,7 @@ import org.slf4j.Logger;
  *
  * @author Poli Andrea (apoli@link.it)
  * @author Tronci Fabio (tronci@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -2774,6 +2775,14 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 						this.log.error("Avvenuto errore durante il controllo del charset della risposta (Content-Type: "+ct+"): "+t.getMessage(),t);
 					}
 					
+					// ------------- aggiungo gli Headers peer -----------------
+					List<Proprieta> props = List.of();
+					if (this.pd != null)
+						props = this.pd.getProprieta();
+					if(this.transportResponseContext!=null) {
+						this.addHeadersPeer(this.pddContext, this.transportResponseContext, props);
+					}
+					
 				} catch (Exception e) {
 					this.msgDiag.addKeywordErroreProcessamento(e, "Analisi risposta fallita");
 					this.msgDiag.logErroreGenerico(e,"AnalisiRispostaConnettore");
@@ -2817,9 +2826,6 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			}
 
 
-
-			
-			
 			
 
 			

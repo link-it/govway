@@ -21,9 +21,20 @@
 
 package org.openspcoop2.pdd.mdb;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.dynamic.PddPluginLoader;
+import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.integrazione.peer.HeaderMap;
+import org.openspcoop2.pdd.core.integrazione.peer.PeerHeaderDescriptor;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
@@ -32,6 +43,7 @@ import org.openspcoop2.pdd.services.connector.IAsyncResponseCallback;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.slf4j.Logger;
 
 /**
@@ -146,4 +158,25 @@ public abstract class GenericLib {
 	public abstract EsitoLib _onMessage(IOpenSPCoopState openspcoopState,
 			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, MsgDiagnostico msgDiag) throws OpenSPCoopStateException;
 	
+
+	protected void addHeadersPeer(PdDContext pddContext, TransportResponseContext transportResponseContext, List<Proprieta> props) {
+		HeaderMap extraHeaders = Objects.requireNonNullElse(
+				(HeaderMap)pddContext.getObject(CostantiPdD.EXTRA_HEADERS_RESPONSE),
+				new HeaderMap());
+		List<PeerHeaderDescriptor> desc = new ArrayList<>();
+			
+		try {
+			if (CostantiProprieta.isPeerHeaderDefaultEnabled(props))
+				desc.addAll(OpenSPCoop2Properties.getInstance().getHeadersPeer());
+		} catch (CoreException e) {
+			// ignoro l'eccezione, dovrebbe succedere solo se govway non e' stato inizializzato correttamente
+		}
+		desc.addAll(CostantiProprieta.getPeerHeaderDescriptors(props));
+		
+		HeaderMap headerPeers = HeaderMap.computeFromHeaders(desc, transportResponseContext.getHeaders());
+		extraHeaders.putAll(headerPeers);
+		pddContext.addObject(CostantiPdD.EXTRA_HEADERS_RESPONSE, extraHeaders);
+
+	}
+
 }

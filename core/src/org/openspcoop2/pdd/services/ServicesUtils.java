@@ -26,6 +26,7 @@ import java.security.SecureRandom;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -82,6 +83,7 @@ import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesIntegrazione;
+import org.openspcoop2.pdd.core.integrazione.peer.HeaderMap;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
@@ -133,6 +135,7 @@ import org.slf4j.Logger;
  * 
  *
  * @author Nardi Lorenzo (nardi@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -553,7 +556,15 @@ public class ServicesUtils {
 		}
 				
 		setCORSAllowOrigin(propertiesTrasporto, logCore, portaDelegata, pddContext, requestInfo);
-						
+			
+		// ------ inserisco gli headers peer -------
+		HeaderMap extraHeaders = Objects.requireNonNullElse(
+				(HeaderMap) pddContext.getObject(CostantiPdD.EXTRA_HEADERS_RESPONSE),
+				new HeaderMap());
+		extraHeaders.forEach((key, value) ->
+			TransportUtils.setHeader(propertiesTrasporto, key, value)
+		);
+		
 		try {
 				
 			OpenSPCoop2MessageProperties forwardHeader = null;

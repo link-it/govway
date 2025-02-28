@@ -35,6 +35,7 @@ import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -92,6 +93,9 @@ import org.openspcoop2.pdd.core.handlers.transazioni.ISalvataggioTracceManager;
 import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePA;
 import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePD;
 import org.openspcoop2.pdd.core.integrazione.UtilitiesTemplate;
+import org.openspcoop2.pdd.core.integrazione.peer.PeerHeaderDescriptor;
+import org.openspcoop2.pdd.core.integrazione.peer.RegexpPeerHeaderDescriptor;
+import org.openspcoop2.pdd.core.integrazione.peer.StringPeerHeaderDescriptor;
 import org.openspcoop2.pdd.core.node.INodeReceiver;
 import org.openspcoop2.pdd.core.node.INodeSender;
 import org.openspcoop2.pdd.core.threshold.IThreshold;
@@ -176,6 +180,7 @@ import org.slf4j.Logger;
  * Contiene un lettore del file di proprietà di govway.
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -2792,6 +2797,9 @@ public class OpenSPCoop2Properties {
 				isGestoreChiaviPDNDorganizationsTraceJsonResponse();
 				isGestoreChiaviPDNDorganizationsTraceName();
 			}
+			
+			getHeadersPeerRegexpCacheSize();
+			getHeadersPeer();
 			
 			return true;
 
@@ -34658,6 +34666,68 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isGestoreChiaviPDNDorganizationsTraceName;
+	}
+	
+	private Integer headersPeerRegexpCacheSize = null;
+	public Integer getHeadersPeerRegexpCacheSize() throws CoreException {
+		if (this.headersPeerRegexpCacheSize == null) {
+			String pName = "org.openspcoop2.pdd.headers.peer.regexp.cacheSize";
+			try{ 
+				String value = null;
+				value = this.reader.getValueConvertEnvProperties(pName);
+				if(value == null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				this.headersPeerRegexpCacheSize = Integer.parseInt(value.trim());
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.headersPeerRegexpCacheSize;
+	}
+	
+	private List<PeerHeaderDescriptor> headersDescriptors = null;
+	public List<PeerHeaderDescriptor> getHeadersPeer() throws CoreException {
+		if (this.headersDescriptors == null) {
+			this.headersDescriptors = new ArrayList<>();
+			
+			String startPName = "org.openspcoop2.pdd.headers.peer.";
+			String endHeaderName = ".headers";
+			String endRegexpName = ".regexp";
+			
+			try {
+				Properties prop = this.reader.readProperties(startPName);
+				prop.forEach((k, v) -> {
+					String key = k.toString();
+					String value = v.toString();
+					
+					PeerHeaderDescriptor desc;
+					
+					if (key.endsWith(endHeaderName)) {
+						key = key.substring(0, key.length() - endHeaderName.length());
+						desc = new StringPeerHeaderDescriptor(key, value);
+					} else if (key.endsWith(endRegexpName)) {
+						key = key.substring(0, key.length() - endRegexpName.length());
+						desc = new RegexpPeerHeaderDescriptor(key, value);
+					} else {
+						String suffix = key.substring(key.lastIndexOf('.'));
+						this.logWarn("Proprieta " + key + " con prefisso: " + startPName + "ha un suffisso '" + suffix + "' non conosciuto");
+						return;
+					}
+					
+					this.headersDescriptors.add(desc);
+				});
+				this.headersDescriptors = Collections.unmodifiableList(this.headersDescriptors);
+				
+			} catch (UtilsException e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '" + startPName + "<Peer-Header-Name>.header': " + e.getMessage(), e);
+				throw new CoreException(e.getMessage(),e);
+			}
+			
+		}
+		return this.headersDescriptors;
 	}
 	
 }

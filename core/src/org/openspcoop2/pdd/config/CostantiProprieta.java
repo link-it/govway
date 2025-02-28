@@ -33,6 +33,9 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneCodifica;
 import org.openspcoop2.pdd.core.dynamic.InformazioniIntegrazioneSorgente;
+import org.openspcoop2.pdd.core.integrazione.peer.PeerHeaderDescriptor;
+import org.openspcoop2.pdd.core.integrazione.peer.RegexpPeerHeaderDescriptor;
+import org.openspcoop2.pdd.core.integrazione.peer.StringPeerHeaderDescriptor;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.resources.Charset;
@@ -613,6 +616,35 @@ public class CostantiProprieta {
 		return readIntegerValueWithDefault(proprieta, CONNETTORE_POOL_CONNECTION_VALIDATE_AFTER_INACTIVITY, defaultValue);
 	}
 	
+	
+	public static final String CONNETTORE_PEER_HEADER_PREFIX = "connettori.peer-header.";
+	public static final String CONNETTORE_PEER_HEADER_ENABLED = "connettori.peer-header.default.enabled";
+	
+	public static boolean isPeerHeaderDefaultEnabled(List<Proprieta> proprieta) {
+		String value = readValue(proprieta, CONNETTORE_PEER_HEADER_ENABLED);
+		return !(value != null && value.equals(Boolean.FALSE.toString()));
+	}
+	
+	public static List<PeerHeaderDescriptor> getPeerHeaderDescriptors(List<Proprieta> proprieta) {
+		List<PeerHeaderDescriptor> desc = new ArrayList<>();
+		
+		for (Proprieta prop : proprieta) {
+			String nome = prop.getNome();
+			if (nome.startsWith(CONNETTORE_PEER_HEADER_PREFIX)) {
+				String valore = prop.getValore();
+				final String endRegexp = ".regexp";
+				if (nome.endsWith(endRegexp)) {
+					nome = nome.substring(CONNETTORE_PEER_HEADER_PREFIX.length(), nome.length() - endRegexp.length());
+					desc.add(new RegexpPeerHeaderDescriptor(nome, valore));
+				} else {
+					nome = nome.substring(CONNETTORE_PEER_HEADER_PREFIX.length());
+					desc.add(new StringPeerHeaderDescriptor(nome, valore));
+				}
+			}
+		}
+		
+		return desc;
+	}
 	
 	// ****  CONNETTORI PROXY PASS *****
 	

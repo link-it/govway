@@ -143,6 +143,7 @@ import org.openspcoop2.pdd.core.handlers.GeneratoreCasualeDate;
 import org.openspcoop2.pdd.core.handlers.GestoreHandlers;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InitContext;
+import org.openspcoop2.pdd.core.integrazione.peer.RegexpPeerHeaderDescriptor;
 import org.openspcoop2.pdd.core.jmx.AccessoRegistroServizi;
 import org.openspcoop2.pdd.core.jmx.ConfigurazioneSistema;
 import org.openspcoop2.pdd.core.jmx.GestoreRisorseJMXGovWay;
@@ -1259,6 +1260,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 				}
 								
+				// inizializzo cache per gli headers peer
+				RegexpPeerHeaderDescriptor.initCache(propertiesReader.getHeadersPeerRegexpCacheSize());
+				
 			} catch(Exception e) {
 				this.logError("Inizializzazione Message/DOM/SOAP: "+e.getMessage(), e);
 				return;

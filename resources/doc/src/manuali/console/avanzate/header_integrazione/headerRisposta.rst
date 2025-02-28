@@ -15,11 +15,11 @@ per le fruizioni che per le erogazioni, sono riassunte nella :numref:`headerGw2C
    =========================================  ==============================================
    Nome Header Trasporto                      Descrizione                                                                       
    =========================================  ==============================================
+   GovWay-Transaction-ID                      Identificativo della transazione assegnato da GovWay   
    GovWay-Message-ID                          Identificativo del messaggio assegnato da GovWay                          
    GovWay-Relates-To                          Identificativo del messaggio riferito                                                 
    GovWay-Conversation-ID                     Identificativo della conversazione                                                    
    GovWay-Application-Message-ID              Identificativo del messaggio assegnato dall'applicativo (solo nel caso di Fruizione)
-   GovWay-Transaction-ID                      Identificativo della transazione assegnato da GovWay
    =========================================  ==============================================
 
 **Header RateLimiting**
@@ -87,4 +87,66 @@ attivati meccanismi di Rate Limiting (sezione :ref:`rateLimiting`).
 - *securityHeaders* : lista di nomi di header http, separati con la virgola. Per ogni header indicato deve essere registrata una ulteriore proprietà dove va indicato il valore da associare all'header:
 
 	- *securityHeaders.<nomeHeader>* = <valoreHeader>
+
+
+**Header Peer**
+
+Gli header HTTP descritti nelle tabelle :numref:`headerGw2ClientTab` e :numref:`headerGw2ClientExtraTab` vengono generati da GovWay e restituiti al client. Nel caso in cui la risposta del backend contenga header con gli stessi nomi, questi vengono sostituiti con quelli generati da GovWay.
+
+È stata introdotta una funzionalità che consente di restituire al client anche gli header generati dal backend, rinominandoli mediante l'introduzione del prefisso "Peer" nel nome. Per impostazione predefinita, GovWay restituisce al client, come header "Peer", tutti gli header definiti nelle tabelle :numref:`headerGw2ClientTab` e :numref:`headerGw2ClientExtraTab`, qualora siano presenti nella risposta del backend.
+
+Questa funzionalità, nella configurazione di default, è particolarmente utile negli scenari di fruizione ModI o SPCoop, dove anche la parte erogatrice è esposta tramite GovWay. In tali contesti, permette al client di ricevere gli identificativi generati dalla parte erogatrice (vedi :numref:`headerPeerGw2ClientTab`), migliorando la tracciabilità e la gestione delle richieste. 
+
+.. table:: Header 'Peer' di default restituiti dal gateway nella risposta all'applicativo client
+   :widths: 35 65
+   :name: headerPeerGw2ClientTab
+
+   =========================================  ==============================================
+   Nome Header ritornato al Client            Nome Header Trasporto generato dal backend                                                                    
+   =========================================  ==============================================
+   GovWay-Peer-Transaction-ID                 GovWay-Transaction-ID     
+   GovWay-Peer-Message-ID                     GovWay-Message-ID
+   GovWay-Peer-Relates-To                     GovWay-Relates-To                                      
+   GovWay-Peer-Conversation-ID                GovWay-Conversation-ID                                                    
+   GovWay-Peer-Application-Message-ID         GovWay-Application-Message-ID
+   X-RateLimit-Peer-Limit                     X-RateLimit-Limit   
+   X-RateLimit-Peer-Remaining                 X-RateLimit-Remaining   
+   X-RateLimit-Peer-Reset                     X-RateLimit-Reset  
+   GovWay-RateLimit-Peer-...                  GovWay-RateLimit-...
+   =========================================  ==============================================
+
+È possibile personalizzare gli header "Peer" restituiti al client sia a livello generale del prodotto sia per la singola API. La generazione di un header "Peer" avviene esclusivamente se è presente l'header corrispondente nel backend.
+
+Per personalizzare la configurazione a livello di singola API, è possibile registrare le seguenti :ref:`configProprieta` a livello di erogazione o fruizione:
+
+- *connettori.peer-header.default.enabled* : consente di disabilitare la configurazione predefinita degli header "Peer". I valori associabili alla proprietà sono 'true' o 'false'. Per default questo controllo è abilitato.
+
+- *connettori.peer-header.NOME-PEER-HEADER* : permette di definire una nuova regola "Peer". Il suffisso NOME-PEER-HEADER rappresenta il nome dell'header HTTP da restituire al client. Il valore della proprietà deve essere una lista di nomi di header HTTP, separati da virgola, da cercare negli header restituiti dal backend. La lista viene analizzata in ordine e, non appena viene trovato un nome corrispondente, il valore di quell'header viene utilizzato per valorizzare l'header "Peer".
+
+- *connettori.peer-header.NOME-PEER-HEADER.regexps* : consente di definire una nuova regola "Peer" utilizzando un'espressione regolare. Il valore della proprietà è un'espressione regolare che viene applicata agli header HTTP restituiti dal backend. Ogni header che soddisfa la regex viene restituito come header "Peer" al client. Il nome dell'header HTTP definito in NOME-PEER-HEADER può referenziare gruppi di cattura dell'espressione regolare utilizzando la sintassi ${numeroPosizioneCattura}. Ad esempio, per implementare la logica predefinita degli header di rate limiting, si può definire la seguente configurazione: 
+
+	- connettori.peer-header.${1}Peer-${2}.regexp=(.+-RateLimit-)(.+)
+
+Per personalizzare la configurazione a livello generale, è possibile modificare il file <directory-lavoro>/govway_local.properties dove può essere configurato un mapping sia in modo specifico che utilizzando espressioni regolari.
+
+   ::
+
+      # mapping puntuale
+      org.openspcoop2.pdd.headers.peer.<NOME-PEER-HEADER>.headers=<NOME-BACKEND-HEADER>
+
+      # mapping tramite espressione regolare
+      # se l'espressione regolare possiede dei gruppi di cattura è possibile referenziarli tramite la sintassi '${numeroPosizioneCattura}'
+      org.openspcoop2.pdd.headers.peer.<NOME-PEER-HEADER>.regexp=<espressioneRegolare>
+
+Di seguito vengono riportate come esempio alcune delle configurazioni di default attive:
+
+   ::
+
+      # mapping puntuale
+      org.openspcoop2.pdd.headers.peer.GovWay-Peer-Transaction-ID.headers=GovWay-Transaction-ID
+
+      # mapping tramite espressione regolare
+      org.openspcoop2.pdd.headers.peer.${1}Peer-${2}.regexp=(.+-RateLimit-)(.+)
+
+	
 
