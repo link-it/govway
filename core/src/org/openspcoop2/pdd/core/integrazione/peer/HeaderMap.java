@@ -37,15 +37,20 @@ public class HeaderMap extends HashMap<String, String> {
 	private static final long serialVersionUID = 5811004934063754049L;
 	
 	public static HeaderMap computeFromHeaders(Collection<PeerHeaderDescriptor> descs, Map<String, List<String>> headers) {
-		HeaderMap rv = new HeaderMap();
+		HeaderMap rv = new HeaderMap();		
 		descs.forEach(desc -> {
+		    if (headers == null) {
+		    	return;
+		    }
 			Map<String, String> entry = desc.computeHeaders(headers.keySet());
 			if (entry == null)
 				return;
 			
 			entry.forEach((newHdr, oldHdr) -> {
-				String value = String.join(",", Objects.requireNonNullElse(headers.get(oldHdr), List.of()));
-				rv.put(newHdr, value);
+				if (oldHdr != null) {
+					String value = String.join(",", Objects.requireNonNullElse(headers.get(oldHdr), List.of()));
+					rv.put(newHdr, value);
+				}
 			});
 		});
 		

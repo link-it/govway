@@ -363,6 +363,13 @@
 					<param name="token" value="DEBUG"/>
 					<param name="value" value="ERROR"/>
 				</antcall>
+				
+				<!-- Console -->
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="\[%{appName} %c\] "/>
+					<param name="value" value=""/>
+				</antcall>
 			</then>
 		</if>
 		
