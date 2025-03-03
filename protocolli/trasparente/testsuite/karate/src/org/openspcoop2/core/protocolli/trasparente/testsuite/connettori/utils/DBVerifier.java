@@ -41,6 +41,9 @@ import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.controllo_traffico.ReadTimeoutConfigurationUtils;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDati;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.sql.ISQLQueryObject;
+import org.openspcoop2.utils.sql.LikeConfig;
+import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.slf4j.Logger;
 
@@ -69,28 +72,66 @@ public class DBVerifier {
 		Utilities.sleep(100); 
 		try {
 			DBVerifier._verify(idTransazione, 
-					esitoExpected, msgErrore);
+					esitoExpected, msgErrore,
+					false);
 		}catch(Throwable t) {
 			Utilities.sleep(500);
 			try {
 				DBVerifier._verify(idTransazione, 
-						esitoExpected, msgErrore);
+						esitoExpected, msgErrore,
+						false);
 			}catch(Throwable t2) {
 				Utilities.sleep(2000);
 				try {
 					DBVerifier._verify(idTransazione, 
-							esitoExpected, msgErrore);
+							esitoExpected, msgErrore,
+							false);
 				}catch(Throwable t3) {
 					Utilities.sleep(5000);
 					DBVerifier._verify(idTransazione, 
-							esitoExpected, msgErrore);
+							esitoExpected, msgErrore,
+							false);
+				}
+			}
+		}
+	}
+	
+	public static void verify(String idTransazione, 
+			long esitoExpected, String msgErrore,
+			boolean checkMsgErroreCaseInsensitive) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			DBVerifier._verify(idTransazione, 
+					esitoExpected, msgErrore,
+					checkMsgErroreCaseInsensitive);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				DBVerifier._verify(idTransazione, 
+						esitoExpected, msgErrore,
+						checkMsgErroreCaseInsensitive);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					DBVerifier._verify(idTransazione, 
+							esitoExpected, msgErrore,
+							checkMsgErroreCaseInsensitive);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					DBVerifier._verify(idTransazione, 
+							esitoExpected, msgErrore,
+							checkMsgErroreCaseInsensitive);
 				}
 			}
 		}
 	}
 	
 	private static void _verify(String idTransazione, 
-			long esitoExpected, String msgErrore) throws Exception  {
+			long esitoExpected, String msgErrore,
+			boolean checkMsgErroreCaseInsensitive) throws Exception  {
 		
 		
 		String query = "select count(*) from transazioni where id = ?";
@@ -132,7 +173,18 @@ public class DBVerifier {
 		// diagnostici
 		
 		if(msgErrore!=null) {
-			query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+msgErrore+"%'";
+			if(checkMsgErroreCaseInsensitive) {
+				ISQLQueryObject sql = SQLObjectFactory.createSQLQueryObject(dbUtils().tipoDatabase);
+				sql.addFromTable("msgdiagnostici");
+				sql.addSelectCountField("conteggio");
+				sql.setANDLogicOperator(true);
+				sql.addWhereCondition("id_transazione = ?");
+				sql.addWhereLikeCondition("messaggio", msgErrore, LikeConfig.contains(true, true));
+				query = sql.createSQLQuery();
+			}
+			else {
+				query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+msgErrore+"%'";
+			}
 			log().info(query);
 		
 			count = dbUtils().readValue(query, Integer.class, idTransazione);

@@ -1080,14 +1080,16 @@ public class SoapTest extends ConfigLoader {
 		
 		for (var r : responses) {
 			// Le richieste che vedono fallita la transazione principale con un 401, ottengono un 500
-			assertEquals(500 , r.getResultHTTPOperation());
+			/** non più vero con il nuovo connettore http core assertEquals(500 , r.getResultHTTPOperation());*/
+			assertEquals(401 , r.getResultHTTPOperation());
 			CommonConsegnaMultipla.withBackoff( () -> checkNessunaNotifica(r));
 			CommonConsegnaMultipla.checkNessunoScheduling(r);
 		}
 		
 		for (var r : responses2) {
 			// Le richieste che vedono fallita la transazione principale, ottengono un 500
-			assertEquals(500 , r.getResultHTTPOperation());
+			/** non più vero con il nuovo connettore http core assertEquals(500 , r.getResultHTTPOperation()); */
+			assertEquals(401 , r.getResultHTTPOperation());
 			checkNessunaNotifica(r);
 			CommonConsegnaMultipla.checkNessunoScheduling(r);
 		}

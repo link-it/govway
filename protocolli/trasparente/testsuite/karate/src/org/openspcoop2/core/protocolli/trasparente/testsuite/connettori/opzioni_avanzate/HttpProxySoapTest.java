@@ -42,6 +42,8 @@ public class HttpProxySoapTest extends ConfigLoader {
 	
 	public static final int waitStopServer = Integer.valueOf(System.getProperty(HttpProxyUtils.PROPERTY_MITMDUMP_WAIT_STOP_SERVER));
 	
+	private static final boolean govwayUseHttpUrlConnection = false; // Da gestire nei test con le varie possibilità di utilizzo dei connettori
+
 	
 	
 	@Test
@@ -49,7 +51,8 @@ public class HttpProxySoapTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 		
 	@Test
@@ -57,7 +60,8 @@ public class HttpProxySoapTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	
 	@Test
@@ -65,7 +69,8 @@ public class HttpProxySoapTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 
 	@Test
@@ -73,7 +78,8 @@ public class HttpProxySoapTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	
 	@Test
@@ -81,7 +87,8 @@ public class HttpProxySoapTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	
 	@Test
@@ -89,6 +96,7 @@ public class HttpProxySoapTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 }

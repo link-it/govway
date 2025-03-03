@@ -331,9 +331,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
-			if (statusCode == 401) {
+			/** non più vero con il nuovo connettore http core 
+			*if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			
 			// In "errore di consegna" rientrano tutti  i 4xx e tutti i 5xx da 501 in poi, 
 			// Quindi in questo test tutte le 2xx, 4xx e 5xx vengono notificate.					
@@ -1151,9 +1152,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			request.addHeader(Common.HEADER_ID_CONDIZIONE, filtro);
 			var current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 			
 			// Filtro ParametroUrl
@@ -1161,9 +1163,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 			
 			// Filtro Regola Statica, vanno tutte sul pool2
@@ -1171,9 +1174,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaStatica",   "SA_TestRegolaStatica",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPoolStatica);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 			
 			// Filtro Regola ClientI Ip, vanno tutte sul Connettore0
@@ -1181,9 +1185,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaClientIp",   "SA_TestRegolaClientIp",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPoolClientIp);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 			
 			
@@ -1192,9 +1197,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaContenuto",   "SA_TestRegolaContenuto",  soapContentType, content);
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 			
 			// Filtro Regola FreemarkerTemplate
@@ -1202,9 +1208,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 
 			// Filtro Regola Velocity Template
@@ -1212,9 +1219,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 			
 			// Filtro Regola Template
@@ -1222,9 +1230,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 			
 			// Filtro Regola SoapAction, è il filtro Pool0-Filtro0, va sul pool0
@@ -1232,9 +1241,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request = RequestBuilder.buildSoapRequest(erogazione, "TestRegolaSoapAction",   "Pool0-Filtro0",  soapContentType);
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPoolSoapAction);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 			
 			// Filtro Regola Url Invocazione
@@ -1242,9 +1252,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			request.setUrl(request.getUrl() + "&govway-testsuite-id_connettore_request="+filtro);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 			
 			// Filtro Regola XForwardedFor
@@ -1253,9 +1264,10 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 			request.setUrl(request.getUrl()+"&returnCode=" + statusCode);
 			request.addHeader(header, filtro);
 			current = CommonConsegnaMultipla.buildRequestAndExpectationFiltered(request, statusCode,connettoriSuccesso, connettoriPool);
+			/** non più vero con il nuovo connettore http core
 			if (statusCode == 401) {
 				current.esitoSincrono = CommonConsegnaMultipla.ESITO_ERRORE_INVOCAZIONE; 
-			}
+			}*/
 			requestsByKind.add(current);
 
 			i++;
@@ -1269,7 +1281,7 @@ public class CondizionaleByFiltroSoapTest extends ConfigLoader {
 	
 	static void checkResponsesStatus(HttpRequest request, List<HttpResponse> responses, int statusCodeEcho) {
 		Map<Integer,Integer> soapStatusCodeMapping = Map.of(
-				401, 500,
+				/*401, 500,*/ // non più vero con connettore http core
 				500, 200);		// Un 500 senza body è un OK con anomalia
 		
 		if (request.getUrl().contains("&fault=true")) {

@@ -59,6 +59,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreHttpPoolParams;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.pdd.services.connector.ConnectorApplicativeThreadPool;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -902,6 +903,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 		}
     }
 	private void releaseResponse(List<Exception> listExceptionChiusura) {
+		boolean responseReadTimeout = false;
 		try{
 			// Gestione finale della connessione    		
     		if(this.isResponse!=null){
@@ -915,13 +917,16 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				this.logger.debug("Chiusura socket fallita: "+t.getMessage(),t);
 			}
 			listExceptionChiusura.add(t);
+			responseReadTimeout = ServicesUtils.isConnessioneServerReadTimeout(t);
     	}
     	try{
 			// Gestione finale della connessione
     		if(this.httpEntityResponse!=null){
 	    		if(this.debug && this.logger!=null)
 	    			this.logger.debug("Chiusura httpEntityResponse...");
-	    		EntityUtils.consume(this.httpEntityResponse);			
+	    		if(!responseReadTimeout) { // altrimenti rimane bloccato indefinitivamente
+	    			EntityUtils.consume(this.httpEntityResponse);
+	    		}
 	    	}
 				
     	}catch(Exception t) {
