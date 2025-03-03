@@ -75,7 +75,7 @@
 		</fileset>
 		<fileset dir="${required_lib}/jakarta">
 			<include name="jakarta.annotation-api-2.1.1.jar"/>
-			<include name="jakarta.servlet-api-5.0.0.jar"/>
+			<include name="jakarta.servlet-api-6.0.0.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/jaxb">
 			<include name="*.jar"/>

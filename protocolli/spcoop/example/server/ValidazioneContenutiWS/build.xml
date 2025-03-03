@@ -175,7 +175,7 @@
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${ws_validazione_lib}/jakarta">
-				<include name="jakarta.servlet-api-5.0.0.jar"/>
+				<include name="jakarta.servlet-api-6.0.0.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.dist}" >
 				<include name="openspcoop2_utils*.jar"/>

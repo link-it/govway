@@ -465,6 +465,34 @@ public class ServletTestService extends HttpServlet {
 		System.out.println(msg);
 	}
 	
+	@SuppressWarnings("removal")
+	private static void printCookie(Cookie c) {
+		systemOut("name: "+c.getName());
+		systemOut("path: "+c.getPath());
+		systemOut("domain: "+c.getDomain());
+		systemOut("comment: "+c.getComment());
+		systemOut("maxAge: "+c.getMaxAge());
+		systemOut("secure: "+c.getSecure());
+		systemOut("value: "+c.getValue());
+		systemOut("version: "+c.getVersion());
+	}
+	
+	@SuppressWarnings("removal")
+	private static Cookie newCookie(HttpCookie httpCookie) {
+		Cookie newCookie = new Cookie(httpCookie.getName(),httpCookie.getValue());
+		if(httpCookie.getComment()!=null)
+			newCookie.setComment(httpCookie.getComment());
+		if(httpCookie.getDomain()!=null)
+			newCookie.setDomain(httpCookie.getDomain());
+		newCookie.setHttpOnly(httpCookie.isHttpOnly());
+		newCookie.setMaxAge((int)httpCookie.getMaxAge());
+		if(httpCookie.getPath()!=null)
+			newCookie.setPath(httpCookie.getPath());
+		newCookie.setSecure(httpCookie.getSecure());
+		newCookie.setVersion(httpCookie.getVersion());
+		return newCookie;
+	}
+	
 	public void doEngine(HttpServletRequest req, HttpServletResponse res, boolean oneway, Properties headerRisposta)
 	throws ServletException, IOException {
 
@@ -519,14 +547,7 @@ public class ServletTestService extends HttpServlet {
 				if(cookies!=null && cookies.length>0) {
 					for (int i = 0; i < cookies.length; i++) {
 						if(cookie.equals(cookies[i].getName())) {
-							systemOut("name: "+cookies[i].getName());
-							systemOut("path: "+cookies[i].getPath());
-							systemOut("domain: "+cookies[i].getDomain());
-							systemOut("comment: "+cookies[i].getComment());
-							systemOut("maxAge: "+cookies[i].getMaxAge());
-							systemOut("secure: "+cookies[i].getSecure());
-							systemOut("value: "+cookies[i].getValue());
-							systemOut("version: "+cookies[i].getVersion());
+							printCookie(cookies[i]);
 							foundCookie = true;
 							break;
 						}
@@ -571,17 +592,7 @@ public class ServletTestService extends HttpServlet {
 						}
 						List<HttpCookie> l = java.net.HttpCookie.parse(value);
 						for (HttpCookie httpCookie : l) {
-							Cookie newCookie = new Cookie(httpCookie.getName(),httpCookie.getValue());
-							if(httpCookie.getComment()!=null)
-								newCookie.setComment(httpCookie.getComment());
-							if(httpCookie.getDomain()!=null)
-								newCookie.setDomain(httpCookie.getDomain());
-							newCookie.setHttpOnly(httpCookie.isHttpOnly());
-							newCookie.setMaxAge((int)httpCookie.getMaxAge());
-							if(httpCookie.getPath()!=null)
-								newCookie.setPath(httpCookie.getPath());
-							newCookie.setSecure(httpCookie.getSecure());
-							newCookie.setVersion(httpCookie.getVersion());
+							Cookie newCookie = newCookie(httpCookie);
 							res.addCookie(newCookie);
 						}
 					}

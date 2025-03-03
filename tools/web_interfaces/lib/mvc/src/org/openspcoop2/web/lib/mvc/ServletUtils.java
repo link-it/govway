@@ -785,6 +785,7 @@ public class ServletUtils {
 		return sb.toString();
 	}
 
+	@SuppressWarnings("removal")
 	public static void removeCookieFromResponse(String cookieName, HttpServletRequest request, HttpServletResponse response){
 		Cookie[] cookies = request.getCookies();
 
@@ -805,7 +806,7 @@ public class ServletUtils {
 				}
 			}
 		}
-	}
+	} 
 	
 	public static void saveConfigurazioneBeanIntoSession(HttpServletRequest request, HttpSession session,ConfigBean configurazioneBean, String objectName){
 		setObjectIntoSession(request, session, configurazioneBean, Costanti.SESSION_PARAMETRO_OLD_CONFIGURAZIONE_PROPERTIES_PREFIX + objectName);

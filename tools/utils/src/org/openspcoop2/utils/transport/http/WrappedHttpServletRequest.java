@@ -31,6 +31,7 @@ import java.util.Map;
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletConnection;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
@@ -135,11 +136,12 @@ public class WrappedHttpServletRequest implements HttpServletRequest {
 		return this.httpServletRequest.getServletPath();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	@Deprecated
+	// jakarta api 5
 	public String getRealPath(String arg0) {
-		return this.httpServletRequest.getRealPath(arg0);
+		if(arg0!=null) {
+			return this.httpServletRequest.getContextPath();
+		}
+		return null;
 	}
 	
 	@Override
@@ -318,11 +320,9 @@ public class WrappedHttpServletRequest implements HttpServletRequest {
 		return this.httpServletRequest.isRequestedSessionIdFromURL();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	@Deprecated
+	// jakarta api 5
 	public boolean isRequestedSessionIdFromUrl() {
-		return this.httpServletRequest.isRequestedSessionIdFromUrl();
+		return this.httpServletRequest.isRequestedSessionIdFromURL();
 	}
 
 	@Override
@@ -410,6 +410,22 @@ public class WrappedHttpServletRequest implements HttpServletRequest {
 	@Override
 	public <T extends HttpUpgradeHandler> T upgrade(Class<T> arg0) throws IOException, ServletException {
 		return this.httpServletRequest.upgrade(arg0);
+	}
+
+	// jakarta api 6
+	@Override
+	public String getProtocolRequestId() {
+		return this.httpServletRequest.getProtocolRequestId();
+	}
+
+	@Override
+	public String getRequestId() {
+		return this.httpServletRequest.getRequestId();
+	}
+
+	@Override
+	public ServletConnection getServletConnection() {
+		return this.httpServletRequest.getServletConnection();
 	}
 	
 }

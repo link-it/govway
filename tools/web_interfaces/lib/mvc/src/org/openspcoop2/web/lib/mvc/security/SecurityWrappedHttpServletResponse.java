@@ -176,10 +176,9 @@ public class SecurityWrappedHttpServletResponse extends HttpServletResponseWrapp
 		return this.getHttpServletResponse().encodeRedirectURL(arg0);
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
+	// jakarta api 5
 	public String encodeRedirectUrl(String arg0) {
-		return this.getHttpServletResponse().encodeRedirectUrl(arg0);
+		return this.getHttpServletResponse().encodeRedirectURL(arg0);
 	}
 
 	@Override
@@ -187,10 +186,9 @@ public class SecurityWrappedHttpServletResponse extends HttpServletResponseWrapp
 		return this.getHttpServletResponse().encodeURL(arg0);
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
+	// jakarta api 5
 	public String encodeUrl(String arg0) {
-		return this.getHttpServletResponse().encodeUrl(arg0);
+		return this.getHttpServletResponse().encodeURL(arg0);
 	}
 
 	@Override
@@ -240,11 +238,12 @@ public class SecurityWrappedHttpServletResponse extends HttpServletResponseWrapp
 		this.getHttpServletResponse().setStatus(arg0);
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	@Deprecated
+	// jakarta api 5
 	public void setStatus(int arg0, String arg1) {
-		this.getHttpServletResponse().setStatus(arg0, arg1);
+		if(arg1!=null) {
+			// nop
+		}
+		this.getHttpServletResponse().setStatus(arg0);
 	}
 
 	// v3

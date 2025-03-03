@@ -29,7 +29,7 @@
 			<include name="**/commons/*"/>
 			<include name="shared/wsdl4j-1.6.3.jar"/>
 			<include name="jakarta/jakarta.annotation-api-2.1.1.jar"/>
-			<include name="jakarta/jakarta.servlet-api-5.0.0.jar"/>
+			<include name="jakarta/jakarta.servlet-api-6.0.0.jar"/>
 			<include name="jakarta/jakarta.xml.ws-api-3.0.1.jar"/>
 			<include name="jakarta/jakarta.jws-api-3.0.0.jar"/>
 			<include name="jakarta/jakarta.mail-api-2.1.3.jar"/>

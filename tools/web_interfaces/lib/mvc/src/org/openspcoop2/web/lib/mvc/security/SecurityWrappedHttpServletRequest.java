@@ -233,11 +233,12 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 		return this.getHttpServletRequest().getServletPath();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	@Deprecated
+	// jakarta api 5
 	public String getRealPath(String arg0) {
-		return this.getHttpServletRequest().getRealPath(arg0);
+		if(arg0!=null) {
+			return this.getHttpServletRequest().getContextPath();
+		}
+		return null;
 	}
 	
 	@Override
@@ -479,11 +480,9 @@ public class SecurityWrappedHttpServletRequest extends HttpServletRequestWrapper
 		return this.getHttpServletRequest().isRequestedSessionIdFromURL();
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	@Deprecated
+	// jakarta api 5
 	public boolean isRequestedSessionIdFromUrl() {
-		return this.getHttpServletRequest().isRequestedSessionIdFromUrl();
+		return this.getHttpServletRequest().isRequestedSessionIdFromURL();
 	}
 
 	@Override
