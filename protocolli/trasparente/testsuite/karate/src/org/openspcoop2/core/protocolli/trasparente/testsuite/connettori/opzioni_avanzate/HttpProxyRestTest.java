@@ -42,75 +42,87 @@ public class HttpProxyRestTest extends ConfigLoader {
 	
 	public static final int waitStopServer = Integer.valueOf(System.getProperty(HttpProxyUtils.PROPERTY_MITMDUMP_WAIT_STOP_SERVER));
 	
+	private static final boolean govwayUseHttpUrlConnection = false; // Da gestire nei test con le varie possibilità di utilizzo dei connettori
+	
 	@Test
 	public void erogazioneGEThttp() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.GET;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneDELETEhttp() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.DELETE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneHEADhttp() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.HEAD;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneLINKhttp() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.LINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneOPTIONShttp() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.OPTIONS;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePATCHhttp() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PATCH;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePOSThttp() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePUThttp() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PUT;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneTRACEhttp() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.TRACE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneUNLINKhttp() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.UNLINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP);
+				HttpProxyUtils.ACTION_HTTP,
+				govwayUseHttpUrlConnection);
 	}
 	
 	
@@ -125,70 +137,80 @@ public class HttpProxyRestTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.GET;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneDELETEhttps() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.DELETE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneHEADhttps() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.HEAD;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneLINKhttps() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.LINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneOPTIONShttps() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.OPTIONS;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePATCHhttps() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PATCH;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePOSThttps() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePUThttps() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PUT;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneTRACEhttps() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.TRACE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneUNLINKhttps() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.UNLINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS);
+				HttpProxyUtils.ACTION_HTTPS,
+				govwayUseHttpUrlConnection);
 	}
 	
 	
@@ -202,70 +224,80 @@ public class HttpProxyRestTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.GET;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneDELETEhttpsCustom() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.DELETE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneHEADhttpsCustom() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.HEAD;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneLINKhttpsCustom() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.LINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneOPTIONShttpsCustom() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.OPTIONS;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePATCHhttpsCustom() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PATCH;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePOSThttpsCustom() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePUThttpsCustom() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PUT;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneTRACEhttpsCustom() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.TRACE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneUNLINKhttpsCustom() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.UNLINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM,
+				govwayUseHttpUrlConnection);
 	}
 	
 	
@@ -285,70 +317,80 @@ public class HttpProxyRestTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.GET;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneDELETEhttpAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.DELETE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneHEADhttpAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.HEAD;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneLINKhttpAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.LINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneOPTIONShttpAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.OPTIONS;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePATCHhttpAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PATCH;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePOSThttpAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePUThttpAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PUT;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneTRACEhttpAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.TRACE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneUNLINKhttpAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.UNLINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTP_AUTH);
+				HttpProxyUtils.ACTION_HTTP_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	
 	
@@ -363,70 +405,80 @@ public class HttpProxyRestTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.GET;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneDELETEhttpsAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.DELETE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneHEADhttpsAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.HEAD;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneLINKhttpsAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.LINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneOPTIONShttpsAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.OPTIONS;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePATCHhttpsAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PATCH;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePOSThttpsAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePUThttpsAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PUT;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneTRACEhttpsAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.TRACE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneUNLINKhttpsAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.UNLINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	
 	
@@ -440,70 +492,80 @@ public class HttpProxyRestTest extends ConfigLoader {
 		HttpRequestMethod method = HttpRequestMethod.GET;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneDELETEhttpsCustomAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.DELETE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneHEADhttpsCustomAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.HEAD;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneLINKhttpsCustomAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.LINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneOPTIONShttpsCustomAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.OPTIONS;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePATCHhttpsCustomAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PATCH;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePOSThttpsCustomAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.POST;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazionePUThttpsCustomAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.PUT;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneTRACEhttpsCustomAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.TRACE;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	@Test
 	public void erogazioneUNLINKhttpsCustomAuth() throws Exception {
 		HttpRequestMethod method = HttpRequestMethod.UNLINK;
 		HttpProxyUtils.composedTestSuccess(logCore, method, TipoServizio.EROGAZIONE, API, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
-				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH);
+				HttpProxyUtils.ACTION_HTTPS_CUSTOM_AUTH,
+				govwayUseHttpUrlConnection);
 	}
 	
 	

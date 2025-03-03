@@ -705,7 +705,8 @@ public class RestTest extends ConfigLoader {
 		
 		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(esitoTransazioneName);
 		logCore.info("Verifico transazione con stato '"+esitoExpected+"' ("+esitoTransazioneName.toString()+") [msgErrore:"+msgErrore+"] ...");
-		DBVerifier.verify(idTransazione, esitoExpected, msgErrore);
+		DBVerifier.verify(idTransazione, esitoExpected, msgErrore, 
+				true); // case insensitive per gestire le varie implementazioni
 		logCore.info("Verifico transazione con stato '"+esitoExpected+"' ("+esitoTransazioneName.toString()+") [msgErrore:"+msgErrore+"] ok");
 		
 		if(tipoEvento!=null) {

@@ -146,6 +146,7 @@ public class CostantiPdD {
     /** Variabile che indica la configurazione di dump */
     public static final String DUMP_CONFIG = "DumpConfig";
     public static final String DUMP_RICHIESTA_EFFETTUATO = "DumpRichiestaEffettuato";
+    public static final String DUMP_RISPOSTA_EFFETTUATO = "DumpRispostaEffettuato";
     
     /** Configurazione soglia per salvataggio in ram */
     public static final int DUMP_BINARIO_THRESHOLD = 1048576; // 1MB (1024*1024)

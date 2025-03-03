@@ -775,7 +775,8 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		
 		
 		// ------------- Dump risposta in uscita-----------------------------
-		if(Dump.isSistemaDumpDisponibile()){
+		if(!this.internalObjects.containsKey(CostantiPdD.DUMP_RISPOSTA_EFFETTUATO) &&
+				Dump.isSistemaDumpDisponibile()){
 			try{
 				if(this.configurazionePdDReader==null) {
 					this.configurazionePdDReader = ConfigurazionePdDManager.getInstance();
@@ -794,6 +795,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							this.inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getResponseHeaders());
+					this.internalObjects.put(CostantiPdD.DUMP_RISPOSTA_EFFETTUATO, true);
 				}
 			}catch(DumpException dumpException){
 				setSOAPFaultProcessamento(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore, this.msgDiag, dumpException, DumpException.DUMP_NON_RIUSCITO);

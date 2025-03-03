@@ -299,6 +299,9 @@
 
 					<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 					<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
+					
+					<!-- Per consentire field protected java.lang.String java.net.HttpURLConnection.method accessible -->
+					<jvmarg value="--add-opens=java.base/java.net=ALL-UNNAMED"/>
 
 					<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
 					     (file:.../lib/json/accessors-smart-2.5.1.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
@@ -398,6 +401,9 @@
 
 											<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
+					
+											<!-- Per consentire field protected java.lang.String java.net.HttpURLConnection.method accessible -->
+											<jvmarg value="--add-opens=java.base/java.net=ALL-UNNAMED"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
 											     (file:.../lib/json/accessors-smart-2.5.1.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
@@ -431,6 +437,9 @@
 
 											<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
+					
+											<!-- Per consentire field protected java.lang.String java.net.HttpURLConnection.method accessible -->
+											<jvmarg value="--add-opens=java.base/java.net=ALL-UNNAMED"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
 											     (file:.../lib/json/accessors-smart-2.5.1.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
@@ -469,6 +478,9 @@
 
 											<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
+											
+											<!-- Per consentire field protected java.lang.String java.net.HttpURLConnection.method accessible -->
+											<jvmarg value="--add-opens=java.base/java.net=ALL-UNNAMED"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
 											     (file:.../lib/json/accessors-smart-2.5.1.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
@@ -506,6 +518,9 @@
 
 											<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 											<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
+					
+											<!-- Per consentire field protected java.lang.String java.net.HttpURLConnection.method accessible -->
+											<jvmarg value="--add-opens=java.base/java.net=ALL-UNNAMED"/>
 
 											<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
 											     (file:.../lib/json/accessors-smart-2.5.1.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->

@@ -701,7 +701,8 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		
 		
 		// ------------- Dump risposta in uscita-----------------------------
-		if(Dump.isSistemaDumpDisponibile()){
+		if(!this.internalObjects.containsKey(CostantiPdD.DUMP_RISPOSTA_EFFETTUATO) &&
+				Dump.isSistemaDumpDisponibile()){
 			try{
 				if(this.configurazionePdDReader==null) {
 					this.configurazionePdDReader = ConfigurazionePdDManager.getInstance();
@@ -719,6 +720,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							this.inRequestContext.getConnettore().getUrlProtocolContext(), 
 							outResponseContext.getResponseHeaders());
+					this.internalObjects.put(CostantiPdD.DUMP_RISPOSTA_EFFETTUATO, true);
 				}
 			}catch(DumpException e){
 				setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore,this.msgDiag, e, DumpException.DUMP_NON_RIUSCITO);

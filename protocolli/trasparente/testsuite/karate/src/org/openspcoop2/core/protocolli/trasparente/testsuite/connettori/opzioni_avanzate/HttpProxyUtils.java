@@ -80,8 +80,11 @@ public class HttpProxyUtils {
 		return s.replace("PORT", port+"").replace("METHOD", method.name());
 	}
 	
-	private static final String CONNECTION_REFUSED_REST = "[proxy: localhost:PORT] http-method:METHOD): Errore avvenuto durante la consegna HTTP: Connection refused (Connection refused)";
-	private static final String CONNECTION_REFUSED_SOAP = "[proxy: localhost:PORT]): Errore avvenuto durante la consegna HTTP: Connection refused (Connection refused)";
+	// http url connection: Errore avvenuto durante la consegna HTTP: Connection refused (Connection refused)
+	// httpcore: Connect to http://localhost:59900 [localhost/127.0.0.1] failed: Connection refused
+	// Uso like per prendere entrambi
+	private static final String CONNECTION_REFUSED_REST = "[proxy: localhost:PORT] http-method:METHOD): Errore avvenuto durante la consegna HTTP: %Connection refused";
+	private static final String CONNECTION_REFUSED_SOAP = "[proxy: localhost:PORT]): Errore avvenuto durante la consegna HTTP: %Connection refused";
 	public static String getConnectionRefusedMessageProxyNoAuth(HttpRequestMethod method, boolean soap) {
 		return getConnectionRefusedMessage(HttpProxyThread.PORT_NO_AUTH, method, soap);
 	}
@@ -239,24 +242,29 @@ public class HttpProxyUtils {
 	
 	public static void composedTestSuccess(Logger logCore, HttpRequestMethod method, TipoServizio tipoServizio, String api, 
 			String mitmdumpCommand, int waitStartupServer, int waitStopServer,
-			String action) throws Exception {
+			String action,
+			boolean govwayUseHttpUrlConnection) throws Exception {
 		_composedTest(logCore, method, tipoServizio, api, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
 				action, 
-				null);
+				null,
+				govwayUseHttpUrlConnection);
 	}
 	public static void composedTestError(Logger logCore, HttpRequestMethod method, TipoServizio tipoServizio, String api, 
 			String mitmdumpCommand, int waitStartupServer, int waitStopServer,
-			String action, String msgErrore) throws Exception {
+			String action, String msgErrore,
+			boolean govwayUseHttpUrlConnection) throws Exception {
 		_composedTest(logCore, method, tipoServizio, api, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
 				action, 
-				msgErrore);
+				msgErrore,
+				govwayUseHttpUrlConnection);
 	}
 	private static void _composedTest(Logger logCore, HttpRequestMethod method, TipoServizio tipoServizio, String api,
 			String mitmdumpCommand, int waitStartupServer, int waitStopServer,
 			String action, 
-			String msgErrore) throws Exception {
+			String msgErrore,
+			boolean govwayUseHttpUrlConnection) throws Exception {
 		
 		ConfigLoader.resetCache();
 		
@@ -313,10 +321,12 @@ public class HttpProxyUtils {
 		case UNLINK:
 		case PUT:
 		case PATCH:
-			error = proxyAuth ?
-					HttpProxyUtils.getConnectionErrorMessageProxyAuth(method, soap)
-					:
-					HttpProxyUtils.getConnectionErrorMessageProxyNoAuth(method, soap);
+			if(govwayUseHttpUrlConnection) {
+				error = proxyAuth ?
+						HttpProxyUtils.getConnectionErrorMessageProxyAuth(method, soap)
+						:
+						HttpProxyUtils.getConnectionErrorMessageProxyNoAuth(method, soap);
+			}
 			break;
 		default:
 			break;
