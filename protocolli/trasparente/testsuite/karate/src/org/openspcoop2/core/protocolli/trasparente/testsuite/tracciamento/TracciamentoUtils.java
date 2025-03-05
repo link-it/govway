@@ -257,8 +257,9 @@ public class TracciamentoUtils {
 			offset = 0;
 			while(!OK.equals(fileRes) && offset<limit) {
 				Utilities.sleep(50+(100*offset));
-				logInfo(logCore,"Verifica ok nel file '"+responseFile.getAbsolutePath()+"' (tentativo:"+offset+") ...");
+				logInfo(logCore,"Verifica ok nel file '"+responseFile.getAbsolutePath()+"' (tentativo:"+offset+") (exists:"+responseFile.exists()+") ...");
 				fileRes = FileSystemUtilities.readFile(responseFile);
+				logInfo(logCore,"Verifica nel file '"+responseFile.getAbsolutePath()+"'; contenuto: ["+FileSystemUtilities.readFile(responseFile)+"]");
 				offset++;
 			}
 			if(offset==limit) {
@@ -300,6 +301,7 @@ public class TracciamentoUtils {
 			else {
 				logInfo(logCore,"Serializzo nel file '"+responseFile.getAbsolutePath()+"' ("+FINE+") ...");
 				FileSystemUtilities.writeFile(responseFile, FINE.getBytes());
+				logInfo(logCore,"Serializzato nel file '"+responseFile.getAbsolutePath()+"'; contenuto: ["+FileSystemUtilities.readFile(responseFile)+"]");
 			}
 			
 			if(tracciamentoVerifica.sleepAfterOutRequest>0) {
@@ -451,7 +453,7 @@ public class TracciamentoUtils {
 		String dir = System.getProperty("fileSystemRecovery.repository");
 		File d = new File(dir);
 		if(!d.exists()) {
-			throw new UtilsException("Repository non trovato");
+			throw new UtilsException("Repository "+d.getAbsolutePath()+" non trovato");
 		}
 		
 		checkRepo(d, expectedFiles, org.openspcoop2.monitor.engine.constants.Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE);

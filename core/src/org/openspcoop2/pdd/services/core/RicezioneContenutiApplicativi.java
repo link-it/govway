@@ -564,33 +564,37 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 	}
 	private void _processComplete(boolean invokedFromAsyncConnector) {
 		
+		// ogni blocco di codice controllare che non sia già stato invocato per via della doppia invocazione '_processComplete'
 		
-		try{
-			if(invokedFromAsyncConnector) {
-				// debug
+		if(!this.internalObjects.containsKey(CostantiPdD.PROCESS_COMPLETE_SET_TIPO)) {
+			try{
+				if(invokedFromAsyncConnector) {
+					// debug
+				}
+				
+				if(this.context!=null  && this.msgContext.getIntegrazione()!=null){
+					if(this.context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
+						this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRichiesta(
+								(String)this.context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
+					}
+					if(this.context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
+						this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRisposta(
+								(String)this.context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
+					}
+					if(this.context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
+						this.msgContext.getIntegrazione().setTipoMessageSecurityRichiesta(
+								(String)this.context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
+					}
+					if(this.context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
+						this.msgContext.getIntegrazione().setTipoMessageSecurityRisposta(
+								(String)this.context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
+					}
+				}
+			}catch(Exception e){
+				setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore,this.msgDiag, e, "FinalizeIntegrationContextRicezioneContenutiApplicativi");
+				return;
 			}
-			
-			if(this.context!=null  && this.msgContext.getIntegrazione()!=null){
-				if(this.context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA)){
-					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRichiesta(
-							(String)this.context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RICHIESTA));
-				}
-				if(this.context.containsKey(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA)){
-					this.msgContext.getIntegrazione().setTipoProcessamentoMtomXopRisposta(
-							(String)this.context.getObject(CostantiPdD.TIPO_PROCESSAMENTO_MTOM_RISPOSTA));
-				}
-				if(this.context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA)){
-					this.msgContext.getIntegrazione().setTipoMessageSecurityRichiesta(
-							(String)this.context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RICHIESTA));
-				}
-				if(this.context.containsKey(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA)){
-					this.msgContext.getIntegrazione().setTipoMessageSecurityRisposta(
-							(String)this.context.getObject(CostantiPdD.TIPO_SICUREZZA_MESSAGGIO_RISPOSTA));
-				}
-			}
-		}catch(Exception e){
-			setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore,this.msgDiag, e, "FinalizeIntegrationContextRicezioneContenutiApplicativi");
-			return;
+			this.internalObjects.put(CostantiPdD.PROCESS_COMPLETE_SET_TIPO, true);
 		}
 		
 		
@@ -641,31 +645,35 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		
 		
 		// ------------- out-handler -----------------------------
-		OutResponseContext outResponseContext = new OutResponseContext(this.logCore,this.protocolFactory, null);
-		// TipoPorta
-		outResponseContext.setTipoPorta(this.msgContext.getTipoPorta());
-		outResponseContext.setIdModulo(this.msgContext.getIdModulo());
-		// DataUscitaMessaggio
-		outResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
-		// PddContext
-		outResponseContext.setPddContext(this.inRequestContext.getPddContext());
-		// Informazioni protocollo e di integrazione
-		outResponseContext.setProtocollo(this.msgContext.getProtocol());
-		outResponseContext.setIntegrazione(this.msgContext.getIntegrazione());
-		// Header di trasporto della risposta
-		outResponseContext.setResponseHeaders(this.msgContext.getResponseHeaders());
-		// Messaggio
-		OpenSPCoop2Message msgResponse = this.msgContext.getMessageResponse();
-		outResponseContext.setMessaggio(msgResponse);
-		// Invoke handler
-		try{
-			GestoreHandlers.outResponse(outResponseContext, this.msgDiag, this.logCore);
-		}catch(HandlerException e){
-			setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore,this.msgDiag, e, e.getIdentitaHandler());
-			return;
-		}catch(Exception e){
-			setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore,this.msgDiag, e, "InvocazioneOutResponseHandler");
-			return;
+		OutResponseContext outResponseContext = null;
+		if(!this.internalObjects.containsKey(CostantiPdD.PROCESS_COMPLETE_GESTORE_OUT_RESPONSE_HANDLER)) {
+			outResponseContext = new OutResponseContext(this.logCore,this.protocolFactory, null);
+			// TipoPorta
+			outResponseContext.setTipoPorta(this.msgContext.getTipoPorta());
+			outResponseContext.setIdModulo(this.msgContext.getIdModulo());
+			// DataUscitaMessaggio
+			outResponseContext.setDataElaborazioneMessaggio(DateManager.getDate());
+			// PddContext
+			outResponseContext.setPddContext(this.inRequestContext.getPddContext());
+			// Informazioni protocollo e di integrazione
+			outResponseContext.setProtocollo(this.msgContext.getProtocol());
+			outResponseContext.setIntegrazione(this.msgContext.getIntegrazione());
+			// Header di trasporto della risposta
+			outResponseContext.setResponseHeaders(this.msgContext.getResponseHeaders());
+			// Messaggio
+			OpenSPCoop2Message msgResponse = this.msgContext.getMessageResponse();
+			outResponseContext.setMessaggio(msgResponse);
+			// Invoke handler
+			try{
+				GestoreHandlers.outResponse(outResponseContext, this.msgDiag, this.logCore);
+			}catch(HandlerException e){
+				setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore,this.msgDiag, e, e.getIdentitaHandler());
+				return;
+			}catch(Exception e){
+				setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore,this.msgDiag, e, "InvocazioneOutResponseHandler");
+				return;
+			}
+			this.internalObjects.put(CostantiPdD.PROCESS_COMPLETE_GESTORE_OUT_RESPONSE_HANDLER, true);
 		}
 		
 
@@ -674,22 +682,24 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		
 		// ---------------- fine gestione ------------------------------
 		OpenSPCoop2Message msgRisposta = null;
-		try{
-			msgRisposta = outResponseContext.getMessaggio();
-			boolean rispostaPresente = true;
-			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance(); // Puo' non essere inizializzato
-			if(properties!=null){
-				rispostaPresente = ServicesUtils.verificaRispostaRelazioneCodiceTrasporto202(this.protocolFactory,OpenSPCoop2Properties.getInstance(), msgRisposta,true);
+		if(outResponseContext!=null) {
+			try{
+				msgRisposta = outResponseContext.getMessaggio();
+				boolean rispostaPresente = true;
+				OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance(); // Puo' non essere inizializzato
+				if(properties!=null){
+					rispostaPresente = ServicesUtils.verificaRispostaRelazioneCodiceTrasporto202(this.protocolFactory,OpenSPCoop2Properties.getInstance(), msgRisposta,true);
+				}
+				if(rispostaPresente){
+					this.msgContext.setMessageResponse(msgRisposta);
+				}else{
+					this.msgContext.setMessageResponse(null);
+					msgRisposta = null;
+				}
+			}catch(Exception e){
+				setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore,this.msgDiag, e, "FineGestioneRicezioneContenutiApplicativi");
+				return;
 			}
-			if(rispostaPresente){
-				this.msgContext.setMessageResponse(msgRisposta);
-			}else{
-				this.msgContext.setMessageResponse(null);
-				msgRisposta = null;
-			}
-		}catch(Exception e){
-			setSOAPFault(AbstractErrorGenerator.getIntegrationInternalError(this.context), this.logCore,this.msgDiag, e, "FineGestioneRicezioneContenutiApplicativi");
-			return;
 		}
 		
 		
@@ -702,7 +712,8 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		
 		// ------------- Dump risposta in uscita-----------------------------
 		if(!this.internalObjects.containsKey(CostantiPdD.DUMP_RISPOSTA_EFFETTUATO) &&
-				Dump.isSistemaDumpDisponibile()){
+				Dump.isSistemaDumpDisponibile() &&
+				outResponseContext!=null){
 			try{
 				if(this.configurazionePdDReader==null) {
 					this.configurazionePdDReader = ConfigurazionePdDManager.getInstance();

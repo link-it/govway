@@ -34,6 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.jmx.MonitoraggioRisorse;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -189,6 +190,35 @@ public class ConfigLoader {
             org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
         }
 
+    }
+    
+    public static void restartConnectionManager() throws UtilsException, HttpUtilsException {
+    	restartConnectionManagerBIO();
+    	restartConnectionManagerNIO();
+    }
+    public static void restartConnectionManagerBIO() throws UtilsException, HttpUtilsException {
+        
+    	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
+    	logger.debug("---- restartConnectionManagerBIO ----");
+    	
+        String jmx_user = prop.getProperty("jmx_username");
+        String jmx_pass = prop.getProperty("jmx_password"); 
+    	
+        String url = prop.getProperty("govway_base_path") + "/check?methodName="+MonitoraggioRisorse.BIO_HTTP_CLIENT_CONNECTION_MANAGER_RESTART+"&resourceName="+CostantiPdD.JMX_MONITORAGGIO_RISORSE;
+        logger.debug("restartConnectionManagerBIO ...");
+        org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
+    }
+    public static void restartConnectionManagerNIO() throws UtilsException, HttpUtilsException {
+        
+    	org.slf4j.Logger logger = LoggerWrapperFactory.getLogger("com.intuit.karate");
+    	logger.debug("---- restartConnectionManagerNIO ----");
+    	
+        String jmx_user = prop.getProperty("jmx_username");
+        String jmx_pass = prop.getProperty("jmx_password"); 
+    	
+        String url = prop.getProperty("govway_base_path") + "/check?methodName="+MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_RESTART+"&resourceName="+CostantiPdD.JMX_MONITORAGGIO_RISORSE;
+        logger.debug("restartConnectionManagerBIO ...");
+        org.openspcoop2.utils.transport.http.HttpUtilities.check(url, jmx_user, jmx_pass);
     }
     
     public static void resetCache_excludeCachePrimoLivello() throws Exception {

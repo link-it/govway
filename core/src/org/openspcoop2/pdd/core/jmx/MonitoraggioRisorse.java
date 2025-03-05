@@ -120,11 +120,13 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	
 	public static final String BIO_HTTP_CLIENT_CONNECTION_MANAGER_STATUS = "getBIOHttpClientConnectionManagerStatus";
 	public static final String BIO_HTTP_CLIENT_CONNECTION_MANAGER_STATUS_METHOD2 = "listBIOHttpClientConnectionManagerStatus"; // per farlo comparire in jmx-console
+	public static final String BIO_HTTP_CLIENT_CONNECTION_MANAGER_RESTART = "restartBIOHttpClientConnectionManager";
 	public static final String BIO_WORKER_THREAD_POOL_STATUS = "getBIOWorkerThreadPoolStatus";
 	public static final String BIO_WORKER_THREAD_POOL_STATUS_METHOD2 = "listBIOWorkerThreadPoolStatus"; // per farlo comparire in jmx-console
 	
 	public static final String NIO_HTTP_CLIENT_CONNECTION_MANAGER_STATUS = "getNIOHttpClientConnectionManagerStatus";
 	public static final String NIO_HTTP_CLIENT_CONNECTION_MANAGER_STATUS_METHOD2 = "getNIOHttpClientConnectionManagerStatus"; // per farlo comparire in jmx-console
+	public static final String NIO_HTTP_CLIENT_CONNECTION_MANAGER_RESTART = "restartNIOHttpClientConnectionManager";
 	public static final String NIO_HTTP_CLIENT_CONNECTION_MANAGER_IO_THREAD_COUNT = "getNIOHttpClientConnectionManagerIOThreadCount";
 	public static final String NIO_HTTP_CLIENT_CONNECTION_MANAGER_IO_THREAD_COUNT_METHOD2 = "getNIOHttpClientConnectionManagerIOThreadCount"; // per farlo comparire in jmx-console
 	public static final String NIO_WORKER_THREAD_POOL_STATUS = "getNIOWorkerThreadPoolStatus";
@@ -378,6 +380,9 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		else if(actionName.equals(MonitoraggioRisorse.BIO_HTTP_CLIENT_CONNECTION_MANAGER_STATUS) || actionName.equals(MonitoraggioRisorse.BIO_HTTP_CLIENT_CONNECTION_MANAGER_STATUS_METHOD2)){
 			return this.getBIOHttpClientConnectionManagerStatus();
 		}
+		else if(actionName.equals(MonitoraggioRisorse.BIO_HTTP_CLIENT_CONNECTION_MANAGER_RESTART)){
+			return this.restartBIOHttpClientConnectionManager();
+		}
 		else if(actionName.equals(MonitoraggioRisorse.BIO_WORKER_THREAD_POOL_STATUS) || actionName.equals(MonitoraggioRisorse.BIO_WORKER_THREAD_POOL_STATUS_METHOD2)){
 			return this.getBIOWorkerThreadPoolStatus();
 		}
@@ -387,6 +392,9 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		}
 		else if(actionName.equals(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_IO_THREAD_COUNT) || actionName.equals(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_IO_THREAD_COUNT_METHOD2)){
 			return this.getNIOHttpClientConnectionManagerIOThreadCount();
+		}
+		else if(actionName.equals(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_RESTART)){
+			return this.restartNIOHttpClientConnectionManager();
 		}
 		else if(actionName.equals(MonitoraggioRisorse.NIO_WORKER_THREAD_POOL_STATUS) || actionName.equals(MonitoraggioRisorse.NIO_WORKER_THREAD_POOL_STATUS_METHOD2)){
 			return this.getNIOWorkerThreadPoolStatus();
@@ -643,6 +651,13 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 					MBeanOperationInfo.ACTION);
 		
 		// MetaData per l'operazione 
+		MBeanOperationInfo restartBIOHttpClientConnectionManagerOPmethod  
+			= new MBeanOperationInfo(MonitoraggioRisorse.BIO_HTTP_CLIENT_CONNECTION_MANAGER_RESTART,"Effettua il riavvio del connection manager http per le connessioni BIO",
+					null,
+					String.class.getName(),
+					MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
 		MBeanOperationInfo getBIOWorkerThreadPoolStatusOP 
 			= new MBeanOperationInfo(MonitoraggioRisorse.BIO_WORKER_THREAD_POOL_STATUS,"Ritorna lo stato del pool di thread utilizzata per inviare la richiesta in streaming tramite connettore HTTP BIO",
 					null,
@@ -668,6 +683,13 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		// MetaData per l'operazione 
 		MBeanOperationInfo getNIOHttpClientConnectionManagerStatusOPmethod2  
 			= new MBeanOperationInfo(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_STATUS_METHOD2,"Ritorna lo stato del connection manager http per le connessioni NIO",
+					null,
+					String.class.getName(),
+					MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione 
+		MBeanOperationInfo restartNIOHttpClientConnectionManagerOPmethod  
+			= new MBeanOperationInfo(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_RESTART,"Effettua il riavvio del connection manager http per le connessioni NIO",
 					null,
 					String.class.getName(),
 					MBeanOperationInfo.ACTION);
@@ -719,8 +741,10 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 				getTransazioniAttiveOP,getTransazioniAttiveOPmethod2, getDettaglioTransazioneAttiva, getTransazioniIdProtocolloAttiviOP,getTransazioniIdProtocolloAttiviOPmethod2,
 				getActiveConnectionsPD,getActiveConnectionsPDmethod2,getActiveConnectionsPA,getActiveConnectionsPAmethod2,
 				getBIOHttpClientConnectionManagerStatusOP, getBIOHttpClientConnectionManagerStatusOPmethod2,
+				restartBIOHttpClientConnectionManagerOPmethod,
 				getBIOWorkerThreadPoolStatusOP,getBIOWorkerThreadPoolStatusOPmethod2,
 				getNIOHttpClientConnectionManagerStatusOP, getNIOHttpClientConnectionManagerStatusOPmethod2,
+				restartNIOHttpClientConnectionManagerOPmethod,
 				getNIOHttpClientConnectionManagerIOThreadCountOP, getNIOHttpClientConnectionManagerIOThreadCountOPmethod2,
 				getNIOWorkerThreadPoolStatusOP,getNIOWorkerThreadPoolStatusOPmethod2};
 		
@@ -1126,6 +1150,15 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		}
 		return stato;
 	}
+	public String restartBIOHttpClientConnectionManager(){
+		try{
+			org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCOREConnectionManager.restartConnectionManager();
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Exception e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
 	public String getBIOWorkerThreadPoolStatus(){
 		String stato = null;
 		try{
@@ -1163,6 +1196,15 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 		return stato;
+	}
+	public String restartNIOHttpClientConnectionManager(){
+		try{
+			org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCOREConnectionManager.restartConnectionManager();
+			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Exception e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
 	}
 	public String getNIOWorkerThreadPoolStatus(){
 		String stato = null;

@@ -78,44 +78,42 @@ public class Utils {
 	private static final int PORT_CASE3 = OpenSSLThread.PORT_CASE3;
 	private static final int PORT_CASE2_DIFFERENT_NONCE = OpenSSLThread.PORT_CASE2_DIFFERENT_NONCE;
 	
-	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
-	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = 
-			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
-	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY = 
-			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: OCSP response error (http code: 503)";
-	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_KID = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
+	public static final String CERTIFICATE_TEST_CN = "CN=test.esempio.it";
+	public static final String CERTIFICATE_TEST_O = "O=Esempio";
+	public static final String CERTIFICATE_TEST_C = "C=it";
 	
-	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=Client-test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
-	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = 
-			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=Client-test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
-	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY = 
-			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: C=it,O=Esempio,CN=Client-test.esempio.it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: OCSP response error (http code: 503)";
-	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_KID = "OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: CN=Client-test.esempio.it, O=Esempio, C=it] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused (Connection refused)";
+	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_MESSAGE = 
+			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: %] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused";
+	public static final String CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE = 
+			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: %] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: OCSP response error (http code: 503)";
 	
-	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2+"");
-	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE2+"");
-	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_FORWARD_PROXY = CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY.replaceAll("PORT", PORT_CASE2+"");
-	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_KID = CERTIFICATE_REVOKED_CONNECTION_REFUSED_KID.replaceAll("PORT", PORT_CASE2+"");
-	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED = CERTIFICATE_VALID_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2+"");
-	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE2+"");
-	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_FORWARD_PROXY = CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY.replaceAll("PORT", PORT_CASE2+"");
-	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_KID = CERTIFICATE_VALID_CONNECTION_REFUSED_KID.replaceAll("PORT", PORT_CASE2+"");
+	public static final String CERTIFICATE_CLIENT_TEST_CN = "Client-test.esempio.it";
+	public static final String CERTIFICATE_CLIENT_TEST_O = "O=Esempio";
+	public static final String CERTIFICATE_CLIENT_TEST_C = "C=it";
 	
-	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE3+"");
-	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_REVOKED_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE3+"");
-	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_FORWARD_PROXY = CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY.replaceAll("PORT", PORT_CASE3+"");
-	public static final String CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED = CERTIFICATE_VALID_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE3+"");
-	public static final String CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO = CERTIFICATE_VALID_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO.replaceAll("PORT", PORT_CASE3+"");
-	public static final String CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_FORWARD_PROXY = CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY.replaceAll("PORT", PORT_CASE3+"");
+	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_MESSAGE = 
+			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: %] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: Connection refused";
+	public static final String CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE = 
+			"OCSP response error (-3 - OCSP_INVOKE_FAILED): OCSP invoke failed; OCSP [certificate: %] (url: http://127.0.0.1:PORT): Invoke OCSP 'http://127.0.0.1:PORT' failed: OCSP response error (http code: 503)";
 	
-	public static final String CERTIFICATE_REVOKED_CASE2_DIFFERENT_NONCE_CONNECTION_REFUSED = CERTIFICATE_REVOKED_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2_DIFFERENT_NONCE+"");
-	public static final String CERTIFICATE_VALID_CASE2_DIFFERENT_NONCE_CONNECTION_REFUSED = CERTIFICATE_VALID_CONNECTION_REFUSED.replaceAll("PORT", PORT_CASE2_DIFFERENT_NONCE+"");
+	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_MESSAGE = CERTIFICATE_REVOKED_CONNECTION_REFUSED_MESSAGE.replace("PORT", PORT_CASE2+"");
+	public static final String CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE = CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE.replace("PORT", PORT_CASE2+"");
+	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_MESSAGE = CERTIFICATE_VALID_CONNECTION_REFUSED_MESSAGE.replace("PORT", PORT_CASE2+"");
+	public static final String CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE = CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE.replace("PORT", PORT_CASE2+"");
+	
+	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_MESSAGE = CERTIFICATE_REVOKED_CONNECTION_REFUSED_MESSAGE.replace("PORT", PORT_CASE3+"");
+	public static final String CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE = CERTIFICATE_REVOKED_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE.replace("PORT", PORT_CASE3+"");
+	public static final String CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_MESSAGE = CERTIFICATE_VALID_CONNECTION_REFUSED_MESSAGE.replace("PORT", PORT_CASE3+"");
+	public static final String CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE = CERTIFICATE_VALID_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE.replace("PORT", PORT_CASE3+"");
+	
+	public static final String CERTIFICATE_REVOKED_CASE2_DIFFERENT_NONCE_CONNECTION_REFUSED_MESSAGE = CERTIFICATE_REVOKED_CONNECTION_REFUSED_MESSAGE.replace("PORT", PORT_CASE2_DIFFERENT_NONCE+"");
+	public static final String CERTIFICATE_VALID_CASE2_DIFFERENT_NONCE_CONNECTION_REFUSED_MESSAGE = CERTIFICATE_VALID_CONNECTION_REFUSED_MESSAGE.replace("PORT", PORT_CASE2_DIFFERENT_NONCE+"");
 	
 	public static final String CERTIFICATE_VALID_DIFFERENT_NONCE = "OCSP [certificate: CN=Client-test.esempio.it, O=Esempio, C=it] OCSP analysis failed (url: http://127.0.0.1:64902): OCSP Response not valid: nonces do not match";
 	
 	public static final String CERTIFICATE_VALID_KEY_USAGE_NOT_FOUND = "OCSP [certificate: CN=Client-test.esempio.it, O=Esempio, C=it] OCSP analysis failed (url: http://127.0.0.1:64901): Signing certificate not valid for signing OCSP responses: extended key usage 'OCSP_SIGNING' not found";
 	
-	public static final String CERTIFICATE_VALID_UNAUTHORIZED_DIFFERENT_ISSUER_CERTIFICATE = "OCSP [certificate: CN=Client-test.esempio.it, O=Esempio, C=it] OCSP analysis failed (url: http://127.0.0.1:64901): Signing certificate is not authorized to sign OCSP responses: unauthorized different issuer certificate 'C=IT,ST=Italy,L=Pisa,O=Example,CN=ExampleCA'";
+	public static final String CERTIFICATE_VALID_UNAUTHORIZED_DIFFERENT_ISSUER_CERTIFICATE = "OCSP [certificate: %CN=Client-test.esempio.it%] OCSP analysis failed (url: http://127.0.0.1:64901): Signing certificate is not authorized to sign OCSP responses: unauthorized different issuer certificate '%CN=ExampleCA%'";
 	
 	public static final String CERTIFICATE_REVOKED_CESSATION_OF_OPERATION = "Certificate revoked in date '%' (Reason: CESSATION_OF_OPERATION)";
 	
@@ -125,9 +123,15 @@ public class Utils {
 	
 	public static final String CERTIFICATE_CRL_REVOKED_UNSPECIFIED_MSG_KEY_COMPROMISE_SAML = "Certificate revocation after %, reason: keyCompromise";
 	
-	public static final String CERTIFICATE_CRL_EXPIRED = "Certificate expired in date '%': OCSP [certificate: C=IT,ST=Italy,L=Pisa,O=Example,CN=ExampleClientScaduto] certificate expired on %";
+	public static final String CERTIFICATE_CLIENT_SCADUTO_TEST_CN = "CN=ExampleClientScaduto";
+	public static final String CERTIFICATE_CLIENT_SCADUTO_TEST_O = "O=Example";
+	public static final String CERTIFICATE_CLIENT_SCADUTO_TEST_L = "L=Pisa";
+	public static final String CERTIFICATE_CLIENT_SCADUTO_TEST_ST = "ST=Italy";
+	public static final String CERTIFICATE_CLIENT_SCADUTO_TEST_C = "C=IT";
 	
-	public static final String CERTIFICATE_CRL_EXPIRED_WSS_SAML = "Certificate expired in date '%': OCSP [certificate: CN=ExampleClientScaduto, O=Example, L=Pisa, ST=Italy, C=IT] NotAfter: %";
+	public static final String CERTIFICATE_CRL_EXPIRED_MESSAGE = "Certificate expired in date '%': OCSP [certificate: %] certificate expired on %";
+	
+	public static final String CERTIFICATE_CRL_EXPIRED_WSS_SAML_MESSAGE = "Certificate expired in date '%': OCSP [certificate: %] NotAfter: %";
 	
 	public static final String CERTIFICATE_CRL_EXPIRED_WSS_SAML_2 = "Could not validate certificate: NotAfter";
 	
@@ -468,7 +472,7 @@ public class Utils {
 	public static void composedTestSuccess(Logger logCore, TipoServizio tipoServizio, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, 
-			String connectionRefusedMsg) throws Exception {
+			String ... connectionRefusedMsg) throws Exception {
 		_composedTest(logCore, tipoServizio, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				action, 
@@ -478,7 +482,7 @@ public class Utils {
 	public static void composedTestSuccess(Logger logCore, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, 
-			String connectionRefusedMsg) throws Exception {
+			String ... connectionRefusedMsg) throws Exception {
 		_composedTest(logCore, TipoServizio.EROGAZIONE, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				action, 
@@ -488,7 +492,7 @@ public class Utils {
 	public static void composedTestError(Logger logCore, TipoServizio tipoServizio, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, String msgErrore, boolean errorCached,
-			String connectionRefusedMsg) throws Exception {
+			String ... connectionRefusedMsg) throws Exception {
 		_composedTest(logCore, tipoServizio, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				action, 
@@ -498,7 +502,7 @@ public class Utils {
 	public static void composedTestError(Logger logCore, String api, String soggetto,
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, String msgErrore, boolean errorCached,
-			String connectionRefusedMsg) throws Exception {
+			String ... connectionRefusedMsg) throws Exception {
 		_composedTest(logCore, TipoServizio.EROGAZIONE, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				action, 
@@ -509,9 +513,12 @@ public class Utils {
 			String opensslCommand, int waitStartupServer, int waitStopServer,
 			String action, 
 			String msgErrore, boolean errorCached,
-			String connectionRefusedMsg) throws Exception {
+			String ... connectionRefusedMsg) throws Exception {
 		
 		ConfigLoader.resetCache();
+		if(TlsTest.api.equals(api)) {
+			ConfigLoader.restartConnectionManager();
+		}
 		
 		boolean get = true;
 		String contentType = null;
@@ -551,7 +558,9 @@ public class Utils {
 		else {
 			sslThread = OpenSSLThread.newOpenSSLThread_case2(opensslCommand, waitStartupServer);
 		}
-		
+		if(TlsTest.api.equals(api)) {
+			ConfigLoader.restartConnectionManager();
+		}		
 				
 		Date date = DateManager.getDate();
 		try {
@@ -567,6 +576,9 @@ public class Utils {
 		}
 		finally {
 			OpenSSLThread.stopOpenSSLThread(sslThread, waitStopServer);
+		}
+		if(TlsTest.api.equals(api)) {
+			ConfigLoader.restartConnectionManager();
 		}
 		if(ForwardProxyConHttpsExternalResourceTest.api.equals(api)) {
 			long esitoExpectedOk = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
@@ -604,6 +616,9 @@ public class Utils {
 		}
 		
 		ConfigLoader.resetCache_excludeCachePrimoLivello();
+		if(TlsTest.api.equals(api)) {
+			ConfigLoader.restartConnectionManager();
+		}
 		
 		// Deve continuare a funzionare per via della cache di secondo livello 'DatiRichieste'
 		// Fa eccezione l'autenticazione https il cui risultato non viene salvato nella cache di secondo livello
@@ -639,6 +654,9 @@ public class Utils {
 		ConfigLoader.resetCachePrimoLivello();
 		if(TokenPolicyNegoziazioneTest.api.equals(api) || TokenPolicyValidazioneTest.apiTLS.equals(api)) {
 			ConfigLoader.resetCache(false, "GestioneToken");
+		}
+		if(TlsTest.api.equals(api)) {
+			ConfigLoader.restartConnectionManager();
 		}
 		
 		// attendo errore connection refused

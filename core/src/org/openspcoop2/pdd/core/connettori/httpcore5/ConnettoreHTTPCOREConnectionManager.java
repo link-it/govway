@@ -223,7 +223,25 @@ public class ConnettoreHTTPCOREConnectionManager {
 		stopConnectionManager(listT);
 					
 		// gestione eccezione
-		if(!listT.isEmpty()) {
+		throwExceptions(listT);
+		
+	}
+	public static synchronized void restartConnectionManager() throws ConnettoreException {
+		
+		List<Throwable> listT = new ArrayList<>();
+		
+		// close client
+		stopClients(listT);
+		
+		// Shut down connManager
+		stopConnectionManager(listT);
+		
+		// gestione eccezione
+		throwExceptions(listT);
+		
+	}
+	private static void throwExceptions(List<Throwable> listT) throws ConnettoreException {
+		if(listT!=null && !listT.isEmpty()) {
 			if(listT.size()==1) {
 				throw new ConnettoreException(listT.get(0).getMessage(),listT.get(0));		
 			}
@@ -232,8 +250,8 @@ public class ConnettoreHTTPCOREConnectionManager {
 				throw new ConnettoreException(multiExc.getMessage(),multiExc);		
 			}
 		}
-		
 	}
+	
 	private static void stopClients(List<Throwable> listT) throws ConnettoreException {
 		if(mapConnection!=null && !mapConnection.isEmpty()) {
 			Iterator<String> it = mapConnection.keySet().iterator();
@@ -246,16 +264,18 @@ public class ConnettoreHTTPCOREConnectionManager {
 					listT.add(new ConnettoreException("Connection ["+key+"] close error: "+t.getMessage(),t));
 				}
 			}
+			mapConnection.clear();
 		}
 	}
 	private static void stopConnectionManager(List<Throwable> listT) {
-		if(ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager!=null && ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.isEmpty()) {
+		if(ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager!=null && !ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.isEmpty()) {
 			for (String key : ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.keySet()) {
 				if(key!=null) {
 					PoolingHttpClientConnectionManager cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(key);
 					stopConnectionManager(cm, listT);
 				}
 			}
+			ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.clear();
 		}
 	}
 	private static void stopConnectionManager(PoolingHttpClientConnectionManager cm, List<Throwable> listT) {

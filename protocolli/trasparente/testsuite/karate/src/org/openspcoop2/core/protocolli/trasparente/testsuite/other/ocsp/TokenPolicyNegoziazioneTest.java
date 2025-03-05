@@ -50,7 +50,7 @@ public class TokenPolicyNegoziazioneTest extends ConfigLoader {
 		Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2", 
-				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED);
+				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 
 		
@@ -60,7 +60,7 @@ public class TokenPolicyNegoziazioneTest extends ConfigLoader {
 		Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3", 
-				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED);
+				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	
 }

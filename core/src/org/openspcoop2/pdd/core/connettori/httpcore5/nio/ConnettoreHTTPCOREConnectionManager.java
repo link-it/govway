@@ -227,16 +227,31 @@ public class ConnettoreHTTPCOREConnectionManager {
 		stopConnectionManager(listT);
 		
 		// gestione eccezione
-		if(!listT.isEmpty()) {
-			if(listT.size()==1) {
-				throw new ConnettoreException(listT.get(0).getMessage(),listT.get(0));		
-			}
-			else {
-				UtilsMultiException multiExc = new UtilsMultiException(listT.toArray(new Throwable[1]));
-				throw new ConnettoreException(multiExc.getMessage(),multiExc);		
-			}
-		}
+		throwExceptions(listT);
 		
+	}
+	public static synchronized void restartConnectionManager() throws ConnettoreException {
+		
+		List<Throwable> listT = new ArrayList<>();
+		
+		// close client
+		stopClients(listT);
+		
+		// Shut down connManager
+		stopConnectionManager(listT);
+		
+		// gestione eccezione
+		throwExceptions(listT);
+		
+	}
+	private static void throwExceptions(List<Throwable> listT) throws ConnettoreException {
+		if(listT.size()==1) {
+			throw new ConnettoreException(listT.get(0).getMessage(),listT.get(0));		
+		}
+		else {
+			UtilsMultiException multiExc = new UtilsMultiException(listT.toArray(new Throwable[1]));
+			throw new ConnettoreException(multiExc.getMessage(),multiExc);		
+		}
 	}
 	private static void stopClients(List<Throwable> listT) throws ConnettoreException {
 		if(mapConnection!=null && !mapConnection.isEmpty()) {
@@ -250,16 +265,18 @@ public class ConnettoreHTTPCOREConnectionManager {
 					listT.add(new ConnettoreException("NIO Connection ["+key+"] close error: "+t.getMessage(),t));
 				}
 			}
+			mapConnection.clear();
 		}
 	}
 	private static void stopConnectionManager(List<Throwable> listT) {
-		if(ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager!=null && ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.isEmpty()) {
+		if(ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager!=null && !ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.isEmpty()) {
 			for (String key : ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.keySet()) {
 				if(key!=null) {
 					PoolingAsyncClientConnectionManager cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(key);
 					stopConnectionManager(cm, listT);
 				}
 			}
+			ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.clear();
 		}
 	}
 	private static void stopConnectionManager(PoolingAsyncClientConnectionManager cm, List<Throwable> listT) {

@@ -148,6 +148,9 @@ public class CostantiPdD {
     public static final String DUMP_RICHIESTA_EFFETTUATO = "DumpRichiestaEffettuato";
     public static final String DUMP_RISPOSTA_EFFETTUATO = "DumpRispostaEffettuato";
     
+    public static final String PROCESS_COMPLETE_SET_TIPO = "PROCESS_COMPLETE_SET_TIPO";
+    public static final String PROCESS_COMPLETE_GESTORE_OUT_RESPONSE_HANDLER = "PROCESS_COMPLETE_GESTORE_OUT_RESPONSE_HANDLER";
+    
     /** Configurazione soglia per salvataggio in ram */
     public static final int DUMP_BINARIO_THRESHOLD = 1048576; // 1MB (1024*1024)
     

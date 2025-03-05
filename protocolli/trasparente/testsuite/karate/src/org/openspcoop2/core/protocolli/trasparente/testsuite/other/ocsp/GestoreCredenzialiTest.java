@@ -52,7 +52,7 @@ public class GestoreCredenzialiTest extends ConfigLoader {
 		Utils.composedTestSuccess(logCore, api, soggetto_case2,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2", 
-				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	
 	
@@ -62,7 +62,7 @@ public class GestoreCredenzialiTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	
 	
@@ -72,7 +72,7 @@ public class GestoreCredenzialiTest extends ConfigLoader {
 		Utils.composedTestSuccess(logCore, api, soggetto_case3,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3", 
-				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	
 	
@@ -82,7 +82,7 @@ public class GestoreCredenzialiTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	
 	
@@ -101,7 +101,8 @@ public class GestoreCredenzialiTest extends ConfigLoader {
 	@Test
 	public void crl_certificateExpired() throws Exception {
 		Utils.get(logCore, api, soggetto_caseCRL, "case3-revoked", 
-				Utils.CERTIFICATE_CRL_EXPIRED);
+				Utils.CERTIFICATE_CRL_EXPIRED_MESSAGE, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_CN, 
+				Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_O, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_C, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_L, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_ST);
 	}
 	
 	
@@ -122,7 +123,8 @@ public class GestoreCredenzialiTest extends ConfigLoader {
 	@Test
 	public void crl_ldap_certificateExpired() throws Exception {
 		Utils.getLdapTest(logCore, api, soggetto_caseCRLldap, "case3-revoked", 
-				Utils.CERTIFICATE_CRL_EXPIRED);
+				Utils.CERTIFICATE_CRL_EXPIRED_MESSAGE, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_CN, 
+				Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_O, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_C, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_L, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_ST);
 	}
 	
 }

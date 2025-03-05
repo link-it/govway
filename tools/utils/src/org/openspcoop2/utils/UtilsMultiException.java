@@ -127,9 +127,12 @@ public class UtilsMultiException extends Exception {
 			for (int i = (this.exceptions.size()-1); i >= 0; i--) {
 				StackTraceElement sElement = new StackTraceElement(UtilsMultiException.class.getName(), "Position_"+(i+1), "MultiException_"+(i+1), (i+1));
 				listStackTraceElement.add(sElement);
-				StackTraceElement[] tmp = this.exceptions.get(i).getStackTrace();
-				if(tmp!=null && tmp.length>0) {
-					listStackTraceElement.addAll(Arrays.asList(tmp));
+				Throwable t = this.exceptions.get(i);
+				if(t!=null) {
+					StackTraceElement[] tmp = t.getStackTrace();
+					if(tmp!=null && tmp.length>0) {
+						listStackTraceElement.addAll(Arrays.asList(tmp));
+					}
 				}
 			}
 			return listStackTraceElement.toArray(new StackTraceElement[1]);

@@ -25,6 +25,8 @@ import java.io.File;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 /**
@@ -43,24 +45,31 @@ public class AbstractTracciamentoHandler {
 	public static final String RES_FILE = "GovWay-TestSuite-Credenziale-ResponseFile";
 	public static final String POST_RES_FILE = "GovWay-TestSuite-Credenziale-PostResponseFile";
 	
-	public void invoke(File file) throws HandlerException {
+	public void invoke(File file, String idTransazione, String fase) throws HandlerException {
 		
 		try {
 			
+			StringBuilder sb = new StringBuilder("====================================== ("+fase+") "+idTransazione+" =================================\n\n");
+			
+			String contenuto = file.exists() ? FileSystemUtilities.readFile(file) : null;
+			sb.append("<"+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+"> Gestione ["+file.getName()+"]; exists["+file.exists()+"] contenuto["+contenuto+"]\n\n");	
+			Utilities.sleep(50);
 			FileSystemUtilities.writeFile(file, OK.getBytes());
+			sb.append("<"+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+"> WRITE OK in ["+file.getName()+"]; contenuto["+FileSystemUtilities.readFile(file)+"]\n\n");			
 			
 			int limit = 300; // 15 secondi
 			int offset = 0;
 			while(offset<limit) {
 				Utilities.sleep(50);
 				String content = null;
-				if(file.exists()) {
+				boolean fExists = file.exists();
+				if(fExists) {
 					content = FileSystemUtilities.readFile(file);
 				}
-				/**System.out.println("LETTO ["+file.getName()+"] (offset:"+offset+"): '"+content+"'");*/
+				sb.append("<"+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+"> LETTO ["+file.getName()+"] EXISTS["+fExists+"] (offset:"+offset+"): '"+content+"'\n\n");
 				if(file.exists() && content!=null && StringUtils.isNotEmpty(content) && !OK.equals(content)) {
 					if(FINE.equals(content)) {
-						/**System.out.println("LETTO ["+file.getName()+"] FINE");*/
+						sb.append("<"+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+"> LETTO ["+file.getName()+"] FINE");
 						return;
 					}
 					else {
@@ -68,17 +77,17 @@ public class AbstractTracciamentoHandler {
 						try {
 							sleep = Integer.valueOf(content);
 						}catch(Exception e) {
-							throw new Exception("File '"+file.getAbsolutePath()+"' contiente un contenuto non atteso ("+content+"): "+e.getMessage());
+							throw new HandlerException("File '"+file.getAbsolutePath()+"' contiente un contenuto non atteso ("+content+"): "+e.getMessage());
 						}
 						Utilities.sleep(sleep);
-						/**System.out.println("LETTO ["+file.getName()+"] FINE DOPO SLEEP "+sleep);*/
+						sb.append("<"+DateUtils.getSimpleDateFormatMs().format(DateManager.getDate())+"> FILE ["+file.getName()+"] FINE DOPO SLEEP "+sleep+"\n\n");
 						return;
 					}
 				}
 				offset++;
 			}
 			if(offset==limit) {
-				throw new Exception("Limit raggiunto per file '"+file.getAbsolutePath()+"'");
+				throw new HandlerException("Limit raggiunto per file '"+file.getAbsolutePath()+"'\n"+sb.toString());
 			}
 			
 		}catch(Exception e) {

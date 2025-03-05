@@ -180,7 +180,7 @@ public class TokenProvider implements IProvider {
 		String url = pDefault.getProperty(Costanti.POLICY_DISCOVERY_URL);
 		InputValidationUtils.validateTextAreaInput(url, "Discovery Document - URL");
 		try{
-			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
+			org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url, true);
 		}catch(Exception e){
 			throw new ProviderValidationException("La URL fornita per il servizio 'Discovery Document' non è valida: "+e.getMessage());
 		}

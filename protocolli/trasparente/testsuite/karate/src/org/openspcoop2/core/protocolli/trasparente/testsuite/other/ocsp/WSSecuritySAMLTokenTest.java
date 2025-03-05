@@ -56,21 +56,21 @@ public class WSSecuritySAMLTokenTest extends ConfigLoader {
 		Utils.composedTestSuccess(logCore, TipoServizio.FRUIZIONE, api_bearer, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2", 
-				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED);
+				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	@Test
 	public void saml_sender_vouches_case2_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, TipoServizio.FRUIZIONE, api_sender_vouches, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2", 
-				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	@Test
 	public void saml_holder_of_key_case2_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, TipoServizio.FRUIZIONE, api_holder_of_key, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2", 
-				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	
 	@Test
@@ -79,7 +79,7 @@ public class WSSecuritySAMLTokenTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED);
+				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	@Test
 	public void saml_sender_vouches_case2_certificateRevoked() throws Exception {
@@ -87,7 +87,7 @@ public class WSSecuritySAMLTokenTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	@Test
 	public void saml_holder_of_key_case2_certificateRevoked() throws Exception {
@@ -95,7 +95,7 @@ public class WSSecuritySAMLTokenTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	
 	
@@ -105,21 +105,21 @@ public class WSSecuritySAMLTokenTest extends ConfigLoader {
 		Utils.composedTestSuccess(logCore, TipoServizio.FRUIZIONE, api_bearer, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3", 
-				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED);
+				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	@Test
 	public void saml_sender_vouches_case3_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, TipoServizio.FRUIZIONE, api_sender_vouches, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3", 
-				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	@Test
 	public void saml_holder_of_key_case3_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, TipoServizio.FRUIZIONE, api_holder_of_key, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3", 
-				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	
 	@Test
@@ -128,7 +128,7 @@ public class WSSecuritySAMLTokenTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED);
+				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	@Test
 	public void saml_sender_vouches_case3_certificateRevoked() throws Exception {
@@ -136,7 +136,7 @@ public class WSSecuritySAMLTokenTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	@Test
 	public void saml_holder_of_key_case3_certificateRevoked() throws Exception {
@@ -144,7 +144,7 @@ public class WSSecuritySAMLTokenTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	
 
@@ -189,7 +189,8 @@ public class WSSecuritySAMLTokenTest extends ConfigLoader {
 	public void saml_bearer_ocsp_crl_certificateExpired() throws Exception {
 		Utils.test(TipoServizio.FRUIZIONE, HttpRequestMethod.POST, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(), 
 				logCore, api_bearer, soggetto, "ocsp-crl-expired", 
-				Utils.CERTIFICATE_CRL_EXPIRED_WSS_SAML);
+				Utils.CERTIFICATE_CRL_EXPIRED_WSS_SAML_MESSAGE, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_CN, 
+				Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_O, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_C, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_L, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_ST);
 	}
 	@Test
 	public void saml_sender_vouches_ocsp_crl_certificateExpired() throws Exception {
@@ -246,7 +247,8 @@ public class WSSecuritySAMLTokenTest extends ConfigLoader {
 	public void saml_bearer_ocsp_crl_ldap_certificateExpired() throws Exception {
 		Utils.ldapTest(TipoServizio.FRUIZIONE, HttpRequestMethod.POST, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(), 
 				logCore, api_bearer, soggetto, "ocsp-crl-ldap-expired", 
-				Utils.CERTIFICATE_CRL_EXPIRED_WSS_SAML);
+				Utils.CERTIFICATE_CRL_EXPIRED_WSS_SAML_MESSAGE, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_CN, 
+				Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_O, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_C, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_L, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_ST);
 	}
 	@Test
 	public void saml_sender_vouches_ocsp_crl_ldap_certificateExpired() throws Exception {

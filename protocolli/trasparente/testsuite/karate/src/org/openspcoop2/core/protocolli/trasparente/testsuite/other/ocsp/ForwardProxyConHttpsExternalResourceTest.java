@@ -51,7 +51,7 @@ public class ForwardProxyConHttpsExternalResourceTest extends ConfigLoader {
 		Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2", 
-				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_FORWARD_PROXY);
+				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 
 	
@@ -61,7 +61,7 @@ public class ForwardProxyConHttpsExternalResourceTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_FORWARD_PROXY);
+				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	
 	
@@ -72,7 +72,7 @@ public class ForwardProxyConHttpsExternalResourceTest extends ConfigLoader {
 		Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, api, soggetto,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3", 
-				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_FORWARD_PROXY);
+				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	
 	
@@ -82,7 +82,7 @@ public class ForwardProxyConHttpsExternalResourceTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_FORWARD_PROXY);
+				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_FORWARD_PROXY_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	
 }

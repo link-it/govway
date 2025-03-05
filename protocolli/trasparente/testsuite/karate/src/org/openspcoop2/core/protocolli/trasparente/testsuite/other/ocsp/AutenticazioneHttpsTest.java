@@ -52,14 +52,14 @@ public class AutenticazioneHttpsTest extends ConfigLoader {
 		Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, api, soggetto_ocsp,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2", 
-				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	@Test
 	public void fruizione_case2_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, TipoServizio.FRUIZIONE, api, soggetto_ocsp,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2", 
-				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_VALID_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	
 	
@@ -69,7 +69,7 @@ public class AutenticazioneHttpsTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	@Test
 	public void fruizione_case2_certificateRevoked() throws Exception {
@@ -77,7 +77,7 @@ public class AutenticazioneHttpsTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case2-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_REVOKED_CASE2_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	
 	
@@ -87,14 +87,14 @@ public class AutenticazioneHttpsTest extends ConfigLoader {
 		Utils.composedTestSuccess(logCore, TipoServizio.EROGAZIONE, api, soggetto_ocsp,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3", 
-				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	@Test
 	public void fruizione_case3_certificateValid() throws Exception {
 		Utils.composedTestSuccess(logCore, TipoServizio.FRUIZIONE, api, soggetto_ocsp,
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3", 
-				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_VALID_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_CLIENT_TEST_CN, Utils.CERTIFICATE_CLIENT_TEST_O, Utils.CERTIFICATE_CLIENT_TEST_C);
 	}
 	
 	
@@ -104,7 +104,7 @@ public class AutenticazioneHttpsTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	@Test
 	public void fruizione_case3_certificateRevoked() throws Exception {
@@ -112,7 +112,7 @@ public class AutenticazioneHttpsTest extends ConfigLoader {
 				opensslCommand, waitStartupServer, waitStopServer,
 				"case3-revoked", 
 				Utils.CERTIFICATE_REVOKED_CESSATION_OF_OPERATION, Utils.ERROR_CACHED,
-				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_ORDINE_DIFFERENTE_CERTIFICATO);
+				Utils.CERTIFICATE_REVOKED_CASE3_CONNECTION_REFUSED_MESSAGE, Utils.CERTIFICATE_TEST_CN, Utils.CERTIFICATE_TEST_O, Utils.CERTIFICATE_TEST_C);
 	}
 	
 
@@ -141,12 +141,14 @@ public class AutenticazioneHttpsTest extends ConfigLoader {
 	@Test
 	public void erogazione_crl_certificateExpired() throws Exception {
 		Utils.get(logCore,TipoServizio.EROGAZIONE, api, soggetto_xca, "case3-revoked", 
-				Utils.CERTIFICATE_CRL_EXPIRED);
+				Utils.CERTIFICATE_CRL_EXPIRED_MESSAGE, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_CN, 
+				Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_O, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_C, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_L, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_ST);
 	}
 	@Test
 	public void fruizione_crl_certificateExpired() throws Exception {
 		Utils.get(logCore,TipoServizio.FRUIZIONE, api, soggetto_xca, "case3-revoked", 
-				Utils.CERTIFICATE_CRL_EXPIRED);
+				Utils.CERTIFICATE_CRL_EXPIRED_MESSAGE, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_CN, 
+				Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_O, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_C, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_L, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_ST);
 	}
 	
 	
@@ -177,12 +179,14 @@ public class AutenticazioneHttpsTest extends ConfigLoader {
 	@Test
 	public void erogazione_crl_ldap_certificateExpired() throws Exception {
 		Utils.getLdapTest(logCore,TipoServizio.EROGAZIONE, apiLDAP, soggetto_xca, "case3-revoked", 
-				Utils.CERTIFICATE_CRL_EXPIRED);
+				Utils.CERTIFICATE_CRL_EXPIRED_MESSAGE, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_CN, 
+				Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_O, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_C, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_L, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_ST);
 	}
 	@Test
 	public void fruizione_crl_ldap_certificateExpired() throws Exception {
 		Utils.getLdapTest(logCore,TipoServizio.FRUIZIONE, apiLDAP, soggetto_xca, "case3-revoked", 
-				Utils.CERTIFICATE_CRL_EXPIRED);
+				Utils.CERTIFICATE_CRL_EXPIRED_MESSAGE, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_CN, 
+				Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_O, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_C, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_L, Utils.CERTIFICATE_CLIENT_SCADUTO_TEST_ST);
 	}
 	
 	
