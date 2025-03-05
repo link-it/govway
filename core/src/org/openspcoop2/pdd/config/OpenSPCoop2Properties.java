@@ -1614,6 +1614,7 @@ public class OpenSPCoop2Properties {
 			}
 			
 			isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary();
+			getHeaderForceHttpLibrary();
 			
 			// Connettore https
 			this.getConnettoreHttpsSecureRandomAlgo();
@@ -15594,6 +15595,29 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary;
+	}
+	
+	private String forceHttpLibraryViaHeader = null;
+	public String getHeaderForceHttpLibrary() {	
+		if(this.forceHttpLibraryViaHeader==null){
+			String pName = "org.openspcoop2.pdd.connettori.forceLibraryViaHeader";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.forceHttpLibraryViaHeader = name.trim();
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.forceHttpLibraryViaHeader = null;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.forceHttpLibraryViaHeader = null;
+			}  
+		}
+
+		return this.forceHttpLibraryViaHeader;
 	}
 	
 
