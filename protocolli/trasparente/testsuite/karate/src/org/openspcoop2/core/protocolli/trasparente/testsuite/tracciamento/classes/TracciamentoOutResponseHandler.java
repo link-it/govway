@@ -57,7 +57,11 @@ public class TracciamentoOutResponseHandler extends AbstractTracciamentoHandler 
 			if(hdr==null) {
 				throw new HandlerException("Header '"+AbstractTracciamentoHandler.RES_FILE+"' non presente");
 			}
-			this.invoke(new File(hdr));
+			String idTransazione = null;
+			if(context.getPddContext()!=null && context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+				idTransazione = (String) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			}
+			this.invoke(new File(hdr), idTransazione, "outResponse");
 		}catch(Exception e) {
 			throw new HandlerException(e.getMessage(),e);
 		}
