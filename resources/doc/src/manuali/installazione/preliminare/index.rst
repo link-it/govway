@@ -30,8 +30,7 @@ mancanti.
       GovWay supporta anche altri application server j2ee diversi da
       quelli citati, partendo dalla distribuzione sorgente.
 
-#. Un *RDBMS* accessibile via JDBC. La binary release supporta le
-   seguenti piattaforme:
+#. Un *RDBMS* accessibile via JDBC. La release binaria è compatibile con i seguenti database:
 
    -  *PostgreSQL 8.x o superiore*
 
@@ -42,6 +41,8 @@ mancanti.
    -  *HyperSQL 2.0 o superiore*
 
    -  *MS SQL Server 2019 o superiore*
+   
+   Il database devoe essere configurato con un character encoding UTF-8 e una collation case-sensitive per garantire il corretto funzionamento dell'applicazione.
 
 La distribuzione GovWay è stata estesamente testata prima del rilascio
 sulla seguente piattaforma di riferimento:
