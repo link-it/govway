@@ -18,15 +18,15 @@ And header Authorization = call basic ({ username: '<username>', password: '<pas
 And header govway-testsuite-role = 'undefined'
 When method post
 Then status 401
-And match response == ''
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/<response>')
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 
 Examples:
-| tipo-test | username | password | azione |
-| certificato self signed | ApplicativoBlockingIDA01ExampleClientNonRilasciatoCA | ApplicativoBlockingIDA01ExampleClientNonRilasciatoCA | puntuale |
-| certificato self signed | ApplicativoBlockingIDA01ExampleClientNonRilasciatoCA | ApplicativoBlockingIDA01ExampleClientNonRilasciatoCA | validazioneSoloTramiteCA |
-| certificato rilasciato da CA, non presente in truststore certificati | ApplicativoBlockingIDA01ExampleClientNonInseritoTrustStoreCertificati | ApplicativoBlockingIDA01ExampleClientNonInseritoTrustStoreCertificati | puntuale |
+| tipo-test | username | password | azione | response |
+| certificato self signed | ApplicativoBlockingIDA01ExampleClientNonRilasciatoCA | ApplicativoBlockingIDA01ExampleClientNonRilasciatoCA | puntuale | authorization-deny-401.json |
+| certificato self signed | ApplicativoBlockingIDA01ExampleClientNonRilasciatoCA | ApplicativoBlockingIDA01ExampleClientNonRilasciatoCA | validazioneSoloTramiteCA | authorization-deny-401.json | authorization-deny-401.json |
+| certificato rilasciato da CA, non presente in truststore certificati | ApplicativoBlockingIDA01ExampleClientNonInseritoTrustStoreCertificati | ApplicativoBlockingIDA01ExampleClientNonInseritoTrustStoreCertificati | puntuale | authorization-deny-401.json |
 
 @autorizzazioneSicurezzaTokenCertificatiValidiUseX5C
 Scenario Outline: Test autorizzazione token dove la validazione del token va a buon fine poichè il certificato riferito tramite ##useX5C## è valido (tipo: <tipo-test>)

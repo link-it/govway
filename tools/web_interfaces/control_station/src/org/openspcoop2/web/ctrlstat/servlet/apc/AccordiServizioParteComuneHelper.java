@@ -8611,11 +8611,12 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		// i valori accettati sono solo i seguenti
 		return ApiCostanti.VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI.equals(parameterValueFiltrato) 
 				|| ApiCostanti.VALORE_PARAMETRO_APC_API_SOGGETTO_REFERENTE.equals(parameterValueFiltrato) 
+				|| ApiCostanti.VALORE_PARAMETRO_APC_API_PROFILO.equals(parameterValueFiltrato)
 				|| ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE.equals(parameterValueFiltrato)
-				|| ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE.equals(parameterValueFiltrato)
-				|| ApiCostanti.VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE.equals(parameterValueFiltrato)
 				|| ApiCostanti.VALORE_PARAMETRO_APC_API_GRUPPI.equals(parameterValueFiltrato)
 				|| ApiCostanti.VALORE_PARAMETRO_APC_API_CANALE.equals(parameterValueFiltrato)
+				|| ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_SPECIFICA_INTERFACCE.equals(parameterValueFiltrato)
+				|| ApiCostanti.VALORE_PARAMETRO_APC_API_OPZIONI_AVANZATE.equals(parameterValueFiltrato)
 				|| ApiCostanti.VALORE_PARAMETRO_APC_API_GESTIONE_PARZIALE_WSDL_CHANGE.equals(parameterValueFiltrato)
 				;
 	}

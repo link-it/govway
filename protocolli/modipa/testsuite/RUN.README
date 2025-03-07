@@ -78,7 +78,9 @@ Prerequisiti:
 
 + Nel file /etc/govway/govway_local.properties abilitare le seguenti proprietà:
 
-	# Praticamente faccio riverificare sempre la connessione
+	# Faccio riverificare sempre la connessione
+	# Server a risolvere il problema 'Errore avvenuto durante la consegna HTTP: The target server failed to respond' dovuto al fatto che apache karate è una versione non recente.
+	# Da rivedere se aggiornando karate non ci sia più questa esigenza
 	org.openspcoop2.pdd.connettori.syncClient.validateAfterInactivity.localhost\:8090=1
 	org.openspcoop2.pdd.connettori.syncClient.validateAfterInactivity.localhost\:8091=1
 
