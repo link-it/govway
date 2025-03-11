@@ -19,7 +19,7 @@
 		
 		<axis.version>1.4</axis.version>
 		<axis.gov4j.version>1.4-gov4j-1</axis.gov4j.version>
-		<axis.gov4j-jakarta.version>1.4-gov4j-jk1</axis.gov4j-jakarta.version>
+		<axis.gov4j-jakarta.version>1.4-gov4j-jk2</axis.gov4j-jakarta.version>
 		<mailapi.version>1.5.6</mailapi.version>
 		<neethi.version>2.0.4</neethi.version>
 		<opensaml.version>1.1</opensaml.version>

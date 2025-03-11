@@ -1742,7 +1742,8 @@ public class LocalForward extends GestioneViaJmx {
 
 			String motivoErroreProcessamento = dbComponentErogatore.getVerificatoreMessaggi().getMotivoErroreProcessamentoMessaggio(id, "INBOX");
 			//System.out.println("A:"+motivoErroreProcessamento);
-			Assert.assertTrue(motivoErroreProcessamento!=null && motivoErroreProcessamento.contains("Errore avvenuto durante la consegna HTTP: Connection refused"));
+			Assert.assertTrue(motivoErroreProcessamento!=null && motivoErroreProcessamento.contains("Errore avvenuto durante la consegna HTTP")
+					&& motivoErroreProcessamento.contains(" Connection refused"));
 
 			dbComponentErogatore.getVerificatoreMessaggi().deleteMessage(id, "INBOX", Utilities.testSuiteProperties.isUseTransazioni());
 

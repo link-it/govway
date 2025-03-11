@@ -5,8 +5,12 @@
 	<subsystem xmlns="urn:jboss:domain:messaging-activemq:1.X">
                 <server name="default">
                         ...
-                        <address-setting name="jms.queue.testOpenSPCoop2Queue" redelivery-delay="120000" max-delivery-attempts="-1"/>
-                        <address-setting name="jms.topic.testOpenSPCoop2Topic" redelivery-delay="120000" max-delivery-attempts="-1"/>
+                        <!-- 
+				redelivery-multiplier="1.0" evita che Artemis riduca il delay.
+				max-redelivery-delay="xxx" assicura che il ritardo massimo non venga accorciato
+			-->
+                        <address-setting name="jms.queue.testOpenSPCoop2Queue" redelivery-delay="120000" max-redelivery-delay="120000" max-delivery-attempts="-1" redelivery-multiplier="1.0"/>
+                        <address-setting name="jms.topic.testOpenSPCoop2Topic" redelivery-delay="120000" max-redelivery-delay="120000" max-delivery-attempts="-1" redelivery-multiplier="1.0"/>
                         ...
                         <jms-queue name="testOpenSPCoop2Queue" entries="java:jboss/exported/queue/testOpenSPCoop2Queue"/>
                         <jms-topic name="testOpenSPCoop2Topic" entries="java:jboss/exported/topic/testOpenSPCoop2Topic"/>

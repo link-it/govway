@@ -2527,14 +2527,42 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			
 			
 			
+			/* ------------------- ReadMessage -----------------------*/
+			
+			try {
+				// Invoco il metodo getMessage del ConnettoreMsg per provocare l'eventuale sbustamento delle informazioni di protocollo
+				this.connettoreMsg.getRequestMessage(this.requestInfo, this.pddContext);
+			}
+			catch(Exception e){
+				this.msgDiag.logErroreGenerico(e, "getRequestMessage");
+
+				if(this.existsModuloInAttesaRispostaApplicativa) {
+					
+					this.sendErroreProcessamento(this.localForward, this.localForwardEngine, this.ejbUtils, 
+							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_509_READ_REQUEST_MSG),
+							this.idModuloInAttesa, this.bustaRichiesta, this.idCorrelazioneApplicativa, this.idCorrelazioneApplicativaRisposta, this.servizioApplicativoFruitore, e,
+							(this.consegnaMessagePrimaTrasformazione!=null ? this.consegnaMessagePrimaTrasformazione.getParseException() : null),
+							this.pddContext);
+					
+					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "msgRequest.getMessage()");
+					esito.setEsitoInvocazione(true);
+				}else{
+					this.ejbUtils.rollbackMessage("Lettura del messaggio da spedire non riuscita.",this.servizioApplicativo, esito);
+					esito.setStatoInvocazioneErroreNonGestito(e);
+					esito.setEsitoInvocazione(false);
+				}
+				this.openspcoopstate.releaseResource();
+
+				return esito;
+			}
 			
 			
 			
+		
+		
 			/* ------------------- Dump -----------------------*/
-				
-			// Invoco il metodo getMessage del ConnettoreMsg per provocare l'eventuale sbustamento delle informazioni di protocollo
-			this.connettoreMsg.getRequestMessage(this.requestInfo, this.pddContext);
-			
+							
 			String idMessaggioDumpRichiesta = this.idMessaggioConsegna;
 			if(this.idMessaggioPreBehaviour!=null){
 				idMessaggioDumpRichiesta = this.idMessaggioPreBehaviour;

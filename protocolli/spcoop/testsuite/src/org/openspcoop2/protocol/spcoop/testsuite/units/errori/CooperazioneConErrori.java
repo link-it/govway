@@ -675,7 +675,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		err.setMsgErrore("Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="ConnettoreErrato")
@@ -1352,7 +1352,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		err.setMsgErrore("Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="ConnettoreErratoServizioApplicativo")
@@ -2978,7 +2978,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		err.setMsgErrore("Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 
 	}
@@ -3189,7 +3189,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		err.setMsgErrore("Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="rispedizioniAsincronoSimmetrico")
@@ -3353,7 +3353,7 @@ public class CooperazioneConErrori extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		err.setMsgErrore("Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="rispedizioniAsincronoAsimmetrico")

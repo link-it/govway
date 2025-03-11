@@ -73,7 +73,8 @@ public class Utilities {
 	public static Properties initProperties(String as, String username, String password) {
 		Properties properties = new Properties();
 		if(as.startsWith(WILDFLY)){
-			properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
+			/**properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");*/
+			properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.wildfly.naming.client.WildFlyInitialContextFactory"); // da wildfly 27
 			properties.put(Context.PROVIDER_URL, "http-remoting://127.0.0.1:8080");
 		}
 		else{

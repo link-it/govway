@@ -89,7 +89,7 @@
 					<arg value="${stubPackageOverriding}" />
 					<arg value="${stubBuild.urlWSDL}" />
 					<classpath>
-						<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk1.jar"/>
+						<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk2.jar"/>
 						<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
 						<pathelement path="${required_lib}/axis14/axis-saaj-1.4.jar"/>
 						<pathelement path="${required_lib}/axis14/mailapi-1.5.6.jar"/>
@@ -106,7 +106,7 @@
 					<arg value="${stubBuild.srcDir}" />
 					<arg value="${stubBuild.urlWSDL}" />
 					<classpath>
-						<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk1.jar"/>
+						<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk2.jar"/>
 						<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
 						<pathelement path="${required_lib}/axis14/axis-saaj-1.4.jar"/>
 						<pathelement path="${required_lib}/axis14/mailapi-1.5.6.jar"/>
@@ -123,7 +123,7 @@
 		<javac includeantruntime="false" destdir="${stubBuild.buildDir}" debug="${debug}" encoding="UTF-8">
 			<src path="${stubBuild.srcDir}" />
 			<classpath>
-				<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk1.jar"/>
+				<pathelement path="${required_lib}/axis14/axis-1.4-gov4j-jk2.jar"/>
 				<pathelement path="${required_lib}/axis14/axis-jaxrpc-1.4-gov4j-1.jar"/>
 				<pathelement path="${required_lib}/axis14/axis-saaj-1.4.jar"/>
 				<pathelement path="${required_lib}/axis14/mailapi-1.5.6.jar"/>

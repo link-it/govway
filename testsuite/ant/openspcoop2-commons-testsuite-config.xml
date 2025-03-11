@@ -410,8 +410,11 @@
 				<antcall target="replace_token">
 				    <param name="file" value="${build_testunits}/config.xml"/>
 					<param name="token" value="&#60;!-- CONTEXT_JMS_FACTORY --&#62;"/>
-					<!-- 
+					<!--
+					wildfly minore di 27
 					<param name="value" value="&#60;property nome=&#34;context-java.naming.factory.initial&#34; valore=&#34;org.jboss.naming.remote.client.InitialContextFactory&#34; /&#62;"/>
+					wildfly maggiore o uguale a 27
+					<param name="value" value="&#60;property nome=&#34;context-java.naming.factory.initial&#34; valore=&#34;org.wildfly.naming.client.WildFlyInitialContextFactory&#34; /&#62;"/>
 					-->
 					<param name="value" value=""/>
 				</antcall>

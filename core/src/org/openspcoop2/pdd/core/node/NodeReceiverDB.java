@@ -221,6 +221,7 @@ public class NodeReceiverDB extends AbstractCore implements INodeReceiver{
 					if( (NodeReceiverDB.openspcoopProperties.singleConnectionNodeReceiver()==false) && (checkOnlyCache==false) ){
 						msgDiag.highDebug("Rilascio connessione per NodeReceiver");
 						dbManager.releaseResource(codicePorta, idModulo, resource);
+						resource = null;
 					}
 					
 					msgDiag.highDebug("Sleep...");
@@ -281,6 +282,7 @@ public class NodeReceiverDB extends AbstractCore implements INodeReceiver{
 					if( (NodeReceiverDB.openspcoopProperties.singleConnectionNodeReceiver()==false) && (checkOnlyCache==false) ){
 						msgDiag.highDebug("Rilascio connessione per NodeReceiver");
 						dbManager.releaseResource(codicePorta, idModulo, resource);
+						resource = null;
 					}
 					
 					msgDiag.highDebug("Fine Lettura");

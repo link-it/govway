@@ -2071,7 +2071,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		err.setMsgErrore("Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPD8Provider")
@@ -2090,7 +2090,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 			
 			Reporter.log("Controllo esistenza diagnostico [https://verificaSSLTestPD]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"(location: http://127.0.0.3:1234/govway/spcoop/in)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"Errore avvenuto durante la consegna HTTP: Connection refused"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD8StartTime,"Connection refused"));
 			
 		}catch(Exception e){
 			throw e;
@@ -2185,7 +2185,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		err.setMsgErrore("Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPA8Provider")
@@ -2275,7 +2275,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 			Reporter.log("Controllo esistenza diagnostico ["+verifica+"]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,verifica));
 			
-			verifica = "Errore avvenuto durante la consegna HTTP: Connection refused";
+			verifica = "Connection refused";
 			Reporter.log("Controllo esistenza diagnostico ["+verifica+"]");
 			List<String> listDiagnostici = new ArrayList<>();
 			boolean b = msgDiagComponent.isTracedMessaggioWithLike(id,verifica,listDiagnostici);
@@ -2387,7 +2387,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		err.setMsgErrore("Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPD9Provider")
@@ -2406,7 +2406,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 			
 			Reporter.log("Controllo esistenza diagnostico [https://verificaSSLTestPD]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD9StartTime,"(location: http://127.0.0.3:567/govway/spcoop/in)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD9StartTime,"Errore avvenuto durante la consegna HTTP: Connection refused"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(this.testPD9StartTime,"Connection refused"));
 			
 		}catch(Exception e){
 			throw e;
@@ -2501,7 +2501,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 		ErroreAttesoOpenSPCoopLogCore err = new ErroreAttesoOpenSPCoopLogCore();
 		err.setIntervalloInferiore(dataInizioTest);
 		err.setIntervalloSuperiore(dataFineTest);
-		err.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection refused");
+		err.setMsgErrore("Connection refused");
 		this.erroriAttesiOpenSPCoopCore.add(err);
 	}
 	@DataProvider (name="testPA9Provider")
@@ -2589,7 +2589,7 @@ public class UrlPrefixRewriter extends GestioneViaJmx {
 			
 			Reporter.log("Controllo esistenza diagnostico [ https://verificaSSLTestPA]");
 			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"(location: http://127.0.0.3:567/govwayTestSuite/server)"));
-			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Errore avvenuto durante la consegna HTTP: Connection refused"));
+			Assert.assertTrue(msgDiagComponent.isTracedMessaggioWithLike(id,"Connection refused"));
 			
 		}catch(Exception e){
 			throw e;

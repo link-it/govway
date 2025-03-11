@@ -158,6 +158,7 @@ public class HTTPS extends GestioneViaJmx {
 	private static final String CA_NON_PRESENTE = "unable to find valid certification path to requested target";
 	private static final String HOST_VERIFY = "No subject alternative names present";
 	private static final String HOST_VERIFY_2 = "HTTPS hostname wrong:  should be <127.0.0.1>";
+	private static final String HOST_VERIFY_3 = "Certificate for <127.0.0.1> doesn't match any of the subject alternative names: []";
 	
 	private static final String CREDENZIALI_NON_FORNITE_DIAGNOSTICO = CostantiProtocollo.CREDENZIALI_NON_FORNITE;
 	private static final String CREDENZIALI_NON_FORNITE_ECCEZIONE = CostantiProtocollo.PREFISSO_AUTENTICAZIONE_FALLITA+CostantiProtocollo.CREDENZIALI_NON_FORNITE;
@@ -931,7 +932,7 @@ public class HTTPS extends GestioneViaJmx {
 			
 			// Check msgDiag
 			if(dataMsg!=null){
-				Assert.assertTrue( dataMsg.isTracedMessaggioWithLike(id,HOST_VERIFY) || dataMsg.isTracedMessaggioWithLike(id,HOST_VERIFY_2) );
+				Assert.assertTrue( dataMsg.isTracedMessaggioWithLike(id,HOST_VERIFY) || dataMsg.isTracedMessaggioWithLike(id,HOST_VERIFY_2) || dataMsg.isTracedMessaggioWithLike(id,HOST_VERIFY_3) );
 			}
 			
 		}catch(Exception e){

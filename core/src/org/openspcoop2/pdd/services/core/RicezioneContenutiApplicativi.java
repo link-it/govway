@@ -4999,6 +4999,14 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 			EsitoLib esito;
 			
 			OpenSPCoopStateless openspcoopstateless = (OpenSPCoopStateless) this.openspcoopstate;
+		
+			// Gestione oneway versione 11
+			if (openspcoopstateless.getDestinatarioResponseMsgLib()!=null &&
+					openspcoopstateless.getDestinatarioResponseMsgLib().startsWith(
+					RicezioneContenutiApplicativi.ID_MODULO)){
+				this.msgDiag.highDebug("Imbustamento not stateless (terminato:true)");
+				return true;
+			}
 			
 			OpenSPCoop2Properties propertiesReader = this.parametriGestioneRisposta.getPropertiesReader();
 						

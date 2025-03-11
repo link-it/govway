@@ -104,7 +104,7 @@
 				<include name="openspcoop2*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/axis14">
-				<include name="axis-1.4-gov4j-jk1.jar"/>
+				<include name="axis-1.4-gov4j-jk2.jar"/>
 				<include name="${axis_saaj_jar}"/>
 				<include name="axis-jaxrpc-1.4-gov4j-1.jar"/>
 				<include name="wss4j-1.5.11.jar"/>

@@ -43,6 +43,7 @@
 		<javac includeantruntime="false" destdir="${build}" debug="${debug}">
 			<!--<compilerarg value="-Xlint:unchecked"/>
                         <compilerarg value="-Xlint:deprecation"/>-->
+			<compilerarg value="-proc:full"/>
 			<src path="${src}" />
 			<classpath>
 				<path refid="classpath" />
