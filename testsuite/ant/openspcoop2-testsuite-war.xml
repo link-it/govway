@@ -157,7 +157,11 @@
 			</lib>
 			<lib dir="${required_lib}/jackson">
 				<include name="${jackson_jar}"/>
+				<include name="jackson-annotations-2.17.2.jar"/>
+				<include name="jackson-core-2.17.2.jar"/>
+				<include name="jackson-databind-2.17.2.jar"/>
 				<include name="jackson-datatype-joda-2.17.2.jar"/>
+				<include name="jackson-datatype-jsr310-2.17.2.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-2.0.16-gov4j-1.jar"/>

@@ -334,17 +334,17 @@ public class MTOMUtilities {
 				Reporter.log("Cerco codice di errore ["+codiceErrore+"]");
 				Reporter.log("Cerco messaggio di errore ["+msgErrore+"]");
 				
-				if(e instanceof jakarta.xml.ws.soap.SOAPFaultException) {
+				if(e instanceof jakarta.xml.ws.soap.SOAPFaultException && !(e instanceof org.apache.cxf.binding.soap.SoapFault)) {
 					jakarta.xml.ws.soap.SOAPFaultException fault = (jakarta.xml.ws.soap.SOAPFaultException) e;
 					Reporter.log("FaultCode ["+fault.getFault().getFaultCode()+"]");
 					Reporter.log("FaultCodeLocalPart ["+fault.getFault().getFaultCodeAsName().getLocalName()+"]");
 					String sub = null;
 					if(soap11==false){
-//						if(fault.getFault().getFaultSubcodes().hasNext()){
-//							javax.xml.namespace.QName q = (javax.xml.namespace.QName)  fault.getFault().getFaultSubcodes().next();
-//							sub = q.getLocalPart();
-//							Reporter.log("SubFaultCode ["+sub+"]");
-//						}
+						if(fault.getFault().getFaultSubcodes().hasNext()){
+							javax.xml.namespace.QName q = (javax.xml.namespace.QName)  fault.getFault().getFaultSubcodes().next();
+							sub = q.getLocalPart();
+							Reporter.log("SubFaultCode ["+sub+"]");
+						}
 					}
 					Reporter.log("FaultString ["+fault.getFault().getFaultString()+"]");
 					Reporter.log("FaultActor ["+fault.getFault().getFaultActor()+"]");
@@ -385,7 +385,7 @@ public class MTOMUtilities {
 						}
 					}
 				}
-				else {
+				else if (e instanceof org.apache.cxf.binding.soap.SoapFault){
 					org.apache.cxf.binding.soap.SoapFault fault = (org.apache.cxf.binding.soap.SoapFault) e2;
 					Reporter.log("FaultCode ["+fault.getFaultCode()+"]");
 					Reporter.log("FaultCodeLocalPart ["+fault.getFaultCode().getLocalPart()+"]");
@@ -434,6 +434,9 @@ public class MTOMUtilities {
 							Assert.assertTrue(fault.getRole()==null);
 						}
 					}
+				}
+				else {
+					throw new Exception("Eccezione '"+e.getClass().getName()+"' non gestita: "+e.getMessage());
 				}
 				
 	    		@SuppressWarnings("unchecked")

@@ -47,6 +47,9 @@
 			<!-- Per non far comparire il WARNING ad ogni invocazione ma solo la prima volta: Illegal reflective access by org.openspcoop2.utils.transport.http.HttpUtilities 
 						(file:...openspcoop2_utils.jar) to field java.net.HttpURLConnection.method -->
 			<jvmarg value="-Djdk.module.illegalAccess=permit"/>
+			<!-- Per consentire field protected java.lang.String java.net.HttpURLConnection.method accessible -->
+			<jvmarg value="--add-opens=java.base/java.net=ALL-UNNAMED"/>
+			<!-- jenkins -->
 			<jvmarg value="-Djenkins=${jenkins}" />
 		</testng>
 		<if>
@@ -102,6 +105,9 @@
 			<!-- Per non far comparire il WARNING ad ogni invocazione ma solo la prima volta: Illegal reflective access by org.openspcoop2.utils.transport.http.HttpUtilities 
 						(file:...openspcoop2_utils.jar) to field java.net.HttpURLConnection.method -->
 			<jvmarg value="-Djdk.module.illegalAccess=permit"/>
+			<!-- Per consentire field protected java.lang.String java.net.HttpURLConnection.method accessible -->
+			<jvmarg value="--add-opens=java.base/java.net=ALL-UNNAMED"/>
+			<!-- jenkins -->
 			<jvmarg value="-Djenkins=${jenkins}" />
 		</testng>
 		<if>
