@@ -91,14 +91,32 @@
                         </then>
                 </if>
 
-		<echo message="Update ZAP"/>
-
-		<!-- Run the java code  -->
-		<exec executable="${update_zap}">
-			<arg value="${zaproxy.home}"/>
-			<arg value="${zaproxy.port}" />
-			<arg value="${zaproxy.address}" />
-		</exec>
+                <!-- Run the java code  -->
+		<if>
+                	<or>
+	                        <equals arg1="${zaproxy.javahome}" arg2="$${zaproxy.javahome}"/>
+	                        <equals arg1="${zaproxy.javahome}" arg2=""/>
+	                </or>
+                        <then>
+                        	<echo message="Update ZAP ..."/>
+				<exec executable="${update_zap}">
+					<arg value="${zaproxy.home}"/>
+					<arg value="${zaproxy.port}" />
+					<arg value="${zaproxy.address}" />
+				</exec>
+				<echo message="Update ZAP completed"/>
+                        </then>
+                        <else>
+				<echo message="Update ZAP (${zaproxy.javahome}) ..."/>
+				<exec executable="${update_zap}">
+					<arg value="${zaproxy.home}"/>
+					<arg value="${zaproxy.port}" />
+					<arg value="${zaproxy.address}" />
+					<arg value="${zaproxy.javahome}" />
+				</exec>
+				<echo message="Update ZAP (${zaproxy.javahome}) completed"/>
+                        </else>
+		</if>		
 	</target>
 	<target name="-runZapProxy" 
         	description="Esegue ZAP Proxy" >
@@ -115,17 +133,38 @@
                                 <fail message="Parametro 'zaproxy.home' non definito"/>
                         </then>
                 </if>
+                                
+               <!-- Run the java code  -->
+		<if>
+                	<or>
+	                        <equals arg1="${zaproxy.javahome}" arg2="$${zaproxy.javahome}"/>
+	                        <equals arg1="${zaproxy.javahome}" arg2=""/>
+	                </or>
+                        <then>
+                      		<echo message="Run ZAP Api Key: '${zap-api-key}' ..."/>
+				<exec executable="${run_zap}">
+					<arg value="${zaproxy.home}"/>
+					<arg value="${zaproxy.session}" />
+					<arg value="${zap-api-key}" />
+					<arg value="${zaproxy.port}" />
+					<arg value="${zaproxy.address}" />
+				</exec>     
+				<echo message="Run ZAP Api Key: '${zap-api-key}' completed"/>                           
+                        </then>
+                        <else>
+	                        <echo message="Run ZAP Api Key: '${zap-api-key}' (${zaproxy.javahome}) ..."/>
+				<exec executable="${run_zap}">
+					<arg value="${zaproxy.home}"/>
+					<arg value="${zaproxy.session}" />
+					<arg value="${zap-api-key}" />
+					<arg value="${zaproxy.port}" />
+					<arg value="${zaproxy.address}" />
+					<arg value="${zaproxy.javahome}" />
+				</exec>
+				<echo message="Run ZAP Api Key: '${zap-api-key}' (${zaproxy.javahome}) completed"/>
+                        </else>
+                </if>                
 
-		<echo message="Run ZAP Api Key: '${zap-api-key}'"/>
-
-		<!-- Run the java code  -->
-		<exec executable="${run_zap}">
-			<arg value="${zaproxy.home}"/>
-			<arg value="${zaproxy.session}" />
-			<arg value="${zap-api-key}" />
-			<arg value="${zaproxy.port}" />
-			<arg value="${zaproxy.address}" />
-		</exec>
 	</target>
 	<target name="-executeZap" depends="-checkZapProxyHome, build"
         	description="Esegue il target indicato" >
@@ -150,20 +189,26 @@
 			<format property="touch.time" pattern="yyyyMMdd_HHmmssSSS" />
 		</tstamp>
 		<var name="zap-api-key" value="${zaproxy.api-key}_${touch.time}" />
+		<echo message="Check stop ZAP ..."/>
 		<exec executable="${stop_zap}" failonerror="false"> <!-- Se non esiste fa lo stesso -->
 			<arg value="false" />
 		</exec>
+		<echo message="Check stop ZAP completed"/>
 		<trycatch property="error.message">
 			<try>
 				<parallel timeout="${zaproxy.timeout}" failonany="true">
 					<antcall target="-runZapProxy" />
 					<sequential>
+						<echo message="Wait ..."/>
 						<exec executable="${wait_start_zap}" failonerror="true">
 							<arg value="${zaproxy.port}" />
 							<arg value="${zaproxy.address}" />
 						</exec>
+						<echo message="Wait completed"/>
 						<antcall target="${zap_target}" />
+						<echo message="Stop ZAP ..."/>
 						<exec executable="${stop_zap}" failonerror="true"/>
+						<echo message="Stop ZAP completed"/>
 					</sequential>
 				</parallel>
 			</try>
@@ -173,9 +218,11 @@
 			</catch>
 
 			<finally>
+				<echo message="Finally stop ZAP ..."/>
 				<exec executable="${stop_zap}" failonerror="false"> <!-- Se non esiste fa lo stesso -->
 					<arg value="false" />
 				</exec>
+				<echo message="Finally stop ZAP completed"/>
 			</finally>
 		</trycatch>
 

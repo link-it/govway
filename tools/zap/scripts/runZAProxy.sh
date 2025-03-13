@@ -28,6 +28,16 @@ then
 	echo "Host non definito"
 	exit 1
 fi
+ZAP_JAVA_HOME=$6
+if [ -z "${ZAP_JAVA_HOME}" ]
+then
+	ZAP_JAVA_HOME="${JAVA_HOME}"
+fi
+if [ -z "${ZAP_JAVA_HOME}" ]
+then
+	echo "JavaHome non definita"
+	exit 1
+fi
 
 if [ -e "${ZAP_SESSION}.session" ]
 then
@@ -46,7 +56,7 @@ then
 	ZAP_SESSION_COMMAND=-newsession
 fi
 
-ZAP_COMMAND="${JAVA_HOME}/bin/java -classpath "${ZAP_HOME}/*":"${ZAP_HOME}/lib/*" org.zaproxy.zap.ZAP -daemon ${ZAP_SESSION_COMMAND} ${ZAP_SESSION} -config session=${ZAP_SESSION} -config api.key=${ZAP_API_KEY} -config port=${ZAP_PORT} -config host=${ZAP_HOST} -port ${ZAP_PORT} -host ${ZAP_HOST}"
+ZAP_COMMAND="${ZAP_JAVA_HOME}/bin/java -classpath "${ZAP_HOME}/*":"${ZAP_HOME}/lib/*" org.zaproxy.zap.ZAP -daemon ${ZAP_SESSION_COMMAND} ${ZAP_SESSION} -config session=${ZAP_SESSION} -config api.key=${ZAP_API_KEY} -config port=${ZAP_PORT} -config host=${ZAP_HOST} -port ${ZAP_PORT} -host ${ZAP_HOST}"
 
 echo "Execute: ${ZAP_COMMAND}"
 ${ZAP_COMMAND}
