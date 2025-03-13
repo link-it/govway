@@ -137,6 +137,8 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
                    -Dzaproxy.home=/tmp/ZAP_2.12.0
 	           -Dgovway.endpoint=http://127.0.0.1:8080 -Dgovway.ente=Ente
                    -Dzaproxy.skipTests=api-config,api-monitor
+                   
+    Per indicare la jvm (es. versione 17 per zap >= 2.16.0) è possibile utilizzare la variabile 'zaproxy.javahome'
 
 2.8 Librerie 3parti
 
