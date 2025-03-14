@@ -115,9 +115,9 @@
 	    <option value="3.3.2" text="3.3.2"/>
 	    <option value="3.3.1" text="3.3.1"/>
 	    <option value="3.3.0" text="3.3.0"/>
-	    <option value="3.2.2" text="3.2.2"/>
+	    <!-- <option value="3.2.2" text="3.2.2"/>
 	    <option value="3.2.1" text="3.2.1"/>
-	    <option value="3.2.0" text="3.2.0"/>
+	    <option value="3.2.0" text="3.2.0"/> -->
 	    <!-- <option value="3.1.1" text="3.1.1"/>
 	    <option value="3.1.0" text="3.1.0"/>
 	    <option value="3.0.1" text="3.0.1"/>
