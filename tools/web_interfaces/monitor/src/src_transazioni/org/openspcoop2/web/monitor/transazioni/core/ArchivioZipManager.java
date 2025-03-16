@@ -791,8 +791,8 @@ public class ArchivioZipManager {
 	}
 
 	private static String extractTipoContenutoConnettoreFromPath(String path, String chiave, String connettore) {
-		// Rimozione di "Transazioni/CHIAVE/CONSEGNA/contenuti/"
-		String pathToNomeContenuto = ROOT_FOLDER_TRANSAZIONI +File.separatorChar + chiave + File.separatorChar +  connettore + File.separatorChar + FOLDER_CONTENUTI + File.separatorChar;
+		// Rimozione di "Transazioni/CHIAVE/consegne/CONSEGNA/contenuti/"
+		String pathToNomeContenuto = ROOT_FOLDER_TRANSAZIONI +File.separatorChar + chiave + File.separatorChar  + FOLDER_CONSEGNE + File.separatorChar + connettore + File.separatorChar + FOLDER_CONTENUTI + File.separatorChar;
 		int transazioniIndex = path.indexOf(pathToNomeContenuto);
 		if (transazioniIndex != -1) {
 			path = path.substring(transazioniIndex + pathToNomeContenuto.length());
@@ -818,8 +818,8 @@ public class ArchivioZipManager {
 	}
 
 	private static String extractNomeContenutoConsegnaFromPath(String path, String chiave, String connettore, String contenuto) {
-		// Rimozione di "Transazioni/CHIAVE/CONSEGNA/contenuti/CONTENUTO/"
-		String pathToNomeContenuto = ROOT_FOLDER_TRANSAZIONI +File.separatorChar + chiave + File.separatorChar +  connettore  + File.separatorChar + FOLDER_CONTENUTI + File.separatorChar + contenuto + File.separator;
+		// Rimozione di "Transazioni/CHIAVE/consegne/CONSEGNA/contenuti/CONTENUTO/"
+		String pathToNomeContenuto = ROOT_FOLDER_TRANSAZIONI +File.separatorChar + chiave + File.separatorChar + FOLDER_CONSEGNE + File.separatorChar +  connettore  + File.separatorChar + FOLDER_CONTENUTI + File.separatorChar + contenuto + File.separator;
 		int transazioniIndex = path.indexOf(pathToNomeContenuto);
 		if (transazioniIndex != -1) {
 			path = path.substring(transazioniIndex + pathToNomeContenuto.length());
@@ -846,8 +846,8 @@ public class ArchivioZipManager {
 	}
 
 	private static String extractIdAllegatoConsegnaFromPath(String path, String chiave, String connettore, String contenuto) {
-		// Rimozione di "Transazioni/CHIAVE/CONSEGNA/contenuti/CONTENUTO/allegati/allegato_"
-		String pathToIdAllegato = ROOT_FOLDER_TRANSAZIONI +File.separatorChar + chiave + File.separatorChar +  connettore
+		// Rimozione di "Transazioni/CHIAVE/consegne/CONSEGNA/contenuti/CONTENUTO/allegati/allegato_"
+		String pathToIdAllegato = ROOT_FOLDER_TRANSAZIONI +File.separatorChar + chiave + File.separatorChar + FOLDER_CONSEGNE + File.separatorChar +  connettore
 				+ File.separatorChar + FOLDER_CONTENUTI + File.separatorChar + contenuto + File.separator + NOME_FILE_ALLEGATI + File.separator + NOME_FILE_ALLEGATO + "_";
 		int transazioniIndex = path.indexOf(pathToIdAllegato);
 		if (transazioniIndex != -1) {
