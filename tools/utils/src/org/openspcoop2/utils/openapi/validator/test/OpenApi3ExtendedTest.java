@@ -3159,10 +3159,7 @@ public class OpenApi3ExtendedTest {
 			httpEntityResponseTest17.setContent(msg);
 			
 			String msgRisposta = "None";
-			if(json17_fault_type_title.equals(msg)) {
-				 msgRisposta = "Type";
-			}
-			else if(json17_fault_title.equals(msg)) {
+			if(json17_fault_title.equals(msg)) {
 				 msgRisposta = "Title";
 			}
 			else if(json17_fault_status.equals(msg)) {
