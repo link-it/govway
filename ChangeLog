@@ -1,3 +1,12 @@
+2025-03-18  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1592
+	In precedenza, la diagnostica di Hazelcast veniva mantenuta attiva per default, generando file di log nel percorso LOG_DIR/hazelcast con il formato diagnostics-#-.log.
+	Sebbene fossero presenti meccanismi di rotazione basati sulla dimensione del file, il nome del log cambiava a ogni riavvio dell'application server, 
+	portando nel tempo all'accumulo di file e al rischio di esaurimento dello spazio su disco.
+	Per prevenire questo problema, la diagnostica di Hazelcast è ora disabilitata di default.
+
 2025-03-18  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]
