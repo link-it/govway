@@ -1,8 +1,1 @@
-# resources/doc/src/manuali/vulnerability-management/falsePositive/CVE-2022-38752.rst
-# mvn/dependencies/owasp/falsePositives/snakeyaml.xml
-CVE-2022-1471
-# mvn/dependencies/owasp/falsePositives/console-back-office.xml
-CVE-2012-1007
-CVE-2016-1182
-CVE-2016-1181
-CVE-2015-0899
+#CVE-??
