@@ -40,6 +40,8 @@ import org.openspcoop2.core.transazioni.constants.DeleteState;
 import org.openspcoop2.core.transazioni.constants.ExportState;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.protocol.basic.diagnostica.DiagnosticSerializer;
+import org.openspcoop2.protocol.basic.tracciamento.TracciaSerializer;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -82,6 +84,9 @@ import org.slf4j.Logger;
  */
 public class SingleCsvFileExporter implements IExporter{
 
+	private static final String ERRORE_EXPORT = "Si è verificato un errore durante l'esportazione della transazione con id:";
+	private static final String ERRORE_EXPORT_FILE = "Errore durante esportazione su file";
+	
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 	private static void logDebug(String msg) {
 		if(SingleCsvFileExporter.log!=null) {
@@ -100,7 +105,9 @@ public class SingleCsvFileExporter implements IExporter{
 	}
 
 	private boolean exportTracce = false;
+	private boolean exportTracceUseProtocolSerialization = false;
 	private boolean exportDiagnostici = false;
+	private boolean exportDiagnosticiUseProtocolSerialization = false;
 	private boolean exportContenuti = false;
 	private boolean enableHeaderInfo = false;
 	private boolean mimeThrowExceptionIfNotFound = false;
@@ -128,7 +135,9 @@ public class SingleCsvFileExporter implements IExporter{
 		this.enableHeaderInfo = properties.isEnableHeaderInfo();
 
 		this.exportTracce = properties.isExportTracce();
+		this.exportTracceUseProtocolSerialization = properties.isExportTracceUseProtocolSerialization();
 		this.exportDiagnostici = properties.isExportDiagnostici();
+		this.exportDiagnosticiUseProtocolSerialization = properties.isExportDiagnosticiUseProtocolSerialization();
 		this.exportContenuti = properties.isExportContenuti();
 		this.mimeThrowExceptionIfNotFound = properties.isMimeThrowExceptionIfNotFound();
 		this.abilitaMarcamentoTemporale = properties.isAbilitaMarcamentoTemporaleEsportazione();
@@ -145,9 +154,9 @@ public class SingleCsvFileExporter implements IExporter{
 		this.transazioniExporterService = transazioniExport;
 		
 		SingleCsvFileExporter.logInfo("Single File Exporter inizializzato:");
-		SingleCsvFileExporter.logInfo("\t -esportazione Tracce      abilitata: "+this.exportTracce);
-		SingleCsvFileExporter.logInfo("\t -esportazione Contenuti   abilitata: "+this.exportContenuti);
-		SingleCsvFileExporter.logInfo("\t -esportazione Diagnostici abilitata: "+this.exportDiagnostici);
+		SingleCsvFileExporter.logInfo("\t -esportazione Tracce abilitata (useProtocolSerialization:"+this.exportTracceUseProtocolSerialization+"): "+this.exportTracce);
+		SingleCsvFileExporter.logInfo("\t -esportazione Diagnostici abilitata (exportDiagnosticiUseProtocolSerialization:"+this.exportDiagnosticiUseProtocolSerialization+"): "+this.exportDiagnostici);
+		SingleCsvFileExporter.logInfo("\t -esportazione Contenuti abilitata: "+this.exportContenuti);
 		SingleCsvFileExporter.logInfo("\t -enable header info abilitato: "+this.enableHeaderInfo);
 		SingleCsvFileExporter.logInfo("\t -formato scelto: "+this.formato);
 		SingleCsvFileExporter.logInfo("\t -usa count: "+this.useCount);
@@ -199,7 +208,13 @@ public class SingleCsvFileExporter implements IExporter{
 					String newLine = j > 0 ? "\n\n" : CostantiExport.EMPTY_STRING;
 
 					IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
-					IDiagnosticSerializer diagnosticoBuilder = pf.createDiagnosticSerializer();
+					IDiagnosticSerializer diagnosticoBuilder = null;
+					if(this.exportDiagnosticiUseProtocolSerialization) {
+						diagnosticoBuilder = pf.createDiagnosticSerializer();
+					}
+					else {
+						diagnosticoBuilder = new DiagnosticSerializer(pf);
+					}
 					
 					if(j==0){
 						XMLRootElement xmlRootElement = diagnosticoBuilder.getXMLRootElement();
@@ -226,14 +241,14 @@ public class SingleCsvFileExporter implements IExporter{
 
 				oneLine.add(sbDiagnostici.toString());
 			}catch (DriverMsgDiagnosticiException e) {
-				String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+				String msg = ERRORE_EXPORT+t.getIdTransazione();
 				msg+=" Non sono riuscito a creare il file diagnostici.xml ("+e.getMessage()+")";
 				throw new ExportException(msg, e);
 			} catch (DriverMsgDiagnosticiNotFoundException e) {
 				// diagnostici non presenti
 				oneLine.add(CostantiExport.EMPTY_STRING);
 			} catch (ProtocolException e) {
-				String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+				String msg = ERRORE_EXPORT+t.getIdTransazione();
 				msg+=" Non sono riuscito a creare il file diagnostici.xml ("+e.getMessage()+")";
 				throw new ExportException(msg, e);
 			}
@@ -249,14 +264,14 @@ public class SingleCsvFileExporter implements IExporter{
 
 			Traccia tracciaRichiesta = null;
 			Traccia tracciaRisposta  = null;
-			ArrayList<Traccia> tracce = new ArrayList<Traccia>();
+			ArrayList<Traccia> tracce = new ArrayList<>();
 			try{
 				if(!isRisposta){
 					tracciaRichiesta=this.tracciamentoService.getTraccia(RuoloMessaggio.RICHIESTA,properties);
 					tracce.add(tracciaRichiesta);
 				}
 			}catch(DriverTracciamentoException e){
-				String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+				String msg = ERRORE_EXPORT+t.getIdTransazione();
 				msg+=" Non sono riuscito a recuperare la traccia di richiesta ("+e.getMessage()+")";
 				throw new ExportException(msg, e);
 			}catch(DriverTracciamentoNotFoundException e){
@@ -268,7 +283,7 @@ public class SingleCsvFileExporter implements IExporter{
 					tracce.add(tracciaRisposta);
 				}
 			}catch(DriverTracciamentoException e){
-				String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+				String msg = ERRORE_EXPORT+t.getIdTransazione();
 				msg+=" Non sono riuscito a recuperare la traccia di risposta ("+e.getMessage()+")";
 				throw new ExportException(msg, e);
 			}catch(DriverTracciamentoNotFoundException e){
@@ -282,7 +297,13 @@ public class SingleCsvFileExporter implements IExporter{
 						Traccia tr = tracce.get(j);
 
 						IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tr.getProtocollo());
-						ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
+						ITracciaSerializer tracciaBuilder = null;
+						if(this.exportTracceUseProtocolSerialization) {
+							tracciaBuilder = pf.createTracciaSerializer();
+						}
+						else {
+							tracciaBuilder = new TracciaSerializer(pf);
+						}
 
 						try {
 							tracciaBuilder.setOmitXmlDeclaration(true);
@@ -337,7 +358,7 @@ public class SingleCsvFileExporter implements IExporter{
 					}
 					}*/
 				}catch(ProtocolException e){
-					String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+					String msg = ERRORE_EXPORT+t.getIdTransazione();
 					msg+=" Non sono riuscito a creare il file tracce.xml ("+e.getMessage()+")";
 					throw new ExportException(msg, e);
 				}
@@ -1025,7 +1046,7 @@ public class SingleCsvFileExporter implements IExporter{
 			SingleCsvFileExporter.logDebug("Esportazione completata.");
 
 		}catch(ExportException e){
-			SingleCsvFileExporter.logError("Errore durante esportazione su file",e);
+			SingleCsvFileExporter.logError(ERRORE_EXPORT_FILE,e);
 
 			if(this.abilitaMarcamentoTemporale && te!=null){
 				try{
@@ -1043,8 +1064,8 @@ public class SingleCsvFileExporter implements IExporter{
 
 			throw e;
 		}catch(Exception e){
-			SingleCsvFileExporter.logError("Errore durante esportazione su file",e);
-			throw new ExportException("Errore durante esportazione su file", e);
+			SingleCsvFileExporter.logError(ERRORE_EXPORT_FILE,e);
+			throw new ExportException(ERRORE_EXPORT_FILE, e);
 		}
 	}
 
@@ -1106,11 +1127,10 @@ public class SingleCsvFileExporter implements IExporter{
 					
 					totale += transazioni.size();
 					
-					if(!this.useCount) {
-						if(totale >= Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES) {
-							stopExport = true;
-							popolaDataSourceExport(dataSourceTransazioni,transazioni); // altrimenti l'ultima lista recuperata non viene inserita
-						}
+					if(!this.useCount &&
+						totale >= Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES) {
+						stopExport = true;
+						popolaDataSourceExport(dataSourceTransazioni,transazioni); // altrimenti l'ultima lista recuperata non viene inserita
 					}
 				}
 
@@ -1141,7 +1161,7 @@ public class SingleCsvFileExporter implements IExporter{
 			SingleCsvFileExporter.logDebug("Esportazione completata.");
 
 		}catch(ExportException e){
-			SingleCsvFileExporter.logError("Errore durante esportazione su file",e);
+			SingleCsvFileExporter.logError(ERRORE_EXPORT_FILE,e);
 
 			if(this.abilitaMarcamentoTemporale){
 				try{
@@ -1159,8 +1179,8 @@ public class SingleCsvFileExporter implements IExporter{
 
 			throw e;
 		}catch(Exception e){
-			SingleCsvFileExporter.logError("Errore durante esportazione su file",e);
-			throw new ExportException("Errore durante esportazione su file", e);
+			SingleCsvFileExporter.logError(ERRORE_EXPORT_FILE,e);
+			throw new ExportException(ERRORE_EXPORT_FILE, e);
 		}
 	}
 

@@ -41,9 +41,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 				<f:facet name="openMarker">
 					<a4j:outputPanel id="openMarkerPnl" styleClass="icon-search-box">
 						<input type="hidden" id="_csrfFormTogglePanel" name="_csrf" value="#{loginBean.csrf}"/>
-						<a4j:outputPanel id="openMarkerPnl1" styleClass="" rendered="#{not(searchFormTransazioni.periodo eq 'Live') and 
-															searchFormTransazioni.aggiornamentoDatiAbilitato and
-															searchFormTransazioni.showButtonNuovaRicerca}">
+						<a4j:outputPanel id="openMarkerPnl1" styleClass="" rendered="#{searchFormTransazioni.showButtonAggiorna}">
 							<i class="material-icons md-24" id="iconaRefreshOpen">&#xE863;</i>
 							<rich:toolTip for="openMarkerPnl1" value="#{msg['commons.search.filtroRicerca.refresh.tooltip']}" />
 							<a4j:support event="onclick" action="#{searchFormTransazioni.filtra}" process="searchPnl" 
@@ -64,6 +62,13 @@ xmlns="http://www.w3.org/1999/xhtml"
 				</f:facet>
 				<a4j:keepAlive beanName="transazioniBean" />
 				<a4j:outputPanel id="panelTransazioniCtr" ajaxRendered="false">
+					<c:if test="#{searchFormTransazioni.modalitaRicercaStorico == 'esaminaArchivioZip'}">
+						<link:fileUploadSupport id="formFile" loginBean="#{loginBean}" mBean="#{searchFormTransazioni}"
+							uploadServletUrl="#{facesContext.externalContext.request.contextPath}/archivioZipUpload"
+							fileUploadBean="#{searchFormTransazioni.archivioZip}"
+							reRender="panelTransazioniCtr"
+						/>
+					</c:if>
 					<div class="form-container noborder">
 						<h:form prependId="false"  id="formSearchTransazioni" >
 							<a4j:jsFunction name="refreshPnl" reRender="panelTransazioniCtr"/>
@@ -131,8 +136,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 								</c:if>
 								
 								<a4j:outputPanel id="panelButtonSearchTransazioni" styleClass="buttonrow" layout="block" ajaxRendered="false">	
-									<a4j:commandButton id="filtra" value="#{(searchFormTransazioni.aggiornamentoDatiAbilitato and searchFormTransazioni.showButtonNuovaRicerca) ? 
-															'Nuova Ricerca' : 'Cerca'}" 
+									<a4j:commandButton id="filtra" value="#{searchFormTransazioni.buttonFiltraLabel}" 
 														styleClass="icon-refresh" 
 														process="searchPnl" 
 														reRender="panelPaginaTransazioniCtr"
@@ -140,17 +144,15 @@ xmlns="http://www.w3.org/1999/xhtml"
 														action="#{searchFormTransazioni.filtra}"
 														oncomplete="completaRicerca(event)"
 														/>
-									<a4j:commandButton id="aggiorna" value="Filtra Risultati" 
+									<a4j:commandButton id="aggiorna" value="#{msg['commons.search.button.filtraRisultati.label']}" 
 														styleClass="icon-refresh" 
 														process="searchPnl" 
 														reRender="panelPaginaTransazioniCtr"
-														rendered="#{not(searchFormTransazioni.periodo eq 'Live') and 
-															searchFormTransazioni.aggiornamentoDatiAbilitato and
-															searchFormTransazioni.showButtonNuovaRicerca}"
+														rendered="#{searchFormTransazioni.showButtonAggiorna}"
 														action="#{searchFormTransazioni.aggiorna}"
 														oncomplete="completaRicerca(event)"
 														/>	
-									<a4j:commandButton id="filtraLive" value="Aggiorna Criteri Ricerca" 
+									<a4j:commandButton id="filtraLive" value="#{msg['commons.search.button.aggiornaCriteriRicerca.label']}" 
 														styleClass="icon-refresh" 
 														process="searchPnl" 
 														reRender="listaTransazioniCtr"
@@ -158,13 +160,13 @@ xmlns="http://www.w3.org/1999/xhtml"
 														action="#{searchFormTransazioni.validaSezioneDatiMittenteAction}"
 														oncomplete="completaRicerca(event)"
 														/>
-									<a4j:commandButton id="svuotaNotLive" value="Ripulisci"
+									<a4j:commandButton id="svuotaNotLive" value="#{msg['commons.search.button.ripulisci.label']}"
 											styleClass="icon-refresh" process="searchPnl"
 											reRender="panelPaginaTransazioniCtr" 
 											rendered="#{not(searchFormTransazioni.periodo eq 'Live')}"
 											action="#{searchFormTransazioni.ripulisci}"
 											oncomplete="completa(event)" />
-									<a4j:commandButton id="svuotaLive" value="Ripulisci"
+									<a4j:commandButton id="svuotaLive" value="#{msg['commons.search.button.ripulisci.label']}"
 											styleClass="icon-refresh" process="searchPnl"
 											reRender="searchPnl,listaTransazioniCtr" 
 											rendered="#{searchFormTransazioni.periodo eq 'Live'}"

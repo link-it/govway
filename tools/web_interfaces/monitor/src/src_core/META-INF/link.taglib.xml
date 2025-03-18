@@ -39,6 +39,14 @@
    		<tag-name>dialogInfo</tag-name>
    		<source>taglib/dialogInfo.xhtml</source>
    	</tag>
+   	<tag>
+   		<tag-name>fileUpload</tag-name>
+   		<source>taglib/fileUpload.xhtml</source>
+   	</tag>
+   	<tag>
+   		<tag-name>fileUploadSupport</tag-name>
+   		<source>taglib/fileUploadSupport.xhtml</source>
+   	</tag>
    <function>
       <function-name>concat</function-name>
       <function-class>org.openspcoop2.web.monitor.core.taglib.Utils</function-class>

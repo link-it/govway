@@ -38,7 +38,6 @@ import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.RicercaUtente;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
-import org.openspcoop2.web.monitor.core.bean.FileUploadBean;
 import org.openspcoop2.web.monitor.core.bean.RicercaUtenteBean;
 import org.openspcoop2.web.monitor.core.bean.RicercheUtenteSearchForm;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
@@ -49,6 +48,7 @@ import org.openspcoop2.web.monitor.core.dao.IRicercheUtenteService;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.ricerche.ModuloRicerca;
+import org.openspcoop2.web.monitor.core.ricerche.RicercheFileUploadBean;
 import org.openspcoop2.web.monitor.core.ricerche.RicerchePersonalizzate;
 import org.openspcoop2.web.monitor.core.ricerche.SalvaRicercaForm;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
@@ -77,7 +77,7 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 
 	private transient RicercheUtenteSearchForm search;
 
-	private FileUploadBean ricercheFile= null;
+	private RicercheFileUploadBean ricercheFile= null;
 	private String idFiles= null;
 	private String caricaRicercheErrorMessage = null;
 	private boolean salvataggioOk = false;
@@ -495,10 +495,10 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 		this.caricaRicercheErrorMessage = null;
 	}
 
-	public FileUploadBean getRicercheFile() {
+	public RicercheFileUploadBean getRicercheFile() {
 		return this.ricercheFile;
 	}
-	public void setRicercheFile(FileUploadBean ricercheFile) {
+	public void setRicercheFile(RicercheFileUploadBean ricercheFile) {
 		this.ricercheFile = ricercheFile;
 		this.ricercheFile.setmBean(this);
 	}
@@ -534,13 +534,6 @@ public class RicercheUtenteBean extends PdDBaseBean<RicercaUtenteBean, Long, ISe
 		}
 
 		return Costanti.ERRORE_GENERICO;
-	}
-
-	public boolean isVisualizzaComandiEliminaFile() {
-		return !this.ricercheFile.getMapElementiRicevuti().isEmpty();
-	}
-
-	public void setVisualizzaComandiEliminaFile(boolean visualizzaComandiEliminaFile) {
 	}
 
 	public String getCaricaRicercheErrorMessage() {

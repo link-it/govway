@@ -196,6 +196,8 @@ public class TransazioniService implements ITransazioniService {
 	
 	private boolean isAttivoSqlFilterTransazioniIntegrationManager = true;
 	
+	private ITransazioniService archivioZipTransazioniService = null;
+	
 	private List<Index> forceIndexLiveFindAll;
 	private List<Index> forceIndexLiveCount;
 	private List<Index> forceIndexAndamentoTemporaleFindAll;
@@ -295,6 +297,8 @@ public class TransazioniService implements ITransazioniService {
 			break;
 		case ID_TRANSAZIONE:
 			return this.forceIndexIdTransazioneFindAll;
+		case ESAMINA_ARCHIVIO_ZIP:
+			return lnull;
 		}
 		return lnull;
 	}
@@ -342,6 +346,8 @@ public class TransazioniService implements ITransazioniService {
 			break;
 		case ID_TRANSAZIONE:
 			return this.forceIndexIdTransazioneCount;
+		case ESAMINA_ARCHIVIO_ZIP:
+			return lnull;
 		}
 		return lnull;
 	}
@@ -423,6 +429,8 @@ public class TransazioniService implements ITransazioniService {
 		}
 
 		this.liveMaxResults = 50;
+		this.archivioZipTransazioniService = new ArchivioZipTransazioniService();
+		((ArchivioZipTransazioniService )this.archivioZipTransazioniService).setUtilsServiceManager(this.utilsServiceManager);
 	}
 
 	public TransazioniService(Connection con, boolean autoCommit, Logger log) {
@@ -504,6 +512,8 @@ public class TransazioniService implements ITransazioniService {
 		}
 
 		this.liveMaxResults = 50;
+		this.archivioZipTransazioniService = new ArchivioZipTransazioniService();
+		((ArchivioZipTransazioniService )this.archivioZipTransazioniService).setUtilsServiceManager(this.utilsServiceManager);
 	}
 
 	@Override
@@ -519,6 +529,7 @@ public class TransazioniService implements ITransazioniService {
 	@Override
 	public void setSearch(TransazioniSearchForm search) {
 		this.searchForm  = search;
+		this.archivioZipTransazioniService.setSearch(this.searchForm);
 	}
 
 	 @Override
@@ -658,6 +669,9 @@ public class TransazioniService implements ITransazioniService {
 	}
 	@Override
 	public List<TransazioneBean> findAll(int start, int limit, SortOrder sortOrder, String sortField) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.findAll(start, limit, sortOrder, sortField);
+		}
 
 		List<TransazioneBean> listaBean = new ArrayList<TransazioneBean>();
 		try {
@@ -742,6 +756,10 @@ public class TransazioniService implements ITransazioniService {
 
 	@Override
 	public List<TransazioneBean> findAll(int start, int limit) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.findAll(start, limit);
+		}
+		
 		List<TransazioneBean> listaBean = new ArrayList<TransazioneBean>();
 		try {
 			this.log.debug("Find All + Limit");
@@ -830,6 +848,10 @@ public class TransazioniService implements ITransazioniService {
 
 	@Override
 	public int totalCount(SortOrder sortOrder, String sortField) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.totalCount(sortOrder, sortField);
+		}
+		
 		try {
 
 			this.log.debug("Count + Sorting: SortOrder["+sortOrder.toString()+"], SortField["+sortField+"]");
@@ -858,6 +880,10 @@ public class TransazioniService implements ITransazioniService {
 
 	@Override
 	public int totalCount() {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.totalCount();
+		}
+		
 		try {
 
 			this.log.debug("Count");
@@ -897,6 +923,10 @@ public class TransazioniService implements ITransazioniService {
 
 	@Override
 	public List<TransazioneBean> findAll() {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.findAll();
+		}
+		
 		List<TransazioneBean> listaBean = new ArrayList<TransazioneBean>();
 		try {
 			this.log.debug("Find All");
@@ -1174,6 +1204,10 @@ public class TransazioniService implements ITransazioniService {
 	@Override
 	public TransazioneBean findByIdTransazione(String idTransazione)
 			throws Exception {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.findByIdTransazione(idTransazione);
+		}
+		
 		try {
 
 			this.log.debug("Find By Id Transazione: "+ idTransazione);
@@ -1706,6 +1740,10 @@ public class TransazioniService implements ITransazioniService {
 	
 	@Override
 	public int countDumpMessaggiGByDataConsegnaErogatore(String idTransazione, String saErogatore){
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.countDumpMessaggiGByDataConsegnaErogatore(idTransazione, saErogatore);
+		}
+		
 		try {
 			this.log.debug("Count numero consegne [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "]");
 
@@ -1734,6 +1772,10 @@ public class TransazioniService implements ITransazioniService {
 	
 	@Override
 	public List<DumpMessaggioBean> listDumpMessaggiGByDataConsegnaErogatore(String idTransazione, String saErogatore, int start, int limit) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.listDumpMessaggiGByDataConsegnaErogatore(idTransazione, saErogatore, start, limit);
+		}
+		
 		List<DumpMessaggioBean> lista = new ArrayList<DumpMessaggioBean>();
 		try {
 			this.log.debug("Find All + Limit numero consegne [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "]");
@@ -1802,7 +1844,10 @@ public class TransazioniService implements ITransazioniService {
 	
 	@Override
 	public DumpMessaggio getDumpMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws Exception {
-
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.getDumpMessaggio(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
+		}
+		
 		try {
 			this.log.debug("Get Dump Messaggio [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
 
@@ -1858,7 +1903,10 @@ public class TransazioniService implements ITransazioniService {
 
 	@Override
 	public JDBCDumpMessaggioStream getContentInputStream(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws ServiceException {
-
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.getContentInputStream(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
+		}
+		
 		try {
 			this.log.debug("Get Dump Messaggio [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
 
@@ -1890,7 +1938,10 @@ public class TransazioniService implements ITransazioniService {
 	
 	@Override
 	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio, Long idDump) {
-
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.getAllegatiMessaggio(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio, idDump);
+		}
+		
 		try {
 
 			this.log.debug("Get allegati Messaggio [idDump: " + idDump + "]");
@@ -1951,6 +2002,10 @@ public class TransazioniService implements ITransazioniService {
 		
 	@Override
 	public List<DumpContenuto> getContenutiSpecifici(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio, Long idDump) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.getContenutiSpecifici(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio, idDump);
+		}
+		
 		try {
 
 			this.log.debug("Get Contenuti specifici [idDump: "	+ idDump + "]");
@@ -2006,6 +2061,10 @@ public class TransazioniService implements ITransazioniService {
 	
 	@Override
 	public Date getDataConsegnaErogatore(String idTransazione, String saErogatore, Date dataAccettazione) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.getDataConsegnaErogatore(idTransazione, saErogatore, dataAccettazione);
+		}
+		
 		try {
 
 			this.log.info("Get data ultima consegna [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ dataAccettazione: " + dataAccettazione + "]");
@@ -2069,7 +2128,10 @@ public class TransazioniService implements ITransazioniService {
 	
 	@Override
 	public boolean hasInfoDumpAvailable(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) {
-
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.hasInfoDumpAvailable(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
+		}
+		
 		try {
 
 			this.log.info("Has Info Dump Available [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ dataAccettazione: " + tipoMessaggio.toString() + "]");
@@ -2163,6 +2225,9 @@ public class TransazioniService implements ITransazioniService {
 	
 	@Override
 	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.hasInfoHeaderTrasportoAvailable(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
+		}
 
 		this.log
 		.info("Has Info Header Trasporto Available [id transazione: "	+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
@@ -2259,7 +2324,10 @@ public class TransazioniService implements ITransazioniService {
 
 	@Override
 	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio, Long idDump) {
-
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.getHeaderTrasporto(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio, idDump);
+		}
+		
 		try {
 
 			this.log.debug("Get Header Trasporto [idDump: "	+ idDump + "]");
@@ -2312,6 +2380,10 @@ public class TransazioniService implements ITransazioniService {
 
 	@Override
 	public List<TransazioneBean> findAllDuplicati(String idTransazione, String idEgov, boolean isRisposta, int start, int limit) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.findAllDuplicati(idTransazione, idEgov, isRisposta, start, limit);
+		}
+		
 		List<TransazioneBean> listaBean = new ArrayList<TransazioneBean>();
 		try {
 
@@ -2393,6 +2465,9 @@ public class TransazioniService implements ITransazioniService {
 
 	@Override
 	public TransazioneBean findTransazioneOriginale(String idTransazioneDuplicata,	String idEgov, boolean isRisposta) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.findTransazioneOriginale(idTransazioneDuplicata, idEgov, isRisposta);
+		}
 
 		this.log.info("Find Transazione Originale [id transazione duplicata: "	+ idTransazioneDuplicata + "],[ idEgov: " + idEgov + "], [isRisposta: " + isRisposta + "]");
 		try {
@@ -2457,6 +2532,9 @@ public class TransazioniService implements ITransazioniService {
 
 	@Override
 	public int countAllDuplicati(String idTransazione, String idEgov,	boolean isRisposta) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.countAllDuplicati(idTransazione, idEgov, isRisposta);
+		}
 
 		this.log.debug("Count All Duplicati [id transazione: "	+ idTransazione + "],[ idEgov: " + idEgov + "], [isRisposta: "	+ isRisposta + "]");
 		try {
@@ -3834,6 +3912,9 @@ public class TransazioniService implements ITransazioniService {
 		}
 
 	}
+	private boolean isRicercaArchivioZip() {
+		return this.searchForm.isRicercaArchivioZip();
+	}
 	private boolean isRicercaLibera() {
 		if(!this.searchForm.isLive() && StringUtils.isNotEmpty(this.searchForm.getModalitaRicercaStorico())) {
 			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.searchForm.getModalitaRicercaStorico());
@@ -4220,6 +4301,9 @@ public class TransazioniService implements ITransazioniService {
 	
 	@Override
 	public Long getContentLengthMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.getContentLengthMessaggio(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
+		}
 		try {
 
 			this.log.info("getContentLengthMessaggio [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ dataAccettazione: " + tipoMessaggio.toString() + "]");
@@ -4287,6 +4371,9 @@ public class TransazioniService implements ITransazioniService {
 	
 	@Override
 	public String getContentTypeMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) {
+		if (isRicercaArchivioZip()) {
+			return this.archivioZipTransazioniService.getContentTypeMessaggio(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
+		}
 		try {
 
 			this.log.info("getContentTypeMessaggio [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ dataAccettazione: " + tipoMessaggio.toString() + "]");

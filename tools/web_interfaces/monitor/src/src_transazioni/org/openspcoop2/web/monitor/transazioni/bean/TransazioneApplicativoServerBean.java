@@ -1077,4 +1077,8 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 	public String getErroreVisualizzaFaultUltimoErrore(){
 		return FormatoFaultUtils.getErroreVisualizzaFault(super.getFaultUltimoErrore());
 	}
+	
+	public String getNomeConnettoreDirectoryInArchivioZip() {
+		return this.getConnettoreNome()!=null ? this.getConnettoreNome() : "Default";
+	}
 }

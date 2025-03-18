@@ -3175,9 +3175,6 @@ public class OpenApi3ExtendedTest {
 			if(json17_fault_type_title.equals(msg)) {
 				 msgRisposta = "Type";
 			}
-			else if(json17_fault_title.equals(msg)) {
-				 msgRisposta = "Title";
-			}
 			else if(json17_fault_status.equals(msg)) {
 				 msgRisposta = "Status";
 			}

@@ -800,4 +800,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	public void setExportContenutiMultipart(Boolean exportContenutiMultipart) {
 		this.exportContenutiMultipart = exportContenutiMultipart;
 	}
+	public boolean isVisualizzaLinkEsporta() {
+		return this.service.getSearch().isShowButtonEsporta();
+	}
 }

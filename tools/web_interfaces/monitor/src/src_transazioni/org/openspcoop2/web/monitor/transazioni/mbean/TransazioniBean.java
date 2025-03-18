@@ -940,6 +940,10 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_LIBERA_LABEL_KEY), 
 					ModalitaRicercaTransazioni.RICERCA_LIBERA,
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_LIBERA_ICON_KEY)));
+			listaGruppoTermporale.add(new Storico(ModalitaRicercaTransazioni.ESAMINA_ARCHIVIO_ZIP.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_ESAMINA_ARCHIVIO_ZIP_LABEL_KEY), 
+					ModalitaRicercaTransazioni.ESAMINA_ARCHIVIO_ZIP,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_ESAMINA_ARCHIVIO_ZIP_ICON_KEY)));
 			gruppoTemporale.setListaStorico(listaGruppoTermporale);
 			this.tipiStorico.add(gruppoTemporale);
 			
@@ -1065,4 +1069,12 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	public void setTransazioniLatenzaPortaEnabled(boolean transazioniLatenzaPortaEnabled) {
 		this.transazioniLatenzaPortaEnabled = transazioniLatenzaPortaEnabled;
 	}
+	
+	public boolean isShowButtonEsporta() {
+		return ((TransazioniSearchForm)this.search).isShowButtonEsporta();
+	}
+//
+//	public void setShowButtonEsporta(boolean showButtonEsporta) {
+//		((TransazioniSearchForm)this.search).setShowButtonEsporta(showButtonEsporta);
+//	}
 }

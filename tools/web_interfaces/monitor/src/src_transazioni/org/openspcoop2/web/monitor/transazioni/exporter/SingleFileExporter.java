@@ -22,6 +22,7 @@ package org.openspcoop2.web.monitor.transazioni.exporter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +57,8 @@ import org.openspcoop2.core.transazioni.dao.jdbc.JDBCDumpMessaggioStream;
 import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggioMultipartInfo;
 import org.openspcoop2.protocol.basic.archive.ZIPUtils;
+import org.openspcoop2.protocol.basic.diagnostica.DiagnosticSerializer;
+import org.openspcoop2.protocol.basic.tracciamento.TracciaSerializer;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -100,10 +103,31 @@ import org.slf4j.Logger;
  */
 public class SingleFileExporter implements IExporter{
 
+	private static final String ERRORE_EXPORT = "Si è verificato un errore durante l'esportazione della transazione con id:";
+	private static final String ERRORE_EXPORT_CONTENUTI = "Si è verificato un errore durante l'esportazione dei contenuti della transazione con id:";
+	private static final String ERRORE_EXPORT_FILE = "Errore durante esportazione su file";
+	
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
+	private static void logDebug(String msg) {
+		if(SingleFileExporter.log!=null) {
+			SingleFileExporter.log.debug(msg);
+		}
+	}
+	private static void logInfo(String msg) {
+		if(SingleFileExporter.log!=null) {
+			SingleFileExporter.log.info(msg);
+		}
+	}
+	private static void logError(String msg, Exception e) {
+		if(SingleFileExporter.log!=null) {
+			SingleFileExporter.log.error(msg, e);
+		}
+	}
 	
 	private boolean exportTracce = false;
+	private boolean exportTracceUseProtocolSerialization = false;
 	private boolean exportDiagnostici = false;
+	private boolean exportDiagnosticiUseProtocolSerialization = false;
 	private boolean exportContenuti = false;
 	private boolean enableHeaderInfo = false;
 	private boolean enableConsegneInfo = false;
@@ -129,7 +153,9 @@ public class SingleFileExporter implements IExporter{
 		this.enableConsegneInfo = properties.isEnableConsegneInfo();
 		
 		this.exportTracce = properties.isExportTracce();
+		this.exportTracceUseProtocolSerialization = properties.isExportTracceUseProtocolSerialization();
 		this.exportDiagnostici = properties.isExportDiagnostici();
+		this.exportDiagnosticiUseProtocolSerialization = properties.isExportDiagnosticiUseProtocolSerialization();
 		this.exportContenuti = properties.isExportContenuti();
 		this.mimeThrowExceptionIfNotFound = properties.isMimeThrowExceptionIfNotFound();
 		this.abilitaMarcamentoTemporale = properties.isAbilitaMarcamentoTemporaleEsportazione();
@@ -143,21 +169,21 @@ public class SingleFileExporter implements IExporter{
 		this.diagnosticiService = diagnosticiService;
 		this.transazioniExporterService = transazioniExport;
 		
-		SingleFileExporter.log.info("Single File Exporter inizializzato:");
-		SingleFileExporter.log.info("\t -esportazione Consegne    abilitata: "+this.enableConsegneInfo);
-		SingleFileExporter.log.info("\t -esportazione Tracce      abilitata: "+this.exportTracce);
-		SingleFileExporter.log.info("\t -esportazione Contenuti   abilitata: "+this.exportContenuti);
-		SingleFileExporter.log.info("\t -esportazione Diagnostici abilitata: "+this.exportDiagnostici);
-		SingleFileExporter.log.info("\t -usa count: "+this.useCount);
+		SingleFileExporter.logInfo("Single File Exporter inizializzato:");
+		SingleFileExporter.logInfo("\t -esportazione Consegne abilitata: "+this.enableConsegneInfo);
+		SingleFileExporter.logInfo("\t -esportazione Tracce abilitata (useProtocolSerialization:"+this.exportTracceUseProtocolSerialization+"): "+this.exportTracce);
+		SingleFileExporter.logInfo("\t -esportazione Diagnostici abilitata (exportDiagnosticiUseProtocolSerialization:"+this.exportDiagnosticiUseProtocolSerialization+"): "+this.exportDiagnostici);
+		SingleFileExporter.logInfo("\t -esportazione Contenuti abilitata: "+this.exportContenuti);
+		SingleFileExporter.logInfo("\t -usa count: "+this.useCount);
 		if(!this.useCount) {
-			SingleFileExporter.log.info("\t -numero massimo elementi esportati: "+Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES);
+			SingleFileExporter.logInfo("\t -numero massimo elementi esportati: "+Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES);
 		}
 		
-		SingleFileExporter.log.info("\t -MimeType handling (mime.throwExceptionIfMappingNotFound):"+this.mimeThrowExceptionIfNotFound);
+		SingleFileExporter.logInfo("\t -MimeType handling (mime.throwExceptionIfMappingNotFound):"+this.mimeThrowExceptionIfNotFound);
 	}
 	
 	public SingleFileExporter(OutputStream outstream,ExporterProperties properties, ITransazioniService transazioniService,
-			ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
+			ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) {
 		
 		this(properties, transazioniService,  
 				tracciamentoService, diagnosticiService,transazioniExport);
@@ -167,7 +193,7 @@ public class SingleFileExporter implements IExporter{
 	}
 
 	public SingleFileExporter(File destFile,ExporterProperties properties, ITransazioniService transazioniService,
-			ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService,ITransazioniExportService transazioniExport) throws Exception{
+			ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService,ITransazioniExportService transazioniExport) throws FileNotFoundException {
 		this(properties,transazioniService, 
 				tracciamentoService,diagnosticiService,transazioniExport);
 		
@@ -175,12 +201,12 @@ public class SingleFileExporter implements IExporter{
 		
 		this.zip = new ZipOutputStream(fos);
 		this.fileName = destFile.getName();
-		SingleFileExporter.log.info("\n\t -Esportazione su file:"+destFile.getAbsolutePath());
+		SingleFileExporter.logInfo("\n\t -Esportazione su file:"+destFile.getAbsolutePath());
 		
 	}
 
 	public SingleFileExporter(String pathToFile,ExporterProperties properties, ITransazioniService transazioniService,
-			ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
+			ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws FileNotFoundException {
 		this(new File(pathToFile), properties, transazioniService,  
 				tracciamentoService, diagnosticiService,transazioniExport);
 	}
@@ -203,9 +229,9 @@ public class SingleFileExporter implements IExporter{
 					consegnaMultipla = true;
 				}
 			} catch (Exception e) {
-				String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+				String msg = ERRORE_EXPORT+t.getIdTransazione();
 				msg+=" Non sono riuscito a comprendere l'esito della transazione ("+e.getMessage()+")";
-				SingleFileExporter.log.error(msg,e);
+				SingleFileExporter.logError(msg,e);
 				throw new ExportException(msg, e);
 			}
 			
@@ -220,9 +246,9 @@ public class SingleFileExporter implements IExporter{
 					this.zip.flush();
 					this.zip.closeEntry();
 				} catch (Exception e) {
-					String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+					String msg = ERRORE_EXPORT+t.getIdTransazione();
 					msg+=" Non sono riuscito a creare il file manifest.xml ("+e.getMessage()+")";
-					SingleFileExporter.log.error(msg,e);
+					SingleFileExporter.logError(msg,e);
 					throw new ExportException(msg, e);
 				}
 				
@@ -241,7 +267,7 @@ public class SingleFileExporter implements IExporter{
 					if(listConsegne!=null && !listConsegne.isEmpty()) {
 						for (TransazioneApplicativoServerBean tAS : listConsegne) {
 							
-							String connettoreNome = ZIPUtils.convertNameToSistemaOperativoCompatible(tAS.getConnettoreNome()!=null ? tAS.getConnettoreNome() : "Default");
+							String connettoreNome = ZIPUtils.convertNameToSistemaOperativoCompatible(tAS.getNomeConnettoreDirectoryInArchivioZip());
 							String dirConsegna = dir+connettoreNome+File.separator;
 							
 							this.zip.putNextEntry(new ZipEntry(dirConsegna+"manifest.xml"));
@@ -266,9 +292,9 @@ public class SingleFileExporter implements IExporter{
 										this.zip.flush();
 										this.zip.closeEntry();
 									}catch(Exception ioe){
-										String msg = "Si e' verificato un errore durante l'esportazione dei contenuti della transazione con id:"+t.getIdTransazione();
+										String msg = ERRORE_EXPORT_CONTENUTI+t.getIdTransazione();
 										msg+=" Non sono riuscito a creare il file fault ("+ioe.getMessage()+")";
-										SingleFileExporter.log.error(msg,ioe);
+										SingleFileExporter.logError(msg,ioe);
 										throw new ExportException(msg, ioe);
 									}				
 								}
@@ -283,9 +309,9 @@ public class SingleFileExporter implements IExporter{
 										this.zip.flush();
 										this.zip.closeEntry();
 									}catch(Exception ioe){
-										String msg = "Si e' verificato un errore durante l'esportazione dei contenuti della transazione con id:"+t.getIdTransazione();
+										String msg = ERRORE_EXPORT_CONTENUTI+t.getIdTransazione();
 										msg+=" Non sono riuscito a creare il file faultUltimoErrore ("+ioe.getMessage()+")";
-										SingleFileExporter.log.error(msg,ioe);
+										SingleFileExporter.logError(msg,ioe);
 										throw new ExportException(msg, ioe);
 									}				
 								}
@@ -303,9 +329,9 @@ public class SingleFileExporter implements IExporter{
 						}
 					}
 				}catch(Exception e){
-					String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+					String msg = ERRORE_EXPORT+t.getIdTransazione();
 					msg+=" Non sono riuscito a recuperare le informazioni sulle consegne ("+e.getMessage()+")";
-					SingleFileExporter.log.error(msg,e);
+					SingleFileExporter.logError(msg,e);
 					throw new ExportException(msg, e);
 				}
 				
@@ -315,7 +341,7 @@ public class SingleFileExporter implements IExporter{
 			//tracce
 			if(this.exportTracce){
 				//devo impostare solo l'idtransazione
-				//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
+				/**filter.setIdMessaggio(this.diagnosticiBean.getIdMessaggio());*/	
 				Map<String, String> properties = new HashMap<>();
 				properties.put("id_transazione", t.getIdTransazione());
 
@@ -326,7 +352,7 @@ public class SingleFileExporter implements IExporter{
 					tracciaRichiesta=this.tracciamentoService.getTraccia(RuoloMessaggio.RICHIESTA,properties);
 					tracce.add(tracciaRichiesta);
 				}catch(DriverTracciamentoException e){
-					String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+					String msg = ERRORE_EXPORT+t.getIdTransazione();
 					msg+=" Non sono riuscito a recuperare la traccia di richiesta ("+e.getMessage()+")";
 					throw new ExportException(msg, e);
 				}catch(DriverTracciamentoNotFoundException e){
@@ -336,7 +362,7 @@ public class SingleFileExporter implements IExporter{
 					tracciaRisposta = this.tracciamentoService.getTraccia(RuoloMessaggio.RISPOSTA,properties);
 					tracce.add(tracciaRisposta);
 				}catch(DriverTracciamentoException e){
-					String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+					String msg = ERRORE_EXPORT+t.getIdTransazione();
 					msg+=" Non sono riuscito a recuperare la traccia di risposta ("+e.getMessage()+")";
 					throw new ExportException(msg, e);
 				}catch(DriverTracciamentoNotFoundException e){
@@ -357,7 +383,13 @@ public class SingleFileExporter implements IExporter{
 							String newLine = j > 0 ? "\n\n" : "";
 							
 							IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(tr.getProtocollo());
-							ITracciaSerializer tracciaBuilder = pf.createTracciaSerializer();
+							ITracciaSerializer tracciaBuilder = null;
+							if(this.exportTracceUseProtocolSerialization) {
+								tracciaBuilder = pf.createTracciaSerializer();
+							}
+							else {
+								tracciaBuilder = new TracciaSerializer(pf);
+							}
 							
 							try {
 								if(j==0){
@@ -444,7 +476,7 @@ public class SingleFileExporter implements IExporter{
 							}
 						}
 					}catch(Exception e){
-						String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+						String msg = ERRORE_EXPORT+t.getIdTransazione();
 						msg+=" Non sono riuscito a creare il file tracce.xml ("+e.getMessage()+")";
 						throw new ExportException(msg, e);
 					}
@@ -472,9 +504,9 @@ public class SingleFileExporter implements IExporter{
 						this.zip.flush();
 						this.zip.closeEntry();
 					}catch(Exception ioe){
-						String msg = "Si e' verificato un errore durante l'esportazione dei contenuti della transazione con id:"+t.getIdTransazione();
+						String msg = ERRORE_EXPORT_CONTENUTI+t.getIdTransazione();
 						msg+=" Non sono riuscito a creare il file faultIntegrazione ("+ioe.getMessage()+")";
-						SingleFileExporter.log.error(msg,ioe);
+						SingleFileExporter.logError(msg,ioe);
 						throw new ExportException(msg, ioe);
 					}				
 				}
@@ -489,9 +521,9 @@ public class SingleFileExporter implements IExporter{
 						this.zip.flush();
 						this.zip.closeEntry();
 					}catch(Exception ioe){
-						String msg = "Si e' verificato un errore durante l'esportazione dei contenuti della transazione con id:"+t.getIdTransazione();
+						String msg = ERRORE_EXPORT_CONTENUTI+t.getIdTransazione();
 						msg+=" Non sono riuscito a creare il file faultCooperazione ("+ioe.getMessage()+")";
-						SingleFileExporter.log.error(msg,ioe);
+						SingleFileExporter.logError(msg,ioe);
 						throw new ExportException(msg, ioe);
 					}				
 				}
@@ -517,13 +549,13 @@ public class SingleFileExporter implements IExporter{
 			
 			
 			//devo impostare solo l'idtransazione
-			//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
+			/**filter.setIdMessaggio(this.diagnosticiBean.getIdMessaggio());*/	
 			Map<String, String> properties = new HashMap<>();
 			properties.put("id_transazione", t.getIdTransazione());
 			filter.setProperties(properties);
 			
 			//non necessario, id_transazione e' sufficiente
-			//filter.setIdentificativoPorta(search.getIdentificativoPorta());
+			/**filter.setIdentificativoPorta(search.getIdentificativoPorta());*/
 			
 			if(forceNullApplicativo) {
 				filter.setCheckApplicativoIsNull(true);
@@ -548,7 +580,13 @@ public class SingleFileExporter implements IExporter{
 					String newLine = j > 0 ? "\n\n" : "";
 					
 					IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
-					IDiagnosticSerializer diagnosticoBuilder = pf.createDiagnosticSerializer();
+					IDiagnosticSerializer diagnosticoBuilder = null;
+					if(this.exportDiagnosticiUseProtocolSerialization) {
+						diagnosticoBuilder = pf.createDiagnosticSerializer();
+					}
+					else {
+						diagnosticoBuilder = new DiagnosticSerializer(pf);
+					}
 					
 					if(j==0){
 						XMLRootElement xmlRootElement = diagnosticoBuilder.getXMLRootElement();
@@ -586,7 +624,7 @@ public class SingleFileExporter implements IExporter{
 					in.close();
 			}
 		}catch(Exception e){
-			String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+			String msg = ERRORE_EXPORT+t.getIdTransazione();
 			msg+=" Non sono riuscito a creare il file diagnostici.xml ("+e.getMessage()+")";
 			throw new ExportException(msg, e);
 		}
@@ -598,14 +636,14 @@ public class SingleFileExporter implements IExporter{
 		try{
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 			
-//			int start = 0;
-//			int limit = 100;
+/**			int start = 0;
+			int limit = 100;*/
 			
 			
 			SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
-			SingleFileExporter.log.debug("Avvio esportazione ...");
-			SingleFileExporter.log.debug("Inizio esportazione alle:"+time.format(startTime));
-			List<TransazioneBean> transazioni = new ArrayList<TransazioneBean>();
+			SingleFileExporter.logDebug("Avvio esportazione ...");
+			SingleFileExporter.logDebug("Inizio esportazione alle:"+time.format(startTime));
+			List<TransazioneBean> transazioni = new ArrayList<>();
 			
 			for (String id : idtransazioni) {
 				transazioni.add(this.transazioniService.findByIdTransazione(id));
@@ -622,7 +660,7 @@ public class SingleFileExporter implements IExporter{
 			}catch(Exception ioe){
 				String msg = "Si e' verificato un errore durante l'esportazione delle transazioni";
 				msg+=" Non sono riuscito a creare il file SearchFilter.xml ("+ioe.getMessage()+")";
-				SingleFileExporter.log.error(msg,ioe);
+				SingleFileExporter.logError(msg,ioe);
 				throw new ExportException(msg, ioe);
 			}
 			
@@ -652,11 +690,11 @@ public class SingleFileExporter implements IExporter{
 			this.zip.flush();
 			this.zip.close();
 		
-			SingleFileExporter.log.debug("Fine esportazione alle:"+formatter.format(Calendar.getInstance().getTime()));
-			SingleFileExporter.log.debug("Esportazione completata.");
+			SingleFileExporter.logDebug("Fine esportazione alle:"+formatter.format(Calendar.getInstance().getTime()));
+			SingleFileExporter.logDebug("Esportazione completata.");
 			
 		}catch(ExportException e){
-			SingleFileExporter.log.error("Errore durante esportazione su file",e);
+			SingleFileExporter.logError(ERRORE_EXPORT_FILE,e);
 			
 			if(this.abilitaMarcamentoTemporale && te!=null){
 				try{
@@ -668,14 +706,14 @@ public class SingleFileExporter implements IExporter{
 					
 					this.transazioniExporterService.store(te);
 				}catch(Exception ex){
-					SingleFileExporter.log.error("Errore durante il marcamento temporale.",ex);
+					SingleFileExporter.logError("Errore durante il marcamento temporale.",ex);
 				}
 			}
 			
 			throw e;
 		}catch(Exception e){
-			SingleFileExporter.log.error("Errore durante esportazione su file",e);
-			throw new ExportException("Errore durante esportazione su file", e);
+			SingleFileExporter.logError(ERRORE_EXPORT_FILE,e);
+			throw new ExportException(ERRORE_EXPORT_FILE, e);
 		}
 	}
 	
@@ -694,8 +732,8 @@ public class SingleFileExporter implements IExporter{
 			int limit = 100;
 			
 			SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
-			SingleFileExporter.log.debug("Avvio esportazione ...");
-			SingleFileExporter.log.debug("Inizio esportazione alle:"+time.format(startTime));
+			SingleFileExporter.logDebug("Avvio esportazione ...");
+			SingleFileExporter.logDebug("Inizio esportazione alle:"+time.format(startTime));
 			
 			if(this.abilitaMarcamentoTemporale){
 				te = this.transazioniExporterService.getByIntervallo(this.transazioniService.getSearch().getDataInizio(), this.transazioniService.getSearch().getDataFine());
@@ -709,7 +747,7 @@ public class SingleFileExporter implements IExporter{
 				this.transazioniExporterService.store(te);
 			}
 			
-			List<TransazioneBean> transazioni = new ArrayList<>();
+			List<TransazioneBean> transazioni = null;
 			
 			transazioni = this.transazioniService.findAll(start, limit);
 			
@@ -718,7 +756,7 @@ public class SingleFileExporter implements IExporter{
 						
 			//creo sempre il file anche se non ci sono transazioni
 			//il file conterra' solo il SearchFilter.xml
-//			if(transazioni.size()>0){
+/**			if(transazioni.size()>0){*/
 				//int i = 0;// progressivo per evitare entry duplicate nel file zip
 				// Create a buffer for reading the files
 				String rootDir = "Transazioni"+File.separatorChar;
@@ -750,11 +788,10 @@ public class SingleFileExporter implements IExporter{
 						
 						totale += transazioni.size();
 						
-						if(!this.useCount) {
-							if(totale >= Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES) {
-								stopExport = true;
-								export(rootDir,transazioni); // altrimenti l'ultima lista recuperata non viene inserita
-							}
+						if(!this.useCount &&
+							totale >= Costanti.SELECT_ITEM_VALORE_MASSIMO_ENTRIES) {
+							stopExport = true;
+							export(rootDir,transazioni); // altrimenti l'ultima lista recuperata non viene inserita
 						}
 					}
 
@@ -763,10 +800,10 @@ public class SingleFileExporter implements IExporter{
 				}catch(IOException ioe){
 					String msg = "Si e' verificato un errore durante l'esportazione delle transazioni";
 					msg+=" Non sono riuscito a creare il file SearchFilter.xml ("+ioe.getMessage()+")";
-					SingleFileExporter.log.error(msg,ioe);
+					SingleFileExporter.logError(msg,ioe);
 					throw new ExportException(msg, ioe);
 				}
-//			}
+/**			}*/
 				
 			Date dataFine = Calendar.getInstance().getTime();
 			
@@ -776,11 +813,11 @@ public class SingleFileExporter implements IExporter{
 				this.transazioniExporterService.store(te);
 			}
 			
-			SingleFileExporter.log.debug("Fine esportazione alle:"+formatter.format(dataFine));
-			SingleFileExporter.log.debug("Esportazione completata.");
+			SingleFileExporter.logDebug("Fine esportazione alle:"+formatter.format(dataFine));
+			SingleFileExporter.logDebug("Esportazione completata.");
 			
 		}catch(ExportException e){
-			SingleFileExporter.log.error("Errore durante esportazione su file",e);
+			SingleFileExporter.logError(ERRORE_EXPORT_FILE,e);
 			
 			if(this.abilitaMarcamentoTemporale){
 				try{
@@ -792,14 +829,14 @@ public class SingleFileExporter implements IExporter{
 					
 					this.transazioniExporterService.store(te);
 				}catch(Exception ex){
-					SingleFileExporter.log.error("Errore durante il marcamento temporale.",ex);
+					SingleFileExporter.logError("Errore durante il marcamento temporale.",ex);
 				}
 			}
 			
 			throw e;
 		}catch(Exception e){
-			SingleFileExporter.log.error("Errore durante esportazione su file",e);
-			throw new ExportException("Errore durante esportazione su file", e);
+			SingleFileExporter.logError(ERRORE_EXPORT_FILE,e);
+			throw new ExportException(ERRORE_EXPORT_FILE, e);
 		}
 	}
 	
@@ -823,7 +860,7 @@ public class SingleFileExporter implements IExporter{
 	public static void exportContenuti(Logger log, Transazione t, 
 			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
 			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
-		_exportContenuti(log, t.getIdTransazione(), null, null,
+		internalExportContenuti(log, t.getIdTransazione(), null, null,
 				zip, dirPath,service, tipo,
 				headersAsProperties, contenutiAsProperties);
 	}
@@ -831,12 +868,12 @@ public class SingleFileExporter implements IExporter{
 	public static void exportContenuti(Logger log, TransazioneApplicativoServer transazioneApplicativoServer, Date dataConsegnaErogatore, 
 			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
 			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
-		_exportContenuti(log, transazioneApplicativoServer.getIdTransazione(), transazioneApplicativoServer.getServizioApplicativoErogatore(), dataConsegnaErogatore,
+		internalExportContenuti(log, transazioneApplicativoServer.getIdTransazione(), transazioneApplicativoServer.getServizioApplicativoErogatore(), dataConsegnaErogatore,
 				zip, dirPath,service, tipo,
 				headersAsProperties, contenutiAsProperties);
 	}
 	
-	private static void _exportContenuti(Logger log, String idTransazione, String saErogatore, Date dataConsegnaErogatore,
+	private static void internalExportContenuti(Logger log, String idTransazione, String saErogatore, Date dataConsegnaErogatore,
 			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
 			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
 
@@ -876,10 +913,10 @@ public class SingleFileExporter implements IExporter{
 				try{
 					
 					String ext = "bin";
-					if(dumpBinario==false || dump.getContentType()!=null) {
+					if(!dumpBinario || dump.getContentType()!=null) {
 						
 						String contentType = dump.getContentType();
-						/*
+						/**
 						 * Fix: se è multipart è giusto vederlo come un binario
 						if(ContentTypeUtilities.isMultipart(contentType)){
 							contentType = org.openspcoop2.utils.transport.http.ContentTypeUtilities.getInternalMultipartContentType(contentType);
@@ -936,7 +973,7 @@ public class SingleFileExporter implements IExporter{
 			if(dump.getContentLength()!=null) {
 				bf.append("ContentLength=").append(dump.getContentLength()).append("\n");
 			}
-			if(dumpBinario==false || dump.getFormatoMessaggio()!=null) {
+			if(!dumpBinario || dump.getFormatoMessaggio()!=null) {
 				bf.append("MessageType=").append(dump.getFormatoMessaggio()).append("\n");
 			}
 			bf.append("TransactionId=").append(dump.getIdTransazione()).append("\n");
@@ -956,30 +993,31 @@ public class SingleFileExporter implements IExporter{
 			
 			// haeder messaggio
 			List<DumpMultipartHeader> headersMultiPart = dump.getMultipartHeaderList();
-			if(headersMultiPart==null || headersMultiPart.size()<=0) {
-				if(dump.getMultipartContentId()!=null || dump.getMultipartContentType()!=null || dump.getMultipartContentLocation()!=null) {
-					headersMultiPart = new ArrayList<>();
-					if(dump.getMultipartContentId()!=null) {
-						DumpMultipartHeader header = new DumpMultipartHeader();
-						header.setNome(HttpConstants.CONTENT_ID);
-						header.setValore(dump.getMultipartContentId());
-						headersMultiPart.add(header);
-					}
-					if(dump.getMultipartContentType()!=null) {
-						DumpMultipartHeader header = new DumpMultipartHeader();
-						header.setNome(HttpConstants.CONTENT_TYPE);
-						header.setValore(dump.getMultipartContentType());
-						headersMultiPart.add(header);
-					}
-					if(dump.getMultipartContentLocation()!=null) {
-						DumpMultipartHeader header = new DumpMultipartHeader();
-						header.setNome(HttpConstants.CONTENT_LOCATION);
-						header.setValore(dump.getMultipartContentLocation());
-						headersMultiPart.add(header);
-					}
+			if( (headersMultiPart==null || headersMultiPart.isEmpty()) 
+					&&
+				(dump.getMultipartContentId()!=null || dump.getMultipartContentType()!=null || dump.getMultipartContentLocation()!=null) 
+				){
+				headersMultiPart = new ArrayList<>();
+				if(dump.getMultipartContentId()!=null) {
+					DumpMultipartHeader header = new DumpMultipartHeader();
+					header.setNome(HttpConstants.CONTENT_ID);
+					header.setValore(dump.getMultipartContentId());
+					headersMultiPart.add(header);
+				}
+				if(dump.getMultipartContentType()!=null) {
+					DumpMultipartHeader header = new DumpMultipartHeader();
+					header.setNome(HttpConstants.CONTENT_TYPE);
+					header.setValore(dump.getMultipartContentType());
+					headersMultiPart.add(header);
+				}
+				if(dump.getMultipartContentLocation()!=null) {
+					DumpMultipartHeader header = new DumpMultipartHeader();
+					header.setNome(HttpConstants.CONTENT_LOCATION);
+					header.setValore(dump.getMultipartContentLocation());
+					headersMultiPart.add(header);
 				}
 			}
-			if(headersMultiPart!=null && headersMultiPart.size()>0) {
+			if(headersMultiPart!=null && !headersMultiPart.isEmpty()) {
 				try{
 					String name = "message_multipart_headers.";
 					if(headersAsProperties) {
@@ -1002,7 +1040,7 @@ public class SingleFileExporter implements IExporter{
 			
 			//header trasporto
 			List<DumpHeaderTrasporto> headers = service.getHeaderTrasporto(dump.getIdTransazione(), dump.getServizioApplicativoErogatore(), dump.getDataConsegnaErogatore(), dump.getTipoMessaggio(), dump.getId());
-			if(headers.size()>0){
+			if(!headers.isEmpty()){
 				try{
 					String name = "headers.";
 					if(headersAsProperties) {
@@ -1025,7 +1063,7 @@ public class SingleFileExporter implements IExporter{
 			}
 			//contenuti
 			List<DumpContenuto> contenuti = service.getContenutiSpecifici(dump.getIdTransazione(), dump.getServizioApplicativoErogatore(), dump.getDataConsegnaErogatore(), dump.getTipoMessaggio(), dump.getId());
-			if(contenuti.size()>0){
+			if(!contenuti.isEmpty()){
 				try{
 					String name = "contents.";
 					if(contenutiAsProperties) {
@@ -1049,7 +1087,7 @@ public class SingleFileExporter implements IExporter{
 			}
 			//allegati
 			List<DumpAllegato> allegati = service.getAllegatiMessaggio(dump.getIdTransazione(), dump.getServizioApplicativoErogatore(),  dump.getDataConsegnaErogatore(), dump.getTipoMessaggio(), dump.getId());
-			if(allegati.size()>0){
+			if(!allegati.isEmpty()){
 				try{
 					for (int i = 0; i < allegati.size(); i++) {
 						DumpAllegato allegato = allegati.get(i);
@@ -1067,7 +1105,7 @@ public class SingleFileExporter implements IExporter{
 						}
 						zip.putNextEntry(new ZipEntry(name));
 						List<DumpHeaderAllegato> headersAllegato = allegato.getHeaderList();
-						if(headersAllegato==null || headersAllegato.size()<=0) {
+						if(headersAllegato==null || headersAllegato.isEmpty()) {
 							headersAllegato = new ArrayList<>();
 							if(allegato.getContentId()!=null) {
 								DumpHeaderAllegato header = new DumpHeaderAllegato();
@@ -1118,7 +1156,7 @@ public class SingleFileExporter implements IExporter{
 	public static void exportContenutiMultipart(Logger log, Transazione t, 
 			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
 			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
-		_exportContenutiMultipart(log, t.getIdTransazione(), null, null,
+		internalExportContenutiMultipart(log, t.getIdTransazione(), null, null,
 				zip, dirPath,service, tipo,
 				headersAsProperties, contenutiAsProperties);
 	}
@@ -1126,15 +1164,19 @@ public class SingleFileExporter implements IExporter{
 	public static void exportContenutiMultipart(Logger log, TransazioneApplicativoServer transazioneApplicativoServer, Date dataConsegnaErogatore, 
 			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
 			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
-		_exportContenutiMultipart(log, transazioneApplicativoServer.getIdTransazione(), transazioneApplicativoServer.getServizioApplicativoErogatore(), dataConsegnaErogatore,
+		internalExportContenutiMultipart(log, transazioneApplicativoServer.getIdTransazione(), transazioneApplicativoServer.getServizioApplicativoErogatore(), dataConsegnaErogatore,
 				zip, dirPath,service, tipo,
 				headersAsProperties, contenutiAsProperties);
 	}
 	
-	private static void _exportContenutiMultipart(Logger log, String idTransazione, String saErogatore, Date dataConsegnaErogatore,
+	private static void internalExportContenutiMultipart(Logger log, String idTransazione, String saErogatore, Date dataConsegnaErogatore,
 			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
 			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
 
+		if(contenutiAsProperties) {
+			// nop
+		}
+		
 		String contenutiDir = null;
 		if(dirPath!=null) {
 			contenutiDir = dirPath+"contenuti"+File.separator;
@@ -1172,10 +1214,10 @@ public class SingleFileExporter implements IExporter{
 				try{
 					
 					String ext = "bin";
-					if(dumpBinario==false || dumpDB.getContentType()!=null) {
+					if(!dumpBinario || dumpDB.getContentType()!=null) {
 						
 						String contentType = dumpDB.getContentType();
-						/*
+						/**
 						 * Fix: se è multipart è giusto vederlo come un binario
 						if(ContentTypeUtilities.isMultipart(contentType)){
 							contentType = org.openspcoop2.utils.transport.http.ContentTypeUtilities.getInternalMultipartContentType(contentType);
@@ -1253,7 +1295,7 @@ public class SingleFileExporter implements IExporter{
 			if(dumpDB.getContentLength()!=null) {
 				bf.append("ContentLength=").append(dumpDB.getContentLength()).append("\n");
 			}
-			if(dumpBinario==false || dumpDB.getFormatoMessaggio()!=null) {
+			if(!dumpBinario || dumpDB.getFormatoMessaggio()!=null) {
 				bf.append("MessageType=").append(dumpDB.getFormatoMessaggio()).append("\n");
 			}
 			bf.append("TransactionId=").append(dumpDB.getIdTransazione()).append("\n");
@@ -1276,7 +1318,7 @@ public class SingleFileExporter implements IExporter{
 			DumpMessaggioMultipartInfo headersMultiPartInfoBody = dumpMessaggio!=null ? dumpMessaggio.getMultipartInfoBody() : null;
 			
 			if(headersMultiPartInfoBody !=null) {
-				headersMultiPart = new ArrayList<DumpMultipartHeader>();
+				headersMultiPart = new ArrayList<>();
 				
 				if(headersMultiPartInfoBody.getHeadersValues() != null && headersMultiPartInfoBody.getHeadersValues().size() > 0) {
 					Map<String, String> toMapSingleValue = TransportUtils.convertToMapSingleValue(headersMultiPartInfoBody.getHeadersValues());
@@ -1318,7 +1360,7 @@ public class SingleFileExporter implements IExporter{
 					}
 				}
 			}
-			if(headersMultiPart!=null && headersMultiPart.size()>0) {
+			if(headersMultiPart!=null && !headersMultiPart.isEmpty()) {
 				try{
 					String name = "message_multipart_headers.";
 					if(headersAsProperties) {
@@ -1341,7 +1383,7 @@ public class SingleFileExporter implements IExporter{
 			
 			//header trasporto
 			List<DumpHeaderTrasporto> headers = service.getHeaderTrasporto(dumpDB.getIdTransazione(), dumpDB.getServizioApplicativoErogatore(), dumpDB.getDataConsegnaErogatore(), dumpDB.getTipoMessaggio(), dumpDB.getId());
-			if(headers!=null && headers.size()>0){
+			if(headers!=null && !headers.isEmpty()){
 				try{
 					String name = "headers.";
 					if(headersAsProperties) {
@@ -1365,7 +1407,7 @@ public class SingleFileExporter implements IExporter{
 			
 			//allegati
 			List<DumpAttachment> attachments = dumpMessaggio!=null ? dumpMessaggio.getAttachments() : null;
-			if(attachments!=null && attachments.size()>0){
+			if(attachments!=null && !attachments.isEmpty()){
 				try{
 					for (int i = 0; i < attachments.size(); i++) {
 						DumpAttachment dumpAttachment = attachments.get(i);

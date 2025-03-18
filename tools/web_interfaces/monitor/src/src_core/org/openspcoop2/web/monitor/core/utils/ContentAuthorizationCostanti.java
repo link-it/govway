@@ -68,6 +68,9 @@ public class ContentAuthorizationCostanti {
 		"/transazioni/pages/form/transazioni.jsf",
 		"/transazioni/pages/form/transazioniLivello2.jsf",
 		
+		//Servlet Archivio Zip
+		"/archivioZipUpload",
+		
 		// Esiti Live
 		"/transazioni/pages/form/esitiLive.jsf",
 
@@ -145,6 +148,9 @@ public class ContentAuthorizationCostanti {
 		"/transazioni/pages/form/faultTransazioneApplicativoServer.jsf",
 		"/transazioni/pages/form/dettaglioDumpMultipart.jsf",
 		"/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServerMultipart.jsf",
+		
+		//Servlet Archivio Zip
+		"/archivioZipUpload",
 
 		// Configurazione Utenti
 		"/core/pages/form/user.jsf",
@@ -223,6 +229,9 @@ public class ContentAuthorizationCostanti {
 		{"/tracceexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
 		{"/transazioniexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
 		{"/transazionicsvexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
+		
+		//Servlet Archivio Zip
+		{"/archivioZipUpload",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
 
 		// Esiti Live
 		{"/transazioni/pages/form/esitiLive.jsf",ApplicationBean.FUNZIONALITA_ESITI_LIVE},

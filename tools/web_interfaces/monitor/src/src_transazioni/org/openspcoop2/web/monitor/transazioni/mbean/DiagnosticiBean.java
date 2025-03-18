@@ -20,6 +20,11 @@
 package org.openspcoop2.web.monitor.transazioni.mbean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
+import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServerBean;
 
 /**
  * DiagnosticiBean
@@ -42,6 +47,9 @@ public class DiagnosticiBean implements Serializable {
 	private String protocollo;
 	private String nomeServizioApplicativo;
 	private Boolean forceNomeServizioApplicativoNull;
+	private List<MsgDiagnostico> diagnostici = new ArrayList<>();
+	private List<TransazioneApplicativoServerBean> transazioniApplicativoServer;
+	private boolean usaInformazioniArchivio;
 	
 	public void setIdTransazione(String idTransazione) {
 		this.idTransazione = idTransazione;
@@ -94,5 +102,24 @@ public class DiagnosticiBean implements Serializable {
 	public void setForceNomeServizioApplicativoNull(Boolean forceNomeServizioApplicativoNull) {
 		this.forceNomeServizioApplicativoNull = forceNomeServizioApplicativoNull;
 	}
-	
+
+	public List<MsgDiagnostico> getDiagnostici() {
+		return this.diagnostici;
+	}
+
+	public boolean isUsaInformazioniArchivio() {
+		return this.usaInformazioniArchivio;
+	}
+
+	public void setUsaInformazioniArchivio(boolean usaInformazioniArchivio) {
+		this.usaInformazioniArchivio = usaInformazioniArchivio;
+	}
+
+	public List<TransazioneApplicativoServerBean> getTransazioniApplicativoServer() {
+		return this.transazioniApplicativoServer;
+	}
+
+	public void setTransazioniApplicativoServer(List<TransazioneApplicativoServerBean> transazioniApplicativoServer) {
+		this.transazioniApplicativoServer = transazioniApplicativoServer;
+	}
 }

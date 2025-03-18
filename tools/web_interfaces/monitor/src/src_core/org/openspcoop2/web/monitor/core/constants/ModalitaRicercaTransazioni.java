@@ -34,6 +34,7 @@ public enum ModalitaRicercaTransazioni {
 
 	ANDAMENTO_TEMPORALE ("intervalloTemporale"),
 	RICERCA_LIBERA ("ricercaLibera"),
+	ESAMINA_ARCHIVIO_ZIP("esaminaArchivioZip"),
 	MITTENTE_TOKEN_INFO ("mittenteTokenInfo"),
 	MITTENTE_SOGGETTO ("mittenteSoggetto"),
 	MITTENTE_APPLICATIVO ("mittenteApplicativo"),
@@ -84,7 +85,8 @@ public enum ModalitaRicercaTransazioni {
 					MITTENTE_SOGGETTO,
 					MITTENTE_TOKEN_INFO,
 					RICERCA_LIBERA,
-					LIVE:
+					LIVE,
+					ESAMINA_ARCHIVIO_ZIP:
 					return 1;
 				case ID_APPLICATIVO_AVANZATA,
 					ID_APPLICATIVO_BASE:

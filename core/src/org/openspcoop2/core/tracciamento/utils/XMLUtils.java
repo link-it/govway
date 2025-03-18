@@ -53,6 +53,10 @@ import org.openspcoop2.core.tracciamento.utils.serializer.JsonJacksonDeserialize
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
+import org.openspcoop2.utils.serialization.IDeserializer;
+import org.openspcoop2.utils.serialization.SerializationConfig;
+import org.openspcoop2.utils.serialization.SerializationFactory;
+import org.openspcoop2.utils.serialization.SerializationFactory.SERIALIZATION_TYPE;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -523,6 +527,30 @@ public class XMLUtils  {
 			bout.flush();
 			bout.close();
 			return bout.toString();
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public static Traccia toTracciaFromXml(String traccia) throws XMLUtilsException{
+		return toTracciaFromXml(traccia.getBytes());
+	}
+	public static Traccia toTracciaFromXml(byte[] traccia) throws XMLUtilsException{
+		try (ByteArrayInputStream bin = new ByteArrayInputStream(traccia)){
+			return (Traccia) org.openspcoop2.utils.xml.JaxbUtils.xmlToObj(bin, Traccia.class);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public static Traccia toTracciaFromJson(String traccia) throws XMLUtilsException{
+		return toTracciaFromJson(traccia.getBytes());
+	}
+	public static Traccia toTracciaFromJson(byte[] traccia) throws XMLUtilsException{
+		try (ByteArrayInputStream bin = new ByteArrayInputStream(traccia)){
+			SerializationConfig config = new SerializationConfig();
+			IDeserializer deserializer = SerializationFactory.getDeserializer(SERIALIZATION_TYPE.JSON_JACKSON, config);
+			return (Traccia) deserializer.readObject(bin, Traccia.class);
 		}catch(Exception e){
 			throw new XMLUtilsException(e.getMessage(),e);
 		}

@@ -513,7 +513,7 @@
 				</rich:column>
 				<ui:insert name="extraColumns"></ui:insert>
 				<ui:define name="buttons">
-					<h:panelGrid columns="1" >
+					<h:panelGrid columns="1" rendered="${mBean.showButtonEsporta}">
 						<h:commandLink id="exportCsv-iconLink" styleClass="icon-csv" 
 					onclick="if(checkSelection('msgDt','msgDt_checkSelection')){ preparaFormModale(getSelectedRows('msgDt'),getSelectedAllValue('msgDt')); Richfaces.showModalPanel('exportCsvModalPnl'); } return false;" >
 								<h:outputText value="Esporta" />

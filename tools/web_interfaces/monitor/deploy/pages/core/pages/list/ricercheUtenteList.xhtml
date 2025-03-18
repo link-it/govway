@@ -257,192 +257,22 @@ xmlns="http://www.w3.org/1999/xhtml"
 					<strong>Note:</strong> (<em>*</em>) Campi obbligatori
 				</p>
 				<div class="form-container noborder">
-					<h:form id="formControlloUpload" prependId="false">							
-						<input type="hidden" id="_csrfFormControlloUpload" name="_csrf" value="#{loginBean.csrf}"/>
-						<a4j:jsFunction name="startUploads" oncomplete="caricaFile(data);" actionListener="#{ricercheUtenteBean.ricercheFile.startUploadsListener}" 
-							 reRender="idFilesValidi" >
-						</a4j:jsFunction>
-						<a4j:jsFunction name="propagaStopUploads" reRender="panelFormCaricaRicercheContainer,fileCaricaRicercheCtr" 
-								actionListener="#{ricercheUtenteBean.ricercheFile.stopUploadsListener}" limitToList="true">
-								<a4j:actionparam name="param1" assignTo="#{ricercheUtenteBean.idFiles}"  />
-						</a4j:jsFunction>
-						<a4j:jsFunction name="endUploadFail" reRender="panelFormCaricaRicercheContainer,fileCaricaRicercheCtr" 
-								actionListener="#{ricercheUtenteBean.ricercheFile.uploadErrorListener}" limitToList="true">
-						</a4j:jsFunction>
-						<a4j:jsFunction name="propagaEndDeleteOk" reRender="panelFormCaricaRicercheContainer,fileCaricaRicercheCtr" 
-								actionListener="#{ricercheUtenteBean.ricercheFile.deleteCompleteOkListener}" limitToList="true">
-								<a4j:actionparam name="param1" assignTo="#{ricercheUtenteBean.idFiles}"  />
-						</a4j:jsFunction>
-						<a4j:jsFunction name="propagaEndDeleteFail" reRender="panelFormCaricaRicercheContainer,fileCaricaRicercheCtr" 
-								actionListener="#{ricercheUtenteBean.ricercheFile.deleteCompleteFailListener}" limitToList="true">
-						</a4j:jsFunction>
-					</h:form>
-						
+					<link:fileUploadSupport id="formFile" loginBean="#{loginBean}" mBean="#{ricercheUtenteBean}"
+						uploadServletUrl="#{facesContext.externalContext.request.contextPath}/ricercheUpload"
+						fileUploadBean="#{ricercheUtenteBean.ricercheFile}"
+						reRender="panelFormCaricaRicercheContainer,fileCaricaRicercheCtr"
+					/>
+					
 					<a4j:outputPanel layout="block" id="panelFormCaricaRicercheContainer" ajaxRendered="false">
 						<h:form id="dSFormUploadPnl" prependId="false">
 							<input type="hidden" id="_csrfFormExportReport" name="_csrf" value="#{loginBean.csrf}"/>
 						 
 							<link:fieldset legend="Ricerche" collapsible="false">
-		 	                   <link:prop label="#{msg['commons.ricercheUtente.importaRicerche.label']}" required="true">
-	                      		   <input id="form-file" size="50" type="file" name="theFile" class="inputLinkLong" multiple="multiple"/>
-	                      		   <script type="text/javascript" nonce="#{_csp_random_nonce}">
-	                      				jQuery(document).ready(function(){
-	                        				jQuery('#form-file').change(function() {
-	                          					startUploads();
-	                          				});
-	                        			});
-	                      		   </script>
-	                      		   <h:inputHidden value="#{ricercheUtenteBean.idFiles}" id="idFilesValidi" /> 
-                    		   </link:prop>
-                      
-                    			<a4j:outputPanel layout="block" rendered="#{ricercheUtenteBean.visualizzaComandiEliminaFile}" id="infoFileCaricatoPanel">
-                    				<c:forEach items="#{ricercheUtenteBean.ricercheFile.mapChiaviElementi}" var="entry">
-	                      				<a4j:outputPanel layout="block" styleClass="prop">
-	                        				<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />	
-	                        				<a4j:outputPanel layout="block" styleClass="divNoEdit">
-	                          					<span class="spanNoEdit"><i id="form-file-identificativo-file-caricato">#{entry.value}</i></span>
-	                          					<a id="form-file-delete-cmd_#{entry.key}" class="text-action-link " title="Rimuovi #{entry.value}" target="_self" href="#" type="button">
-		                            				<span class="icon-box">
-		                              					<i class="material-icons md-16">delete</i>
-		                            				</span>
-		                            				<script type="text/javascript" nonce="#{_csp_random_nonce}">
-		                              					jQuery(document).ready(function(){
-															var fileId = '#{entry.key}';
-															var jQueryFileId = '#form-file-delete-cmd_'+fileId;
-		                                  					jQuery(jQueryFileId).click(function() {
-		                                    					cancellaFileSelezionato(fileId);
-		                                  					});
-		                                				});
-		                            				</script>
-	                          					</a>
-	                            			</a4j:outputPanel>
-	                   					</a4j:outputPanel>
-                   					</c:forEach>
-                    			</a4j:outputPanel>
-
-                    			<script type="text/javascript" nonce="#{_csp_random_nonce}">
-									//<![CDATA[
-									var baseUploadUrl = '#{facesContext.externalContext.request.contextPath}/ricercheUpload';
- 		
-									function caricaFile(startUploadsResp) {
-										// svuoto elenco ids
-										jQuery("[id$='idFilesValidi']").val('');
-										
-									    var formData = new FormData();
-									    var fileInput = jQuery('#form-file')[0].files; // Ottieni tutti i file selezionati
-									    
-									 	// Aggiungi tutti i file all'oggetto FormData
-									    for (var i = 0; i < fileInput.length; i++) {
-									        formData.append('theFiles[]', fileInput[i]); // Usa 'theFiles[]' per inviare un array di file
-									    }
-									    
-									    //formData.append('theFile', fileInput); // Append the file to the FormData object
-										    
-									    jQuery.ajax({
-									        url: baseUploadUrl, 
-									        type: 'POST',
-									        data: formData,
-									        processData: false, 
-									        contentType: false, 
-									        success: function(data, textStatus, jqXHR) {
-												var files = JSON.parse(data).files; // Ottieni l'array dei file
-												
-												// Itera su ciascun file dell'array
-												files.forEach(function(file) {
-												    if (!file.error) {
-												        var ids = jQuery("[id$='idFilesValidi']").val();
-												        
-												        // Controlla se ci sono già ID e aggiungi una virgola se necessario
-												        if (ids.length > 0) {
-												            ids += ',';
-												        }
-												        
-												        ids += file.id; // Aggiungi l'ID del file
-												        
-												        jQuery("[id$='idFilesValidi']").val(ids); // Aggiorna il campo con i nuovi ID
-												    } else {
-												        // Gestisci l'errore
-												        endUploadFail();
-												    }
-												});
-												
-												// Invia al server tutti gli ID caricati
-												stopUploads(jQuery("[id$='idFilesValidi']").val());
-									        },
-									        error: function(xhr, status, error) {
-									            console.log('File upload failed: ' + error);
-									            // Handle the error
-									            endUploadFail();
-									        }
-									    });
-									}
- 										
-									function cancellaFileSelezionato(fileId) {
-										//var fileId = jQuery("[id$='idFilesValidi']").val();
-										var deleteUrl = baseUploadUrl + '?id=' + fileId;
- 											
-										jQuery.ajax({
-									        url: deleteUrl, 
-									        type: 'DELETE',
-									        success: function(data, textStatus, jqXHR) {
-// 										            console.log('File deleted successfully');
-										            
-									            var file = JSON.parse(data).files[0];
-	 										            
-									            if(!file.error && file.stato == true){
-									            	console.log('cancellaFileSelezionato successfully');
-									            	
-									            	var ids = jQuery("[id$='idFilesValidi']").val().split(',');
-													
-													var f;
-													for(var t= 0 ; t < ids.length; t++){
-														if(ids[t] == fileId) {
-															f = t;
-															break;
-														}
-													}
-													
-													var newIds = '';
-													for(var t= 0 ; t < ids.length; t++){
-														if(t != f) {
-															if(newIds.length > 0)
-																newIds += ',';
-															
-															newIds += ids[t];
-														}
-													}
-													
-													jQuery("[id$='idFilesValidi']").val(newIds);
-													endDeleteOk(jQuery("[id$='idFilesValidi']").val());
-												} else {
-													endDeleteFail();
-												}
-								        	},
-									        error: function(xhr, status, error) {
- 										            console.log('File deletion failed: ' + error);
- 										            // Handle the error
- 										            endDeleteFail();
- 										        }
- 										    });
- 										}
- 										
- 										function stopUploads(idFiles){
- 											console.log('stopUploads ' + idFiles);
- 											propagaStopUploads(idFiles);
- 											console.log('stopUploads successfully');
- 										}
- 										
- 										function endDeleteOk(idFiles){
- 											console.log('endDeleteOk ' + idFiles);
- 											propagaEndDeleteOk(idFiles);
- 											console.log('endDeleteOk successfully');
- 										}
- 										
- 										function endDeleteFail(){
- 											propagaEndDeleteFail();
- 										}
-									 //]]>
-								</script>
+								<link:fileUpload id="formFile" loginBean="#{loginBean}" mBean="#{ricercheUtenteBean}"
+									fileUploadBean="#{ricercheUtenteBean.ricercheFile}"
+									label="#{msg['commons.ricercheUtente.importaRicerche.label']}"
+									required="true"
+								/>
 								</link:fieldset>
 								<div class="buttonrowmodal">
 									<a4j:commandButton styleClass="icon-save positive" id="importaRicercheButton"

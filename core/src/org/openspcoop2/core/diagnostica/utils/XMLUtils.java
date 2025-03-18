@@ -38,6 +38,10 @@ import org.openspcoop2.core.diagnostica.utils.serializer.JsonJacksonDeserializer
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
+import org.openspcoop2.utils.serialization.IDeserializer;
+import org.openspcoop2.utils.serialization.SerializationConfig;
+import org.openspcoop2.utils.serialization.SerializationFactory;
+import org.openspcoop2.utils.serialization.SerializationFactory.SERIALIZATION_TYPE;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -321,6 +325,30 @@ public class XMLUtils  {
 		}
 	}
 	
+	public static MessaggioDiagnostico toMessaggioDiagnosticoFromXml(String messaggioDiagnostico) throws XMLUtilsException{
+		return toMessaggioDiagnosticoFromXml(messaggioDiagnostico.getBytes());
+	}
+	public static MessaggioDiagnostico toMessaggioDiagnosticoFromXml(byte[] messaggioDiagnostico) throws XMLUtilsException{
+		try (ByteArrayInputStream bin = new ByteArrayInputStream(messaggioDiagnostico)){
+			return (MessaggioDiagnostico) org.openspcoop2.utils.xml.JaxbUtils.xmlToObj(bin, MessaggioDiagnostico.class);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public static MessaggioDiagnostico toMessaggioDiagnosticoFromJson(String messaggioDiagnostico) throws XMLUtilsException{
+		return toMessaggioDiagnosticoFromJson(messaggioDiagnostico.getBytes());
+	}
+	public static MessaggioDiagnostico toMessaggioDiagnosticoFromJson(byte[] messaggioDiagnostico) throws XMLUtilsException{
+		try (ByteArrayInputStream bin = new ByteArrayInputStream(messaggioDiagnostico)){
+			SerializationConfig config = new SerializationConfig();
+			IDeserializer deserializer = SerializationFactory.getDeserializer(SERIALIZATION_TYPE.JSON_JACKSON, config);
+			return (MessaggioDiagnostico) deserializer.readObject(bin, MessaggioDiagnostico.class);
+		}catch(Exception e){
+			throw new XMLUtilsException(e.getMessage(),e);
+		}
+	}
+	
 	
 	
 	
@@ -329,40 +357,34 @@ public class XMLUtils  {
 			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isMessaggioDiagnostico_engine(elemXML);
+			return XMLUtils.isMessaggioDiagnosticoEngine(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isMessaggioDiagnostico(Document docXML){
 		try{
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isMessaggioDiagnostico_engine(elemXML);
+			return XMLUtils.isMessaggioDiagnosticoEngine(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isMessaggioDiagnostico(Element elemXML){
-		return isMessaggioDiagnostico_engine(elemXML);
+		return isMessaggioDiagnosticoEngine(elemXML);
 	}
 	public static boolean isMessaggioDiagnostico(Node nodeXml){
-		return isMessaggioDiagnostico_engine(nodeXml);
+		return isMessaggioDiagnosticoEngine(nodeXml);
 	}
-	private static boolean isMessaggioDiagnostico_engine(Node nodeXml){
+	private static boolean isMessaggioDiagnosticoEngine(Node nodeXml){
 		try{
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if(CostantiDiagnostica.ROOT_LOCAL_NAME_MESSAGGIO_DIAGNOSTICO.equals(nodeXml.getLocalName()) && 
-					CostantiDiagnostica.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() ) 
-				){
-				return true;
-			}
-			else{
-				return false;
-			}
+			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");*/
+			return CostantiDiagnostica.ROOT_LOCAL_NAME_MESSAGGIO_DIAGNOSTICO.equals(nodeXml.getLocalName()) && 
+					CostantiDiagnostica.TARGET_NAMESPACE.equals(nodeXml.getNamespaceURI() ) ;
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}

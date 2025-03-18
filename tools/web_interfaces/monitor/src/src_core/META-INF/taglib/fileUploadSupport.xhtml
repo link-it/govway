@@ -1,0 +1,172 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
+	<f:loadBundle var="msg" basename="messages" />
+
+	<c:if test="#{empty id}">
+		<c:set var="id" value="form-file" />
+	</c:if>
+	
+	<c:if test="#{empty reRender}">
+		<c:set var="reRender" value="#{id}_formSupportoPanel" />
+	</c:if>
+	
+	<c:if test="#{empty fileUploadBean}">
+		<c:set var="fileUploadBean" value="#{mBean.fileUploadBean}" />
+	</c:if>
+	
+	<c:if test="#{empty uploadServletUrl}">
+		<c:set var="uploadServletUrl" value="#{facesContext.externalContext.request.contextPath}/uploadServlet" />
+	</c:if>
+	
+	<a4j:outputPanel layout="block" rendered="#{true}" id="#{id}_formSupportoPanel">
+		<h:form id="#{id}_formControlloUpload" prependId="false">							
+			<input type="hidden" id="_csrfFormControlloUpload_#{id}" name="_csrf" value="#{loginBean.csrf}"/>
+			<a4j:jsFunction name="#{id}_startUploads" oncomplete="#{id}_caricaFile(data);" actionListener="#{fileUploadBean.startUploadsListener}" 
+				 reRender="idFilesValidi" >
+			</a4j:jsFunction>
+			<a4j:jsFunction name="#{id}_propagaStopUploads" reRender="#{reRender}" 
+					actionListener="#{fileUploadBean.stopUploadsListener}" limitToList="true">
+					<a4j:actionparam name="param1" assignTo="#{mBean.idFiles}"  />
+			</a4j:jsFunction>
+			<a4j:jsFunction name="#{id}_endUploadFail" reRender="#{reRender}" 
+					actionListener="#{fileUploadBean.uploadErrorListener}" limitToList="true">
+			</a4j:jsFunction>
+			<a4j:jsFunction name="#{id}_propagaEndDeleteOk" reRender="#{reRender}" 
+					actionListener="#{fileUploadBean.deleteCompleteOkListener}" limitToList="true">
+					<a4j:actionparam name="param1" assignTo="#{mBean.idFiles}"  />
+			</a4j:jsFunction>
+			<a4j:jsFunction name="#{id}_propagaEndDeleteFail" reRender="#{reRender}" 
+					actionListener="#{fileUploadBean.deleteCompleteFailListener}" limitToList="true">
+			</a4j:jsFunction>
+		</h:form>
+		
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
+		//<![CDATA[
+			var #{id}_baseUploadUrl = '#{uploadServletUrl}';
+ 		
+			function #{id}_caricaFile(startUploadsResp) {
+				// svuoto elenco ids
+				jQuery("[id$='#{id}_idFilesValidi']").val('');
+				
+			    var formData = new FormData();
+			    var fileInput = jQuery('##{id}')[0].files; // Ottieni tutti i file selezionati
+			    
+			 	// Aggiungi tutti i file all'oggetto FormData
+			    for (var i = 0; i < fileInput.length; i++) {
+			        formData.append('theFiles[]', fileInput[i]); // Usa 'theFiles[]' per inviare un array di file
+			    }
+			    
+			    jQuery.ajax({
+			        url: #{id}_baseUploadUrl, 
+			        type: 'POST',
+			        data: formData,
+			        processData: false, 
+			        contentType: false, 
+			        success: function(data, textStatus, jqXHR) {
+						var files = JSON.parse(data).files; // Ottieni l'array dei file
+						
+						// Itera su ciascun file dell'array
+						files.forEach(function(file) {
+						    if (!file.error) {
+						        var ids = jQuery("[id$='#{id}_idFilesValidi']").val();
+						        
+						        // Controlla se ci sono già ID e aggiungi una virgola se necessario
+						        if (ids.length > 0) {
+						            ids += ',';
+						        }
+						        
+						        ids += file.id; // Aggiungi l'ID del file
+						        
+						        jQuery("[id$='#{id}_idFilesValidi']").val(ids); // Aggiorna il campo con i nuovi ID
+						    } else {
+						        // Gestisci l'errore
+						        #{id}_endUploadFail();
+						    }
+						});
+						
+						// Invia al server tutti gli ID caricati
+						#{id}_stopUploads(jQuery("[id$='#{id}_idFilesValidi']").val());
+			        },
+			        error: function(xhr, status, error) {
+			            console.log('File upload failed: ' + error);
+			            // Handle the error
+			            #{id}_endUploadFail();
+			        }
+			    });
+			}
+ 										
+			function #{id}_cancellaFileSelezionato(fileId) {
+				//var fileId = jQuery("[id$='#{id}_idFilesValidi']").val();
+				var deleteUrl = #{id}_baseUploadUrl + '?id=' + fileId;
+						
+				jQuery.ajax({
+			        url: deleteUrl, 
+			        type: 'DELETE',
+			        success: function(data, textStatus, jqXHR) {
+// 										            console.log('File deleted successfully');
+										            
+		            var file = JSON.parse(data).files[0];
+					            
+		            if(!file.error && file.stato == true){
+		            	console.log('cancellaFileSelezionato successfully');
+		            	
+		            	var ids = jQuery("[id$='#{id}_idFilesValidi']").val().split(',');
+						
+						var f;
+						for(var t= 0 ; t < ids.length; t++){
+							if(ids[t] == fileId) {
+								f = t;
+								break;
+							}
+						}
+						
+						var newIds = '';
+						for(var t= 0 ; t < ids.length; t++){
+							if(t != f) {
+								if(newIds.length > 0)
+									newIds += ',';
+								
+								newIds += ids[t];
+							}
+						}
+						
+						jQuery("[id$='#{id}_idFilesValidi']").val(newIds);
+						#{id}_endDeleteOk(jQuery("[id$='#{id}_idFilesValidi']").val());
+					} else {
+						#{id}_endDeleteFail();
+					}
+	        	},
+		        error: function(xhr, status, error) {
+				            console.log('File deletion failed: ' + error);
+				            // Handle the error
+				            #{id}_endDeleteFail();
+				        }
+				    });
+				}
+				
+				function #{id}_stopUploads(idFiles){
+					console.log('stopUploads ' + idFiles);
+					#{id}_propagaStopUploads(idFiles);
+					console.log('stopUploads successfully');
+				}
+				
+				function #{id}_endDeleteOk(idFiles){
+					console.log('endDeleteOk ' + idFiles);
+					#{id}_propagaEndDeleteOk(idFiles);
+					console.log('endDeleteOk successfully');
+				}
+				
+				function #{id}_endDeleteFail(){
+					#{id}_propagaEndDeleteFail();
+				}
+			 //]]>
+		</script>
+	</a4j:outputPanel>
+
+</ui:composition>

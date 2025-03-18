@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 
@@ -86,6 +87,9 @@ public class DiagnosticiDM extends
 	public int getRowCount() {
 		try {
 			if (this.rowCount == null) {
+				if (this.diagnosticiBean.isUsaInformazioniArchivio()) {
+					this.rowCount = this.diagnosticiBean.getDiagnostici().size();
+				} else {
 				FiltroRicercaDiagnostici filter = new FiltroRicercaDiagnostici();
 
 				// devo solo settare l'idtransazione
@@ -106,6 +110,7 @@ public class DiagnosticiDM extends
 
 				this.rowCount = this.getDataProvider()
 						.countMessaggiDiagnostici(filter);
+				}
 			}
 		} catch (Exception e) {
 			DiagnosticiDM.log.error(e.getMessage(), e);
@@ -144,37 +149,44 @@ public class DiagnosticiDM extends
 				int limit = ((SequenceRange) range).getRows();
 
 				this.wrappedKeys = new ArrayList<Integer>();
-				FiltroRicercaDiagnosticiConPaginazione filter = new FiltroRicercaDiagnosticiConPaginazione();
-				filter.setOffset(start);
-				filter.setLimit(limit);
-
-				// devo impostare solo l'idtransazione
-				// filter.setIdEgov(this.diagnosticiBean.getIdEgov());
-				Map<String, String> properties = new HashMap<>();
-				properties.put("id_transazione",
-						this.diagnosticiBean.getIdTransazione());
-				filter.setProperties(properties);
-				
-				filter.setCheckApplicativoIsNull(this.diagnosticiBean.getForceNomeServizioApplicativoNull());
-				filter.setApplicativo(this.diagnosticiBean.getNomeServizioApplicativo());
-				
-				// NON CI VUOLE: altrimenti non vengono visualizzati i primi diagnostici che possiedono un identificativo porta differente
-//				IDSoggetto dominio = new IDSoggetto();
-//				dominio.setCodicePorta(this.diagnosticiBean
-//						.getIdentificativoPorta());
-//				filter.setDominio(dominio);
-
 				List<MsgDiagnostico> msgs = null;
-				try{
-					msgs = this.getDataProvider()
-							.getMessaggiDiagnostici(filter);
-				}catch(DriverMsgDiagnosticiNotFoundException notFound){
-					msgs = new ArrayList<MsgDiagnostico>();
-					DiagnosticiDM.log.debug(notFound.getMessage(), notFound);
+				
+				if (this.diagnosticiBean.isUsaInformazioniArchivio()) {
+					msgs = this.diagnosticiBean.getDiagnostici().stream().skip(start).limit(limit).collect(Collectors.toList());
+				} else {
+					FiltroRicercaDiagnosticiConPaginazione filter = new FiltroRicercaDiagnosticiConPaginazione();
+					filter.setOffset(start);
+					filter.setLimit(limit);
+	
+					// devo impostare solo l'idtransazione
+					// filter.setIdEgov(this.diagnosticiBean.getIdEgov());
+					Map<String, String> properties = new HashMap<>();
+					properties.put("id_transazione",
+							this.diagnosticiBean.getIdTransazione());
+					filter.setProperties(properties);
+					
+					filter.setCheckApplicativoIsNull(this.diagnosticiBean.getForceNomeServizioApplicativoNull());
+					filter.setApplicativo(this.diagnosticiBean.getNomeServizioApplicativo());
+					
+					// NON CI VUOLE: altrimenti non vengono visualizzati i primi diagnostici che possiedono un identificativo porta differente
+	//				IDSoggetto dominio = new IDSoggetto();
+	//				dominio.setCodicePorta(this.diagnosticiBean
+	//						.getIdentificativoPorta());
+	//				filter.setDominio(dominio);
+	
+				
+					try{
+						msgs = this.getDataProvider()
+								.getMessaggiDiagnostici(filter);
+					}catch(DriverMsgDiagnosticiNotFoundException notFound){
+						msgs = new ArrayList<MsgDiagnostico>();
+						DiagnosticiDM.log.debug(notFound.getMessage(), notFound);
+					}
+	
+					// salvo tot count
+					//this.rowCount = (int) msgs.size();
+				
 				}
-
-				// salvo tot count
-				//this.rowCount = (int) msgs.size();
 
 				List<BlackListElement> metodiEsclusi = new ArrayList<BlackListElement>(0);
 				
@@ -196,4 +208,7 @@ public class DiagnosticiDM extends
 
 	}
 
+	public boolean isShowButtonEsporta() {
+		return !this.diagnosticiBean.isUsaInformazioniArchivio();
+	}
 }

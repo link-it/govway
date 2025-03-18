@@ -32,8 +32,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
@@ -41,6 +39,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
+import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.UtilsException;
@@ -53,12 +52,17 @@ import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.PdDBaseBean;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
+import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServerArchivioBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServerBean;
+import org.openspcoop2.web.monitor.transazioni.bean.TransazioneArchivioBean;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniApplicativoServerService;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
 import org.openspcoop2.web.monitor.transazioni.exporter.SingleFileExporter;
 import org.slf4j.Logger;
+
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * DettagliBean
@@ -548,7 +552,14 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 		if (this.dettaglio != null)
 			return this.dettaglio;
 		try {
-
+			if(this.transazioniService.getSearch().isRicercaArchivioZip()) {
+				this.diagnosticiBean.setUsaInformazioniArchivio(true);
+				TransazioneArchivioBean transazioneArchivioBean = this.transazioniService.getSearch().getArchivioZipManager().getMapTransazioni().get(this.idTransazione);
+				TransazioneApplicativoServerArchivioBean consegnaArchivioBean = transazioneArchivioBean.getConsegne().get(this.servizioApplicativoErogatore);       
+				this.dettaglio = consegnaArchivioBean.getTransazioneApplicativoServerBean();
+				return this.dettaglio;
+			}
+			
 			this.transazioniSAService.setIdTransazione(this.idTransazione);
 			this.transazioniSAService.setProtocollo(this.protocollo);
 			this.dettaglio = this.transazioniSAService.findByServizioApplicativoErogatore(this.servizioApplicativoErogatore);
@@ -842,8 +853,19 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 			if(this.dettaglio != null) {
 				this.diagnosticiBean.setProtocollo(this.dettaglio.getProtocollo()); 
 				this.diagnosticiBean.setNomeServizioApplicativo(this.dettaglio.getNomeServizioApplicativoErogatore());
+				if(this.transazioniService.getSearch().isRicercaArchivioZip()) {
+					
+					TransazioneArchivioBean transazioneArchivioBean = this.transazioniService.getSearch().getArchivioZipManager().getMapTransazioni().get(this.idTransazione);
+					List<MsgDiagnostico> diagnostici = transazioneArchivioBean.getConsegne().get(this.dettaglio.getNomeServizioApplicativoErogatore()).getDiagnostici();
+					if(diagnostici != null && !diagnostici.isEmpty()) {
+						this.diagnosticiBean.getDiagnostici().addAll(diagnostici);
+					}
+				}
 			}
 			this.diagnosticiBean.setForceNomeServizioApplicativoNull(null);
+			if(this.transazioniService.getSearch().isRicercaArchivioZip()) {
+				this.diagnosticiBean.setUsaInformazioniArchivio(true);
+			}
 //		}
 		
 		return this.diagnosticiBean;

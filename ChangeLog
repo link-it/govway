@@ -1,3 +1,9 @@
+2025-03-18  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità #1557
+	È stata aggiunta una nuova funzionalità alla console che consente di visualizzare le transazioni esportate in un archivio ZIP senza doverle effettivamente importare nel database.
+
 2025-02-28  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore]
