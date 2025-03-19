@@ -15597,9 +15597,10 @@ public class OpenSPCoop2Properties {
 		return this.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary;
 	}
 	
-	private String forceHttpLibraryViaHeader = null;
-	public String getHeaderForceHttpLibrary() {	
-		if(this.forceHttpLibraryViaHeader==null){
+	private String forceHttpLibraryViaHeader;
+	private boolean isForceHttpLibraryViaHeaderSet = false;
+	public String getHeaderForceHttpLibrary() {
+		if(!this.isForceHttpLibraryViaHeaderSet){
 			String pName = "org.openspcoop2.pdd.connettori.forceLibraryViaHeader";
 			try{ 
 				String name = null;
@@ -15608,9 +15609,10 @@ public class OpenSPCoop2Properties {
 					name = name.trim();
 					this.forceHttpLibraryViaHeader = name.trim();
 				}else{
-					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.logInfo(getMessaggioProprietaNonImpostata(pName, true));
 					this.forceHttpLibraryViaHeader = null;
 				}
+				this.isForceHttpLibraryViaHeaderSet = true;
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
 				this.forceHttpLibraryViaHeader = null;

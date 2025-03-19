@@ -60,6 +60,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -365,6 +366,13 @@ public class ConnettoreUtils {
 	private static String formatTipoConnettore(OpenSPCoop2Properties props, String tipoConnector, TipiConnettore t, ConnettoreMsg connettoreMsg, IAsyncResponseCallback asyncResponseCallback) {
 		if(connettoreMsg.getConnectorProperties()!=null && !connettoreMsg.getConnectorProperties().isEmpty()) {
 			String impl = connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_HTTP_IMPL);
+
+			String headerForceLibrary = props.getHeaderForceHttpLibrary();
+			TransportRequestContext transportContext = connettoreMsg.getTransportRequestContext();
+			if (impl == null && headerForceLibrary != null && transportContext.getHeaderFirstValue(headerForceLibrary) != null) {
+				impl = transportContext.getHeaderFirstValue(headerForceLibrary);
+			}
+			
 			ConnettoriHttpImpl cImpl = ConnettoriHttpImpl.getConnettoreHttpImplSafe(impl);
 			if(cImpl!=null) {
 				return formatTipoConnettore(tipoConnector, t, cImpl, asyncResponseCallback);
@@ -374,6 +382,7 @@ public class ConnettoreUtils {
 		boolean nio = asyncResponseCallback!=null;
 		String libreriaHttpDefault = nio ? props.getConnettoreNIOLibreriaHttpDefault() : props.getConnettoreLibreriaHttpDefault();
 		String libreriaHttpsDefault = nio ? props.getConnettoreNIOLibreriaHttpsDefault() : props.getConnettoreLibreriaHttpsDefault();
+		
 		return formatTipoConnettore(tipoConnector, t, 
 				nio,
 				libreriaHttpDefault,
