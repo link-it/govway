@@ -136,6 +136,9 @@ Per creare una tag version:
     - versione hsql (standalone)
     - versone oracle
     - batch
+    
+20.b !!NOTA!!!! Verificare le vulnerabilità delle immagini e aggiornare comunque le versioni aggiornate in govway/tomcat9/Dockerfile.govway e govway/wildfly25/Dockerfile.govway:
+    - HSQLDB_FULLVERSION, POSTGRES_JDBC_VERSION, TOMCAT_VERSION, WILDFLY_VERSION
 
 21. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
 
