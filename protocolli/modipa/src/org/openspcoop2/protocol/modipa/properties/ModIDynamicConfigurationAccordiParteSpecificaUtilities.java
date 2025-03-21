@@ -48,6 +48,7 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.utils.ModISecurityUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
+import org.slf4j.Logger;
 
 /**
  * ModIDynamicConfigurationAccordiParteSpecificaUtilities
@@ -66,7 +67,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 	static ConsoleConfiguration getDynamicConfigParteSpecifica(ModIProperties modiProperties,
 			ConsoleOperationType consoleOperationType,
 			IConsoleHelper consoleHelper, IRegistryReader registryReader,
-			IConfigIntegrationReader configIntegrationReader, IDServizio id, IDSoggetto idFruitore, boolean fruizioni) throws ProtocolException {
+			IConfigIntegrationReader configIntegrationReader, IDServizio id, IDSoggetto idFruitore, boolean fruizioni,
+			Logger log) throws ProtocolException {
 		
 		if(consoleHelper.isModalitaCompleta()) {
 			return null;
@@ -115,6 +117,15 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			if(!ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternDatiCorniceSicurezza)) {
 				schemaDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
 			}
+		}
+		
+		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
+		if(pdnd && !fruizioni) {
+			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addPdndInfo(modiProperties,
+					configuration, rest, 
+					api, portType,
+					registryReader, id,
+					log);
 		}
 		
 		// Identificazione se è richiesta la sicurezza
@@ -217,7 +228,12 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			
 		}
 		
-		return null;
+		if(pdnd) {
+			return configuration;
+		}
+		else {
+			return null;
+		}
 		
 	}
 	
@@ -270,6 +286,12 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			if(!ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternDatiCorniceSicurezza)) {
 				schemaDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
 			}
+		}
+		
+		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
+		if(pdnd && !fruizioni) {
+			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updatePdndInfo(modiProperties,
+					consoleConfiguration, properties);
 		}
 		
 		// Identificazione se è richiesta la sicurezza
@@ -398,6 +420,12 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			if(!ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternDatiCorniceSicurezza)) {
 				schemaDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
 			}
+		}
+		
+		
+		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
+		if(pdnd && !fruizioni) {
+			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.validatePdndInfo(consoleConfiguration, properties);
 		}
 		
 		

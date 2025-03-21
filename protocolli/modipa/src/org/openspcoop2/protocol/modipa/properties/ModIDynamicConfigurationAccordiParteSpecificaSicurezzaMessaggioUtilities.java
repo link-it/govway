@@ -21,20 +21,26 @@ package org.openspcoop2.protocol.modipa.properties;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.engine.utils.AzioniUtils;
 import org.openspcoop2.protocol.modipa.config.ModIAuditClaimConfig;
 import org.openspcoop2.protocol.modipa.config.ModIAuditConfig;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -59,6 +65,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.properties.SubtitleConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.TitleConsoleItem;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
@@ -66,6 +73,7 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.digest.DigestEncoding;
+import org.slf4j.Logger;
 
 /**
  * ModIDynamicConfigurationAccordiParteSpecificaUtilities
@@ -2398,6 +2406,406 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			if(selectIPUserItemValue!=null) {
 				selectIPUserItemValue.setValue(null);
 			}
+		}
+	}
+	
+	
+	static void addPdndInfo(ModIProperties modiProperties,
+			ConsoleConfiguration configuration, boolean rest,
+			AccordoServizioParteComune api, String portType,
+			IRegistryReader registryReader, IDServizio idServizio,
+			Logger log) throws ProtocolException {
+		
+		
+		TitleConsoleItem titolo = (TitleConsoleItem) ProtocolPropertiesFactory.newTitleItem(
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_LABEL);
+		configuration.addConsoleItem(titolo );
+		
+		StringConsoleItem modiEServiceIdItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.TEXT_AREA,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL
+					);
+		modiEServiceIdItem.setRows(1);
+		configuration.addConsoleItem(modiEServiceIdItem);
+		
+		BooleanConsoleItem modiSignalHubItem = (BooleanConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN,
+				ConsoleItemType.CHECKBOX,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL);
+		modiSignalHubItem.setReloadOnChange(true, true);
+		configuration.addConsoleItem(modiSignalHubItem);
+		
+		// SignalHub sub-section
+		
+		SubtitleConsoleItem modiSignalHubSubtitleItem = (SubtitleConsoleItem) ProtocolPropertiesFactory.newSubTitleItem(
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SUBTITLE_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SUBTITLE_LABEL
+				); 
+		modiSignalHubSubtitleItem.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(modiSignalHubSubtitleItem);
+		
+		
+		StringConsoleItem profiloSicurezzaMessaggioOpItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, 
+				(rest ? ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_REST_LABEL : ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_SOAP_LABEL ));
+		profiloSicurezzaMessaggioOpItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_NOTE);
+		profiloSicurezzaMessaggioOpItem.setRequired(true); 
+		AccordoServizioParteSpecifica aspsRicercaAzioni = new AccordoServizioParteSpecifica();
+		aspsRicercaAzioni.setTipo(idServizio.getTipo());
+		aspsRicercaAzioni.setNome(idServizio.getNome());
+		aspsRicercaAzioni.setVersione(idServizio.getVersione());
+		if(idServizio.getSoggettoErogatore()!=null) {
+			aspsRicercaAzioni.setTipoSoggettoErogatore(idServizio.getSoggettoErogatore().getTipo());
+			aspsRicercaAzioni.setNomeSoggettoErogatore(idServizio.getSoggettoErogatore().getNome());
+		}
+		aspsRicercaAzioni.setPortType(portType);
+		
+		AccordoServizioParteComuneSintetico aspcSelected = new AccordoServizioParteComuneSintetico(api);
+		if(portType!=null) {
+			// SOAP
+			profiloSicurezzaMessaggioOpItem.setType(ConsoleItemType.SELECT);
+			
+			// listo le altre azioni
+			List<String> filtraAzioniUtilizzate = new ArrayList<>();
+			Map<String,String> azioni = null;
+			try {
+				azioni = AzioniUtils.getAzioniConLabel(aspsRicercaAzioni, aspcSelected, true, false, 
+						filtraAzioniUtilizzate, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED, ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, log); 
+			}catch(Exception e) {
+				throw new ProtocolException("Lettura azioni '"+idServizio+"' non riuscita: "+e.getMessage(),e);
+			}
+			if(azioni!=null && !azioni.isEmpty()) {
+				for (Map.Entry<String,String> entry : azioni.entrySet()) {
+					String azioneId = entry.getKey();
+					String azioneLabel = entry.getValue();
+					(profiloSicurezzaMessaggioOpItem).addLabelValue(azioneLabel,azioneId);
+				}
+			}
+		}
+		else {
+			// REST
+				
+			// listo le altre azioni
+			List<String> filtraAzioniUtilizzate = new ArrayList<>();
+			Map<String,String> azioni = null;
+			try {
+				azioni = AzioniUtils.getAzioniConLabel(aspsRicercaAzioni, aspcSelected, true, false, 
+					filtraAzioniUtilizzate, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED, ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, log); 
+			}catch(Exception e) {
+				throw new ProtocolException("Lettura azioni '"+idServizio+"' non riuscita: "+e.getMessage(),e);
+			}
+			if(azioni!=null && !azioni.isEmpty()) {
+				for (Map.Entry<String,String> entry : azioni.entrySet()) {
+					String azioneId = entry.getKey();
+					String azioneLabel = entry.getValue();
+					(profiloSicurezzaMessaggioOpItem).addLabelValue(azioneLabel,azioneId);
+				}
+			}
+		}
+		profiloSicurezzaMessaggioOpItem.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(profiloSicurezzaMessaggioOpItem);
+/**
+		StringConsoleItem pubblicatoreOpItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				"signatureOp", 
+				"Applicativo pubblicatore");
+		pubblicatoreOpItem.setNote("Indicare l'applicativo che sarà autorizzato a pubblicare");
+		(pubblicatoreOpItem).addLabelValue(ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED,ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED);
+		if(portType!=null) {
+			// SOAP
+			pubblicatoreOpItem.setType(ConsoleItemType.SELECT);
+			
+//			// listo le altre azioni
+//			List<String> filtraAzioniUtilizzate = new ArrayList<>();
+//			filtraAzioniUtilizzate.add(idAzione);
+//				Map<String,String> azioni = AzioniUtils.getAzioniConLabel(asps, aspcSelected, addTrattinoSelezioneNonEffettuata, throwException, 
+//						filtraAzioniUtilizzate, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED, ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, log); 
+//				if(azioni!=null && !azioni.isEmpty()) {
+//					for (Map.Entry<String,String> entry : azioni.entrySet()) {
+//						String azioneId = entry.getKey();
+//						String tmpInterazione = AzioniUtils.getProtocolPropertyStringValue(aspc, ptValue.getValue(), azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ID);
+//						if(!ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE.equals(tmpInterazione)) {
+//							continue;
+//						}
+//						String tmpRuolo = AzioniUtils.getProtocolPropertyStringValue(aspc, ptValue.getValue(), azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_ID);
+//						if(!ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH.equals(tmpRuolo)) {
+//							continue;
+//						}
+//						String tmpRelazione = AzioniUtils.getProtocolPropertyStringValue(aspc, ptValue.getValue(), azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_ID);
+//						if(!ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(tmpRelazione)) {
+//							continue;
+//						}
+//						String azioneLabel = azioni.get(azioneId);
+//						((StringConsoleItem)profiloInterazioneAsincronaCorrelataAzioneItem).addLabelValue(azioneLabel,azioneId);
+//					}
+//				}
+//			}
+		}
+		else {
+			// REST
+				
+//			// listo le altre azioni
+//			List<String> filtraAzioniUtilizzate = new ArrayList<>();
+//			filtraAzioniUtilizzate.add(idAzione);
+//			Map<String,String> azioni = AzioniUtils.getAzioniConLabel(asps, aspcSelected, addTrattinoSelezioneNonEffettuata, throwException, 
+//					filtraAzioniUtilizzate, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED, ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, log); 
+//			if(azioni!=null && !azioni.isEmpty()) {
+//				for (String azioneId : azioni.keySet()) {
+//					String tmpInterazione = AzioniUtils.getProtocolPropertyStringValue(aspc, null, azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ID);
+//					if(!ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE.equals(tmpInterazione)) {
+//						continue;
+//					}
+//					String tmpRuolo = AzioniUtils.getProtocolPropertyStringValue(aspc, null, azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_ID);
+//					if(!ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH.equals(tmpRuolo)) {
+//						continue;
+//					}
+//					String tmpRelazione = AzioniUtils.getProtocolPropertyStringValue(aspc, null, azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_ID);
+//					if(!ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(tmpRelazione)) {
+//						continue;
+//					}
+//					String azioneLabel = azioni.get(azioneId);
+//					((StringConsoleItem)profiloInterazioneAsincronaCorrelataAzioneItem).addLabelValue(azioneLabel,azioneId);
+//				}
+//			}
+		}
+		configuration.addConsoleItem(pubblicatoreOpItem);
+		*/
+		
+		StringConsoleItem profiloSicurezzaMessaggioAlgItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_LABEL);
+		List<String> algo = modiProperties.getSignalHubAlgorithms();
+		if(algo!=null && !algo.isEmpty()) {
+			for (String a : algo) {
+				profiloSicurezzaMessaggioAlgItem.addLabelValue(a,a);
+			}
+		}
+		profiloSicurezzaMessaggioAlgItem.setDefaultValue(modiProperties.getSignalHubDefaultAlgorithm());
+		profiloSicurezzaMessaggioAlgItem.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(profiloSicurezzaMessaggioAlgItem);
+		
+		StringConsoleItem profiloSicurezzaMessaggioAlgDimensioneSeme = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_LABEL);
+		List<String> size = modiProperties.getSignalHubSeedSize();
+		if(size!=null && !size.isEmpty()) {
+			for (String a : size) {
+				profiloSicurezzaMessaggioAlgDimensioneSeme.addLabelValue(a,a);
+			}
+		}
+		profiloSicurezzaMessaggioAlgDimensioneSeme.setDefaultValue(modiProperties.getSignalHubDefaultSeedSize());
+		profiloSicurezzaMessaggioAlgDimensioneSeme.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(profiloSicurezzaMessaggioAlgDimensioneSeme);
+		
+		StringConsoleItem profiloSicurezzaMessaggioAlgScadenzaSeme = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.TEXT_EDIT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL);
+		if(!modiProperties.isSignalHubSeedLifetimeUnlimited()) {
+			profiloSicurezzaMessaggioAlgScadenzaSeme.setRequired(true);
+			profiloSicurezzaMessaggioAlgScadenzaSeme.setDefaultValue(modiProperties.getSignalHubDeSeedSeedLifetimeDaysDefault());
+		}
+		profiloSicurezzaMessaggioAlgScadenzaSeme.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(profiloSicurezzaMessaggioAlgScadenzaSeme);
+
+	}
+	
+	static void updatePdndInfo(ModIProperties modiProperties,
+			ConsoleConfiguration consoleConfiguration, ProtocolProperties properties
+			) throws ProtocolException {
+		
+		
+		BooleanProperty modiSignalHubItemValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID);
+		boolean signalHub = modiSignalHubItemValue!=null && modiSignalHubItemValue.getValue()!=null && modiSignalHubItemValue.getValue().booleanValue();
+	
+		
+		// eService id
+		AbstractConsoleItem<?> modiEServiceIdItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+		if(modiEServiceIdItem!=null) {
+			modiEServiceIdItem.setRequired(signalHub);
+		}
+		
+		
+		// signalHub subsection
+		BaseConsoleItem modiSignalHubSubtitleItem = 	
+				ProtocolPropertiesUtils.getBaseConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SUBTITLE_ID);
+		if(modiSignalHubSubtitleItem!=null) {
+			if(signalHub) {
+				modiSignalHubSubtitleItem.setType(ConsoleItemType.SUBTITLE);
+			}
+			else {
+				modiSignalHubSubtitleItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+		
+		// signalHub operation
+		
+		AbstractConsoleItem<?> profiloSicurezzaMessaggioOpItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
+		if(profiloSicurezzaMessaggioOpItem!=null) {
+			if(signalHub) {
+				profiloSicurezzaMessaggioOpItem.setType(ConsoleItemType.SELECT);
+			}
+			else {
+				profiloSicurezzaMessaggioOpItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+		StringProperty profiloSicurezzaMessaggioOpItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
+		if(profiloSicurezzaMessaggioOpItemValue!=null && profiloSicurezzaMessaggioOpItemValue.getValue()!=null && !signalHub) {
+			profiloSicurezzaMessaggioOpItemValue.setValue(null);
+		}
+		
+		
+		// signalHub algorithm
+		
+		AbstractConsoleItem<?> profiloSicurezzaMessaggioAlgItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID);
+		if(profiloSicurezzaMessaggioAlgItem!=null) {
+			if(signalHub) {
+				profiloSicurezzaMessaggioAlgItem.setType(ConsoleItemType.SELECT);
+			}
+			else {
+				profiloSicurezzaMessaggioAlgItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+		StringProperty profiloSicurezzaMessaggioAlgItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID);
+		if(profiloSicurezzaMessaggioAlgItemValue!=null) {
+			if(signalHub) {
+				if(profiloSicurezzaMessaggioAlgItemValue.getValue()==null || StringUtils.isEmpty(profiloSicurezzaMessaggioAlgItemValue.getValue())) {
+					profiloSicurezzaMessaggioAlgItemValue.setValue(modiProperties.getSignalHubDefaultAlgorithm()); // default
+				}
+			}
+			else {
+				if(profiloSicurezzaMessaggioAlgItemValue.getValue()!=null) {
+					profiloSicurezzaMessaggioAlgItemValue.setValue(null);
+				}
+			}
+		}
+		
+		// signalHub seed size
+		
+		AbstractConsoleItem<?> profiloSicurezzaMessaggioSeedSizeItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID);
+		if(profiloSicurezzaMessaggioSeedSizeItem!=null) {
+			if(signalHub) {
+				profiloSicurezzaMessaggioSeedSizeItem.setType(ConsoleItemType.SELECT);
+			}
+			else {
+				profiloSicurezzaMessaggioSeedSizeItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+		StringProperty profiloSicurezzaMessaggioSeedSizeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID);
+		if(profiloSicurezzaMessaggioSeedSizeItemValue!=null) {
+			if(signalHub) {
+				if(profiloSicurezzaMessaggioSeedSizeItemValue.getValue()==null || StringUtils.isEmpty(profiloSicurezzaMessaggioSeedSizeItemValue.getValue())) {
+					profiloSicurezzaMessaggioSeedSizeItemValue.setValue(modiProperties.getSignalHubDefaultSeedSize()); // default
+				}
+			}
+			else {
+				if(profiloSicurezzaMessaggioSeedSizeItemValue.getValue()!=null) {
+					profiloSicurezzaMessaggioSeedSizeItemValue.setValue(null);
+				}
+			}
+		}
+		
+		
+		// signalHub seed lifetime
+		
+		AbstractConsoleItem<?> profiloSicurezzaMessaggioSeedLifeTimeItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
+		if(profiloSicurezzaMessaggioSeedLifeTimeItem!=null) {
+			if(signalHub) {
+				profiloSicurezzaMessaggioSeedLifeTimeItem.setType(ConsoleItemType.TEXT_EDIT);
+			}
+			else {
+				profiloSicurezzaMessaggioSeedLifeTimeItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+		StringProperty profiloSicurezzaMessaggioSeedLifeTimeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
+		if(profiloSicurezzaMessaggioSeedLifeTimeItemValue!=null &&
+			!signalHub &&
+			profiloSicurezzaMessaggioSeedLifeTimeItemValue.getValue()!=null) {
+			profiloSicurezzaMessaggioSeedLifeTimeItemValue.setValue(null);
+		}
+	}
+	
+	
+	static void validatePdndInfo(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+		
+		AbstractConsoleItem<?> modiEServiceIdItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID
+						);
+		if(modiEServiceIdItem!=null) {
+			
+			StringProperty modiEServiceIdItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+			if(modiEServiceIdItemValue!=null && modiEServiceIdItemValue.getValue()!=null && !"".equals(modiEServiceIdItemValue.getValue())) {
+				try {
+					InputValidationUtils.validateTextAreaInput(modiEServiceIdItemValue.getValue(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+			
+		}
+		
+		BooleanProperty modiSignalHubItemValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID);
+		boolean signalHub = modiSignalHubItemValue!=null && modiSignalHubItemValue.getValue()!=null && modiSignalHubItemValue.getValue().booleanValue();
+		
+		if(signalHub) {
+			
+			// operation
+			AbstractConsoleItem<?> profiloSignalHubOperationItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID
+							);
+			StringProperty profiloSignalHubOperationItemValue = null;
+			String profiloSignalHubOperation = null;
+			if(profiloSignalHubOperationItem!=null) {
+				profiloSignalHubOperationItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
+				if(profiloSignalHubOperationItemValue!=null && profiloSignalHubOperationItemValue.getValue()!=null && !"".equals(profiloSignalHubOperationItemValue.getValue())) {
+					profiloSignalHubOperation = profiloSignalHubOperationItemValue.getValue();	
+				}
+			}
+			if(profiloSignalHubOperation==null || "".equals(profiloSignalHubOperation) ||
+					ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(profiloSignalHubOperation)) {
+				throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ERROR_UNDEFINED);
+			}
+			
+			// lifetime
+			AbstractConsoleItem<?> profiloSignalHubSeedLifeTimeItem = 	
+					ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+							ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID
+							);
+			if(profiloSignalHubSeedLifeTimeItem!=null) {
+				
+				StringProperty profiloSignalHubSeedLifeTimeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
+				if(profiloSignalHubSeedLifeTimeItemValue!=null && profiloSignalHubSeedLifeTimeItemValue.getValue()!=null && !"".equals(profiloSignalHubSeedLifeTimeItemValue.getValue())) {
+					try {
+						int i = Integer.parseInt(profiloSignalHubSeedLifeTimeItemValue.getValue());
+						if(i<=0) {
+							throw new ProtocolException("deve essere fornito un numero intero maggiore di 0");
+						}
+					}catch(Exception e) {
+						throw new ProtocolException(CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL+" '"+profiloSignalHubSeedLifeTimeItemValue.getValue()+"' non valido; must be a positive integer greater than 0");
+					}
+				}
+				
+			}
+			
 		}
 	}
 }

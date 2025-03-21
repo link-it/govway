@@ -277,6 +277,21 @@ public class ModISecurityUtils {
 				 CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(sorgenteToken));
 	}
 	
+	public static boolean isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(AccordoServizioParteComune api, String portType) {
+		List<String> tmp = getPropertySicurezzaMessaggioEngine(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, api, portType, false);
+		if(tmp!=null && !tmp.isEmpty()) {
+			for (String sorgenteToken : tmp) {
+				if(isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(sorgenteToken) ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	private static boolean isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(String sorgenteToken) {
+		return CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND.equals(sorgenteToken);
+	}
+	
 	public static boolean isProfiloSicurezzaMessaggioApplicabileRichiesta(AccordoServizioParteComune api, String portType, boolean sicurezzaRequired) {
 		List<String> tmp = getPropertySicurezzaMessaggioEngine(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE, api, portType, false);
 		if(tmp!=null && !tmp.isEmpty()) {

@@ -313,7 +313,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException {
 		
 		ConsoleConfiguration configuration = ModIDynamicConfigurationAccordiParteSpecificaUtilities.getDynamicConfigParteSpecifica(this.modiProperties,
-				consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, null, false);
+				consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, null, false,
+				this.log);
 		if(configuration!=null) {
 			return configuration;
 		}
@@ -357,7 +358,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		ConsoleConfiguration configuration = ModIDynamicConfigurationAccordiParteSpecificaUtilities.getDynamicConfigParteSpecifica(this.modiProperties,
 				consoleOperationType, consoleHelper, registryReader, configIntegrationReader, 
-				id.getIdServizio(), id.getIdFruitore(), true);
+				id.getIdServizio(), id.getIdFruitore(), true,
+				this.log);
 		if(configuration!=null) {
 			return configuration;
 		}

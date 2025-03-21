@@ -422,7 +422,14 @@ public class ModIProperties {
 			this.useErroreApplicativoStaticInstance();
 			this.useEsitoStaticInstance();
 			this.getStaticInstanceConfig();
-
+			
+			/* **** Signal Hub **** */
+			this.getSignalHubAlgorithms();
+			this.getSignalHubDefaultAlgorithm();
+			this.getSignalHubSeedSize();
+			this.getSignalHubDefaultSeedSize();
+			this.isSignalHubSeedLifetimeUnlimited();
+			this.getSignalHubDeSeedSeedLifetimeDaysDefault();
 			
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo modipa, "+e.getMessage();
@@ -4811,5 +4818,166 @@ public class ModIProperties {
 			}
 		}
 		return this.staticInstanceConfig;
+	}
+	
+	
+    /* **** Signal Hub **** */
+	
+	private List<String> signalHubAlgorithms= null;
+	public List<String> getSignalHubAlgorithms() throws ProtocolException{
+    	if(this.signalHubAlgorithms==null){
+	    	
+    		String propertyName = "org.openspcoop2.protocol.modipa.signalHub.algorithms";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+    			this.signalHubAlgorithms = ModISecurityConfig.convertToList(value);
+    			if(this.signalHubAlgorithms==null || this.signalHubAlgorithms.isEmpty()) {
+    				throw new ProtocolException("SignalHub algorithms undefined");
+    			}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubAlgorithms;
+	}
+	
+	private String signalHubDefaultAlgorithm= null;
+	public String getSignalHubDefaultAlgorithm() throws ProtocolException{
+    	if(this.signalHubDefaultAlgorithm==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.algorithms.default";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					this.signalHubDefaultAlgorithm = value;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubDefaultAlgorithm;
+	}
+	
+	private List<String> signalHubSeedSize= null;
+	public List<String> getSignalHubSeedSize() throws ProtocolException{
+    	if(this.signalHubSeedSize==null){
+	    	
+    		String propertyName = "org.openspcoop2.protocol.modipa.signalHub.seed.size";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+    			this.signalHubSeedSize = ModISecurityConfig.convertToList(value);
+    			if(this.signalHubSeedSize==null || this.signalHubSeedSize.isEmpty()) {
+    				throw new ProtocolException("SignalHub algorithms undefined");
+    			}
+    			for (String s : this.signalHubSeedSize) {
+    				validateSignalHubInteger("Signal Hub - Seed size",s);
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubSeedSize;
+	}
+	
+	private static void validateSignalHubInteger(String objectTitle, String s) throws ProtocolException {
+		try {
+			int i = Integer.parseInt(s);
+			if(i<=0) {
+				throw new ProtocolException("must be a positive integer greater than 0");
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(objectTitle+" '"+s+"' invalid; must be a positive integer greater than 0");
+		}
+	}
+	
+	private String signalHubDefaultSeedSize= null;
+	public String getSignalHubDefaultSeedSize() throws ProtocolException{
+    	if(this.signalHubDefaultSeedSize==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.seed.size.default";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					validateSignalHubInteger("Signal Hub - Default seed size", value);
+					this.signalHubDefaultSeedSize = value;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubDefaultSeedSize;
+	}
+	
+	private Boolean signalHubSeedLifetimeUnlimited = null;
+	public boolean isSignalHubSeedLifetimeUnlimited(){
+		if(this.signalHubSeedLifetimeUnlimited==null){
+			
+			Boolean defaultValue =false;
+			String propertyName = "org.openspcoop2.protocol.modipa.signalHub.seed.lifetime.unlimited";
+			
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.signalHubSeedLifetimeUnlimited = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.signalHubSeedLifetimeUnlimited = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.signalHubSeedLifetimeUnlimited = defaultValue;
+			}
+		}
+
+		return this.signalHubSeedLifetimeUnlimited;
+	}
+	
+	private String signalHubDefaultSeedLifetimeDaysDefault= null;
+	public String getSignalHubDeSeedSeedLifetimeDaysDefault() throws ProtocolException{
+    	if(this.signalHubDefaultSeedLifetimeDaysDefault==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.seed.lifetime.days.default";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					validateSignalHubInteger("Signal Hub - Default lifetime days", value);
+					this.signalHubDefaultSeedLifetimeDaysDefault = value;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubDefaultSeedLifetimeDaysDefault;
 	}
 }

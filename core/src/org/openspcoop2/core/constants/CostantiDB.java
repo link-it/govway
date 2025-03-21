@@ -1102,6 +1102,16 @@ public final class CostantiDB {
     public static final String MODIPA_KEYSTORE_FRUIZIONE = "fruizione";
     public static final String MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY = "token";
     
+    // Info
+    
+    public static final String MODIPA_API_IMPL_INFO_ID_ESERVICE_ID = "modipaInfoGenEserviceId";
+    
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID = "modipaInfoGenSignalHub";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID = "modipaInfoGenSignalHubOp";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID = "modipaInfoGenSignalHubAlg";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID = "modipaInfoGenSignalHubSeedSize";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID = "modipaInfoGenSignalHubSeedLifetime";
+    
 	// COSTANTI buste
 	
 	public static final String MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE = "ProfiloSicurezzaCanale";
