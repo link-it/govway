@@ -39,6 +39,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.io.notifier.unblocked.IPipedUnblockedStream;
 import org.openspcoop2.utils.io.notifier.unblocked.PipedUnblockedStreamFactory;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 /**
  * ConnettoreHTTPCOREInputStreamEntityConsumer
@@ -61,11 +62,22 @@ public class ConnettoreHTTPCOREInputStreamEntityConsumer implements AsyncRespons
 	private int sizeBuffer;
 	private Integer readTimeout;
 	
+	private final HttpRequestMethod method;
+	
 	public ConnettoreHTTPCOREInputStreamEntityConsumer(ConnettoreLogger logger, int sizeBuffer, int readTimeout, boolean delegata) {
 		this.logger = logger;
 		this.sizeBuffer = sizeBuffer;
 		this.readTimeout = readTimeout;
 		this.delegata = delegata;
+		this.method = null;
+	}
+	
+	public ConnettoreHTTPCOREInputStreamEntityConsumer(HttpRequestMethod method, ConnettoreLogger logger, int sizeBuffer, int readTimeout, boolean delegata) {
+		this.logger = logger;
+		this.sizeBuffer = sizeBuffer;
+		this.readTimeout = readTimeout;
+		this.delegata = delegata;
+		this.method = method;
 	}
 	
 	private void invokeCallback() {
@@ -115,6 +127,9 @@ public class ConnettoreHTTPCOREInputStreamEntityConsumer implements AsyncRespons
 		}
 		this.res = new ConnettoreHTTPCOREResponse(res);
 		this.callback = callback;
+		
+		if (this.method != null && this.method.equals(HttpRequestMethod.HEAD))
+			invokeCallback();
 	}
 	
 	@Override

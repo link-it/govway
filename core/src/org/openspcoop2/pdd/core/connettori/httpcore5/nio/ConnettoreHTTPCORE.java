@@ -601,7 +601,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			int dimensioneBuffer = OpenSPCoop2Properties.getInstance().getNIOConfigAsyncResponsePipedUnblockedStreamBuffer();
 			if(stream) {
 				boolean delegata = !ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo);
-				responseConsumer = new ConnettoreHTTPCOREInputStreamEntityConsumer(this.logger, dimensioneBuffer, this.readConnectionTimeout, delegata);	
+				responseConsumer = new ConnettoreHTTPCOREInputStreamEntityConsumer(this.httpMethod,this.logger, dimensioneBuffer, this.readConnectionTimeout, delegata);	
 			}
 			else {
 				responseConsumer = new ConnettoreHTTPCOREExtendAbstractBinResponseConsumer();
