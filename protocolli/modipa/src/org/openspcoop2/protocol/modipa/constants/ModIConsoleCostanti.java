@@ -908,6 +908,21 @@ public class ModIConsoleCostanti {
 	
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL;
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT_LABEL = "&nbsp;";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT_ID = "modipaInfoGenSignalHubPulisherText";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_LABEL;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_NOTE = "Solo l'applicativo indicato o con il ruolo configurato potrà pubblicare segnali di variazione del servizio";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ERROR_UNDEFINED = "Deve essere selezionato un applicativo o un ruolo autorizzato a pubblicare segnali di variazione del servizio";
+
+
 }
 
 

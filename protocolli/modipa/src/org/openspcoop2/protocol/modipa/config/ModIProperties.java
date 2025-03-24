@@ -430,6 +430,8 @@ public class ModIProperties {
 			this.getSignalHubDefaultSeedSize();
 			this.isSignalHubSeedLifetimeUnlimited();
 			this.getSignalHubDeSeedSeedLifetimeDaysDefault();
+			this.getSignalHubApiName();
+			this.getSignalHubApiVersion();
 			
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo modipa, "+e.getMessage();
@@ -4979,5 +4981,56 @@ public class ModIProperties {
     	}
     	
     	return this.signalHubDefaultSeedLifetimeDaysDefault;
+	}
+	
+	private String signalHubApiName= null;
+	public String getSignalHubApiName() throws ProtocolException{
+    	if(this.signalHubApiName==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.api.name";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					this.signalHubApiName = value;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubApiName;
+	}
+	
+	private Integer signalHubApiVersion= null;
+	public int getSignalHubApiVersion() throws ProtocolException{
+    	if(this.signalHubApiVersion==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.api.version";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					validateSignalHubInteger("Signal Hub - API Version", value);
+					this.signalHubApiVersion = Integer.valueOf(value);
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubApiVersion;
 	}
 }

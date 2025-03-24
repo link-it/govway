@@ -392,6 +392,10 @@ public final class CostantiLabel {
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_LABEL = "Algoritmo";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_LABEL = "Dimensione Seme";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL = "Giorni Rotazione Seme";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_LABEL = "Pubblicatore";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_LABEL = "Applicativo";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_LABEL = "Ruolo";
+
     
 	public static final String MODIPA_STORE_PATH_LABEL = "Path";
 	public static final String MODIPA_STORE_TYPE_LABEL = "Tipo";

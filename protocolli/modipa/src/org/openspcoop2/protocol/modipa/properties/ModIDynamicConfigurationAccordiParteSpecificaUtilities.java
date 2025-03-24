@@ -67,8 +67,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 	static ConsoleConfiguration getDynamicConfigParteSpecifica(ModIProperties modiProperties,
 			ConsoleOperationType consoleOperationType,
 			IConsoleHelper consoleHelper, IRegistryReader registryReader,
-			IConfigIntegrationReader configIntegrationReader, IDServizio id, IDSoggetto idFruitore, boolean fruizioni,
-			Logger log) throws ProtocolException {
+			IConfigIntegrationReader configIntegrationReader, IDServizio id, IDSoggetto idFruitore, boolean fruizioni) throws ProtocolException {
 		
 		if(consoleHelper.isModalitaCompleta()) {
 			return null;
@@ -122,10 +121,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
 		if(pdnd && !fruizioni) {
 			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addPdndInfo(modiProperties,
-					configuration, rest, 
-					api, portType,
-					registryReader, id,
-					log);
+					configuration, rest);
 		}
 		
 		// Identificazione se è richiesta la sicurezza
@@ -237,10 +233,10 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		
 	}
 	
-	static boolean updateDynamicConfigParteSpecifica(ModIProperties modiProperties,
+	static boolean updateDynamicConfigParteSpecifica(Logger log, ModIProperties modiProperties,
 			ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
-			IDServizio id, IRegistryReader registryReader, boolean fruizioni) throws ProtocolException {
+			IDServizio id, IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, boolean fruizioni) throws ProtocolException {
 		if(consoleHelper.isModalitaCompleta()) {
 			return false;
 		}
@@ -290,8 +286,11 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		
 		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
 		if(pdnd && !fruizioni) {
-			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updatePdndInfo(modiProperties,
-					consoleConfiguration, properties);
+			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updatePdndInfo(consoleConfiguration, properties,
+					api, portType, id,
+					registryReader,
+					configIntegrationReader,
+					log);
 		}
 		
 		// Identificazione se è richiesta la sicurezza

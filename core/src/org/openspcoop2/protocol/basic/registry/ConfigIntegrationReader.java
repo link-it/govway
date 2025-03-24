@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.utils.AllarmiDriverUtils;
@@ -34,12 +35,17 @@ import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.CredenzialeTipo;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneCRUD;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
@@ -54,11 +60,11 @@ import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReaderInUso;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteApplicative;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPorteDelegate;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServiziApplicativi;
-import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
-import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReaderInUso;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -298,6 +304,189 @@ public class ConfigIntegrationReader implements IConfigIntegrationReader {
 		}catch(Exception e){
 			throw new RegistryException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public List<IDServizioApplicativo> findIdServiziApplicativiByPaAuth(PortaApplicativa pa, boolean authToken, boolean authTrasporto) throws RegistryNotFound,RegistryException{
+		try{
+			if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+				IDSoggetto idSoggetto = new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario());
+				String superuser = null;
+				
+				boolean returnAll = false;
+				
+				boolean bothSslAndToken = false;
+				String tokenPolicy = null;
+				boolean tokenPolicyOR = false;
+				if(pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null) {
+					tokenPolicy = pa.getGestioneToken().getPolicy();
+				}
+				
+				// find by credenziali trasporto		
+				List<IDServizioApplicativo> ltrasporto = null;
+				if(authTrasporto) {
+					if(pa.getAutenticazione()!=null && StringUtils.isNotEmpty(pa.getAutenticazione())) {
+						TipoAutenticazione auth = TipoAutenticazione.toEnumConstant(pa.getAutenticazione(), false);
+						if(auth==null || TipoAutenticazione.DISABILITATO.equals(auth)) {
+							returnAll = true;
+						}
+					}
+					if(returnAll) {
+						return findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pa.getAutenticazione(), tokenPolicy, pa.getProprietaAutenticazione()); 
+					}
+					else {
+						ltrasporto = findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pa.getAutenticazione(), tokenPolicy, pa.getProprietaAutenticazione());
+					}
+				}
+				
+				// find by token
+				List<IDServizioApplicativoDB> ltoken = null;
+				if(authToken &&
+					tokenPolicy!=null) {
+					ltoken = ((DriverConfigurazioneDB)this.driverConfigurazioneGET).soggettiServizioApplicativoList(idSoggetto,superuser, CredenzialeTipo.TOKEN, 
+							false, CostantiConfigurazione.CLIENT, 
+							bothSslAndToken, tokenPolicy, tokenPolicyOR);
+				}
+
+				List<IDServizioApplicativo> lSA = new ArrayList<>();
+				List<String> nomi = new ArrayList<>();
+				if(ltrasporto!=null && !ltrasporto.isEmpty()) {
+					for (IDServizioApplicativo idSADB : ltrasporto) {
+						lSA.add(idSADB);
+						nomi.add(idSADB.getNome());
+					}
+				}
+				if(ltoken!=null && !ltoken.isEmpty()) {
+					for (IDServizioApplicativoDB idSADB : ltoken) {
+						if(!nomi.contains(idSADB.getNome())) {
+							lSA.add(idSADB);
+							nomi.add(idSADB.getNome());
+						}
+					}
+				}
+				if(lSA.isEmpty()) {
+					throw new RegistryNotFound("Servizi applicativi non trovati");
+				}
+				return lSA;
+			}
+			else {
+				throw new RegistryException("Unsupported");
+			}
+		}
+		catch (RegistryNotFound notFound) {
+			throw notFound;
+		}
+		catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	@Override
+	public List<IDServizioApplicativo> findIdServiziApplicativiByPdAuth(PortaDelegata pd, boolean authToken, boolean authTrasporto) throws RegistryNotFound,RegistryException{
+		try{
+			if(this.driverConfigurazioneGET instanceof DriverConfigurazioneDB) {
+				IDSoggetto idSoggetto = new IDSoggetto(pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario());
+				String superuser = null;
+				
+				boolean returnAll = false;
+				
+				boolean bothSslAndToken = false;
+				String tokenPolicy = null;
+				boolean tokenPolicyOR = false;
+				if(pd.getGestioneToken()!=null && pd.getGestioneToken().getPolicy()!=null) {
+					tokenPolicy = pd.getGestioneToken().getPolicy();
+				}
+				
+				// find by credenziali trasporto		
+				List<IDServizioApplicativo> ltrasporto = null;
+				if(authTrasporto) {
+					if(pd.getAutenticazione()!=null && StringUtils.isNotEmpty(pd.getAutenticazione())) {
+						TipoAutenticazione auth = TipoAutenticazione.toEnumConstant(pd.getAutenticazione(), false);
+						if(auth==null || TipoAutenticazione.DISABILITATO.equals(auth)) {
+							returnAll = true;
+						}
+					}
+					if(returnAll) {
+						return findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pd.getAutenticazione(), tokenPolicy, pd.getProprietaAutenticazione()); 
+					}
+					else {
+						ltrasporto = findIdServiziApplicativiByAuthTrasporto(idSoggetto, returnAll, pd.getAutenticazione(), tokenPolicy, pd.getProprietaAutenticazione());
+					}
+				}
+				
+				// find by token
+				List<IDServizioApplicativoDB> ltoken = null;
+				if(authToken &&
+					tokenPolicy!=null) {
+					ltoken = ((DriverConfigurazioneDB)this.driverConfigurazioneGET).soggettiServizioApplicativoList(idSoggetto,superuser, CredenzialeTipo.TOKEN, 
+							false, CostantiConfigurazione.CLIENT, 
+							bothSslAndToken, tokenPolicy, tokenPolicyOR);
+				}
+
+				List<IDServizioApplicativo> lSA = new ArrayList<>();
+				List<String> nomi = new ArrayList<>();
+				if(ltrasporto!=null && !ltrasporto.isEmpty()) {
+					for (IDServizioApplicativo idSADB : ltrasporto) {
+						lSA.add(idSADB);
+						nomi.add(idSADB.getNome());
+					}
+				}
+				if(ltoken!=null && !ltoken.isEmpty()) {
+					for (IDServizioApplicativoDB idSADB : ltoken) {
+						if(!nomi.contains(idSADB.getNome())) {
+							lSA.add(idSADB);
+							nomi.add(idSADB.getNome());
+						}
+					}
+				}
+				if(lSA.isEmpty()) {
+					throw new RegistryNotFound("Servizi applicativi non trovati");
+				}
+				return lSA;
+			}
+			else {
+				throw new RegistryException("Unsupported");
+			}
+		}
+		catch (RegistryNotFound notFound) {
+			throw notFound;
+		}
+		catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	private List<IDServizioApplicativo> findIdServiziApplicativiByAuthTrasporto(IDSoggetto idSoggetto, boolean returnAll, String autenticazione, String tokenPolicy, List<Proprieta> listProprietaAutenticazione) throws RegistryNotFound, RegistryException, DriverConfigurazioneException{
+		// find by credenziali trasporto
+		if(returnAll) {
+			ProtocolFiltroRicercaServiziApplicativi f = new ProtocolFiltroRicercaServiziApplicativi();
+			f.setTipoSoggetto(idSoggetto.getTipo());
+			f.setNomeSoggetto(idSoggetto.getNome());
+			f.setTipo(CostantiConfigurazione.CLIENT);
+			return this.findIdServiziApplicativi(f);
+		}
+		else {
+			Boolean appId = null;
+			CredenzialeTipo tipoAutenticazione = CredenzialeTipo.toEnumConstant(autenticazione);
+			if(CredenzialeTipo.APIKEY.equals(tipoAutenticazione) && listProprietaAutenticazione!=null && !listProprietaAutenticazione.isEmpty()) {
+				for (Proprieta proprieta : listProprietaAutenticazione) {
+					if("appId".equals(proprieta.getNome())) {
+						appId = "true".equals(proprieta.getValore());
+						break;
+					}
+				}
+			}
+			boolean bothSslAndToken = false;
+			boolean tokenPolicyOR = false;
+			List<IDServizioApplicativoDB> ltrasporto = ((DriverConfigurazioneDB)this.driverConfigurazioneGET).soggettiServizioApplicativoList(idSoggetto,null,tipoAutenticazione, 
+					appId, CostantiConfigurazione.CLIENT, 
+					bothSslAndToken, tokenPolicy, tokenPolicyOR);
+			List<IDServizioApplicativo> lSA = new ArrayList<>();
+			for (IDServizioApplicativoDB idSADB : ltrasporto) {
+				lSA.add(idSADB);
+			}
+			return lSA;
+		}
+		
 	}
 	
 	@Override

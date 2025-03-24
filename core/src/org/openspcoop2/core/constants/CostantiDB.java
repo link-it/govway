@@ -1111,6 +1111,9 @@ public final class CostantiDB {
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID = "modipaInfoGenSignalHubAlg";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID = "modipaInfoGenSignalHubSeedSize";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID = "modipaInfoGenSignalHubSeedLifetime";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID = "modipaInfoGenSignalHubPulisherSA";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID = "modipaInfoGenSignalHubPulisherRole";
+
     
 	// COSTANTI buste
 	

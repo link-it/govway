@@ -25,9 +25,12 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
+import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -117,17 +120,22 @@ public interface IRegistryReader extends IRegistryReaderInUso {
 	public AccordoServizioParteSpecifica getAccordoServizioParteSpecifica(IDServizio idServizio,boolean readAllegati) throws RegistryNotFound,RegistryException;
 	public List<IDServizio> findIdAccordiServizioParteSpecifica(ProtocolFiltroRicercaServizi filtro) throws RegistryNotFound,RegistryException; 
 	
-	
 	// ELEMENTI INTERNI ALL'ACCORDO PARTE SPECIFICA
 	
 	public List<IDFruizione> findIdFruizioni(ProtocolFiltroRicercaFruizioniServizio filtro) throws RegistryNotFound,RegistryException; 
-	
-	
+		
 	// ACCORDI COOPERAZIONE
 	
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo) throws RegistryNotFound,RegistryException;
 	public AccordoCooperazione getAccordoCooperazione(IDAccordoCooperazione idAccordo,boolean readAllegati) throws RegistryNotFound,RegistryException;
 	public List<IDAccordoCooperazione> findIdAccordiCooperazione(ProtocolFiltroRicercaAccordi filtro) throws RegistryNotFound,RegistryException; 
 	
+	// GRUPPI
+	public List<IDGruppo> findIdGruppi(ProtocolFiltroRicercaGruppi filtro) throws RegistryNotFound,RegistryException; 
 	
+	// RUOLI
+	public List<IDRuolo> findIdRuoli(ProtocolFiltroRicercaRuoli filtro) throws RegistryNotFound,RegistryException; 
+	
+	// SCOPE
+	public List<IDScope> findIdScope(ProtocolFiltroRicercaScope filtro) throws RegistryNotFound,RegistryException; 
 }

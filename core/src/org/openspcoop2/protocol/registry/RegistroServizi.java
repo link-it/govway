@@ -40,6 +40,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
@@ -54,6 +55,7 @@ import org.openspcoop2.core.registry.Azione;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.PortaDominio;
@@ -77,6 +79,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
@@ -2115,6 +2118,52 @@ public class RegistroServizi  {
 	}
 	
 	
+	protected static String _getKey_getGruppo(String nomeGruppo) throws DriverRegistroServiziException{
+		return "getGruppo_" + nomeGruppo;
+	}
+	public org.openspcoop2.core.registry.Gruppo getGruppo(Connection connectionPdD,String nomeRegistro,String nomeGruppo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+		
+		// Raccolta dati
+		if(nomeGruppo == null)
+			throw new DriverRegistroServiziException("[getGruppo]: Parametro non definito");	
+		IDGruppo idGruppo = new IDGruppo(nomeGruppo);
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_getGruppo(nomeGruppo);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					if(notFoundClassName.equals(response.getException().getClass().getName()))
+						throw (DriverRegistroServiziNotFound) response.getException();
+					else
+						throw (DriverRegistroServiziException) response.getException();
+				}else{
+					return ((Gruppo) response.getObject());
+				}
+			}
+		}
+
+
+		// Algoritmo CACHE
+		Gruppo gruppo = null;
+		if(this.cache!=null){
+			gruppo = (Gruppo) this.getObjectCache(key,"getGruppo",nomeRegistro,null,connectionPdD,idGruppo);
+		}else{
+			gruppo = (Gruppo) this.getObject("getGruppo",nomeRegistro,null,connectionPdD,idGruppo);
+		}
+
+		if(gruppo!=null)
+			return gruppo;
+		else
+			throw new DriverRegistroServiziNotFound("[getGruppo] Gruppo ["+nomeGruppo+"] non trovato");
+
+	}
+	
+	
+	
 	protected static String _getKey_getRuolo(String nomeRuolo) throws DriverRegistroServiziException{
 		return "getRuolo_" + nomeRuolo;
 	}
@@ -2694,6 +2743,14 @@ public class RegistroServizi  {
 	@SuppressWarnings("unchecked")
 	public List<String> getAllIdPorteDominio(Connection connectionPdD,String nomeRegistro,FiltroRicerca filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return (List<String>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdPorteDominio_method());
+	}
+	
+	protected static String _toKey_getAllIdGruppi_method(){
+		return "getAllIdGruppi";
+	}
+	@SuppressWarnings("unchecked")
+	public List<IDGruppo> getAllIdGruppi(Connection connectionPdD,String nomeRegistro,FiltroRicercaGruppi filtroRicerca) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return (List<IDGruppo>) _getAllIdEngine(connectionPdD, nomeRegistro, filtroRicerca, _toKey_getAllIdGruppi_method());
 	}
 	
 	protected static String _toKey_getAllIdRuoli_method(){
