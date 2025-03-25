@@ -922,7 +922,22 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_NOTE = "Solo l'applicativo indicato o con il ruolo configurato potrà pubblicare segnali di variazione del servizio";
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ERROR_UNDEFINED = "Deve essere selezionato un applicativo o un ruolo autorizzato a pubblicare segnali di variazione del servizio";
 
+	// Signal Hub fruizione
+	
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_LABEL = MODIPA_TITLE_LABEL+" - "+CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL;
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_ID = ModICostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_ID;
+	
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX = ModICostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX;
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_LABEL_DEFAULT = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_DEFAULT;
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_LABEL_RIDEFINISCI = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_RIDEFINISCI;
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_DEFAULT_VALUE = ModICostanti.MODIPA_PROFILO_DEFAULT;
+	
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX = ModICostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX;
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_LABEL = "";
 
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_MODE_DEFAULT_INFO_INTESTAZIONE_PARAM = "PARAM";
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_MODE_DEFAULT_INFO_INTESTAZIONE = "Il parametro '"+MODIPA_API_IMPL_PUSH_SIGNAL_HUB_MODE_DEFAULT_INFO_INTESTAZIONE_PARAM+"' deve essere indicato nella richiesta di fruizione tramite una delle seguenti modalità:";
+	
 }
 
 

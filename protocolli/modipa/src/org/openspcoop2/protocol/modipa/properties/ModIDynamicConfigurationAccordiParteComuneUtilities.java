@@ -889,4 +889,19 @@ public class ModIDynamicConfigurationAccordiParteComuneUtilities {
 			idAccordoSignalHubPushAPI = IDAccordoFactory.getInstance().getIDAccordoFromValues(modiProperties.getSignalHubApiName(), idSoggetto, modiProperties.getSignalHubApiVersion());
 		}
 	}
+	
+	public static boolean isApiSignalHubPushAPI(IDAccordo idAccordo, IRegistryReader registryReader, 
+			ModIProperties modiProperties, Logger log) {
+		if(idAccordo!=null) {
+			// è un accordo built-in che si assume esista
+			IDAccordo idAccordoSignalHubPushAPIreaded = null;
+			try {
+				idAccordoSignalHubPushAPIreaded = ModIDynamicConfigurationAccordiParteComuneUtilities.getIdAccordoSignalHubPush(registryReader, modiProperties);
+			}catch(Exception e) {
+				log.error("Lettura id accordo signalhub api push fallita: "+e.getMessage(),e);
+			}
+			return idAccordoSignalHubPushAPIreaded!=null && idAccordoSignalHubPushAPIreaded.equals(idAccordo);
+		}
+		return false;
+	}
 }

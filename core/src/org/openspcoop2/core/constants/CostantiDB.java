@@ -1114,6 +1114,10 @@ public final class CostantiDB {
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID = "modipaInfoGenSignalHubPulisherSA";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID = "modipaInfoGenSignalHubPulisherRole";
 
+    public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_ID = "modipaSignalHubPush";
+    public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX = "modipaSignalHubPushParamMode";
+    public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX = "modipaSignalHubPushParamValue";
+
     
 	// COSTANTI buste
 	

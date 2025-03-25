@@ -114,7 +114,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteComune(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException {
 		
-		if(isApiSignalHubPushAPI(id, registryReader)) {
+		if(ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(id, registryReader, this.modiProperties, this.log)) {
 			// è un accordo built-in che si assume esista
 			return super.getDynamicConfigAccordoServizioParteComune(consoleOperationType, consoleHelper, registryReader,
 					configIntegrationReader, id);
@@ -165,7 +165,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id)
 			throws ProtocolException {
 		
-		if(isApiSignalHubPushAPI(id, registryReader)) {
+		if(ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(id, registryReader, this.modiProperties, this.log)) {
 			// è un accordo built-in che si assume esista
 			super.updateDynamicConfigAccordoServizioParteComune(consoleConfiguration,
 					consoleOperationType, consoleHelper, properties,
@@ -186,7 +186,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 		
-		if(isApiSignalHubPushAPI(id, registryReader)) {
+		if(ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(id, registryReader, this.modiProperties, this.log)) {
 			// è un accordo built-in che si assume esista
 			super.validateDynamicConfigAccordoServizioParteComune(consoleConfiguration, consoleOperationType, consoleHelper, properties, 
 					registryReader, configIntegrationReader, id);
@@ -197,19 +197,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 				registryReader, id);
 	}
 	
-	private boolean isApiSignalHubPushAPI(IDAccordo idAccordo, IRegistryReader registryReader) {
-		if(idAccordo!=null) {
-			// è un accordo built-in che si assume esista
-			IDAccordo idAccordoSignalHubPushAPI = null;
-			try {
-				idAccordoSignalHubPushAPI = ModIDynamicConfigurationAccordiParteComuneUtilities.getIdAccordoSignalHubPush(registryReader, this.modiProperties);
-			}catch(Exception e) {
-				this.log.error("Lettura id accordo signalhub api push fallita: "+e.getMessage(),e);
-			}
-			return idAccordoSignalHubPushAPI!=null && idAccordoSignalHubPushAPI.equals(idAccordo);
-		}
-		return false;
-	}
+	
 
 	
 	
@@ -346,7 +334,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException {
 		
-		ConsoleConfiguration configuration = ModIDynamicConfigurationAccordiParteSpecificaUtilities.getDynamicConfigParteSpecifica(this.modiProperties,
+		ConsoleConfiguration configuration = ModIDynamicConfigurationAccordiParteSpecificaUtilities.getDynamicConfigParteSpecifica(this.log, this.modiProperties,
 				consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, null, false);
 		if(configuration!=null) {
 			return configuration;
@@ -390,7 +378,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDFruizione id) throws ProtocolException {
 		
-		ConsoleConfiguration configuration = ModIDynamicConfigurationAccordiParteSpecificaUtilities.getDynamicConfigParteSpecifica(this.modiProperties,
+		ConsoleConfiguration configuration = ModIDynamicConfigurationAccordiParteSpecificaUtilities.getDynamicConfigParteSpecifica(this.log, this.modiProperties,
 				consoleOperationType, consoleHelper, registryReader, configIntegrationReader, 
 				id.getIdServizio(), id.getIdFruitore(), true);
 		if(configuration!=null) {

@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -39,6 +40,7 @@ import org.openspcoop2.core.registry.Proprieta;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -1149,6 +1151,17 @@ public class ModIUtils {
 			Object instance = getModiProperties();
 			Method mGetIsTokenOAuthUseJtiIntegrityAsMessageId = instance.getClass().getMethod("isTokenOAuthUseJtiIntegrityAsMessageId");
 			return (Boolean) mGetIsTokenOAuthUseJtiIntegrityAsMessageId.invoke(instance);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
+	public static IDAccordo buildSignalHubPushIdAPI(IDSoggetto idSoggettoDefault) throws ProtocolException {
+		try {
+			Object instance = getModiProperties();
+			Method mGetSignalHubApiName = instance.getClass().getMethod("getSignalHubApiName");
+			Method mGetSignalHubApiVersion = instance.getClass().getMethod("getSignalHubApiVersion");
+			return IDAccordoFactory.getInstance().getIDAccordoFromValues((String) mGetSignalHubApiName.invoke(instance), idSoggettoDefault, (Integer) mGetSignalHubApiVersion.invoke(instance));
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}

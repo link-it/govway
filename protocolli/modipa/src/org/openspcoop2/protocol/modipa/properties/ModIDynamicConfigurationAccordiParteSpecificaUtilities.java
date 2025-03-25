@@ -64,7 +64,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 	private static String getErrorLetturaAPIFallita(Exception e) {
 		return "Lettura API fallita: "+e.getMessage();
 	}
-	static ConsoleConfiguration getDynamicConfigParteSpecifica(ModIProperties modiProperties,
+	static ConsoleConfiguration getDynamicConfigParteSpecifica(Logger log, ModIProperties modiProperties,
 			ConsoleOperationType consoleOperationType,
 			IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDServizio id, IDSoggetto idFruitore, boolean fruizioni) throws ProtocolException {
@@ -82,10 +82,11 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		
 		// Identificazione API
 		AccordoServizioParteComune api = null;
+		IDAccordo idAccordo = null;
 		String portType = null; 
 		try {
 			if(id!=null && id.getUriAccordoServizioParteComune()!=null) {
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(id.getUriAccordoServizioParteComune());
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(id.getUriAccordoServizioParteComune());
 				api = registryReader.getAccordoServizioParteComune(idAccordo, false, false);
 			}
 			
@@ -116,6 +117,12 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			if(!ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternDatiCorniceSicurezza)) {
 				schemaDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
 			}
+		}
+		
+		if(fruizioni && idAccordo!=null && ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(idAccordo, registryReader, modiProperties, log)) {
+			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addSignaHubFruizioneConfig(modiProperties,
+					configuration, rest);
+			return configuration;
 		}
 		
 		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
@@ -250,10 +257,11 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		
 		// Identificazione API
 		AccordoServizioParteComune api = null;
+		IDAccordo idAccordo = null;
 		String portType = null; 
 		try {
 			if(id!=null && id.getUriAccordoServizioParteComune()!=null) {
-				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(id.getUriAccordoServizioParteComune());
+				idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(id.getUriAccordoServizioParteComune());
 				api = registryReader.getAccordoServizioParteComune(idAccordo, false, false);
 			}
 			
@@ -282,6 +290,12 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			if(!ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD.equals(patternDatiCorniceSicurezza)) {
 				schemaDatiCorniceSicurezza = ModISecurityUtils.getProfiloSicurezzaMessaggioCorniceSicurezzaSchema(api, portType);
 			}
+		}
+		
+		if(fruizioni && idAccordo!=null && ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(idAccordo, registryReader, modiProperties, log)) {
+			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateSignaHubFruizioneConfig(modiProperties,
+					consoleConfiguration, properties);
+			return true;
 		}
 		
 		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);

@@ -432,6 +432,7 @@ public class ModIProperties {
 			this.getSignalHubDeSeedSeedLifetimeDaysDefault();
 			this.getSignalHubApiName();
 			this.getSignalHubApiVersion();
+			this.getSignalHubConfig();
 			
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo modipa, "+e.getMessage();
@@ -5033,4 +5034,27 @@ public class ModIProperties {
     	
     	return this.signalHubApiVersion;
 	}
+	
+	
+	
+	private ModISignalHubConfig signalHubConfig = null;
+	public ModISignalHubConfig getSignalHubConfig() throws ProtocolException{
+    	if(this.signalHubConfig==null){
+    		String propertyPrefix = "org.openspcoop2.protocol.modipa.signalHub";
+        	try{
+        		String debugPrefix = "Param signal hub '"+propertyPrefix+"'";
+				Properties p = this.reader.readProperties(propertyPrefix+"."); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
+				if(p==null || p.isEmpty()) {
+					throw new ProtocolException(debugPrefix+" non trovata");
+				}
+        		this.signalHubConfig = new ModISignalHubConfig(propertyPrefix, p);
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonCorretta(propertyPrefix, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubConfig;
+	}
+	
 }

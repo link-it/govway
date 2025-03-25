@@ -54,6 +54,8 @@ import org.openspcoop2.protocol.engine.utils.AzioniUtils;
 import org.openspcoop2.protocol.modipa.config.ModIAuditClaimConfig;
 import org.openspcoop2.protocol.modipa.config.ModIAuditConfig;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
+import org.openspcoop2.protocol.modipa.config.ModISignalHubConfig;
+import org.openspcoop2.protocol.modipa.config.ModISignalHubParamConfig;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -3052,6 +3054,116 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		if(publisherSAundefined && publisherRoleUndefined) {
 			throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ERROR_UNDEFINED);
 		}
+	}
+	
+	
+	
+	
+	
+	static void addSignaHubFruizioneConfig(ModIProperties modiProperties,
+			ConsoleConfiguration configuration, boolean rest) throws ProtocolException {
+		
+		
+		TitleConsoleItem titolo = (TitleConsoleItem) ProtocolPropertiesFactory.newTitleItem(
+				ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_LABEL);
+		configuration.addConsoleItem(titolo );
+		
+		ModISignalHubConfig c = modiProperties.getSignalHubConfig();
+		if(c!=null && c.getClaims()!=null && !c.getClaims().isEmpty()) {
+			for (ModISignalHubParamConfig modISignalHubParamConfig : c.getClaims()) {
+				addSignaHubFruizioneConfig(configuration, modISignalHubParamConfig, rest);
+			}
+		}
+		
+	}
+	
+	private static String addSignaHubFruizioneConfig(ConsoleConfiguration configuration, ModISignalHubParamConfig paramConfig, boolean rest) throws ProtocolException {
+		
+		String modeId = ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX+paramConfig.getNome(); 
+		
+		StringConsoleItem modeItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				modeId, 
+				paramConfig.getLabel());
+		modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_LABEL_DEFAULT,
+				ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_DEFAULT);
+		modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_LABEL_RIDEFINISCI,
+				ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI);
+		modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_DEFAULT_VALUE);
+		modeItem.setReloadOnChange(true, true);
+		configuration.addConsoleItem(modeItem);
+		
+		StringConsoleItem ridefineItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.TEXT_AREA,
+				ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX+paramConfig.getNome(),
+				ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_LABEL);
+		ridefineItem.setRequired(true);
+		ridefineItem.setRows(2);
+		ridefineItem.setInfo(buildConsoleItemInfoCorniceSicurezza(paramConfig.getLabel(), rest));
+		if(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_DEFAULT_VALUE.equals(ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_DEFAULT)) {
+			ridefineItem.setType(ConsoleItemType.HIDDEN);
+		}
+		configuration.addConsoleItem(ridefineItem);
+		
+		return modeId;
+	}
+	
+	static void updateSignaHubFruizioneConfig(ModIProperties modiProperties,
+			ConsoleConfiguration configuration, ProtocolProperties properties) throws ProtocolException {
+		
+		ModISignalHubConfig c = modiProperties.getSignalHubConfig();
+		if(c!=null && c.getClaims()!=null && !c.getClaims().isEmpty()) {
+			for (ModISignalHubParamConfig modISignalHubParamConfig : c.getClaims()) {
+				updateSignaHubFruizioneConfig(configuration, properties, modISignalHubParamConfig);
+			}
+		}
+		
+	}
+	
+	private static void updateSignaHubFruizioneConfig(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, ModISignalHubParamConfig paramConfig) throws ProtocolException {
+		
+		String modeId = ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX+paramConfig.getNome();
+		
+		boolean ridefinisciItem = false;
+		StringProperty selectSchemaModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, 
+				modeId);
+		if(selectSchemaModeItemValue==null) {
+			ridefinisciItem = false;	
+		}
+		else {
+			ridefinisciItem = ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI.equals(selectSchemaModeItemValue.getValue());
+		}
+	
+		AbstractConsoleItem<?> modeItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), modeId);
+		if(ridefinisciItem) {
+			modeItem.setInfo(null);
+		}
+		else {
+			modeItem.setInfo(new ConsoleItemInfo(paramConfig.getLabel()));
+			modeItem.getInfo().setHeaderBody(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_MODE_DEFAULT_INFO_INTESTAZIONE.
+					replace(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_MODE_DEFAULT_INFO_INTESTAZIONE_PARAM, paramConfig.getNome()));
+			modeItem.getInfo().setListBody(new ArrayList<>());
+			modeItem.getInfo().getListBody().addAll(paramConfig.getRulesInfo());
+		}
+		
+		String id = ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX+paramConfig.getNome();
+		AbstractConsoleItem<?> valueItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), id);
+		if(ridefinisciItem) {
+			valueItem.setType(ConsoleItemType.TEXT_AREA);
+		}
+		else {
+			valueItem.setType(ConsoleItemType.HIDDEN);
+			StringProperty selectItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, id);
+			if(selectItemValue!=null) {
+				selectItemValue.setValue(null);
+			}
+		}
+		
 	}
 }
 	
