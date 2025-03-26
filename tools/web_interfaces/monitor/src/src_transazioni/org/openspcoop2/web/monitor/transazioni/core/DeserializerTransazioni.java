@@ -39,6 +39,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.openspcoop2.core.diagnostica.utils.XMLUtils;
 import org.openspcoop2.core.diagnostica.utils.XMLUtilsException;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -339,7 +340,7 @@ public class DeserializerTransazioni {
 				transazioneBean.setLocationConnettore(UtilityTransazioni.escapeXmlValue(datiIntegrazione.getConnettore()));
 			}
 			if((datiIntegrazione.getUrlInvocazione()!=null && StringUtils.isNotEmpty(datiIntegrazione.getUrlInvocazione()))){
-				transazioneBean.setUrlInvocazione(UtilityTransazioni.escapeXmlValue(datiIntegrazione.getUrlInvocazione()));
+				transazioneBean.setUrlInvocazione(StringEscapeUtils.unescapeXml(datiIntegrazione.getUrlInvocazione()));
 			}
 			if((datiIntegrazione.getIndirizzoClient()!=null && StringUtils.isNotEmpty(datiIntegrazione.getIndirizzoClient()))){
 				transazioneBean.setSocketClientAddress(UtilityTransazioni.escapeXmlValue(datiIntegrazione.getIndirizzoClient()));
@@ -840,7 +841,7 @@ public class DeserializerTransazioni {
 			estraiDatiUltimoErroreConsegna(transazioneApplicativoServerBean, datiConsegna);
 
 			if(datiConsegna.getConnettore()!=null && !"".equals(datiConsegna.getConnettore())) {
-				transazioneApplicativoServerBean.setLocationConnettore(UtilityTransazioni.escapeXmlValue(datiConsegna.getConnettore()));
+				transazioneApplicativoServerBean.setLocationConnettore(StringEscapeUtils.unescapeXml(datiConsegna.getConnettore()));
 			}
 			if(datiConsegna.getCodiceRisposta()!=null && !"".equals(datiConsegna.getCodiceRisposta())) {
 				transazioneApplicativoServerBean.setCodiceRisposta(UtilityTransazioni.escapeXmlValue(datiConsegna.getCodiceRisposta()));

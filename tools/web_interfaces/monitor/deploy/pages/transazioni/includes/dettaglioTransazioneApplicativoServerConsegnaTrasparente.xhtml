@@ -110,8 +110,8 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />
-                   	<h:commandLink id="exportDumpMessaggiReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliTransazioneApplicativoServerBean.visualizzaLinkEsporta}" />
+                   	<h:commandLink id="exportDumpMessaggiReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}" rendered="${dettagliTransazioneApplicativoServerBean.visualizzaLinkEsporta}">
                    		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
 						<h:outputText value="Esporta" />
 					</h:commandLink>
@@ -141,14 +141,14 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliTransazioneApplicativoServerBean.visualizzaLinkEsporta}" />
                    	<h:commandLink id="exportDumpBinarioReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}"
-                   		rendered="#{not dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRichiestaUscita}">
+                   		rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaLinkEsporta and (not dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRichiestaUscita)}">
                    		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.dataUltimaConsegna}" target="#{dettagliDump.ultimaConsegna}"/>
 						<h:outputText value="Esporta" />
 					</h:commandLink>
-					<h:commandLink id="exportDumpBinarioMultipartReqUscita-iconLink" styleClass="icon-compress" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRichiestaUscita}"
+					<h:commandLink id="exportDumpBinarioMultipartReqUscita-iconLink" styleClass="icon-compress" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaLinkEsporta and dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRichiestaUscita}"
                    		onclick="preparaFormModale('RichiestaUscitaDumpBinario'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
 						<h:outputText value="Esporta" />
 					</h:commandLink>
@@ -237,8 +237,8 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
                    						 
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
-                   	<h:commandLink id="exportDumpMessaggiResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}">
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliTransazioneApplicativoServerBean.visualizzaLinkEsporta}" />	 
+                   	<h:commandLink id="exportDumpMessaggiResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}" rendered="${dettagliTransazioneApplicativoServerBean.visualizzaLinkEsporta}" >
                    		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpMessaggiResIngresso" value="Esporta" />
 					</h:commandLink>
@@ -268,13 +268,13 @@
                     	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
                    	</a4j:htmlCommandLink>
-                   	<h:outputLabel value="&#160;|&#160;" />	 
+                   	<h:outputLabel value="&#160;|&#160;" rendered="${dettagliTransazioneApplicativoServerBean.visualizzaLinkEsporta}" />	 
                    	<h:commandLink id="exportDumpBinarioResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}"
-                   		rendered="#{not dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRispostaIngresso}">
+                   		rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaLinkEsporta and (not dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRispostaIngresso)}">
                    		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
 						<h:outputText value="Esporta" />
 					</h:commandLink>
-					<h:commandLink id="exportDumpBinarioMultipartResIngresso-iconLink" styleClass="icon-compress" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRispostaIngresso}"
+					<h:commandLink id="exportDumpBinarioMultipartResIngresso-iconLink" styleClass="icon-compress" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaLinkEsporta and dettagliTransazioneApplicativoServerBean.hasDumpBinarioMultipartUltimaConsegnaRispostaIngresso}"
                    		onclick="preparaFormModale('RispostaIngressoDumpBinario'); Richfaces.showModalPanel('esportaModalPnl'); return false;" >
 						<h:outputText value="Esporta" />
 					</h:commandLink>

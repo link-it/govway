@@ -84,6 +84,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
+import org.openspcoop2.web.monitor.transazioni.bean.DumpMessaggioBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServerBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
@@ -324,6 +325,31 @@ public class SingleFileExporter implements IExporter{
 								for (int i = 0; i < listTipiDaEsportare.length; i++) {
 									exportContenuti(SingleFileExporter.log, tAS, null, this.zip, dirConsegna, this.transazioniService, listTipiDaEsportare[i],
 											this.headersAsProperties, this.contenutiAsProperties);
+								}
+								
+								if(tAS.getNumeroTentativi() > 1) {
+									// 	storico consegne
+									String dirStorico= dirConsegna+"storico"+File.separator;
+									
+									int countDumpMessaggiGByDataConsegnaErogatore = this.transazioniService.countDumpMessaggiGByDataConsegnaErogatore(t.getIdTransazione(), tAS.getServizioApplicativoErogatore());
+									
+									List<DumpMessaggioBean> lista = this.transazioniService.listDumpMessaggiGByDataConsegnaErogatore(t.getIdTransazione(), 
+											tAS.getServizioApplicativoErogatore(),0,countDumpMessaggiGByDataConsegnaErogatore);
+									
+									if(lista!=null && !lista.isEmpty()) {
+										for (int j = 0; j < lista.size(); j++) {
+											DumpMessaggioBean tentativo = lista.get(j);
+											// TODO POLI verificare se funziona correttamente.
+											long dataConsegnaErogatoreMillis = tentativo.getDataConsegnaErogatore() != null ? tentativo.getDataConsegnaErogatore().getTime() : System.currentTimeMillis() + j;
+											String dirTentativo = dirStorico+dataConsegnaErogatoreMillis+File.separator;
+											
+											for (int i = 0; i < listTipiDaEsportare.length; i++) {
+												exportContenuti(SingleFileExporter.log, tAS, tentativo.getDataConsegnaErogatore(), 
+														this.zip, dirTentativo, this.transazioniService, listTipiDaEsportare[i],
+														this.headersAsProperties, this.contenutiAsProperties);
+											}
+										}
+									}
 								}
 							}
 						}

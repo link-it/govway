@@ -968,4 +968,8 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 	public void initExportListener(ActionEvent ae){
 		this.exportContenutiMultipart = null;		
 	}
+	
+	public boolean isVisualizzaLinkEsporta() {
+		return this.transazioniService.getSearch().isShowButtonEsporta();
+	}
 }
