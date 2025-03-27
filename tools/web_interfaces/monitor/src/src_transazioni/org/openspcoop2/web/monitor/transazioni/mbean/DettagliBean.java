@@ -1274,7 +1274,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 					this.exportContenutiMultipart=null;
 				}
 			} else {
-				SingleFileExporter.exportContenuti(log, this.dettaglio, zip, dirPath, this.transazioniService, this.exportContenuto,
+				SingleFileExporter.exportContenuti(log, this.dettaglio, zip, dirPath, false, this.transazioniService, this.exportContenuto,
 					DettagliBean.headersAsProperties,DettagliBean.contenutiAsProperties);
 			}
 			

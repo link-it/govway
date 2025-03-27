@@ -78,12 +78,15 @@ import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.CopyStream;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
+import org.openspcoop2.web.monitor.transazioni.bean.DumpMessaggioBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServerBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
@@ -211,6 +214,8 @@ public class SingleFileExporter implements IExporter{
 				tracciamentoService, diagnosticiService,transazioniExport);
 	}
 	
+	public static final String EXPORT_DATE_FORMAT_MS = "yyyyMMdd_HHmmssSSS";
+	
 	private void export(String rootDir, List<TransazioneBean> transazioni) throws ExportException{
 		
 		byte[] buf = new byte[1024];
@@ -322,8 +327,37 @@ public class SingleFileExporter implements IExporter{
 								listTipiDaEsportare[2] = TipoMessaggio.RISPOSTA_INGRESSO;
 								listTipiDaEsportare[3] = TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO;
 								for (int i = 0; i < listTipiDaEsportare.length; i++) {
-									exportContenuti(SingleFileExporter.log, tAS, null, this.zip, dirConsegna, this.transazioniService, listTipiDaEsportare[i],
+									exportContenuti(SingleFileExporter.log, tAS, null, this.zip, dirConsegna, true, this.transazioniService, listTipiDaEsportare[i],
 											this.headersAsProperties, this.contenutiAsProperties);
+								}
+								
+								if(tAS.getNumeroTentativi() > 1) {
+									// 	storico consegne
+									String dirStorico= dirConsegna+"contenuti"+File.separator+"storico"+File.separator;
+									
+									int countDumpMessaggiGByDataConsegnaErogatore = this.transazioniService.countDumpMessaggiGByDataConsegnaErogatore(t.getIdTransazione(), tAS.getServizioApplicativoErogatore());
+									
+									List<DumpMessaggioBean> lista = this.transazioniService.listDumpMessaggiGByDataConsegnaErogatore(t.getIdTransazione(), 
+											tAS.getServizioApplicativoErogatore(),0,countDumpMessaggiGByDataConsegnaErogatore);
+									
+									if(lista!=null && !lista.isEmpty()) {
+										for (int j = 0; j < lista.size(); j++) {
+											DumpMessaggioBean tentativo = lista.get(j);
+											Date dataConsegnaErogatoreMillis = null;
+											if(tentativo.getDataConsegnaErogatore() != null) {
+												dataConsegnaErogatoreMillis = tentativo.getDataConsegnaErogatore();
+											} else {
+												dataConsegnaErogatoreMillis = new Date(DateManager.getTimeMillis()+j);
+											}
+											String dirTentativo = dirStorico+DateUtils.getSimpleDateFormat(EXPORT_DATE_FORMAT_MS).format(dataConsegnaErogatoreMillis)+File.separator;
+											
+											for (int i = 0; i < listTipiDaEsportare.length; i++) {
+												exportContenuti(SingleFileExporter.log, tAS, tentativo.getDataConsegnaErogatore(), 
+														this.zip, dirTentativo, false, this.transazioniService, listTipiDaEsportare[i],
+														this.headersAsProperties, this.contenutiAsProperties);
+											}
+										}
+									}
 								}
 							}
 						}
@@ -532,7 +566,7 @@ public class SingleFileExporter implements IExporter{
 				
 				TipoMessaggio [] listTipiDaEsportare = TipoMessaggio.values();
 				for (int i = 0; i < listTipiDaEsportare.length; i++) {
-					exportContenuti(SingleFileExporter.log, t, this.zip, transazioneDir, this.transazioniService, listTipiDaEsportare[i],
+					exportContenuti(SingleFileExporter.log, t, this.zip, transazioneDir, true, this.transazioniService, listTipiDaEsportare[i],
 							this.headersAsProperties, this.contenutiAsProperties);
 				}
 
@@ -858,28 +892,33 @@ public class SingleFileExporter implements IExporter{
 	}
 	
 	public static void exportContenuti(Logger log, Transazione t, 
-			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
+			ZipOutputStream zip,String dirPath,boolean addContenutiDir,ITransazioniService service,TipoMessaggio tipo,
 			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
 		internalExportContenuti(log, t.getIdTransazione(), null, null,
-				zip, dirPath,service, tipo,
+				zip, dirPath, addContenutiDir,service, tipo,
 				headersAsProperties, contenutiAsProperties);
 	}
 	
 	public static void exportContenuti(Logger log, TransazioneApplicativoServer transazioneApplicativoServer, Date dataConsegnaErogatore, 
-			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
+			ZipOutputStream zip,String dirPath,boolean addContenutiDir,ITransazioniService service,TipoMessaggio tipo,
 			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
 		internalExportContenuti(log, transazioneApplicativoServer.getIdTransazione(), transazioneApplicativoServer.getServizioApplicativoErogatore(), dataConsegnaErogatore,
-				zip, dirPath,service, tipo,
+				zip, dirPath,addContenutiDir,service, tipo,
 				headersAsProperties, contenutiAsProperties);
 	}
 	
 	private static void internalExportContenuti(Logger log, String idTransazione, String saErogatore, Date dataConsegnaErogatore,
-			ZipOutputStream zip,String dirPath,ITransazioniService service,TipoMessaggio tipo,
+			ZipOutputStream zip,String dirPath,boolean addContenutiDir,ITransazioniService service,TipoMessaggio tipo,
 			boolean headersAsProperties, boolean contenutiAsProperties) throws ExportException{
 
 		String contenutiDir = null;
 		if(dirPath!=null) {
-			contenutiDir = dirPath+"contenuti"+File.separator;
+			if(addContenutiDir) {
+				contenutiDir = dirPath+"contenuti"+File.separator;
+			}
+			else {
+				contenutiDir = dirPath;
+			}
 		}
 		else {
 			contenutiDir = "";

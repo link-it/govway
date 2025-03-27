@@ -69,7 +69,8 @@ public class TransazioniApplicativoServerDM extends BaseDataModel<Long, Transazi
 				
 				List<TransazioneApplicativoServerBean> list = null;
 				if (this.diagnosticiBean.isUsaInformazioniArchivio()) {
-					list = this.diagnosticiBean.getTransazioniApplicativoServer().stream().skip(start).limit(limit).collect(Collectors.toList());
+					list = this.diagnosticiBean.getTransazioniApplicativoServer().stream()
+							.sorted((a,b)->a.getDataRegistrazione().compareTo(b.getDataRegistrazione())).skip(start).limit(limit).collect(Collectors.toList());
 				} else {
 					this.getDataProvider().setProtocollo(this.diagnosticiBean.getProtocollo());
 					this.getDataProvider().setIdTransazione(this.diagnosticiBean.getIdTransazione());

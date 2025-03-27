@@ -714,6 +714,7 @@ public class ArchivioZipManager {
 			transazioneApplicativoServerBean.setFaultUltimoErrore(transazioneApplicativoServerBean2.getFaultUltimoErrore());
 		}
 
+		transazioneApplicativoServerBean.setId((long) transazionearchivioBean.getConsegne().size() + 1);
 		consegnaArchivioBean.setTransazioneApplicativoServerBean(transazioneApplicativoServerBean);
 		transazionearchivioBean.getConsegne().put(chiaveConsegna, consegnaArchivioBean);
 	}

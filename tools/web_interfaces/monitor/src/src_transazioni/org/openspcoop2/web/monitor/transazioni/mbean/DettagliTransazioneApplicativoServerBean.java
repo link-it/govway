@@ -817,7 +817,7 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 				}
 			} else {
 				SingleFileExporter.exportContenuti(log, this.dettaglio, dataConsegna, 
-					zip, dirPath, this.transazioniService, this.exportContenuto,
+					zip, dirPath, false, this.transazioniService, this.exportContenuto,
 					DettagliTransazioneApplicativoServerBean.headersAsProperties,DettagliTransazioneApplicativoServerBean.contenutiAsProperties);
 			}
 			zip.flush();
@@ -967,5 +967,9 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 	@Override
 	public void initExportListener(ActionEvent ae){
 		this.exportContenutiMultipart = null;		
+	}
+	
+	public boolean isVisualizzaLinkEsporta() {
+		return this.transazioniService.getSearch().isShowButtonEsporta();
 	}
 }

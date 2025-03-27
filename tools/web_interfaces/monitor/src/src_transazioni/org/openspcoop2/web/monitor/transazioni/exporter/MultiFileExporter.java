@@ -78,6 +78,8 @@ import org.slf4j.Logger;
  */
 public class MultiFileExporter implements IExporter{
 
+	/** Classe non più utilizzata, veniva agganciata all'export, valutarne l'eliminazione */
+	
 	private static final String ERRORE_EXPORT = "Si è verificato un errore durante l'esportazione della transazione con id:";
 	
 	private Logger log = null;
@@ -407,7 +409,7 @@ public class MultiFileExporter implements IExporter{
 
 				TipoMessaggio [] listTipiDaEsportare = TipoMessaggio.values();
 				for (int i = 0; i < listTipiDaEsportare.length; i++) {
-					SingleFileExporter.exportContenuti(this.log, t, zip, transazioneDir, this.transazioniService, listTipiDaEsportare[i],
+					SingleFileExporter.exportContenuti(this.log, t, zip, transazioneDir, true, this.transazioniService, listTipiDaEsportare[i],
 							this.headersAsProperties, this.contenutiAsProperties);
 				}
 
