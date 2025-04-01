@@ -23,9 +23,12 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.opzioni
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.regex.Pattern;
+
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibraryMode;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -67,8 +70,8 @@ public class HttpProxyUtils {
 	private static final String API_UNAVAILABLE = "APIUnavailable";
 	private static final String API_UNAVAILABLE_MESSAGE = "The API Implementation is temporary unavailable";
 	
-	private static final String CONNECTION_SUCCESS_REST = "[proxy: localhost:PORT] http-method:METHOD) con codice di trasporto: 200";
-	private static final String CONNECTION_SUCCESS_SOAP = "[proxy: localhost:PORT]) con codice di trasporto: 200";
+	private static final String CONNECTION_SUCCESS_REST = "\\[proxy: localhost:PORT\\] http-method:METHOD\\) con codice di trasporto: 200";
+	private static final String CONNECTION_SUCCESS_SOAP = "\\[proxy: localhost:PORT\\]\\) con codice di trasporto: 200";
 	public static String getConnectionSuccessMessageProxyNoAuth(HttpRequestMethod method, boolean soap) {
 		return getConnectionSuccessMessage(HttpProxyThread.PORT_NO_AUTH, method, soap);
 	}
@@ -83,8 +86,8 @@ public class HttpProxyUtils {
 	// http url connection: Errore avvenuto durante la consegna HTTP: Connection refused (Connection refused)
 	// httpcore: Connect to http://localhost:59900 [localhost/127.0.0.1] failed: Connection refused
 	// Uso like per prendere entrambi
-	private static final String CONNECTION_REFUSED_REST = "[proxy: localhost:PORT] http-method:METHOD): Errore avvenuto durante la consegna HTTP: %Connection refused";
-	private static final String CONNECTION_REFUSED_SOAP = "[proxy: localhost:PORT]): Errore avvenuto durante la consegna HTTP: %Connection refused";
+	private static final String CONNECTION_REFUSED_REST = "\\[proxy: localhost:PORT\\] http-method:METHOD\\): Errore avvenuto durante la consegna HTTP: .*Connection refused";
+	private static final String CONNECTION_REFUSED_SOAP = "\\[proxy: localhost:PORT\\]\\): Errore avvenuto durante la consegna HTTP: .*Connection refused";
 	public static String getConnectionRefusedMessageProxyNoAuth(HttpRequestMethod method, boolean soap) {
 		return getConnectionRefusedMessage(HttpProxyThread.PORT_NO_AUTH, method, soap);
 	}
@@ -96,8 +99,8 @@ public class HttpProxyUtils {
 		return s.replace("PORT", port+"").replace("METHOD", method.name());
 	}
 	
-	private static final String CONNECTION_ERROR_REST = "[proxy: localhost:PORT] http-method:METHOD): Errore avvenuto durante la consegna HTTP: Unexpected end of file from server";
-	private static final String CONNECTION_ERROR_SOAP = "[proxy: localhost:PORT]): Errore avvenuto durante la consegna HTTP: Unexpected end of file from server";
+	private static final String CONNECTION_ERROR_REST = "\\[proxy: localhost:PORT\\] http-method:METHOD\\): Errore avvenuto durante la consegna HTTP: Unexpected end of file from server";
+	private static final String CONNECTION_ERROR_SOAP = "\\[proxy: localhost:PORT\\]\\): Errore avvenuto durante la consegna HTTP: Unexpected end of file from server";
 	public static String getConnectionErrorMessageProxyNoAuth(HttpRequestMethod method, boolean soap) {
 		return getConnectionErrorMessage(HttpProxyThread.PORT_NO_AUTH, method, soap);
 	}
@@ -109,8 +112,8 @@ public class HttpProxyUtils {
 		return s.replace("PORT", port+"").replace("METHOD", method.name());
 	}
 	
-	private static final String CONNECTION_PROXY_AUTH_ERROR_REST = "[proxy: localhost:PORT] http-method:METHOD): errore HTTP 407";
-	private static final String CONNECTION_PROXY_AUTH_ERROR_SOAP = "[proxy: localhost:PORT]): (407) Proxy Authentication Required";
+	private static final String CONNECTION_PROXY_AUTH_ERROR_REST = "\\[proxy: localhost:PORT\\] http-method:METHOD\\): errore HTTP 407";
+	private static final String CONNECTION_PROXY_AUTH_ERROR_SOAP = "\\[proxy: localhost:PORT\\]\\): \\(407\\) Proxy Authentication Required";
 	public static String getConnectionProxyAuthErrorMessageProxyAuth(HttpRequestMethod method, boolean soap) {
 		return getConnectionProxyAuthErrorMessage(HttpProxyThread.PORT_AUTH, method, soap);
 	}
@@ -141,11 +144,10 @@ public class HttpProxyUtils {
 	
 	private static HttpResponse test(TipoServizio tipoServizio, boolean soap, HttpRequestMethod method, String contentType, byte[] content,
 			Logger logCore, String api, String operazione, 
-			String msgDiagnostico, boolean attesoErrore) throws Exception {
-		
+			String msgDiagnostico, boolean attesoErrore, HttpLibraryMode mode) throws Exception {
 		
 		String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+api+"/v1/"+operazione
+				? System.getProperty("govway_base_path") + "/in/SoggettoInternoTest/"+api+"/v1/"+operazione
 				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+api+"/v1/"+operazione;
 		
 		HttpRequest request = new HttpRequest();
@@ -165,6 +167,10 @@ public class HttpProxyUtils {
 		request.setContentType(contentType);
 		request.setContent(content);
 		request.setUrl(url);
+		
+		if (mode != null) {
+			mode.patchRequest(request);
+		}
 		
 		HttpResponse response = null;
 		try {
@@ -234,8 +240,10 @@ public class HttpProxyUtils {
 			HttpProxyUtils.verifyOk(response, 200, contentType);
 		}
 		
-		DBVerifier.verify(idTransazione, esitoExpected, msgDiagnostico);
-		
+		if (msgDiagnostico != null)
+			DBVerifier.verify(idTransazione, esitoExpected, Pattern.compile(".*" + msgDiagnostico + ".*", Pattern.DOTALL), mode);
+		else
+			DBVerifier.verify(idTransazione, esitoExpected, mode);
 		return response;
 		
 	}
@@ -243,28 +251,28 @@ public class HttpProxyUtils {
 	public static void composedTestSuccess(Logger logCore, HttpRequestMethod method, TipoServizio tipoServizio, String api, 
 			String mitmdumpCommand, int waitStartupServer, int waitStopServer,
 			String action,
-			boolean govwayUseHttpUrlConnection) throws Exception {
+			boolean govwayUseHttpUrlConnection, HttpLibraryMode mode) throws Exception {
 		_composedTest(logCore, method, tipoServizio, api, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
 				action, 
 				null,
-				govwayUseHttpUrlConnection);
+				govwayUseHttpUrlConnection, mode);
 	}
 	public static void composedTestError(Logger logCore, HttpRequestMethod method, TipoServizio tipoServizio, String api, 
 			String mitmdumpCommand, int waitStartupServer, int waitStopServer,
 			String action, String msgErrore,
-			boolean govwayUseHttpUrlConnection) throws Exception {
+			boolean govwayUseHttpUrlConnection, HttpLibraryMode mode) throws Exception {
 		_composedTest(logCore, method, tipoServizio, api, 
 				mitmdumpCommand, waitStartupServer, waitStopServer,
 				action, 
 				msgErrore,
-				govwayUseHttpUrlConnection);
+				govwayUseHttpUrlConnection, mode);
 	}
 	private static void _composedTest(Logger logCore, HttpRequestMethod method, TipoServizio tipoServizio, String api,
 			String mitmdumpCommand, int waitStartupServer, int waitStopServer,
 			String action, 
 			String msgErrore,
-			boolean govwayUseHttpUrlConnection) throws Exception {
+			boolean govwayUseHttpUrlConnection, HttpLibraryMode mode) throws Exception {
 		
 		ConfigLoader.resetCache();
 		
@@ -273,7 +281,7 @@ public class HttpProxyUtils {
 		String contentType = null;
 		byte[]content = null;
 		boolean soap = false;
-		if(HttpProxySoapTest.API.equals(api)) {
+		if(HttpProxySoapTestEngine.API.equals(api)) {
 			contentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
 			content = Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes();
 			soap = true;
@@ -292,7 +300,7 @@ public class HttpProxyUtils {
 		// attendo errore connection refused
 		HttpProxyUtils.test(tipoServizio, soap, method, contentType, content,
 				logCore, api, action, 
-				connectionRefusedMsg, true);
+				connectionRefusedMsg, true, mode);
 		
 		HttpProxyThread httpProxyThread = null;
 		if(proxyAuth) {
@@ -306,7 +314,7 @@ public class HttpProxyUtils {
 		try {
 			HttpProxyUtils.test(tipoServizio, soap,method, contentType, content,
 						logCore, api, action, 
-						msgErrore, (msgErrore!=null));
+						msgErrore, (msgErrore!=null), mode);
 		}
 		finally {
 			HttpProxyThread.stopHttpProxyThread(httpProxyThread, waitStopServer);
@@ -333,7 +341,7 @@ public class HttpProxyUtils {
 		}
 		HttpProxyUtils.test(tipoServizio, soap,method, contentType, content,
 					logCore, api, action, 
-					error, true);
+					error, true, mode);
 		
 		
 		if(proxyAuth) {
@@ -344,7 +352,7 @@ public class HttpProxyUtils {
 			try {
 				HttpProxyUtils.test(tipoServizio, soap,method, contentType, content,
 							logCore, api, action, 
-							msgErroreAuth, true);
+							msgErroreAuth, true, mode);
 			}
 			finally {
 				HttpProxyThread.stopHttpProxyThread(httpProxyThread, waitStopServer);
@@ -366,7 +374,7 @@ public class HttpProxyUtils {
 			}*/
 			HttpProxyUtils.test(tipoServizio, soap,method, contentType, content,
 						logCore, api, action, 
-						error, true);
+						error, true, mode);
 			
 		}
 		

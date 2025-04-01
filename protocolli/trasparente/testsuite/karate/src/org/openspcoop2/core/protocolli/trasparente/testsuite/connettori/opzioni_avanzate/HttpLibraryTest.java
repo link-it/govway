@@ -1,20 +1,38 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * https://govway.org
+ * 
+ * Copyright (c) 2005-2025 Link.it srl (https://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.opzioni_avanzate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.sql.ISQLQueryObject;
-import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibrary;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibraryMode;
+import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -22,69 +40,89 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
+/**
+* HttpLibraryTest: classe per i test sul controllo delle librerie http usate dai connettori
+* nel caso di configurazione avanzata da console.
+* @author Tommaso Burlon (tommaso.burlon@link.it)
+* @author $Author$
+* @version $Rev$, $Date$
+*/
 public class HttpLibraryTest extends ConfigLoader {
 	
 	private static final String HTTPCORE_LIBRARY = "core";
 	private static final String HTTPCONNECTION_LIBRARY = "UrlConn";
 	
-	private static final String HTTP_SCHEME = "http";
-	private static final String HTTPS_SCHEME = "https";
-	
 	private static final String API = "TestHttpLibrary";
 	
 	@Test
-	public void testHttpCoreNIO() throws Throwable {
-		String id = test(HTTP_SCHEME, HTTPCORE_LIBRARY, true);
-		checkLibrary(id, HTTP_SCHEME, HTTPCORE_LIBRARY, true);
+	public void testHttpCoreNIO() throws SQLQueryObjectException, ProtocolException, UtilsException {
+		HttpLibraryMode mode = new HttpLibraryMode(HttpLibrary.HTTPCORE, true, false);
+		String id = test(mode);
+		checkLibrary(id, mode);
 	}
 	
 	@Test
-	public void testHttpsCoreNIO() throws Throwable {
-		String id = test(HTTPS_SCHEME, HTTPCORE_LIBRARY, true);
-		checkLibrary(id, HTTPS_SCHEME, HTTPCORE_LIBRARY, true);
+	public void testHttpsCoreNIO() throws SQLQueryObjectException, ProtocolException, UtilsException {
+		HttpLibraryMode mode = new HttpLibraryMode(HttpLibrary.HTTPCORE, true, true);
+		String id = test(mode);
+		checkLibrary(id, mode);
 	}
 	
 	@Test
-	public void testHttpCoreBIO() throws Throwable {
-		String id = test(HTTP_SCHEME, HTTPCORE_LIBRARY, false);
-		checkLibrary(id, HTTP_SCHEME, HTTPCORE_LIBRARY, false);
+	public void testHttpCoreBIO() throws SQLQueryObjectException, ProtocolException, UtilsException {
+		HttpLibraryMode mode = new HttpLibraryMode(HttpLibrary.HTTPCORE, false, false);
+		String id = test(mode);
+		checkLibrary(id, mode);
 	}
 	
 	@Test
-	public void testHttpsCoreBIO() throws Throwable {
-		String id = test(HTTPS_SCHEME, HTTPCORE_LIBRARY, false);
-		checkLibrary(id, HTTPS_SCHEME, HTTPCORE_LIBRARY, false);
+	public void testHttpsCoreBIO() throws SQLQueryObjectException, ProtocolException, UtilsException {
+		HttpLibraryMode mode = new HttpLibraryMode(HttpLibrary.HTTPCORE, false, true);
+		String id = test(mode);
+		checkLibrary(id, mode);
 	}
 	
 	@Test
-	public void testHttpUrlConnBIO() throws Throwable {
-		String id = test(HTTP_SCHEME, HTTPCONNECTION_LIBRARY, false);
-		checkLibrary(id, HTTP_SCHEME, HTTPCONNECTION_LIBRARY, false);
+	public void testHttpUrlConnBIO() throws SQLQueryObjectException, ProtocolException, UtilsException {
+		HttpLibraryMode mode = new HttpLibraryMode(HttpLibrary.URLCONNECTION, false, false);
+		String id = test(mode);
+		checkLibrary(id, mode);
 	}
 	
 	@Test
-	public void testHttpsUrlConnBIO() throws Throwable {
-		String id = test(HTTPS_SCHEME, HTTPCONNECTION_LIBRARY, false);
-		checkLibrary(id, HTTPS_SCHEME, HTTPCONNECTION_LIBRARY, false);
+	public void testHttpsUrlConnBIO() throws SQLQueryObjectException, ProtocolException, UtilsException {
+		HttpLibraryMode mode = new HttpLibraryMode(HttpLibrary.URLCONNECTION, false, true);
+		String id = test(mode);
+		checkLibrary(id, mode);
 	}
 	
 	@Test
-	public void testHttpUrlConnNIO() throws Throwable {
-		String id = test(HTTP_SCHEME, HTTPCONNECTION_LIBRARY, true);
-		checkLibrary(id, HTTP_SCHEME, HTTPCORE_LIBRARY, true);
+	public void testHttpUrlConnNIO() throws SQLQueryObjectException, ProtocolException, UtilsException {
+		HttpLibraryMode mode = new HttpLibraryMode(HttpLibrary.URLCONNECTION, true, false);
+		String id = test(mode);
+		checkLibrary(id, new HttpLibraryMode(HttpLibrary.HTTPCORE, true, false));
 	}
 	
 	@Test
-	public void testHttpsUrlConnNIO() throws Throwable {
-		String id = test(HTTPS_SCHEME, HTTPCONNECTION_LIBRARY, true);
-		checkLibrary(id, HTTPS_SCHEME, HTTPCORE_LIBRARY, true);
+	public void testHttpsUrlConnNIO() throws SQLQueryObjectException, ProtocolException, UtilsException {
+		HttpLibraryMode mode = new HttpLibraryMode(HttpLibrary.URLCONNECTION, true, true);
+		String id = test(mode);
+		checkLibrary(id, new HttpLibraryMode(HttpLibrary.HTTPCORE, true, true));
 	}
 	
-	private String test(String scheme, String library, boolean isNIO) throws Throwable {
-		String operazione = scheme + library;
+	private String test(HttpLibraryMode mode) throws UtilsException  {
+		String libName = null;
+		
+		if (mode.getLibrary().equals(HttpLibrary.HTTPCORE)) {
+			libName = HTTPCORE_LIBRARY;
+		} else if (mode.getLibrary().equals(HttpLibrary.URLCONNECTION)) {
+			libName = HTTPCONNECTION_LIBRARY;
+		}
+		
+		String operazione = (mode.isHttps() ? "https" : "http") + libName;
 		String url = new StringBuilder()
 				.append(System.getProperty("govway_base_path"))
-				.append(isNIO ? "/in/async" : "")
+				.append(mode.isNIO() ? "/in/async" : "")
 				.append("/").append("SoggettoInternoTest")
 				.append("/").append(API)
 				.append("/").append("v1")
@@ -113,40 +151,8 @@ public class HttpLibraryTest extends ConfigLoader {
 		return idTransazione;
 	}
 	
-	private void checkLibrary(String idTransazione, String scheme, String library, boolean isNIO) throws SQLQueryObjectException {
-		String msgLibrary = scheme + library + (isNIO ? "-nio" : "");
-		checkMsgDiag(idTransazione, "Messaggio applicativo con ID \\[[^\\]]+\\] consegnato al servizio applicativo \\[[^\\]]+\\] mediante connettore \\[" + msgLibrary + "\\] \\([^\\)]+\\) con codice di trasporto: 200");
-	}
-	
-	public static void checkMsgDiag(String idTransazione, String msgRegex) throws SQLQueryObjectException {
-		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(ConfigLoader.getDbUtils().tipoDatabase);
-		query.addFromTable(CostantiDB.MSG_DIAGNOSTICI);
-		query.addSelectField(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
-		query.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE + " = ?");
-		query.setANDLogicOperator(true);
-		
-		List<Map<String, Object>> msgs = null;
-		int[] timeouts = {100, 250, 500, 2000, 5000};
-		int index = 0;
-		
-		// se non trovo nessun messaggio aspetto che magari govway non ha ancora scritto il messaggio sul db
-		while (msgs == null && index < timeouts.length) {
-			
-			Utilities.sleep(timeouts[index++]); 
-			
-			msgs = ConfigLoader.getDbUtils().readRows(query.createSQLQuery(), idTransazione);
-		}
-		assertNotNull(msgs);
-		
-		ConfigLoader.getLoggerCore().debug("messaggio attesto: {}", msgRegex);
-		Pattern pattern = Pattern.compile(msgRegex);
-		for (Map<String, Object> msg : msgs) {
-			assertTrue(msg.containsKey(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));
-			String message = (String) msg.get(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
-			if (pattern.matcher(message).matches())
-				return;
-		}
-		
-		assertTrue("nessun messaggio diagnostico corrisponde a quelli cercati", false);
+	private void checkLibrary(String idTransazione, HttpLibraryMode mode) throws SQLQueryObjectException, ProtocolException {
+		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
+		DBVerifier.verify(idTransazione, esitoExpected, mode);
 	}
 }

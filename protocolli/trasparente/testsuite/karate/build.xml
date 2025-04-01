@@ -280,8 +280,10 @@
 			</elseif>
 		</if>
 
+		<echo message="Bundle selezionati creazione: [${loadFiles}]" />
 		<for list="${loadFiles}" delimiter=":" param="loadFile">
 			<sequential>
+				<local name="filename" />
 				<basename property="filename" file="@{loadFile}"/>
 				<echo message="Bundle: ${filename}, caricamento configurazione in corso (delete) ..." />
 				<java classname="org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader" fork="true">
@@ -589,8 +591,10 @@
 			</else>
 		</if>
 
+		<echo message="Bundle selezionati eliminazione: [${deleteFiles}]" />
 		<for list="${deleteFiles}" delimiter=":" param="deleteFile">
                         <sequential>
+				<local name="filename" />
 				<basename property="filename" file="@{deleteFile}"/>
 				<echo message="Bundle: ${filename}, eliminazione configurazione in corso ..." />
 				<java classname="org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader" fork="true">

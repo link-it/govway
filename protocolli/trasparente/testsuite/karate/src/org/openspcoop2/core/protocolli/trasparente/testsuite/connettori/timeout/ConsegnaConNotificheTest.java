@@ -49,6 +49,7 @@ import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_condizionale.RequestBuilder;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_multipla.CommonConsegnaMultipla;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibraryMode;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.PolicyDati;
@@ -63,6 +64,11 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 */
 public class ConsegnaConNotificheTest extends ConfigLoader {
 
+	private HttpLibraryMode mode = null;
+	protected void setHttpLibraryMode(HttpLibraryMode mode) {
+		this.mode = mode;
+	}
+	
 	@BeforeClass
 	public static void Before() {
 		Common.fermaRiconsegne(dbUtils);
@@ -84,13 +90,13 @@ public class ConsegnaConNotificheTest extends ConfigLoader {
 	public void connettoreConnectionTimeout() throws DriverRegistroServiziException {
 		connettoreTimeout("Connection", CONNETTORE_CONNECTION_TIMEOUT, ESITO_ERRORE_CONNECTION_TIMEOUT, 
 				TipoEvento.CONTROLLO_TRAFFICO_CONNECTION_TIMEOUT,
-				RestTest.MESSAGGIO_CONNECTION_TIMEOUT.replace(RestTest.SOGLIA, "10"));
+				RestTestEngine.MESSAGGIO_CONNECTION_TIMEOUT.replace(RestTestEngine.SOGLIA, "10"));
 	}
 	@Test
 	public void connettoreReadTimeout() throws DriverRegistroServiziException {
 		connettoreTimeout("Read", CONNETTORE_READ_TIMEOUT, ESITO_ERRORE_READ_TIMEOUT, 
 				TipoEvento.CONTROLLO_TRAFFICO_READ_TIMEOUT,
-				RestTest.MESSAGGIO_READ_TIMEOUT.replace(RestTest.SOGLIA, "2000"));
+				RestTestEngine.MESSAGGIO_READ_TIMEOUT.replace(RestTestEngine.SOGLIA, "2000"));
 	}
 	
 	private void connettoreTimeout(String tipo, String nomeConnettore, int esito, TipoEvento tipoEvento, String descrizioneEvento) throws DriverRegistroServiziException {
@@ -102,7 +108,9 @@ public class ConsegnaConNotificheTest extends ConfigLoader {
 		// eccetto quello rotto, dove devono avvenire le rispedizioni.
 		
 		HttpRequest request1 = RequestBuilder.buildRestRequest(erogazione);
-
+		if (this.mode != null)
+			this.mode.patchRequest(request1);
+		
 		var responses = Common.makeParallelRequests(request1, 5);
 		
 		Common.checkAll200(responses);
