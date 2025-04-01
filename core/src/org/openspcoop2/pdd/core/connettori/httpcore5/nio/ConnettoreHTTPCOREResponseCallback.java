@@ -275,6 +275,7 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 		}  catch(Exception e){ 
 			this.writeExceptionResponse(e);
 			this.notifyCallbackFinished(AsyncResponseCallbackClientEvent.COMPLETED);
+			this.connettore.freeResources();
 			return;
 		}
 		
@@ -357,9 +358,7 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 			this.writeExceptionResponse(e);
 			
 		} finally {
-			
 			this.notifyCallbackFinished(AsyncResponseCallbackClientEvent.COMPLETED);
-			
 		}
 	}
 
@@ -397,14 +396,7 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 	
 	private void notifyCallbackFinished(AsyncResponseCallbackClientEvent clientEvent) {
 		// se per caso non l'ho ancora chiuso lo faccio
-		if(this.connettore.cloasebleDumpBout!=null) { 
-			try {
-				this.connettore.cloasebleDumpBout.clearResources();
-				this.connettore.cloasebleDumpBout = null;
-			}catch(Exception t) {
-				this.connettoreLogger.error(ConnettoreHTTPCORE.MSG_RELEASE_RESOURCES_FAILED+t.getMessage(),t);
-			}
-		}
+		this.connettore.freeResources();
 		this.connettore.asyncComplete(clientEvent);
 		if(this.connettoreDebug) {
 			this.connettoreLogger.debug("NIO - Callback Response finished");

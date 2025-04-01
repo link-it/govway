@@ -631,16 +631,18 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
 			this.processReadTimeoutException(this.readConnectionTimeout, this.readConnectionTimeoutConfigurazioneGlobale, e, msgErrore);
 			
+			this.freeResources();
 			return false;
-		} finally {
-			// se per caso non l'ho ancora chiuso lo faccio
-			if(this.cloasebleDumpBout!=null) { 
-				try {
-					this.cloasebleDumpBout.clearResources();
-					this.cloasebleDumpBout = null;
-				}catch(Exception t) {
-					this.logger.error(MSG_RELEASE_RESOURCES_FAILED+t.getMessage(),t);
-				}
+		}
+	}
+	
+	public void freeResources() {
+		if(this.cloasebleDumpBout!=null) { 
+			try {
+				this.cloasebleDumpBout.clearResources();
+				this.cloasebleDumpBout = null;
+			}catch(Exception t) {
+				this.logger.error(MSG_RELEASE_RESOURCES_FAILED+t.getMessage(),t);
 			}
 		}
 	}
