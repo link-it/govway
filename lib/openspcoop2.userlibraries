@@ -26,7 +26,7 @@
 	<archive path="/op2_3.3.dev/lib/commons/commons-compress-1.26.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-math3-3.6.1.jar"/>
 	<!-- cxf -->
-        <archive path="/op2_3.3.dev/lib/cxf/cxf-core-3.6.5-gov4j-1.jar"/>
+        <archive path="/op2_3.3.dev/lib/cxf/cxf-core-3.6.5-gov4j-2.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-bindings-soap-3.6.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-databinding-jaxb-3.6.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-features-logging-3.6.5.jar"/>
@@ -38,7 +38,7 @@
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-transports-http-3.6.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-transports-http-jetty-3.6.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-json-basic-3.6.5.jar"/>
-	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-security-jose-3.6.5-gov4j-1.jar"/>
+	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-security-jose-3.6.5-gov4j-2.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-security-jose-jaxrs-3.6.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-service-description-common-openapi-3.6.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-service-description-openapi-v3-3.6.5.jar"/>
@@ -296,8 +296,8 @@
 	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-bindings-2.4.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-integration-2.4.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-policy-2.4.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-common-2.4.1-gov4j-2.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-dom-2.4.1-gov4j-2.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-common-2.4.1-gov4j-3.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-dom-2.4.1-gov4j-3.jar"/>
 	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-policy-stax-2.4.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-stax-2.4.1.jar"/>
     </library>

@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -54,6 +55,7 @@ import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.remote.IRemoteStoreProvider;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
@@ -455,7 +457,16 @@ public class MessageSecurityReceiver_jose extends AbstractRESTMessageSecurityRec
 							throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require password secret key");
 						}
 						else {
-							throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require password private key");
+							boolean required = true;
+							if(KeystoreType.JKS.isType(encryptionKS.getKeystoreType())) {
+								required = DBUtils.isKeystoreJksKeyPasswordRequired();
+							}
+							else if(KeystoreType.PKCS12.isType(encryptionKS.getKeystoreType())) {
+								required = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+							}
+							if(required) {
+								throw new SecurityException(JOSECostanti.JOSE_ENGINE_DECRYPT_DESCRIPTION+" require password private key");
+							}
 						}
 					}
 

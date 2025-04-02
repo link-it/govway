@@ -36,6 +36,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -101,6 +102,7 @@ import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.date.DateManager;
@@ -295,6 +297,9 @@ public class GestoreTokenAttributeAuthorityUtilities {
 						if(jsonCompactVerify==null) {
 							jsonCompactVerify = new JsonVerifySignature(p, options);
 						}
+						
+						jsonCompactVerify.setJksPasswordRequired(DBUtils.isTruststoreJksPasswordRequired());
+						jsonCompactVerify.setPkcs12PasswordRequired(DBUtils.isTruststorePkcs12PasswordRequired());
 						
 	    				if(jsonCompactVerify.verify(new String(risposta))) {
 	    					if(tokenParser instanceof BasicRetrieveAttributeAuthorityResponseParser) {
@@ -760,6 +765,7 @@ public class GestoreTokenAttributeAuthorityUtilities {
 			httpsClient = policyAttributeAuthority.isHttpsAuthentication();
 			if(httpsClient) {
 				sslClientConfig = policyAttributeAuthority.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+				TokenUtilities.injectSameKeystoreForHttpsClient(sslConfig, sslClientConfig);
 			}
 		}
 		
@@ -1010,7 +1016,16 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		if(keystorePassword==null && 
 				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType)) {
-			throw new TokenException("JWT Signature keystore password undefined");
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12PasswordRequired();
+			}
+			if(required) {
+				throw new TokenException("JWT Signature keystore password undefined");
+			}
 		}
 		
 		String keyAlias = policyAttributeAuthority.getRequestJwtSignKeyAlias();
@@ -1023,7 +1038,16 @@ public class GestoreTokenAttributeAuthorityUtilities {
 		if(keyPassword==null && 
 				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) &&
 				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType)) {
-			throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksKeyPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+			}
+			if(required) {
+				throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
+			}
 		}
 		
 		String keystoreByokPolicy = policyAttributeAuthority.getRequestJwtSignKeystoreByokPolicy();

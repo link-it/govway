@@ -69,6 +69,50 @@ public class DBUtils {
 	
 	private static final String WHERE_ID_CONDITION = "id = ?";
 	
+	private static boolean keystoreJksPasswordRequired = true;
+	private static boolean keystoreJksKeyPasswordRequired = true;
+	private static boolean keystorePkcs12PasswordRequired = true;
+	private static boolean keystorePkcs12KeyPasswordRequired = true;
+	private static boolean truststoreJksPasswordRequired = true;
+	private static boolean truststorePkcs12PasswordRequired = true;
+	public static boolean isKeystoreJksPasswordRequired() {
+		return keystoreJksPasswordRequired;
+	}
+	public static void setKeystoreJksPasswordRequired(boolean isKeystoreJksPasswordRequired) {
+		DBUtils.keystoreJksPasswordRequired = isKeystoreJksPasswordRequired;
+	}
+	public static boolean isKeystoreJksKeyPasswordRequired() {
+		return keystoreJksKeyPasswordRequired;
+	}
+	public static void setKeystoreJksKeyPasswordRequired(boolean isKeystoreJksKeyPasswordRequired) {
+		DBUtils.keystoreJksKeyPasswordRequired = isKeystoreJksKeyPasswordRequired;
+	}
+	public static boolean isKeystorePkcs12PasswordRequired() {
+		return keystorePkcs12PasswordRequired;
+	}
+	public static void setKeystorePkcs12PasswordRequired(boolean isKeystorePkcs12PasswordRequired) {
+		DBUtils.keystorePkcs12PasswordRequired = isKeystorePkcs12PasswordRequired;
+	}
+	public static boolean isKeystorePkcs12KeyPasswordRequired() {
+		return keystorePkcs12KeyPasswordRequired;
+	}
+	public static void setKeystorePkcs12KeyPasswordRequired(boolean isKeystorePkcs12KeyPasswordRequired) {
+		DBUtils.keystorePkcs12KeyPasswordRequired = isKeystorePkcs12KeyPasswordRequired;
+	}
+	public static boolean isTruststoreJksPasswordRequired() {
+		return truststoreJksPasswordRequired;
+	}
+	public static void setTruststoreJksPasswordRequired(boolean isTruststoreJksPasswordRequired) {
+		DBUtils.truststoreJksPasswordRequired = isTruststoreJksPasswordRequired;
+	}
+	public static boolean isTruststorePkcs12PasswordRequired() {
+		return truststorePkcs12PasswordRequired;
+	}
+	public static void setTruststorePkcs12PasswordRequired(boolean isTruststorePkcs12PasswordRequired) {
+		DBUtils.truststorePkcs12PasswordRequired = isTruststorePkcs12PasswordRequired;
+	}
+
+
 	public static String estraiTipoDatabaseFromLocation(String location)throws CoreException{
 		if(location==null){
 			throw new CoreException("Location del db is null");

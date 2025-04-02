@@ -38,10 +38,12 @@ import org.apache.wss4j.common.crypto.Crypto;
 import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.saml.bean.Version;
 import org.opensaml.saml.saml2.core.NameIDType;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**
  * SAMLCallbackHandler
@@ -294,11 +296,27 @@ public class SAMLBuilderConfig {
 										SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_FILE+"]");
 			}
 			if(this.signAssertionCryptoPropCustomKeystoreFile!=null && this.signAssertionCryptoPropCustomKeystorePassword==null) {
-				throw new IOException(SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_PASSWORD+SAML_CONFIG_BUILD_PROPERTY_IF_USE+
-						SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_FILE+"]");
+				boolean required = true;
+				if(KeystoreType.JKS.isType(this.signAssertionCryptoPropCustomKeystoreType)) {
+					required = DBUtils.isKeystoreJksPasswordRequired();
+				}
+				else if(KeystoreType.PKCS12.isType(this.signAssertionCryptoPropCustomKeystoreType)) {
+					required = DBUtils.isKeystorePkcs12PasswordRequired();
+				}
+				if(required) {
+					throw new IOException(SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_PASSWORD+SAML_CONFIG_BUILD_PROPERTY_IF_USE+
+							SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_FILE+"]");
+				}
 			}
 			this.signAssertionIssuerKeyName = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_KEY_NAME, true);
-			this.signAssertionIssuerKeyPassword = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_KEY_PASSWORD, true);
+			boolean requiredKey = true;
+			if(KeystoreType.JKS.isType(this.signAssertionCryptoPropCustomKeystoreType)) {
+				requiredKey = DBUtils.isKeystoreJksKeyPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(this.signAssertionCryptoPropCustomKeystoreType)) {
+				requiredKey = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+			}
+			this.signAssertionIssuerKeyPassword = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_KEY_PASSWORD, requiredKey);
 			this.signAssertionSendKeyValue = isTrue(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_SEND_KEY_VALUE, false);
 			this.signAssertionSignatureAlgorithm = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_SIGNATURE_ALGORITHM, false);
 			this.signAssertionSignatureDigestAlgorithm = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_SIGNATURE_DIGEST_ALGORITHM, false);
@@ -345,8 +363,17 @@ public class SAMLBuilderConfig {
 										SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE+"]");
 			}
 			if(this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreFile!=null && this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystorePassword==null) {
-				throw new IOException(SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_PASSWORD+SAML_CONFIG_BUILD_PROPERTY_IF_USE+
-						SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE+"]");
+				boolean required = true;
+				if(KeystoreType.JKS.isType(this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreType)) {
+					required = DBUtils.isKeystoreJksKeyPasswordRequired();
+				}
+				else if(KeystoreType.PKCS12.isType(this.subjectConfirmationMethodHolderOfKeyCryptoPropertiesCustomKeystoreType)) {
+					required = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+				}
+				if(required) {
+					throw new IOException(SAML_CONFIG_BUILD_REQUIRED_PROPERTY_PREFIX+SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_PASSWORD+SAML_CONFIG_BUILD_PROPERTY_IF_USE+
+							SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_FILE+"]");
+				}
 			}
 			this.subjectConfirmationMethodHolderOfKeyCryptoCertificateAlias = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_ALIAS, true);
 		}

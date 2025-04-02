@@ -25,7 +25,9 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 
 /**
@@ -121,7 +123,16 @@ public class MerlinTruststore implements Serializable {
 				throw new SecurityException("Tipo dello Store non indicato");
 			}
 			if(this.passwordStore==null){
-				throw new SecurityException("Password dello Store non indicata");
+				boolean required = true;
+				if(KeystoreType.JKS.isType(this.tipoStore)) {
+					required = DBUtils.isTruststoreJksPasswordRequired();
+				}
+				else if(KeystoreType.PKCS12.isType(this.tipoStore)) {
+					required = DBUtils.isTruststorePkcs12PasswordRequired();
+				}
+				if(required) {
+					throw new SecurityException("Password dello Store non indicata");
+				}
 			}
 			
 			HSMManager hsmManager = HSMManager.getInstance();

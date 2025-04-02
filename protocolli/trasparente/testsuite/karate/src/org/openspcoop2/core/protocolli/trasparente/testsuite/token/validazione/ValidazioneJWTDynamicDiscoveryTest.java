@@ -53,33 +53,33 @@ public class ValidazioneJWTDynamicDiscoveryTest extends ConfigLoader {
 		
 	@Test
 	public void oidc() throws Exception {
-		test(TipoServizio.EROGAZIONE,"oidc");
+		test(TipoServizio.EROGAZIONE, validazione, "oidc");
 	}
 	@Test
 	public void oidcFruizione() throws Exception {
-		test(TipoServizio.FRUIZIONE,"oidc");
+		test(TipoServizio.FRUIZIONE, validazione, "oidc");
 	}
 	
 	@Test
 	public void custom() throws Exception {
-		test(TipoServizio.EROGAZIONE,"custom");
+		test(TipoServizio.EROGAZIONE, validazione, "custom");
 	}
 	@Test
 	public void customFruizione() throws Exception {
-		test(TipoServizio.FRUIZIONE,"custom");
+		test(TipoServizio.FRUIZIONE, validazione, "custom");
 	}
 	
 	@Test
 	public void warningOnly() throws Exception {
-		test(TipoServizio.EROGAZIONE,"warningOnly");
+		test(TipoServizio.EROGAZIONE, validazione, "warningOnly");
 	}
 	@Test
 	public void warningOnlyFruizione() throws Exception {
-		test(TipoServizio.FRUIZIONE,"warningOnly");
+		test(TipoServizio.FRUIZIONE, validazione, "warningOnly");
 	}
 	
 	
-	private void test(TipoServizio tipoServizio, String operazione) throws Exception {
+	static void test(TipoServizio tipoServizio, String api, String operazione) throws Exception {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheConfigurazione(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheDatiRichieste(logCore);
@@ -120,8 +120,11 @@ public class ValidazioneJWTDynamicDiscoveryTest extends ConfigLoader {
 			if("custom".equals(operazione)) {
 				tokenPolicy = tokenPolicy + "Custom";
 			}
+			else if(ValidazioneJWTKeystoreSenzaPasswordTest.validazione_dynamic_discovery.equals(api)) {
+				tokenPolicy = tokenPolicy + "_truststoreJksSenzaPassword";
+			}
 			
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					null,
 					Utilities.credenzialiMittente, mapExpectedTokenInfo),
 					tokenPolicy,
@@ -133,7 +136,7 @@ public class ValidazioneJWTDynamicDiscoveryTest extends ConfigLoader {
 			
 			// deve funzionare comunque
 			
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					null,
 					Utilities.credenzialiMittente, mapExpectedTokenInfo),
 					tokenPolicy,
@@ -148,7 +151,7 @@ public class ValidazioneJWTDynamicDiscoveryTest extends ConfigLoader {
 			
 			List<String> invalid = Utilities.getMapExpectedTokenInfoInvalid(token);
 			invalid.addAll(mapExpectedTokenInfoDD);
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					"Retrieve store '"+prefixHttp+"/TestService/echo?destFile="+f.getAbsolutePath()+"' failed (returnCode:500)",
 					null, 
 					invalid),
@@ -159,7 +162,7 @@ public class ValidazioneJWTDynamicDiscoveryTest extends ConfigLoader {
 			
 			FileSystemUtilities.writeFile(f, keystore);
 			
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					null,
 					Utilities.credenzialiMittente, mapExpectedTokenInfo),
 					tokenPolicy,
@@ -171,7 +174,7 @@ public class ValidazioneJWTDynamicDiscoveryTest extends ConfigLoader {
 			
 			// deve funzionare comunque
 						
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					null,
 					Utilities.credenzialiMittente, mapExpectedTokenInfo),
 					tokenPolicy,
@@ -183,7 +186,7 @@ public class ValidazioneJWTDynamicDiscoveryTest extends ConfigLoader {
 			
 			invalid = Utilities.getMapExpectedTokenInfoInvalid(token);
 			invalid.addAll(getInvalidDD());
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					"Recupero informazioni tramite 'dynamic discovery' (https://127.0.0.1:8445/TestService/echo?destFile=${header:govway-testsuite-dynamic-location}) fallito: Risposta del servizio 'Dynamic Discovery' non valida: Connessione terminata con errore (codice trasporto: 500):",
 					null, 
 					invalid),
@@ -194,7 +197,7 @@ public class ValidazioneJWTDynamicDiscoveryTest extends ConfigLoader {
 			
 			FileSystemUtilities.writeFile(fDD, dd.getBytes());
 			
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					null,
 					Utilities.credenzialiMittente, mapExpectedTokenInfo),
 					tokenPolicy,

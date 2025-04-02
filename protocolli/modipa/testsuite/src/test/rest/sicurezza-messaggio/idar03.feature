@@ -2844,3 +2844,47 @@ And match header Agid-JWT-Signature == '#notpresent'
 * match tidMessaggio == client_integrity_token.payload.jti
 
 
+
+
+@KeystoreJksSenzaPasswordDefinitoFruizione
+Scenario: Test tramite l'utilizzo di un keystore jks senza password nel keystore e/o nella chiave definito nella fruizione e nella risposta dell'erogazione
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestModIRestKeystoreJksSenzaPasswordDefinitoFruizione/v1"
+And path 'keystoreJksNoPassword-KeyNoPassword'
+And request read('request.json')
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+@KeystorePkcs12SenzaPasswordDefinitoFruizione
+Scenario: Test tramite l'utilizzo di un keystore pkcs12 senza password senza password nel keystore e/o nella chiave definito nella fruizione e nella risposta dell'erogazione
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestModIRestKeystoreJksSenzaPasswordDefinitoFruizione/v1"
+And path 'keystorePkcs12NoPassword-KeyNoPassword'
+And request read('request.json')
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+@KeystoreSenzaPasswordDefinitoApplicativo
+Scenario Outline: Test tramite l'utilizzo di un '<tipo-test>' su un integrity senza password nel keystore e/o nella chiave a seconda del tipo di test
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestModIRestKeystoreSenzaPasswordDefinitoApplicativo/v1"
+And path '<tipo-test>'
+And request read('request.json')
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test | username | password |
+| keystoreJksNoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystoreJksNoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystoreJksNoPassword-KeyNoPassword |
+| keystoreJksNoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystoreJksNoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystoreJksNoPassword-KeyWithPassword |
+| keystorePkcs12NoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyNoPassword |
+| keystorePkcs12NoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyWithPassword |
+

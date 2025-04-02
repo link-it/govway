@@ -715,3 +715,26 @@ Examples:
 | interno (noCertificato) | DemoSoggettoFruitore | ApplicativoBlockingIDA01ExampleClientToken1-InternalGenerator | ApplicativoBlockingIDA01ExampleClientToken1-InternalGenerator | authorization-roles-deny-notfound-esterno-ApplicativoBlockingIDA01ExampleClientToken1.xml |
 | esterno | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClient1| ApplicativoBlockingIDA01ExampleExternalClient1 | authorization-roles-deny-notfound-esterno-ApplicativoBlockingIDA01ExampleExternalClient1.xml |
 | esterno (noCertificato) | DemoSoggettoFruitoreEsternoTestInterno | ApplicativoBlockingIDA01ExampleExternalClientToken1 | ApplicativoBlockingIDA01ExampleExternalClientToken1 | authorization-roles-deny-notfound-esterno-ApplicativoBlockingIDA01ExampleExternalClientToken1.xml |
+
+
+@negoziazioneViaTokenPolicySecurity_keystoreSenzaPassword
+Scenario Outline: Test negoziazione ok tramite l'utilizzo di un '<tipo-test>', definito nella token policy, su una integrity 01 senza password nel keystore e/o nella chiave a seconda del tipo di test
+
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaMessaggioSOAPViaTokenPolicyKeystoreSenzaPassword/v1"
+And path '<tipo-test>'
+And request read('requestConHeader.xml')
+And header Content-Type = 'application/soap+xml'
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione03ViaTokenPolicy'
+When method post
+Then status 200
+And match response == read('requestConHeader.xml')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test |
+| keystoreJksNoPassword-KeyNoPassword |
+| keystoreJksNoPassword-KeyWithPassword |
+| keystorePkcs12NoPassword-KeyNoPassword |
+| keystorePkcs12NoPassword-KeyWithPassword |

@@ -74,6 +74,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
@@ -1930,7 +1931,15 @@ public class ConnettoriHelper extends ConsoleHelper {
 						// 1a. Password per gli archivi JKS o PKCS12.
 						de.setType(DataElementType.TEXT_EDIT);
 						de.setSize(this.getSize());
-						de.setRequired(true);
+						if(tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.JKS)) {
+							de.setRequired(this.core.isLoadCertificateWizardJksPasswordRequiredRequired());
+						}
+						else if(tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.PKCS12)) {
+							de.setRequired(this.core.isLoadCertificateWizardPkcs12PasswordRequiredRequired());
+						}
+						else {
+							de.setRequired(true);
+						}
 					} else {
 						de.setType(DataElementType.HIDDEN);
 					}
@@ -4750,8 +4759,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 							this.pd.setMessage(e.getMessage());
 							return false;
 						}
-						
-						if ("".equals(httpspwd)) {
+						boolean isRequired = true;
+						if(KeystoreType.JKS.isType(httpstipo)) {
+							isRequired = this.core.isTruststoreJksPasswordRequired();
+						}
+						else if(KeystoreType.PKCS12.isType(httpstipo)) {
+							isRequired = this.core.isTruststorePkcs12PasswordRequired();
+						}
+						if ("".equals(httpspwd) && isRequired) {
 							this.pd.setMessage("La password del TrustStore è necessaria per l'Autenticazione Server");
 							return false;
 						}
@@ -4801,7 +4816,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 					
 					if (httpsstato) {
 						if (ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT.equals(httpskeystore)) {
-							if ("".equals(httpspwdprivatekeytrust)) {
+							boolean isRequired = true;
+							if(KeystoreType.JKS.isType(httpstipo)) {
+								isRequired = this.core.isKeystoreJksKeyPasswordRequired();
+							}
+							else if(KeystoreType.PKCS12.isType(httpstipo)) {
+								isRequired = this.core.isKeystorePkcs12KeyPasswordRequired();
+							}
+							if ("".equals(httpspwdprivatekeytrust) && isRequired) {
 								this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 								return false;
 							}
@@ -4842,7 +4864,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 								return false;
 							}
 							
-							if ("".equals(httpspwdkey)) {
+							boolean isRequired = true;
+							if(KeystoreType.JKS.isType(httpstipokey)) {
+								isRequired = this.core.isKeystoreJksPasswordRequired();
+							}
+							else if(KeystoreType.PKCS12.isType(httpstipokey)) {
+								isRequired = this.core.isKeystorePkcs12PasswordRequired();
+							}
+							if ("".equals(httpspwdkey) && isRequired) {
 								this.pd.setMessage("La password del KeyStore è necessaria per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
 								return false;
 							}
@@ -4851,7 +4880,14 @@ public class ConnettoriHelper extends ConsoleHelper {
 								return false;
 							}
 							
-							if ("".equals(httpspwdprivatekey)) {
+							isRequired = true;
+							if(KeystoreType.JKS.isType(httpstipokey)) {
+								isRequired = this.core.isKeystoreJksKeyPasswordRequired();
+							}
+							else if(KeystoreType.PKCS12.isType(httpstipokey)) {
+								isRequired = this.core.isKeystorePkcs12KeyPasswordRequired();
+							}
+							if ("".equals(httpspwdprivatekey) && isRequired) {
 								this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 								return false;
 							}
@@ -5781,10 +5817,18 @@ public class ConnettoriHelper extends ConsoleHelper {
 						}
 					} else {
 						String tipoCredenzialiSSLFileCertificatoPassword = this.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-						
 						if(StringUtils.isEmpty(tipoCredenzialiSSLFileCertificatoPassword)) {
-							this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare la " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-							return false;
+							boolean required = true;
+							if(KeystoreType.JKS.isType(tipoCredenzialiSSLTipoArchivio.name())) {
+								required = this.core.isLoadCertificateWizardJksPasswordRequiredRequired();
+							}
+							else if(KeystoreType.PKCS12.isType(tipoCredenzialiSSLTipoArchivio.name())) {
+								required = this.core.isLoadCertificateWizardPkcs12PasswordRequiredRequired();
+							}
+							if(required) {
+								this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare la " + ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
+								return false;
+							}
 						}
 						List<String> listaAliasEstrattiCertificato = new ArrayList<>();
 						try {

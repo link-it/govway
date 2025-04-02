@@ -82,6 +82,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -921,7 +922,10 @@ public final class ServiziApplicativiChange extends Action {
 					if(tipoCredenzialiSSLFileCertificato.getValue() != null && tipoCredenzialiSSLFileCertificato.getValue().length > 0) {
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ALIAS_NON_SCELTO;
 						if(!tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.CER)) {
-							if(StringUtils.isNotEmpty(tipoCredenzialiSSLFileCertificatoPassword)) {
+							if(StringUtils.isNotEmpty(tipoCredenzialiSSLFileCertificatoPassword) || 
+									(KeystoreType.JKS.isType(tipoCredenzialiSSLTipoArchivio.name()) && !saCore.isLoadCertificateWizardJksPasswordRequiredRequired()) ||
+									(KeystoreType.PKCS12.isType(tipoCredenzialiSSLTipoArchivio.name()) && !saCore.isLoadCertificateWizardPkcs12PasswordRequiredRequired())
+									) {
 								try {
 									listaAliasEstrattiCertificato = ArchiveLoader.readAliases(tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato.getValue(), tipoCredenzialiSSLFileCertificatoPassword);
 									Collections.sort(listaAliasEstrattiCertificato);
@@ -1535,7 +1539,12 @@ public final class ServiziApplicativiChange extends Action {
 						httpsstato = true;
 						if (httpspathkey.equals(httpspath) &&
 								httpstipokey.equals(httpstipo) &&
-								httpspwdkey.equals(httpspwd))
+								(
+									(httpspwdkey!=null && httpspwdkey.equals(httpspwd))
+									||
+									(httpspwdkey==null && httpspwd==null)
+								)
+							)
 							httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
 						else
 							httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;

@@ -26,10 +26,13 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.joda.time.DateTime;
+import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.keystore.MerlinProvider;
+import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.SecurityConstants;
-import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.utils.certificate.KeystoreType;
 
 
 
@@ -212,14 +215,16 @@ public class SAMLUtilities {
 			}
 			
 			String password = signaturePropRefiId.getProperty("org.apache.ws.security.crypto.merlin.keystore.password");
-			if(password==null) {
+			if(password==null && MessageSecurityContext.isPasswordRequired(signaturePropRefiId, false)) {
 				throw new SecurityException("Keystore password in signaturePropRefId undefined");
 			}
-			if(SecurityConstants.SAML_SIGNATURE_PARAM_CONVERTO_INTO_SAML_CONFIG.equals(key)) {
-				samlConfig.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_PASSWORD, password);
-			}
-			else {
-				samlConfig.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_PASSWORD, password);
+			if(password!=null) {
+				if(SecurityConstants.SAML_SIGNATURE_PARAM_CONVERTO_INTO_SAML_CONFIG.equals(key)) {
+					samlConfig.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_CRYPTO_PROP_KEYSTORE_PASSWORD, password);
+				}
+				else {
+					samlConfig.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_HOLDER_OF_KEY_CRYPTO_PROPERTIES_KEYSTORE_PASSWORD, password);
+				}
 			}
 			
 			if(signatureAlias==null) {
@@ -233,10 +238,12 @@ public class SAMLUtilities {
 			}
 			
 			if(SecurityConstants.SAML_SIGNATURE_PARAM_CONVERTO_INTO_SAML_CONFIG.equals(key)) {
-				if(signaturePassword==null) {
+				if(signaturePassword==null && MessageSecurityContext.isPasswordRequired(signaturePropRefiId, true)) {
 					throw new SecurityException("Signature password undefined");
 				}
-				samlConfig.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_KEY_PASSWORD, signaturePassword);
+				if(signaturePassword!=null) {
+					samlConfig.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_KEY_PASSWORD, signaturePassword);
+				}
 				
 				if(signatureAlgorithm!=null) {
 					samlConfig.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_SIGNATURE_ALGORITHM, signatureAlgorithm);
@@ -267,9 +274,20 @@ public class SAMLUtilities {
 		}
 		p.put(KeystoreConstants.PROPERTY_KEYSTORE_PATH, keystoreFile);
 		if(keystorePassword==null) {
-			throw new SecurityException("Keystore file undefined");
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12PasswordRequired();
+			}
+			if(required) {
+				throw new SecurityException("Keystore password undefined");
+			}
 		}
-		p.put(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD, keystorePassword);
+		if(keystorePassword!=null) {
+			p.put(KeystoreConstants.PROPERTY_KEYSTORE_PASSWORD, keystorePassword);
+		}
 		if(byokPolicy!=null) {
 			p.put(KeystoreConstants.PROPERTY_KEYSTORE_PATH_BYOK, byokPolicy);
 		}

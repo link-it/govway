@@ -50,34 +50,34 @@ public class IntrospectionDynamicDiscoveryTest extends ConfigLoader {
 		
 	@Test
 	public void oidc() throws Exception {
-		test(TipoServizio.EROGAZIONE,"oidc");
+		test(TipoServizio.EROGAZIONE, validazione, "oidc");
 	}
 	@Test
 	public void oidcFruizione() throws Exception {
-		test(TipoServizio.FRUIZIONE,"oidc");
+		test(TipoServizio.FRUIZIONE, validazione, "oidc");
 	}
 	
 	@Test
 	public void custom() throws Exception {
-		test(TipoServizio.EROGAZIONE,"custom");
+		test(TipoServizio.EROGAZIONE, validazione, "custom");
 	}
 	@Test
 	public void customFruizione() throws Exception {
-		test(TipoServizio.FRUIZIONE,"custom");
+		test(TipoServizio.FRUIZIONE, validazione, "custom");
 	}
 	
 	
 	@Test
 	public void warningOnly() throws Exception {
-		test(TipoServizio.EROGAZIONE,"warningOnly");
+		test(TipoServizio.EROGAZIONE, validazione, "warningOnly");
 	}
 	@Test
 	public void warningOnlyFruizione() throws Exception {
-		test(TipoServizio.FRUIZIONE,"warningOnly");
+		test(TipoServizio.FRUIZIONE, validazione, "warningOnly");
 	}
 	
 	
-	private void test(TipoServizio tipoServizio, String operazione) throws Exception {
+	static void test(TipoServizio tipoServizio, String api, String operazione) throws Exception {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheConfigurazione(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheDatiRichieste(logCore);
@@ -119,8 +119,11 @@ public class IntrospectionDynamicDiscoveryTest extends ConfigLoader {
 			if("custom".equals(operazione)) {
 				tokenPolicy = tokenPolicy + "Custom";
 			}
+			else if(IntrospectionKeystoreSenzaPasswordTest.validazione_dynamic_discovery.equals(api)) {
+				tokenPolicy = tokenPolicy + "_truststoreJks12SenzaPassword";
+			}
 			
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					null,
 					Utilities.credenzialiMittente, mapExpectedTokenInfo),
 					tokenPolicy,
@@ -132,7 +135,7 @@ public class IntrospectionDynamicDiscoveryTest extends ConfigLoader {
 			
 			// deve funzionare comunque
 			
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					null,
 					Utilities.credenzialiMittente, mapExpectedTokenInfo),
 					tokenPolicy,
@@ -149,7 +152,7 @@ public class IntrospectionDynamicDiscoveryTest extends ConfigLoader {
 			List<String> invalid = Utilities.getMapExpectedTokenInfoInvalid(token);
 			invalid.addAll(mapExpectedTokenInfoDD);
 			String warningMessage = "warningOnly".equals(operazione) ? " (configurazione in modalità 'WarningOnly')" : "";
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					"Validazione del token, tramite il servizio di Introspection ("+prefixHttp+"/TestService/echo?existsQueryParameters=test_token&destFile="+f.getAbsolutePath()+"&destFileContentType=application/json), fallita"+warningMessage+": Risposta del servizio di Introspection non valida: Connessione terminata con errore (codice trasporto: 500)",
 					null, 
 					invalid),
@@ -160,7 +163,7 @@ public class IntrospectionDynamicDiscoveryTest extends ConfigLoader {
 			
 			FileSystemUtilities.writeFile(f, tokenPayload.getBytes());
 			
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					null,
 					Utilities.credenzialiMittente, mapExpectedTokenInfo),
 					tokenPolicy,
@@ -172,7 +175,7 @@ public class IntrospectionDynamicDiscoveryTest extends ConfigLoader {
 			
 			// deve funzionare comunque
 						
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					null,
 					Utilities.credenzialiMittente, mapExpectedTokenInfo),
 					tokenPolicy,
@@ -184,7 +187,7 @@ public class IntrospectionDynamicDiscoveryTest extends ConfigLoader {
 			
 			invalid = Utilities.getMapExpectedTokenInfoInvalid(token);
 			invalid.addAll(ValidazioneJWTDynamicDiscoveryTest.getInvalidDD());
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					"Recupero informazioni tramite 'dynamic discovery' ("+prefixHttp+"/TestService/echo?destFile=${header:govway-testsuite-dynamic-location}) fallito: Risposta del servizio 'Dynamic Discovery' non valida: Connessione terminata con errore (codice trasporto: 500):",
 					null, 
 					invalid),
@@ -195,7 +198,7 @@ public class IntrospectionDynamicDiscoveryTest extends ConfigLoader {
 			
 			FileSystemUtilities.writeFile(fDD, dd.getBytes());
 			
-			check(Utilities._test(logCore, tipoServizio, validazione, operazione, headers,  null,
+			check(Utilities._test(logCore, tipoServizio, api, operazione, headers,  null,
 					null,
 					Utilities.credenzialiMittente, mapExpectedTokenInfo),
 					tokenPolicy,

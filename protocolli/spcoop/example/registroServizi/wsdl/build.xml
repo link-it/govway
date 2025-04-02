@@ -63,7 +63,7 @@
 		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-frontend-jaxws-3.6.5.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-databinding-jaxb-3.6.5.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="cxf-tools-common-3.6.5.jar"/>
-		<fileset dir="${required_lib}/cxf" includes="cxf-core-3.6.5-gov4j-1.jar"/>
+		<fileset dir="${required_lib}/cxf" includes="cxf-core-3.6.5-gov4j-2.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="cxf-rt-wsdl-3.6.5.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="cxf-rt-frontend-jaxws-3.6.5.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="cxf-rt-frontend-simple-3.6.5.jar"/>

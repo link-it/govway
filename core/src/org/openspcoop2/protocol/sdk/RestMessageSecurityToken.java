@@ -48,6 +48,8 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 	private String httpHeaderName;
 	private String queryParameterName;
 	private String formParameterName;
+	
+	private String jweDecodedPayload; // jwe
 
 	public String getQueryParameterName() {
 		return this.queryParameterName;
@@ -66,6 +68,10 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 	}
 	public void setHttpHeaderName(String httpHeaderName) {
 		this.httpHeaderName = httpHeaderName;
+	}
+	
+	public void setJweDecodedPayload(String jweDecodedPayload) {
+		this.jweDecodedPayload = jweDecodedPayload;
 	}
 	
 	public String getHeader() {
@@ -107,6 +113,9 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 	}
 	
 	public String getPayload() {
+		if(this.jweDecodedPayload!=null) {
+			return this.jweDecodedPayload;
+		}
 		if(this.token!=null) {
 			String [] split = this.token.split("\\.");
 			if(split!=null && split.length>1) {
@@ -116,6 +125,9 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 		return null;
 	}
 	public String getDecodedPayload() {
+		if(this.jweDecodedPayload!=null) {
+			return this.jweDecodedPayload;
+		}
 		String payload = this.getPayload();
 		if(payload!=null) {
 			return new String(Base64Utilities.decode(payload));
@@ -185,10 +197,10 @@ public class RestMessageSecurityToken extends AbstractMessageSecurityToken<Strin
 	private synchronized void initReadClaimsPayload() throws UtilsException {
 		if(this.readClaimsPayload==null) {
 			this.readClaimsPayload = new HashMap<>();
-			String hdr = getDecodedPayload();
+			String payload = getDecodedPayload();
 			JSONUtils jsonUtils = JSONUtils.getInstance();
-			if(jsonUtils.isJson(hdr)) {
-				JsonNode root = jsonUtils.getAsNode(hdr);
+			if(jsonUtils.isJson(payload)) {
+				JsonNode root = jsonUtils.getAsNode(payload);
 				Map<String, Serializable> readClaims = jsonUtils.convertToSimpleMap(root);
 				initReadClaimsPayload(readClaims);
 			}

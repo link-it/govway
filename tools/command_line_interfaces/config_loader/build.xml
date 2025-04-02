@@ -167,7 +167,7 @@
 			<fileset dir="${openspcoop2.lib}/testsuite" includes="spring-jdbc-5.3.39.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="freemarker-2.3.31.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="velocity-*.jar"/>
-			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-2.4.1-gov4j-2.jar"/>
+			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-2.4.1-gov4j-3.jar"/>
 			<fileset dir="${openspcoop2.lib}/applicationServer/tomcat9" includes="*.jar"/> <!-- Serve per il datasource env -->
 		</copy>
 		

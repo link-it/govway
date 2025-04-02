@@ -309,6 +309,9 @@ public class JsonUtils {
 	}
 	
 	public static KeyStore getKeyStore(Properties props) throws UtilsException {
+		return getKeyStore(true, true, props);
+	}
+	public static KeyStore getKeyStore(boolean jksPasswordRequired, boolean pkcs12PasswordRequired, Properties props) throws UtilsException {
 		Object oKeystore = props.get(RSSecurityConstants.RSSEC_KEY_STORE);
 		if(oKeystore instanceof KeyStore) {
 			return (KeyStore) oKeystore;
@@ -323,7 +326,16 @@ public class JsonUtils {
 				String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 				
 				if(password==null || "".equals(password)){
-					throw new UtilsException("Keystore password undefined");
+					boolean required = true;
+					if(KeystoreType.JKS.isType(type)) {
+						required = jksPasswordRequired;
+					}
+					else if(KeystoreType.PKCS12.isType(type)) {
+						required = pkcs12PasswordRequired;
+					}
+					if(required) {
+						throw new UtilsException("Keystore password undefined");
+					}
 				}
 				if(type==null || "".equals(type)){
 					type = KeystoreType.JKS.getNome();
@@ -376,7 +388,10 @@ public class JsonUtils {
 		return null;
 	}
 	public static Certificate getCertificateKey(Properties props) throws UtilsException {
-		KeyStore keystore = getKeyStore(props);
+		return getCertificateKey(true, true, props);
+	}
+	public static Certificate getCertificateKey(boolean jksPasswordRequired, boolean pkcs12PasswordRequired, Properties props) throws UtilsException {
+		KeyStore keystore = getKeyStore(jksPasswordRequired, pkcs12PasswordRequired, props);
 		if(keystore!=null) {
 			String alias = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
 			if(alias!=null && !"".equals(alias)){

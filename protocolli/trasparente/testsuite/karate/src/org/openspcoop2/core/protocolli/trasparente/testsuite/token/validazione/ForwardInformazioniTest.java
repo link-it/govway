@@ -41,6 +41,7 @@ import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JWTOptions;
+import org.openspcoop2.utils.security.JsonDecrypt;
 import org.openspcoop2.utils.security.JsonSignature;
 import org.openspcoop2.utils.security.JsonVerifySignature;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -318,7 +319,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		
 	}
 	
-	private static void checkGovWayJwt(String hdrAtteso, HttpResponse response, Map<String, List<String>> values, boolean govway) throws Exception {
+	static void checkGovWayJwt(String hdrAtteso, HttpResponse response, Map<String, List<String>> values, boolean govway) throws Exception {
 		checkGovWayJwt(hdrAtteso, response, values, govway, 
 				null);
 	}
@@ -346,7 +347,13 @@ public class ForwardInformazioniTest extends ConfigLoader {
 			String password = "openspcoop";
 			String file = "/etc/govway/keys/erogatore.jks";
 			String alias = "erogatore";
-			if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equals(keystoreType)) {
+			if(ForwardInformazioniKeystoreSenzaPasswordTest.HEADER_JWS.equals(hdrAtteso) ||
+					ForwardInformazioniKeystoreSenzaPasswordTest.HEADER_JWE.equals(hdrAtteso)) {
+				file = "/etc/govway/keys/soggetto1.jks";
+				alias = "soggetto1";
+				password = "openspcoopjks";
+			}
+			else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equals(keystoreType)) {
 				file = "/etc/govway/keys/testJWKpublic.jwk";
 				alias = "c98fda52-9a37-41c0-8696-65e5022e9e44";
 			}
@@ -361,25 +368,49 @@ public class ForwardInformazioniTest extends ConfigLoader {
 			props.put("rs.security.keystore.file", file);
 			props.put("rs.security.keystore.alias",alias);
 			props.put("rs.security.keystore.password",password);
-			props.put("rs.security.key.password",password);
-			
-			JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
-				
-			props.put("rs.security.signature.algorithm","RS256");
-			props.put("rs.security.signature.include.cert","false");
-			props.put("rs.security.signature.include.key.id","true");
-			props.put("rs.security.signature.include.public.key","false");
-			props.put("rs.security.signature.include.cert.sha1","false");
-			props.put("rs.security.signature.include.cert.sha256","false");
-				
-			JsonVerifySignature jsonSignature = new JsonVerifySignature(props, options);
-			if(!jsonSignature.verify(v)) {
-				throw new Exception("Token non valido ?");
+			if(ForwardInformazioniKeystoreSenzaPasswordTest.HEADER_JWE.equals(hdrAtteso)) {
+				props.put("rs.security.key.password","openspcoop");
 			}
-			//System.out.println(token);
+			else {			
+				props.put("rs.security.key.password",password);				
+			}
 			
+			byte[] vDecoded = null;
+			JWTOptions options = new JWTOptions(JOSESerialization.COMPACT);
+		
+			if(ForwardInformazioniKeystoreSenzaPasswordTest.HEADER_JWE.equals(hdrAtteso)) {
+				
+				props.put("rs.security.encryption.key.algorithm", "RSA1_5");
+				props.put("rs.security.encryption.content.algorithm","A256GCM");
+				props.put("rs.security.encryption.include.cert","false");
+				props.put("rs.security.encryption.include.key.id","true");
+				props.put("rs.security.encryption.include.public.key","false");
+				props.put("rs.security.encryption.include.cert.sha1","false");
+				props.put("rs.security.encryption.include.cert.sha256","false");
+				
+				JsonDecrypt jsonDecryp = new JsonDecrypt(props, options);
+				jsonDecryp.decrypt(v);
+				
+				vDecoded = jsonDecryp.getDecodedPayloadAsByte();
+			}
+			else {
 			
-			byte[] vDecoded = jsonSignature.getDecodedPayloadAsByte();
+				props.put("rs.security.signature.algorithm","RS256");
+				props.put("rs.security.signature.include.cert","false");
+				props.put("rs.security.signature.include.key.id","true");
+				props.put("rs.security.signature.include.public.key","false");
+				props.put("rs.security.signature.include.cert.sha1","false");
+				props.put("rs.security.signature.include.cert.sha256","false");
+					
+				JsonVerifySignature jsonSignature = new JsonVerifySignature(props, options);
+				if(!jsonSignature.verify(v)) {
+					throw new Exception("Token non valido ?");
+				}
+				//System.out.println(token);
+				
+				
+				vDecoded = jsonSignature.getDecodedPayloadAsByte();
+			}
 			String json = new String(vDecoded);
 			//System.out.println("RICEVUTO: "+json);
 			
@@ -500,7 +531,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		}
 	}
 	
-	private static String buildJWT(Map<String, List<String>> values) throws Exception {
+	static String buildJWT(Map<String, List<String>> values) throws Exception {
 		
 		String jsonInput = Utilities.buildFullJson(values); 
 		

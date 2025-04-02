@@ -2155,7 +2155,8 @@ public class HttpUtilities {
 							}
 							keystore.load(null); // inizializza il keystore
 							keystore.setKeyEntry(request.getKeyAlias(), key, 
-									request.getKeyPassword().toCharArray(), keystoreParam.getCertificateChain(request.getKeyAlias()));
+									request.getKeyPassword().toCharArray()!=null ? request.getKeyPassword().toCharArray() : "".toCharArray(), 
+									keystoreParam.getCertificateChain(request.getKeyAlias()));
 						}
 						else {
 							keystore = keystoreParam;
@@ -2169,28 +2170,28 @@ public class HttpUtilities {
 						//else {*/
 						keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
 						
-						keyManagerFactory.init(keystore, request.getKeyPassword().toCharArray());
+						keyManagerFactory.init(keystore, request.getKeyPassword().toCharArray()!=null ? request.getKeyPassword().toCharArray() : "".toCharArray());
 						km = keyManagerFactory.getKeyManagers();
-						if(!oldMethodKeyAlias && request.getKeyAlias()!=null) {
-							if(km!=null && km.length>0 && km[0]!=null && km[0] instanceof X509KeyManager) {
+						if(!oldMethodKeyAlias && request.getKeyAlias()!=null &&
+							km!=null && km.length>0 && km[0]!=null && km[0] instanceof X509KeyManager) {
 								
-								String alias = request.getKeyAlias();
-								
-								// Fix case insensitive
-								Enumeration<String> enAliases = keystore.aliases();
-								if(enAliases!=null) {
-									while (enAliases.hasMoreElements()) {
-										String a = enAliases.nextElement();
-										if(a.equalsIgnoreCase(alias)) {
-											alias = a; // uso quello presente nel keystore
-											break;
-										}
+							String alias = request.getKeyAlias();
+							
+							// Fix case insensitive
+							Enumeration<String> enAliases = keystore.aliases();
+							if(enAliases!=null) {
+								while (enAliases.hasMoreElements()) {
+									String a = enAliases.nextElement();
+									if(a.equalsIgnoreCase(alias)) {
+										alias = a; // uso quello presente nel keystore
+										break;
 									}
 								}
-								
-								X509KeyManager wrapperX509KeyManager = new SSLX509ManagerForcedClientAlias(alias, (X509KeyManager)km[0] );
-								km[0] = wrapperX509KeyManager;
 							}
+							
+							X509KeyManager wrapperX509KeyManager = new SSLX509ManagerForcedClientAlias(alias, (X509KeyManager)km[0] );
+							km[0] = wrapperX509KeyManager;
+							
 						}
 					}catch(Throwable e) {
 						if(location!=null) {

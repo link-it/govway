@@ -52,6 +52,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCoreException;
@@ -442,7 +443,10 @@ public final class SoggettiAdd extends Action {
 					if(tipoCredenzialiSSLFileCertificato.getValue() != null && tipoCredenzialiSSLFileCertificato.getValue().length > 0) {
 						tipoCredenzialiSSLWizardStep = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP_ALIAS_NON_SCELTO;
 						if(!tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.CER)) {
-							if(StringUtils.isNotEmpty(tipoCredenzialiSSLFileCertificatoPassword)) {
+							if(StringUtils.isNotEmpty(tipoCredenzialiSSLFileCertificatoPassword) || 
+									(KeystoreType.JKS.isType(tipoCredenzialiSSLTipoArchivio.name()) && !soggettiCore.isLoadCertificateWizardJksPasswordRequiredRequired()) ||
+									(KeystoreType.PKCS12.isType(tipoCredenzialiSSLTipoArchivio.name()) && !soggettiCore.isLoadCertificateWizardPkcs12PasswordRequiredRequired())
+									) {
 								try {
 									listaAliasEstrattiCertificato = ArchiveLoader.readAliases(tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato.getValue(), tipoCredenzialiSSLFileCertificatoPassword);
 									Collections.sort(listaAliasEstrattiCertificato);

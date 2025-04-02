@@ -1,3 +1,9 @@
+2025-04-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
+	Aggiunta funzionalità #1589
+	È adesso possibile utilizzare keystore PKCS12 e JKS senza password.
+
 2025-03-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

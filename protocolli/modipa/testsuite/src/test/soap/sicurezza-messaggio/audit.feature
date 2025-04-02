@@ -269,7 +269,7 @@ And match header Agid-JWT-Signature == '#notpresent'
 
 
 @negoziazioneViaTokenPolicySecurityConIntegrityOk
-Scenario: Test negoziazione ok tramite l'utilizzo di un keystore JWK definito nella token policy, anche con integrity (fallisce poichè il kid nell'audit non è presente nel truststore)
+Scenario: Test negoziazione ok tramite l'utilizzo di un keystore PKCS12 definito nella token policy, anche con integrity (fallisce poichè il kid nell'audit non è presente nel truststore)
 
 Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaIntegrityAuditViaTokenPolicySOAP/v1"
 And path 'test'

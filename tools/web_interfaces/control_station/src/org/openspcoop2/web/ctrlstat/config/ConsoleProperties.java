@@ -774,6 +774,41 @@ public class ConsoleProperties {
 		return parse(b, false);
 	}
 	
+	public boolean isKeystoreJksPasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "keystore.jks.passwordRequired");
+		return parse(b, true);
+	}
+	public boolean isKeystoreJksKeyPasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "keystore.jks.key.passwordRequired");
+		return parse(b, true);
+	}
+	public boolean isKeystorePkcs12PasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "keystore.pkcs12.passwordRequired");
+		return parse(b, true);
+	}
+	public boolean isKeystorePkcs12KeyPasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "keystore.pkcs12.key.passwordRequired");
+		return parse(b, true);
+	}
+	
+	public boolean isTruststoreJksPasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "truststore.jks.passwordRequired");
+		return parse(b, true);
+	}
+	public boolean isTruststorePkcs12PasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "truststore.pkcs12.passwordRequired");
+		return parse(b, true);
+	}
+	
+	public boolean isLoadCertificateWizardJksPasswordRequiredRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "loadCertificateWizard.jks.passwordRequired");
+		return parse(b, true);
+	}
+	public boolean isLoadCertificateWizardPkcs12PasswordRequiredRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "loadCertificateWizard.pkcs12.passwordRequired");
+		return parse(b, true);
+	}
+	
 	
 	/* ----- Gestione Password ------- */
 	

@@ -29,7 +29,9 @@ import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.utils.security.JOSESerialization;
+import org.openspcoop2.utils.security.JWEOptions;
 import org.openspcoop2.utils.security.JWSOptions;
+import org.openspcoop2.utils.security.JsonEncrypt;
 import org.openspcoop2.utils.security.JsonSignature;
 import org.openspcoop2.utils.security.JwtHeaders;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -75,7 +77,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
-				buildJWT(true, 
+				buildJWS(true, 
 						mapExpectedTokenInfo));
 		
 		Utilities._test(logCore, tipoServizio, validazione, "success", headers,  null,
@@ -355,7 +357,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
-		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(true,
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWS(true,
 				false, true, true, true, true,
 				mapExpectedTokenInfo));
 		
@@ -380,7 +382,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
-		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(true,
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWS(true,
 				true, false, true, true, true,
 				mapExpectedTokenInfo));
 		
@@ -405,7 +407,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
-		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(true,
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWS(true,
 				true, true, false, true, true,
 				mapExpectedTokenInfo));
 		
@@ -430,7 +432,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
-		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(true,
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWS(true,
 				true, true, true, false, true,
 				mapExpectedTokenInfo));
 		
@@ -455,7 +457,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
-		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(true,
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWS(true,
 				true, true, true, true, false,
 				mapExpectedTokenInfo));
 		
@@ -480,7 +482,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		List<String> mapExpectedTokenInfo = new ArrayList<>();
 		Map<String, String> headers = new HashMap<>();
 		headers.put("test-username", Utilities.username);
-		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT(false,
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWS(false,
 				mapExpectedTokenInfo));
 		
 		Utilities._test(logCore, tipoServizio, validazione, "requiredClaims", headers,  null,
@@ -984,7 +986,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 						true, 
 						false, false, 
 						false, false,
-						mapExpectedTokenInfo));
+						mapExpectedTokenInfo,
+						false));
 		Utilities._test(logCore, tipoServizio, validazione, "not", headers,  null,
 				"(Token claim 'TESTclient_id' with unauthorized value) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
 				Utilities.credenzialiMittente_clientIdInvalid, mapExpectedTokenInfo);
@@ -1098,7 +1101,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				false, 
 				false, false, 
 				true, false,
-				mapExpectedTokenInfo));
+				mapExpectedTokenInfo,
+				false));
 		
 		Utilities._test(logCore, tipoServizio, validazione, "not", headers,  null,
 				"(Token claim 'TESTusername' with unexpected value (regExpr not find failed)) La richiesta presenta un token non sufficiente per fruire del servizio richiesto",
@@ -1168,7 +1172,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 						true, 
 						false, false, 
 						false, false,
-						mapExpectedTokenInfo));
+						mapExpectedTokenInfo,
+						false));
 		Utilities._test(logCore, tipoServizio, validazione, "notOnlyAuthzContenuti", headers,  null,
 				TipoServizio.EROGAZIONE.equals(tipoServizio) ?
 						"(Resource '${tokenInfo:clientId}' with unauthorized value '18192.apps.invalid') Il chiamante non è autorizzato ad invocare l'API"
@@ -1294,7 +1299,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				false, 
 				false, false, 
 				true, false,
-				mapExpectedTokenInfo));
+				mapExpectedTokenInfo,
+				false));
 		
 		Utilities._test(logCore, tipoServizio, validazione, "notOnlyAuthzContenuti", headers,  null,
 				TipoServizio.EROGAZIONE.equals(tipoServizio) ?
@@ -2398,15 +2404,22 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				false, 
 				false, false, 
 				false, false,
-				null);
+				null,
+				false);
 	}
-	public static String buildJWT(boolean requiredClaims,
+	public static String buildJWE(boolean requiredClaims,
 			List<String> mapExpectedTokenInfo) throws Exception {
-		return buildJWT(requiredClaims,
+		return buildJWE(requiredClaims,
 				true, true, true, true, true,
 				mapExpectedTokenInfo);
 	}
-	private static String buildJWT(boolean requiredClaims,
+	public static String buildJWS(boolean requiredClaims,
+			List<String> mapExpectedTokenInfo) throws Exception {
+		return buildJWS(requiredClaims,
+				true, true, true, true, true,
+				mapExpectedTokenInfo);
+	}
+	private static String buildJWE(boolean requiredClaims,
 			boolean requiredClaims_clientId, boolean requiredClaims_issuer, boolean requiredClaims_subject,
 			boolean requiredClaims_username, boolean requiredClaims_eMail,
 			List<String> mapExpectedTokenInfo) throws Exception {
@@ -2422,7 +2435,27 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				false, 
 				false, false, 
 				false, false,
-				mapExpectedTokenInfo);
+				mapExpectedTokenInfo,
+				true);
+	}
+	private static String buildJWS(boolean requiredClaims,
+			boolean requiredClaims_clientId, boolean requiredClaims_issuer, boolean requiredClaims_subject,
+			boolean requiredClaims_username, boolean requiredClaims_eMail,
+			List<String> mapExpectedTokenInfo) throws Exception {
+		return buildJWT(requiredClaims,
+				requiredClaims_clientId, requiredClaims_issuer, requiredClaims_subject,
+				requiredClaims_username, requiredClaims_eMail,
+				true, true, true,
+				true, true, true,
+				false,
+				false, null, 
+				false, null,
+				false,
+				false, 
+				false, false, 
+				false, false,
+				mapExpectedTokenInfo,
+				false);
 	}
 	private static String buildJWT_scope(boolean scope1, boolean scope2, boolean scope3,
 			List<String> mapExpectedTokenInfo) throws Exception {
@@ -2437,7 +2470,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				false, 
 				false, false, 
 				false, false,
-				mapExpectedTokenInfo);
+				mapExpectedTokenInfo,
+				false);
 	}
 	private static String buildJWT_roles(boolean role1, boolean role2, boolean role3,
 			List<String> mapExpectedTokenInfo) throws Exception {
@@ -2452,7 +2486,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				false, 
 				false, false, 
 				false, false,
-				mapExpectedTokenInfo);
+				mapExpectedTokenInfo,
+				false);
 	}
 	private static String buildJWT_dates(boolean invalidIat, Long futureIat, 
 			boolean invalidNbf, Long futureNbf, 
@@ -2469,7 +2504,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				false, 
 				false, false, 
 				false, false,
-				mapExpectedTokenInfo);
+				mapExpectedTokenInfo,
+				false);
 	}	
 	private static String buildJWT_invalid(boolean invalidClientId, boolean invalidAudience, boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
 			List<String> mapExpectedTokenInfo) throws Exception {
@@ -2484,7 +2520,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				invalidClientId, 
 				false, invalidAudience, 
 				invalidUsername, invalidClaimCheNonDeveEsistere,
-				mapExpectedTokenInfo);
+				mapExpectedTokenInfo,
+				false);
 	}		
 	private static String buildJWT_singleValueNoArrayAudience(boolean invalidAudience,
 			List<String> mapExpectedTokenInfo) throws Exception {
@@ -2499,7 +2536,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				false, 
 				true, invalidAudience, 
 				false, false,
-				mapExpectedTokenInfo);
+				mapExpectedTokenInfo,
+				false);
 	}
 	private static String buildJWT(boolean requiredClaims,
 			boolean requiredClaims_clientId, boolean requiredClaims_issuer, boolean requiredClaims_subject,
@@ -2513,7 +2551,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 			boolean invalidClientId, 
 			boolean singleValueNoArrayAudience,boolean invalidAudience,
 			boolean invalidUsername, boolean invalidClaimCheNonDeveEsistere,
-			List<String> mapExpectedTokenInfo) throws Exception {
+			List<String> mapExpectedTokenInfo,
+			boolean encrypt) throws Exception {
 		
 		String jsonInput = Utilities.buildJson(requiredClaims, 
 				requiredClaims_clientId, requiredClaims_issuer, requiredClaims_subject, 
@@ -2538,7 +2577,13 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		Properties props = new Properties();
 		props.put("rs.security.keystore.type","JKS");
 		String password = "openspcoop";
-		if(signWithSoggetto1) {
+		if(encrypt) {
+			// per validare
+			props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+			props.put("rs.security.keystore.password",password);
+			props.put("rs.security.keystore.alias","soggetto1"); // per cifrare si usa la chiave pubblica
+		}
+		else if(signWithSoggetto1) {
 			props.put("rs.security.keystore.file", "/etc/govway/keys/soggetto1.jks");
 			props.put("rs.security.keystore.alias","soggetto1");
 			props.put("rs.security.keystore.password","openspcoopjks");
@@ -2551,24 +2596,40 @@ public class ValidazioneJWTTest extends ConfigLoader {
 			props.put("rs.security.key.password",password);
 		}
 		
-		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+		String token = null;
+		if(encrypt) {
+			JWEOptions options = new JWEOptions(JOSESerialization.COMPACT);
 			
-		props.put("rs.security.signature.algorithm","RS256");
-		props.put("rs.security.signature.include.cert","false");
-		props.put("rs.security.signature.include.key.id","true");
-		props.put("rs.security.signature.include.public.key","false");
-		props.put("rs.security.signature.include.cert.sha1","false");
-		props.put("rs.security.signature.include.cert.sha256","false");
+			props.put("rs.security.encryption.key.algorithm", "RSA1_5");
+			props.put("rs.security.encryption.content.algorithm","A256GCM");
+			props.put("rs.security.encryption.include.cert","false");
+			props.put("rs.security.encryption.include.key.id","true");
+			props.put("rs.security.encryption.include.public.key","false");
+			props.put("rs.security.encryption.include.cert.sha1","false");
+			props.put("rs.security.encryption.include.cert.sha256","false");
 			
-		JsonSignature jsonSignature = new JsonSignature(props, options);
-		String token = jsonSignature.sign(jsonInput);
+			JsonEncrypt jsonEncrypt = new JsonEncrypt(props, options);
+			token = jsonEncrypt.encrypt(jsonInput);
+		}
+		else {
+			JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
+				
+			props.put("rs.security.signature.algorithm","RS256");
+			props.put("rs.security.signature.include.cert","false");
+			props.put("rs.security.signature.include.key.id","true");
+			props.put("rs.security.signature.include.public.key","false");
+			props.put("rs.security.signature.include.cert.sha1","false");
+			props.put("rs.security.signature.include.cert.sha256","false");
+				
+			JsonSignature jsonSignature = new JsonSignature(props, options);
+			token = jsonSignature.sign(jsonInput);
+		}
+		
 		//System.out.println(token);
 			
 		return token;		
 		
 	}
-	
-	
 	
 	
 	private static String buildJWTHeader(String typ,String cty,String algo,

@@ -16,6 +16,7 @@ Examples:
 |nome|
 |applicativo.json|
 |applicativo_proprieta.json|
+|applicativo_trust_senza_password.json|
 
 @Create409
 Scenario: Applicativi Creazione 409 Conflitto

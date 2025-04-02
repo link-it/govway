@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.utils;
 
 import java.util.List;
 
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
@@ -32,6 +33,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -109,7 +111,20 @@ public class ModIKeystoreUtils {
 			if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) && 
 					!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
 					!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
-				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+				boolean required = true;
+				if(
+						(KeystoreType.JKS.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystoreJksPasswordRequired())
+						||
+						(KeystoreType.PKCS12.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystorePkcs12PasswordRequired())
+				) {
+					required = false;
+				}
+				if(required) {
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+				}
+				else {
+					this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+				}
 			}
 			else {
 				this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_PASSWORD);
@@ -135,7 +150,20 @@ public class ModIKeystoreUtils {
 			if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) && 
 					!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
 					!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
-				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_PASSWORD);
+				boolean required = true;
+				if(
+						(KeystoreType.JKS.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystoreJksKeyPasswordRequired())
+						||
+						(KeystoreType.PKCS12.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystorePkcs12KeyPasswordRequired())
+				) {
+					required = false;
+				}
+				if(required) {
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_PASSWORD);
+				}
+				else {
+					this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_PASSWORD);
+				}
 			}
 			else {
 				this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEY_PASSWORD);
@@ -207,7 +235,20 @@ public class ModIKeystoreUtils {
 					if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) && 
 						!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
 						!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
-						this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+						boolean required = true;
+						if(
+								(KeystoreType.JKS.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystoreJksPasswordRequired())
+								||
+								(KeystoreType.PKCS12.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystorePkcs12PasswordRequired())
+						) {
+							required = false;
+						}
+						if(required) {
+							this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+						}
+						else {
+							this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_PASSWORD);
+						}
 					}
 					else {
 						this.securityMessageKeystorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_PASSWORD);
@@ -233,7 +274,20 @@ public class ModIKeystoreUtils {
 					if(!CostantiDB.KEYSTORE_TYPE_JWK.equalsIgnoreCase(this.securityMessageKeystoreType) && 
 							!CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) && 
 							!CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
-						this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_PASSWORD);
+						boolean required = true;
+						if(
+								(KeystoreType.JKS.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystoreJksKeyPasswordRequired())
+								||
+								(KeystoreType.PKCS12.isType(this.securityMessageKeystoreType) && !DBUtils.isKeystorePkcs12KeyPasswordRequired())
+						) {
+							required = false;
+						}
+						if(required) {
+							this.securityMessageKeyPassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_PASSWORD);
+						}
+						else {
+							this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_PASSWORD);
+						}
 					}
 					else {
 						this.securityMessageKeyPassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEY_PASSWORD);

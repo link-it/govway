@@ -669,7 +669,6 @@ components:
       type: object
       required: 
         - truststore_path
-        - truststore_password
       properties:
         truststore_path:
           type: string
@@ -688,9 +687,6 @@ components:
           maxLength: 255
     BaseKeyStore:
       type: object
-      required: 
-        - keystore_password
-        - key_password
       properties:
         keystore_password:
           type: string

@@ -51,6 +51,8 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.rs.security.jose.common.KeyManagementUtils;
+import org.apache.wss4j.dom.handler.WSHandler;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.jminix.console.tool.StandaloneMiniConsole;
 import org.openspcoop2.core.commons.CoreException;
@@ -787,7 +789,36 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				OpenSPCoop2Startup.logStartupInfo("Add Bouncycastle in keystore.Merlin provider");
 				org.openspcoop2.security.keystore.MerlinProvider.setUseBouncyCastleProvider(true);
 			}
-						
+			
+			DBUtils.setKeystoreJksPasswordRequired(propertiesReader.isConfigurazioneKeystoreJksPasswordRequired());
+			DBUtils.setKeystoreJksKeyPasswordRequired(propertiesReader.isConfigurazioneKeystoreJksKeyPasswordRequired());
+			DBUtils.setKeystorePkcs12PasswordRequired(propertiesReader.isConfigurazioneKeystorePkcs12PasswordRequired());
+			DBUtils.setKeystorePkcs12KeyPasswordRequired(propertiesReader.isConfigurazioneKeystorePkcs12KeyPasswordRequired());
+			DBUtils.setTruststoreJksPasswordRequired(propertiesReader.isConfigurazioneTruststoreJksPasswordRequired());
+			DBUtils.setTruststorePkcs12PasswordRequired(propertiesReader.isConfigurazioneTruststorePkcs12PasswordRequired());
+			// disabilito anche nelle librerie
+			if(!propertiesReader.isConfigurazioneKeystoreJksPasswordRequired() || !propertiesReader.isConfigurazioneTruststoreJksPasswordRequired()) {
+				KeyManagementUtils.setKeystoreJksPasswordRequired(false);
+			}
+			if(!propertiesReader.isConfigurazioneKeystoreJksKeyPasswordRequired()) {
+				KeyManagementUtils.setKeystoreJksKeyPasswordRequired(false);
+			}
+			if(!propertiesReader.isConfigurazioneKeystorePkcs12PasswordRequired() || !propertiesReader.isConfigurazioneTruststorePkcs12PasswordRequired()) {
+				KeyManagementUtils.setKeystorePkcs12PasswordRequired(false);
+			}
+			if(!propertiesReader.isConfigurazioneKeystorePkcs12KeyPasswordRequired()) {
+				KeyManagementUtils.setKeystorePkcs12KeyPasswordRequired(false);
+			}
+			OpenSPCoop2Startup.logStartupInfo("KeyManagementUtils.keystoreJksPasswordRequired="+KeyManagementUtils.isKeystoreJksPasswordRequired());
+			OpenSPCoop2Startup.logStartupInfo("KeyManagementUtils.keystoreJksKeyPasswordRequired="+KeyManagementUtils.isKeystoreJksKeyPasswordRequired());
+			OpenSPCoop2Startup.logStartupInfo("KeyManagementUtils.keystorePkcs12PasswordRequired="+KeyManagementUtils.isKeystorePkcs12PasswordRequired());
+			OpenSPCoop2Startup.logStartupInfo("KeyManagementUtils.keystorePkcs12KeyPasswordRequired="+KeyManagementUtils.isKeystorePkcs12KeyPasswordRequired());
+			if(!propertiesReader.isConfigurazioneKeystoreJksPasswordRequired() || !propertiesReader.isConfigurazioneTruststoreJksPasswordRequired() ||
+					!propertiesReader.isConfigurazioneKeystorePkcs12PasswordRequired() || !propertiesReader.isConfigurazioneTruststorePkcs12PasswordRequired()) {
+				WSHandler.setKeystorePasswordRequired(false);
+			}
+			OpenSPCoop2Startup.logStartupInfo("WSHandler.keystorePasswordRequired="+WSHandler.isKeystorePasswordRequired());
+			
 			StringBuilder sb = new StringBuilder();
 			Provider[] providerList = Security.getProviders();
 	        sb.append("Security Providers disponibili sono "+providerList.length+":\n");

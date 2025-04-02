@@ -634,17 +634,19 @@ public class AttributeAuthorityProvider implements IProvider {
 	}
 	public String dynamicUpdateStorePassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		String type = Costanti.ID_AA_JWS_TRUSTSTORE_TYPE;
+		boolean keystore = true;
 		if(Costanti.ID_AA_JWS_KEYSTORE_PASSWORD.equals(item.getName())) {
 			type = Costanti.ID_AA_JWS_KEYSTORE_TYPE;
 		}
 		else if(Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
+			keystore = false;
 		}
 		else if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
 		}
 		
-		return AbstractSecurityProvider.processStorePassword(type, items, mapNameValue, item, actualValue);
+		return AbstractSecurityProvider.processStorePassword(keystore, type, items, mapNameValue, item, actualValue);
 	}
 	private String dynamicUpdateStoreKeyPassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		String type = Costanti.ID_AA_JWS_KEYSTORE_TYPE;

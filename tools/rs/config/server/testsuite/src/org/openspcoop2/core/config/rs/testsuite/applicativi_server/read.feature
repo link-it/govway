@@ -19,4 +19,5 @@ Examples:
 |nome|
 |applicativo.json|
 |applicativo_proprieta.json|
+|applicativo_trust_senza_password.json|
 

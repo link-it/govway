@@ -378,7 +378,9 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			/**pTruststore.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_DEFAULT);*/
 			pTruststore.put(KeystoreConstants.PROPERTY_PROVIDER, KeystoreConstants.PROVIDER_GOVWAY);
 			pTruststore.put(KeystoreConstants.PROPERTY_TRUSTSTORE_TYPE, trustStoreCertificati.getSecurityMessageTruststoreType());
-			pTruststore.put(KeystoreConstants.PROPERTY_TRUSTSTORE_PASSWORD, trustStoreCertificati.getSecurityMessageTruststorePassword());
+			if(trustStoreCertificati.getSecurityMessageTruststorePassword()!=null) {
+				pTruststore.put(KeystoreConstants.PROPERTY_TRUSTSTORE_PASSWORD, trustStoreCertificati.getSecurityMessageTruststorePassword());
+			}
 			pTruststore.put(KeystoreConstants.PROPERTY_TRUSTSTORE_PATH, trustStoreCertificati.getSecurityMessageTruststorePath());
 			pTruststore.put(KeystoreConstants.PROPERTY_REQUEST_INFO, requestInfo);
 			if(trustStoreCertificati.getSecurityMessageTruststoreCRLs()!=null) {

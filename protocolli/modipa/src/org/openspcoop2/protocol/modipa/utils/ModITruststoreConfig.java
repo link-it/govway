@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.modipa.utils;
 
 import java.util.List;
 
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -31,6 +32,7 @@ import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
@@ -101,8 +103,22 @@ public class ModITruststoreConfig {
 					}
 					
 					if(!this.securityMessageTruststoreJWK && !this.securityMessageTruststoreRemote) {
-						this.securityMessageTruststorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
-								ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD);
+						boolean required = true;
+						if(
+								(KeystoreType.JKS.isType(this.securityMessageTruststoreType) && !DBUtils.isTruststoreJksPasswordRequired())
+								||
+								(KeystoreType.PKCS12.isType(this.securityMessageTruststoreType) && !DBUtils.isTruststorePkcs12PasswordRequired())
+						) {
+							required = false;
+						}
+						if(required) {
+							this.securityMessageTruststorePassword = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, 
+									ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD);
+						}
+						else {
+							this.securityMessageTruststorePassword = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, 
+									ssl ? ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD : ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD);
+						}
 					}
 				}
 

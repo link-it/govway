@@ -34,6 +34,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -53,6 +54,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.KeystoreUtils;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
@@ -715,14 +717,26 @@ public class JOSEUtils {
 				}
 				keystoreType = keystoreType.trim();
 				
+				boolean requiredPassword = true;
 				if(!properties.containsKey(password)) {
-					throw new SecurityException(requiredPropertyPrefix+password+"' not found");
+					if(
+							(KeystoreType.JKS.isType(keystoreType) && !DBUtils.isTruststoreJksPasswordRequired())
+							||
+							(KeystoreType.PKCS12.isType(keystoreType) && !DBUtils.isTruststorePkcs12PasswordRequired())
+					) {
+						requiredPassword = false;
+					}
+					if(requiredPassword) {
+						throw new SecurityException(requiredPropertyPrefix+password+"' not found");
+					}
 				}
 				String keystorePassword = (String) properties.get(password);
-				if(keystorePassword==null) {
+				if(keystorePassword==null && requiredPassword) {
 					throw new SecurityException(requiredPropertyPrefix+password+"' is empty");
 				}
-				keystorePassword = keystorePassword.trim();
+				else if(keystorePassword!=null) {
+					keystorePassword = keystorePassword.trim();
+				}
 				
 				keystore = GestoreKeystoreCache.getMerlinTruststore(requestInfo, keystoreFile, keystoreType, keystorePassword).getTrustStore();
 			}
@@ -1027,11 +1041,20 @@ public class JOSEUtils {
 				String trustStoreSslTypePropertyName = JOSECostanti.ID_TRUSTSTORE_SSL_KEYSTORE_TYPE;
 				String trustStoreSslPasswordProperty = properties.getProperty(trustStoreSslPasswordPropertyName);
 				String trustStoreSslTypeProperty = properties.getProperty(trustStoreSslTypePropertyName);
-				if(trustStoreSslPasswordProperty==null) {
-					throw new SecurityException("TrustStore ssl password undefined");
-				}
 				if(trustStoreSslTypeProperty==null) {
 					throw new SecurityException("TrustStore ssl type undefined");
+				}
+				if(trustStoreSslPasswordProperty==null) {
+					boolean required = true;
+					if(KeystoreType.JKS.isType(trustStoreSslTypeProperty)) {
+						required = DBUtils.isTruststoreJksPasswordRequired();
+					}
+					else if(KeystoreType.PKCS12.isType(trustStoreSslTypeProperty)) {
+						required = DBUtils.isTruststorePkcs12PasswordRequired();
+					}
+					if(required) {
+						throw new SecurityException("TrustStore ssl password undefined");
+					}
 				}
 				trustStoreSsl = GestoreKeystoreCache.getMerlinTruststore(requestInfo, trustStoreSslProperty, trustStoreSslTypeProperty, trustStoreSslPasswordProperty);
 			}

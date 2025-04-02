@@ -203,10 +203,12 @@ Examples:
 |erogazione_modi_rest_header_firmare.json|
 |erogazione_modi_rest_header_rif_509_risp.json|
 |erogazione_modi_rest_keystore_ridefinito_file.json|
+|erogazione_modi_rest_keystore_ridefinito_file_keystore_senza_password.json|
 |erogazione_modi_rest_keystore_ridefinito_path.json|
 |erogazione_modi_rest_keystore_ridefinito_hsm.json|
 |erogazione_modi_rest_rif_multipli.json|
 |erogazione_modi_rest_truststore_ridefinito.json|
+|erogazione_modi_rest_truststore_ridefinito_trust_senza_password.json|
 |erogazione_modi_rest_truststore_ridefinito_hsm.json|
 |erogazione_modi_rest_truststore_ridefinito_ocsp.json|
 |erogazione_modi_rest_ttl.json|

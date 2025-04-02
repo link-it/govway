@@ -129,6 +129,8 @@ Scenario Outline: Update Fruizioni Connettore 204
 Examples:
 |nome|connettore|
 |connettore_fruizione_http.json|https://ginovadifretta.it/petstore|
+|connettore_fruizione_http_trust_senza_password.json|https://ginovadifretta.it/petstore|
+|connettore_fruizione_http_keystore_senza_password.json|https://ginovadifretta.it/petstore|
 |connettore_fruizione_echo.json|[echo] govway://echo|
 |connettore_fruizione_null.json|[null] govway://dev/null|
 |connettore_fruizione_plugin.json|[plugin] custom|

@@ -288,7 +288,7 @@ public class BasicTest extends ConfigLoader {
 		
 		tracciamentoVerifica.checkInfo = true;
 		tracciamentoVerifica.headers.put(TestTracciamentoCostanti.HTTP_TOKEN, 
-				ValidazioneJWTTest.buildJWT(true, 
+				ValidazioneJWTTest.buildJWS(true, 
 						tracciamentoVerifica.mapExpectedTokenInfo));
 		tracciamentoVerifica.tempiElaborazioneExpected = false; // non vengono tracciati
 		
@@ -334,7 +334,7 @@ public class BasicTest extends ConfigLoader {
 		
 		tracciamentoVerifica.checkInfo = true;
 		tracciamentoVerifica.headers.put(TestTracciamentoCostanti.HTTP_TOKEN, 
-				ValidazioneJWTTest.buildJWT(true, 
+				ValidazioneJWTTest.buildJWS(true, 
 						tracciamentoVerifica.mapExpectedTokenInfo));
 		tracciamentoVerifica.mapExpectedTokenInfo.clear(); // non vengono tracciate
 		tracciamentoVerifica.tempiElaborazioneExpected = true;

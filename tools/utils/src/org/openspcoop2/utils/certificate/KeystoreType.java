@@ -71,6 +71,10 @@ public enum KeystoreType {
 		return this.nome;
 	}
 	
+	public boolean isType(String value) {
+		return this.nome.equalsIgnoreCase(value);
+	}
+	
 	public static KeystoreType toEnumFromName(String name) {
 		KeystoreType [] tipi = KeystoreType.values();
 		for (int i = 0; i < tipi.length; i++) {

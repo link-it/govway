@@ -607,7 +607,8 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			if(!trustStoreCertificati.isSecurityMessageTruststoreRemote()) {
 				secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_FILE, trustStoreCertificati.getSecurityMessageTruststorePath());
 			}
-			if(!trustStoreCertificati.isSecurityMessageTruststoreJWK() && !trustStoreCertificati.isSecurityMessageTruststoreRemote()) {
+			if(!trustStoreCertificati.isSecurityMessageTruststoreJWK() && !trustStoreCertificati.isSecurityMessageTruststoreRemote() &&
+				trustStoreCertificati.getSecurityMessageTruststorePassword()!=null) {
 				secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD, trustStoreCertificati.getSecurityMessageTruststorePassword());
 			}
 			if(trustStoreCertificati.getSecurityMessageTruststoreCRLs()!=null) {
@@ -626,7 +627,9 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 				trustStoreSsl!=null && trustStoreSsl.getSecurityMessageTruststorePath()!=null) {
 				secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE, trustStoreSsl.getSecurityMessageTruststorePath());
 				secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE, trustStoreSsl.getSecurityMessageTruststoreType());
-				secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD, trustStoreSsl.getSecurityMessageTruststorePassword());
+				if(trustStoreSsl.getSecurityMessageTruststorePassword()!=null) {
+					secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD, trustStoreSsl.getSecurityMessageTruststorePassword());
+				}
 				if(trustStoreSsl.getSecurityMessageTruststoreCRLs()!=null) {
 					secProperties.put(SecurityConstants.JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL, trustStoreSsl.getSecurityMessageTruststoreCRLs());
 				}

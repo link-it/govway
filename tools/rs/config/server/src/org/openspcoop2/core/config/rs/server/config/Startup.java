@@ -31,6 +31,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
@@ -358,6 +359,13 @@ public class Startup implements ServletContextListener {
 				ControlStationCore.setIsSoggettiApplicativiCredenzialiBasicPermitSameCredentialsApiMode(serverProperties.isSoggettiApplicativiCredenzialiBasicPermitSameCredentials());
 				ControlStationCore.setIsSoggettiApplicativiCredenzialiSslPermitSameCredentialsApiMode(serverProperties.isSoggettiApplicativiCredenzialiSslPermitSameCredentials());
 				ControlStationCore.setIsSoggettiApplicativiCredenzialiPrincipalPermitSameCredentialsApiMode(serverProperties.isSoggettiApplicativiCredenzialiPrincipalPermitSameCredentials());
+				
+				DBUtils.setKeystoreJksPasswordRequired(serverProperties.isKeystoreJksPasswordRequired());
+				DBUtils.setKeystoreJksKeyPasswordRequired(serverProperties.isKeystoreJksKeyPasswordRequired());
+				DBUtils.setKeystorePkcs12PasswordRequired(serverProperties.isKeystorePkcs12PasswordRequired());
+				DBUtils.setKeystorePkcs12KeyPasswordRequired(serverProperties.isKeystorePkcs12KeyPasswordRequired());
+				DBUtils.setTruststoreJksPasswordRequired(serverProperties.isTruststoreJksPasswordRequired());
+				DBUtils.setTruststorePkcs12PasswordRequired(serverProperties.isTruststorePkcs12PasswordRequired());
 				
 			} catch (Exception e) {
 				throw new UtilsRuntimeException(e.getMessage(),e);
