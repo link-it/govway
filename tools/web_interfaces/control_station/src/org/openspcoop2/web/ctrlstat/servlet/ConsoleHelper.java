@@ -6227,7 +6227,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean isModISignaHubPush = false;
 			if(isPortaDelegata && this.isProfiloModIPA(protocollo)) {
 				PortaDelegata portaDelegata = (PortaDelegata) oggetto;
-				if(portaDelegata!=null) {
+				if(portaDelegata!=null && 
+						portaDelegata.getServizio()!=null && portaDelegata.getServizio().getTipo()!=null && portaDelegata.getServizio().getNome()!=null && portaDelegata.getServizio().getVersione()!=null &&
+						portaDelegata.getSoggettoErogatore()!=null && portaDelegata.getSoggettoErogatore().getTipo()!=null && portaDelegata.getSoggettoErogatore().getNome()!=null) {
 					try {
 						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getServizio().getTipo(), portaDelegata.getServizio().getNome(), 
 								portaDelegata.getSoggettoErogatore().getTipo(), portaDelegata.getSoggettoErogatore().getNome(), 
