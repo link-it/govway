@@ -1172,7 +1172,12 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							httpsstato = true;
 							if (httpspathkey.equals(httpspath) &&
 									httpstipokey.equals(httpstipo) &&
-									httpspwdkey.equals(httpspwd))
+									(
+										(httpspwdkey!=null && httpspwdkey.equals(httpspwd))
+										||
+										(httpspwdkey==null && httpspwd==null)
+									)
+								)
 								httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT;
 							else
 								httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;

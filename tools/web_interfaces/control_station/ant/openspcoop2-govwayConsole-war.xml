@@ -430,7 +430,7 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/wss4j">
-				<include name="wss4j-ws-security-common-3.0.3-gov4j-2.jar"/>
+				<include name="wss4j-ws-security-common-3.0.3-gov4j-3.jar"/>
 			</lib>
 			<lib dir="${required_lib}/angus">
 				<include name="*.jar"/>

@@ -811,3 +811,57 @@ And match response == read("response-op.xml")
 
 * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
 * match tidMessaggio == client_request_id
+
+
+
+
+
+
+@KeystoreJksSenzaPasswordDefinitoFruizione
+Scenario: Test tramite l'utilizzo di un keystore jks senza password nel keystore e/o nella chiave definito nella fruizione e nella risposta dell'erogazione
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestModISoapKeystoreJksSenzaPasswordDefinitoFruizione/v1"
+And path 'keystoreJksNoPassword-KeyNoPassword'
+And request read("requestConHeader.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = 'test'
+When method post
+Then status 200
+And match response == read('requestConHeader.xml')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+@KeystorePkcs12SenzaPasswordDefinitoFruizione
+Scenario: Test tramite l'utilizzo di un keystore pkcs12 senza password senza password nel keystore e/o nella chiave definito nella fruizione e nella risposta dell'erogazione
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestModISoapKeystoreJksSenzaPasswordDefinitoFruizione/v1"
+And path 'keystorePkcs12NoPassword-KeyNoPassword'
+And request read("requestConHeader.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = 'test'
+When method post
+Then status 200
+And match response == read('requestConHeader.xml')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+
+@KeystoreSenzaPasswordDefinitoApplicativo
+Scenario Outline: Test tramite l'utilizzo di un '<tipo-test>' su un integrity senza password nel keystore e/o nella chiave a seconda del tipo di test
+Given url govway_base_path + "/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestModISoapKeystoreSenzaPasswordDefinitoApplicativo/v1"
+And path '<tipo-test>'
+And request read("requestConHeader.xml")
+And header Content-Type = 'application/soap+xml'
+And header action = 'test'
+And header Authorization = call basic ({ username: '<username>', password: '<password>' })
+When method post
+Then status 200
+And match response == read('requestConHeader.xml')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test | username | password |
+| keystoreJksNoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystoreJksNoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystoreJksNoPassword-KeyNoPassword |
+| keystoreJksNoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystoreJksNoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystoreJksNoPassword-KeyWithPassword |
+| keystorePkcs12NoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyNoPassword |
+| keystorePkcs12NoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyWithPassword |
+

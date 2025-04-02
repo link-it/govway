@@ -329,6 +329,7 @@ public class ConnettoreCheck {
 						if(introspectionHttpsClient) {
 							Properties introspectionSslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
 							putAll(introspectionSslClientConfig, mapProperties);
+							injectSameKeystoreForHttpsClient(sslConfig, introspectionSslClientConfig, mapProperties);
 						}
 						
 						connettoreIntrospection.setProperties(mapProperties);
@@ -342,6 +343,7 @@ public class ConnettoreCheck {
 						if(userInfoHttpsClient) {
 							Properties userInfoSslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
 							putAll(userInfoSslClientConfig, mapProperties);
+							injectSameKeystoreForHttpsClient(sslConfig, userInfoSslClientConfig, mapProperties);
 						}
 						
 						connettoreUserInfo.setProperties(mapProperties);
@@ -408,8 +410,9 @@ public class ConnettoreCheck {
 											
 					boolean httpsClient = policy.isHttpsAuthentication();
 					if(httpsClient) {
-						Properties introspectionSslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
-						putAll(introspectionSslClientConfig, mapProperties);
+						Properties sslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+						putAll(sslClientConfig, mapProperties);
+						injectSameKeystoreForHttpsClient(sslConfig, sslClientConfig, mapProperties);
 					}
 					
 					connettore.setProperties(mapProperties);
@@ -463,8 +466,9 @@ public class ConnettoreCheck {
 											
 					boolean httpsClient = policy.isHttpsAuthentication();
 					if(httpsClient) {
-						Properties introspectionSslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
-						putAll(introspectionSslClientConfig, mapProperties);
+						Properties sslClientConfig = policy.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+						putAll(sslClientConfig, mapProperties);
+						injectSameKeystoreForHttpsClient(sslConfig, sslClientConfig, mapProperties);
 					}
 					
 					connettore.setProperties(mapProperties);
@@ -519,6 +523,19 @@ public class ConnettoreCheck {
 			
 		}catch(Throwable t) {
 			throw new ConnettoreException(t.getMessage(),t);
+		}
+	}
+	private static void injectSameKeystoreForHttpsClient(Properties sslConfig, Properties sslClientConfig, Map<String,String> mapProperties) {
+		if(!sslClientConfig.containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION) && !sslClientConfig.containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD)) {
+			// modalita usa valori del truststore
+			String trustStoreLocation = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION); 
+			String trustStorePassword = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			if(trustStoreLocation!=null) {
+				mapProperties.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION, trustStoreLocation);
+				if(trustStorePassword!=null) {
+					mapProperties.put(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD, trustStorePassword);
+				}
+			}
 		}
 	}
 	public static void checkTokenPolicyValidazione(String nome, Logger log) throws ConnettoreException{
@@ -786,7 +803,7 @@ public class ConnettoreCheck {
 		if(config!=null && !config.isEmpty()) {
 			Iterator<?> it = config.keySet().iterator();
 			while (it.hasNext()) {
-				Object object = (Object) it.next();
+				Object object = it.next();
 				if(object instanceof String) {
 					String key = (String) object;
 					mapProperties.put(key, config.getProperty(key));			

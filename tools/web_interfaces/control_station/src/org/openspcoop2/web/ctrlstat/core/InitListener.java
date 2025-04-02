@@ -36,6 +36,7 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -483,6 +484,19 @@ public class InitListener implements ServletContextListener {
 			}catch(Exception e){
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
+			
+			InitListener.logInfo("Inizializzazione keystore config in corso...");
+			try{
+				DBUtils.setKeystoreJksPasswordRequired(consoleProperties.isKeystoreJksPasswordRequired());
+				DBUtils.setKeystoreJksKeyPasswordRequired(consoleProperties.isKeystoreJksKeyPasswordRequired());
+				DBUtils.setKeystorePkcs12PasswordRequired(consoleProperties.isKeystorePkcs12PasswordRequired());
+				DBUtils.setKeystorePkcs12KeyPasswordRequired(consoleProperties.isKeystorePkcs12KeyPasswordRequired());
+				DBUtils.setTruststoreJksPasswordRequired(consoleProperties.isTruststoreJksPasswordRequired());
+				DBUtils.setTruststorePkcs12PasswordRequired(consoleProperties.isTruststorePkcs12PasswordRequired());
+			}catch(Exception e){
+				throw new UtilsRuntimeException(e.getMessage(),e);
+			}
+			InitListener.logInfo("Inizializzazione keystore config effettuata con successo");
 			
 			try{
 				if(consoleProperties.isGestoreConsistenzaDatiEnabled()){

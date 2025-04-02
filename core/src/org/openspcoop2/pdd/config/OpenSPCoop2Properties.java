@@ -772,6 +772,13 @@ public class OpenSPCoop2Properties {
 			this.isConfigurazioneCacheRequestManagerOCSPResponseSaveInCache();
 			this.isConfigurazioneCacheRequestManagerRemoteStoreSaveInCache();
 			
+			this.isConfigurazioneKeystoreJksPasswordRequired();
+			this.isConfigurazioneKeystoreJksKeyPasswordRequired();
+			this.isConfigurazioneKeystorePkcs12PasswordRequired();
+			this.isConfigurazioneKeystorePkcs12KeyPasswordRequired();
+			this.isConfigurazioneTruststoreJksPasswordRequired();
+			this.isConfigurazioneTruststorePkcs12PasswordRequired();
+			
 			if(this.isConfigurazionePluginsEnabled()) {
 				this.isConfigurazionePluginsDebug();
 				this.getConfigurazionePluginsSeconds();
@@ -4776,6 +4783,136 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isConfigurazioneCacheRequestManagerRemoteStoreSaveInCache;
+	}
+	
+	
+	
+	private Boolean isConfigurazioneKeystoreJksPasswordRequired = null;
+	public boolean isConfigurazioneKeystoreJksPasswordRequired() {	
+		if(this.isConfigurazioneKeystoreJksPasswordRequired==null){
+			String pName = "org.openspcoop2.pdd.keystore.jks.passwordRequired";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isConfigurazioneKeystoreJksPasswordRequired = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isConfigurazioneKeystoreJksPasswordRequired = true;
+			}    
+		}
+
+		return this.isConfigurazioneKeystoreJksPasswordRequired;
+	}
+	private Boolean isConfigurazioneKeystoreJksKeyPasswordRequired = null;
+	public boolean isConfigurazioneKeystoreJksKeyPasswordRequired() {	
+		if(this.isConfigurazioneKeystoreJksKeyPasswordRequired==null){
+			String pName = "org.openspcoop2.pdd.keystore.jks.key.passwordRequired";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isConfigurazioneKeystoreJksKeyPasswordRequired = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isConfigurazioneKeystoreJksKeyPasswordRequired = true;
+			}    
+		}
+
+		return this.isConfigurazioneKeystoreJksKeyPasswordRequired;
+	}
+	private Boolean isConfigurazioneKeystorePkcs12PasswordRequired = null;
+	public boolean isConfigurazioneKeystorePkcs12PasswordRequired() {	
+		if(this.isConfigurazioneKeystorePkcs12PasswordRequired==null){
+			String pName = "org.openspcoop2.pdd.keystore.pkcs12.passwordRequired";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isConfigurazioneKeystorePkcs12PasswordRequired = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isConfigurazioneKeystorePkcs12PasswordRequired = true;
+			}    
+		}
+
+		return this.isConfigurazioneKeystorePkcs12PasswordRequired;
+	}
+	private Boolean isConfigurazioneKeystorePkcs12KeyPasswordRequired = null;
+	public boolean isConfigurazioneKeystorePkcs12KeyPasswordRequired() {	
+		if(this.isConfigurazioneKeystorePkcs12KeyPasswordRequired==null){
+			String pName = "org.openspcoop2.pdd.keystore.pkcs12.key.passwordRequired";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isConfigurazioneKeystorePkcs12KeyPasswordRequired = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isConfigurazioneKeystorePkcs12KeyPasswordRequired = true;
+			}    
+		}
+
+		return this.isConfigurazioneKeystorePkcs12KeyPasswordRequired;
+	}
+	
+	private Boolean isConfigurazioneTruststoreJksPasswordRequired = null;
+	public boolean isConfigurazioneTruststoreJksPasswordRequired() {	
+		if(this.isConfigurazioneTruststoreJksPasswordRequired==null){
+			String pName = "org.openspcoop2.pdd.truststore.jks.passwordRequired";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isConfigurazioneTruststoreJksPasswordRequired = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isConfigurazioneTruststoreJksPasswordRequired = true;
+			}    
+		}
+
+		return this.isConfigurazioneTruststoreJksPasswordRequired;
+	}
+	private Boolean isConfigurazioneTruststorePkcs12PasswordRequired = null;
+	public boolean isConfigurazioneTruststorePkcs12PasswordRequired() {	
+		if(this.isConfigurazioneTruststorePkcs12PasswordRequired==null){
+			String pName = "org.openspcoop2.pdd.truststore.pkcs12.passwordRequired";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isConfigurazioneTruststorePkcs12PasswordRequired = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isConfigurazioneTruststorePkcs12PasswordRequired = true;
+			}    
+		}
+
+		return this.isConfigurazioneTruststorePkcs12PasswordRequired;
 	}
 
 

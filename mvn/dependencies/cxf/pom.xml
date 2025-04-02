@@ -19,7 +19,7 @@
 		
 		<asm.version>9.7.1</asm.version>
 		<cxf.version>4.1.0</cxf.version>
-		<cxf.gov4j.version>4.1.0-gov4j-1</cxf.gov4j.version>
+		<cxf.gov4j.version>4.1.0-gov4j-2</cxf.gov4j.version>
 		<stax2.api.version>4.2.2</stax2.api.version>
 		<woodstock.core.version>7.1.0</woodstock.core.version>
 		<xml.resolver.version>1.2</xml.resolver.version>

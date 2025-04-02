@@ -111,6 +111,15 @@ public class JsonVerifySignature {
 	public void setValidityCheck(CertificateValidityCheck validityCheck) {
 		this.validityCheck = validityCheck;
 	}
+	
+	private boolean jksPasswordRequired=true;
+	private boolean pkcs12PasswordRequired=true;
+	public void setJksPasswordRequired(boolean jksPasswordRequired) {
+		this.jksPasswordRequired = jksPasswordRequired;
+	}
+	public void setPkcs12PasswordRequired(boolean pkcs12PasswordRequired) {
+		this.pkcs12PasswordRequired = pkcs12PasswordRequired;
+	}	
 
 	public JsonVerifySignature(Properties props, JWTOptions options) throws UtilsException{
 		try {
@@ -624,7 +633,7 @@ public class JsonVerifySignature {
 				KeyStore trustStore = this.trustStoreCertificatiX509;
 				if(trustStore==null &&
 					this.propsConfig!=null) {
-					trustStore = JsonUtils.getKeyStore(this.propsConfig);
+					trustStore = JsonUtils.getKeyStore(this.jksPasswordRequired, this.pkcs12PasswordRequired, this.propsConfig);
 				}
 				
 				if(trustStore!=null) {

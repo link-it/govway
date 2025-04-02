@@ -248,6 +248,8 @@ Scenario Outline: Erogazioni Update Connettore 204
 Examples:
 |nome|connettore|
 |connettore_erogazione_http.json|https://ginovadifretta.it/petstore|
+|connettore_erogazione_http_trust_senza_password.json|https://ginovadifretta.it/petstore|
+|connettore_erogazione_http_keystore_senza_password.json|https://ginovadifretta.it/petstore|
 |connettore_erogazione_echo.json|[echo] govway://echo|
 |connettore_erogazione_null.json|[null] govway://dev/null|
 |connettore_erogazione_plugin.json|[plugin] custom|

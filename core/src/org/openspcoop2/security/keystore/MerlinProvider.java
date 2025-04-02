@@ -143,7 +143,7 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 			keyStoreArchive = (byte[]) keyStoreArchiveObject;
 		}
 		
-		String keyStorePassword = properties.getProperty(prefix + KEYSTORE_PASSWORD, "security");
+		String keyStorePassword = properties.getProperty(prefix + KEYSTORE_PASSWORD);
 		if (keyStorePassword != null) {
 			keyStorePassword = keyStorePassword.trim();
 			keyStorePassword = decryptPassword(keyStorePassword, passwordEncryptor);
@@ -230,7 +230,7 @@ public class MerlinProvider extends org.apache.wss4j.common.crypto.Merlin {
 			trustStoreArchive = (byte[]) trustStoreArchiveObject;
 		}
 		
-		String trustStorePassword = properties.getProperty(prefix + TRUSTSTORE_PASSWORD, "security");
+		String trustStorePassword = properties.getProperty(prefix + TRUSTSTORE_PASSWORD);
 		if (trustStorePassword != null) {
 			trustStorePassword = trustStorePassword.trim();
 			trustStorePassword = decryptPassword(trustStorePassword, passwordEncryptor);

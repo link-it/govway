@@ -33,7 +33,7 @@
 	<archive path="/op2_3.4.dev/lib/console/jquery-ui-1.14.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/console/jsoup-1.18.3.jar"/>
 	<!-- cxf -->
-        <archive path="/op2_3.4.dev/lib/cxf/cxf-core-4.1.0-gov4j-1.jar"/>
+        <archive path="/op2_3.4.dev/lib/cxf/cxf-core-4.1.0-gov4j-2.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-bindings-soap-4.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-databinding-jaxb-4.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-features-logging-4.1.0.jar"/>
@@ -45,7 +45,7 @@
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-transports-http-4.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-transports-http-jetty-4.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-rs-json-basic-4.1.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-rs-security-jose-4.1.0-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-rs-security-jose-4.1.0-gov4j-2.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-rs-security-jose-jaxrs-4.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-rs-service-description-common-openapi-4.1.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-rs-service-description-openapi-v3-4.1.0.jar"/>
@@ -254,8 +254,8 @@
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-bindings-3.0.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-integration-3.0.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-policy-3.0.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-common-3.0.3-gov4j-2.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-dom-3.0.3-gov4j-2.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-common-3.0.3-gov4j-3.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-dom-3.0.3-gov4j-3.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-policy-stax-3.0.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-stax-3.0.3.jar"/>
     </library>

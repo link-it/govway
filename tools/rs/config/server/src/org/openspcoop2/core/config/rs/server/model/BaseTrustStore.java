@@ -30,7 +30,7 @@ public class BaseTrustStore  {
   @Schema(example = "/path/to/truststore", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private String truststorePath = null;
   
-  @Schema(example = "pwd", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(example = "pwd", description = "")
   private String truststorePassword = null;
   
   @Schema(description = "")
@@ -63,7 +63,6 @@ public class BaseTrustStore  {
    * @return truststorePassword
   **/
   @JsonProperty("truststore_password")
-  @NotNull
   @Valid
   public String getTruststorePassword() {
     return this.truststorePassword;

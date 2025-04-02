@@ -26,7 +26,9 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.certificate.hsm.HSMManager;
 
@@ -201,7 +203,16 @@ public class MerlinKeystore implements Serializable {
 				throw new SecurityException("Tipo dello Store non indicato");
 			}
 			if(this.passwordStore==null){
-				throw new SecurityException("Password dello Store non indicata");
+				boolean required = true;
+				if(KeystoreType.JKS.isType(this.tipoStore)) {
+					required = DBUtils.isKeystoreJksPasswordRequired();
+				}
+				else if(KeystoreType.PKCS12.isType(this.tipoStore)) {
+					required = DBUtils.isKeystorePkcs12PasswordRequired();
+				}
+				if(required) {
+					throw new SecurityException("Password dello Store non indicata");
+				}
 			}
 			
 			HSMManager hsmManager = HSMManager.getInstance();
@@ -215,7 +226,23 @@ public class MerlinKeystore implements Serializable {
 			
 			this.initKS();
 			
-			if(passwordPrivateKey==null && privatePasswordRequired){
+			initPrivateKey(passwordPrivateKey, privatePasswordRequired);
+			
+		}catch(Exception e){
+			throw new SecurityException(e.getMessage(),e);
+		}
+	}
+	private void initPrivateKey(String passwordPrivateKey, boolean privatePasswordRequired) throws SecurityException {
+		if(passwordPrivateKey==null && privatePasswordRequired){
+			
+			boolean required = true;
+			if(KeystoreType.JKS.isType(this.tipoStore)) {
+				required = DBUtils.isKeystoreJksKeyPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(this.tipoStore)) {
+				required = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+			}
+			if(required) {
 				if(this.pathStore!=null) {
 					throw new SecurityException("Password chiave privata non indicata per lo Store ["+this.pathStore+"] ");
 				}
@@ -223,11 +250,8 @@ public class MerlinKeystore implements Serializable {
 					throw new SecurityException("Password chiave privata non indicata per lo Store ");
 				}
 			}
-			this.passwordPrivateKey = passwordPrivateKey;
-			
-		}catch(Exception e){
-			throw new SecurityException(e.getMessage(),e);
 		}
+		this.passwordPrivateKey = passwordPrivateKey;
 	}
 	
 	private void initKsBytes(BYOKRequestParams requestParams) throws SecurityException {
@@ -284,7 +308,16 @@ public class MerlinKeystore implements Serializable {
 			throw new SecurityException("Alias della chiave non fornita");
 		}
 		if(password==null) {
-			throw new SecurityException("Password della chiave non fornita");
+			boolean required = true;
+			if(KeystoreType.JKS.isType(this.tipoStore)) {
+				required = DBUtils.isKeystoreJksKeyPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(this.tipoStore)) {
+				required = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+			}
+			if(required) {
+				throw new SecurityException("Password della chiave non fornita");
+			}
 		}
 		this.checkInit(); // per ripristino da Serializable
 		try {

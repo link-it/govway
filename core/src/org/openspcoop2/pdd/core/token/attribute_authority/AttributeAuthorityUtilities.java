@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
@@ -68,7 +69,16 @@ public class AttributeAuthorityUtilities {
 				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-			throw new TokenException("JWS Signature keystore password undefined");
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12PasswordRequired();
+			}
+			if(required) {
+				throw new TokenException("JWS Signature keystore password undefined");
+			}
 		}
 		String keyAlias = policy.getRequestJwtSignKeyAlias();
 		if(keyAlias==null && 
@@ -81,7 +91,16 @@ public class AttributeAuthorityUtilities {
 				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-			throw new TokenException("JWS Signature key password undefined");
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksKeyPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+			}
+			if(required) {
+				throw new TokenException("JWS Signature key password undefined");
+			}
 		}
 		
 		String keystoreByokPolicy = policy.getRequestJwtSignKeystoreByokPolicy();

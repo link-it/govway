@@ -32,6 +32,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -321,6 +322,22 @@ public class GestoreTokenValidazioneUtilities {
     						portaDelegata);
     				jsonDecrypt.decrypt(token);
     				informazioniToken = new InformazioniToken(SorgenteInformazioniToken.JWT,jsonDecrypt.getDecodedPayload(),tokenParser);
+    				if( pddContext!=null ) {
+						restSecurityToken = new RestMessageSecurityToken();
+						if(jsonDecrypt.getX509Certificate()!=null) {
+							restSecurityToken.setCertificate(new CertificateInfo(jsonDecrypt.getX509Certificate(), "access_token"));
+						}
+						if(jsonDecrypt.getKid()!=null) {
+							restSecurityToken.setKid(jsonDecrypt.getKid());
+						}
+						restSecurityToken.setJweDecodedPayload(jsonDecrypt.getDecodedPayload());
+						restSecurityToken.setToken(token);
+						if(esitoPresenzaToken!=null) {
+							restSecurityToken.setHttpHeaderName(esitoPresenzaToken.getHeaderHttp());
+							restSecurityToken.setQueryParameterName(esitoPresenzaToken.getPropertyUrl());
+							restSecurityToken.setFormParameterName(esitoPresenzaToken.getPropertyFormBased());
+						}
+					}
     			}catch(Exception e) {
     				log.debug(GestoreToken.getMessageTokenNonValido(e),e);
     				detailsError = GestoreToken.getMessageTokenNonValido(e);
@@ -522,6 +539,9 @@ public class GestoreTokenValidazioneUtilities {
 			jsonCompactVerify = new JsonVerifySignature(p, options);
 		}
 		
+		jsonCompactVerify.setJksPasswordRequired(DBUtils.isTruststoreJksPasswordRequired());
+		jsonCompactVerify.setPkcs12PasswordRequired(DBUtils.isTruststorePkcs12PasswordRequired());
+		
 		return jsonCompactVerify;
 	}
 	
@@ -550,8 +570,10 @@ public class GestoreTokenValidazioneUtilities {
 		}
 		inject.inject(p);
 		
-		jsonDecrypt = new JsonDecrypt(p, options);
-				
+		jsonDecrypt = new JsonDecrypt(p, options, 
+				DBUtils.isKeystoreJksPasswordRequired(), 
+				DBUtils.isKeystorePkcs12PasswordRequired());
+		
 		return jsonDecrypt;
 	}
 	
@@ -1907,6 +1929,7 @@ public class GestoreTokenValidazioneUtilities {
 			}
 			if(httpsClient) {
 				sslClientConfig = policyGestioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+				TokenUtilities.injectSameKeystoreForHttpsClient(sslConfig, sslClientConfig);
 				resolveDynamicProperyValues(sslClientConfig, dynamicMap, pddContext);
 			}
 		}

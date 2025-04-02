@@ -43,11 +43,11 @@ public class MerlinKeystoreCache extends AbstractKeystoreCache<MerlinKeystore> {
 			return new MerlinKeystore(propertyFilePath);
 		}
 		else if(params.length==1){
-			if( ! (params[0] instanceof String) && ! (params[0] instanceof BYOKRequestParams) ){
+			if( params[0]!=null && ! (params[0] instanceof String) && ! (params[0] instanceof BYOKRequestParams) ){
 				throw new SecurityException("Param[0] must be String (passwordPrivateKey) or BYOKRequestParams");
 			}
 			String propertyFilePath = key;
-			if(params[0] instanceof String) {
+			if(params[0]==null || params[0] instanceof String) {
 				String passwordPrivateKey = (String) params[0];
 				return new MerlinKeystore(propertyFilePath, passwordPrivateKey);
 			}
@@ -60,11 +60,11 @@ public class MerlinKeystoreCache extends AbstractKeystoreCache<MerlinKeystore> {
 			if( ! (params[0] instanceof String) ){
 				throw new SecurityException("Param[0] must be String (tipoStore or passwordPrivateKey)");
 			}
-			if( ! (params[1] instanceof String) && ! (params[1] instanceof BYOKRequestParams) ){
+			if( params[1]!=null && ! (params[1] instanceof String) && ! (params[1] instanceof BYOKRequestParams) ){
 				throw new SecurityException("Param[1] must be String (passwordStore) or BYOKRequestParams");
 			}
 			String pathStore = key;
-			if( (params[1] instanceof String) ){
+			if( params[1]==null || (params[1] instanceof String) ){
 				String tipoStore = (String) params[0];
 				String passwordStore = (String) params[1];
 				return new MerlinKeystore(pathStore, tipoStore, passwordStore);
@@ -77,16 +77,16 @@ public class MerlinKeystoreCache extends AbstractKeystoreCache<MerlinKeystore> {
 		}
 		else if(params.length==3){
 			if(params[0] instanceof String) {
-				if( ! (params[1] instanceof String) ){
+				if(params[1]!=null && ! (params[1] instanceof String) ){
 					throw new SecurityException("Param[1] must be String (passwordStore)");
 				}
-				if( ! (params[2] instanceof String) && ! (params[2] instanceof BYOKRequestParams) ){
+				if(params[2] !=null && ! (params[2] instanceof String) && ! (params[2] instanceof BYOKRequestParams) ){
 					throw new SecurityException("Param[2] must be String (passwordPrivateKey) or BYOKRequestParams");
 				}
 				String pathStore = key;
 				String tipoStore = (String) params[0];
 				String passwordStore = (String) params[1];
-				if(params[2] instanceof String) {
+				if(params[2]==null || params[2] instanceof String) {
 					String passwordPrivateKey = (String) params[2];
 					return new MerlinKeystore(pathStore, tipoStore, passwordStore, passwordPrivateKey);
 				}
@@ -99,7 +99,7 @@ public class MerlinKeystoreCache extends AbstractKeystoreCache<MerlinKeystore> {
 				if( ! (params[1] instanceof String) ){
 					throw new SecurityException("Param[1] must be String (tipoStore)");
 				}
-				if( ! (params[2] instanceof String) ){
+				if( params[2]!=null && ! (params[2] instanceof String) ){
 					throw new SecurityException("Param[2] must be String (passwordStore)");
 				}
 				byte [] store = (byte[]) params[0];
@@ -119,16 +119,16 @@ public class MerlinKeystoreCache extends AbstractKeystoreCache<MerlinKeystore> {
 				if( ! (params[1] instanceof String) ){
 					throw new SecurityException("Param[1] must be String (tipoStore)");
 				}
-				if( ! (params[2] instanceof String) ){
+				if( params[2]!=null && ! (params[2] instanceof String) ){
 					throw new SecurityException("Param[2] must be String (passwordStore)");
 				}
-				if( ! (params[3] instanceof String) && ! (params[3] instanceof BYOKRequestParams) ){
+				if( params[3]!=null && ! (params[3] instanceof String) && ! (params[3] instanceof BYOKRequestParams) ){
 					throw new SecurityException("Param[3] must be String (passwordPrivateKey) or BYOKRequestParams");
 				}
 				byte [] store = (byte[]) params[0];
 				String tipoStore = (String) params[1];
 				String passwordStore = (String) params[2];
-				if(params[3] instanceof String) {
+				if(params[3]==null || params[3] instanceof String) {
 					String passwordPrivateKey = (String) params[3];
 					return new MerlinKeystore(store, tipoStore, passwordStore, passwordPrivateKey);
 				}
@@ -138,10 +138,10 @@ public class MerlinKeystoreCache extends AbstractKeystoreCache<MerlinKeystore> {
 				}
 			}
 			else {
-				if( ! (params[1] instanceof String) ){
+				if( params[1]!=null && ! (params[1] instanceof String) ){
 					throw new SecurityException("Param[1] must be String (passwordStore)");
 				}
-				if( ! (params[2] instanceof String) ){
+				if( params[2]!=null && ! (params[2] instanceof String) ){
 					throw new SecurityException("Param[2] must be String (passwordPrivateKey)");
 				}
 				if( ! (params[3] instanceof BYOKRequestParams) ){
@@ -162,10 +162,10 @@ public class MerlinKeystoreCache extends AbstractKeystoreCache<MerlinKeystore> {
 			if( ! (params[1] instanceof String) ){
 				throw new SecurityException("Param[1] must be String (tipoStore)");
 			}
-			if( ! (params[2] instanceof String) ){
+			if( params[2]!=null && ! (params[2] instanceof String) ){
 				throw new SecurityException("Param[2] must be String (passwordStore)");
 			}
-			if( ! (params[3] instanceof String) ){
+			if( params[3]!=null && ! (params[3] instanceof String) ){
 				throw new SecurityException("Param[3] must be String (passwordPrivateKey)");
 			}
 			if( ! (params[4] instanceof BYOKRequestParams) ){

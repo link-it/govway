@@ -1235,6 +1235,40 @@ public class ControlStationCore {
 	public boolean isVisualizzaCampiPasswordComeLock() {
 		return this.visualizzaCampiPasswordComeLock;
 	}
+	
+	/** Keystore */
+	private boolean isKeystoreJksPasswordRequired;
+	public boolean isKeystoreJksPasswordRequired() {
+		return this.isKeystoreJksPasswordRequired;
+	}
+	private boolean isKeystoreJksKeyPasswordRequired;
+	public boolean isKeystoreJksKeyPasswordRequired() {
+		return this.isKeystoreJksKeyPasswordRequired;
+	}
+	private boolean isKeystorePkcs12PasswordRequired;
+	public boolean isKeystorePkcs12PasswordRequired() {
+		return this.isKeystorePkcs12PasswordRequired;
+	}
+	private boolean isKeystorePkcs12KeyPasswordRequired;
+	public boolean isKeystorePkcs12KeyPasswordRequired() {
+		return this.isKeystorePkcs12KeyPasswordRequired;
+	}
+	private boolean isTruststoreJksPasswordRequired;
+	public boolean isTruststoreJksPasswordRequired() {
+		return this.isTruststoreJksPasswordRequired;
+	}
+	private boolean isTruststorePkcs12PasswordRequired;
+	public boolean isTruststorePkcs12PasswordRequired() {
+		return this.isTruststorePkcs12PasswordRequired;
+	}
+	private boolean isLoadCertificateWizardJksPasswordRequiredRequired;
+	public boolean isLoadCertificateWizardJksPasswordRequiredRequired() {
+		return this.isLoadCertificateWizardJksPasswordRequiredRequired;
+	}
+	private boolean isLoadCertificateWizardPkcs12PasswordRequiredRequired;
+	public boolean isLoadCertificateWizardPkcs12PasswordRequiredRequired() {
+		return this.isLoadCertificateWizardPkcs12PasswordRequiredRequired;
+	}
 
 	/** OCSP */
 	private boolean isOCSPPolicyChoiceConnettoreHTTPSVerificaServerDisabilitata = false;
@@ -2692,6 +2726,16 @@ public class ControlStationCore {
 		/** Tracciamento */
 		this.isTracciamentoDatabaseRispostaConsegnataSelectEnabled = core.isTracciamentoDatabaseRispostaConsegnataSelectEnabled;
 		
+		/** Keystore */
+		this.isKeystoreJksPasswordRequired = core.isKeystoreJksPasswordRequired;
+		this.isKeystoreJksKeyPasswordRequired = core.isKeystoreJksKeyPasswordRequired;
+		this.isKeystorePkcs12PasswordRequired = core.isKeystorePkcs12PasswordRequired;
+		this.isKeystorePkcs12KeyPasswordRequired = core.isKeystorePkcs12KeyPasswordRequired;
+		this.isTruststoreJksPasswordRequired = core.isTruststoreJksPasswordRequired;
+		this.isTruststorePkcs12PasswordRequired = core.isTruststorePkcs12PasswordRequired;
+		this.isLoadCertificateWizardJksPasswordRequiredRequired = core.isLoadCertificateWizardJksPasswordRequiredRequired;
+		this.isLoadCertificateWizardPkcs12PasswordRequiredRequired = core.isLoadCertificateWizardPkcs12PasswordRequiredRequired;
+		
 		/** Opzioni di visualizzazione */
 		this.showCorrelazioneAsincronaInAccordi = core.showCorrelazioneAsincronaInAccordi;
 		this.showFlagPrivato = core.showFlagPrivato;
@@ -3125,6 +3169,14 @@ public class ControlStationCore {
 			this.isClusterAsyncUpdate = consoleProperties.isClusterAsyncUpdate();
 			this.clusterAsyncUpdateCheckInterval = consoleProperties.getClusterAsyncUpdateCheckInterval();
 			this.isTracciamentoDatabaseRispostaConsegnataSelectEnabled = consoleProperties.isTracciamentoDatabaseRispostaConsegnataSelectEnabled();
+			this.isKeystoreJksPasswordRequired = consoleProperties.isKeystoreJksPasswordRequired();
+			this.isKeystoreJksKeyPasswordRequired = consoleProperties.isKeystoreJksKeyPasswordRequired();
+			this.isKeystorePkcs12PasswordRequired = consoleProperties.isKeystorePkcs12PasswordRequired();
+			this.isKeystorePkcs12KeyPasswordRequired = consoleProperties.isKeystorePkcs12KeyPasswordRequired();
+			this.isTruststoreJksPasswordRequired = consoleProperties.isTruststoreJksPasswordRequired();
+			this.isTruststorePkcs12PasswordRequired = consoleProperties.isTruststorePkcs12PasswordRequired();
+			this.isLoadCertificateWizardJksPasswordRequiredRequired = consoleProperties.isLoadCertificateWizardJksPasswordRequiredRequired();
+			this.isLoadCertificateWizardPkcs12PasswordRequiredRequired = consoleProperties.isLoadCertificateWizardPkcs12PasswordRequiredRequired();
 		
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();

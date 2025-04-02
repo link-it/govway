@@ -30,6 +30,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rt.security.rs.RSSecurityConstants;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -508,7 +509,16 @@ public class TokenUtilities {
 				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-			throw new TokenException("JWT Signature keystore password undefined");
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12PasswordRequired();
+			}
+			if(required) {
+				throw new TokenException("JWT Signature keystore password undefined");
+			}
 		}
 		String keyAlias = policy.getJwtSignKeyAlias();
 		if(keyAlias==null && 
@@ -522,7 +532,16 @@ public class TokenUtilities {
 				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-			throw new TokenException("JWT Signature key password undefined");
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksKeyPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+			}
+			if(required) {
+				throw new TokenException("JWT Signature key password undefined");
+			}
 		}
 		
 		String keystoreByokPolicy = policy.getJwtSignKeystoreByokPolicy();
@@ -1093,5 +1112,21 @@ public class TokenUtilities {
 			}
 		}
 		return forwardProxy;
+	}
+	
+	
+	
+	public static void injectSameKeystoreForHttpsClient(Properties sslConfig, Properties sslClientConfig) {
+		if(!sslClientConfig.containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION) && !sslClientConfig.containsKey(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_PASSWORD)) {
+			// modalita usa valori del truststore
+			String trustStoreLocation = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_LOCATION); 
+			String trustStorePassword = sslConfig.getProperty(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+			if(trustStoreLocation!=null) {
+				sslClientConfig.put(CostantiConnettori.CONNETTORE_HTTPS_KEY_STORE_LOCATION, trustStoreLocation);
+				if(trustStorePassword!=null) {
+					sslClientConfig.put(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD, trustStorePassword);
+				}
+			}
+		}
 	}
 }

@@ -45,7 +45,7 @@ public class MerlinTruststoreCache extends AbstractKeystoreCache<MerlinTruststor
 			if( ! (params[0] instanceof String) ){
 				throw new SecurityException("Param[0] must be String (tipoStore)");
 			}
-			if( ! (params[1] instanceof String) ){
+			if( params[1]!=null && ! (params[1] instanceof String) ){
 				throw new SecurityException("Param[1] must be String (passwordStore)");
 			}
 			String pathStore = key;
@@ -60,7 +60,7 @@ public class MerlinTruststoreCache extends AbstractKeystoreCache<MerlinTruststor
 			if( ! (params[1] instanceof String) ){
 				throw new SecurityException("Param[1] must be String (tipoStore)");
 			}
-			if( ! (params[2] instanceof String) ){
+			if( params[2]!=null && ! (params[2] instanceof String) ){
 				throw new SecurityException("Param[2] must be String (passwordStore)");
 			}
 			byte [] store = (byte[]) params[0];

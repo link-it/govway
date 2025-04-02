@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.mvc.properties.Item;
 import org.openspcoop2.core.mvc.properties.constants.ItemType;
 import org.openspcoop2.core.mvc.properties.provider.IProvider;
@@ -32,6 +33,7 @@ import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
@@ -173,14 +175,16 @@ public abstract class AbstractSecurityProvider implements IProvider {
 	}
 	private String dynamicUpdateStorePassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		String type = SecurityConstants.KEYSTORE_TYPE;
+		boolean keystore = true;
 		if(SecurityConstants.SECRETKEYSTORE_PASSWORD.equals(item.getName())) {
 			type = SecurityConstants.SECRETKEYSTORE_TYPE;
 		}
 		else if(SecurityConstants.TRUSTSTORE_PASSWORD.equals(item.getName())) {
 			type = SecurityConstants.TRUSTSTORE_TYPE;
+			keystore = false;
 		}
 		
-		return processStorePassword(type, items, mapNameValue, item, actualValue);
+		return processStorePassword(keystore, type, items, mapNameValue, item, actualValue);
 	}
 	private String dynamicUpdateStoreKeyPassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		if(!HSMUtils.isHsmConfigurableKeyPassword()) {
@@ -271,7 +275,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 		}
 	}
 	
-	public static String processStorePassword(String type, List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+	public static String processStorePassword(boolean keystore, String type, List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		if(items!=null && !items.isEmpty()) {
 			for (Object itemCheck : items) {
 				/**System.out.println("CHECK ["+itemCheck.getClass().getName()+"]");*/
@@ -286,6 +290,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 											
 					if(find) {
 						/**System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");*/
+						processStorePasswordRequired(keystore, value, item);
 						return processStorePassword(value, item, actualValue);
 					}
 				}
@@ -306,6 +311,14 @@ public abstract class AbstractSecurityProvider implements IProvider {
 			return item.getValue();
 		}
 	}
+	private static void processStorePasswordRequired(boolean keystore, String value, Item item) {
+		if(KeystoreType.JKS.isType(value)) {
+			item.setRequired(keystore ? DBUtils.isKeystoreJksPasswordRequired() : DBUtils.isTruststoreJksPasswordRequired());
+		}
+		else if(KeystoreType.PKCS12.isType(value)) {
+			item.setRequired(keystore ? DBUtils.isKeystorePkcs12PasswordRequired() : DBUtils.isTruststorePkcs12PasswordRequired());
+		}
+	}
 	
 	public static String processStoreKeyPassword(String type, List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		if(items!=null && !items.isEmpty()) {
@@ -322,6 +335,7 @@ public abstract class AbstractSecurityProvider implements IProvider {
 											
 					if(find) {
 						/**System.out.println("TROVATO TYPE ["+mapNameValue.get(SecurityConstants.KEYSTORE_TYPE)+"]");*/
+						processStoreKeyPasswordRequired(value, item);
 						return processStoreKeyPassword(value, item, actualValue);
 					}
 				}
@@ -340,6 +354,14 @@ public abstract class AbstractSecurityProvider implements IProvider {
 			item.setValue(actualValue);
 			item.setType(ItemType.LOCK);
 			return item.getValue();
+		}
+	}
+	private static void processStoreKeyPasswordRequired(String value, Item item) {
+		if(KeystoreType.JKS.isType(value)) {
+			item.setRequired(DBUtils.isKeystoreJksKeyPasswordRequired());
+		}
+		else if(KeystoreType.PKCS12.isType(value)) {
+			item.setRequired(DBUtils.isKeystorePkcs12PasswordRequired());
 		}
 	}
 	

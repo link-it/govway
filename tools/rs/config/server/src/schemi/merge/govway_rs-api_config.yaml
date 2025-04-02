@@ -9639,7 +9639,6 @@ components:
           - $ref: "#/components/schemas/AuthenticationToken"
     BaseTrustStore:
       required:
-      - "truststore_password"
       - "truststore_path"
       type: "object"
       properties:
@@ -9658,9 +9657,6 @@ components:
           maxLength: 255
           type: "string"
     BaseKeyStore:
-      required:
-      - "key_password"
-      - "keystore_password"
       type: "object"
       properties:
         keystore_password:

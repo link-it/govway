@@ -28,6 +28,7 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.ocsp.OCSPProvider;
@@ -99,10 +100,12 @@ public class ConnettoreHTTPSUtils {
 			prop.setValore(httpstipo);
 			connettore.addProperty(prop);
 	
-			prop = new org.openspcoop2.core.config.Property();
-			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
-			prop.setValore(httpspwd);
-			connettore.addProperty(prop);
+			if(httpspwd!=null && !"".equals(httpspwd)) {
+				prop = new org.openspcoop2.core.config.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+				prop.setValore(httpspwd);
+				connettore.addProperty(prop);
+			}
 			
 			if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
 				prop = new org.openspcoop2.core.config.Property();
@@ -148,10 +151,12 @@ public class ConnettoreHTTPSUtils {
 
 
 			if (ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT.equals(httpskeystore)) {
-				prop = new org.openspcoop2.core.config.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
-				prop.setValore(httpspwdprivatekeytrust);
-				connettore.addProperty(prop);
+				if(httpspwdprivatekeytrust!=null && !"".equals(httpspwdprivatekeytrust)) {
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
+					prop.setValore(httpspwdprivatekeytrust);
+					connettore.addProperty(prop);
+				}
 
 				prop = new org.openspcoop2.core.config.Property();
 				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
@@ -163,10 +168,12 @@ public class ConnettoreHTTPSUtils {
 				prop.setValore(httpstipo);
 				connettore.addProperty(prop);
 
-				prop = new org.openspcoop2.core.config.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-				prop.setValore(httpspwd);
-				connettore.addProperty(prop);
+				if(httpspwd!=null && !"".equals(httpspwd)) {
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+					prop.setValore(httpspwd);
+					connettore.addProperty(prop);
+				}
 
 			} else {
 				prop = new org.openspcoop2.core.config.Property();
@@ -179,15 +186,19 @@ public class ConnettoreHTTPSUtils {
 				prop.setValore(httpstipokey);
 				connettore.addProperty(prop);
 
-				prop = new org.openspcoop2.core.config.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-				prop.setValore(httpspwdkey);
-				connettore.addProperty(prop);
+				if(httpspwdkey!=null && !"".equals(httpspwdkey)) {
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+					prop.setValore(httpspwdkey);
+					connettore.addProperty(prop);
+				}
 
-				prop = new org.openspcoop2.core.config.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
-				prop.setValore(httpspwdprivatekey);
-				connettore.addProperty(prop);
+				if(httpspwdprivatekey!=null && !"".equals(httpspwdprivatekey)) {
+					prop = new org.openspcoop2.core.config.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
+					prop.setValore(httpspwdprivatekey);
+					connettore.addProperty(prop);
+				}
 
 			}
 			
@@ -270,10 +281,12 @@ public class ConnettoreHTTPSUtils {
 			prop.setValore(httpstipo);
 			connettore.addProperty(prop);
 	
-			prop = new org.openspcoop2.core.registry.Property();
-			prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
-			prop.setValore(httpspwd);
-			connettore.addProperty(prop);
+			if(httpspwd!=null && !"".equals(httpspwd)) {
+				prop = new org.openspcoop2.core.registry.Property();
+				prop.setNome(CostantiDB.CONNETTORE_HTTPS_TRUST_STORE_PASSWORD);
+				prop.setValore(httpspwd);
+				connettore.addProperty(prop);
+			}
 	
 			if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
 				prop = new org.openspcoop2.core.registry.Property();
@@ -320,10 +333,12 @@ public class ConnettoreHTTPSUtils {
 
 
 			if (ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT.equals(httpskeystore)) {
-				prop = new org.openspcoop2.core.registry.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
-				prop.setValore(httpspwdprivatekeytrust);
-				connettore.addProperty(prop);
+				if(httpspwdprivatekeytrust!=null && !"".equals(httpspwdprivatekeytrust)) {
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
+					prop.setValore(httpspwdprivatekeytrust);
+					connettore.addProperty(prop);
+				}
 
 				prop = new org.openspcoop2.core.registry.Property();
 				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_LOCATION);
@@ -335,10 +350,12 @@ public class ConnettoreHTTPSUtils {
 				prop.setValore(httpstipo);
 				connettore.addProperty(prop);
 
-				prop = new org.openspcoop2.core.registry.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-				prop.setValore(httpspwd);
-				connettore.addProperty(prop);
+				if(httpspwd!=null && !"".equals(httpspwd)) {
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+					prop.setValore(httpspwd);
+					connettore.addProperty(prop);
+				}
 
 			} else {
 				prop = new org.openspcoop2.core.registry.Property();
@@ -351,15 +368,19 @@ public class ConnettoreHTTPSUtils {
 				prop.setValore(httpstipokey);
 				connettore.addProperty(prop);
 
-				prop = new org.openspcoop2.core.registry.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
-				prop.setValore(httpspwdkey);
-				connettore.addProperty(prop);
+				if(httpspwdkey!=null && !"".equals(httpspwdkey)) {
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_STORE_PASSWORD);
+					prop.setValore(httpspwdkey);
+					connettore.addProperty(prop);
+				}
 
-				prop = new org.openspcoop2.core.registry.Property();
-				prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
-				prop.setValore(httpspwdprivatekey);
-				connettore.addProperty(prop);
+				if(httpspwdprivatekey!=null && !"".equals(httpspwdprivatekey)) {
+					prop = new org.openspcoop2.core.registry.Property();
+					prop.setNome(CostantiDB.CONNETTORE_HTTPS_KEY_PASSWORD);
+					prop.setValore(httpspwdprivatekey);
+					connettore.addProperty(prop);
+				}
 
 			}
 			
@@ -480,6 +501,7 @@ public class ConnettoreHTTPSUtils {
 		dati.add(de);
 		
 		boolean truststoreHsm = false;
+		String httpstipoDefault = null;
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_TYPE);
@@ -522,6 +544,10 @@ public class ConnettoreHTTPSUtils {
 		else {
 			de.setType(DataElementType.HIDDEN);
 		}
+		if( (httpstipo==null || "".equals(httpstipo)) 
+				&& de.getValues()!=null && de.getValues().length>0) {
+				httpstipoDefault = de.getValues()[0];
+		}
 		dati.add(de);
 
 		de = new DataElement();
@@ -557,7 +583,7 @@ public class ConnettoreHTTPSUtils {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-				de.setRequired(true);	
+				de.setRequired(isStorePasswordRequired(httpstipo, httpstipoDefault, false, false, core));
 				core.getLockUtilities().lock(de, httpspwd);
 			}else{
 				core.getLockUtilities().lockReadOnly(de, httpspwd);
@@ -731,7 +757,7 @@ public class ConnettoreHTTPSUtils {
 		if (httpsstato &&
 				(httpskeystore == null || "".equals(httpskeystore) || httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT))){
 			if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-				de.setRequired(true);	
+				de.setRequired(isStorePasswordRequired(httpstipo, httpstipoDefault, true, true, core));
 				core.getLockUtilities().lock(de, httpspwdprivatekeytrust);
 			}else{
 				core.getLockUtilities().lockReadOnly(de, httpspwdprivatekeytrust);
@@ -747,6 +773,7 @@ public class ConnettoreHTTPSUtils {
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_TYPE);
+		String httpstipokeyDefault = null;
 		if (httpsstato &&
 				(httpskeystore != null && httpskeystore.equals(ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI))) {
 			de.setType(DataElementType.SELECT);
@@ -788,6 +815,10 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 			de.setValue("");
 		}
+		if( (httpstipokey==null || "".equals(httpstipokey)) 
+			&& de.getValues()!=null && de.getValues().length>0) {
+			httpstipokeyDefault = de.getValues()[0];
+		}
 		dati.add(de);
 		
 		de = new DataElement();
@@ -823,7 +854,7 @@ public class ConnettoreHTTPSUtils {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-				de.setRequired(true);	
+				de.setRequired(isStorePasswordRequired(httpstipokey, httpstipokeyDefault, true, false, core));
 				core.getLockUtilities().lock(de, httpspwdkey);
 			}else{
 				core.getLockUtilities().lockReadOnly(de, httpspwdkey);
@@ -844,7 +875,7 @@ public class ConnettoreHTTPSUtils {
 				de.setType(DataElementType.HIDDEN);
 			}
 			else if(!consoleHelper.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)){
-				de.setRequired(true);
+				de.setRequired(isStorePasswordRequired(httpstipokey, httpstipokeyDefault, true, true, core));
 				core.getLockUtilities().lock(de, httpspwdprivatekey);
 			}else{
 				core.getLockUtilities().lockReadOnly(de, httpspwdprivatekey);
@@ -944,6 +975,40 @@ public class ConnettoreHTTPSUtils {
 			de.setType(DataElementType.HIDDEN);
 		}
 		dati.add(de);
+	}
+	private static boolean isStorePasswordRequired(String httpstipo, String httpstipoDefault, boolean keystore, boolean key, ControlStationCore core) {
+		String check = httpstipo;
+		if(httpstipo==null || "".equals(httpstipo)) {
+			check = httpstipoDefault;
+		}
+		
+		if(KeystoreType.JKS.isType(check)) {
+			return isStoreJksPasswordRequired(keystore, key, core);
+		}
+		else if(KeystoreType.PKCS12.isType(check)) {
+			return isStorePkcs12PasswordRequired(keystore, key, core);
+		}
+		else {
+			return true;
+		}
+	}
+	private static boolean isStoreJksPasswordRequired(boolean keystore, boolean key,
+			ControlStationCore core) {
+		if(keystore) {
+			return key ? core.isKeystoreJksKeyPasswordRequired() : core.isKeystoreJksPasswordRequired();
+		}
+		else {
+			return core.isTruststoreJksPasswordRequired();
+		}
+	}
+	private static boolean isStorePkcs12PasswordRequired(boolean keystore, boolean key,
+			ControlStationCore core) {
+		if(keystore) {
+			return key ? core.isKeystorePkcs12KeyPasswordRequired() : core.isKeystorePkcs12PasswordRequired();
+		}
+		else {
+			return core.isTruststorePkcs12PasswordRequired();
+		}
 	}
 	
 	public static void addHTTPSDatiAsHidden(List<DataElement> dati,

@@ -110,8 +110,22 @@ public class JsonDecrypt {
 		this.validityCheck = validityCheck;
 	}
 	
+	private boolean jksPasswordRequired=true;
+	private boolean pkcs12PasswordRequired=true;
+	public void setJksPasswordRequired(boolean jksPasswordRequired) {
+		this.jksPasswordRequired = jksPasswordRequired;
+	}
+	public void setPkcs12PasswordRequired(boolean pkcs12PasswordRequired) {
+		this.pkcs12PasswordRequired = pkcs12PasswordRequired;
+	}	
+	
 	public JsonDecrypt(Properties props, JWTOptions options) throws UtilsException{
+		this(props, options, true, true);
+	}
+	public JsonDecrypt(Properties props, JWTOptions options, boolean jksPasswordRequired, boolean pkcs12PasswordRequired) throws UtilsException{
 		try {
+			this.jksPasswordRequired = jksPasswordRequired;
+			this.pkcs12PasswordRequired = pkcs12PasswordRequired;
 			this.dynamicProvider = JsonUtils.isDynamicProvider(props); // rimuove l'alias
 			if(this.dynamicProvider) {
 				this.properties = props;
@@ -138,7 +152,7 @@ public class JsonDecrypt {
 			JweDecryptionProvider providerBuild = buildProviderFromProperties(props, contentAlgorithm);
 			
 			try {
-				Certificate cert = JsonUtils.getCertificateKey(props);
+				Certificate cert = JsonUtils.getCertificateKey(this.jksPasswordRequired,this.pkcs12PasswordRequired,props);
 				if(cert instanceof X509Certificate) {
 					this.x509Certificate = (X509Certificate) cert;
 				}

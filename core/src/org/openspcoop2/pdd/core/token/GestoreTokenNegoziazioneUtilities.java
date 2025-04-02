@@ -33,6 +33,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -78,6 +79,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.certificate.KeystoreParams;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.byok.BYOKProvider;
 import org.openspcoop2.utils.certificate.byok.BYOKRequestParams;
 import org.openspcoop2.utils.date.DateManager;
@@ -444,6 +446,7 @@ public class GestoreTokenNegoziazioneUtilities {
 			httpsClient = policyNegoziazioneToken.isHttpsAuthentication();
 			if(httpsClient) {
 				sslClientConfig = policyNegoziazioneToken.getProperties().get(Costanti.POLICY_ENDPOINT_SSL_CLIENT_CONFIG);
+				TokenUtilities.injectSameKeystoreForHttpsClient(sslConfig, sslClientConfig);
 			}
 		}
 		
@@ -993,7 +996,16 @@ public class GestoreTokenNegoziazioneUtilities {
 				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-			throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksKeyPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12KeyPasswordRequired();
+			}
+			if(required) {
+				throw new TokenException(GestoreToken.KEY_PASSWORD_UNDEFINED);
+			}
 		}
 		kp.setKeyPassword(keyPassword);
 		
@@ -1035,7 +1047,16 @@ public class GestoreTokenNegoziazioneUtilities {
 				!SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE.equalsIgnoreCase(keystoreType) && 
 				!SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equalsIgnoreCase(keystoreType)) {
-			throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_PASSWORD_UNDEFINED);
+			boolean required = true;
+			if(KeystoreType.JKS.isType(keystoreType)) {
+				required = DBUtils.isKeystoreJksPasswordRequired();
+			}
+			else if(KeystoreType.PKCS12.isType(keystoreType)) {
+				required = DBUtils.isKeystorePkcs12PasswordRequired();
+			}
+			if(required) {
+				throw new TokenException(GestoreToken.KEYSTORE_KEYSTORE_PASSWORD_UNDEFINED);
+			}
 		}
 		kp.setPassword(keystorePassword);
 		

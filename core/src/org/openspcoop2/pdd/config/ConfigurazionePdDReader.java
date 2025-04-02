@@ -6445,26 +6445,20 @@ public class ConfigurazionePdDReader {
 					}
 				}
 				else {	
-					IBYOKUnwrapManager byokUnwrapManager = BYOKUnwrapFactory.getBYOKUnwrapManager(keystoreParams.getByokPolicy(), log);
-					
 					if(keystoreParams.getPath().startsWith(JOSEUtils.HTTP_PROTOCOL) || keystoreParams.getPath().startsWith(JOSEUtils.HTTPS_PROTOCOL)) {
 						byte [] store = getStoreCertificatiTokenPolicy(policy, keystoreParams, log);
-						check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), store, keystoreParams.getType(),
-								keystoreParams.getPassword(), 
-								byokUnwrapManager,
-								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+						check = CertificateUtils.checkTrustStore(keystoreParams.getPath(), store, keystoreParams.getType(), 
+								keystoreParams.getPassword(), keystoreParams.getCrls(), keystoreParams.getOcspPolicy(),keystoreParams.getKeyAlias(),
 								sogliaWarningGiorni, 
-								false, //addCertificateDetails,  
+								false, //addCertificateDetails, 
 								separator, newLine,
 								log);
 					}
 					else {
-						check = CertificateUtils.checkKeyStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(),
-								keystoreParams.getPassword(), 
-								byokUnwrapManager,
-								keystoreParams.getKeyAlias(), keystoreParams.getKeyPassword(),
+						check = CertificateUtils.checkTrustStore(keystoreParams.getPath(), classpathSupported, keystoreParams.getType(), 
+								keystoreParams.getPassword(), keystoreParams.getCrls(), keystoreParams.getOcspPolicy(),keystoreParams.getKeyAlias(),
 								sogliaWarningGiorni, 
-								false, //addCertificateDetails,  
+								false, //addCertificateDetails, 
 								separator, newLine,
 								log);
 					}

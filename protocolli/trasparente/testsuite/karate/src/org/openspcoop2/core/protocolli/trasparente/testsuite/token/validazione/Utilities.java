@@ -203,8 +203,11 @@ public class Utilities extends ConfigLoader {
 			else if(msgError!=null && 
 					(ValidazioneJWTKeystoreDinamicoTest.validazione.equals(api) || 
 							ValidazioneJWTDynamicDiscoveryTest.validazione.equals(api) ||
+							ValidazioneJWTKeystoreSenzaPasswordTest.validazione_dynamic_discovery.equals(api) ||
 							IntrospectionDynamicDiscoveryTest.validazione.equals(api) ||
-							UserInfoDynamicDiscoveryTest.validazione.equals(api))) {
+							IntrospectionKeystoreSenzaPasswordTest.validazione_dynamic_discovery.equals(api) ||
+							UserInfoDynamicDiscoveryTest.validazione.equals(api) ||
+							UserInfoKeystoreSenzaPasswordTest.validazione_dynamic_discovery.equals(api))) {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_TOKEN);
 				code = 401;
 				error = "TokenAuthenticationFailed";
@@ -217,7 +220,10 @@ public class Utilities extends ConfigLoader {
 			verifyOk(response, 200, contentType);
 		}
 					
-		if(!ForwardInformazioniTest.forward.equals(api) && !ForwardInformazioniTest.forwardAlternativeSigner.equals(api)) {
+		if(!ForwardInformazioniTest.forward.equals(api) && 
+				!ForwardInformazioniTest.forwardAlternativeSigner.equals(api) &&
+				!ForwardInformazioniKeystoreSenzaPasswordTest.API_JWS.equals(api) &&
+				!ForwardInformazioniKeystoreSenzaPasswordTest.API_JWE.equals(api)) {
 			DBVerifier.verify(idTransazione, esitoExpected, msgError,
 					credenzialiMittente, mapExpectedTokenInfo);
 		}

@@ -225,6 +225,32 @@ public class ServerProperties  {
 		return Boolean.parseBoolean(this.readProperty(true, "soggettiApplicativi.credenzialiPrincipal.permitSameCredentials"));
 	}
 	
+	public boolean isKeystoreJksPasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "keystore.jks.passwordRequired");
+		return parse(b, true);
+	}
+	public boolean isKeystoreJksKeyPasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "keystore.jks.key.passwordRequired");
+		return parse(b, true);
+	}
+	public boolean isKeystorePkcs12PasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "keystore.pkcs12.passwordRequired");
+		return parse(b, true);
+	}
+	public boolean isKeystorePkcs12KeyPasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "keystore.pkcs12.key.passwordRequired");
+		return parse(b, true);
+	}
+	
+	public boolean isTruststoreJksPasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "truststore.jks.passwordRequired");
+		return parse(b, true);
+	}
+	public boolean isTruststorePkcs12PasswordRequired() throws UtilsException{
+		BooleanNullable b = this.readBooleanProperty(false, "truststore.pkcs12.passwordRequired");
+		return parse(b, true);
+	}
+	
 	public Properties getApiYamlSnakeLimits() throws UtilsException{
 
 		String pName = "api.yaml.snakeLimits";

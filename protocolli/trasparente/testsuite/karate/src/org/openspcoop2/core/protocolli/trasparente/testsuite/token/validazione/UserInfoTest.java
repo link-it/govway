@@ -1561,7 +1561,7 @@ public class UserInfoTest extends ConfigLoader {
 	
 	
 	
-	private static String buildJWT(boolean requiredClaims,
+	static String buildJWT(boolean requiredClaims,
 			List<String> mapExpectedTokenInfo) throws Exception {
 		return buildJWT(requiredClaims,
 				true, true, true, true, true,

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.ConfigurazioneMultitenant;
 import org.openspcoop2.core.config.constants.PortaApplicativaSoggettiFruitori;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -515,6 +516,8 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		String keystoreType = null;
 		boolean keystoreKeyPair = false;
 		boolean keystoreJWK = false;
+		boolean keystoreJks = false;
+		boolean keystorePkcs12 = false;
 		if(typeItemItemValue!=null && typeItemItemValue.getValue()!=null) {
 			keystoreType = typeItemItemValue.getValue();
 			if(hsm && (lHsmTypes==null || !lHsmTypes.contains(keystoreType))) {
@@ -532,6 +535,14 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				keystoreJWK = false;
 				keystoreType = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_DEFAULT_VALUE;
 				typeItemItemValue.setValue(keystoreType);
+			}
+			if(keystoreType==null || "".equals(keystoreType)) {
+				keystoreJks = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS.equals(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_DEFAULT_VALUE);
+				keystorePkcs12 = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12.equals(ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_DEFAULT_VALUE);
+			}
+			else {
+				keystoreJks = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS.equals(keystoreType);
+				keystorePkcs12 = ModIConsoleCostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12.equals(keystoreType);
 			}
 		}
 		
@@ -573,6 +584,13 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		if(keystorePasswordItem!=null) {
 			if(ridefinisci && !hsm && !keystoreKeyPair && !keystoreJWK) {
 				keystorePasswordItem.setType(ConsoleItemType.LOCK);
+				if( 
+						(keystoreJks && !DBUtils.isKeystoreJksPasswordRequired())
+						||
+						(keystorePkcs12 && !DBUtils.isKeystorePkcs12PasswordRequired())
+				) {
+					keystorePasswordItem.setRequired(false);
+				}
 			}
 			else {
 				keystorePasswordItem.setType(ConsoleItemType.LOCK_HIDDEN);
@@ -637,7 +655,13 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 			if(ridefinisci && (!hsm || HSMUtils.isHsmConfigurableKeyPassword()) && !keystoreJWK) {
 				keyPasswordItem.setType(ConsoleItemType.LOCK);
 				
-				if(keystoreKeyPair) {
+				if(
+						keystoreKeyPair 
+						||
+						(keystoreJks && !DBUtils.isKeystoreJksKeyPasswordRequired())
+						||
+						(keystorePkcs12 && !DBUtils.isKeystorePkcs12KeyPasswordRequired())
+				) {
 					keyPasswordItem.setRequired(false);
 				}
 			}
@@ -729,7 +753,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				// Verifico chiave privata
 				if(archive!=null) {
 					KeyStore ks = KeystoreUtils.readKeystore(archive, archiveType.name(), keystorePasswordItemValue.getValue());
-					ks.getKey(keyAliasItemValue.getValue(), keyPasswordItemValue.getValue().toCharArray());
+					ks.getKey(keyAliasItemValue.getValue(), keyPasswordItemValue.getValue()!=null ? keyPasswordItemValue.getValue().toCharArray() : "".toCharArray());
 				}
 			}
 		}
@@ -999,6 +1023,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 		boolean hsm = false;
 		boolean remoteStore = false;
 		boolean jwk = false;
+		boolean jks = false;
 		AbstractConsoleItem<?> typeItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), 
 						ssl ? ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_ID
@@ -1050,6 +1075,7 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				hsm = HSMUtils.isKeystoreHSM(typeItemValue.getValue());
 				if(!hsm) {
 					jwk = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JWK.equals(typeItemValue.getValue());
+					jks = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS.equals(typeItemValue.getValue());
 					if(!jwk &&
 						remoteStoreConfig!=null && !remoteStoreConfig.isEmpty()) {
 						for (RemoteStoreConfig rsc : remoteStoreConfig) {
@@ -1094,10 +1120,17 @@ public class ModIDynamicConfigurationKeystoreUtilities {
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), 
 						passwordId);
 		passwordItem.setType(password ? ConsoleItemType.LOCK : ConsoleItemType.LOCK_HIDDEN);
-		if(password)
-			passwordItem.setRequired(requiredValue);
-		else 
+		if(password) {
+			if(jks && !DBUtils.isTruststoreJksPasswordRequired()) {
+				passwordItem.setRequired(false);
+			}
+			else {
+				passwordItem.setRequired(requiredValue);
+			}
+		}
+		else { 
 			passwordItem.setRequired(false);
+		}
 		
 		StringProperty passwordItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, 
 				passwordId);

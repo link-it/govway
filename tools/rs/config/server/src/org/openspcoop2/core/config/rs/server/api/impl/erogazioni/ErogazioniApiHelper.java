@@ -244,7 +244,7 @@ public class ErogazioniApiHelper {
 						registryReader, configRegistryReader, oldIdAps);
 				
 			}catch(ProtocolException e){
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
 		}
 	}
@@ -269,7 +269,7 @@ public class ErogazioniApiHelper {
 						registryReader, configRegistryReader, id);
 				
 			}catch(ProtocolException e){
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e.getMessage());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}
 		}
 	}

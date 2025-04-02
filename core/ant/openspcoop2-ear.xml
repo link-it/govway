@@ -28,7 +28,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.2.1-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.11.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-4.1.0-gov4j-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-4.1.0-gov4j-2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-4.1.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-4.1.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jakarta.ws.rs-api-3.1.0.jar"/>
@@ -76,8 +76,8 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-bindings-3.0.3.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-integration-3.0.3.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-policy-3.0.3.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-common-3.0.3-gov4j-2.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-3.0.3-gov4j-2.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-common-3.0.3-gov4j-3.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-3.0.3-gov4j-3.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-3.0.3.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-3.0.3.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-7.1.0.jar"/>	

@@ -430,7 +430,8 @@ public class SSLUtilities {
 						}
 						keystore.load(null); // inizializza il keystore
 						keystore.setKeyEntry(sslConfig.getKeyAlias(), key, 
-								sslConfig.getKeyPassword().toCharArray(), keystoreParam.getCertificateChain(sslConfig.getKeyAlias()));
+								sslConfig.getKeyPassword()!=null ? sslConfig.getKeyPassword().toCharArray() : "".toCharArray(), 
+								keystoreParam.getCertificateChain(sslConfig.getKeyAlias()));
 					}
 					else {
 						keystore = keystoreParam;
@@ -444,28 +445,27 @@ public class SSLUtilities {
 					//else {*/
 					keyManagerFactory = KeyManagerFactory.getInstance(sslConfig.getKeyManagementAlgorithm());
 					
-					keyManagerFactory.init(keystore, sslConfig.getKeyPassword().toCharArray());
+					keyManagerFactory.init(keystore, sslConfig.getKeyPassword()!=null ? sslConfig.getKeyPassword().toCharArray() : "".toCharArray());
 					km = keyManagerFactory.getKeyManagers();
-					if(!oldMethodKeyAlias && sslConfig.getKeyAlias()!=null) {
-						if(km!=null && km.length>0 && km[0]!=null && km[0] instanceof X509KeyManager) {
+					if(!oldMethodKeyAlias && sslConfig.getKeyAlias()!=null &&
+						km!=null && km.length>0 && km[0]!=null && km[0] instanceof X509KeyManager) {
 							
-							String alias = sslConfig.getKeyAlias();
-							
-							// Fix case insensitive
-							Enumeration<String> enAliases = keystore.aliases();
-							if(enAliases!=null) {
-								while (enAliases.hasMoreElements()) {
-									String a = (String) enAliases.nextElement();
-									if(a.equalsIgnoreCase(alias)) {
-										alias = a; // uso quello presente nel keystore
-										break;
-									}
+						String alias = sslConfig.getKeyAlias();
+						
+						// Fix case insensitive
+						Enumeration<String> enAliases = keystore.aliases();
+						if(enAliases!=null) {
+							while (enAliases.hasMoreElements()) {
+								String a = enAliases.nextElement();
+								if(a.equalsIgnoreCase(alias)) {
+									alias = a; // uso quello presente nel keystore
+									break;
 								}
 							}
-							
-							X509KeyManager wrapperX509KeyManager = new SSLX509ManagerForcedClientAlias(alias, (X509KeyManager)km[0] );
-							km[0] = wrapperX509KeyManager;
 						}
+						
+						X509KeyManager wrapperX509KeyManager = new SSLX509ManagerForcedClientAlias(alias, (X509KeyManager)km[0] );
+						km[0] = wrapperX509KeyManager;
 					}
 					bfLog.append("Gestione keystore effettuata\n");
 				}catch(Throwable e) {
@@ -490,7 +490,7 @@ public class SSLUtilities {
 				bfLog.append("Gestione truststore...\n");
 				bfLog.append("\tTruststore type["+sslConfig.getTrustStoreType()+"]\n");
 				bfLog.append("\tTruststore location["+sslConfig.getTrustStoreLocation()+"]\n");
-				//bfLog.append("\tTruststore password["+sslConfig.getTrustStorePassword()+"]\n");
+				/**bfLog.append("\tTruststore password["+sslConfig.getTrustStorePassword()+"]\n");*/
 				bfLog.append("\tTruststore trustManagementAlgorithm["+sslConfig.getTrustManagementAlgorithm()+"]\n");
 				String location = null;
 				try {

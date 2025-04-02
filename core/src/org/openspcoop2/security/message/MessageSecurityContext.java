@@ -23,6 +23,7 @@
 package org.openspcoop2.security.message;
 
 import java.io.IOException;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,6 +42,7 @@ import jakarta.xml.soap.SOAPPart;
 
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
+import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
@@ -59,11 +61,13 @@ import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.security.SecurityException;
+import org.openspcoop2.security.keystore.KeystoreConstants;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.saml.SAMLConstants;
 import org.openspcoop2.security.message.utils.EncryptionBean;
 import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
@@ -579,7 +583,8 @@ public abstract class MessageSecurityContext{
     			
     			HashMap<String, String> mapAliasToPassword = new HashMap<>();
     			
-    			if(props.containsKey(SecurityConstants.SIGNATURE_PASSWORD)) {
+    			if(props.containsKey(SecurityConstants.SIGNATURE_PASSWORD) ||
+    					!isPasswordRequired(props, SecurityConstants.SIGNATURE_PROPERTY_REF_ID) ) {
     				String password = (String) props.get(SecurityConstants.SIGNATURE_PASSWORD);
     				String alias = null;
     				if(props.containsKey(SecurityConstants.SIGNATURE_USER)) {
@@ -593,7 +598,8 @@ public abstract class MessageSecurityContext{
     				}
     			}
     			
-    			if(props.containsKey(SecurityConstants.ENCRYPTION_PASSWORD)) {
+    			if(props.containsKey(SecurityConstants.ENCRYPTION_PASSWORD) ||
+    					!isPasswordRequired(props, SecurityConstants.ENCRYPTION_PROPERTY_REF_ID) ) {
     				String password = (String) props.get(SecurityConstants.ENCRYPTION_PASSWORD);
     				String alias = null;
     				if(props.containsKey(SecurityConstants.ENCRYPTION_USER)) {
@@ -607,7 +613,8 @@ public abstract class MessageSecurityContext{
     				}
     			}
 
-    			if(props.containsKey(SecurityConstants.DECRYPTION_PASSWORD)) {
+    			if(props.containsKey(SecurityConstants.DECRYPTION_PASSWORD) ||
+    					!isPasswordRequired(props, SecurityConstants.DECRYPTION_PROPERTY_REF_ID) ) {
     				String password = (String) props.get(SecurityConstants.DECRYPTION_PASSWORD);
     				String alias = null;
     				if(props.containsKey(SecurityConstants.DECRYPTION_USER)) {
@@ -654,6 +661,32 @@ public abstract class MessageSecurityContext{
     	}catch(Exception e){
     		throw new SecurityException(e.getMessage(),e);
     	}
+    }
+    
+    private static boolean isPasswordRequired(Map<String, Object> props, String refId) {
+    	Object o = props.get(refId);
+    	Properties p = null;
+    	if(o instanceof Properties) {
+    		p = (Properties) o;
+    	}
+		return isPasswordRequired(p, true);
+    }
+    public static boolean isPasswordRequired(Properties pr, boolean key) {
+    	String keystoreType = null;
+    	keystoreType = pr!=null ? pr.getProperty(KeystoreConstants.PROPERTY_KEYSTORE_TYPE) : null;
+    	if(keystoreType!=null){
+			keystoreType = keystoreType.trim();
+		}else{
+			keystoreType = KeyStore.getDefaultType();
+		}
+		boolean required = true;
+		if(KeystoreType.JKS.isType(keystoreType)) {
+			required = key ? DBUtils.isKeystoreJksKeyPasswordRequired() : DBUtils.isKeystoreJksPasswordRequired();
+		}
+		else if(KeystoreType.PKCS12.isType(keystoreType)) {
+			required = key ? DBUtils.isKeystorePkcs12KeyPasswordRequired() : DBUtils.isKeystorePkcs12PasswordRequired();
+		}
+		return required;
     }
     
     public static CallbackHandler newCallbackHandler(Map<String, String> mapAliasToPassword) {

@@ -1619,7 +1619,7 @@ public class RestTest extends ConfigLoader {
 				tipoTest, msgErrore,
 				 map);
 	}
-	private static HttpResponse _test(
+	static HttpResponse _test(
 			TipoServizio tipoServizio,String api, String operazione,
 			String tipoTest, String msgErrore,
 			AAHeaderMap map) throws Exception {

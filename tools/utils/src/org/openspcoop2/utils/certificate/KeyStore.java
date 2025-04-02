@@ -111,7 +111,7 @@ public class KeyStore {
 					key = this.keystoreArchive.getKey(alias, password.toCharArray());
 				}
 				else {
-					key = this.keystoreArchive.getKey(alias, null);
+					key = this.keystoreArchive.getKey(alias, "".toCharArray());
 				}
 				if(key==null) {
 					throw new UtilsException("Not found");

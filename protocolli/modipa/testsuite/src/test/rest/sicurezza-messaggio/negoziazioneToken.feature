@@ -423,6 +423,26 @@ And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'
 
 
+@negoziazioneViaTokenPolicySecurity03Ok_keystoreSenzaPassword
+Scenario Outline: Test negoziazione ok tramite l'utilizzo di un '<tipo-test>', definito nella token policy, su una integrity 01 senza password nel keystore e/o nella chiave a seconda del tipo di test
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/DemoNegoziazioneTokenSicurezzaMessaggio03ViaTokenPolicyKeystoreSenzaPassword/v1"
+And path '<tipo-test>'
+And request read('request.json')
+And header govway-testsuite-role = 'undefined'
+And header tiponegoziazionetest = 'Fruizione03ViaTokenPolicy'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| tipo-test |
+| keystoreJksNoPassword-KeyNoPassword |
+| keystoreJksNoPassword-KeyWithPassword |
+| keystorePkcs12NoPassword-KeyNoPassword |
+| keystorePkcs12NoPassword-KeyWithPassword |
 
 @negoziazioneViaTokenPolicySecurity04JWKOk
 Scenario: Test negoziazione ok tramite l'utilizzo di un keystore JWKS definito nella token policy, su una integrity 02'

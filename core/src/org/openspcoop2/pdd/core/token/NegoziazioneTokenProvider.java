@@ -901,8 +901,10 @@ public class NegoziazioneTokenProvider implements IProvider {
 	}
 	private String dynamicUpdateStorePassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
+		boolean keystore = true;
 		if(Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
+			keystore = false;
 		}
 		else if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
@@ -917,7 +919,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			}
 		}
 		
-		return AbstractSecurityProvider.processStorePassword(type, items, mapNameValue, item, actualValue);
+		return AbstractSecurityProvider.processStorePassword(keystore, type, items, mapNameValue, item, actualValue);
 	}
 	private String dynamicUpdateStoreKeyPassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;

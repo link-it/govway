@@ -48,7 +48,7 @@ public class KeystoreUtils {
 		
 		try (ByteArrayInputStream bin = new ByteArrayInputStream(keystoreBytes)){
 			java.security.KeyStore keystore = java.security.KeyStore.getInstance(tipoKeystore);
-			keystore.load(bin, passwordKeystore!=null ? passwordKeystore.toCharArray() : null);
+			keystore.load(bin, passwordKeystore!=null ? passwordKeystore.toCharArray() : "".toCharArray());
 			return keystore;
 		}catch(Exception e){
 			
@@ -57,7 +57,7 @@ public class KeystoreUtils {
 				Provider p = Security.getProvider(org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME);
 				if(p!=null) {
 					java.security.KeyStore keystore = java.security.KeyStore.getInstance(tipoKeystore, p);
-					keystore.load(bin, passwordKeystore!=null ? passwordKeystore.toCharArray() : null);
+					keystore.load(bin, passwordKeystore!=null ? passwordKeystore.toCharArray() : "".toCharArray());
 					return keystore;
 				}
 			}catch(Exception eFix){

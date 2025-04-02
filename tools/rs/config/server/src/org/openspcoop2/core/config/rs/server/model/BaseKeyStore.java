@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class BaseKeyStore  {
   
-  @Schema(example = "pwd", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(example = "pwd", description = "")
   private String keystorePassword = null;
   
-  @Schema(example = "pwd", requiredMode = Schema.RequiredMode.REQUIRED, description = "password della chiave privata")
+  @Schema(example = "pwd", description = "password della chiave privata")
  /**
    * password della chiave privata  
   **/
@@ -49,7 +49,6 @@ public class BaseKeyStore  {
    * @return keystorePassword
   **/
   @JsonProperty("keystore_password")
-  @NotNull
   @Valid
   public String getKeystorePassword() {
     return this.keystorePassword;
@@ -69,7 +68,6 @@ public class BaseKeyStore  {
    * @return keyPassword
   **/
   @JsonProperty("key_password")
-  @NotNull
   @Valid
   public String getKeyPassword() {
     return this.keyPassword;
