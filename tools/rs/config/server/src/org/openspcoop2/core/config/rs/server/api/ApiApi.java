@@ -364,7 +364,7 @@ public interface ApiApi  {
     public ListaApiAllegati findAllApiAllegati(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") @DefaultValue("0") Integer offset);
 
     /**
-     * Elenco servizi di una API
+     * Elenco azioni di un servizio di una API
      *
      * Questa operazione consente di ottenere le azioni di un servizio della API identificata dal nome e dalla versione
      *
@@ -372,7 +372,7 @@ public interface ApiApi  {
     @GET
     @Path("/api/{nome}/{versione}/servizi/{nome_servizio}/azioni")
     @Produces({ "application/json", "application/problem+json" })
-    @Operation(summary = "Elenco servizi di una API", tags={ "api" })
+    @Operation(summary = "Elenco azioni di un servizio di una API", tags={ "api" })
     @ApiResponses(value = { 
         @ApiResponse(responseCode = "200", description = "Ricerca eseguita correttamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ListaApiAzioni.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = Problem.class))),
