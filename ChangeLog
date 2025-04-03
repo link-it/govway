@@ -1,3 +1,10 @@
+2025-04-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1594
+	Risolta la seguente vulnerabilità relative ai jar di terza parte:
+	- CVE-2025-22228: aggiornata libreria 'org.springframework.security:spring-security-crypto' alla versione 5.8.16-gov4j-1
+
 2025-04-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, ApiRsConfigurazione]
