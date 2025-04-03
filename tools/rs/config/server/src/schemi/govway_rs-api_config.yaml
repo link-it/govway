@@ -1150,7 +1150,7 @@ paths:
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
         - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
-      summary: Elenco servizi di una API
+      summary: Elenco azioni di un servizio di una API
       operationId: findAllApiAzioni
       description: Questa operazione consente di ottenere le azioni di un servizio della API identificata dal nome e dalla versione
       responses: 

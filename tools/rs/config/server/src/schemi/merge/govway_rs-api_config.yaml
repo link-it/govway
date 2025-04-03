@@ -1162,7 +1162,7 @@ paths:
     get:
       tags:
       - "api"
-      summary: "Elenco servizi di una API"
+      summary: "Elenco azioni di un servizio di una API"
       description: "Questa operazione consente di ottenere le azioni di un servizio\
         \ della API identificata dal nome e dalla versione"
       operationId: "findAllApiAzioni"
