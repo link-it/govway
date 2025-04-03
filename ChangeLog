@@ -1,5 +1,11 @@
 2025-04-03  Andrea Poli <apoli@link.it>
 
+	* [GovWayMonitor]
+	Risolto Bug #1593
+	Nella ricerca per token, per principal o per indirizzo ip non veniva effettuato il trim del valore inserito in input
+
+2025-04-03  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug #1594
 	Risolta la seguente vulnerabilità relative ai jar di terza parte:
