@@ -4215,11 +4215,13 @@ public class TransazioniService implements ITransazioniService {
 			boolean ricercaEsatta = TipoMatch.EQUALS.equals(match);
 			boolean caseSensitive = CaseSensitiveMatch.SENSITIVE.equals(caseSensitiveMatch);
 			 
+			String valoreRiconoscimento = searchForm.getValoreRiconoscimento()!=null ? searchForm.getValoreRiconoscimento().trim() : null;
+			
 			IPaginatedExpression pagExpr = null;
 			boolean ricercaIdentificatoAutenticatoSsl = false;
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO)) {
 				CredenzialeSearchTrasporto searchTrasporto = new CredenzialeSearchTrasporto(searchForm.getAutenticazione());
-				pagExpr = searchTrasporto.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
+				pagExpr = searchTrasporto.createExpression(credenzialeMittentiService, valoreRiconoscimento, ricercaEsatta, caseSensitive);
 				ricercaIdentificatoAutenticatoSsl = searchTrasporto.isSsl();
 			} 
 			
@@ -4243,7 +4245,7 @@ public class TransazioniService implements ITransazioniService {
 				}
 				
 				CredenzialeSearchClientAddress searchClientAddress = new CredenzialeSearchClientAddress(socketAddress, trasportAddress, and);
-				pagExpr = searchClientAddress.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
+				pagExpr = searchClientAddress.createExpression(credenzialeMittentiService, valoreRiconoscimento, ricercaEsatta, caseSensitive);
 			} 
 			
 			boolean searchByRefCredentials = false;
@@ -4257,7 +4259,7 @@ public class TransazioniService implements ITransazioniService {
 					searchToken = new CredenzialeSearchToken(tcm);
 					searchByRefCredentials = TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm);
 				}
-				pagExpr = searchToken.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
+				pagExpr = searchToken.createExpression(credenzialeMittentiService, valoreRiconoscimento, ricercaEsatta, caseSensitive);
 			}
 			
 			findAll = credenzialeMittentiService.findAll(pagExpr);
@@ -4267,7 +4269,7 @@ public class TransazioniService implements ITransazioniService {
 			}
 			
 			if(ricercaIdentificatoAutenticatoSsl && ricercaEsatta && findAll!=null && !findAll.isEmpty()) {
-				findAll = CredenzialeSearchTrasporto.filterList(findAll, searchForm.getValoreRiconoscimento(), this.log);
+				findAll = CredenzialeSearchTrasporto.filterList(findAll, valoreRiconoscimento, this.log);
 			}
 			
 		}catch(ServiceException | ExpressionException | NotImplementedException | ExpressionNotImplementedException | UtilsException e) {
