@@ -2487,30 +2487,30 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		configuration.addConsoleItem(modiSignalHubAlgItem);
 		
 		// seed size
-		StringConsoleItem modiSignalHubAlgDimensioneSeme = (StringConsoleItem) 
-				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+		NumberConsoleItem modiSignalHubAlgDimensioneSeme = (NumberConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.NUMBER,
 				ConsoleItemType.SELECT,
 				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, 
 				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_LABEL);
-		List<String> size = modiProperties.getSignalHubSeedSize();
+		List<Integer> size = modiProperties.getSignalHubSeedSize();
 		if(size!=null && !size.isEmpty()) {
-			for (String a : size) {
-				modiSignalHubAlgDimensioneSeme.addLabelValue(a,a);
+			for (Integer a : size) {
+				modiSignalHubAlgDimensioneSeme.addLabelValue(a.toString(),a.longValue());
 			}
 		}
-		modiSignalHubAlgDimensioneSeme.setDefaultValue(modiProperties.getSignalHubDefaultSeedSize());
+		modiSignalHubAlgDimensioneSeme.setDefaultValue(modiProperties.getSignalHubDefaultSeedSize().longValue());
 		modiSignalHubAlgDimensioneSeme.setType(ConsoleItemType.HIDDEN);
 		configuration.addConsoleItem(modiSignalHubAlgDimensioneSeme);
 		
 		// seed lifetime
-		StringConsoleItem modiSignalHubAlgScadenzaSeme = (StringConsoleItem) 
-				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+		NumberConsoleItem modiSignalHubAlgScadenzaSeme = (NumberConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.NUMBER,
 				ConsoleItemType.TEXT_EDIT,
 				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, 
 				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL);
 		if(!modiProperties.isSignalHubSeedLifetimeUnlimited()) {
 			modiSignalHubAlgScadenzaSeme.setRequired(true);
-			modiSignalHubAlgScadenzaSeme.setDefaultValue(modiProperties.getSignalHubDeSeedSeedLifetimeDaysDefault());
+			modiSignalHubAlgScadenzaSeme.setDefaultValue(modiProperties.getSignalHubDeSeedSeedLifetimeDaysDefault().longValue());
 		}
 		modiSignalHubAlgScadenzaSeme.setType(ConsoleItemType.HIDDEN);
 		configuration.addConsoleItem(modiSignalHubAlgScadenzaSeme);
@@ -2676,11 +2676,11 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				modiSignalHubSeedSizeItem.setType(ConsoleItemType.HIDDEN);
 			}
 		}
-		StringProperty modiSignalHubSeedSizeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID);
+		NumberProperty modiSignalHubSeedSizeItemValue = (NumberProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID);
 		if(modiSignalHubSeedSizeItemValue!=null) {
 			if(signalHub) {
-				if(modiSignalHubSeedSizeItemValue.getValue()==null || StringUtils.isEmpty(modiSignalHubSeedSizeItemValue.getValue())) {
-					modiSignalHubSeedSizeItemValue.setValue(modiProperties.getSignalHubDefaultSeedSize()); // default
+				if(modiSignalHubSeedSizeItemValue.getValue()==null) {
+					modiSignalHubSeedSizeItemValue.setValue(modiProperties.getSignalHubDefaultSeedSize().longValue()); // default
 				}
 			}
 			else {
@@ -2703,7 +2703,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				modiSignalHubSeedLifeTimeItem.setType(ConsoleItemType.HIDDEN);
 			}
 		}
-		StringProperty modiSignalHubSeedLifeTimeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
+		NumberProperty modiSignalHubSeedLifeTimeItemValue = (NumberProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
 		if(modiSignalHubSeedLifeTimeItemValue!=null &&
 			!signalHub &&
 			modiSignalHubSeedLifeTimeItemValue.getValue()!=null) {
@@ -3003,10 +3003,10 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 						);
 		if(profiloSignalHubSeedLifeTimeItem!=null) {
 			
-			StringProperty profiloSignalHubSeedLifeTimeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
+			NumberProperty profiloSignalHubSeedLifeTimeItemValue = (NumberProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
 			if(profiloSignalHubSeedLifeTimeItemValue!=null && profiloSignalHubSeedLifeTimeItemValue.getValue()!=null && !"".equals(profiloSignalHubSeedLifeTimeItemValue.getValue())) {
 				try {
-					int i = Integer.parseInt(profiloSignalHubSeedLifeTimeItemValue.getValue());
+					long i = (profiloSignalHubSeedLifeTimeItemValue.getValue());
 					if(i<=0) {
 						throw new ProtocolException("deve essere fornito un numero intero maggiore di 0");
 					}

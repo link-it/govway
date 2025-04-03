@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -4871,18 +4872,21 @@ public class ModIProperties {
     	return this.signalHubDefaultAlgorithm;
 	}
 	
-	private List<String> signalHubSeedSize= null;
-	public List<String> getSignalHubSeedSize() throws ProtocolException{
+	private List<Integer> signalHubSeedSize= null;
+	public List<Integer> getSignalHubSeedSize() throws ProtocolException{
     	if(this.signalHubSeedSize==null){
 	    	
     		String propertyName = "org.openspcoop2.protocol.modipa.signalHub.seed.size";
     		try{  
 				String value = this.reader.getValueConvertEnvProperties(propertyName);
-    			this.signalHubSeedSize = ModISecurityConfig.convertToList(value);
+    			this.signalHubSeedSize = ModISecurityConfig.convertToList(value)
+    					.stream()
+    					.map(Integer::parseInt)
+    					.collect(Collectors.toList());
     			if(this.signalHubSeedSize==null || this.signalHubSeedSize.isEmpty()) {
     				throw new ProtocolException("SignalHub algorithms undefined");
     			}
-    			for (String s : this.signalHubSeedSize) {
+    			for (Integer s : this.signalHubSeedSize) {
     				validateSignalHubInteger("Signal Hub - Seed size",s);
 				}
 			}catch(java.lang.Exception e) {
@@ -4894,28 +4898,27 @@ public class ModIProperties {
     	return this.signalHubSeedSize;
 	}
 	
-	private static void validateSignalHubInteger(String objectTitle, String s) throws ProtocolException {
+	private static void validateSignalHubInteger(String objectTitle, Integer i) throws ProtocolException {
 		try {
-			int i = Integer.parseInt(s);
 			if(i<=0) {
 				throw new ProtocolException("must be a positive integer greater than 0");
 			}
 		}catch(Exception e) {
-			throw new ProtocolException(objectTitle+" '"+s+"' invalid; must be a positive integer greater than 0");
+			throw new ProtocolException(objectTitle+" '"+i+"' invalid; must be a positive integer greater than 0");
 		}
 	}
 	
-	private String signalHubDefaultSeedSize= null;
-	public String getSignalHubDefaultSeedSize() throws ProtocolException{
+	private Integer signalHubDefaultSeedSize= null;
+	public Integer getSignalHubDefaultSeedSize() throws ProtocolException{
     	if(this.signalHubDefaultSeedSize==null){
 	    	String name = "org.openspcoop2.protocol.modipa.signalHub.seed.size.default";
     		try{  
 				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
-					value = value.trim();
-					validateSignalHubInteger("Signal Hub - Default seed size", value);
-					this.signalHubDefaultSeedSize = value;
+					Integer valueInt = Integer.parseInt(value.trim());
+					validateSignalHubInteger("Signal Hub - Default seed size", valueInt);
+					this.signalHubDefaultSeedSize = valueInt;
 				}
 				else {
 					throw newProtocolExceptionPropertyNonDefinita();
@@ -4958,17 +4961,17 @@ public class ModIProperties {
 		return this.signalHubSeedLifetimeUnlimited;
 	}
 	
-	private String signalHubDefaultSeedLifetimeDaysDefault= null;
-	public String getSignalHubDeSeedSeedLifetimeDaysDefault() throws ProtocolException{
+	private Integer signalHubDefaultSeedLifetimeDaysDefault= null;
+	public Integer getSignalHubDeSeedSeedLifetimeDaysDefault() throws ProtocolException{
     	if(this.signalHubDefaultSeedLifetimeDaysDefault==null){
 	    	String name = "org.openspcoop2.protocol.modipa.signalHub.seed.lifetime.days.default";
     		try{  
 				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
-					value = value.trim();
-					validateSignalHubInteger("Signal Hub - Default lifetime days", value);
-					this.signalHubDefaultSeedLifetimeDaysDefault = value;
+					Integer valueInt = Integer.parseInt(value.trim());
+					validateSignalHubInteger("Signal Hub - Default lifetime days", valueInt);
+					this.signalHubDefaultSeedLifetimeDaysDefault = valueInt;
 				}
 				else {
 					throw newProtocolExceptionPropertyNonDefinita();
@@ -5017,9 +5020,9 @@ public class ModIProperties {
 				String value = this.reader.getValueConvertEnvProperties(name); 
 				
 				if (value != null){
-					value = value.trim();
-					validateSignalHubInteger("Signal Hub - API Version", value);
-					this.signalHubApiVersion = Integer.valueOf(value);
+					Integer valueInt = Integer.parseInt(value.trim());
+					validateSignalHubInteger("Signal Hub - API Version", valueInt);
+					this.signalHubApiVersion = valueInt;
 				}
 				else {
 					throw newProtocolExceptionPropertyNonDefinita();

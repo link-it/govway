@@ -963,6 +963,9 @@ public class CostantiPdD {
     
     /* Costanti per Headers Peer */
     public static final MapKey<String> EXTRA_HEADERS_RESPONSE = Map.newMapKey("MAPPA_HEADERS_EXTRA_RISPOSTA");
+    
+    /* Costante per sovrascrivere il tipo di connettore nella consegna dei contenuti */
+    public static final MapKey<String> KEY_OVERRIDE_CONNETTORE = Map.newMapKey("overrideConnettore");
 }
 
 

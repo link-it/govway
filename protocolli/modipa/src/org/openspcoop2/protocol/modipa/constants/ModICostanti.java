@@ -489,6 +489,13 @@ public class ModICostanti {
     public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX = CostantiDB.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX;
     public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX = CostantiDB.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX;
         
+    public static final String MODIPA_CONNETTORE_SIGNAL_HUB_PSEUDONYMIZATION = "signalHubPseudonymization";
+    public static final MapKey<String> MODIPA_KEY_INFO_SIGNAL_HUB_ALGORITHM_ID = Map.newMapKey(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID);
+    public static final MapKey<String> MODIPA_KEY_INFO_SIGNAL_HUB_SEED_SIZE_ID = Map.newMapKey(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID);
+    public static final MapKey<String> MODIPA_KEY_INFO_SIGNAL_HUB_SEED_LIFETIME_ID = Map.newMapKey(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
+    public static final MapKey<String> MODIPA_KEY_INFO_SIGNAL_HUB_PUBLISHER_SA_ID = Map.newMapKey(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
+    public static final MapKey<String> MODIPA_KEY_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID = Map.newMapKey(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID);
+    
     public static final String MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX = "2xx";
     public static final int MODIPA_PROFILO_INTERAZIONE_HTTP_CODE_2XX_INT_VALUE = -2;    
     

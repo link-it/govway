@@ -1596,7 +1596,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 
 
-
+		
 
 		// Punto di inizio per la transazione.
 		IConnettore connectorSenderForDisconnect = null;
@@ -1979,6 +1979,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			msgDiag.mediumDebug("Inizializzazione connettore per la spedizione...");
 			//	Connettore per consegna
 			String tipoConnector = connettoreMsg.getTipoConnettore();
+			if (pddContext.getObject(CostantiPdD.KEY_OVERRIDE_CONNETTORE) != null) {
+				tipoConnector = pddContext.get(CostantiPdD.KEY_OVERRIDE_CONNETTORE).toString();
+			}
+			
 			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, tipoConnector);
 			IConnettore connectorSender = null;
 
