@@ -261,7 +261,7 @@
 	<!-- spring-security -->
 	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-core-5.8.16.jar"/>
 	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-web-5.8.16.jar"/>
-	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-crypto-5.8.16.jar"/>
+	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-crypto-5.8.16-gov4j-1.jar"/>
 	<archive path="/op2_3.3.dev/lib/spring-security/spring-security-config-5.8.16.jar"/>
 	<!-- swagger -->
 	<archive path="/op2_3.3.dev/lib/swagger/swagger-annotations-2.2.4.jar"/>
