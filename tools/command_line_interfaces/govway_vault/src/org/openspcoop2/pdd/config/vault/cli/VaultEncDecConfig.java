@@ -41,10 +41,11 @@ public class VaultEncDecConfig {
 	public static final String FILE_OUT="-file_out";
 	
 	public static final String SECURITY="-sec";
-	public static final String KSM="-ksm";
+	public static final String KMS="-kms";
+	public static final String KSM_DEPRECATED="-ksm";
 		
 	public static String getUsage() {
-		return SYSTEM_IN+"|"+FILE_IN+"=text|path "+SYSTEM_OUT+"|"+FILE_OUT+"=path ["+SECURITY+"|"+KSM+"=id]";
+		return SYSTEM_IN+"|"+FILE_IN+"=text|path "+SYSTEM_OUT+"|"+FILE_OUT+"=path ["+SECURITY+"|"+KMS+"=id]";
 	}
 	
 	private static final String UNKNOW_OPTION = "(unknown option '";
@@ -61,7 +62,7 @@ public class VaultEncDecConfig {
 	private String outFilePath = null;
 	
 	private boolean securityMode = true; // default
-	private boolean ksmMode = false;
+	private boolean kmsMode = false;
 	private String id= null;
 	
 	public VaultEncDecConfig(String[] args, String utilizzoErrato, boolean encodingMode) throws CoreException{
@@ -148,10 +149,15 @@ public class VaultEncDecConfig {
 				this.securityMode=true;
 				this.id = args[2].substring((SECURITY+"=").length());
 			}
-			else if(args[2].startsWith(KSM+"=") && args[2].length()>(KSM+"=").length()) {
+			else if(args[2].startsWith(KMS+"=") && args[2].length()>(KMS+"=").length()) {
 				this.securityMode=false;
-				this.ksmMode=true;
-				this.id = args[2].substring((KSM+"=").length());
+				this.kmsMode=true;
+				this.id = args[2].substring((KMS+"=").length());
+			}
+			else if(args[2].startsWith(KSM_DEPRECATED+"=") && args[2].length()>(KSM_DEPRECATED+"=").length()) {
+				this.securityMode=false;
+				this.kmsMode=true;
+				this.id = args[2].substring((KSM_DEPRECATED+"=").length());
 			}
 			else {
 				throw new CoreException(UNKNOW_OPTION+args[2]+"') "+utilizzoErrato);
@@ -195,8 +201,8 @@ public class VaultEncDecConfig {
 		return this.securityMode;
 	}
 
-	public boolean isKsmMode() {
-		return this.ksmMode;
+	public boolean isKmsMode() {
+		return this.kmsMode;
 	}
 
 	public String getId() {
@@ -205,19 +211,19 @@ public class VaultEncDecConfig {
 	
 	public void validate(BYOKManager byokManager) throws CoreException {
 		
-		String ksmPrefix = "Ksm '";
+		String kmsPrefix = "Kms '";
 		
 		if(this.securityMode){
 			validateSecurityMode(byokManager);
 		}
-		if(this.ksmMode && !byokManager.existsKSMConfigByType(this.id)) {
-			throw new CoreException(ksmPrefix+this.id+"' not exists");
+		if(this.kmsMode && !byokManager.existsKMSConfigByType(this.id)) {
+			throw new CoreException(kmsPrefix+this.id+"' not exists");
 		}
-		else if(this.ksmMode && !this.encodingMode && !byokManager.getUnwrapTypes().contains(this.id)) {
-			throw new CoreException(ksmPrefix+this.id+"' unusable for unwrap operation");
+		else if(this.kmsMode && !this.encodingMode && !byokManager.getUnwrapTypes().contains(this.id)) {
+			throw new CoreException(kmsPrefix+this.id+"' unusable for unwrap operation");
 		}
-		else if(this.ksmMode && this.encodingMode && !byokManager.getWrapTypes().contains(this.id)) {
-			throw new CoreException(ksmPrefix+this.id+"' unusable for wrap operation");
+		else if(this.kmsMode && this.encodingMode && !byokManager.getWrapTypes().contains(this.id)) {
+			throw new CoreException(kmsPrefix+this.id+"' unusable for wrap operation");
 		}
 	}
 	public void validateSecurityMode(BYOKManager byokManager) throws CoreException {

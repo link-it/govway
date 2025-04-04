@@ -68,7 +68,7 @@ public class BYOKRequestParams {
 	}
 	
 	
-	public static BYOKRequestParams getBYOKRequestParamsByKsmId(String ksmId, 
+	public static BYOKRequestParams getBYOKRequestParamsByKmsId(String kmsId, 
 			Map<String, String> inputMap, Map<String, Object> dynamicMap) throws UtilsException {
 		
 		BYOKManager manager = BYOKManager.getInstance();
@@ -76,14 +76,14 @@ public class BYOKRequestParams {
 			throw new UtilsException("BYOKManager not initialized");
 		}
 		
-		return getBYOKRequestParamsByKsmId(ksmId, manager, 
+		return getBYOKRequestParamsByKmsId(kmsId, manager, 
 				inputMap, dynamicMap);
 	}
-	public static BYOKRequestParams getBYOKRequestParamsByKsmId(String ksmId, BYOKManager manager, 
+	public static BYOKRequestParams getBYOKRequestParamsByKmsId(String kmsId, BYOKManager manager, 
 			Map<String, String> inputMap, Map<String, Object> dynamicMap) throws UtilsException {
-		BYOKConfig bconfig = manager.getKSMConfigByType(ksmId);
+		BYOKConfig bconfig = manager.getKMSConfigByType(kmsId);
 		if(bconfig==null) {
-			throw new UtilsException("BYOK configuration for ksm id '"+ksmId+"' not found");
+			throw new UtilsException("BYOK configuration for kms id '"+kmsId+"' not found");
 		}
 		BYOKRequestParams req = new BYOKRequestParams();
 		req.setConfig(bconfig);
@@ -92,7 +92,7 @@ public class BYOKRequestParams {
 		
 		req.setDynamicMap(dynamicMap);
 		
-		req.setKeyIdentity(ksmId);
+		req.setKeyIdentity(kmsId);
 		
 		return req;
 	}

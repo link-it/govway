@@ -1,54 +1,54 @@
-.. _byokInstallKsmRemoto:
+.. _byokInstallKmsRemoto:
 
-KSM Remoto
+KMS Remoto
 -------------------------------------------------------
 
 In questa sezione viene descritta la sintassi da utilizzare per definire i KMS funzionali ad operazioni di cifratura (wrap) o di decifratura (unwrap) dove la master key  è depositata su un servizio remoto (es. in cloud) e le operazioni di wrap e unwrap sono rese disponibili dal servizio remoto tramite chiamate di API.
 
-Di seguito un esempio di KSM basato sulla chiamata dell'operazione wrap in cui l'informazione da cifrare viene fornita nel payload http come json payload e l'informazione cifrata viene ritornata all'interno di una risposta json nel claim 'value'.
+Di seguito un esempio di KMS basato sulla chiamata dell'operazione wrap in cui l'informazione da cifrare viene fornita nel payload http come json payload e l'informazione cifrata viene ritornata all'interno di una risposta json nel claim 'value'.
 
 ::
 
-    # Esempio di KSM Wrap
-    ksm.govway-remote-wrap.label=GovWay Remote Wrap Example
-    ksm.govway-remote-wrap.type=govway-remote-wrap
-    ksm.govway-remote-wrap.mode=wrap
-    ksm.govway-remote-wrap.encryptionMode=remote
-    ksm.govway-remote-wrap.http.endpoint=https://vault.example/keys/wrapkey?api-version=1.0
-    ksm.govway-remote-wrap.http.method=POST
-    ksm.govway-remote-wrap.http.payload.inline={"alg": "RSA1_5","value": "${ksm-key}"}
-    ksm.govway-remote-wrap.http.response.jsonPath=$.value
+    # Esempio di KMS Wrap
+    kms.govway-remote-wrap.label=GovWay Remote Wrap Example
+    kms.govway-remote-wrap.type=govway-remote-wrap
+    kms.govway-remote-wrap.mode=wrap
+    kms.govway-remote-wrap.encryptionMode=remote
+    kms.govway-remote-wrap.http.endpoint=https://vault.example/keys/wrapkey?api-version=1.0
+    kms.govway-remote-wrap.http.method=POST
+    kms.govway-remote-wrap.http.payload.inline={"alg": "RSA1_5","value": "${kms-key}"}
+    kms.govway-remote-wrap.http.response.jsonPath=$.value
     
-Un esempio di KSM basato sulla chiamata dell'operazione unwrap in cui l'informazione da decifrare viene fornita come parametro 'key' della query url, e l'informazione decifrata viene tornata nel payload http codificata in base64. Viene inoltre attivata una gestione personalizzata del protocollo https dove viene indicato un truststore custom per effettuare l'autenticazione server.
+Un esempio di KMS basato sulla chiamata dell'operazione unwrap in cui l'informazione da decifrare viene fornita come parametro 'key' della query url, e l'informazione decifrata viene tornata nel payload http codificata in base64. Viene inoltre attivata una gestione personalizzata del protocollo https dove viene indicato un truststore custom per effettuare l'autenticazione server.
 
 ::
     
-    # Esempio di KSM Unwrap
-    ksm.govway-remote-unwrap.label=GovWay Remote Unwrap Example
-    ksm.govway-remote-unwrap.type=govway-remote-unwrap
-    ksm.govway-remote-unwrap.mode=unwrap
-    ksm.govway-remote-unwrap.encryptionMode=remote
-    ksm.govway-remote-unwrap.http.endpoint=https://vault.example/keys/unwrapkey?api-version=1.0&key=${ksm-urlencoded-key}
-    ksm.govway-remote-unwrap.http.method=GET
-    ksm.govway-remote-unwrap.http.username=test
-    ksm.govway-remote-unwrap.http.password=changeme
-    ksm.govway-remote-unwrap.http.response.base64Encoded=true
-    ksm.govway-remote-unwrap.https=true
-    ksm.govway-remote-unwrap.https.hostnameVerifier=true
-    ksm.govway-remote-unwrap.https.serverAuth=true
-    ksm.govway-remote-unwrap.https.serverAuth.trustStore.path=/tmp/test.jks
-    ksm.govway-remote-unwrap.https.serverAuth.trustStore.type=jks
-    ksm.govway-remote-unwrap.https.serverAuth.trustStore.password=123456
+    # Esempio di KMS Unwrap
+    kms.govway-remote-unwrap.label=GovWay Remote Unwrap Example
+    kms.govway-remote-unwrap.type=govway-remote-unwrap
+    kms.govway-remote-unwrap.mode=unwrap
+    kms.govway-remote-unwrap.encryptionMode=remote
+    kms.govway-remote-unwrap.http.endpoint=https://vault.example/keys/unwrapkey?api-version=1.0&key=${kms-urlencoded-key}
+    kms.govway-remote-unwrap.http.method=GET
+    kms.govway-remote-unwrap.http.username=test
+    kms.govway-remote-unwrap.http.password=changeme
+    kms.govway-remote-unwrap.http.response.base64Encoded=true
+    kms.govway-remote-unwrap.https=true
+    kms.govway-remote-unwrap.https.hostnameVerifier=true
+    kms.govway-remote-unwrap.https.serverAuth=true
+    kms.govway-remote-unwrap.https.serverAuth.trustStore.path=/tmp/test.jks
+    kms.govway-remote-unwrap.https.serverAuth.trustStore.type=jks
+    kms.govway-remote-unwrap.https.serverAuth.trustStore.password=123456
 
 L'operazione viene descritta da un insieme di direttive definite tramite la sintassi:
 
-- '*ksm.<idKsm>.http.<direttiva>*'
+- '*kms.<idKms>.http.<direttiva>*'
 
 Di seguito vengono fornite tutte le direttive supportate per la gestione della richiesta http:
 
-- *endpoint* [required]: definisce l'endpoint del ksm;
+- *endpoint* [required]: definisce l'endpoint del kms;
 
-- *method* [required]: definisce il metodo HTTP utilzzato per connettersi al ksm;
+- *method* [required]: definisce il metodo HTTP utilzzato per connettersi al kms;
 
 - *header.<nome>* [optional]: consente di definire un header http con nome '<name>' valorizzato con il valore indicato nella proprietà;
 
@@ -73,11 +73,11 @@ L'informazione cifrata o decifrata viene attesa per default nel payload della ri
 
 Inoltre se l'endpoint contattato è su protocollo https, può essere attivata una gestione personalizzata dell'autenticazione server e/o client definendo la seguente proprietà:
 
-- ksm.<idKSM>.https=true
+- kms.<idKMS>.https=true
 
 Tutte le configurazioni relative al protocollo https possono essere fornite utilizzando le seguenti ulteriori direttive definibili tramite la sintassi:
 
-- '*ksm.<idKsm>.https.<direttivaHttps>*'
+- '*kms.<idKms>.https.<direttivaHttps>*'
 
 Di seguito vengono fornite tutte le direttive https supportate:
 

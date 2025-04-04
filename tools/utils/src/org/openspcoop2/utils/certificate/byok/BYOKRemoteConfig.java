@@ -80,48 +80,48 @@ public class BYOKRemoteConfig implements Serializable {
 	private String httpResponseJsonPath;
 	
 	
-	protected BYOKRemoteConfig(String id, Properties p, Logger log) throws UtilsException {
+	protected BYOKRemoteConfig(String id, Properties p, Logger log, String byokPropertyPrefix) throws UtilsException {
 				
 		if(p==null || p.isEmpty()) {
 			log.error("Properties is null");
-			throw new UtilsException("Properties '"+BYOKCostanti.PROPERTY_PREFIX+id+".*' undefined");
+			throw new UtilsException("Properties '"+byokPropertyPrefix+id+".*' undefined");
 		}
 		
-		this.httpEndpoint = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_ENDPOINT, true);
-		this.httpMethod = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_METHOD, true);
+		this.httpEndpoint = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_ENDPOINT, true, byokPropertyPrefix);
+		this.httpMethod = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_METHOD, true, byokPropertyPrefix);
 		
 		initHttpHeader(p);
 			
-		this.httpPayloadPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_PAYLOAD_PATH, false);	
-		this.httpPayloadInLine = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_PAYLOAD_INLINE, false);	
+		this.httpPayloadPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_PAYLOAD_PATH, false, byokPropertyPrefix);	
+		this.httpPayloadInLine = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_PAYLOAD_INLINE, false, byokPropertyPrefix);	
 			
-		this.httpUsername = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_USERNAME, false);
-		this.httpPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_PASSWORD, false);	
+		this.httpUsername = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_USERNAME, false, byokPropertyPrefix);
+		this.httpPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_PASSWORD, false, byokPropertyPrefix);	
 		
-		this.httpConnectionTimeout = BYOKConfig.getIntegerProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_CONNECTION_TIMEOUT, false);	
-		this.httpReadTimeout = BYOKConfig.getIntegerProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_READ_TIMEOUT, false);	
+		this.httpConnectionTimeout = BYOKConfig.getIntegerProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_CONNECTION_TIMEOUT, false, byokPropertyPrefix);	
+		this.httpReadTimeout = BYOKConfig.getIntegerProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_READ_TIMEOUT, false, byokPropertyPrefix);	
 
-		this.https = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS, false, false);	
+		this.https = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS, false, false, byokPropertyPrefix);	
 		
-		this.httpsHostnameVerifier = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_VERIFICA_HOSTNAME, false, this.https);
+		this.httpsHostnameVerifier = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_VERIFICA_HOSTNAME, false, this.https, byokPropertyPrefix);
 		
-		this.httpsServerAuth = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER, false, this.https);
-		this.httpsServerAuthTrustStorePath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_TRUSTSTORE_PATH, false);
-		this.httpsServerAuthTrustStoreType = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_TRUSTSTORE_TYPE, this.httpsServerAuth);
-		this.httpsServerAuthTrustStorePassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_TRUSTSTORE_PASSWORD, false);
-		this.httpsServerAuthTrustStoreCrls = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_CRLS, false);
-		this.httpsServerAuthTrustStoreOcspPolicy = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_OCSP_POLICY, false);
+		this.httpsServerAuth = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER, false, this.https, byokPropertyPrefix);
+		this.httpsServerAuthTrustStorePath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_TRUSTSTORE_PATH, false, byokPropertyPrefix);
+		this.httpsServerAuthTrustStoreType = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_TRUSTSTORE_TYPE, this.httpsServerAuth, byokPropertyPrefix);
+		this.httpsServerAuthTrustStorePassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_TRUSTSTORE_PASSWORD, false, byokPropertyPrefix);
+		this.httpsServerAuthTrustStoreCrls = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_CRLS, false, byokPropertyPrefix);
+		this.httpsServerAuthTrustStoreOcspPolicy = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_OCSP_POLICY, false, byokPropertyPrefix);
 		
-		this.httpsClientAuth = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT, false, false);
-		this.httpsClientAuthKeyStorePath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEYSTORE_PATH, false);
-		this.httpsClientAuthKeyStoreType = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEYSTORE_TYPE, this.httpsClientAuth);
-		this.httpsClientAuthKeyStorePassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEYSTORE_PASSWORD, false);
-		this.httpsClientAuthKeyAlias = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEY_ALIAS, false);
-		this.httpsClientAuthKeyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEY_PASSWORD, false);
+		this.httpsClientAuth = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT, false, false, byokPropertyPrefix);
+		this.httpsClientAuthKeyStorePath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEYSTORE_PATH, false, byokPropertyPrefix);
+		this.httpsClientAuthKeyStoreType = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEYSTORE_TYPE, this.httpsClientAuth, byokPropertyPrefix);
+		this.httpsClientAuthKeyStorePassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEYSTORE_PASSWORD, false, byokPropertyPrefix);
+		this.httpsClientAuthKeyAlias = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEY_ALIAS, false, byokPropertyPrefix);
+		this.httpsClientAuthKeyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEY_PASSWORD, false, byokPropertyPrefix);
 		
-		this.httpResponseBase64Encoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_BASE64_ENCODED, false, false);
-		this.httpResponseHexEncoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_HEX_ENCODED, false, false);
-		this.httpResponseJsonPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH, false);
+		this.httpResponseBase64Encoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_BASE64_ENCODED, false, false, byokPropertyPrefix);
+		this.httpResponseHexEncoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_HEX_ENCODED, false, false, byokPropertyPrefix);
+		this.httpResponseJsonPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH, false, byokPropertyPrefix);
 	}
 
 	private void initHttpHeader(Properties p) {

@@ -36,8 +36,8 @@ public class VaultUpdateConfig {
 	public static final String SECURITY_IN="-sec_in";
 	public static final String SECURITY_OUT="-sec_out";
 	
-	/** NO! I secreti interni a GovWay sono protetti con security public static final String KSM_IN="-ksm_in";
-	public static final String KSM_OUT="-ksm_out";*/
+	/** NO! I secreti interni a GovWay sono protetti con security public static final String KMS_IN="-kms_in";
+	public static final String KMS_OUT="-kms_out";*/
 	
 	public static final String PLAIN_IN="-plain_in";
 	public static final String PLAIN_OUT="-plain_out";
@@ -48,22 +48,22 @@ public class VaultUpdateConfig {
 	
 	public static String getUsage() {
 		return SECURITY_IN+"|"+
-				/**KSM_IN+"|"+*/
+				/**KMS_IN+"|"+*/
 				PLAIN_IN+
 				"[=id] "+
 				SECURITY_OUT+"|"+
-				/**KSM_OUT+"|"+*/
+				/**KMS_OUT+"|"+*/
 				PLAIN_OUT+")[=id] "+
 				"["+REPORT+"=path]";
 	}
 	
 	private boolean inSecurityMode = false;
-	/**private boolean inKsmMode = false;*/
+	/**private boolean inKmsMode = false;*/
 	private boolean inPlainMode = false;
 	private String inId = null;
 	
 	private boolean outSecurityMode = false;
-	/**private boolean outKsmMode = false;*/
+	/**private boolean outKmsMode = false;*/
 	private boolean outPlainMode = false;
 	private String outId = null;
 	
@@ -96,9 +96,9 @@ public class VaultUpdateConfig {
 				this.inSecurityMode=true;
 				this.inId = args[0].substring((SECURITY_IN+"=").length());
 			}
-			/**else if(args[0].startsWith(KSM_IN+"=") && args[0].length()>(KSM_IN+"=").length()) {
-				this.inKsmMode=true;
-				this.inId = args[0].substring((KSM_IN+"=").length());
+			/**else if(args[0].startsWith(KMS_IN+"=") && args[0].length()>(KMS_IN+"=").length()) {
+				this.inKmsMode=true;
+				this.inId = args[0].substring((KMS_IN+"=").length());
 			}*/
 			else {
 				throw new CoreException(UNKNOW_OPTION+args[0]+"') "+utilizzoErrato);
@@ -120,9 +120,9 @@ public class VaultUpdateConfig {
 				this.outSecurityMode=true;
 				this.outId = args[1].substring((SECURITY_OUT+"=").length());
 			}
-			/**else if(args[1].startsWith(KSM_OUT+"=") && args[1].length()>(KSM_OUT+"=").length()) {
-				this.outKsmMode=true;
-				this.outId = args[1].substring((KSM_OUT+"=").length());
+			/**else if(args[1].startsWith(KMS_OUT+"=") && args[1].length()>(KMS_OUT+"=").length()) {
+				this.outKmsMode=true;
+				this.outId = args[1].substring((KMS_OUT+"=").length());
 			}*/
 			else {
 				throw new CoreException(UNKNOW_OPTION+args[1]+"') "+utilizzoErrato);
@@ -154,8 +154,8 @@ public class VaultUpdateConfig {
 		return this.inSecurityMode;
 	}
 
-	/**public boolean isInKsmMode() {
-		return this.inKsmMode;
+	/**public boolean isInKmsMode() {
+		return this.inKmsMode;
 	}*/
 
 	public boolean isInPlainMode() {
@@ -170,8 +170,8 @@ public class VaultUpdateConfig {
 		return this.outSecurityMode;
 	}
 
-	/**public boolean isOutKsmMode() {
-		return this.outKsmMode;
+	/**public boolean isOutKmsMode() {
+		return this.outKmsMode;
 	}*/
 
 	public boolean isOutPlainMode() {
@@ -188,26 +188,26 @@ public class VaultUpdateConfig {
 	
 	public void validate(BYOKManager byokManager) throws CoreException {
 		
-		/**String ksmPrefix = "Ksm '";*/
+		/**String kmsPrefix = "Kms '";*/
 		
 		if(this.inSecurityMode && !byokManager.existsSecurityEngineByType(this.inId)){
 			throw new CoreException("Security policy '"+this.inId+"' not found");
 		}
-		/**if(this.inKsmMode && !byokManager.existsKSMConfigByType(this.inId)) {
-			throw new CoreException(ksmPrefix+this.inId+"' not exists");
+		/**if(this.inKmsMode && !byokManager.existsKMSConfigByType(this.inId)) {
+			throw new CoreException(kmsPrefix+this.inId+"' not exists");
 		}
-		else if(this.inKsmMode && !byokManager.isKSMUsedInSecurityUnwrapConfig(this.inId, new StringBuilder())) {
-			throw new CoreException(ksmPrefix+this.inId+"' unusable for unwrap operation");
+		else if(this.inKmsMode && !byokManager.isKMSUsedInSecurityUnwrapConfig(this.inId, new StringBuilder())) {
+			throw new CoreException(kmsPrefix+this.inId+"' unusable for unwrap operation");
 		}*/
 		
 		if(this.outSecurityMode && !byokManager.existsSecurityEngineByType(this.outId)){
 			throw new CoreException("Security policy '"+this.outId+"' not found");
 		}
-		/**if(this.outKsmMode && !byokManager.existsKSMConfigByType(this.outId)) {
-			throw new CoreException(ksmPrefix+this.outId+"' not exists");
+		/**if(this.outKmsMode && !byokManager.existsKMSConfigByType(this.outId)) {
+			throw new CoreException(kmsPrefix+this.outId+"' not exists");
 		}
-		else if(this.outKsmMode && !byokManager.isKSMUsedInSecurityWrapConfig(this.outId, new StringBuilder())) {
-			throw new CoreException(ksmPrefix+this.outId+"' unusable for wrap operation");
+		else if(this.outKmsMode && !byokManager.isKMSUsedInSecurityWrapConfig(this.outId, new StringBuilder())) {
+			throw new CoreException(kmsPrefix+this.outId+"' unusable for wrap operation");
 		}*/
 	}
 }

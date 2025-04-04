@@ -59,27 +59,50 @@ public class BYOKSecurityConfig implements Serializable {
 			throw new UtilsException("Properties '"+BYOKCostanti.SECURITY_PROPERTY_PREFIX+id+".*' undefined");
 		}
 		
-		this.wrapId = getProperty(id, p, BYOKCostanti.SECURITY_PROPERTY_SUFFIX_WRAP, true);	
-		this.unwrapId = getProperty(id, p, BYOKCostanti.SECURITY_PROPERTY_SUFFIX_UNWRAP, true);	
-				
+		boolean deprecatedMode = false;
+		
+		this.wrapId = getProperty(id, p, BYOKCostanti.SECURITY_PROPERTY_SUFFIX_WRAP_KMS, false);
+		if(this.wrapId==null) {
+			this.wrapId = getProperty(id, p, BYOKCostanti.SECURITY_PROPERTY_SUFFIX_WRAP_KSM_DEPRECATED, false);
+			if(this.wrapId!=null) {
+				deprecatedMode = true;
+			}
+		}
+		if(this.wrapId==null) {
+			this.wrapId = getProperty(id, p, BYOKCostanti.SECURITY_PROPERTY_SUFFIX_WRAP_KMS, true); // sollevo eccezione con required true
+		}
+		
+		this.unwrapId = getProperty(id, p, BYOKCostanti.SECURITY_PROPERTY_SUFFIX_UNWRAP_KMS, false);	
+		if(this.unwrapId==null) {
+			this.unwrapId = getProperty(id, p, BYOKCostanti.SECURITY_PROPERTY_SUFFIX_UNWRAP_KSM_DEPRECATED, false);
+			if(this.unwrapId!=null) {
+				deprecatedMode = true;
+			}
+		}
+		if(this.unwrapId==null) {
+			this.unwrapId = getProperty(id, p, BYOKCostanti.SECURITY_PROPERTY_SUFFIX_UNWRAP_KMS, true);	// sollevo eccezione con required true
+		}
+		
+		String securityPropertySuffixInput = deprecatedMode ? BYOKCostanti.SECURITY_PROPERTY_SUFFIX_INPUT_KSM_DEPRECATED : BYOKCostanti.SECURITY_PROPERTY_SUFFIX_INPUT_KMS;
+		
 		this.inputParametersIds = new ArrayList<>();
-		initInput(p, this.inputParametersIds);
+		initInput(p, this.inputParametersIds, securityPropertySuffixInput);
 		if(this.inputParametersIds!=null && !this.inputParametersIds.isEmpty()) {
 			for (String inputId : this.inputParametersIds) {
-				String value = getProperty(id, p, BYOKCostanti.SECURITY_PROPERTY_SUFFIX_INPUT+inputId, true);	
+				String value = getProperty(id, p, securityPropertySuffixInput+inputId, true);	
 				this.inputParameters.add(new BYOKSecurityConfigParameter(inputId, value));
 			}
 		}
 		
 	}
 
-	void initInput(Properties p, List<String> idKeystore) {
+	void initInput(Properties p, List<String> idKeystore, String securityPropertySuffixInput) {
 		Enumeration<?> enKeys = p.keys();
 		while (enKeys.hasMoreElements()) {
 			Object object = enKeys.nextElement();
 			if(object instanceof String) {
 				String key = (String) object;
-				initInput(key, BYOKCostanti.SECURITY_PROPERTY_SUFFIX_INPUT, idKeystore);	
+				initInput(key, securityPropertySuffixInput, idKeystore);	
 			}
 		}
 	}

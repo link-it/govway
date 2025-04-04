@@ -422,7 +422,7 @@ public class InitListener implements ServletContextListener {
 			}		
 			
 			// inizializza nodi runtime
-			// !!NOTA!!: eventuali secrets riferiti nella ConfigurazioneNodiRuntimeProperties devono essere definiti tramite ksm o tramite security che non invocano i nodi govway run
+			// !!NOTA!!: eventuali secrets riferiti nella ConfigurazioneNodiRuntimeProperties devono essere definiti tramite kms o tramite security che non invocano i nodi govway run
 			InitListener.logInfo("Inizializzazione NodiRuntime in corso...");
 			try {
 				ConfigurazioneNodiRuntimeProperties backwardCompatibility = new ConfigurazioneNodiRuntimeProperties(consoleProperties.getJmxPdDBackwardCompatibilityPrefix(), 

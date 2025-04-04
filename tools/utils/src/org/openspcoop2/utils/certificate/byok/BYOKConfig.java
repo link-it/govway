@@ -60,30 +60,30 @@ public class BYOKConfig implements Serializable {
 	private BYOKLocalConfig localConfig;
 	
 	
-	protected BYOKConfig(String id, Properties p, Logger log) throws UtilsException {
+	protected BYOKConfig(String id, Properties p, Logger log, String byokPropertyPrefix) throws UtilsException {
 		this.id = id;
 		
 		if(p==null || p.isEmpty()) {
 			log.error("Properties is null");
-			throw new UtilsException("Properties '"+BYOKCostanti.PROPERTY_PREFIX+id+".*' undefined");
+			throw new UtilsException("Properties '"+byokPropertyPrefix+id+".*' undefined");
 		}
 		
-		this.type = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_TYPE, true);	
-		this.label = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LABEL, true);	
+		this.type = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_TYPE, true, byokPropertyPrefix);	
+		this.label = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LABEL, true, byokPropertyPrefix);	
 		
-		String tmpMode = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_MODE, true);
+		String tmpMode = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_MODE, true, byokPropertyPrefix);
 		try {
 			this.mode = BYOKMode.valueOf(tmpMode.toUpperCase());
 		}catch(Exception e) {
-			throw new UtilsException("Invalid property '"+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_MODE+"' enum value '"+tmpMode+"': "+e.getMessage());
+			throw new UtilsException("Invalid property '"+byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_MODE+"' enum value '"+tmpMode+"': "+e.getMessage());
 		}
 		
-		tmpMode = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_ENCRYPTION_MODE, false);
+		tmpMode = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_ENCRYPTION_MODE, false, byokPropertyPrefix);
 		if(tmpMode!=null && StringUtils.isNotEmpty(tmpMode)) {
 			try {
 				this.encryptionMode = BYOKEncryptionMode.valueOf(tmpMode.toUpperCase());
 			}catch(Exception e) {
-				throw new UtilsException("Invalid property '"+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_ENCRYPTION_MODE+"' enum value '"+tmpMode+"': "+e.getMessage());
+				throw new UtilsException("Invalid property '"+byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_ENCRYPTION_MODE+"' enum value '"+tmpMode+"': "+e.getMessage());
 			}
 		}
 		else {
@@ -94,17 +94,17 @@ public class BYOKConfig implements Serializable {
 		initInput(p, this.inputParametersIds);
 		if(this.inputParametersIds!=null && !this.inputParametersIds.isEmpty()) {
 			for (String inputId : this.inputParametersIds) {
-				String nameP = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_INPUT+inputId+BYOKCostanti.PROPERTY_SUFFIX_INPUT_NAME, true);	
-				String labelP = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_INPUT+inputId+BYOKCostanti.PROPERTY_SUFFIX_INPUT_LABEL, true);	
+				String nameP = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_INPUT+inputId+BYOKCostanti.PROPERTY_SUFFIX_INPUT_NAME, true, byokPropertyPrefix);	
+				String labelP = getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_INPUT+inputId+BYOKCostanti.PROPERTY_SUFFIX_INPUT_LABEL, true, byokPropertyPrefix);	
 				this.inputParameters.add(new BYOKConfigParameter(inputId, nameP, labelP));
 			}
 		}
 		
 		if(BYOKEncryptionMode.REMOTE.equals(this.encryptionMode)) {
-			this.remoteConfig = new BYOKRemoteConfig(id, p, log);
+			this.remoteConfig = new BYOKRemoteConfig(id, p, log, byokPropertyPrefix);
 		}
 		else {
-			this.localConfig = new BYOKLocalConfig(id, p, log, this);
+			this.localConfig = new BYOKLocalConfig(id, p, log, this, byokPropertyPrefix);
 		}
 		
 	}
@@ -134,36 +134,36 @@ public class BYOKConfig implements Serializable {
 		}
 	}
 	
-	static String getProperty(String id, Properties p, String name, boolean required) throws UtilsException {
+	static String getProperty(String id, Properties p, String name, boolean required, String byokPropertyPrefix) throws UtilsException {
 		String tmp = p.getProperty(name);
 		if(tmp!=null) {
 			return tmp.trim();
 		}
 		else {
 			if(required) {
-				throw new UtilsException("Property '"+BYOKCostanti.PROPERTY_PREFIX+id+"."+name+"' notFound");
+				throw new UtilsException("Property '"+byokPropertyPrefix+id+"."+name+"' notFound");
 			}
 			return null;
 		}
 	}
-	static Integer getIntegerProperty(String id, Properties p, String name, boolean required) throws UtilsException {
-		String v = getProperty(id, p, name, required);
+	static Integer getIntegerProperty(String id, Properties p, String name, boolean required, String byokPropertyPrefix) throws UtilsException {
+		String v = getProperty(id, p, name, required, byokPropertyPrefix);
 		if(v!=null && StringUtils.isNotEmpty(v)) {
 			try {
 				return Integer.valueOf(v);
 			}catch(Exception e) {
-				throw new UtilsException("Invalid integer property '"+BYOKCostanti.PROPERTY_PREFIX+id+"."+name+"' value '"+e.getMessage()+"': "+e.getMessage());
+				throw new UtilsException("Invalid integer property '"+byokPropertyPrefix+id+"."+name+"' value '"+e.getMessage()+"': "+e.getMessage());
 			}
 		}
 		return null;
 	}
-	static Boolean getBooleanProperty(String id, Properties p, String name, boolean required, Boolean defaultValue) throws UtilsException {
-		String v = getProperty(id, p, name, required);
+	static Boolean getBooleanProperty(String id, Properties p, String name, boolean required, Boolean defaultValue, String byokPropertyPrefix) throws UtilsException {
+		String v = getProperty(id, p, name, required, byokPropertyPrefix);
 		if(v!=null && StringUtils.isNotEmpty(v)) {
 			try {
 				return Boolean.parseBoolean(v);
 			}catch(Exception e) {
-				throw new UtilsException("Invalid boolean property '"+BYOKCostanti.PROPERTY_PREFIX+id+"."+name+"' value '"+e.getMessage()+"': "+e.getMessage());
+				throw new UtilsException("Invalid boolean property '"+byokPropertyPrefix+id+"."+name+"' value '"+e.getMessage()+"': "+e.getMessage());
 			}
 		}
 		return defaultValue;
@@ -176,7 +176,7 @@ public class BYOKConfig implements Serializable {
 	
 	
 	public String getPrefixForLog() {
-		return "[KSM '"+this.getId()+"' type:"+this.type+" label:"+this.label+"] ";
+		return "[KMS '"+this.getId()+"' type:"+this.type+" label:"+this.label+"] ";
 	}
 
 	

@@ -24232,7 +24232,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					String value = null;
 					try {
 						if(byokPolicy!=null) {
-							String label = BYOKManager.getInstance().getKSMConfigByType(byokPolicy).getLabel();
+							String label = BYOKManager.getInstance().getKMSConfigByType(byokPolicy).getLabel();
 							value = ((label!=null && StringUtils.isNotEmpty(label)) ? label : byokPolicy);
 						}
 					}catch(Exception t) {

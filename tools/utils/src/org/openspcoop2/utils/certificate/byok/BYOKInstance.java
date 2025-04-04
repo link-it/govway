@@ -150,49 +150,49 @@ public class BYOKInstance {
 		
 		List<BYOKConfigParameter> inputParameters = config.getInputParameters();
 		
-		localConfig.encryptionEngine = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.encryptionEngine = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL, config.getLocalConfig().encryptionEngine);
 		
 		localConfig.keystoreType = config.getLocalConfig().keystoreType;
 		localConfig.keystoreHsmType = config.getLocalConfig().keystoreHsmType;
-		localConfig.keystorePath = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.keystorePath = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_PATH, config.getLocalConfig().keystorePath);
-		localConfig.keystorePassword = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.keystorePassword = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_PASSWORD, config.getLocalConfig().keystorePassword);
 		
-		localConfig.keyPath = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.keyPath = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PATH, config.getLocalConfig().keyPath);
-		localConfig.keyInline = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.keyInline = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_INLINE, config.getLocalConfig().keyInline);
-		localConfig.keyEncoding = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.keyEncoding = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ENCODING, config.getLocalConfig().keyEncoding);
-		localConfig.keyAlgorithm = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.keyAlgorithm = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALGORITHM, config.getLocalConfig().keyAlgorithm);
-		localConfig.keyAlias = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.keyAlias = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALIAS, config.getLocalConfig().keyAlias);
-		localConfig.keyPassword = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.keyPassword = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD, config.getLocalConfig().keyPassword);
-		localConfig.keyId = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.keyId = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ID, config.getLocalConfig().keyId);
 		localConfig.keyWrap = config.getLocalConfig().keyWrap;
 		
-		localConfig.publicKeyPath = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.publicKeyPath = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_PATH, config.getLocalConfig().publicKeyPath);
-		localConfig.publicKeyInline = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.publicKeyInline = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_INLINE, config.getLocalConfig().publicKeyInline);
-		localConfig.publicKeyEncoding = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.publicKeyEncoding = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING, config.getLocalConfig().publicKeyEncoding);
 		
-		localConfig.pw = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.pw = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW, config.getLocalConfig().pw);
-		localConfig.pwType = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.pwType = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW_TYPE, config.getLocalConfig().pwType);
 		localConfig.pwIteration = config.getLocalConfig().pwIteration;
 		
-		localConfig.contentAlgorithm = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.contentAlgorithm = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_CONTENT_ALGORITHM, config.getLocalConfig().contentAlgorithm);
 		
-		localConfig.encoding = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		localConfig.encoding = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 				BYOKCostanti.PROPERTY_SUFFIX_LOCAL_ENCODING, config.getLocalConfig().encoding);
 
 		localConfig.joseIncludeCert = config.getLocalConfig().joseIncludeCert;
@@ -211,11 +211,11 @@ public class BYOKInstance {
 		BYOKRemoteConfig config = configParam.getRemoteConfig();
 		List<BYOKConfigParameter> inputParameters = configParam.getInputParameters();
 		
-		http.setUrl(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+		http.setUrl(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 			BYOKCostanti.PROPERTY_SUFFIX_HTTP_ENDPOINT, config.getHttpEndpoint()));
 		String m = null;
 		try {
-			m = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+			m = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 					BYOKCostanti.PROPERTY_SUFFIX_HTTP_METHOD, config.getHttpMethod());
 			if(m==null) {
 				throw new UtilsException("Undefined");
@@ -248,9 +248,9 @@ public class BYOKInstance {
 			HttpRequest http) throws UtilsException {
 		if(config.getHttpHeaders()!=null && !config.getHttpHeaders().isEmpty()) {
 			for(Map.Entry<String,String> entry : config.getHttpHeaders().entrySet()) {
-				String nome = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				String nome = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTP_HEADER+"<name>", entry.getKey());
-				String valore = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				String valore = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTP_HEADER+entry.getKey(), entry.getValue());
 				if(nome!=null && valore!=null) {
 					http.addHeader(nome, valore);
@@ -258,11 +258,11 @@ public class BYOKInstance {
 			}
 		}
 		if(config.getHttpUsername()!=null) {
-			http.setUsername(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+			http.setUsername(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTP_USERNAME, config.getHttpUsername()));
 		}
 		if(config.getHttpPassword()!=null) {
-			http.setPassword(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+			http.setPassword(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTP_PASSWORD, config.getHttpPassword()));
 		}
 	}
@@ -270,7 +270,7 @@ public class BYOKInstance {
 			List<BYOKConfigParameter> inputParameters, Map<String,String> inputMap, byte[] key,
 			HttpRequest http) throws UtilsException {
 		if(config.getHttpPayloadInLine()!=null) {
-			String content = resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+			String content = resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 					BYOKCostanti.PROPERTY_SUFFIX_HTTP_PAYLOAD_INLINE, config.getHttpPayloadInLine());
 			if(content!=null) {
 				http.setContent(content.getBytes());
@@ -283,7 +283,7 @@ public class BYOKInstance {
 			}catch(Exception e) {
 				throw new UtilsException("Invalid request payload file ("+config.getHttpPayloadPath()+"): "+e.getMessage(),e);
 			}
-			http.setContent(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+			http.setContent(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 					BYOKCostanti.PROPERTY_SUFFIX_HTTP_PAYLOAD_PATH, fileContent));
 		}
 		
@@ -320,23 +320,23 @@ public class BYOKInstance {
 		if(config.isHttpsServerAuth()) {
 			
 			if(config.getHttpsServerAuthTrustStorePath()!=null) {
-				http.setTrustStorePath(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				http.setTrustStorePath(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_TRUSTSTORE_PATH, config.getHttpsServerAuthTrustStorePath()));
 			}
 			if(config.getHttpsServerAuthTrustStoreType()!=null) {
-				http.setTrustStoreType(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				http.setTrustStoreType(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_TRUSTSTORE_TYPE, config.getHttpsServerAuthTrustStoreType()));
 			}
 			if(config.getHttpsServerAuthTrustStorePassword()!=null) {
-				http.setTrustStorePassword(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				http.setTrustStorePassword(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_TRUSTSTORE_PASSWORD, config.getHttpsServerAuthTrustStorePassword()));
 			}
 			if(config.getHttpsServerAuthTrustStoreCrls()!=null) {
-				http.setCrlPath(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				http.setCrlPath(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_CRLS, config.getHttpsServerAuthTrustStoreCrls()));
 			}
 			if(config.getHttpsServerAuthTrustStoreOcspPolicy()!=null) {
-				http.setOcspPolicy(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				http.setOcspPolicy(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_SERVER_OCSP_POLICY, config.getHttpsServerAuthTrustStoreOcspPolicy()));
 			}
 			
@@ -351,25 +351,25 @@ public class BYOKInstance {
 		if(config.isHttpsClientAuth()) {
 			
 			if(config.getHttpsClientAuthKeyStorePath()!=null) {
-				http.setKeyStorePath(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				http.setKeyStorePath(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEYSTORE_PATH, config.getHttpsClientAuthKeyStorePath()));
 			}
 			if(config.getHttpsClientAuthKeyStoreType()!=null) {
-				http.setKeyStoreType(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				http.setKeyStoreType(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEYSTORE_TYPE, config.getHttpsClientAuthKeyStoreType()));
 			}
 			if(config.getHttpsClientAuthKeyStorePassword()!=null) {
-				http.setKeyStorePassword(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				http.setKeyStorePassword(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEYSTORE_PASSWORD, config.getHttpsClientAuthKeyStorePassword()));
 			}
 			
 			
 			if(config.getHttpsClientAuthKeyAlias()!=null) {
-				http.setKeyAlias(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				http.setKeyAlias(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEY_ALIAS, config.getHttpsClientAuthKeyAlias()));
 			}
 			if(config.getHttpsClientAuthKeyPassword()!=null) {
-				http.setKeyPassword(resolveKsmConstants(dynamicMap, inputParameters, inputMap, key,
+				http.setKeyPassword(resolveKmsConstants(dynamicMap, inputParameters, inputMap, key,
 						BYOKCostanti.PROPERTY_SUFFIX_HTTPS_AUTENTICAZIONE_CLIENT_KEY_PASSWORD, config.getHttpsClientAuthKeyPassword()));
 			}
 		}
@@ -407,41 +407,41 @@ public class BYOKInstance {
 		}
 	}
 	
-	private static byte[] resolveKsmConstants(Map<String,Object> dynamicMap, List<BYOKConfigParameter> inputParameters,
+	private static byte[] resolveKmsConstants(Map<String,Object> dynamicMap, List<BYOKConfigParameter> inputParameters,
 			Map<String,String> inputMap, byte[] key,
 			String name, byte[] value) throws UtilsException {
 		byte[] returnArray = null;
 		if(value!=null) {
 			String v = new String(value);
-			if(BYOKCostanti.VARIABILE_KSM_KEY.equals(v)) {
+			if(BYOKCostanti.VARIABILE_KMS_KEY.equals(v) || BYOKCostanti.VARIABILE_KSM_KEY_DEPRECATED.equals(v)) {
 				returnArray = key;
 			}
-			else if(BYOKCostanti.VARIABILE_KSM_KEY_URL_ENCODED.equals(v)) {
+			else if(BYOKCostanti.VARIABILE_KMS_KEY_URL_ENCODED.equals(v) || BYOKCostanti.VARIABILE_KSM_KEY_URL_ENCODED_DEPRECATED.equals(v)) {
 				returnArray = TransportUtils.urlEncodeParam(v, Charset.UTF_8.getValue()).getBytes();
 			}
-			else if(BYOKCostanti.VARIABILE_KSM_KEY_BASE64.equals(v)) {
+			else if(BYOKCostanti.VARIABILE_KMS_KEY_BASE64.equals(v) || BYOKCostanti.VARIABILE_KSM_KEY_BASE64_DEPRECATED.equals(v)) {
 				returnArray = Base64Utilities.encode(key);
 			}
-			else if(BYOKCostanti.VARIABILE_KSM_KEY_BASE64_URL_ENCODED.equals(v)) {
+			else if(BYOKCostanti.VARIABILE_KMS_KEY_BASE64_URL_ENCODED.equals(v) || BYOKCostanti.VARIABILE_KSM_KEY_BASE64_URL_ENCODED_DEPRECATED.equals(v)) {
 				String base64 = Base64Utilities.encodeAsString(key);
 				returnArray = TransportUtils.urlEncodeParam(base64, Charset.UTF_8.getValue()).getBytes();
 			}
-			else if(BYOKCostanti.VARIABILE_KSM_KEY_HEX.equals(v)) {
+			else if(BYOKCostanti.VARIABILE_KMS_KEY_HEX.equals(v) || BYOKCostanti.VARIABILE_KSM_KEY_HEX_DEPRECATED.equals(v)) {
 				returnArray = HexBinaryUtilities.encodeAsString(key).getBytes();
 			}
-			else if(BYOKCostanti.VARIABILE_KSM_KEY_HEX_URL_ENCODED.equals(v)) {
+			else if(BYOKCostanti.VARIABILE_KMS_KEY_HEX_URL_ENCODED.equals(v) || BYOKCostanti.VARIABILE_KSM_KEY_HEX_URL_ENCODED_DEPRECATED.equals(v)) {
 				String hex =  HexBinaryUtilities.encodeAsString(key);
 				returnArray = TransportUtils.urlEncodeParam(hex, Charset.UTF_8.getValue()).getBytes();
 			}
 			else {
-				returnArray = resolveKsmConstants(dynamicMap, inputParameters, 
+				returnArray = resolveKmsConstants(dynamicMap, inputParameters, 
 						inputMap, key,
 						name, v).getBytes();
 			}
 		}
 		return returnArray;
 	}
-	private static String resolveKsmConstants(Map<String,Object> dynamicMap, List<BYOKConfigParameter> inputParameters,
+	private static String resolveKmsConstants(Map<String,Object> dynamicMap, List<BYOKConfigParameter> inputParameters,
 			Map<String,String> inputMap, byte[] key,
 			String name, String value) throws UtilsException {
 		
@@ -449,16 +449,29 @@ public class BYOKInstance {
 			return value;
 		}
 		
-		String newValue = resolveKsmConstant(value, BYOKCostanti.VARIABILE_KSM_KEY, key);
-		newValue = resolveKsmConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_URL_ENCODED, key);
+		String newValue = resolveKmsConstant(value, BYOKCostanti.VARIABILE_KMS_KEY, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_DEPRECATED, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KMS_KEY_URL_ENCODED, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_URL_ENCODED_DEPRECATED, key);
 		
-		newValue = resolveKsmConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_BASE64, key);
-		newValue = resolveKsmConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_BASE64_URL_ENCODED, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KMS_KEY_BASE64, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_BASE64_DEPRECATED, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KMS_KEY_BASE64_URL_ENCODED, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_BASE64_URL_ENCODED_DEPRECATED, key);
 		
-		newValue = resolveKsmConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_HEX, key);
-		newValue = resolveKsmConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_HEX_URL_ENCODED, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KMS_KEY_HEX, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_HEX_DEPRECATED, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KMS_KEY_HEX_URL_ENCODED, key);
+		newValue = resolveKmsConstant(newValue, BYOKCostanti.VARIABILE_KSM_KEY_HEX_URL_ENCODED_DEPRECATED, key);
 		
-		if(newValue.contains(BYOKCostanti.VARIABILE_KSM_KEY_PREFIX) && !dynamicMap.containsKey(BYOKCostanti.VARIABILE_KSM)) {
+		String kmsMapId = null;
+		if(newValue.contains(BYOKCostanti.VARIABILE_KMS_KEY_PREFIX) && !dynamicMap.containsKey(BYOKCostanti.VARIABILE_KMS)) {
+			kmsMapId = BYOKCostanti.VARIABILE_KMS;
+		}
+		else if(newValue.contains(BYOKCostanti.VARIABILE_KSM_KEY_PREFIX_DEPRECATED) && !dynamicMap.containsKey(BYOKCostanti.VARIABILE_KSM_DEPRECATED)) {
+			kmsMapId = BYOKCostanti.VARIABILE_KSM_DEPRECATED;
+		}
+		if(kmsMapId!=null) {
 			Map<String, String> k = new HashMap<>();
 			for (BYOKConfigParameter parameter: inputParameters) {
 				if(inputMap!=null && inputMap.containsKey(parameter.getName())) {
@@ -467,28 +480,31 @@ public class BYOKInstance {
 					k.put(parameter.getName(), valueResolved);
 				}
 			} 
-			dynamicMap.put(BYOKCostanti.VARIABILE_KSM, k);
+			dynamicMap.put(kmsMapId, k);
 		}
 		
 		return resolve(name, newValue, dynamicMap);
 	}
-	private static String resolveKsmConstant(String value, String constant, byte[] key) throws UtilsException {
+	private static String resolveKmsConstant(String value, String constant, byte[] key) throws UtilsException {
 		if(value!=null && value.contains(constant)){
 			
 			String replaceValue = null;
-			if(BYOKCostanti.VARIABILE_KSM_KEY.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_URL_ENCODED.equals(constant)) {
+			if(BYOKCostanti.VARIABILE_KMS_KEY.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_DEPRECATED.equals(constant) ||
+					BYOKCostanti.VARIABILE_KMS_KEY_URL_ENCODED.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_URL_ENCODED_DEPRECATED.equals(constant)) {
 				replaceValue = new String(key);
 			}
-			else if(BYOKCostanti.VARIABILE_KSM_KEY_BASE64.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_BASE64_URL_ENCODED.equals(constant)) {
+			else if(BYOKCostanti.VARIABILE_KMS_KEY_BASE64.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_BASE64_DEPRECATED.equals(constant) ||
+					BYOKCostanti.VARIABILE_KMS_KEY_BASE64_URL_ENCODED.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_BASE64_URL_ENCODED_DEPRECATED.equals(constant)) {
 				replaceValue = Base64Utilities.encodeAsString(key);
 			}
-			else if(BYOKCostanti.VARIABILE_KSM_KEY_HEX.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_HEX_URL_ENCODED.equals(constant)) {
+			else if(BYOKCostanti.VARIABILE_KMS_KEY_HEX.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_HEX_DEPRECATED.equals(constant) ||
+					BYOKCostanti.VARIABILE_KMS_KEY_HEX_URL_ENCODED.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_HEX_URL_ENCODED_DEPRECATED.equals(constant)) {
 				replaceValue = HexBinaryUtilities.encodeAsString(key);
 			}
 			
-			if(BYOKCostanti.VARIABILE_KSM_KEY_URL_ENCODED.equals(constant) || 
-					BYOKCostanti.VARIABILE_KSM_KEY_BASE64_URL_ENCODED.equals(constant) || 
-					BYOKCostanti.VARIABILE_KSM_KEY_HEX_URL_ENCODED.equals(constant)) {
+			if(BYOKCostanti.VARIABILE_KMS_KEY_URL_ENCODED.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_URL_ENCODED_DEPRECATED.equals(constant) ||  
+					BYOKCostanti.VARIABILE_KMS_KEY_BASE64_URL_ENCODED.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_BASE64_URL_ENCODED_DEPRECATED.equals(constant) || 
+					BYOKCostanti.VARIABILE_KMS_KEY_HEX_URL_ENCODED.equals(constant) || BYOKCostanti.VARIABILE_KSM_KEY_HEX_URL_ENCODED_DEPRECATED.equals(constant)) {
 				replaceValue = TransportUtils.urlEncodeParam(replaceValue,Charset.UTF_8.getValue());
 			}
 			

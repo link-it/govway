@@ -102,9 +102,9 @@ public class BYOKProvider {
 		String label = sortedMap.get(type);
 		
 		StringBuilder securityId = new StringBuilder();
-		if(byokManager.isKSMUsedInSecurityUnwrapConfig(type, securityId)) {
+		if(byokManager.isKMSUsedInSecurityUnwrapConfig(type, securityId)) {
 			String secId =  securityId.toString();
-			BYOKSecurityConfig secConfig = byokManager.getKSMSecurityConfig(secId);
+			BYOKSecurityConfig secConfig = byokManager.getKMSSecurityConfig(secId);
 			
 			if( BYOKManager.getSecurityRemoteEngineGovWayPolicy()!=null &&
 				BYOKManager.getSecurityRemoteEngineGovWayPolicy().equals(secId)) {
@@ -157,9 +157,9 @@ public class BYOKProvider {
 		return this.byok ? this.byokLabels : noBYOK;
 	}
 
-	public Map<String, String> getInputMap(String ksmId) {
+	public Map<String, String> getInputMap(String kmsId) {
 		Map<String, String> inputMap = new HashMap<>();
-		BYOKSecurityConfig secConfig = this.byokSecurity.get(ksmId);
+		BYOKSecurityConfig secConfig = this.byokSecurity.get(kmsId);
 		if(secConfig!=null && secConfig.getInputParameters()!=null && !secConfig.getInputParameters().isEmpty()) {
 			for (BYOKSecurityConfigParameter param : secConfig.getInputParameters()) {
 				inputMap.put(param.getName(), param.getValue());
@@ -168,22 +168,22 @@ public class BYOKProvider {
 		return inputMap;
 	}
 	
-	public static boolean isPolicyDefined(String ksmId) {
-		return ksmId!=null && StringUtils.isNotEmpty(ksmId) && !BYOK_POLICY_UNDEFINED_EMPTY.equals(ksmId) && !BYOK_POLICY_UNDEFINED.equals(ksmId);
+	public static boolean isPolicyDefined(String kmsId) {
+		return kmsId!=null && StringUtils.isNotEmpty(kmsId) && !BYOK_POLICY_UNDEFINED_EMPTY.equals(kmsId) && !BYOK_POLICY_UNDEFINED.equals(kmsId);
 	}
 	
-	public static BYOKRequestParams getBYOKRequestParamsByUnwrapBYOKPolicy(String ksmId,
+	public static BYOKRequestParams getBYOKRequestParamsByUnwrapBYOKPolicy(String kmsId,
 			Map<String,Object> dynamicMap) throws UtilsException {
 		// configurato via console
 		
-		if(!isPolicyDefined(ksmId)) {
+		if(!isPolicyDefined(kmsId)) {
 			return null;
 		}
 		
 		BYOKProvider provider = BYOKProvider.getUnwrapInstance();
-		Map<String, String> inputMap = provider.getInputMap(ksmId);
+		Map<String, String> inputMap = provider.getInputMap(kmsId);
 		
-		return BYOKRequestParams.getBYOKRequestParamsByKsmId(ksmId, 
+		return BYOKRequestParams.getBYOKRequestParamsByKmsId(kmsId, 
 				inputMap, dynamicMap);
 	}
 	

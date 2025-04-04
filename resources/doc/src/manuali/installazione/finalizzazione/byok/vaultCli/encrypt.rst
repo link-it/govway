@@ -3,7 +3,7 @@
 Encrypt / Decrypt
 -------------------------------------------------------
 
-Il tool *govway-vault-cli* consente la cifratura o decifratura di chiavi, riferendosi a un security engine o un KSM definito nel file *<directory-lavoro>/byok.properties*.
+Il tool *govway-vault-cli* consente la cifratura o decifratura di chiavi, riferendosi a un security engine o un KMS definito nel file *<directory-lavoro>/byok.properties*.
 
 I comandi da utilizzare sono *encrypt.sh* per la cifratura e *decrypt.sh* per la decifratura.
 
@@ -11,7 +11,7 @@ Se invocato senza parametri, il tool visualizza nell'errore restituito gli argom
 
 ::
 
-    encrypt -system_in|-file_in=text|path -system_out|-file_out=path [-sec|-ksm=id]
+    encrypt -system_in|-file_in=text|path -system_out|-file_out=path [-sec|-kms=id]
     
 Gli argomenti prevedono:
 
@@ -25,10 +25,10 @@ Gli argomenti prevedono:
     - *-system_out*: il contenuto viene visualizzato come output dell'esecuzione del tool a linea di comando;
     - *-file_out=PATH*: consente di indicare il path assoluto dove verrà salvato il contenuto elaborato;
     
-- il riferimento a un security engine o un KSM definito nel file *<directory-lavoro>/byok.properties*:
+- il riferimento a un security engine o un KMS definito nel file *<directory-lavoro>/byok.properties*:
 
     - *-sec=id*: identificativo di un :ref:`byokInstallSecurityEngine`;
-    - *-ksm=id*: identificativo di un :ref:`byokInstallKsm`.
+    - *-kms=id*: identificativo di un :ref:`byokInstallKms`.
     
 Di seguito un esempio che assume l'esistenza di un security engine 'gw-pbkdf2' configurato per attuare una cifratura attraverso la derivazione di una chiave conforme al comando 'openssl aes-256-cbc -pbkdf2 -k encryptionPassword -a'.
 
