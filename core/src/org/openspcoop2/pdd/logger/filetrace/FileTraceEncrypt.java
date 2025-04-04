@@ -161,21 +161,21 @@ public class FileTraceEncrypt {
 	
 	private BYOKRequestParams getBYOKRequestParams(FileTraceEncryptConfig config) throws UtilsException {
 		BYOKRequestParams req = null;
-		if(config!=null && config.getKsmId()!=null) {
+		if(config!=null && config.getKmsId()!=null) {
 			BYOKManager manager = BYOKManager.getInstance();
 			if(manager==null) {
 				throw new UtilsException("BYOKManager not initialized");
 			}
-			BYOKConfig bconfig = manager.getKSMConfigByType(config.getKsmId());
+			BYOKConfig bconfig = manager.getKMSConfigByType(config.getKmsId());
 			if(bconfig==null) {
-				throw new UtilsException("BYOK configuration for ksm id '"+config.getKsmId()+"' not found");
+				throw new UtilsException("BYOK configuration for kms id '"+config.getKmsId()+"' not found");
 			}
 			req = new BYOKRequestParams();
 			req.setConfig(bconfig);
 			
 			Map<String, String> inputMap = new HashMap<>();
-			if(config.getKsmInput()!=null && !config.getKsmInput().isEmpty()) {
-				inputMap.putAll(config.getKsmInput());
+			if(config.getKmsInput()!=null && !config.getKmsInput().isEmpty()) {
+				inputMap.putAll(config.getKmsInput());
 			}
 			req.setInputMap(inputMap);
 			

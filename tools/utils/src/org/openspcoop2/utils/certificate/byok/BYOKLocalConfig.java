@@ -80,16 +80,16 @@ public class BYOKLocalConfig implements Serializable {
 	protected boolean joseIncludeCertSha256;
 	
 	protected BYOKLocalConfig() {}
-	protected BYOKLocalConfig(String id, Properties p, Logger log, BYOKConfig config) throws UtilsException {
+	protected BYOKLocalConfig(String id, Properties p, Logger log, BYOKConfig config, String byokPropertyPrefix) throws UtilsException {
 				
 		if(p==null || p.isEmpty()) {
 			log.error("Properties is null");
-			throw new UtilsException("Properties '"+BYOKCostanti.PROPERTY_PREFIX+id+".*' undefined");
+			throw new UtilsException("Properties '"+byokPropertyPrefix+id+".*' undefined");
 		}
 		
-		initEngine(id, p, config);
+		initEngine(id, p, config, byokPropertyPrefix);
 		
-		initKeystore(id, p, config);
+		initKeystore(id, p, config, byokPropertyPrefix);
 	}
 
 	private static final String UNSUPPORTED_KEYSTORE_PREFIX = "Unsupported keystore '";
@@ -97,48 +97,48 @@ public class BYOKLocalConfig implements Serializable {
 	private static final String VALUE_SEPARATOR = "' value '";
 	private static final String TYPE_SEPARATOR = "' type '";
 	
-	private void initEngine(String id, Properties p, BYOKConfig config) throws UtilsException {
+	private void initEngine(String id, Properties p, BYOKConfig config, String byokPropertyPrefix) throws UtilsException {
 		
 		if(config!=null) {
 			// nop
 		}
 		
-		this.encryptionEngine = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL, true);
+		this.encryptionEngine = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL, true, byokPropertyPrefix);
 		if(!BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JAVA.equals(this.encryptionEngine) &&
 				!BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JOSE.equals(this.encryptionEngine) &&
 				!BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL.equals(this.encryptionEngine)) {
-			throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL+VALUE_SEPARATOR+this.encryptionEngine+"'");
+			throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL+VALUE_SEPARATOR+this.encryptionEngine+"'");
 		}
 		
 		this.contentAlgorithm = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_CONTENT_ALGORITHM, 
-				!BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL.equals(this.encryptionEngine));
+				!BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL.equals(this.encryptionEngine), byokPropertyPrefix);
 		
 		if(BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JAVA.equals(this.encryptionEngine) ||
 				BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL.equals(this.encryptionEngine)) {
 			boolean required = BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JAVA.equals(this.encryptionEngine);
 					/**|| 
 					BYOKMode.WRAP.equals(config.getMode()); // il wrap richiede e produce un valore leggibile per l'unwrap*/
-			this.encoding = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_ENCODING, required);
+			this.encoding = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_ENCODING, required, byokPropertyPrefix);
 			if(this.encoding!=null && StringUtils.isNotEmpty(this.encoding) &&
 					!BYOKCostanti.PROPERTY_LOCAL_ENCODING_BASE64.equals(this.encoding) &&
 					!BYOKCostanti.PROPERTY_LOCAL_ENCODING_HEX.equals(this.encoding)) {
-				throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_ENCODING+VALUE_SEPARATOR+this.encoding+"'");
+				throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_ENCODING+VALUE_SEPARATOR+this.encoding+"'");
 			}
 		}
 		
 		if(BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JAVA.equals(this.encryptionEngine)) {		
-			this.keyWrap = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_WRAP, false, false);
+			this.keyWrap = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_WRAP, false, false, byokPropertyPrefix);
 		}
 		
 		if(BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JOSE.equals(this.encryptionEngine)) {		
 			
-			this.joseIncludeCert = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_CERT, false, false);
-			this.joseIncludePublicKey = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_PUBLIC_KEY, false, false);
-			this.joseIncludeKeyId = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_KEY_ID, false, false);
-			this.joseIncludeCertSha1 = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_CERT_SHA1, false, false);
-			this.joseIncludeCertSha256 = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_CERT_SHA256, false, false);
+			this.joseIncludeCert = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_CERT, false, false, byokPropertyPrefix);
+			this.joseIncludePublicKey = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_PUBLIC_KEY, false, false, byokPropertyPrefix);
+			this.joseIncludeKeyId = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_KEY_ID, false, false, byokPropertyPrefix);
+			this.joseIncludeCertSha1 = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_CERT_SHA1, false, false, byokPropertyPrefix);
+			this.joseIncludeCertSha256 = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_JOSE_INCLUDE_CERT_SHA256, false, false, byokPropertyPrefix);
 			
-			String keyIdTmp = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ID, false);
+			String keyIdTmp = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ID, false, byokPropertyPrefix);
 			if(keyIdTmp!=null) {
 				this.keyId = keyIdTmp.trim();
 			}
@@ -146,9 +146,9 @@ public class BYOKLocalConfig implements Serializable {
 		}
 	}
 	
-	private void initKeystore(String id, Properties p, BYOKConfig config) throws UtilsException {
+	private void initKeystore(String id, Properties p, BYOKConfig config, String byokPropertyPrefix) throws UtilsException {
 		
-		String tmpKeystoreType = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE, true);
+		String tmpKeystoreType = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE, true, byokPropertyPrefix);
 		this.keystoreType = KeystoreType.toEnumFromName(tmpKeystoreType);
 		if(this.keystoreType==null) {
 			HSMManager hsmManager = HSMManager.getInstance();
@@ -157,11 +157,11 @@ public class BYOKLocalConfig implements Serializable {
 				this.keystoreHsmType = tmpKeystoreType;
 			}
 			else {
-				throw new UtilsException(UNSUPPORTED_KEYSTORE_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+tmpKeystoreType+"'");
+				throw new UtilsException(UNSUPPORTED_KEYSTORE_PREFIX+byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+tmpKeystoreType+"'");
 			}
 		}
-		String unsupportedError = UNSUPPORTED_KEYSTORE_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+tmpKeystoreType+"' with "+
-				BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL+" '";
+		String unsupportedError = UNSUPPORTED_KEYSTORE_PREFIX+byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+tmpKeystoreType+"' with "+
+				byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_IMPL+" '";
 		switch (this.keystoreType) {
 		case JKS:
 		case PKCS12:
@@ -173,7 +173,7 @@ public class BYOKLocalConfig implements Serializable {
 				throw new UtilsException(unsupportedError+BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL+"'");
 			}
 			
-			initKeystoreEngine(id, p, config);
+			initKeystoreEngine(id, p, config, byokPropertyPrefix);
 			break;
 		case KEY_PAIR:
 		case PUBLIC_KEY:
@@ -183,7 +183,7 @@ public class BYOKLocalConfig implements Serializable {
 				throw new UtilsException(unsupportedError+BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_OPENSSL+"'");
 			}
 			
-			initKeyEngine(id, p);
+			initKeyEngine(id, p, byokPropertyPrefix);
 			break;
 		case PASSWORD_KEY_DERIVATION:
 			
@@ -191,87 +191,87 @@ public class BYOKLocalConfig implements Serializable {
 				throw new UtilsException(unsupportedError+BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JOSE+"'");
 			}
 			
-			initPasswordEngine(id, p);
+			initPasswordEngine(id, p, byokPropertyPrefix);
 			break;
 		default:
-			throw new UtilsException(UNSUPPORTED_KEYSTORE_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+this.keystoreType+"'");
+			throw new UtilsException(UNSUPPORTED_KEYSTORE_PREFIX+byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_TYPE+TYPE_SEPARATOR+this.keystoreType+"'");
 		}
 	}
-	private void initKeystoreEngine(String id, Properties p, BYOKConfig config) throws UtilsException {
+	private void initKeystoreEngine(String id, Properties p, BYOKConfig config, String byokPropertyPrefix) throws UtilsException {
 		
 		if(KeystoreType.PKCS11.equals(this.keystoreType)) {
 			this.keystorePath = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
 		}
 		else {
-			this.keystorePath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_PATH, true);
+			this.keystorePath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_PATH, true, byokPropertyPrefix);
 		}
 		
 		if(KeystoreType.PKCS11.equals(this.keystoreType)) {
 			this.keystorePassword = HSMUtils.KEYSTORE_HSM_STORE_PASSWORD_UNDEFINED;
 		}
 		else if(!KeystoreType.JWK_SET.equals(this.keystoreType)) {
-			this.keystorePassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_PASSWORD, true);
+			this.keystorePassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEYSTORE_PASSWORD, true, byokPropertyPrefix);
 		}
 		
-		initKeystoreKey(id, p, config);
+		initKeystoreKey(id, p, config, byokPropertyPrefix);
 	}
-	private void initKeystoreKey(String id, Properties p, BYOKConfig config) throws UtilsException {
+	private void initKeystoreKey(String id, Properties p, BYOKConfig config, String byokPropertyPrefix) throws UtilsException {
 		
-		this.keyAlias = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALIAS, true);
+		this.keyAlias = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALIAS, true, byokPropertyPrefix);
 				
 		if(KeystoreType.JCEKS.equals(this.keystoreType) || BYOKMode.UNWRAP.equals(config.getMode())) {
 			
-			this.keyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD, false);
+			this.keyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD, false, byokPropertyPrefix);
 			
 		}
 		
-		this.keyAlgorithm = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALGORITHM, true);
+		this.keyAlgorithm = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALGORITHM, true, byokPropertyPrefix);
 		
 	}
 	
-	private void initKeyEngine(String id, Properties p) throws UtilsException {
+	private void initKeyEngine(String id, Properties p, String byokPropertyPrefix) throws UtilsException {
 		
-		this.keyInline = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_INLINE, false);
-		this.keyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PATH, (this.keyInline==null || StringUtils.isEmpty(this.keyInline)));
+		this.keyInline = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_INLINE, false, byokPropertyPrefix);
+		this.keyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PATH, (this.keyInline==null || StringUtils.isEmpty(this.keyInline)), byokPropertyPrefix);
 		
-		this.keyEncoding = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ENCODING, false);
+		this.keyEncoding = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ENCODING, false, byokPropertyPrefix);
 		if(this.keyEncoding!=null && StringUtils.isNotEmpty(this.keyEncoding) &&
 			!BYOKCostanti.PROPERTY_LOCAL_ENCODING_BASE64.equals(this.keyEncoding) &&
 			!BYOKCostanti.PROPERTY_LOCAL_ENCODING_HEX.equals(this.keyEncoding)) {
-			throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ENCODING+VALUE_SEPARATOR+this.keyEncoding+"'");
+			throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ENCODING+VALUE_SEPARATOR+this.keyEncoding+"'");
 		}
 		
-		this.keyAlgorithm = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALGORITHM, true);
+		this.keyAlgorithm = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_ALGORITHM, true, byokPropertyPrefix);
 		
 		if(KeystoreType.KEY_PAIR.equals(this.keystoreType)) {
-			this.publicKeyInline = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_INLINE, false);
-			this.publicKeyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_PATH, (this.publicKeyInline==null || StringUtils.isEmpty(this.publicKeyInline)));
+			this.publicKeyInline = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_INLINE, false, byokPropertyPrefix);
+			this.publicKeyPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_PATH, (this.publicKeyInline==null || StringUtils.isEmpty(this.publicKeyInline)), byokPropertyPrefix);
 			
-			this.publicKeyEncoding = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING, false);
+			this.publicKeyEncoding = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING, false, byokPropertyPrefix);
 			if(this.publicKeyEncoding!=null && StringUtils.isNotEmpty(this.publicKeyEncoding) &&
 				!BYOKCostanti.PROPERTY_LOCAL_ENCODING_BASE64.equals(this.publicKeyEncoding) &&
 				!BYOKCostanti.PROPERTY_LOCAL_ENCODING_HEX.equals(this.publicKeyEncoding)) {
-				throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING+VALUE_SEPARATOR+this.publicKeyEncoding+"'");
+				throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PUBLIC_KEY_ENCODING+VALUE_SEPARATOR+this.publicKeyEncoding+"'");
 			}
 			
-			this.keyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD, false);
+			this.keyPassword = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_KEY_PASSWORD, false, byokPropertyPrefix);
 		}
 	
 	}
 	
-	private void initPasswordEngine(String id, Properties p) throws UtilsException {
+	private void initPasswordEngine(String id, Properties p, String byokPropertyPrefix) throws UtilsException {
 		
-		this.pw = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW, true);
+		this.pw = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW, true, byokPropertyPrefix);
 		
-		this.pwType = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW_TYPE, false);
+		this.pwType = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW_TYPE, false, byokPropertyPrefix);
 		if(this.pwType==null || StringUtils.isEmpty(this.pwType.trim())) {
 			this.pwType = BYOKCostanti.PROPERTY_LOCAL_PW_TYPE_DEFAULT;
 		}
 		else if(!BYOKCostanti.getLocalPasswordTypes().contains(this.pwType)) {
-			throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+BYOKCostanti.PROPERTY_PREFIX+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW_TYPE+VALUE_SEPARATOR+this.pwType+"'");
+			throw new UtilsException(UNSUPPORTED_PROPERTY_PREFIX+byokPropertyPrefix+id+"."+BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PW_TYPE+VALUE_SEPARATOR+this.pwType+"'");
 		}
 		
-		this.pwIteration = BYOKConfig.getIntegerProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PWD_ITERATION, false);
+		this.pwIteration = BYOKConfig.getIntegerProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_LOCAL_PWD_ITERATION, false, byokPropertyPrefix);
 	}
 	
 	

@@ -32,11 +32,11 @@ import org.openspcoop2.utils.transport.http.IBYOKUnwrapManager;
  */
 public class BYOKUnwrapManager implements IBYOKUnwrapManager {
 
-	private String ksmId;
+	private String kmsId;
 	private BYOKRequestParams byokParams;
 	
-	public BYOKUnwrapManager(String ksmId, BYOKRequestParams byokParams) {
-		this.ksmId = ksmId;
+	public BYOKUnwrapManager(String kmsId, BYOKRequestParams byokParams) {
+		this.kmsId = kmsId;
 		this.byokParams = byokParams;
 	}
 	
@@ -51,7 +51,7 @@ public class BYOKUnwrapManager implements IBYOKUnwrapManager {
 
 	@Override
 	public String getPolicy() {
-		return this.ksmId;
+		return this.kmsId;
 	}
 
 }

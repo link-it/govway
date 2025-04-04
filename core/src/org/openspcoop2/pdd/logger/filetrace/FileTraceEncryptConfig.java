@@ -80,8 +80,8 @@ public class FileTraceEncryptConfig {
 	private boolean joseIncludeCertSha1;
 	private boolean joseIncludeCertSha256;
 	
-	private String ksmId;
-	private Map<String, String> ksmInput;
+	private String kmsId;
+	private Map<String, String> kmsInput;
 	
 	private static final String ENCRYPTIONT_ENGINE_JAVA = BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JAVA;
 	private static final String ENCRYPTIONT_ENGINE_JOSE = BYOKCostanti.PROPERTY_LOCAL_ENCRYPTION_ENGINE_JOSE;
@@ -140,8 +140,10 @@ public class FileTraceEncryptConfig {
 	private static final String JOSE_INCLUDE_CERT_SHA1 = ".include.cert.sha1";
 	private static final String JOSE_INCLUDE_CERT_SHA256 = ".include.cert.sha256";
 	
-	private static final String KSM = ".ksm";
-	private static final String KSM_PARAM = ".ksm.param.";
+	private static final String KMS = ".kms";
+	private static final String KMS_PARAM = ".kms.param.";
+	private static final String KSM_DEPRECATED = ".ksm";
+	private static final String KSM_PARAM_DEPRECATED = ".ksm.param.";
 
 	
 	public static Map<String, FileTraceEncryptConfig> parse(PropertiesReader reader) throws UtilsException{
@@ -179,7 +181,7 @@ public class FileTraceEncryptConfig {
 				
 				parseKestore(encMode, propertiesMap, c);
 				
-				parseKsm(encMode, propertiesMap, c);
+				parseKms(encMode, propertiesMap, c);
 				
 				result.put(encMode, c);
 			}
@@ -450,38 +452,50 @@ public class FileTraceEncryptConfig {
 		}
 	}
 	
-	private static void parseKsm(String encMode, Properties propertiesMap, 
+	private static void parseKms(String encMode, Properties propertiesMap, 
 			FileTraceEncryptConfig c) {
-		String ksmPName = encMode+KSM;
-		String ksm = propertiesMap.getProperty(ksmPName);
-		if(ksm!=null && StringUtils.isNotEmpty(ksm.trim())) {
-			c.ksmId = ksm.trim();
+		
+		String prefixKMSparams = KMS_PARAM;
+		
+		String kmsPName = encMode+KMS;
+		String kms = propertiesMap.getProperty(kmsPName);
+		if(kms!=null && StringUtils.isNotEmpty(kms.trim())) {
+			c.kmsId = kms.trim();
+		}
+		else {
+			// provo precedente modalità
+			kmsPName = encMode+KSM_DEPRECATED;
+			kms = propertiesMap.getProperty(kmsPName);
+			if(kms!=null && StringUtils.isNotEmpty(kms.trim())) {
+				c.kmsId = kms.trim();
+				prefixKMSparams = KSM_PARAM_DEPRECATED;
+			}
 		}
 		
 		List<String> inputParams = new ArrayList<>();
-		initKsmParamsInput(encMode, propertiesMap, inputParams);
+		initKmsParamsInput(encMode, propertiesMap, inputParams, prefixKMSparams);
 		if(!inputParams.isEmpty()) {
-			c.ksmInput = new HashMap<>();
+			c.kmsInput = new HashMap<>();
 			for (String inputId : inputParams) {
-				String value = propertiesMap.getProperty(encMode+KSM_PARAM+inputId);
+				String value = propertiesMap.getProperty(encMode+prefixKMSparams+inputId);
 				if(value!=null) {
-					c.ksmInput.put(inputId, value.trim());
+					c.kmsInput.put(inputId, value.trim());
 				}
 			}
 		}
 	}
-	private static void initKsmParamsInput(String encMode, Properties propertiesMap, List<String> idKeystore) {
-		String ksmParam = encMode+KSM_PARAM;
+	private static void initKmsParamsInput(String encMode, Properties propertiesMap, List<String> idKeystore, String prefixKMSparams) {
+		String kmsParam = encMode+prefixKMSparams;
 		Enumeration<?> enKeys = propertiesMap.keys();
 		while (enKeys.hasMoreElements()) {
 			Object object = enKeys.nextElement();
 			if(object instanceof String) {
 				String key = (String) object;
-				initKsmParamsInput(key, ksmParam, idKeystore);	
+				initKmsParamsInput(key, kmsParam, idKeystore);	
 			}
 		}
 	}
-	private static void initKsmParamsInput(String key, String prefix, List<String> idKeystore) {
+	private static void initKmsParamsInput(String key, String prefix, List<String> idKeystore) {
 		if(key.startsWith(prefix) && key.length()>(prefix.length())) {
 			String tmp = key.substring(prefix.length());
 			if(tmp!=null && StringUtils.isNotEmpty(tmp) &&
@@ -619,11 +633,11 @@ public class FileTraceEncryptConfig {
 		return jwtHeaders;
 	}
 
-	public String getKsmId() {
-		return this.ksmId;
+	public String getKmsId() {
+		return this.kmsId;
 	}
-	public Map<String, String> getKsmInput() {
-		return this.ksmInput;
+	public Map<String, String> getKmsInput() {
+		return this.kmsInput;
 	}
 
 }

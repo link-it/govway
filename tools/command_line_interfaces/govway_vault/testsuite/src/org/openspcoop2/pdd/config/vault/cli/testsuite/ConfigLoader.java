@@ -85,19 +85,19 @@ public class ConfigLoader {
     public static final String SECURITY_ASYNC_KEYS_UNWRAP = "async-keys-unwrap"; 
     public static final String SECURITY_GOVWAY_REMOTE_UNWRAP = "govway-remote-unwrap";
     
-    public static final String KSM_PBKDF2_WRAP = "openssl-pbkdf2-wrap-novariable";
-    public static final String KSM_PBKDF2_UNWRAP = "openssl-pbkdf2-unwrap-novariable"; 
-    public static final String KSM_ASYNC_KEYS_WRAP = "async-keys-wrap-novariable";
-    public static final String KSM_ASYNC_KEYS_UNWRAP = "async-keys-unwrap-novariable"; 
-    public static final String KSM_GOVWAY_REMOTE_WRAP = "govway-remote-wrap-novariable";
-    public static final String KSM_GOVWAY_REMOTE_UNWRAP = "govway-remote-unwrap-novariable";
+    public static final String KMS_PBKDF2_WRAP = "openssl-pbkdf2-wrap-novariable";
+    public static final String KMS_PBKDF2_UNWRAP = "openssl-pbkdf2-unwrap-novariable"; 
+    public static final String KMS_ASYNC_KEYS_WRAP = "async-keys-wrap-novariable";
+    public static final String KMS_ASYNC_KEYS_UNWRAP = "async-keys-unwrap-novariable"; 
+    public static final String KMS_GOVWAY_REMOTE_WRAP = "govway-remote-wrap-novariable";
+    public static final String KMS_GOVWAY_REMOTE_UNWRAP = "govway-remote-unwrap-novariable";
     
     public static final String SYSTEM_IN="-system_in";
     public static final String SYSTEM_OUT="-system_out";
     public static final String FILE_IN="-file_in";
     public static final String FILE_OUT="-file_out";
     public static final String SEC="-sec";
-    public static final String KSM="-ksm";
+    public static final String KMS="-kms";
     
 	public static final String SECURITY_IN="-sec_in";
 	public static final String SECURITY_OUT="-sec_out";
@@ -576,7 +576,7 @@ public class ConfigLoader {
 	        	params.add(SEC+"="+idPolicy);
 	        }
 	        else {
-	        	params.add(KSM+"="+idPolicy);
+	        	params.add(KMS+"="+idPolicy);
 	        }
         }
         

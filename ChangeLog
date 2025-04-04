@@ -1,3 +1,10 @@
+2025-04-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1595
+	Nelle configurazioni dei Key Management Service utilizzati per le funzionalità 'BYOK', veniva erroneamente utilizzata la keyword 'ksm' al posto di 'kms'.
+	È stata apportata la correzione, mantenendo tuttavia il supporto della vecchia keyword per motivi di retrocompatibilità, deprecandone l’utilizzo.
+
 2025-04-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

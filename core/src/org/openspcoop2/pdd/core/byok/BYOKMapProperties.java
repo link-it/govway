@@ -45,10 +45,14 @@ public class BYOKMapProperties extends MapProperties {
 
 	public static final String FILE_NAME = "govway.secrets.properties";
 	
-	private static final String PROP_KSM_PREFIX = "ksm.";
-	private static final String ENV_KSM_PREFIX = MapProperties.ENV_PREFIX+PROP_KSM_PREFIX;
-	private static final String JAVA_KSM_PREFIX = MapProperties.JAVA_PREFIX+PROP_KSM_PREFIX;
+	private static final String PROP_KMS_PREFIX = "kms.";
+	private static final String ENV_KMS_PREFIX = MapProperties.ENV_PREFIX+PROP_KMS_PREFIX;
+	private static final String JAVA_KMS_PREFIX = MapProperties.JAVA_PREFIX+PROP_KMS_PREFIX;
 	
+	private static final String PROP_KSM_PREFIX_DEPRECATED = "ksm.";
+	private static final String ENV_KSM_PREFIX_DEPRECATED = MapProperties.ENV_PREFIX+PROP_KSM_PREFIX_DEPRECATED;
+	private static final String JAVA_KSM_PREFIX_DEPRECATED = MapProperties.JAVA_PREFIX+PROP_KSM_PREFIX_DEPRECATED;
+		
 	private static final String PROP_SECURITY_PREFIX = "security.";
 	private static final String ENV_SECURITY_PREFIX = MapProperties.ENV_PREFIX+PROP_SECURITY_PREFIX;
 	private static final String JAVA_SECURITY_PREFIX = MapProperties.JAVA_PREFIX+PROP_SECURITY_PREFIX;
@@ -66,18 +70,25 @@ public class BYOKMapProperties extends MapProperties {
 	private static final String UNWRAP_DEFAULT_MODE = "unwrap.default.mode";
 	private static final String UNWRAP_DEFAULT_ID = "unwrap.default.id";
 	private static final String UNWRAP_MODE_SECURITY = "security"; 
-	private static final String UNWRAP_MODE_KSM = "ksm"; 
+	private static final String UNWRAP_MODE_KMS = "kms"; 
+	private static final String UNWRAP_MODE_KSM_DEPRECATED = "ksm"; 
 	
-	// ksm.<id>.param.<paramName>=<paramValue>
-	private static final String KSM_PREFIX = "ksm.";
-	private static final String KSM_PARAM_PREFIX = ".param.";
-	private static String getKsmParamPrefixPropertyName(String ksmId) {
-		return KSM_PREFIX+ksmId+KSM_PARAM_PREFIX;
+	// kms.<id>.param.<paramName>=<paramValue>
+	private static final String KMS_PREFIX = "kms.";
+	private static final String KMS_PARAM_PREFIX = ".param.";
+	private static String getKmsParamPrefixPropertyName(String kmsId) {
+		return KMS_PREFIX+kmsId+KMS_PARAM_PREFIX;
+	}
+	
+	private static final String KSM_PREFIX_DEPRECATED = "ksm.";
+	private static final String KSM_PARAM_PREFIX_DEPRECATED = ".param.";
+	private static String getKsmParamPrefixPropertyNameDeprecated(String ksmId) {
+		return KSM_PREFIX_DEPRECATED+ksmId+KSM_PARAM_PREFIX_DEPRECATED;
 	}
 		
 	private static final String ERROR_SUFFIX_UNKNOW = "' unknown";
 	
-	private static final String ERROR_DEFAULT_MODE_NOT_FOUND = ") an unwrap mode has not been defined (security/ksm); specifying the mode is mandatory if a default unwrap mode is not defined.";
+	private static final String ERROR_DEFAULT_MODE_NOT_FOUND = ") an unwrap mode has not been defined (security/kms); specifying the mode is mandatory if a default unwrap mode is not defined.";
 	
 	private String defaultUnwrapId = null;
 	private Boolean defaultUnwrapModeSecurity = null;
@@ -88,7 +99,7 @@ public class BYOKMapProperties extends MapProperties {
 	
 	private Map<String, DriverBYOK> mapDriverSecurity = new HashMap<>();
 	
-	private Map<String, Map<String, String>> mapKsmInput = new HashMap<>();
+	private Map<String, Map<String, String>> mapKmsInput = new HashMap<>();
 	
 	private Map<String, Object> dynamicMap = null;
 	private boolean checkJmxPrefixOperazioneNonRiuscita = false;
@@ -181,14 +192,16 @@ public class BYOKMapProperties extends MapProperties {
 		this.loadDefaultUnwrap();
 		
 		if(key.startsWith(ENV_PREFIX) && key.length()>ENV_PREFIX.length() &&
-				!key.startsWith(ENV_KSM_PREFIX) &&
+				!key.startsWith(ENV_KSM_PREFIX_DEPRECATED) &&
+				!key.startsWith(ENV_KMS_PREFIX) &&
 				!key.startsWith(ENV_SECURITY_PREFIX) &&
 				!key.startsWith(ENV_WRAPPED_PREFIX) &&
 				!key.startsWith(ENV_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX)) {
 			loadEnvPropertyInEnvironment(key);
 		}
 		else if(key.startsWith(JAVA_PREFIX) && key.length()>JAVA_PREFIX.length() &&
-				!key.startsWith(JAVA_KSM_PREFIX) &&
+				!key.startsWith(JAVA_KSM_PREFIX_DEPRECATED) &&
+				!key.startsWith(JAVA_KMS_PREFIX) &&
 				!key.startsWith(JAVA_SECURITY_PREFIX) &&
 				!key.startsWith(JAVA_WRAPPED_PREFIX) &&
 				!key.startsWith(JAVA_UNWRAP_AFTER_GOVWAY_STARTUP_PREFIX)) {
@@ -246,7 +259,7 @@ public class BYOKMapProperties extends MapProperties {
 				plainValue = getDriverBYOK(securityId).unwrapAsString(value, securityId, true);
 			}
 			else {
-				plainValue = unwrapByKsmId(value, securityId);
+				plainValue = unwrapByKmsId(value, securityId);
 			}
 		}catch(Exception e) {
 			throw new UtilsException("["+key+"] "+e.getMessage(),e);
@@ -279,7 +292,7 @@ public class BYOKMapProperties extends MapProperties {
 				if(UNWRAP_MODE_SECURITY.equals(tmp.trim())) {
 					this.defaultUnwrapModeSecurity = true; 
 				}
-				else if(UNWRAP_MODE_KSM.equals(tmp.trim())) {
+				else if(UNWRAP_MODE_KMS.equals(tmp.trim()) || UNWRAP_MODE_KSM_DEPRECATED.equals(tmp.trim())) {
 					this.defaultUnwrapModeSecurity = false; 
 				}
 				else {
@@ -355,18 +368,29 @@ public class BYOKMapProperties extends MapProperties {
 			return true;
 		}
 		else {
-			String pKsmName = javaProperty ? JAVA_KSM_PREFIX : ENV_KSM_PREFIX;
-			tmp = this.reader.getValue_convertEnvProperties(pKsmName+key);
+			return isWrappedBySecurityKms(javaProperty, key);
+		}
+	}
+	private boolean isWrappedBySecurityKms(boolean javaProperty, String key) throws UtilsException {
+		String pKmsName = javaProperty ? JAVA_KMS_PREFIX : ENV_KMS_PREFIX;
+		String tmp = this.reader.getValue_convertEnvProperties(pKmsName+key);
+		if(tmp!=null && StringUtils.isNotEmpty(tmp.trim())) {
+			return false;
+		}
+		else {
+			pKmsName = javaProperty ? JAVA_KSM_PREFIX_DEPRECATED : ENV_KSM_PREFIX_DEPRECATED;
+			tmp = this.reader.getValue_convertEnvProperties(pKmsName+key);
 			if(tmp!=null && StringUtils.isNotEmpty(tmp.trim())) {
 				return false;
 			}
-			else if(this.defaultUnwrapModeSecurity!=null) {
-				return this.defaultUnwrapModeSecurity.booleanValue();
-			}
-			else {
-				String prefix = javaProperty ? JAVA_PREFIX : ENV_PREFIX;
-				throw new UtilsException("("+prefix+key+ERROR_DEFAULT_MODE_NOT_FOUND);
-			}
+		}
+		
+		if(this.defaultUnwrapModeSecurity!=null) {
+			return this.defaultUnwrapModeSecurity.booleanValue();
+		}
+		else {
+			String prefix = javaProperty ? JAVA_PREFIX : ENV_PREFIX;
+			throw new UtilsException("("+prefix+key+ERROR_DEFAULT_MODE_NOT_FOUND);
 		}
 	}
 	
@@ -380,18 +404,29 @@ public class BYOKMapProperties extends MapProperties {
 			return tmp.trim();
 		}
 		else {
-			String pKsmName = javaProperty ? JAVA_KSM_PREFIX : ENV_KSM_PREFIX;
-			tmp = this.reader.getValue_convertEnvProperties(pKsmName+key);
+			return getUnwrapIdByKms(javaProperty, key);
+		}
+	}
+	private String getUnwrapIdByKms(boolean javaProperty, String key) throws UtilsException {
+		String pKmsName = javaProperty ? JAVA_KMS_PREFIX : ENV_KMS_PREFIX;
+		String tmp = this.reader.getValue_convertEnvProperties(pKmsName+key);
+		if(tmp!=null && StringUtils.isNotEmpty(tmp.trim())) {
+			return tmp.trim();
+		}
+		else {
+			pKmsName = javaProperty ? JAVA_KSM_PREFIX_DEPRECATED : ENV_KSM_PREFIX_DEPRECATED;
+			tmp = this.reader.getValue_convertEnvProperties(pKmsName+key);
 			if(tmp!=null && StringUtils.isNotEmpty(tmp.trim())) {
 				return tmp.trim();
 			}
-			else if(this.defaultUnwrapId!=null) {
-				return this.defaultUnwrapId;
-			}
-			else {
-				String prefix = javaProperty ? JAVA_PREFIX : ENV_PREFIX;
-				throw new UtilsException("("+prefix+key+ERROR_DEFAULT_MODE_NOT_FOUND);
-			}
+		}
+		
+		if(this.defaultUnwrapId!=null) {
+			return this.defaultUnwrapId;
+		}
+		else {
+			String prefix = javaProperty ? JAVA_PREFIX : ENV_PREFIX;
+			throw new UtilsException("("+prefix+key+ERROR_DEFAULT_MODE_NOT_FOUND);
 		}
 	}
 	
@@ -423,9 +458,12 @@ public class BYOKMapProperties extends MapProperties {
 		}
 	}
 	
-	private Map<String, String> readKsmInputMap(String ksmId) throws UtilsException{
+	private Map<String, String> readKmsInputMap(String kmsId) throws UtilsException{
 		Map<String, String> map = new HashMap<>();
-		Properties p = this.reader.readProperties_convertEnvProperties(getKsmParamPrefixPropertyName(ksmId));
+		Properties p = this.reader.readProperties_convertEnvProperties(getKmsParamPrefixPropertyName(kmsId));
+		if(p==null || p.isEmpty()) {
+			p = this.reader.readProperties_convertEnvProperties(getKsmParamPrefixPropertyNameDeprecated(kmsId));
+		}
 		if(p!=null && !p.isEmpty()) {
 			for (Map.Entry<Object,Object> entry : p.entrySet()) {
 				if(entry.getKey() instanceof String && entry.getValue() instanceof String) {
@@ -435,28 +473,28 @@ public class BYOKMapProperties extends MapProperties {
 		}
 		return map;
 	}
-	private Map<String, String> getKsmInputMap(String ksmId) {
-		if(!this.mapKsmInput.containsKey(ksmId)) {
-			initKsmInputMap(ksmId);
+	private Map<String, String> getKmsInputMap(String kmsId) {
+		if(!this.mapKmsInput.containsKey(kmsId)) {
+			initKmsInputMap(kmsId);
 		}
-		return this.mapKsmInput.get(ksmId);
+		return this.mapKmsInput.get(kmsId);
 	}
-	private synchronized void initKsmInputMap(String ksmId) {
-		this.mapKsmInput.computeIfAbsent(ksmId, k -> {
+	private synchronized void initKmsInputMap(String kmsId) {
+		this.mapKmsInput.computeIfAbsent(kmsId, k -> {
 			try {
-				return readKsmInputMap(ksmId);
+				return readKmsInputMap(kmsId);
 			} catch (UtilsException e) {
 				throw new UtilsRuntimeException(e.getMessage(),e);
 			}
 		});
 	}
 	
-	private String unwrapByKsmId(String value, String ksmId) throws UtilsException {
+	private String unwrapByKmsId(String value, String kmsId) throws UtilsException {
 		
-		Map<String, String> inputMap = getKsmInputMap(ksmId);
-		BYOKRequestParams params = DriverBYOK.getBYOKRequestParamsByKsmId(ksmId, inputMap, newDynamicMap());
+		Map<String, String> inputMap = getKmsInputMap(kmsId);
+		BYOKRequestParams params = DriverBYOK.getBYOKRequestParamsByKmsId(kmsId, inputMap, newDynamicMap());
 		if(!BYOKMode.UNWRAP.equals(params.getConfig().getMode())) {
-			throw new UtilsException("Ksm '"+ksmId+"' unusable in unwrap operation");
+			throw new UtilsException("Kms '"+kmsId+"' unusable in unwrap operation");
 		}
 		BYOKInstance instance = BYOKInstance.newInstance(this.log, params, value.getBytes());
 		byte[] unwrappedValue = DriverBYOK.processInstance(instance, this.checkJmxPrefixOperazioneNonRiuscita);

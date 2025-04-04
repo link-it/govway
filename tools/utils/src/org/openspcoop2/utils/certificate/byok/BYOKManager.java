@@ -83,69 +83,65 @@ public class BYOKManager {
 	/*
 	 * Consente di inizializzare una serie di keystore hardware
 	 * 
-	 * La configurazione di ogni keystore deve essere definita nel file ksm.properties fornito come argomento dove la sintassi utilizzabile è la seguente
+	 * La configurazione di ogni keystore deve essere definita nel file kms.properties fornito come argomento dove la sintassi utilizzabile è la seguente
 	 * 
-	 * ksm.<idKSM>.type: [required] identificativo univoco del ksm utilizzato nelle configurazioni di govway
-	 * ksm.<idKSM>.label: [required] etichetta associata al ksm e visualizzata nelle maschere di configurazione
-	 * ksm.<idKSM>.mode: [required] indica il tipo di operazione wrap e unwrap
-	 * ksm.<idKSM>.input.<idParam>.name: [optional] se fornito definisce un parametro richiesto alla configurazione della credenziale a cui il ksm viene associato 
-	 * ksm.<idKSM>.input.<idParam>.label: [optional] definisce l'etichetta associata al parametro di configurazione
+	 * kms.<idKMS>.type: [required] identificativo univoco del kms utilizzato nelle configurazioni di govway
+	 * kms.<idKMS>.label: [required] etichetta associata al kms e visualizzata nelle maschere di configurazione
+	 * kms.<idKMS>.mode: [required] indica il tipo di operazione wrap e unwrap
+	 * kms.<idKMS>.input.<idParam>.name: [optional] se fornito definisce un parametro richiesto alla configurazione della credenziale a cui il kms viene associato 
+	 * kms.<idKMS>.input.<idParam>.label: [optional] definisce l'etichetta associata al parametro di configurazione
 	 * 
-	 * Le restanti proprietà definiscono come accedere al ksm possono essere valorizzate utilizzando anche le seguenti variabili:
-	 * ${ksm-key}: byte[] dell'archivio indicato
-	 * ${ksm-base64-key}: byte[] dell'archivio indicato codificato in base64
-	 * ${ksm-hex-key}: byte[] dell'archivio indicato codificato in base64
-	 * ${ksm:<nomeparametro>}: parametro indicato nella configurazione del ksm
+	 * Le restanti proprietà definiscono come accedere al kms possono essere valorizzate utilizzando anche le seguenti variabili:
+	 * ${kms-key}: byte[] dell'archivio indicato
+	 * ${kms-base64-key}: byte[] dell'archivio indicato codificato in base64
+	 * ${kms-hex-key}: byte[] dell'archivio indicato codificato in base64
+	 * ${kms:<nomeparametro>}: parametro indicato nella configurazione del kms
 	 * 
-	 * L'operazione di wrap/unwrap può essere realizzata invocando un ksm remoto (via http) o cifrando/decifrando tramite keystore locali.
+	 * L'operazione di wrap/unwrap può essere realizzata invocando un kms remoto (via http) o cifrando/decifrando tramite keystore locali.
 	 * 
-	 * ksm.<idKSM>.encryptionMode: [optional; default:remote] indica il tipo di encryption via ksm remoto (remote) o locale (local)
+	 * kms.<idKMS>.encryptionMode: [optional; default:remote] indica il tipo di encryption via kms remoto (remote) o locale (local)
 	 * 
-	 * Configurazioni per ksm remoto:
+	 * Configurazioni per kms remoto:
 	 * 
-	 * ksm.<idKSM>.http.endpoint: [required] definisce l'endpoint del ksm
-	 * ksm.<idKSM>.http.method: [required] definisce il metodo HTTP utilzzato per connettersi al ksm
-	 * ksm.<idKSM>.http.header.<nome>: definisce un header HTTP che possiede il nome indicato nella proprietà stessa
-	 * ksm.<idKSM>.http.payload.inline [optional] definisce il payload da utilizzare nella richiesta http
-	 * ksm.<idKSM>.http.payload.path [optional] alternativa alla precedente proprietà defnisce il path ad un file contenente il payload da utilizzare nella richiesta http
-	 * ksm.<idKSM>.http.username [optional] definisce la credenziale http-basic (username)
-	 * ksm.<idKSM>.http.password [optional] definisce la credenziale http-basic (password)
-	 * ksm.<idKSM>.http.connectionTimeout [optional; int] tempo massimo in millisecondi di attesa per stabilire una connessione con il server ksm
-	 * ksm.<idKSM>.http.readTimeout [optional; int] tempo massimo in millisecondi di attesa per la ricezione di una risposta dal server
+	 * kms.<idKMS>.http.endpoint: [required] definisce l'endpoint del kms
+	 * kms.<idKMS>.http.method: [required] definisce il metodo HTTP utilzzato per connettersi al kms
+	 * kms.<idKMS>.http.header.<nome>: definisce un header HTTP che possiede il nome indicato nella proprietà stessa
+	 * kms.<idKMS>.http.payload.inline [optional] definisce il payload da utilizzare nella richiesta http
+	 * kms.<idKMS>.http.payload.path [optional] alternativa alla precedente proprietà defnisce il path ad un file contenente il payload da utilizzare nella richiesta http
+	 * kms.<idKMS>.http.username [optional] definisce la credenziale http-basic (username)
+	 * kms.<idKMS>.http.password [optional] definisce la credenziale http-basic (password)
+	 * kms.<idKMS>.http.connectionTimeout [optional; int] tempo massimo in millisecondi di attesa per stabilire una connessione con il server kms
+	 * kms.<idKMS>.http.readTimeout [optional; int] tempo massimo in millisecondi di attesa per la ricezione di una risposta dal server
 	 * 
 	 * Le seguenti proprietà opzionali consentono invece di utilizzare e configurare un connettore di tipo https
-	 * ksm.<idKSM>.https [optional; boolean] indica se utilizzare o meno un connettore di tipo https 
-	 * ksm.<idKSM>.https.hostnameVerifier  [optional; boolean] indica se deve essere verificato l'hostname rispetto al certificato server
+	 * kms.<idKMS>.https [optional; boolean] indica se utilizzare o meno un connettore di tipo https 
+	 * kms.<idKMS>.https.hostnameVerifier  [optional; boolean] indica se deve essere verificato l'hostname rispetto al certificato server
 	 * 
-	 * ksm.<idKSM>.https.serverAuth  [optional; boolean] indica se deve essere effettuata l'autenticazione del certificato server
-	 * ksm.<idKSM>.https.serverAuth.trustStore.path: truststore per effettuare l'autenticazione
-	 * ksm.<idKSM>.https.serverAuth.trustStore.type: tipo di truststore
-	 * ksm.<idKSM>.https.serverAuth.trustStore.password password del truststore
-	 * ksm.<idKSM>.https.serverAuth.trustStore.crls: crl
-	 * ksm.<idKSM>.https.serverAuth.trustStore.ocspPolicy: OCSP Policy
+	 * kms.<idKMS>.https.serverAuth  [optional; boolean] indica se deve essere effettuata l'autenticazione del certificato server
+	 * kms.<idKMS>.https.serverAuth.trustStore.path: truststore per effettuare l'autenticazione
+	 * kms.<idKMS>.https.serverAuth.trustStore.type: tipo di truststore
+	 * kms.<idKMS>.https.serverAuth.trustStore.password password del truststore
+	 * kms.<idKMS>.https.serverAuth.trustStore.crls: crl
+	 * kms.<idKMS>.https.serverAuth.trustStore.ocspPolicy: OCSP Policy
 	 * 
-	 * ksm.<idKSM>.https.clientAuth  [optional; boolean] indica se deve essere inviato un certificato client
-	 * ksm.<idKSM>.https.clientAuth.keyStore.path: keystore per effettuare l'autenticazione client
-	 * ksm.<idKSM>.https.clientAuth.keyStore.type: tipo di keystore
-	 * ksm.<idKSM>.https.clientAuth.keyStore.password password del keystore
-	 * ksm.<idKSM>.https.clientAuth.key.alias: identifica la chiave privata
-	 * ksm.<idKSM>.https.clientAuth.key.password: password della chiave privata
+	 * kms.<idKMS>.https.clientAuth  [optional; boolean] indica se deve essere inviato un certificato client
+	 * kms.<idKMS>.https.clientAuth.keyStore.path: keystore per effettuare l'autenticazione client
+	 * kms.<idKMS>.https.clientAuth.keyStore.type: tipo di keystore
+	 * kms.<idKMS>.https.clientAuth.keyStore.password password del keystore
+	 * kms.<idKMS>.https.clientAuth.key.alias: identifica la chiave privata
+	 * kms.<idKMS>.https.clientAuth.key.password: password della chiave privata
      *
-     * ksm.<idKSM>.http.response.base64Encoded [optional; boolean] indicazione se la risposta è codificata in base64
-     * ksm.<idKSM>.http.response.hexEncoded [optional; boolean] indicazione se la risposta è codificata tramite una rappresentazione esadecimale
-     * ksm.<idKSM>.http.response.jsonPath [optional] se la risposta è un json (eventualmente dopo la decodificata base64/hex) consente di indicare un jsonPath per estrarre l'informazione da un singolo elemento
-     *
-     * Configurazioni per ksm locale:
-     * 
-     * ksm.<idKSM>.TERMINARE
+     * kms.<idKMS>.http.response.base64Encoded [optional; boolean] indicazione se la risposta è codificata in base64
+     * kms.<idKMS>.http.response.hexEncoded [optional; boolean] indicazione se la risposta è codificata tramite una rappresentazione esadecimale
+     * kms.<idKMS>.http.response.jsonPath [optional] se la risposta è un json (eventualmente dopo la decodificata base64/hex) consente di indicare un jsonPath per estrarre l'informazione da un singolo elemento
 	 * 
 	 **/
 	
 
-	private HashMap<String, BYOKConfig> ksmKeystoreMapIDtoConfig = new HashMap<>();
+	private HashMap<String, BYOKConfig> kmsKeystoreMapIDtoConfig = new HashMap<>();
 	
-	private HashMap<String, String> ksmKeystoreMapLabelToID = new HashMap<>();
-	private HashMap<String, String> ksmKeystoreMapTypeToID = new HashMap<>();
+	private HashMap<String, String> kmsKeystoreMapLabelToID = new HashMap<>();
+	private HashMap<String, String> kmsKeystoreMapTypeToID = new HashMap<>();
 	
 	private List<String> unwrapTypes = new ArrayList<>();
 	private List<String> unwrapLabels = new ArrayList<>();
@@ -181,7 +177,7 @@ public class BYOKManager {
 			init(p, log);
 		}
 	}
-	/**private KSMManager(Properties p, Logger log, boolean accessKeystore) throws UtilsException {
+	/**private BYOKManager(Properties p, Logger log, boolean accessKeystore) throws UtilsException {
 		init(p, log, accessKeystore);
 	}*/
 	private void init(Properties p, Logger log) throws UtilsException {
@@ -199,7 +195,7 @@ public class BYOKManager {
 			}
 		}
 		else {
-			log.warn("La configurazione fornita per KSM non contiene alcun keystore");
+			log.warn("La configurazione fornita per KMS non contiene alcun keystore");
 		}
 		
 		if(!securityKeystore.isEmpty()) {
@@ -208,7 +204,7 @@ public class BYOKManager {
 			}
 		}
 		else {
-			log.warn("La configurazione fornita per KSM non contiene alcun security manager");
+			log.warn("La configurazione fornita per KMS non contiene alcun security manager");
 		}
 		
 		initSecurityGovWay(p);
@@ -224,7 +220,10 @@ public class BYOKManager {
 		}
 	}
 	private void init(String key, List<String> idKeystore, List<String> securityKeystore) {
-		boolean isIdKeystore = initEngine(key, idKeystore, BYOKCostanti.PROPERTY_PREFIX);
+		boolean isIdKeystore = initEngine(key, idKeystore, BYOKCostanti.PROPERTY_PREFIX_KMS);
+		if(!isIdKeystore) {
+			isIdKeystore = initEngine(key, idKeystore, BYOKCostanti.PROPERTY_PREFIX_KSM_DEPRECATED);
+		}
 		if(!isIdKeystore) {
 			initEngine(key, securityKeystore, BYOKCostanti.SECURITY_PROPERTY_PREFIX);
 		}
@@ -247,48 +246,54 @@ public class BYOKManager {
 	}
 	
 	private void init(Properties p, Logger log, String idK) throws UtilsException {
-		String prefix = BYOKCostanti.PROPERTY_PREFIX + idK + ".";
+		String byokPropertyPrefix = BYOKCostanti.PROPERTY_PREFIX_KMS;
+		String prefix = byokPropertyPrefix + idK + ".";
 		Properties pKeystore = Utilities.readProperties(prefix, p);
-		BYOKConfig ksmKeystore = new BYOKConfig(idK, pKeystore, log);
+		if(pKeystore==null || pKeystore.isEmpty()) {
+			byokPropertyPrefix = BYOKCostanti.PROPERTY_PREFIX_KSM_DEPRECATED;
+			prefix = byokPropertyPrefix + idK + ".";
+			pKeystore = Utilities.readProperties(prefix, p);
+		}
+		BYOKConfig kmsKeystore = new BYOKConfig(idK, pKeystore, log, byokPropertyPrefix);
 		
 		// check label
 		boolean alreadyExists = false;
-		for (String l : this.ksmKeystoreMapLabelToID.keySet()) {
-			if(ksmKeystore.getLabel().equalsIgnoreCase(l)) {
+		for (String l : this.kmsKeystoreMapLabelToID.keySet()) {
+			if(kmsKeystore.getLabel().equalsIgnoreCase(l)) {
 				alreadyExists = true;
 				break;
 			}
 		}
 		if(alreadyExists) {
-			throw new UtilsException("Same label found for ksm '"+this.ksmKeystoreMapLabelToID.get(ksmKeystore.getLabel())+"' e '"+idK+"'");
+			throw new UtilsException("Same label found for kms '"+this.kmsKeystoreMapLabelToID.get(kmsKeystore.getLabel())+"' e '"+idK+"'");
 		}
-		this.ksmKeystoreMapLabelToID.put(ksmKeystore.getLabel(), idK);
+		this.kmsKeystoreMapLabelToID.put(kmsKeystore.getLabel(), idK);
 		
 		// check type
 		alreadyExists = false;
-		for (String type : this.ksmKeystoreMapTypeToID.keySet()) {
-			if(ksmKeystore.getType().equalsIgnoreCase(type)) {
+		for (String type : this.kmsKeystoreMapTypeToID.keySet()) {
+			if(kmsKeystore.getType().equalsIgnoreCase(type)) {
 				alreadyExists = true;
 				break;
 			}
 		}
 		if(alreadyExists) {
-			throw new UtilsException("Same type found for ksm '"+this.ksmKeystoreMapTypeToID.get(ksmKeystore.getType())+"' e '"+idK+"'");
+			throw new UtilsException("Same type found for kms '"+this.kmsKeystoreMapTypeToID.get(kmsKeystore.getType())+"' e '"+idK+"'");
 		}
-		this.ksmKeystoreMapTypeToID.put(ksmKeystore.getType(), idK);
+		this.kmsKeystoreMapTypeToID.put(kmsKeystore.getType(), idK);
 		
 		// registro nelle liste
-		if(BYOKMode.UNWRAP.equals(ksmKeystore.getMode())) {
-			this.unwrapTypes.add(ksmKeystore.getType());
-			this.unwrapLabels.add(ksmKeystore.getLabel());
+		if(BYOKMode.UNWRAP.equals(kmsKeystore.getMode())) {
+			this.unwrapTypes.add(kmsKeystore.getType());
+			this.unwrapLabels.add(kmsKeystore.getLabel());
 		}
 		else {
-			this.wrapTypes.add(ksmKeystore.getType());
-			this.wrapLabels.add(ksmKeystore.getLabel());
+			this.wrapTypes.add(kmsKeystore.getType());
+			this.wrapLabels.add(kmsKeystore.getLabel());
 		}
 		
-		this.ksmKeystoreMapIDtoConfig.put(idK, ksmKeystore);
-		String d = "KSM "+idK+" registrato (type:"+ksmKeystore.getType()+") label:"+ksmKeystore.getLabel()+"";
+		this.kmsKeystoreMapIDtoConfig.put(idK, kmsKeystore);
+		String d = "KMS "+idK+" registrato (type:"+kmsKeystore.getType()+") label:"+kmsKeystore.getLabel()+"";
 		log.info(d);	
 	}
 	
@@ -317,32 +322,32 @@ public class BYOKManager {
 		}
 	}
 	
-	public BYOKConfig getKSMConfigByType(String type) throws UtilsException {
-		if(!this.ksmKeystoreMapTypeToID.containsKey(type)) {
-			throw new UtilsException("KSM type '"+type+"' "+UNKNOWN);
+	public BYOKConfig getKMSConfigByType(String type) throws UtilsException {
+		if(!this.kmsKeystoreMapTypeToID.containsKey(type)) {
+			throw new UtilsException("KMS type '"+type+"' "+UNKNOWN);
 		}
-		String idK = this.ksmKeystoreMapTypeToID.get(type);
-		if(!this.ksmKeystoreMapIDtoConfig.containsKey(idK)) {
-			throw new UtilsException("KSM config for type '"+type+"' unknown ? (id:"+idK+")");
+		String idK = this.kmsKeystoreMapTypeToID.get(type);
+		if(!this.kmsKeystoreMapIDtoConfig.containsKey(idK)) {
+			throw new UtilsException("KMS config for type '"+type+"' unknown ? (id:"+idK+")");
 		}
-		return this.ksmKeystoreMapIDtoConfig.get(idK);
+		return this.kmsKeystoreMapIDtoConfig.get(idK);
 	}
 	
-	public BYOKConfig getKSMConfigByLabel(String label) throws UtilsException {
-		if(!this.ksmKeystoreMapLabelToID.containsKey(label)) {
-			throw new UtilsException("KSM label '"+label+"' "+UNKNOWN);
+	public BYOKConfig getKMSConfigByLabel(String label) throws UtilsException {
+		if(!this.kmsKeystoreMapLabelToID.containsKey(label)) {
+			throw new UtilsException("KMS label '"+label+"' "+UNKNOWN);
 		}
-		String idK = this.ksmKeystoreMapLabelToID.get(label);
-		if(!this.ksmKeystoreMapIDtoConfig.containsKey(idK)) {
-			throw new UtilsException("KSM config for label '"+label+"' unknown ? (id:"+idK+")");
+		String idK = this.kmsKeystoreMapLabelToID.get(label);
+		if(!this.kmsKeystoreMapIDtoConfig.containsKey(idK)) {
+			throw new UtilsException("KMS config for label '"+label+"' unknown ? (id:"+idK+")");
 		}
-		return this.ksmKeystoreMapIDtoConfig.get(idK);
+		return this.kmsKeystoreMapIDtoConfig.get(idK);
 	}
 	
 	public List<String> getKeystoreTypes() {
 		List<String> l = new ArrayList<>();
-		if(!this.ksmKeystoreMapLabelToID.isEmpty()) {
-			for (String type : this.ksmKeystoreMapLabelToID.keySet()) {
+		if(!this.kmsKeystoreMapLabelToID.isEmpty()) {
+			for (String type : this.kmsKeystoreMapLabelToID.keySet()) {
 				l.add(type);
 			}
 		}
@@ -382,17 +387,17 @@ public class BYOKManager {
 		return sMap;
 	}
 	
-	public boolean isKSMUsedInSecurityWrapConfig(String id, StringBuilder securityId) {
-		return isKSMUsedInSecurityConfig(true, id, securityId);
+	public boolean isKMSUsedInSecurityWrapConfig(String id, StringBuilder securityId) {
+		return isKMSUsedInSecurityConfig(true, id, securityId);
 	}
-	public boolean isKSMUsedInSecurityUnwrapConfig(String id, StringBuilder securityId) {
-		return isKSMUsedInSecurityConfig(false, id, securityId	);
+	public boolean isKMSUsedInSecurityUnwrapConfig(String id, StringBuilder securityId) {
+		return isKMSUsedInSecurityConfig(false, id, securityId	);
 	}
-	private boolean isKSMUsedInSecurityConfig(boolean wrap, String id, StringBuilder securityId) {
+	private boolean isKMSUsedInSecurityConfig(boolean wrap, String id, StringBuilder securityId) {
 		if(!this.securityMapIDtoConfig.isEmpty()) {
 			for (Map.Entry<String,BYOKSecurityConfig> entry : this.securityMapIDtoConfig.entrySet()) {
-				String confKsmId = wrap ? entry.getValue().getWrapId() : entry.getValue().getUnwrapId();
-				if(id.equals(confKsmId)){
+				String confKmsId = wrap ? entry.getValue().getWrapId() : entry.getValue().getUnwrapId();
+				if(id.equals(confKmsId)){
 					if(securityId!=null) {
 						securityId.append(entry.getKey());
 					}
@@ -403,11 +408,11 @@ public class BYOKManager {
 		return false;
 	}
 	
-	public boolean existsKSMConfigByType(String type) {
+	public boolean existsKMSConfigByType(String type) {
 		if(type==null) {
 			return false;
 		}
-		for (String i : this.ksmKeystoreMapTypeToID.keySet()) {
+		for (String i : this.kmsKeystoreMapTypeToID.keySet()) {
 			if(type.equalsIgnoreCase(i)) {
 				return true;
 			}
@@ -415,11 +420,11 @@ public class BYOKManager {
 		return false;
 	}
 	
-	public boolean existsKSMConfigByLabel(String label) {
+	public boolean existsKMSConfigByLabel(String label) {
 		if(label==null) {
 			return false;
 		}
-		for (String i : this.ksmKeystoreMapLabelToID.keySet()) {
+		for (String i : this.kmsKeystoreMapLabelToID.keySet()) {
 			if(label.equalsIgnoreCase(i)) {
 				return true;
 			}
@@ -440,13 +445,13 @@ public class BYOKManager {
 		return this.wrapLabels;
 	}
 	
-	public BYOKSecurityConfig getKSMSecurityConfig(String type) throws UtilsException {
+	public BYOKSecurityConfig getKMSSecurityConfig(String type) throws UtilsException {
 		if(!this.securityMapIDtoConfig.containsKey(type)) {
-			throw new UtilsException("KSM security config type '"+type+"' "+UNKNOWN);
+			throw new UtilsException("KMS security config type '"+type+"' "+UNKNOWN);
 		}
 		BYOKSecurityConfig c = this.securityMapIDtoConfig.get(type);
 		if(c==null) {
-			throw new UtilsException("KSM security config type '"+type+"' "+UNKNOWN);
+			throw new UtilsException("KMS security config type '"+type+"' "+UNKNOWN);
 		}
 		return c;
 	}
@@ -497,7 +502,7 @@ public class BYOKManager {
 			return false;
 		}
 		
-		BYOKSecurityConfig secConfig = this.getKSMSecurityConfig(securityManagerPolicy);
+		BYOKSecurityConfig secConfig = this.getKMSSecurityConfig(securityManagerPolicy);
 		
 		boolean govwayRuntime = false;
 		if(secConfig.getInputParameters()!=null && !secConfig.getInputParameters().isEmpty()) {
@@ -518,14 +523,14 @@ public class BYOKManager {
 		// ne basta uno
 		
 		if(wrap) {
-			BYOKConfig c = this.getKSMConfigByType(secConfig.getWrapId());
+			BYOKConfig c = this.getKMSConfigByType(secConfig.getWrapId());
 			if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
 				return true;
 			}
 		}
 		
 		if(unwrap) {
-			BYOKConfig c = this.getKSMConfigByType(secConfig.getUnwrapId());
+			BYOKConfig c = this.getKMSConfigByType(secConfig.getUnwrapId());
 			if(BYOKEncryptionMode.REMOTE.equals(c.getEncryptionMode())) {
 				return true;
 			}

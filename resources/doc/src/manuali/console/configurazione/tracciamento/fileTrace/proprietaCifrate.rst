@@ -122,9 +122,9 @@ Di seguito vengono fornite tutte le direttive supportate:
 
 - *include.public.key* [optional; mode=jose; boolean true/false]: indicazione se inserire nell'header del token JWE  (claim 'jwk') la chiave pubblica utilizzata per la cifratura.
 
-- *ksm* [optional]: consente di riferire un KSM di 'unwrap', tramite il proprio identificativo, definito nel file *<directory-lavoro>/byok.properties*; maggiori dettagli vengono forniti nella sezione :ref:`byokInstallKsm`;
+- *kms* [optional]: consente di riferire un KMS di 'unwrap', tramite il proprio identificativo, definito nel file *<directory-lavoro>/byok.properties*; maggiori dettagli vengono forniti nella sezione :ref:`byokInstallKms`;
 
-- *ksm.param.<paramName>* [optional]: come descritto nella sezione :ref:`byokInstallKsmParametri` ogni KSM può richiedere dei parametri di input che possono essere forniti tramite la direttiva '*ksm.param.<paramName>*'.
+- *kms.param.<paramName>* [optional]: come descritto nella sezione :ref:`byokInstallKmsParametri` ogni KMS può richiedere dei parametri di input che possono essere forniti tramite la direttiva '*kms.param.<paramName>*'.
 
 **Rappresentazione dei dati cifrati con mode=java**
 

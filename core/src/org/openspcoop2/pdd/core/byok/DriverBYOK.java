@@ -106,7 +106,7 @@ public class DriverBYOK implements IDriverBYOK {
 				Map<String, Object> mDefault = this.dynamicMapForSecurityPolicy.get(this.securityRemotePolicy!=null ? this.securityRemotePolicy : this.securityPolicy);
 				Map<String, Object> mNew = new HashMap<>();
 				for (Map.Entry<String,Object> entry : mDefault.entrySet()) {
-					if(!BYOKCostanti.VARIABILE_KSM.equals(entry.getKey())){ // devo escludere ksm object contenente le variabili di un'altra security policy
+					if(!BYOKCostanti.VARIABILE_KMS.equals(entry.getKey()) && !BYOKCostanti.VARIABILE_KSM_DEPRECATED.equals(entry.getKey())){ // devo escludere kms object contenente le variabili di un'altra security policy
 						mNew.put(entry.getKey(), entry.getValue());
 					}
 				}
@@ -286,11 +286,11 @@ public class DriverBYOK implements IDriverBYOK {
 			throw new UtilsException("BYOKManager not initialized");
 		}
 		
-		BYOKSecurityConfig secConfig = manager.getKSMSecurityConfig(securityPolicy); 
+		BYOKSecurityConfig secConfig = manager.getKMSSecurityConfig(securityPolicy); 
 		
-		String ksmId = wrap ? secConfig.getWrapId() : secConfig.getUnwrapId();
-		if(ksmId==null) {
-			throw new UtilsException("BYOK security configuration '"+securityPolicy+"' without "+(wrap ?  "wrap" : "unwrap")+" ksm id");
+		String kmsId = wrap ? secConfig.getWrapId() : secConfig.getUnwrapId();
+		if(kmsId==null) {
+			throw new UtilsException("BYOK security configuration '"+securityPolicy+"' without "+(wrap ?  "wrap" : "unwrap")+" kms id");
 		}
 				
 		Map<String, String> inputMap = new HashMap<>();
@@ -300,27 +300,27 @@ public class DriverBYOK implements IDriverBYOK {
 			}
 		}
 		
-		return getBYOKRequestParamsByKsmId(ksmId, manager, 
+		return getBYOKRequestParamsByKmsId(kmsId, manager, 
 				inputMap, dynamicMap);
 	}
 	
-	public static BYOKRequestParams getBYOKRequestParamsByUnwrapBYOKPolicy(String ksmId,
+	public static BYOKRequestParams getBYOKRequestParamsByUnwrapBYOKPolicy(String kmsId,
 			Busta busta, RequestInfo requestInfo, Context context, Logger log) throws UtilsException {
-		if(BYOKProvider.isPolicyDefined(ksmId)){
+		if(BYOKProvider.isPolicyDefined(kmsId)){
 			Map<String,Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(busta, requestInfo, context, log);
-			return BYOKProvider.getBYOKRequestParamsByUnwrapBYOKPolicy(ksmId, dynamicMap);
+			return BYOKProvider.getBYOKRequestParamsByUnwrapBYOKPolicy(kmsId, dynamicMap);
 		}
 		return null;
 	}
 	
-	public static BYOKRequestParams getBYOKRequestParamsByKsmId(String ksmId, 
+	public static BYOKRequestParams getBYOKRequestParamsByKmsId(String kmsId, 
 			Map<String, String> inputMap, Map<String, Object> dynamicMap) throws UtilsException {
-		return BYOKRequestParams.getBYOKRequestParamsByKsmId(ksmId, 
+		return BYOKRequestParams.getBYOKRequestParamsByKmsId(kmsId, 
 				inputMap,dynamicMap);
 	}
-	public static BYOKRequestParams getBYOKRequestParamsByKsmId(String ksmId, BYOKManager manager, 
+	public static BYOKRequestParams getBYOKRequestParamsByKmsId(String kmsId, BYOKManager manager, 
 			Map<String, String> inputMap, Map<String, Object> dynamicMap) throws UtilsException {
-		return BYOKRequestParams.getBYOKRequestParamsByKsmId(ksmId, manager, 
+		return BYOKRequestParams.getBYOKRequestParamsByKmsId(kmsId, manager, 
 				inputMap, dynamicMap);
 	}
 	

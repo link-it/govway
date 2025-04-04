@@ -22,7 +22,7 @@ Devono inoltre essere abilitate le funzioni di wrap e unwrap (per default disabi
     org.openspcoop2.pdd.byok.jmx.wrap.enabled=true
     org.openspcoop2.pdd.byok.jmx.unwrap.enabled=true
 
-Tanto premesso la configurazione dei KSM utilizzati dai nodi manager potranno riferire speciali costanti:
+Tanto premesso la configurazione dei KMS utilizzati dai nodi manager potranno riferire speciali costanti:
 
 - ${govway-runtime:endpoint-wrap}: consente di riferire l'endpoint esposto dai nodi run che implementa l'operazione di wrap;
 - ${govway-runtime:endpoint-unwrap}: consente di riferire l'endpoint esposto dai nodi run che implementa l'operazione di unwrap;
@@ -46,82 +46,82 @@ Di seguito un esempio in cui viene attivata la cifratura tramite il Security Eng
     # Security Engine
     #
     # 'gw-pbkdf2' usato dai nodi run
-    security.gw-pbkdf2.ksm.wrap=openssl-pbkdf2-wrap
-    security.gw-pbkdf2.ksm.unwrap=openssl-pbkdf2-unwrap
-    security.gw-pbkdf2.ksm.param.encryptionPassword=${envj:read(GOVWAY_ENCRYPTION_PASSWORD)}
+    security.gw-pbkdf2.kms.wrap=openssl-pbkdf2-wrap
+    security.gw-pbkdf2.kms.unwrap=openssl-pbkdf2-unwrap
+    security.gw-pbkdf2.kms.param.encryptionPassword=${envj:read(GOVWAY_ENCRYPTION_PASSWORD)}
     #
     # 'gw-remote' usato dai nodi manager
-    security.gw-remote.ksm.wrap=govway-remote-wrap
-    security.gw-remote.ksm.unwrap=govway-remote-unwrap
-    security.gw-remote.ksm.param.endpointWrap=${govway-runtime:endpoint-wrap}
-    security.gw-remote.ksm.param.endpointUnwrap=${govway-runtime:endpoint-unwrap}
-    security.gw-remote.ksm.param.username=${govway-runtime:username}
-    security.gw-remote.ksm.param.password=${govway-runtime:password}
+    security.gw-remote.kms.wrap=govway-remote-wrap
+    security.gw-remote.kms.unwrap=govway-remote-unwrap
+    security.gw-remote.kms.param.endpointWrap=${govway-runtime:endpoint-wrap}
+    security.gw-remote.kms.param.endpointUnwrap=${govway-runtime:endpoint-unwrap}
+    security.gw-remote.kms.param.username=${govway-runtime:username}
+    security.gw-remote.kms.param.password=${govway-runtime:password}
     # =======================================================================================
     
     # =======================================================================================
-    # KSM 'gw-pbkdf2' usato dai nodi run
+    # KMS 'gw-pbkdf2' usato dai nodi run
     #
     # WRAP
-    ksm.govway-openssl-pbkdf2-wrap.label=OpenSSL 'pbkdf2' Wrap
-    ksm.govway-openssl-pbkdf2-wrap.type=openssl-pbkdf2-wrap
-    ksm.govway-openssl-pbkdf2-wrap.mode=wrap
-    ksm.govway-openssl-pbkdf2-wrap.encryptionMode=local
-    ksm.govway-openssl-pbkdf2-wrap.input.param1.name=encryptionPassword
-    ksm.govway-openssl-pbkdf2-wrap.input.param1.label=Encryption Password
-    ksm.govway-openssl-pbkdf2-wrap.local.impl=openssl
-    ksm.govway-openssl-pbkdf2-wrap.local.keystore.type=pass
-    ksm.govway-openssl-pbkdf2-wrap.local.password=${ksm:encryptionPassword}
-    ksm.govway-openssl-pbkdf2-wrap.local.password.type=openssl-pbkdf2-aes-256-cbc
-    ksm.govway-openssl-pbkdf2-wrap.local.encoding=base64
+    kms.govway-openssl-pbkdf2-wrap.label=OpenSSL 'pbkdf2' Wrap
+    kms.govway-openssl-pbkdf2-wrap.type=openssl-pbkdf2-wrap
+    kms.govway-openssl-pbkdf2-wrap.mode=wrap
+    kms.govway-openssl-pbkdf2-wrap.encryptionMode=local
+    kms.govway-openssl-pbkdf2-wrap.input.param1.name=encryptionPassword
+    kms.govway-openssl-pbkdf2-wrap.input.param1.label=Encryption Password
+    kms.govway-openssl-pbkdf2-wrap.local.impl=openssl
+    kms.govway-openssl-pbkdf2-wrap.local.keystore.type=pass
+    kms.govway-openssl-pbkdf2-wrap.local.password=${kms:encryptionPassword}
+    kms.govway-openssl-pbkdf2-wrap.local.password.type=openssl-pbkdf2-aes-256-cbc
+    kms.govway-openssl-pbkdf2-wrap.local.encoding=base64
     #
     # UNWRAP
-    ksm.govway-openssl-pbkdf2-unwrap.label=OpenSSL 'pbkdf2'
-    ksm.govway-openssl-pbkdf2-unwrap.type=openssl-pbkdf2-unwrap
-    ksm.govway-openssl-pbkdf2-unwrap.mode=unwrap
-    ksm.govway-openssl-pbkdf2-unwrap.encryptionMode=local
-    ksm.govway-openssl-pbkdf2-unwrap.input.param1.name=encryptionPassword
-    ksm.govway-openssl-pbkdf2-unwrap.input.param1.label=Encryption Password
-    ksm.govway-openssl-pbkdf2-unwrap.local.impl=openssl
-    ksm.govway-openssl-pbkdf2-unwrap.local.keystore.type=pass
-    ksm.govway-openssl-pbkdf2-unwrap.local.password=${ksm:encryptionPassword}
-    ksm.govway-openssl-pbkdf2-unwrap.local.password.type=openssl-pbkdf2-aes-256-cbc
-    ksm.govway-openssl-pbkdf2-unwrap.local.encoding=base64
+    kms.govway-openssl-pbkdf2-unwrap.label=OpenSSL 'pbkdf2'
+    kms.govway-openssl-pbkdf2-unwrap.type=openssl-pbkdf2-unwrap
+    kms.govway-openssl-pbkdf2-unwrap.mode=unwrap
+    kms.govway-openssl-pbkdf2-unwrap.encryptionMode=local
+    kms.govway-openssl-pbkdf2-unwrap.input.param1.name=encryptionPassword
+    kms.govway-openssl-pbkdf2-unwrap.input.param1.label=Encryption Password
+    kms.govway-openssl-pbkdf2-unwrap.local.impl=openssl
+    kms.govway-openssl-pbkdf2-unwrap.local.keystore.type=pass
+    kms.govway-openssl-pbkdf2-unwrap.local.password=${kms:encryptionPassword}
+    kms.govway-openssl-pbkdf2-unwrap.local.password.type=openssl-pbkdf2-aes-256-cbc
+    kms.govway-openssl-pbkdf2-unwrap.local.encoding=base64
     # =======================================================================================
         
     # =======================================================================================
-    # KSM 'gw-remote' usato dai nodi manager
+    # KMS 'gw-remote' usato dai nodi manager
     #
     # WRAP
-    ksm.govway-remote-wrap.label=GovWay Remote Wrap
-    ksm.govway-remote-wrap.type=govway-remote-wrap
-    ksm.govway-remote-wrap.mode=wrap
-    ksm.govway-remote-wrap.encryptionMode=remote
-    ksm.govway-remote-wrap.input.param1.name=endpointWrap
-    ksm.govway-remote-wrap.input.param1.label=Endpoint Wrap Key
-    ksm.govway-remote-wrap.input.param2.name=username
-    ksm.govway-remote-wrap.input.param2.label=Username
-    ksm.govway-remote-wrap.input.param3.name=password
-    ksm.govway-remote-wrap.input.param3.label=Password
-    ksm.govway-remote-wrap.http.endpoint=${ksm:endpointWrap}&paramValue=${ksm-base64-urlencoded-key}
-    ksm.govway-remote-wrap.http.method=GET
-    ksm.govway-remote-wrap.http.username=${ksm:username}
-    ksm.govway-remote-wrap.http.password=${ksm:password}
+    kms.govway-remote-wrap.label=GovWay Remote Wrap
+    kms.govway-remote-wrap.type=govway-remote-wrap
+    kms.govway-remote-wrap.mode=wrap
+    kms.govway-remote-wrap.encryptionMode=remote
+    kms.govway-remote-wrap.input.param1.name=endpointWrap
+    kms.govway-remote-wrap.input.param1.label=Endpoint Wrap Key
+    kms.govway-remote-wrap.input.param2.name=username
+    kms.govway-remote-wrap.input.param2.label=Username
+    kms.govway-remote-wrap.input.param3.name=password
+    kms.govway-remote-wrap.input.param3.label=Password
+    kms.govway-remote-wrap.http.endpoint=${kms:endpointWrap}&paramValue=${kms-base64-urlencoded-key}
+    kms.govway-remote-wrap.http.method=GET
+    kms.govway-remote-wrap.http.username=${kms:username}
+    kms.govway-remote-wrap.http.password=${kms:password}
     #
     # UNWRAP
-    ksm.govway-remote-unwrap.label=GovWay Remote Unwrap
-    ksm.govway-remote-unwrap.type=govway-remote-unwrap
-    ksm.govway-remote-unwrap.mode=unwrap
-    ksm.govway-remote-unwrap.encryptionMode=remote
-    ksm.govway-remote-unwrap.input.param1.name=endpointUnwrap
-    ksm.govway-remote-unwrap.input.param1.label=Endpoint Unwrap Key
-    ksm.govway-remote-unwrap.input.param2.name=username
-    ksm.govway-remote-unwrap.input.param2.label=Username
-    ksm.govway-remote-unwrap.input.param3.name=password
-    ksm.govway-remote-unwrap.input.param3.label=Password
-    ksm.govway-remote-unwrap.http.endpoint=${ksm:endpointUnwrap}&paramValue=${ksm-urlencoded-key}
-    ksm.govway-remote-unwrap.http.method=GET
-    ksm.govway-remote-unwrap.http.username=${ksm:username}
-    ksm.govway-remote-unwrap.http.password=${ksm:password}
-    ksm.govway-remote-unwrap.http.response.base64Encoded=true
+    kms.govway-remote-unwrap.label=GovWay Remote Unwrap
+    kms.govway-remote-unwrap.type=govway-remote-unwrap
+    kms.govway-remote-unwrap.mode=unwrap
+    kms.govway-remote-unwrap.encryptionMode=remote
+    kms.govway-remote-unwrap.input.param1.name=endpointUnwrap
+    kms.govway-remote-unwrap.input.param1.label=Endpoint Unwrap Key
+    kms.govway-remote-unwrap.input.param2.name=username
+    kms.govway-remote-unwrap.input.param2.label=Username
+    kms.govway-remote-unwrap.input.param3.name=password
+    kms.govway-remote-unwrap.input.param3.label=Password
+    kms.govway-remote-unwrap.http.endpoint=${kms:endpointUnwrap}&paramValue=${kms-urlencoded-key}
+    kms.govway-remote-unwrap.http.method=GET
+    kms.govway-remote-unwrap.http.username=${kms:username}
+    kms.govway-remote-unwrap.http.password=${kms:password}
+    kms.govway-remote-unwrap.http.response.base64Encoded=true
     # =======================================================================================

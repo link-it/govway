@@ -788,7 +788,7 @@ public class ConnettoreUtils {
 					sb.append(CostantiLabel.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTPS_KEYSTORE_BYOK_POLICY);
 					sb.append(separator);
 					try {
-						String label = BYOKManager.getInstance().getKSMConfigByType(keyBYOK).getLabel();
+						String label = BYOKManager.getInstance().getKMSConfigByType(keyBYOK).getLabel();
 						sb.append((label!=null && StringUtils.isNotEmpty(label)) ? label : keyBYOK);
 					}catch(Exception t) {
 						sb.append(keyBYOK);	

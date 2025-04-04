@@ -10,12 +10,12 @@ All'interno del file *<directory-lavoro>/govway.secrets.properties* è possibile
     # Consente di definire proprietà java tramite la sintassi:
     java.<nome>=<valore>
 
-Il valore fornito dovrà essere decifrabile tramite uno dei security engine o KMS di 'unwrap' disponibili all'interno della configurazione *<directory-lavoro>/byok.properties*, descritti rispettivamente nelle sezioni  :ref:`byokInstallSecurityEngine` e :ref:`byokInstallKsm`. 
+Il valore fornito dovrà essere decifrabile tramite uno dei security engine o KMS di 'unwrap' disponibili all'interno della configurazione *<directory-lavoro>/byok.properties*, descritti rispettivamente nelle sezioni  :ref:`byokInstallSecurityEngine` e :ref:`byokInstallKms`. 
 
 La modalità di decifratura di default è definibile tramite la proprietà 'unwrap.default.mode', che può assumere i seguenti valori:
 
 - security: viene utilizzato il security engine riferito dall'identificativo riportato nella proprietà 'unwrap.default.id'. 
-- ksm: viene utilizzato il Key Management Service riferito dall'identificativo riportato nella proprietà 'unwrap.default.id'.
+- kms: viene utilizzato il Key Management Service riferito dall'identificativo riportato nella proprietà 'unwrap.default.id'.
 
 Se la proprietà 'unwrap.default.mode' non viene definita, viene utilizzata la modalità security engine.
 
@@ -23,7 +23,7 @@ Se la proprietà 'unwrap.default.mode' non viene definita, viene utilizzata la m
 
     # Indica la modalità di default utilizzata per decifrare i valori forniti rispetto alle configurazioni presenti nel file 'byok.properties'.
     # security: viene utilizzato il security engine indicato nella proprietà 'unwrap.default.id' (per default viene utilizzato il security engine caricato da GovWay)
-    # ksm: viene utilizzato il key management service definito tramite la proprietà 'unwrap.default.id'
+    # kms: viene utilizzato il key management service definito tramite la proprietà 'unwrap.default.id'
     unwrap.default.mode=
     unwrap.default.id=
 
@@ -47,7 +47,7 @@ Di seguito, la sintassi da utilizzare nel file *govway.secrets.properties*:
     #obfuscated.digest=SHA-256
     #obfuscated.static=******
 
-È inoltre possibile definire una modalità di decifratura differente da quella di default specificando la modalità da utilizzare per la singola variabile tramite il prefisso 'java.security.' o il prefisso 'java.ksm.', a seconda che si voglia utilizzare rispettivamente un security engine o un KSM per la decodifica.
+È inoltre possibile definire una modalità di decifratura differente da quella di default specificando la modalità da utilizzare per la singola variabile tramite il prefisso 'java.security.' o il prefisso 'java.kms.', a seconda che si voglia utilizzare rispettivamente un security engine o un KMS per la decodifica.
 
 Di seguito un esempio di utilizzo di un security engine differente:
 
@@ -56,19 +56,19 @@ Di seguito un esempio di utilizzo di un security engine differente:
     java.<nomeVariabile>=<valoreCifratoTramiteSecurityEngineIdX>
     java.security.<nomeVariabile>=<identificativoSecurityEngineIdX>
     
-Di seguito un esempio di utilizzo di un ksm:
+Di seguito un esempio di utilizzo di un kms:
 
 ::
 
-    java.<nomeVariabile>=<valoreCifratoTramiteKSMIdX>
-    java.ksm.<nomeVariabile>=<identificativoKSMIdX>
+    java.<nomeVariabile>=<valoreCifratoTramiteKMSIdX>
+    java.kms.<nomeVariabile>=<identificativoKMSIdX>
 
-Come descritto nella sezione :ref:`byokInstallKsmParametri` ogni KSM può richiedere dei parametri di input. Tali parametri possono essere forniti nel file *govway.secrets.properties* tramite la seguente sintassi:
+Come descritto nella sezione :ref:`byokInstallKmsParametri` ogni KMS può richiedere dei parametri di input. Tali parametri possono essere forniti nel file *govway.secrets.properties* tramite la seguente sintassi:
 
 ::
 
-    # Per un ksm è possibile configurare i parametri richiesti tramite la seguente sintassi:
-    ksm.<identificativoKSM>.param.<nomeParametro>=<valoreParametro>
+    # Per un kms è possibile configurare i parametri richiesti tramite la seguente sintassi:
+    kms.<identificativoKMS>.param.<nomeParametro>=<valoreParametro>
 
 È infine possibile definire all'interno del file *govway.secrets.properties* delle variabili i cui valori non sono cifrati, registrandole con la seguente modalità:
 

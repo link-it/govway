@@ -36,14 +36,19 @@ public class BYOKCostanti {
 
 	public static final String SECURITY_PROPERTY_PREFIX = "security.";
 	
-	public static final String SECURITY_PROPERTY_SUFFIX_WRAP = "ksm.wrap";
-	public static final String SECURITY_PROPERTY_SUFFIX_UNWRAP = "ksm.unwrap";
+	public static final String SECURITY_PROPERTY_SUFFIX_WRAP_KMS = "kms.wrap";
+	public static final String SECURITY_PROPERTY_SUFFIX_WRAP_KSM_DEPRECATED = "ksm.wrap";
 	
-	public static final String SECURITY_PROPERTY_SUFFIX_INPUT = "ksm.param.";
+	public static final String SECURITY_PROPERTY_SUFFIX_UNWRAP_KMS = "kms.unwrap";
+	public static final String SECURITY_PROPERTY_SUFFIX_UNWRAP_KSM_DEPRECATED = "ksm.unwrap";
+	
+	public static final String SECURITY_PROPERTY_SUFFIX_INPUT_KMS = "kms.param.";
+	public static final String SECURITY_PROPERTY_SUFFIX_INPUT_KSM_DEPRECATED = "ksm.param.";
 	
 	
 	
-	public static final String PROPERTY_PREFIX = "ksm.";
+	public static final String PROPERTY_PREFIX_KMS = "kms.";
+	public static final String PROPERTY_PREFIX_KSM_DEPRECATED = "ksm.";
 	
 	public static final String PROPERTY_SUFFIX_LABEL = "label";
 	public static final String PROPERTY_SUFFIX_TYPE = "type";
@@ -170,15 +175,26 @@ public class BYOKCostanti {
 	
 	
 	
-	public static final String VARIABILE_KSM_KEY = "${ksm-key}";
-	public static final String VARIABILE_KSM_KEY_URL_ENCODED = "${ksm-urlencoded-key}";
-	public static final String VARIABILE_KSM_KEY_BASE64 = "${ksm-base64-key}";
-	public static final String VARIABILE_KSM_KEY_BASE64_URL_ENCODED = "${ksm-base64-urlencoded-key}";
-	public static final String VARIABILE_KSM_KEY_HEX = "${ksm-hex-key}";
-	public static final String VARIABILE_KSM_KEY_HEX_URL_ENCODED = "${ksm-hex-urlencoded-key}";
+	public static final String VARIABILE_KMS_KEY = "${kms-key}";
+	public static final String VARIABILE_KMS_KEY_URL_ENCODED = "${kms-urlencoded-key}";
+	public static final String VARIABILE_KMS_KEY_BASE64 = "${kms-base64-key}";
+	public static final String VARIABILE_KMS_KEY_BASE64_URL_ENCODED = "${kms-base64-urlencoded-key}";
+	public static final String VARIABILE_KMS_KEY_HEX = "${kms-hex-key}";
+	public static final String VARIABILE_KMS_KEY_HEX_URL_ENCODED = "${kms-hex-urlencoded-key}";
+	// deprecated
+	public static final String VARIABILE_KSM_KEY_DEPRECATED = "${ksm-key}";
+	public static final String VARIABILE_KSM_KEY_URL_ENCODED_DEPRECATED = "${ksm-urlencoded-key}";
+	public static final String VARIABILE_KSM_KEY_BASE64_DEPRECATED = "${ksm-base64-key}";
+	public static final String VARIABILE_KSM_KEY_BASE64_URL_ENCODED_DEPRECATED = "${ksm-base64-urlencoded-key}";
+	public static final String VARIABILE_KSM_KEY_HEX_DEPRECATED = "${ksm-hex-key}";
+	public static final String VARIABILE_KSM_KEY_HEX_URL_ENCODED_DEPRECATED = "${ksm-hex-urlencoded-key}";
 	
-	public static final String VARIABILE_KSM = "ksm";
-	public static final String VARIABILE_KSM_KEY_PREFIX = "${ksm:";
+	
+	public static final String VARIABILE_KMS = "kms";
+	public static final String VARIABILE_KMS_KEY_PREFIX = "${kms:";
+	// deprecated
+	public static final String VARIABILE_KSM_DEPRECATED = "ksm";
+	public static final String VARIABILE_KSM_KEY_PREFIX_DEPRECATED = "${ksm:";
 	
 	
 	

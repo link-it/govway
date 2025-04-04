@@ -1,49 +1,49 @@
-.. _byokInstallKsmLocale:
+.. _byokInstallKmsLocale:
 
-KSM Locale
+KMS Locale
 -------------------------------------------------------
 
 In questa sezione viene descritta la sintassi da utilizzare per definire i KMS funzionali ad operazioni di cifratura (wrap) o di decifratura (unwrap) dove la master key è presente in un keystore locale (risiedente su filesystem) o all'interno di un HSM;
 
-Di seguito un esempio di KSM basato sulla cifratura di un'informazione tramite una chiave pubblica
+Di seguito un esempio di KMS basato sulla cifratura di un'informazione tramite una chiave pubblica
 
 ::
 
-    # Esempio di KSM Wrap per una cifratura basata su chiave pubblica
-    ksm.govway-async-keys-wrap.label=GovWay AsyncKeys Wrap Example
-    ksm.govway-async-keys-wrap.type=async-keys-wrap
-    ksm.govway-async-keys-wrap.mode=wrap
-    ksm.govway-async-keys-wrap.encryptionMode=local
-    ksm.govway-async-keys-wrap.local.impl=java
-    ksm.govway-async-keys-wrap.local.keystore.type=public
-    ksm.govway-async-keys-wrap.local.key.path=/etc/govway/keys/keyPair-test.rsa.publicKey.pem
-    ksm.govway-async-keys-wrap.local.key.algorithm=RSA/ECB/OAEPWithSHA-256AndMGF1Padding
-    ksm.govway-async-keys-wrap.local.key.wrap=true
-    ksm.govway-async-keys-wrap.local.algorithm=AES/CBC/PKCS5Padding
-    ksm.govway-async-keys-wrap.local.encoding=base64
+    # Esempio di KMS Wrap per una cifratura basata su chiave pubblica
+    kms.govway-async-keys-wrap.label=GovWay AsyncKeys Wrap Example
+    kms.govway-async-keys-wrap.type=async-keys-wrap
+    kms.govway-async-keys-wrap.mode=wrap
+    kms.govway-async-keys-wrap.encryptionMode=local
+    kms.govway-async-keys-wrap.local.impl=java
+    kms.govway-async-keys-wrap.local.keystore.type=public
+    kms.govway-async-keys-wrap.local.key.path=/etc/govway/keys/keyPair-test.rsa.publicKey.pem
+    kms.govway-async-keys-wrap.local.key.algorithm=RSA/ECB/OAEPWithSHA-256AndMGF1Padding
+    kms.govway-async-keys-wrap.local.key.wrap=true
+    kms.govway-async-keys-wrap.local.algorithm=AES/CBC/PKCS5Padding
+    kms.govway-async-keys-wrap.local.encoding=base64
     
-Il corrispettivo esempio di KSM necessario a decifrare l'informazione tramite la chiave privata associata.
+Il corrispettivo esempio di KMS necessario a decifrare l'informazione tramite la chiave privata associata.
 
 ::
     
-    # Esempio di KSM Unwrap per una cifratura basata su chiave asincrona
-    ksm.govway-async-keys-unwrap.label=GovWay AsyncKeys Unwrap Example
-    ksm.govway-async-keys-unwrap.type=async-keys-unwrap
-    ksm.govway-async-keys-unwrap.mode=unwrap
-    ksm.govway-async-keys-unwrap.encryptionMode=local
-    ksm.govway-async-keys-unwrap.local.impl=java
-    ksm.govway-async-keys-unwrap.local.keystore.type=keys
-    ksm.govway-async-keys-unwrap.local.key.path=/etc/govway/keys/keyPair-test.rsa.pkcs8_encrypted.privateKey.pem
-    ksm.govway-async-keys-unwrap.local.key.password=${envj:read(GOVWAY_PRIVATE_KEY_PASSWORD)}
-    ksm.govway-async-keys-unwrap.local.publicKey.path=/etc/govway/keys/keyPair-test.rsa.publicKey.pem
-    ksm.govway-async-keys-unwrap.local.key.algorithm=RSA/ECB/OAEPWithSHA-256AndMGF1Padding
-    ksm.govway-async-keys-unwrap.local.key.wrap=true
-    ksm.govway-async-keys-unwrap.local.algorithm=AES/CBC/PKCS5Padding
-    ksm.govway-async-keys-unwrap.local.encoding=base64
+    # Esempio di KMS Unwrap per una cifratura basata su chiave asincrona
+    kms.govway-async-keys-unwrap.label=GovWay AsyncKeys Unwrap Example
+    kms.govway-async-keys-unwrap.type=async-keys-unwrap
+    kms.govway-async-keys-unwrap.mode=unwrap
+    kms.govway-async-keys-unwrap.encryptionMode=local
+    kms.govway-async-keys-unwrap.local.impl=java
+    kms.govway-async-keys-unwrap.local.keystore.type=keys
+    kms.govway-async-keys-unwrap.local.key.path=/etc/govway/keys/keyPair-test.rsa.pkcs8_encrypted.privateKey.pem
+    kms.govway-async-keys-unwrap.local.key.password=${envj:read(GOVWAY_PRIVATE_KEY_PASSWORD)}
+    kms.govway-async-keys-unwrap.local.publicKey.path=/etc/govway/keys/keyPair-test.rsa.publicKey.pem
+    kms.govway-async-keys-unwrap.local.key.algorithm=RSA/ECB/OAEPWithSHA-256AndMGF1Padding
+    kms.govway-async-keys-unwrap.local.key.wrap=true
+    kms.govway-async-keys-unwrap.local.algorithm=AES/CBC/PKCS5Padding
+    kms.govway-async-keys-unwrap.local.encoding=base64
 
 L'operazione viene descritta da un insieme di direttive definite tramite la sintassi:
 
-- '*ksm.<idKsm>.local.<direttiva>*'
+- '*kms.<idKms>.local.<direttiva>*'
 
 Di seguito vengono fornite tutte le direttive supportate:
 

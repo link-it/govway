@@ -69,7 +69,7 @@ public class VaultEncDecUtilities {
 				output = processBySecurity(input);
 			}
 			else {
-				output = processByKsm(input);
+				output = processByKms(input);
 			}
 			
 			VaultTools.logCoreDebug("Serializzazione output ...");
@@ -123,19 +123,19 @@ public class VaultEncDecUtilities {
 		
 		return output;
 	}
-	public byte[] processByKsm(byte[] input) throws UtilsException {
-		String ksmId = this.encDecConfig.getId();
-		VaultTools.logCoreDebug("Cifratura tramite ksm '"+ksmId+"' ...");
+	public byte[] processByKms(byte[] input) throws UtilsException {
+		String kmsId = this.encDecConfig.getId();
+		VaultTools.logCoreDebug("Cifratura tramite kms '"+kmsId+"' ...");
 		
 		Map<String, Object> dynamicMap = DriverBYOK.buildDynamicMap(VaultTools.getLogCore());
 		Map<String, String> inputMap = new HashMap<>();
-		BYOKRequestParams requestParams = BYOKRequestParams.getBYOKRequestParamsByKsmId(ksmId, inputMap, dynamicMap);
+		BYOKRequestParams requestParams = BYOKRequestParams.getBYOKRequestParamsByKmsId(kmsId, inputMap, dynamicMap);
         
 		BYOKInstance instance = BYOKInstance.newInstance(VaultTools.getLogCore(), requestParams, input);
 		
 		byte[] output = DriverBYOK.processInstance(instance, true);
 		
-		VaultTools.logCoreDebug("Cifratura tramite ksm '"+ksmId+"' completata");
+		VaultTools.logCoreDebug("Cifratura tramite kms '"+kmsId+"' completata");
 		
 		return output;
 	}

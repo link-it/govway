@@ -316,15 +316,15 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step1cCifraturaKeystoreFileViaKsm() throws UtilsException, HttpUtilsException, IOException {
+	public void step1cCifraturaKeystoreFileViaKms() throws UtilsException, HttpUtilsException, IOException {
 		
-		logCoreInfo("@step1cCifraturaKeystoreFileViaKsm");
+		logCoreInfo("@step1cCifraturaKeystoreFileViaKms");
 		
 		checkExternalToolError();
 		
-		copyEncryptedFile(KSM_PBKDF2_WRAP, false); 
-		// verifico utilizzo di un ksm non agganciato a security
-		updateByokPolicy(SECURITY_PBKDF2_UNWRAP, KSM_PBKDF2_UNWRAP);
+		copyEncryptedFile(KMS_PBKDF2_WRAP, false); 
+		// verifico utilizzo di un kms non agganciato a security
+		updateByokPolicy(SECURITY_PBKDF2_UNWRAP, KMS_PBKDF2_UNWRAP);
 		resetCache();
 	}
 	
@@ -412,7 +412,7 @@ public class SecretsTest extends ConfigLoader {
 		checkExternalToolError();
 		
 		copyEncryptedFile(GW_KEYS_POLICY, true);
-		updateByokPolicy(KSM_PBKDF2_UNWRAP, SECURITY_ASYNC_KEYS_UNWRAP);
+		updateByokPolicy(KMS_PBKDF2_UNWRAP, SECURITY_ASYNC_KEYS_UNWRAP);
 		resetCache();
 	}
 	
@@ -428,21 +428,21 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step2gCifraturaKeystoreFileViaKsm() throws UtilsException, HttpUtilsException, IOException {
+	public void step2gCifraturaKeystoreFileViaKms() throws UtilsException, HttpUtilsException, IOException {
 		
-		logCoreInfo("@step2gCifraturaKeystoreFileViaKsm");
+		logCoreInfo("@step2gCifraturaKeystoreFileViaKms");
 		
 		checkExternalToolError();
 		
-		copyEncryptedFile(KSM_ASYNC_KEYS_WRAP, false);
-		updateByokPolicy(SECURITY_ASYNC_KEYS_UNWRAP, KSM_ASYNC_KEYS_UNWRAP);
+		copyEncryptedFile(KMS_ASYNC_KEYS_WRAP, false);
+		updateByokPolicy(SECURITY_ASYNC_KEYS_UNWRAP, KMS_ASYNC_KEYS_UNWRAP);
 		resetCache();
 	}
 	
 	@Test
-	public void step2hInvocazioneServiziGovwayConSecretLockedByGwKeysPolicyKeystoreFileViaKsm() throws UtilsException, HttpUtilsException {
+	public void step2hInvocazioneServiziGovwayConSecretLockedByGwKeysPolicyKeystoreFileViaKms() throws UtilsException, HttpUtilsException {
 		
-		logCoreInfo("@step2hInvocazioneServiziGovwayConSecretLockedByGwKeysPolicyKeystoreFileViaKsm");
+		logCoreInfo("@step2hInvocazioneServiziGovwayConSecretLockedByGwKeysPolicyKeystoreFileViaKms");
 		
 		checkExternalToolError();
 		
@@ -524,7 +524,7 @@ public class SecretsTest extends ConfigLoader {
 		checkExternalToolError();
 		
 		copyEncryptedFile(GW_REMOTE_POLICY, true);
-		updateByokPolicy(KSM_ASYNC_KEYS_UNWRAP, SECURITY_GOVWAY_REMOTE_UNWRAP);
+		updateByokPolicy(KMS_ASYNC_KEYS_UNWRAP, SECURITY_GOVWAY_REMOTE_UNWRAP);
 		resetCache();
 	}
 	
@@ -540,21 +540,21 @@ public class SecretsTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void step3gCifraturaKeystoreFileViaKsm() throws UtilsException, HttpUtilsException, IOException {
+	public void step3gCifraturaKeystoreFileViaKms() throws UtilsException, HttpUtilsException, IOException {
 		
-		logCoreInfo("@step3gCifraturaKeystoreFileViaKsm");
+		logCoreInfo("@step3gCifraturaKeystoreFileViaKms");
 		
 		checkExternalToolError();
 		
-		copyEncryptedFile(KSM_GOVWAY_REMOTE_WRAP, false);
-		updateByokPolicy(SECURITY_GOVWAY_REMOTE_UNWRAP, KSM_GOVWAY_REMOTE_UNWRAP);
+		copyEncryptedFile(KMS_GOVWAY_REMOTE_WRAP, false);
+		updateByokPolicy(SECURITY_GOVWAY_REMOTE_UNWRAP, KMS_GOVWAY_REMOTE_UNWRAP);
 		resetCache();
 	}
 	
 	@Test
-	public void step3hInvocazioneServiziGovwayConSecretLockedByRemotePolicyKeystoreFileViaKsm() throws UtilsException, HttpUtilsException {
+	public void step3hInvocazioneServiziGovwayConSecretLockedByRemotePolicyKeystoreFileViaKms() throws UtilsException, HttpUtilsException {
 		
-		logCoreInfo("@step3hInvocazioneServiziGovwayConSecretLockedByRemotePolicyKeystoreFileViaKsm");
+		logCoreInfo("@step3hInvocazioneServiziGovwayConSecretLockedByRemotePolicyKeystoreFileViaKms");
 		
 		checkExternalToolError();
 		
@@ -631,7 +631,7 @@ public class SecretsTest extends ConfigLoader {
 		checkExternalToolError();
 		
 		copyEncryptedFile(null, false); // riversa i file con contennuto in chiaro
-		updateByokPolicy(KSM_GOVWAY_REMOTE_UNWRAP, "-");
+		updateByokPolicy(KMS_GOVWAY_REMOTE_UNWRAP, "-");
 		resetCache();
 	}
 	
@@ -779,16 +779,16 @@ public class SecretsTest extends ConfigLoader {
 		verificaEncryptDecryptToolBySecurity(GW_KEYS_POLICY, GW_KEYS_POLICY);
 		verificaEncryptDecryptToolBySecurity(GW_REMOTE_POLICY, GW_REMOTE_POLICY);
 		
-		// ksm
-		verificaEncryptDecryptToolByKsm(null, KSM_PBKDF2_WRAP, KSM_PBKDF2_UNWRAP);
-		verificaEncryptDecryptToolByKsm(null, KSM_ASYNC_KEYS_WRAP, KSM_ASYNC_KEYS_UNWRAP);
-		verificaEncryptDecryptToolByKsm(null, KSM_GOVWAY_REMOTE_WRAP, KSM_GOVWAY_REMOTE_UNWRAP);
+		// kms
+		verificaEncryptDecryptToolByKms(null, KMS_PBKDF2_WRAP, KMS_PBKDF2_UNWRAP);
+		verificaEncryptDecryptToolByKms(null, KMS_ASYNC_KEYS_WRAP, KMS_ASYNC_KEYS_UNWRAP);
+		verificaEncryptDecryptToolByKms(null, KMS_GOVWAY_REMOTE_WRAP, KMS_GOVWAY_REMOTE_UNWRAP);
 		
 	}
 	private void verificaEncryptDecryptToolBySecurity(String idPolicy, String idPolicyFornitaAlTool) throws UtilsException, IOException {
 		verificaEncryptDecryptTool(idPolicy, true, idPolicyFornitaAlTool, idPolicyFornitaAlTool);
 	}
-	private void verificaEncryptDecryptToolByKsm(String idPolicy, String idWrap, String idUnwrap) throws UtilsException, IOException {
+	private void verificaEncryptDecryptToolByKms(String idPolicy, String idWrap, String idUnwrap) throws UtilsException, IOException {
 		verificaEncryptDecryptTool(idPolicy, false, idWrap, idUnwrap);
 	}
 	private void verificaEncryptDecryptTool(String idPolicy, boolean security,String idWrap, String idUnwrap) throws UtilsException, IOException {

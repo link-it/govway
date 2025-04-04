@@ -11,7 +11,7 @@ In alternativa, è possibile adottare una gestione BYOK, dove la master key è d
 
 La gestione delle informazioni confidenziali è attivabile all'interno del file *<directory-lavoro>/byok.properties*, nel quale sono presenti le due seguenti sezioni principali:
 
-- 'Key Management Service' (KMS): ogni KMS definisce i criteri di cifratura (wrap) o di decifratura (unwrap) di un'informazione sensibile o di una chiave/keystore; la sintassi viene descritta nella sezione :ref:`byokInstallKsm`. Un KMS può riferirsi a una chiave gestita localmente tramite un approccio HYOK (:ref:`byokInstallKsmLocale`) o gestita da remoto su un servizio cloud come previsto dall'approccio BYOK (:ref:`byokInstallKsmRemoto`).
+- 'Key Management Service' (KMS): ogni KMS definisce i criteri di cifratura (wrap) o di decifratura (unwrap) di un'informazione sensibile o di una chiave/keystore; la sintassi viene descritta nella sezione :ref:`byokInstallKms`. Un KMS può riferirsi a una chiave gestita localmente tramite un approccio HYOK (:ref:`byokInstallKmsLocale`) o gestita da remoto su un servizio cloud come previsto dall'approccio BYOK (:ref:`byokInstallKmsRemoto`).
 
 - 'Security Engine': l'associazione di un KMS che consente la cifratura di un'informazione confidenziale (wrap) e un altro che ne consente la decifratura (unwrap) viene registrata sotto la definizione di un security engine, come descritto nella sezione :ref:`byokInstallSecurityEngine`.
 
@@ -30,11 +30,11 @@ I KMS e i security engine vengono utilizzati da GovWay per gestire diversi aspet
   
     Esempio di configurazione di una policy BYOK su GovWay
 
-- 'Unwrap delle chiavi/keystore per la funzionalità di FileTrace': nella sezione :ref:`avanzate_fileTrace_proprietaCifrate` vengono fornite le indicazioni per cifrare eventuali parti di log; i keystore o le chiavi utilizzate per la cifratura possono a loro volta essere cifrate e dovranno essere decifrate prima del loro utilizzo attraverso un KSM riferito tramite la direttiva *encrypt.encMode1.ksm*.
+- 'Unwrap delle chiavi/keystore per la funzionalità di FileTrace': nella sezione :ref:`avanzate_fileTrace_proprietaCifrate` vengono fornite le indicazioni per cifrare eventuali parti di log; i keystore o le chiavi utilizzate per la cifratura possono a loro volta essere cifrate e dovranno essere decifrate prima del loro utilizzo attraverso un KMS riferito tramite la direttiva *encrypt.encMode1.kms*.
 
 - 'Tool govway-vault-cli': al termine dell'esecuzione dell'installer (:ref:`inst_installer`), nella directory *dist/tools/govway-vault-cli* è presente un tool da linea di comando che consente:
 
-   - la cifratura o decifratura di chiavi, riferendosi a un security engine o un KSM definito nel file *<directory-lavoro>/byok.properties*;
+   - la cifratura o decifratura di chiavi, riferendosi a un security engine o un KMS definito nel file *<directory-lavoro>/byok.properties*;
    
    - l'aggiornamento di una base dati esistente, consentendo di cifrare le informazioni confidenziali precedentemente salvate in chiaro o di aggiornarle attraverso l'utilizzo di una differente master key.
    
@@ -43,7 +43,7 @@ I KMS e i security engine vengono utilizzati da GovWay per gestire diversi aspet
 .. toctree::
         :maxdepth: 2
 
-	ksm/index
+	kms/index
 	security
 	infoConfidenziali
 	vaultCli/index
