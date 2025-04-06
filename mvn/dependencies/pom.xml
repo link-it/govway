@@ -108,7 +108,7 @@
 						<id>check owasp</id>
 						<phase>${owasp}</phase>
 						<configuration>
-							<autoUpdate>${owasp.plugin.autoUpdate}</autoUpdate>
+							<autoUpdate>${owasp.plugin.autoUpdate}</autoUpdate> <!-- Impostare a false quando ci sono problemi su repository NIST -->
 							<failBuildOnAnyVulnerability>${owasp.plugin.failBuildOnAnyVulnerability}</failBuildOnAnyVulnerability>
 							<!-- <failBuildOnCVSS>8</failBuildOnCVSS> -->
 							<outputDirectory>${owasp.output.dir}</outputDirectory>
