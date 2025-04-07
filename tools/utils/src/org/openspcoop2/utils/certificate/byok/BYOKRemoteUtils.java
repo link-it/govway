@@ -63,6 +63,12 @@ public class BYOKRemoteUtils {
 						throw new UtilsException("Read failure with pattern '"+pattern+"'");
 					}
 					content = valoreEstratto.getBytes();
+					if(instance.getConfig().getRemoteConfig().isHttpResponseJsonPathBase64Encoded()) {
+						content = Base64Utilities.decode(content);
+					}
+					else if(instance.getConfig().getRemoteConfig().isHttpResponseJsonPathHexEncoded()) {
+						content = HexBinaryUtilities.decode(new String(content).toCharArray());
+					}
 				}catch(Exception e) {
 					throw new UtilsException(e.getMessage(),e);
 				}

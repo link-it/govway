@@ -78,7 +78,8 @@ public class BYOKRemoteConfig implements Serializable {
 	private boolean httpResponseBase64Encoded;
 	private boolean httpResponseHexEncoded;
 	private String httpResponseJsonPath;
-	
+	private boolean httpResponseJsonPathBase64Encoded;
+	private boolean httpResponseJsonPathHexEncoded;
 	
 	protected BYOKRemoteConfig(String id, Properties p, Logger log, String byokPropertyPrefix) throws UtilsException {
 				
@@ -122,6 +123,8 @@ public class BYOKRemoteConfig implements Serializable {
 		this.httpResponseBase64Encoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_BASE64_ENCODED, false, false, byokPropertyPrefix);
 		this.httpResponseHexEncoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_HEX_ENCODED, false, false, byokPropertyPrefix);
 		this.httpResponseJsonPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH, false, byokPropertyPrefix);
+		this.httpResponseJsonPathBase64Encoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH_BASE64_ENCODED, false, false, byokPropertyPrefix);
+		this.httpResponseJsonPathHexEncoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH_HEX_ENCODED, false, false, byokPropertyPrefix);
 	}
 
 	private void initHttpHeader(Properties p) {
@@ -227,5 +230,11 @@ public class BYOKRemoteConfig implements Serializable {
 	}
 	public String getHttpResponseJsonPath() {
 		return this.httpResponseJsonPath;
+	}
+	public boolean isHttpResponseJsonPathBase64Encoded() {
+		return this.httpResponseJsonPathBase64Encoded;
+	}
+	public boolean isHttpResponseJsonPathHexEncoded() {
+		return this.httpResponseJsonPathHexEncoded;
 	}
 }

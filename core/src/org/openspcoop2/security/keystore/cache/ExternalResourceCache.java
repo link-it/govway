@@ -42,10 +42,10 @@ public class ExternalResourceCache extends AbstractKeystoreCache<ExternalResourc
 			return new ExternalResource(key, key, new ExternalResourceConfig()); // l'id della risorsa esterna è la url stessa della risorsa, non serve un id aggiuntivo
 		}
 		else if(params.length==1){
-			if( ! (params[0] instanceof ExternalResourceConfig) ){
+			if( params[0]!=null && !(params[0] instanceof ExternalResourceConfig) ){
 				throw new SecurityException("Param[0] must be ExternalResourceConfig");
 			}
-			ExternalResourceConfig externalConfig = (ExternalResourceConfig) params[0];
+			ExternalResourceConfig externalConfig = (params[0]==null) ? new ExternalResourceConfig() : (ExternalResourceConfig) params[0];
 			return new ExternalResource(key, key, externalConfig); // l'id della risorsa esterna è la url stessa della risorsa, non serve un id aggiuntivo
 		}
 		else{
