@@ -70,6 +70,9 @@ L'informazione cifrata o decifrata viene attesa per default nel payload della ri
 
 - *response.jsonPath*: [optional] se la risposta è un json (eventualmente dopo la decodificata base64/hex) consente di indicare un jsonPath per estrarre l'informazione da un singolo elemento.
 	
+- *response.jsonPath.base64Encoded*: [optional; boolean] indicazione se sarà atteso un valore, estratto tramite jsonPath, codificato in base64;
+
+- *response.jsonPath.hexEncoded*: [optional; boolean] indicazione se sarà atteso un valore, estratto tramite jsonPath, codificato tramite una rappresentazione esadecimale;	
 
 Inoltre se l'endpoint contattato è su protocollo https, può essere attivata una gestione personalizzata dell'autenticazione server e/o client definendo la seguente proprietà:
 

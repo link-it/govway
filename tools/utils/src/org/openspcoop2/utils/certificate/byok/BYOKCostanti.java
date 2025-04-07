@@ -99,6 +99,8 @@ public class BYOKCostanti {
 	public static final String PROPERTY_SUFFIX_HTTP_RESPONSE_BASE64_ENCODED = "http.response.base64Encoded";
 	public static final String PROPERTY_SUFFIX_HTTP_RESPONSE_HEX_ENCODED = "http.response.hexEncoded";
 	public static final String PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH = "http.response.jsonPath";
+	public static final String PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH_BASE64_ENCODED = "http.response.jsonPath.base64Encoded";
+	public static final String PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH_HEX_ENCODED = "http.response.jsonPath.hexEncoded";
 	
 	
 	
