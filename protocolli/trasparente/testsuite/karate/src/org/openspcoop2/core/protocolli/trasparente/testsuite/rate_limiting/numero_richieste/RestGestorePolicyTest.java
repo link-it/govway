@@ -44,60 +44,185 @@ public class RestGestorePolicyTest extends ConfigLoader {
 	
 	
 	@Test
-	public void richiestePerMinutoDefaultErogazione_local() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneLocal() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.LOCAL);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_local_divided_by_nodes() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoLocal() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.LOCAL, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoLocal() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.LOCAL, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	@Test
+	public void richiestePerMinutoDefaultErogazioneLocalDividedByNodes() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_database() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoLocalDividedByNodes() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoLocalDividedByNodes() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.LOCAL_DIVIDED_BY_NODES, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	@Test
+	public void richiestePerMinutoDefaultErogazioneDatabase() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.DATABASE);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_hazelcast() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoDatabase() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.DATABASE, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoDatabase() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.DATABASE, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	@Test
+	public void richiestePerMinutoDefaultErogazioneHazelcast() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_MAP);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_hazelcast_nearCache() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoHazelcast() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_MAP, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoHazelcast() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_MAP, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	@Test
+	public void richiestePerMinutoDefaultErogazioneHazelcastNearCache() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_hazelcast_localCache() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoHazelcastNearCache() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoHazelcastNearCache() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	@Test
+	public void richiestePerMinutoDefaultErogazioneHazelcastLocalCache() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_hazelcast_nearCache_putSync() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoHazelcastLocalCache() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoHazelcastLocalCache() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_LOCAL_CACHE, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	@Test
+	public void richiestePerMinutoDefaultErogazioneHazelcastNearCachePutSync() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_hazelcast_nearCache_putAsync() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoHazelcastNearCachePutSync() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoHazelcastNearCachePutSync() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_SYNC_MAP, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	@Test
+	public void richiestePerMinutoDefaultErogazioneHazelcastNearCachePutAsync() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_hazelcast_contatoriSingoli_PNCounter() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoHazelcastNearCachePutAsync() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoHazelcastNearCachePutAsync() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	@Test
+	public void richiestePerMinutoDefaultErogazioneHazelcastContatoriSingoliPNCounter() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_hazelcast_contatoriSingoli_AtomicLong() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoHazelcastContatoriSingoliPNCounter() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoHazelcastContatoriSingoliPNCounter() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_PNCOUNTER, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	@Test
+	public void richiestePerMinutoDefaultErogazioneHazelcastContatoriSingoliAtomicLong() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG);
 	}
 	@Test
-	public void richiestePerMinutoDefaultErogazione_hazelcast_contatoriSingoli_AtomicLongAsync() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoHazelcastContatoriSingoliAtomicLong() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoHazelcastContatoriSingoliAtomicLong() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	@Test
+	public void richiestePerMinutoDefaultErogazioneHazelcastContatoriSingoliAtomicLongAsync() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC);
 	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoHazelcastContatoriSingoliAtomicLongAsync() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoHazelcastContatoriSingoliAtomicLongAsync() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_ATOMIC_LONG_ASYNC, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
 //	@Test
-//	public void richiestePerMinutoDefaultErogazione_hazelcast_replicatedMap() throws Exception {
+//	public void richiestePerMinutoDefaultErogazioneHazelcastReplicatedMap() throws Exception {
 //		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP);
 //	}
+//	@Test
+//	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoHazelcastReplicatedMap() throws Exception {
+//		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP, "NumeroRichiesteRestTracciamentoDisabilitato");
+//	}
+//	@Test
+//	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoHazelcastReplicatedMap() throws Exception {
+//		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.HAZELCAST_REPLICATED_MAP, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+//	}
+	
 	@Test
-	public void richiestePerMinutoDefaultErogazione_redis_atomicLong() throws Exception {
+	public void richiestePerMinutoDefaultErogazioneRedisAtomicLong() throws Exception {
 		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG);
 	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoRedisAtomicLong() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoRedisAtomicLong() throws Exception {
+		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.REDISSON_ATOMIC_LONG, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
 //	@Test
-//	public void richiestePerMinutoDefaultErogazione_redis_longAdder() throws Exception {
+//	public void richiestePerMinutoDefaultErogazioneRedisLongAdder() throws Exception {
 //		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER);
+//	}
+//	@Test
+//	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitatoRedisLongAdder() throws Exception {
+//		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER, "NumeroRichiesteRestTracciamentoDisabilitato");
+//	}
+//	@Test
+//	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitatoRedisLongAdder() throws Exception {
+//		this.restTest.richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType.REDISSON_LONGADDER, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
 //	}
 	
 	

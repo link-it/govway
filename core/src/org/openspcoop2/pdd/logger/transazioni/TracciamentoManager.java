@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.utils.OpenSPCoopAppenderUtilities;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -745,6 +746,7 @@ public class TracciamentoManager {
 		}
 
 
+		MisurazioniTransazione misurazioniTransazione = null;
 		Transazione transazioneDTO = null;
 		HandlerException fileTraceException = null;
 		try{
@@ -776,6 +778,9 @@ public class TracciamentoManager {
 			long timeStart = -1;
 			try{
 				if(exitTransactionAfterRateLimitingRemoveThreadNoTraceDB && noFileTrace) {
+					if(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && this.openspcoopProperties.isControlloTrafficoEnabled()){
+						misurazioniTransazione = TransazioneUtilities.fillMisurazioniTransazione(info, this.fase, transaction, esito, transazioneDTO);
+					}
 					return; // entro nel finally e se sono post out rimuovo il thread per il controllo del traffico
 				}
 				
@@ -809,6 +814,9 @@ public class TracciamentoManager {
 						this.fase, 
 						esito, esitoContext, 
 						info.getTransazioneDaAggiornare()); // NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+				if(FaseTracciamento.POST_OUT_RESPONSE.equals(this.fase) && this.openspcoopProperties.isControlloTrafficoEnabled()){
+					misurazioniTransazione = TransazioneUtilities.fillMisurazioniTransazione(info, this.fase, transaction, esito, transazioneDTO);
+				}
 				if(FaseTracciamento.OUT_RESPONSE.equals(this.fase)) {
 					info.setTransazioneDaAggiornare(transazioneDTO);
 				}
@@ -848,7 +856,7 @@ public class TracciamentoManager {
 							timeStart = DateManager.getTimeMillis();
 						}
 						PostOutResponseHandlerGestioneControlloTraffico outHandler = new PostOutResponseHandlerGestioneControlloTraffico();
-						outHandler.process(controlloCongestioneMaxRequestThreadRegistrato, this.log, idTransazione, transazioneDTO, info, esito,
+						outHandler.process(controlloCongestioneMaxRequestThreadRegistrato, this.log, idTransazione, misurazioniTransazione, info,
 								( (times!=null && this.openspcoopProperties.isTransazioniRegistrazioneSlowLogRateLimitingDetails()) ? times : null));
 					}catch (Throwable e) {
 						this.logError("["+idTransazione+"] Errore durante la registrazione di terminazione del thread: "+e.getMessage(),e);

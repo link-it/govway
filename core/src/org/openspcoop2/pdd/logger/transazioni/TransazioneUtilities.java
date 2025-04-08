@@ -34,6 +34,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -155,6 +156,53 @@ public class TransazioneUtilities {
 	public static String getConnettoriMultipli(Context context) {
 		return ConfigurazioneTracciamentoUtils.getConnettoriMultipli(context);
 	}
+	
+	public static MisurazioniTransazione fillMisurazioniTransazione(InformazioniTransazione info, FaseTracciamento fase,  Transaction transaction, EsitoTransazione esito, Transazione transactionDTOparam) {
+		MisurazioniTransazione misurazioniTransazione = new MisurazioniTransazione();
+		misurazioniTransazione.setTipoPdD(info.getTipoPorta());
+		misurazioniTransazione.setProtocollo( info.getProtocolFactory().getProtocol());
+		misurazioniTransazione.setEsitoTransazione(esito.getCode());
+		
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		
+		boolean fillTransaction = transactionDTOparam==null;
+		Transazione transactionDTO = fillTransaction ? new Transazione() : transactionDTOparam;
+		
+		if(fillTransaction)
+			TransazioneUtilities.setDataIngressoRichiesta(op2Properties, transactionDTO, info, transaction); 
+		misurazioniTransazione.setDataIngressoRichiesta(transactionDTO.getDataIngressoRichiesta());
+		
+		if(fillTransaction)
+			TransazioneUtilities.setDataUscitaRichiesta(transactionDTO, fase, transaction);
+		misurazioniTransazione.setDataUscitaRichiesta(transactionDTO.getDataUscitaRichiesta());
+		
+		if(fillTransaction)
+			TransazioneUtilities.setDataIngressoRisposta(op2Properties, transactionDTO, fase, transaction);
+		misurazioniTransazione.setDataIngressoRisposta(transactionDTO.getDataIngressoRisposta());
+		
+		if(fillTransaction)
+			TransazioneUtilities.setDataUscitaRisposta(op2Properties, transactionDTO, info, fase, transaction);
+		misurazioniTransazione.setDataUscitaRisposta(transactionDTO.getDataUscitaRisposta());
+		
+		if(fillTransaction)
+			TransazioneUtilities.setRichiestaIngressoBytes(transactionDTO, info, transaction, fase);
+		misurazioniTransazione.setRichiestaIngressoBytes(transactionDTO.getRichiestaIngressoBytes());
+		
+		if(fillTransaction)
+			TransazioneUtilities.setRichiestaUscitaBytes(transactionDTO, info, transaction, fase);
+		misurazioniTransazione.setRichiestaUscitaBytes(transactionDTO.getRichiestaUscitaBytes());
+		
+		if(fillTransaction)
+			TransazioneUtilities.setRispostaIngressoBytes(transactionDTO, info, transaction, fase);
+		misurazioniTransazione.setRispostaIngressoBytes(transactionDTO.getRispostaIngressoBytes());
+		
+		if(fillTransaction)
+			TransazioneUtilities.setRispostaUscitaBytes(transactionDTO, info, fase);
+		misurazioniTransazione.setRispostaUscitaBytes(transactionDTO.getRispostaUscitaBytes());
+		
+		return misurazioniTransazione;
+	}
+	
 	
 	public Transazione fillTransaction(InformazioniTransazione info, Transaction transaction, IDSoggetto idDominio,
 			TransazioniProcessTimes times, FaseTracciamento fase, 
@@ -361,61 +409,16 @@ public class TransazioneUtilities {
 			}
 			
 			// ** data_uscita_risposta **
-			if(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
-				boolean calcolaDataUscitaRispostaConDateAfterResponseSent = op2Properties.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent();
-				if(calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataRispostaSpedita()!=null) {
-					if(FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
-						transactionDTO.setDataUscitaRisposta(info.getDataRispostaSpedita());
-					}
-				}
-				else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataPrimaSpedizioneRisposta()!=null) {
-					transactionDTO.setDataUscitaRisposta(info.getDataPrimaSpedizioneRisposta());
-				}
-				else if (transaction.getDataUscitaRisposta()!=null){
-					transactionDTO.setDataUscitaRisposta(transaction.getDataUscitaRisposta());
-				}
-				else{
-					// creo sempre una data di risposta.
-					transactionDTO.setDataUscitaRisposta(DateManager.getDate());
-				}
+			TransazioneUtilities.setDataUscitaRisposta(op2Properties, transactionDTO, info, fase, transaction);
 				
-				// ** data_uscita_risposta_stream **
-				if(calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataPrimaSpedizioneRisposta()!=null) {
-					transactionDTO.setDataUscitaRispostaStream(info.getDataPrimaSpedizioneRisposta());
-				}
-				else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataRispostaSpedita()!=null &&
-					FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
-					transactionDTO.setDataUscitaRispostaStream(info.getDataRispostaSpedita());
-				}
-				
-				if(calcolaDataUscitaRispostaConDateAfterResponseSent && transactionDTO.getDataUscitaRispostaStream()==null) {
-					transactionDTO.setDataUscitaRispostaStream(transactionDTO.getDataUscitaRisposta()); // uso la stessa
-				}
-			}
+			// ** data_uscita_risposta_stream **
+			TransazioneUtilities.setDataUscitaRispostaStream(op2Properties, transactionDTO, info, fase);
 			
 			// ** dimensione_ingresso_risposta **
-			if(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
-				if (info.getInputResponseMessageSize()!=null && info.getInputResponseMessageSize()>0 &&
-					transaction!=null && transaction.getDataIngressoRisposta()!=null) { // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
-					
-					boolean add = false;
-					if(info.getContext()!=null) {
-						Object o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_START_DATE);
-						if(o instanceof Date) {
-							add = true;
-						}
-					}
-					
-					if(add) {
-						transactionDTO.setRispostaIngressoBytes(info.getInputResponseMessageSize());
-					}
-				}
+			TransazioneUtilities.setRispostaIngressoBytes(transactionDTO, info, transaction, fase);
 	
-				// ** dimensione_uscita_risposta **
-				if (info.getOutputResponseMessageSize()!=null && info.getOutputResponseMessageSize()>0){
-					transactionDTO.setRispostaUscitaBytes(info.getOutputResponseMessageSize());
-				}
-			}
+			// ** dimensione_uscita_risposta **
+			TransazioneUtilities.setRispostaUscitaBytes(transactionDTO, info, fase);
 			
 			// ** FAULT **
 			if(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
@@ -504,130 +507,40 @@ public class TransazioneUtilities {
 
 			// ** Tempi di latenza **
 
-			boolean valorizzataDataIngressoConDataAccettazione = op2Properties.isTransazioniValorizzaDataIngressoConDataAccettazione();
-			
 			// Se data_accettazione_richiesta è null viene impostata a CURRENT_TIMESTAMP
-			if (transaction.getDataAccettazioneRichiesta()!=null){
-				transactionDTO.setDataAccettazioneRichiesta(transaction.getDataAccettazioneRichiesta());
-			}else{
-				Object o = info.getContext().getObject(CostantiPdD.DATA_ACCETTAZIONE_RICHIESTA);
-				if(o instanceof Date){
-					transactionDTO.setDataAccettazioneRichiesta((Date) o);
-				}
-				else{
-					transactionDTO.setDataAccettazioneRichiesta(DateManager.getDate());
-				}
-			}
+			TransazioneUtilities.setDataAccettazioneRichiesta(transactionDTO, info, transaction);
 			
 			// Se data_ingresso_richiesta è null viene impostata a CURRENT_TIMESTAMP
-			if(valorizzataDataIngressoConDataAccettazione) {
-				transactionDTO.setDataIngressoRichiesta(transactionDTO.getDataAccettazioneRichiesta());
-			}
-			else {
-				if (transaction.getDataIngressoRichiesta()!=null){
-					transactionDTO.setDataIngressoRichiesta(transaction.getDataIngressoRichiesta());
-				}else{
-					Object o = info.getContext().getObject(CostantiPdD.DATA_INGRESSO_RICHIESTA);
-					if(o instanceof Date){
-						transactionDTO.setDataIngressoRichiesta((Date) o);
-					}
-					else{
-						transactionDTO.setDataIngressoRichiesta(DateManager.getDate());
-					}
-				}
-			}
+			TransazioneUtilities.setDataIngressoRichiesta(op2Properties, transactionDTO, info, transaction); 
 			
 			// data_ingresso_richiesta_stream
-			if(info.getContext()!=null) {
-				Object o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_REQUEST_COMPLETE_DATE);
-				if(o==null) {
-					o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_REQUEST_ERROR_DATE);
-				}
-				if(o instanceof Date) {
-					Date d = (Date) o;
-					transactionDTO.setDataIngressoRichiestaStream(d);
-				}
-			}
+			TransazioneUtilities.setDataIngressoRichiestaStream(transactionDTO, info);
 			
 			// data_uscita_richiesta si imposta se e' diversa da null
-			if(FaseTracciamento.OUT_REQUEST.equals(fase) || FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
-				if (transaction.getDataUscitaRichiesta()!=null) {
-					transactionDTO.setDataUscitaRichiesta(transaction.getDataUscitaRichiesta());
-				}
-				
-				// data_uscita_richiesta_stream
-				if(transaction.getDataRichiestaInoltrata()!=null) {
-					transactionDTO.setDataUscitaRichiestaStream(transaction.getDataRichiestaInoltrata());
-				}
-			}
+			TransazioneUtilities.setDataUscitaRichiesta(transactionDTO, fase, transaction);
 
-			if(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
-				// data_accettazione_risposta
-				// La porta di dominio mi passa sempre questa informazione.
-				// Nel PddMonitor, invece, la data deve essere visualizzata solo se la dimensione e' diverso da 0 e cioe' se c'e' un messaggio di risposta.
-				/**if (transaction.getDimensioneIngressoRispostaBytes()!=null && transaction.getDimensioneIngressoRispostaBytes()>0){*/
-				// L'INFORMAZIONE DEVE INVECE ESSERE SALVATA PER LA SIMULAZIONE DEI MESSAGGI DIAGNOSTICI
-				if (transaction.getDataAccettazioneRisposta()!=null){
-					transactionDTO.setDataAccettazioneRisposta(transaction.getDataAccettazioneRisposta());
-				}
+			// data_accettazione_risposta
+			TransazioneUtilities.setDataAccettazioneRisposta(transactionDTO, fase, transaction);
 				
-				// data_ingresso_risposta
-				// La porta di dominio mi passa sempre questa informazione.
-				// Nel PddMonitor, invece, la data deve essere visualizzata solo se la dimensione e' diverso da 0 e cioe' se c'e' un messaggio di risposta.
-				/**if (transaction.getDimensioneIngressoRispostaBytes()!=null && transaction.getDimensioneIngressoRispostaBytes()>0){*/
-				// L'INFORMAZIONE DEVE INVECE ESSERE SALVATA PER LA SIMULAZIONE DEI MESSAGGI DIAGNOSTICI
-				if(valorizzataDataIngressoConDataAccettazione && transactionDTO.getDataAccettazioneRisposta()!=null) {
-					transactionDTO.setDataIngressoRisposta(transactionDTO.getDataAccettazioneRisposta());
-				}
-				else {
-					if (transaction.getDataIngressoRisposta()!=null){
-						transactionDTO.setDataIngressoRisposta(transaction.getDataIngressoRisposta());
-					}
-				}
+			// data_ingresso_risposta
+			TransazioneUtilities.setDataIngressoRisposta(op2Properties, transactionDTO, fase, transaction);
 				
-				// data_ingresso_risposta_stream
-				if(info.getContext()!=null) {
-					Object o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_COMPLETE_DATE);
-					if(o==null) {
-						o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_ERROR_DATE);
-					}
-					if(o instanceof Date) {
-						Date d = (Date) o;
-						transactionDTO.setDataIngressoRispostaStream(d);
-					}
-				}
-	
-				// data_uscita_risposta
-				// data_uscita_risposta_stream
-				// Gestite prima per la doppia fase, come per l'esito
-			}
+			// data_ingresso_risposta_stream
+			TransazioneUtilities.setDataIngressoRispostaStream(transactionDTO, info, fase);
+			
+			// data_uscita_risposta
+			// data_uscita_risposta_stream
+			// Gestite prima per la doppia fase, come per l'esito
 
 
 			// ** Dimensione messaggi gestiti **
 			// Se le dimensioni (BIGINT) sono null occorre impostarle a zero
 
 			// dimensione_ingresso_richiesta
-			if (info.getInputRequestMessageSize()!=null && info.getInputRequestMessageSize()>0){
-				transactionDTO.setRichiestaIngressoBytes(info.getInputRequestMessageSize());
-			}
-			if(transactionDTO.getRichiestaIngressoBytes()==null &&
-					FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
-				transactionDTO.setRichiestaIngressoBytes(readDimensioneFromDumpBinario(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO, transaction));
-			}
+			TransazioneUtilities.setRichiestaIngressoBytes(transactionDTO, info, transaction, fase);
 
 			// dimensione_uscita_richiesta
-			if( 
-					(FaseTracciamento.OUT_REQUEST.equals(fase) || FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase))
-					&& 
-					(info.getOutputRequestMessageSize()!=null && info.getOutputRequestMessageSize()>0 &&
-						transactionDTO.getDataUscitaRichiesta()!=null) // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
-				) {
-				transactionDTO.setRichiestaUscitaBytes(info.getOutputRequestMessageSize());
-			}
-			if(transactionDTO.getRichiestaUscitaBytes()==null &&
-					FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
-				transactionDTO.setRichiestaUscitaBytes(readDimensioneFromDumpBinario(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO, transaction));
-			}
+			TransazioneUtilities.setRichiestaUscitaBytes(transactionDTO, info, transaction, fase);
 
 			// dimensione_ingresso_risposta
 			// dimensione_uscita_risposta
@@ -1337,7 +1250,217 @@ public class TransazioneUtilities {
 		}
 	}
 	
-	private Long readDimensioneFromDumpBinario(TipoMessaggio tipoMessaggio, Transaction transaction) {
+	private static void setDataAccettazioneRichiesta(Transazione transactionDTO, InformazioniTransazione info, Transaction transaction) {
+		// Se data_accettazione_richiesta è null viene impostata a CURRENT_TIMESTAMP
+		if (transaction.getDataAccettazioneRichiesta()!=null){
+			transactionDTO.setDataAccettazioneRichiesta(transaction.getDataAccettazioneRichiesta());
+		}else{
+			Object o = info.getContext().getObject(CostantiPdD.DATA_ACCETTAZIONE_RICHIESTA);
+			if(o instanceof Date){
+				transactionDTO.setDataAccettazioneRichiesta((Date) o);
+			}
+			else{
+				transactionDTO.setDataAccettazioneRichiesta(DateManager.getDate());
+			}
+		}
+	}
+	private static void setDataIngressoRichiesta(OpenSPCoop2Properties op2Properties, Transazione transactionDTO, InformazioniTransazione info, Transaction transaction) {
+		// Se data_ingresso_richiesta è null viene impostata a CURRENT_TIMESTAMP
+		boolean valorizzataDataIngressoConDataAccettazione = op2Properties.isTransazioniValorizzaDataIngressoConDataAccettazione();
+		if(valorizzataDataIngressoConDataAccettazione) {
+			transactionDTO.setDataIngressoRichiesta(transactionDTO.getDataAccettazioneRichiesta());
+		}
+		else {
+			if (transaction.getDataIngressoRichiesta()!=null){
+				transactionDTO.setDataIngressoRichiesta(transaction.getDataIngressoRichiesta());
+			}else{
+				Object o = info.getContext().getObject(CostantiPdD.DATA_INGRESSO_RICHIESTA);
+				if(o instanceof Date){
+					transactionDTO.setDataIngressoRichiesta((Date) o);
+				}
+				else{
+					transactionDTO.setDataIngressoRichiesta(DateManager.getDate());
+				}
+			}
+		}
+	}
+	private static void setDataIngressoRichiestaStream(Transazione transactionDTO, InformazioniTransazione info) {
+		if(info.getContext()!=null) {
+			Object o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_REQUEST_COMPLETE_DATE);
+			if(o==null) {
+				o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_REQUEST_ERROR_DATE);
+			}
+			if(o instanceof Date) {
+				Date d = (Date) o;
+				transactionDTO.setDataIngressoRichiestaStream(d);
+			}
+		}
+	}
+	
+	private static void setDataUscitaRichiesta(Transazione transactionDTO, FaseTracciamento fase, Transaction transaction) {
+		// data_uscita_richiesta si imposta se e' diversa da null
+		if(FaseTracciamento.OUT_REQUEST.equals(fase) || FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+			if (transaction.getDataUscitaRichiesta()!=null) {
+				transactionDTO.setDataUscitaRichiesta(transaction.getDataUscitaRichiesta());
+			}
+			
+			// data_uscita_richiesta_stream
+			if(transaction.getDataRichiestaInoltrata()!=null) {
+				transactionDTO.setDataUscitaRichiestaStream(transaction.getDataRichiestaInoltrata());
+			}
+		}
+	}
+	
+	private static void setDataAccettazioneRisposta(Transazione transactionDTO, FaseTracciamento fase, Transaction transaction) {
+		if(
+				(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase))
+				&&
+			// data_accettazione_risposta
+			// La porta di dominio mi passa sempre questa informazione.
+			// Nel PddMonitor, invece, la data deve essere visualizzata solo se la dimensione e' diverso da 0 e cioe' se c'e' un messaggio di risposta.
+			/**if (transaction.getDimensioneIngressoRispostaBytes()!=null && transaction.getDimensioneIngressoRispostaBytes()>0){*/
+			// L'INFORMAZIONE DEVE INVECE ESSERE SALVATA PER LA SIMULAZIONE DEI MESSAGGI DIAGNOSTICI
+			transaction.getDataAccettazioneRisposta()!=null){
+			transactionDTO.setDataAccettazioneRisposta(transaction.getDataAccettazioneRisposta());
+		}
+	}
+	private static void setDataIngressoRisposta(OpenSPCoop2Properties op2Properties, Transazione transactionDTO, FaseTracciamento fase, Transaction transaction) {
+		if(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+			// data_ingresso_risposta
+			
+			boolean valorizzataDataIngressoConDataAccettazione = op2Properties.isTransazioniValorizzaDataIngressoConDataAccettazione();
+			
+			// La porta di dominio mi passa sempre questa informazione.
+			// Nel PddMonitor, invece, la data deve essere visualizzata solo se la dimensione e' diverso da 0 e cioe' se c'e' un messaggio di risposta.
+			/**if (transaction.getDimensioneIngressoRispostaBytes()!=null && transaction.getDimensioneIngressoRispostaBytes()>0){*/
+			// L'INFORMAZIONE DEVE INVECE ESSERE SALVATA PER LA SIMULAZIONE DEI MESSAGGI DIAGNOSTICI
+			if(valorizzataDataIngressoConDataAccettazione && transactionDTO.getDataAccettazioneRisposta()!=null) {
+				transactionDTO.setDataIngressoRisposta(transactionDTO.getDataAccettazioneRisposta());
+			}
+			else {
+				if (transaction.getDataIngressoRisposta()!=null){
+					transactionDTO.setDataIngressoRisposta(transaction.getDataIngressoRisposta());
+				}
+			}
+		}
+	}
+	private static void setDataIngressoRispostaStream(Transazione transactionDTO, InformazioniTransazione info, FaseTracciamento fase) {
+		if(
+			(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase))
+				&&
+			// data_ingresso_risposta_stream
+			info.getContext()!=null) {
+			Object o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_COMPLETE_DATE);
+			if(o==null) {
+				o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_ERROR_DATE);
+			}
+			if(o instanceof Date) {
+				Date d = (Date) o;
+				transactionDTO.setDataIngressoRispostaStream(d);
+			}
+		}
+	}
+	
+	private static void setDataUscitaRisposta(OpenSPCoop2Properties op2Properties, Transazione transactionDTO, InformazioniTransazione info, FaseTracciamento fase, Transaction transaction) {
+		// ** data_uscita_risposta **
+		if(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+			boolean calcolaDataUscitaRispostaConDateAfterResponseSent = op2Properties.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent();
+			if(calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataRispostaSpedita()!=null) {
+				if(FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+					transactionDTO.setDataUscitaRisposta(info.getDataRispostaSpedita());
+				}
+			}
+			else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataPrimaSpedizioneRisposta()!=null) {
+				transactionDTO.setDataUscitaRisposta(info.getDataPrimaSpedizioneRisposta());
+			}
+			else if (transaction.getDataUscitaRisposta()!=null){
+				transactionDTO.setDataUscitaRisposta(transaction.getDataUscitaRisposta());
+			}
+			else{
+				// creo sempre una data di risposta.
+				transactionDTO.setDataUscitaRisposta(DateManager.getDate());
+			}
+		}
+	}
+	private static void setDataUscitaRispostaStream(OpenSPCoop2Properties op2Properties, Transazione transactionDTO, InformazioniTransazione info, FaseTracciamento fase) {
+		// ** data_uscita_risposta_stream **
+		if(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+			boolean calcolaDataUscitaRispostaConDateAfterResponseSent = op2Properties.isTransazioniValorizzaDataUscitaRispostaUseDateAfterResponseSent();
+			if(calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataPrimaSpedizioneRisposta()!=null) {
+				transactionDTO.setDataUscitaRispostaStream(info.getDataPrimaSpedizioneRisposta());
+			}
+			else if(!calcolaDataUscitaRispostaConDateAfterResponseSent && info.getDataRispostaSpedita()!=null &&
+				FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+				transactionDTO.setDataUscitaRispostaStream(info.getDataRispostaSpedita());
+			}
+			
+			if(calcolaDataUscitaRispostaConDateAfterResponseSent && transactionDTO.getDataUscitaRispostaStream()==null) {
+				transactionDTO.setDataUscitaRispostaStream(transactionDTO.getDataUscitaRisposta()); // uso la stessa
+			}
+		}
+	}
+	
+	private static void setRichiestaIngressoBytes(Transazione transactionDTO, InformazioniTransazione info, Transaction transaction, FaseTracciamento fase) {
+		// dimensione_ingresso_richiesta
+		if (info.getInputRequestMessageSize()!=null && info.getInputRequestMessageSize()>0){
+			transactionDTO.setRichiestaIngressoBytes(info.getInputRequestMessageSize());
+		}
+		if(transactionDTO.getRichiestaIngressoBytes()==null &&
+				FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+			transactionDTO.setRichiestaIngressoBytes(readDimensioneFromDumpBinario(TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO, transaction));
+		}
+	}
+	
+	private static void setRichiestaUscitaBytes(Transazione transactionDTO, InformazioniTransazione info, Transaction transaction, FaseTracciamento fase) {
+		if( 
+				(FaseTracciamento.OUT_REQUEST.equals(fase) || FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase))
+				&& 
+				(info.getOutputRequestMessageSize()!=null && info.getOutputRequestMessageSize()>0 &&
+					transactionDTO.getDataUscitaRichiesta()!=null) // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
+			) {
+			transactionDTO.setRichiestaUscitaBytes(info.getOutputRequestMessageSize());
+		}
+		if(transactionDTO.getRichiestaUscitaBytes()==null &&
+				FaseTracciamento.POST_OUT_RESPONSE.equals(fase)) {
+			transactionDTO.setRichiestaUscitaBytes(readDimensioneFromDumpBinario(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO, transaction));
+		}
+	}
+	
+	private static void setRispostaIngressoBytes(Transazione transactionDTO, InformazioniTransazione info, Transaction transaction, FaseTracciamento fase) {
+		// ** dimensione_ingresso_risposta **
+		if(
+				(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase))
+				&&
+				(info.getInputResponseMessageSize()!=null && info.getInputResponseMessageSize()>0 &&
+					transaction!=null && transaction.getDataIngressoRisposta()!=null)
+			) { // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
+				
+			boolean add = false;
+			if(info.getContext()!=null) {
+				Object o = info.getContext().get(DiagnosticInputStream.DIAGNOSTIC_INPUT_STREAM_RESPONSE_START_DATE);
+				if(o instanceof Date) {
+					add = true;
+				}
+			}
+			
+			if(add) {
+				transactionDTO.setRispostaIngressoBytes(info.getInputResponseMessageSize());
+			}
+			
+		}
+	}
+	
+	private static void setRispostaUscitaBytes(Transazione transactionDTO, InformazioniTransazione info, FaseTracciamento fase) {
+		if(
+				(FaseTracciamento.OUT_RESPONSE.equals(fase) || FaseTracciamento.POST_OUT_RESPONSE.equals(fase))
+				&&
+				(info.getOutputResponseMessageSize()!=null && info.getOutputResponseMessageSize()>0)
+			){
+			transactionDTO.setRispostaUscitaBytes(info.getOutputResponseMessageSize());
+		}
+	}
+	
+	private static Long readDimensioneFromDumpBinario(TipoMessaggio tipoMessaggio, Transaction transaction) {
 		if(transaction!=null && !transaction.getMessaggi().isEmpty()) {
 			for (Messaggio msg : transaction.getMessaggi()) {
 				if(tipoMessaggio.equals(msg.getTipoMessaggio()) && msg.getBody()!=null){

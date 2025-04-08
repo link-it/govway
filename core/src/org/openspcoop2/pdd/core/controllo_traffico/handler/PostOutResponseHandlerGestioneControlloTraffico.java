@@ -28,7 +28,6 @@ import org.openspcoop2.core.controllo_traffico.driver.IGestorePolicyAttive;
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
-import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.GeneratoreMessaggiErrore;
@@ -39,7 +38,6 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.logger.transazioni.InformazioniTransazione;
 import org.openspcoop2.pdd.logger.transazioni.TransazioniProcessTimes;
 import org.openspcoop2.protocol.sdk.Context;
-import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
@@ -53,7 +51,7 @@ import org.slf4j.Logger;
 public class PostOutResponseHandlerGestioneControlloTraffico {
 
 	public void process(Boolean controlloTrafficoMaxRequestThreadRegistrato, Logger logger, String idTransazione,
-			Transazione transazioneDTO, InformazioniTransazione info, EsitoTransazione esito,
+			MisurazioniTransazione misurazioniTransazione, InformazioniTransazione info,
 			TransazioniProcessTimes times){
 		
 		Context context = info.getContext();
@@ -94,7 +92,7 @@ public class PostOutResponseHandlerGestioneControlloTraffico {
 		}
 		try {
 			Logger logControlloTraffico = OpenSPCoop2Logger.getLoggerOpenSPCoopControlloTraffico(OpenSPCoop2Properties.getInstance().isControlloTrafficoDebug());
-			if(transazioneDTO!=null){
+			if(misurazioniTransazione!=null){
 			
 				if(times!=null) {
 					timeStart = DateManager.getTimeMillis();
@@ -137,22 +135,7 @@ public class PostOutResponseHandlerGestioneControlloTraffico {
 									policyTypes!=null && policyTypes.size()==uniqueIdsPolicies.size() &&
 									policyConfigurationGlobale!=null &&
 									policyConfigurationPorta!=null) {
-								
-								MisurazioniTransazione misurazioniTransazione = new MisurazioniTransazione();
-								misurazioniTransazione.setTipoPdD(info.getTipoPorta());
-								misurazioniTransazione.setProtocollo( info.getProtocolFactory().getProtocol());
-								misurazioniTransazione.setEsitoTransazione(esito.getCode());
-								
-								misurazioniTransazione.setDataIngressoRichiesta(transazioneDTO.getDataIngressoRichiesta());
-								misurazioniTransazione.setDataUscitaRichiesta(transazioneDTO.getDataUscitaRichiesta());
-								misurazioniTransazione.setDataIngressoRisposta(transazioneDTO.getDataIngressoRisposta());
-								misurazioniTransazione.setDataUscitaRisposta(transazioneDTO.getDataUscitaRisposta());
-								
-								misurazioniTransazione.setRichiestaIngressoBytes(transazioneDTO.getRichiestaIngressoBytes());
-								misurazioniTransazione.setRichiestaUscitaBytes(transazioneDTO.getRichiestaUscitaBytes());
-								misurazioniTransazione.setRispostaIngressoBytes(transazioneDTO.getRispostaIngressoBytes());
-								misurazioniTransazione.setRispostaUscitaBytes(transazioneDTO.getRispostaUscitaBytes());
-								
+																
 								if(times!=null) {
 									long timeEnd =  DateManager.getTimeMillis();
 									long timeProcess = timeEnd-timeStart;
