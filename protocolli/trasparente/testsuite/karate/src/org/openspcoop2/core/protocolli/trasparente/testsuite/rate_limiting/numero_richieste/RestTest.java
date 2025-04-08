@@ -90,7 +90,19 @@ public class RestTest extends ConfigLoader {
 		this.richiestePerMinutoDefaultErogazione(null);
 	}
 	
-	public void richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType policyType) throws Exception {
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoDisabilitato() throws Exception {
+		this.richiestePerMinutoDefaultErogazione(null, "NumeroRichiesteRestTracciamentoDisabilitato");
+	}
+	@Test
+	public void richiestePerMinutoDefaultErogazioneTracciamentoViolazioneDisabilitato() throws Exception {
+		this.richiestePerMinutoDefaultErogazione(null, "NumeroRichiesteRestTracciamentoDisabilitatoSoloPerViolazione");
+	}
+	
+	void richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType policyType) throws Exception {
+		richiestePerMinutoDefaultErogazione(policyType, "NumeroRichiesteRest");
+	}
+	void richiestePerMinutoDefaultErogazione(PolicyGroupByActiveThreadsType policyType, String servizio) throws Exception {
 		
 		if(policyType!=null && !policyType.isSupportedResource(TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE)) {
 			logRateLimiting.warn("Test numeroRichiesteFalliteErogazione con policy type '"+policyType+"' non effettuato poichè non supportato dal gestore");
@@ -102,23 +114,23 @@ public class RestTest extends ConfigLoader {
 			logRateLimiting.info("Test richieste per minuto");
 			final int maxRequests = 10;
 	
-			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", "NumeroRichiesteRest", policyType);
+			dbUtils.setEngineTypeErogazione("SoggettoInternoTest", servizio, policyType);
 			
-			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", "NumeroRichiesteRest");
+			long idErogazione = dbUtils.getIdErogazione("SoggettoInternoTest", servizio);
 			Utils.ripulisciRiferimentiCacheErogazione(idErogazione);
 					
 			HttpRequest request = new HttpRequest();
 			request.setContentType("application/json");
 			request.setMethod(HttpRequestMethod.GET);
-			request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/NumeroRichiesteRest/v1/minuto-default");
+			request.setUrl( System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+servizio+"/v1/minuto-default");
 			
 			// attivo nuovo motore
 			Utils.makeParallelRequests(request, 1);
 			
-			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "NumeroRichiesteRest", PolicyAlias.MINUTODEFAULT);
+			String idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", servizio, PolicyAlias.MINUTODEFAULT);
 			Utils.resetCounters(idPolicy);
 			
-			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", "NumeroRichiesteRest", PolicyAlias.MINUTODEFAULT);
+			idPolicy = dbUtils.getIdPolicyErogazione("SoggettoInternoTest", servizio, PolicyAlias.MINUTODEFAULT);
 			Utils.checkConditionsNumeroRichieste(idPolicy, 0, 0, 0, policyType, TipoRisorsaPolicyAttiva.NUMERO_RICHIESTE );
 			
 			// Aspetto lo scoccare del minuto

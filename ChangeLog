@@ -1,3 +1,9 @@
+2025-04-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1596
+	I contatori delle policy di rate limiting non venivano aggiornati correttamente se si disabilitava il tracciamento su database
+
 2025-04-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
