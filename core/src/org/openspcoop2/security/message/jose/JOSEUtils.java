@@ -927,7 +927,13 @@ public class JOSEUtils {
 					
 				}
 				
-				else if( passwordDefined || SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(type)) {
+				else if( passwordDefined
+						|| 
+						((!DBUtils.isKeystoreJksPasswordRequired()) && SecurityConstants.KEYSTORE_TYPE_JKS_VALUE.equalsIgnoreCase(type))
+						|| 
+						((!DBUtils.isKeystorePkcs12PasswordRequired()) && SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE.equalsIgnoreCase(type))
+						|| 
+						SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equalsIgnoreCase(type)) {
 					
 					if(file.startsWith(HTTP_PROTOCOL) || file.startsWith(HTTPS_PROTOCOL)) {
 						
