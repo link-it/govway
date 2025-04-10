@@ -102,8 +102,8 @@ public class PeerUtilities {
 	 * - verifica che gli headers standard di govway vanegono correttamente inviati
 	 * - verifica che gli headers peer descritti da una regexp ritorni tutti e solo
 	 *   gli headers matchati  
-	 * @param tipoServizio (Erogazione | Fruizione)
-	 * @param type (SOAP | REST)
+	 * @param tipoServizio (Erogazione o Fruizione)
+	 * @param type (SOAP o REST)
 	 * @throws UtilsException
 	 */
 	public static void testSimple(TipoServizio tipoServizio, ServiceBinding type) throws UtilsException {
@@ -151,8 +151,8 @@ public class PeerUtilities {
 	/**
 	 * Test utilizzato per verificare che le proprieta dell'erogazione/fruizione sovrascrivono
 	 * le proprieta di default
-	 * @param tipoServizio (Erogazione | Fruizione)
-	 * @param type (SOAP | REST)
+	 * @param tipoServizio (Erogazione o Fruizione)
+	 * @param type (SOAP o REST)
 	 * @throws UtilsException
 	 */
 	public static void testOverwrite(TipoServizio tipoServizio, ServiceBinding type) throws UtilsException {

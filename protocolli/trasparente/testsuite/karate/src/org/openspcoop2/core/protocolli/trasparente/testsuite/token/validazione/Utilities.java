@@ -71,12 +71,30 @@ public class Utilities extends ConfigLoader {
 				headers, queryParameters, msgError,
 				credenzialiMittente,mapExpectedTokenInfo);
 	}
+	public static HttpResponse _test(Logger logCore, boolean soap, String api, String operazione,
+			Map<String, String> headers, Map<String, String> queryParameters, String msgError,
+			CredenzialiMittenteVerifier credenzialiMittente, List<String> mapExpectedTokenInfo) throws Exception {
+		return _test(logCore, TipoServizio.EROGAZIONE, soap, api, operazione,
+				headers, queryParameters, msgError,
+				credenzialiMittente,mapExpectedTokenInfo);
+	}
 	public static HttpResponse _test(Logger logCore, TipoServizio tipoServizio, String api, String operazione,
+			Map<String, String> headers, Map<String, String> queryParameters, String msgError,
+			CredenzialiMittenteVerifier credenzialiMittente, List<String> mapExpectedTokenInfo) throws Exception {
+		return _test(logCore, tipoServizio, false, api, operazione,
+				headers, queryParameters, msgError,
+				credenzialiMittente, mapExpectedTokenInfo);
+	}
+	public static HttpResponse _test(Logger logCore, TipoServizio tipoServizio, boolean soap, String api, String operazione,
 			Map<String, String> headers, Map<String, String> queryParameters, String msgError,
 			CredenzialiMittenteVerifier credenzialiMittente, List<String> mapExpectedTokenInfo) throws Exception {
 		
 		String contentType = HttpConstants.CONTENT_TYPE_JSON;
 		byte[]content = Bodies.getJson(Bodies.SMALL_SIZE).getBytes();
+		if(soap) {
+			contentType = HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			content = Bodies.getSOAPEnvelope12(Bodies.SMALL_SIZE).getBytes();
+		}
 		
 		String apiInvoke = "SoggettoInternoTest/"+api+"/v1";
 		String url = tipoServizio == TipoServizio.EROGAZIONE
@@ -221,6 +239,7 @@ public class Utilities extends ConfigLoader {
 		}
 					
 		if(!ForwardInformazioniTest.forward.equals(api) && 
+				!ForwardInformazioniTest.forwardSOAP.equals(api) && 
 				!ForwardInformazioniTest.forwardAlternativeSigner.equals(api) &&
 				!ForwardInformazioniKeystoreSenzaPasswordTest.API_JWS.equals(api) &&
 				!ForwardInformazioniKeystoreSenzaPasswordTest.API_JWE.equals(api)) {

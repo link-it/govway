@@ -58,9 +58,18 @@ public class ForwardInformazioniTest extends ConfigLoader {
 
 	public static final String forward = "TestForwardInformazioniToken";
 	public static final String forwardAlternativeSigner = "TestForwardInformazioniTokenKeystoreNonX509";
+	public static final String forwardSOAP = "TestForwardInformazioniTokenSOAP";
 		
+
 	@Test
-	public void govwayHeaders() throws Exception {
+	public void govwayOriginale() throws Exception {
+		govwayOriginale(forward);
+	}
+	@Test
+	public void govwayOriginaleSoap() throws Exception {
+		govwayOriginale(forwardSOAP);
+	}
+	private void govwayOriginale(String api) throws Exception {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
@@ -70,7 +79,157 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
-		HttpResponse response = Utilities._test(logCore, forward, "govwayHeaders", headers,  null,
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "originale", headers,  null,
+				null,
+				null, null);
+		
+		checkGovWayJwt("govway-testsuite-authorization", response, values, false);
+	}
+	
+	@Test
+	public void govwayOriginaleHttpCustom() throws Exception {
+		govwayOriginaleHttpCustom(forward);
+	}
+	@Test
+	public void govwayOriginaleHttpCustomSoap() throws Exception {
+		govwayOriginaleHttpCustom(forwardSOAP);
+	}
+	private void govwayOriginaleHttpCustom(String api) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "httpcustom", headers,  null,
+				null,
+				null, null);
+		
+		checkGovWayJwt("govway-testsuite-originale-custom", response, values, false);
+	}
+	
+	@Test
+	public void govwayOriginaleQueryParamCustom() throws Exception {
+		govwayOriginaleQueryParamCustom(forward);
+	}
+	@Test
+	public void govwayOriginaleQueryParamCustomSoap() throws Exception {
+		govwayOriginaleQueryParamCustom(forwardSOAP);
+	}
+	private void govwayOriginaleQueryParamCustom(String api) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "queryparamcustom", headers,  null,
+				null,
+				null, null);
+		
+		checkGovWayJwt("govway-testsuite-originale_custom", response, values, false);
+	}
+	
+	@Test
+	public void govwayOriginaleNonInoltrato() throws Exception {
+		govwayOriginaleNonInoltrato(forward);
+	}
+	@Test
+	public void govwayOriginaleNonInoltratoSoap() throws Exception {
+		govwayOriginaleNonInoltrato(forwardSOAP);
+	}
+	private void govwayOriginaleNonInoltrato(String api) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "originaleNonInoltrato", headers,  null,
+				null,
+				null, null);
+		
+		checkNotExists("govway-testsuite-authorization", response);
+	}
+	
+	@Test
+	public void govwayOriginaleHttpCustomNonInoltrato() throws Exception {
+		govwayOriginaleHttpCustomNonInoltrato(forward);
+	}
+	@Test
+	public void govwayOriginaleHttpCustomNonInoltratoSoap() throws Exception {
+		govwayOriginaleHttpCustomNonInoltrato(forwardSOAP);
+	}
+	private void govwayOriginaleHttpCustomNonInoltrato(String api) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "httpcustomNonInoltrato", headers,  null,
+				null,
+				null, null);
+		
+		checkNotExists("govway-testsuite-originale-custom", response);
+	}
+	
+	@Test
+	public void govwayOriginaleQueryParamCustomNonInoltrato() throws Exception {
+		govwayOriginaleQueryParamCustomNonInoltrato(forward);
+	}
+	@Test
+	public void govwayOriginaleQueryParamCustomNonInoltratoSoap() throws Exception {
+		govwayOriginaleQueryParamCustomNonInoltrato(forwardSOAP);
+	}
+	private void govwayOriginaleQueryParamCustomNonInoltrato(String api) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "queryparamcustomNonInoltrato", headers,  null,
+				null,
+				null, null);
+		
+		checkNotExists("govway-testsuite-originale_custom", response);
+	}
+	
+	@Test
+	public void govwayHeaders() throws Exception {
+		govwayHeaders(forward);
+	}
+	@Test
+	public void govwayHeadersSoap() throws Exception {
+		govwayHeaders(forwardSOAP);
+	}
+	private void govwayHeaders(String api) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		Map<String, List<String>> values = new HashMap<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
+				buildJWT(values));
+		
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "govwayHeaders", headers,  null,
 				null,
 				null, null);
 		
@@ -79,6 +238,13 @@ public class ForwardInformazioniTest extends ConfigLoader {
 	
 	@Test
 	public void govwayJson() throws Exception {
+		govwayJson(forward);
+	}
+	@Test
+	public void govwayJsonSoap() throws Exception {
+		govwayJson(forwardSOAP);
+	}
+	private void govwayJson(String api) throws Exception {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
@@ -88,7 +254,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
-		HttpResponse response = Utilities._test(logCore, forward, "govwayJson", headers,  null,
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "govwayJson", headers,  null,
 				null,
 				null, null);
 		
@@ -97,6 +263,13 @@ public class ForwardInformazioniTest extends ConfigLoader {
 	
 	@Test
 	public void govwayJws() throws Exception {
+		govwayJws(forward);
+	}
+	@Test
+	public void govwayJwsSoap() throws Exception {
+		govwayJws(forwardSOAP);
+	}
+	private void govwayJws(String api) throws Exception {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
@@ -106,7 +279,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
-		HttpResponse response = Utilities._test(logCore, forward, "govwayJws", headers,  null,
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "govwayJws", headers,  null,
 				null,
 				null, null);
 		
@@ -115,6 +288,13 @@ public class ForwardInformazioniTest extends ConfigLoader {
 	
 	@Test
 	public void jws() throws Exception {
+		jws(forward);
+	}
+	@Test
+	public void jwsSoap() throws Exception {
+		jws(forwardSOAP);
+	}
+	private void jws(String api) throws Exception {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
@@ -124,7 +304,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
-		HttpResponse response = Utilities._test(logCore, forward, "jws", headers,  null,
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "jws", headers,  null,
 				null,
 				null, null);
 		
@@ -133,6 +313,13 @@ public class ForwardInformazioniTest extends ConfigLoader {
 	
 	@Test
 	public void json() throws Exception {
+		json(forward);
+	}
+	@Test
+	public void jsonSoap() throws Exception {
+		json(forwardSOAP);
+	}
+	private void json(String api) throws Exception {
 		
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
@@ -142,7 +329,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+
 				buildJWT(values));
 		
-		HttpResponse response = Utilities._test(logCore, forward, "json", headers,  null,
+		HttpResponse response = Utilities._test(logCore, api.endsWith("SOAP"), api, "json", headers,  null,
 				null,
 				null, null);
 		
@@ -333,6 +520,14 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		String v = response.getHeaderFirstValue(hdrAtteso);
 		if(v==null || StringUtils.isEmpty(v)) {
 			throw new Exception("Header atteso '"+hdrAtteso+"' non presente");
+		}
+		if("govway-testsuite-authorization".equals(hdrAtteso) &&
+			!v.startsWith(HttpConstants.AUTHORIZATION_PREFIX_BEARER)) {
+			throw new Exception("Header atteso '"+hdrAtteso+"' non presente con prefisso bearer");
+		}
+		v = v.replaceFirst(HttpConstants.AUTHORIZATION_PREFIX_BEARER, "");
+		if(v==null || StringUtils.isEmpty(v)) {
+			throw new Exception("Header atteso '"+hdrAtteso+"' vuoto dopo il bearer");
 		}
 		
 		File f = null;
@@ -559,6 +754,20 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		//System.out.println(token);
 			
 		return token;		
+		
+	}
+	
+	
+	private static void checkNotExists(String hdrAtteso, HttpResponse response) throws Exception {
+		
+		if(response==null || response.getHeadersValues()==null || response.getHeadersValues().isEmpty()) {
+			throw new Exception("Header non ritornati");
+		}
+		
+		String v = response.getHeaderFirstValue(hdrAtteso);
+		if(v!=null && StringUtils.isNotEmpty(v)) {
+			throw new Exception("Header atteso '"+hdrAtteso+"' non atteso");
+		}
 		
 	}
 	

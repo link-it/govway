@@ -1778,8 +1778,15 @@ public class GestoreToken {
 		
 		// Elimino token ricevuto
 		boolean delete = GestoreTokenValidazioneUtilities.deleteTokenReceived(datiInvocazione, esitoPresenzaToken, trasparente, forwardTrasparenteModeHeader, forwardTrasparenteModeUrl);
+		boolean soap = datiInvocazione!=null && datiInvocazione.getMessage()!=null && org.openspcoop2.message.constants.ServiceBinding.SOAP.equals(datiInvocazione.getMessage().getServiceBinding());
 		
-		if(trasparente && delete) {
+		if(trasparente && 
+				(
+						delete // eventualmente effettuo il forward di altri header
+						|| 
+						soap // anche gli header originali non vengono inoltrati
+				)
+		) {
 			
 			// Forward trasparente
 			
