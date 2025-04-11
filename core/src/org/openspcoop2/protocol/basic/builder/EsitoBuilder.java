@@ -288,6 +288,15 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 								org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_READ_TIMEOUT.equals(timeoutExceededMessage)) {
 							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_RESPONSE_TIMEOUT, tipoContext);
 						}
+						else if(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_POLICY_IN_ERRORE.equals(timeoutExceededMessage)) {
+							if(context.containsKey(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_POLICY_IN_ERROR_ESITO)) {
+								EsitoTransazioneName esito = (EsitoTransazioneName) context.get(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_POLICY_IN_ERROR_ESITO);
+								return this.esitiProperties.convertToEsitoTransazione(esito, tipoContext);
+							}
+							else {
+								return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
+							}
+						}
 					}
 					timeoutExceededMessage = (String) context.get(LimitedInputStream.ERROR_MSG_KEY);
 					if(timeoutExceededMessage!=null && timeoutExceededMessage.startsWith(org.openspcoop2.core.constants.Costanti.PREFIX_TIMEOUT_REQUEST)) {

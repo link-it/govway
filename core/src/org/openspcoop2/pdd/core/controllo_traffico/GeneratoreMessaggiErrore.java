@@ -29,6 +29,7 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.utils.Map;
@@ -172,8 +173,9 @@ public class GeneratoreMessaggiErrore {
 		}
 	}
 	
-	private static final String PDD_CONTEXT_VALUE_POLICY_VIOLATA = "controlloTrafficoRateLimitingPolicyViolata";
-	private static final String PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY = "controlloTrafficoRateLimitingPolicyViolataWarningOnly";
+	private static final String PDD_CONTEXT_VALUE_POLICY_VIOLATA = org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_POLICY_VIOLATA;
+	private static final String PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY = org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY;
+	private static final String PDD_CONTEXT_VALUE_POLICY_IN_ERRORE = org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_POLICY_IN_ERRORE;
 	public static void addPddContextInfoControlloTrafficoPolicyViolated(PdDContext pddContext, boolean warningOnly){
 		addContextInfoControlloTrafficoPolicyViolated(pddContext, warningOnly);
 	}
@@ -184,6 +186,11 @@ public class GeneratoreMessaggiErrore {
 		else{
 			context.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_POLICY_VIOLATA);
 		}
+	}
+	
+	public static void addPddContextInfoControlloTrafficoPolicyInError(PdDContext pddContext, EsitoTransazioneName esito){
+		pddContext.addObject(PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE, PDD_CONTEXT_VALUE_POLICY_IN_ERRORE);
+		pddContext.addObject(org.openspcoop2.core.controllo_traffico.constants.Costanti.PDD_CONTEXT_VALUE_POLICY_IN_ERROR_ESITO, esito);
 	}
 	
 	public static final MapKey<String> PDD_CONTEXT_MAX_THREADS_THRESHOLD = Map.newMapKey("CT_MAX_THREADS_THRESHOLD"); // numero massimo di richieste simultanee configurate sul sistema

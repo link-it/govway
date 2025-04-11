@@ -35,6 +35,8 @@ import org.openspcoop2.utils.MapKey;
  * @version $Rev$, $Date$
  */
 public class Costanti {
+	
+	private Costanti() {}
 
 	public static final MapKey<String> PDD_CONTEXT_NAME_CONTROLLO_TRAFFICO_VIOLAZIONE = Map.newMapKey("controlloTrafficoViolazione");
 	
@@ -43,6 +45,10 @@ public class Costanti {
 	public static final String PDD_CONTEXT_VALUE_RESPONSE_READ_TIMEOUT = "controlloTrafficoResponseReadTimeout";
 	public static final String PDD_CONTEXT_VALUE_READ_TIMEOUT = "controlloTrafficoReadTimeout";
 	
+	public static final String PDD_CONTEXT_VALUE_POLICY_VIOLATA = "controlloTrafficoRateLimitingPolicyViolata";
+	public static final String PDD_CONTEXT_VALUE_POLICY_VIOLATA_WARNING_ONLY = "controlloTrafficoRateLimitingPolicyViolataWarningOnly";
+	public static final String PDD_CONTEXT_VALUE_POLICY_IN_ERRORE = "controlloTrafficoRateLimitingPolicyInErrore";
+	public static final MapKey<String> PDD_CONTEXT_VALUE_POLICY_IN_ERROR_ESITO = Map.newMapKey("controlloTrafficoRateLimitingPolicyInErroreEsito");	
 	
 	public static final String SEPARATORE_IDPOLICY_RAGGRUPPAMENTO = " - ";
 	
@@ -50,16 +56,16 @@ public class Costanti {
 	private static String controlloTrafficoEventiImagePrefix = "imageEventi";
 	private static String controlloTrafficoImageExt = ".bin";
 	
-	public static String getControlloTrafficoImage(String CT_policyType) {
-		return getEngineControlloTrafficoImagePrefix(CT_policyType, controlloTrafficoImagePrefix);
+	public static String getControlloTrafficoImage(String ctPolicyType) {
+		return getEngineControlloTrafficoImagePrefix(ctPolicyType, controlloTrafficoImagePrefix);
 	}
-	public static String getControlloTrafficoEventiImage(String CT_policyType) {
-		return getEngineControlloTrafficoImagePrefix(CT_policyType, controlloTrafficoEventiImagePrefix);
+	public static String getControlloTrafficoEventiImage(String ctPolicyType) {
+		return getEngineControlloTrafficoImagePrefix(ctPolicyType, controlloTrafficoEventiImagePrefix);
 	}
-	private static String getEngineControlloTrafficoImagePrefix(String CT_policyType, String prefix) {
+	private static String getEngineControlloTrafficoImagePrefix(String ctPolicyType, String prefix) {
 		StringBuilder sb = new StringBuilder(prefix);
-		if(CT_policyType!=null && !"LOCAL".equals(CT_policyType)) {
-			sb.append("-").append(CT_policyType);
+		if(ctPolicyType!=null && !"LOCAL".equals(ctPolicyType)) {
+			sb.append("-").append(ctPolicyType);
 		}
 		sb.append(controlloTrafficoImageExt);
 		return sb.toString();

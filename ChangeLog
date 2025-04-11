@@ -1,3 +1,11 @@
+2025-04-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1598
+	Migliorata la tracciabilità nei casi in cui una policy non viene elaborata a causa di malfunzionamenti interni, configurazioni errate o altre anomalie.
+	In queste circostanze viene ora assegnato un esito di errore generico, distinto da "Violazione Rate Limiting", 
+	consentendo il tracciamento e la diagnosi anche quando la registrazione delle policy violate è disabilitata.
+
 2025-04-10  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
