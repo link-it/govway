@@ -29812,6 +29812,35 @@ public class OpenSPCoop2Properties {
 		return this.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy.get(protocollo);
 	}
 	
+	private EsitoTransazioneName getControlloTrafficoEsitiPolicyElaborazioneInErrore = null;
+	public EsitoTransazioneName getControlloTrafficoEsitiPolicyElaborazioneInErrore(EsitiProperties esitiProperties) {	
+		if(this.getControlloTrafficoEsitiPolicyElaborazioneInErrore==null){
+			String pName = "org.openspcoop2.pdd.controlloTraffico.violazionePolicy.elaborazioneInErrore";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX);
+					this.getControlloTrafficoEsitiPolicyElaborazioneInErrore = EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX;
+				}
+				else {
+					name = name.trim();
+					if(esitiProperties!=null) {
+						this.getControlloTrafficoEsitiPolicyElaborazioneInErrore = esitiProperties.getEsitoTransazioneName(Integer.parseInt(name));
+					}
+					else {
+						// verrà inizializzato alla prima chiamata
+					}
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"', viene utilizzato il default="+EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX+" : "+e.getMessage(),e);
+				this.getControlloTrafficoEsitiPolicyElaborazioneInErrore = EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX;
+			}    
+		}
+
+		return this.getControlloTrafficoEsitiPolicyElaborazioneInErrore;
+	}
+	
 	private Boolean isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile = null;
 	private boolean isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile() {	
 		if(this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile==null){
@@ -29874,6 +29903,8 @@ public class OpenSPCoop2Properties {
 				getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy(protocollo);
 			}
 			this.controlloTrafficoConfigurazione.setEsitiPolicyViolate(this.getControlloTrafficoEsitiDaConsiderarePerViolazionePolicy);
+			
+			getControlloTrafficoEsitiPolicyElaborazioneInErrore(null);
 			
 			this.controlloTrafficoConfigurazione.setElaborazioneRealtime_incrementaSoloPolicyApplicabile(this.isControlloTrafficoRealtimeIncrementaSoloPolicyApplicabile());
 		}

@@ -72,8 +72,10 @@ import org.openspcoop2.pdd.core.transazioni.TransactionDeletedException;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
 
@@ -753,7 +755,18 @@ public class InRequestProtocolHandlerGestioneControlloTraffico {
 					if(policyViolate>0 || policyInErrore>0){
 						msgDiag.logPersonalizzato(GeneratoreMessaggiErrore.MSG_DIAGNOSTICO_INTERCEPTOR_CONTROLLO_TRAFFICO_POLICY_CONTROLLO_TERMINATO_CON_ERRORE);
 						
-						GeneratoreMessaggiErrore.addPddContextInfoControlloTrafficoPolicyViolated(context.getPddContext(), false);
+						if(policyInErrore>0) {
+							EsitoTransazioneName esito = op2Properties.getControlloTrafficoEsitiPolicyElaborazioneInErrore(EsitiProperties.getInstance(log, context.getProtocolFactory()));
+							if(EsitoTransazioneName.CONTROLLO_TRAFFICO_POLICY_VIOLATA.equals(esito)) {
+								GeneratoreMessaggiErrore.addPddContextInfoControlloTrafficoPolicyViolated(context.getPddContext(), false);
+							}
+							else {
+								GeneratoreMessaggiErrore.addPddContextInfoControlloTrafficoPolicyInError(context.getPddContext(), esito);
+							}
+						}
+						else {
+							GeneratoreMessaggiErrore.addPddContextInfoControlloTrafficoPolicyViolated(context.getPddContext(), false);
+						}
 						
 						HandlerException he = GeneratoreMessaggiErrore.getControlloTrafficoPolicyViolated(policyBloccanti,
 								configurazioneControlloTraffico.isErroreGenerico(), context.getPddContext());

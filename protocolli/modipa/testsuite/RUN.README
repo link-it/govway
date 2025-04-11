@@ -1,5 +1,7 @@
 Prerequisiti:
 
++ Riportare le indicazioni fornite in protocolli/trasparente/testsuite/karate/RUN.README
+
 + Impostare multitenant attivo con:
   - Fruizioni -> Soggetto Erogatore=Escludi Soggetto Fruitore
     Erogazioni -> Soggetti Fruitori=Escludi Soggetto Erogatore
