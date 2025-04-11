@@ -31,6 +31,7 @@ import java.util.Properties;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.AttributeAuthority;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -1676,6 +1677,10 @@ public class GestoreToken {
 			InformazioniToken informazioniTokenNormalizzate,
 			boolean portaDelegata,
 			PdDContext pddContext, Busta busta) throws Exception {
+		
+		if(datiInvocazione==null) {
+			throw new CoreException("Dati invocazioni is null");
+		}
 		
 		PolicyGestioneToken policyGestioneToken = datiInvocazione.getPolicyGestioneToken();
 			
