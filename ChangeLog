@@ -1,6 +1,14 @@
 2025-04-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
+	Risolto Bug #1600
+	Introdotta una gestione delle risposte Problem Details non conformi; ora il connettore intercetta e registra correttamente le risposte contenenti Problem Details con struttura non valida 
+	(es. {"code":500,"status":"internal error"}), evitando la terminazione anomala della transazione.
+	In questi casi, tuttavia, il codice di stato non può essere interpretato, quindi eventuali rispedizioni condizionate su tale informazione non saranno eseguite.
+
+2025-04-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
 	Risolto Bug #1599
 	Nel log applicativo 'govway_core', in condizioni limite, avveniva il seguente errore: "Errore durante il dump del soap fault"
 

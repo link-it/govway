@@ -75,28 +75,28 @@ public abstract class AbstractDeserializer {
 		else {
 			if(value!=null) {
 				if(value instanceof String) {
-					problem.getCustom().put(name, (String) value);
+					problem.getCustom().put(name, value);
 				}
 				else if(value instanceof com.fasterxml.jackson.databind.node.TextNode) {
 					com.fasterxml.jackson.databind.node.TextNode textNode = (com.fasterxml.jackson.databind.node.TextNode) value;
 					problem.getCustom().put(name, (textNode.asText()));
 				}
 				else if(value instanceof Integer) {
-					problem.getCustom().put(name, (Integer) value);
+					problem.getCustom().put(name, value);
 				}
 				else if(value instanceof com.fasterxml.jackson.databind.node.IntNode) {
 					com.fasterxml.jackson.databind.node.IntNode intNode = (com.fasterxml.jackson.databind.node.IntNode) value;
 					problem.getCustom().put(name, intNode.asInt());
 				}
 				else if(value instanceof Long) {
-					problem.getCustom().put(name, (Long) value);
+					problem.getCustom().put(name, value);
 				}
 				else if(value instanceof com.fasterxml.jackson.databind.node.LongNode) {
 					com.fasterxml.jackson.databind.node.LongNode longNode = (com.fasterxml.jackson.databind.node.LongNode) value;
 					problem.getCustom().put(name, longNode.asInt());
 				}
 				else if(value instanceof Boolean) {
-					problem.getCustom().put(name, (Boolean) value);
+					problem.getCustom().put(name, value);
 				}
 				else if(value instanceof com.fasterxml.jackson.databind.node.BooleanNode) {
 					com.fasterxml.jackson.databind.node.BooleanNode booleanNode = (com.fasterxml.jackson.databind.node.BooleanNode) value;

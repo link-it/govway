@@ -82,7 +82,7 @@ public class JsonDeserializer extends AbstractDeserializer {
 		
 		Iterator<String> it = problemNode.fieldNames();
 		while (it.hasNext()) {
-			String name = (String) it.next();
+			String name = it.next();
 			Object value = problemNode.get(name);
 			
 			super.set(problem, name, value, throwExceptionIfUnsupportedCustomClaim);

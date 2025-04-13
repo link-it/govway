@@ -45,6 +45,8 @@ import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -86,6 +88,12 @@ public class GestoreErroreConnettore {
 	/** Logger utilizzato per debug. */
 	private static Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 
+	private static final String ERRORE_APPLICATIVO_SOAP_FAULT = "errore applicativo SoapFault";
+	
+	private static final String INTERVALLO_RISPEDIZIONE_NON_IMPOSTATO = "Intervallo di rispedizione non impostato: ";
+	private static final String SERIALIZZAZIONE_SOAP_FAULT_NON_RIUSCITA = "Serializzazione SOAPFault non riuscita: ";
+	private static final String VERIFICA_ESPRESSIONE_REGOLARE_PREFIX = "Verifica espressione regolare '";
+	private static final String FALLITA_SUFFIX = "' fallita: ";
 
 	private static org.openspcoop2.utils.Semaphore semaphore = new org.openspcoop2.utils.Semaphore("GestoreErroreConnettore");
 	/** GestoreErrore di default per il componente di integrazione */
@@ -102,7 +110,6 @@ public class GestoreErroreConnettore {
 			return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(key);
 		}else{
 
-			//synchronized (gestioneErroreDefaultComponenteIntegrazioneMap) {
 			SemaphoreLock lock = semaphore.acquireThrowRuntime("getGestioneErroreDefaultComponenteIntegrazione");
 			try {
 
@@ -153,7 +160,6 @@ public class GestoreErroreConnettore {
 			return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(key);
 		}else{
 
-			//synchronized (gestioneErroreDefaultComponenteCooperazioneMap) {
 			SemaphoreLock lock = semaphore.acquireThrowRuntime("getGestioneErroreDefaultComponenteCooperazione");
 			try {
 
@@ -206,11 +212,11 @@ public class GestoreErroreConnettore {
 					faultClient.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
 					gestione.addSoapFault(faultClient);
 					// per gestire actor Client con soap:
-					//				GestioneErroreSoapFault faultSoapClient = new GestioneErroreSoapFault();
+					/**				GestioneErroreSoapFault faultSoapClient = new GestioneErroreSoapFault();
 					//				faultSoapClient.setFaultCode("soap:Client");
 					//				faultSoapClient.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE));
 					//				faultSoapClient.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
-					//				gestione.addSoapFault(faultSoapClient);
+					//				gestione.addSoapFault(faultSoapClient);*/
 
 					// BUSTE ERRORE DI PROCESSAMENTO
 					// SoapActor == null
@@ -224,11 +230,11 @@ public class GestoreErroreConnettore {
 					faultServer.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
 					gestione.addSoapFault(faultServer);
 					// per gestire actor Server con soap:
-					//				GestioneErroreSoapFault faultSoapServer = new GestioneErroreSoapFault();
+					/**				GestioneErroreSoapFault faultSoapServer = new GestioneErroreSoapFault();
 					//				faultSoapServer.setFaultCode("soap:Server");
 					//				faultSoapServer.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO));
 					//				faultSoapServer.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
-					//				gestione.addSoapFault(faultSoapServer);
+					//				gestione.addSoapFault(faultSoapServer);*/
 				}
 
 				GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.put(key, gestione);
@@ -255,8 +261,12 @@ public class GestoreErroreConnettore {
 	 * @return true se la consegna e' stata effettuata con successo, false altrimenti.
 	 */
 	public boolean verificaConsegna(GestioneErrore gestioneErrore,String msgErroreConnettore,Exception eccezioneErroreConnettore,
-			IConnettore connectorSender) throws GestoreMessaggiException,javax.xml.soap.SOAPException,UtilsException{	
+			IConnettore connectorSender) throws GestoreMessaggiException,UtilsException{	
 
+		if(eccezioneErroreConnettore!=null) {
+			// nop
+		}
+		
 		long codiceTrasporto = connectorSender.getCodiceTrasporto();
 		OpenSPCoop2Message messageResponse = connectorSender.getResponse();
 		String protocolloConnettore = connectorSender.getProtocollo();
@@ -305,7 +315,7 @@ public class GestoreErroreConnettore {
 						int cadenzaRispedizione = Integer.parseInt(gestioneErrore.getCadenzaRispedizione());
 						this.dataRispedizione = new java.sql.Timestamp(now.getTime()+(cadenzaRispedizione*60*1000));
 					}catch(Exception e)	{
-						GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato: "+e.getMessage());
+						GestoreErroreConnettore.log.error(INTERVALLO_RISPEDIZIONE_NON_IMPOSTATO+e.getMessage(),e);
 					}
 				}
 			}else{
@@ -319,7 +329,7 @@ public class GestoreErroreConnettore {
 		SOAPBody bodyConFault = null;
 		MessageType messageType = null;
 
-		if(messageResponse!=null && (messageResponse instanceof OpenSPCoop2SoapMessage) ){
+		if(messageResponse instanceof OpenSPCoop2SoapMessage ){
 			try{
 				messageType = messageResponse.getMessageType();
 				if(messageResponse.castAsSoap().hasSOAPFault()) {
@@ -337,7 +347,6 @@ public class GestoreErroreConnettore {
 				boolean match = true;
 				if(gestore.getFaultCode()!=null){
 					String codice = null;
-					@SuppressWarnings("unused")
 					String namespaceCodice = null;
 					if(this.fault.getFaultCodeAsQName()!=null){
 						codice = this.fault.getFaultCodeAsQName().getLocalPart();	
@@ -346,40 +355,44 @@ public class GestoreErroreConnettore {
 					else{
 						codice = this.fault.getFaultCode();
 					}
+					if(namespaceCodice!=null) {
+						// nop
+					}
 					
-					List<String> subCodice_soap12 = new ArrayList<>();
-					List<String> subCodiceNamespace_soap12 = new ArrayList<>();
-					if(MessageType.SOAP_12.equals(messageType)) {
-						if(this.fault.getFaultSubcodes()!=null) {
-							Iterator<QName> it = this.fault.getFaultSubcodes();
-							while (it.hasNext()) {
-								QName qName = (QName) it.next();
-								if(qName.getLocalPart()!=null) {
-									subCodice_soap12.add(qName.getLocalPart());
-									subCodiceNamespace_soap12.add(qName.getNamespaceURI()!=null ? qName.getNamespaceURI() : "");
-								}
+					List<String> subCodiceSoap12 = new ArrayList<>();
+					List<String> subCodiceNamespaceSoap12 = new ArrayList<>();
+					if(MessageType.SOAP_12.equals(messageType) &&
+						this.fault.getFaultSubcodes()!=null) {
+						Iterator<QName> it = this.fault.getFaultSubcodes();
+						while (it.hasNext()) {
+							QName qName = it.next();
+							if(qName.getLocalPart()!=null) {
+								subCodiceSoap12.add(qName.getLocalPart());
+								subCodiceNamespaceSoap12.add(qName.getNamespaceURI()!=null ? qName.getNamespaceURI() : "");
 							}
 						}
 					}
 							
 
-					if( gestore.getFaultCode().equalsIgnoreCase(codice) == false) {
+					if( !gestore.getFaultCode().equalsIgnoreCase(codice)) {
 
 						// provo a verificare con regular expr
 
 						boolean matchRegExpr = false;
 						try {
 							matchRegExpr = RegularExpressionEngine.isMatch(codice, gestore.getFaultCode());
-						}catch(RegExpNotFoundException notFound) {}
+						}catch(RegExpNotFoundException notFound) {
+							// ignore
+						}
 						catch(Exception e)	{
-							GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultCode()+"' per fault code '"+codice+"' fallita: "+e.getMessage());
+							GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+gestore.getFaultCode()+"' per fault code '"+codice+FALLITA_SUFFIX+e.getMessage(),e);
 						}
 
 						if(!matchRegExpr) {
 							
 							boolean matchSoap12 = false;
-							if(!subCodice_soap12.isEmpty()) {
-								for (String code12 : subCodice_soap12) {
+							if(!subCodiceSoap12.isEmpty()) {
+								for (String code12 : subCodiceSoap12) {
 									if( gestore.getFaultCode().equalsIgnoreCase(code12) ) {
 										matchSoap12 = true;
 										break;
@@ -388,9 +401,11 @@ public class GestoreErroreConnettore {
 										boolean matchRegExprSoap12 = false;
 										try {
 											matchRegExprSoap12 = RegularExpressionEngine.isMatch(code12, gestore.getFaultCode());
-										}catch(RegExpNotFoundException notFound) {}
+										}catch(RegExpNotFoundException notFound) {
+											// ignore
+										}
 										catch(Exception e)	{
-											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultCode()+"' per fault subcode 1.2 '"+code12+"' fallita: "+e.getMessage());
+											GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+gestore.getFaultCode()+"' per fault subcode 1.2 '"+code12+FALLITA_SUFFIX+e.getMessage(),e);
 										}
 										if(matchRegExprSoap12) {
 											matchSoap12 = true;
@@ -411,16 +426,18 @@ public class GestoreErroreConnettore {
 
 					String actor = this.fault.getFaultActor();
 
-					if( gestore.getFaultActor().equalsIgnoreCase(actor) == false) {
+					if( !gestore.getFaultActor().equalsIgnoreCase(actor)) {
 
 						// provo a verificare con regular expr
 
 						boolean matchRegExpr = false;
 						try {
 							matchRegExpr = RegularExpressionEngine.isMatch(actor, gestore.getFaultActor());
-						}catch(RegExpNotFoundException notFound) {}
+						}catch(RegExpNotFoundException notFound) {
+							// ignore
+						}
 						catch(Exception e)	{
-							GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultActor()+"' per fault actor '"+actor+"' fallita: "+e.getMessage());
+							GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+gestore.getFaultActor()+"' per fault actor '"+actor+FALLITA_SUFFIX+e.getMessage(),e);
 						}
 
 						if(!matchRegExpr) {
@@ -435,9 +452,9 @@ public class GestoreErroreConnettore {
 
 					if( (faultString==null) ||
 							(
-									(faultString.contains(gestore.getFaultString()) == false) &&
-									(faultString.contains(gestore.getFaultString().toLowerCase()) == false) &&
-									(faultString.contains(gestore.getFaultString().toUpperCase()) == false)
+									(!faultString.contains(gestore.getFaultString())) &&
+									(!faultString.contains(gestore.getFaultString().toLowerCase())) &&
+									(!faultString.contains(gestore.getFaultString().toUpperCase()))
 									)
 							) {
 
@@ -446,9 +463,11 @@ public class GestoreErroreConnettore {
 						boolean matchRegExpr = false;
 						try {
 							matchRegExpr = RegularExpressionEngine.isMatch(faultString, gestore.getFaultString());
-						}catch(RegExpNotFoundException notFound) {}
+						}catch(RegExpNotFoundException notFound) {
+							// ignore
+						}
 						catch(Exception e)	{
-							GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultString()+"' per fault string '"+faultString+"' fallita: "+e.getMessage());
+							GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+gestore.getFaultString()+"' per fault string '"+faultString+FALLITA_SUFFIX+e.getMessage(),e);
 						}
 
 						if(!matchRegExpr) {
@@ -462,8 +481,8 @@ public class GestoreErroreConnettore {
 						try{
 							this.errore = "errore applicativo, "+SoapUtils.safe_toString(messageResponse.getFactory(), this.fault, GestoreErroreConnettore.log);
 						}catch(Exception e){
-							this.errore = "errore applicativo SoapFault";
-							GestoreErroreConnettore.log.error("Serializzazione SOAPFault non riuscita: "+e.getMessage(),e);
+							this.errore = ERRORE_APPLICATIVO_SOAP_FAULT;
+							GestoreErroreConnettore.log.error(SERIALIZZAZIONE_SOAP_FAULT_NON_RIUSCITA+e.getMessage(),e);
 						}
 						this.riconsegna = true;
 						if(gestore.getCadenzaRispedizione()!=null){
@@ -471,14 +490,14 @@ public class GestoreErroreConnettore {
 								int cadenzaRispedizione = Integer.parseInt(gestore.getCadenzaRispedizione());
 								this.dataRispedizione = new java.sql.Timestamp(now.getTime()+(cadenzaRispedizione*60*1000));
 							}catch(Exception e)	{
-								GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato (soap fault): "+e.getMessage());
+								GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato (soap fault): "+e.getMessage(),e);
 							}
 						}else if(gestioneErrore.getCadenzaRispedizione()!=null){
 							try{
 								int cadenzaRispedizione = Integer.parseInt(gestioneErrore.getCadenzaRispedizione());
 								this.dataRispedizione = new java.sql.Timestamp(now.getTime()+(cadenzaRispedizione*60*1000));
 							}catch(Exception e)	{
-								GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato: "+e.getMessage());
+								GestoreErroreConnettore.log.error(INTERVALLO_RISPEDIZIONE_NON_IMPOSTATO+e.getMessage(),e);
 							}
 						}
 						return false;
@@ -493,15 +512,14 @@ public class GestoreErroreConnettore {
 
 
 		// ESITO PROBLEM DETAIL
-		ProblemRFC7807 problem = null;
+		ProblemRFC7807 problemReceived = null;
 
 		if(messageResponse!=null) {
 			if(messageResponse instanceof OpenSPCoop2RestJsonMessage ){
 				try{
 					OpenSPCoop2RestJsonMessage msg = messageResponse.castAsRestJson();
 					if(msg.hasContent() && msg.isProblemDetailsForHttpApis_RFC7807()) {
-						JsonDeserializer deserializer = new JsonDeserializer();
-						problem = deserializer.fromString(msg.getContent(), false);
+						problemReceived = parseJsonProblemRFC7807(msg);
 					}
 				}catch(Exception e){
 					throw new GestoreMessaggiException(e.getMessage(),e);
@@ -511,8 +529,7 @@ public class GestoreErroreConnettore {
 				try{
 					OpenSPCoop2RestXmlMessage msg = messageResponse.castAsRestXml();
 					if(msg.hasContent() && msg.isProblemDetailsForHttpApis_RFC7807()) {
-						XmlDeserializer deserializer = new XmlDeserializer();
-						problem = deserializer.fromNode(msg.getContent(), false);
+						problemReceived = parseXmlProblemRFC7807(msg);
 					}
 				}catch(Exception e){
 					throw new GestoreMessaggiException(e.getMessage(),e);
@@ -520,25 +537,27 @@ public class GestoreErroreConnettore {
 			}
 		}
 
-		if(problem!=null){
-			this.problem = problem;
+		if(problemReceived!=null){
+			this.problem = problemReceived;
 			for(int i=0; i<gestioneErrore.sizeSoapFaultList();i++){
 				GestioneErroreSoapFault gestore = gestioneErrore.getSoapFault(i);
 				boolean match = true;
 
 				if(gestore.getFaultCode()!=null){ // status in problem
-					String codice = problem.getStatus()+"";
+					String codice = problemReceived.getStatus()+"";
 
-					if( gestore.getFaultCode().equalsIgnoreCase(codice) == false) {
+					if( !gestore.getFaultCode().equalsIgnoreCase(codice)) {
 
 						// provo a verificare con regular expr
 
 						boolean matchRegExpr = false;
 						try {
 							matchRegExpr = RegularExpressionEngine.isMatch(codice, gestore.getFaultCode());
-						}catch(RegExpNotFoundException notFound) {}
+						}catch(RegExpNotFoundException notFound) {
+							// ignore
+						}
 						catch(Exception e)	{
-							GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultCode()+"' per problem status '"+codice+"' fallita: "+e.getMessage());
+							GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+gestore.getFaultCode()+"' per problem status '"+codice+FALLITA_SUFFIX+e.getMessage(),e);
 						}
 
 						if(!matchRegExpr) {
@@ -549,18 +568,20 @@ public class GestoreErroreConnettore {
 				}
 
 				if(gestore.getFaultActor()!=null){ // type in problem
-					String actor = problem.getType();
+					String actor = problemReceived.getType();
 
-					if( gestore.getFaultActor().equalsIgnoreCase(actor) == false) {
+					if( !gestore.getFaultActor().equalsIgnoreCase(actor)) {
 
 						// provo a verificare con regular expr
 
 						boolean matchRegExpr = false;
 						try {
 							matchRegExpr = RegularExpressionEngine.isMatch(actor, gestore.getFaultActor());
-						}catch(RegExpNotFoundException notFound) {}
+						}catch(RegExpNotFoundException notFound) {
+							// ignore
+						}
 						catch(Exception e)	{
-							GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultActor()+"' per problem type '"+actor+"' fallita: "+e.getMessage());
+							GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+gestore.getFaultActor()+"' per problem type '"+actor+FALLITA_SUFFIX+e.getMessage(),e);
 						}
 
 						if(!matchRegExpr) {
@@ -581,19 +602,21 @@ public class GestoreErroreConnettore {
 							String value = properties.getProperty(key);
 
 							if(ProblemConstants.CLAIM_TYPE.equals(key)) {
-								if(problem.getType()==null || "".equals(problem.getType())) {
+								if(problemReceived.getType()==null || "".equals(problemReceived.getType())) {
 									match = false; 
 									break;
 								}
 								else {
-									if( problem.getType().equalsIgnoreCase(value) == false) {
+									if( !problemReceived.getType().equalsIgnoreCase(value)) {
 										// provo a verificare con regular expr
 										boolean matchRegExpr = false;
 										try {
-											matchRegExpr = RegularExpressionEngine.isMatch(problem.getType(), value);
-										}catch(RegExpNotFoundException notFound) {}
+											matchRegExpr = RegularExpressionEngine.isMatch(problemReceived.getType(), value);
+										}catch(RegExpNotFoundException notFound) {
+											// ignore
+										}
 										catch(Exception e)	{
-											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem type '"+problem.getType()+"' fallita: "+e.getMessage());
+											GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+value+"' per problem type '"+problemReceived.getType()+FALLITA_SUFFIX+e.getMessage(),e);
 										}
 										if(!matchRegExpr) {
 											match = false; // non ha il valore definito
@@ -604,19 +627,21 @@ public class GestoreErroreConnettore {
 							}
 
 							else if(ProblemConstants.CLAIM_TITLE.equals(key)) {
-								if(problem.getTitle()==null || "".equals(problem.getTitle())) {
+								if(problemReceived.getTitle()==null || "".equals(problemReceived.getTitle())) {
 									match = false; 
 									break;
 								}
 								else {
-									if( problem.getTitle().equalsIgnoreCase(value) == false) {
+									if( !problemReceived.getTitle().equalsIgnoreCase(value)) {
 										// provo a verificare con regular expr
 										boolean matchRegExpr = false;
 										try {
-											matchRegExpr = RegularExpressionEngine.isMatch(problem.getTitle(), value);
-										}catch(RegExpNotFoundException notFound) {}
+											matchRegExpr = RegularExpressionEngine.isMatch(problemReceived.getTitle(), value);
+										}catch(RegExpNotFoundException notFound) {
+											// ignore
+										}
 										catch(Exception e)	{
-											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem title '"+problem.getTitle()+"' fallita: "+e.getMessage());
+											GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+value+"' per problem title '"+problemReceived.getTitle()+FALLITA_SUFFIX+e.getMessage(),e);
 										}
 										if(!matchRegExpr) {
 											match = false; // non ha il valore definito
@@ -627,19 +652,21 @@ public class GestoreErroreConnettore {
 							}
 
 							else if(ProblemConstants.CLAIM_STATUS.equals(key)) {
-								if(problem.getStatus()==null) {
+								if(problemReceived.getStatus()==null) {
 									match = false; 
 									break;
 								}
 								else {
-									if( problem.getStatus().toString().equalsIgnoreCase(value) == false) {
+									if( !problemReceived.getStatus().toString().equalsIgnoreCase(value)) {
 										// provo a verificare con regular expr
 										boolean matchRegExpr = false;
 										try {
-											matchRegExpr = RegularExpressionEngine.isMatch(problem.getStatus().toString(), value);
-										}catch(RegExpNotFoundException notFound) {}
+											matchRegExpr = RegularExpressionEngine.isMatch(problemReceived.getStatus().toString(), value);
+										}catch(RegExpNotFoundException notFound) {
+											// ignore
+										}
 										catch(Exception e)	{
-											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem status '"+problem.getStatus().toString()+"' fallita: "+e.getMessage());
+											GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+value+"' per problem status '"+problemReceived.getStatus().toString()+FALLITA_SUFFIX+e.getMessage(),e);
 										}
 										if(!matchRegExpr) {
 											match = false; // non ha il valore definito
@@ -650,19 +677,21 @@ public class GestoreErroreConnettore {
 							}
 
 							else if(ProblemConstants.CLAIM_DETAIL.equals(key)) {
-								if(problem.getDetail()==null || "".equals(problem.getDetail())) {
+								if(problemReceived.getDetail()==null || "".equals(problemReceived.getDetail())) {
 									match = false; 
 									break;
 								}
 								else {
-									if( problem.getDetail().equalsIgnoreCase(value) == false) {
+									if( !problemReceived.getDetail().equalsIgnoreCase(value)) {
 										// provo a verificare con regular expr
 										boolean matchRegExpr = false;
 										try {
-											matchRegExpr = RegularExpressionEngine.isMatch(problem.getDetail(), value);
-										}catch(RegExpNotFoundException notFound) {}
+											matchRegExpr = RegularExpressionEngine.isMatch(problemReceived.getDetail(), value);
+										}catch(RegExpNotFoundException notFound) {
+											// ignore
+										}
 										catch(Exception e)	{
-											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem detail '"+problem.getDetail()+"' fallita: "+e.getMessage());
+											GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+value+"' per problem detail '"+problemReceived.getDetail()+FALLITA_SUFFIX+e.getMessage(),e);
 										}
 										if(!matchRegExpr) {
 											match = false; // non ha il valore definito
@@ -673,19 +702,21 @@ public class GestoreErroreConnettore {
 							}
 
 							else if(ProblemConstants.CLAIM_INSTANCE.equals(key)) {
-								if(problem.getInstance()==null || "".equals(problem.getInstance())) {
+								if(problemReceived.getInstance()==null || "".equals(problemReceived.getInstance())) {
 									match = false; 
 									break;
 								}
 								else {
-									if( problem.getInstance().equalsIgnoreCase(value) == false) {
+									if( !problemReceived.getInstance().equalsIgnoreCase(value)) {
 										// provo a verificare con regular expr
 										boolean matchRegExpr = false;
 										try {
-											matchRegExpr = RegularExpressionEngine.isMatch(problem.getInstance(), value);
-										}catch(RegExpNotFoundException notFound) {}
+											matchRegExpr = RegularExpressionEngine.isMatch(problemReceived.getInstance(), value);
+										}catch(RegExpNotFoundException notFound) {
+											// ignore
+										}
 										catch(Exception e)	{
-											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem instance '"+problem.getInstance()+"' fallita: "+e.getMessage());
+											GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+value+"' per problem instance '"+problemReceived.getInstance()+FALLITA_SUFFIX+e.getMessage(),e);
 										}
 										if(!matchRegExpr) {
 											match = false; // non ha il valore definito
@@ -697,26 +728,28 @@ public class GestoreErroreConnettore {
 
 							else {
 
-								if(problem.getCustom()==null || problem.getCustom().isEmpty() || !problem.getCustom().containsKey(key)) {
+								if(problemReceived.getCustom()==null || problemReceived.getCustom().isEmpty() || !problemReceived.getCustom().containsKey(key)) {
 									match = false; 
 									break;
 								}
 								else {
-									Object valoreClaim = problem.getCustom().get(key);
+									Object valoreClaim = problemReceived.getCustom().get(key);
 									if(valoreClaim==null) {
 										match = false; 
 										break;
 									}
 									else {
 										String v = valoreClaim.toString();
-										if( v.equalsIgnoreCase(value) == false) {
+										if( !v.equalsIgnoreCase(value)) {
 											// provo a verificare con regular expr
 											boolean matchRegExpr = false;
 											try {
 												matchRegExpr = RegularExpressionEngine.isMatch(v, value);
-											}catch(RegExpNotFoundException notFound) {}
+											}catch(RegExpNotFoundException notFound) {
+												// ignore
+											}
 											catch(Exception e)	{
-												GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem '"+key+"' '"+v+"' fallita: "+e.getMessage());
+												GestoreErroreConnettore.log.error(VERIFICA_ESPRESSIONE_REGOLARE_PREFIX+value+"' per problem '"+key+"' '"+v+FALLITA_SUFFIX+e.getMessage(),e);
 											}
 											if(!matchRegExpr) {
 												match = false; // non ha il valore definito
@@ -735,7 +768,7 @@ public class GestoreErroreConnettore {
 				if( match ){
 					if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestore.getComportamento())){
 						try{
-							this.errore = "errore applicativo, "+problem.getRaw();
+							this.errore = "errore applicativo, "+problemReceived.getRaw();
 						}catch(Exception e){
 							this.errore = "errore applicativo (Problem Detail RFC 7807)";
 							GestoreErroreConnettore.log.error("Serializzazione Problem Detail RFC 7807 non riuscita: "+e.getMessage(),e);
@@ -746,14 +779,14 @@ public class GestoreErroreConnettore {
 								int cadenzaRispedizione = Integer.parseInt(gestore.getCadenzaRispedizione());
 								this.dataRispedizione = new java.sql.Timestamp(now.getTime()+(cadenzaRispedizione*60*1000));
 							}catch(Exception e)	{
-								GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato (problem detail): "+e.getMessage());
+								GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato (problem detail): "+e.getMessage(),e);
 							}
 						}else if(gestioneErrore.getCadenzaRispedizione()!=null){
 							try{
 								int cadenzaRispedizione = Integer.parseInt(gestioneErrore.getCadenzaRispedizione());
 								this.dataRispedizione = new java.sql.Timestamp(now.getTime()+(cadenzaRispedizione*60*1000));
 							}catch(Exception e)	{
-								GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato: "+e.getMessage());
+								GestoreErroreConnettore.log.error(INTERVALLO_RISPEDIZIONE_NON_IMPOSTATO+e.getMessage(),e);
 							}
 						}
 						return false;
@@ -784,14 +817,14 @@ public class GestoreErroreConnettore {
 
 				// match
 				if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestore.getComportamento())){
-					//this.errore = "errore di trasporto, codice "+codiceTrasporto;
+					/**this.errore = "errore di trasporto, codice "+codiceTrasporto;*/
 					this.errore = "errore "+formatProtocolloConnettore(protocolloConnettore)+codiceTrasporto;
 					if(this.fault!=null){
 						try{
 							this.errore = this.errore + " (" +SoapUtils.safe_toString(messageResponse.getFactory(), this.fault, GestoreErroreConnettore.log)+ ")";
 						}catch(Exception e){
-							this.errore = "errore applicativo SoapFault";
-							GestoreErroreConnettore.log.error("Serializzazione SOAPFault non riuscita: "+e.getMessage(),e);
+							this.errore = ERRORE_APPLICATIVO_SOAP_FAULT;
+							GestoreErroreConnettore.log.error(SERIALIZZAZIONE_SOAP_FAULT_NON_RIUSCITA+e.getMessage(),e);
 						}
 					}
 					this.riconsegna = true;
@@ -800,14 +833,14 @@ public class GestoreErroreConnettore {
 							int cadenzaRispedizione = Integer.parseInt(gestore.getCadenzaRispedizione());
 							this.dataRispedizione = new java.sql.Timestamp(now.getTime()+(cadenzaRispedizione*60*1000));
 						}catch(Exception e)	{
-							GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato (codice di trasporto): "+e.getMessage());
+							GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato (codice di trasporto): "+e.getMessage(),e);
 						}
 					}else if(gestioneErrore.getCadenzaRispedizione()!=null){
 						try{
 							int cadenzaRispedizione = Integer.parseInt(gestioneErrore.getCadenzaRispedizione());
 							this.dataRispedizione = new java.sql.Timestamp(now.getTime()+(cadenzaRispedizione*60*1000));
 						}catch(Exception e)	{
-							GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato: "+e.getMessage());
+							GestoreErroreConnettore.log.error(INTERVALLO_RISPEDIZIONE_NON_IMPOSTATO+e.getMessage(),e);
 						}
 					}
 					return false;
@@ -821,14 +854,14 @@ public class GestoreErroreConnettore {
 
 		// Match non trovato, assumo comportamento di default
 		if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestioneErrore.getComportamento())){
-			//this.errore = "errore di trasporto, codice "+codiceTrasporto;
+			/**this.errore = "errore di trasporto, codice "+codiceTrasporto;*/
 			this.errore = "errore "+formatProtocolloConnettore(protocolloConnettore)+codiceTrasporto;
 			if(this.fault!=null){
 				try{
 					this.errore = this.errore + " (" +SoapUtils.safe_toString(messageResponse.getFactory(), this.fault, GestoreErroreConnettore.log)+ ")";
 				}catch(Exception e){
-					this.errore = "errore applicativo SoapFault";
-					GestoreErroreConnettore.log.error("Serializzazione SOAPFault non riuscita: "+e.getMessage(),e);
+					this.errore = ERRORE_APPLICATIVO_SOAP_FAULT;
+					GestoreErroreConnettore.log.error(SERIALIZZAZIONE_SOAP_FAULT_NON_RIUSCITA+e.getMessage(),e);
 				}
 			}
 			this.riconsegna = true;
@@ -837,7 +870,7 @@ public class GestoreErroreConnettore {
 					int cadenzaRispedizione = Integer.parseInt(gestioneErrore.getCadenzaRispedizione());
 					this.dataRispedizione = new java.sql.Timestamp(now.getTime()+(cadenzaRispedizione*60*1000));
 				}catch(Exception e)	{
-					GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato: "+e.getMessage());
+					GestoreErroreConnettore.log.error(INTERVALLO_RISPEDIZIONE_NON_IMPOSTATO+e.getMessage(),e);
 				}
 			}
 			return false;
@@ -849,6 +882,25 @@ public class GestoreErroreConnettore {
 
 	}
 
+	private ProblemRFC7807 parseJsonProblemRFC7807 (OpenSPCoop2RestJsonMessage msg) throws MessageException, MessageNotSupportedException{
+		try {
+			JsonDeserializer deserializer = new JsonDeserializer();
+			return deserializer.fromString(msg.getContent(), false);
+		}catch(Exception e) {
+			GestoreErroreConnettore.log.error("Parsing problem details (RFC7807) JSON:["+msg.getContent()+"] fallita: "+e.getMessage(),e);
+			return null;
+		}
+	}
+	private ProblemRFC7807 parseXmlProblemRFC7807 (OpenSPCoop2RestXmlMessage msg) throws MessageException, MessageNotSupportedException{
+		XmlDeserializer deserializer = new XmlDeserializer();
+		try {
+			return deserializer.fromNode(msg.getContent(), false);
+		}catch(Exception e) {
+			GestoreErroreConnettore.log.error("Parsing problem details (RFC7807) XML["+msg.getContent()+"] fallita: "+e.getMessage(),e);
+			return null;
+		}
+	}
+	
 	/**
 	 * Motivo errore consegna
 	 * 
