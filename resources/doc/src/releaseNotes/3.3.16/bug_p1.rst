@@ -37,6 +37,8 @@ Sono stati risolti i seguenti bug:
 
 - Le funzionalità di lock basate su semafori sono state estese con uno scheduler che permette il rilascio automatico del lock dopo un timeout configurabile.
 
+- Nel log applicativo 'govway_core', in condizioni limite, avveniva il seguente errore: "Errore durante il dump del soap fault".
+
 
 Per la console di gestione sono stati risolti i seguenti bug:
 

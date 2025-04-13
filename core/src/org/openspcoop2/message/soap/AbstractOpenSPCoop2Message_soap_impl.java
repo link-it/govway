@@ -80,7 +80,7 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	protected OpenSPCoop2SoapMessageCore soapCore;
 	
 
-	public AbstractOpenSPCoop2Message_soap_impl(OpenSPCoop2MessageFactory messageFactory, MimeHeaders mhs, InputStream is, long overhead,
+	protected AbstractOpenSPCoop2Message_soap_impl(OpenSPCoop2MessageFactory messageFactory, MimeHeaders mhs, InputStream is, long overhead,
 			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws MessageException {
 		super(messageFactory, is, SoapUtils.getContentType(mhs), true, soapStreamReader);
 		this.overhead = overhead;
@@ -129,17 +129,17 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 			if(this.contentUpdatable && this.getSoapReader()!=null && this.getSoapReader().isSoapHeaderModified()) {
 				SOAPHeader newHdr = this.getSoapReader().getHeader();
 				
-				//Node newHdrAdopted = envelope.getOwnerDocument().adoptNode(newHdr);
+				/**Node newHdrAdopted = envelope.getOwnerDocument().adoptNode(newHdr);*/
 				if(hdr!=null) {
-					/*org.w3c.dom.NodeList l = envelope.getChildNodes();
+					/**org.w3c.dom.NodeList l = envelope.getChildNodes();
 					for (int i = 0; i < l.getLength(); i++) {
 						System.out.println("BEFORE ["+l.item(i).getClass().getName()+"] ["+l.item(i).getLocalName()+"]");
 					}*/
 					
-					//envelope.replaceChild(hdr, newHdrAdopted);
+					/**envelope.replaceChild(hdr, newHdrAdopted);*/
 					// devo preservare i commenti, cdata ...
 					
-					/*
+					/**
 					In questa maniera creo un nuovo header e chi ha preso il riferimento se lo perde (es. sbustamento Modi, wsaddressing)
 					Node newHdrAdopted = envelope.getOwnerDocument().importNode(newHdr, true);
 					if((hdr.getPrefix()==null && newHdrAdopted.getPrefix()!=null) || (!hdr.getPrefix().equals(newHdrAdopted.getPrefix()))) {
@@ -152,26 +152,28 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 					
 					// rimpiazzo i figli
 					hdr.removeContents();
-					NodeList list = newHdr.getChildNodes();
-					//System.out.println("LIST["+list.getLength()+"] ["+org.openspcoop2.utils.xml.XMLUtils.getInstance().toString(newHdr)+"]");
-					if(list!=null && list.getLength()>0) {
-						for (int i = 0; i < list.getLength(); i++) {
-							Node n = list.item(i);
-							//System.out.println("i["+i+"] ["+n.getClass().getName()+"] ["+n.getLocalName()+"]");
-							Node newNodeAdopted = envelope.getOwnerDocument().importNode(n, true);
-							hdr.appendChild(newNodeAdopted);
+					if(newHdr!=null) {
+						NodeList list = newHdr.getChildNodes();
+						/**System.out.println("LIST["+list.getLength()+"] ["+org.openspcoop2.utils.xml.XMLUtils.getInstance().toString(newHdr)+"]");*/
+						if(list!=null && list.getLength()>0) {
+							for (int i = 0; i < list.getLength(); i++) {
+								Node n = list.item(i);
+								/**System.out.println("i["+i+"] ["+n.getClass().getName()+"] ["+n.getLocalName()+"]");*/
+								Node newNodeAdopted = envelope.getOwnerDocument().importNode(n, true);
+								hdr.appendChild(newNodeAdopted);
+							}
 						}
 					}
 					
-					/*l = envelope.getChildNodes();
+					/**l = envelope.getChildNodes();
 					for (int i = 0; i < l.getLength(); i++) {
 						System.out.println("AFTER ["+l.item(i).getClass().getName()+"] ["+l.item(i).getLocalName()+"]");
 					}*/
 				}
-				else {
+				else if(newHdr!=null){
 					Node newHdrAdopted = envelope.getOwnerDocument().importNode(newHdr, true);
 					if((envelope.getPrefix()==null && newHdrAdopted.getPrefix()!=null) || (!envelope.getPrefix().equals(newHdrAdopted.getPrefix()))) {
-						//System.out.println("ALLINEAO AD ENVELOPE PREFIX ["+envelope.getPrefix()+"]");
+						/**System.out.println("ALLINEAO AD ENVELOPE PREFIX ["+envelope.getPrefix()+"]");*/
 						newHdrAdopted.setPrefix(envelope.getPrefix()); // allineo alla costruzione del DOM
 					}
 					SOAPBody body = envelope.getBody();
@@ -184,22 +186,22 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 				}
 				
 				// Rilascio memoria tanto verra usato sempre il DOM costruito
-				//if(this.contentUpdatable) {
-				//System.out.println("ADD SOAP HEADER e RILASCIO RISORSE");
+				/**if(this.contentUpdatable) {
+				//System.out.println("ADD SOAP HEADER e RILASCIO RISORSE");*/
 				this.getSoapReader().clearHeader();
 				this.clearDynamicResources();
-				//}
+				/**}
 				//else {
 				//	System.out.println("ADD SOAP HEADER SENZA RILASCIARE RISORSE");
-				//}
+				//}*/
 				
 				this.releaseSoapReader();
 			}
 			
 			// Rilascio SOAPReader tanto verra usato sempre il DOM costruito
-			//if(this.contentUpdatable) {
+			/**if(this.contentUpdatable) {
 			//this.releaseSoapReader();
-			//}
+			//}*/
 			
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
@@ -231,36 +233,36 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	
 	@Override
 	public MessageContext serializeResourcesTo() throws MessageException{
-//		if(this.isContentBuilded()) {
+/**		if(this.isContentBuilded()) {
 //			return this.content.serializeResourcesTo();
 //		}
-//		else {
+//		else {*/
 		MessageContext messageContext = super.serializeResourcesTo();
 		return this.soapCore.serializeResourcesTo(messageContext);
-//		}
+/**		}*/
 	}
 	
 	@Override
 	public void readResourcesFrom(MessageContext messageContext) throws MessageException{
-//		if(this.isContentBuilded()) {
+/**		if(this.isContentBuilded()) {
 //			this.content.readResourcesFrom(messageContext);
 //		}
-//		else {
+//		else {*/
 		super.readResourcesFrom(messageContext);
 		this.soapCore.readResourcesFrom(messageContext);
-//		}
+/**		}*/
 	}
 	
 	/* SOAPAction */
 	
 	@Override
 	public String getSoapAction(){
-//		if(this.isContentBuilded()) {
+/**		if(this.isContentBuilded()) {
 //			return this.content.getSoapAction();
 //		}
-//		else {
+//		else {*/
 		return this.soapCore.getSoapAction();
-//		}
+/**		}*/
 	}
 	
 	@Override
@@ -268,21 +270,21 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 		if(this.isContentBuilded()) {
 			this.content.setSoapAction(soapAction);
 		}
-//		else {
+/**		else {*/
 		this.soapCore.setSoapAction(soapAction);
-//		}
+/**		}*/
 	}
 	
 	/* WSSecurity */
 	
 	@Override
 	public boolean isThrowExceptionIfFoundMoreSecurityHeader() {
-//		if(this.isContentBuilded()) {
+/**		if(this.isContentBuilded()) {
 //			return this.content.isThrowExceptionIfFoundMoreSecurityHeader();
 //		}
-//		else {
+//		else {*/
 		return this.soapCore.isThrowExceptionIfFoundMoreSecurityHeader();
-//		}
+/**		}*/
 	}
 
 	@Override
@@ -290,9 +292,9 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 		if(this.isContentBuilded()) {
 			this.content.setThrowExceptionIfFoundMoreSecurityHeader(throwExceptionIfFoundMoreSecurityHeader);
 		}
-//		else {
+/**		else {*/
 		this.soapCore.setThrowExceptionIfFoundMoreSecurityHeader(throwExceptionIfFoundMoreSecurityHeader);
-//		}
+/**		}*/
 	}
 	
 	/* Trasporto */
@@ -519,12 +521,9 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	
 	public boolean isSoapHeaderOptimizable() {
 		OpenSPCoop2MessageSoapStreamReader soapReader = this.getSoapReader();
-		if( ( (!this.isContentBuilded()) || !this.contentUpdatable ) 
+		return ( (!this.isContentBuilded()) || !this.contentUpdatable ) 
 				&& 
-				soapReader!=null && soapReader.isParsingComplete() && soapReader.isSoapHeaderOptimizable()) {
-			return true;
-		}
-		return false;
+				soapReader!=null && soapReader.isParsingComplete() && soapReader.isSoapHeaderOptimizable();
 	}
 	
 	/* Elementi SOAP */
@@ -532,10 +531,9 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	private DynamicSOAPMessage<T> dynamicSOAPMessage = null;
 	@Override
 	public SOAPMessage getSOAPMessage() throws MessageException, MessageNotSupportedException {
-		if(this.dynamicSOAPMessage==null) {
-			if(isSoapHeaderOptimizable()) {
-				this.dynamicSOAPMessage = new DynamicSOAPMessage<T>(this);
-			}
+		if(this.dynamicSOAPMessage==null &&
+			isSoapHeaderOptimizable()) {
+			this.dynamicSOAPMessage = new DynamicSOAPMessage<>(this);
 		}
 		if(this.dynamicSOAPMessage!=null) {
 			return this.dynamicSOAPMessage;
@@ -548,10 +546,9 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	private DynamicSOAPPart<T> dynamicSOAPPart = null;
 	@Override
 	public SOAPPart getSOAPPart() throws MessageException, MessageNotSupportedException {
-		if(this.dynamicSOAPPart==null) {
-			if(isSoapHeaderOptimizable()) {
-				this.dynamicSOAPPart = new DynamicSOAPPart<T>(this);
-			}
+		if(this.dynamicSOAPPart==null &&
+			isSoapHeaderOptimizable()) {
+			this.dynamicSOAPPart = new DynamicSOAPPart<>(this);
 		}
 		if(this.dynamicSOAPPart!=null) {
 			return this.dynamicSOAPPart;
@@ -565,10 +562,9 @@ public abstract class AbstractOpenSPCoop2Message_soap_impl<T extends AbstractOpe
 	private DynamicSOAPHeader<T> dynamicSOAPHeader = null;
 	@Override
 	public SOAPHeader getSOAPHeader() throws MessageException, MessageNotSupportedException {
-		if(this.dynamicSOAPHeader==null) {
-			if(isSoapHeaderOptimizable()) {
-				this.dynamicSOAPHeader = new DynamicSOAPHeader<T>(this);
-			}
+		if(this.dynamicSOAPHeader==null &&
+			isSoapHeaderOptimizable()) {
+			this.dynamicSOAPHeader = new DynamicSOAPHeader<>(this);
 		}
 		if(this.dynamicSOAPHeader!=null) {
 			return this.dynamicSOAPHeader;
