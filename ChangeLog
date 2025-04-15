@@ -1,3 +1,10 @@
+2025-04-15  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #1602
+	Corretto un problema nella risoluzione delle informazioni PDND nell’elenco delle transazioni e nei report statistici, che si verificava in presenza di più clientId associati alla stessa organizzazione.
+	In tali casi, solo uno dei clientId veniva risolto correttamente, mostrando i dati dell’organizzazione, mentre per gli altri la risoluzione non avveniva come previsto.
+
 2025-04-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

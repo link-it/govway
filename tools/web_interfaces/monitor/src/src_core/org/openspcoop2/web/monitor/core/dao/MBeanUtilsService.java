@@ -32,6 +32,8 @@ import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTokenClient;
+import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
@@ -39,7 +41,10 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
 import org.slf4j.Logger;
 
@@ -214,11 +219,128 @@ public class MBeanUtilsService {
 		if(l!=null && !l.isEmpty()) {
 			cm = l.get(0);
 		}
+		/**System.out.println("TEST FORZO RICERCA ALTERNATIVA"); cm = null;*/
 		if(cm!=null) {
 			return cm;
 		}
-		else {
-			throw new NotFoundException("Credential type["+tipo.getRawValue()+"] ref["+id+"] not found");
+		else if(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tipo) || TipoCredenzialeMittente.PDND_ORGANIZATION_JSON.equals(tipo) ) {
+			// provo a cercare se l'informazione sull'organizzazione è stata asssociata ad un altro clientId della stessa organizzazione
+			cm = getPdndOrganizationJsonFromClientIdLong(search, tipo, id);
+			if(cm!=null) {
+				/**System.out.println("TROVATA INFO TRAMITE RICERCA ALTERNATIVA!");*/
+				return cm;
+			}
 		}
+		throw new NotFoundException("Credential type["+tipo.getRawValue()+"] ref["+id+"] not found");
+		
+	}
+	private CredenzialeMittente getPdndOrganizationJsonFromClientIdLong(JDBCCredenzialeMittenteServiceSearch search, TipoCredenzialeMittente tipo, Long id) throws ServiceException, NotFoundException, NotImplementedException, ExpressionNotImplementedException, ExpressionException{
+		
+		// Potrebbe succedere che esista sul DB delle tracce una situazione tipo clientId diversi con stesso consumerId
+		/** pdnd_client_json	{"id":"aaa5313f-ec86-4ec5-bfcb-55d80b8addaf","consumerId":"ddda331c-2516-48dc-96f6-1ad334985846"}
+		    pdnd_client_json	{"id":"bbb7d8d4-7bb6-4b28-bd1a-f03dd1602f1d","consumerId":"ddda331c-2516-48dc-96f6-1ad334985846"}
+		    pdnd_client_json	{"id":"ccc5d37c-7ec9-4326-9069-e0696fb017d9","consumerId":"ddda331c-2516-48dc-96f6-1ad334985846"}
+		
+    	    e invece l'informazione sull'organizzazione riferisce solo uno degli id con id 1812
+		    pdnd_org_name	Comune di Esempio	14-APR-25 17:04:57,627000000	2699	1812 <----
+		    pdnd_org_json	{"id":"kkkka331c-2516-48dc-96f6-1ad334985846","externalId":{"origin":"IPA","id":"c_a123"},"name":"Comune di Esempio","category":"Comuni e loro Consorzi e Associazioni"} 2679	1812 <----
+		
+		    dove 1812 è : 
+		    token_clientId	bbb7d8d4-7bb6-4b28-bd1a-f03dd1602f1d	14-APR-25 17:04:57,606000000	1812
+		 *	
+		 */
+		
+		// recupero uuid del clientId
+		CredenzialeMittente cmClient = null;
+		try {
+			cmClient = search.get(id);
+		}catch(NotFoundException notFound) {
+			// not found ?
+		}catch(Exception e) {
+			// fatalError
+			this.log.error("getPdndOrganizationJsonFromClientIdLong failed: "+e.getMessage(),e);
+		}
+		String clientId = null;
+		if(cmClient!=null) {
+			/**System.out.println("RECUPERATO CLIENT ID ["+cmClient.getCredenziale()+"]");*/
+			TipoCredenzialeMittente t = TipoCredenzialeMittente.toEnumConstant(cmClient.getTipo(), false);
+			if(t!=null && t.equals(TipoCredenzialeMittente.TOKEN_CLIENT_ID)) {
+				clientId = CredenzialeTokenClient.convertClientIdDBValueToOriginal(cmClient.getCredenziale());
+				/**System.out.println("RECUPERATO CLIENT ID ["+cmClient.getCredenziale()+"]: "+clientId);*/
+			}
+		}
+		
+		String consumerId = getPdndOrganizationConsumerId(search, clientId);
+		/**System.out.println("RECUPERATO CONSUMER ID ["+consumerId+"]");*/
+		
+		if(consumerId!=null) {
+			return getPdndOrganizationInfoFromConsumerId(search, consumerId, tipo, id);
+		}
+		
+		return null;
+		
+	}
+	private String getPdndOrganizationConsumerId(JDBCCredenzialeMittenteServiceSearch search, String clientId) throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+		// cerco consumer id con quel client id
+		IPaginatedExpression pagExpr = search.newPaginatedExpression();
+		pagExpr.equals(CredenzialeMittente.model().TIPO, TipoCredenzialeMittente.PDND_CLIENT_JSON.getRawValue());
+		pagExpr.like(CredenzialeMittente.model().CREDENZIALE, "\""+clientId+"\"", LikeMode.ANYWHERE);
+		pagExpr.addOrder(CredenzialeMittente.model().ORA_REGISTRAZIONE, SortOrder.DESC);
+		pagExpr.limit(1);
+		List<CredenzialeMittente> l = search.findAll(pagExpr);
+		CredenzialeMittente cmJson = null;
+		if(l!=null && !l.isEmpty()) {
+			cmJson = l.get(0);
+		}
+		String consumerId = null;
+		if(cmJson!=null && cmJson.getCredenziale()!=null) {
+			String pattern = "$.consumerId";
+			try {
+				consumerId = JsonPathExpressionEngine.extractAndConvertResultAsString(cmJson.getCredenziale(), pattern, this.log);
+			}catch(Exception e) {
+				// fatalError
+				this.log.error("getPdndOrganizationJsonFromClientIdLong consumerId read failed from ["+cmJson.getCredenziale()+"] with pattern ["+pattern+"]: "+e.getMessage(),e);
+			}
+		}
+		return consumerId;
+	}
+	private CredenzialeMittente getPdndOrganizationInfoFromConsumerId(JDBCCredenzialeMittenteServiceSearch search, String consumerId, TipoCredenzialeMittente tipo, long id) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
+		IPaginatedExpression pagExpr = search.newPaginatedExpression();
+		pagExpr.equals(CredenzialeMittente.model().TIPO, TipoCredenzialeMittente.PDND_ORGANIZATION_JSON.getRawValue());
+		pagExpr.like(CredenzialeMittente.model().CREDENZIALE, "\""+consumerId+"\"", LikeMode.ANYWHERE);
+		pagExpr.addOrder(CredenzialeMittente.model().ORA_REGISTRAZIONE, SortOrder.DESC);
+		pagExpr.limit(1);
+		List<CredenzialeMittente> l = search.findAll(pagExpr);
+		CredenzialeMittente cmJson = null;
+		if(l!=null && !l.isEmpty()) {
+			cmJson = l.get(0);
+		}
+		if(cmJson!=null && cmJson.getCredenziale()!=null) {
+			if(TipoCredenzialeMittente.PDND_ORGANIZATION_JSON.equals(tipo)) {
+				cmJson.setRefCredenziale(id); // aggiorno ref
+				/**System.out.println("RECUPERATO PDND_ORGANIZATION_JSON ["+cmJson.getCredenziale()+"]");*/
+				return cmJson;
+			}
+			else {
+				String pattern =  "$.name";
+				String name = null;
+				try {
+					name = JsonPathExpressionEngine.extractAndConvertResultAsString(cmJson.getCredenziale(), pattern, this.log);
+				}catch(Exception e) {
+					// fatalError
+					this.log.error("getPdndOrganizationJsonFromClientIdLong name read failed from ["+cmJson.getCredenziale()+"] with pattern ["+pattern+"]: "+e.getMessage(),e);
+				}
+				if(name!=null) {
+					CredenzialeMittente cmName = new CredenzialeMittente();
+					cmName.setCredenziale(name);
+					cmName.setOraRegistrazione(cmJson.getOraRegistrazione()); // metto stessa data
+					cmName.setRefCredenziale(id); // aggiorno ref
+					cmName.setTipo(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.getRawValue());
+					/**System.out.println("RECUPERATO PDND_ORGANIZATION_NAME ["+cmName.getCredenziale()+"]");*/
+					return cmName;
+				}
+			}
+		}
+		return null;
 	}
 }

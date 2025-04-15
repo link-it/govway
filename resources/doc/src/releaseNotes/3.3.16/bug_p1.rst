@@ -48,6 +48,8 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:
 
+- Corretto un problema nella risoluzione delle informazioni PDND nell’elenco delle transazioni e nei report statistici, che si verificava in presenza di più clientId associati alla stessa organizzazione. In tali casi, solo uno dei clientId veniva risolto correttamente, mostrando i dati dell’organizzazione, mentre per gli altri la risoluzione non avveniva come previsto.
+
 - È stato corretto un comportamento anomalo nel filtro di ricerca delle azioni per le API SOAP nelle sezioni "Transazioni" e "Statistiche", che impediva la selezione delle azioni. Il filtro funzionava correttamente per le API di tipo REST.
 
 - Nella ricerca per token, per principal o per indirizzo ip non veniva effettuato il trim del valore inserito in input.
