@@ -1,3 +1,9 @@
+2025-04-16  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]	
+	Risolto Bug #1603
+	Aggiunto supporto per configurare un truststore di tipo PDND.
+
 2025-04-15  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]
