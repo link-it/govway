@@ -11378,6 +11378,9 @@ components:
           pcks11_tipo:
             maxLength: 255
             type: "string"
+          pdnd_tipo:
+            maxLength: 255
+            type: "string"
     ModIKeyStoreDefault:
       required:
       - "modalita"
@@ -12940,6 +12943,7 @@ components:
       enum:
       - "jks"
       - "pkcs11"
+      - "pdnd"
     ModIKeystoreEnum:
       type: "string"
       example: "jks"

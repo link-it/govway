@@ -83,6 +83,7 @@ Examples:
 |erogazione_modi_soap_header_firmare.json|
 |erogazione_modi_soap_truststore_ridefinito.json|
 |erogazione_modi_soap_truststore_ridefinito_hsm.json|
+|erogazione_modi_soap_truststore_ridefinito_pdnd.json|
 |erogazione_modi_soap_truststore_ridefinito_ocsp.json|
 |erogazione_modi_soap_keystore_ridefinito_file.json|
 |erogazione_modi_soap_keystore_ridefinito_path.json|
@@ -198,6 +199,7 @@ Examples:
 |erogazione_modi_rest_truststore_ridefinito.json|
 |erogazione_modi_rest_truststore_ridefinito_trust_senza_password.json|
 |erogazione_modi_rest_truststore_ridefinito_hsm.json|
+|erogazione_modi_rest_truststore_ridefinito_pdnd.json|
 |erogazione_modi_rest_truststore_ridefinito_ocsp.json|
 |erogazione_modi_rest_ttl.json|
 |erogazione_modi_rest_claims.json|

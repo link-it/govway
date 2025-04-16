@@ -58,5 +58,7 @@ Per la console di monitoraggio sono stati risolti i seguenti bug:
 
 Per le API di configurazione sono stati risolti i seguenti bug:
 
+- aggiunto supporto per configurare un truststore di tipo PDND;
+
 - introdotto controllo sul valore del claim 'tipo_servizio' in modo da verificare che sia uno dei valori ammessi dal profilo di interoperabiltà.
 

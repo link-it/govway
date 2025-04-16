@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.rs.server.api.impl.ProtocolPropertiesHelper;
+import org.openspcoop2.core.config.rs.server.config.Startup;
 import org.openspcoop2.core.config.rs.server.model.BaseFruizioneModIOAuth;
 import org.openspcoop2.core.config.rs.server.model.BaseModIRichiestaInformazioniUtenteAudit;
 import org.openspcoop2.core.config.rs.server.model.Erogazione;
@@ -104,7 +105,9 @@ import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 
@@ -121,7 +124,10 @@ public class ModiErogazioniApiHelper {
 	private static final String SPECIFICARE_CONFIGURAZIONE_MODI = "Specificare la configurazione 'ModI'";
 	private static final String IMPOSSIBILE_ABILITARE_SICUREZZA = "Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata";
 	private static final String TIPO_TRUSTSTORE_PKCS11_NON_INDICATO = "Tipo truststore pks11 non indicato";
+	private static final String TIPO_TRUSTSTORE_PDND_NON_INDICATO = "Tipo truststore pdnd non indicato";
+	private static final String TIPO_TRUSTSTORE_PDND_SCONOSCIUTO_PREFIX = "Tipo truststore pdnd sconosciuto: ";
 	private static final String TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX = "Tipo truststore sconosciuto: ";
+	private static final String TIPO_TRUSTSTORE_NON_SUPPORTATO_SSL = "Truststore PDND non supportato con configurazione ssl";
 	
 	public static FruizioneModI getFruizioneModI(AccordoServizioParteSpecifica asps, ErogazioniEnv env, ProfiloEnum profilo, Map <String, AbstractProperty<?>> p) throws CoreException, DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
@@ -411,6 +417,10 @@ public class ModiErogazioniApiHelper {
 				tipo = ModITruststoreEnum.PKCS11;
 				truststore.setPcks11Tipo(truststoreTipoString);
 			}
+			else if(isModITrustStore(truststoreTipoString)) {
+				tipo = ModITruststoreEnum.PDND;
+				truststore.setPdndTipo(truststoreTipoString);
+			}
 			else {
 				if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS)) {
 					tipo = ModITruststoreEnum.JKS;
@@ -616,6 +626,10 @@ public class ModiErogazioniApiHelper {
 				tipo = ModITruststoreEnum.PKCS11;
 				truststore.setPcks11Tipo(truststoreTipoString);
 			}
+			else if(isModITrustStore(truststoreTipoString)) {
+				tipo = ModITruststoreEnum.PDND;
+				truststore.setPdndTipo(truststoreTipoString);
+			}
 			else {
 				if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS)) {
 					tipo = ModITruststoreEnum.JKS;
@@ -643,6 +657,10 @@ public class ModiErogazioniApiHelper {
 					tipo = ModITruststoreEnum.PKCS11;
 					truststore.setPcks11Tipo(truststoreTipoString);
 				}
+				/** SU SSL NON HA SENSO else if(isModITrustStore(truststoreTipoString)) {
+					tipo = ModITruststoreEnum.PDND;
+					truststore.setPdndTipo(truststoreTipoString);
+				}*/
 				else {
 					if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS)) {
 						tipo = ModITruststoreEnum.JKS;
@@ -1098,6 +1116,10 @@ public class ModiErogazioniApiHelper {
 				tipo = ModITruststoreEnum.PKCS11;
 				truststore.setPcks11Tipo(truststoreTipoString);
 			}
+			else if(isModITrustStore(truststoreTipoString)) {
+				tipo = ModITruststoreEnum.PDND;
+				truststore.setPdndTipo(truststoreTipoString);
+			}
 			else {
 				if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS)) {
 					tipo = ModITruststoreEnum.JKS;
@@ -1337,6 +1359,10 @@ public class ModiErogazioniApiHelper {
 				tipo = ModITruststoreEnum.PKCS11;
 				truststore.setPcks11Tipo(truststoreTipoString);
 			}
+			else if(isModITrustStore(truststoreTipoString)) {
+				tipo = ModITruststoreEnum.PDND;
+				truststore.setPdndTipo(truststoreTipoString);
+			}
 			else {
 				if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS)) {
 					tipo = ModITruststoreEnum.JKS;
@@ -1364,6 +1390,10 @@ public class ModiErogazioniApiHelper {
 					tipo = ModITruststoreEnum.PKCS11;
 					truststore.setPcks11Tipo(truststoreTipoString);
 				}
+				/** SU SSL NON HA SENSO else if(isModITrustStore(truststoreTipoString)) {
+					tipo = ModITruststoreEnum.PDND;
+					truststore.setPdndTipo(truststoreTipoString);
+				}*/
 				else {
 					if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS)) {
 						tipo = ModITruststoreEnum.JKS;
@@ -1432,6 +1462,32 @@ public class ModiErogazioniApiHelper {
 		
 		
 		return modi;
+	}
+	
+	private static boolean isModITrustStoreSafe(String truststoreTipoString) {
+		try {
+			return isModITrustStore(truststoreTipoString);
+		}catch(Exception e) {
+			if(Startup.getLog()!=null) {
+				Startup.getLog().error(e.getMessage(),e);	
+			}
+		}
+		return false;
+	}
+	private static boolean isModITrustStore(String truststoreTipoString) throws CoreException {
+		try {
+			List<RemoteStoreConfig> remoteStoreConfig = ModIUtils.getRemoteStoreConfig();
+			if(remoteStoreConfig!=null && !remoteStoreConfig.isEmpty()) {
+				for (RemoteStoreConfig rsc : remoteStoreConfig) {
+					if(truststoreTipoString.equals(rsc.getStoreName())) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
 	}
 
 	private static FruizioneModIRichiestaInformazioneUtente getInformazioniUtenteCodiceEnte(
@@ -1779,6 +1835,15 @@ public class ModiErogazioniApiHelper {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 				}
 				break;
+			case PDND:
+				tipo = truststoreRidefinito.getPdndTipo();
+				if(tipo==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PDND_NON_INDICATO);
+				}
+				if(!isModITrustStoreSafe(tipo)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PDND_SCONOSCIUTO_PREFIX+tipo);
+				}
+				break;
 			default:
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 			}
@@ -1821,6 +1886,8 @@ public class ModiErogazioniApiHelper {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 					}
 					break;
+				case PDND:
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_NON_SUPPORTATO_SSL);
 				default:
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 				}
@@ -2373,6 +2440,15 @@ public class ModiErogazioniApiHelper {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 				}
 				break;
+			case PDND:
+				tipo = truststoreRidefinito.getPdndTipo();
+				if(tipo==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PDND_NON_INDICATO);
+				}
+				if(!isModITrustStoreSafe(tipo)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PDND_SCONOSCIUTO_PREFIX+tipo);
+				}
+				break;
 			default:
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 			}
@@ -2415,6 +2491,8 @@ public class ModiErogazioniApiHelper {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 					}
 					break;
+				case PDND:
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_NON_SUPPORTATO_SSL);					
 				default:
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 				}
@@ -2579,6 +2657,15 @@ public class ModiErogazioniApiHelper {
 				tipo = truststoreRidefinito.getPcks11Tipo();
 				if(tipo==null) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
+				}
+				break;
+			case PDND:
+				tipo = truststoreRidefinito.getPdndTipo();
+				if(tipo==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PDND_NON_INDICATO);
+				}
+				if(!isModITrustStoreSafe(tipo)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PDND_SCONOSCIUTO_PREFIX+tipo);
 				}
 				break;
 			default:
@@ -3016,6 +3103,15 @@ public class ModiErogazioniApiHelper {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 				}
 				break;
+			case PDND:
+				tipo = truststoreRidefinito.getPdndTipo();
+				if(tipo==null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PDND_NON_INDICATO);
+				}
+				if(!isModITrustStoreSafe(tipo)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PDND_SCONOSCIUTO_PREFIX+tipo);
+				}
+				break;				
 			default:
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 			}

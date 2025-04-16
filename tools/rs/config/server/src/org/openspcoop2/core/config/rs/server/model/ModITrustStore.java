@@ -32,6 +32,9 @@ public class ModITrustStore extends BaseTrustStore {
   
   @Schema(description = "")
   private String pcks11Tipo = null;
+  
+  @Schema(description = "")
+  private String pdndTipo = null;
  /**
    * Get truststoreTipo
    * @return truststoreTipo
@@ -71,6 +74,25 @@ public class ModITrustStore extends BaseTrustStore {
     return this;
   }
 
+ /**
+   * Get pdndTipo
+   * @return pdndTipo
+  **/
+  @JsonProperty("pdnd_tipo")
+  @Valid
+ @Size(max=255)  public String getPdndTipo() {
+    return this.pdndTipo;
+  }
+
+  public void setPdndTipo(String pdndTipo) {
+    this.pdndTipo = pdndTipo;
+  }
+
+  public ModITrustStore pdndTipo(String pdndTipo) {
+    this.pdndTipo = pdndTipo;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -79,6 +101,7 @@ public class ModITrustStore extends BaseTrustStore {
     sb.append("    ").append(ModITrustStore.toIndentedString(super.toString())).append("\n");
     sb.append("    truststoreTipo: ").append(ModITrustStore.toIndentedString(this.truststoreTipo)).append("\n");
     sb.append("    pcks11Tipo: ").append(ModITrustStore.toIndentedString(this.pcks11Tipo)).append("\n");
+    sb.append("    pdndTipo: ").append(ModITrustStore.toIndentedString(this.pdndTipo)).append("\n");
     sb.append("}");
     return sb.toString();
   }

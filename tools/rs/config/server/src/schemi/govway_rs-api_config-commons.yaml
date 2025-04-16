@@ -2468,6 +2468,9 @@ components:
             pcks11_tipo:
               type: string
               maxLength: 255
+            pdnd_tipo:
+              type: string
+              maxLength: 255              
 
     ModIKeyStoreDefault:
       type: object
@@ -3843,7 +3846,7 @@ components:
       default: api
     ModITruststoreEnum:
       type: string
-      enum: ['jks', 'pkcs11']
+      enum: ['jks', 'pkcs11', 'pdnd']
       example: 'jks'
     ModIKeystoreEnum:
       type: string
