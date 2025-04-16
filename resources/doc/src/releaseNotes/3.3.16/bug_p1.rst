@@ -55,3 +55,8 @@ Per la console di monitoraggio sono stati risolti i seguenti bug:
 - Nella ricerca per token, per principal o per indirizzo ip non veniva effettuato il trim del valore inserito in input.
 
 - (https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1583) Aggiunto il suffisso '.rollingFile' ai RollingFile appender in monitor.log4j2.properties per uniformarli agli altri file di configurazione log4j del progetto.
+
+Per le API di configurazione sono stati risolti i seguenti bug:
+
+- introdotto controllo sul valore del claim 'tipo_servizio' in modo da verificare che sia uno dei valori ammessi dal profilo di interoperabiltà.
+
