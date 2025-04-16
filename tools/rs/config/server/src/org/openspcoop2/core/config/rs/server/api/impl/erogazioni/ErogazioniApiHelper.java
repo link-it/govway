@@ -457,11 +457,20 @@ public class ErogazioniApiHelper {
 	
 	public static final void fillAps(
 			AccordoServizioParteSpecifica specifico, 
-			APIImpl impl
-		) {	
+			APIImpl impl,
+			ErogazioniEnv env
+		) throws ProtocolException {	
 		
 		specifico.setNome(impl.getApiNome());
-		specifico.setTipo(impl.getTipoServizio());
+		
+		if(impl.getTipoServizio()!=null && StringUtils.isNotEmpty(impl.getTipoServizio())) {
+			List<String> l = env.protocolFactoryMgr.getProtocolFactoryByName(env.tipo_protocollo).createProtocolConfiguration().getTipiServizi(null);
+			if(l!=null && !l.contains(impl.getTipoServizio())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo servizio indicato '"+impl.getTipoServizio()+"' non supportato dal profilo '"+env.profilo+"'");
+			}
+			specifico.setTipo(impl.getTipoServizio());
+		}
+		
 		specifico.setVersione(impl.getApiVersione());
 		specifico.setPortType(impl.getApiSoapServizio());	
 	}
@@ -470,7 +479,7 @@ public class ErogazioniApiHelper {
 			throws DriverRegistroServiziException, ProtocolException {
 		final AccordoServizioParteSpecifica ret = new AccordoServizioParteSpecifica();
 				
-		fillAps(ret, impl);
+		fillAps(ret, impl, env);
 		
 		// Questo per seguire la specifica della console, che durante la creazione di un servizio soap
 		// vuole che il nome del'asps sia quello del servizio\port_type

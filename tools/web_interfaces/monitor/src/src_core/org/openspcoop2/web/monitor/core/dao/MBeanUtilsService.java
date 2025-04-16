@@ -32,7 +32,6 @@ import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
-import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTokenClient;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeTokenClient;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -43,7 +42,6 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
-import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
 import org.slf4j.Logger;
@@ -225,7 +223,14 @@ public class MBeanUtilsService {
 		}
 		else if(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tipo) || TipoCredenzialeMittente.PDND_ORGANIZATION_JSON.equals(tipo) ) {
 			// provo a cercare se l'informazione sull'organizzazione è stata asssociata ad un altro clientId della stessa organizzazione
-			cm = getPdndOrganizationJsonFromClientIdLong(search, tipo, id);
+			try {
+				cm = getPdndOrganizationJsonFromClientIdLong(search, tipo, id);
+			}catch(Exception e) {
+				// fatalError
+				if(this.log!=null) {
+					this.log.error("getPdndOrganizationJsonFromClientIdLong process failed: "+e.getMessage(),e);
+				}
+			}
 			if(cm!=null) {
 				/**System.out.println("TROVATA INFO TRAMITE RICERCA ALTERNATIVA!");*/
 				return cm;
@@ -287,7 +292,13 @@ public class MBeanUtilsService {
 		pagExpr.like(CredenzialeMittente.model().CREDENZIALE, "\""+clientId+"\"", LikeMode.ANYWHERE);
 		pagExpr.addOrder(CredenzialeMittente.model().ORA_REGISTRAZIONE, SortOrder.DESC);
 		pagExpr.limit(1);
-		List<CredenzialeMittente> l = search.findAll(pagExpr);
+		List<CredenzialeMittente> l = null;
+		try {
+			l = search.findAll(pagExpr);
+		}catch(Exception e) {
+			// fatalError
+			this.log.error("getPdndOrganizationConsumerId clientId:'"+clientId+"' failed: "+e.getMessage(),e);
+		}
 		CredenzialeMittente cmJson = null;
 		if(l!=null && !l.isEmpty()) {
 			cmJson = l.get(0);
@@ -310,7 +321,13 @@ public class MBeanUtilsService {
 		pagExpr.like(CredenzialeMittente.model().CREDENZIALE, "\""+consumerId+"\"", LikeMode.ANYWHERE);
 		pagExpr.addOrder(CredenzialeMittente.model().ORA_REGISTRAZIONE, SortOrder.DESC);
 		pagExpr.limit(1);
-		List<CredenzialeMittente> l = search.findAll(pagExpr);
+		List<CredenzialeMittente> l = null;
+		try {
+			l = search.findAll(pagExpr);
+		}catch(Exception e) {
+			// fatalError
+			this.log.error("getPdndOrganizationInfoFromConsumerId consumerId:'"+consumerId+"' failed: "+e.getMessage(),e);
+		}
 		CredenzialeMittente cmJson = null;
 		if(l!=null && !l.isEmpty()) {
 			cmJson = l.get(0);
