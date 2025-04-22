@@ -78,6 +78,8 @@ import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.CopyStream;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -107,6 +109,7 @@ public class SingleFileExporter implements IExporter{
 	private static final String ERRORE_EXPORT = "Si è verificato un errore durante l'esportazione della transazione con id:";
 	private static final String ERRORE_EXPORT_CONTENUTI = "Si è verificato un errore durante l'esportazione dei contenuti della transazione con id:";
 	private static final String ERRORE_EXPORT_FILE = "Errore durante esportazione su file";
+	public static final String EXPORT_DATE_FORMAT_MS = "yyyyMMdd_HHmmssSSS";
 	
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 	private static void logDebug(String msg) {
@@ -339,9 +342,14 @@ public class SingleFileExporter implements IExporter{
 									if(lista!=null && !lista.isEmpty()) {
 										for (int j = 0; j < lista.size(); j++) {
 											DumpMessaggioBean tentativo = lista.get(j);
-											// TODO POLI verificare se funziona correttamente.
-											long dataConsegnaErogatoreMillis = tentativo.getDataConsegnaErogatore() != null ? tentativo.getDataConsegnaErogatore().getTime() : System.currentTimeMillis() + j;
-											String dirTentativo = dirStorico+dataConsegnaErogatoreMillis+File.separator;
+											
+											Date dataConsegnaErogatoreMillis = null;
+											if(tentativo.getDataConsegnaErogatore() != null) {
+												dataConsegnaErogatoreMillis = tentativo.getDataConsegnaErogatore();
+											} else {
+												dataConsegnaErogatoreMillis = new Date(DateManager.getTimeMillis()+j);
+											}
+											String dirTentativo = dirStorico+DateUtils.getSimpleDateFormat(EXPORT_DATE_FORMAT_MS).format(dataConsegnaErogatoreMillis)+File.separator;
 											
 											for (int i = 0; i < listTipiDaEsportare.length; i++) {
 												exportContenuti(SingleFileExporter.log, tAS, tentativo.getDataConsegnaErogatore(), 

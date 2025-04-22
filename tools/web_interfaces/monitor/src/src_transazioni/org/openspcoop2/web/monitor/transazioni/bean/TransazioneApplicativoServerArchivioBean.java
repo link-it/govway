@@ -16,10 +16,13 @@ public class TransazioneApplicativoServerArchivioBean {
 	private byte[] diagnosticiRaw;
 	private List<MsgDiagnostico> diagnostici;
 	private Map<TipoMessaggio, ContenutiTransazioneArchivioBean> contenuti;
+	private Map<String, Map<TipoMessaggio, ContenutiTransazioneArchivioBean>> storico;
+	
 	
 	public TransazioneApplicativoServerArchivioBean(String nomeSA) {
 		this.nomeSA = nomeSA;
 		this.contenuti = new HashMap<>();
+		this.storico = new HashMap<>();
 		this.diagnostici = new ArrayList<>();
 	}
 
@@ -46,5 +49,8 @@ public class TransazioneApplicativoServerArchivioBean {
 	}
 	public void setDiagnosticiRaw(byte[] diagnosticiRaw) {
 		this.diagnosticiRaw = diagnosticiRaw;
+	}
+	public Map<String, Map<TipoMessaggio, ContenutiTransazioneArchivioBean>> getStorico() {
+		return this.storico;
 	}
 }
