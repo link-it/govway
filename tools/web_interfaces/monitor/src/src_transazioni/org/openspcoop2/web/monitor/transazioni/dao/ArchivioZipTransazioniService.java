@@ -1,6 +1,7 @@
 package org.openspcoop2.web.monitor.transazioni.dao;
 
 import java.io.ByteArrayInputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
@@ -41,6 +43,7 @@ import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServer
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneArchivioBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
+import org.openspcoop2.web.monitor.transazioni.exporter.SingleFileExporter;
 import org.slf4j.Logger;
 
 public class ArchivioZipTransazioniService implements ITransazioniService{
@@ -297,16 +300,99 @@ public class ArchivioZipTransazioniService implements ITransazioniService{
 
 	@Override
 	public int countDumpMessaggiGByDataConsegnaErogatore(String idTransazione, String saErogatore) {
+		TransazioneArchivioBean transazioneArchivioBean = getTransazioneFromMap(idTransazione);
+
+		if(transazioneArchivioBean != null) {
+			TransazioneApplicativoServerArchivioBean consegnaArchivioBean = transazioneArchivioBean.getConsegne().get(saErogatore);
+
+			if(consegnaArchivioBean != null) {
+				Map<String,Map<TipoMessaggio,ContenutiTransazioneArchivioBean>> storico = consegnaArchivioBean.getStorico();
+				
+				if(storico != null) {
+					return storico.size();
+				}
+			}
+		}
+		
 		return 0;
 	}
 
 	@Override
 	public Date getDataConsegnaErogatore(String idTransazione, String saErogatore, Date dataAccettazione) {
+		TransazioneArchivioBean transazioneArchivioBean = getTransazioneFromMap(idTransazione);
+
+		if(transazioneArchivioBean != null) {
+			TransazioneApplicativoServerArchivioBean consegnaArchivioBean = transazioneArchivioBean.getConsegne().get(saErogatore);
+
+			if(consegnaArchivioBean != null) {
+				Map<String,Map<TipoMessaggio,ContenutiTransazioneArchivioBean>> storico = consegnaArchivioBean.getStorico();
+				
+				if(storico != null) {
+					Date dataConsegnaErogatore = null;
+                        // Decodifica data
+					for (String key : storico.keySet()) {
+						Date dataConsegnaTmp = null;
+						try {
+							dataConsegnaTmp = DateUtils.getSimpleDateFormat(SingleFileExporter.EXPORT_DATE_FORMAT_MS).parse(key);
+						} catch (ParseException e) {
+							// la data e' un millis
+							dataConsegnaTmp = new Date(Long.parseLong(key));
+						}
+						
+						// cerco la data piu' recente
+						if (dataConsegnaErogatore == null || dataConsegnaTmp.after(dataConsegnaErogatore)) {
+							dataConsegnaErogatore = dataConsegnaTmp;
+						}
+					}
+					
+					return dataConsegnaErogatore;
+				}
+			}
+		}
+		
 		return null;
 	}
 
 	@Override
 	public List<DumpMessaggioBean> listDumpMessaggiGByDataConsegnaErogatore(String idTransazione, String saErogatore, int start, int limit) {
+		TransazioneArchivioBean transazioneArchivioBean = getTransazioneFromMap(idTransazione);
+
+		if(transazioneArchivioBean != null) {
+			TransazioneApplicativoServerArchivioBean consegnaArchivioBean = transazioneArchivioBean.getConsegne().get(saErogatore);
+
+			if(consegnaArchivioBean != null) {
+				Map<String,Map<TipoMessaggio,ContenutiTransazioneArchivioBean>> storico = consegnaArchivioBean.getStorico();
+				
+				if(storico != null) {
+					List<DumpMessaggioBean> dumpMessaggi = new ArrayList<>();
+					
+					for (Map.Entry<String, Map<TipoMessaggio, ContenutiTransazioneArchivioBean>> entry : storico.entrySet()) {
+						String key = entry.getKey();
+						Map<TipoMessaggio, ContenutiTransazioneArchivioBean> val = entry.getValue();
+						
+						DumpMessaggioBean dumpMessaggioBean = new DumpMessaggioBean();
+						dumpMessaggioBean.setIdTransazione(idTransazione);
+						dumpMessaggioBean.setServizioApplicativoErogatore(saErogatore);
+						// Decodifica data
+						try {
+							dumpMessaggioBean.setDataConsegnaErogatore(DateUtils.getSimpleDateFormat(SingleFileExporter.EXPORT_DATE_FORMAT_MS).parse(key));
+						} catch (ParseException e) {
+							// la data e' un millis
+							dumpMessaggioBean.setDataConsegnaErogatore(new Date(Long.parseLong(key)));
+						}
+						
+						for (Map.Entry<TipoMessaggio, ContenutiTransazioneArchivioBean> entry2 : val.entrySet()) {
+							TipoMessaggio tipoMessaggio = entry2.getKey();
+							dumpMessaggioBean.getTipiMessaggio().add(tipoMessaggio);
+						}
+						dumpMessaggi.add(dumpMessaggioBean);
+					}
+					// paginazione e ordinamento
+					return dumpMessaggi.stream().sorted((a, b) -> b.getDataConsegnaErogatore().compareTo(a.getDataConsegnaErogatore())).skip(start).limit(limit).collect(Collectors.toList());
+				}
+			}
+		}
+		
 		return new ArrayList<>();
 	}
 

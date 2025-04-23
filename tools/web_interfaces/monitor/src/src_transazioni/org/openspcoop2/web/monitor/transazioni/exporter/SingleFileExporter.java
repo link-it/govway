@@ -109,6 +109,7 @@ public class SingleFileExporter implements IExporter{
 	private static final String ERRORE_EXPORT = "Si è verificato un errore durante l'esportazione della transazione con id:";
 	private static final String ERRORE_EXPORT_CONTENUTI = "Si è verificato un errore durante l'esportazione dei contenuti della transazione con id:";
 	private static final String ERRORE_EXPORT_FILE = "Errore durante esportazione su file";
+	public static final String EXPORT_DATE_FORMAT_MS = "yyyyMMdd_HHmmssSSS";
 	
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger();
 	private static void logDebug(String msg) {
@@ -213,8 +214,6 @@ public class SingleFileExporter implements IExporter{
 		this(new File(pathToFile), properties, transazioniService,  
 				tracciamentoService, diagnosticiService,transazioniExport);
 	}
-	
-	public static final String EXPORT_DATE_FORMAT_MS = "yyyyMMdd_HHmmssSSS";
 	
 	private void export(String rootDir, List<TransazioneBean> transazioni) throws ExportException{
 		

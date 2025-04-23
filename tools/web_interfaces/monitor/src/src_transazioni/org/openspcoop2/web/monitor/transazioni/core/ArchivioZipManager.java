@@ -68,6 +68,7 @@ public class ArchivioZipManager {
 	private static final String ROOT_FOLDER_TRANSAZIONI = "Transazioni";
 	private static final String FOLDER_CONTENUTI = "contenuti";
 	private static final String FOLDER_CONSEGNE = "consegne";
+	private static final String FOLDER_STORICO = "storico";
 	private static final String NOME_FILE_HEADERS_TXT = "headers";
 	private static final String NOME_FILE_MANIFEST_TXT = "manifest";
 	private static final String NOME_FILE_MESSAGE = "message";
@@ -315,11 +316,25 @@ public class ArchivioZipManager {
 			}
 
 			if(chiaveConsegna != null) {
-				// Estrai il nome del contenuto dal path
-				chiaveContenuto = extractTipoContenutoConnettoreFromPath(entry.getName(), chiave, chiaveConsegna);
-				nomeContenuto = extractNomeContenutoConsegnaFromPath(entry.getName(), chiave, chiaveConsegna, chiaveContenuto);
+				String chiaveConsegnaStorico = null;
+				if(isDataStoricoConnettore(entry.getName(), chiave, chiaveConsegna)) {
+					chiaveConsegnaStorico = extractDataStoricoConnettoreFromPath(entry.getName(), chiave, chiaveConsegna);
+				}
+				// verifico che non sia una consegna storico
+				if (chiaveConsegnaStorico != null) {
+					// Estrai il nome del contenuto dal path
+					chiaveContenuto = extractTipoContenutoDataStoricoConnettoreFromPath(entry.getName(), chiave, chiaveConsegna,chiaveConsegnaStorico);
+					nomeContenuto = extractNomeContenutoDataStoricoFromPath(entry.getName(), chiave, chiaveConsegna, chiaveConsegnaStorico, chiaveContenuto);
+					
+					log.debug("Estraggo contenuto {} per il messaggio {} dello storico data {} della consegna {} della transazione {} dal file {}:", nomeContenuto, chiaveContenuto, chiaveConsegnaStorico, chiaveConsegna, chiave, entry.getName());
+				} else {
+					// Estrai il nome del contenuto dal path
+					chiaveContenuto = extractTipoContenutoConnettoreFromPath(entry.getName(), chiave, chiaveConsegna);
+					nomeContenuto = extractNomeContenutoConsegnaFromPath(entry.getName(), chiave, chiaveConsegna, chiaveContenuto);
 
-				log.debug("Estraggo contenuto {} per il messaggio {} della consegna {} della transazione {} dal file {}:", nomeContenuto, chiaveContenuto, chiaveConsegna, chiave, entry.getName());
+					log.debug("Estraggo contenuto {} per il messaggio {} della consegna {} della transazione {} dal file {}:", nomeContenuto, chiaveContenuto, chiaveConsegna, chiave, entry.getName());
+				}
+							
 				TransazioneApplicativoServerArchivioBean consegnaArchivioBean = transazionearchivioBean.getConsegne().remove(chiaveConsegna);
 
 				if(consegnaArchivioBean == null) {
@@ -329,6 +344,16 @@ public class ArchivioZipManager {
 				tipoMessaggio = getTipoMessaggioFromDirName(chiaveContenuto);
 
 				Map<TipoMessaggio, ContenutiTransazioneArchivioBean> contenuti = consegnaArchivioBean.getContenuti();
+				
+				if(chiaveConsegnaStorico != null) {
+					contenuti = consegnaArchivioBean.getStorico().remove(chiaveConsegnaStorico);
+					
+					if (contenuti == null) {
+						contenuti = new HashMap<>();
+					}
+					
+					consegnaArchivioBean.getStorico().put(chiaveConsegnaStorico, contenuti);
+				} 
 
 				estraiContenuto(fileContent, chiave, chiaveConsegna, nomeContenuto, tipoMessaggio, contenuti);
 
@@ -789,6 +814,61 @@ public class ArchivioZipManager {
 		}
 
 		return null; 
+	}
+	
+	private static boolean isDataStoricoConnettore(String path, String chiave, String connettore) {
+		// Rimozione di "Transazioni/CHIAVE/consegne/CONSEGNA/contenuti/storico/"
+		String pathToNomeContenuto = ROOT_FOLDER_TRANSAZIONI + File.separatorChar + chiave + File.separatorChar
+				+ FOLDER_CONSEGNE + File.separatorChar + connettore + File.separatorChar + FOLDER_CONTENUTI
+				+ File.separatorChar + FOLDER_STORICO + File.separatorChar;
+		int transazioniIndex = path.indexOf(pathToNomeContenuto);
+		return transazioniIndex != -1;
+	}
+	
+	private static String extractDataStoricoConnettoreFromPath(String path, String chiave, String connettore) {
+		// Rimozione di "Transazioni/CHIAVE/consegne/CONSEGNA/contenuti/storico"
+		String pathToNomeContenuto = ROOT_FOLDER_TRANSAZIONI +File.separatorChar + chiave + File.separatorChar  + FOLDER_CONSEGNE + File.separatorChar + connettore + File.separatorChar + FOLDER_CONTENUTI + File.separatorChar + FOLDER_STORICO + File.separatorChar;
+		int transazioniIndex = path.indexOf(pathToNomeContenuto);
+		if (transazioniIndex != -1) {
+			path = path.substring(transazioniIndex + pathToNomeContenuto.length());
+		}
+
+		// Rimozione di tutto quello che c'e' dopo il primo "/"
+		int endIndex = path.indexOf(File.separatorChar);
+		if (endIndex != -1) {
+			return path.substring(0, endIndex);
+		}
+
+		return null; 
+	}
+	
+	private static String extractTipoContenutoDataStoricoConnettoreFromPath(String path, String chiave, String connettore, String dataConsegna) {
+		// Rimozione di "Transazioni/CHIAVE/consegne/CONSEGNA/contenuti/storico/DATACONSEGNA/"
+		String pathToNomeContenuto = ROOT_FOLDER_TRANSAZIONI +File.separatorChar + chiave + File.separatorChar  + FOLDER_CONSEGNE + File.separatorChar + connettore + File.separatorChar + FOLDER_CONTENUTI 
+				+ File.separatorChar + FOLDER_STORICO + File.separatorChar + dataConsegna + File.separator;
+		int transazioniIndex = path.indexOf(pathToNomeContenuto);
+		if (transazioniIndex != -1) {
+			path = path.substring(transazioniIndex + pathToNomeContenuto.length());
+		}
+
+		// Rimozione di tutto quello che c'e' dopo il primo "/"
+		int endIndex = path.indexOf(File.separatorChar);
+		if (endIndex != -1) {
+			return path.substring(0, endIndex);
+		}
+
+		return null; 
+	}
+	
+	private static String extractNomeContenutoDataStoricoFromPath(String path, String chiave, String connettore, String dataConsegna, String contenuto) {
+		// Rimozione di "Transazioni/CHIAVE/consegne/CONSEGNA/contenuti/storico/DATACONSEGNA/CONTENUTO/"
+		String pathToNomeContenuto = ROOT_FOLDER_TRANSAZIONI +File.separatorChar + chiave + File.separatorChar + FOLDER_CONSEGNE + File.separatorChar +  connettore  + File.separatorChar + FOLDER_CONTENUTI 
+				+ File.separatorChar + FOLDER_STORICO + File.separatorChar + dataConsegna + File.separatorChar + contenuto + File.separator;
+		int transazioniIndex = path.indexOf(pathToNomeContenuto);
+		if (transazioniIndex != -1) {
+			path = path.substring(transazioniIndex + pathToNomeContenuto.length());
+		}
+		return path; 
 	}
 
 	private static String extractTipoContenutoConnettoreFromPath(String path, String chiave, String connettore) {
