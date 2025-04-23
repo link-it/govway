@@ -641,6 +641,7 @@ public class DeserializerTransazioni {
 				}
 
 				transazioneDest.setGruppi(sb.toString());
+				transazioneDest.setGruppiLabel(sb.toString());
 			}
 		}
 	}
