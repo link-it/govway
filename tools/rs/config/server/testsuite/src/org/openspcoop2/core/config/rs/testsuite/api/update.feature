@@ -9,6 +9,11 @@ Background:
 
 * def interfaccia = read('interfaccia_petstore.json')
 
+* def api_openapi3 = read('api_openapi3.json')
+* eval randomize(api_openapi3 , ["nome"])
+
+* def interfaccia_openapi3 = read('interfaccia_petstore_openapi3.json')
+
 * def info_generali = read('api_info_generali.json')
 * eval randomize( info_generali, ["nome"])
 
@@ -23,6 +28,11 @@ Background:
 Scenario: Api Update Interfaccia 204
 
     * call update_204 ( { resourcePath: 'api', body: api, body_update: interfaccia, key: api.nome + '/' + api.versione + '/interfaccia', delete_key: api.nome + '/' + api.versione } )
+
+@UpdateInterfacciaOpenAPI3_204
+Scenario: Api OpenAPI 3 Update Interfaccia 204
+
+    * call update_204 ( { resourcePath: 'api', body: api_openapi3, body_update: interfaccia_openapi3, key: api_openapi3.nome + '/' + api_openapi3.versione + '/interfaccia', delete_key: api_openapi3.nome + '/' + api_openapi3.versione } )
 
 @UpdateInfoGenerali204
 Scenario: Api Update Info Generali 204

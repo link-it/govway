@@ -133,6 +133,11 @@
 				<include name="micrometer-observation-1.13.3.jar"/>
 				<include name="micrometer-commons-1.13.3.jar"/>
 			</lib>
+			<lib dir="${openspcoop2.lib}/json">
+				<include name="accessors-smart-2.5.2.jar"/>
+				<include name="json-smart-2.5.2.jar"/>
+				<include name="json-path-2.9.0-gov4j-1.jar"/>
+			</lib>
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>
 			</lib>
