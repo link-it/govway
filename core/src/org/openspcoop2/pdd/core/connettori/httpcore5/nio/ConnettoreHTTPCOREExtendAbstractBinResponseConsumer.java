@@ -60,6 +60,8 @@ public class ConnettoreHTTPCOREExtendAbstractBinResponseConsumer extends Abstrac
 	protected ConnettoreHTTPCOREResponse buildResult() {
 		// NOTA: non funziona in streaming. Il complete viene chiamato solamente quando è stato letto tutto lo stream
 		/**System.out.println("BUILD RESULT!");*/
+		if (this.stream == null)
+			this.stream = new ByteArrayOutputStream();
 		this.res.setEntity(new InputStreamEntity(new ByteArrayInputStream(this.stream.toByteArray()), this.ct));
 		return this.res;
 	}

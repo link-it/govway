@@ -110,21 +110,90 @@ public class TransactionContext {
 		
 		/**System.out.println("FILL ["+thNames.size()+"] ["+thNames+"]");*/
 		
+		List<String> threadsClientNio = new ArrayList<>();
+		
 		for (String tName : thNames) {
-			TransactionInfo tInfo = setTransactionInfoThreadLocal.get(tName);
-			if(tInfo!=null && tInfo.transaction!=null) {
-				String id = null;
-				try {
-					id = tInfo.transaction.getId();
-				}catch(Throwable t) {
-					// potrebbe diventare null
+			fillTransactionKeysThreadLocal(tName, threadsClientNio, keys);
+		}
+		
+		if(useThreadLocal) {
+			fillTransactionKeysThreadLocalCleanThreadNio(threadsClientNio,thNames, keys);
+		}
+	}
+	private static boolean isClientNio(String tName) {
+		return tName.startsWith("httpclient-dispatch");
+	}
+	private static void fillTransactionKeysThreadLocal(String tName, List<String> threadsClientNio, List<String> keys) {
+		TransactionInfo tInfo = setTransactionInfoThreadLocal.get(tName);
+		if(tInfo!=null && tInfo.transaction!=null) {
+			String id = null;
+			try {
+				id = tInfo.transaction.getId();
+			}catch(Throwable t) {
+				// potrebbe diventare null
+			}
+			/**System.out.println("tName id["+id+"]");*/
+			if(id!=null) {
+				if(useThreadLocal) {
+					String threadNameId = formatThreadId(tName, id);
+					if(isClientNio(tName) && !threadsClientNio.contains(threadNameId)) {
+						threadsClientNio.add(threadNameId);
+					}
+					keys.add(threadNameId);
 				}
-				/**System.out.println("tName id["+id+"]");*/
-				if(id!=null) {
+				else {
 					keys.add(id);
 				}
 			}
 		}
+	}
+	private static String formatThreadId(String tName, String id) {
+		return "Thread:"+tName+" id:"+id;
+	}
+	private static String extractIdFromFormatThreadId(String id) { 
+		String f = " id:";
+		if(id.contains(f)) {
+			String [] split = id.split(f);
+			if(split.length==2) {
+				return split[1];
+			}
+		}
+		return id;
+	}
+	private static void fillTransactionKeysThreadLocalCleanThreadNio(List<String> threadsClientNio, List<String> thNames, List<String> keys) {
+		if(!threadsClientNio.isEmpty()) {
+			for (String threadNameId : threadsClientNio) {
+				String id = extractIdFromFormatThreadId(threadNameId);
+				boolean find = existsAnotherThreadWithSameId(thNames, id);
+				if(!find) {
+					// rimane perchè la gestione (ConnettoreHTTPCORETransactionThreadContextSwitchEntityProducer<T extends AsyncEntityProducer> implements AsyncEntityProducer) funziona male
+					// in caso di errori di timeout non viene chiamato ne il metodo 'releaseResources' ne il metodo 'failed'
+					keys.remove(threadNameId);
+					/**System.out.println("Remove ["+threadNameId+"]");*/
+				}
+			}
+		}
+	}
+	private static boolean existsAnotherThreadWithSameId(List<String> thNames, String id) {
+		boolean find = false;
+		for (String tName : thNames) {
+			if(!isClientNio(tName)) {
+				TransactionInfo tInfo = setTransactionInfoThreadLocal.get(tName);
+				String idAltroThread = null;
+				if(tInfo!=null && tInfo.transaction!=null) {
+					try {
+						idAltroThread = tInfo.transaction.getId();
+					}catch(Throwable t) {
+						// potrebbe diventare null
+					}
+				}
+				if(idAltroThread!=null && idAltroThread.equals(id)) {
+					find = true;
+					break;
+				}
+			}
+		}
+		return find;
 	}
 			
 	
@@ -155,6 +224,8 @@ public class TransactionContext {
 			}catch(Exception e){
 				throw new TransactionNotExistsException(INDICAZIONE_GESTIONE_STATEFUL_ERRATA+e.getMessage(),e);
 			}
+			/**String tName = Thread.currentThread().getName();
+			System.out.println("TX create ("+id+") per thread ["+tName+"]");**/
 			transactionContextThreadLocal.get().transaction = new Transaction(id, originator, gestioneStateful);
 		}
 	}
@@ -170,6 +241,8 @@ public class TransactionContext {
 			}catch(Exception e){
 				throw new TransactionNotExistsException(INDICAZIONE_GESTIONE_STATEFUL_ERRATA+e.getMessage(),e);
 			}
+			/**String tName = Thread.currentThread().getName();
+			System.out.println("TX set ("+id+") per thread ["+tName+"]");*/
 			transactionContextThreadLocal.get().transaction = transaction;
 		}
 	}
@@ -211,6 +284,8 @@ public class TransactionContext {
 	
 	public static Transaction removeTransaction(String id){
 		if(useThreadLocal) {
+			/**String tName = Thread.currentThread().getName();
+			System.out.println("TX remove ("+id+") per thread ["+tName+"]");*/
 			Transaction t = transactionContextThreadLocal.get().transaction;
 			transactionContextThreadLocal.get().transaction = null;
 			return t;

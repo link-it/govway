@@ -162,7 +162,7 @@ public class SoapTest extends ConfigLoader {
 		
 		verifyResponseContent(content, response, addHeader, soap11, operazione);
 		
-		DBVerifier.verify(idTransazione, esitoExpected, null);
+		DBVerifier.verify(idTransazione, esitoExpected);
 	}
 	
 	public static void verifyOk(HttpResponse response, int code, String contentType, Logger logCore) throws Exception {

@@ -92,10 +92,13 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 				});
 			} else {
 				super.writeTo(out, msg, consume);
-				this.asyncWriteTask.complete( true );
 			}
 		} catch (Exception e) {
 			doMessageErrorWriteTo(e);
+		} finally {
+			if ( !this.flowStream ) {
+				this.asyncWriteTask.complete( true );
+			}
 		}
 	}
 	private void doMessageErrorWriteTo(Exception e) throws MessageException {
@@ -131,10 +134,13 @@ public class HttpServletConnectorAsyncOutMessage extends HttpServletConnectorOut
 				});
 			} else {
 				httpServletConnectorOutMessage.sendResponseByBuffer(message);
-				this.asyncWriteTask.complete( true );
 			}
 		} catch (Exception e) {
 			doConnectionErrorWriteTo(e);
+		} finally {
+			if ( !this.flowStream ) {
+				this.asyncWriteTask.complete( true );
+			}
 		}
 	}
 	private void doConnectionErrorWriteTo(Exception e) throws ConnectorException {

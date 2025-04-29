@@ -1,3 +1,15 @@
+2025-02-29  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [TestsuiteProtocolloTrasparente]
+	Aggiunta funzionalità #1588
+	Aggiunti test che verificano le funzionalità dei connettori per le implementazioni tramite httpcore NIO/BIO e la precedente libreria urlConnection
+
+2025-04-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #562
+	Completata integrazione dei connettori NIO
+
 2025-04-18  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.16.p1

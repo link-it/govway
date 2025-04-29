@@ -78,14 +78,28 @@ public class ConnettoreHTTPCORETransactionThreadContextSwitchEntityProducer<T ex
 		this.wrapped.produce(channel);
 	}
 	
+	private boolean released = false;
+	
 	@Override
 	public void releaseResources() {
 		
-		if(this.switchThreadContext) {
+		if(this.switchThreadContext && !this.released) {
 			this.connettore.removeThreadLocalContext(this.function, this.switchThreadLocalContextDoneHolder);
+			this.released = true;
 		}
 
 		this.wrapped.releaseResources();
+	}
+	
+	@Override
+	public void failed(Exception e) {
+		
+		if(this.switchThreadContext && !this.released) {
+			this.connettore.removeThreadLocalContext(this.function, this.switchThreadLocalContextDoneHolder);
+			this.released = true;
+		}
+		
+		this.wrapped.failed(e);
 	}
 	
 	
@@ -110,10 +124,6 @@ public class ConnettoreHTTPCORETransactionThreadContextSwitchEntityProducer<T ex
 	@Override
 	public boolean isChunked() {
 		return this.wrapped.isChunked();
-	}
-	@Override
-	public void failed(Exception e) {
-		this.wrapped.failed(e);
 	}
 	@Override
 	public boolean isRepeatable() {

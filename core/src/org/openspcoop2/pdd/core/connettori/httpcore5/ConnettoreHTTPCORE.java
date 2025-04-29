@@ -745,6 +745,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 						}
 						this.contentLength = -1;
 						try {
+							this.disconnect();
 							return this.send(request); // caching ricorsivo non serve
 						}finally {
 							/**System.out.println("CHECK ["+redirectLocation+"]");

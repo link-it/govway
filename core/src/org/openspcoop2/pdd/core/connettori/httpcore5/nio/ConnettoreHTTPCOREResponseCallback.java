@@ -62,8 +62,8 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 	private boolean switchThreadContext = false; 
 	private String function;
 	private BooleanNullable switchThreadLocalContextDoneHolder = BooleanNullable.FALSE();
-	
-	public ConnettoreHTTPCOREResponseCallback(ConnettoreHTTPCORE connettore, ConnettoreMsg request, HttpBodyParameters httpBody ) {
+		
+	public ConnettoreHTTPCOREResponseCallback(ConnettoreHTTPCORE connettore, ConnettoreMsg request, HttpBodyParameters httpBody) {
 		this.connettore = connettore;
 		this.request = request;
 		this.httpBody = httpBody;
@@ -236,33 +236,16 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 								throw new ConnettoreException("Return code ["+this.connettore.getCodiceTrasporto()+"] (redirect "+HttpConstants.REDIRECT_LOCATION+":"+redirectLocation+") non consentito dal WS-I Basic Profile (http://www.ws-i.org/Profiles/BasicProfile-1.1-2004-08-24.html#HTTP_Redirect_Status_Codes)");
 							
 						}
-
-						org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE connettoreySyncRedirect = new org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE();
-						/**org.openspcoop2.pdd.core.PdDContext pddContext = new org.openspcoop2.pdd.core.PdDContext();
-						for (String key : this.connettore.getPddContext().keys()) {
-							pddContext.addObject(key, this.connettore.getPddContext().getObject(key));
-						}*/
-						connettoreySyncRedirect.init(this.connettore.getPddContext(), this.connettore.getProtocolFactory());
-						connettoreySyncRedirect.setHttpMethod(this.connettore.getHttpMethod());
-						IAsyncResponseCallback callback = this.request.getAsyncResponseCallback();
-						try {
-							this.request.setAsyncResponseCallback(null);
-							@SuppressWarnings("unused")
-							boolean success = connettoreySyncRedirect.send(null, this.request); // caching ricorsivo non serve
-							
-							this.connettore.setResponseMsg(connettoreySyncRedirect.getResponse());
-							this.connettore.setCodiceTrasporto(connettoreySyncRedirect.getCodiceTrasporto());
-							this.connettore.setResultHTTPMessage(connettoreySyncRedirect.getResultHTTPMessage());
-							this.connettore.setContentLength(connettoreySyncRedirect.getContentLength());
+						
+						if(this.connettore.getPropertiesTrasportoRisposta() != null) {
 							this.connettore.getPropertiesTrasportoRisposta().clear();
-							this.connettore.getPropertiesTrasportoRisposta().putAll(connettoreySyncRedirect.getPropertiesTrasportoRisposta());
-							this.connettore.setTipoRisposta(TransportUtils.getObjectAsString(mapHeaderHttpResponse, HttpConstants.CONTENT_TYPE));
-							this.connettore.setInputStreamResponse(connettoreySyncRedirect.getIsResponse());
-							/**this.connettore.setAsyncInvocationSuccess(success);
-							return;*/
-						}finally {
-							this.request.setAsyncResponseCallback(callback);
 						}
+						
+						IAsyncResponseCallback callback = this.request.getAsyncResponseCallback();
+						this.request.setAsyncResponseCallback(new ConnettoreHTTPCORERedirectCallback(this, callback));
+						this.connettore.disconnect();
+						this.connettore.send(this.request);
+						return;
 
 					}else{
 						if(this.connettore.isSoap()) {
@@ -288,60 +271,86 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 					}
 				}
 			}
+
+		}  catch(Exception e){ 
+			this.writeExceptionResponse(e);
+			this.notifyCallbackFinished(AsyncResponseCallbackClientEvent.COMPLETED);
+			this.connettore.freeResources();
+			return;
+		}
+		
+		this.handleResponse();
+	}
+	
+	public void handlePostRedirect(IAsyncResponseCallback prevCB) {		
+		
+		try {
 			
-			
-
-
-
-
+			if (this.connettore.getEccezioneProcessamento() != null)
+				throw this.connettore.getEccezioneProcessamento();
+			if (this.connettore.getMaxNumberRedirects() == this.connettore.getNumberRedirect())
+				throw new ConnettoreException(ConnettoreUtils.getPrefixRedirect(this.connettore.getCodiceTrasporto(), this.connettore.getRedirectLocation())+"non consentita ulteriormente, sono già stati gestiti "+this.connettore.getMaxNumberRedirects()+" redirects: "+this.connettore.getRouteRedirect());
+		} catch (Exception e) {
+			this.writeExceptionResponse(e);
+		} finally {
+			this.request.setAsyncResponseCallback(prevCB);
+			this.notifyCallbackFinished(AsyncResponseCallbackClientEvent.COMPLETED);
+		}
+	}
+	
+	private void handleResponse() {
+		
+		Map<String, List<String>> connettorePropertiesTrasportoRisposta = this.connettore.getPropertiesTrasportoRisposta();
+		
+		try {
 			/* ------------  PostOutRequestHandler ------------- */
 			this.connettore.postOutRequest();
-
-
-
-
+	
+	
+	
+	
 			/* ------------  PreInResponseHandler ------------- */
 			this.connettore.preInResponse();
-
+	
 			// Lettura risposta parametri NotifierInputStream per la risposta
 			this.connettore.setNotifierInputStreamParams(null);
 			if(this.connettore.getPreInResponseContext()!=null){
 				this.connettore.setNotifierInputStreamParams(this.connettore.getPreInResponseContext().getNotifierInputStreamParams());
 			}
-
-
+	
+	
 			/* ------------  Gestione Risposta ------------- */
-
+	
 			this.connettore.normalizeInputStreamResponse(this.connettore.readConnectionTimeout, this.connettore.readConnectionTimeoutConfigurazioneGlobale);
-
+	
 			this.connettore.initCheckContentTypeConfiguration();
-
+	
 			if(this.connettore.isDumpBinarioRisposta() &&
 				!this.connettore.dumpResponse(connettorePropertiesTrasportoRisposta)) {
 				this.connettore.setAsyncInvocationSuccess(false);
 				return;
 			}
-
+	
 			if(this.connettore.isRest()){
-
+	
 				if(!this.connettore.doRestResponse()){
 					this.connettore.setAsyncInvocationSuccess(false);
 					return;
 				}
-
+	
 			}
 			else{
-
+	
 				if(!this.connettore.doSoapResponse()){
 					this.connettore.setAsyncInvocationSuccess(false);
 					return;
 				}
-
+	
 			}
-
+	
 			if(this.connettoreDebug)
 				this.connettoreLogger.info("Gestione invio/risposta http effettuata con successo",false);
-
+	
 			this.connettore.setAsyncInvocationSuccess(true);
 
 		}  catch(Exception e){ 
@@ -351,17 +360,17 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 		} finally {
 			
 			this.notifyCallbackFinished(AsyncResponseCallbackClientEvent.COMPLETED);
-			
 		}
-
-		
 	}
 
 	@Override
 	public void failed(final Exception e) {
 		try {
+			if(this.switchThreadContext) {
+				switchThreadContext("failed");
+			}
 			
-			if(this.connettoreDebug) {
+			if(this.connettoreDebug && this.connettoreLogger!=null) {
 				this.connettoreLogger.debug("NIO - Callback Response started after 'failed' event ...");
 			}
 			
@@ -378,6 +387,13 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 	public void cancelled() {
 		
 		try {
+			if(this.switchThreadContext) {
+				switchThreadContext("cancelled");
+			}
+			
+			if(this.connettoreDebug && this.connettoreLogger!=null) {
+				this.connettoreLogger.debug("NIO - Callback Response started after 'cancelled' event ...");
+			}
 			
 			this.writeExceptionResponse(new Exception("Cancelled") );
 			
@@ -389,16 +405,19 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 		
 	}
 	
-	private void notifyCallbackFinished(AsyncResponseCallbackClientEvent clientEvent) {
-		// se per caso non l'ho ancora chiuso lo faccio
-		if(this.connettore.cloasebleDumpBout!=null) { 
-			try {
-				this.connettore.cloasebleDumpBout.clearResources();
-				this.connettore.cloasebleDumpBout = null;
-			}catch(Exception t) {
-				this.connettoreLogger.error(ConnettoreHTTPCORE.MSG_RELEASE_RESOURCES_FAILED+t.getMessage(),t);
+	private void switchThreadContext(String method) {
+		try {
+			this.connettore.checkThreadLocalContext(this.function, this.switchThreadLocalContextDoneHolder);
+		} catch(Exception eError){ 
+			if(this.connettoreLogger!=null) {
+				this.connettoreLogger.error("gestione checkThreadLocalContext in '"+method+"' terminata con errore: "+eError.getMessage(),eError);
 			}
 		}
+	}
+
+	private void notifyCallbackFinished(AsyncResponseCallbackClientEvent clientEvent) {
+		// se per caso non l'ho ancora chiuso lo faccio
+		this.connettore.freeResources();
 		this.connettore.asyncComplete(clientEvent);
 		if(this.connettoreDebug) {
 			this.connettoreLogger.debug("NIO - Callback Response finished");
@@ -408,6 +427,13 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 	private void writeExceptionResponse(final Exception e) {
 		this.connettore.setEccezioneProcessamento(e);
 		String msgErrore = this.connettore.readExceptionMessageFromException(e);
+		
+		boolean connect = this.connettore.processConnectionTimeoutException(this.connettore.connectionTimeout, this.connettore.connectionTimeoutConfigurazioneGlobale, e, msgErrore);
+		
+		boolean read = this.connettore.processReadTimeoutException(this.connettore.readConnectionTimeout, this.connettore.readConnectionTimeoutConfigurazioneGlobale, e, msgErrore);
+		
+		msgErrore = ConnettoreHTTPCORE.correctMessageTimeout(connect, read, msgErrore);
+		
 		if(this.connettore.isGenerateErrorWithConnectorPrefix()) {
 			this.connettore.setErrore("Errore avvenuto durante la consegna HTTP: "+msgErrore);
 		}
@@ -415,10 +441,6 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 			this.connettore.setErrore(msgErrore);
 		}
 		this.connettoreLogger.error("Errore avvenuto durante la consegna HTTP: "+msgErrore,e);
-		
-		this.connettore.processConnectionTimeoutException(this.connettore.connectionTimeout, this.connettore.connectionTimeoutConfigurazioneGlobale, e, msgErrore);
-		
-		this.connettore.processReadTimeoutException(this.connettore.readConnectionTimeout, this.connettore.readConnectionTimeoutConfigurazioneGlobale, e, msgErrore);
 		
 		this.connettore.setAsyncInvocationSuccess(false);
 	}

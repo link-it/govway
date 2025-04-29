@@ -185,22 +185,41 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 	}
 	
 	public static boolean isReadTimeoutException(Exception e, String message){
-		return "Read timed out".equals(message) && (e instanceof java.net.SocketTimeoutException);
+		return (e instanceof java.net.SocketTimeoutException)
+				&&
+				(
+						("Read timed out".equals(message))
+						||
+						(message.contains(" MILLISECONDS") && !(e instanceof org.apache.hc.client5.http.ConnectTimeoutException)) // httpclient5 nio usa una eccezione specifica solo per il connect timeout
+				);
 	}
 	public static boolean containsReadTimeoutException(Exception e, String message){
-		return message!=null && message.contains("Read timed out") && (e instanceof java.net.SocketTimeoutException || Utilities.existsInnerException(e, java.net.SocketTimeoutException.class));
+		return (message!=null)
+				&&
+				(
+						(message.contains("Read timed out"))
+						||
+						(message.contains(" MILLISECONDS") && !(e instanceof org.apache.hc.client5.http.ConnectTimeoutException) && !(Utilities.existsInnerException(e, org.apache.hc.client5.http.ConnectTimeoutException.class))) // httpclient5 nio usa una eccezione specifica solo per il connect timeout
+				)
+				&&
+				(e instanceof java.net.SocketTimeoutException || Utilities.existsInnerException(e, java.net.SocketTimeoutException.class));		
 	}
-	public void processReadTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
+	public boolean processReadTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
+		boolean isException = false;
     	try {
-	    	if(timeout>0 && isReadTimeoutException(e, message)) {
-	      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.WAIT_RESPONSE);
-	    		notifier.notify(timeout);
+	    	if(timeout>0) {
+	    		isException = isReadTimeoutException(e, message);
+	    		if(isException) {
+		      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.WAIT_RESPONSE);
+		    		notifier.notify(timeout);
+	    		}
 	    	}
     	}catch(Exception error) {
     		if(this.logger!=null) {
     			this.logger.error("Errore avvenuto durante la registrazione dell'evento di read timeout: "+error.getMessage(),error);
     		}
     	}
+    	return isException;
     }
     
     public static boolean isConnectionTimeoutException(Exception e, String message){
@@ -208,6 +227,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
     				"connect timed out".equals(message) // http url connection
     				||
     				(message!=null && message.contains("Connect timed out")) // httpcore5
+    				||
+    				(e instanceof org.apache.hc.client5.http.ConnectTimeoutException) // httpclient5 nio, l'eccezione estende comunque java.net.SocketTimeoutException
     			)
     			&&
     			(e instanceof java.net.SocketTimeoutException);
@@ -218,6 +239,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						message.contains("connect timed out") // http url connection
 						||
 						message.contains("Connect timed out") // httpcore5
+	    				||
+	    				(e instanceof org.apache.hc.client5.http.ConnectTimeoutException || Utilities.existsInnerException(e, org.apache.hc.client5.http.ConnectTimeoutException.class)) // httpclient5 nio, l'eccezione estende comunque java.net.SocketTimeoutException
 				)
 				&& 
 				(
@@ -226,17 +249,22 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						Utilities.existsInnerException(e, java.net.SocketTimeoutException.class)
 				);
 	}
-    public void processConnectionTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
+    public boolean processConnectionTimeoutException(int timeout, boolean configurazioneGlobale, Exception e, String message) {
+    	boolean isException = false;
     	try {
-	    	if(timeout>0 && isConnectionTimeoutException(e, message)) {
-	      		TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.CONNECTION);
-	    		notifier.notify(timeout);
+    		if(timeout>0) {
+    			isException = isConnectionTimeoutException(e, message); 
+    			if(isException) {
+    				TimeoutNotifier notifier = getTimeoutNotifier(timeout, configurazioneGlobale, TimeoutNotifierType.CONNECTION);
+    				notifier.notify(timeout);
+    			}
 	    	}
     	}catch(Exception error) {
     		if(this.logger!=null) {
     			this.logger.error("Errore avvenuto durante la registrazione dell'evento di connection timeout: "+error.getMessage(),error);
     		}
     	}
+    	return isException;
     }
 	
 	public void initCheckContentTypeConfiguration(){		

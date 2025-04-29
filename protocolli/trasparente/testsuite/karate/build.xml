@@ -232,50 +232,84 @@
 		<delete dir="${log_testsuite}"/>
 		<mkdir dir="${output}"/>
 		<mkdir dir="${log_testsuite}"/>
+		
+		<var name="deleteFiles" value=""/>
+                <if>
+                        <or>
+                                <equals arg1="${delete}" arg2="$${delete}"/>
+                                <equals arg1="${delete}" arg2="true" />
+                        </or>
+                        <then>
+                                <path id="configurazione.files">
+                                        <fileset dir="${src_testsuite}/configurazioni-govway">
+                                                <include name="*.zip"/>
+                                        </fileset>
+                                </path>
+                                <property name="deleteFileProp" refid="configurazione.files"/>
+                                <var name="deleteFiles" value="${deleteFileProp}"/>
+                        </then>
+                        <elseif>
+				<not>
+					<equals arg1="${delete}" arg2="false" />
+				</not>
+                                <then>
+                                        <var name="deleteFiles" value="${delete}"/>
+                                </then>
+                        </elseif>
+                </if>
 
-		<var name="loadEnabled" value="true"/>
+		<var name="loadFiles" value=""/>
 		<if>
-			<not>
+			<or>
 				<equals arg1="${load}" arg2="$${load}"/>
-			</not>
+				<equals arg1="${load}" arg2="true" />
+			</or>
 			<then>
-				<var name="loadEnabled" value="${load}"/>
+				<path id="configurazione.files">
+					<fileset dir="${src_testsuite}/configurazioni-govway">
+        					<include name="*.zip"/>
+    					</fileset>
+				</path>
+				<property name="loadFileProp" refid="configurazione.files"/>
+				<var name="loadFiles" value="${loadFileProp}"/>
 			</then>
-		</if>
-		<var name="deleteEnabled" value="true"/>
-		<if>
-			<not>
-				<equals arg1="${delete}" arg2="$${delete}"/>
-			</not>
-			<then>
-				<var name="deleteEnabled" value="${delete}"/>
-			</then>
+			<elseif>
+				<not>
+                                        <equals arg1="${load}" arg2="false" />
+                                </not>
+				<then>
+					<var name="loadFiles" value="${load}"/>
+				</then>
+			</elseif>
 		</if>
 
-		<if>
-			<equals arg1="${loadEnabled}" arg2="true"/>
-			<then>
-
-				<echo message="Caricamento configurazione in corso (delete) ..." />
+		<echo message="Bundle selezionati creazione: [${loadFiles}]" />
+		<for list="${loadFiles}" delimiter=":" param="loadFile">
+			<sequential>
+				<local name="filename" />
+				<basename property="filename" file="@{loadFile}"/>
+				<echo message="Bundle: ${filename}, caricamento configurazione in corso (delete) ..." />
 				<java classname="org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader" fork="true">
 					<arg value="false" />
+					<arg value="${src_testsuite}/configurazioni-govway/${filename}" />
 					<classpath>
 						<path refid="karate_testsuite" />
 						<pathelement path="${build_testsuite}"/>
 					</classpath>
 				</java>
 
-				<echo message="Caricamento configurazione in corso (create) ..." />
+				<echo message="Bundle: ${filename}, caricamento configurazione in corso (create) ..." />
 				<java classname="org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader" fork="true">
 					<arg value="true" />
+					<arg value="${src_testsuite}/configurazioni-govway/${filename}" />
 					<classpath>
 						<path refid="karate_testsuite" />
 						<pathelement path="${build_testsuite}"/>
 					</classpath>
 				</java>
 				<echo message="Caricamento configurazione completata" />
-			</then>
-		</if>
+			</sequential>
+		</for>
 
 		<var name="karateparams" value=""/>
 		<if>
@@ -560,20 +594,23 @@
 			</else>
 		</if>
 
-		<if>
-			<equals arg1="${deleteEnabled}" arg2="true"/>
-			<then>
-				<echo message="Eliminazione configurazione in corso ..." />
+		<echo message="Bundle selezionati eliminazione: [${deleteFiles}]" />
+		<for list="${deleteFiles}" delimiter=":" param="deleteFile">
+                        <sequential>
+				<local name="filename" />
+				<basename property="filename" file="@{deleteFile}"/>
+				<echo message="Bundle: ${filename}, eliminazione configurazione in corso ..." />
 				<java classname="org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader" fork="true">
 					<arg value="false" />
+					<arg value="${src_testsuite}/configurazioni-govway/${filename}" />
 					<classpath>
 						<path refid="karate_testsuite" />
 						<pathelement path="${build_testsuite}"/>
 					</classpath>
 				</java>
 				<echo message="Eliminazione configurazione effettuata" />
-			</then>
-		</if>
+			</sequential>
+		</for>
 
 		<junitreport todir="${output}">
 			<fileset dir="${output}">

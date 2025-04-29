@@ -25,8 +25,10 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibraryMode;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -43,20 +45,25 @@ import org.slf4j.Logger;
 * EngineTest
 *
 * @author Francesco Scarlato (scarlato@link.it)
+* @author Tommaso Burlon (tommas.burlon@link.it)
 * @author $Author$
 * @version $Rev$, $Date$
 */
 public class RedirectUtilities {
 
+	public static final String NOT_FOLLOW = "not-follow";
+	public static final String FOLLOW = "follow";
+	public static final String FOLLOW_MAXHOP = "follow-maxhop";
+	
 	public static void _test(
 			Logger logCore,
 			String api, String operazione, 
 			int numeroRedirect, int httpRedirectStatus, boolean relative,
-			boolean withContent, String contentType, String contentS) throws Exception {
+			boolean withContent, String contentType, String contentS, HttpLibraryMode mode) throws Exception {
 
 		Date now = DateManager.getDate();
 
-		String url = System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+api+"/v1/"+operazione;
+		String url = System.getProperty("govway_base_path") + "/in/SoggettoInternoTest/"+api+"/v1/"+operazione;
 		if(httpRedirectStatus!=307) {
 			if(!url.contains("?")) {
 				url = url + "?";
@@ -99,6 +106,9 @@ public class RedirectUtilities {
 		
 		request.setUrl(url);
 		
+		if (mode != null)
+			mode.patchRequest(request);
+		
 		HttpResponse response = null;
 		try {
 			response = HttpUtilities.httpInvoke(request);
@@ -109,10 +119,10 @@ public class RedirectUtilities {
 		String idTransazione = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		assertNotNull(idTransazione);
 		
-		String diagnostico = null;
+		Pattern diagnostico = null;
 		long esitoExpected = -1;
 		if(numeroRedirect>0) {
-			if("follow-maxhop".equals(operazione)) {
+			if(FOLLOW_MAXHOP.equals(operazione)) {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
 				if(api.contains("REST")) {
 					verifyKo(response, 503, HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807, "APIUnavailable");
@@ -120,7 +130,7 @@ public class RedirectUtilities {
 				else {
 					verifyKo(response, 500, contentTypeError, "APIUnavailable");
 				}
-				diagnostico = "non consentita ulteriormente, sono già stati gestiti 2 redirects";
+				diagnostico = Pattern.compile(".*" + Pattern.quote("non consentita ulteriormente, sono già stati gestiti 2 redirects") + ".*");
 			}
 			else {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
@@ -131,26 +141,26 @@ public class RedirectUtilities {
 			if(api.contains("SOAP")) {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.ERRORE_INVOCAZIONE);
 				verifyKo(response, 500, contentTypeError, "APIUnavailable");
-				diagnostico = "Gestione redirect (code:"+httpRedirectStatus+" Location:http://localhost:8080/govway/SoggettoInternoTest/BackendRedirect/v1%) non attiva";
+				diagnostico = Pattern.compile(".*" + Pattern.quote("Gestione redirect (code:"+httpRedirectStatus+" Location:http://localhost:8080/govway/SoggettoInternoTest/BackendRedirect/v1") + ".*" + Pattern.quote(") non attiva") + ".*");
 				if(relative) {
-					diagnostico = "Gestione redirect (code:"+httpRedirectStatus+" Location:/govway/SoggettoInternoTest/BackendRedirect/v1%) non attiva";
+					diagnostico = Pattern.compile(".*" + Pattern.quote("Gestione redirect (code:"+httpRedirectStatus+" Location:/govway/SoggettoInternoTest/BackendRedirect/v1") + ".*" + Pattern.quote(") non attiva") + ".*");
 				}
 			}
 			else {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.HTTP_3xx);
 				verifyOk(response, httpRedirectStatus, contentType, contentS, logCore); // il codice http e' gia' stato impostato
-				diagnostico = " [redirect-location: http://localhost:8080/govway/SoggettoInternoTest/BackendRedirect/v1";
+				diagnostico = Pattern.compile(".*" + Pattern.quote(" [redirect-location: http://localhost:8080/govway/SoggettoInternoTest/BackendRedirect/v1") + ".*");
 				if(relative) {
-					diagnostico = " [redirect-location: /govway/SoggettoInternoTest/BackendRedirect/v1";
+					diagnostico = Pattern.compile(".*" + Pattern.quote(" [redirect-location: /govway/SoggettoInternoTest/BackendRedirect/v1") + ".*");
 				}
 			}
 		}
 		
-		DBVerifier.verify(idTransazione, esitoExpected, diagnostico);
+		DBVerifier.verify(idTransazione, esitoExpected, diagnostico, mode);
 		
 		List<String> idByCheckApplicativo = DBVerifier.getIdsTransazioneByIdApplicativoRichiesta(idTransazione, now);
 		assertNotNull(idByCheckApplicativo);
-		if("follow-maxhop".equals(operazione)) {
+		if(FOLLOW_MAXHOP.equals(operazione)) {
 			boolean expected = idByCheckApplicativo.size()==3;
 			if(!expected) {
 				throw new Exception("Attese "+(numeroRedirect+1)+" transazioni di backend con id correlazione '"+idTransazione+"', trovate "+idByCheckApplicativo.size()+"");
@@ -170,14 +180,14 @@ public class RedirectUtilities {
 		}
 		
 		for (int i = 0; i < idByCheckApplicativo.size(); i++) {
-			diagnostico = " [redirect-location: http://localhost:8080/TestService/echo";
+			String diagnosticoStr = " [redirect-location: http://localhost:8080/TestService/echo";
 			if(relative) {
-				diagnostico = " [redirect-location: /TestService/echo";
+				diagnosticoStr = " [redirect-location: /TestService/echo";
 			}
 			if(i==(idByCheckApplicativo.size()-1)) {
-				if(!"follow-maxhop".equals(operazione) && numeroRedirect>0) {
+				if(!FOLLOW_MAXHOP.equals(operazione) && numeroRedirect>0) {
 					esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.OK);
-					diagnostico = null;
+					diagnosticoStr = null;
 				}
 				else {
 					esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.HTTP_3xx);
@@ -186,7 +196,7 @@ public class RedirectUtilities {
 			else {
 				esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(EsitoTransazioneName.HTTP_3xx);
 			}
-			DBVerifier.verify(idByCheckApplicativo.get(i), esitoExpected, diagnostico);
+			DBVerifier.verify(idByCheckApplicativo.get(i), esitoExpected, diagnosticoStr);
 		}
 
 	}

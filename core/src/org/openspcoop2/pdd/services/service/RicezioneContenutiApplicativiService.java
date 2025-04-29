@@ -1321,7 +1321,7 @@ public class RicezioneContenutiApplicativiService implements IRicezioneService, 
 		boolean registraTracciaOutResponse = false;
 		try{
 			if(this.responseMessage!=null && !this.responseMessage.isForcedEmptyResponse() && (this.responseMessage.getForcedResponse()==null)){
-					
+					 
 				// force response code
 				if(this.responseMessage.getForcedResponseCode()!=null){
 					try{

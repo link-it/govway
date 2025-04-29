@@ -30,6 +30,10 @@
 
 - Indicare come proprieta java: 
   JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8"
+  
+- Aprire vari moduli di java, sia per hazelcast che per l'impostazione dei metodi LINK/UNLINK/PATCH nella classe UrlConnection:
+
+  JAVA_OPTS="$JAVA_OPTS --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED --add-opens java.base/sun.net.www.protocol.https=ALL-UNNAMED"
 
 - Deve essere abilitato il TRACE METHOD http, altrimenti risulta '405 Not Allowed'
   Per farlo su wildfly aggiungere l'attributo disallowed-methods valorizzato vuoto in tutti gli http e https listener:
@@ -117,6 +121,9 @@
   Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale o quando è stata violata una policy di rate limiting, o per le CORS Preflight.
 
 - Impostare in govway_local.properties 
+
+	org.openspcoop2.pdd.connettori.forceLibraryViaHeader=GovWay-TestSuite-HttpLibrary
+
 	org.openspcoop2.pdd.statistiche.generazione.baseOraria.timer.intervalloSecondi=8
 	org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.timer.intervalloSecondi=8
 	org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.timer.intervalloSecondi=8
@@ -368,8 +375,8 @@ Per eseguire i test:
 	ant run_test
 
 	Parametri:
-		-Dload=false (default: true) Carica la configurazione di govway all'inizio del test	
-		-Ddelete=false (default: true) Elimina la configurazione di govway alla fine del test
+		-Dload=false (possibili valori: extraTestBundle.zip, trasparenteTestBundle.zip, true, false; default: true) Carica la configurazione di govway all'inizio del test	
+		-Ddelete=false (possibili valori: extraTestBundle.zip, trasparenteTestBundle.zip, true, false; default: true) Elimina la configurazione di govway alla fine del test
 		-Dwait=false (default:true) Non aspetta lo scoccare della nuova finestra di tempo nei test di rate limiting
 
 Per eseguire solo una classe, indicare il package e il metodo:

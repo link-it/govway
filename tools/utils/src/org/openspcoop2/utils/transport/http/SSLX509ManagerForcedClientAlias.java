@@ -25,6 +25,8 @@ import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.X509ExtendedKeyManager;
 import javax.net.ssl.X509KeyManager;
 
 /**
@@ -34,7 +36,8 @@ import javax.net.ssl.X509KeyManager;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SSLX509ManagerForcedClientAlias implements X509KeyManager {
+public class SSLX509ManagerForcedClientAlias extends X509ExtendedKeyManager{
+/** implements X509KeyManager { httpclient5 fa il check del tipo */
 
 	/*
 	 * Il default KeyManager spedisce il primo certificato che trova che ha un match con le condizioni richieste dal server. 
@@ -42,38 +45,65 @@ public class SSLX509ManagerForcedClientAlias implements X509KeyManager {
 	 * */
 	
 	private String alias;
-	private X509KeyManager wrapped_x509KeyManager;
+	private X509KeyManager wrappedX509KeyManager;
 	
 	public SSLX509ManagerForcedClientAlias(String alias, X509KeyManager x509KeyManager) {
 		this.alias = alias;
-		this.wrapped_x509KeyManager = x509KeyManager;
+		this.wrappedX509KeyManager = x509KeyManager;
 	}
 	
 	@Override
 	public String chooseClientAlias(String[] keyType, Principal[] issuers, Socket socket) {
 		// force
+		/**System.out.println("DEBUG chooseClientAlias("+keyType+") forzo ["+this.alias+"]");*/
 		return this.alias;
 	}
+	@Override
+	public String chooseEngineClientAlias(String[] keyType, Principal[] issuers, SSLEngine engine) {
+		// force
+		/**System.out.println("DEBUG chooseEngineClientAlias("+keyType+") forzo ["+this.alias+"]");*/
+		return this.alias;
+	}
+
 	
 	@Override
 	public String[] getClientAliases(String keyType, Principal[] issuers) {
-		return this.wrapped_x509KeyManager.getClientAliases(keyType, issuers);
+		/**System.out.println("DEBUG getClientAliases("+keyType+")");*/
+		return this.wrappedX509KeyManager.getClientAliases(keyType, issuers);
 	}
 	@Override
 	public String[] getServerAliases(String keyType, Principal[] issuers) {
-		return this.wrapped_x509KeyManager.getServerAliases(keyType, issuers);
+		/**System.out.println("DEBUG getServerAliases("+keyType+")");*/
+		return this.wrappedX509KeyManager.getServerAliases(keyType, issuers);
 	}
 	@Override
 	public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket) {
-		return this.wrapped_x509KeyManager.chooseServerAlias(keyType, issuers, socket);
+		/**System.out.println("DEBUG chooseServerAlias("+keyType+")");*/
+		return this.wrappedX509KeyManager.chooseServerAlias(keyType, issuers, socket);
+	}
+	@Override
+	public String chooseEngineServerAlias(String keyType, Principal[] issuers, SSLEngine engine) {
+		/**System.out.println("DEBUG chooseEngineServerAlias("+keyType+")");*/
+		if(this.wrappedX509KeyManager instanceof X509ExtendedKeyManager x509extendedkeymanager) {
+			return x509extendedkeymanager.chooseEngineServerAlias(keyType, issuers, engine);
+		}
+		else {
+			return super.chooseEngineServerAlias(keyType, issuers, engine);
+		}
 	}
 	@Override
 	public X509Certificate[] getCertificateChain(String alias) {
-		return this.wrapped_x509KeyManager.getCertificateChain(alias);
+		/**System.out.println("DEBUG getCertificateChain("+alias+")");*/
+		return this.wrappedX509KeyManager.getCertificateChain(alias);
 	}
 	@Override
 	public PrivateKey getPrivateKey(String alias) {
-		return this.wrapped_x509KeyManager.getPrivateKey(alias);
+		/**System.out.println("DEBUG getPrivateKey("+alias+")");
+		PrivateKey pk = this.wrappedX509KeyManager.getPrivateKey(alias);
+		if(pk==null) {
+			System.out.println("DEBUG getPrivateKey("+alias+") NULL");
+		}*/
+		return this.wrappedX509KeyManager.getPrivateKey(alias);
 	}
 	
 }

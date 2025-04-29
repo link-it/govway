@@ -429,7 +429,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 
 			// Aggiunga del SoapAction Header in caso di richiesta SOAP
 			// spostato sotto il forwardHeader per consentire alle trasformazioni di modificarla
-			if(this.isSoap && this.sbustamentoSoap == false){
+			if(this.isSoap && !this.sbustamentoSoap){
 				if(this.debug)
 					this.logger.debug("Impostazione soap action...");
 				boolean existsTransportProperties = false;
@@ -601,7 +601,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			int dimensioneBuffer = OpenSPCoop2Properties.getInstance().getNIOConfigAsyncResponsePipedUnblockedStreamBuffer();
 			if(stream) {
 				boolean delegata = !ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo);
-				responseConsumer = new ConnettoreHTTPCOREInputStreamEntityConsumer(this.logger, dimensioneBuffer, this.readConnectionTimeout, delegata);	
+				responseConsumer = new ConnettoreHTTPCOREInputStreamEntityConsumer(this.httpMethod,this.logger, dimensioneBuffer, this.readConnectionTimeout, delegata);	
 			}
 			else {
 				responseConsumer = new ConnettoreHTTPCOREExtendAbstractBinResponseConsumer();
@@ -619,6 +619,13 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 		}  catch(Exception e){ 
 			this.eccezioneProcessamento = e;
 			String msgErrore = this.readExceptionMessageFromException(e);
+			
+			boolean connect = this.processConnectionTimeoutException(this.connectionTimeout, this.connectionTimeoutConfigurazioneGlobale, e, msgErrore);
+			
+			boolean read = this.processReadTimeoutException(this.readConnectionTimeout, this.readConnectionTimeoutConfigurazioneGlobale, e, msgErrore);
+			
+			msgErrore = correctMessageTimeout(connect, read, msgErrore);
+			
 			if(this.generateErrorWithConnectorPrefix) {
 				this.errore = "Errore avvenuto durante la consegna HTTP: "+msgErrore;
 			}
@@ -627,20 +634,28 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			}
 			this.logger.error("Errore avvenuto durante la consegna HTTP: "+msgErrore,e);
 			
-			this.processConnectionTimeoutException(this.connectionTimeout, this.connectionTimeoutConfigurazioneGlobale, e, msgErrore);
-			
-			this.processReadTimeoutException(this.readConnectionTimeout, this.readConnectionTimeoutConfigurazioneGlobale, e, msgErrore);
-			
+			this.freeResources();
 			return false;
-		} finally {
-			// se per caso non l'ho ancora chiuso lo faccio
-			if(this.cloasebleDumpBout!=null) { 
-				try {
-					this.cloasebleDumpBout.clearResources();
-					this.cloasebleDumpBout = null;
-				}catch(Exception t) {
-					this.logger.error(MSG_RELEASE_RESOURCES_FAILED+t.getMessage(),t);
-				}
+		}
+	}
+	
+	public static String correctMessageTimeout(boolean connect, boolean read, String msgErrore) {
+		if(connect) {
+			msgErrore = msgErrore.replace("failed:", "failed: connect timed out after");
+		}
+		else if(read) {
+			msgErrore = "read timed out after " + msgErrore;
+		}
+		return msgErrore;
+	}
+	
+	public void freeResources() {
+		if(this.cloasebleDumpBout!=null) { 
+			try {
+				this.cloasebleDumpBout.clearResources();
+				this.cloasebleDumpBout = null;
+			}catch(Exception t) {
+				this.logger.error(MSG_RELEASE_RESOURCES_FAILED+t.getMessage(),t);
 			}
 		}
 	}

@@ -28,10 +28,14 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
 
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.DbUtils;
@@ -44,6 +48,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.LikeConfig;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.slf4j.Logger;
 
@@ -65,30 +70,75 @@ public class DBVerifier {
 	}
 	
 	public static void verify(String idTransazione, 
-			long esitoExpected, String msgErrore) throws Exception  {
+			long esitoExpected) throws AssertionError, SQLQueryObjectException  {
+		verify(idTransazione, esitoExpected, "", null);
+	}
+	
+	public static void verify(String idTransazione, 
+			long esitoExpected, HttpLibraryMode mode) throws AssertionError, SQLQueryObjectException  {
+		verify(idTransazione, esitoExpected, "", mode);
+	}
+	
+	public static void verify(String idTransazione, 
+			long esitoExpected, String msgErrore, HttpLibraryMode mode) throws AssertionError, SQLQueryObjectException  {
+		Pattern msgPattern = null;
+		if (msgErrore != null && !msgErrore.isBlank())
+			msgPattern = Pattern.compile(".*" + Pattern.quote(msgErrore) + ".*", Pattern.DOTALL);
+		verify(idTransazione, esitoExpected, msgPattern, mode);
+	}
+	
+	public static void verify(String idTransazione, 
+			long esitoExpected, Pattern msgErrore, HttpLibraryMode mode) throws AssertionError, SQLQueryObjectException  {
 		
-		// La scrittura su database avviene dopo aver risposto al client
+		int[] timeouts = {100, 250, 500, 2000, 5000};
+		int index = 0;
+		boolean err = true;
+		List<Pattern> patterns = new ArrayList<>();
+		if (mode != null)
+			patterns.add(mode.getExpectedMessage());
+		if (msgErrore != null)
+			patterns.add(msgErrore);
+		
+		// se non trovo nessun messaggio aspetto che magari govway non ha ancora scritto il messaggio sul db
+		while (err && index < timeouts.length) {
+			
+			Utilities.sleep(timeouts[index++]); 
+			
+			try {
+				DBVerifier.verifyConnettoreResponse(idTransazione, esitoExpected, patterns);
+				err = false;
+			} catch (AssertionError | SQLQueryObjectException e) {
+				log().warn("tentativo fallito: {}", e.getCause(), e);
+				err = true;
+				if (index >= timeouts.length)
+					throw e;
+			}
+		}
+	}
+	
+	public static void verify(String idTransazione, 
+			long esitoExpected, String msgErrore) throws Exception  {
 		
 		Utilities.sleep(100); 
 		try {
-			DBVerifier._verify(idTransazione, 
+			DBVerifier.engineVerify(idTransazione, 
 					esitoExpected, msgErrore,
 					false);
 		}catch(Throwable t) {
 			Utilities.sleep(500);
 			try {
-				DBVerifier._verify(idTransazione, 
+				DBVerifier.engineVerify(idTransazione, 
 						esitoExpected, msgErrore,
 						false);
 			}catch(Throwable t2) {
 				Utilities.sleep(2000);
 				try {
-					DBVerifier._verify(idTransazione, 
+					DBVerifier.engineVerify(idTransazione, 
 							esitoExpected, msgErrore,
 							false);
 				}catch(Throwable t3) {
 					Utilities.sleep(5000);
-					DBVerifier._verify(idTransazione, 
+					DBVerifier.engineVerify(idTransazione, 
 							esitoExpected, msgErrore,
 							false);
 				}
@@ -104,24 +154,24 @@ public class DBVerifier {
 		
 		Utilities.sleep(100); 
 		try {
-			DBVerifier._verify(idTransazione, 
+			DBVerifier.engineVerify(idTransazione, 
 					esitoExpected, msgErrore,
 					checkMsgErroreCaseInsensitive);
 		}catch(Throwable t) {
 			Utilities.sleep(500);
 			try {
-				DBVerifier._verify(idTransazione, 
+				DBVerifier.engineVerify(idTransazione, 
 						esitoExpected, msgErrore,
 						checkMsgErroreCaseInsensitive);
 			}catch(Throwable t2) {
 				Utilities.sleep(2000);
 				try {
-					DBVerifier._verify(idTransazione, 
+					DBVerifier.engineVerify(idTransazione, 
 							esitoExpected, msgErrore,
 							checkMsgErroreCaseInsensitive);
 				}catch(Throwable t3) {
 					Utilities.sleep(5000);
-					DBVerifier._verify(idTransazione, 
+					DBVerifier.engineVerify(idTransazione, 
 							esitoExpected, msgErrore,
 							checkMsgErroreCaseInsensitive);
 				}
@@ -129,47 +179,94 @@ public class DBVerifier {
 		}
 	}
 	
-	private static void _verify(String idTransazione, 
+	
+	private static void verifyIdTransazione(String idTransazione) throws SQLQueryObjectException {
+		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(ConfigLoader.getDbUtils().tipoDatabase);
+		query.addFromTable(CostantiDB.TRANSAZIONI);
+		query.addSelectCountField(CostantiDB.COLUMN_ID);
+		query.addWhereCondition(CostantiDB.COLUMN_ID + " = ?");
+		query.setANDLogicOperator(true);
+		
+		String queryStr = query.createSQLQuery();
+		
+		log().info("verifico id transazione[{}]: {}", idTransazione, queryStr);
+		int count = dbUtils().readValue(queryStr, Integer.class, idTransazione);
+		assertEquals("IdTransazione: "+idTransazione, 1, count);
+	}
+	
+	private static void verifyEsito(String idTransazione, long esitoExpected) throws SQLQueryObjectException {
+		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(ConfigLoader.getDbUtils().tipoDatabase);
+		query.addFromTable(CostantiDB.TRANSAZIONI);
+		query.addSelectField("esito");
+		query.addWhereCondition(CostantiDB.COLUMN_ID + " = ?");
+		query.setANDLogicOperator(true);
+		
+		String queryStr = query.createSQLQuery();
+		
+		log().info("verifico esito[{}], transazione[{}]: {}", esitoExpected, idTransazione, queryStr);
+		Object esito = dbUtils().readValue(queryStr, Object.class, idTransazione);
+		
+		assertTrue("transazione: " + idTransazione + " tipo: ["+(esito!=null ? esito.getClass().getName() : null)+"], esito intero o long o java.math.BigDecimal", 
+				(esito instanceof Integer) || (esito instanceof Long) || (esito instanceof java.math.BigDecimal));
+		
+		Long esitoValue = null;
+		if (esito instanceof java.math.BigDecimal bd) {
+			esitoValue = bd.longValue();
+		}
+		else if (esito instanceof Integer integer) {
+			esitoValue = Long.valueOf(integer);
+		} else {
+			esitoValue = (Long) esito;
+		}
+		
+		assertEquals("transazione: " + idTransazione + ", esito:" + esitoExpected, esitoExpected, esitoValue.longValue());
+	}
+	
+	private static void checkMsg(String idTransazione, List<Pattern> patternList) throws SQLQueryObjectException {
+		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(ConfigLoader.getDbUtils().tipoDatabase);
+		query.addFromTable(CostantiDB.MSG_DIAGNOSTICI);
+		query.addSelectField(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
+		query.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE + " = ?");
+		query.setANDLogicOperator(true);
+		log().info(query.createSQLQuery());
+		
+		List<Map<String, Object>> msgs = ConfigLoader.getDbUtils().readRows(query.createSQLQuery(), idTransazione);
+		Set<Pattern> patternSet = new HashSet<>(patternList);
+		
+		for (Map<String, Object> msg : msgs) {
+			assertTrue(msg.containsKey(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO));
+			String message = (String) msg.get(CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO);
+			
+			log().debug(message);
+			
+			patternSet.removeIf(pattern -> pattern.matcher(message).matches());
+		}
+		
+		if (log().isInfoEnabled())
+			log().info("pattern non trovati: [{}]", String.join(", ", patternSet.stream().map(Pattern::toString).toList()));
+		assertTrue("Alcuni messaggi diagnositici non sono stati trovati", patternSet.isEmpty());
+	}
+	
+	private static void verifyConnettoreResponse(String idTransazione, 
+			long esitoExpected, List<Pattern> patterns) throws SQLQueryObjectException {
+		
+		verifyIdTransazione(idTransazione);
+		
+		verifyEsito(idTransazione, esitoExpected);
+		
+		checkMsg(idTransazione, patterns);
+	}
+	
+	private static void engineVerify(String idTransazione, 
 			long esitoExpected, String msgErrore,
 			boolean checkMsgErroreCaseInsensitive) throws Exception  {
 		
 		
-		String query = "select count(*) from transazioni where id = ?";
-		log().info(query);
+		verifyIdTransazione(idTransazione);
 		
-		int count = dbUtils().readValue(query, Integer.class, idTransazione);
-		assertEquals("IdTransazione: "+idTransazione, 1, count);
-
+		verifyEsito(idTransazione, esitoExpected);
 		
-		
-		query = "select esito from transazioni where id = ?";
-		log().info(query);
-		
-		String msg = "IdTransazione: "+idTransazione;
-		
-		List<Map<String, Object>> rows = dbUtils().readRows(query, idTransazione);
-		assertNotNull(msg, rows);
-		assertEquals(msg, 1, rows.size());
-					
-		Long esito = null;
-		Map<String, Object> row = rows.get(0);
-		for (String key : row.keySet()) {
-			log().debug("Row["+key+"]="+row.get(key));
-		}
-	
-		Object oEsito = row.get("esito");
-		assertNotNull(msg,oEsito);
-		assertTrue(msg+" oEsito classe '"+oEsito.getClass().getName()+"'", (oEsito instanceof Integer || oEsito instanceof Long));
-		if(oEsito instanceof Integer) {
-			esito = Long.valueOf( (Integer)oEsito );
-		}
-		else {
-			esito = (Long)oEsito;
-		}
-		assertEquals(msg,esitoExpected, esito.longValue());
-
-		
-		
+		String query;
 		// diagnostici
 		
 		if(msgErrore!=null) {
@@ -187,8 +284,8 @@ public class DBVerifier {
 			}
 			log().info(query);
 		
-			count = dbUtils().readValue(query, Integer.class, idTransazione);
-			assertTrue(msg+" Cerco dettaglio '"+msgErrore+"'; count trovati: "+count+"", (count>0));
+			int count = dbUtils().readValue(query, Integer.class, idTransazione);
+			assertTrue(" Cerco dettaglio '"+msgErrore+"'; count trovati: "+count+"", (count>0));
 		}
 
 	}

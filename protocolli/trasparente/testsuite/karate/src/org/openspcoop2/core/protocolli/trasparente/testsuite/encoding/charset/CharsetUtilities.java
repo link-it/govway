@@ -222,7 +222,7 @@ public class CharsetUtilities {
 			verifyContentOk(response, 200, contentTypeCharset, contentCharset, contentDaVerificare, charset, logCore);
 		}
 		
-		DBVerifier.verify(idTransazione, esitoExpected, null);
+		DBVerifier.verify(idTransazione, esitoExpected);
 
 		if(operazione.startsWith("access_content_read_only")) {
 			
