@@ -162,6 +162,7 @@ public class TransazioniApplicativoServerService implements ITransazioniApplicat
 			IExpression expr = this.createFilter();
 			
 			expr.sortOrder(SortOrder.ASC).addOrder(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE);
+			expr.sortOrder(SortOrder.ASC).addOrder(TransazioneApplicativoServer.model().CONNETTORE_NOME);
 
 			IPaginatedExpression pagExpr = this.transazioniSASearch.toPaginatedExpression(expr);
 

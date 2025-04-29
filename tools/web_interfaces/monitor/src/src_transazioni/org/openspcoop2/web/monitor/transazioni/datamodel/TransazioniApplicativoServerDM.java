@@ -22,6 +22,7 @@ package org.openspcoop2.web.monitor.transazioni.datamodel;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,7 +71,10 @@ public class TransazioniApplicativoServerDM extends BaseDataModel<Long, Transazi
 				List<TransazioneApplicativoServerBean> list = null;
 				if (this.diagnosticiBean.isUsaInformazioniArchivio()) {
 					list = this.diagnosticiBean.getTransazioniApplicativoServer().stream()
-							.sorted((a,b)->a.getDataRegistrazione().compareTo(b.getDataRegistrazione())).skip(start).limit(limit).collect(Collectors.toList());
+							.sorted(
+									Comparator.comparing(TransazioneApplicativoServerBean::getDataRegistrazione)
+						             .thenComparing(TransazioneApplicativoServerBean::getConnettoreNome)
+									).skip(start).limit(limit).collect(Collectors.toList());
 				} else {
 					this.getDataProvider().setProtocollo(this.diagnosticiBean.getProtocollo());
 					this.getDataProvider().setIdTransazione(this.diagnosticiBean.getIdTransazione());

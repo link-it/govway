@@ -1,3 +1,9 @@
+2025-04-29  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità #1557
+	Integrata funzionalità di consultazione delle transazioni precedentemente esportate come archivio zip
+
 2025-02-29  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [TestsuiteProtocolloTrasparente]
