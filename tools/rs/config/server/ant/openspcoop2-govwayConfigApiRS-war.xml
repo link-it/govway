@@ -146,12 +146,18 @@
 				<include name="${jakarta_activation_jar}"/>
 				<include name="velocity-*.jar"/>	
 			</lib>
+			<lib dir="${openspcoop2.lib}/json">
+				<include name="accessors-smart-2.4.8.jar"/>
+				<include name="json-smart-2.4.10.jar"/>
+				<include name="json-path-2.9.0-gov4j-1.jar"/>
+			</lib>
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/javax">
 				<include name="${validation-api-2.0.1_jar}"/>
 			</lib>
+			
 			<lib dir="${openspcoop2.lib}/bean-validation">
 				<include name="${bean-validation_jars}"/>
 			</lib>
