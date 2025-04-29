@@ -865,7 +865,7 @@ public class DeserializerTransazioni {
 
 			UltimoErrore ultimoErrore = datiConsegna.getUltimoErrore();
 
-			transazioneApplicativoServerBean.setUltimoErrore(ultimoErrore.getDettaglio()); 
+			transazioneApplicativoServerBean.setUltimoErrore(StringEscapeUtils.unescapeXml(ultimoErrore.getDettaglio()));
 
 			if(ultimoErrore.getDettaglioEsito()!=null) {
 				org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DatiConsegna.UltimoErrore.DettaglioEsito dettaglioEsito = ultimoErrore.getDettaglioEsito();
@@ -875,7 +875,7 @@ public class DeserializerTransazioni {
 			}
 
 			if(StringUtils.isNotEmpty(ultimoErrore.getConnettore())) {
-				transazioneApplicativoServerBean.setLocationUltimoErrore(UtilityTransazioni.escapeXmlValue(ultimoErrore.getConnettore()));
+				transazioneApplicativoServerBean.setLocationUltimoErrore(StringEscapeUtils.unescapeXml(ultimoErrore.getConnettore()));
 			}
 			if(StringUtils.isNotEmpty(ultimoErrore.getCodiceRisposta())) {
 				transazioneApplicativoServerBean.setCodiceRispostaUltimoErrore(UtilityTransazioni.escapeXmlValue(ultimoErrore.getCodiceRisposta()));
