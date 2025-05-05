@@ -38,6 +38,8 @@ import org.openspcoop2.utils.SemaphoreLock;
  */
 public class TransactionContext {
 
+	private static final String INDICAZIONE_GESTIONE_STATEFUL_ERRATA = "Indicazione sulla gestione stateful errata: ";
+	
 	private static Boolean gestioneStateful = null;
 	public static synchronized void initGestioneStateful() throws Exception{
 		if(gestioneStateful==null){
@@ -135,7 +137,7 @@ public class TransactionContext {
 						initGestioneStateful();
 					}
 				}catch(Exception e){
-					throw new TransactionNotExistsException("Indicazione sulla gestione stateful errata: "+e.getMessage(),e);
+					throw new TransactionNotExistsException(INDICAZIONE_GESTIONE_STATEFUL_ERRATA+e.getMessage(),e);
 				}
 				Transaction transaction = new Transaction(id, originator, gestioneStateful);
 				transactionContextShared.put(id, transaction);
@@ -143,6 +145,22 @@ public class TransactionContext {
 		}
 	}
 	
+	// usato per trasferire l'oggetto in un altro thread
+	public static void setTransactionThreadLocal(String id, Transaction transaction) throws TransactionNotExistsException {
+		if(useThreadLocal &&
+				(transactionContext_threadLocal.get().transaction==null || !id.equals(transactionContext_threadLocal.get().transaction.getId()) ) 
+			){
+			try{
+				if(gestioneStateful==null){
+					initGestioneStateful();
+				}
+			}catch(Exception e){
+				throw new TransactionNotExistsException(INDICAZIONE_GESTIONE_STATEFUL_ERRATA+e.getMessage(),e);
+			}
+			transactionContext_threadLocal.get().transaction = transaction;
+		}
+	}
+		
 	public static Transaction getTransaction(String id) throws TransactionNotExistsException{
 		return getTransaction(id, null, false);
 	}

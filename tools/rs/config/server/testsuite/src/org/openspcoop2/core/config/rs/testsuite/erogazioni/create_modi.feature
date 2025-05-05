@@ -26,6 +26,17 @@ Background:
 * eval randomize(api_petstore_rest_audit, ["nome"])
 * eval api_petstore_rest_audit.referente = soggettoDefault
 
+* def api_petstore_rest_signalhub = read('api_modi_rest_signalhub.json')
+* eval randomize(api_petstore_rest_signalhub, ["nome"])
+* eval api_petstore_rest_signalhub.referente = soggettoDefault
+
+* def api_petstore_soap_signalhub = read('api_modi_soap_signalhub.json')
+* eval randomize(api_petstore_soap_signalhub, ["nome"])
+* eval api_petstore_soap_signalhub.referente = soggettoDefault
+
+* def applicativo_signalhub = read('applicativo_client_signalhub.json')
+* eval randomize(applicativo_signalhub, ["nome"])
+
 * def header_firmare_default = read('api_modi_header_firmare_default.json')
 
 * def getExpectedSOAP =
@@ -304,3 +315,31 @@ Scenario Outline: Erogazioni Creazione Petstore 400 <nome>
 Examples:
 |nome|errore
 |erogazione_modi_rest_audit_different_senza_valore_atteso.json|Audience di audit non definito|
+
+@CreatePetstore204_modi_signalhub_REST
+Scenario Outline: Erogazioni Creazione Petstore signalhub <nome>
+
+        * def erogazione_petstore = read('<nome>')
+        * eval erogazione_petstore.erogazione_nome = api_petstore_rest_signalhub.nome
+        * eval erogazione_petstore.api_nome = api_petstore_rest_signalhub.nome
+        * eval erogazione_petstore.api_versione = api_petstore_rest_signalhub.versione
+	* eval erogazione_petstore.modi.informazioni_generali.signal_hub.applicativo = applicativo_signalhub.nome
+
+        * def petstore_key = erogazione_petstore.erogazione_nome + '/' + erogazione_petstore.api_versione
+        * def api_petstore_path = 'api/' + api_petstore_rest_signalhub.nome + '/' + api_petstore_rest_signalhub.versione
+
+        * call create ( { resourcePath: 'api', body: api_petstore_rest_signalhub, query_params: query_param_profilo_modi } )
+        * call create ( { resourcePath: 'applicativi', body: applicativo_signalhub, query_params: query_param_profilo_modi } )
+	* call create ( { resourcePath: 'fruizioni/PDND/api-pdnd-push-signals/1/configurazioni/controllo-accessi/autorizzazione/applicativi', body: { applicativo: applicativo_signalhub.nome }, query_params: query_param_profilo_modi} )
+        * call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
+		* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
+        * match response.modi == erogazione_petstore.modi
+	* call delete ({ resourcePath: 'fruizioni/PDND/api-pdnd-push-signals/1/configurazioni/controllo-accessi/autorizzazione/applicativi/' + applicativo_signalhub.nome , query_params: query_param_profilo_modi })
+	* call delete ({ resourcePath: 'applicativi/' + applicativo_signalhub.nome , query_params: query_param_profilo_modi })
+	* call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
+        * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+
+Examples:
+|nome|
+|erogazione_modi_rest_signalhub.json|
+

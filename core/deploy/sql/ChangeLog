@@ -1,3 +1,22 @@
+2025-04-14  Tommaso Burlon <tommaso.burlon@link.it>
+
+	Aggiunta tabella 'servizi_digest_params' per la gestione dei seed per la creazione di
+	digests per ogni servizio, con possibilita di tenere uno storico. Indice sull'attributo
+	id_servizio in quanto lo storico dovrebbe essere molto corto (di default 1)
+	
+	CREATE TABLE servizi_digest_params
+	(
+		id_servizio BIGINT NOT NULL,
+		serial_number BIGINT,
+		...
+	);
+
+	Aggiunto semaforo per la gestione della concorrenza della tabella sopra indicata
+
+	INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('ServiziDigestParamsUpdate');
+
+
+
 2025-02-17  Andrea Poli <apoli@link.it>
 
 	Aggiunte colonne 'id' con primary key nelle tabelle 'statistiche' e 'transazioni_info'.

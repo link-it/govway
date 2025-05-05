@@ -23,7 +23,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.UtilsException;
@@ -45,10 +49,12 @@ public class DigestConfig implements Serializable {
 	private static final String DIGEST_SALT_LENGTH = "digest.salt.length";
 	private static final String DIGEST_SALT_SECURE_RANDOM_ALGORITHM = "digest.salt.secureRandomAlgorithm";
 	private static final String DIGEST_BASE64_ENCODE = "digest.base64Encode";
+	private static final String DIGEST_HASH_COMPOSITION = "digest.composition";
 	
-	private DigestType digestType = null;		
+	private DigestType digestType = null;
 	private Integer saltLength = null;
-	private String algorithmSecureRandom = null;
+	private String algorithmSecureRandom = "SHA1PRNG";
+	private String hashComposition = "${message}${salt}";
 	private boolean base64Encode = false;
 	
 	public DigestConfig() {}
@@ -98,6 +104,7 @@ public class DigestConfig implements Serializable {
 	public DigestConfig(Properties p) throws UtilsException {
 		this.initEngine(p);
 	}
+	
 	private void initEngine(Properties p) throws UtilsException {
 		final String NOT_CORRECT_PROPERTY = "Property: '%s' value: '%s' not correct: %s";
 
@@ -129,8 +136,11 @@ public class DigestConfig implements Serializable {
 		String digestBase64Encode = getProperty(p, DIGEST_BASE64_ENCODE, false);
 		if(StringUtils.isNotEmpty(digestBase64Encode)) {
 			this.base64Encode = Boolean.valueOf(digestBase64Encode);
-		} else {
-			this.base64Encode = false;
+		}
+		
+		String digestHashComposition = getProperty(p, DIGEST_HASH_COMPOSITION, false);
+		if(StringUtils.isNotEmpty(digestHashComposition)) {
+			this.hashComposition = digestHashComposition;
 		}
 	}
 	
@@ -146,6 +156,54 @@ public class DigestConfig implements Serializable {
 			return pValue.trim();
 		}
 	} 
+	
+	
+	private static final Pattern COMPOSITION_VAR_PATTERN = Pattern.compile("\\$\\{([^\\}]*)\\}");
+	private static final String SALT_LABEL = "salt";
+	private static final String MESSAGE_LABEL = "message";
+	public byte[] composeMessage(byte[] input, byte[] salt) {
+		String scheme = this.getHashComposition();
+		Pattern pattern = DigestConfig.COMPOSITION_VAR_PATTERN;
+		
+		List<byte[]> bytes = new ArrayList<>();
+		Matcher matcher = pattern.matcher(scheme);
+		int lastIndex = 0;
+		int size = 0;
+		
+		while (matcher.find(lastIndex)) {
+			if (lastIndex < matcher.start()) {
+				bytes.add(scheme.substring(lastIndex, matcher.start()).getBytes());
+				size += (matcher.start() - lastIndex);
+			}
+			
+			lastIndex = matcher.end();
+			
+			byte[] sub = null;
+			if (matcher.group(1).equals(MESSAGE_LABEL))
+				sub = input;
+			if (matcher.group(1).equals(SALT_LABEL))
+				sub = salt;
+			
+			if (sub != null) {
+				size += sub.length;
+				bytes.add(sub);
+			}
+		}
+		
+		if (lastIndex < scheme.length()) {
+			bytes.add(scheme.substring(lastIndex).getBytes());
+			size += scheme.length() - lastIndex;
+		}
+		
+		byte[] buf = new byte[size];
+		lastIndex = 0;
+		for (byte[] src : bytes) {
+			System.arraycopy(src, 0, buf, lastIndex, src.length);
+			lastIndex += src.length;
+		}
+		
+		return buf;
+	}
 	
 	public DigestType getDigestType() {
 		return this.digestType;
@@ -177,5 +235,13 @@ public class DigestConfig implements Serializable {
 
 	public void setBase64Encode(boolean base64Encode) {
 		this.base64Encode = base64Encode;
+	}
+	
+	public String getHashComposition() {
+		return this.hashComposition;
+	}
+
+	public void setHashComposition(String hashComposition) {
+		this.hashComposition = hashComposition;
 	}
 }

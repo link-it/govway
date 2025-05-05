@@ -317,12 +317,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					String operation = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
 					
 					if (azione.equals(operation)) {
+						this.context.addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PROPERTIES, protoProps);
 						this.context.addObject(CostantiPdD.KEY_OVERRIDE_CONNETTORE, ModICostanti.MODIPA_CONNETTORE_SIGNAL_HUB_PSEUDONYMIZATION);
-						this.context.addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_ALGORITHM_ID, ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID));
-						this.context.addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID, ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID));
-						this.context.addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PUBLISHER_SA_ID, ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID));
-						this.context.addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SEED_SIZE_ID, ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, true));
-						this.context.addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, true));
 					}
 				}
 				

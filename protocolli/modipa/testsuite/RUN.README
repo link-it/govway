@@ -232,6 +232,10 @@ Prerequisiti:
     - Violazione Policy Rate Limiting
   Questo perchè di base govway non traccia le transazioni quando è stata superata la soglia globale o quando è stata violata una policy di rate limiting.
 
++ Per i test su signal hub:
+	- aggiungere al file /etc/govway/modipa_local.properties la linea: 
+		org.openspcoop2.protocol.modipa.signalHub.seed.history=3
+
 + Aggiungere in /etc/hosts la riga
 	127.0.0.1 Erogatore
 

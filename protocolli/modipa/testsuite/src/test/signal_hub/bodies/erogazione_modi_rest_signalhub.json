@@ -1,0 +1,27 @@
+{
+    "connettore": {
+        "endpoint": "https://Erogatore:8445/TestService/echo"
+    },
+    "autenticazione": {
+        "tipo": "https",
+        "opzionale": true
+    },
+    "api_nome": "SignalHubTest",
+    "erogazione_nome": "SignalHubErase",
+    "erogazione_versione": 1,
+    "api_versione": 1,
+    "modi": {
+                "protocollo": "rest",
+                "informazioni_generali": {
+                    "service_id": "PROVAAAA",
+                    "signal_hub": {
+                        "risorsa": "GET_pseudonymization",
+                        "algoritmo": "SHAKE128",
+                        "dimensione_seme": 16,
+                        "giorni_rotazione": 4,
+                        "applicativo": "SignalHubCryptoInfoBasic"
+                    }
+                }
+        }
+}
+

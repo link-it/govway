@@ -341,6 +341,17 @@ public final class CostantiDB {
     
     public static final String REMOTE_STORE_KEY = "remote_store_key";
     
+    /** Costanti Digest Service params **/
+    public static final String SERVIZI_DIGEST_PARAMS = "servizi_digest_params";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_ID_SERVIZIO_REF = "id_servizio";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_SERIAL_NUMBER = "serial_number";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_ALGORITHM = "algorithm";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_PERIOD = "lifetime";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_DATE = "data_registrazione";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_SEED = "seed";
+    
+    
+
     private static boolean allarmiEnabled = false;
     public static boolean isAllarmiEnabled() {
 		return allarmiEnabled;

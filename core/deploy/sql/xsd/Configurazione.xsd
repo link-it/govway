@@ -9,6 +9,7 @@
                 <linkit:info version="1.0" project-name="Configurazione">
                     <linkit:authors>
                         <linkit:author name="Poli Andrea" mail="poli@link.it"/>
+                        <linkit:author name="Tommaso Burlon" mail="tommaso.burlon@link.it"/>
                     </linkit:authors>
                 </linkit:info>
                 <linkit:jax-ws xml-annotations="false" ws="false"/>
@@ -67,6 +68,8 @@
 				<linkit:sql-comment><![CDATA[**** Keystore ****]]></linkit:sql-comment>
                                 <linkit:sql-table object-name="remote-store" object-type="remote-store"/>
 				<linkit:sql-table object-name="remote-store-key" object-type="remote-store-key"/>
+				<linkit:sql-comment><![CDATA[**** Digests Servizi Params ****]]></linkit:sql-comment>
+				<linkit:sql-table object-name="servizi-digest-params" object-type="servizi-digest-params"/>
                             </linkit:sql-table-list>
                         </linkit:sql-script>
                         <linkit:sql-mapping single-table-mapping="false"
@@ -3868,4 +3871,89 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
         </xsd:complexType>
     </xsd:element>
 
+    <xsd:element name="servizi-digest-params">
+        <xsd:annotation>
+            <xsd:appinfo>
+                <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+                    <linkit:interface crud="false" id="xsd:string"/>
+                    <linkit:sql-table-mapping name="servizi_digest_params"
+                        comment="Informazioni crittografiche per la generazione dei digests">
+			<linkit:sql-table-index name="INDEX_REF_SERVIZI">
+                            <linkit:sql-table-index-field name="id_servizio" ignoreTypeCompatibility="true"/>
+                        </linkit:sql-table-index>
+                    </linkit:sql-table-mapping>
+                </linkit:generator>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="id_servizio" type="xsd:long">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="id_servizio"/>
+                                <linkit:sql-ddl-column-comment>Identificativo del servizio erogato tramite la porta [FK logica verso tabella servizi(id)]</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="serial-number" type="xsd:long" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="serial_number"/>
+                                <linkit:sql-ddl-column-comment>Numero seriale associato alle informazioni crittografiche</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="data-registrazione" type="xsd:dateTime">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="data_registrazione" />
+                                <linkit:sql-ddl-column-comment>Data registrazione del seme</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="seed" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="seed" varchar="1024"/>
+                                <linkit:sql-ddl-column-comment>Seme attuale per generare i digests</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="algorithm" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="algorithm" varchar="32"/>
+                                <linkit:sql-ddl-column-comment>Nome dell'algoritmo utilizzato per il digest</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="lifetime" type="xsd:int">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="lifetime"/>
+                                <linkit:sql-ddl-column-comment>Periodo di rotazione del seme (espresso in giorni)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 </xsd:schema>

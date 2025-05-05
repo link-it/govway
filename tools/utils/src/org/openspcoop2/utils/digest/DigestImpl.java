@@ -24,7 +24,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import org.bouncycastle.jcajce.provider.digest.SHA3;
-import org.bouncycastle.util.Arrays;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;
 
@@ -66,6 +65,7 @@ public class DigestImpl implements IDigest {
 	}
 	
 	
+	
 	@Override
 	public byte[] digest(byte[] input, byte[] salt) throws UtilsException {
 		byte[] output = null;
@@ -73,7 +73,7 @@ public class DigestImpl implements IDigest {
 		if (salt.length != this.config.getSaltLength())
 			throw new UtilsException("lunghezza salt fornito: " + salt.length + ", lunghezza attesa: " + this.config.getSaltLength());
 		
-		byte[] msg = Arrays.concatenate(input, salt);
+		byte[] msg = this.config.composeMessage(input, salt);
 		
 		try {
 			switch (this.config.getDigestType()) {
@@ -88,7 +88,7 @@ public class DigestImpl implements IDigest {
 			case SHA3_512:
 			case SHA512:
 			case SHA512_256:
-				output = standardDigest(Arrays.concatenate(input, salt));
+				output = standardDigest(msg);
 				break;
 			}
 		} catch (NoSuchAlgorithmException e) {

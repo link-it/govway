@@ -48,4 +48,12 @@ public enum DigestType implements Serializable {
 	public String getAlgorithmName() {
 		return this.algorithmName;
 	}
+	
+	public static DigestType fromAlgorithmName(String value) {
+		for (DigestType type : DigestType.values()) {
+			if (type.getAlgorithmName().equals(value))
+				return type;
+		}
+		return null;
+	}
 }

@@ -385,7 +385,7 @@ public class ErogazioniApiHelper {
 		return p;
 	}
 	
-	public static ProtocolProperties getProtocolProperties(Erogazione body, ProfiloEnum profilo, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) throws Exception {
+	public static ProtocolProperties getProtocolProperties(Erogazione body, ProfiloEnum profilo, AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) throws Exception {
 
 
 		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
@@ -401,7 +401,7 @@ public class ErogazioniApiHelper {
 			return FatturaPAErogazioniApiHelper.getProtocolProperties(body);
 		case MODI:
 		case MODIPA:
-			return ModiErogazioniApiHelper.getProtocolProperties(body, asps, env, required);
+			return ModiErogazioniApiHelper.getProtocolProperties(body, aspc, asps, env, required);
 		case SPCOOP:
 			return SPCoopErogazioniApiHelper.getProtocolProperties(body);
 		}
@@ -4896,6 +4896,10 @@ public class ErogazioniApiHelper {
 					}
 					newPa.getAutorizzazioneToken().getRuoli().setMatch(tipoTokenRuoloMatch);
 				}
+			} else if (!authzAbilitata.isTokenRichiedente().booleanValue() && !authzAbilitata.isTokenRuoli().booleanValue() && authzAbilitata.isToken().booleanValue()) {
+				newPa.setAutorizzazioneToken(new PortaApplicativaAutorizzazioneToken());
+			} else {
+				newPa.setAutorizzazioneToken(null);
 			}
 			
 			if ( authzAbilitata.isScope() ) {

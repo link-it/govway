@@ -23,37 +23,22 @@ package org.openspcoop2.protocol.modipa.connettori;
 import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.config.Connettore;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
-import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.PortaDelegataAzione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiLabel;
-import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
-import org.openspcoop2.core.controllo_traffico.beans.RisultatoStatistico;
-import org.openspcoop2.core.controllo_traffico.constants.TipoPeriodoStatistico;
 import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
-import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
-import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -62,19 +47,18 @@ import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
-import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.DigestServiceParams;
+import org.openspcoop2.pdd.config.DigestServiceParamsDriver;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.Utilities;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseWithResponse;
-import org.openspcoop2.pdd.core.connettori.ConnettoreCheck;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
-import org.openspcoop2.pdd.core.connettori.ConnettoreStatusResponseType;
-import org.openspcoop2.pdd.core.controllo_traffico.policy.GestoreCacheControlloTraffico;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.builder.Sbustamento;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
@@ -82,10 +66,12 @@ import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.engine.validator.Validatore;
 import org.openspcoop2.protocol.engine.validator.ValidazioneSintattica;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.modipa.utils.SignalHubUtils;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.Riscontro;
 import org.openspcoop2.protocol.sdk.Trasmissione;
@@ -94,6 +80,7 @@ import org.openspcoop2.protocol.sdk.constants.FaseImbustamento;
 import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.protocol.sdk.validator.IValidatoreErrori;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
@@ -101,13 +88,15 @@ import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
+import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.rest.problem.JsonSerializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
-import org.openspcoop2.utils.rest.problem.XmlSerializer;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 
 /**
@@ -121,26 +110,82 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 	
 	@Override
 	public String getProtocollo() {
-    	return "";
+    	return "http";
     }
 	
 	public static final String LOCATION = "govway://signalHubPseudonymization";
     
 	private DumpByteArrayOutputStream requestBout = null;
 
-	public static String getMessage(PdDContext pddContext, MessageType messageTypeRequest) throws UtilsException {
+	
+	private DigestServiceParams initCryptoInfo(DigestServiceParamsDriver driver, PdDContext context) throws UtilsException, DriverConfigurazioneException, ProtocolException {
+		RequestInfo reqInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		IDServizio idServizio = reqInfo.getIdServizio();
 		
-		Long seedSize = (Long) pddContext.getObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SEED_SIZE_ID);
-		Long seedLifetime = (Long) pddContext.getObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
-		String algorithm = (String) pddContext.getObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_ALGORITHM_ID);
-		String role = (String) pddContext.getObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID);
-		String servizioApplicativo = (String) pddContext.getObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
+		driver.acquireLock(reqInfo.getIdTransazione());
+		DigestServiceParams param = null;
 		
-		return "{}";
+		List<ProtocolProperty> protocolProperty = ((List<?>) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PROPERTIES))
+				.stream()
+				.map(p -> (ProtocolProperty)p)
+				.collect(Collectors.toList());
+		param = SignalHubUtils.generateDigestServiceParams(idServizio, protocolProperty, null);
+		driver.addEntry(param);
+		
+		driver.releaseLock();
+		
+		return param;
 	}
 	
-	private static String getContentType(PdDContext pddContext, MessageType messageTypeRequest) throws UtilsException {
-		return HttpConstants.CONTENT_TYPE_JSON;
+	private void retrieveCryptoInfo(PdDContext pddContext) throws UtilsException, DriverConfigurazioneException, ProtocolException, ConnettoreException {
+		
+		RequestInfo reqInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		IDServizio idServizio = reqInfo.getIdServizio();
+		
+		Object db = ConfigurazionePdDReader.getDriverConfigurazionePdD();
+		if (!(db instanceof DriverConfigurazioneDB))
+			throw new UtilsException("driver trovato non di tipo db");
+		
+		
+		String signalIdRaw = reqInfo.getProtocolContext().getParameterFirstValue("signalId");
+		DigestServiceParams param = null;
+		
+		try {
+			Long signalId = signalIdRaw != null ? Long.parseLong(signalIdRaw) : null;
+			DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db);
+			param = driver.getEntry(idServizio, signalId);
+			
+			if (param == null && signalId == null) {
+				param = this.initCryptoInfo(driver, pddContext);
+			}
+			
+		} catch (NumberFormatException e) {
+			throw new ConnettoreException("signalId params non int64");
+		}
+		
+		
+		if (param == null) {
+			ProblemRFC7807 problemRFC7807 = new ProblemRFC7807();
+			problemRFC7807.setStatus(404);
+			problemRFC7807.setDetail("Informazioni di pseudoanonimizzazione non trovate");
+			problemRFC7807.setTitle("Not Found");
+			problemRFC7807.setType("https://httpstatuses.com/404");
+			
+			JsonSerializer jsonSerializer = new JsonSerializer();
+			this.isResponse = new ByteArrayInputStream(jsonSerializer.toByteArray(problemRFC7807));
+			this.tipoRisposta = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
+			this.codice = 404;
+			return;
+		}
+		
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		ObjectNode node = jsonUtils.newObjectNode();
+		node.put("seed", new String(param.getSeed()));
+		node.put("cryptoHashFunction", param.getDigestAlgorithm().toString());
+		
+		this.isResponse = new ByteArrayInputStream(jsonUtils.toByteArray(node));
+		this.tipoRisposta = HttpConstants.CONTENT_TYPE_JSON;
+		this.codice = 200;
 	}
 	
 	/* ********  METODI  ******** */
@@ -181,6 +226,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 		@SuppressWarnings("unused")
 		BustaRawContent<?> headerProtocolloRisposta = null;
 		String protocol = null;
+		
 		try{
 			IProtocolFactory<?> protocolFactory = this.getProtocolFactory();
 			IProtocolManager protocolManager = protocolFactory.createProtocolManager();
@@ -333,11 +379,6 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 				this.dataRichiestaInoltrata = DateManager.getDate();
 			}
 			
-			
-			
-			
-			
-			
 			/* ------------  PostOutRequestHandler ------------- */
 			this.postOutRequest();
 			
@@ -352,9 +393,9 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 				notifierInputStreamParams = this.preInResponseContext.getNotifierInputStreamParams();
 			}
 			
-			this.isResponse = new ByteArrayInputStream(ConnettoreSignalHubPseudonymization.getMessage(pddContext, this.requestMsg.getMessageType()).getBytes());
-			this.tipoRisposta = ConnettoreSignalHubPseudonymization.getContentType(pddContext, this.requestMsg.getMessageType());
+			this.retrieveCryptoInfo(pddContext);
 			
+
 			this.normalizeInputStreamResponse(readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale);
 			
 			this.initCheckContentTypeConfiguration();
@@ -379,7 +420,6 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 						this.openspcoopProperties.getAttachmentsProcessingMode());
 			} else {
 				TransportResponseContext responseContext = new TransportResponseContext(this.logger.getLogger());
-				responseContext.setCodiceTrasporto(this.codice+"");
 				responseContext.setContentLength(0);
 				
 				pr = messageFactory.createMessage(this.messageTypeResponse,responseContext,
@@ -389,6 +429,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 			if(pr.getParseException()!=null){
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 			}
+			
 			this.responseMsg = pr.getMessage_throwParseException();
 			
 			validatoreSintattico = new ValidazioneSintattica(this.getPddContext(),state,this.responseMsg, this.openspcoopProperties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory); 

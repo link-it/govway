@@ -17,34 +17,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+package org.openspcoop2.protocol.modipa.utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-
-package org.openspcoop2.pdd.core.autorizzazione.pd;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 
 /**
- * Interfaccia che definisce un processo di autorizzazione sui token
- *
+ * Classe per simulare lo stream della richiesta servlet
+ * 
+ * 
  * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
+public class MockServletOutputStream extends ServletOutputStream {
 
-public class AutorizzazioneSignalHubPush extends AbstractAutorizzazioneBase {
+	
+	private ByteArrayOutputStream os = new ByteArrayOutputStream();
+	
+	@Override
+	public boolean isReady() {
+		return true;
+	}
 
 	@Override
-	public boolean saveAuthorizationResultInCache() {
-		return false;
+	public void setWriteListener(WriteListener arg0) {
+		
+		try {
+			arg0.onWritePossible();
+		} catch (IOException e) {
+			// ignore
+		}
+	}
+
+	@Override
+	public void write(int b) throws IOException {
+		this.os.write(b);
 	}
 	
-    @Override
-	public EsitoAutorizzazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione){
-    	
-    	// La logica di autorizzazione per token (richiedente, ruoli, scope e options) viene realizzata nel Gestore dell'Autorizzazione
-    	
-    	EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
-    	esito.setAutorizzato(true);
-    	return esito;
-    }
-	
+	public ByteArrayOutputStream getByteArrayOutputStream() {
+		return this.os;
+	}
+
 }

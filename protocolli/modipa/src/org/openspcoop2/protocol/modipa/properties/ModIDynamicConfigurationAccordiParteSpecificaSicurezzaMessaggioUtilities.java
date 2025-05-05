@@ -48,6 +48,7 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.utils.AzioniUtils;
@@ -88,6 +89,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.digest.DigestEncoding;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ModIDynamicConfigurationAccordiParteSpecificaUtilities
@@ -97,6 +99,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities {
+	
+	private static Logger logger = LoggerFactory.getLogger(ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.class);
 	
 	private ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities() {}
 
@@ -2801,6 +2805,18 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 	}
 	
 	private static void addSignalHubOperations(AccordoServizioParteComune api, IDServizio idServizio, String portType, AbstractConsoleItem<?> modiSignalHubOpItem, Logger log) throws ProtocolException {
+		Map<String,String> azioni = getSignalHubOperations(api, idServizio, portType, log);
+		if(azioni!=null && !azioni.isEmpty()) {
+			for (Map.Entry<String,String> entry : azioni.entrySet()) {
+				String azioneId = entry.getKey();
+				String azioneLabel = entry.getValue();
+				((StringConsoleItem)modiSignalHubOpItem).addLabelValue(azioneLabel,azioneId);
+			}
+		}	
+	}
+	
+	private static Map<String, String> getSignalHubOperations(AccordoServizioParteComune api, IDServizio idServizio, String portType, Logger log) throws ProtocolException {
+		
 		AccordoServizioParteSpecifica aspsRicercaAzioni = new AccordoServizioParteSpecifica();
 		aspsRicercaAzioni.setTipo(idServizio.getTipo());
 		aspsRicercaAzioni.setNome(idServizio.getNome());
@@ -2812,11 +2828,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		aspsRicercaAzioni.setPortType(portType);
 		
 		AccordoServizioParteComuneSintetico aspcSelected = new AccordoServizioParteComuneSintetico(api);
-		addSignalHubOperations(aspcSelected, aspsRicercaAzioni,
-					idServizio, modiSignalHubOpItem, log);
-	}
-	private static void addSignalHubOperations(AccordoServizioParteComuneSintetico aspcSelected, AccordoServizioParteSpecifica aspsRicercaAzioni,
-			IDServizio idServizio, AbstractConsoleItem<?> modiSignalHubOpItem, Logger log) throws ProtocolException {
+
+		
 		List<String> filtraAzioniUtilizzate = new ArrayList<>();
 		Map<String,String> azioni = null;
 		try {
@@ -2825,41 +2838,9 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		}catch(Exception e) {
 			throw new ProtocolException("Lettura azioni '"+idServizio+"' non riuscita: "+e.getMessage(),e);
 		}
-		if(azioni!=null && !azioni.isEmpty()) {
-			for (Map.Entry<String,String> entry : azioni.entrySet()) {
-				String azioneId = entry.getKey();
-				String azioneLabel = entry.getValue();
-				((StringConsoleItem)modiSignalHubOpItem).addLabelValue(azioneLabel,azioneId);
-			}
-		}	
+		return azioni;
 	}
-	private static void addSignalHubServiziApplicativi(IRegistryReader registryReader,
-			IConfigIntegrationReader configIntegrationReader,
-			AbstractConsoleItem<?> modiSignalHubPublisherSAItem, Logger log,
-			IDServizio idServizio) throws ProtocolException {
-		
-		((StringConsoleItem)modiSignalHubPublisherSAItem).addLabelValue(ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED);
-		
-		// identifico porta delegate per pubblicare signal hub
-		IDAccordo idAccordoSignalHubPushAPI = null;
-		try {
-			ModIProperties modiProperties = ModIProperties.getInstance();
-			idAccordoSignalHubPushAPI = ModIDynamicConfigurationAccordiParteComuneUtilities.getIdAccordoSignalHubPush(registryReader, modiProperties);
-		}catch(Exception e) {
-			log.error("Lettura id accordo signalhub api push fallita: "+e.getMessage(),e);
-		}
-		IDPortaDelegata idPD = null;
-		if(idAccordoSignalHubPushAPI!=null) {
-			idPD = readPDSignalHub(registryReader,
-					configIntegrationReader,
-					log,
-					idServizio, idAccordoSignalHubPushAPI);
-		}
-		
-		addSignalHubServiziApplicativi(configIntegrationReader,
-				modiSignalHubPublisherSAItem, log,
-				idPD);
-	}
+	
 	private static IDPortaDelegata readPDSignalHub(IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader,
 			Logger log,
@@ -2892,13 +2873,15 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		}
 		return null;
 	}
-	private static void addSignalHubServiziApplicativi(IConfigIntegrationReader configIntegrationReader,
+	private static void addSignalHubServiziApplicativi(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
 			AbstractConsoleItem<?> modiSignalHubPublisherSAItem, Logger log,
-			IDPortaDelegata idPD) {
-		if(idPD!=null) {
+			IDServizio idServizio) {
+		
+		((StringConsoleItem)modiSignalHubPublisherSAItem).addLabelValue(ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED);
+
+		if(idServizio!=null) {
 			try {
-				PortaDelegata pd = configIntegrationReader.getPortaDelegata(idPD);
-				List<IDServizioApplicativo> idSA = configIntegrationReader.findIdServiziApplicativiByPdAuth(pd, true, true);
+				List<IDServizioApplicativo> idSA = getSignalHubServiziApplicativi(registryReader, configIntegrationReader, idServizio);
 				if(idSA!=null && !idSA.isEmpty()) {
 					List<String> nomi = new ArrayList<>();
 					for (IDServizioApplicativo idServizioApplicativo : idSA) {
@@ -2914,12 +2897,34 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			}
 		}
 	}
+	
+	private static List<IDServizioApplicativo> getSignalHubServiziApplicativi(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio idServizio) throws RegistryNotFound, RegistryException, DriverRegistroServiziException, ProtocolException {
+		IDAccordo idAccordoSignalHubPushAPI = ModIDynamicConfigurationAccordiParteComuneUtilities.getIdAccordoSignalHubPush(registryReader, ModIProperties.getInstance());
+		IDPortaDelegata idPD = readPDSignalHub(registryReader,
+				configIntegrationReader,
+				logger,
+				idServizio, idAccordoSignalHubPushAPI);
+		PortaDelegata pd = configIntegrationReader.getPortaDelegata(idPD);
+		return configIntegrationReader.findIdServiziApplicativiByPdAuth(pd, true, true);
+	}
+	
 	private static void addSignalHubRuoli(IRegistryReader registryReader,
 			AbstractConsoleItem<?> modiSignalHubPublisherRoleItem, Logger log) {
 			
 		((StringConsoleItem)modiSignalHubPublisherRoleItem).addLabelValue(ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED);
 		
-		List<IDRuolo>  l = null;
+		List<IDRuolo>  l = getSignalHubRuoli(registryReader, log);
+			
+		if(l!=null && !l.isEmpty()) {
+			for (IDRuolo idRuolo : l) {
+				((StringConsoleItem)modiSignalHubPublisherRoleItem).addLabelValue(idRuolo.getNome(),idRuolo.getNome());
+			}
+		}
+
+	}
+	
+	private static List<IDRuolo> getSignalHubRuoli(IRegistryReader registryReader, Logger log) {
+		List<IDRuolo>  l = List.of();
 		try {
 			ProtocolFiltroRicercaRuoli filtro = new ProtocolFiltroRicercaRuoli();
 			filtro.setContesto(RuoloContesto.PORTA_DELEGATA);
@@ -2930,25 +2935,20 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		}catch(Exception e) {
 			log.error("Lettura id accordo signalhub api push fallita: "+e.getMessage(),e);
 		}
-			
-		if(l!=null && !l.isEmpty()) {
-			for (IDRuolo idRuolo : l) {
-				((StringConsoleItem)modiSignalHubPublisherRoleItem).addLabelValue(idRuolo.getNome(),idRuolo.getNome());
-			}
-		}
-
+		return l;
 	}
 	
 	
-	static void validatePdndInfo(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+	public static void validatePdndInfo(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, AccordoServizioParteComune api, IDServizio idServizio, String portType, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
 		
 		AbstractConsoleItem<?> modiEServiceIdItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
 						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID
 						);
+		StringProperty modiEServiceIdItemValue = null;
 		if(modiEServiceIdItem!=null) {
 			
-			StringProperty modiEServiceIdItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+			modiEServiceIdItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
 			if(modiEServiceIdItemValue!=null && modiEServiceIdItemValue.getValue()!=null && !"".equals(modiEServiceIdItemValue.getValue())) {
 				try {
 					InputValidationUtils.validateTextAreaInput(modiEServiceIdItemValue.getValue(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL);
@@ -2963,29 +2963,37 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		boolean signalHub = modiSignalHubItemValue!=null && modiSignalHubItemValue.getValue()!=null && modiSignalHubItemValue.getValue().booleanValue();
 		
 		if(signalHub) {
-			validatePdndInfoSignalHub(consoleConfiguration, properties);
+			if (modiEServiceIdItemValue == null)
+				throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID_ESERVICE_UNDEFINED);
+			validatePdndInfoSignalHub(registryReader, configIntegrationReader, api, idServizio, portType, consoleConfiguration, properties);
 		}
 	}
-	private static void validatePdndInfoSignalHub(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+	private static void validatePdndInfoSignalHub(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, AccordoServizioParteComune api, IDServizio idServizio, String portType, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
 		
 		// operation
-		validatePdndInfoSignalHubOperation(consoleConfiguration, properties);
+		validatePdndInfoSignalHubOperation(api, idServizio, portType, consoleConfiguration, properties);
 		
+		// algorithm
+		validatePdndInfoSignalHubAlgorithm(consoleConfiguration, properties);
+
+		// seed size
+		validatePdndInfoSignalHubSeedSize(consoleConfiguration, properties);	
+				
 		// lifetime
-		validatePdndInfoSignalHubLifeTime(consoleConfiguration, properties);
+		validatePdndInfoSignalHubLifeTime(api, idServizio, portType, consoleConfiguration, properties);
 		
 		// publisher
-		validatePdndInfoSignalHubPublisher(consoleConfiguration, properties);
+		validatePdndInfoSignalHubPublisher(registryReader, configIntegrationReader, api, idServizio, portType, consoleConfiguration, properties);
 		
 	}
-	private static void validatePdndInfoSignalHubOperation(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+	private static void validatePdndInfoSignalHubOperation(AccordoServizioParteComune api, IDServizio idServizio, String portType,ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
 		AbstractConsoleItem<?> profiloSignalHubOperationItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
 						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID
 						);
 		StringProperty profiloSignalHubOperationItemValue = null;
 		String profiloSignalHubOperation = null;
-		if(profiloSignalHubOperationItem!=null) {
+		if(profiloSignalHubOperationItem != null) {
 			profiloSignalHubOperationItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
 			if(profiloSignalHubOperationItemValue!=null && profiloSignalHubOperationItemValue.getValue()!=null && !"".equals(profiloSignalHubOperationItemValue.getValue())) {
 				profiloSignalHubOperation = profiloSignalHubOperationItemValue.getValue();	
@@ -2995,8 +3003,53 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(profiloSignalHubOperation)) {
 			throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ERROR_UNDEFINED);
 		}
+		
+		Map<String, String> operations = getSignalHubOperations(api, idServizio, portType, logger);
+		if (!operations.containsKey(profiloSignalHubOperation)) {
+			throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ERROR_WRONG);
+		}
 	}
-	private static void validatePdndInfoSignalHubLifeTime(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+	private static void validatePdndInfoSignalHubAlgorithm(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+		AbstractConsoleItem<?> profiloSignalHubAlgorithmItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID
+				);
+		
+		if(profiloSignalHubAlgorithmItem!=null) {
+			
+			StringProperty profiloSignalHubAlgorithmItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID);
+			if(profiloSignalHubAlgorithmItemValue!=null && profiloSignalHubAlgorithmItemValue.getValue()!=null && !"".equals(profiloSignalHubAlgorithmItemValue.getValue())) {
+				List<String> algorithms = ModIProperties.getInstance().getSignalHubAlgorithms();
+				
+				if (!algorithms.contains(profiloSignalHubAlgorithmItemValue.getValue())) {
+					throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ERROR_WRONG);
+				}
+			}
+			
+		}
+	}
+	
+	private static void validatePdndInfoSignalHubSeedSize(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+		AbstractConsoleItem<?> profiloSignalHubSeedSizetem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID
+				);
+		Integer seedSize = null;
+		
+		if(profiloSignalHubSeedSizetem != null) {
+			
+			NumberProperty profiloSignalHubSeedSizeItemValue = (NumberProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID);
+			if(profiloSignalHubSeedSizeItemValue!=null && profiloSignalHubSeedSizeItemValue.getValue()!=null) {
+				List<Integer> seedSizes = ModIProperties.getInstance().getSignalHubSeedSize();
+				seedSize = profiloSignalHubSeedSizeItemValue.getValue().intValue();
+				
+				if (!seedSizes.contains(seedSize)) {
+					throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ERROR_WRONG);
+				}
+			}
+			
+		}
+	}
+	
+	private static void validatePdndInfoSignalHubLifeTime(AccordoServizioParteComune api, IDServizio idServizio, String portType, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
 		AbstractConsoleItem<?> profiloSignalHubSeedLifeTimeItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
 						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID
@@ -3004,7 +3057,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		if(profiloSignalHubSeedLifeTimeItem!=null) {
 			
 			NumberProperty profiloSignalHubSeedLifeTimeItemValue = (NumberProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
-			if(profiloSignalHubSeedLifeTimeItemValue!=null && profiloSignalHubSeedLifeTimeItemValue.getValue()!=null && !"".equals(profiloSignalHubSeedLifeTimeItemValue.getValue())) {
+			if(profiloSignalHubSeedLifeTimeItemValue!=null && profiloSignalHubSeedLifeTimeItemValue.getValue()!=null) {
 				try {
 					long i = (profiloSignalHubSeedLifeTimeItemValue.getValue());
 					if(i<=0) {
@@ -3014,10 +3067,9 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 					throw new ProtocolException(CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL+" '"+profiloSignalHubSeedLifeTimeItemValue.getValue()+"' non valido; must be a positive integer greater than 0");
 				}
 			}
-			
 		}
 	}
-	private static void validatePdndInfoSignalHubPublisher(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+	private static void validatePdndInfoSignalHubPublisher(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, AccordoServizioParteComune api, IDServizio idServizio, String portType, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
 		
 		// publisher sa
 		AbstractConsoleItem<?> profiloSignalHubSAItem = 	
@@ -3029,7 +3081,21 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		if(profiloSignalHubSAItem!=null) {
 			profiloSignalHubSAItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
 			if(profiloSignalHubSAItemValue!=null && profiloSignalHubSAItemValue.getValue()!=null && !"".equals(profiloSignalHubSAItemValue.getValue())) {
-				profiloSignalHubSA = profiloSignalHubSAItemValue.getValue();	
+				profiloSignalHubSA = profiloSignalHubSAItemValue.getValue();
+
+				try {
+					String finalSAName = profiloSignalHubSA;
+					List<IDServizioApplicativo> idSAs = getSignalHubServiziApplicativi(registryReader, configIntegrationReader, idServizio);
+					long matched = idSAs.stream().filter(id -> id.getNome().equals(finalSAName)).count();
+					if (matched < 1) {
+						throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_UNDEFINED);
+					}
+				} catch (RegistryNotFound 
+						| RegistryException 
+						| DriverRegistroServiziException  e) {
+					throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_UNDEFINED, e);
+				}
+				
 			}
 		}
 		
@@ -3043,7 +3109,14 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		if(profiloSignalHubRoleItem!=null) {
 			profiloSignalHubRoleItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID);
 			if(profiloSignalHubRoleItemValue!=null && profiloSignalHubRoleItemValue.getValue()!=null && !"".equals(profiloSignalHubRoleItemValue.getValue())) {
-				profiloSignalHubRole = profiloSignalHubRoleItemValue.getValue();	
+				profiloSignalHubRole = profiloSignalHubRoleItemValue.getValue();
+				
+				String finalRole = profiloSignalHubRole;
+				List<IDRuolo> roles = getSignalHubRuoli(registryReader, logger);
+				long matched = roles.stream().filter(r -> r.getNome().equals(finalRole)).count();
+				if (matched == 0) {
+					throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_UNDEFINED);
+				}
 			}
 		}
 		

@@ -20,13 +20,18 @@
 
 package org.openspcoop2.protocol.modipa.builder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.SOAPEnvelope;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDAccordo;
@@ -35,15 +40,23 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.DigestServiceParams;
+import org.openspcoop2.pdd.config.DigestServiceParamsDriver;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
+import org.openspcoop2.pdd.core.transazioni.Transaction;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -51,26 +64,46 @@ import org.openspcoop2.protocol.modipa.ModIBustaRawContent;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.constants.ModIHeaderType;
+import org.openspcoop2.protocol.modipa.constants.ModISignalHubOperation;
+import org.openspcoop2.protocol.modipa.utils.MockHttpServletRequest;
+import org.openspcoop2.protocol.modipa.utils.MockHttpServletResponse;
+import org.openspcoop2.protocol.modipa.utils.MockServletInputStream;
+import org.openspcoop2.protocol.modipa.utils.MockServletOutputStream;
 import org.openspcoop2.protocol.modipa.utils.ModIKeystoreConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
+import org.openspcoop2.protocol.modipa.utils.SignalHubUtils;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.protocol.utils.IDSerialGenerator;
 import org.openspcoop2.utils.MapKey;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.digest.DigestConfig;
+import org.openspcoop2.utils.digest.DigestFactory;
+import org.openspcoop2.utils.digest.IDigest;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
+import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
+import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * ModIImbustamento
@@ -284,6 +317,13 @@ public class ModIImbustamento {
 				
 			}
 			
+			/* *** SIGNAL HUB PUSH SIGNALS *** */	
+			if (RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)
+					&& context.containsKey(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SIGNAL_TYPE)) {
+				msg = this.computeSignalHubMessage(msg, context, protocolFactory, state);
+				
+			}
+			
 			
 			/* *** SICUREZZA CANALE *** */
 			
@@ -367,6 +407,8 @@ public class ModIImbustamento {
 					}
 				}
 				
+				boolean bufferMessageReadOnly = this.modiProperties.isReadByPathBufferEnabled();
+
 				boolean fruizione = isRichiesta;
 				
 				boolean addAudit = fruizione && corniceSicurezza && 
@@ -398,7 +440,6 @@ public class ModIImbustamento {
 				if(addSecurity || addAudit) {
 				
 					// dynamicMap
-					boolean bufferMessageReadOnly = this.modiProperties.isReadByPathBufferEnabled();
 					Map<String, Object> dynamicMapRequest = null;
 					if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
 						dynamicMapRequest = ModIUtilities.removeDynamicMapRequest(context);
@@ -859,6 +900,155 @@ public class ModIImbustamento {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 		
+	}
+	
+	
+	private static final String ERROR_MESSAGE_SEED_NOT_UPDATED = "seed update non riuscito";
+	
+	private DigestServiceParams obtainDigestServiceParam(Context context, IDServizio idServizio, IDSerialGenerator serialGenerator, IDSerialGeneratorParameter serialGeneratorParameter) throws ProtocolException, UtilsException, DriverConfigurazioneException, IOException {		
+		Object db = ConfigurazionePdDReader.getDriverConfigurazionePdD();
+		if (!(db instanceof DriverConfigurazioneDB))
+			throw new ProtocolException("driver db non trovato");
+		
+		DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db);
+		DigestServiceParams param = driver.getValidEntry(idServizio);
+		if (param == null) {
+			RequestInfo reqInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			driver.acquireLock(reqInfo.getIdTransazione());
+			
+			try (MockServletInputStream is = new MockServletInputStream()) {
+				param = driver.getValidEntry(idServizio);
+				if (param != null)
+					return param;
+				
+				List<ProtocolProperty> eServiceProperties = SignalHubUtils.obtainSignalHubProtocolProperty(context);
+				
+				String seedSignalId = serialGenerator.buildID(serialGeneratorParameter);
+				param = SignalHubUtils.generateDigestServiceParams(idServizio, eServiceProperties, Long.valueOf(seedSignalId));
+
+				String eServiceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+				
+				
+				MockHttpServletRequest req = new MockHttpServletRequest(reqInfo.getProtocolContext().getHttpServletRequest());
+				MockHttpServletResponse res = new MockHttpServletResponse();
+				
+				req.setInputStream(is);
+				req.setHeader("GovWay-Signal-Type", List.of(ModISignalHubOperation.SEEDUPDATE.toString()));
+				req.setHeader("GovWay-Signal-ObjectId", List.of(seedSignalId));
+				req.setHeader("GovWay-Signal-ObjectType", List.of("seed"));
+				req.setHeader("GovWay-Signal-ServiceId", List.of(eServiceId));
+				req.setHeader("Content-Length", List.of("0"));
+				req.setHeader("Content-Type", null);
+				
+				
+				Transaction transaction = TransactionContext.removeTransaction(reqInfo.getIdTransazione());
+				
+				try {
+					req.getRequestDispatcher(req.getPathInfo()).include(req, res);
+				} catch (IOException | ServletException e) {
+					throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+				} finally {
+					try {
+						TransactionContext.setTransactionThreadLocal(reqInfo.getIdTransazione(), transaction);
+					} catch (TransactionNotExistsException e) {
+						// ignore should never happen
+					}
+				}
+				
+				try {
+					if (res.getStatus() != HttpServletResponse.SC_OK)
+						throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+					byte[] out = ((MockServletOutputStream)res.getOutputStream()).getByteArrayOutputStream().toByteArray();
+					
+					JSONUtils jsonUtils = JSONUtils.getInstance();
+					JsonNode node = jsonUtils.getAsNode(out);
+					if (node.get(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID).isNull())
+						throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+				} catch (IOException e) {
+					throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+				}
+				
+				driver.addEntry(param);
+				
+			} finally {
+				driver.releaseLock();
+			}
+			
+			driver.removeOldEntries(idServizio, this.modiProperties.getSignalHubDigestHistroy());
+		}
+		
+		return param;
+	}
+	
+	private OpenSPCoop2Message computeSignalHubMessage(OpenSPCoop2Message msg, Context context, 
+			IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException, UtilsException, DriverConfigurazioneException, IOException {
+		
+		IDServizio idServizio = (IDServizio) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SERVICE);
+		String objectId = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_ID);
+		String objectType = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_TYPE);
+		ModISignalHubOperation signalType = (ModISignalHubOperation) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SIGNAL_TYPE);
+		String serviceId = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_ESERVICE_ID);
+		
+		ConfigurazionePdD config = protocolFactory.getConfigurazionePdD();
+		
+		IDSerialGenerator serialGenerator = new IDSerialGenerator(config.getLog(), state, config.getTipoDatabase());
+		
+		IDSerialGeneratorParameter serialGeneratorParameter = new IDSerialGeneratorParameter(protocolFactory.getProtocol());
+		serialGeneratorParameter.setSerializableTimeWaitMs(config.getAttesaAttivaJDBC());
+		serialGeneratorParameter.setSerializableNextIntervalTimeMs(config.getCheckIntervalJDBC());
+		serialGeneratorParameter.setTipo(IDSerialGeneratorType.NUMERIC);
+		serialGeneratorParameter.setWrap(true);
+		serialGeneratorParameter.setSize(256);
+		serialGeneratorParameter.setMaxValue(Long.MAX_VALUE);
+		serialGeneratorParameter.setInformazioneAssociataAlProgressivo(serviceId);
+		
+		Long signalId;
+		
+		if (signalType.equals(ModISignalHubOperation.SEEDUPDATE)) {
+			signalId = Long.valueOf(objectId);
+			
+			objectId = "-";
+			objectType = "-";
+		} else {
+		
+			DigestServiceParams param = obtainDigestServiceParam(context, idServizio, serialGenerator, serialGeneratorParameter);
+			
+			DigestConfig digestConfig = new DigestConfig();
+			digestConfig.setDigestType(param.getDigestAlgorithm());
+			digestConfig.setSaltLength(param.getSeed().length);
+			digestConfig.setHashComposition(this.modiProperties.getSignalHubHashCompose());
+			digestConfig.setBase64Encode(true);
+					
+			IDigest digestGenerator = DigestFactory.getDigest(this.log, digestConfig);
+			
+			objectId = new String(digestGenerator.digest(objectId.getBytes(), param.getSeed()));
+			signalId = Long.valueOf(serialGenerator.buildID(serialGeneratorParameter));
+		}
+				
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+		ObjectNode root = jsonUtils.newObjectNode();
+		root.put(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID, signalId);
+		root.put(ModICostanti.MODIPA_SIGNAL_HUB_ID_OBJECT_TYPE, objectType);
+		root.put(ModICostanti.MODIPA_SIGNAL_HUB_ID_OBJECT_ID, objectId);
+		root.put(ModICostanti.MODIPA_SIGNAL_HUB_ID_ESERVICE_ID, serviceId);
+		root.put(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_TYPE, signalType.toString());
+		
+		
+		TransportRequestContext transportRequestContext = msg.getTransportRequestContext();
+		String protocolName = msg.getProtocolName();
+		String transactionId = msg.getTransactionId();
+		
+		msg = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(
+				msg.getMessageType(), 
+				msg.getMessageRole(), 
+				HttpConstants.CONTENT_TYPE_JSON,
+				jsonUtils.toByteArray(root)).getMessage();
+		
+		msg.setTransportRequestContext(transportRequestContext);
+		msg.setProtocolName(protocolName);
+		msg.setTransactionId(transactionId);
+		
+		return msg;
 	}
 	
 }

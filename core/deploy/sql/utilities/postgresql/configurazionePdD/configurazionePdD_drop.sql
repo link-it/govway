@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX INDEX_REF_SERVIZI;
 -- DROP INDEX REMOTE_STORE_CREATE;
 -- DROP INDEX REMOTE_STORE_UPDATE;
 -- DROP INDEX INDEX_NODI_OP;
@@ -7,6 +8,7 @@
 -- DROP INDEX index_dump_config_1;
 -- DROP INDEX index_filetrace_config_1;
 -- DROP INDEX index_tracce_config_1;
+DROP TABLE servizi_digest_params;
 DROP TABLE remote_store_key;
 DROP TABLE remote_store;
 DROP TABLE nodi_runtime_operations;
@@ -41,6 +43,7 @@ DROP TABLE configurazione;
 DROP TABLE config_cache_regole;
 DROP TABLE routing;
 DROP TABLE registri;
+DROP SEQUENCE seq_servizi_digest_params;
 DROP SEQUENCE seq_remote_store_key;
 DROP SEQUENCE seq_remote_store;
 DROP SEQUENCE seq_nodi_runtime_operations;

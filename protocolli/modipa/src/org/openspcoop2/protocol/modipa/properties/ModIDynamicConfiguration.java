@@ -366,7 +366,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throws ProtocolException {
 		
 		boolean operazioneGestita = ModIDynamicConfigurationAccordiParteSpecificaUtilities.validateDynamicConfigParteSpecifica(this.modiProperties,
-				consoleConfiguration, consoleHelper, properties, id, registryReader, false);
+				consoleConfiguration, consoleHelper, properties, id, registryReader, configIntegrationReader, false);
 		if(!operazioneGestita) {
 			super.validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader, configIntegrationReader, id);
 		}
@@ -413,7 +413,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throws ProtocolException {
 	
 		boolean operazioneGestita = ModIDynamicConfigurationAccordiParteSpecificaUtilities.validateDynamicConfigParteSpecifica(this.modiProperties,
-				consoleConfiguration, consoleHelper, properties, id.getIdServizio(), registryReader, true);
+				consoleConfiguration, consoleHelper, properties, id.getIdServizio(), registryReader, configIntegrationReader, true);
 		if(!operazioneGestita) {
 			super.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType,
 					consoleHelper, properties, registryReader, configIntegrationReader, id);

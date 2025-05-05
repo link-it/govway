@@ -390,7 +390,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 	
 	static boolean validateDynamicConfigParteSpecifica(ModIProperties modiProperties,
 			ConsoleConfiguration consoleConfiguration, IConsoleHelper consoleHelper, ProtocolProperties properties, IDServizio id,
-			IRegistryReader registryReader, boolean fruizioni) throws ProtocolException {
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, boolean fruizioni) throws ProtocolException {
 		
 		if(!isMascheraGestioneFruizioneOrErogazione(consoleHelper)) {
 			return false;
@@ -438,7 +438,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		
 		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
 		if(pdnd && !fruizioni) {
-			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.validatePdndInfo(consoleConfiguration, properties);
+			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.validatePdndInfo(registryReader, configIntegrationReader, api, id, portType, consoleConfiguration, properties);
 		}
 		
 		

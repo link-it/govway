@@ -896,7 +896,11 @@ public class ModIConsoleCostanti {
 	
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_REST_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_REST_LABEL;
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_SOAP_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_SOAP_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID_ESERVICE_UNDEFINED = "SignalHub richiede che sia indicata l'id dell'eservice erogato";
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_NOTE = "Indicare la risorsa che esporrà le informazioni di pseudoanonimizzazione";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ERROR_WRONG = "Risorsa che espone le informazioni di pseudoanonimizzazione non riconosciuta";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ERROR_WRONG = "Algoritmo per la generazione del digest non riconosciuto tra quelli indicate tra le proprieta ModI";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ERROR_WRONG = "Dimensione del seme per la generazione del digest non riconosciuto tra quelli indicate tra le proprieta ModI";
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ERROR_UNDEFINED = "SignalHub richiede che sia indicata l'operazione che esporrà le informazioni di pseudoanonimizzazione";
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID;
 	
@@ -920,6 +924,8 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID;
 	
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_NOTE = "Solo l'applicativo indicato o con il ruolo configurato potrà pubblicare segnali di variazione del servizio";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_UNDEFINED = "L'applicativo definito non risulta abilitato alla pubblicazione di segnali";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_UNDEFINED = "Il ruolo interno indicato non esiste";
 	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ERROR_UNDEFINED = "Deve essere selezionato un applicativo o un ruolo autorizzato a pubblicare segnali di variazione del servizio";
 
 	// Signal Hub fruizione

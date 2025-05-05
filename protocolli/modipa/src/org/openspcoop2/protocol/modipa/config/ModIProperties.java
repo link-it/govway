@@ -434,7 +434,8 @@ public class ModIProperties {
 			this.getSignalHubApiName();
 			this.getSignalHubApiVersion();
 			this.getSignalHubConfig();
-			
+			this.getSignalHubSeedSize();
+			this.getSignalHubDigestHistroy();
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo modipa, "+e.getMessage();
 			this.logError(msg,e);
@@ -5058,6 +5059,46 @@ public class ModIProperties {
     	}
     	
     	return this.signalHubConfig;
+	}
+	
+	private String signalHubHashCompose = null;
+	public String getSignalHubHashCompose() throws ProtocolException{
+    	if(this.signalHubHashCompose==null){
+    		String name = "org.openspcoop2.protocol.modipa.signalHub.hash.composition";
+        	try{
+				String value = this.reader.getValue(name); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
+				if(value == null || value.isBlank()) {
+					throw new ProtocolException(name + " non trovata");
+				}
+        		this.signalHubHashCompose = value;
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonCorretta(name, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubHashCompose;
+	}
+	
+	private Integer signalHubDigestHistroy = null;
+	public int getSignalHubDigestHistroy() throws ProtocolException{
+    	if(this.signalHubDigestHistroy==null){
+    		String name = "org.openspcoop2.protocol.modipa.signalHub.seed.history";
+        	try{
+				String rawValue = this.reader.getValue(name); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
+				if(rawValue == null || rawValue.isBlank()) {
+					
+					throw new ProtocolException(name + " non trovata");
+				}
+				Integer value = Integer.valueOf(rawValue);
+				this.signalHubDigestHistroy = value;
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonCorretta(name, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubDigestHistroy;
 	}
 	
 }

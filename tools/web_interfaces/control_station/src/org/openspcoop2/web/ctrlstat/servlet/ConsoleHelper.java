@@ -6380,7 +6380,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			// ** Trasporto Richiedente **
 			boolean labelAutorizzazioneTrasportoAttuata = false;
-			if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) && !AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)){
+			if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)){
 			
 				boolean autorizzazione_autenticazione =  false;
 				boolean isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione = false;
@@ -6391,7 +6391,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 							
-				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
+				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) || AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)) {
 				
 					if(!allHidden) {
 						if( !isSupportatoAutenticazione 
@@ -6558,7 +6558,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			// ** Trasporto Ruoli **
-			if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione) && !AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)){
+			if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)){
 					
 				boolean autorizzazione_ruoli = false;
 				
@@ -6722,7 +6722,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
 			
 				// ** Token Richiedente **
-				if( (tokenAbilitato || modiSicurezzaMessaggio) && !AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione) && !AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)) {
+				if( (tokenAbilitato || modiSicurezzaMessaggio) && !AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)) {
 					
 					boolean autorizzazione_autenticazione_token =  false;
 												
@@ -6800,7 +6800,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 				// ** Token Ruoli **
-				if((tokenAbilitato || modiSicurezzaMessaggio) && !AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione) && !AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)) {
+				if((tokenAbilitato || modiSicurezzaMessaggio) && !AutorizzazioneUtilities.STATO_XACML_POLICY.equals(autorizzazione)) {
 					
 					boolean autorizzazione_ruoli_token = false;
 						
@@ -7389,10 +7389,10 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 				
-				boolean validazioneInputB = !validazioneInput.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
-				boolean introspectionB = !introspection.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
-				boolean userInfoB = !userInfo.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
-				boolean forwardB = !forward.equals(StatoFunzionalita.DISABILITATO.getValue());
+				boolean validazioneInputB = !StatoFunzionalitaConWarning.DISABILITATO.getValue().equals(validazioneInput);
+				boolean introspectionB = !StatoFunzionalitaConWarning.DISABILITATO.getValue().equals(introspection);
+				boolean userInfoB = !StatoFunzionalitaConWarning.DISABILITATO.getValue().equals(userInfo);
+				boolean forwardB = !StatoFunzionalitaConWarning.DISABILITATO.getValue().equals(forward);
 				
 				if(!validazioneInputB && !introspectionB && !userInfoB && !forwardB) {
 					StringBuilder sb = new StringBuilder();
@@ -7418,7 +7418,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 			
-			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
+			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) || AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)) {
 				
 				// autorizzazione abilitata
 				

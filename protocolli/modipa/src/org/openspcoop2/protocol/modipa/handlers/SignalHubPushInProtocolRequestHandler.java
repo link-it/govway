@@ -1,0 +1,291 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * https://govway.org
+ * 
+ * Copyright (c) 2005-2025 Link.it srl (https://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package org.openspcoop2.protocol.modipa.handlers;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Fruitore;
+import org.openspcoop2.core.registry.ProtocolProperty;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
+import org.openspcoop2.pdd.core.dynamic.DynamicException;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.core.handlers.HandlerException;
+import org.openspcoop2.pdd.core.handlers.InRequestContext;
+import org.openspcoop2.pdd.core.handlers.InRequestHandler;
+import org.openspcoop2.protocol.basic.registry.RegistryReader;
+import org.openspcoop2.protocol.modipa.config.ModIProperties;
+import org.openspcoop2.protocol.modipa.config.ModISignalHubConfig;
+import org.openspcoop2.protocol.modipa.config.ModISignalHubParamConfig;
+import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.modipa.constants.ModISignalHubOperation;
+import org.openspcoop2.protocol.modipa.properties.ModIDynamicConfigurationAccordiParteComuneUtilities;
+import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
+import org.openspcoop2.protocol.registry.RegistroServiziReader;
+import org.openspcoop2.protocol.sdk.Context;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
+import org.openspcoop2.protocol.sdk.registry.RegistryException;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
+import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
+import org.slf4j.Logger;
+
+/**
+ * SignalHubPushInRequestHandler
+ *
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
+public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
+	
+	@Override
+	public void invoke(InRequestContext context) throws HandlerException {
+		try {
+			if (checkSignalHubPushConditions(context)) {
+				List<ProtocolProperty> props = getSignalHubPushProperty(context);
+				parseSignalHubPushProperty(context, props);
+			}
+		} catch (ProtocolException 
+				| DriverRegistroServiziException 
+				| DynamicException 
+				| RegistryNotFound 
+				| RegistryException e) {
+			throw new HandlerException(e);
+		} 
+	}
+	
+	private boolean checkSignalHubPushConditions(InRequestContext context) throws ProtocolException, DriverRegistroServiziException, RegistryNotFound, RegistryException {
+		Logger logger = context.getLogCore();
+		
+		
+		// controllo che sia una fruizione ModI
+		if (context.getTipoPorta() == null
+				|| !context.getTipoPorta().equals(TipoPdD.DELEGATA)
+				|| context.getPddContext() == null)
+			return false;
+		
+		IRegistryReader registryReader = this.getIRegistryReader(context);
+
+		
+		// controllo che l'id dell'accordo sia raggiungibile
+
+		AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(this.getRequestInfo(context).getIdServizio());
+		IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+		if (idAccordo == null)
+			return false;
+		
+		
+		// controllo che l'accordo sia l'accordo built-in per la registrazione dei segnali
+		boolean isApiSignalHubPushAPI = false;
+			
+		Map<String, IDriverRegistroServiziGet> readers = RegistroServiziReader.getDriverRegistroServizi();
+
+		for (Map.Entry<String, IDriverRegistroServiziGet> entry : readers.entrySet()) {
+			IRegistryReader reader;
+			try {
+				reader = new RegistryReader(entry.getValue(), logger);
+				isApiSignalHubPushAPI |= ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(idAccordo, reader, ModIProperties.getInstance(), logger);
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				// ignore
+			}
+		}
+		
+		if (!isApiSignalHubPushAPI)
+			return false;
+		
+		
+		logger.info("request to signal push");
+		return true;
+	}
+	
+	
+	private RequestInfo getRequestInfo(InRequestContext context) {
+		return (RequestInfo) context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+	}
+	
+	private IRegistryReader getIRegistryReader(InRequestContext context) throws ProtocolException {
+		return context.getProtocolFactory().getCachedRegistryReader(context.getStato(), this.getRequestInfo(context));
+	}
+	
+	private IDSoggetto getFruitore(InRequestContext context) {
+		return this.getRequestInfo(context).getFruitore();
+	}
+	
+	private List<ProtocolProperty> getSignalHubPushProperty(InRequestContext context) throws ProtocolException, RegistryNotFound, RegistryException {
+		Logger logger = context.getLogCore();
+
+		IRegistryReader reader = this.getIRegistryReader(context);
+		
+		IDServizio servizio = this.getRequestInfo(context).getIdServizio();
+		
+		IDSoggetto idFruitore = this.getFruitore(context);
+		
+		
+		AccordoServizioParteSpecifica asps = reader.getAccordoServizioParteSpecifica(servizio, false);
+		List<Fruitore> fruitori = Objects.requireNonNullElseGet(asps.getFruitoreList(), ArrayList::new);
+				
+		Optional<Fruitore> fruitore = fruitori
+				.stream().filter(f -> f.getNome().equals(idFruitore.getNome()) && f.getTipo().equals(idFruitore.getTipo()))
+				.findAny();
+				
+		if (fruitore.isEmpty())
+			return List.of();
+		
+		List<ProtocolProperty> props = fruitore.get().getProtocolPropertyList();
+		if (props != null && !props.isEmpty())
+			return props;
+				
+		logger.info("request to signal push");
+				
+		
+		return List.of();
+	}
+
+	private String getDynamicProperty(List<ProtocolProperty> props, ModISignalHubParamConfig param, Context context, Map<String, Object> dynamicMap, boolean useDefault) throws ProtocolException {
+		try {
+			String key = CostantiDB.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX + param.getPropertyId();
+			String mode = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(props, CostantiDB.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX + param.getPropertyId());
+			String ridefinedValue = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(props, CostantiDB.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX + param.getPropertyId());
+			List<String> values = null;
+					
+			if (!useDefault && mode.equals(CostantiDB.MODIPA_PROFILO_RIDEFINISCI)) {
+				values = List.of(ridefinedValue);
+			} else {
+				values = param.getRules();
+			}
+	
+			return ModIUtilities.getDynamicValue(key, values, dynamicMap, context);
+		} catch (ProtocolException e) {
+			return null;
+		}
+	}
+	
+	private void parseSignalHubPushProperty(InRequestContext context, List<ProtocolProperty> props) throws ProtocolException, DynamicException, HandlerException, RegistryNotFound, RegistryException, NumberFormatException, DriverRegistroServiziException { 
+		ModIProperties modiProperties = ModIProperties.getInstance();
+		ModISignalHubConfig signalHubConfig = modiProperties.getSignalHubConfig();
+		Logger logger = context.getLogCore();
+
+		Map<String, ModISignalHubParamConfig> claims = signalHubConfig.getClaims()
+				.stream()
+				.collect(Collectors.toMap(v -> v.getPropertyId(), v -> v));
+		
+		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(context.getMessaggio(), context.getPddContext(), null, logger, modiProperties.isReadByPathBufferEnabled());
+
+		boolean isSeedUpdate = false;
+		String signalTypeRaw = getDynamicProperty(props, claims.get("signalType"), context.getPddContext(), dynamicMap, true);
+		ModISignalHubOperation signalType = ModISignalHubOperation.fromString(signalTypeRaw);
+		
+		if (signalType != null && signalType.equals(ModISignalHubOperation.SEEDUPDATE))
+			isSeedUpdate = true;
+		
+		String objectId = getDynamicProperty(props, claims.get("objectId"), context.getPddContext(), dynamicMap, isSeedUpdate);
+		String objectType = getDynamicProperty(props, claims.get("objectType"), context.getPddContext(), dynamicMap, isSeedUpdate);
+		signalTypeRaw = getDynamicProperty(props, claims.get("signalType"), context.getPddContext(), dynamicMap, isSeedUpdate);
+		signalType = ModISignalHubOperation.fromString(signalTypeRaw);
+
+		if (objectId == null || objectType == null || signalTypeRaw == null) {
+			throw new HandlerException("I parametri objectId, objectType and signalType sono necessari");
+		}
+		if (signalType == null) {
+			throw new HandlerException("Il parametro signalType puo' avere solo i seguenti valori: [UPDATE, CREATE, DELETE]");
+		}
+		
+		String service = null;
+		String serviceVersion = null;
+		String serviceId = null;
+		
+		service = getDynamicProperty(props, claims.get("service"), context.getPddContext(), dynamicMap, isSeedUpdate);
+		serviceVersion = getDynamicProperty(props, claims.get("serviceVersion"), context.getPddContext(), dynamicMap, isSeedUpdate);
+		serviceId = getDynamicProperty(props, claims.get("serviceId"), context.getPddContext(), dynamicMap, isSeedUpdate);
+		
+		
+		IRegistryReader reader = this.getIRegistryReader(context);
+		
+		IDServizio idServizio = null;
+		List<ProtocolProperty> eServiceProperties = null;
+		
+		if (serviceId == null && (service == null || serviceVersion == null))
+			throw new HandlerException("Indicare almeno un id eService o il nome/versione di un servizio");
+
+		
+		if (serviceId == null) {
+			idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(
+					ProfiloUtils.toProtocollo(ProfiloEnum.MODIPA), 
+					service,
+					this.getFruitore(context), 
+					Integer.valueOf(serviceVersion));
+			
+			AccordoServizioParteSpecifica asps = reader.getAccordoServizioParteSpecifica(idServizio);
+			eServiceProperties = asps.getProtocolPropertyList();
+		} else {
+			ProtocolFiltroRicercaServizi filter = new ProtocolFiltroRicercaServizi();
+			ProtocolProperties filterProps = new ProtocolProperties();
+			filterProps.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID, serviceId);
+			filter.setProtocolPropertiesServizi(filterProps);
+			
+			List<IDServizio> idServices = reader.findIdAccordiServizioParteSpecifica(filter);
+			logger.debug("id servizi: {}", idServices);
+			
+			if (idServices.isEmpty())
+				throw new HandlerException("Nessun servizio registrato con l'eservice indicato");
+			if (idServices.size() > 1)
+				throw new HandlerException("Piu di un servizio registrato con l'eservice indicato");
+			
+			idServizio = idServices.get(0);
+			
+			if (!idServizio.getSoggettoErogatore().equals(this.getFruitore(context)))
+				throw new HandlerException("Accesso ad un servizio con un erogatore diverso da quello della fruizione di default");
+
+			AccordoServizioParteSpecifica asps = reader.getAccordoServizioParteSpecifica(idServizio);
+			eServiceProperties = asps.getProtocolPropertyList();
+		}
+		
+		serviceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+		
+		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_ID, objectId);
+		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_ESERVICE_ID, serviceId);
+		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SERVICE, idServizio);
+		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_TYPE, objectType);
+		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SIGNAL_TYPE, signalType);
+		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PROPERTIES, eServiceProperties);
+	}
+
+}

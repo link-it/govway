@@ -16,9 +16,14 @@ function fn() {
 
   karate.configure('connectTimeout',  connect_timeout);
   karate.configure('readTimeout', read_timeout);
-  
+
+  var Base64 = Java.type('java.util.Base64');
+  var String = Java.type('java.lang.String');
+
   return { 
     govway_base_path: karate.properties["govway_base_path"],
+    govway_config_api_path: karate.properties["govway_config_api_path"],
+    auth_config_api: Base64.getEncoder().encodeToString(new String(karate.properties["config_api_username"] + ":" + karate.properties["config_api_password"]).getBytes()),
     jmx_username: karate.properties["jmx_username"],
     jmx_password: karate.properties["jmx_password"],
     govwayDbConfig: { 
