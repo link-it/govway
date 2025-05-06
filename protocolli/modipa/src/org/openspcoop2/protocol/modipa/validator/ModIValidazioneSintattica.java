@@ -324,8 +324,8 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 				
 				/* *** SICUREZZA CANALE *** */
 				
-				String securityChannelProfile = ModIPropertiesUtils.readPropertySecurityChannelProfile(aspc);
-				bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE, securityChannelProfile.toUpperCase());
+				String securityChannelProfile = ModIPropertiesUtils.readPropertySecurityChannelProfile(aspc, asps);
+				bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE, securityChannelProfile);
 				
 				if(request && this.context!=null) {
 					

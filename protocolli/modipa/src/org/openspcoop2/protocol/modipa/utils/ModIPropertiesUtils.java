@@ -47,6 +47,7 @@ import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.utils.ModISecurityUtils;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -63,10 +64,22 @@ public class ModIPropertiesUtils {
 	
 	private ModIPropertiesUtils() {}
 
-	public static String readPropertySecurityChannelProfile(AccordoServizioParteComune aspc) throws ProtocolException {
+	
+	public static String readPropertySecurityChannelProfile(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps) throws ProtocolException {
+		try {
+			return ModIPropertiesUtils.readPropertySecurityChannelProfileEngine(aspc).toUpperCase();
+		} catch (ProtocolException e) {
+			if (ModISecurityUtils.isSicurezzaMessaggioRequired(aspc, asps.getPortType()))
+				throw e;
+		}
+		return null;
+	}
+	
+	public static String readPropertySecurityChannelProfileEngine(AccordoServizioParteComune aspc) throws ProtocolException {
 		return ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(aspc.getProtocolPropertyList(), 
 				ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE);
 	}
+	
 	
 	
 	
@@ -91,6 +104,15 @@ public class ModIPropertiesUtils {
 		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA);
 	}
 	public static String readPropertySecurityMessageProfile(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean filterPDND) throws ProtocolException {
+		try {
+			return ModIPropertiesUtils.readPropertySecurityMessageProfileEngine(aspc, nomePortType, azione, filterPDND);
+		} catch (ProtocolException e) {
+			if (ModISecurityUtils.isSicurezzaMessaggioRequired(aspc, nomePortType))
+				throw e;
+		}
+		return null;
+	}
+	public static String readPropertySecurityMessageProfileEngine(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean filterPDND) throws ProtocolException {
 		String profile = readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO);
 		if(filterPDND &&
 			(

@@ -321,19 +321,19 @@ public class ModIImbustamento {
 			if (RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)
 					&& context.containsKey(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SIGNAL_TYPE)) {
 				msg = this.computeSignalHubMessage(msg, context, protocolFactory, state);
-				
 			}
 			
 			
 			/* *** SICUREZZA CANALE *** */
 			
-			String securityChannelProfile = ModIPropertiesUtils.readPropertySecurityChannelProfile(aspc);
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE, securityChannelProfile.toUpperCase());
+			String securityChannelProfile = ModIPropertiesUtils.readPropertySecurityChannelProfile(aspc, asps);
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE, securityChannelProfile);
 			
 			
 			/* *** SICUREZZA MESSAGGIO *** */
 			
 			boolean isRichiesta = MessageRole.REQUEST.equals(messageRole);
+			
 			
 			boolean filterPDND = true;
 			String securityMessageProfileNonFiltratoPDND = ModIPropertiesUtils.readPropertySecurityMessageProfile(aspc, nomePortType, azione, !filterPDND);
@@ -901,7 +901,6 @@ public class ModIImbustamento {
 		}
 		
 	}
-	
 	
 	private OpenSPCoop2Message computeSignalHubMessage(OpenSPCoop2Message msg, Context context, 
 			IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException, UtilsException, DriverConfigurazioneException, IOException {
