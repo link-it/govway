@@ -24,12 +24,16 @@ Prerequisiti:
 	- Configurare il file di properties delle classi junit in <src/testsuite.properties>
 	
 		+ Indicare il base path per govway in <govway_base_path>
-
+		
+		+ Indicare il path base dell'api di configurazione <govway_config_api> e le utenze per poterci accedere <config_api_username, config_api_password>
+ 
 		+ Indicare per la proprietà <config_loader_path> il percorso assoluto verso gli script di caricamento sul db degli archivi zip 
 			di configurazione.
 
 		+ NOTA: La porta deve restare 8090 altrimenti è necessario cambiare la configurazione di tutte le porte delegate
 			dentro modipaTestBundle.zip
+
+		
 
 - Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444, 8445, 8450 e 8451 utilizzando le configurazioni presenti nella directory https:
   a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)

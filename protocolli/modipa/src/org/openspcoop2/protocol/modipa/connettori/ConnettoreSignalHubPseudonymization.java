@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -121,18 +120,24 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 	private DigestServiceParams initCryptoInfo(DigestServiceParamsDriver driver, PdDContext context) throws UtilsException, DriverConfigurazioneException, ProtocolException {
 		RequestInfo reqInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		IDServizio idServizio = reqInfo.getIdServizio();
-		
-		driver.acquireLock(reqInfo.getIdTransazione());
 		DigestServiceParams param = null;
 		
-		List<ProtocolProperty> protocolProperty = ((List<?>) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PROPERTIES))
-				.stream()
-				.map(p -> (ProtocolProperty)p)
-				.collect(Collectors.toList());
-		param = SignalHubUtils.generateDigestServiceParams(idServizio, protocolProperty, null);
-		driver.addEntry(param);
+		List<ProtocolProperty> protocolProperty = SignalHubUtils.obtainSignalHubProtocolProperty(context);
 		
-		driver.releaseLock();
+		// provo ad inizializzare il db
+		driver.acquireLock(reqInfo.getIdTransazione());
+		try {
+			
+			// se le informazioni crittografiche esistono gia le ritorno altrimenti le genero
+			param = driver.getLastEntry(idServizio);
+			if (param != null)
+				return param;
+			
+			param = SignalHubUtils.generateDigestServiceParams(idServizio, protocolProperty, null);
+			driver.addNewEntry(param);
+		} finally {
+			driver.releaseLock();
+		}
 		
 		return param;
 	}
@@ -142,19 +147,24 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 		RequestInfo reqInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		IDServizio idServizio = reqInfo.getIdServizio();
 		
+		// ottengo il driver di configurazione
 		Object db = ConfigurazionePdDReader.getDriverConfigurazionePdD();
 		if (!(db instanceof DriverConfigurazioneDB))
 			throw new UtilsException("driver trovato non di tipo db");
 		
 		
-		String signalIdRaw = reqInfo.getProtocolContext().getParameterFirstValue("signalId");
+		// cerco di ottenere l'id del segnale per fare una ricerca puntuale delle informazioni crittografiche
+		String signalIdRaw = reqInfo.getProtocolContext().getParameterFirstValue(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID);
 		DigestServiceParams param = null;
 		
 		try {
 			Long signalId = signalIdRaw != null ? Long.parseLong(signalIdRaw) : null;
 			DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db);
+			
+			// se signalId risulta uguale a null ritornero le informazioni critoogtafiche piu recenti
 			param = driver.getEntry(idServizio, signalId);
 			
+			// se non esistno informazioni crittografiche nel db lo inizializzo
 			if (param == null && signalId == null) {
 				param = this.initCryptoInfo(driver, pddContext);
 			}
@@ -164,6 +174,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 		}
 		
 		
+		// se non ho trovato alcuna informazione crittografica ritorno 404
 		if (param == null) {
 			ProblemRFC7807 problemRFC7807 = new ProblemRFC7807();
 			problemRFC7807.setStatus(404);
@@ -177,7 +188,8 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 			this.codice = 404;
 			return;
 		}
-		
+
+		// serializzo il messsaggio
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		ObjectNode node = jsonUtils.newObjectNode();
 		node.put("seed", new String(param.getSeed()));
@@ -393,6 +405,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 				notifierInputStreamParams = this.preInResponseContext.getNotifierInputStreamParams();
 			}
 			
+			// operazione di gestione delle informaizoni crittografiche
 			this.retrieveCryptoInfo(pddContext);
 			
 

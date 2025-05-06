@@ -105,7 +105,6 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 
 		
 		// controllo che l'id dell'accordo sia raggiungibile
-
 		AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(this.getRequestInfo(context).getIdServizio());
 		IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 		if (idAccordo == null)
@@ -131,8 +130,8 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 		if (!isApiSignalHubPushAPI)
 			return false;
 		
+		logger.debug("Nuova richiesta di deposito di segnali SignalHub");
 		
-		logger.info("request to signal push");
 		return true;
 	}
 	
@@ -150,18 +149,13 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 	}
 	
 	private List<ProtocolProperty> getSignalHubPushProperty(InRequestContext context) throws ProtocolException, RegistryNotFound, RegistryException {
-		Logger logger = context.getLogCore();
-
 		IRegistryReader reader = this.getIRegistryReader(context);
-		
 		IDServizio servizio = this.getRequestInfo(context).getIdServizio();
-		
 		IDSoggetto idFruitore = this.getFruitore(context);
-		
 		
 		AccordoServizioParteSpecifica asps = reader.getAccordoServizioParteSpecifica(servizio, false);
 		List<Fruitore> fruitori = Objects.requireNonNullElseGet(asps.getFruitoreList(), ArrayList::new);
-				
+		
 		Optional<Fruitore> fruitore = fruitori
 				.stream().filter(f -> f.getNome().equals(idFruitore.getNome()) && f.getTipo().equals(idFruitore.getTipo()))
 				.findAny();
@@ -172,10 +166,7 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 		List<ProtocolProperty> props = fruitore.get().getProtocolPropertyList();
 		if (props != null && !props.isEmpty())
 			return props;
-				
-		logger.info("request to signal push");
-				
-		
+			
 		return List.of();
 	}
 
@@ -186,6 +177,7 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 			String ridefinedValue = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(props, CostantiDB.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX + param.getPropertyId());
 			List<String> values = null;
 					
+			// se il campo e' stato ridefinito uso il template ridefinito altrimenti quello di default
 			if (!useDefault && mode.equals(CostantiDB.MODIPA_PROFILO_RIDEFINISCI)) {
 				values = List.of(ridefinedValue);
 			} else {
@@ -209,16 +201,18 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 		
 		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(context.getMessaggio(), context.getPddContext(), null, logger, modiProperties.isReadByPathBufferEnabled());
 
+		// controllo se il segnale e' un segnale di SEEDUPDATE in tal caso le informazioni saranne messe da govway negli header di default
 		boolean isSeedUpdate = false;
-		String signalTypeRaw = getDynamicProperty(props, claims.get("signalType"), context.getPddContext(), dynamicMap, true);
+		String signalTypeRaw = getDynamicProperty(props, claims.get(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_TYPE), context.getPddContext(), dynamicMap, true);
 		ModISignalHubOperation signalType = ModISignalHubOperation.fromString(signalTypeRaw);
 		
 		if (signalType != null && signalType.equals(ModISignalHubOperation.SEEDUPDATE))
 			isSeedUpdate = true;
 		
-		String objectId = getDynamicProperty(props, claims.get("objectId"), context.getPddContext(), dynamicMap, isSeedUpdate);
-		String objectType = getDynamicProperty(props, claims.get("objectType"), context.getPddContext(), dynamicMap, isSeedUpdate);
-		signalTypeRaw = getDynamicProperty(props, claims.get("signalType"), context.getPddContext(), dynamicMap, isSeedUpdate);
+		// ottengo le varie informaizoni di deposito del segnale (nel caso di seedupdate usero i template di default)
+		String objectId = getDynamicProperty(props, claims.get(ModICostanti.MODIPA_SIGNAL_HUB_ID_OBJECT_ID), context.getPddContext(), dynamicMap, isSeedUpdate);
+		String objectType = getDynamicProperty(props, claims.get(ModICostanti.MODIPA_SIGNAL_HUB_ID_OBJECT_TYPE), context.getPddContext(), dynamicMap, isSeedUpdate);
+		signalTypeRaw = getDynamicProperty(props, claims.get(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_TYPE), context.getPddContext(), dynamicMap, isSeedUpdate);
 		signalType = ModISignalHubOperation.fromString(signalTypeRaw);
 
 		if (objectId == null || objectType == null || signalTypeRaw == null) {
@@ -244,8 +238,8 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 		
 		if (serviceId == null && (service == null || serviceVersion == null))
 			throw new HandlerException("Indicare almeno un id eService o il nome/versione di un servizio");
-
 		
+		// se tutte le informazioni sono presenti ottengo il serviceId a partire dall'id del servizio
 		if (serviceId == null) {
 			idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(
 					ProfiloUtils.toProtocollo(ProfiloEnum.MODIPA), 
@@ -256,6 +250,7 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 			AccordoServizioParteSpecifica asps = reader.getAccordoServizioParteSpecifica(idServizio);
 			eServiceProperties = asps.getProtocolPropertyList();
 		} else {
+			// altrimenti ottengo l'id sdel servizio partendo dal serviceId
 			ProtocolFiltroRicercaServizi filter = new ProtocolFiltroRicercaServizi();
 			ProtocolProperties filterProps = new ProtocolProperties();
 			filterProps.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID, serviceId);
@@ -266,8 +261,6 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 			
 			if (idServices.isEmpty())
 				throw new HandlerException("Nessun servizio registrato con l'eservice indicato");
-			if (idServices.size() > 1)
-				throw new HandlerException("Piu di un servizio registrato con l'eservice indicato");
 			
 			idServizio = idServices.get(0);
 			

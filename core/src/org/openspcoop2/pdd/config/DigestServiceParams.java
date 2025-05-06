@@ -20,6 +20,7 @@
 package org.openspcoop2.pdd.config;
 
 
+import java.io.Serializable;
 import java.time.Instant;
 
 import org.openspcoop2.core.id.IDServizio;
@@ -32,7 +33,9 @@ import org.openspcoop2.utils.digest.DigestType;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class DigestServiceParams {
+public class DigestServiceParams implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private IDServizio idServizio;
 	private DigestType digestAlgorithm;
 	private byte[] seed;

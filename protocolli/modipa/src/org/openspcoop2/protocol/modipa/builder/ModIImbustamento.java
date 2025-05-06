@@ -903,94 +903,18 @@ public class ModIImbustamento {
 	}
 	
 	
-	private static final String ERROR_MESSAGE_SEED_NOT_UPDATED = "seed update non riuscito";
-	
-	private DigestServiceParams obtainDigestServiceParam(Context context, IDServizio idServizio, IDSerialGenerator serialGenerator, IDSerialGeneratorParameter serialGeneratorParameter) throws ProtocolException, UtilsException, DriverConfigurazioneException, IOException {		
-		Object db = ConfigurazionePdDReader.getDriverConfigurazionePdD();
-		if (!(db instanceof DriverConfigurazioneDB))
-			throw new ProtocolException("driver db non trovato");
-		
-		DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db);
-		DigestServiceParams param = driver.getValidEntry(idServizio);
-		if (param == null) {
-			RequestInfo reqInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
-			driver.acquireLock(reqInfo.getIdTransazione());
-			
-			try (MockServletInputStream is = new MockServletInputStream()) {
-				param = driver.getValidEntry(idServizio);
-				if (param != null)
-					return param;
-				
-				List<ProtocolProperty> eServiceProperties = SignalHubUtils.obtainSignalHubProtocolProperty(context);
-				
-				String seedSignalId = serialGenerator.buildID(serialGeneratorParameter);
-				param = SignalHubUtils.generateDigestServiceParams(idServizio, eServiceProperties, Long.valueOf(seedSignalId));
-
-				String eServiceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
-				
-				
-				MockHttpServletRequest req = new MockHttpServletRequest(reqInfo.getProtocolContext().getHttpServletRequest());
-				MockHttpServletResponse res = new MockHttpServletResponse();
-				
-				req.setInputStream(is);
-				req.setHeader("GovWay-Signal-Type", List.of(ModISignalHubOperation.SEEDUPDATE.toString()));
-				req.setHeader("GovWay-Signal-ObjectId", List.of(seedSignalId));
-				req.setHeader("GovWay-Signal-ObjectType", List.of("seed"));
-				req.setHeader("GovWay-Signal-ServiceId", List.of(eServiceId));
-				req.setHeader("Content-Length", List.of("0"));
-				req.setHeader("Content-Type", null);
-				
-				
-				Transaction transaction = TransactionContext.removeTransaction(reqInfo.getIdTransazione());
-				
-				try {
-					req.getRequestDispatcher(req.getPathInfo()).include(req, res);
-				} catch (IOException | ServletException e) {
-					throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
-				} finally {
-					try {
-						TransactionContext.setTransactionThreadLocal(reqInfo.getIdTransazione(), transaction);
-					} catch (TransactionNotExistsException e) {
-						// ignore should never happen
-					}
-				}
-				
-				try {
-					if (res.getStatus() != HttpServletResponse.SC_OK)
-						throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
-					byte[] out = ((MockServletOutputStream)res.getOutputStream()).getByteArrayOutputStream().toByteArray();
-					
-					JSONUtils jsonUtils = JSONUtils.getInstance();
-					JsonNode node = jsonUtils.getAsNode(out);
-					if (node.get(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID).isNull())
-						throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
-				} catch (IOException e) {
-					throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
-				}
-				
-				driver.addEntry(param);
-				
-			} finally {
-				driver.releaseLock();
-			}
-			
-			driver.removeOldEntries(idServizio, this.modiProperties.getSignalHubDigestHistroy());
-		}
-		
-		return param;
-	}
-	
 	private OpenSPCoop2Message computeSignalHubMessage(OpenSPCoop2Message msg, Context context, 
 			IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException, UtilsException, DriverConfigurazioneException, IOException {
 		
+		// ottengo le informazioni inserite dall'handler
 		IDServizio idServizio = (IDServizio) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SERVICE);
 		String objectId = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_ID);
 		String objectType = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_TYPE);
 		ModISignalHubOperation signalType = (ModISignalHubOperation) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SIGNAL_TYPE);
 		String serviceId = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_ESERVICE_ID);
 		
+		// configuro il generatore di numeri seriali
 		ConfigurazionePdD config = protocolFactory.getConfigurazionePdD();
-		
 		IDSerialGenerator serialGenerator = new IDSerialGenerator(config.getLog(), state, config.getTipoDatabase());
 		
 		IDSerialGeneratorParameter serialGeneratorParameter = new IDSerialGeneratorParameter(protocolFactory.getProtocol());
@@ -1002,29 +926,33 @@ public class ModIImbustamento {
 		serialGeneratorParameter.setMaxValue(Long.MAX_VALUE);
 		serialGeneratorParameter.setInformazioneAssociataAlProgressivo(serviceId);
 		
+		// se mi trovo in condizione di seedupdate il signalId sara gia stato creato e inserito come objectId da govway
 		Long signalId;
-		
 		if (signalType.equals(ModISignalHubOperation.SEEDUPDATE)) {
 			signalId = Long.valueOf(objectId);
 			
 			objectId = "-";
 			objectType = "-";
 		} else {
-		
+			
+			// per le operazione UPDATE, CREATE, DELETE ottengo i dati per produrre il digest dell'id
 			DigestServiceParams param = obtainDigestServiceParam(context, idServizio, serialGenerator, serialGeneratorParameter);
 			
+			// configuro il generatore di digest
 			DigestConfig digestConfig = new DigestConfig();
 			digestConfig.setDigestType(param.getDigestAlgorithm());
 			digestConfig.setSaltLength(param.getSeed().length);
 			digestConfig.setHashComposition(this.modiProperties.getSignalHubHashCompose());
 			digestConfig.setBase64Encode(true);
-					
+			
 			IDigest digestGenerator = DigestFactory.getDigest(this.log, digestConfig);
 			
+			// produco il digest e il numero seriale del segnale
 			objectId = new String(digestGenerator.digest(objectId.getBytes(), param.getSeed()));
 			signalId = Long.valueOf(serialGenerator.buildID(serialGeneratorParameter));
 		}
-				
+		
+		// serializzo le informazioni prodotte in json
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		ObjectNode root = jsonUtils.newObjectNode();
 		root.put(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID, signalId);
@@ -1034,6 +962,7 @@ public class ModIImbustamento {
 		root.put(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_TYPE, signalType.toString());
 		
 		
+		// altero il messaggio govway in modo tale di restituire al backend il nuovo messaggio
 		TransportRequestContext transportRequestContext = msg.getTransportRequestContext();
 		String protocolName = msg.getProtocolName();
 		String transactionId = msg.getTransactionId();
@@ -1049,6 +978,95 @@ public class ModIImbustamento {
 		msg.setTransactionId(transactionId);
 		
 		return msg;
+	}
+	
+	private static final String ERROR_MESSAGE_SEED_NOT_UPDATED = "seed update non riuscito";
+	private DigestServiceParams obtainDigestServiceParam(Context context, IDServizio idServizio, IDSerialGenerator serialGenerator, IDSerialGeneratorParameter serialGeneratorParameter) throws ProtocolException, UtilsException, DriverConfigurazioneException, IOException {		
+		
+		// ottengo il driver di configurazione
+		Object db = ConfigurazionePdDReader.getDriverConfigurazionePdD();
+		if (!(db instanceof DriverConfigurazioneDB))
+			throw new ProtocolException("driver db non trovato");
+		
+		// ottengo il driver per le informazioni diagnostiche
+		DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db);
+		DigestServiceParams param = driver.getValidEntry(idServizio);
+		
+		// non esiste informazioni crittografiche valide devo rigenerarle
+		if (param == null) {
+			RequestInfo reqInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+			
+			driver.acquireLock(reqInfo.getIdTransazione());
+			try (MockServletInputStream is = new MockServletInputStream()) {
+				
+				// riprovo a vedere se esistono informaizoni crittografiche valide prodotte da un altro thread nel frattempo
+				param = driver.getValidEntry(idServizio);
+				if (param != null)
+					return param;
+				
+				// genero nuove informazioni crittografiche
+				List<ProtocolProperty> eServiceProperties = SignalHubUtils.obtainSignalHubProtocolProperty(context);
+				
+				String seedSignalId = serialGenerator.buildID(serialGeneratorParameter);
+				param = SignalHubUtils.generateDigestServiceParams(idServizio, eServiceProperties, Long.valueOf(seedSignalId));
+
+				String eServiceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+				
+				
+				// creo una richiesta e risposta servlet mock per inviare un segnale di SEEDUPDATE alla stessa porta delegata con le stesse credenziali 
+				MockHttpServletRequest req = new MockHttpServletRequest(reqInfo.getProtocolContext().getHttpServletRequest());
+				MockHttpServletResponse res = new MockHttpServletResponse();
+				
+				// i segnali di SEEDUPDATE devono essere inserite negli header di default
+				req.setInputStream(is);
+				req.setHeader("GovWay-Signal-Type", List.of(ModISignalHubOperation.SEEDUPDATE.toString()));
+				req.setHeader("GovWay-Signal-ObjectId", List.of(seedSignalId));
+				req.setHeader("GovWay-Signal-ObjectType", List.of("seed"));
+				req.setHeader("GovWay-Signal-ServiceId", List.of(eServiceId));
+				req.setHeader("Content-Length", List.of("0"));
+				req.setHeader("Content-Type", null);
+				
+				// rimuove la transazione corrente dal contesto in quanto verra eseguita la transazione per il SEEDUPDATE
+				Transaction transaction = TransactionContext.removeTransaction(reqInfo.getIdTransazione());
+				
+				try {
+					req.getRequestDispatcher(req.getPathInfo()).include(req, res);
+				} catch (IOException | ServletException e) {
+					throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+				} finally {
+					try {
+						TransactionContext.setTransactionThreadLocal(reqInfo.getIdTransazione(), transaction);
+					} catch (TransactionNotExistsException e) {
+						// ignore should never happen
+					}
+				}
+				
+				// controllo che il backend abbia ritornato una risposta positiva di creazione del seme
+				try {
+					if (res.getStatus() != HttpServletResponse.SC_OK)
+						throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+					byte[] out = ((MockServletOutputStream)res.getOutputStream()).getByteArrayOutputStream().toByteArray();
+					
+					JSONUtils jsonUtils = JSONUtils.getInstance();
+					JsonNode node = jsonUtils.getAsNode(out);
+					if (node.get(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID).isNull())
+						throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+				} catch (IOException e) {
+					throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+				}
+				
+				// posso inserire le nuove informazioni crittografiche
+				driver.addNewEntry(param);
+				
+			} finally {
+				driver.releaseLock();
+			}
+			
+			// rimuovo le informazioni crittografiche vecchie
+			driver.removeOldEntries(idServizio, this.modiProperties.getSignalHubDigestHistroy());
+		}
+		
+		return param;
 	}
 	
 }

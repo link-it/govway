@@ -1,3 +1,22 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * https://govway.org
+ * 
+ * Copyright (c) 2005-2025 Link.it srl (https://link.it). 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.protocol.modipa.utils;
 
 import java.security.SecureRandom;
@@ -15,8 +34,26 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.digest.DigestType;
 
+/**
+ * SignalHubUtils classe con metodi di utilita signal hub
+ *
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
+ * @author $Author$
+ * @version $Rev$, $Date$
+ */
 public class SignalHubUtils {
 	
+	private SignalHubUtils() {}
+	
+	/**
+	 * Funzioone per fare il parsing delle protocolProperties di un erogazione impostata per supportare singnal hub
+	 * per generare nuove informazioni crittografiche per la creazione del digest
+	 * @param idServizio
+	 * @param eServiceProperties
+	 * @param serial
+	 * @return
+	 * @throws ProtocolException
+	 */
 	public static DigestServiceParams generateDigestServiceParams(IDServizio idServizio, List<ProtocolProperty> eServiceProperties, Long serial) throws ProtocolException {
 		Long durata = ProtocolPropertiesUtils.getRequiredNumberValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, true);
 		String algorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID);

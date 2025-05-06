@@ -26,9 +26,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 
 /**
- * Classe per simulare lo stream della richiesta servlet
- * 
- * 
+ * MockServletOutputStream semplice stream usato per poter leggere 
+ * il contenuto da una risposta servlet http
+ *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$

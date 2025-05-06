@@ -53,8 +53,8 @@ import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
 /**
- * Classe per simulare una richiesta servlet http
- * 
+ * Classe per simulare una richiesta servlet http in cui si possono sovrascrivere
+ * vari elementi
  * 
  * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$

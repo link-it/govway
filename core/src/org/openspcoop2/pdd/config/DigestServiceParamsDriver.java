@@ -45,6 +45,8 @@ import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DigestServiceParamsDriver
@@ -57,10 +59,14 @@ public class DigestServiceParamsDriver {
 
 	private static final String DB_LOCK_ID = "ServiziDigestParamsUpdate";
 	private static final org.openspcoop2.utils.Semaphore THREAD_LOCK = new org.openspcoop2.utils.Semaphore("DigestServiceParamsDriver-threadLock");
-
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
 	private DriverConfigurazioneDB driverConfigurazioneDB;
 
-
+	private String getKey(IDServizio idServizio, Long serialNumber) {
+		return "DigestServiceParams" + idServizio.toString() + "-" + serialNumber;
+	}
+	
 	private Long getIdServizio(Connection conn, String tipoDB, IDServizio idServizio) throws SQLQueryObjectException, SQLException {
 		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(tipoDB); 
 		query.addFromTable(CostantiDB.SOGGETTI);
@@ -125,12 +131,20 @@ public class DigestServiceParamsDriver {
 		this.driverConfigurazioneDB = driverConfigurazioneDB;
 	}
 	
-	public boolean removeEntries(IDServizio idServizio) {
+	/**
+	 * Rimuove tutte le informazioni crittografiche per la generazione dei digest per un determinato
+	 * servizio.
+	 * @param idServizio servizio di cui rimuovere le informazioni crittografiche
+	 * @return
+	 * @throws DriverConfigurazioneException nel caso la rimozione non avvenga correttamente
+	 */
+	public boolean removeEntries(IDServizio idServizio) throws DriverConfigurazioneException {
 		Connection conn = null;
 		String tipoDB = this.driverConfigurazioneDB.getTipoDB();
 		try { 
 			conn = this.driverConfigurazioneDB.getConnection("removeEntries");
 			
+			// ottengo l'id di riferimento del servizio
 			Long idServizioRef = this.getIdServizio(conn, tipoDB, idServizio);
 			if (idServizioRef == null)
 				return false;
@@ -143,8 +157,8 @@ public class DigestServiceParamsDriver {
 				stmt.setLong(1, idServizioRef);
 				stmt.execute();
 			}
-		} catch (DriverConfigurazioneException | SQLQueryObjectException | SQLException e) {
-			return false;
+		} catch (SQLQueryObjectException | SQLException e) {
+			throw new DriverConfigurazioneException("Errore nella rimozione di un record di tipo DigestServiceParam", e);
 		} finally {
 			this.driverConfigurazioneDB.closeConnection(conn);
 		}
@@ -152,16 +166,27 @@ public class DigestServiceParamsDriver {
 		return true;
 	}
 	
-	public boolean removeOldEntries(IDServizio idServizio, int n) {
+	
+	/**
+	 * Rimuove partendo dalle informazioni piu vecchie tutte le informazioni crittografiche relative ad un determinato 
+	 * servizio fino ad averne al piu n
+	 * @param idServizio: id del servizio relativo
+	 * @param n: numero di informazioni massimo da tenere in memoria
+	 * @return
+	 * @throws DriverConfigurazioneException: nel caso la rimozione non vada a buon fine
+	 */
+	public boolean removeOldEntries(IDServizio idServizio, int n) throws DriverConfigurazioneException {
 		Connection conn = null;
 		String tipoDB = this.driverConfigurazioneDB.getTipoDB();
 		try { 
 			conn = this.driverConfigurazioneDB.getConnection("removeEntries");
 			
+			// ottengo l'id di riferimento del servizio
 			Long idServizioRef = this.getIdServizio(conn, tipoDB, idServizio);
 			if (idServizioRef == null)
 				return false;
 			
+			// ottengo il timestamp della n-esimo record
 			Timestamp lastQuery = null;
 			ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(tipoDB); 
 			query.addFromTable(CostantiDB.SERVIZI_DIGEST_PARAMS);
@@ -181,9 +206,11 @@ public class DigestServiceParamsDriver {
 				}
 			}
 			
+			// se non esiste ci sono meno di n records
 			if (lastQuery == null)
 				return true;
 			
+			// elimino tutti i record con un timestamp precedente
 			query = SQLObjectFactory.createSQLQueryObject(tipoDB); 
 			query.addDeleteTable(CostantiDB.SERVIZI_DIGEST_PARAMS);
 			query.setANDLogicOperator(true);
@@ -196,8 +223,8 @@ public class DigestServiceParamsDriver {
 				stmt.setTimestamp(index++, lastQuery);
 				stmt.execute();
 			}
-		} catch (DriverConfigurazioneException | SQLQueryObjectException | SQLException e) {
-			return false;
+		} catch (SQLQueryObjectException | SQLException e) {
+			throw new DriverConfigurazioneException("Errore nell'aggiunta di un record di tipo DigestServiceParam", e);
 		} finally {
 			this.driverConfigurazioneDB.closeConnection(conn);
 		}
@@ -205,16 +232,27 @@ public class DigestServiceParamsDriver {
 		return true;
 	}
 	
-	public boolean addEntry(DigestServiceParams params) {
+	/**
+	 * Aggiunge una nuova informazioni crittografica, questa funzione deve essere chiamata usando il lock fornito dalla classe,
+	 * nel caso l'aggiunta vada a buon fine la nuova informazione aggiunta verra registrata in cache come informazione piu
+	 * recente
+	 * @param params: informazione crittografica da aggiungere
+	 * @return
+	 * @throws DriverConfigurazioneException: nel caso l'aggiunta non vada a buon fine
+	 */
+	public boolean addNewEntry(DigestServiceParams params)  throws DriverConfigurazioneException {
 		Connection conn = null;
 		String tipoDB = this.driverConfigurazioneDB.getTipoDB();
+	
 		try { 
 			conn = this.driverConfigurazioneDB.getConnection("addEntry");
 			
+			// ottengo l'id di riferimento del servizio
 			Long idServizioRef = this.getIdServizio(conn, tipoDB, params.getIdServizio());
 			if (idServizioRef == null)
 				return false;
 			
+			// aggiungo il nuovo elemento nel db
 			ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(tipoDB); 
 			query.addInsertTable(CostantiDB.SERVIZI_DIGEST_PARAMS);
 			if (params.getSerialNumber() != null)
@@ -236,46 +274,80 @@ public class DigestServiceParamsDriver {
 				stmt.setString(index++, new String(params.getSeed()));
 				stmt.execute();
 			}
-		} catch (DriverConfigurazioneException | SQLQueryObjectException | SQLException e) {
-			return false;
+		} catch (SQLQueryObjectException | SQLException e) {
+			throw new DriverConfigurazioneException (e);
 		} finally {
 			this.driverConfigurazioneDB.closeConnection(conn);
+		}
+		
+		// aggiungo i parametri in cache (se ottengo un exception posso ignorarla in quanto non invalida il processo)
+		try {
+			ConfigurazionePdDReader.getCache().put(getKey(params.getIdServizio(), null), params);
+		} catch (UtilsException e) {
+			this.logger.warn("Errore nell'aggiunta di un valore in cache", e);
 		}
 		
 		return true;
 	}
 	
-	public DigestServiceParams getValidEntry(IDServizio idServizio) {
-		DigestServiceParams param = this.getLastEntry(idServizio);
-		
+	private boolean isValid(DigestServiceParams param) {
 		if (param == null)
-			return null;
-		
+			return false;
 		Instant now = Instant.now();
 		Instant expiration = param
 				.getDataRegistrazione()
 				.plus(Duration.ofDays(param.getDurata()));
 		
-		if (now.isAfter(expiration))
-			return null;
-		return param;
+		return now.isBefore(expiration);
 	}
 	
-	public DigestServiceParams getLastEntry(IDServizio idServizio) {
+	/**
+	 * Funzione che se possible ritorna l'informazione crittografica piu recente se e solo se e' ancora valida
+	 * @param idServizio
+	 * @return null se l'informazione crittografica piu recente non risulta valida
+	 * @throws DriverConfigurazioneException
+	 */
+	public DigestServiceParams getValidEntry(IDServizio idServizio) throws DriverConfigurazioneException {
+		DigestServiceParams param = this.getLastEntry(idServizio);
+		if (isValid(param))
+			return param;
+		return null;
+	}
+	
+	/**
+	 * Funzione che ritorna l'informazione crittografica piu recente
+	 * @param idServizio
+	 * @return
+	 * @throws DriverConfigurazioneException
+	 */
+	public DigestServiceParams getLastEntry(IDServizio idServizio) throws DriverConfigurazioneException {
 		return this.getEntry(idServizio, null);
 	}
 	
-	public DigestServiceParams getEntry(IDServizio idServizio, Long serialNumber) {
+	/**
+	 * Metodo che ritorna l'informazione crittografica relativa ad un servizio dato un determinato numero seriale
+	 * @param idServizio
+	 * @param serialNumber
+	 * @return
+	 * @throws DriverConfigurazioneException
+	 */
+	public DigestServiceParams getEntry(IDServizio idServizio, Long serialNumber) throws DriverConfigurazioneException {
 		Connection conn = null;
 		String tipoDB = this.driverConfigurazioneDB.getTipoDB();
-		
+		DigestServiceParams param  = null;
 		
 		try {
+			// cerco di ottenere i parametri dalla cache se e solo se il numero seriale e' definito o se il record piu recente e' ancora valido
+			param = (DigestServiceParams) ConfigurazionePdDReader.getRawObjectCache(getKey(idServizio, serialNumber));
+			if (param != null && (serialNumber != null || isValid(param)))
+				return param;
+			
 			conn = this.driverConfigurazioneDB.getConnection("getEntry");
 			
+			// ottengo l'id di riferimento del servizio
 			Long idServizioRef = this.getIdServizio(conn, tipoDB, idServizio);
 			if (idServizioRef == null)
-				return null;
+				throw new DriverConfigurazioneException("idServizio riferito non presente nella tabella servizio");
 			
 			ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(tipoDB); 
 			query.addFromTable(CostantiDB.SERVIZI_DIGEST_PARAMS);
@@ -295,17 +367,26 @@ public class DigestServiceParamsDriver {
 				
 				try (ResultSet rs = stmt.executeQuery()) {
 					if (rs.next()) {
-						return this.paramsFromResultSet(idServizio, rs);
+						param = this.paramsFromResultSet(idServizio, rs);
 					}
 				}
 			}
-		} catch (DriverConfigurazioneException | SQLQueryObjectException | SQLException e) {
-			return null;
+			
+		} catch (SQLQueryObjectException | SQLException e) {
+			throw new DriverConfigurazioneException("Errore nella get del DigestServiceParam", e);
 		} finally {
 			this.driverConfigurazioneDB.closeConnection(conn);
 		}
+	
+		// aggiorno la cache se e solo se il numero seriale e' esplicitato o il record e' valido
+		try {
+			if (param != null && (serialNumber != null || isValid(param)))
+				ConfigurazionePdDReader.getCache().put(getKey(idServizio, serialNumber), param);
+		} catch (UtilsException e) {
+			this.logger.warn("Errore nell'aggiunta di un valore in cache", e);
+		}
 		
-		return null;
+		return param;
 	}
 	
 	private Semaphore semaphore;
@@ -315,7 +396,6 @@ public class DigestServiceParamsDriver {
 		if (this.semaphore == null) {
 			InfoStatistics semaphoreStatistics = new InfoStatistics();
 			
-			// TODO: add properties
 			SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(1000, 1000);
 			
 			this.semaphore = new Semaphore(semaphoreStatistics, SemaphoreMapping.newInstance(DB_LOCK_ID), 
@@ -327,12 +407,18 @@ public class DigestServiceParamsDriver {
 		return this.semaphore;
 	}
 	
+	/**
+	 * Ottiene un lock (globale e locale) sulla tabella delle informazioni crittografiche
+	 * @param idTransazione, id della transazione corrente
+	 * @throws UtilsException
+	 * @throws DriverConfigurazioneException
+	 */
 	public void acquireLock(String idTransazione) throws UtilsException, DriverConfigurazioneException {
 		Connection con = null;
 		try {
-			con = this.driverConfigurazioneDB.getConnection("acquireLock");
+			con = this.driverConfigurazioneDB.getConnection("acquireLockDigestService");
 			
-			while(!this.getSemaphore().newLock(con, "acquireLock")) {
+			while(!this.getSemaphore().newLock(con, "acquireLockDigestService")) {
 				Utilities.sleep(1);
 			}
 			
@@ -345,12 +431,17 @@ public class DigestServiceParamsDriver {
 		}
 	}
 	
+	/**
+	 * Rilascia il lock (globale e locale) sulla tabella delle informazioni crittografiche
+	 * @throws UtilsException
+	 * @throws DriverConfigurazioneException
+	 */
 	public void releaseLock() throws UtilsException, DriverConfigurazioneException {
 		Connection con = null;
 		try {
 			THREAD_LOCK.release(this.lock, "acquireLock");
-			con = this.driverConfigurazioneDB.getConnection("releaseLock");
-			this.getSemaphore().releaseLock(con, "releaseLock");
+			con = this.driverConfigurazioneDB.getConnection("releaseLockDigestService");
+			this.getSemaphore().releaseLock(con, "releaseLockDigestService");
 		} finally {
 			this.driverConfigurazioneDB.releaseConnection(con);
 		}
