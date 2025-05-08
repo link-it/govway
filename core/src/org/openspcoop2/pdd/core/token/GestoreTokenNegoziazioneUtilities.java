@@ -86,6 +86,8 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
 import org.openspcoop2.utils.security.JsonSignature;
@@ -123,31 +125,31 @@ public class GestoreTokenNegoziazioneUtilities {
 		boolean refreshModeEnabled = false;
 		try {
 			if(policyNegoziazioneToken.isClientCredentialsGrant()) {
-				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_clientCredentials();	
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials();	
 				if(datiRichiesta!=null) {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_CLIENT_CREDENTIAL);
 				}
 			}
 			else if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_usernamePassword();	
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword();	
 				if(datiRichiesta!=null) {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_USERNAME_PASSWORD);
 				}
 			}
 			else if(policyNegoziazioneToken.isRfc7523x509Grant()) {
-				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509();	
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509();	
 				if(datiRichiesta!=null) {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_X509);
 				}
 			}
 			else if(policyNegoziazioneToken.isRfc7523ClientSecretGrant()) {
-				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret();
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523ClientSecret();
 				if(datiRichiesta!=null) {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET);
 				}
 			}
 			else if(policyNegoziazioneToken.isCustomGrant()) {
-				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_refreshToken_grantType_custom();	
+				refreshModeEnabled = OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenRefreshTokenGrantTypeCustom();	
 				if(datiRichiesta!=null) {
 					datiRichiesta.setGrantType(Costanti.ID_RETRIEVE_TOKEN_METHOD_CUSTOM);
 				}
@@ -164,8 +166,8 @@ public class GestoreTokenNegoziazioneUtilities {
 					Date now = DateManager.getDate();
 					int secondsPreExpire = -1;
 					OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-					if(properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent()!=null && properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent()>0) {
-						int percent = properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent();
+					if(properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent()!=null && properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent()>0) {
+						int percent = properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent();
 						long secondsExpire = previousToken.getRefreshExpiresIn().getTime() / 1000l;
 						long secondsIat = previousToken.getRetrievedRefreshTokenIn().getTime() / 1000l;
 						long secondsDiff = secondsExpire - secondsIat;
@@ -178,8 +180,8 @@ public class GestoreTokenNegoziazioneUtilities {
 							}
 						}
 					}
-					else if(properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds()!=null && properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds()>0) {
-						secondsPreExpire = properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds();
+					else if(properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds()!=null && properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds()>0) {
+						secondsPreExpire = properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds();
 					}
 					if(secondsPreExpire>0) {
 						now = new Date(now.getTime() + (secondsPreExpire*1000));
@@ -304,7 +306,7 @@ public class GestoreTokenNegoziazioneUtilities {
 				} 
     			
     			// comunque lo aggiungo per essere consultabile nei casi di errore
-    			if(OpenSPCoop2Properties.getInstance().isGestioneRetrieveToken_saveTokenInfo_retrieveFailed()) {
+    			if(OpenSPCoop2Properties.getInstance().isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed()) {
     				if(informazioniToken!=null) {
 		    			if(httpResponseCode!=null) {
 		    				informazioniToken.setHttpResponseCode(httpResponseCode+"");
@@ -368,8 +370,8 @@ public class GestoreTokenNegoziazioneUtilities {
 			if(checkPerRinegoziazione) {
 				int secondsPreExpire = -1;
 				OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-				if(properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent()!=null && properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent()>0) {
-					int percent = properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_percent();
+				if(properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent()!=null && properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent()>0) {
+					int percent = properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent();
 					long secondsExpire = esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn().getTime() / 1000l;
 					long secondsIat = esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getRetrievedIn().getTime() / 1000l;
 					long secondsDiff = secondsExpire - secondsIat;
@@ -382,8 +384,8 @@ public class GestoreTokenNegoziazioneUtilities {
 						}
 					}
 				}
-				else if(properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds()!=null && properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds()>0) {
-					secondsPreExpire = properties.getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds();
+				else if(properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds()!=null && properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds()>0) {
+					secondsPreExpire = properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds();
 				}
 				if(secondsPreExpire>0) {
 					now = new Date(now.getTime() + (secondsPreExpire*1000));
@@ -526,7 +528,7 @@ public class GestoreTokenNegoziazioneUtilities {
 		connettoreMsg.setConnectorProperties(new java.util.HashMap<>());
 		connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_LOCATION, endpoint);
 		OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-		Boolean debugTramiteProperties = properties.getGestioneRetrieveToken_debug();
+		Boolean debugTramiteProperties = properties.getGestioneRetrieveTokenDebug();
 		if(debugTramiteProperties!=null) {
 			if(debugTramiteProperties) {
 				connettoreMsg.getConnectorProperties().put(CostantiConnettori.CONNETTORE_DEBUG, true+"");
@@ -613,7 +615,7 @@ public class GestoreTokenNegoziazioneUtilities {
 					busta, requestInfo, log);
 			TransportUtils.setParameter(pContent,ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ASSERTION, signedJwt);
 			if(datiRichiesta!=null) {
-				boolean infoNormalizzate = properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate();
+				boolean infoNormalizzate = properties.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoTransazioniRegistrazioneInformazioniNormalizzate();
 				datiRichiesta.setJwtClientAssertion(new InformazioniJWTClientAssertion(log, signedJwt, infoNormalizzate));
 			}
 		}
@@ -645,8 +647,19 @@ public class GestoreTokenNegoziazioneUtilities {
 			}
 		}
 		
-		if(policyNegoziazioneToken.isPDND()) {
+		// indicazione se siamo in una token policy PDND
+		boolean pdnd = isTokenPolicyVersoPDND(policyNegoziazioneToken, OpenSPCoop2Properties.getInstance(), protocolFactory);
+		if(pdnd) {
 			String formClientId = dynamicParameters.getFormClientId();
+			if(formClientId==null) {
+				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+				String nomeSoggettoInterno = getNomeSoggettoInterno(busta, tipoPdD, 
+						protocolFactory, requestInfo, 
+						op2Properties);
+				if(op2Properties.isGestioneRetrieveTokenPdndDatiRichiestaForceClientId(protocolFactory!=null ? protocolFactory.getProtocol() : null, nomeSoggettoInterno)) {
+					formClientId = dynamicParameters.getSignedJwtClientId();
+				}
+			}
 			if(formClientId!=null && !"".equals(formClientId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(formClientId)) {
 				TransportUtils.setParameter(pContent,Costanti.PDND_OAUTH2_RFC_6749_REQUEST_CLIENT_ID, formClientId);
 				if(datiRichiesta!=null && datiRichiesta.getClientId()==null) { // dovrebbe essere null poiche' il tipo PDND non e' abilitabile per il tipo clientId/Secret
@@ -805,6 +818,39 @@ public class GestoreTokenNegoziazioneUtilities {
 		
 	}
 	
+	private static String getNomeSoggettoInterno(Busta busta, TipoPdD tipoPdD, 
+			IProtocolFactory<?> protocolFactory, RequestInfo requestInfo, 
+			OpenSPCoop2Properties op2Properties) {
+		// soggetto interno
+		String nomeSoggettoInterno = null;
+		if(TipoPdD.APPLICATIVA.equals(tipoPdD) && busta!=null && busta.getDestinatario()!=null) {
+			nomeSoggettoInterno = busta.getDestinatario();
+		}
+		else if(TipoPdD.DELEGATA.equals(tipoPdD) && busta!=null && busta.getMittente()!=null) {
+			nomeSoggettoInterno = busta.getMittente();
+		}
+		else {
+			nomeSoggettoInterno = op2Properties.getIdentitaPortaDefault(protocolFactory!=null ? protocolFactory.getProtocol() : null, requestInfo).getNome();
+		}
+		return nomeSoggettoInterno;
+	}
+	
+	private static boolean isTokenPolicyVersoPDND(PolicyNegoziazioneToken policyNegoziazioneToken, OpenSPCoop2Properties op2Properties, IProtocolFactory<?> protocolFactory) throws TokenException {
+		boolean pdnd = policyNegoziazioneToken.isPDND();
+		if(!pdnd) {
+			// per client interop verifico la url
+			try {
+				pdnd = policyNegoziazioneToken.getEndpoint()!=null && RegularExpressionEngine.isMatch(policyNegoziazioneToken.getEndpoint(), 
+						op2Properties.getGestioneRetrieveTokenPdndUrlPatternMatch(protocolFactory!=null ? protocolFactory.getProtocol() : null));
+			}catch(RegExpNotFoundException notFound) {
+				pdnd = false;
+			}catch(Exception e) {
+				throw new TokenException(e.getMessage(),e);
+			}
+		}
+		return pdnd;
+	}
+	
 	private static String buildJwt(PolicyNegoziazioneToken policyNegoziazioneToken,
 			Busta busta, TipoPdD tipoPdD,
 			NegoziazioneTokenDynamicParameters dynamicParameters, 
@@ -817,21 +863,21 @@ public class GestoreTokenNegoziazioneUtilities {
 		
 		ObjectNode jwtPayload = jsonUtils.newObjectNode();
 
+		// indicazione se siamo in una token policy PDND
+		boolean pdnd = isTokenPolicyVersoPDND(policyNegoziazioneToken, op2Properties, protocolFactory);
+		
+		// soggetto interno
+		String nomeSoggettoInterno = getNomeSoggettoInterno(busta, tipoPdD, 
+				protocolFactory, requestInfo, 
+				op2Properties);
+		
 		// add iat, nbf, exp
 		long nowMs = DateManager.getTimeMillis();
 		long nowSeconds = nowMs/1000;
 		
 		String issuer = dynamicParameters.getSignedJwtIssuer();
 		if(issuer==null) {
-			if(TipoPdD.APPLICATIVA.equals(tipoPdD) && busta!=null && busta.getDestinatario()!=null) {
-				issuer = busta.getDestinatario();
-			}
-			else if(TipoPdD.DELEGATA.equals(tipoPdD) && busta!=null && busta.getMittente()!=null) {
-				issuer = busta.getMittente();
-			}
-			else {
-				issuer = op2Properties.getIdentitaPortaDefault(protocolFactory!=null ? protocolFactory.getProtocol() : null, requestInfo).getNome();
-			}
+			issuer = nomeSoggettoInterno;
 		}
 		if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(issuer)) {
 			jwtPayload.put(Claims.OIDC_ID_TOKEN_ISSUER, issuer);
@@ -842,7 +888,11 @@ public class GestoreTokenNegoziazioneUtilities {
 		if(clientId==null) {
 			throw new TokenException("ClientID undefined");
 		}
-		if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(clientId)) {
+		if(	
+				!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(clientId) 
+				&& 
+				(!pdnd || op2Properties.isGestioneRetrieveTokenPdndPayloadClientId(protocolFactory!=null ? protocolFactory.getProtocol() : null, nomeSoggettoInterno))
+			) {
 			jwtPayload.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_CLIENT_ID, clientId);
 		}
 		
@@ -871,7 +921,9 @@ public class GestoreTokenNegoziazioneUtilities {
 		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT, nowSeconds);
 		
 		// The JWT MAY contain an "nbf" (not before) claim that identifies the time before which the token MUST NOT be accepted for processing.
-		jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE, nowSeconds);
+		if(!pdnd || op2Properties.isGestioneRetrieveTokenPdndPayloadNbf(protocolFactory!=null ? protocolFactory.getProtocol() : null, nomeSoggettoInterno)) {
+			jwtPayload.put(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE, nowSeconds);
+		}
 		
 		// The JWT MUST contain an "exp" (expiration time) claim that limits the time window during which the JWT can be used.
 		int ttl = -1;
@@ -908,7 +960,9 @@ public class GestoreTokenNegoziazioneUtilities {
 			if(jwtPurposeId==null) {
 				throw new TokenException("JWT-PurposeId undefined");
 			}
-			jwtPayload.put(Costanti.PDND_PURPOSE_ID, jwtPurposeId);
+			if(!Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(jwtPurposeId)) {
+				jwtPayload.put(Costanti.PDND_PURPOSE_ID, jwtPurposeId);
+			}
 			
 			// sessionInfo
 			String sessionInfo = dynamicParameters.getSignedJwtSessionInfo();

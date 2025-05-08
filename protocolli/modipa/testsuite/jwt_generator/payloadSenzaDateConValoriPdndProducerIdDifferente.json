@@ -1,0 +1,11 @@
+{
+  "jti": "c25d563d-fec2-11ec-95fd-0242c7eae486",
+  "aud": "testsuite",
+  "client_id": "DemoSoggettoFruitore/ApplicativoBlockingIDA01",
+  "iss": "DemoSoggettoFruitore",
+  "sub": "ApplicativoBlockingIDA01",
+  "producerId": "error70d-8c4c-4f0d-9d8a-162843c10333",
+  "consumerId": "hhhe070d-8c4c-4f0d-9d8a-162843c10444",
+  "eServiceId": "ggge070d-8c4c-4f0d-9d8a-162843c10555",
+  "descriptorId": "fffe070d-8c4c-4f0d-9d8a-162843c10666"
+}

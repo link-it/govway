@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.autorizzazione;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.utils.ConfigUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -204,6 +205,12 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 						log.debug("Verifico valore dela risorsa '"+risorsa+"' tramite espressione regolare (match:"+match+") '"+regexpPattern+"' ...");
 						
 						// basta che un valore abbia match
+						if(valoreRisorsa==null || StringUtils.isEmpty(valoreRisorsa)) {
+							// questo controllo serve per evitare che venga lanciata l'eccezione dentro RegularExpressionEngine del contenuto vuoto
+							this.autorizzato = false;
+							this.errorMessage = "Unable to locate the resource '"+risorsa+"' or the resource is empty.";
+							break;
+						}
 						boolean ok = match ? RegularExpressionEngine.isMatch(valoreRisorsa, regexpPattern) : RegularExpressionEngine.isFind(valoreRisorsa, regexpPattern);
 						if(not) {
 							if(ok) {

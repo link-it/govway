@@ -1,3 +1,13 @@
+2025-05-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloModIPA, GovWayConsole]
+	Aggiunta funzionalità #1608 e #1610
+	- Introdotta la possibilità di specificare l’ID Ente all’interno di un soggetto con profilo ModI.
+          In fase di validazione di un voucher PDND, viene ora verificata la corrispondenza tra il claim producerId e l’ID Ente configurato.
+	- Migliorata la generazione dell’asserzione per la richiesta di un voucher PDND, assicurando che includa esclusivamente i claim previsti dalla specifica ufficiale PDND.
+	- Aggiunti controlli espliciti sulla presenza dei claim 'iat', 'exp' e 'nbf' durante la validazione dei voucher PDND, in conformità con i requisiti di sicurezza.
+	- Corretto un malfunzionamento che impediva lo scorrimento di oltre 20 elementi nella cache PDND consultabile tramite console di gestione 'govwayConsole'.
+
 2025-04-29  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]	

@@ -227,6 +227,9 @@ public class ModIProperties {
 			
 			getRemoteStoreConfig();
 			
+			getValidazioneTokenOAuthClaimsRequired();
+			getValidazioneTokenPDNDClaimsRequired();
+			
 			/* **** KEY STORE **** */
 			
 			String keystoreType = getSicurezzaMessaggioCertificatiKeyStoreTipo();
@@ -882,6 +885,91 @@ public class ModIProperties {
 	}
 	
 	
+	
+	/* **** TOKEN OAUTH **** */
+	
+	private List<String> validazioneTokenOAuthClaimsRequired= null;
+	private List<String> getValidazioneTokenOAuthClaimsRequired() throws ProtocolException{
+    	if(this.validazioneTokenOAuthClaimsRequired==null){
+    		String propertyName = "org.openspcoop2.protocol.modipa.token.oauth.claims.required";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+				if(value!=null && StringUtils.isNotEmpty(value)) {
+					this.validazioneTokenOAuthClaimsRequired = ModISecurityConfig.convertToList(value);
+				}
+				else {
+					this.validazioneTokenOAuthClaimsRequired = new ArrayList<>();
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.validazioneTokenOAuthClaimsRequired;
+	}
+	private Map<String,List<String>> validazioneTokenOAuthClaimsRequiredSoggetto = new HashMap<>();
+	public List<String> getValidazioneTokenOAuthClaimsRequired(String soggetto) throws ProtocolException{
+		if(!this.validazioneTokenOAuthClaimsRequiredSoggetto.containsKey(soggetto)){
+    		String propertyName = "org.openspcoop2.protocol.modipa."+soggetto+".token.oauth.claims.required";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+				if(value!=null && StringUtils.isNotEmpty(value)) {
+					this.validazioneTokenOAuthClaimsRequiredSoggetto.put(soggetto, ModISecurityConfig.convertToList(value));
+				}
+				else {
+					this.validazioneTokenOAuthClaimsRequiredSoggetto.put(soggetto, getValidazioneTokenOAuthClaimsRequired());
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.validazioneTokenOAuthClaimsRequiredSoggetto.get(soggetto);
+	}
+	
+	
+	private List<String> validazioneTokenPDNDClaimsRequired= null;
+	private List<String> getValidazioneTokenPDNDClaimsRequired() throws ProtocolException{
+    	if(this.validazioneTokenPDNDClaimsRequired==null){
+    		String propertyName = "org.openspcoop2.protocol.modipa.token.pdnd.claims.required";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+				if(value!=null && StringUtils.isNotEmpty(value)) {
+					this.validazioneTokenPDNDClaimsRequired = ModISecurityConfig.convertToList(value);
+				}
+				else {
+					this.validazioneTokenOAuthClaimsRequired = new ArrayList<>();
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.validazioneTokenPDNDClaimsRequired;
+	}
+	private Map<String,List<String>> validazioneTokenPDNDClaimsRequiredSoggetto = new HashMap<>();
+	public List<String> getValidazioneTokenPDNDClaimsRequired(String soggetto) throws ProtocolException{
+		if(!this.validazioneTokenPDNDClaimsRequiredSoggetto.containsKey(soggetto)){
+    		String propertyName = "org.openspcoop2.protocol.modipa."+soggetto+".token.pdnd.claims.required";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+				if(value!=null && StringUtils.isNotEmpty(value)) {
+					this.validazioneTokenPDNDClaimsRequiredSoggetto.put(soggetto, ModISecurityConfig.convertToList(value));
+				}
+				else {
+					this.validazioneTokenPDNDClaimsRequiredSoggetto.put(soggetto, getValidazioneTokenPDNDClaimsRequired());
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.validazioneTokenPDNDClaimsRequiredSoggetto.get(soggetto);
+	}
 	
 	
 	

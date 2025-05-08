@@ -140,7 +140,7 @@ public class TransazioneUtilities {
 		this.transazioniRegistrazioneAttributiInformazioniNormalizzate = configTransazioni!=null && StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken()) &&
 				openspcoopProperties.isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate(); // per adesso la configurazione avviene via govway.properties
 		this.transazioniRegistrazioneRetrieveTokenSaveAsTokenInfo = configTransazioni!=null && StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken()) &&
-				openspcoopProperties.isGestioneRetrieveToken_saveAsTokenInfo(); // per adesso la configurazione avviene via govway.properties
+				openspcoopProperties.isGestioneRetrieveTokenSaveAsTokenInfo(); // per adesso la configurazione avviene via govway.properties
 	}
 	
 	public static boolean isConsegnaMultipla(Context context) {
@@ -1061,12 +1061,12 @@ public class TransazioneUtilities {
 					informazioniNegoziazioneToken = transaction.getInformazioniNegoziazioneToken();
 					if(
 							(
-									op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature() &&
+									op2Properties.isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature() &&
 									(informazioniNegoziazioneToken.getAccessToken()!=null || informazioniNegoziazioneToken.getRefreshToken()!=null)
 							)
 							||
 							(
-									op2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature() &&
+									op2Properties.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature() &&
 									informazioniNegoziazioneToken.getRequest()!=null
 							)
 					) {
@@ -1076,7 +1076,7 @@ public class TransazioneUtilities {
 				}
 				
 				if(informazioniNegoziazioneToken!=null) {
-					if(op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature()) {
+					if(op2Properties.isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature()) {
 						if(informazioniNegoziazioneToken.getAccessToken()!=null) {
 							String originale = informazioniNegoziazioneToken.getAccessToken();
 							String senzaSignature = TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getAccessToken());
@@ -1096,7 +1096,7 @@ public class TransazioneUtilities {
 					if(informazioniNegoziazioneToken.getRequest()!=null &&
 						informazioniNegoziazioneToken.getRequest().getJwtClientAssertion()!=null && 
 						informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()!=null &&
-						op2Properties.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature()) {
+						op2Properties.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature()) {
 						informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().setToken(TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()));
 					}
 				}

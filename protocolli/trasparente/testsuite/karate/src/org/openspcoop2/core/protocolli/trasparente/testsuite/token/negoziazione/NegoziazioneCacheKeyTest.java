@@ -98,7 +98,8 @@ public class NegoziazioneCacheKeyTest extends ConfigLoader {
 		// il test sul payload fallisce poichè vi è un controllo sul valore nel controllo degli accessi
 		_cacheKey_key("test-clientId", 
 				false, true, 
-				true, false);
+				/** dopo fix della PDND, il clientId non viene più inviato: true, false); */
+				false,true);
 		
 	}
 	

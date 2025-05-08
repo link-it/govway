@@ -740,7 +740,6 @@ public class NegoziazioneTokenProvider implements IProvider {
 			Costanti.ID_RETRIEVE_BEARER_TOKEN.equals(id) ||
 			Costanti.ID_RETRIEVE_JWT_X5U.equals(id) ||
 			Costanti.ID_RETRIEVE_JWT_KID_VALUE.equals(id) ||
-			Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id) ||
 			Costanti.ID_RETRIEVE_SCOPE.equals(id) ||
 			Costanti.ID_RETRIEVE_AUDIENCE.equals(id) ||
 			Costanti.ID_RETRIEVE_FORM_PARAMETERS.equals(id) ||
@@ -782,6 +781,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_RETRIEVE_JWT_CLIENT_ID.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_CLIENT_ID_APPLICATIVO_MODI_CUSTOM.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_AUDIENCE.equals(id) ||
+				Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id) ||
 				Costanti.ID_RETRIEVE_FORM_RESOURCE.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();

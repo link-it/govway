@@ -2356,10 +2356,19 @@ public class OpenSPCoop2Properties {
 			this.getGestioneTokenUserInfoLockPermits();
 			this.isGestioneTokenDynamicDiscoveryKeyCacheUseToken();
 			this.isGestioneTokenDynamicDiscoveryUseCacheConfig();
+			this.isGestioneTokenIatRequired();
+			this.isGestioneTokenIatRequired(true);
+			this.isGestioneTokenIatRequired(false);
 			this.getGestioneTokenIatTimeCheckMilliseconds();
 			this.getGestioneTokenIatTimeCheckFutureToleranceMilliseconds();
+			this.isGestioneTokenExpRequired();
+			this.isGestioneTokenExpRequired(true);
+			this.isGestioneTokenExpRequired(false);
 			this.isGestioneTokenExpTimeCheck();
 			this.getGestioneTokenExpTimeCheckToleranceMilliseconds();
+			this.isGestioneTokenNbfRequired();
+			this.isGestioneTokenNbfRequired(true);
+			this.isGestioneTokenNbfRequired(false);		
 			this.getGestioneTokenNbfTimeCheckToleranceMilliseconds();
 			this.getGestioneTokenValidityCheck();
 			this.isGestioneTokenSaveSourceTokenInfo();
@@ -2391,24 +2400,30 @@ public class OpenSPCoop2Properties {
 			this.getGestioneTokenHeaderIntegrazioneTrasportoRoleSeparator();
 			
 			// Gestione RetrieveToken
-			this.getGestioneRetrieveToken_debug();
+			this.getGestioneRetrieveTokenDebug();
 			this.getGestioneRetrieveTokenLockPermits();
-			if(!this.validateGestioneRetrieveToken_refreshTokenBeforeExpire()) {
+			if(!this.validateGestioneRetrieveTokenRefreshTokenBeforeExpire()) {
 				return false;
 			}
-			this.isGestioneRetrieveToken_refreshToken_grantType_clientCredentials();
-			this.isGestioneRetrieveToken_refreshToken_grantType_usernamePassword();
-			this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509();
-			this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret();
-			this.isGestioneRetrieveToken_refreshToken_grantType_custom();
-			this.isGestioneRetrieveToken_saveAsTokenInfo();
-			this.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature();
-			this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest();
-			this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date();
-			this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate();
-			this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature();
-			this.isGestioneRetrieveToken_saveTokenInfo_retrieveFailed();
+			this.isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials();
+			this.isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword();
+			this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509();
+			this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523ClientSecret();
+			this.isGestioneRetrieveTokenRefreshTokenGrantTypeCustom();
+			this.isGestioneRetrieveTokenSaveAsTokenInfo();
+			this.isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature();
+			this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest();
+			this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequestDate();
+			this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoTransazioniRegistrazioneInformazioniNormalizzate();
+			this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature();
+			this.isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed();
 			this.initGestioneRetrieveTokenCacheKey();
+			// dovrebbe venire chiamato solo per ModI
+			// può essere usato con il profilo trasparente nella testsuite
+			this.getGestioneRetrieveTokenPdndUrlPatternMatch(Costanti.MODIPA_PROTOCOL_NAME);
+			this.isGestioneRetrieveTokenPdndPayloadClientId(Costanti.MODIPA_PROTOCOL_NAME);
+			this.isGestioneRetrieveTokenPdndPayloadNbf(Costanti.MODIPA_PROTOCOL_NAME);
+			this.isGestioneRetrieveTokenPdndDatiRichiestaForceClientId(Costanti.MODIPA_PROTOCOL_NAME);
 						
 			// Gestione AttributeAuthority
 			this.isGestioneAttributeAuthorityDebug();
@@ -2836,6 +2851,23 @@ public class OpenSPCoop2Properties {
 			while (protocolli.hasMoreElements()) {
 				String protocollo = protocolli.nextElement();
 				getBypassFilterMustUnderstandProperties(protocollo);
+			}
+			
+			// ControlliToken
+			protocolli = ProtocolFactoryManager.getInstance().getProtocolFactories().keys();
+			while (protocolli.hasMoreElements()) {
+				String protocollo = protocolli.nextElement();
+				isGestioneTokenIatRequired(true, protocollo);
+				isGestioneTokenIatRequired(false, protocollo);
+				isGestioneTokenExpRequired(true, protocollo);
+				isGestioneTokenExpRequired(false, protocollo);
+				isGestioneTokenNbfRequired(true, protocollo);
+				isGestioneTokenNbfRequired(false, protocollo);
+				if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocollo)) {
+					isGestioneTokenIatPdndRequired();
+					isGestioneTokenExpPdndRequired();
+					isGestioneTokenNbfPdndRequired();
+				}
 			}
 			
 			return true;
@@ -25013,6 +25045,90 @@ public class OpenSPCoop2Properties {
 
 		return this.isGestioneTokenDynamicDiscoveryUseCacheConfig;
 	}
+		
+	private Boolean isGestioneTokenIatRequired = null;
+	public boolean isGestioneTokenIatRequired() {
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.iat.required";
+		if(this.isGestioneTokenIatRequired==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneTokenIatRequired = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenIatRequired = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenIatRequired = false;
+			}
+		}
+		
+		return this.isGestioneTokenIatRequired;
+	}
+	
+	private static final String GESTIONE_TOKEN_FRUIZIONI = "fruizioni";
+	private static final String GESTIONE_TOKEN_EROGAZIONI = "erogazioni";
+	private static final String GESTIONE_TOKEN_SUFFIX_REQUIRED = ".required";
+	
+	private Map<String,BooleanNullable> isGestioneTokenIatRequirePddRuolodMap = new HashMap<>();
+	public BooleanNullable isGestioneTokenIatRequired(boolean portaDelegata) {
+
+		String keyRuolo =  portaDelegata ? GESTIONE_TOKEN_FRUIZIONI : GESTIONE_TOKEN_EROGAZIONI;
+		String pName = "org.openspcoop2.pdd.gestioneToken.iat."+keyRuolo+GESTIONE_TOKEN_SUFFIX_REQUIRED;
+		if(!this.isGestioneTokenIatRequirePddRuolodMap.containsKey(keyRuolo)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					boolean v = Boolean.parseBoolean(value);
+					this.isGestioneTokenIatRequirePddRuolodMap.put(keyRuolo, v ? BooleanNullable.TRUE() : BooleanNullable.FALSE());
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenIatRequirePddRuolodMap.put(keyRuolo, BooleanNullable.NULL());
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenIatRequirePddRuolodMap.put(keyRuolo, BooleanNullable.NULL());
+			}
+		}
+		
+		return this.isGestioneTokenIatRequirePddRuolodMap.get(keyRuolo);
+	}
+	
+	private Map<String,BooleanNullable> isGestioneTokenIatRequirePddRuoloProtocolloMap = new HashMap<>();
+	public BooleanNullable isGestioneTokenIatRequired(boolean portaDelegata, String protocollo) {
+
+		String keyRuolo =  portaDelegata ? GESTIONE_TOKEN_FRUIZIONI : GESTIONE_TOKEN_EROGAZIONI;
+		keyRuolo+="."+protocollo;
+		String pName = "org.openspcoop2.pdd.gestioneToken.iat."+keyRuolo+GESTIONE_TOKEN_SUFFIX_REQUIRED;
+		if(!this.isGestioneTokenIatRequirePddRuoloProtocolloMap.containsKey(keyRuolo)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					boolean v = Boolean.parseBoolean(value);
+					this.isGestioneTokenIatRequirePddRuoloProtocolloMap.put(keyRuolo, v ? BooleanNullable.TRUE() : BooleanNullable.FALSE());
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenIatRequirePddRuoloProtocolloMap.put(keyRuolo, BooleanNullable.NULL());
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenIatRequirePddRuoloProtocolloMap.put(keyRuolo, BooleanNullable.NULL());
+			}
+		}
+		
+		return this.isGestioneTokenIatRequirePddRuoloProtocolloMap.get(keyRuolo);
+	}
+	public BooleanNullable isGestioneTokenIatPdndRequired() {
+		return isGestioneTokenIatRequired(false, "pdnd");
+	}
 	
 	private Boolean getGestioneTokenIatTimeCheckMillisecondsRead = null;
 	private Long getGestioneTokenIatTimeCheckMilliseconds = null;
@@ -25067,6 +25183,86 @@ public class OpenSPCoop2Properties {
 		return this.getGestioneTokenIatTimeCheckFutureToleranceMilliseconds;
 	}
 	
+	private Boolean isGestioneTokenExpRequired = null;
+	public boolean isGestioneTokenExpRequired() {
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.exp.required";
+		if(this.isGestioneTokenExpRequired==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneTokenExpRequired = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenExpRequired = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenExpRequired = false;
+			}
+		}
+		
+		return this.isGestioneTokenExpRequired;
+	}
+	
+	private Map<String,BooleanNullable> isGestioneTokenExpRequirePddRuolodMap = new HashMap<>();
+	public BooleanNullable isGestioneTokenExpRequired(boolean portaDelegata) {
+
+		String keyRuolo =  portaDelegata ? GESTIONE_TOKEN_FRUIZIONI : GESTIONE_TOKEN_EROGAZIONI;
+		String pName = "org.openspcoop2.pdd.gestioneToken.exp."+keyRuolo+GESTIONE_TOKEN_SUFFIX_REQUIRED;
+		if(!this.isGestioneTokenExpRequirePddRuolodMap.containsKey(keyRuolo)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					boolean v = Boolean.parseBoolean(value);
+					this.isGestioneTokenExpRequirePddRuolodMap.put(keyRuolo, v ? BooleanNullable.TRUE() : BooleanNullable.FALSE());
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenExpRequirePddRuolodMap.put(keyRuolo, BooleanNullable.NULL());
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenExpRequirePddRuolodMap.put(keyRuolo, BooleanNullable.NULL());
+			}
+		}
+		
+		return this.isGestioneTokenExpRequirePddRuolodMap.get(keyRuolo);
+	}
+	
+	private Map<String,BooleanNullable> isGestioneTokenExpRequirePddRuoloProtocolloMap = new HashMap<>();
+	public BooleanNullable isGestioneTokenExpRequired(boolean portaDelegata, String protocollo) {
+
+		String keyRuolo =  portaDelegata ? GESTIONE_TOKEN_FRUIZIONI : GESTIONE_TOKEN_EROGAZIONI;
+		keyRuolo+="."+protocollo;
+		String pName = "org.openspcoop2.pdd.gestioneToken.exp."+keyRuolo+GESTIONE_TOKEN_SUFFIX_REQUIRED;
+		if(!this.isGestioneTokenExpRequirePddRuoloProtocolloMap.containsKey(keyRuolo)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					boolean v = Boolean.parseBoolean(value);
+					this.isGestioneTokenExpRequirePddRuoloProtocolloMap.put(keyRuolo, v ? BooleanNullable.TRUE() : BooleanNullable.FALSE());
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenExpRequirePddRuoloProtocolloMap.put(keyRuolo, BooleanNullable.NULL());
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenExpRequirePddRuoloProtocolloMap.put(keyRuolo, BooleanNullable.NULL());
+			}
+		}
+		
+		return this.isGestioneTokenExpRequirePddRuoloProtocolloMap.get(keyRuolo);
+	}
+	public BooleanNullable isGestioneTokenExpPdndRequired() {
+		return isGestioneTokenExpRequired(false, "pdnd");
+	}
+	
 	private Boolean isGestioneTokenExpTimeCheck = null;
 	public boolean isGestioneTokenExpTimeCheck(){
 
@@ -25118,6 +25314,86 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getGestioneTokenExpTimeCheckToleranceMilliseconds;
+	}
+	
+	private Boolean isGestioneTokenNbfRequired = null;
+	public boolean isGestioneTokenNbfRequired() {
+
+		String pName = "org.openspcoop2.pdd.gestioneToken.nbf.required";
+		if(this.isGestioneTokenNbfRequired==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneTokenNbfRequired = Boolean.parseBoolean(value);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenNbfRequired = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenNbfRequired = false;
+			}
+		}
+		
+		return this.isGestioneTokenNbfRequired;
+	}
+	
+	private Map<String,BooleanNullable> isGestioneTokenNbfRequirePddRuolodMap = new HashMap<>();
+	public BooleanNullable isGestioneTokenNbfRequired(boolean portaDelegata) {
+
+		String keyRuolo =  portaDelegata ? GESTIONE_TOKEN_FRUIZIONI : GESTIONE_TOKEN_EROGAZIONI;
+		String pName = "org.openspcoop2.pdd.gestioneToken.nbf."+keyRuolo+GESTIONE_TOKEN_SUFFIX_REQUIRED;
+		if(!this.isGestioneTokenNbfRequirePddRuolodMap.containsKey(keyRuolo)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					boolean v = Boolean.parseBoolean(value);
+					this.isGestioneTokenNbfRequirePddRuolodMap.put(keyRuolo, v ? BooleanNullable.TRUE() : BooleanNullable.FALSE());
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenNbfRequirePddRuolodMap.put(keyRuolo, BooleanNullable.NULL());
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenNbfRequirePddRuolodMap.put(keyRuolo, BooleanNullable.NULL());
+			}
+		}
+		
+		return this.isGestioneTokenNbfRequirePddRuolodMap.get(keyRuolo);
+	}
+	
+	private Map<String,BooleanNullable> isGestioneTokenNbfRequirePddRuoloProtocolloMap = new HashMap<>();
+	public BooleanNullable isGestioneTokenNbfRequired(boolean portaDelegata, String protocollo) {
+
+		String keyRuolo =  portaDelegata ? GESTIONE_TOKEN_FRUIZIONI : GESTIONE_TOKEN_EROGAZIONI;
+		keyRuolo+="."+protocollo;
+		String pName = "org.openspcoop2.pdd.gestioneToken.nbf."+keyRuolo+GESTIONE_TOKEN_SUFFIX_REQUIRED;
+		if(!this.isGestioneTokenNbfRequirePddRuoloProtocolloMap.containsKey(keyRuolo)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					boolean v = Boolean.parseBoolean(value);
+					this.isGestioneTokenNbfRequirePddRuoloProtocolloMap.put(keyRuolo, v ? BooleanNullable.TRUE() : BooleanNullable.FALSE());
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					this.isGestioneTokenNbfRequirePddRuoloProtocolloMap.put(keyRuolo, BooleanNullable.NULL());
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneTokenNbfRequirePddRuoloProtocolloMap.put(keyRuolo, BooleanNullable.NULL());
+			}
+		}
+		
+		return this.isGestioneTokenNbfRequirePddRuoloProtocolloMap.get(keyRuolo);
+	}
+	public BooleanNullable isGestioneTokenNbfPdndRequired() {
+		return isGestioneTokenNbfRequired(false, "pdnd");
 	}
 	
 	private Boolean getGestioneTokenNbfTimeCheckToleranceMillisecondsRead = null;
@@ -25975,29 +26251,29 @@ public class OpenSPCoop2Properties {
 	
 	/* ------------- Gestione Retrieve Token ---------------------*/
 	
-	private Boolean isGestioneRetrieveToken_debug = null;
-	private Boolean isGestioneRetrieveToken_debug_read = null;
-	public Boolean getGestioneRetrieveToken_debug(){
+	private Boolean isGestioneRetrieveTokenDebug = null;
+	private Boolean isGestioneRetrieveTokenDebugRead = null;
+	public Boolean getGestioneRetrieveTokenDebug(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.debug";
-		if(this.isGestioneRetrieveToken_debug_read==null){
+		if(this.isGestioneRetrieveTokenDebugRead==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_debug = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenDebug = Boolean.parseBoolean(value);
 				}
 				
-				this.isGestioneRetrieveToken_debug_read=true;
+				this.isGestioneRetrieveTokenDebugRead=true;
 
 			}catch(java.lang.Exception e) {
 				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default='Utilizzo dell'impostazione del connettore', errore:"+e.getMessage(),e);
-				this.isGestioneRetrieveToken_debug = false;
+				this.isGestioneRetrieveTokenDebug = false;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_debug;
+		return this.isGestioneRetrieveTokenDebug;
 	}
 	
 	private Boolean getGestioneRetrieveTokenLockPermitsRead = null;
@@ -26029,59 +26305,59 @@ public class OpenSPCoop2Properties {
 		return this.getGestioneRetrieveTokenLockPermits;
 	}
 	
-	private Integer isGestioneRetrieveToken_refreshTokenBeforeExpire_percent = null;
-	private Boolean isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_read = null;
-	private String isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName = "org.openspcoop2.pdd.retrieveToken.refreshTokenBeforeExpire.percent";
-	public Integer getGestioneRetrieveToken_refreshTokenBeforeExpire_percent(){
+	private Integer isGestioneRetrieveTokenRefreshTokenBeforeExpirePercent = null;
+	private Boolean isGestioneRetrieveTokenRefreshTokenBeforeExpirePercentRead = null;
+	private String isGestioneRetrieveTokenRefreshTokenBeforeExpirePercentPName = "org.openspcoop2.pdd.retrieveToken.refreshTokenBeforeExpire.percent";
+	public Integer getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent(){
 
-		if(this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_read==null){
+		if(this.isGestioneRetrieveTokenRefreshTokenBeforeExpirePercentRead==null){
 			try{  
-				String value = this.reader.getValueConvertEnvProperties(this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName); 
+				String value = this.reader.getValueConvertEnvProperties(this.isGestioneRetrieveTokenRefreshTokenBeforeExpirePercentPName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent = Integer.parseInt(value);
+					this.isGestioneRetrieveTokenRefreshTokenBeforeExpirePercent = Integer.parseInt(value);
 				}
 				
-				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_read=true;
+				this.isGestioneRetrieveTokenRefreshTokenBeforeExpirePercentRead=true;
 
 			}catch(java.lang.Exception e) {
-				this.logError("proprietà di govway '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName+"' non impostata, errore:"+e.getMessage(),e);
-				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent = null;
+				this.logError("proprietà di govway '"+this.isGestioneRetrieveTokenRefreshTokenBeforeExpirePercentPName+"' non impostata, errore:"+e.getMessage(),e);
+				this.isGestioneRetrieveTokenRefreshTokenBeforeExpirePercent = null;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent;
+		return this.isGestioneRetrieveTokenRefreshTokenBeforeExpirePercent;
 	}
 	
-	private Integer isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds = null;
-	private Boolean isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_read = null;
-	private String isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName = "org.openspcoop2.pdd.retrieveToken.refreshTokenBeforeExpire.seconds";
-	public Integer getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds(){
+	private Integer isGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds = null;
+	private Boolean isGestioneRetrieveTokenRefreshTokenBeforeExpireSecondsRead = null;
+	private String isGestioneRetrieveTokenRefreshTokenBeforeExpireSecondsPName = "org.openspcoop2.pdd.retrieveToken.refreshTokenBeforeExpire.seconds";
+	public Integer getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds(){
 
-		if(this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_read==null){
+		if(this.isGestioneRetrieveTokenRefreshTokenBeforeExpireSecondsRead==null){
 			try{  
-				String value = this.reader.getValueConvertEnvProperties(this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName); 
+				String value = this.reader.getValueConvertEnvProperties(this.isGestioneRetrieveTokenRefreshTokenBeforeExpireSecondsPName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds = Integer.parseInt(value);
+					this.isGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds = Integer.parseInt(value);
 				}
 				
-				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_read=true;
+				this.isGestioneRetrieveTokenRefreshTokenBeforeExpireSecondsRead=true;
 
 			}catch(java.lang.Exception e) {
-				this.logError("proprietà di govway '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"' non impostata, errore:"+e.getMessage(),e);
-				this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds = null;
+				this.logError("proprietà di govway '"+this.isGestioneRetrieveTokenRefreshTokenBeforeExpireSecondsPName+"' non impostata, errore:"+e.getMessage(),e);
+				this.isGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds = null;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds;
+		return this.isGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds;
 	}
 	
-	private boolean validateGestioneRetrieveToken_refreshTokenBeforeExpire() {
-		Integer percent = getGestioneRetrieveToken_refreshTokenBeforeExpire_percent();
-		Integer seconds = getGestioneRetrieveToken_refreshTokenBeforeExpire_seconds();
+	private boolean validateGestioneRetrieveTokenRefreshTokenBeforeExpire() {
+		Integer percent = getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent();
+		Integer seconds = getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds();
 		boolean percentDefined = percent !=null && percent>0;
 		boolean secondsDefined = seconds!=null && seconds>0;
 		/*
@@ -26091,310 +26367,310 @@ public class OpenSPCoop2Properties {
 			return false;
 		}*/
 		if(percentDefined && secondsDefined) {
-			this.logError("Non è possibile definire contemporaneamente entrambe le seguenti proprietà: '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_percent_pName+"' o '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"'");
+			this.logError("Non è possibile definire contemporaneamente entrambe le seguenti proprietà: '"+this.isGestioneRetrieveTokenRefreshTokenBeforeExpirePercentPName+"' o '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"'");
 			return false;
 		}
 		return true;
 	}
 	
-	private Boolean isGestioneRetrieveToken_refreshToken_grantType_clientCredentials = null;
-	public boolean isGestioneRetrieveToken_refreshToken_grantType_clientCredentials(){
+	private Boolean isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials = null;
+	public boolean isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.clientCredentials";
-		if(this.isGestioneRetrieveToken_refreshToken_grantType_clientCredentials==null){
+		if(this.isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_refreshToken_grantType_clientCredentials = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isGestioneRetrieveToken_refreshToken_grantType_clientCredentials = false;
+					this.isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isGestioneRetrieveToken_refreshToken_grantType_clientCredentials = false;
+				this.isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials = false;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_refreshToken_grantType_clientCredentials;
+		return this.isGestioneRetrieveTokenRefreshTokenGrantTypeClientCredentials;
 	}
 	
-	private Boolean isGestioneRetrieveToken_refreshToken_grantType_usernamePassword = null;
-	public boolean isGestioneRetrieveToken_refreshToken_grantType_usernamePassword(){
+	private Boolean isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword = null;
+	public boolean isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.usernamePassword";
-		if(this.isGestioneRetrieveToken_refreshToken_grantType_usernamePassword==null){
+		if(this.isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_refreshToken_grantType_usernamePassword = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isGestioneRetrieveToken_refreshToken_grantType_usernamePassword = false;
+					this.isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isGestioneRetrieveToken_refreshToken_grantType_usernamePassword = false;
+				this.isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword = false;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_refreshToken_grantType_usernamePassword;
+		return this.isGestioneRetrieveTokenRefreshTokenGrantTypeUsernamePassword;
 	}
 	
-	private Boolean isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509 = null;
-	public boolean isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509(){
+	private Boolean isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509 = null;
+	public boolean isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.rfc7523_x509";
-		if(this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509==null){
+		if(this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509 = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509 = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509 = false;
+					this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509 = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509 = false;
+				this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509 = false;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_x509;
+		return this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523x509;
 	}
 	
-	private Boolean isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret = null;
-	public boolean isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret(){
+	private Boolean isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523ClientSecret = null;
+	public boolean isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523ClientSecret(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.rfc7523_clientSecret";
-		if(this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret==null){
+		if(this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523ClientSecret==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523ClientSecret = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret = false;
+					this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523ClientSecret = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret = false;
+				this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523ClientSecret = false;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_refreshToken_grantType_rfc7523_clientSecret;
+		return this.isGestioneRetrieveTokenRefreshTokenGrantTypeRfc7523ClientSecret;
 	}
 	
-	private Boolean isGestioneRetrieveToken_refreshToken_grantType_custom = null;
-	public boolean isGestioneRetrieveToken_refreshToken_grantType_custom(){
+	private Boolean isGestioneRetrieveTokenRefreshTokenGrantTypeCustom = null;
+	public boolean isGestioneRetrieveTokenRefreshTokenGrantTypeCustom(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.refreshToken.grantType.custom";
-		if(this.isGestioneRetrieveToken_refreshToken_grantType_custom==null){
+		if(this.isGestioneRetrieveTokenRefreshTokenGrantTypeCustom==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_refreshToken_grantType_custom = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenRefreshTokenGrantTypeCustom = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isGestioneRetrieveToken_refreshToken_grantType_custom = false;
+					this.isGestioneRetrieveTokenRefreshTokenGrantTypeCustom = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isGestioneRetrieveToken_refreshToken_grantType_custom = false;
+				this.isGestioneRetrieveTokenRefreshTokenGrantTypeCustom = false;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_refreshToken_grantType_custom;
+		return this.isGestioneRetrieveTokenRefreshTokenGrantTypeCustom;
 	}
 	
-	private Boolean isGestioneRetrieveToken_saveAsTokenInfo = null;
-	public boolean isGestioneRetrieveToken_saveAsTokenInfo(){
+	private Boolean isGestioneRetrieveTokenSaveAsTokenInfo = null;
+	public boolean isGestioneRetrieveTokenSaveAsTokenInfo(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.saveAsTokenInfo";
-		if(this.isGestioneRetrieveToken_saveAsTokenInfo==null){
+		if(this.isGestioneRetrieveTokenSaveAsTokenInfo==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_saveAsTokenInfo = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenSaveAsTokenInfo = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isGestioneRetrieveToken_saveAsTokenInfo = true;
+					this.isGestioneRetrieveTokenSaveAsTokenInfo = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isGestioneRetrieveToken_saveAsTokenInfo = true;
+				this.isGestioneRetrieveTokenSaveAsTokenInfo = true;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_saveAsTokenInfo;
+		return this.isGestioneRetrieveTokenSaveAsTokenInfo;
 	}
 	
-	private Boolean isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature = null;
-	public boolean isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature(){
+	private Boolean isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature = null;
+	public boolean isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.saveAsTokenInfo.excludeJwtSignature";
-		if(this.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature==null){
+		if(this.isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature = true;
+					this.isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature = true;
+				this.isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature = true;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_saveAsTokenInfo_excludeJwtSignature;
+		return this.isGestioneRetrieveTokenSaveAsTokenInfoExcludeJwtSignature;
 	}
 	
-	private Boolean isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest = null;
-	public boolean isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest(){
+	private Boolean isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest = null;
+	public boolean isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.saveAsTokenInfo.saveSourceRequest";
-		if(this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest==null){
+		if(this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest = true;
+					this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest = true;
+				this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest = true;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest;
+		return this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest;
 	}
 	
-	private Boolean isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date = null;
-	public boolean isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date(){
+	private Boolean isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequestDate = null;
+	public boolean isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequestDate(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.saveAsTokenInfo.saveSourceRequest.date";
-		if(this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date==null){
+		if(this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequestDate==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequestDate = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date = true;
+					this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequestDate = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date = true;
+				this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequestDate = true;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date;
+		return this.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequestDate;
 	}
 	
-	private Boolean isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate = null;
-	public boolean isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate(){
+	private Boolean isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoTransazioniRegistrazioneInformazioniNormalizzate = null;
+	public boolean isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoTransazioniRegistrazioneInformazioniNormalizzate(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.grantType_rfc7523.saveClientAssertionJWTInfo.transazioniRegistrazioneInformazioniNormalizzate";
-		if(this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate==null){
+		if(this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoTransazioniRegistrazioneInformazioniNormalizzate==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoTransazioniRegistrazioneInformazioniNormalizzate = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate = false;
+					this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoTransazioniRegistrazioneInformazioniNormalizzate = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate = false;
+				this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoTransazioniRegistrazioneInformazioniNormalizzate = false;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_transazioniRegistrazioneInformazioniNormalizzate;
+		return this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoTransazioniRegistrazioneInformazioniNormalizzate;
 	}
 	
-	private Boolean isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature = null;
-	public boolean isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature(){
+	private Boolean isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature = null;
+	public boolean isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.grantType_rfc7523.saveClientAssertionJWTInfo.excludeJwtSignature";
-		if(this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature==null){
+		if(this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
-					this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature = true;
+					this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature = true;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
-				this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature = true;
+				this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature = true;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_grantType_rfc7523_saveClientAssertionJWTInfo_excludeJwtSignature;
+		return this.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature;
 	}
 	
-	private Boolean isGestioneRetrieveToken_saveTokenInfo_retrieveFailed = null;
-	public boolean isGestioneRetrieveToken_saveTokenInfo_retrieveFailed(){
+	private Boolean isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed = null;
+	public boolean isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed(){
 
 		String pName = "org.openspcoop2.pdd.retrieveToken.saveTokenInfo.retrieveFailed";
-		if(this.isGestioneRetrieveToken_saveTokenInfo_retrieveFailed==null){
+		if(this.isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed==null){
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(pName); 
 
 				if (value != null){
 					value = value.trim();
-					this.isGestioneRetrieveToken_saveTokenInfo_retrieveFailed = Boolean.parseBoolean(value);
+					this.isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed = Boolean.parseBoolean(value);
 				}else{
 					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
-					this.isGestioneRetrieveToken_saveTokenInfo_retrieveFailed = false;
+					this.isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed = false;
 				}
 
 			}catch(java.lang.Exception e) {
 				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
-				this.isGestioneRetrieveToken_saveTokenInfo_retrieveFailed = false;
+				this.isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed = false;
 			}
 		}
 
-		return this.isGestioneRetrieveToken_saveTokenInfo_retrieveFailed;
+		return this.isGestioneRetrieveTokenSaveTokenInfoRetrieveFailed;
 	}
 
 	private Map<String, Boolean> gestioneRetrieveTokenCacheKey = null;
@@ -26425,14 +26701,231 @@ public class OpenSPCoop2Properties {
 		}
 		
 		// logica di default
-		if(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_IDENTIFIER.equals(tipo) || 
-				CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SESSION_INFO.equals(tipo)) {
-			return false;
-		}
-		else {
-			return true;
-		}
+		return !(
+				CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_IDENTIFIER.equals(tipo)
+				|| 
+				CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SESSION_INFO.equals(tipo)
+				);
 	}
+	
+	private static final String PDND_PATTERN_MATCH_DEFAULT = "^https://auth.*\\.interop\\.pagopa\\.it/token\\.oauth2$";
+	private static final String PDD_RETRIEVE_TOKEN_PREFIX_PROPERTY = "org.openspcoop2.pdd.retrieveToken.";
+	private Map<String,String> getGestioneRetrieveTokenPdndUrlPatternMatch = new HashMap<>();
+	public String getGestioneRetrieveTokenPdndUrlPatternMatch(String protocollo){
+
+		if(protocollo==null) {
+			protocollo = Costanti.MODIPA_PROTOCOL_NAME; // default
+		}
+		
+		String pName = PDD_RETRIEVE_TOKEN_PREFIX_PROPERTY+protocollo+".pdnd.url.pattern";
+		if(!this.getGestioneRetrieveTokenPdndUrlPatternMatch.containsKey(protocollo)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.getGestioneRetrieveTokenPdndUrlPatternMatch.put(protocollo, value);
+				}else{
+					// dovrebbe venire chiamato solo per ModI
+					if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocollo)) {
+						this.logWarn(getMessaggioProprietaNonImpostata(pName, PDND_PATTERN_MATCH_DEFAULT));
+					}
+					this.getGestioneRetrieveTokenPdndUrlPatternMatch.put(protocollo, PDND_PATTERN_MATCH_DEFAULT);
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, PDND_PATTERN_MATCH_DEFAULT),e);
+				this.getGestioneRetrieveTokenPdndUrlPatternMatch.put(protocollo, PDND_PATTERN_MATCH_DEFAULT);
+			}
+		}
+
+		return this.getGestioneRetrieveTokenPdndUrlPatternMatch.get(protocollo);
+	}
+	
+	private Map<String,Boolean> isGestioneRetrieveTokenPdndPayloadClientId = new HashMap<>();
+	private boolean isGestioneRetrieveTokenPdndPayloadClientId(String protocollo){
+
+		if(protocollo==null) {
+			protocollo = Costanti.MODIPA_PROTOCOL_NAME; // default
+		}
+		
+		String pName = PDD_RETRIEVE_TOKEN_PREFIX_PROPERTY+protocollo+".pdnd.payload.clientId";
+		if(!this.isGestioneRetrieveTokenPdndPayloadClientId.containsKey(protocollo)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenPdndPayloadClientId.put(protocollo, Boolean.parseBoolean(value));
+				}else{
+					// dovrebbe venire chiamato solo per ModI
+					if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocollo)) {
+						this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					}
+					this.isGestioneRetrieveTokenPdndPayloadClientId.put(protocollo, false);
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneRetrieveTokenPdndPayloadClientId.put(protocollo, false);
+			}
+		}
+
+		return this.isGestioneRetrieveTokenPdndPayloadClientId.get(protocollo);
+	}
+	
+	private Map<String,Boolean> isGestioneRetrieveTokenPdndPayloadClientIdMapSoggetto = new HashMap<>();
+	public boolean isGestioneRetrieveTokenPdndPayloadClientId(String protocollo, String soggettoFruitore){
+
+		if(soggettoFruitore==null) {
+			return isGestioneRetrieveTokenPdndPayloadClientId(protocollo);
+		}
+		
+		String key = protocollo+"_"+soggettoFruitore;
+		String pName = PDD_RETRIEVE_TOKEN_PREFIX_PROPERTY+protocollo+"."+soggettoFruitore+".pdnd.payload.clientId";
+		if(!this.isGestioneRetrieveTokenPdndPayloadClientIdMapSoggetto.containsKey(key)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenPdndPayloadClientIdMapSoggetto.put(key, Boolean.parseBoolean(value));
+				}else{
+					return isGestioneRetrieveTokenPdndPayloadClientId(protocollo);
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("isGestioneRetrieveTokenPdndPayloadClientId failed: "+e.getMessage(), e);
+				return isGestioneRetrieveTokenPdndPayloadClientId(protocollo);
+			}
+		}
+
+		return this.isGestioneRetrieveTokenPdndPayloadClientIdMapSoggetto.get(key);
+	}
+	
+	private Map<String,Boolean> isGestioneRetrieveTokenPdndPayloadNbf = new HashMap<>();
+	private boolean isGestioneRetrieveTokenPdndPayloadNbf(String protocollo){
+
+		if(protocollo==null) {
+			protocollo = Costanti.MODIPA_PROTOCOL_NAME; // default
+		}
+		
+		String pName = PDD_RETRIEVE_TOKEN_PREFIX_PROPERTY+protocollo+".pdnd.payload.nbf";
+		if(!this.isGestioneRetrieveTokenPdndPayloadNbf.containsKey(protocollo)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenPdndPayloadNbf.put(protocollo, Boolean.parseBoolean(value));
+				}else{
+					// dovrebbe venire chiamato solo per ModI
+					if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocollo)) {
+						this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					}
+					this.isGestioneRetrieveTokenPdndPayloadNbf.put(protocollo, false);
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isGestioneRetrieveTokenPdndPayloadNbf.put(protocollo, false);
+			}
+		}
+
+		return this.isGestioneRetrieveTokenPdndPayloadNbf.get(protocollo);
+	}
+	
+	private Map<String,Boolean> isGestioneRetrieveTokenPdndPayloadNbfMapSoggetto = new HashMap<>();
+	public boolean isGestioneRetrieveTokenPdndPayloadNbf(String protocollo, String soggettoFruitore){
+
+		if(soggettoFruitore==null) {
+			return isGestioneRetrieveTokenPdndPayloadNbf(protocollo);
+		}
+		
+		String key = protocollo+"_"+soggettoFruitore;
+		String pName = PDD_RETRIEVE_TOKEN_PREFIX_PROPERTY+protocollo+"."+soggettoFruitore+".pdnd.payload.nbf";
+		if(!this.isGestioneRetrieveTokenPdndPayloadNbfMapSoggetto.containsKey(key)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenPdndPayloadNbfMapSoggetto.put(key, Boolean.parseBoolean(value));
+				}else{
+					return isGestioneRetrieveTokenPdndPayloadNbf(protocollo);
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("isGestioneRetrieveTokenPdndPayloadNbf failed: "+e.getMessage(), e);
+				return isGestioneRetrieveTokenPdndPayloadNbf(protocollo);
+			}
+		}
+
+		return this.isGestioneRetrieveTokenPdndPayloadNbfMapSoggetto.get(key);
+	}
+	
+	
+	private Map<String,Boolean> isGestioneRetrieveTokenPdndDatiRichiestaForceClientId = new HashMap<>();
+	private boolean isGestioneRetrieveTokenPdndDatiRichiestaForceClientId(String protocollo){
+
+		if(protocollo==null) {
+			protocollo = Costanti.MODIPA_PROTOCOL_NAME; // default
+		}
+		
+		String pName = PDD_RETRIEVE_TOKEN_PREFIX_PROPERTY+protocollo+".pdnd.datiRichiesta.forceClientId";
+		if(!this.isGestioneRetrieveTokenPdndDatiRichiestaForceClientId.containsKey(protocollo)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenPdndDatiRichiestaForceClientId.put(protocollo, Boolean.parseBoolean(value));
+				}else{
+					// dovrebbe venire chiamato solo per ModI
+					if(Costanti.MODIPA_PROTOCOL_NAME.equals(protocollo)) {
+						this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					}
+					this.isGestioneRetrieveTokenPdndDatiRichiestaForceClientId.put(protocollo, true);
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isGestioneRetrieveTokenPdndDatiRichiestaForceClientId.put(protocollo, true);
+			}
+		}
+
+		return this.isGestioneRetrieveTokenPdndDatiRichiestaForceClientId.get(protocollo);
+	}
+	
+	private Map<String,Boolean> isGestioneRetrieveTokenPdndDatiRichiestaForceClientIdMapSoggetto = new HashMap<>();
+	public boolean isGestioneRetrieveTokenPdndDatiRichiestaForceClientId(String protocollo, String soggettoFruitore){
+
+		if(soggettoFruitore==null) {
+			return isGestioneRetrieveTokenPdndDatiRichiestaForceClientId(protocollo);
+		}
+		
+		String key = protocollo+"_"+soggettoFruitore;
+		String pName = PDD_RETRIEVE_TOKEN_PREFIX_PROPERTY+protocollo+"."+soggettoFruitore+".pdnd.datiRichiesta.forceClientId";
+		if(!this.isGestioneRetrieveTokenPdndDatiRichiestaForceClientIdMapSoggetto.containsKey(key)){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneRetrieveTokenPdndDatiRichiestaForceClientIdMapSoggetto.put(key, Boolean.parseBoolean(value));
+				}else{
+					return isGestioneRetrieveTokenPdndDatiRichiestaForceClientId(protocollo);
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError("isGestioneRetrieveTokenPdndDatiRichiestaForceClientId failed: "+e.getMessage(), e);
+				return isGestioneRetrieveTokenPdndDatiRichiestaForceClientId(protocollo);
+			}
+		}
+
+		return this.isGestioneRetrieveTokenPdndDatiRichiestaForceClientIdMapSoggetto.get(key);
+	}
+	
 	
 	
 	

@@ -1,0 +1,9 @@
+{
+  "iat": 7657287297,
+  "nbf": 1657287297,
+  "jti": "c25d563d-fec2-11ec-95fd-0242c7eae486",
+  "aud": "testsuite",
+  "client_id": "DemoSoggettoFruitore/ApplicativoBlockingIDA01",
+  "iss": "DemoSoggettoFruitore",
+  "sub": "ApplicativoBlockingIDA01"
+}
