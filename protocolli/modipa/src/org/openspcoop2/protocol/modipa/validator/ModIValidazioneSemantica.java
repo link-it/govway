@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.modipa.validator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
@@ -65,6 +67,7 @@ import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -183,6 +186,8 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				throw new ProtocolException("Busta undefined");
 			}
 			
+			IRegistryReader registryReader = null;
+			
 			TipoPdD tipoPdD = isRichiesta ? TipoPdD.APPLICATIVA : TipoPdD.DELEGATA;
 			IDSoggetto idSoggetto = TipoPdD.DELEGATA.equals(tipoPdD) ? 
 						new IDSoggetto(busta.getTipoMittente(),busta.getMittente()) : 
@@ -191,7 +196,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				idSoggetto = OpenSPCoop2Properties.getInstance().getIdentitaPortaDefault(this.protocolFactory.getProtocol(), requestInfo);
 			}
 			else {
-				IRegistryReader registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo);
+				registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo);
 				idSoggetto.setCodicePorta(registryReader.getDominio(idSoggetto));
 			}
 			msgDiag = MsgDiagnostico.newInstance(TipoPdD.DELEGATA, 
@@ -253,10 +258,18 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					pa = validateTokenAuthorizationAudience(msg, factory, state, requestInfo,
 							isRichiesta, prefixAuthorization,
 							checkAudienceByModIConfig);
-					
+									
 					PDNDResolver pdndResolver = new PDNDResolver(this.context, this.modiProperties.getRemoteStoreConfig());
 					rsc = pdndResolver.enrichTokenInfo(requestInfo, sicurezzaMessaggio, sicurezzaAudit, idSoggetto);
 				
+					boolean claimValidi = validateTokenAuthorizationClaims(rsc, idSoggetto, isRichiesta, prefixAuthorization);
+					if(claimValidi) {
+						if(registryReader==null) {
+							registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo);
+						}
+						validateTokenAuthorizationProducerIdByModIConfig(registryReader, idSoggetto, 
+								isRichiesta, prefixAuthorization); 
+					}
 				}
 				
 			}
@@ -1179,6 +1192,57 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		}
 	}
 	
+	private boolean validateTokenAuthorizationClaims(RemoteStoreConfig rsc, IDSoggetto idSoggetto,
+			boolean isRichiesta, String prefixAuthorization) throws ProtocolException{
+		// valido claims obbligatori
+		List<String> claimsAttesi = null;
+		if(rsc!=null) {
+			claimsAttesi = this.modiProperties.getValidazioneTokenPDNDClaimsRequired(idSoggetto.getNome());	
+		}
+		else {
+			claimsAttesi = this.modiProperties.getValidazioneTokenOAuthClaimsRequired(idSoggetto.getNome());	
+		}
+		if(claimsAttesi!=null && !claimsAttesi.isEmpty()) {
+			for (String claim : claimsAttesi) {
+				String claimValue = readClaimFromTokenOAuth(claim);	
+				if(claimValue==null || StringUtils.isEmpty(claimValue)) {
+					this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+							isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_PRESENTE :
+								CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_PRESENTE, 
+								prefixAuthorization+getErroreClaimNonPresente(claim)));
+					return false;
+					
+				}
+			}
+		}
+		return true;
+	}
+	
+	private boolean validateTokenAuthorizationProducerIdByModIConfig(IRegistryReader registriReader, IDSoggetto idSoggetto, 
+			boolean isRichiesta, String prefixAuthorization) throws ProtocolException{
+		String producerIdClaimReceived = readProducerIdFromTokenOAuth();			
+		if(producerIdClaimReceived!=null && StringUtils.isNotEmpty(producerIdClaimReceived)) {
+
+			Soggetto s = null;
+			try {
+				s = registriReader.getSoggetto(idSoggetto);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			String idEnte = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(s.getProtocolPropertyList(), ModICostanti.MODIPA_SOGGETTI_ID_ENTE_ID);
+			if(idEnte!=null && StringUtils.isNotEmpty(idEnte) && !idEnte.equals(producerIdClaimReceived)) {
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+						isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+							prefixAuthorization+getErroreClaimNonValido(org.openspcoop2.pdd.core.token.Costanti.PDND_PRODUCER_ID)));
+				return false;
+			}
+			
+		}
+		
+		return true;
+	}
+	
 	private PortaApplicativa readPortaApplicativa(OpenSPCoop2Message msg, IProtocolFactory<?> factory, IState state, RequestInfo requestInfo) throws ProtocolException {
 		
 		PortaApplicativa pa = null;
@@ -1299,4 +1363,24 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		}
 	}
 	
+	private String readProducerIdFromTokenOAuth() {
+		return readClaimFromTokenOAuth(org.openspcoop2.pdd.core.token.Costanti.PDND_PRODUCER_ID);
+	}
+	private String readClaimFromTokenOAuth(String name) {
+		Object oInformazioniTokenNormalizzate = null;
+		if(this.context!=null) {
+			oInformazioniTokenNormalizzate = this.context.getObject(org.openspcoop2.pdd.core.token.Costanti.PDD_CONTEXT_TOKEN_INFORMAZIONI_NORMALIZZATE);
+		}
+		InformazioniToken informazioniTokenNormalizzate = null;
+		if(oInformazioniTokenNormalizzate!=null) {
+			informazioniTokenNormalizzate = (InformazioniToken) oInformazioniTokenNormalizzate;
+			if(informazioniTokenNormalizzate.getClaims()!=null) {
+				Serializable s = informazioniTokenNormalizzate.getClaims().get(name);
+				if(s instanceof String) {
+					return (String) s;
+				}
+			}
+		}
+		return null;
+	}
 }

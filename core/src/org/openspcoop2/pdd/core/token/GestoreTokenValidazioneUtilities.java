@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.token;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -39,7 +40,9 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDServizio;
@@ -51,6 +54,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.rest.OpenSPCoop2Message_binary_impl;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
 import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -73,6 +77,7 @@ import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.pdd.core.token.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoDynamicDiscoveryPortaDelegata;
 import org.openspcoop2.pdd.core.token.pd.EsitoGestioneTokenPortaDelegata;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -89,10 +94,12 @@ import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPValidator;
 import org.openspcoop2.security.message.constants.SecurityConstants;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.JWKSet;
+import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -1536,7 +1543,162 @@ public class GestoreTokenValidazioneUtilities {
 		return !nbf.before(checkNow);
 	}
 	
-	static void validazioneInformazioniToken(EsitoGestioneToken esitoGestioneToken, PolicyGestioneToken policyGestioneToken, boolean saveErrorInCache) throws TokenException, CoreException {
+	public static boolean isProfiloModIPAEnabled() {
+		try {
+			Enumeration<String> en = ProtocolFactoryManager.getInstance().getProtocolNames();
+			while (en.hasMoreElements()) {
+				String protocollo = en.nextElement();
+				if(protocollo.equals(CostantiLabel.MODIPA_PROTOCOL_NAME)) {
+					return true;
+				}
+			}
+			return false;
+		}catch(Throwable t) {
+			return false;
+		}
+	}
+	
+	private static List<String> policyGestioneTokenPDND = null;
+	private static synchronized void initPolicyGestioneTokenPDND(Logger log) {
+		if(policyGestioneTokenPDND==null) {
+			try {
+				policyGestioneTokenPDND = new ArrayList<>();
+				if(isProfiloModIPAEnabled()) {
+					initPolicyGestioneTokenPDND();
+				}
+			}catch(Exception e) {
+				log.error("Errore di inizializzazione policy 'PDND': "+e.getMessage(), e);
+			}
+		}
+	}
+	private static synchronized void initPolicyGestioneTokenPDND() throws ProtocolException {
+		List<RemoteStoreConfig> listRSC = ModIUtils.getRemoteStoreConfig();
+		if(listRSC!=null && !listRSC.isEmpty()) {
+			for (RemoteStoreConfig r : listRSC) {
+				if(!policyGestioneTokenPDND.contains(r.getTokenPolicy())) {
+					policyGestioneTokenPDND.add(r.getTokenPolicy());
+				}
+			}
+		}
+	}
+	private static boolean isPdndTokenPolicy(Logger log, String tokenPolicy) {
+		if(policyGestioneTokenPDND==null) {
+			initPolicyGestioneTokenPDND(log) ;
+		}
+		return policyGestioneTokenPDND.contains(tokenPolicy);
+	}
+	
+	private static List<Proprieta> readProprieta(AbstractDatiInvocazione datiInvocazione) throws DriverConfigurazioneException {
+		List<Proprieta> l = null;
+		if(datiInvocazione instanceof DatiInvocazionePortaDelegata) {
+			DatiInvocazionePortaDelegata d = (DatiInvocazionePortaDelegata) datiInvocazione;
+			PortaDelegata pd = d.getPd();
+			if(pd==null && d.getIdPD()!=null) {
+				ConfigurazionePdDManager configManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+				pd = configManager.getPortaDelegataSafeMethod(d.getIdPD(), datiInvocazione.getRequestInfo());
+			}
+			if(pd!=null) {
+				return pd.getProprieta();
+			}
+		}
+		else {
+			DatiInvocazionePortaApplicativa d = (DatiInvocazionePortaApplicativa) datiInvocazione;
+			PortaApplicativa pa = d.getPa();
+			if(pa==null && d.getIdPA()!=null) {
+				ConfigurazionePdDManager configManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+				pa = configManager.getPortaApplicativaSafeMethod(d.getIdPA(), datiInvocazione.getRequestInfo());
+			}
+			if(pa!=null) {
+				return pa.getProprieta();
+			}
+		}
+		return l;
+	}
+	
+	static boolean isIatRequired(Logger log, PolicyGestioneToken policyGestioneToken, AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocollo, OpenSPCoop2Properties op2Properties) throws CoreException {
+		
+		String p = protocollo!=null ? protocollo.getProtocol() : "";
+		
+		boolean delegata = datiInvocazione instanceof DatiInvocazionePortaDelegata;
+		
+		boolean required = op2Properties.isGestioneTokenIatRequired();
+		BooleanNullable bn = op2Properties.isGestioneTokenIatRequired(delegata, p);
+		if(bn!=null && bn.getValue()!=null) {
+			required = bn.getValue().booleanValue();
+		}
+		
+		if(!delegata && isPdndTokenPolicy(log, policyGestioneToken.getName())) {
+			bn = op2Properties.isGestioneTokenIatPdndRequired();
+			if(bn!=null && bn.getValue()!=null) {
+				required = bn.getValue().booleanValue();
+			}
+		}
+		
+		try {
+			List<Proprieta> props = readProprieta(datiInvocazione);
+			return CostantiProprieta.isTokenValidationClaimsIatRequired(props, required);
+		}catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	
+	static boolean isExpRequired(Logger log, PolicyGestioneToken policyGestioneToken, AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocollo, OpenSPCoop2Properties op2Properties) throws CoreException {
+		
+		String p = protocollo!=null ? protocollo.getProtocol() : "";
+		
+		boolean delegata = datiInvocazione instanceof DatiInvocazionePortaDelegata;
+		
+		boolean required = op2Properties.isGestioneTokenExpRequired();
+		BooleanNullable bn = op2Properties.isGestioneTokenExpRequired(delegata, p);
+		if(bn!=null && bn.getValue()!=null) {
+			required = bn.getValue().booleanValue();
+		}
+		
+		if(!delegata && isPdndTokenPolicy(log, policyGestioneToken.getName())) {
+			bn = op2Properties.isGestioneTokenExpPdndRequired();
+			if(bn!=null && bn.getValue()!=null) {
+				required = bn.getValue().booleanValue();
+			}
+		}
+		
+		try {
+			List<Proprieta> props = readProprieta(datiInvocazione);
+			return CostantiProprieta.isTokenValidationClaimsExpRequired(props, required);
+		}catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	
+	static boolean isNbfRequired(Logger log, PolicyGestioneToken policyGestioneToken, AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocollo, OpenSPCoop2Properties op2Properties) throws CoreException {
+		
+		String p = protocollo!=null ? protocollo.getProtocol() : "";
+		
+		boolean delegata = datiInvocazione instanceof DatiInvocazionePortaDelegata;
+		
+		boolean required = op2Properties.isGestioneTokenNbfRequired();
+		BooleanNullable bn = op2Properties.isGestioneTokenNbfRequired(delegata, p);
+		if(bn!=null && bn.getValue()!=null) {
+			required = bn.getValue().booleanValue();
+		}
+		
+		if(!delegata && isPdndTokenPolicy(log, policyGestioneToken.getName())) {
+			bn = op2Properties.isGestioneTokenNbfPdndRequired();
+			if(bn!=null && bn.getValue()!=null) {
+				required = bn.getValue().booleanValue();
+			}
+		}
+		
+		try {
+			List<Proprieta> props = readProprieta(datiInvocazione);
+			return CostantiProprieta.isTokenValidationClaimsNbfRequired(props, required);
+		}catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	
+	static void validazioneInformazioniToken(boolean checkRequired, // verranno controllati solo nella validazione jwt
+			Logger log, AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocolFactory, 
+			EsitoGestioneToken esitoGestioneToken, PolicyGestioneToken policyGestioneToken, boolean saveErrorInCache) throws TokenException, CoreException {
 		
 		Date now = DateManager.getDate();
 		
@@ -1544,9 +1706,34 @@ public class GestoreTokenValidazioneUtilities {
 			esitoGestioneToken.setDateValide(true); // tanto le ricontrollo adesso
 		}
 			
+		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
+		
+		/** === EXP === ***/
+		
+		if(esitoGestioneToken.isValido() && checkRequired) {
+			
+			boolean check = isExpRequired(log, policyGestioneToken, datiInvocazione, protocolFactory, op2Properties);
+			if(check && esitoGestioneToken.getInformazioniToken().getExp()==null) {
+				esitoGestioneToken.setTokenValidazioneFallita();
+				esitoGestioneToken.setDateValide(false);
+				esitoGestioneToken.setDetails("Token rejected; the 'exp' (expiration time) claim is required but missing.");
+				if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+	    					esitoGestioneToken.getDetails()));  		
+    			}
+    			else {
+    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+    						false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+    						esitoGestioneToken.getDetails()));
+    			} 	
+			}
+			
+		}
+		
 		if(esitoGestioneToken.isValido()) {
 			
-			boolean enabled = OpenSPCoop2Properties.getInstance().isGestioneTokenExpTimeCheck();
+			boolean enabled = op2Properties.isGestioneTokenExpTimeCheck();
 			
 			if(enabled && esitoGestioneToken.getInformazioniToken().getExp()!=null) {	
 				
@@ -1577,6 +1764,31 @@ public class GestoreTokenValidazioneUtilities {
 			
 		}
 			
+		
+		
+		/** === NBF === ***/
+		
+		if(esitoGestioneToken.isValido() && checkRequired) {
+			
+			boolean check = isNbfRequired(log, policyGestioneToken, datiInvocazione, protocolFactory, op2Properties);
+			if(check && esitoGestioneToken.getInformazioniToken().getNbf()==null) {
+				esitoGestioneToken.setTokenValidazioneFallita();
+				esitoGestioneToken.setDateValide(false);
+				esitoGestioneToken.setDetails("Token rejected; the 'nbf' (not before) claim is required but missing.");
+				if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+	    					esitoGestioneToken.getDetails()));  		
+    			}
+    			else {
+    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+    						false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+    						esitoGestioneToken.getDetails()));
+    			} 	
+			}
+			
+		}
+		
 		if(esitoGestioneToken.isValido() &&
 			esitoGestioneToken.getInformazioniToken().getNbf()!=null) {
 			
@@ -1607,6 +1819,32 @@ public class GestoreTokenValidazioneUtilities {
 			}
 		}
 		
+		
+		
+		
+		/** === IAT === ***/
+		
+		if(esitoGestioneToken.isValido() && checkRequired) {
+			
+			boolean check = isIatRequired(log, policyGestioneToken, datiInvocazione, protocolFactory, op2Properties);
+			if(check && esitoGestioneToken.getInformazioniToken().getIat()==null) {
+				esitoGestioneToken.setTokenValidazioneFallita();
+				esitoGestioneToken.setDateValide(false);
+				esitoGestioneToken.setDetails("Token rejected; the 'iat' (issued at) claim is required but missing.");
+				if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
+					esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+	    					false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+	    					esitoGestioneToken.getDetails()));  		
+    			}
+    			else {
+    				esitoGestioneToken.setWwwAuthenticateErrorHeader(WWWAuthenticateGenerator.buildHeaderValue(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
+    						false, // ritorno l'errore preciso in questo caso // policyGestioneToken.isGenericError(), 
+    						esitoGestioneToken.getDetails()));
+    			} 	
+			}
+			
+		}
+		
 		if(esitoGestioneToken.isValido() &&
 			esitoGestioneToken.getInformazioniToken().getIat()!=null) {				
 			/*
@@ -1615,7 +1853,7 @@ public class GestoreTokenValidazioneUtilities {
 			 *   The iat Claim can be used to reject tokens that were issued too far away from the current time, 
 			 *   limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is Client specific. 
 			 **/
-			Long old = OpenSPCoop2Properties.getInstance().getGestioneTokenIatTimeCheckMilliseconds();
+			Long old = op2Properties.getGestioneTokenIatTimeCheckMilliseconds();
 			if(old!=null) {
 				Date oldMax = new Date((DateManager.getTimeMillis() - old.longValue()));
 				if(esitoGestioneToken.getInformazioniToken().getIat().before(oldMax)) {
@@ -1636,7 +1874,7 @@ public class GestoreTokenValidazioneUtilities {
 				}
 			}
 			
-			Long future = OpenSPCoop2Properties.getInstance().getGestioneTokenIatTimeCheckFutureToleranceMilliseconds();
+			Long future = op2Properties.getGestioneTokenIatTimeCheckFutureToleranceMilliseconds();
 			if(future!=null && future.longValue()>0) {
 				Date futureMax = new Date((DateManager.getTimeMillis() + future.longValue()));
 				if(esitoGestioneToken.getInformazioniToken().getIat().after(futureMax)) {

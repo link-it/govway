@@ -1430,7 +1430,9 @@ public class GestoreToken {
 		
 		if(esitoGestioneToken.isValido()) {
 			// ricontrollo tutte le date
-			GestoreTokenValidazioneUtilities.validazioneInformazioniToken(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
+			GestoreTokenValidazioneUtilities.validazioneInformazioniToken(true,
+					log, datiInvocazione, protocolFactory,
+					esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
 					datiInvocazione.getPolicyGestioneToken().isValidazioneJWTSaveErrorInCache());
 		}
 		
@@ -1550,7 +1552,9 @@ public class GestoreToken {
 		
 		if(esitoGestioneToken.isValido()) {
 			// ricontrollo tutte le date
-			GestoreTokenValidazioneUtilities.validazioneInformazioniToken(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
+			GestoreTokenValidazioneUtilities.validazioneInformazioniToken(false,
+					log, datiInvocazione, protocolFactory,
+					esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
 					datiInvocazione.getPolicyGestioneToken().isIntrospectionSaveErrorInCache());
 		}
 		
@@ -1656,7 +1660,9 @@ public class GestoreToken {
 		
 		if(esitoGestioneToken.isValido()) {
 			// ricontrollo tutte le date
-			GestoreTokenValidazioneUtilities.validazioneInformazioniToken(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
+			GestoreTokenValidazioneUtilities.validazioneInformazioniToken(false,
+					log, datiInvocazione, protocolFactory,
+					esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
 					datiInvocazione.getPolicyGestioneToken().isUserInfoSaveErrorInCache());
 		}
 		
@@ -1924,11 +1930,11 @@ public class GestoreToken {
 		
 		String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-		if(datiRichiesta==null && op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest()) {
+		if(datiRichiesta==null && op2Properties.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest()) {
 			datiRichiesta = new InformazioniNegoziazioneToken_DatiRichiesta();
 			datiRichiesta.setPolicy(policyNegoziazioneToken.getName());
 			datiRichiesta.setTransactionId(idTransazione);
-			if(op2Properties.isGestioneRetrieveToken_saveAsTokenInfo_saveSourceRequest_date()) {
+			if(op2Properties.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequestDate()) {
 				datiRichiesta.setPrepareRequest(DateManager.getDate());	
 			}
 		}

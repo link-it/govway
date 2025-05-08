@@ -858,6 +858,32 @@ public class RemoteStoreProviderDriverUtils {
 		if((filtroOrganizzazione!=null && "".equals(filtroOrganizzazione))) {
 			filtroOrganizzazione=null;
 		}
+
+		// count
+		PreparedStatement selectStmtCount = null;
+		ResultSet selectRSCount = null;
+		int size = 0;
+		try {
+			ISQLQueryObject sqlQueryObject = buildSqlRemoteStoreKeyEntries(tipoDatabase, filtroKid, filtroClientId, filtroOrganizzazione);
+			sqlQueryObject.addSelectCountField("somma");
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+			selectStmtCount = con.prepareStatement(sqlQuery);
+			selectStmtCount.setLong(1, idRemoteStore);
+			selectRSCount = selectStmtCount.executeQuery();
+			if(selectRSCount.next()) {
+				size = selectRSCount.getInt("somma");
+				if(size<0) {
+					size=0;
+				}
+				ricerca.setNumEntries(idLista, size);
+			}
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		finally {
+			JDBCUtilities.closeResources(selectRSCount, selectStmtCount);
+		}
 		
 		List<RemoteStoreKeyEntry> list = new ArrayList<>();
 		PreparedStatement selectStmt = null;
@@ -865,19 +891,7 @@ public class RemoteStoreProviderDriverUtils {
 		try {
 			IJDBCAdapter jdbcAdapter = JDBCAdapterFactory.createJDBCAdapter(tipoDatabase);
 			
-			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
-			sqlQueryObject.addFromTable(CostantiDB.REMOTE_STORE_KEY);
-			sqlQueryObject.addWhereCondition(COLUMN_ID_REMOTE_STORE+"=?");
-			if(filtroKid!=null) {
-				sqlQueryObject.addWhereLikeCondition(COLUMN_KID, filtroKid, LikeConfig.contains(true));
-			}
-			if(filtroClientId!=null) {
-				sqlQueryObject.addWhereLikeCondition(COLUMN_CLIENT_ID, filtroClientId, LikeConfig.contains(true));
-			}
-			if(filtroOrganizzazione!=null) {
-				sqlQueryObject.addWhereLikeCondition(COLUMN_ORGANIZATION_DETAILS, filtroOrganizzazione, LikeConfig.contains(true));
-			}
-			sqlQueryObject.setANDLogicOperator(true);
+			ISQLQueryObject sqlQueryObject = buildSqlRemoteStoreKeyEntries(tipoDatabase, filtroKid, filtroClientId, filtroOrganizzazione);
 			sqlQueryObject.addOrderBy(COLUMN_DATA_REGISTRAZIONE, false);
 			sqlQueryObject.setOffset(offset);
 			sqlQueryObject.setLimit(limit);
@@ -898,6 +912,29 @@ public class RemoteStoreProviderDriverUtils {
 		}
 		
 		return list;
+	}
+	
+	private static ISQLQueryObject buildSqlRemoteStoreKeyEntries(String tipoDatabase, String filtroKid, String filtroClientId, String filtroOrganizzazione) throws KeystoreException {
+		ISQLQueryObject sqlQueryObject = null;
+		try {
+			sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
+			sqlQueryObject.addFromTable(CostantiDB.REMOTE_STORE_KEY);
+			sqlQueryObject.addWhereCondition(COLUMN_ID_REMOTE_STORE+"=?");
+			if(filtroKid!=null) {
+				sqlQueryObject.addWhereLikeCondition(COLUMN_KID, filtroKid, LikeConfig.contains(true));
+			}
+			if(filtroClientId!=null) {
+				sqlQueryObject.addWhereLikeCondition(COLUMN_CLIENT_ID, filtroClientId, LikeConfig.contains(true));
+			}
+			if(filtroOrganizzazione!=null) {
+				sqlQueryObject.addWhereLikeCondition(COLUMN_ORGANIZATION_DETAILS, filtroOrganizzazione, LikeConfig.contains(true));
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+		}
+		catch(Exception e) {
+			throw new KeystoreException(e.getMessage(),e);
+		}
+		return sqlQueryObject;
 	}
 	
 	private static RemoteStoreKeyEntry readKeyEntry(Logger log, ResultSet selectRS, IJDBCAdapter jdbcAdapter) throws SQLException, UtilsException {

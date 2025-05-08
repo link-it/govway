@@ -182,8 +182,22 @@ public class CostantiProprieta {
 		return defaultValue;
 	}
 	
+	public static final String TOKEN_VALIDATION_CLAIMS_VALUE_ENABLED = VALUE_ENABLED;
+	public static final String TOKEN_VALIDATION_CLAIMS_VALUE_DISABLED = VALUE_DISABLED;
+
+	public static final String TOKEN_VALIDATION_CLAIMS_IAT_REQUIRED = "tokenValidation.iat.required";
+	public static final String TOKEN_VALIDATION_CLAIMS_EXP_REQUIRED = "tokenValidation.exp.required";
+	public static final String TOKEN_VALIDATION_CLAIMS_NBF_REQUIRED = "tokenValidation.nbf.required";
 	
-	
+	public static boolean isTokenValidationClaimsIatRequired(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, TOKEN_VALIDATION_CLAIMS_IAT_REQUIRED, defaultValue, TOKEN_VALIDATION_CLAIMS_VALUE_ENABLED, TOKEN_VALIDATION_CLAIMS_VALUE_DISABLED);
+	}
+	public static boolean isTokenValidationClaimsExpRequired(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, TOKEN_VALIDATION_CLAIMS_EXP_REQUIRED, defaultValue, TOKEN_VALIDATION_CLAIMS_VALUE_ENABLED, TOKEN_VALIDATION_CLAIMS_VALUE_DISABLED);
+	}
+	public static boolean isTokenValidationClaimsNbfRequired(List<Proprieta> proprieta, boolean defaultValue) {
+		return readBooleanValueWithDefault(proprieta, TOKEN_VALIDATION_CLAIMS_NBF_REQUIRED, defaultValue, TOKEN_VALIDATION_CLAIMS_VALUE_ENABLED, TOKEN_VALIDATION_CLAIMS_VALUE_DISABLED);
+	}
 	
 	
 	

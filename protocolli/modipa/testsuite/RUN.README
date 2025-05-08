@@ -108,6 +108,7 @@ Prerequisiti:
 		# Configurazione utilizzata per invocare il servizio esposto sulla PDND per l'ottenimento delle chiavi pubbliche rispetto al kid
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.name=PDNDSimulato
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.label=PDND-Simulato
+		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.tokenPolicy=SimulazionePDND-KidInToken
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.baseUrl=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/simulazione-api-pdnd/v1/keys
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.keyId.mode=URL_SUFFIX
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd.readTimeout=15000
@@ -186,6 +187,11 @@ Prerequisiti:
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-organization-error.connectTimeout=10000
 		org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.simulazione-pdnd-recupero-info-organization-error.http.queryParameter.returnOrganizationError=true
 
+		# ----- PDND Configuration
+
+		# consente di indicare i claims obbligatori attesi nel token oauth
+		org.openspcoop2.protocol.modipa.DemoSoggettoErogatoreConIdEnte.token.pdnd.claims.required=producerId,consumerId,eServiceId,descriptorId
+
 		# ================================================
 		# -------- KeyStore -------- 
 
@@ -215,9 +221,23 @@ Prerequisiti:
 	org.openspcoop2.pdd.gestoreChiaviPDND.remoteStore.name=PDNDSimulato
 	org.openspcoop2.pdd.gestoreChiaviPDND.remoteStore.checkAllStores=false
 	org.openspcoop2.pdd.gestorePDND.clientInfo.enabled=true
+	
+	# Tutta la testsuite è stata costruita per attendersi questi due claim anche nella richiessta di voucher.
+	# Dei test che verificano il funzionamento di default che non vengano prodotti sono presenti nella testsuite del protocollo trasparente all'interno del package 'token.negoziazione' es. in NegoziazioneCacheKeyTest
+	# generazione del clientId
+	org.openspcoop2.pdd.retrieveToken.modipa.DemoSoggettoFruitore.pdnd.payload.clientId=true
+	org.openspcoop2.pdd.retrieveToken.modipa.DemoSoggettoFruitoreEsternoTestInterno.pdnd.payload.clientId=true
+	org.openspcoop2.pdd.retrieveToken.modipa.DemoSoggettoErogatore.pdnd.payload.clientId=true
+	org.openspcoop2.pdd.retrieveToken.modipa.DemoSoggettoErogatore2.pdnd.payload.clientId=true
+	# generazione del claim nbf
+	org.openspcoop2.pdd.retrieveToken.modipa.DemoSoggettoFruitore.pdnd.payload.nbf=true
+	org.openspcoop2.pdd.retrieveToken.modipa.DemoSoggettoFruitoreEsternoTestInterno.pdnd.payload.nbf=true
+	org.openspcoop2.pdd.retrieveToken.modipa.DemoSoggettoErogatore.pdnd.payload.nbf=true
+	org.openspcoop2.pdd.retrieveToken.modipa.DemoSoggettoErogatore2.pdnd.payload.nbf=true
 
 + Nel file /etc/govway/console_local.properties abilitare le seguenti proprietà (per retrocompatibilità nei test):
 
+	policyGestioneToken.pdnd=PDND,SimulazionePDND-KidInToken
 	policyGestioneToken.pdnd.useAllPDNDStores=false
 
 + Copiare nella cartella dell'application server che serve il contenuto statico, i ExampleClient1.crt, ExampleClient2.crt ed ExampleServer.crt, utilizzati

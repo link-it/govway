@@ -172,6 +172,23 @@ public class ModIConsoleCostanti {
 	
 	
 	
+	
+	// Soggetti
+	
+	public static final String MODIPA_SOGGETTI_LABEL = MODIPA_TITLE_LABEL;
+	public static final String MODIPA_SOGGETTI_ID = "modipaSoggettiTitleId";
+	
+	
+	public static final String MODIPA_SOGGETTI_PDND_LABEL = "Informazioni PDND";
+	public static final String MODIPA_SOGGETTI_PDND_ID = "modipaSoggettiSubtitleId";
+	
+	public static final String MODIPA_SOGGETTI_ID_ENTE_ID = ModICostanti.MODIPA_SOGGETTI_ID_ENTE_ID;
+	public static final String MODIPA_SOGGETTI_ID_ENTE_LABEL = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_ID_ENTE;
+	public static final int MODIPA_SOGGETTI_ID_ENTE_ROWS = 1;
+	
+	
+	
+	
 	// Applicativi
 	
 	public static final String MODIPA_APPLICATIVI_LABEL = MODIPA_TITLE_LABEL + " - "+ CostantiLabel.MODIPA_SICUREZZA_MESSAGGIO_SUBTITLE_LABEL;

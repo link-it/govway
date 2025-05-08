@@ -26,6 +26,7 @@ import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.protocol.basic.properties.BasicDynamicConfiguration;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -54,6 +55,8 @@ import org.openspcoop2.protocol.utils.ModISecurityUtils;
  */
 public class ModIDynamicConfiguration extends BasicDynamicConfiguration implements org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration {
 
+
+
 	private ModIProperties modiProperties = null;
 
 	public ModIDynamicConfiguration(IProtocolFactory<?> factory) throws ProtocolException{
@@ -61,6 +64,51 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		this.modiProperties = ModIProperties.getInstance();
 	}
 
+	
+	
+	
+	
+	/*** SOGGETTI */
+	
+	@Override
+	public ConsoleConfiguration getDynamicConfigSoggetto(ConsoleOperationType consoleOperationType,
+			IConsoleHelper consoleHelper, IRegistryReader registryReader,
+			IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException {
+		
+		ConsoleConfiguration configuration = ModIDynamicConfigurationSoggettiUtilities.getDynamicConfigSoggetto(consoleOperationType, consoleHelper, registryReader,
+				configIntegrationReader, id);
+		if(configuration!=null) {
+			return configuration;
+		}
+		else {
+			return super.getDynamicConfigSoggetto(consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id);
+		}
+
+	}
+
+	/**@Override
+	public void updateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id)
+			throws ProtocolException {
+		super.updateDynamicConfigSoggetto(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader,
+				configIntegrationReader, id);
+	}*/
+
+	@Override
+	public void validateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration,
+			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
+			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id)
+			throws ProtocolException {
+		
+		ModIDynamicConfigurationSoggettiUtilities.validateDynamicConfigSoggetto(consoleConfiguration,
+				consoleOperationType, consoleHelper, properties, 
+				configIntegrationReader, id);
+		
+	}
+	
+	
+	
 	
 
 	/*** APPLICATIVI */

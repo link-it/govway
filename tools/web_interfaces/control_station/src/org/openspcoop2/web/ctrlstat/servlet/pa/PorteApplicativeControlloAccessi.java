@@ -670,8 +670,10 @@ public class PorteApplicativeControlloAccessi extends Action {
 						List<String> newPolicyLabels = new ArrayList<>();
 						List<String> newPolicyValues = new ArrayList<>();
 						
-						newPolicyLabels.add(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
-						newPolicyValues.add(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+						if(!CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(policyValues[0])){
+							newPolicyLabels.add(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+							newPolicyValues.add(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+						}
 						newPolicyLabels.addAll(Arrays.asList(policyLabels));
 						newPolicyValues.addAll(Arrays.asList(policyValues));
 						

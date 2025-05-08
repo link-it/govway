@@ -21,6 +21,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.token.negoziazione
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 import java.util.Properties;
@@ -301,7 +302,8 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 			
 			String clientId = JsonPathExpressionEngine.extractAndConvertResultAsString(decoded, "$..client_id", logCore);
 			//System.out.println("CLIENT ID '"+clientId+"'");
-			assertEquals("check clientId per idTransazione '"+idTransazione+"'", expectedClientId, clientId);
+			/** eliminato con la nuova modalità PDND assertEquals("check clientId per idTransazione '"+idTransazione+"'", expectedClientId, clientId); */
+			assertNull("check clientId null per idTransazione '"+idTransazione+"'", clientId);
 			
 			String sub = JsonPathExpressionEngine.extractAndConvertResultAsString(decoded, "$..sub", logCore);
 			//System.out.println("SUB '"+sub+"'");

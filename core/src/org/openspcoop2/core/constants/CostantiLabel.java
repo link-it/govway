@@ -121,6 +121,7 @@ public final class CostantiLabel {
 	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID = "Identificativo";
 	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID_SEARCH = "Token ClientId";
 	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_TOKEN_KID = "Key Id (kid) del Certificato";
+	public static final String LABEL_CREDENZIALI_AUTENTICAZIONE_ID_ENTE = "ID Ente";
    	
     /**
      * PROPRIETA CONFIGURAZIONE

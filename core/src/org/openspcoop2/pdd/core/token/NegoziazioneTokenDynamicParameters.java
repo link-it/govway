@@ -528,7 +528,7 @@ public class NegoziazioneTokenDynamicParameters extends AbstractDynamicParameter
 			if(policyNegoziazioneToken.isPDND()) {
 				
 				this.signedJwtPurposeId = policyNegoziazioneToken.getJwtPurposeId();
-				if(this.signedJwtPurposeId!=null && !"".equals(this.signedJwtPurposeId)) {
+				if(this.signedJwtPurposeId!=null && !"".equals(this.signedJwtPurposeId) && !Costanti.POLICY_RETRIEVE_TOKEN_JWT_CLAIM_UNDEFINED.equals(this.signedJwtPurposeId)) {
 					this.signedJwtPurposeId = DynamicUtils.convertDynamicPropertyValue("jwtPurposeId.gwt", this.signedJwtPurposeId, dynamicMap, pddContext);	
 				}
 				
