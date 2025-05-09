@@ -127,6 +127,7 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectId'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectId'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -160,8 +161,9 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 Scenario: push del segnale (usando serviceId) e parametri custom
 
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdServiceId'
 	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdServiceId'
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
 	And header GovWay-Signal-ServiceId = 'eServiceTestID'
@@ -175,7 +177,8 @@ Scenario: push del segnale (usando serviceId) e parametri custom
 Scenario: push del segnale corretto (usando service/serviceVersion)
 
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdName'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdName'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -194,7 +197,8 @@ Scenario: push del segnale (usando serviceId) con gli header di default per il p
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Signal-ObjectType = 'objectType'
-	And header GovWay-Signal-ObjectId = 'objectId'
+	And header GovWay-Signal-ObjectId = 'objectIdserviceIdDefHeader'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdserviceIdDefHeader'
 	And header GovWay-Signal-Type = 'UPDATE'
 	And header GovWay-Signal-ServiceId = 'eServiceTestID'
 	And request ''
@@ -210,7 +214,8 @@ Scenario: push del segnale (usando nome/versione servizio) con gli header di def
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Signal-ObjectType = 'objectType'
-	And header GovWay-Signal-ObjectId = 'objectId'
+	And header GovWay-Signal-ObjectId = 'objectIdNameDefHeader'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdNameDefHeader'
 	And header GovWay-Signal-Type = 'UPDATE'
 	And header GovWay-Signal-Service = 'SignalHubTest'
 	And header GovWay-Signal-Service-Version = 1
@@ -227,7 +232,8 @@ Scenario: push del segnale (usando serviceId) con i parametri della query di def
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And param govway_signal_object_type = 'objectType'
-	And param govway_signal_object_id = 'objectId'
+	And param govway_signal_object_id = 'objectIdServiceIdDefParam'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdServiceIdDefParam'
 	And param govway_signal_type = 'UPDATE'
 	And param govway_signal_service_id = 'eServiceTestID'
 	And request ''
@@ -243,7 +249,8 @@ Scenario: push del segnale (usando nome/versione servizio) con i parametri della
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And param govway_signal_object_type = 'objectType'
-	And param govway_signal_object_id = 'objectId'
+	And param govway_signal_object_id = 'objectIdNameDefParam'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdNameDefParam'
 	And param govway_signal_type = 'UPDATE'
 	And param govway_signal_service = 'SignalHubTest'
 	And param govway_signal_service_version = 1
@@ -276,7 +283,8 @@ Scenario: push del segnale ad un servizio con un erogatore diverso da quello del
 Scenario: autorizzazione tramite ruoli
 
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdRole'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdRole'
 	And header Authorization = 'Basic RGVtb1NpZ25hbEh1YjE6MTIzNDU2'
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -483,7 +491,8 @@ Scenario: push del segnale in cui genero anche il seme correttamnete
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdCretion'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdCretion'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -527,7 +536,8 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdReplace'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdReplace'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -543,7 +553,8 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdReplace'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdReplace'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -559,7 +570,8 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdReplace'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdReplace'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -575,7 +587,8 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdReplace'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdReplace'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -595,7 +608,8 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdKeep'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdKeep'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -611,7 +625,8 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdKeep'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdKeep'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -627,7 +642,8 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdKeep'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdKeep'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -643,7 +659,8 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
 	Given url push_signal_url
-	And param govway_testsuite_objectId = 'objectId'
+	And param govway_testsuite_objectId = 'objectIdKeep'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdKeep'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'push_signal'
 	And header GovWay-Testsuite-ObjectType = 'objectType'

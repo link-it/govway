@@ -50,18 +50,11 @@ import com.intuit.karate.netty.FeatureServer;
 public class SignalHubTest extends ConfigLoader { 
     
     private static FeatureServer server;
-    private static FeatureServer proxy;
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@BeforeClass
     public static void beforeClass() {       
-        File file = FileUtils.getFileRelativeTo(SignalHubTest.class, "proxy.feature");
-        proxy = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_port")), 
-                false,
-                new HashMap<>((Map) prop)
-            );
-
-        file = FileUtils.getFileRelativeTo(SignalHubTest.class, "mock.feature");
+        File file = FileUtils.getFileRelativeTo(SignalHubTest.class, "mock.feature");
         server = FeatureServer.start(file, Integer.valueOf(prop.getProperty("http_mock_port")),
                 false,
                 new HashMap<>((Map) prop)
@@ -71,7 +64,6 @@ public class SignalHubTest extends ConfigLoader {
     @AfterClass
     public static void afterClass() {
         server.stop();
-        proxy.stop();
     }     
 
 }

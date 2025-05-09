@@ -11,13 +11,16 @@ Background:
     }
     """
 
+	* def compute_digest = read('classpath:utils/compute_digest.js')
     * def task_id = "fb382380-cf98-4f75-95eb-2a65ba45309e"
+    * def get_seed = read('classpath:test/signal_hub/utils/get_seed.js')
 
 # GIRO OK
 #
 #
 
 Scenario: isTest('push_signal') && request.signalType != 'SEEDUPDATE'
+
 
 	* match request ==
 		"""
@@ -29,6 +32,10 @@ Scenario: isTest('push_signal') && request.signalType != 'SEEDUPDATE'
   			signalType : 'UPDATE',
 		}
 		"""
+	* def objectId = requestHeaders['GovWay-TestSuite-Plain-Object-ID'][0]
+	* def hash = compute_digest('SHA-256', objectId + get_seed())
+	* karate.log("plain id: " + objectId + ", seed: " + get_seed())
+	* match hash == request.objectId
     * def sigId = request.signalId
     * def responseStatus = 200
     * def response = ({ signalId: sigId })

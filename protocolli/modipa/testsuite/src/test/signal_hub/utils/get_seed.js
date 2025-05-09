@@ -12,7 +12,7 @@ function get_seed() {
     java.lang.Thread.sleep(db_sleep_before_read)
     DbUtils = Java.type('org.openspcoop2.core.protocolli.modipa.testsuite.DbUtils')
     db = new DbUtils(govwayDbConfig)
-    dbquery = "SELECT seed FROM servizi_digest_params ORDER BY data_registrazione LIMIT 1;"
+    dbquery = "SELECT seed FROM servizi_digest_params ORDER BY data_registrazione DESC LIMIT 1;"
     karate.log("Query: " + dbquery)
     return db.readValue(dbquery);
 }
