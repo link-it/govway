@@ -20,6 +20,7 @@
 
 package org.openspcoop2.protocol.basic.registry;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -27,9 +28,12 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
+import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -54,9 +58,12 @@ import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordoAzioni;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaFruizioniServizio;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaGruppi;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortType;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortTypeAzioni;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRisorse;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRuoli;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaScope;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -64,6 +71,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReaderInUso;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.resources.Loader;
@@ -86,7 +94,7 @@ public class RegistryReader implements IRegistryReader {
 	private IRegistryReaderInUso inUsoDriver = null;
 	
 	private Logger log;
-	public RegistryReader(IDriverRegistroServiziGet driverRegistroServizi, Logger log) throws Exception{
+	public RegistryReader(IDriverRegistroServiziGet driverRegistroServizi, Logger log) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		this.driverRegistroServiziGET = driverRegistroServizi;
 		if(this.driverRegistroServiziGET instanceof IDriverRegistroServiziCRUD){
 			this.driverRegistroServiziCRUD = (IDriverRegistroServiziCRUD) this.driverRegistroServiziGET;
@@ -175,7 +183,7 @@ public class RegistryReader implements IRegistryReader {
 				return ((DriverRegistroServiziDB)this.driverRegistroServiziGET).existsSoggetto(codiceIPA);
 			}
 			else{
-				throw new RuntimeException("Not Implemented");
+				throw new UtilsRuntimeException("Not Implemented");
 			}
 		}catch(Exception e){
 			return false;
@@ -203,11 +211,10 @@ public class RegistryReader implements IRegistryReader {
 		try{
 			if(this.driverRegistroServiziGET instanceof DriverRegistroServiziDB){
 				Soggetto s = ((DriverRegistroServiziDB)this.driverRegistroServiziGET).getSoggetto(codiceIPA);
-				IDSoggetto idSoggetto = new IDSoggetto(s.getTipo(), s.getNome(), s.getIdentificativoPorta());
-				return idSoggetto;
+				return new IDSoggetto(s.getTipo(), s.getNome(), s.getIdentificativoPorta());
 			}
 			else{
-				throw new RuntimeException("Not Implemented");
+				throw new UtilsRuntimeException("Not Implemented");
 			}
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
@@ -231,7 +238,7 @@ public class RegistryReader implements IRegistryReader {
 				throw new DriverRegistroServiziNotFound("Soggetto di default per il tipo '"+tipoSoggettoDefault+"' non trovato");
 			}
 			else{
-				throw new RuntimeException("Not Implemented");
+				throw new UtilsRuntimeException("Not Implemented");
 			}
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
@@ -247,7 +254,7 @@ public class RegistryReader implements IRegistryReader {
 				return ((DriverRegistroServiziDB)this.driverRegistroServiziGET).getCodiceIPA(idSoggetto);
 			}
 			else{
-				throw new RuntimeException("Not Implemented");
+				throw new UtilsRuntimeException("Not Implemented");
 			}
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
@@ -372,7 +379,7 @@ public class RegistryReader implements IRegistryReader {
 				filtroDriver.setNomePdd(filtro.getNomePdd());
 			}
 			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
-			if(listPP!=null && listPP.size()>0){
+			if(listPP!=null && !listPP.isEmpty()){
 				filtroDriver.setProtocolProperties(listPP);
 			}
 			if(filtro.getProprieta()!=null && !filtro.getProprieta().isEmpty()) {
@@ -452,7 +459,7 @@ public class RegistryReader implements IRegistryReader {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
 			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
-			if(listPP!=null && listPP.size()>0){
+			if(listPP!=null && !listPP.isEmpty()){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
 			if(filtro.getEscludiServiziComposti()!=null){
@@ -533,9 +540,9 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getNomePortType()!=null){
 				filtroDriver.setNomePortType(filtro.getNomePortType());
 			}
-			List<FiltroRicercaProtocolPropertyRegistry> listPP_portTypes = ProtocolUtils.convert(filtro.getProtocolPropertiesPortType());
-			if(listPP_portTypes!=null && listPP_portTypes.size()>0){
-				filtroDriver.setProtocolPropertiesPortType(listPP_portTypes);
+			List<FiltroRicercaProtocolPropertyRegistry> listPPportTypes = ProtocolUtils.convert(filtro.getProtocolPropertiesPortType());
+			if(listPPportTypes!=null && !listPPportTypes.isEmpty()){
+				filtroDriver.setProtocolPropertiesPortType(listPPportTypes);
 			}	
 			
 			// accordo
@@ -560,7 +567,7 @@ public class RegistryReader implements IRegistryReader {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
 			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
-			if(listPP!=null && listPP.size()>0){
+			if(listPP!=null && !listPP.isEmpty()){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
 			if(filtro.getEscludiServiziComposti()!=null){
@@ -615,18 +622,18 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getNomeAzione()!=null){
 				filtroDriver.setNomeAzione(filtro.getNomeAzione());
 			}
-			List<FiltroRicercaProtocolPropertyRegistry> listPP_azioni = ProtocolUtils.convert(filtro.getProtocolPropertiesAzione());
-			if(listPP_azioni!=null && listPP_azioni.size()>0){
-				filtroDriver.setProtocolPropertiesAzione(listPP_azioni);
+			List<FiltroRicercaProtocolPropertyRegistry> listPPazioni = ProtocolUtils.convert(filtro.getProtocolPropertiesAzione());
+			if(listPPazioni!=null && !listPPazioni.isEmpty()){
+				filtroDriver.setProtocolPropertiesAzione(listPPazioni);
 			}	
 			
 			// portType
 			if(filtro.getNomePortType()!=null){
 				filtroDriver.setNomePortType(filtro.getNomePortType());
 			}
-			List<FiltroRicercaProtocolPropertyRegistry> listPP_portTypes = ProtocolUtils.convert(filtro.getProtocolPropertiesPortType());
-			if(listPP_portTypes!=null && listPP_portTypes.size()>0){
-				filtroDriver.setProtocolPropertiesPortType(listPP_portTypes);
+			List<FiltroRicercaProtocolPropertyRegistry> listPPportTypes = ProtocolUtils.convert(filtro.getProtocolPropertiesPortType());
+			if(listPPportTypes!=null && !listPPportTypes.isEmpty()){
+				filtroDriver.setProtocolPropertiesPortType(listPPportTypes);
 			}	
 			
 			// accordo
@@ -651,7 +658,7 @@ public class RegistryReader implements IRegistryReader {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
 			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
-			if(listPP!=null && listPP.size()>0){
+			if(listPP!=null && !listPP.isEmpty()){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
 			if(filtro.getEscludiServiziComposti()!=null){
@@ -705,9 +712,9 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getNomeAzione()!=null){
 				filtroDriver.setNomeAzione(filtro.getNomeAzione());
 			}
-			List<FiltroRicercaProtocolPropertyRegistry> listPP_azioni = ProtocolUtils.convert(filtro.getProtocolPropertiesAzione());
-			if(listPP_azioni!=null && listPP_azioni.size()>0){
-				filtroDriver.setProtocolPropertiesAzione(listPP_azioni);
+			List<FiltroRicercaProtocolPropertyRegistry> listPPazioni = ProtocolUtils.convert(filtro.getProtocolPropertiesAzione());
+			if(listPPazioni!=null && !listPPazioni.isEmpty()){
+				filtroDriver.setProtocolPropertiesAzione(listPPazioni);
 			}	
 			
 			// accordo
@@ -732,7 +739,7 @@ public class RegistryReader implements IRegistryReader {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
 			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
-			if(listPP!=null && listPP.size()>0){
+			if(listPP!=null && !listPP.isEmpty()){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
 			if(filtro.getEscludiServiziComposti()!=null){
@@ -776,9 +783,9 @@ public class RegistryReader implements IRegistryReader {
 			if(filtro.getNomeRisorsa()!=null){
 				filtroDriver.setResourceName(filtro.getNomeRisorsa());
 			}
-			List<FiltroRicercaProtocolPropertyRegistry> listPP_resources = ProtocolUtils.convert(filtro.getProtocolPropertiesRisorsa());
-			if(listPP_resources!=null && listPP_resources.size()>0){
-				filtroDriver.setProtocolPropertiesResources(listPP_resources);
+			List<FiltroRicercaProtocolPropertyRegistry> listPPresources = ProtocolUtils.convert(filtro.getProtocolPropertiesRisorsa());
+			if(listPPresources!=null && !listPPresources.isEmpty()){
+				filtroDriver.setProtocolPropertiesResources(listPPresources);
 			}	
 			
 			// accordo
@@ -803,7 +810,7 @@ public class RegistryReader implements IRegistryReader {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
 			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
-			if(listPP!=null && listPP.size()>0){
+			if(listPP!=null && !listPP.isEmpty()){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
 			if(filtro.getEscludiServiziComposti()!=null){
@@ -894,7 +901,7 @@ public class RegistryReader implements IRegistryReader {
 				filtroDriver.setPortType(filtro.getPortType());
 			}
 			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolPropertiesServizi());
-			if(listPP!=null && listPP.size()>0){
+			if(listPP!=null && !listPP.isEmpty()){
 				filtroDriver.setProtocolProperties(listPP);
 			}
 
@@ -925,9 +932,9 @@ public class RegistryReader implements IRegistryReader {
 					filtroDriver.setNomeSoggettoFruitore(filtro.getSoggettoFruitore().getNome());
 				}
 			}
-			List<FiltroRicercaProtocolPropertyRegistry> listPP_fruitore = ProtocolUtils.convert(filtro.getProtocolPropertiesFruizione());
-			if(listPP_fruitore!=null && listPP_fruitore.size()>0){
-				filtroDriver.setProtocolPropertiesFruizione(listPP_fruitore);
+			List<FiltroRicercaProtocolPropertyRegistry> listPPfruitore = ProtocolUtils.convert(filtro.getProtocolPropertiesFruizione());
+			if(listPPfruitore!=null && !listPPfruitore.isEmpty()){
+				filtroDriver.setProtocolPropertiesFruizione(listPPfruitore);
 			}
 			
 			// servizio
@@ -955,7 +962,7 @@ public class RegistryReader implements IRegistryReader {
 				filtroDriver.setPortType(filtro.getPortType());
 			}
 			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolPropertiesServizi());
-			if(listPP!=null && listPP.size()>0){
+			if(listPP!=null && !listPP.isEmpty()){
 				filtroDriver.setProtocolProperties(listPP);
 			}
 
@@ -1027,7 +1034,7 @@ public class RegistryReader implements IRegistryReader {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
 			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
-			if(listPP!=null && listPP.size()>0){
+			if(listPP!=null && !listPP.isEmpty()){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
 			if(filtro.getEscludiServiziComposti()!=null){
@@ -1046,4 +1053,113 @@ public class RegistryReader implements IRegistryReader {
 	}
 
 
+	
+	
+	
+	// GRUPPI
+	@Override
+	public List<IDGruppo> findIdGruppi(ProtocolFiltroRicercaGruppi filtro) throws RegistryNotFound,RegistryException{
+		try{
+			org.openspcoop2.core.registry.driver.FiltroRicercaGruppi filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaGruppi();
+			if(filtro.getMinDate()!=null) {
+				filtroDriver.setMinDate(filtro.getMinDate());
+			}
+			if(filtro.getMaxDate()!=null) {
+				filtroDriver.setMaxDate(filtro.getMaxDate());
+			}
+			filtroDriver.setOrdinaDataRegistrazione(filtro.isOrdinaDataRegistrazione());
+			if(filtro.getNome()!=null){
+				filtroDriver.setNome(filtro.getNome());
+			}
+			if(filtro.getTipo()!=null){
+				filtroDriver.setTipo(filtro.getTipo());
+			}
+			if(filtro.getServiceBinding()!=null) {
+				filtroDriver.setServiceBinding(filtro.getServiceBinding());
+			}
+			if(filtro.getProtocollo()!=null) {
+				filtroDriver.setProtocollo(filtro.getProtocollo());
+			}
+			if(filtro.getProtocolli()!=null){
+				filtroDriver.setProtocolli(filtro.getProtocolli());
+			}
+
+			return this.driverRegistroServiziGET.getAllIdGruppi(filtroDriver);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	// RUOLI
+	@Override
+	public List<IDRuolo> findIdRuoli(ProtocolFiltroRicercaRuoli filtro) throws RegistryNotFound,RegistryException{
+		try{
+			org.openspcoop2.core.registry.driver.FiltroRicercaRuoli filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaRuoli();
+			if(filtro.getMinDate()!=null) {
+				filtroDriver.setMinDate(filtro.getMinDate());
+			}
+			if(filtro.getMaxDate()!=null) {
+				filtroDriver.setMaxDate(filtro.getMaxDate());
+			}
+			if(filtro.getNome()!=null){
+				filtroDriver.setNome(filtro.getNome());
+			}
+			if(filtro.getTipo()!=null){
+				filtroDriver.setTipo(filtro.getTipo());
+			}
+			if(filtro.getTipologia()!=null) {
+				filtroDriver.setTipologia(filtro.getTipologia());
+			}
+			if(filtro.getContesto()!=null) {
+				filtroDriver.setContesto(filtro.getContesto());
+			}
+
+			return this.driverRegistroServiziGET.getAllIdRuoli(filtroDriver);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	
+	// SCOPE
+	@Override
+	public List<IDScope> findIdScope(ProtocolFiltroRicercaScope filtro) throws RegistryNotFound,RegistryException{
+		try{
+			org.openspcoop2.core.registry.driver.FiltroRicercaScope filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaScope();
+			if(filtro.getMinDate()!=null) {
+				filtroDriver.setMinDate(filtro.getMinDate());
+			}
+			if(filtro.getMaxDate()!=null) {
+				filtroDriver.setMaxDate(filtro.getMaxDate());
+			}
+			if(filtro.getNome()!=null){
+				filtroDriver.setNome(filtro.getNome());
+			}
+			if(filtro.getTipo()!=null){
+				filtroDriver.setTipo(filtro.getTipo());
+			}
+			if(filtro.getTipologia()!=null) {
+				filtroDriver.setTipologia(filtro.getTipologia());
+			}
+			if(filtro.getContesto()!=null) {
+				filtroDriver.setContesto(filtro.getContesto());
+			}
+
+			return this.driverRegistroServiziGET.getAllIdScope(filtroDriver);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
 }

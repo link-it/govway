@@ -311,11 +311,21 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 					}
 				}
 				
+				/* *** SIGNAL HUB *** */
+				List<ProtocolProperty> protoProps = asps.getProtocolProperty();
+				if (!protoProps.isEmpty() && ProtocolPropertiesUtils.getBooleanValuePropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, false)) {
+					String operation = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(protoProps, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
+					
+					if (azione.equals(operation)) {
+						this.context.addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PROPERTIES, protoProps);
+						this.context.addObject(CostantiPdD.KEY_OVERRIDE_CONNETTORE, ModICostanti.MODIPA_CONNETTORE_SIGNAL_HUB_PSEUDONYMIZATION);
+					}
+				}
 				
 				/* *** SICUREZZA CANALE *** */
 				
-				String securityChannelProfile = ModIPropertiesUtils.readPropertySecurityChannelProfile(aspc);
-				bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE, securityChannelProfile.toUpperCase());
+				String securityChannelProfile = ModIPropertiesUtils.readPropertySecurityChannelProfile(aspc, asps);
+				bustaRitornata.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_CANALE, securityChannelProfile);
 				
 				if(request && this.context!=null) {
 					

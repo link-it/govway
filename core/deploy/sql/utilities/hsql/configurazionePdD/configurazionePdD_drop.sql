@@ -9,6 +9,7 @@
 -- DROP INDEX index_pdd_sys_props_1;
 -- DROP INDEX index_servizi_pdd_1;
 -- DROP INDEX index_config_url_regole_1;
+-- DROP INDEX INDEX_REF_SERVIZI;
 -- DROP INDEX REMOTE_STORE_CREATE;
 -- DROP INDEX REMOTE_STORE_UPDATE;
 -- DROP INDEX INDEX_NODI_OP;
@@ -17,6 +18,8 @@
 -- DROP INDEX index_dump_config_1;
 -- DROP INDEX index_filetrace_config_1;
 -- DROP INDEX index_tracce_config_1;
+DROP TABLE servizi_digest_params_init_seq;
+DROP TABLE servizi_digest_params;
 DROP TABLE remote_store_key_init_seq;
 DROP TABLE remote_store_key;
 DROP TABLE remote_store_init_seq;
@@ -85,6 +88,7 @@ DROP TABLE routing_init_seq;
 DROP TABLE routing;
 DROP TABLE registri_init_seq;
 DROP TABLE registri;
+DROP SEQUENCE seq_servizi_digest_params;
 DROP SEQUENCE seq_remote_store_key;
 DROP SEQUENCE seq_remote_store;
 DROP SEQUENCE seq_nodi_runtime_operations;

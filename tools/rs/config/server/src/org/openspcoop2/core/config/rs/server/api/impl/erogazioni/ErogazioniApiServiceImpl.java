@@ -71,6 +71,7 @@ import org.openspcoop2.core.config.rs.server.model.ModalitaIdentificazioneAzione
 import org.openspcoop2.core.config.rs.server.model.OneOfConnettoreErogazioneConnettore;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -84,6 +85,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.beans.OperationSintetica;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
@@ -189,11 +191,13 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
-				
+				AccordoServizioParteComune accordoFull = null;
 				boolean required = false;
+				
 				if(env.isProfiloModi()) {
-					AccordoServizioParteComune accordoFull = Helper.getAccordoFull(body.getApiNome(),
+					accordoFull = Helper.getAccordoFull(body.getApiNome(),
 							body.getApiVersione(), idReferente, env.apcCore);
+					
 					if(accordoFull.sizeProtocolPropertyList()>0) {
 						for (org.openspcoop2.core.registry.ProtocolProperty pp : accordoFull.getProtocolPropertyList()) {
 							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
@@ -206,7 +210,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 					}
 				}
 				
-				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, asps, env, required);
+				protocolProperties = ErogazioniApiHelper.getProtocolProperties(body, profilo, accordoFull, asps, env, required);
 
 				if(protocolProperties != null) {
 					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
@@ -761,7 +765,11 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 
-			ErogazioneModI ret = ModiErogazioniApiHelper.getErogazioneModi(asps, env, profilo, ErogazioniApiHelper.getProtocolPropertiesMap(asps, env));
+			final IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+			final AccordoServizioParteComune aspc = Helper.getAccordoFull(idAccordo.getNome(),
+					idAccordo.getVersione(), idAccordo.getSoggettoReferente(), env.apcCore);
+			
+			ErogazioneModI ret = ModiErogazioniApiHelper.getErogazioneModi(aspc, asps, env, profilo, ErogazioniApiHelper.getProtocolPropertiesMap(asps, env));
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
@@ -1362,7 +1370,12 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 
 			ProtocolProperties protocolProperties = null;
 			if(profilo != null) {
-				protocolProperties = ModiErogazioniApiHelper.updateModiProtocolProperties(asps, profilo, body.getModi(), env);
+				
+				final IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				final AccordoServizioParteComune aspc = Helper.getAccordoFull(idAccordo.getNome(), 
+						idAccordo.getVersione(), idAccordo.getSoggettoReferente(), env.apcCore);
+			
+				protocolProperties = ModiErogazioniApiHelper.updateModiProtocolProperties(aspc, asps, profilo, body.getModi(), env);
 
 				if(protocolProperties != null) {
 					asps.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));

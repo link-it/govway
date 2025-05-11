@@ -53,6 +53,7 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.state.URLProtocolContext;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.slf4j.Logger;
@@ -72,24 +73,25 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	@SuppressWarnings("unused")
 	private IProtocolFactory<?> protocolFactory;
 	private RequestInfo requestInfo;
-	/*public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory) throws Exception{
+	/**public CachedConfigIntegrationReader(Logger log,IProtocolFactory protocolFactory){
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.configurazionePdDMangager = ConfigurazionePdDManager.getInstance();
 	}*/
-	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo) throws Exception{
+	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo) {
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
 		this.requestInfo = requestInfo;
 	}
-	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configurazionePdDManager, RequestInfo requestInfo) throws Exception{
+	public CachedConfigIntegrationReader(Logger log,IProtocolFactory<?> protocolFactory, ConfigurazionePdDManager configurazionePdDManager, RequestInfo requestInfo) {
 		this.log = log;
 		this.protocolFactory = protocolFactory;
 		this.configurazionePdDManager = configurazionePdDManager;
 		this.requestInfo = requestInfo;
 	}
 
+	private static final String NOT_IMPLEMENTEND = "Not Implemented";
 	
 	
 	// SERVIZI APPLICATIVI
@@ -288,13 +290,23 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	}
 	
 	@Override
+	public List<IDServizioApplicativo> findIdServiziApplicativiByPaAuth(PortaApplicativa pa, boolean authToken, boolean authTrasporto) throws RegistryNotFound,RegistryException{
+		throw new UtilsRuntimeException(NOT_IMPLEMENTEND);
+	}
+	
+	@Override
+	public List<IDServizioApplicativo> findIdServiziApplicativiByPdAuth(PortaDelegata pd, boolean authToken, boolean authTrasporto) throws RegistryNotFound,RegistryException{
+		throw new UtilsRuntimeException(NOT_IMPLEMENTEND);
+	}
+	
+	@Override
 	public boolean inUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws RegistryException{
-		throw new RuntimeException("Not Implemented");
+		throw new UtilsRuntimeException(NOT_IMPLEMENTEND);
 	}
 	
 	@Override
 	public String getDettagliInUso(IDServizioApplicativo idServizioApplicativo, boolean verificaRuoli) throws RegistryException{
-		throw new RuntimeException("Not Implemented");
+		throw new UtilsRuntimeException(NOT_IMPLEMENTEND);
 	}
 	
 	
@@ -316,9 +328,9 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	public boolean existsPortaDelegata(IDPortaDelegata idPortaDelegata){
 		try{
 			return this.configurazionePdDManager.getPortaDelegata(idPortaDelegata, this.requestInfo)!=null;
-		} catch (DriverConfigurazioneNotFound de) {
+		}/** catch (DriverConfigurazioneNotFound de) {
 			return false;
-		}catch(Exception e){
+		}*/catch(Exception e){
 			return false;
 		}
 	}
@@ -334,7 +346,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	public String getAzione(PortaDelegata pd,URLProtocolContext transportContext, RequestInfo requestInfo, IProtocolFactory<?> protocolFactory,
-			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
+			OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws DriverConfigurazioneException, IdentificazioneDinamicaException{
 		return this.configurazionePdDManager.getAzione(pd, transportContext, requestInfo, null, soapStreamReader, null, false, protocolFactory);
 	}
 	
@@ -351,12 +363,12 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	@Override
 	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
-		throw new RegistryException("Not Implemented");
+		throw new RegistryException(NOT_IMPLEMENTEND);
 	}
 	
 	@Override
 	public List<Allarme> getAllarmi(IDPortaDelegata idPortaDelegata) throws RegistryNotFound,RegistryException{
-		throw new RegistryException("Not Implemented");
+		throw new RegistryException(NOT_IMPLEMENTEND);
 	}
 	
 	@Override
@@ -386,9 +398,9 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	public boolean existsPortaApplicativa(IDPortaApplicativa idPortaApplicativa){
 		try{
 			return this.configurazionePdDManager.getPortaApplicativa(idPortaApplicativa, this.requestInfo)!=null;
-		} catch (DriverConfigurazioneNotFound de) {
+		}/** catch (DriverConfigurazioneNotFound de) {
 			return false;
-		}catch(Exception e){
+		}*/catch(Exception e){
 			return false;
 		}
 	} 
@@ -403,7 +415,7 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 		}
 	}
 	public String getAzione(PortaApplicativa pa,URLProtocolContext transportContext, RequestInfo requestInfo, IProtocolFactory<?> protocolFactory,
-			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws DriverConfigurazioneException, DriverConfigurazioneNotFound, IdentificazioneDinamicaException{
+			OpenSPCoop2Message message, OpenSPCoop2MessageSoapStreamReader soapStreamReader) throws DriverConfigurazioneException, IdentificazioneDinamicaException{
 		return this.configurazionePdDManager.getAzione(pa, transportContext, requestInfo, message, soapStreamReader, null, false, protocolFactory);
 	}
 	
@@ -420,12 +432,12 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	@Override
 	public List<AttivazionePolicy> getRateLimitingPolicy(IDPortaApplicativa idPortaDelegata) throws RegistryNotFound,RegistryException{
-		throw new RegistryException("Not Implemented");
+		throw new RegistryException(NOT_IMPLEMENTEND);
 	}
 	
 	@Override
 	public List<Allarme> getAllarmi(IDPortaApplicativa idPortaDelegata) throws RegistryNotFound,RegistryException{
-		throw new RegistryException("Not Implemented");
+		throw new RegistryException(NOT_IMPLEMENTEND);
 	}
 	
 	@Override
@@ -465,22 +477,22 @@ public class CachedConfigIntegrationReader implements IConfigIntegrationReader {
 	
 	@Override
 	public List<AttivazionePolicy> getRateLimitingPolicyGlobali() throws RegistryNotFound,RegistryException{
-		throw new RegistryException("Not Implemented");
+		throw new RegistryException(NOT_IMPLEMENTEND);
 	}
 	
 	@Override
 	public String getNextPolicyInstanceSerialId(String policyId) throws RegistryException{
-		throw new RegistryException("Not Implemented");
+		throw new RegistryException(NOT_IMPLEMENTEND);
 	}
 	
 	@Override
 	public List<Allarme> getAllarmiGlobali() throws RegistryNotFound,RegistryException{
-		throw new RegistryException("Not Implemented");
+		throw new RegistryException(NOT_IMPLEMENTEND);
 	}
 	
 	@Override
 	public String getNextAlarmInstanceSerialId(String tipoPlugin) throws RegistryException{
-		throw new RegistryException("Not Implemented");
+		throw new RegistryException(NOT_IMPLEMENTEND);
 	}
 	
 	@Override

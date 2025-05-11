@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDServizio;
@@ -50,10 +51,12 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class AzioniUtils {
+	
+	private AzioniUtils() {}
 
 	public static List<String> getAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
 			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate,
-			String DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA, Logger log) throws DriverConfigurazioneException{
+			String defaultValueAzioneRisorsaNonSelezionata, Logger log) throws DriverConfigurazioneException{
 		String nomeMetodo = "getAzioni";
 		try {
 			// Prendo le azioni associate al servizio
@@ -77,9 +80,9 @@ public class AzioniUtils {
 									}
 								}
 								if(pt==null){
-									throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
+									throw new CoreException("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
 								}
-								if(pt.getAzione().size()>0){
+								if(!pt.getAzione().isEmpty()){
 									azioniList = new ArrayList<>();
 									for (int i = 0; i < pt.getAzione().size(); i++) {
 										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(pt.getAzione().get(i).getNome())) {
@@ -88,7 +91,7 @@ public class AzioniUtils {
 									}
 								}
 							}else{
-								if(aspc.getAzione().size()>0){
+								if(!aspc.getAzione().isEmpty()){
 									azioniList = new ArrayList<>();
 									for (int i = 0; i < aspc.getAzione().size(); i++) {
 										if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getAzione().get(i).getNome())) {
@@ -101,7 +104,7 @@ public class AzioniUtils {
 						break;
 
 					case REST:
-						if(aspc.getResource().size()>0){
+						if(!aspc.getResource().isEmpty()){
 							azioniList = new ArrayList<>();
 							for (int i = 0; i < aspc.getResource().size(); i++) {
 								if(filtraAzioniUtilizzate==null || !filtraAzioniUtilizzate.contains(aspc.getResource().get(i).getNome())) {
@@ -120,12 +123,12 @@ public class AzioniUtils {
 			}
 			
 			List<String> azioniListReturn = null;
-			if(azioniList!=null && azioniList.size()>0) {
+			if(azioniList!=null && !azioniList.isEmpty()) {
 				Collections.sort(azioniList);
 				
 				azioniListReturn = new ArrayList<>();
 				if(addTrattinoSelezioneNonEffettuata) {
-					azioniListReturn.add(DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
+					azioniListReturn.add(defaultValueAzioneRisorsaNonSelezionata);
 				}
 				azioniListReturn.addAll(azioniList);
 			}
@@ -142,7 +145,7 @@ public class AzioniUtils {
 	public static Map<String,String> getMapAzioni(AccordoServizioParteSpecifica asps,AccordoServizioParteComuneSintetico aspc, 
 			boolean addTrattinoSelezioneNonEffettuata, boolean throwException, List<String> filtraAzioniUtilizzate, 
 			boolean sortByLabel, boolean sortFirstByPath, // per soap questi due parametri sono  ininfluenti
-			String DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA, String DEFAULT_LABEL_AZIONE_RISORSA_NON_SELEZIONATA, Logger log
+			String defaultValueAzioneRisorsaNonSelezionata, String defaultLabelAzioneRisorsaNonSelezionata, Logger log
 			) throws DriverConfigurazioneException{
 		String nomeMetodo = "getAzioni";
 		try {
@@ -169,9 +172,9 @@ public class AzioniUtils {
 									}
 								}
 								if(pt==null){
-									throw new Exception("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
+									throw new CoreException("Servizio ["+idServizio.toString()+"] possiede il port type ["+asps.getPortType()+"] che non risulta essere registrato nell'accordo di servizio ["+asps.getAccordoServizioParteComune()+"]");
 								}
-								if(pt.getAzione().size()>0){
+								if(!pt.getAzione().isEmpty()){
 									azioniMap = new HashMap<>();
 									sortList = new ArrayList<>();
 									for (int i = 0; i < pt.getAzione().size(); i++) {
@@ -182,7 +185,7 @@ public class AzioniUtils {
 									}
 								}
 							}else{
-								if(aspc.getAzione().size()>0){
+								if(!aspc.getAzione().isEmpty()){
 									azioniMap = new HashMap<>();
 									sortList = new ArrayList<>();
 									for (int i = 0; i < aspc.getAzione().size(); i++) {
@@ -197,7 +200,7 @@ public class AzioniUtils {
 						break;
 
 					case REST:
-						if(aspc.getResource().size()>0){
+						if(!aspc.getResource().isEmpty()){
 							azioniMap = new HashMap<>();
 							sortList = new ArrayList<>();
 							if(sortByLabel) {
@@ -235,12 +238,12 @@ public class AzioniUtils {
 				}
 			}
 			
-			Map<String, String> mapAzioniReturn = new LinkedHashMap<String, String>();
-			if(sortList!=null && sortList.size()>0) {
+			Map<String, String> mapAzioniReturn = new LinkedHashMap<>();
+			if(sortList!=null && !sortList.isEmpty()) {
 				Collections.sort(sortList);
 				
 				if(addTrattinoSelezioneNonEffettuata) {
-					mapAzioniReturn.put(DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA,DEFAULT_LABEL_AZIONE_RISORSA_NON_SELEZIONATA);
+					mapAzioniReturn.put(defaultValueAzioneRisorsaNonSelezionata,defaultLabelAzioneRisorsaNonSelezionata);
 				}
 				
 				if(sortMap!=null) {

@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 
 /**     
  * Enumeration TipoAutorizzazione
@@ -46,7 +47,8 @@ public enum TipoAutorizzazione implements IEnumeration , Serializable , Cloneabl
 	XACML_POLICY (CostantiConfigurazione.AUTORIZZAZIONE_XACML_POLICY,"xacmlPolicy"),
 	INTERNAL_XACML_POLICY (CostantiConfigurazione.AUTORIZZAZIONE_INTERNAL_XACML_POLICY,"internalXacmlPolicy"),
 	EXTERNAL_XACML_POLICY (CostantiConfigurazione.AUTORIZZAZIONE_EXTERNAL_XACML_POLICY,"externalXacmlPolicy"),
-	TOKEN (CostantiConfigurazione.AUTORIZZAZIONE_TOKEN,"token");
+	TOKEN (CostantiConfigurazione.AUTORIZZAZIONE_TOKEN,"token"),
+	SIGNAL_HUB_PUSH (CostantiConfigurazione.SIGNAL_HUB_PUSH,"signalHubPush");
 
 	
 	/** Value */
@@ -85,21 +87,36 @@ public enum TipoAutorizzazione implements IEnumeration , Serializable , Cloneabl
 	
 	/** compatibility with the generated bean (reflection) */
 	public boolean equals(Object object,List<String> fieldsNotCheck){
-		if( !(object instanceof TipoAutorizzazione) ){
-			throw new RuntimeException("Wrong type: "+object.getClass().getName());
+		if(fieldsNotCheck!=null) {
+			// nop
 		}
-		return this.equals(((TipoAutorizzazione)object));
+		if( !(object instanceof TipoAutorizzazione) ){
+			throw new UtilsRuntimeException("Wrong type: "+object.getClass().getName());
+		}
+		return this.equals((object));
 	}
 	public String toString(boolean reportHTML){
+		if(reportHTML) {
+			// nop
+		}
 		return toString();
 	}
   	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
+  		if(reportHTML && fieldsNotIncluded!=null) {
+			// nop
+		}
   		return toString();
   	}
   	public String diff(Object object,StringBuilder bf,boolean reportHTML){
+  		if(object!=null && reportHTML) {
+  			// nop
+  		}
 		return bf.toString();
 	}
 	public String diff(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){
+		if(object!=null && reportHTML && fieldsNotIncluded!=null) {
+  			// nop
+  		}
 		return bf.toString();
 	}
 	
@@ -110,69 +127,57 @@ public enum TipoAutorizzazione implements IEnumeration , Serializable , Cloneabl
 		return isInternalRolesRequired(TipoAutorizzazione.toEnumConstant(autorizzazione));
 	}
 	public static boolean isInternalRolesRequired(TipoAutorizzazione autorizzazione){
-		if(TipoAutorizzazione.INTERNAL_ROLES.equals(autorizzazione)	||
-				TipoAutorizzazione.AUTHENTICATED_INTERNAL_ROLES.equals(autorizzazione) 
-				){
-			return true;
-		}
-		return false;
+		return TipoAutorizzazione.INTERNAL_ROLES.equals(autorizzazione)	||
+				TipoAutorizzazione.AUTHENTICATED_INTERNAL_ROLES.equals(autorizzazione);
 	}
 	
 	public static boolean isExternalRolesRequired(String autorizzazione){
 		return isExternalRolesRequired(TipoAutorizzazione.toEnumConstant(autorizzazione));
 	}
 	public static boolean isExternalRolesRequired(TipoAutorizzazione autorizzazione){
-		if(TipoAutorizzazione.EXTERNAL_ROLES.equals(autorizzazione) ||
-				TipoAutorizzazione.AUTHENTICATED_EXTERNAL_ROLES.equals(autorizzazione) 
-				 ){
-			return true;
-		}
-		return false;
+		return TipoAutorizzazione.EXTERNAL_ROLES.equals(autorizzazione) ||
+				TipoAutorizzazione.AUTHENTICATED_EXTERNAL_ROLES.equals(autorizzazione);
 	}
 	
 	public static boolean isRolesRequired(String autorizzazione){
 		return isRolesRequired(TipoAutorizzazione.toEnumConstant(autorizzazione));
 	}
 	public static boolean isRolesRequired(TipoAutorizzazione autorizzazione){
-		if(TipoAutorizzazione.ROLES.equals(autorizzazione) ||
+		return TipoAutorizzazione.ROLES.equals(autorizzazione) ||
 				TipoAutorizzazione.AUTHENTICATED_ROLES.equals(autorizzazione) ||
 				TipoAutorizzazione.INTERNAL_ROLES.equals(autorizzazione) ||
 				TipoAutorizzazione.AUTHENTICATED_INTERNAL_ROLES.equals(autorizzazione) ||
 				TipoAutorizzazione.EXTERNAL_ROLES.equals(autorizzazione) ||
-				TipoAutorizzazione.AUTHENTICATED_EXTERNAL_ROLES.equals(autorizzazione) ){
-			return true;
-		}
-		return false;
+				TipoAutorizzazione.AUTHENTICATED_EXTERNAL_ROLES.equals(autorizzazione) ;
 	}
 	
 	public static boolean isAuthenticationRequired(String autorizzazione){
 		return isAuthenticationRequired(TipoAutorizzazione.toEnumConstant(autorizzazione));
 	}
+	
 	public static boolean isAuthenticationRequired(TipoAutorizzazione autorizzazione){
-		if(TipoAutorizzazione.AUTHENTICATED.equals(autorizzazione) ||
+		return TipoAutorizzazione.AUTHENTICATED.equals(autorizzazione) ||
+				isSignalHubPush(autorizzazione) ||
 				TipoAutorizzazione.AUTHENTICATED_EXTERNAL_ROLES.equals(autorizzazione)  ||
 				TipoAutorizzazione.AUTHENTICATED_INTERNAL_ROLES.equals(autorizzazione)  ||
-				TipoAutorizzazione.AUTHENTICATED_ROLES.equals(autorizzazione)  
-				){
-			return true;
-		}
-		return false;
+				TipoAutorizzazione.AUTHENTICATED_ROLES.equals(autorizzazione);  
 	}
 	
 	public static boolean isXacmlPolicyRequired(String autorizzazione){
 		return isXacmlPolicyRequired(TipoAutorizzazione.toEnumConstant(autorizzazione));
 	}
 	public static boolean isXacmlPolicyRequired(TipoAutorizzazione autorizzazione){
-		if(TipoAutorizzazione.XACML_POLICY.equals(autorizzazione) ||
+		return TipoAutorizzazione.XACML_POLICY.equals(autorizzazione) ||
 				TipoAutorizzazione.EXTERNAL_XACML_POLICY.equals(autorizzazione)  ||
-				TipoAutorizzazione.INTERNAL_XACML_POLICY.equals(autorizzazione)  
-				){
-			return true;
-		}
-		return false;
+				TipoAutorizzazione.INTERNAL_XACML_POLICY.equals(autorizzazione);
 	}
 	
-
+	public static boolean isSignalHubPush(String autorizzazione){
+		return isSignalHubPush(TipoAutorizzazione.toEnumConstant(autorizzazione));
+	}
+	public static boolean isSignalHubPush(TipoAutorizzazione autorizzazione){
+		return TipoAutorizzazione.SIGNAL_HUB_PUSH.equals(autorizzazione);
+	}
 	
 	public static List<String> getAllValues(){
 		List<String> l = new ArrayList<>();
@@ -185,16 +190,15 @@ public enum TipoAutorizzazione implements IEnumeration , Serializable , Cloneabl
 		List<String> l = new ArrayList<>();
 		for (TipoAutorizzazione tmp : values()) {
 			
-			if(isAuthenticationRequired(tmp)){
+			if(isAuthenticationRequired(tmp) &&
 				// se l'autenticazione non è attivata, le autorizzazioni basate sull'autenticazione non hanno senso
-				if(!authenticated){
-					continue;
-				}
+				!authenticated){
+				continue;
 			}
 			
 			if(isAuthenticationRequired(tmp) && isRolesRequired(tmp)){
 				// i metodi con sia autenticazione che roles sono permessi solo se l'autenticazione è opzionale, altrimenti i ruoli non verranno mai presi in considerazione
-				if(optionalAuthenticated==false){
+				if(!optionalAuthenticated){
 					continue;
 				}
 			}

@@ -365,9 +365,6 @@ public class ArchiviCore extends ControlStationCore {
 					validateDocuments, importInformationMissingGlobalPlaceholder);
 			
 		} 
-		catch(ImportInformationMissingException iime) {
-			throw iime;
-		}
 		catch(Exception e) {
 			throw new DriverControlStationException(getPrefixError("convert",  e),e);
 		}
@@ -396,9 +393,6 @@ public class ArchiviCore extends ControlStationCore {
 					validateDocuments, importInformationMissingGlobalPlaceholder);
 			
 		} 
-		catch(ImportInformationMissingException iime) {
-			throw iime;
-		}
 		catch(Exception e) {
 			throw new DriverControlStationException(getPrefixError("finalizeArchive",  e),e);
 		}

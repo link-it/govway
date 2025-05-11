@@ -20,24 +20,43 @@
 package org.openspcoop2.protocol.modipa.properties;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
+import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.constants.RuoloContesto;
+import org.openspcoop2.core.registry.constants.RuoloTipologia;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.protocol.engine.constants.Costanti;
+import org.openspcoop2.protocol.engine.utils.AzioniUtils;
 import org.openspcoop2.protocol.modipa.config.ModIAuditClaimConfig;
 import org.openspcoop2.protocol.modipa.config.ModIAuditConfig;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
+import org.openspcoop2.protocol.modipa.config.ModISignalHubConfig;
+import org.openspcoop2.protocol.modipa.config.ModISignalHubParamConfig;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -59,13 +78,18 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.properties.SubtitleConsoleItem;
+import org.openspcoop2.protocol.sdk.properties.TitleConsoleItem;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaFruizioniServizio;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRuoli;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.digest.DigestEncoding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ModIDynamicConfigurationAccordiParteSpecificaUtilities
@@ -75,6 +99,8 @@ import org.openspcoop2.utils.digest.DigestEncoding;
  * @version $Rev$, $Date$
  */
 public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities {
+	
+	private static Logger logger = LoggerFactory.getLogger(ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.class);
 	
 	private ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities() {}
 
@@ -2400,4 +2426,883 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			}
 		}
 	}
+	
+	
+	static void addPdndInfo(ModIProperties modiProperties,
+			ConsoleConfiguration configuration, boolean rest) throws ProtocolException {
+		
+		
+		TitleConsoleItem titolo = (TitleConsoleItem) ProtocolPropertiesFactory.newTitleItem(
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_LABEL);
+		configuration.addConsoleItem(titolo );
+		
+		StringConsoleItem modiEServiceIdItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.TEXT_AREA,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL
+					);
+		modiEServiceIdItem.setRows(1);
+		configuration.addConsoleItem(modiEServiceIdItem);
+		
+		if(modiProperties.isSignalHubEnabled()) {
+		
+			BooleanConsoleItem modiSignalHubItem = (BooleanConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.BOOLEAN,
+					ConsoleItemType.CHECKBOX,
+					ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, 
+					ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL);
+			modiSignalHubItem.setReloadOnChange(true, true);
+			configuration.addConsoleItem(modiSignalHubItem);
+		
+			addSignalHubInfo(modiProperties,
+					configuration, rest);
+		}
+		
+	}
+	
+	private static void addSignalHubInfo(ModIProperties modiProperties,
+			ConsoleConfiguration configuration, boolean rest) throws ProtocolException {
+		
+		// SignalHub sub-section
+		
+		SubtitleConsoleItem modiSignalHubSubtitleItem = (SubtitleConsoleItem) ProtocolPropertiesFactory.newSubTitleItem(
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SUBTITLE_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SUBTITLE_LABEL
+				); 
+		modiSignalHubSubtitleItem.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(modiSignalHubSubtitleItem);
+		
+		// operation
+		StringConsoleItem modiSignalHubOpItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, 
+				(rest ? ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_REST_LABEL : ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_SOAP_LABEL ));
+		modiSignalHubOpItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_NOTE);
+		modiSignalHubOpItem.setRequired(true); 
+		modiSignalHubOpItem.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(modiSignalHubOpItem);
+		
+		// alg
+		StringConsoleItem modiSignalHubAlgItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_LABEL);
+		List<String> algo = modiProperties.getSignalHubAlgorithms();
+		if(algo!=null && !algo.isEmpty()) {
+			for (String a : algo) {
+				modiSignalHubAlgItem.addLabelValue(a,a);
+			}
+		}
+		modiSignalHubAlgItem.setDefaultValue(modiProperties.getSignalHubDefaultAlgorithm());
+		modiSignalHubAlgItem.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(modiSignalHubAlgItem);
+		
+		// seed size
+		NumberConsoleItem modiSignalHubAlgDimensioneSeme = (NumberConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.NUMBER,
+				ConsoleItemType.SELECT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_LABEL);
+		List<Integer> size = modiProperties.getSignalHubSeedSize();
+		if(size!=null && !size.isEmpty()) {
+			for (Integer a : size) {
+				modiSignalHubAlgDimensioneSeme.addLabelValue(a.toString(),a.longValue());
+			}
+		}
+		modiSignalHubAlgDimensioneSeme.setDefaultValue(modiProperties.getSignalHubDefaultSeedSize().longValue());
+		modiSignalHubAlgDimensioneSeme.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(modiSignalHubAlgDimensioneSeme);
+		
+		// seed lifetime
+		NumberConsoleItem modiSignalHubAlgScadenzaSeme = (NumberConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.NUMBER,
+				ConsoleItemType.TEXT_EDIT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL);
+		if(!modiProperties.isSignalHubSeedLifetimeUnlimited()) {
+			modiSignalHubAlgScadenzaSeme.setRequired(true);
+			modiSignalHubAlgScadenzaSeme.setDefaultValue(modiProperties.getSignalHubDeSeedSeedLifetimeDaysDefault().longValue());
+		}
+		modiSignalHubAlgScadenzaSeme.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(modiSignalHubAlgScadenzaSeme);
+
+		
+		// publisher
+		StringConsoleItem modiSignalHubPublisherItem = (StringConsoleItem)
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+						ConsoleItemType.TEXT,
+						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT_ID, 
+						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT_LABEL);
+		modiSignalHubPublisherItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT);
+		configuration.addConsoleItem(modiSignalHubPublisherItem);
+		
+		// publisher applicative
+		StringConsoleItem modiSignalHubPublisherSAItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_LABEL);
+		modiSignalHubPublisherSAItem.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(modiSignalHubPublisherSAItem);
+		
+		// publisher role
+		StringConsoleItem modiSignalHubPublisherRoleItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_LABEL);
+		modiSignalHubPublisherRoleItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_NOTE);
+		modiSignalHubPublisherRoleItem.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(modiSignalHubPublisherRoleItem);
+	}
+	
+	static void updatePdndInfo(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			AccordoServizioParteComune api, String portType, IDServizio idServizio,
+			IRegistryReader registryReader,
+			IConfigIntegrationReader configIntegrationReader,
+			Logger log) throws ProtocolException {
+		
+		ModIProperties modiProperties = ModIProperties.getInstance();
+		
+		boolean signalHub = false;
+		if(modiProperties.isSignalHubEnabled()) {
+			BooleanProperty modiSignalHubItemValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID);
+			signalHub = modiSignalHubItemValue!=null && modiSignalHubItemValue.getValue()!=null && modiSignalHubItemValue.getValue().booleanValue();
+		}
+		
+		
+		// eService id
+		AbstractConsoleItem<?> modiEServiceIdItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+		if(modiEServiceIdItem!=null) {
+			modiEServiceIdItem.setRequired(signalHub);
+		}
+	
+		
+		// Signal hub
+		if(modiProperties.isSignalHubEnabled()) {
+			
+			updateSignalHubInfo(consoleConfiguration, properties,
+					api, portType, idServizio,
+					log,
+					signalHub);
+			
+			updateSignalHubPublisherInfo(consoleConfiguration, properties,
+					idServizio,
+					registryReader,
+					configIntegrationReader,
+					log,
+					signalHub);
+		}
+	}
+	
+	private static void updateSignalHubInfo(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			AccordoServizioParteComune api, String portType, IDServizio idServizio,
+			Logger log,
+			boolean signalHub) throws ProtocolException {
+
+		ModIProperties modiProperties = ModIProperties.getInstance();
+		
+		// signalHub subsection
+		BaseConsoleItem modiSignalHubSubtitleItem = 	
+				ProtocolPropertiesUtils.getBaseConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SUBTITLE_ID);
+		if(modiSignalHubSubtitleItem!=null) {
+			if(signalHub) {
+				modiSignalHubSubtitleItem.setType(ConsoleItemType.SUBTITLE);
+			}
+			else {
+				modiSignalHubSubtitleItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+		
+		// signalHub operation
+		updatePdndInfoSignalHubOperation(api, portType, idServizio,
+				consoleConfiguration, properties,
+				log, signalHub);
+
+		// signalHub algorithm
+		updatePdndInfoSignalHubAlgo(modiProperties,
+				consoleConfiguration, properties,
+				signalHub);
+		
+		// seed
+		updatePdndInfoSignalHubSeed(modiProperties,
+				consoleConfiguration, properties,
+				signalHub);
+		
+	}
+	private static void updateSignalHubPublisherInfo(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			IDServizio idServizio,
+			IRegistryReader registryReader,
+			IConfigIntegrationReader configIntegrationReader,
+			Logger log,
+			boolean signalHub) throws ProtocolException {
+		
+		// publisher
+		updatePdndInfoSignalHubPublisher(consoleConfiguration, properties,
+				idServizio,
+				registryReader,
+				configIntegrationReader,
+				log,
+				signalHub);
+		
+	}
+	private static void updatePdndInfoSignalHubOperation(AccordoServizioParteComune api, String portType, IDServizio idServizio,
+			ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			Logger log, boolean signalHub) throws ProtocolException {
+		AbstractConsoleItem<?> modiSignalHubOpItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
+		if(modiSignalHubOpItem!=null) {
+			modiSignalHubOpItem.setRequired(signalHub);
+			if(signalHub) {
+				modiSignalHubOpItem.setType(ConsoleItemType.SELECT);
+				addSignalHubOperations(api, idServizio, portType, modiSignalHubOpItem, log);
+			}
+			else {
+				modiSignalHubOpItem.setType(ConsoleItemType.HIDDEN);
+				modiSignalHubOpItem.clearMapLabelValues();
+			}
+		}
+		StringProperty modiSignalHubOpItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
+		if(modiSignalHubOpItemValue!=null && modiSignalHubOpItemValue.getValue()!=null && !signalHub) {
+			modiSignalHubOpItemValue.setValue(null);
+		}
+	}
+	private static void updatePdndInfoSignalHubAlgo(ModIProperties modiProperties,
+			ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			boolean signalHub) throws ProtocolException {
+		AbstractConsoleItem<?> modiSignalHubAlgItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID);
+		if(modiSignalHubAlgItem!=null) {
+			if(signalHub) {
+				modiSignalHubAlgItem.setType(ConsoleItemType.SELECT);
+			}
+			else {
+				modiSignalHubAlgItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+		StringProperty modiSignalHubAlgItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID);
+		if(modiSignalHubAlgItemValue!=null) {
+			if(signalHub) {
+				if(modiSignalHubAlgItemValue.getValue()==null || StringUtils.isEmpty(modiSignalHubAlgItemValue.getValue())) {
+					modiSignalHubAlgItemValue.setValue(modiProperties.getSignalHubDefaultAlgorithm()); // default
+				}
+			}
+			else {
+				if(modiSignalHubAlgItemValue.getValue()!=null) {
+					modiSignalHubAlgItemValue.setValue(null);
+				}
+			}
+		}
+	}
+	private static void updatePdndInfoSignalHubSeed(ModIProperties modiProperties,
+			ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			boolean signalHub) throws ProtocolException {
+		
+		// signalHub seed size
+		updatePdndInfoSignalHubSeedSize(modiProperties,
+				consoleConfiguration, properties,
+				signalHub);
+		
+		// signalHub seed lifetime
+		updatePdndInfoSignalHubSeedLifeTime(consoleConfiguration, properties,
+				signalHub);
+		
+	}
+	private static void updatePdndInfoSignalHubSeedSize(ModIProperties modiProperties,
+			ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			boolean signalHub) throws ProtocolException {
+		AbstractConsoleItem<?> modiSignalHubSeedSizeItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID);
+		if(modiSignalHubSeedSizeItem!=null) {
+			if(signalHub) {
+				modiSignalHubSeedSizeItem.setType(ConsoleItemType.SELECT);
+			}
+			else {
+				modiSignalHubSeedSizeItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+		NumberProperty modiSignalHubSeedSizeItemValue = (NumberProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID);
+		if(modiSignalHubSeedSizeItemValue!=null) {
+			if(signalHub) {
+				if(modiSignalHubSeedSizeItemValue.getValue()==null) {
+					modiSignalHubSeedSizeItemValue.setValue(modiProperties.getSignalHubDefaultSeedSize().longValue()); // default
+				}
+			}
+			else {
+				if(modiSignalHubSeedSizeItemValue.getValue()!=null) {
+					modiSignalHubSeedSizeItemValue.setValue(null);
+				}
+			}
+		}
+	}
+	private static void updatePdndInfoSignalHubSeedLifeTime(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			boolean signalHub) throws ProtocolException {
+		AbstractConsoleItem<?> modiSignalHubSeedLifeTimeItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
+		if(modiSignalHubSeedLifeTimeItem!=null) {
+			modiSignalHubSeedLifeTimeItem.setRequired(signalHub);
+			if(signalHub) {
+				modiSignalHubSeedLifeTimeItem.setType(ConsoleItemType.TEXT_EDIT);
+			}
+			else {
+				modiSignalHubSeedLifeTimeItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+		NumberProperty modiSignalHubSeedLifeTimeItemValue = (NumberProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
+		if(modiSignalHubSeedLifeTimeItemValue!=null &&
+			!signalHub &&
+			modiSignalHubSeedLifeTimeItemValue.getValue()!=null) {
+			modiSignalHubSeedLifeTimeItemValue.setValue(null);
+		}
+	}
+	private static void updatePdndInfoSignalHubPublisher(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			IDServizio idServizio,
+			IRegistryReader registryReader,
+			IConfigIntegrationReader configIntegrationReader,
+			Logger log,
+			boolean signalHub) throws ProtocolException {
+		
+		AbstractConsoleItem<?> modiSignalHubPublisherItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT_ID);
+		if(modiSignalHubPublisherItem!=null) {
+			if(signalHub) {
+				modiSignalHubPublisherItem.setType(ConsoleItemType.TEXT);
+			}
+			else {
+				modiSignalHubPublisherItem.setType(ConsoleItemType.HIDDEN);
+			}
+		}
+		StringProperty modiSignalHubPublisherItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT_ID);
+		if(modiSignalHubPublisherItemValue!=null) {
+			if(signalHub) {
+				modiSignalHubPublisherItemValue.setValue(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT);
+			}
+			else {
+				modiSignalHubPublisherItemValue.setValue(null);
+			}
+		}
+		
+		updatePdndInfoSignalHubPublisherSA(consoleConfiguration, properties,
+				idServizio,
+				registryReader,
+				configIntegrationReader,
+				log,
+				signalHub);
+		
+		updatePdndInfoSignalHubPublisherRole(consoleConfiguration, properties,
+				registryReader,
+				log,
+				signalHub);
+	}
+	private static void updatePdndInfoSignalHubPublisherSA(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			IDServizio idServizio,
+			IRegistryReader registryReader,
+			IConfigIntegrationReader configIntegrationReader,
+			Logger log,
+			boolean signalHub) throws ProtocolException {
+		AbstractConsoleItem<?> modiSignalHubPublisherSAItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
+		if(modiSignalHubPublisherSAItem!=null) {
+			if(signalHub) {
+				modiSignalHubPublisherSAItem.setType(ConsoleItemType.SELECT);
+				addSignalHubServiziApplicativi(registryReader,
+						configIntegrationReader,
+						modiSignalHubPublisherSAItem, log,
+						idServizio);
+			}
+			else {
+				modiSignalHubPublisherSAItem.setType(ConsoleItemType.HIDDEN);
+				modiSignalHubPublisherSAItem.clearMapLabelValues();
+			}
+		}
+		StringProperty modiSignalHubPublisherSAItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
+		if(modiSignalHubPublisherSAItemValue!=null && 
+			!signalHub) {
+			modiSignalHubPublisherSAItemValue.setValue(null);
+		}
+	}
+	private static void updatePdndInfoSignalHubPublisherRole(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			IRegistryReader registryReader,
+			Logger log,
+			boolean signalHub) throws ProtocolException {
+		AbstractConsoleItem<?> modiSignalHubPublisherRoleItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID);
+		if(modiSignalHubPublisherRoleItem!=null) {
+			if(signalHub) {
+				modiSignalHubPublisherRoleItem.setType(ConsoleItemType.SELECT);
+				addSignalHubRuoli(registryReader,
+						modiSignalHubPublisherRoleItem, log);
+			}
+			else {
+				modiSignalHubPublisherRoleItem.setType(ConsoleItemType.HIDDEN);
+				modiSignalHubPublisherRoleItem.clearMapLabelValues();
+			}
+		}
+		StringProperty modiSignalHubPublisherRoleItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID);
+		if(modiSignalHubPublisherRoleItemValue!=null && 
+			!signalHub) {
+			modiSignalHubPublisherRoleItemValue.setValue(null);
+		}
+	}
+	
+	private static void addSignalHubOperations(AccordoServizioParteComune api, IDServizio idServizio, String portType, AbstractConsoleItem<?> modiSignalHubOpItem, Logger log) throws ProtocolException {
+		Map<String,String> azioni = getSignalHubOperations(api, idServizio, portType, log);
+		if(azioni!=null && !azioni.isEmpty()) {
+			for (Map.Entry<String,String> entry : azioni.entrySet()) {
+				String azioneId = entry.getKey();
+				String azioneLabel = entry.getValue();
+				((StringConsoleItem)modiSignalHubOpItem).addLabelValue(azioneLabel,azioneId);
+			}
+		}	
+	}
+	
+	private static Map<String, String> getSignalHubOperations(AccordoServizioParteComune api, IDServizio idServizio, String portType, Logger log) throws ProtocolException {
+		
+		AccordoServizioParteSpecifica aspsRicercaAzioni = new AccordoServizioParteSpecifica();
+		aspsRicercaAzioni.setTipo(idServizio.getTipo());
+		aspsRicercaAzioni.setNome(idServizio.getNome());
+		aspsRicercaAzioni.setVersione(idServizio.getVersione());
+		if(idServizio.getSoggettoErogatore()!=null) {
+			aspsRicercaAzioni.setTipoSoggettoErogatore(idServizio.getSoggettoErogatore().getTipo());
+			aspsRicercaAzioni.setNomeSoggettoErogatore(idServizio.getSoggettoErogatore().getNome());
+		}
+		aspsRicercaAzioni.setPortType(portType);
+		
+		AccordoServizioParteComuneSintetico aspcSelected = new AccordoServizioParteComuneSintetico(api);
+
+		
+		List<String> filtraAzioniUtilizzate = new ArrayList<>();
+		Map<String,String> azioni = null;
+		try {
+			azioni = AzioniUtils.getAzioniConLabel(aspsRicercaAzioni, aspcSelected, true, false, 
+					filtraAzioniUtilizzate, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED, ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, log); 
+		}catch(Exception e) {
+			throw new ProtocolException("Lettura azioni '"+idServizio+"' non riuscita: "+e.getMessage(),e);
+		}
+		return azioni;
+	}
+	
+	private static IDPortaDelegata readPDSignalHub(IRegistryReader registryReader,
+			IConfigIntegrationReader configIntegrationReader,
+			Logger log,
+			IDServizio idServizio, IDAccordo idAccordoSignalHubPushAPI) {
+		ProtocolFiltroRicercaFruizioniServizio filtro = new ProtocolFiltroRicercaFruizioniServizio();
+		filtro.setIdAccordoServizioParteComune(idAccordoSignalHubPushAPI);
+		filtro.setSoggettoFruitore(idServizio.getSoggettoErogatore());
+		try {
+			List<IDFruizione> list = registryReader.findIdFruizioni(filtro);
+			if(list!=null && !list.isEmpty()) {
+				return readPDSignalHub(configIntegrationReader,list);
+			}
+		}catch(Exception e) {
+			log.error("Lettura id servizio signalhub api push fallita: "+e.getMessage(),e);
+		}
+		return null;
+	}
+	private static IDPortaDelegata readPDSignalHub(IConfigIntegrationReader configIntegrationReader,List<IDFruizione> list) throws RegistryException {
+		// prendo la prima
+		IDFruizione idF = list.get(0);
+		if(idF!=null) {
+			List<MappingFruizionePortaDelegata> listMF = configIntegrationReader.getMappingFruizionePortaDelegataList(idF.getIdFruitore(), idF.getIdServizio());
+			if(listMF!=null && !listMF.isEmpty()) {
+				for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : listMF) {
+					if(mappingFruizionePortaDelegata.isDefault()) {
+						return mappingFruizionePortaDelegata.getIdPortaDelegata();
+					}
+				}
+			}
+		}
+		return null;
+	}
+	private static void addSignalHubServiziApplicativi(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader,
+			AbstractConsoleItem<?> modiSignalHubPublisherSAItem, Logger log,
+			IDServizio idServizio) {
+		
+		((StringConsoleItem)modiSignalHubPublisherSAItem).addLabelValue(ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED);
+
+		if(idServizio!=null) {
+			try {
+				List<IDServizioApplicativo> idSA = getSignalHubServiziApplicativi(registryReader, configIntegrationReader, idServizio);
+				if(idSA!=null && !idSA.isEmpty()) {
+					List<String> nomi = new ArrayList<>();
+					for (IDServizioApplicativo idServizioApplicativo : idSA) {
+						nomi.add(idServizioApplicativo.getNome());
+					}
+					Collections.sort(nomi);
+					for (String s : nomi) {
+						((StringConsoleItem)modiSignalHubPublisherSAItem).addLabelValue(s,s);
+					}
+				}
+			}catch(Exception e) {
+				log.error("Lettura porta delegata per signalhub api push fallita: "+e.getMessage(),e);
+			}
+		}
+	}
+	
+	private static List<IDServizioApplicativo> getSignalHubServiziApplicativi(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio idServizio) throws RegistryNotFound, RegistryException, DriverRegistroServiziException, ProtocolException {
+		IDAccordo idAccordoSignalHubPushAPI = ModIDynamicConfigurationAccordiParteComuneUtilities.getIdAccordoSignalHubPush(registryReader, ModIProperties.getInstance());
+		IDPortaDelegata idPD = readPDSignalHub(registryReader,
+				configIntegrationReader,
+				logger,
+				idServizio, idAccordoSignalHubPushAPI);
+		PortaDelegata pd = configIntegrationReader.getPortaDelegata(idPD);
+		return configIntegrationReader.findIdServiziApplicativiByPdAuth(pd, true, true);
+	}
+	
+	private static void addSignalHubRuoli(IRegistryReader registryReader,
+			AbstractConsoleItem<?> modiSignalHubPublisherRoleItem, Logger log) {
+			
+		((StringConsoleItem)modiSignalHubPublisherRoleItem).addLabelValue(ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED);
+		
+		List<IDRuolo>  l = getSignalHubRuoli(registryReader, log);
+			
+		if(l!=null && !l.isEmpty()) {
+			for (IDRuolo idRuolo : l) {
+				((StringConsoleItem)modiSignalHubPublisherRoleItem).addLabelValue(idRuolo.getNome(),idRuolo.getNome());
+			}
+		}
+
+	}
+	
+	private static List<IDRuolo> getSignalHubRuoli(IRegistryReader registryReader, Logger log) {
+		List<IDRuolo>  l = List.of();
+		try {
+			ProtocolFiltroRicercaRuoli filtro = new ProtocolFiltroRicercaRuoli();
+			filtro.setContesto(RuoloContesto.PORTA_DELEGATA);
+			filtro.setTipologia(RuoloTipologia.INTERNO);
+			l = registryReader.findIdRuoli(filtro);
+		}catch(RegistryNotFound e) {
+			log.debug("Ruoli per signalhub api push non presenti"+e.getMessage(),e);
+		}catch(Exception e) {
+			log.error("Lettura id accordo signalhub api push fallita: "+e.getMessage(),e);
+		}
+		return l;
+	}
+	
+	
+	public static void validatePdndInfo(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, AccordoServizioParteComune api, IDServizio idServizio, String portType, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+		
+		ModIProperties modiProperties = ModIProperties.getInstance();
+		
+		AbstractConsoleItem<?> modiEServiceIdItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID
+						);
+		StringProperty modiEServiceIdItemValue = null;
+		if(modiEServiceIdItem!=null) {
+			
+			modiEServiceIdItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+			if(modiEServiceIdItemValue!=null && modiEServiceIdItemValue.getValue()!=null && !"".equals(modiEServiceIdItemValue.getValue())) {
+				try {
+					InputValidationUtils.validateTextAreaInput(modiEServiceIdItemValue.getValue(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+			}
+			
+		}
+		
+		boolean signalHub = false;
+		if(modiProperties.isSignalHubEnabled()) {
+			BooleanProperty modiSignalHubItemValue = (BooleanProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID);
+			signalHub = modiSignalHubItemValue!=null && modiSignalHubItemValue.getValue()!=null && modiSignalHubItemValue.getValue().booleanValue();
+		}
+		
+		if(signalHub) {
+			if (modiEServiceIdItemValue == null)
+				throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID_ESERVICE_UNDEFINED);
+			validatePdndInfoSignalHub(registryReader, configIntegrationReader, api, idServizio, portType, consoleConfiguration, properties);
+		}
+	}
+	private static void validatePdndInfoSignalHub(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, AccordoServizioParteComune api, IDServizio idServizio, String portType, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+		
+		// operation
+		validatePdndInfoSignalHubOperation(api, idServizio, portType, consoleConfiguration, properties);
+		
+		// algorithm
+		validatePdndInfoSignalHubAlgorithm(consoleConfiguration, properties);
+
+		// seed size
+		validatePdndInfoSignalHubSeedSize(consoleConfiguration, properties);	
+				
+		// lifetime
+		validatePdndInfoSignalHubLifeTime(consoleConfiguration, properties);
+		
+		// publisher
+		validatePdndInfoSignalHubPublisher(registryReader, configIntegrationReader, idServizio, consoleConfiguration, properties);
+		
+	}
+	private static void validatePdndInfoSignalHubOperation(AccordoServizioParteComune api, IDServizio idServizio, String portType,ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+		AbstractConsoleItem<?> profiloSignalHubOperationItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID
+						);
+		StringProperty profiloSignalHubOperationItemValue = null;
+		String profiloSignalHubOperation = null;
+		if(profiloSignalHubOperationItem != null) {
+			profiloSignalHubOperationItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
+			if(profiloSignalHubOperationItemValue!=null && profiloSignalHubOperationItemValue.getValue()!=null && !"".equals(profiloSignalHubOperationItemValue.getValue())) {
+				profiloSignalHubOperation = profiloSignalHubOperationItemValue.getValue();	
+			}
+		}
+		if(profiloSignalHubOperation==null || "".equals(profiloSignalHubOperation) ||
+				ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(profiloSignalHubOperation)) {
+			throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ERROR_UNDEFINED);
+		}
+		
+		Map<String, String> operations = getSignalHubOperations(api, idServizio, portType, logger);
+		if (!operations.containsKey(profiloSignalHubOperation)) {
+			throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ERROR_WRONG);
+		}
+	}
+	private static void validatePdndInfoSignalHubAlgorithm(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+		AbstractConsoleItem<?> profiloSignalHubAlgorithmItem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID
+				);
+		
+		if(profiloSignalHubAlgorithmItem!=null) {
+			
+			StringProperty profiloSignalHubAlgorithmItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID);
+			if(profiloSignalHubAlgorithmItemValue!=null && profiloSignalHubAlgorithmItemValue.getValue()!=null && !"".equals(profiloSignalHubAlgorithmItemValue.getValue())) {
+				List<String> algorithms = ModIProperties.getInstance().getSignalHubAlgorithms();
+				
+				if (!algorithms.contains(profiloSignalHubAlgorithmItemValue.getValue())) {
+					throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ERROR_WRONG);
+				}
+			}
+			
+		}
+	}
+	
+	private static void validatePdndInfoSignalHubSeedSize(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+		AbstractConsoleItem<?> profiloSignalHubSeedSizetem = ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID
+				);
+		Integer seedSize = null;
+		
+		if(profiloSignalHubSeedSizetem != null) {
+			
+			NumberProperty profiloSignalHubSeedSizeItemValue = (NumberProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID);
+			if(profiloSignalHubSeedSizeItemValue!=null && profiloSignalHubSeedSizeItemValue.getValue()!=null) {
+				List<Integer> seedSizes = ModIProperties.getInstance().getSignalHubSeedSize();
+				seedSize = profiloSignalHubSeedSizeItemValue.getValue().intValue();
+				
+				if (!seedSizes.contains(seedSize)) {
+					throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ERROR_WRONG);
+				}
+			}
+			
+		}
+	}
+	
+	private static void validatePdndInfoSignalHubLifeTime(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+		AbstractConsoleItem<?> profiloSignalHubSeedLifeTimeItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID
+						);
+		if(profiloSignalHubSeedLifeTimeItem!=null) {
+			
+			NumberProperty profiloSignalHubSeedLifeTimeItemValue = (NumberProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID);
+			if(profiloSignalHubSeedLifeTimeItemValue!=null && profiloSignalHubSeedLifeTimeItemValue.getValue()!=null) {
+				try {
+					long i = (profiloSignalHubSeedLifeTimeItemValue.getValue());
+					if(i<=0) {
+						throw new ProtocolException("deve essere fornito un numero intero maggiore di 0");
+					}
+				}catch(Exception e) {
+					throw new ProtocolException(CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL+" '"+profiloSignalHubSeedLifeTimeItemValue.getValue()+"' non valido; must be a positive integer greater than 0");
+				}
+			}
+		}
+	}
+	
+	
+	private static void validatePdndInfoSignalHubPublisher(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio idServizio, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
+		
+		boolean publisherSAundefined =  validatePdndIfnoSignalHubPublisherSA(registryReader, configIntegrationReader, idServizio, consoleConfiguration, properties);
+		
+		boolean publisherRoleUndefined = validatePdndIfnoSignalHubPublisherRole(registryReader, consoleConfiguration, properties);
+		
+		if(publisherSAundefined && publisherRoleUndefined) {
+			throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ERROR_UNDEFINED);
+		}
+	}
+	
+	private static boolean validatePdndIfnoSignalHubPublisherSA(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio idServizio, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties)  throws ProtocolException {
+		AbstractConsoleItem<?> profiloSignalHubSAItem = ProtocolPropertiesUtils.getAbstractConsoleItem(
+				consoleConfiguration.getConsoleItem(),
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
+		StringProperty profiloSignalHubSAItemValue = null;
+		String profiloSignalHubSA = null;
+		if (profiloSignalHubSAItem != null) {
+			profiloSignalHubSAItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties,
+					ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
+			if (profiloSignalHubSAItemValue != null && 
+					profiloSignalHubSAItemValue.getValue() != null &&
+					!"".equals(profiloSignalHubSAItemValue.getValue()) &&
+					!ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(profiloSignalHubSAItemValue.getValue())) {
+				profiloSignalHubSA = profiloSignalHubSAItemValue.getValue();
+
+				try {
+					String finalSAName = profiloSignalHubSA;
+					List<IDServizioApplicativo> idSAs = getSignalHubServiziApplicativi(registryReader,
+							configIntegrationReader, idServizio);
+					long matched = idSAs.stream().filter(id -> id.getNome().equals(finalSAName)).count();
+					if (matched < 1) {
+						throw new ProtocolException(
+								ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_UNDEFINED);
+					}
+				} catch (RegistryNotFound | RegistryException | DriverRegistroServiziException e) {
+					throw new ProtocolException(
+							ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_UNDEFINED, e);
+				}
+
+			}
+		}
+		
+		return profiloSignalHubSA==null 
+				|| "".equals(profiloSignalHubSA) 
+				|| ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(profiloSignalHubSA);
+	}
+	
+	private static boolean validatePdndIfnoSignalHubPublisherRole(IRegistryReader registryReader, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties)  throws ProtocolException {
+		AbstractConsoleItem<?> profiloSignalHubRoleItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID
+						);
+		StringProperty profiloSignalHubRoleItemValue = null;
+		String profiloSignalHubRole = null;
+		if(profiloSignalHubRoleItem!=null) {
+			profiloSignalHubRoleItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID);
+			if(profiloSignalHubRoleItemValue!=null && 
+					profiloSignalHubRoleItemValue.getValue()!=null && 
+					!"".equals(profiloSignalHubRoleItemValue.getValue()) &&
+					!ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(profiloSignalHubRoleItemValue.getValue())) {
+				profiloSignalHubRole = profiloSignalHubRoleItemValue.getValue();
+				
+				String finalRole = profiloSignalHubRole;
+				List<IDRuolo> roles = getSignalHubRuoli(registryReader, logger);
+				long matched = roles.stream().filter(r -> r.getNome().equals(finalRole)).count();
+				if (matched == 0) {
+					throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_UNDEFINED);
+				}
+			}
+		}
+		
+		return profiloSignalHubRole==null 
+				|| "".equals(profiloSignalHubRole) 
+				|| ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED.equals(profiloSignalHubRole);
+	}
+	
+	static void addSignaHubFruizioneConfig(ModIProperties modiProperties,
+			ConsoleConfiguration configuration, boolean rest) throws ProtocolException {
+		
+		
+		TitleConsoleItem titolo = (TitleConsoleItem) ProtocolPropertiesFactory.newTitleItem(
+				ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_ID, 
+				ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_LABEL);
+		configuration.addConsoleItem(titolo );
+		
+		ModISignalHubConfig c = modiProperties.getSignalHubConfig();
+		if(c!=null && c.getClaims()!=null && !c.getClaims().isEmpty()) {
+			for (ModISignalHubParamConfig modISignalHubParamConfig : c.getClaims()) {
+				addSignaHubFruizioneConfig(configuration, modISignalHubParamConfig, rest);
+			}
+		}
+		
+	}
+	
+	private static String addSignaHubFruizioneConfig(ConsoleConfiguration configuration, ModISignalHubParamConfig paramConfig, boolean rest) throws ProtocolException {
+		
+		String modeId = ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX+paramConfig.getNome(); 
+		
+		StringConsoleItem modeItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				modeId, 
+				paramConfig.getLabel());
+		modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_LABEL_DEFAULT,
+				ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_DEFAULT);
+		modeItem.addLabelValue(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_LABEL_RIDEFINISCI,
+				ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI);
+		modeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_DEFAULT_VALUE);
+		modeItem.setReloadOnChange(true, true);
+		configuration.addConsoleItem(modeItem);
+		
+		StringConsoleItem ridefineItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.TEXT_AREA,
+				ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX+paramConfig.getNome(),
+				ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_LABEL);
+		ridefineItem.setRequired(true);
+		ridefineItem.setRows(2);
+		ridefineItem.setInfo(buildConsoleItemInfoCorniceSicurezza(paramConfig.getLabel(), rest));
+		if(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_DEFAULT_VALUE.equals(ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_DEFAULT)) {
+			ridefineItem.setType(ConsoleItemType.HIDDEN);
+		}
+		configuration.addConsoleItem(ridefineItem);
+		
+		return modeId;
+	}
+	
+	static void updateSignaHubFruizioneConfig(ModIProperties modiProperties,
+			ConsoleConfiguration configuration, ProtocolProperties properties) throws ProtocolException {
+		
+		ModISignalHubConfig c = modiProperties.getSignalHubConfig();
+		if(c!=null && c.getClaims()!=null && !c.getClaims().isEmpty()) {
+			for (ModISignalHubParamConfig modISignalHubParamConfig : c.getClaims()) {
+				updateSignaHubFruizioneConfig(configuration, properties, modISignalHubParamConfig);
+			}
+		}
+		
+	}
+	
+	private static void updateSignaHubFruizioneConfig(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties, ModISignalHubParamConfig paramConfig) throws ProtocolException {
+		
+		String modeId = ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX+paramConfig.getNome();
+		
+		boolean ridefinisciItem = false;
+		StringProperty selectSchemaModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, 
+				modeId);
+		if(selectSchemaModeItemValue==null) {
+			ridefinisciItem = false;	
+		}
+		else {
+			ridefinisciItem = ModIConsoleCostanti.MODIPA_PROFILO_MODE_VALUE_RIDEFINISCI.equals(selectSchemaModeItemValue.getValue());
+		}
+	
+		AbstractConsoleItem<?> modeItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), modeId);
+		if(ridefinisciItem) {
+			modeItem.setInfo(null);
+		}
+		else {
+			modeItem.setInfo(new ConsoleItemInfo(paramConfig.getLabel()));
+			modeItem.getInfo().setHeaderBody(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_MODE_DEFAULT_INFO_INTESTAZIONE.
+					replace(ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_MODE_DEFAULT_INFO_INTESTAZIONE_PARAM, paramConfig.getNome()));
+			modeItem.getInfo().setListBody(new ArrayList<>());
+			modeItem.getInfo().getListBody().addAll(paramConfig.getRulesInfo());
+		}
+		
+		String id = ModIConsoleCostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX+paramConfig.getNome();
+		AbstractConsoleItem<?> valueItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), id);
+		if(ridefinisciItem) {
+			valueItem.setType(ConsoleItemType.TEXT_AREA);
+		}
+		else {
+			valueItem.setType(ConsoleItemType.HIDDEN);
+			StringProperty selectItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, id);
+			if(selectItemValue!=null) {
+				selectItemValue.setValue(null);
+			}
+		}
+		
+	}
 }
+	

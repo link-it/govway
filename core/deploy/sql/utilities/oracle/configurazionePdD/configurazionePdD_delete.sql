@@ -1,3 +1,4 @@
+DELETE FROM servizi_digest_params;
 DELETE FROM remote_store_key;
 DELETE FROM remote_store;
 DELETE FROM nodi_runtime_operations;

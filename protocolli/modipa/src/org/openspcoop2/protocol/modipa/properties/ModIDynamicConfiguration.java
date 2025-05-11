@@ -162,6 +162,12 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 	public ConsoleConfiguration getDynamicConfigAccordoServizioParteComune(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException {
 		
+		if(ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(id, registryReader, this.modiProperties, this.log)) {
+			// è un accordo built-in che si assume esista
+			return super.getDynamicConfigAccordoServizioParteComune(consoleOperationType, consoleHelper, registryReader,
+					configIntegrationReader, id);
+		}
+		
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
 					
 		BaseConsoleItem titolo = ProtocolPropertiesFactory.newTitleItem(
@@ -207,6 +213,14 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id)
 			throws ProtocolException {
 		
+		if(ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(id, registryReader, this.modiProperties, this.log)) {
+			// è un accordo built-in che si assume esista
+			super.updateDynamicConfigAccordoServizioParteComune(consoleConfiguration,
+					consoleOperationType, consoleHelper, properties,
+					registryReader, configIntegrationReader, id);
+			return;
+		}
+		
 		ModIDynamicConfigurationAccordiParteComuneUtilities.updateProfiloSicurezzaCanale(consoleConfiguration, properties);
 		
 		boolean rest = ModIDynamicConfigurationAccordiParteComuneUtilities.isApiRest(consoleOperationType, consoleHelper, registryReader, id);
@@ -220,9 +234,17 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 	public void validateDynamicConfigAccordoServizioParteComune(ConsoleConfiguration consoleConfiguration, ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 		
+		if(ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(id, registryReader, this.modiProperties, this.log)) {
+			// è un accordo built-in che si assume esista
+			super.validateDynamicConfigAccordoServizioParteComune(consoleConfiguration, consoleOperationType, consoleHelper, properties, 
+					registryReader, configIntegrationReader, id);
+			return;
+		}
+		
 		ModIDynamicConfigurationAccordiParteComuneUtilities.validateDynamicConfigAccordoServizioParteComune(consoleOperationType, consoleHelper, properties, 
 				registryReader, id);
 	}
+	
 	
 
 	
@@ -360,7 +382,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDServizio id) throws ProtocolException {
 		
-		ConsoleConfiguration configuration = ModIDynamicConfigurationAccordiParteSpecificaUtilities.getDynamicConfigParteSpecifica(this.modiProperties,
+		ConsoleConfiguration configuration = ModIDynamicConfigurationAccordiParteSpecificaUtilities.getDynamicConfigParteSpecifica(this.log, this.modiProperties,
 				consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id, null, false);
 		if(configuration!=null) {
 			return configuration;
@@ -375,9 +397,10 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDServizio id)
 			throws ProtocolException {
 		
-		boolean operazioneGestita = ModIDynamicConfigurationAccordiParteSpecificaUtilities.updateDynamicConfigParteSpecifica(this.modiProperties,
-				consoleConfiguration, consoleOperationType, consoleHelper, properties, 
-				id, registryReader, false);
+		boolean operazioneGestita = ModIDynamicConfigurationAccordiParteSpecificaUtilities.updateDynamicConfigParteSpecifica(this.log, this.modiProperties,
+				consoleConfiguration, 
+				consoleOperationType, consoleHelper, properties, 
+				id, registryReader, configIntegrationReader, false);
 		if(!operazioneGestita) {
 			super.updateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader, configIntegrationReader, id);
 		}
@@ -391,7 +414,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throws ProtocolException {
 		
 		boolean operazioneGestita = ModIDynamicConfigurationAccordiParteSpecificaUtilities.validateDynamicConfigParteSpecifica(this.modiProperties,
-				consoleConfiguration, consoleHelper, properties, id, registryReader, false);
+				consoleConfiguration, consoleHelper, properties, id, registryReader, configIntegrationReader, false);
 		if(!operazioneGestita) {
 			super.validateDynamicConfigAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader, configIntegrationReader, id);
 		}
@@ -403,7 +426,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDFruizione id) throws ProtocolException {
 		
-		ConsoleConfiguration configuration = ModIDynamicConfigurationAccordiParteSpecificaUtilities.getDynamicConfigParteSpecifica(this.modiProperties,
+		ConsoleConfiguration configuration = ModIDynamicConfigurationAccordiParteSpecificaUtilities.getDynamicConfigParteSpecifica(this.log, this.modiProperties,
 				consoleOperationType, consoleHelper, registryReader, configIntegrationReader, 
 				id.getIdServizio(), id.getIdFruitore(), true);
 		if(configuration!=null) {
@@ -420,8 +443,10 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDFruizione id)
 			throws ProtocolException {
 		
-		boolean operazioneGestita = ModIDynamicConfigurationAccordiParteSpecificaUtilities.updateDynamicConfigParteSpecifica(this.modiProperties,
-				consoleConfiguration, consoleOperationType, consoleHelper, properties, id.getIdServizio(), registryReader, true);
+		boolean operazioneGestita = ModIDynamicConfigurationAccordiParteSpecificaUtilities.updateDynamicConfigParteSpecifica(this.log, this.modiProperties,
+				consoleConfiguration, 
+				consoleOperationType, consoleHelper, properties, 
+				id.getIdServizio(), registryReader, configIntegrationReader, true);
 		if(!operazioneGestita) {
 			super.updateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType,
 					consoleHelper, properties, registryReader, configIntegrationReader, id);
@@ -436,7 +461,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throws ProtocolException {
 	
 		boolean operazioneGestita = ModIDynamicConfigurationAccordiParteSpecificaUtilities.validateDynamicConfigParteSpecifica(this.modiProperties,
-				consoleConfiguration, consoleHelper, properties, id.getIdServizio(), registryReader, true);
+				consoleConfiguration, consoleHelper, properties, id.getIdServizio(), registryReader, configIntegrationReader, true);
 		if(!operazioneGestita) {
 			super.validateDynamicConfigFruizioneAccordoServizioParteSpecifica(consoleConfiguration, consoleOperationType,
 					consoleHelper, properties, registryReader, configIntegrationReader, id);

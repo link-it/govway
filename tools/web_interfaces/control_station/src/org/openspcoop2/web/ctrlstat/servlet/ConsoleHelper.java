@@ -251,6 +251,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
 import org.openspcoop2.protocol.utils.EsitiConfigUtils;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
@@ -6221,19 +6222,46 @@ public class ConsoleHelper implements IConsoleHelper {
 				dati.add(de);
 			}
 			
-			List<String> auturizzazioneValues = AutorizzazioneUtilities.getStati();
+			IDServizio idServizio = null;
+			AccordoServizioParteSpecifica asps = null;
+			boolean isModISignaHubPush = false;
+			if(isPortaDelegata && this.isProfiloModIPA(protocollo)) {
+				PortaDelegata portaDelegata = (PortaDelegata) oggetto;
+				if(portaDelegata!=null && 
+						portaDelegata.getServizio()!=null && portaDelegata.getServizio().getTipo()!=null && portaDelegata.getServizio().getNome()!=null && portaDelegata.getServizio().getVersione()!=null &&
+						portaDelegata.getSoggettoErogatore()!=null && portaDelegata.getSoggettoErogatore().getTipo()!=null && portaDelegata.getSoggettoErogatore().getNome()!=null) {
+					try {
+						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaDelegata.getServizio().getTipo(), portaDelegata.getServizio().getNome(), 
+								portaDelegata.getSoggettoErogatore().getTipo(), portaDelegata.getSoggettoErogatore().getNome(), 
+								portaDelegata.getServizio().getVersione());
+						if(idServizio!=null) {
+							asps = this.apsCore.getServizio(idServizio,false);
+						}
+						if(asps!=null) {
+							IDAccordo modisignalHubPushApi = ModIUtils.buildSignalHubPushIdAPI(this.soggettiCore.getSoggettoOperativoDefault(null, protocollo));
+							IDAccordo idAccordoServizio = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+							isModISignaHubPush = modisignalHubPushApi.equals(idAccordoServizio);
+						}
+					}catch(Exception e) {
+						throw new DriverControlStationException(e.getMessage(),e);
+					}
+				}				
+			}
+			
+			List<String> auturizzazioneValues = AutorizzazioneUtilities.getStati(isModISignaHubPush);
 			int totEl = auturizzazioneValues.size();
-			if (confPers )
+			if (confPers ) {
 				totEl++;
+			}
 			String[] tipoAutorizzazione = new String[totEl];
-			String[] tipoAutorizzazione_label = new String[totEl];
+			String[] tipoAutorizzazioneLabel = new String[totEl];
 			for (int i = 0; i < auturizzazioneValues.size(); i++) {
 				tipoAutorizzazione[i]=auturizzazioneValues.get(i);
-				tipoAutorizzazione_label[i]=auturizzazioneValues.get(i);
+				tipoAutorizzazioneLabel[i]=auturizzazioneValues.get(i);
 			}
 			if (confPers ){
 				tipoAutorizzazione[totEl-1] = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
-				tipoAutorizzazione_label[totEl-1] = CostantiControlStation.DEFAULT_LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
+				tipoAutorizzazioneLabel[totEl-1] = CostantiControlStation.DEFAULT_LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM;
 			}
 			
 			if(modiSicurezzaMessaggio) {
@@ -6253,7 +6281,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			else {
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoAutorizzazione);
-				de.setLabels(tipoAutorizzazione_label);
+				de.setLabels(tipoAutorizzazioneLabel);
 				de.setPostBack(true);
 				de.setSelected(autorizzazione);
 				de.setValoreDefaultSelect(StatoFunzionalita.DISABILITATO.getValue());
@@ -6280,7 +6308,6 @@ public class ConsoleHelper implements IConsoleHelper {
 			boolean old_autorizzazione_custom = false;
 			String old_autorizzazione = null;
 			Long idPorta = null;
-			IDServizio idServizio = null;
 			
 			String nomePostback = this.getPostBackElementName();
 			if(!CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE.equals(nomePostback) &&
@@ -6303,12 +6330,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					old_autorizzazione_scope = pd.getScope() != null && pd.getScope().getStato().equals(StatoFunzionalita.ABILITATO);
 					old_xacmlPolicy = StringUtils.isNotEmpty(pd.getXacmlPolicy());
 					idPorta = pd.getId();
-					try {
-						idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
-								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
-								pd.getServizio().getVersione());
-					}catch(Exception e) {
-						throw new DriverControlStationException(e.getMessage(),e);
+					if(idServizio==null) {
+						try {
+							idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(pd.getServizio().getTipo(), pd.getServizio().getNome(), 
+									pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome(), 
+									pd.getServizio().getVersione());
+						}catch(Exception e) {
+							throw new DriverControlStationException(e.getMessage(),e);
+						}
 					}
 					old_autorizzazione_custom = pd.getAutorizzazione() != null && !TipoAutorizzazione.getAllValues().contains(pd.getAutorizzazione());
 				}
@@ -6351,7 +6380,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 			// ** Trasporto Richiedente **
 			boolean labelAutorizzazioneTrasportoAttuata = false;
-			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
+			if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)){
 			
 				boolean autorizzazione_autenticazione =  false;
 				boolean isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione = false;
@@ -6362,7 +6391,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 				
 							
-				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
+				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) || AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)) {
 				
 					if(!allHidden) {
 						if( !isSupportatoAutenticazione 
@@ -6529,7 +6558,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			// ** Trasporto Ruoli **
-			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
+			if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)){
 					
 				boolean autorizzazione_ruoli = false;
 				
@@ -6918,7 +6947,9 @@ public class ConsoleHelper implements IConsoleHelper {
 						org.openspcoop2.core.registry.constants.ServiceBinding serviceBinding = org.openspcoop2.core.registry.constants.ServiceBinding.REST;
 						if(idServizio!=null) {
 							try {
-								AccordoServizioParteSpecifica asps = this.apsCore.getServizio(idServizio,false);
+								if(asps==null) {
+									asps = this.apsCore.getServizio(idServizio,false);
+								}
 								AccordoServizioParteComuneSintetico aspc = this.apcCore.getAccordoServizioSintetico(this.idAccordoFactory.getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
 								serviceBinding = aspc.getServiceBinding();
 							}catch(Exception e) {
@@ -6955,7 +6986,8 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				boolean autorizzazione_scope = false;
 			
-				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) && tokenAbilitato){
+				if((AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) || AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)) 
+						&& tokenAbilitato){
 					
 					// ** Scope **
 					
@@ -7357,10 +7389,10 @@ public class ConsoleHelper implements IConsoleHelper {
 					return false;
 				}
 				
-				boolean validazioneInputB = !validazioneInput.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
-				boolean introspectionB = !introspection.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
-				boolean userInfoB = !userInfo.equals(StatoFunzionalitaConWarning.DISABILITATO.getValue());
-				boolean forwardB = !forward.equals(StatoFunzionalita.DISABILITATO.getValue());
+				boolean validazioneInputB = !StatoFunzionalitaConWarning.DISABILITATO.getValue().equals(validazioneInput);
+				boolean introspectionB = !StatoFunzionalitaConWarning.DISABILITATO.getValue().equals(introspection);
+				boolean userInfoB = !StatoFunzionalitaConWarning.DISABILITATO.getValue().equals(userInfo);
+				boolean forwardB = !StatoFunzionalitaConWarning.DISABILITATO.getValue().equals(forward);
 				
 				if(!validazioneInputB && !introspectionB && !userInfoB && !forwardB) {
 					StringBuilder sb = new StringBuilder();
@@ -7386,7 +7418,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 			
-			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
+			if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione) || AutorizzazioneUtilities.STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(autorizzazione)) {
 				
 				// autorizzazione abilitata
 				
@@ -9605,6 +9637,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			StringBuilder bfToolTip = new StringBuilder();
 			StringBuilder bfToolTipNotValid = new StringBuilder();
 			int rowsToolTip = 0;
+			
+			if(TipoAutorizzazione.isSignalHubPush(autorizzazione)) {
+				String tooltip = CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_SIGNAL_HUB;
+				de.addStatus(tooltip, tooltip, CheckboxStatusType.CONFIG_ENABLE);
+			}
 			
 			Boolean validPuntuale = null;
 			if(TipoAutorizzazione.isAuthenticationRequired(autorizzazione)) {

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -35,6 +36,7 @@ import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
@@ -59,20 +61,22 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
  * 
  */
 public class DBOggettiInUsoUtils_accordiSoap {
+	
+	private DBOggettiInUsoUtils_accordiSoap() {}
 
 	protected static boolean isPortTypeConfigInUso(Connection con, String tipoDB, IDPortType idPT, Map<ErrorsHandlerCostant, 
 			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
-		return _isPortTypeInUso(con,tipoDB,idPT,false,true,whereIsInUso,normalizeObjectIds);
+		return isPortTypeInUsoInternal(con,tipoDB,idPT,false,true,whereIsInUso,normalizeObjectIds);
 	}
 	protected static boolean isPortTypeRegistryInUso(Connection con, String tipoDB, IDPortType idPT, Map<ErrorsHandlerCostant, 
 			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
-		return _isPortTypeInUso(con,tipoDB,idPT,true,false,whereIsInUso,normalizeObjectIds);
+		return isPortTypeInUsoInternal(con,tipoDB,idPT,true,false,whereIsInUso,normalizeObjectIds);
 	}
 	protected static boolean isPortTypeInUso(Connection con, String tipoDB, IDPortType idPT, Map<ErrorsHandlerCostant, 
 			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
-		return _isPortTypeInUso(con,tipoDB,idPT,true,true,whereIsInUso,normalizeObjectIds);
+		return isPortTypeInUsoInternal(con,tipoDB,idPT,true,true,whereIsInUso,normalizeObjectIds);
 	}
-	private static boolean _isPortTypeInUso(Connection con, String tipoDB, IDPortType idPT,
+	private static boolean isPortTypeInUsoInternal(Connection con, String tipoDB, IDPortType idPT,
 			boolean registry, boolean config, Map<ErrorsHandlerCostant, 
 			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
 		String nomeMetodo = "_isPortTypeInUso";
@@ -83,37 +87,40 @@ public class DBOggettiInUsoUtils_accordiSoap {
 
 		try {
 		
+			if(registry) {
+				// nop
+			}
+			
 			boolean isInUso = false;
 			
-			List<String> correlazione_list = whereIsInUso.get(ErrorsHandlerCostant.IS_CORRELATA);
+			List<String> correlazioneList = whereIsInUso.get(ErrorsHandlerCostant.IS_CORRELATA);
 			
-			List<String> porte_applicative_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
-			List<String> porte_delegate_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE);
-			List<String> mappingErogazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA);
-			List<String> mappingFruizionePD_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD);
-			
-			if (correlazione_list == null) {
-				correlazione_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.IS_CORRELATA, correlazione_list);
+			List<String> porteApplicativeList = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
+			List<String> porteDelegateList = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE);
+			List<String> mappingErogazionePAList = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA);
+			List<String> mappingFruizionePDList = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD);
+						
+			if (correlazioneList == null) {
+				correlazioneList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IS_CORRELATA, correlazioneList);
 			}
 			
-			if (porte_applicative_list == null) {
-				porte_applicative_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porte_applicative_list);
+			if (porteApplicativeList == null) {
+				porteApplicativeList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porteApplicativeList);
 			}
-			if (porte_delegate_list == null) {
-				porte_delegate_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, porte_delegate_list);
+			if (porteDelegateList == null) {
+				porteDelegateList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, porteDelegateList);
 			}
-			if (mappingErogazionePA_list == null) {
-				mappingErogazionePA_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePA_list);
+			if (mappingErogazionePAList == null) {
+				mappingErogazionePAList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePAList);
 			}
-			if (mappingFruizionePD_list == null) {
-				mappingFruizionePD_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePD_list);
+			if (mappingFruizionePDList == null) {
+				mappingFruizionePDList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePDList);
 			}
-
 			
 			
 			
@@ -141,7 +148,7 @@ public class DBOggettiInUsoUtils_accordiSoap {
 			stmt.setLong(1, idAccordo);
 			stmt.setString(2, idPT.getNome());
 			risultato = stmt.executeQuery();
-			List<IDServizio> idServiziWithAccordo = new ArrayList<IDServizio>();
+			List<IDServizio> idServiziWithAccordo = new ArrayList<>();
 			while (risultato.next()) {
 				IDSoggetto soggettoErogatore = new IDSoggetto(risultato.getString("tipo_soggetto"), risultato.getString("nome_soggetto"));
 				IDServizio idServizio = 
@@ -180,7 +187,7 @@ public class DBOggettiInUsoUtils_accordiSoap {
 			while (risultato.next()){
 				String nomeAzioneCorrelata = risultato.getString("nomeAzioneCorrelata");
 				String nomePTCorrelato = risultato.getString("nomePTCorrelato");
-				correlazione_list.add("Azione "+nomeAzioneCorrelata+" del Servizio "+nomePTCorrelato);
+				correlazioneList.add("Azione "+nomeAzioneCorrelata+" del Servizio "+nomePTCorrelato);
 				isInUso = true;
 			}
 			risultato.close();
@@ -259,7 +266,7 @@ public class DBOggettiInUsoUtils_accordiSoap {
 					String tipoReferenteApi = risultato.getString("tipoReferenteApi");
 					String nomeReferenteApi = risultato.getString("nomeReferenteApi");
 					IDAccordo idAPI = idAccordoFactory.getIDAccordoFromValues(nomeApi, tipoReferenteApi, nomeReferenteApi, versioneApi);
-					correlazione_list.add("Azione "+nomeAzioneCorrelata+" del Servizio "+nomePTCorrelato+" dell'API '"+idAccordoFactory.getUriFromIDAccordo(idAPI)+"' (interazione: NonBloccante-Push)");
+					correlazioneList.add("Azione "+nomeAzioneCorrelata+" del Servizio "+nomePTCorrelato+" dell'API '"+idAccordoFactory.getUriFromIDAccordo(idAPI)+"' (interazione: NonBloccante-Push)");
 					isInUso = true;
 				}
 				risultato.close();
@@ -274,95 +281,94 @@ public class DBOggettiInUsoUtils_accordiSoap {
 			
 			
 			// Porte delegate, mapping
-			if(config){
-				if(idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
-					for (IDServizio idServizio : idServiziWithAccordo) {
-						
-						long idS = DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(),
-								idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(),
-								con, tipoDB);
-						if(idS<=0) {
-							throw new Exception("Servizio '"+idServizio+"' non esistente");
-						}
-						
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-						sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
-						sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-						sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_FRUITORI,"id","idFruitore");
-						sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".tipo_soggetto");
-						sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".nome_soggetto");
-						sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_servizio");
-						sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto");
-						sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".id");
-						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_servizio = ?");
-						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto = " + CostantiDB.SOGGETTI + ".id");
-						sqlQueryObject.setANDLogicOperator(true);
-						sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".tipo_soggetto");
-						sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".nome_soggetto");
-						sqlQueryObject.setSortType(true);
-						queryString = sqlQueryObject.createSQLQuery();
-						stmt = con.prepareStatement(queryString);
-						stmt.setLong(1, idS);
-						risultato = stmt.executeQuery();
-						List<IDSoggetto> listFruitori = new ArrayList<IDSoggetto>();
-						while (risultato.next()){
-							listFruitori.add(new IDSoggetto(risultato.getString("tipo_soggetto"),risultato.getString("nome_soggetto")));
-						}
-						risultato.close();
-						stmt.close();
-						
-						
-						if(listFruitori!=null && !listFruitori.isEmpty()) {
-						
-							for (IDSoggetto idSoggettoFruitore : listFruitori) {
-								List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio, true);
-								if(lPD!=null && lPD.size()>0) {
-									for (MappingFruizionePortaDelegata mapping : lPD) {
-										if(!mapping.isDefault()) {
-											// segnalo solo quelle di default, non ha senso segnalarte tutte
-											continue;
-										}
-										String nome = mapping.getIdPortaDelegata().getNome();
-										ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
-										if(resultPorta.mapping) {
-											mappingFruizionePD_list.add(resultPorta.label);
-										}
-										else {
-											porte_delegate_list.add(resultPorta.label);
-										}
-										isInUso = true;
+			if(config &&
+				idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
+				for (IDServizio idServizio : idServiziWithAccordo) {
+					
+					long idS = DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(),
+							idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(),
+							con, tipoDB);
+					if(idS<=0) {
+						throw new CoreException("Servizio '"+idServizio+"' non esistente");
+					}
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_FRUITORI,"id","idFruitore");
+					sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".tipo_soggetto");
+					sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".nome_soggetto");
+					sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_servizio");
+					sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto");
+					sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_servizio = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto = " + CostantiDB.SOGGETTI + ".id");
+					sqlQueryObject.setANDLogicOperator(true);
+					sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".tipo_soggetto");
+					sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".nome_soggetto");
+					sqlQueryObject.setSortType(true);
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idS);
+					risultato = stmt.executeQuery();
+					List<IDSoggetto> listFruitori = new ArrayList<>();
+					while (risultato.next()){
+						listFruitori.add(new IDSoggetto(risultato.getString("tipo_soggetto"),risultato.getString("nome_soggetto")));
+					}
+					risultato.close();
+					stmt.close();
+					
+					
+					if(listFruitori!=null && !listFruitori.isEmpty()) {
+					
+						for (IDSoggetto idSoggettoFruitore : listFruitori) {
+							List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio, true);
+							if(lPD!=null && !lPD.isEmpty()) {
+								for (MappingFruizionePortaDelegata mapping : lPD) {
+									if(!mapping.isDefault()) {
+										// segnalo solo quelle di default, non ha senso segnalarte tutte
+										continue;
 									}
+									String nome = mapping.getIdPortaDelegata().getNome();
+									ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+									if(resultPorta.mapping) {
+										mappingFruizionePDList.add(resultPorta.label);
+									}
+									else {
+										porteDelegateList.add(resultPorta.label);
+									}
+									isInUso = true;
 								}
 							}
-							
 						}
+						
 					}
 				}
-				
 			}
+				
+			
 				
 				
 			// Porte applicative, mapping
-			if(config){
-				if(idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
-					for (IDServizio idServizio : idServiziWithAccordo) {
-						List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio, true);
-						if(lPA!=null && lPA.size()>0) {
-							for (MappingErogazionePortaApplicativa mapping : lPA) {
-								if(!mapping.isDefault()) {
-									// segnalo solo quelle di default, non ha senso segnalarte tutte
-									continue;
-								}
-								String nome = mapping.getIdPortaApplicativa().getNome();
-								ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
-								if(resultPorta.mapping) {
-									mappingErogazionePA_list.add(resultPorta.label);
-								}
-								else {
-									porte_applicative_list.add(resultPorta.label);
-								}
-								isInUso = true;
+			if(config &&
+				idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
+				for (IDServizio idServizio : idServiziWithAccordo) {
+					List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio, true);
+					if(lPA!=null && !lPA.isEmpty()) {
+						for (MappingErogazionePortaApplicativa mapping : lPA) {
+							if(!mapping.isDefault()) {
+								// segnalo solo quelle di default, non ha senso segnalarte tutte
+								continue;
 							}
+							String nome = mapping.getIdPortaApplicativa().getNome();
+							ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+							if(resultPorta.mapping) {
+								mappingErogazionePAList.add(resultPorta.label);
+							}
+							else {
+								porteApplicativeList.add(resultPorta.label);
+							}
+							isInUso = true;
 						}
 					}
 				}
@@ -385,9 +391,9 @@ public class DBOggettiInUsoUtils_accordiSoap {
 	}
 	protected static String toString(IDPortType idPT, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, String intestazione){
 		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
-		String msg = "Servizio '"+(idPT.getNome())+"'" + intestazione+separator;
-		if(prefix==false){
-			msg = "";
+		StringBuilder msgBuilder = new StringBuilder("Servizio '"+(idPT.getNome())+"'" + intestazione+separator);
+		if(!prefix){
+			msgBuilder = new StringBuilder("");
 		}
 		String separatorCategorie = "";
 		if(whereIsInUso.size()>1) {
@@ -396,47 +402,47 @@ public class DBOggettiInUsoUtils_accordiSoap {
 		for (ErrorsHandlerCostant key : keys) {
 			List<String> messages = whereIsInUso.get(key);
 
-			if ( messages!=null && messages.size() > 0) {
-				msg += separatorCategorie;
+			if ( messages!=null && !messages.isEmpty()) {
+				msgBuilder.append(separatorCategorie);
 			}
 			
 			switch (key) {
 
 			case IS_CORRELATA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "correlato verso altre azioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("correlato verso altre azioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			
 			case IN_USO_IN_PORTE_APPLICATIVE:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Inbound: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzato nelle Porte Inbound: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case IN_USO_IN_PORTE_DELEGATE:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Outbound: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzato nelle Porte Outbound: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;			
 			case IN_USO_IN_MAPPING_EROGAZIONE_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzato nelle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case IN_USO_IN_MAPPING_FRUIZIONE_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzato nelle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
 			default:
-				msg += "utilizzata in oggetto non codificato ("+key+")"+separator;
+				msgBuilder.append("utilizzata in oggetto non codificato ("+key+")"+separator);
 				break;
 			}
 			
 		}// chiudo for
 
-		return msg;
+		return msgBuilder.toString();
 	}
 	
 	
@@ -457,17 +463,17 @@ public class DBOggettiInUsoUtils_accordiSoap {
 
 	protected static boolean isOperazioneConfigInUso(Connection con, String tipoDB, IDPortTypeAzione idOperazione, Map<ErrorsHandlerCostant, 
 			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
-		return _isOperazioneInUso(con,tipoDB,idOperazione,false,true,whereIsInUso,normalizeObjectIds);
+		return isOperazioneInUsoInternal(con,tipoDB,idOperazione,false,true,whereIsInUso,normalizeObjectIds);
 	}
 	protected static boolean isOperazioneRegistryInUso(Connection con, String tipoDB, IDPortTypeAzione idOperazione, Map<ErrorsHandlerCostant, 
 			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
-		return _isOperazioneInUso(con,tipoDB,idOperazione,true,false,whereIsInUso,normalizeObjectIds);
+		return isOperazioneInUsoInternal(con,tipoDB,idOperazione,true,false,whereIsInUso,normalizeObjectIds);
 	}
 	protected static boolean isOperazioneInUso(Connection con, String tipoDB, IDPortTypeAzione idOperazione, Map<ErrorsHandlerCostant, 
 			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
-		return _isOperazioneInUso(con,tipoDB,idOperazione,true,true,whereIsInUso,normalizeObjectIds);
+		return isOperazioneInUsoInternal(con,tipoDB,idOperazione,true,true,whereIsInUso,normalizeObjectIds);
 	}
-	private static boolean _isOperazioneInUso(Connection con, String tipoDB, IDPortTypeAzione idOperazione,
+	private static boolean isOperazioneInUsoInternal(Connection con, String tipoDB, IDPortTypeAzione idOperazione,
 			boolean registry, boolean config, Map<ErrorsHandlerCostant, 
 			List<String>> whereIsInUso, boolean normalizeObjectIds) throws UtilsException {
 		String nomeMetodo = "_isOperazioneInUso";
@@ -480,89 +486,96 @@ public class DBOggettiInUsoUtils_accordiSoap {
 		
 			boolean isInUso = false;
 			
-			List<String> correlazione_list = whereIsInUso.get(ErrorsHandlerCostant.IS_CORRELATA);
+			List<String> correlazioneList = whereIsInUso.get(ErrorsHandlerCostant.IS_CORRELATA);
 			
-			List<String> porte_applicative_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
-			List<String> porte_delegate_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE);
-			List<String> mappingErogazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA);
-			List<String> mappingFruizionePD_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD);
+			List<String> porteApplicativeList = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
+			List<String> porteDelegateList = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE);
+			List<String> mappingErogazionePAList = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA);
+			List<String> mappingFruizionePDList = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD);
 			
-			List<String> trasformazionePD_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PD);
-			List<String> trasformazionePD_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PD);
-			List<String> trasformazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA);
-			List<String> trasformazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PA);
+			List<String> trasformazionePDMappingList = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PD);
+			List<String> trasformazionePDList = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PD);
+			List<String> trasformazionePAMappingLis = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA);
+			List<String> trasformazionePAList = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PA);
 			
-			List<String> urlInvocazionePD_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.URLINVOCAZIONE_MAPPING_PD);
-			List<String> urlInvocazionePD_list = whereIsInUso.get(ErrorsHandlerCostant.URLINVOCAZIONE_PD);
-			List<String> urlInvocazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.URLINVOCAZIONE_MAPPING_PA);
-			List<String> urlInvocazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.URLINVOCAZIONE_PA);
+			List<String> urlInvocazionePDMappingList = whereIsInUso.get(ErrorsHandlerCostant.URLINVOCAZIONE_MAPPING_PD);
+			List<String> urlInvocazionePDList = whereIsInUso.get(ErrorsHandlerCostant.URLINVOCAZIONE_PD);
+			List<String> urlInvocazionePAMappingList = whereIsInUso.get(ErrorsHandlerCostant.URLINVOCAZIONE_MAPPING_PA);
+			List<String> urlInvocazionePAList = whereIsInUso.get(ErrorsHandlerCostant.URLINVOCAZIONE_PA);
 			
-			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
-			List<String> allarme_list = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
+			List<String> ctList = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
+			List<String> allarmeList = whereIsInUso.get(ErrorsHandlerCostant.ALLARMI);
 			
-			if (correlazione_list == null) {
-				correlazione_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.IS_CORRELATA, correlazione_list);
-			}
+			List<String> modiSignalHubList = whereIsInUso.get(ErrorsHandlerCostant.IS_RIFERITA_MODI_SIGNAL_HUB);
 			
-			if (porte_applicative_list == null) {
-				porte_applicative_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porte_applicative_list);
-			}
-			if (porte_delegate_list == null) {
-				porte_delegate_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, porte_delegate_list);
-			}
-			if (mappingErogazionePA_list == null) {
-				mappingErogazionePA_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePA_list);
-			}
-			if (mappingFruizionePD_list == null) {
-				mappingFruizionePD_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePD_list);
+			if (correlazioneList == null) {
+				correlazioneList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IS_CORRELATA, correlazioneList);
 			}
 			
-			if (trasformazionePD_mapping_list == null) {
-				trasformazionePD_mapping_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PD, trasformazionePD_mapping_list);
+			if (porteApplicativeList == null) {
+				porteApplicativeList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porteApplicativeList);
 			}
-			if (trasformazionePD_list == null) {
-				trasformazionePD_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PD, trasformazionePD_list);
+			if (porteDelegateList == null) {
+				porteDelegateList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_DELEGATE, porteDelegateList);
 			}
-			if (trasformazionePA_mapping_list == null) {
-				trasformazionePA_mapping_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA, trasformazionePA_mapping_list);
+			if (mappingErogazionePAList == null) {
+				mappingErogazionePAList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, mappingErogazionePAList);
 			}
-			if (trasformazionePA_list == null) {
-				trasformazionePA_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PA, trasformazionePA_list);
-			}
-			
-			if (urlInvocazionePD_mapping_list == null) {
-				urlInvocazionePD_mapping_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.URLINVOCAZIONE_MAPPING_PD, urlInvocazionePD_mapping_list);
-			}
-			if (urlInvocazionePD_list == null) {
-				urlInvocazionePD_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.URLINVOCAZIONE_PD, urlInvocazionePD_list);
-			}
-			if (urlInvocazionePA_mapping_list == null) {
-				urlInvocazionePA_mapping_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.URLINVOCAZIONE_MAPPING_PA, urlInvocazionePA_mapping_list);
-			}
-			if (urlInvocazionePA_list == null) {
-				urlInvocazionePA_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.URLINVOCAZIONE_PA, urlInvocazionePA_list);
+			if (mappingFruizionePDList == null) {
+				mappingFruizionePDList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_FRUIZIONE_PD, mappingFruizionePDList);
 			}
 			
-			if (ct_list == null) {
-				ct_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ct_list);
+			if (trasformazionePDMappingList == null) {
+				trasformazionePDMappingList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PD, trasformazionePDMappingList);
 			}
-			if (allarme_list == null) {
-				allarme_list = new ArrayList<>();
-				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarme_list);
+			if (trasformazionePDList == null) {
+				trasformazionePDList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PD, trasformazionePDList);
+			}
+			if (trasformazionePAMappingLis == null) {
+				trasformazionePAMappingLis = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA, trasformazionePAMappingLis);
+			}
+			if (trasformazionePAList == null) {
+				trasformazionePAList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.TRASFORMAZIONE_PA, trasformazionePAList);
+			}
+			
+			if (urlInvocazionePDMappingList == null) {
+				urlInvocazionePDMappingList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.URLINVOCAZIONE_MAPPING_PD, urlInvocazionePDMappingList);
+			}
+			if (urlInvocazionePDList == null) {
+				urlInvocazionePDList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.URLINVOCAZIONE_PD, urlInvocazionePDList);
+			}
+			if (urlInvocazionePAMappingList == null) {
+				urlInvocazionePAMappingList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.URLINVOCAZIONE_MAPPING_PA, urlInvocazionePAMappingList);
+			}
+			if (urlInvocazionePAList == null) {
+				urlInvocazionePAList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.URLINVOCAZIONE_PA, urlInvocazionePAList);
+			}
+			
+			if (ctList == null) {
+				ctList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.CONTROLLO_TRAFFICO, ctList);
+			}
+			if (allarmeList == null) {
+				allarmeList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.ALLARMI, allarmeList);
+			}
+			
+			if (modiSignalHubList == null) {
+				modiSignalHubList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IS_RIFERITA_MODI_SIGNAL_HUB, modiSignalHubList);
 			}
 			
 			
@@ -592,7 +605,7 @@ public class DBOggettiInUsoUtils_accordiSoap {
 			stmt.setLong(1, idAccordo);
 			stmt.setString(2, idOperazione.getIdPortType().getNome());
 			risultato = stmt.executeQuery();
-			List<IDServizio> idServiziWithAccordo = new ArrayList<IDServizio>();
+			List<IDServizio> idServiziWithAccordo = new ArrayList<>();
 			while (risultato.next()) {
 				IDSoggetto soggettoErogatore = new IDSoggetto(risultato.getString("tipo_soggetto"), risultato.getString("nome_soggetto"));
 				IDServizio idServizio = 
@@ -654,10 +667,10 @@ public class DBOggettiInUsoUtils_accordiSoap {
 				String nomePTCorrelato = risultato.getString("nomePTCorrelato");
 				String correlataServizio = risultato.getString("correlataServizio");
 				if(correlataServizio!=null && !"".equals(correlataServizio)) {
-					correlazione_list.add("Azione "+nomeAzioneCorrelata+" del Servizio "+nomePTCorrelato);
+					correlazioneList.add("Azione "+nomeAzioneCorrelata+" del Servizio "+nomePTCorrelato);
 				}
 				else {
-					correlazione_list.add("Azione "+nomeAzioneCorrelata);
+					correlazioneList.add("Azione "+nomeAzioneCorrelata);
 				}
 				isInUso = true;
 			}
@@ -734,7 +747,7 @@ public class DBOggettiInUsoUtils_accordiSoap {
 				risultato = stmt.executeQuery();
 				while (risultato.next()){
 					String nomeAzioneCorrelata = risultato.getString("nomeAzioneCorrelata");
-					correlazione_list.add("Azione "+nomeAzioneCorrelata+" (interazione: NonBloccante-Pull)");
+					correlazioneList.add("Azione "+nomeAzioneCorrelata+" (interazione: NonBloccante-Pull)");
 					isInUso = true;
 				}
 				risultato.close();
@@ -792,7 +805,7 @@ public class DBOggettiInUsoUtils_accordiSoap {
 					String tipoReferenteApi = risultato.getString("tipoReferenteApi");
 					String nomeReferenteApi = risultato.getString("nomeReferenteApi");
 					IDAccordo idAPI = idAccordoFactory.getIDAccordoFromValues(nomeApi, tipoReferenteApi, nomeReferenteApi, versioneApi);
-					correlazione_list.add("Azione "+nomeAzioneCorrelata+" del Servizio "+nomePTCorrelato+" dell'API '"+idAccordoFactory.getUriFromIDAccordo(idAPI)+"' (interazione: NonBloccante-Push)");
+					correlazioneList.add("Azione "+nomeAzioneCorrelata+" del Servizio "+nomePTCorrelato+" dell'API '"+idAccordoFactory.getUriFromIDAccordo(idAPI)+"' (interazione: NonBloccante-Push)");
 					isInUso = true;
 				}
 				risultato.close();
@@ -805,483 +818,483 @@ public class DBOggettiInUsoUtils_accordiSoap {
 
 			
 			// Porte delegate
-			if(config){
-				if(idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
-					for (IDServizio idServizio : idServiziWithAccordo) {
-						
-						long idS = DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(),
-								idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(),
-								con, tipoDB);
-						if(idS<=0) {
-							throw new Exception("Servizio '"+idServizio+"' non esistente");
-						}
-						
-						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-						sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
-						sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-						sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_FRUITORI,"id","idFruitore");
-						sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".tipo_soggetto");
-						sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".nome_soggetto");
-						sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_servizio");
-						sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto");
-						sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".id");
-						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_servizio = ?");
-						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto = " + CostantiDB.SOGGETTI + ".id");
-						sqlQueryObject.setANDLogicOperator(true);
-						sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".tipo_soggetto");
-						sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".nome_soggetto");
-						sqlQueryObject.setSortType(true);
-						queryString = sqlQueryObject.createSQLQuery();
-						stmt = con.prepareStatement(queryString);
-						stmt.setLong(1, idS);
-						risultato = stmt.executeQuery();
-						List<IDSoggetto> listFruitori = new ArrayList<IDSoggetto>();
-						while (risultato.next()){
-							listFruitori.add(new IDSoggetto(risultato.getString("tipo_soggetto"),risultato.getString("nome_soggetto")));
-						}
-						risultato.close();
-						stmt.close();
-						
-						
-						if(listFruitori!=null && !listFruitori.isEmpty()) {
-						
-							for (IDSoggetto idSoggettoFruitore : listFruitori) {
-								List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio, true);
-								if(lPD!=null && lPD.size()>0) {
-									for (MappingFruizionePortaDelegata mapping : lPD) {
-										
-										// ** mapping **
-										
-										sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-										sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-										sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
-										sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_AZIONI);
-										sqlQueryObject.addSelectField("nome_porta");
-										sqlQueryObject.setANDLogicOperator(true);
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_AZIONI+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_AZIONI+".azione=?");
-										queryString = sqlQueryObject.createSQLQuery();
-										stmt = con.prepareStatement(queryString);
-										stmt.setString(1, mapping.getIdPortaDelegata().getNome());
-										stmt.setString(2, idOperazione.getNome());
-										risultato = stmt.executeQuery();
-										while (risultato.next()){
-											String nome = risultato.getString("nome_porta");
-											ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
-											if(resultPorta.mapping) {
-												mappingFruizionePD_list.add(resultPorta.label);
-											}
-											else {
-												porte_delegate_list.add(resultPorta.label);
-											}
-											isInUso = true;
-										}
-										risultato.close();
-										stmt.close();
-										
-										
-										// ** trasformazioni **
-										
-										sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-										sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
-										sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-										sqlQueryObject.addSelectField("nome_porta");
-										sqlQueryObject.setANDLogicOperator(true);
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
-										// condizione di controllo
-										sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
-										sqlQueryObjectOr.setANDLogicOperator(false);
-										// (applicabilita_azioni == 'NOME') OR (applicabilita_azioni like 'NOME,%') OR (applicabilita_azioni like '%,NOME') OR (applicabilita_azioni like '%,applicabilita_azioni,%')
-										// CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".applicabilita_azioni = ?");
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".applicabilita_azioni", idOperazione.getNome(), false , false);
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".applicabilita_azioni", idOperazione.getNome()+",", LikeConfig.startsWith(false));
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".applicabilita_azioni", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
-										sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".applicabilita_azioni", ","+idOperazione.getNome()+",", true , false);
-										sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
-										queryString = sqlQueryObject.createSQLQuery();
-										stmt = con.prepareStatement(queryString);
-										stmt.setString(1, mapping.getIdPortaDelegata().getNome());
-										// CLOB stmt.setString(2, idRisorsa.getNome());
-										risultato = stmt.executeQuery();
-										while (risultato.next()){
-											String nome = risultato.getString("nome_porta");
-											ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
-											if(resultPorta.mapping) {
-												trasformazionePD_mapping_list.add(resultPorta.label);
-											}
-											else {
-												trasformazionePD_list.add(resultPorta.label);
-											}
-											isInUso = true;
-										}
-										risultato.close();
-										stmt.close();
-										
-										
-										// ** url di invocazione **
-										
-										sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-										sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
-										sqlQueryObject.addSelectField("nome_porta");
-										sqlQueryObject.setANDLogicOperator(true);
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".tipo_soggetto_erogatore=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_soggetto_erogatore=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".tipo_servizio=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_servizio=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".versione_servizio=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_azione=?");
-										sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".mode_azione=?");
-										queryString = sqlQueryObject.createSQLQuery();
-										stmt = con.prepareStatement(queryString);
-										index = 1;
-										stmt.setString(index++, mapping.getIdPortaDelegata().getNome());
-										stmt.setString(index++, idServizio.getSoggettoErogatore().getTipo());
-										stmt.setString(index++, idServizio.getSoggettoErogatore().getNome());
-										stmt.setString(index++, idServizio.getTipo());
-										stmt.setString(index++, idServizio.getNome());
-										stmt.setInt(index++, idServizio.getVersione());
-										stmt.setString(index++, idOperazione.getNome());
-										stmt.setString(index++, ModalitaIdentificazioneAzione.STATIC.getValue());
-										risultato = stmt.executeQuery();
-										while (risultato.next()){
-											String nome = risultato.getString("nome_porta");
-											ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
-											if(resultPorta.mapping) {
-												urlInvocazionePD_mapping_list.add(resultPorta.label);
-											}
-											else {
-												urlInvocazionePD_list.add(resultPorta.label);
-											}
-											isInUso = true;
-										}
-										risultato.close();
-										stmt.close();
-										
-										
-										// ** Controllo che non sia associato a policy di controllo del traffico o allarmi **
-										
-										int max = 2;
-										if(!CostantiDB.isAllarmiEnabled()) {
-											max=1;
-										}
-										for (int i = 0; i < max; i++) {
-											
-											String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
-											String identificativo_column = "active_policy_id";
-											String alias_column = "policy_alias";
-											List<String> list = ct_list;
-											String oggetto = "Policy";
-											if(i==1) {
-												tabella = CostantiDB.ALLARMI;
-												identificativo_column = "nome";
-												alias_column = "alias";
-												list = allarme_list;
-												oggetto = "Allarme";
-											}
-										
-											sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-											sqlQueryObject.addFromTable(tabella);
-											sqlQueryObject.addSelectField(identificativo_column);
-											sqlQueryObject.addSelectField(alias_column);
-											sqlQueryObject.addSelectField("filtro_ruolo");
-											sqlQueryObject.addSelectField("filtro_porta");
-											sqlQueryObject.setANDLogicOperator(true);
-											sqlQueryObject.addWhereCondition(tabella+".filtro_ruolo=?");
-											sqlQueryObject.addWhereCondition(tabella+".filtro_porta=?");
-											
-											// condizione di controllo
-											sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
-											sqlQueryObjectOr.setANDLogicOperator(false);
-											// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
-											// CLOB sqlQueryObjectOr.addWhereCondition(tabella+".filtro_azione = ?");
-											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome(), false , false);
-											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome()+",", LikeConfig.startsWith(false));
-											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
-											sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome()+",", true , false);
-											sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
-											
-											sqlQueryObject.addOrderBy("filtro_ruolo");
-											sqlQueryObject.addOrderBy("filtro_porta");
-											queryString = sqlQueryObject.createSQLQuery();
-											stmt = con.prepareStatement(queryString);
-											stmt.setString(1, "delegata");
-											stmt.setString(2, mapping.getIdPortaDelegata().getNome());
-											// CLOB stmt.setString(3, idRisorsa.getNome());
-											risultato = stmt.executeQuery();
-											while (risultato.next()) {
-												
-												String alias = risultato.getString(alias_column);
-												if(alias== null || "".equals(alias)) {
-													alias = risultato.getString(identificativo_column);
-												}
-												
-												String nomePorta = risultato.getString("filtro_porta");
-												String filtro_ruolo = risultato.getString("filtro_ruolo");
-												if(nomePorta!=null) {
-													String tipo = null;
-													String label = null;
-													if("delegata".equals(filtro_ruolo)) {
-														try {
-															ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
-															if(resultPorta.mapping) {
-																label = "Fruizione di Servizio "+ resultPorta.label;
-															}
-														}catch(Exception e) {
-															tipo = "Outbound";
-														}
-													}
-													else {
-														tipo = filtro_ruolo;
-													}
-													if(label==null) {
-														list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
-													}
-													else {
-														list.add(oggetto+" '"+alias+"' attiva nella "+label);
-													}
-												}
-												else {
-													list.add(oggetto+" '"+alias+"'");
-												}
-								
-												isInUso = true;
-											}
-											risultato.close();
-											stmt.close();
-										}
-									}
-								}
-							}
-							
-						}
+			if(config &&
+				idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
+				for (IDServizio idServizio : idServiziWithAccordo) {
+					
+					long idS = DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(),
+							idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(),
+							con, tipoDB);
+					if(idS<=0) {
+						throw new CoreException("Servizio '"+idServizio+"' non esistente");
 					}
-				}
-				
-			}
-				
-				
-			// Porte applicative
-			if(config){
-				if(idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
-					for (IDServizio idServizio : idServiziWithAccordo) {
-						List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio, true);
-						if(lPA!=null && lPA.size()>0) {
-							for (MappingErogazionePortaApplicativa mapping : lPA) {
-								
-								// ** mapping **
-								
-								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-								sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
-								sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
-								sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
-								sqlQueryObject.addSelectField("nome_porta");
-								sqlQueryObject.setANDLogicOperator(true);
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta");
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_AZIONI+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_AZIONI+".azione=?");
-								queryString = sqlQueryObject.createSQLQuery();
-								stmt = con.prepareStatement(queryString);
-								stmt.setString(1, mapping.getIdPortaApplicativa().getNome());
-								stmt.setString(2, idOperazione.getNome());
-								risultato = stmt.executeQuery();
-								while (risultato.next()){
-									String nome = risultato.getString("nome_porta");
-									ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
-									if(resultPorta.mapping) {
-										mappingErogazionePA_list.add(resultPorta.label);
-									}
-									else {
-										porte_applicative_list.add(resultPorta.label);
-									}
-									isInUso = true;
-								}
-								risultato.close();
-								stmt.close();
-								
-								
-								// ** trasformazioni **
-								
-								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-								sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI);
-								sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
-								sqlQueryObject.addSelectField("nome_porta");
-								sqlQueryObject.setANDLogicOperator(true);
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
-								// condizione di controllo
-								sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
-								sqlQueryObjectOr.setANDLogicOperator(false);
-								// (applicabilita_azioni == 'NOME') OR (applicabilita_azioni like 'NOME,%') OR (applicabilita_azioni like '%,NOME') OR (applicabilita_azioni like '%,applicabilita_azioni,%')
-								// CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".applicabilita_azioni = ?");
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".applicabilita_azioni", idOperazione.getNome(), false , false);
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".applicabilita_azioni", idOperazione.getNome()+",", LikeConfig.startsWith(false));
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".applicabilita_azioni", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
-								sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".applicabilita_azioni", ","+idOperazione.getNome()+",", true , false);
-								sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
-								queryString = sqlQueryObject.createSQLQuery();
-								stmt = con.prepareStatement(queryString);
-								stmt.setString(1, mapping.getIdPortaApplicativa().getNome());
-								// CLOB stmt.setString(2, idRisorsa.getNome());
-								risultato = stmt.executeQuery();
-								while (risultato.next()){
-									String nome = risultato.getString("nome_porta");
-									ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
-									if(resultPorta.mapping) {
-										trasformazionePA_mapping_list.add(resultPorta.label);
-									}
-									else {
-										trasformazionePA_list.add(resultPorta.label);
-									}
-									isInUso = true;
-								}
-								risultato.close();
-								stmt.close();
-								
-								
-								// ** url di invocazione **
-								
-								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-								sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
-								sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-								sqlQueryObject.addSelectField("nome_porta");
-								sqlQueryObject.setANDLogicOperator(true);
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto="+CostantiDB.SOGGETTI+".id");
-								sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".tipo_servizio=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".servizio=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".versione_servizio=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".azione=?");
-								sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".mode_azione=?");
-								queryString = sqlQueryObject.createSQLQuery();
-								stmt = con.prepareStatement(queryString);
-								index = 1;
-								stmt.setString(index++, mapping.getIdPortaApplicativa().getNome());
-								stmt.setString(index++, idServizio.getSoggettoErogatore().getTipo());
-								stmt.setString(index++, idServizio.getSoggettoErogatore().getNome());
-								stmt.setString(index++, idServizio.getTipo());
-								stmt.setString(index++, idServizio.getNome());
-								stmt.setInt(index++, idServizio.getVersione());
-								stmt.setString(index++, idOperazione.getNome());
-								stmt.setString(index++, ModalitaIdentificazioneAzione.STATIC.getValue());
-								risultato = stmt.executeQuery();
-								while (risultato.next()){
-									String nome = risultato.getString("nome_porta");
-									ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
-									if(resultPorta.mapping) {
-										urlInvocazionePA_mapping_list.add(resultPorta.label);
-									}
-									else {
-										urlInvocazionePA_list.add(resultPorta.label);
-									}
-									isInUso = true;
-								}
-								risultato.close();
-								stmt.close();
-								
-								
-								// ** Controllo che non sia associato a policy di controllo del traffico o allarmi **
-								
-								int max = 2;
-								if(!CostantiDB.isAllarmiEnabled()) {
-									max=1;
-								}
-								for (int i = 0; i < max; i++) {
+					
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI_FRUITORI);
+					sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_FRUITORI,"id","idFruitore");
+					sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".tipo_soggetto");
+					sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".nome_soggetto");
+					sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_servizio");
+					sqlQueryObject.addSelectField(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto");
+					sqlQueryObject.addSelectField(CostantiDB.SOGGETTI + ".id");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_servizio = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_FRUITORI + ".id_soggetto = " + CostantiDB.SOGGETTI + ".id");
+					sqlQueryObject.setANDLogicOperator(true);
+					sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".tipo_soggetto");
+					sqlQueryObject.addOrderBy(CostantiDB.SOGGETTI + ".nome_soggetto");
+					sqlQueryObject.setSortType(true);
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					stmt.setLong(1, idS);
+					risultato = stmt.executeQuery();
+					List<IDSoggetto> listFruitori = new ArrayList<>();
+					while (risultato.next()){
+						listFruitori.add(new IDSoggetto(risultato.getString("tipo_soggetto"),risultato.getString("nome_soggetto")));
+					}
+					risultato.close();
+					stmt.close();
+					
+					
+					if(listFruitori!=null && !listFruitori.isEmpty()) {
+					
+						for (IDSoggetto idSoggettoFruitore : listFruitori) {
+							List<MappingFruizionePortaDelegata> lPD = DBMappingUtils.mappingFruizionePortaDelegataList(con, tipoDB, idSoggettoFruitore, idServizio, true);
+							if(lPD!=null && !lPD.isEmpty()) {
+								for (MappingFruizionePortaDelegata mapping : lPD) {
 									
-									String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
-									String identificativo_column = "active_policy_id";
-									String alias_column = "policy_alias";
-									List<String> list = ct_list;
-									String oggetto = "Policy";
-									if(i==1) {
-										tabella = CostantiDB.ALLARMI;
-										identificativo_column = "nome";
-										alias_column = "alias";
-										list = allarme_list;
-										oggetto = "Allarme";
-									}
-								
+									// ** mapping **
+									
 									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
-									sqlQueryObject.addFromTable(tabella);
-									sqlQueryObject.addSelectField(identificativo_column);
-									sqlQueryObject.addSelectField(alias_column);
-									sqlQueryObject.addSelectField("filtro_ruolo");
-									sqlQueryObject.addSelectField("filtro_porta");
+									sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+									sqlQueryObject.addFromTable(CostantiDB.MAPPING_FRUIZIONE_PD);
+									sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_AZIONI);
+									sqlQueryObject.addSelectField("nome_porta");
 									sqlQueryObject.setANDLogicOperator(true);
-									sqlQueryObject.addWhereCondition(tabella+".filtro_ruolo=?");
-									sqlQueryObject.addWhereCondition(tabella+".filtro_porta=?");
-									
-									// condizione di controllo
-									sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
-									sqlQueryObjectOr.setANDLogicOperator(false);
-									// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
-									// CLOB sqlQueryObjectOr.addWhereCondition(tabella+".filtro_azione = ?");
-									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome(), false , false);
-									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome()+",", LikeConfig.startsWith(false));
-									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
-									sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome()+",", true , false);
-									sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
-									
-									sqlQueryObject.addOrderBy("filtro_ruolo");
-									sqlQueryObject.addOrderBy("filtro_porta");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta=?");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id="+CostantiDB.MAPPING_FRUIZIONE_PD+".id_porta");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_AZIONI+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_AZIONI+".azione=?");
 									queryString = sqlQueryObject.createSQLQuery();
 									stmt = con.prepareStatement(queryString);
-									stmt.setString(1, "applicativa");
-									stmt.setString(2, mapping.getIdPortaApplicativa().getNome());
-									// CLOB stmt.setString(3, idRisorsa.getNome());
+									stmt.setString(1, mapping.getIdPortaDelegata().getNome());
+									stmt.setString(2, idOperazione.getNome());
 									risultato = stmt.executeQuery();
-									while (risultato.next()) {
-										
-										String alias = risultato.getString(alias_column);
-										if(alias== null || "".equals(alias)) {
-											alias = risultato.getString(identificativo_column);
-										}
-										
-										String nomePorta = risultato.getString("filtro_porta");
-										String filtro_ruolo = risultato.getString("filtro_ruolo");
-										if(nomePorta!=null) {
-											String tipo = null;
-											String label = null;
-											if("applicativa".equals(filtro_ruolo)) {
-												try {
-													ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
-													if(resultPorta.mapping) {
-														label = "Erogazione di Servizio "+ resultPorta.label;
-													}
-												}catch(Exception e) {
-													tipo = "Inbound";
-												}
-											}
-											else {
-												tipo = filtro_ruolo;
-											}
-											if(label==null) {
-												list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
-											}
-											else {
-												list.add(oggetto+" '"+alias+"' attiva nella "+label);
-											}
+									while (risultato.next()){
+										String nome = risultato.getString("nome_porta");
+										ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+										if(resultPorta.mapping) {
+											mappingFruizionePDList.add(resultPorta.label);
 										}
 										else {
-											list.add(oggetto+" '"+alias+"'");
+											porteDelegateList.add(resultPorta.label);
 										}
-						
 										isInUso = true;
 									}
 									risultato.close();
 									stmt.close();
+									
+									
+									// ** trasformazioni **
+									
+									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+									sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI);
+									sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+									sqlQueryObject.addSelectField("nome_porta");
+									sqlQueryObject.setANDLogicOperator(true);
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta=?");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".id_porta="+CostantiDB.PORTE_DELEGATE+".id");
+									// condizione di controllo
+									sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+									sqlQueryObjectOr.setANDLogicOperator(false);
+									// (applicabilita_azioni == 'NOME') OR (applicabilita_azioni like 'NOME,%') OR (applicabilita_azioni like '%,NOME') OR (applicabilita_azioni like '%,applicabilita_azioni,%')
+									/** CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".applicabilita_azioni = ?");*/
+									sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".applicabilita_azioni", idOperazione.getNome(), false , false);
+									sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".applicabilita_azioni", idOperazione.getNome()+",", LikeConfig.startsWith(false));
+									sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".applicabilita_azioni", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
+									sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_DELEGATE_TRASFORMAZIONI+".applicabilita_azioni", ","+idOperazione.getNome()+",", true , false);
+									sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+									queryString = sqlQueryObject.createSQLQuery();
+									stmt = con.prepareStatement(queryString);
+									stmt.setString(1, mapping.getIdPortaDelegata().getNome());
+									/** CLOB stmt.setString(2, idRisorsa.getNome());*/
+									risultato = stmt.executeQuery();
+									while (risultato.next()){
+										String nome = risultato.getString("nome_porta");
+										ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+										if(resultPorta.mapping) {
+											trasformazionePDMappingList.add(resultPorta.label);
+										}
+										else {
+											trasformazionePDList.add(resultPorta.label);
+										}
+										isInUso = true;
+									}
+									risultato.close();
+									stmt.close();
+									
+									
+									// ** url di invocazione **
+									
+									sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+									sqlQueryObject.addFromTable(CostantiDB.PORTE_DELEGATE);
+									sqlQueryObject.addSelectField("nome_porta");
+									sqlQueryObject.setANDLogicOperator(true);
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_porta=?");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".tipo_soggetto_erogatore=?");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_soggetto_erogatore=?");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".tipo_servizio=?");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_servizio=?");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".versione_servizio=?");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".nome_azione=?");
+									sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".mode_azione=?");
+									queryString = sqlQueryObject.createSQLQuery();
+									stmt = con.prepareStatement(queryString);
+									index = 1;
+									stmt.setString(index++, mapping.getIdPortaDelegata().getNome());
+									stmt.setString(index++, idServizio.getSoggettoErogatore().getTipo());
+									stmt.setString(index++, idServizio.getSoggettoErogatore().getNome());
+									stmt.setString(index++, idServizio.getTipo());
+									stmt.setString(index++, idServizio.getNome());
+									stmt.setInt(index++, idServizio.getVersione());
+									stmt.setString(index++, idOperazione.getNome());
+									stmt.setString(index++, ModalitaIdentificazioneAzione.STATIC.getValue());
+									risultato = stmt.executeQuery();
+									while (risultato.next()){
+										String nome = risultato.getString("nome_porta");
+										ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaDelegata(nome, tipoDB, con, normalizeObjectIds);
+										if(resultPorta.mapping) {
+											urlInvocazionePDMappingList.add(resultPorta.label);
+										}
+										else {
+											urlInvocazionePDList.add(resultPorta.label);
+										}
+										isInUso = true;
+									}
+									risultato.close();
+									stmt.close();
+									
+									
+									// ** Controllo che non sia associato a policy di controllo del traffico o allarmi **
+									
+									int max = 2;
+									if(!CostantiDB.isAllarmiEnabled()) {
+										max=1;
+									}
+									for (int i = 0; i < max; i++) {
+										
+										String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+										String identificativoColumn = "active_policy_id";
+										String aliasColumn = "policy_alias";
+										List<String> list = ctList;
+										String oggetto = "Policy";
+										if(i==1) {
+											tabella = CostantiDB.ALLARMI;
+											identificativoColumn = "nome";
+											aliasColumn = "alias";
+											list = allarmeList;
+											oggetto = "Allarme";
+										}
+									
+										sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+										sqlQueryObject.addFromTable(tabella);
+										sqlQueryObject.addSelectField(identificativoColumn);
+										sqlQueryObject.addSelectField(aliasColumn);
+										sqlQueryObject.addSelectField("filtro_ruolo");
+										sqlQueryObject.addSelectField("filtro_porta");
+										sqlQueryObject.setANDLogicOperator(true);
+										sqlQueryObject.addWhereCondition(tabella+".filtro_ruolo=?");
+										sqlQueryObject.addWhereCondition(tabella+".filtro_porta=?");
+										
+										// condizione di controllo
+										sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+										sqlQueryObjectOr.setANDLogicOperator(false);
+										// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
+										/** CLOB sqlQueryObjectOr.addWhereCondition(tabella+".filtro_azione = ?");*/
+										sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome(), false , false);
+										sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome()+",", LikeConfig.startsWith(false));
+										sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
+										sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome()+",", true , false);
+										sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+										
+										sqlQueryObject.addOrderBy("filtro_ruolo");
+										sqlQueryObject.addOrderBy("filtro_porta");
+										queryString = sqlQueryObject.createSQLQuery();
+										stmt = con.prepareStatement(queryString);
+										stmt.setString(1, "delegata");
+										stmt.setString(2, mapping.getIdPortaDelegata().getNome());
+										/** CLOB stmt.setString(3, idRisorsa.getNome());*/
+										risultato = stmt.executeQuery();
+										while (risultato.next()) {
+											
+											String alias = risultato.getString(aliasColumn);
+											if(alias== null || "".equals(alias)) {
+												alias = risultato.getString(identificativoColumn);
+											}
+											
+											String nomePorta = risultato.getString("filtro_porta");
+											String filtroRuolo = risultato.getString("filtro_ruolo");
+											if(nomePorta!=null) {
+												String tipo = null;
+												String label = null;
+												if("delegata".equals(filtroRuolo)) {
+													try {
+														ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaDelegata(nomePorta, tipoDB, con, normalizeObjectIds);
+														if(resultPorta.mapping) {
+															label = "Fruizione di Servizio "+ resultPorta.label;
+														}
+													}catch(Exception e) {
+														tipo = "Outbound";
+													}
+												}
+												else {
+													tipo = filtroRuolo;
+												}
+												if(label==null) {
+													list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+												}
+												else {
+													list.add(oggetto+" '"+alias+"' attiva nella "+label);
+												}
+											}
+											else {
+												list.add(oggetto+" '"+alias+"'");
+											}
+							
+											isInUso = true;
+										}
+										risultato.close();
+										stmt.close();
+									}
 								}
+							}
+						}
+						
+					}
+				}
+			}
+				
+			
+				
+				
+			// Porte applicative
+			if(config &&
+				idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
+				for (IDServizio idServizio : idServiziWithAccordo) {
+					List<MappingErogazionePortaApplicativa> lPA = DBMappingUtils.mappingErogazionePortaApplicativaList(con, tipoDB, idServizio, true);
+					if(lPA!=null && !lPA.isEmpty()) {
+						for (MappingErogazionePortaApplicativa mapping : lPA) {
+							
+							// ** mapping **
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+							sqlQueryObject.addFromTable(CostantiDB.MAPPING_EROGAZIONE_PA);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_AZIONI);
+							sqlQueryObject.addSelectField("nome_porta");
+							sqlQueryObject.setANDLogicOperator(true);
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id="+CostantiDB.MAPPING_EROGAZIONE_PA+".id_porta");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_AZIONI+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_AZIONI+".azione=?");
+							queryString = sqlQueryObject.createSQLQuery();
+							stmt = con.prepareStatement(queryString);
+							stmt.setString(1, mapping.getIdPortaApplicativa().getNome());
+							stmt.setString(2, idOperazione.getNome());
+							risultato = stmt.executeQuery();
+							while (risultato.next()){
+								String nome = risultato.getString("nome_porta");
+								ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									mappingErogazionePAList.add(resultPorta.label);
+								}
+								else {
+									porteApplicativeList.add(resultPorta.label);
+								}
+								isInUso = true;
+							}
+							risultato.close();
+							stmt.close();
+							
+							
+							// ** trasformazioni **
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+							sqlQueryObject.addSelectField("nome_porta");
+							sqlQueryObject.setANDLogicOperator(true);
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".id_porta="+CostantiDB.PORTE_APPLICATIVE+".id");
+							// condizione di controllo
+							sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+							sqlQueryObjectOr.setANDLogicOperator(false);
+							// (applicabilita_azioni == 'NOME') OR (applicabilita_azioni like 'NOME,%') OR (applicabilita_azioni like '%,NOME') OR (applicabilita_azioni like '%,applicabilita_azioni,%')
+							/** CLOB sqlQueryObjectOr.addWhereCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".applicabilita_azioni = ?");*/
+							sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".applicabilita_azioni", idOperazione.getNome(), false , false);
+							sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".applicabilita_azioni", idOperazione.getNome()+",", LikeConfig.startsWith(false));
+							sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".applicabilita_azioni", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
+							sqlQueryObjectOr.addWhereLikeCondition(CostantiDB.PORTE_APPLICATIVE_TRASFORMAZIONI+".applicabilita_azioni", ","+idOperazione.getNome()+",", true , false);
+							sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+							queryString = sqlQueryObject.createSQLQuery();
+							stmt = con.prepareStatement(queryString);
+							stmt.setString(1, mapping.getIdPortaApplicativa().getNome());
+							/** CLOB stmt.setString(2, idRisorsa.getNome());*/
+							risultato = stmt.executeQuery();
+							while (risultato.next()){
+								String nome = risultato.getString("nome_porta");
+								ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									trasformazionePAMappingLis.add(resultPorta.label);
+								}
+								else {
+									trasformazionePAList.add(resultPorta.label);
+								}
+								isInUso = true;
+							}
+							risultato.close();
+							stmt.close();
+							
+							
+							// ** url di invocazione **
+							
+							sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+							sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE);
+							sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+							sqlQueryObject.addSelectField("nome_porta");
+							sqlQueryObject.setANDLogicOperator(true);
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".nome_porta=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto="+CostantiDB.SOGGETTI+".id");
+							sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".nome_soggetto=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".tipo_servizio=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".servizio=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".versione_servizio=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".azione=?");
+							sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".mode_azione=?");
+							queryString = sqlQueryObject.createSQLQuery();
+							stmt = con.prepareStatement(queryString);
+							index = 1;
+							stmt.setString(index++, mapping.getIdPortaApplicativa().getNome());
+							stmt.setString(index++, idServizio.getSoggettoErogatore().getTipo());
+							stmt.setString(index++, idServizio.getSoggettoErogatore().getNome());
+							stmt.setString(index++, idServizio.getTipo());
+							stmt.setString(index++, idServizio.getNome());
+							stmt.setInt(index++, idServizio.getVersione());
+							stmt.setString(index++, idOperazione.getNome());
+							stmt.setString(index++, ModalitaIdentificazioneAzione.STATIC.getValue());
+							risultato = stmt.executeQuery();
+							while (risultato.next()){
+								String nome = risultato.getString("nome_porta");
+								ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+								if(resultPorta.mapping) {
+									urlInvocazionePAMappingList.add(resultPorta.label);
+								}
+								else {
+									urlInvocazionePAList.add(resultPorta.label);
+								}
+								isInUso = true;
+							}
+							risultato.close();
+							stmt.close();
+							
+							
+							// ** Controllo che non sia associato a policy di controllo del traffico o allarmi **
+							
+							int max = 2;
+							if(!CostantiDB.isAllarmiEnabled()) {
+								max=1;
+							}
+							for (int i = 0; i < max; i++) {
+								
+								String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
+								String identificativoColumn = "active_policy_id";
+								String aliasColumn = "policy_alias";
+								List<String> list = ctList;
+								String oggetto = "Policy";
+								if(i==1) {
+									tabella = CostantiDB.ALLARMI;
+									identificativoColumn = "nome";
+									aliasColumn = "alias";
+									list = allarmeList;
+									oggetto = "Allarme";
+								}
+							
+								sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+								sqlQueryObject.addFromTable(tabella);
+								sqlQueryObject.addSelectField(identificativoColumn);
+								sqlQueryObject.addSelectField(aliasColumn);
+								sqlQueryObject.addSelectField("filtro_ruolo");
+								sqlQueryObject.addSelectField("filtro_porta");
+								sqlQueryObject.setANDLogicOperator(true);
+								sqlQueryObject.addWhereCondition(tabella+".filtro_ruolo=?");
+								sqlQueryObject.addWhereCondition(tabella+".filtro_porta=?");
+								
+								// condizione di controllo
+								sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
+								sqlQueryObjectOr.setANDLogicOperator(false);
+								// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
+								/** CLOB sqlQueryObjectOr.addWhereCondition(tabella+".filtro_azione = ?");*/
+								sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome(), false , false);
+								sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome()+",", LikeConfig.startsWith(false));
+								sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
+								sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome()+",", true , false);
+								sqlQueryObject.addWhereCondition(sqlQueryObjectOr.createSQLConditions());
+								
+								sqlQueryObject.addOrderBy("filtro_ruolo");
+								sqlQueryObject.addOrderBy("filtro_porta");
+								queryString = sqlQueryObject.createSQLQuery();
+								stmt = con.prepareStatement(queryString);
+								stmt.setString(1, "applicativa");
+								stmt.setString(2, mapping.getIdPortaApplicativa().getNome());
+								/** CLOB stmt.setString(3, idRisorsa.getNome());*/
+								risultato = stmt.executeQuery();
+								while (risultato.next()) {
+									
+									String alias = risultato.getString(aliasColumn);
+									if(alias== null || "".equals(alias)) {
+										alias = risultato.getString(identificativoColumn);
+									}
+									
+									String nomePorta = risultato.getString("filtro_porta");
+									String filtroRuolo = risultato.getString("filtro_ruolo");
+									if(nomePorta!=null) {
+										String tipo = null;
+										String label = null;
+										if("applicativa".equals(filtroRuolo)) {
+											try {
+												ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(nomePorta, tipoDB, con, normalizeObjectIds);
+												if(resultPorta.mapping) {
+													label = "Erogazione di Servizio "+ resultPorta.label;
+												}
+											}catch(Exception e) {
+												tipo = "Inbound";
+											}
+										}
+										else {
+											tipo = filtroRuolo;
+										}
+										if(label==null) {
+											list.add(oggetto+" '"+alias+"' attiva nella porta '"+tipo+"' '"+nomePorta+"' ");
+										}
+										else {
+											list.add(oggetto+" '"+alias+"' attiva nella "+label);
+										}
+									}
+									else {
+										list.add(oggetto+" '"+alias+"'");
+									}
+					
+									isInUso = true;
+								}
+								risultato.close();
+								stmt.close();
 							}
 						}
 					}
 				}
 			}
+			
 						
 			
 			
@@ -1330,23 +1343,23 @@ public class DBOggettiInUsoUtils_accordiSoap {
 					for (int i = 0; i < max; i++) {
 						
 						String tabella = CostantiDB.CONTROLLO_TRAFFICO_ACTIVE_POLICY;
-						String identificativo_column = "active_policy_id";
-						String alias_column = "policy_alias";
-						List<String> list = ct_list;
+						String identificativoColumn = "active_policy_id";
+						String aliasColumn = "policy_alias";
+						List<String> list = ctList;
 						String oggetto = "Policy";
 						if(i==1) {
 							tabella = CostantiDB.ALLARMI;
-							identificativo_column = "nome";
-							alias_column = "alias";
-							list = allarme_list;
+							identificativoColumn = "nome";
+							aliasColumn = "alias";
+							list = allarmeList;
 							oggetto = "Allarme";
 						}
 					
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 						sqlQueryObject.addFromTable(tabella);
 						sqlQueryObject.setSelectDistinct(true);
-						sqlQueryObject.addSelectField(identificativo_column);
-						sqlQueryObject.addSelectField(alias_column);
+						sqlQueryObject.addSelectField(identificativoColumn);
+						sqlQueryObject.addSelectField(aliasColumn);
 						sqlQueryObject.addSelectField("filtro_ruolo");
 						sqlQueryObject.addSelectField("filtro_porta");
 						sqlQueryObject.setANDLogicOperator(true);
@@ -1372,7 +1385,7 @@ public class DBOggettiInUsoUtils_accordiSoap {
 						sqlQueryObjectOr = SQLObjectFactory.createSQLQueryObject(tipoDB);
 						sqlQueryObjectOr.setANDLogicOperator(false);
 						// (filtro_azione == 'NOME') OR (filtro_azione like 'NOME,%') OR (filtro_azione like '%,NOME') OR (filtro_azione like '%,applicabilita_azioni,%')
-						// CLOB sqlQueryObjectOr.addWhereCondition(tabella+".filtro_azione = ?");
+						/** CLOB sqlQueryObjectOr.addWhereCondition(tabella+".filtro_azione = ?");*/
 						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome(), false , false);
 						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", idOperazione.getNome()+",", LikeConfig.startsWith(false));
 						sqlQueryObjectOr.addWhereLikeCondition(tabella+".filtro_azione", ","+idOperazione.getNome(), LikeConfig.endsWith(false));
@@ -1392,13 +1405,13 @@ public class DBOggettiInUsoUtils_accordiSoap {
 						stmt.setString(index++, idServizio.getTipo());
 						stmt.setString(index++, idServizio.getNome());
 						stmt.setInt(index++, idServizio.getVersione());
-						// CLOB stmt.setString(index++, idRisorsa.getNome());
+						/** CLOB stmt.setString(index++, idRisorsa.getNome());*/
 						risultato = stmt.executeQuery();
 						while (risultato.next()) {
 							
-							String alias = risultato.getString(alias_column);
+							String alias = risultato.getString(aliasColumn);
 							if(alias== null || "".equals(alias)) {
-								alias = risultato.getString(identificativo_column);
+								alias = risultato.getString(identificativoColumn);
 							}
 							
 							String oggettoTrovato = oggetto+" '"+alias+"'";
@@ -1413,6 +1426,62 @@ public class DBOggettiInUsoUtils_accordiSoap {
 					}
 				}
 			}
+			
+			
+			
+			
+			
+			
+			
+			// ** Controllo che non sia riferito dalla configurazione SignalHub **
+			if(registry && Costanti.MODIPA_PROTOCOL_NAME.equals(idOperazione.getIdPortType().getIdAccordo().getSoggettoReferente().getTipo()) &&
+				idServiziWithAccordo!=null && !idServiziWithAccordo.isEmpty()) {
+				for (IDServizio idServizio : idServiziWithAccordo) {
+									
+					long idS = DBUtils.getIdServizio(idServizio.getNome(), idServizio.getTipo(), idServizio.getVersione(),
+							idServizio.getSoggettoErogatore().getNome(), idServizio.getSoggettoErogatore().getTipo(),
+							con, tipoDB);
+					if(idS<=0) {
+						throw new CoreException("Servizio '"+idServizio+"' non esistente");
+					}
+						
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.SERVIZI);
+					sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+					sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI,"id","idServizio");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI + ".id = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI + ".id = " + CostantiDB.PROTOCOL_PROPERTIES + ".id_proprietario");
+					sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES + ".tipo_proprietario=?");
+					sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES + ".name=?");
+					sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES + ".value_string=?");
+					sqlQueryObject.setANDLogicOperator(true);
+					queryString = sqlQueryObject.createSQLQuery();
+					stmt = con.prepareStatement(queryString);
+					index = 1;
+					stmt.setLong(index++, idS);
+					stmt.setString(index++, ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA.name());
+					stmt.setString(index++, Costanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID);
+					stmt.setString(index++, idOperazione.getNome());
+					risultato = stmt.executeQuery();
+					if(risultato.next()) {
+						
+						// trovata
+						IDPortaApplicativa idPA = DBMappingUtils.getIDPortaApplicativaAssociataDefault(idServizio, con, tipoDB);
+						if(idPA!=null) {
+							ResultPorta resultPorta = DBOggettiInUsoUtils.formatPortaApplicativa(idPA.getNome(), tipoDB, con, normalizeObjectIds);
+							modiSignalHubList.add(resultPorta.label);
+						}
+						else {
+							modiSignalHubList.add(idServizio.toString());
+						}
+						
+						isInUso = true;
+						
+					}
+				}
+			}
+			
+			
 			
 			
 			
@@ -1445,9 +1514,9 @@ public class DBOggettiInUsoUtils_accordiSoap {
 	}
 	protected static String toString(IDPortTypeAzione idOperazione, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, String intestazione){
 		Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
-		String msg = "Azione '"+idOperazione.getNome()+"'" + intestazione+separator;
-		if(prefix==false){
-			msg = "";
+		StringBuilder msgBuilder = new StringBuilder("Azione '"+idOperazione.getNome()+"'" + intestazione+separator);
+		if(!prefix){
+			msgBuilder = new StringBuilder("");
 		}
 		String separatorCategorie = "";
 		if(whereIsInUso.size()>1) {
@@ -1456,100 +1525,106 @@ public class DBOggettiInUsoUtils_accordiSoap {
 		for (ErrorsHandlerCostant key : keys) {
 			List<String> messages = whereIsInUso.get(key);
 
-			if ( messages!=null && messages.size() > 0) {
-				msg += separatorCategorie;
+			if ( messages!=null && !messages.isEmpty()) {
+				msgBuilder.append(separatorCategorie);
 			}
 			
 			switch (key) {
 
 			case IS_CORRELATA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "correlata ad altre azioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("correlata ad altre azioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			
 			case IN_USO_IN_PORTE_APPLICATIVE:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "appartenente ad un gruppo differente da quello predefinito nelle Porte Inbound: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("appartenente ad un gruppo differente da quello predefinito nelle Porte Inbound: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case IN_USO_IN_PORTE_DELEGATE:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "appartenente ad un gruppo differente da quello predefinito nelle Porte Outbound: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("appartenente ad un gruppo differente da quello predefinito nelle Porte Outbound: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case IN_USO_IN_MAPPING_EROGAZIONE_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "appartenente ad un gruppo differente da quello predefinito nelle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("appartenente ad un gruppo differente da quello predefinito nelle Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case IN_USO_IN_MAPPING_FRUIZIONE_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "appartenente ad un gruppo differente da quello predefinito nelle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("appartenente ad un gruppo differente da quello predefinito nelle Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
 			case TRASFORMAZIONE_MAPPING_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzata nel criterio di applicabilità della Trasformazione (Risorse) per le Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzata nel criterio di applicabilità della Trasformazione (Risorse) per le Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case TRASFORMAZIONE_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzata nelle Porte Outbound (Criterio di applicabilità della Trasformazione - Risorse): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzata nelle Porte Outbound (Criterio di applicabilità della Trasformazione - Risorse): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case TRASFORMAZIONE_MAPPING_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzata nel criterio di applicabilità della Trasformazione (Risorse) per le Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzata nel criterio di applicabilità della Trasformazione (Risorse) per le Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case TRASFORMAZIONE_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzata nelle Porte Inbound (Criterio di applicabilità della Trasformazione - Risorse): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzata nelle Porte Inbound (Criterio di applicabilità della Trasformazione - Risorse): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
 			case URLINVOCAZIONE_MAPPING_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzata nella configurazione dell'Url di Invocazione per le Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzata nella configurazione dell'Url di Invocazione per le Fruizioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case URLINVOCAZIONE_PD:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzata nelle Porte Outbound (Azione statica): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzata nelle Porte Outbound (Azione statica): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case URLINVOCAZIONE_MAPPING_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzata nella configurazione dell'Url di Invocazione per le Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzata nella configurazione dell'Url di Invocazione per le Erogazioni: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case URLINVOCAZIONE_PA:
-				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzata nelle Porte Inbound (Azione statica): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty()) {
+					msgBuilder.append("utilizzata nelle Porte Inbound (Azione statica): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
 			case CONTROLLO_TRAFFICO:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "utilizzata in Policy di Rate Limiting: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty() ) {
+					msgBuilder.append("utilizzata in Policy di Rate Limiting: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 			case ALLARMI:
-				if ( messages!=null && messages.size() > 0 ) {
-					msg += "utilizzato in Allarmi: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				if ( messages!=null && !messages.isEmpty() ) {
+					msgBuilder.append("utilizzato in Allarmi: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;
 				
+			case IS_RIFERITA_MODI_SIGNAL_HUB:
+				if ( messages!=null && !messages.isEmpty() ) {
+					msgBuilder.append("riferito nella configurazione 'SignalHub' dell'erogazione: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
+				}
+				break;				
+				
 			default:
-				msg += "utilizzata in oggetto non codificato ("+key+")"+separator;
+				msgBuilder.append("utilizzata in oggetto non codificato ("+key+")"+separator);
 				break;
 			}
 			
 		}// chiudo for
 
-		return msg;
+		return msgBuilder.toString();
 	}
 	
 }

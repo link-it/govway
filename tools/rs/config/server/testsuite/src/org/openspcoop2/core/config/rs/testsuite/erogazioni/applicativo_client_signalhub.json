@@ -1,0 +1,8 @@
+{
+  "credenziali": {
+    "modalita_accesso": "http-basic",
+    "username": "DemoPetStoreSignalHub",
+    "password": "1234567"
+  },
+  "nome": "DemoPetStoreSignalHub"
+}

@@ -385,6 +385,19 @@ public final class CostantiLabel {
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_DEFAULT = MODIPA_LABEL_DEFAULT;
     public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_RIDEFINISCI = MODIPA_LABEL_RIDEFINISCI;
     
+    public static final String MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL = "Identificativo eService";
+    
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL = "Signal Hub";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_REST_LABEL = "Risorsa";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_SOAP_LABEL = "Azione";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_LABEL = "Algoritmo";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_LABEL = "Dimensione Seme";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL = "Giorni Rotazione Seme";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_LABEL = "Pubblicatore";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_LABEL = "Applicativo";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_LABEL = "Ruolo";
+
+    
 	public static final String MODIPA_STORE_PATH_LABEL = "Path";
 	public static final String MODIPA_STORE_TYPE_LABEL = "Tipo";
 	public static final String MODIPA_STORE_PATH_PRIVATE_KEY_LABEL = "Chiave Privata";

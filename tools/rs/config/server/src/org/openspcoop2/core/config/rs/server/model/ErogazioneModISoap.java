@@ -30,11 +30,14 @@ public class ErogazioneModISoap  implements OneOfErogazioneModi, OneOfErogazione
   @Schema(required = true, description = "")
   private TipoApiEnum protocollo = null;
   
-  @Schema(required = true, description = "")
+  @Schema(description = "")
   private ErogazioneModISoapRichiesta richiesta = null;
   
-  @Schema(required = true, description = "")
+  @Schema(description = "")
   private ErogazioneModISoapRisposta risposta = null;
+  
+  @Schema(description = "")
+  private ErogazioneModIInfoGenerali informazioniGenerali = null;
  /**
    * Get protocollo
    * @return protocollo
@@ -61,7 +64,6 @@ public class ErogazioneModISoap  implements OneOfErogazioneModi, OneOfErogazione
    * @return richiesta
   **/
   @JsonProperty("richiesta")
-  @NotNull
   @Valid
   public ErogazioneModISoapRichiesta getRichiesta() {
     return this.richiesta;
@@ -81,7 +83,6 @@ public class ErogazioneModISoap  implements OneOfErogazioneModi, OneOfErogazione
    * @return risposta
   **/
   @JsonProperty("risposta")
-  @NotNull
   @Valid
   public ErogazioneModISoapRisposta getRisposta() {
     return this.risposta;
@@ -96,6 +97,25 @@ public class ErogazioneModISoap  implements OneOfErogazioneModi, OneOfErogazione
     return this;
   }
 
+ /**
+   * Get informazioniGenerali
+   * @return informazioniGenerali
+  **/
+  @JsonProperty("informazioni_generali")
+  @Valid
+  public ErogazioneModIInfoGenerali getInformazioniGenerali() {
+    return this.informazioniGenerali;
+  }
+
+  public void setInformazioniGenerali(ErogazioneModIInfoGenerali informazioniGenerali) {
+    this.informazioniGenerali = informazioniGenerali;
+  }
+
+  public ErogazioneModISoap informazioniGenerali(ErogazioneModIInfoGenerali informazioniGenerali) {
+    this.informazioniGenerali = informazioniGenerali;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -105,6 +125,7 @@ public class ErogazioneModISoap  implements OneOfErogazioneModi, OneOfErogazione
     sb.append("    protocollo: ").append(ErogazioneModISoap.toIndentedString(this.protocollo)).append("\n");
     sb.append("    richiesta: ").append(ErogazioneModISoap.toIndentedString(this.richiesta)).append("\n");
     sb.append("    risposta: ").append(ErogazioneModISoap.toIndentedString(this.risposta)).append("\n");
+    sb.append("    informazioniGenerali: ").append(ErogazioneModISoap.toIndentedString(this.informazioniGenerali)).append("\n");
     sb.append("}");
     return sb.toString();
   }

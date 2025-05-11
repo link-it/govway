@@ -895,6 +895,71 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KEYSTORE_MODE_ID = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_KEYSTORE_MODE;
 	public static final boolean MODIPA_API_IMPL_PROFILO_SICUREZZA_OAUTH_KEYSTORE_MODE_DEFAULT_VALUE = false;
 	
+	// Informazioni Genrali
+	
+	public static final String MODIPA_API_IMPL_INFO_LABEL = MODIPA_TITLE_LABEL+" - Informazioni Generali";
+	public static final String MODIPA_API_IMPL_INFO_ID = "modipaAPIImplInfoGenTitleId";
+	
+	public static final String MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_ID_ESERVICE_ID = ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID;
+	
+	// Signal Hub
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SUBTITLE_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SUBTITLE_ID = "modipaAPIImplInfoGenSignalHubSubtitleId";
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_REST_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_REST_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_SOAP_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_SOAP_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID_ESERVICE_UNDEFINED = "SignalHub richiede che sia indicata l'id dell'eservice erogato";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_NOTE = "Indicare la risorsa che esporrà le informazioni di pseudoanonimizzazione";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ERROR_WRONG = "Risorsa che espone le informazioni di pseudoanonimizzazione non riconosciuta";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ERROR_WRONG = "Algoritmo per la generazione del digest non riconosciuto tra quelli indicate tra le proprieta ModI";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ERROR_WRONG = "Dimensione del seme per la generazione del digest non riconosciuto tra quelli indicate tra le proprieta ModI";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ERROR_UNDEFINED = "SignalHub richiede che sia indicata l'operazione che esporrà le informazioni di pseudoanonimizzazione";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT_LABEL = "&nbsp;";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT_ID = "modipaInfoGenSignalHubPulisherText";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_TEXT = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_LABEL;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID = ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_NOTE = "Solo l'applicativo indicato o con il ruolo configurato potrà pubblicare segnali di variazione del servizio";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_UNDEFINED = "L'applicativo definito non risulta abilitato alla pubblicazione di segnali";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_UNDEFINED = "Il ruolo interno indicato non esiste";
+	public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ERROR_UNDEFINED = "Deve essere selezionato un applicativo o un ruolo autorizzato a pubblicare segnali di variazione del servizio";
+
+	// Signal Hub fruizione
+	
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_LABEL = MODIPA_TITLE_LABEL+" - "+CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL;
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_ID = ModICostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_ID;
+	
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX = ModICostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX;
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_LABEL_DEFAULT = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_DEFAULT;
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_LABEL_RIDEFINISCI = ModIConsoleCostanti.MODIPA_API_IMPL_PROFILO_SICUREZZA_MESSAGGIO_STORE_MODE_LABEL_RIDEFINISCI;
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_DEFAULT_VALUE = ModICostanti.MODIPA_PROFILO_DEFAULT;
+	
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX = ModICostanti.MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX;
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_LABEL = "";
+
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_MODE_DEFAULT_INFO_INTESTAZIONE_PARAM = "PARAM";
+	public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_MODE_DEFAULT_INFO_INTESTAZIONE = "Il parametro '"+MODIPA_API_IMPL_PUSH_SIGNAL_HUB_MODE_DEFAULT_INFO_INTESTAZIONE_PARAM+"' deve essere indicato nella richiesta di fruizione tramite una delle seguenti modalità:";
 	
 }
 

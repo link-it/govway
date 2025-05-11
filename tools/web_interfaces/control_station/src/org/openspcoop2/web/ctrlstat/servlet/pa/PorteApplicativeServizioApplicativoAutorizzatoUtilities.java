@@ -127,7 +127,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 	
 	private boolean isSicurezzaMessaggioRiferimentoX509Required(AccordoServizioParteComune aspc, String portType) throws DriverControlStationException {
 		try {
-			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.modipa.properties.ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtilities");
+			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.utils.ModISecurityUtils");
 			Method mGetMethod = modiPropertiesClass.getMethod("isSicurezzaMessaggioRiferimentoX509Required", AccordoServizioParteComune.class, String.class);
 			Object oValue = mGetMethod.invoke(null, aspc, portType);
 			if(oValue instanceof Boolean) {

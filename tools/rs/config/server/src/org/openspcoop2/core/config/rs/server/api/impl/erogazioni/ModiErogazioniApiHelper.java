@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.rs.server.model.BaseFruizioneModIOAuth;
 import org.openspcoop2.core.config.rs.server.model.BaseModIRichiestaInformazioniUtenteAudit;
 import org.openspcoop2.core.config.rs.server.model.Erogazione;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModI;
+import org.openspcoop2.core.config.rs.server.model.ErogazioneModIInfoGenerali;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRest;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRichiestaSicurezzaMessaggio;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRichiestaSi
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRisposta;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRispostaSicurezzaMessaggio;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita;
+import org.openspcoop2.core.config.rs.server.model.ErogazioneModISignalHub;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoap;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoapRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ErogazioneModISoapRichiestaSicurezzaMessaggio;
@@ -106,6 +108,7 @@ import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
 import org.openspcoop2.protocol.utils.ModIUtils;
+import org.openspcoop2.protocol.utils.ModISecurityUtils;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
@@ -123,6 +126,8 @@ public class ModiErogazioniApiHelper {
 	private static final String OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI = "Operazione utilizzabile solamente con Profilo 'ModI'";
 	private static final String SPECIFICARE_CONFIGURAZIONE_MODI = "Specificare la configurazione 'ModI'";
 	private static final String IMPOSSIBILE_ABILITARE_SICUREZZA = "Impossibile abilitare la sicurezza messaggio, deve essere abilitata nella API implementata";
+	private static final String SICUREZZA_MESSAGGIO_NON_PRESENTE = "Per la seguente configurazione risultano necessari inseriri gli elementi di richiesta e risposta per la sicurezza messaggio";
+	private static final String SICUREZZA_MESSAGGIO_NON_NECESSARIA = "Per la seguente configurazione la sicurezza messaggio non risulta abilitata gli elementi di richiesta e risposta non devono essere presenti";
 	private static final String TIPO_TRUSTSTORE_PKCS11_NON_INDICATO = "Tipo truststore pks11 non indicato";
 	private static final String TIPO_TRUSTSTORE_PDND_NON_INDICATO = "Tipo truststore pdnd non indicato";
 	private static final String TIPO_TRUSTSTORE_PDND_SCONOSCIUTO_PREFIX = "Tipo truststore pdnd sconosciuto: ";
@@ -131,25 +136,25 @@ public class ModiErogazioniApiHelper {
 	
 	public static FruizioneModI getFruizioneModI(AccordoServizioParteSpecifica asps, ErogazioniEnv env, ProfiloEnum profilo, Map <String, AbstractProperty<?>> p) throws CoreException, DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
 		}
 
-		AccordoServizioParteComune aspc = getAccordoServizioParteComune(asps, env);
-		TipoApiEnum protocollo = getTipoApi(aspc);
-		String schemaAudit = getSchemaAudit(aspc, protocollo);
+		AccordoServizioParteComune aspc = ModiErogazioniApiHelper.getAccordoServizioParteComune(asps, env);
+		TipoApiEnum protocollo = ModiErogazioniApiHelper.getTipoApi(aspc);
+		String schemaAudit = ModiErogazioniApiHelper.getSchemaAudit(aspc, protocollo);
 
 		FruizioneModI fruizionemodi = new FruizioneModI();
 		if(p!= null) {
 
-			FruizioneModIOAuth oauth = getFruizioneModIOAuth(p, protocollo);
+			FruizioneModIOAuth oauth = ModiErogazioniApiHelper.getFruizioneModIOAuth(p, protocollo);
 			if(oauth!=null) {
 				fruizionemodi.setModi(oauth);
 			}
 			else {
 				if(protocollo.equals(TipoApiEnum.SOAP)) {
-					fruizionemodi.setModi(getFruizioneModISoap(p, schemaAudit));
+					fruizionemodi.setModi(ModiErogazioniApiHelper.getFruizioneModISoap(p, schemaAudit));
 				} else {
-					fruizionemodi.setModi(getFruizioneModIRest(p, schemaAudit));
+					fruizionemodi.setModi(ModiErogazioniApiHelper.getFruizioneModIRest(p, schemaAudit));
 				}
 			}
 		}
@@ -157,20 +162,19 @@ public class ModiErogazioniApiHelper {
 		return fruizionemodi;
 	}
 	
-	public static ErogazioneModI getErogazioneModi(AccordoServizioParteSpecifica asps, ErogazioniEnv env, ProfiloEnum profilo, Map <String, AbstractProperty<?>> p) throws CoreException, DriverRegistroServiziNotFound, DriverRegistroServiziException {
+	public static ErogazioneModI getErogazioneModi(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ErogazioniEnv env, ProfiloEnum profilo, Map <String, AbstractProperty<?>> p) throws CoreException, DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
 		}
 
-		TipoApiEnum protocollo = getTipoApi(asps, env);
-
+		TipoApiEnum protocollo = ModiErogazioniApiHelper.getTipoApi(asps, env);
 		ErogazioneModI erogazionemodi = new ErogazioneModI();
 		if(p!= null) {
 
 			if(protocollo.equals(TipoApiEnum.SOAP)) {
-				erogazionemodi.setModi(getSOAPProperties(p));
+				erogazionemodi.setModi(ModiErogazioniApiHelper.getSOAPProperties(aspc, asps, p));
 			} else {
-				erogazionemodi.setModi(getRestProperties(p));
+				erogazionemodi.setModi(ModiErogazioniApiHelper.getRestProperties(aspc, asps, p));
 			}
 		}
 		
@@ -196,7 +200,7 @@ public class ModiErogazioniApiHelper {
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402);
-		return isAbilitataEngine(aspc, portType, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, valueAbilitato, null);
+		return ModiErogazioniApiHelper.isAbilitataEngine(aspc, portType, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, valueAbilitato, null);
 	}
 	private static boolean isSicurezzaMessaggioHeaderDuplicati(AccordoServizioParteComune aspc, String portType) {
 		if(!ServiceBinding.REST.equals(aspc.getServiceBinding())) {
@@ -207,10 +211,10 @@ public class ModiErogazioniApiHelper {
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE);
 		valueAbilitato.add(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM);
-		return isAbilitataEngine(aspc, portType, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, valueAbilitato, null);
+		return ModiErogazioniApiHelper.isAbilitataEngine(aspc, portType, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, valueAbilitato, null);
 	}
 	private static boolean isInfoUtenteAbilitato(AccordoServizioParteComune aspc, String portType) {
-		return isAbilitataEngine(aspc, portType, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, true);
+		return ModiErogazioniApiHelper.isAbilitataEngine(aspc, portType, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, null, true);
 	}
 	private static boolean isAbilitataEngine(AccordoServizioParteComune aspc, String portType, String pName, List<String> valueAbilitatoString, Boolean valueAbilitatoBoolean) {
 		if(aspc.getProtocolPropertyList()==null) {
@@ -294,10 +298,10 @@ public class ModiErogazioniApiHelper {
 		ErogazioneConf c = new ModiErogazioniApiHelper(). new ErogazioneConf();
 		
 		AccordoServizioParteComune aspc = env.apcCore.getAccordoServizioFull(asps.getIdAccordo());
-		c.sicurezzaMessaggioAPIAbilitata = isSicurezzaMessaggioAbilitata(aspc, asps.getPortType());
-		c.sicurezzaMessaggioHeaderDuplicatiAbilitato = isSicurezzaMessaggioHeaderDuplicati(aspc, asps.getPortType());
+		c.sicurezzaMessaggioAPIAbilitata = ModiErogazioniApiHelper.isSicurezzaMessaggioAbilitata(aspc, asps.getPortType());
+		c.sicurezzaMessaggioHeaderDuplicatiAbilitato = ModiErogazioniApiHelper.isSicurezzaMessaggioHeaderDuplicati(aspc, asps.getPortType());
 		
-		c.protocollo = getTipoApi(aspc);
+		c.protocollo = ModiErogazioniApiHelper.getTipoApi(aspc);
 		
 		return c;
 	}
@@ -307,19 +311,19 @@ public class ModiErogazioniApiHelper {
 		FruizioneConf c = new ModiErogazioniApiHelper(). new FruizioneConf();
 		
 		AccordoServizioParteComune aspc = env.apcCore.getAccordoServizioFull(asps.getIdAccordo());
-		c.sicurezzaMessaggioAPIAbilitata = isSicurezzaMessaggioAbilitata(aspc, asps.getPortType());
-		c.sicurezzaMessaggioHeaderDuplicatiAbilitato = isSicurezzaMessaggioHeaderDuplicati(aspc, asps.getPortType());
-		c.informazioniUtenteAbilitato= isInfoUtenteAbilitato(aspc, asps.getPortType());
+		c.sicurezzaMessaggioAPIAbilitata = ModiErogazioniApiHelper.isSicurezzaMessaggioAbilitata(aspc, asps.getPortType());
+		c.sicurezzaMessaggioHeaderDuplicatiAbilitato = ModiErogazioniApiHelper.isSicurezzaMessaggioHeaderDuplicati(aspc, asps.getPortType());
+		c.informazioniUtenteAbilitato= ModiErogazioniApiHelper.isInfoUtenteAbilitato(aspc, asps.getPortType());
 		
-		c.protocollo = getTipoApi(aspc);
-		c.schemaAudit = getSchemaAudit(aspc, c.protocollo);
+		c.protocollo = ModiErogazioniApiHelper.getTipoApi(aspc);
+		c.schemaAudit = ModiErogazioniApiHelper.getSchemaAudit(aspc, c.protocollo);
 		
 		return c;
 	}
 	
 	private static TipoApiEnum getTipoApi(AccordoServizioParteSpecifica asps, ErogazioniEnv env) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		AccordoServizioParteComune aspc = env.apcCore.getAccordoServizioFull(asps.getIdAccordo());
-		return getTipoApi(aspc);
+		return ModiErogazioniApiHelper.getTipoApi(aspc);
 	}
 	private static TipoApiEnum getTipoApi(AccordoServizioParteComune aspc) {
 		return aspc.getFormatoSpecifica().equals(FormatoSpecifica.WSDL_11) ? TipoApiEnum.SOAP: TipoApiEnum.REST;
@@ -327,23 +331,23 @@ public class ModiErogazioniApiHelper {
 	private static String getSchemaAudit(AccordoServizioParteComune aspc, TipoApiEnum tipoApi){
 		// prendo la prima che trovo: sull'API non è possibile impostare uno schema differente
 		if(aspc!=null && aspc.sizeProtocolPropertyList()>0) {
-			String s = getSchemaAudit(aspc.getProtocolPropertyList());
+			String s = ModiErogazioniApiHelper.getSchemaAudit(aspc.getProtocolPropertyList());
 			if(s!=null) {
 				return s;
 			}
 		}
 		if(TipoApiEnum.REST.equals(tipoApi)) {
-			return getSchemaAuditRest(aspc);
+			return ModiErogazioniApiHelper.getSchemaAuditRest(aspc);
 		}
 		else {
-			return getSchemaAuditSoap(aspc);
+			return ModiErogazioniApiHelper.getSchemaAuditSoap(aspc);
 		}
 	}
 	private static String getSchemaAuditRest(AccordoServizioParteComune aspc){
 		if(aspc!=null && aspc.sizeResourceList()>0) {
 			for (Resource r: aspc.getResourceList()) {
 				if(r!=null && r.sizeProtocolPropertyList()>0) {
-					String s = getSchemaAudit(r.getProtocolPropertyList());
+					String s = ModiErogazioniApiHelper.getSchemaAudit(r.getProtocolPropertyList());
 					if(s!=null) {
 						return s;
 					}
@@ -356,7 +360,7 @@ public class ModiErogazioniApiHelper {
 		if(aspc!=null && aspc.sizePortTypeList()>0) {
 			for (PortType pt: aspc.getPortTypeList()) {
 				if(pt!=null && pt.sizeAzioneList()>0) {
-					String s = getSchemaAuditSoap(pt.getAzioneList());
+					String s = ModiErogazioniApiHelper.getSchemaAuditSoap(pt.getAzioneList());
 					if(s!=null) {
 						return s;
 					}
@@ -369,7 +373,7 @@ public class ModiErogazioniApiHelper {
 		if(operation!=null && !operation.isEmpty()) {
 			for (Operation op: operation) {
 				if(op!=null && op.sizeProtocolPropertyList()>0) {
-					String s = getSchemaAudit(op.getProtocolPropertyList());
+					String s = ModiErogazioniApiHelper.getSchemaAudit(op.getProtocolPropertyList());
 					if(s!=null) {
 						return s;
 					}
@@ -392,13 +396,7 @@ public class ModiErogazioniApiHelper {
 		return env.apcCore.getAccordoServizioFull(asps.getIdAccordo());
 	}
 	
-	private static ErogazioneModISoap getSOAPProperties(Map<String, AbstractProperty<?>> p) throws CoreException {
-
-		ErogazioneModISoap modi = new ErogazioneModISoap();
-		modi.setProtocollo(TipoApiEnum.SOAP);
-		
-		// *** richiesta ***
-		
+	private static ErogazioneModISoapRichiesta getErogazioneSOAPRichiesta(Map<String, AbstractProperty<?>> p) throws CoreException {
 		ErogazioneModISoapRichiesta richiesta = new ErogazioneModISoapRichiesta();
 		ErogazioneModISoapRichiestaSicurezzaMessaggio sicurezzaMessaggioRichiesta = new ErogazioneModISoapRichiestaSicurezzaMessaggio();
 		
@@ -444,17 +442,17 @@ public class ModiErogazioniApiHelper {
 		
 		// audit
 		
-		BaseModIRichiestaInformazioniUtenteAudit audit = getInformazioniUtenteAudit(p, false);
+		BaseModIRichiestaInformazioniUtenteAudit audit = ModiErogazioniApiHelper.getInformazioniUtenteAudit(p, false);
 		if(audit!=null) {
 			sicurezzaMessaggioRichiesta.setAudit(audit);
 		}
 		
 		richiesta.setSicurezzaMessaggio(sicurezzaMessaggioRichiesta);
-		modi.setRichiesta(richiesta);
+		return richiesta;
+	}
+	
+	private static ErogazioneModISoapRisposta getErogazioneSOAPRisposta(Map<String, AbstractProperty<?>> p) throws CoreException {
 		
-		
-		// *** risposta ***
-				
 		ErogazioneModISoapRisposta risposta = new ErogazioneModISoapRisposta();
 		ErogazioneModISoapRispostaSicurezzaMessaggio sicurezzaMessaggio = new ErogazioneModISoapRispostaSicurezzaMessaggio();
 		
@@ -525,14 +523,28 @@ public class ModiErogazioniApiHelper {
 			sicurezzaMessaggio.setKeystore(ks);
 		} else {
 			
-			ModIKeyStoreRidefinito ks = readKeystoreRidefinito(p);
+			ModIKeyStoreRidefinito ks = ModiErogazioniApiHelper.readKeystoreRidefinito(p);
 			sicurezzaMessaggio.setKeystore(ks);
 		}
 		
 		risposta.setSicurezzaMessaggio(sicurezzaMessaggio);
 		
-		modi.setRisposta(risposta);
+		return risposta;
+	}
+	
+	private static ErogazioneModISoap getSOAPProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, Map<String, AbstractProperty<?>> p) throws CoreException {
+
+		ErogazioneModISoap modi = new ErogazioneModISoap();
+		modi.setProtocollo(TipoApiEnum.SOAP);
 		
+		if (ModISecurityUtils.isSicurezzaMessaggioRequired(aspc, asps.getPortType())) {
+			// *** richiesta ***
+			modi.setRichiesta(ModiErogazioniApiHelper.getErogazioneSOAPRichiesta(p));
+			
+			// *** risposta ***
+			modi.setRisposta(ModiErogazioniApiHelper.getErogazioneSOAPRisposta(p));
+		}
+		modi.setInformazioniGenerali(ModiErogazioniApiHelper.getErogazioneModIInfoGenerali(p));
 		
 		return modi;
 	}
@@ -599,30 +611,32 @@ public class ModiErogazioniApiHelper {
 		
 	}
 
-	private static ErogazioneModIRest getRestProperties(Map<String, AbstractProperty<?>> p) throws CoreException {
-
-		ErogazioneModIRest modi = new ErogazioneModIRest();
-		modi.setProtocollo(TipoApiEnum.REST);
-		
+	private static ErogazioneModIRestRichiesta getErogazioneRestRichiesta(Map<String, AbstractProperty<?>> p) throws CoreException {
 		// *** richiesta ***
-		
+
 		ErogazioneModIRestRichiesta richiesta = new ErogazioneModIRestRichiesta();
 		ErogazioneModIRestRichiestaSicurezzaMessaggio sicurezzaMessaggioRichiesta = new ErogazioneModIRestRichiestaSicurezzaMessaggio();
-		
-		sicurezzaMessaggioRichiesta.setRiferimentoX509(getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, true)));
-		
-		String truststoreMode = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, true);
-		if(truststoreMode.equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
+
+		sicurezzaMessaggioRichiesta.setRiferimentoX509(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p,
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, true)));
+
+		String truststoreMode = ProtocolPropertiesHelper.getStringProperty(p,
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, true);
+		if (truststoreMode.equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
 			ModITrustStoreDefault truststore = new ModITrustStoreDefault().modalita(StatoDefaultRidefinitoEnum.DEFAULT);
 			sicurezzaMessaggioRichiesta.setTruststore(truststore);
 		} else {
-			ModITrustStoreRidefinito truststore = new ModITrustStoreRidefinito().modalita(StatoDefaultRidefinitoEnum.RIDEFINITO);
-			
-			truststore.setTruststoreCrl(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS, true));
-			truststore.setTruststoreOcspPolicy(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY, false));
+			ModITrustStoreRidefinito truststore = new ModITrustStoreRidefinito()
+					.modalita(StatoDefaultRidefinitoEnum.RIDEFINITO);
+
+			truststore.setTruststoreCrl(ProtocolPropertiesHelper.getStringProperty(p,
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS, true));
+			truststore.setTruststoreOcspPolicy(ProtocolPropertiesHelper.getStringProperty(p,
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY, false));
 			ModITruststoreEnum tipo = null;
-			String truststoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, true);
-			if(HSMUtils.isKeystoreHSM(truststoreTipoString)) {
+			String truststoreTipoString = ProtocolPropertiesHelper.getStringProperty(p,
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, true);
+			if (HSMUtils.isKeystoreHSM(truststoreTipoString)) {
 				tipo = ModITruststoreEnum.PKCS11;
 				truststore.setPcks11Tipo(truststoreTipoString);
 			}
@@ -636,24 +650,32 @@ public class ModiErogazioniApiHelper {
 				}
 			}
 			truststore.setTruststoreTipo(tipo);
-			truststore.setTruststorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, true));
-			truststore.setTruststorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, true));
+			truststore.setTruststorePath(ProtocolPropertiesHelper.getStringProperty(p,
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, true));
+			truststore.setTruststorePassword(ProtocolPropertiesHelper.getStringProperty(p,
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, true));
 			sicurezzaMessaggioRichiesta.setTruststore(truststore);
 		}
-		
-		String truststoreSSLMode = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE, false);
-		if(truststoreSSLMode!=null) {
-			if(truststoreSSLMode.equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
-				ModITrustStoreDefault truststore = new ModITrustStoreDefault().modalita(StatoDefaultRidefinitoEnum.DEFAULT);
+
+		String truststoreSSLMode = ProtocolPropertiesHelper.getStringProperty(p,
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_MODE, false);
+		if (truststoreSSLMode != null) {
+			if (truststoreSSLMode.equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
+				ModITrustStoreDefault truststore = new ModITrustStoreDefault()
+						.modalita(StatoDefaultRidefinitoEnum.DEFAULT);
 				sicurezzaMessaggioRichiesta.setTruststoreSsl(truststore);
 			} else {
-				ModITrustStoreRidefinito truststore = new ModITrustStoreRidefinito().modalita(StatoDefaultRidefinitoEnum.RIDEFINITO);
-				
-				truststore.setTruststoreCrl(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS, true));
-				truststore.setTruststoreOcspPolicy(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY, false));
+				ModITrustStoreRidefinito truststore = new ModITrustStoreRidefinito()
+						.modalita(StatoDefaultRidefinitoEnum.RIDEFINITO);
+
+				truststore.setTruststoreCrl(ProtocolPropertiesHelper.getStringProperty(p,
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_CRLS, true));
+				truststore.setTruststoreOcspPolicy(ProtocolPropertiesHelper.getStringProperty(p,
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_OCSP_POLICY, false));
 				ModITruststoreEnum tipo = null;
-				String truststoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE, true);
-				if(HSMUtils.isKeystoreHSM(truststoreTipoString)) {
+				String truststoreTipoString = ProtocolPropertiesHelper.getStringProperty(p,
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE, true);
+				if (HSMUtils.isKeystoreHSM(truststoreTipoString)) {
 					tipo = ModITruststoreEnum.PKCS11;
 					truststore.setPcks11Tipo(truststoreTipoString);
 				}
@@ -667,72 +689,82 @@ public class ModiErogazioniApiHelper {
 					}
 				}
 				truststore.setTruststoreTipo(tipo);
-				truststore.setTruststorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH, true));
-				truststore.setTruststorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD, true));
+				truststore.setTruststorePath(ProtocolPropertiesHelper.getStringProperty(p,
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH, true));
+				truststore.setTruststorePassword(ProtocolPropertiesHelper.getStringProperty(p,
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD, true));
 				sicurezzaMessaggioRichiesta.setTruststoreSsl(truststore);
 			}
 		}
-		
-		String iatMode = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT, false);
-		if(StringUtils.isNotEmpty(iatMode) && ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(iatMode)) {
-			sicurezzaMessaggioRichiesta.setTimeToLive(ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT_SECONDS, false));
+
+		String iatMode = ProtocolPropertiesHelper.getStringProperty(p,
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT, false);
+		if (StringUtils.isNotEmpty(iatMode) && ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(iatMode)) {
+			sicurezzaMessaggioRichiesta.setTimeToLive(ProtocolPropertiesHelper.getIntegerProperty(p,
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT_SECONDS, false));
 		}
 
-		sicurezzaMessaggioRichiesta.setAudience(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE, false));
-		
+		sicurezzaMessaggioRichiesta.setAudience(ProtocolPropertiesHelper.getStringProperty(p,
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE, false));
+
 		// contemporaneita'
-		
-		String idJtiRichiesta = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI, false);
-		String audienceRichiesta = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE, false);
-		if(StringUtils.isNotEmpty(idJtiRichiesta) || StringUtils.isNotEmpty(audienceRichiesta) ) {
-			
+
+		String idJtiRichiesta = ProtocolPropertiesHelper.getStringProperty(p,
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_FILTRO_DUPLICATI, false);
+		String audienceRichiesta = ProtocolPropertiesHelper.getStringProperty(p,
+				ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE, false);
+		if (StringUtils.isNotEmpty(idJtiRichiesta) || StringUtils.isNotEmpty(audienceRichiesta)) {
+
 			ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita richiestaContemporaneita = new ErogazioneModIRestRichiestaSicurezzaMessaggioContemporaneita();
-			
-			if(StringUtils.isNotEmpty(idJtiRichiesta)) {
-				if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION.equals(idJtiRichiesta)) {
+
+			if (StringUtils.isNotEmpty(idJtiRichiesta)) {
+				if (ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_AUTHORIZATION
+						.equals(idJtiRichiesta)) {
 					richiestaContemporaneita.setIdentificativo(ModISicurezzaMessaggioRestTokenChoiseEnum.BEARER);
-				}
-				else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_MODI.equals(idJtiRichiesta)) {
+				} else if (ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_FILTRO_DUPLICATI_VALUE_MODI
+						.equals(idJtiRichiesta)) {
 					richiestaContemporaneita.setIdentificativo(ModISicurezzaMessaggioRestTokenChoiseEnum.AGID);
 				}
 			}
-			if(richiestaContemporaneita.getIdentificativo()==null) {
+			if (richiestaContemporaneita.getIdentificativo() == null) {
 				richiestaContemporaneita.setIdentificativo(ModISicurezzaMessaggioRestTokenChoiseEnum.AGID); // default
 			}
-			
-			if(StringUtils.isNotEmpty(audienceRichiesta)) {
-				if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_SAME.equals(audienceRichiesta)) {
+
+			if (StringUtils.isNotEmpty(audienceRichiesta)) {
+				if (ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_SAME
+						.equals(audienceRichiesta)) {
 					richiestaContemporaneita.setAudience(ModISicurezzaMessaggioRestSameDifferentEnum.SAME);
-				}
-				else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT.equals(audienceRichiesta)) {
+				} else if (ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_DOPPI_HEADER_AUDIENCE_VALUE_DIFFERENT
+						.equals(audienceRichiesta)) {
 					richiestaContemporaneita.setAudience(ModISicurezzaMessaggioRestSameDifferentEnum.DIFFERENT);
 				}
 			}
-			if(richiestaContemporaneita.getAudience()==null) {
+			if (richiestaContemporaneita.getAudience() == null) {
 				richiestaContemporaneita.setAudience(ModISicurezzaMessaggioRestSameDifferentEnum.SAME); // default
 			}
-			if(ModISicurezzaMessaggioRestSameDifferentEnum.DIFFERENT.equals(richiestaContemporaneita.getAudience())) {
-				String audienceAtteso = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY, false);
+			if (ModISicurezzaMessaggioRestSameDifferentEnum.DIFFERENT.equals(richiestaContemporaneita.getAudience())) {
+				String audienceAtteso = ProtocolPropertiesHelper.getStringProperty(p,
+						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_REST_DOPPI_HEADER_AUDIENCE_INTEGRITY,
+						false);
 				richiestaContemporaneita.setAudienceAtteso(audienceAtteso);
 			}
-			
+
 			sicurezzaMessaggioRichiesta.setContemporaneita(richiestaContemporaneita);
 		}
-		
+
 		// audit
-		
-		BaseModIRichiestaInformazioniUtenteAudit audit = getInformazioniUtenteAudit(p, false);
-		if(audit!=null) {
+
+		BaseModIRichiestaInformazioniUtenteAudit audit = ModiErogazioniApiHelper.getInformazioniUtenteAudit(p, false);
+		if (audit != null) {
 			sicurezzaMessaggioRichiesta.setAudit(audit);
 		}
-		
+
 		richiesta.setSicurezzaMessaggio(sicurezzaMessaggioRichiesta);
-		modi.setRichiesta(richiesta);
-		
-		
-		
-		// *** risposta ***
-		
+		return richiesta;
+					
+	}
+	
+	private static ErogazioneModIRestRisposta getErogazioneRestRisposta(Map<String, AbstractProperty<?>> p) throws CoreException {
 		ErogazioneModIRestRisposta risposta = new ErogazioneModIRestRisposta();
 		ErogazioneModIRestRispostaSicurezzaMessaggio sicurezzaMessaggio = new ErogazioneModIRestRispostaSicurezzaMessaggio();
 		
@@ -767,7 +799,7 @@ public class ModiErogazioniApiHelper {
 			sicurezzaMessaggio.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA);
 		} else {
 			sicurezzaMessaggio.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RIDEFINITO);
-			sicurezzaMessaggio.setRiferimentoX509Risposta(getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, true)));
+			sicurezzaMessaggio.setRiferimentoX509Risposta(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, true)));
 		}
 		
 		sicurezzaMessaggio.setCertificateChain(ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, true));
@@ -910,9 +942,22 @@ public class ModiErogazioniApiHelper {
 		
 		risposta.setSicurezzaMessaggio(sicurezzaMessaggio);
 		
-		modi.setRisposta(risposta);
+		return risposta;
+	}
+	
+	private static ErogazioneModIRest getRestProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, Map<String, AbstractProperty<?>> p) throws CoreException {
+
+		ErogazioneModIRest modi = new ErogazioneModIRest();
+		modi.setProtocollo(TipoApiEnum.REST);
+		if (ModISecurityUtils.isSicurezzaMessaggioRequired(aspc, asps.getPortType())) {			
+			// *** richiesta ***
+			modi.setRichiesta(ModiErogazioniApiHelper.getErogazioneRestRichiesta(p));
+			
+			// *** risposta ***
+			modi.setRisposta(ModiErogazioniApiHelper.getErogazioneRestRisposta(p));
+		}
 		
-		
+		modi.setInformazioniGenerali(ModiErogazioniApiHelper.getErogazioneModIInfoGenerali(p));
 		return modi;
 	}
 
@@ -948,7 +993,7 @@ public class ModiErogazioniApiHelper {
 			
 			if(modeKeystore!=null && StringUtils.isNotEmpty(modeKeystore) && modeKeystore.equals(ModICostanti.MODIPA_PROFILO_RIDEFINISCI)) {
 				
-				ModIKeyStoreRidefinito ks = readKeystoreRidefinito(p);
+				ModIKeyStoreRidefinito ks = ModiErogazioniApiHelper.readKeystoreRidefinito(p);
 				oauth.setKeystore(ks);
 
 			} else {
@@ -1051,7 +1096,7 @@ public class ModiErogazioniApiHelper {
 				sicurezzaMessaggioRichiesta.setKeystore(ks);
 			} else {
 				
-				ModIKeyStoreRidefinito ks = readKeystoreRidefinito(p);
+				ModIKeyStoreRidefinito ks = ModiErogazioniApiHelper.readKeystoreRidefinito(p);
 				sicurezzaMessaggioRichiesta.setKeystore(ks);
 			}
 		}
@@ -1067,12 +1112,12 @@ public class ModiErogazioniApiHelper {
 		
 		// info utente
 		
-		sicurezzaMessaggioRichiesta.setInformazioniUtenteCodiceEnte(getInformazioniUtenteCodiceEnte(p));
-		sicurezzaMessaggioRichiesta.setInformazioniUtenteUserid(getInformazioniUtenteUserid(p));
-		sicurezzaMessaggioRichiesta.setInformazioniUtenteIndirizzoIp(getInformazioniUtenteIndirizzoIp(p));
+		sicurezzaMessaggioRichiesta.setInformazioniUtenteCodiceEnte(ModiErogazioniApiHelper.getInformazioniUtenteCodiceEnte(p));
+		sicurezzaMessaggioRichiesta.setInformazioniUtenteUserid(ModiErogazioniApiHelper.getInformazioniUtenteUserid(p));
+		sicurezzaMessaggioRichiesta.setInformazioniUtenteIndirizzoIp(ModiErogazioniApiHelper.getInformazioniUtenteIndirizzoIp(p));
 		
 		// audit
-		FruizioneModIRichiestaInformazioniUtenteAudit audit = getInformazioniUtenteAudit(p, schemaAudit);
+		FruizioneModIRichiestaInformazioniUtenteAudit audit = ModiErogazioniApiHelper.getInformazioniUtenteAudit(p, schemaAudit);
 		if(audit!=null) {
 			sicurezzaMessaggioRichiesta.setAudit(audit);
 		}
@@ -1187,7 +1232,7 @@ public class ModiErogazioniApiHelper {
 			sicurezzaMessaggioRichiesta.setHeaderHttpFirmare(headers);
 		}
 		
-		sicurezzaMessaggioRichiesta.setRiferimentoX509(getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, true)));
+		sicurezzaMessaggioRichiesta.setRiferimentoX509(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, true)));
 
 		sicurezzaMessaggioRichiesta.setCertificateChain(ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, true));
 		
@@ -1215,7 +1260,7 @@ public class ModiErogazioniApiHelper {
 				sicurezzaMessaggioRichiesta.setKeystore(ks);
 			} else {
 				
-				ModIKeyStoreRidefinito ks = readKeystoreRidefinito(p);
+				ModIKeyStoreRidefinito ks = ModiErogazioniApiHelper.readKeystoreRidefinito(p);
 				sicurezzaMessaggioRichiesta.setKeystore(ks);
 			}
 		}
@@ -1230,13 +1275,13 @@ public class ModiErogazioniApiHelper {
 		
 		// info utente
 		
-		sicurezzaMessaggioRichiesta.setInformazioniUtenteCodiceEnte(getInformazioniUtenteCodiceEnte(p));
-		sicurezzaMessaggioRichiesta.setInformazioniUtenteUserid(getInformazioniUtenteUserid(p));
-		sicurezzaMessaggioRichiesta.setInformazioniUtenteIndirizzoIp(getInformazioniUtenteIndirizzoIp(p));
+		sicurezzaMessaggioRichiesta.setInformazioniUtenteCodiceEnte(ModiErogazioniApiHelper.getInformazioniUtenteCodiceEnte(p));
+		sicurezzaMessaggioRichiesta.setInformazioniUtenteUserid(ModiErogazioniApiHelper.getInformazioniUtenteUserid(p));
+		sicurezzaMessaggioRichiesta.setInformazioniUtenteIndirizzoIp(ModiErogazioniApiHelper.getInformazioniUtenteIndirizzoIp(p));
 		
 		// audit
 		
-		FruizioneModIRichiestaInformazioniUtenteAudit audit = getInformazioniUtenteAudit(p, schemaAudit);
+		FruizioneModIRichiestaInformazioniUtenteAudit audit = ModiErogazioniApiHelper.getInformazioniUtenteAudit(p, schemaAudit);
 		if(audit!=null) {
 			sicurezzaMessaggioRichiesta.setAudit(audit);
 		}
@@ -1341,7 +1386,7 @@ public class ModiErogazioniApiHelper {
 			sicurezzaMessaggioRisposta.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RICHIESTA);
 		} else {
 			sicurezzaMessaggioRisposta.setRiferimentoX509(ModISicurezzaMessaggioRestRiferimentoX509Risposta.RIDEFINITO);
-			sicurezzaMessaggioRisposta.setRiferimentoX509Risposta(getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, true)));
+			sicurezzaMessaggioRisposta.setRiferimentoX509Risposta(ModiErogazioniApiHelper.getX509(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, true)));
 		}
 		
 		String truststoreMode = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, true);
@@ -1492,17 +1537,17 @@ public class ModiErogazioniApiHelper {
 
 	private static FruizioneModIRichiestaInformazioneUtente getInformazioniUtenteCodiceEnte(
 			Map<String, AbstractProperty<?>> p) throws CoreException {
-		return getInformazioniUtente(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE);
+		return ModiErogazioniApiHelper.getInformazioniUtente(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE);
 	}
 
 	private static FruizioneModIRichiestaInformazioneUtente getInformazioniUtenteUserid(
 			Map<String, AbstractProperty<?>> p) throws CoreException {
-		return getInformazioniUtente(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER);
+		return ModiErogazioniApiHelper.getInformazioniUtente(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER);
 	}
 
 	private static FruizioneModIRichiestaInformazioneUtente getInformazioniUtenteIndirizzoIp(
 			Map<String, AbstractProperty<?>> p) throws CoreException {
-		return getInformazioniUtente(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER);
+		return ModiErogazioniApiHelper.getInformazioniUtente(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER);
 	}
 	
 	private static FruizioneModIRichiestaInformazioneUtente getInformazioniUtente(
@@ -1555,15 +1600,15 @@ public class ModiErogazioniApiHelper {
 	}
 	
 	private static List<String> getInformazioniAuditRequired(String schemaAudit){
-		return getInformazioniAudit(schemaAudit, true);
+		return ModiErogazioniApiHelper.getInformazioniAudit(schemaAudit, true);
 	}
 	private static List<String> getInformazioniAudit(String schemaAudit){
-		return getInformazioniAudit(schemaAudit, false);
+		return ModiErogazioniApiHelper.getInformazioniAudit(schemaAudit, false);
 	}
 	private static List<String> getInformazioniAudit(String schemaAudit, boolean required){
 		List<String> infoRequired = new ArrayList<>();
 		if(schemaAudit!=null) {
-			ModIAuditConfig modIAuditConfig = getModIAuditConfig(schemaAudit);
+			ModIAuditConfig modIAuditConfig = ModiErogazioniApiHelper.getModIAuditConfig(schemaAudit);
 		
 			if(modIAuditConfig!=null && modIAuditConfig.getClaims()!=null && !modIAuditConfig.getClaims().isEmpty()) {
 				for (ModIAuditClaimConfig claim : modIAuditConfig.getClaims()) {
@@ -1578,17 +1623,17 @@ public class ModiErogazioniApiHelper {
 	
 	private static FruizioneModIRichiestaInformazioniUtenteAudit getInformazioniUtenteAudit(Map<String, AbstractProperty<?>> p, String schemaAudit) throws CoreException {
 		
-		BaseModIRichiestaInformazioniUtenteAudit infoAuditBase = getInformazioniUtenteAudit(p, true);
+		BaseModIRichiestaInformazioniUtenteAudit infoAuditBase = ModiErogazioniApiHelper.getInformazioniUtenteAudit(p, true);
 		FruizioneModIRichiestaInformazioniUtenteAudit infoAudit = null;
 		if(infoAuditBase instanceof FruizioneModIRichiestaInformazioniUtenteAudit) {
 			infoAudit = (FruizioneModIRichiestaInformazioniUtenteAudit) infoAuditBase;
 		}
 		
 		if(schemaAudit!=null) {
-			ModIAuditConfig modIAuditConfig = getModIAuditConfig(schemaAudit);
+			ModIAuditConfig modIAuditConfig = ModiErogazioniApiHelper.getModIAuditConfig(schemaAudit);
 			
 			if(modIAuditConfig!=null && modIAuditConfig.getClaims()!=null && !modIAuditConfig.getClaims().isEmpty()) {
-				infoAudit = getInformazioniUtenteAudit(p, modIAuditConfig.getClaims(), infoAudit);
+				infoAudit = ModiErogazioniApiHelper.getInformazioniUtenteAudit(p, modIAuditConfig.getClaims(), infoAudit);
 			}
 		}
 
@@ -1616,7 +1661,7 @@ public class ModiErogazioniApiHelper {
 	private static FruizioneModIRichiestaInformazioniUtenteAudit getInformazioniUtenteAudit(Map<String, AbstractProperty<?>> p, List<ModIAuditClaimConfig> list, FruizioneModIRichiestaInformazioniUtenteAudit infoAudit) throws CoreException {
 		if(list!=null && !list.isEmpty()) {
 			for (ModIAuditClaimConfig modIAuditClaimConfig : list) {
-				FruizioneModIRichiestaInformazioneUtenteAudit info = getInformazioneUtenteAudit(p, modIAuditClaimConfig.getNome());
+				FruizioneModIRichiestaInformazioneUtenteAudit info = ModiErogazioniApiHelper.getInformazioneUtenteAudit(p, modIAuditClaimConfig.getNome());
 				if(info!=null) {
 					if(infoAudit==null) {
 						infoAudit = new FruizioneModIRichiestaInformazioniUtenteAudit();
@@ -1668,50 +1713,50 @@ public class ModiErogazioniApiHelper {
 		
 	}
 
-	public static ProtocolProperties getProtocolProperties(Erogazione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) 
+	public static ProtocolProperties getProtocolProperties(Erogazione body, AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) 
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
-		return getModiProtocolProperties(body.getModi(), getErogazioneConf(asps, env), required);
+		return ModiErogazioniApiHelper.getModiProtocolProperties(aspc, asps, body.getModi(), ModiErogazioniApiHelper.getErogazioneConf(asps, env), required);
 	}
 
 	public static ProtocolProperties getProtocolProperties(Fruizione body, AccordoServizioParteSpecifica asps, ErogazioniEnv env, boolean required) 
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {		
-		return getModiProtocolProperties(body.getModi(), getFruizioneConf(asps, env), required);
+		return ModiErogazioniApiHelper.getModiProtocolProperties(body.getModi(), ModiErogazioniApiHelper.getFruizioneConf(asps, env), required);
 	}
 
-	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfErogazioneModIModi modi, ErogazioniEnv env) 
+	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfErogazioneModIModi modi, ErogazioniEnv env) 
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
 		}
 
-		ErogazioneConf erogazioneConf = getErogazioneConf(asps, env);
-		return getModiProtocolProperties(modi, erogazioneConf);
+		ErogazioneConf erogazioneConf = ModiErogazioniApiHelper.getErogazioneConf(asps, env);
+		return ModiErogazioniApiHelper.getModiProtocolProperties(aspc, asps, modi, erogazioneConf);
 
 	}
 
 	public static ProtocolProperties updateModiProtocolProperties(AccordoServizioParteSpecifica asps, ProfiloEnum profilo, OneOfFruizioneModIModi modi, ErogazioniEnv env) 
 			throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.OPERAZIONE_UTILIZZABILE_SOLO_CON_MODI);
 		}
 
-		FruizioneConf fruizioneConf = getFruizioneConf(asps, env);
-		return getModiProtocolProperties(modi, fruizioneConf);
+		FruizioneConf fruizioneConf = ModiErogazioniApiHelper.getFruizioneConf(asps, env);
+		return ModiErogazioniApiHelper.getModiProtocolProperties(modi, fruizioneConf);
 
 	}
 
-	private static ProtocolProperties getModiProtocolProperties(OneOfErogazioneModIModi modi, ErogazioneConf erogazioneConf) {
+	private static ProtocolProperties getModiProtocolProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, OneOfErogazioneModIModi modi, ErogazioneConf erogazioneConf) {
 
 		if(modi == null) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(SPECIFICARE_CONFIGURAZIONE_MODI);
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SPECIFICARE_CONFIGURAZIONE_MODI);
 		}
 
 		ProtocolProperties p = new ProtocolProperties();
 
 		if(erogazioneConf.protocollo.equals(TipoApiEnum.SOAP)) {
-			getSOAPProperties((ErogazioneModISoap)modi, p, erogazioneConf);
+			ModiErogazioniApiHelper.getSOAPProperties(aspc, asps, (ErogazioneModISoap)modi, p, erogazioneConf);
 		} else if(erogazioneConf.protocollo.equals(TipoApiEnum.REST)) {
-			getRESTProperties((ErogazioneModIRest)modi, p, erogazioneConf);
+			ModiErogazioniApiHelper.getRESTProperties(aspc, asps, (ErogazioneModIRest)modi, p, erogazioneConf);
 		}
 
 
@@ -1721,18 +1766,18 @@ public class ModiErogazioniApiHelper {
 	private static ProtocolProperties getModiProtocolProperties(OneOfFruizioneModIModi modi, FruizioneConf fruizioneConf) {
 
 		if(modi == null) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(SPECIFICARE_CONFIGURAZIONE_MODI);
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SPECIFICARE_CONFIGURAZIONE_MODI);
 		}
 
 		ProtocolProperties p = new ProtocolProperties();
 
 		if(TipoConfigurazioneFruizioneEnum.OAUTH.equals(modi.getProtocollo())) {
-			getOAUTHProperties((FruizioneModIOAuth)modi, p, fruizioneConf);
+			ModiErogazioniApiHelper.getOAUTHProperties((FruizioneModIOAuth)modi, p, fruizioneConf);
 		}
 		else if(fruizioneConf.protocollo.equals(TipoApiEnum.SOAP)) {
-			getSOAPProperties((FruizioneModISoap)modi, p, fruizioneConf);
+			ModiErogazioniApiHelper.getSOAPProperties((FruizioneModISoap)modi, p, fruizioneConf);
 		} else if(fruizioneConf.protocollo.equals(TipoApiEnum.REST)) {
-			getRESTProperties((FruizioneModIRest)modi, p, fruizioneConf);
+			ModiErogazioniApiHelper.getRESTProperties((FruizioneModIRest)modi, p, fruizioneConf);
 		}
 
 
@@ -1744,7 +1789,7 @@ public class ModiErogazioniApiHelper {
 
 		if(modi == null) {
 			if(modiRequired) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(SPECIFICARE_CONFIGURAZIONE_MODI);
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SPECIFICARE_CONFIGURAZIONE_MODI);
 			}
 			else {
 				return null;
@@ -1754,24 +1799,24 @@ public class ModiErogazioniApiHelper {
 		ProtocolProperties p = new ProtocolProperties();
 
 		if(TipoConfigurazioneFruizioneEnum.OAUTH.equals(modi.getProtocollo())) {
-			getOAUTHProperties((FruizioneModIOAuth)modi, p, fruizioneConf);
+			ModiErogazioniApiHelper.getOAUTHProperties((FruizioneModIOAuth)modi, p, fruizioneConf);
 		}
 		else if(fruizioneConf.protocollo.equals(TipoApiEnum.SOAP)) {
-			getSOAPProperties((FruizioneModISoap)modi, p, fruizioneConf);
+			ModiErogazioniApiHelper.getSOAPProperties((FruizioneModISoap)modi, p, fruizioneConf);
 		} else if(fruizioneConf.protocollo.equals(TipoApiEnum.REST)) {
-			getRESTProperties((FruizioneModIRest)modi, p, fruizioneConf);
+			ModiErogazioniApiHelper.getRESTProperties((FruizioneModIRest)modi, p, fruizioneConf);
 		}
 
 
 		return p;
 	}
 
-	private static ProtocolProperties getModiProtocolProperties(OneOfErogazioneModi modi, ErogazioneConf erogazioneConf,
+	private static ProtocolProperties getModiProtocolProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, OneOfErogazioneModi modi, ErogazioneConf erogazioneConf,
 			boolean modiRequired) {
 
 		if(modi == null) {
 			if(modiRequired) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(SPECIFICARE_CONFIGURAZIONE_MODI);
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SPECIFICARE_CONFIGURAZIONE_MODI);
 			}
 			else {
 				return null;
@@ -1779,28 +1824,21 @@ public class ModiErogazioniApiHelper {
 		}
 
 		ProtocolProperties p = new ProtocolProperties();
-
+		
 		if(erogazioneConf.protocollo.equals(TipoApiEnum.SOAP)) {
-			getSOAPProperties((ErogazioneModISoap)modi, p, erogazioneConf);
+			ModiErogazioniApiHelper.getSOAPProperties(aspc, asps, (ErogazioneModISoap)modi, p, erogazioneConf);
 		} else if(erogazioneConf.protocollo.equals(TipoApiEnum.REST)) {
-			getRESTProperties((ErogazioneModIRest)modi, p, erogazioneConf);
+			ModiErogazioniApiHelper.getRESTProperties(aspc, asps, (ErogazioneModIRest)modi, p, erogazioneConf);
 		}
 
 
 		return p;
 	}
 
-	private static void getRESTProperties(ErogazioneModIRest modi, ProtocolProperties p, ErogazioneConf erogazioneConf) {
-
-		if(!erogazioneConf.sicurezzaMessaggioAPIAbilitata) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(IMPOSSIBILE_ABILITARE_SICUREZZA);
-		}
-
-		// **** richiesta ****
-		
+	private static void fillErogazioneRESTRichiestaProperties(ErogazioneModIRest modi, ProtocolProperties p, ErogazioneConf erogazioneConf) {
 		ErogazioneModIRestRichiestaSicurezzaMessaggio sicurezzaMessaggioRichiesta = modi.getRichiesta().getSicurezzaMessaggio();
 		
-		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, getX509(sicurezzaMessaggioRichiesta.getRiferimentoX509()));
+		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRichiesta.getRiferimentoX509()));
 		
 		if(sicurezzaMessaggioRichiesta.getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
 			
@@ -1832,7 +1870,7 @@ public class ModiErogazioniApiHelper {
 			case PKCS11:
 				tipo = truststoreRidefinito.getPcks11Tipo();
 				if(tipo==null) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 				}
 				break;
 			case PDND:
@@ -1845,7 +1883,7 @@ public class ModiErogazioniApiHelper {
 				}
 				break;
 			default:
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 			}
 			
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, tipo);
@@ -1883,13 +1921,13 @@ public class ModiErogazioniApiHelper {
 				case PKCS11:
 					tipo = truststoreRidefinito.getPcks11Tipo();
 					if(tipo==null) {
-						throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 					}
 					break;
 				case PDND:
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_NON_SUPPORTATO_SSL);
 				default:
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 				}
 				
 				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE, tipo);
@@ -1977,9 +2015,9 @@ public class ModiErogazioniApiHelper {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Modalità di gestione dell'audience di audit sconosciuta: "+sicurezzaMessaggioRichiesta.getAudit().getAudience());
 			}
 		}
-		
-		
-		// **** risposta ****
+	}
+	
+	private static void fillErogazioneRESTRispostaProperties(ErogazioneModIRest modi, ProtocolProperties p, ErogazioneConf erogazioneConf) {
 
 		ErogazioneModIRestRispostaSicurezzaMessaggio sicurezzaMessaggioRisposta = modi.getRisposta().getSicurezzaMessaggio();
 		
@@ -2025,7 +2063,7 @@ public class ModiErogazioniApiHelper {
 		} else {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_FALSE);
 			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, getX509(sicurezzaMessaggioRisposta.getRiferimentoX509Risposta())); 
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRisposta.getRiferimentoX509Risposta())); 
 		}
 		
 		p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, sicurezzaMessaggioRisposta.isCertificateChain() != null && sicurezzaMessaggioRisposta.isCertificateChain().booleanValue()));
@@ -2170,11 +2208,35 @@ public class ModiErogazioniApiHelper {
 			}
 		}
 	}
+	
+	private static void getRESTProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ErogazioneModIRest modi, ProtocolProperties p, ErogazioneConf erogazioneConf) {
 
+		if(!erogazioneConf.sicurezzaMessaggioAPIAbilitata) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.IMPOSSIBILE_ABILITARE_SICUREZZA);
+		}
+
+		if (ModISecurityUtils.isSicurezzaMessaggioRequired(aspc, asps.getPortType())) {
+			
+			if (modi == null || modi.getRichiesta() == null || modi.getRisposta() == null)
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SICUREZZA_MESSAGGIO_NON_PRESENTE);
+			
+			// **** richiesta ****
+			ModiErogazioniApiHelper.fillErogazioneRESTRichiestaProperties(modi, p, erogazioneConf);
+			
+			// **** risposta ****
+			ModiErogazioniApiHelper.fillErogazioneRESTRispostaProperties(modi, p, erogazioneConf);
+		} else {
+			if (modi != null && (modi.getRichiesta() != null || modi.getRisposta() != null))
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SICUREZZA_MESSAGGIO_NON_NECESSARIA);
+		}
+		
+		ModiErogazioniApiHelper.fillErogazioneModIInfoGenerali(p, modi.getInformazioniGenerali());
+	}
+	
 	private static void getRESTProperties(FruizioneModIRest modi, ProtocolProperties p, FruizioneConf fruizioneConf) {
 
 		if(!fruizioneConf.sicurezzaMessaggioAPIAbilitata) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(IMPOSSIBILE_ABILITARE_SICUREZZA);
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.IMPOSSIBILE_ABILITARE_SICUREZZA);
 		}
 
 		// **** richiesta ****
@@ -2218,7 +2280,7 @@ public class ModiErogazioniApiHelper {
 			}
 		}
 		
-		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, getX509(sicurezzaMessaggioRichiesta.getRiferimentoX509())); 
+		p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRichiesta.getRiferimentoX509())); 
 
 		p.addProperty(ProtocolPropertiesFactory.newProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RICHIESTA_RIFERIMENTO_X509_X5C_USE_CERTIFICATE_CHAIN, sicurezzaMessaggioRichiesta.isCertificateChain() != null && sicurezzaMessaggioRichiesta.isCertificateChain().booleanValue()));
 	
@@ -2245,12 +2307,12 @@ public class ModiErogazioniApiHelper {
 			
 			if(sicurezzaMessaggioRichiesta.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
 				
-				setKeystoreDefaultProperties(p);
+				ModiErogazioniApiHelper.setKeystoreDefaultProperties(p);
 				
 			} else {
 
 				ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)sicurezzaMessaggioRichiesta.getKeystore();
-				setKeystoreRidefinitoProperties(p, keystoreRidefinito);
+				ModiErogazioniApiHelper.setKeystoreRidefinitoProperties(p, keystoreRidefinito);
 				
 			}
 		}
@@ -2268,13 +2330,13 @@ public class ModiErogazioniApiHelper {
 
 		// informazione utente
 		
-		addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteCodiceEnte(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE); 
-		addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteUserid(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER); 
-		addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteIndirizzoIp(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER);
+		ModiErogazioniApiHelper.addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteCodiceEnte(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE); 
+		ModiErogazioniApiHelper.addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteUserid(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER); 
+		ModiErogazioniApiHelper.addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteIndirizzoIp(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER);
 		
 		// informazioni audit
 		
-		List<String> infoAuditRequired = getInformazioniAuditRequired(fruizioneConf.schemaAudit);
+		List<String> infoAuditRequired = ModiErogazioniApiHelper.getInformazioniAuditRequired(fruizioneConf.schemaAudit);
 		
 		if(sicurezzaMessaggioRichiesta.getAudit()!=null) {
 			
@@ -2300,11 +2362,11 @@ public class ModiErogazioniApiHelper {
 			
 			if(sicurezzaMessaggioRichiesta.getAudit().getInformazioni()!=null && !sicurezzaMessaggioRichiesta.getAudit().getInformazioni().isEmpty()) {
 				
-				List<String> claimsDefiniti = getInformazioniAudit(fruizioneConf.schemaAudit);
+				List<String> claimsDefiniti = ModiErogazioniApiHelper.getInformazioniAudit(fruizioneConf.schemaAudit);
 				
 				for (FruizioneModIRichiestaInformazioneUtenteAudit info : sicurezzaMessaggioRichiesta.getAudit().getInformazioni()) {
 					if(info!=null) {
-						addInformazioniUtente(info, p, fruizioneConf, claimsDefiniti);		
+						ModiErogazioniApiHelper.addInformazioniUtente(info, p, fruizioneConf, claimsDefiniti);		
 						infoAuditRequired.remove(info.getNome());
 					}
 				}
@@ -2404,7 +2466,7 @@ public class ModiErogazioniApiHelper {
 		} else {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509_AS_REQUEST_VALUE_FALSE);
 			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, getX509(sicurezzaMessaggioRisposta.getRiferimentoX509Risposta())); 
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_REST_RISPOSTA_RIFERIMENTO_X509, ModiErogazioniApiHelper.getX509(sicurezzaMessaggioRisposta.getRiferimentoX509Risposta())); 
 		}
 
 		if(sicurezzaMessaggioRisposta.getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
@@ -2437,7 +2499,7 @@ public class ModiErogazioniApiHelper {
 			case PKCS11:
 				tipo = truststoreRidefinito.getPcks11Tipo();
 				if(tipo==null) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 				}
 				break;
 			case PDND:
@@ -2450,7 +2512,7 @@ public class ModiErogazioniApiHelper {
 				}
 				break;
 			default:
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 			}
 			
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, tipo);
@@ -2488,13 +2550,13 @@ public class ModiErogazioniApiHelper {
 				case PKCS11:
 					tipo = truststoreRidefinito.getPcks11Tipo();
 					if(tipo==null) {
-						throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 					}
 					break;
 				case PDND:
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_NON_SUPPORTATO_SSL);					
 				default:
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 				}
 				
 				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE, tipo);
@@ -2557,6 +2619,7 @@ public class ModiErogazioniApiHelper {
 				}
 			}
 		}
+		
 	}
 
 	private static void addInformazioniUtente(FruizioneModIRichiestaInformazioneUtente informazioniUtenteField, ProtocolProperties p, FruizioneConf fruizioneConf, String modalitaString, String valueString) {
@@ -2616,47 +2679,51 @@ public class ModiErogazioniApiHelper {
 		return String.join(",", sX509);
 	}
 
-	private static void getSOAPProperties(ErogazioneModISoap modi, ProtocolProperties p, ErogazioneConf erogazioneConf) {
-
-		if(!erogazioneConf.sicurezzaMessaggioAPIAbilitata) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(IMPOSSIBILE_ABILITARE_SICUREZZA);
-		}
-		
+	
+	private static void fillErogazioneSOAPRichiestaProperties(ErogazioneModISoap modi, ProtocolProperties p, ErogazioneConf erogazioneConf) {
 		// **** richiesta ****
-		
-		ErogazioneModISoapRichiestaSicurezzaMessaggio sicurezzaMessaggioRichiesta = modi.getRichiesta().getSicurezzaMessaggio();
-		
-		if(sicurezzaMessaggioRichiesta.getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
-			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
+		ErogazioneModISoapRichiestaSicurezzaMessaggio sicurezzaMessaggioRichiesta = modi.getRichiesta()
+				.getSicurezzaMessaggio();
+
+		if (sicurezzaMessaggioRichiesta.getTruststore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
+
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE,
+					ModICostanti.MODIPA_PROFILO_DEFAULT);
 
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS, "");
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY, "");
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, "");
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, "");
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, "");
-			
-		} else {
-			
-			ModITrustStoreRidefinito truststoreRidefinito = (ModITrustStoreRidefinito)sicurezzaMessaggioRichiesta.getTruststore();
-			
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
 
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS, truststoreRidefinito.getTruststoreCrl());
-			if(truststoreRidefinito.getTruststoreOcspPolicy()!=null) {
-				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY, truststoreRidefinito.getTruststoreOcspPolicy());
+		} else {
+
+			ModITrustStoreRidefinito truststoreRidefinito = (ModITrustStoreRidefinito) sicurezzaMessaggioRichiesta
+					.getTruststore();
+
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_MODE,
+					ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
+
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS,
+					truststoreRidefinito.getTruststoreCrl());
+			if (truststoreRidefinito.getTruststoreOcspPolicy() != null) {
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_OCSP_POLICY,
+						truststoreRidefinito.getTruststoreOcspPolicy());
 			}
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD, truststoreRidefinito.getTruststorePassword());
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, truststoreRidefinito.getTruststorePath());
-			
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD,
+					truststoreRidefinito.getTruststorePassword());
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH,
+					truststoreRidefinito.getTruststorePath());
+
 			String tipo = null;
-			switch(truststoreRidefinito.getTruststoreTipo()) {
-			case JKS:tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS;
+			switch (truststoreRidefinito.getTruststoreTipo()) {
+			case JKS:
+				tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS;
 				break;
 			case PKCS11:
 				tipo = truststoreRidefinito.getPcks11Tipo();
-				if(tipo==null) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
+				if (tipo == null) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 				}
 				break;
 			case PDND:
@@ -2669,53 +2736,60 @@ public class ModiErogazioniApiHelper {
 				}
 				break;
 			default:
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
+				throw FaultCode.RICHIESTA_NON_VALIDA
+						.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX + truststoreRidefinito.getTruststoreTipo());
 			}
-			
+
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, tipo);
 
 		}
 
-		if(sicurezzaMessaggioRichiesta.getTimeToLive()!=null && sicurezzaMessaggioRichiesta.getTimeToLive()>0) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT_SECONDS,  sicurezzaMessaggioRichiesta.getTimeToLive()); 
+		if (sicurezzaMessaggioRichiesta.getTimeToLive() != null && sicurezzaMessaggioRichiesta.getTimeToLive() > 0) {
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT,
+					ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT_SECONDS,
+					sicurezzaMessaggioRichiesta.getTimeToLive());
+		} else {
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT,
+					ModICostanti.MODIPA_PROFILO_DEFAULT);
 		}
-		else {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_IAT, ModICostanti.MODIPA_PROFILO_DEFAULT); 
-		}
-		
-		if(sicurezzaMessaggioRichiesta.getWsaTo()!=null) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE, sicurezzaMessaggioRichiesta.getWsaTo());
+
+		if (sicurezzaMessaggioRichiesta.getWsaTo() != null) {
+			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE,
+					sicurezzaMessaggioRichiesta.getWsaTo());
 		} else {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE, "");
 		}
-		
+
 		// informazioni audit
-		
-		if(sicurezzaMessaggioRichiesta.getAudit()!=null &&
-				sicurezzaMessaggioRichiesta.getAudit().getAudience()!=null) {
+
+		if (sicurezzaMessaggioRichiesta.getAudit() != null
+				&& sicurezzaMessaggioRichiesta.getAudit().getAudience() != null) {
 			switch (sicurezzaMessaggioRichiesta.getAudit().getAudience()) {
 			case SAME:
-				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE, 
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE,
 						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTE_AUDIT_AUDIENCE_VALUE_SAME);
 				break;
 			case DIFFERENT:
-				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE, 
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE,
 						ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIT_AUDIENCE_VALUE_DIFFERENT);
-				if(sicurezzaMessaggioRichiesta.getAudit().getAudienceAtteso()==null || StringUtils.isEmpty(sicurezzaMessaggioRichiesta.getAudit().getAudienceAtteso())) {
+				if (sicurezzaMessaggioRichiesta.getAudit().getAudienceAtteso() == null
+						|| StringUtils.isEmpty(sicurezzaMessaggioRichiesta.getAudit().getAudienceAtteso())) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Audience di audit non definito");
 				}
-				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE_CUSTOM_AUDIT, 
+				p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE_CUSTOM_AUDIT,
 						sicurezzaMessaggioRichiesta.getAudit().getAudienceAtteso());
 				break;
 			default:
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Modalità di gestione dell'audience di audit sconosciuta: "+sicurezzaMessaggioRichiesta.getAudit().getAudience());
+				throw FaultCode.RICHIESTA_NON_VALIDA
+						.toException("Modalità di gestione dell'audience di audit sconosciuta: "
+								+ sicurezzaMessaggioRichiesta.getAudit().getAudience());
 			}
 		}
+	}
+	
+	private static void fillErogazioneSOAPRispostaProperties(ErogazioneModISoap modi, ProtocolProperties p, ErogazioneConf erogazioneConf) {
 
-		
-		// **** risposta ****
-		
 		ErogazioneModISoapRispostaSicurezzaMessaggio sicurezzaMessaggioRisposta = modi.getRisposta().getSicurezzaMessaggio();
 		
 		String algo = null;
@@ -2794,15 +2868,40 @@ public class ModiErogazioniApiHelper {
 		
 		if(sicurezzaMessaggioRisposta.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
 			
-			setKeystoreDefaultProperties(p);
+			ModiErogazioniApiHelper.setKeystoreDefaultProperties(p);
 			
 		} else {
 
 			ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)sicurezzaMessaggioRisposta.getKeystore();
-			setKeystoreRidefinitoProperties(p, keystoreRidefinito);
+			ModiErogazioniApiHelper.setKeystoreRidefinitoProperties(p, keystoreRidefinito);
 			
 		}
+	}
+	
+	private static void getSOAPProperties(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps, ErogazioneModISoap modi, ProtocolProperties p, ErogazioneConf erogazioneConf) {
 
+		if(!erogazioneConf.sicurezzaMessaggioAPIAbilitata) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.IMPOSSIBILE_ABILITARE_SICUREZZA);
+		}
+		
+		if (ModISecurityUtils.isSicurezzaMessaggioRequired(aspc, asps.getPortType())) { 
+			if (modi == null || modi.getRichiesta() == null || modi.getRisposta() == null)
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SICUREZZA_MESSAGGIO_NON_PRESENTE);
+			
+			
+			// **** risposta ****
+			ModiErogazioniApiHelper.fillErogazioneSOAPRichiestaProperties(modi, p, erogazioneConf);
+			
+			// **** risposta ****
+			ModiErogazioniApiHelper.fillErogazioneSOAPRispostaProperties(modi, p, erogazioneConf);
+
+		} else {
+			if (modi != null && (modi.getRichiesta() != null || modi.getRisposta() != null))
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SICUREZZA_MESSAGGIO_NON_NECESSARIA);
+			
+		}
+		
+		ModiErogazioniApiHelper.fillErogazioneModIInfoGenerali(p, modi.getInformazioniGenerali());
 	}
 	
 	private static void setKeystoreDefaultProperties(ProtocolProperties p) {
@@ -2886,12 +2985,12 @@ public class ModiErogazioniApiHelper {
 			if(modi.getKeystore()!=null) {
 				if(modi.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
 					
-					setKeystoreDefaultProperties(p);
+					ModiErogazioniApiHelper.setKeystoreDefaultProperties(p);
 					
 				} else {
 	
 					ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)modi.getKeystore();
-					setKeystoreRidefinitoProperties(p, keystoreRidefinito);
+					ModiErogazioniApiHelper.setKeystoreRidefinitoProperties(p, keystoreRidefinito);
 					
 				}
 			}
@@ -2901,7 +3000,7 @@ public class ModiErogazioniApiHelper {
 	private static void getSOAPProperties(FruizioneModISoap modi, ProtocolProperties p, FruizioneConf fruizioneConf) {
 
 		if(!fruizioneConf.sicurezzaMessaggioAPIAbilitata) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(IMPOSSIBILE_ABILITARE_SICUREZZA);
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.IMPOSSIBILE_ABILITARE_SICUREZZA);
 		}
 		
 		// **** richiesta ****
@@ -2994,12 +3093,12 @@ public class ModiErogazioniApiHelper {
 			
 			if(sicurezzaMessaggioRichiesta.getKeystore().getModalita().equals(StatoDefaultRidefinitoEnum.DEFAULT)) {
 				
-				setKeystoreDefaultProperties(p);
+				ModiErogazioniApiHelper.setKeystoreDefaultProperties(p);
 				
 			} else {
 
 				ModIKeyStoreRidefinito keystoreRidefinito = (ModIKeyStoreRidefinito)sicurezzaMessaggioRichiesta.getKeystore();
-				setKeystoreRidefinitoProperties(p, keystoreRidefinito);
+				ModiErogazioniApiHelper.setKeystoreRidefinitoProperties(p, keystoreRidefinito);
 				
 			}
 		}
@@ -3016,13 +3115,13 @@ public class ModiErogazioniApiHelper {
 		
 		// informazione utente
 
-		addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteCodiceEnte(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE); 
-		addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteUserid(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER); 
-		addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteIndirizzoIp(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER);
+		ModiErogazioniApiHelper.addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteCodiceEnte(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE); 
+		ModiErogazioniApiHelper.addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteUserid(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER); 
+		ModiErogazioniApiHelper.addInformazioniUtente(sicurezzaMessaggioRichiesta.getInformazioniUtenteIndirizzoIp(), p, fruizioneConf, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER);
 		
 		// informazioni audit
 		
-		List<String> infoAuditRequired = getInformazioniAuditRequired(fruizioneConf.schemaAudit);
+		List<String> infoAuditRequired = ModiErogazioniApiHelper.getInformazioniAuditRequired(fruizioneConf.schemaAudit);
 		
 		if(sicurezzaMessaggioRichiesta.getAudit()!=null) {
 			
@@ -3048,11 +3147,11 @@ public class ModiErogazioniApiHelper {
 						
 			if(sicurezzaMessaggioRichiesta.getAudit().getInformazioni()!=null && !sicurezzaMessaggioRichiesta.getAudit().getInformazioni().isEmpty()) {
 				
-				List<String> claimsDefiniti = getInformazioniAudit(fruizioneConf.schemaAudit);
+				List<String> claimsDefiniti = ModiErogazioniApiHelper.getInformazioniAudit(fruizioneConf.schemaAudit);
 				
 				for (FruizioneModIRichiestaInformazioneUtenteAudit info : sicurezzaMessaggioRichiesta.getAudit().getInformazioni()) {
 					if(info!=null) {
-						addInformazioniUtente(info, p, fruizioneConf, claimsDefiniti);	
+						ModiErogazioniApiHelper.addInformazioniUtente(info, p, fruizioneConf, claimsDefiniti);	
 						infoAuditRequired.remove(info.getNome());
 					}
 				}
@@ -3100,7 +3199,7 @@ public class ModiErogazioniApiHelper {
 			case PKCS11:
 				tipo = truststoreRidefinito.getPcks11Tipo();
 				if(tipo==null) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_PKCS11_NON_INDICATO);
 				}
 				break;
 			case PDND:
@@ -3113,7 +3212,7 @@ public class ModiErogazioniApiHelper {
 				}
 				break;				
 			default:
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 			}
 			
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE, tipo);
@@ -3138,6 +3237,58 @@ public class ModiErogazioniApiHelper {
 		if(sicurezzaMessaggioRisposta.isVerificaWsaTo()!=null && sicurezzaMessaggioRisposta.isVerificaWsaTo() && sicurezzaMessaggioRisposta.getAudienceAtteso()!=null) {
 			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_AUDIENCE_VALORE, sicurezzaMessaggioRisposta.getAudienceAtteso()); 
 		}
+	}
+	
+	private static void fillErogazioneModIInfoGenerali(ProtocolProperties p, ErogazioneModIInfoGenerali informazioniGenerali) {
+		if (informazioniGenerali != null) {
+			if (informazioniGenerali.getServiceId() != null)
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID, informazioniGenerali.getServiceId());
+			if (informazioniGenerali.getSignalHub() != null) {
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, true);
+				
+				ErogazioneModISignalHub signalHubConf = informazioniGenerali.getSignalHub();
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID, signalHubConf.getAlgoritmo());
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, signalHubConf.getRisorsa());
+				if (signalHubConf.getRuolo() != null)
+					p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID, signalHubConf.getRuolo());
+				if (signalHubConf.getApplicativo() != null)
+					p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID, signalHubConf.getApplicativo());
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, signalHubConf.getGiorniRotazione());
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, signalHubConf.getDimensioneSeme());
+			}
+		}
+	}
+	
+	private static ErogazioneModIInfoGenerali getErogazioneModIInfoGenerali(Map<String, AbstractProperty<?>> p) throws CoreException {
+		ErogazioneModIInfoGenerali infoGenerali = null;
+		
+		String eServiceId = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID, false);
+				
+		if (eServiceId != null) {
+			infoGenerali = new ErogazioneModIInfoGenerali();
+			infoGenerali.setServiceId(eServiceId);
+			
+			Boolean signalHubEnabled = ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, false);
+			if (signalHubEnabled != null && signalHubEnabled.booleanValue()) {
+				String digestAlgorithm = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID, false);
+				String operation = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, false);
+				String role = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID, false);
+				String saName = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID, false);
+				Integer seedLifetime = ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, false);
+				Integer seedSize = ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, false);
+
+				ErogazioneModISignalHub signalHubConf = new ErogazioneModISignalHub();
+				signalHubConf.algoritmo(digestAlgorithm)
+					.applicativo(saName)
+					.dimensioneSeme(seedSize)
+					.risorsa(operation)
+					.ruolo(role)
+					.giorniRotazione(seedLifetime);
+				infoGenerali.setSignalHub(signalHubConf);
+			}
+		}
+		
+		return infoGenerali;
 	}
 
 }
