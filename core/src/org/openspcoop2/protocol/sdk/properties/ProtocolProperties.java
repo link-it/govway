@@ -42,6 +42,9 @@ public class ProtocolProperties {
 	public void addProperty(String id, int value){
 		this.list.add(ProtocolPropertiesFactory.newProperty(id, value));
 	}
+	public void addProperty(String id, boolean value){
+		this.list.add(ProtocolPropertiesFactory.newProperty(id, value));
+	}
 	public void addProperty(String id, long value){
 		this.list.add(ProtocolPropertiesFactory.newProperty(id, value));
 	}

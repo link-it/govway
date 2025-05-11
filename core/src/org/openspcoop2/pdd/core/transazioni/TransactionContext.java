@@ -246,8 +246,7 @@ public class TransactionContext {
 			transactionContextThreadLocal.get().transaction = transaction;
 		}
 	}
-	
-	
+		
 	public static Transaction getTransaction(String id) throws TransactionNotExistsException{
 		return getTransaction(id, null, false);
 	}

@@ -10703,8 +10703,6 @@ components:
     ErogazioneModISoap:
       required:
       - "protocollo"
-      - "richiesta"
-      - "risposta"
       type: "object"
       properties:
         protocollo:
@@ -10713,6 +10711,8 @@ components:
           $ref: "#/components/schemas/ErogazioneModISoapRichiesta"
         risposta:
           $ref: "#/components/schemas/ErogazioneModISoapRisposta"
+        informazioni_generali:
+          $ref: "#/components/schemas/ErogazioneModIInfoGenerali"
     ErogazioneModISoapRichiesta:
       required:
       - "sicurezza_messaggio"
@@ -10787,8 +10787,6 @@ components:
     ErogazioneModIRest:
       required:
       - "protocollo"
-      - "richiesta"
-      - "risposta"
       type: "object"
       properties:
         protocollo:
@@ -10797,6 +10795,8 @@ components:
           $ref: "#/components/schemas/ErogazioneModIRestRichiesta"
         risposta:
           $ref: "#/components/schemas/ErogazioneModIRestRisposta"
+        informazioni_generali:
+          $ref: "#/components/schemas/ErogazioneModIInfoGenerali"
     ErogazioneModIRestRichiesta:
       required:
       - "sicurezza_messaggio"
@@ -10937,6 +10937,39 @@ components:
           items:
             maxLength: 200
             type: "string"
+    ErogazioneModIInfoGenerali:
+      type: "object"
+      properties:
+        service_id:
+          type: "string"
+        signal_hub:
+          $ref: "#/components/schemas/ErogazioneModISignalHub"
+    ErogazioneModISignalHub:
+      required:
+      - "algoritmo"
+      - "dimensione_seme"
+      - "giorni_rotazione"
+      - "risorsa"
+      type: "object"
+      properties:
+        risorsa:
+          type: "string"
+          example: "/pseudonymization"
+        algoritmo:
+          type: "string"
+          example: "SHA-256"
+        dimensione_seme:
+          type: "integer"
+          format: "int32"
+          example: 16
+        giorni_rotazione:
+          type: "integer"
+          format: "int32"
+          example: 15
+        applicativo:
+          type: "string"
+        ruolo:
+          type: "string"
     FruizioneModI:
       required:
       - "modi"

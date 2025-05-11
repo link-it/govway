@@ -20,6 +20,8 @@
 
 package org.openspcoop2.core.protocolli.modipa.testsuite;
 
+import java.sql.Timestamp;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -68,6 +70,14 @@ public class DbUtils {
 
     public int update(String query) {
         return this.jdbc.update(query);
+    }
+    
+    public int update(String query, Object ... args) {
+        return this.jdbc.update(query, args);
+    }
+    
+    public Timestamp addTimestamp(Timestamp timestamp, int days) {
+    	return Timestamp.from(timestamp.toInstant().plus(Duration.ofDays(days)));
     }
 
 }

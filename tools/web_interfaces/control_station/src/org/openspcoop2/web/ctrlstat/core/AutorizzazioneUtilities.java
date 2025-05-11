@@ -36,15 +36,21 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
  * 
  */
 public class AutorizzazioneUtilities {
+	
+	private AutorizzazioneUtilities() {}
 
 	public static final String STATO_ABILITATO = StatoFunzionalita.ABILITATO.getValue();
 	public static final String STATO_DISABILITATO = StatoFunzionalita.DISABILITATO.getValue();
 	public static final String STATO_XACML_POLICY = "xacml-Policy";
-	public static List<String> getStati(){
+	public static final String STATO_SIGNAL_HUB_PUSH_SIGNALS = "signal-Hub";
+	public static List<String> getStati(boolean signalHub){
 		List<String> l = new ArrayList<>();
 		l.add(STATO_DISABILITATO);
 		l.add(STATO_ABILITATO);
 		l.add(STATO_XACML_POLICY);
+		if(signalHub) {
+			l.add(STATO_SIGNAL_HUB_PUSH_SIGNALS);
+		}
 		return l;
 	}
 	public static String convertToStato(String autorizzazione){
@@ -59,6 +65,9 @@ public class AutorizzazioneUtilities {
 		}
 		else if(TipoAutorizzazione.TOKEN.equals(autorizzazione)){
 			return STATO_ABILITATO;
+		}
+		else if(TipoAutorizzazione.SIGNAL_HUB_PUSH.equals(autorizzazione)){
+			return STATO_SIGNAL_HUB_PUSH_SIGNALS;
 		}
 		else{
 			return STATO_ABILITATO;
@@ -92,7 +101,7 @@ public class AutorizzazioneUtilities {
 	}
 	public static TipoAutorizzazione convertToTipoAutorizzazione(String stato,boolean authenticated,boolean roles,
 			boolean tokenAuthenticated, boolean tokenRoles,
-			boolean scopes,String autorizzazione_tokenOptions,
+			boolean scopes,String autorizzazioneTokenOptions,
 			RuoloTipologia tipologia){
 		if(STATO_DISABILITATO.equals(stato)){
 			return TipoAutorizzazione.DISABILITATO;
@@ -106,6 +115,9 @@ public class AutorizzazioneUtilities {
 			case QUALSIASI:
 				return TipoAutorizzazione.XACML_POLICY;
 			}
+		}
+		else if(STATO_SIGNAL_HUB_PUSH_SIGNALS.equals(stato)){
+			return TipoAutorizzazione.SIGNAL_HUB_PUSH;
 		}
 		else {
 			if(roles){
@@ -136,7 +148,7 @@ public class AutorizzazioneUtilities {
 			else if(authenticated){
 				return TipoAutorizzazione.AUTHENTICATED;
 			}
-			else if(tokenAuthenticated || tokenRoles || scopes || (autorizzazione_tokenOptions!=null && !"".equals(autorizzazione_tokenOptions))) {
+			else if(tokenAuthenticated || tokenRoles || scopes || (autorizzazioneTokenOptions!=null && !"".equals(autorizzazioneTokenOptions))) {
 				return TipoAutorizzazione.TOKEN;
 			}
 		}
@@ -144,11 +156,11 @@ public class AutorizzazioneUtilities {
 	}
 	public static String convertToTipoAutorizzazioneAsString(String stato,boolean authenticated,boolean roles,
 			boolean tokenAuthenticated, boolean tokenRoles,
-			boolean scopes,String autorizzazione_tokenOptions, 
+			boolean scopes,String autorizzazioneTokenOptions, 
 			RuoloTipologia tipologia){
 		return convertToTipoAutorizzazione(stato, authenticated, roles, 
 				tokenAuthenticated, tokenRoles,
-				scopes, autorizzazione_tokenOptions, 
+				scopes, autorizzazioneTokenOptions, 
 				tipologia).getValue();
 	}
 	

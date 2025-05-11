@@ -34,6 +34,7 @@ import org.openspcoop2.core.registry.PortType;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.utils.AzioniUtils;
@@ -873,5 +874,34 @@ public class ModIDynamicConfigurationAccordiParteComuneUtilities {
 			}
 		}
 		return rest;
+	}
+	
+	private static IDAccordo idAccordoSignalHubPushAPI = null;
+	public static IDAccordo getIdAccordoSignalHubPush(IRegistryReader registryReader, ModIProperties modiProperties) throws RegistryNotFound, RegistryException, DriverRegistroServiziException, ProtocolException {
+		if(idAccordoSignalHubPushAPI==null) {
+			initIdAccordoSignalHubPush(registryReader, modiProperties);
+		}
+		return idAccordoSignalHubPushAPI;
+	}
+	private static synchronized void initIdAccordoSignalHubPush(IRegistryReader registryReader, ModIProperties modiProperties) throws RegistryNotFound, RegistryException, DriverRegistroServiziException, ProtocolException {
+		if(idAccordoSignalHubPushAPI==null) {
+			IDSoggetto idSoggetto = registryReader.getIdSoggettoDefault(Costanti.MODIPA_PROTOCOL_NAME);
+			idAccordoSignalHubPushAPI = IDAccordoFactory.getInstance().getIDAccordoFromValues(modiProperties.getSignalHubApiName(), idSoggetto, modiProperties.getSignalHubApiVersion());
+		}
+	}
+	
+	public static boolean isApiSignalHubPushAPI(IDAccordo idAccordo, IRegistryReader registryReader, 
+			ModIProperties modiProperties, Logger log) {
+		if(idAccordo!=null) {
+			// è un accordo built-in che si assume esista
+			IDAccordo idAccordoSignalHubPushAPIreaded = null;
+			try {
+				idAccordoSignalHubPushAPIreaded = ModIDynamicConfigurationAccordiParteComuneUtilities.getIdAccordoSignalHubPush(registryReader, modiProperties);
+			}catch(Exception e) {
+				log.error("Lettura id accordo signalhub api push fallita: "+e.getMessage(),e);
+			}
+			return idAccordoSignalHubPushAPIreaded!=null && idAccordoSignalHubPushAPIreaded.equals(idAccordo);
+		}
+		return false;
 	}
 }

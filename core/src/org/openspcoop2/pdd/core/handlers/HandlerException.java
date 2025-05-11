@@ -122,7 +122,7 @@ public class HandlerException extends Exception {
 	}
 	
 	public ErroreIntegrazione convertToErroreIntegrazione() {
-		if(this.customizedResponse==false) {
+		if(!this.customizedResponse) {
 			return null;
 		}
 		if(this.customizedResponseAs4xxCode) {
@@ -141,7 +141,7 @@ public class HandlerException extends Exception {
 		}
 	}
 	public void customized(OpenSPCoop2Message responseMessage) {	
-		if(this.customizedResponse==false) {
+		if(!this.customizedResponse) {
 			return;
 		}
 		if(this.isEmptyResponse()) {
@@ -169,12 +169,10 @@ public class HandlerException extends Exception {
 	public HandlerException(String message, Throwable cause)
 	{
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 	public HandlerException(Throwable cause)
 	{
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * serialVersionUID

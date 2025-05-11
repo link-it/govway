@@ -30,11 +30,14 @@ public class ErogazioneModIRest  implements OneOfErogazioneModi, OneOfErogazione
   @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
   private TipoApiEnum protocollo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(description = "")
   private ErogazioneModIRestRichiesta richiesta = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(description = "")
   private ErogazioneModIRestRisposta risposta = null;
+  
+  @Schema(description = "")
+  private ErogazioneModIInfoGenerali informazioniGenerali = null;
  /**
    * Get protocollo
    * @return protocollo
@@ -61,7 +64,6 @@ public class ErogazioneModIRest  implements OneOfErogazioneModi, OneOfErogazione
    * @return richiesta
   **/
   @JsonProperty("richiesta")
-  @NotNull
   @Valid
   public ErogazioneModIRestRichiesta getRichiesta() {
     return this.richiesta;
@@ -81,7 +83,6 @@ public class ErogazioneModIRest  implements OneOfErogazioneModi, OneOfErogazione
    * @return risposta
   **/
   @JsonProperty("risposta")
-  @NotNull
   @Valid
   public ErogazioneModIRestRisposta getRisposta() {
     return this.risposta;
@@ -96,6 +97,25 @@ public class ErogazioneModIRest  implements OneOfErogazioneModi, OneOfErogazione
     return this;
   }
 
+ /**
+   * Get informazioniGenerali
+   * @return informazioniGenerali
+  **/
+  @JsonProperty("informazioni_generali")
+  @Valid
+  public ErogazioneModIInfoGenerali getInformazioniGenerali() {
+    return this.informazioniGenerali;
+  }
+
+  public void setInformazioniGenerali(ErogazioneModIInfoGenerali informazioniGenerali) {
+    this.informazioniGenerali = informazioniGenerali;
+  }
+
+  public ErogazioneModIRest informazioniGenerali(ErogazioneModIInfoGenerali informazioniGenerali) {
+    this.informazioniGenerali = informazioniGenerali;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -105,6 +125,7 @@ public class ErogazioneModIRest  implements OneOfErogazioneModi, OneOfErogazione
     sb.append("    protocollo: ").append(ErogazioneModIRest.toIndentedString(this.protocollo)).append("\n");
     sb.append("    richiesta: ").append(ErogazioneModIRest.toIndentedString(this.richiesta)).append("\n");
     sb.append("    risposta: ").append(ErogazioneModIRest.toIndentedString(this.risposta)).append("\n");
+    sb.append("    informazioniGenerali: ").append(ErogazioneModIRest.toIndentedString(this.informazioniGenerali)).append("\n");
     sb.append("}");
     return sb.toString();
   }

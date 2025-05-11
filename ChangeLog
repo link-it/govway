@@ -1,3 +1,9 @@
+2025-05-12  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità #1591
+	Introdotta la funzionalità 'Signal Hub' per la gestione delle erogazioni, comprensiva del controllo sull’algoritmo di pseudo-anonimizzazione e della pubblicazione delle variazioni dei dati.
+
 2025-05-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloModIPA, GovWayConsole]

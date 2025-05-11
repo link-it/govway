@@ -1748,7 +1748,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 		}
 
 
-
+		
 
 		// Punto di inizio per la transazione.
 		this.connectorSenderForDisconnect = null;
@@ -2126,6 +2126,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 			//	Connettore per consegna
 			this.tipoConnector = this.connettoreMsg.getTipoConnettore();
 			this.tipoConnector = ConnettoreUtils.formatTipoConnettore(this.propertiesReader, this.tipoConnector, this.connettoreMsg, this.asyncResponseCallback);
+			if (this.pddContext.getObject(CostantiPdD.KEY_OVERRIDE_CONNETTORE) != null) {
+				this.tipoConnector = this.pddContext.get(CostantiPdD.KEY_OVERRIDE_CONNETTORE).toString();
+			}	
+
 			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, this.tipoConnector);
 			this.connectorSender = null;
 

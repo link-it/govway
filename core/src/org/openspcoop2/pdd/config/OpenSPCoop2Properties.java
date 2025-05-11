@@ -26367,7 +26367,7 @@ public class OpenSPCoop2Properties {
 			return false;
 		}*/
 		if(percentDefined && secondsDefined) {
-			this.logError("Non è possibile definire contemporaneamente entrambe le seguenti proprietà: '"+this.isGestioneRetrieveTokenRefreshTokenBeforeExpirePercentPName+"' o '"+this.isGestioneRetrieveToken_refreshTokenBeforeExpire_seconds_pName+"'");
+			this.logError("Non è possibile definire contemporaneamente entrambe le seguenti proprietà: '"+this.isGestioneRetrieveTokenRefreshTokenBeforeExpirePercentPName+"' o '"+this.isGestioneRetrieveTokenRefreshTokenBeforeExpireSecondsPName+"'");
 			return false;
 		}
 		return true;

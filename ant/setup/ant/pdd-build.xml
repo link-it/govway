@@ -750,6 +750,18 @@
 
 		<!-- NOTA: TODO Gestire l'aggiunta degli header separati da ',' usati sia per backward compatibility che sdi che as4 che in futuro ... -->
 		
+		<!-- PROTOCOL ModIPA -->
+		<if>
+                        <istrue value="${antinstaller_protocollo_modipa}"/>
+                        <then>
+                              	<antcall target="set_property">
+                                    <param name="file" value="${file}"/>
+                                        <param name="token" value="org.openspcoop2.pdd.handler.built-in.in-request"/>  <!-- Attenzione a non sovrascrivere i valori originali definiti nel file del prodotto -->
+                                        <param name="value" value="transazioni,signalHubHandler"/>
+                                </antcall>
+                        </then>
+                </if>
+
 		<!-- PROTOCOL AS4-->
 		<if>
 			<istrue value="${antinstaller_protocollo_as4}"/>
@@ -1211,6 +1223,28 @@
 # ----- Personalizzazione Setup GovWay -------------
 				</concat>
 				
+				<!-- PROTOCOL ModIPA -->
+				<if>
+                                        <istrue value="${antinstaller_protocollo_modipa}"/>
+                                        <then>
+                                                <antcall target="set_property">
+                                                    <param name="file" value="${file}"/>
+                                                        <param name="token" value="org.openspcoop2.pdd.handler.built-in.in-request.signalHubHandler"/>
+                                                        <param name="value" value="org.openspcoop2.protocol.modipa.handlers.SignalHubPushInProtocolRequestHandler"/>
+                                                </antcall>
+                                                <antcall target="set_property">
+                                                    <param name="file" value="${file}"/>
+                                                        <param name="token" value="org.openspcoop2.connettore.signalHubPseudonymization"/>
+                                                        <param name="value" value="org.openspcoop2.protocol.modipa.connettori.ConnettoreSignalHubPseudonymization"/>
+                                                </antcall>
+                                                <antcall target="set_property">
+                                                    <param name="file" value="${file}"/>
+                                                        <param name="token" value="org.openspcoop2.autorizzazione.pd.signalHubPush"/>
+                                                        <param name="value" value="org.openspcoop2.protocol.modipa.authorization.AutorizzazioneSignalHubPush"/>
+                                                </antcall>
+                                        </then>
+                                </if>
+
 				<!-- PROTOCOL AS4-->
 				<if>
 					<istrue value="${antinstaller_protocollo_as4}"/>

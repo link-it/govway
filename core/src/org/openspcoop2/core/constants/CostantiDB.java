@@ -341,6 +341,17 @@ public final class CostantiDB {
     
     public static final String REMOTE_STORE_KEY = "remote_store_key";
     
+    /** Costanti Digest Service params **/
+    public static final String SERVIZI_DIGEST_PARAMS = "servizi_digest_params";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_ID_SERVIZIO_REF = "id_servizio";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_SERIAL_NUMBER = "serial_number";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_ALGORITHM = "algorithm";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_PERIOD = "lifetime";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_DATE = "data_registrazione";
+    public static final String SERVIZI_DIGEST_PARAMS_COLUMN_SEED = "seed";
+    
+    
+
     private static boolean allarmiEnabled = false;
     public static boolean isAllarmiEnabled() {
 		return allarmiEnabled;
@@ -1106,6 +1117,23 @@ public final class CostantiDB {
     public static final String MODIPA_KEYSTORE_FRUIZIONE_APPLICATIVO = "applicativo";
     public static final String MODIPA_KEYSTORE_FRUIZIONE = "fruizione";
     public static final String MODIPA_KEYSTORE_FRUIZIONE_TOKEN_POLICY = "token";
+    
+    // Info
+    
+    public static final String MODIPA_API_IMPL_INFO_ID_ESERVICE_ID = "modipaInfoGenEserviceId";
+    
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID = "modipaInfoGenSignalHub";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID = "modipaInfoGenSignalHubOp";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID = "modipaInfoGenSignalHubAlg";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID = "modipaInfoGenSignalHubSeedSize";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID = "modipaInfoGenSignalHubSeedLifetime";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID = "modipaInfoGenSignalHubPulisherSA";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID = "modipaInfoGenSignalHubPulisherRole";
+
+    public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_ID = "modipaSignalHubPush";
+    public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_MODE_ID_PREFIX = "modipaSignalHubPushParamMode";
+    public static final String MODIPA_API_IMPL_PUSH_SIGNAL_HUB_PARAM_VALUE_ID_PREFIX = "modipaSignalHubPushParamValue";
+
     
 	// COSTANTI buste
 	

@@ -58,6 +58,9 @@ public class ConfigLoader {
             }
             
             System.setProperty("govway_base_path", prop.getProperty("govway_base_path"));
+            System.setProperty("config_api_username", prop.getProperty("config_api_username"));
+            System.setProperty("config_api_password", prop.getProperty("config_api_password"));
+            System.setProperty("govway_config_api_path", prop.getProperty("govway_config_api_path"));
             System.setProperty("connect_timeout", prop.getProperty("connect_timeout"));
             System.setProperty("read_timeout", prop.getProperty("read_timeout"));
             System.setProperty("db_username", prop.getProperty("db_username"));
@@ -67,6 +70,7 @@ public class ConfigLoader {
             System.setProperty("db_sleep_before_read", prop.getProperty("db_sleep_before_read"));
             System.setProperty("jmx_username", prop.getProperty("jmx_cache_username"));
             System.setProperty("jmx_password", prop.getProperty("jmx_cache_password")); 
+
 
             // Resetto le cache
             String jmx_user = prop.getProperty("jmx_cache_username");

@@ -1147,7 +1147,20 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			strutsBean.configRegistryReader = soggettiCore.getConfigIntegrationReader(strutsBean.protocolFactory);
 						
 			// ID Accordo, i dati del servizio sono null, è presente solamente l'id dell'API
-			IDServizio idAps = new IDServizio();
+			IDServizio idAps = null;
+			if ((strutsBean.provider != null) && !strutsBean.provider.equals("")) {
+				long idErogatore = Long.parseLong(strutsBean.provider);
+				IDSoggetto idSoggettoErogatore = null;
+				if(idErogatore>0) {
+					idSoggettoErogatore = soggettiCore.getIdSoggettoRegistro(idErogatore);
+				}
+				if(idSoggettoErogatore!=null) {
+					idAps = IDServizioFactory.getInstance().getIDServizioFromValuesWithoutCheck(null, null, idSoggettoErogatore.getTipo(), idSoggettoErogatore.getNome(), -1);
+				}
+			}
+			if(idAps==null) {
+				idAps = new IDServizio();
+			}
 			if(as!=null) {
 				idAps.setUriAccordoServizioParteComune(idAccordoFactory.getUriFromAccordo(as));
 			}

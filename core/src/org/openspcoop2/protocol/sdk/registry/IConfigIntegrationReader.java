@@ -85,6 +85,10 @@ public interface IConfigIntegrationReader extends IConfigIntegrationReaderInUso 
 	
 	public List<IDServizioApplicativo> findIdServiziApplicativi(ProtocolFiltroRicercaServiziApplicativi filtroRicerca) throws RegistryNotFound,RegistryException;
 	
+	public List<IDServizioApplicativo> findIdServiziApplicativiByPaAuth(PortaApplicativa pa, boolean authToken, boolean authTrasporto) throws RegistryNotFound,RegistryException;
+	
+	public List<IDServizioApplicativo> findIdServiziApplicativiByPdAuth(PortaDelegata pd, boolean authToken, boolean authTrasporto) throws RegistryNotFound,RegistryException;
+	
 
 	// PORTA DELEGATA
 	

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -425,8 +426,21 @@ public class ModIProperties {
 			this.useErroreApplicativoStaticInstance();
 			this.useEsitoStaticInstance();
 			this.getStaticInstanceConfig();
-
 			
+			/* **** Signal Hub **** */
+			if(isSignalHubEnabled()) {
+				this.getSignalHubAlgorithms();
+				this.getSignalHubDefaultAlgorithm();
+				this.getSignalHubSeedSize();
+				this.getSignalHubDefaultSeedSize();
+				this.isSignalHubSeedLifetimeUnlimited();
+				this.getSignalHubDeSeedSeedLifetimeDaysDefault();
+				this.getSignalHubApiName();
+				this.getSignalHubApiVersion();
+				this.getSignalHubConfig();
+				this.getSignalHubSeedSize();
+				this.getSignalHubDigestHistroy();
+			}
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo modipa, "+e.getMessage();
 			this.logError(msg,e);
@@ -4900,4 +4914,308 @@ public class ModIProperties {
 		}
 		return this.staticInstanceConfig;
 	}
+	
+	
+    /* **** Signal Hub **** */
+	
+	private Boolean signalHubEnabled = null;
+	public boolean isSignalHubEnabled(){
+		if(this.signalHubEnabled==null){
+			
+			Boolean defaultValue =false;
+			String propertyName = "org.openspcoop2.protocol.modipa.signalHub.enabled";
+			
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.signalHubEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.signalHubEnabled = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.signalHubEnabled = defaultValue;
+			}
+		}
+
+		return this.signalHubEnabled;
+	}
+	
+	private List<String> signalHubAlgorithms= null;
+	public List<String> getSignalHubAlgorithms() throws ProtocolException{
+    	if(this.signalHubAlgorithms==null){
+	    	
+    		String propertyName = "org.openspcoop2.protocol.modipa.signalHub.algorithms";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+    			this.signalHubAlgorithms = ModISecurityConfig.convertToList(value);
+    			if(this.signalHubAlgorithms==null || this.signalHubAlgorithms.isEmpty()) {
+    				throw new ProtocolException("SignalHub algorithms undefined");
+    			}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubAlgorithms;
+	}
+	
+	private String signalHubDefaultAlgorithm= null;
+	public String getSignalHubDefaultAlgorithm() throws ProtocolException{
+    	if(this.signalHubDefaultAlgorithm==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.algorithms.default";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					this.signalHubDefaultAlgorithm = value;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubDefaultAlgorithm;
+	}
+	
+	private List<Integer> signalHubSeedSize= null;
+	public List<Integer> getSignalHubSeedSize() throws ProtocolException{
+    	if(this.signalHubSeedSize==null){
+	    	
+    		String propertyName = "org.openspcoop2.protocol.modipa.signalHub.seed.size";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+    			this.signalHubSeedSize = ModISecurityConfig.convertToList(value)
+    					.stream()
+    					.map(Integer::parseInt)
+    					.collect(Collectors.toList());
+    			if(this.signalHubSeedSize==null || this.signalHubSeedSize.isEmpty()) {
+    				throw new ProtocolException("SignalHub algorithms undefined");
+    			}
+    			for (Integer s : this.signalHubSeedSize) {
+    				validateSignalHubInteger("Signal Hub - Seed size",s);
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubSeedSize;
+	}
+	
+	private static void validateSignalHubInteger(String objectTitle, Integer i) throws ProtocolException {
+		try {
+			if(i<=0) {
+				throw new ProtocolException("must be a positive integer greater than 0");
+			}
+		}catch(Exception e) {
+			throw new ProtocolException(objectTitle+" '"+i+"' invalid; must be a positive integer greater than 0");
+		}
+	}
+	
+	private Integer signalHubDefaultSeedSize= null;
+	public Integer getSignalHubDefaultSeedSize() throws ProtocolException{
+    	if(this.signalHubDefaultSeedSize==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.seed.size.default";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					Integer valueInt = Integer.parseInt(value.trim());
+					validateSignalHubInteger("Signal Hub - Default seed size", valueInt);
+					this.signalHubDefaultSeedSize = valueInt;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubDefaultSeedSize;
+	}
+	
+	private Boolean signalHubSeedLifetimeUnlimited = null;
+	public boolean isSignalHubSeedLifetimeUnlimited(){
+		if(this.signalHubSeedLifetimeUnlimited==null){
+			
+			Boolean defaultValue =false;
+			String propertyName = "org.openspcoop2.protocol.modipa.signalHub.seed.lifetime.unlimited";
+			
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.signalHubSeedLifetimeUnlimited = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.signalHubSeedLifetimeUnlimited = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.signalHubSeedLifetimeUnlimited = defaultValue;
+			}
+		}
+
+		return this.signalHubSeedLifetimeUnlimited;
+	}
+	
+	private Integer signalHubDefaultSeedLifetimeDaysDefault= null;
+	public Integer getSignalHubDeSeedSeedLifetimeDaysDefault() throws ProtocolException{
+    	if(this.signalHubDefaultSeedLifetimeDaysDefault==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.seed.lifetime.days.default";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					Integer valueInt = Integer.parseInt(value.trim());
+					validateSignalHubInteger("Signal Hub - Default lifetime days", valueInt);
+					this.signalHubDefaultSeedLifetimeDaysDefault = valueInt;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubDefaultSeedLifetimeDaysDefault;
+	}
+	
+	private String signalHubApiName= null;
+	public String getSignalHubApiName() throws ProtocolException{
+    	if(this.signalHubApiName==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.api.name";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					this.signalHubApiName = value;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubApiName;
+	}
+	
+	private Integer signalHubApiVersion= null;
+	public int getSignalHubApiVersion() throws ProtocolException{
+    	if(this.signalHubApiVersion==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.api.version";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					Integer valueInt = Integer.parseInt(value.trim());
+					validateSignalHubInteger("Signal Hub - API Version", valueInt);
+					this.signalHubApiVersion = valueInt;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubApiVersion;
+	}
+	
+	
+	
+	private ModISignalHubConfig signalHubConfig = null;
+	public ModISignalHubConfig getSignalHubConfig() throws ProtocolException{
+    	if(this.signalHubConfig==null){
+    		String propertyPrefix = "org.openspcoop2.protocol.modipa.signalHub";
+        	try{
+        		String debugPrefix = "Param signal hub '"+propertyPrefix+"'";
+				Properties p = this.reader.readProperties(propertyPrefix+"."); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
+				if(p==null || p.isEmpty()) {
+					throw new ProtocolException(debugPrefix+" non trovata");
+				}
+        		this.signalHubConfig = new ModISignalHubConfig(propertyPrefix, p);
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonCorretta(propertyPrefix, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubConfig;
+	}
+	
+	private String signalHubHashCompose = null;
+	public String getSignalHubHashCompose() throws ProtocolException{
+    	if(this.signalHubHashCompose==null){
+    		String name = "org.openspcoop2.protocol.modipa.signalHub.hash.composition";
+        	try{
+				String value = this.reader.getValue(name); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
+				if(value == null || value.isBlank()) {
+					throw new ProtocolException(name + " non trovata");
+				}
+        		this.signalHubHashCompose = value;
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonCorretta(name, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubHashCompose;
+	}
+	
+	private Integer signalHubDigestHistroy = null;
+	public int getSignalHubDigestHistroy() throws ProtocolException{
+    	if(this.signalHubDigestHistroy==null){
+    		String name = "org.openspcoop2.protocol.modipa.signalHub.seed.history";
+        	try{
+				String rawValue = this.reader.getValue(name); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
+				if(rawValue == null || rawValue.isBlank()) {
+					
+					throw new ProtocolException(name + " non trovata");
+				}
+				Integer value = Integer.valueOf(rawValue);
+				this.signalHubDigestHistroy = value;
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonCorretta(name, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.signalHubDigestHistroy;
+	}
+	
 }

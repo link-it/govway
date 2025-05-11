@@ -1,0 +1,7 @@
+{
+  "type" : "https://govway.org/handling-errors/503/APIUnavailable.html",
+  "title" : "APIUnavailable",
+  "status" : 503,
+  "detail" : "The API Implementation is temporary unavailable",
+  "govway_id" : "#string"
+}

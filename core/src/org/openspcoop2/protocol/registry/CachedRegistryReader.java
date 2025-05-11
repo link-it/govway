@@ -26,9 +26,12 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
+import org.openspcoop2.core.id.IDRuolo;
+import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
@@ -50,9 +53,12 @@ import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordi;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaAccordoAzioni;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaFruizioniServizio;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaGruppi;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortType;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortTypeAzioni;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRisorse;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRuoli;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaScope;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaSoggetti;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
@@ -940,7 +946,7 @@ public class CachedRegistryReader implements IRegistryReader {
 				filtroDriver.setIdGruppo(filtro.getIdGruppo());
 			}
 			List<FiltroRicercaProtocolPropertyRegistry> listPP = ProtocolUtils.convert(filtro.getProtocolProperties());
-			if(listPP!=null && listPP.size()>0){
+			if(listPP!=null && !listPP.isEmpty()){
 				filtroDriver.setProtocolPropertiesAccordo(listPP);
 			}	
 			if(filtro.getEscludiServiziComposti()!=null){
@@ -958,5 +964,116 @@ public class CachedRegistryReader implements IRegistryReader {
 		}
 	}
 
+	
+	
+
+	
+	// GRUPPI
+	@Override
+	public List<IDGruppo> findIdGruppi(ProtocolFiltroRicercaGruppi filtro) throws RegistryNotFound,RegistryException{
+		try{
+			org.openspcoop2.core.registry.driver.FiltroRicercaGruppi filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaGruppi();
+			if(filtro.getMinDate()!=null) {
+				filtroDriver.setMinDate(filtro.getMinDate());
+			}
+			if(filtro.getMaxDate()!=null) {
+				filtroDriver.setMaxDate(filtro.getMaxDate());
+			}
+			filtroDriver.setOrdinaDataRegistrazione(filtro.isOrdinaDataRegistrazione());
+			if(filtro.getNome()!=null){
+				filtroDriver.setNome(filtro.getNome());
+			}
+			if(filtro.getTipo()!=null){
+				filtroDriver.setTipo(filtro.getTipo());
+			}
+			if(filtro.getServiceBinding()!=null) {
+				filtroDriver.setServiceBinding(filtro.getServiceBinding());
+			}
+			if(filtro.getProtocollo()!=null) {
+				filtroDriver.setProtocollo(filtro.getProtocollo());
+			}
+			if(filtro.getProtocolli()!=null){
+				filtroDriver.setProtocolli(filtro.getProtocolli());
+			}
+
+			return this.registroServiziManager.getAllIdGruppi(filtroDriver, null);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	
+	// RUOLI
+	@Override
+	public List<IDRuolo> findIdRuoli(ProtocolFiltroRicercaRuoli filtro) throws RegistryNotFound,RegistryException{
+		try{
+			org.openspcoop2.core.registry.driver.FiltroRicercaRuoli filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaRuoli();
+			if(filtro.getMinDate()!=null) {
+				filtroDriver.setMinDate(filtro.getMinDate());
+			}
+			if(filtro.getMaxDate()!=null) {
+				filtroDriver.setMaxDate(filtro.getMaxDate());
+			}
+			if(filtro.getNome()!=null){
+				filtroDriver.setNome(filtro.getNome());
+			}
+			if(filtro.getTipo()!=null){
+				filtroDriver.setTipo(filtro.getTipo());
+			}
+			if(filtro.getTipologia()!=null) {
+				filtroDriver.setTipologia(filtro.getTipologia());
+			}
+			if(filtro.getContesto()!=null) {
+				filtroDriver.setContesto(filtro.getContesto());
+			}
+
+			return this.registroServiziManager.getAllIdRuoli(filtroDriver, null);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
+	
+	
+	
+	
+	
+	// SCOPE
+	@Override
+	public List<IDScope> findIdScope(ProtocolFiltroRicercaScope filtro) throws RegistryNotFound,RegistryException{
+		try{
+			org.openspcoop2.core.registry.driver.FiltroRicercaScope filtroDriver = new org.openspcoop2.core.registry.driver.FiltroRicercaScope();
+			if(filtro.getMinDate()!=null) {
+				filtroDriver.setMinDate(filtro.getMinDate());
+			}
+			if(filtro.getMaxDate()!=null) {
+				filtroDriver.setMaxDate(filtro.getMaxDate());
+			}
+			if(filtro.getNome()!=null){
+				filtroDriver.setNome(filtro.getNome());
+			}
+			if(filtro.getTipo()!=null){
+				filtroDriver.setTipo(filtro.getTipo());
+			}
+			if(filtro.getTipologia()!=null) {
+				filtroDriver.setTipologia(filtro.getTipologia());
+			}
+			if(filtro.getContesto()!=null) {
+				filtroDriver.setContesto(filtro.getContesto());
+			}
+
+			return this.registroServiziManager.getAllIdScope(filtroDriver, null);
+		} catch (DriverRegistroServiziNotFound de) {
+			throw new RegistryNotFound(de.getMessage(),de);
+		}catch(Exception e){
+			throw new RegistryException(e.getMessage(),e);
+		}
+	}
 }
 

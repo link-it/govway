@@ -175,6 +175,8 @@ public class CostantiConfigurazione {
     public static final String AUTORIZZAZIONE_EXTERNAL_XACML_POLICY = "externalXacmlPolicy";
 
     public static final String AUTORIZZAZIONE_TOKEN = "token";
+
+    public static final String SIGNAL_HUB_PUSH = "signalHubPush";
     
     /** tipo di configurazione: xml */
     public static final String CONFIGURAZIONE_XML = "xml";

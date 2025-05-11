@@ -16,9 +16,12 @@ function fn() {
 
   karate.configure('connectTimeout',  connect_timeout);
   karate.configure('readTimeout', read_timeout);
-  
+
   return { 
     govway_base_path: karate.properties["govway_base_path"],
+    govway_config_api_path: karate.properties["govway_config_api_path"],
+    config_api_username: karate.properties["config_api_username"],
+    config_api_password: karate.properties["config_api_password"],    
     jmx_username: karate.properties["jmx_username"],
     jmx_password: karate.properties["jmx_password"],
     govwayDbConfig: { 

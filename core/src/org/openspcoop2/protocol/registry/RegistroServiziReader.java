@@ -45,6 +45,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoAzione;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDFruizione;
+import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
 import org.openspcoop2.core.id.IDResource;
@@ -86,6 +87,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicerca;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAzioni;
 import org.openspcoop2.core.registry.driver.FiltroRicercaFruizioniServizio;
+import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaOperations;
 import org.openspcoop2.core.registry.driver.FiltroRicercaPortTypes;
 import org.openspcoop2.core.registry.driver.FiltroRicercaResources;
@@ -719,6 +721,47 @@ public class RegistroServiziReader {
 												keyForClean.add(key);
 												break;
 											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if(keyForClean!=null && !keyForClean.isEmpty()) {
+				for (String key : keyForClean) {
+					removeObjectCache(key);
+				}
+			}
+		}
+	}
+	
+	public static void removeGruppo(IDGruppo idGruppo) throws Exception {
+		if(RegistroServiziReader.isCacheAbilitata()) {
+			
+			String keyGruppo = RegistroServizi._getKey_getGruppo(idGruppo.getNome());
+			RegistroServiziReader.removeObjectCache(keyGruppo);
+			
+			List<String> keyForClean = new ArrayList<>();
+			List<String> keys = RegistroServiziReader.keysCache();
+			if(keys!=null && !keys.isEmpty()) {
+				
+				String prefixGetAllId = RegistroServizi._toKey_getAllIdGruppi_method();
+				
+				for (String key : keys) {
+					if(key!=null &&
+						key.startsWith(prefixGetAllId)) {
+						Object oCode = RegistroServiziReader.getRawObjectCache(key);
+						if(oCode instanceof List<?>) {
+							List<?> l = (List<?>) oCode;
+							if(l!=null && !l.isEmpty()) {
+								for (Object object : l) {
+									if(object instanceof IDGruppo) {
+										IDGruppo idCheck = (IDGruppo) object;
+										if(idCheck.equals(idGruppo)) {
+											keyForClean.add(key);
+											break;
 										}
 									}
 								}
@@ -3945,6 +3988,10 @@ public class RegistroServiziReader {
 	
 	public List<String> getAllIdPorteDominio(Connection connectionPdD,FiltroRicerca filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
 		return this.registroServizi.getAllIdPorteDominio(connectionPdD, nomeRegistro, filtroRicerca);
+	}
+
+	public List<IDGruppo> getAllIdGruppi(Connection connectionPdD,FiltroRicercaGruppi filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
+		return this.registroServizi.getAllIdGruppi(connectionPdD, nomeRegistro, filtroRicerca);
 	}
 	
 	public List<IDRuolo> getAllIdRuoli(Connection connectionPdD,FiltroRicercaRuoli filtroRicerca,String nomeRegistro) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{
