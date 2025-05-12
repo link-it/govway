@@ -1,0 +1,10 @@
+{
+    "connettore": {
+        "endpoint": "http://127.0.0.1:8080/TestService/echo?destFile=/etc/govway/keys/petstore_response.json&destFileContentType=application/json"
+    },
+    "api_nome": "PetStore",
+    "api_versione": 2,
+    "autenticazione": {
+        "tipo": "disabilitato"
+    }
+}

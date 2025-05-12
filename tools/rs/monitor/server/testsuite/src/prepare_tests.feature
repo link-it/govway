@@ -11,7 +11,7 @@ Scenario: Preparazione Test
 
     * call create ({ resourcePath: 'api', body: api_petstore })
 
-    * def erogazione_petstore = read('classpath:bodies/erogazione-petstore.json')
+    * def erogazione_petstore = read('classpath:bodies/erogazione-petstore-echo.json')
     * eval erogazione_petstore.api_nome = api_petstore.nome
     * eval erogazione_petstore.api_versione = api_petstore.versione
     * def erogazione_petstore_path = 'erogazioni/' + erogazione_petstore.api_nome + '/' + erogazione_petstore.api_versione
@@ -19,7 +19,7 @@ Scenario: Preparazione Test
 
     * def erogatore = read('classpath:bodies/soggetto-erogatore.json')
     * eval randomize (erogatore, ["nome", "credenziali.username"])
-    * def fruizione_petstore = read('classpath:bodies/fruizione-petstore.json')
+    * def fruizione_petstore = read('classpath:bodies/fruizione-petstore-echo.json')
     * set fruizione_petstore.api_nome = api_petstore.nome
     * set fruizione_petstore.api_versione = api_petstore.versione
     * set fruizione_petstore.erogatore = erogatore.nome
