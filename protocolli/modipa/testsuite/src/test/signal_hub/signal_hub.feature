@@ -32,7 +32,7 @@ Background:
 	* def auth_push_signal_role = { username: 'DemoSignalHub1', password: '123456' }
 	* def auth_push_signal_role2 = { username: 'DemoSignalHubRole2', password: '123456' }
 #
-# TEST SULL'OTTENIMENTO DELLE INFORMAZIONI DIAGNOSTICHE	
+# TEST SULL'OTTENIMENTO DELLE INFORMAZIONI DI PSEUDOANONIMIZZAZIONE	
 #
 #
 
@@ -87,7 +87,7 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 	 
 	When method get
 	Then status 200
-	* def seed = get_seed()
+	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
 	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA256'}
 	
 	* def deleted = remove_seeds();
@@ -115,7 +115,7 @@ Scenario: Controlla il corretto funzionamento della cache (rimuove un seed ma ri
 	When method get
 	Then status 200
 	# facendo get_seed verifico che vi sia un nuovo seme
-	* def seed = get_seed()
+	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
 	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA256'}
 	
 @test-pseudonymization
@@ -134,7 +134,7 @@ Scenario: Informazioni crittografiche create alla prima richiesta di seme
 	When method get
 	Then status 200
 	
-	* def seed = get_seed()
+	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
 	And match response == {seed: '#(seed)', cryptoHashFunction: 'SHA256'}
 	
 
@@ -157,7 +157,7 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	Then status 200
 	And match response == { signalId: '#number' }
 	
-	* def seed = get_seed()
+	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTest')
 	* def signalId = parseInt(response.signalId - 1)
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
@@ -278,6 +278,75 @@ Scenario: push del segnale (usando nome/versione servizio) con i parametri della
 	When method post
 	Then status 200
 	And match response == { signalId: '#number' }
+	
+	
+	
+@test-push
+@test-push-serviceId-default-header-get
+Scenario: push del segnale (usando serviceId) con gli header di default per il passaggio dei parametri
+
+	Given url push_signal_url_default
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-Signal-ObjectType = 'objectType'
+	And header GovWay-Signal-ObjectId = 'objectIdserviceIdDefHeader'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdserviceIdDefHeader'
+	And header GovWay-Signal-Type = 'UPDATE'
+	And header GovWay-Signal-ServiceId = 'eServiceTestID'
+	When method get
+	Then status 200
+	And match response == { signalId: '#number' }
+
+@test-push
+@test-push-name-default-header-get
+Scenario: push del segnale (usando nome/versione servizio) con gli header di default per il passaggio dei parametri
+
+	Given url push_signal_url_default
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-Signal-ObjectType = 'objectType'
+	And header GovWay-Signal-ObjectId = 'objectIdNameDefHeader'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdNameDefHeader'
+	And header GovWay-Signal-Type = 'UPDATE'
+	And header GovWay-Signal-Service = 'SignalHubTest'
+	And header GovWay-Signal-Service-Version = 1
+	When method get
+	Then status 200
+	And match response == { signalId: '#number' }
+	
+@test-push
+@test-push-serviceId-default-param-get
+Scenario: push del segnale (usando serviceId) con i parametri della query di default per il passaggio dei parametri
+
+	Given url push_signal_url_default
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And param govway_signal_object_type = 'objectType'
+	And param govway_signal_object_id = 'objectIdServiceIdDefParam'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdServiceIdDefParam'
+	And param govway_signal_type = 'UPDATE'
+	And param govway_signal_service_id = 'eServiceTestID'
+	When method get
+	Then status 200
+	And match response == { signalId: '#number' }
+
+@test-push
+@test-push-name-default-param-get
+Scenario: push del segnale (usando nome/versione servizio) con i parametri della query di default per il passaggio dei parametri
+
+	Given url push_signal_url_default
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And param govway_signal_object_type = 'objectType'
+	And param govway_signal_object_id = 'objectIdNameDefParam'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdNameDefParam'
+	And param govway_signal_type = 'UPDATE'
+	And param govway_signal_service = 'SignalHubTest'
+	And param govway_signal_service_version = 1
+	When method get
+	Then status 200
+	And match response == { signalId: '#number' }	
+	
 	
 @test-push
 @test-push-serviceId-applicativoConRuolo
@@ -522,6 +591,45 @@ Scenario: push del segnale signalType non riconosciuto (non appartenente a : [UP
 	* match msgs[0].MESSAGGIO contains "errato 'KILL'"
 	* match msgs[0].MESSAGGIO contains "valori supportati: UPDATE, CREATE, DELETE"
 	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
+
+@test-push
+@test-push-missing-signalHubConfig
+Scenario: push del segnale verso una configurazione su cui non è attivo signalHub
+
+	Given url push_signal_url
+	And header Authorization = call basic (auth_push_signal)
+	And param govway_testsuite_objectId = 'objectId'
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceIDSenzaConfSignalHub'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 400
+	And match response == bad_request
+	
+	* def id_transazione = responseHeaders['GovWay-Transaction-ID'][0]
+	* def msgs = get_diagnostico(id_transazione, 'erogazione del servizio indicato non risulta attiva la funzionalità Signal Hub')
+	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
+	
+@test-push
+@test-push-missing-signalHubConfig-serviceNameVersion
+Scenario: push del segnale verso una configurazione su cui non è attivo signalHub (indirizzamento servizio tramite nome e versione)
+
+	Given url push_signal_url
+	And header Authorization = call basic (auth_push_signal)
+	And param govway_testsuite_objectId = 'objectId'
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Testsuite-Service = 'SignalHubTestSenzaConfigurazione'
+	And header GovWay-Testsuite-Service-Version = 1
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 400
+	And match response == bad_request
+	
+	* def id_transazione = responseHeaders['GovWay-Transaction-ID'][0]
+	* def msgs = get_diagnostico(id_transazione, 'erogazione del servizio indicato non risulta attiva la funzionalità Signal Hub')
+	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')	
 
 @test-push
 @test-push-unauthorized

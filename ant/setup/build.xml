@@ -844,11 +844,18 @@
 						<istrue value="${antinstaller_protocollo_modipa}"/>
 					</and>
 					<then>
+						<!-- API-PDND-->
 						<unzip src="${tmp_archivi}/govway.ear/properties/apiPDND.zip" dest="${tmp_archivi}/apiPDNDZIP"/>
 						<replace dir="${tmp_archivi}/apiPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
 						<delete file="${tmp_archivi}/govway.ear/properties/apiPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.ear/properties/apiPDND.zip" basedir="${tmp_archivi}/apiPDNDZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDZIP"/>
+						<!-- Signal Hub -->
+						<unzip src="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" dest="${tmp_archivi}/signalHubPDNDZIP"/>
+						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<delete file="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" />
+						<zip destfile="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" basedir="${tmp_archivi}/signalHubPDNDZIP"/>
+						<delete dir="${tmp_archivi}/signalHubPDNDZIP"/>
 					</then>
 				</if>
 	
@@ -958,11 +965,18 @@
 						<istrue value="${antinstaller_protocollo_modipa}"/>
 					</and>
 					<then>
+						<!-- API-PDND-->
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" dest="${tmp_archivi}/apiPDNDZIP"/>
 						<replace dir="${tmp_archivi}/apiPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" basedir="${tmp_archivi}/apiPDNDZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDZIP"/>
+						<!-- Signal Hub -->
+						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" dest="${tmp_archivi}/signalHubPDNDZIP"/>
+						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" />
+						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" basedir="${tmp_archivi}/signalHubPDNDZIP"/>
+						<delete dir="${tmp_archivi}/signalHubPDNDZIP"/>
 					</then>
 				</if>
 

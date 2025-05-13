@@ -64,6 +64,7 @@ import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
+import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
 import org.slf4j.Logger;
@@ -319,6 +320,18 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 		}catch(Exception e) {
 			// succede nel caso di name e version
 			throw newHandlerException("L'erogazione del servizio indicato non contiene la configurazione relativa al serviceId", IntegrationFunctionError.BAD_REQUEST);
+		}
+		
+		try {
+			BooleanNullable signalHub = ProtocolPropertiesUtils.getOptionalBooleanValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID);
+			if(signalHub==null || signalHub.getValue()==null || !signalHub.getValue().booleanValue()) {
+				throw new CoreException("Non Attiva");
+			}
+		}catch(Exception e) {
+			// succede nel caso non sia stata attuata la configurazione
+			String msg = "Nell'erogazione del servizio indicato non risulta attiva la funzionalità Signal Hub";
+			logger.error(msg+": "+e.getMessage(), e);
+			throw newHandlerException(msg, IntegrationFunctionError.BAD_REQUEST);
 		}
 		
 		context.getPddContext().addObject(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_ID, objectId);

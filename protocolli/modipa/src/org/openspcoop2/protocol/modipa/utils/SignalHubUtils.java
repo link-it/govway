@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.protocol.modipa.utils;
 
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
@@ -33,6 +32,7 @@ import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.digest.DigestType;
+import org.openspcoop2.utils.random.RandomUtilities;
 
 /**
  * SignalHubUtils classe con metodi di utilita signal hub
@@ -64,7 +64,7 @@ public class SignalHubUtils {
 		param.setDataRegistrazione(Instant.now());
 		param.setDurata(durata.intValue());
 		param.setDigestAlgorithm(DigestType.fromAlgorithmName(algorithm));
-		param.setSeed(Base64.getEncoder().encode(new SecureRandom().generateSeed(seedSize.intValue())));
+		param.setSeed(Base64.getEncoder().encode(RandomUtilities.getSecureRandom().generateSeed(seedSize.intValue())));
 		param.setSerialNumber(serial);
 		
 		return param;

@@ -83,6 +83,9 @@ public class MockHttpServletRequest implements HttpServletRequest {
 			return this.asyncContext;
 		return this.req.getAsyncContext();
 	}
+	public void setAsyncContext(AsyncContext asyncContext) {
+		this.asyncContext = asyncContext;
+	}
 
 	@Override
 	public Object getAttribute(String arg0) {
@@ -90,12 +93,14 @@ public class MockHttpServletRequest implements HttpServletRequest {
 			return this.attributes.get(arg0);
 		return this.req.getAttribute(arg0);
 	}
-
 	@Override
 	public Enumeration<String> getAttributeNames() {
 		if (this.attributes != null)
 			return Collections.enumeration(this.attributes.keySet());
 		return this.req.getAttributeNames();
+	}
+	public void setAttributes(Map<String, Object> attributes) {
+		this.attributes = attributes;
 	}
 
 	@Override
@@ -103,6 +108,9 @@ public class MockHttpServletRequest implements HttpServletRequest {
 		if (this.characterEncoding != null)
 			return this.characterEncoding;
 		return this.req.getCharacterEncoding();
+	}
+	public void setWrappedCharacterEncoding(String enc) {
+		this.characterEncoding = enc;
 	}
 
 	@Override
@@ -125,6 +133,9 @@ public class MockHttpServletRequest implements HttpServletRequest {
 		if (this.dispatcherType != null)
 			return this.dispatcherType;
 		return this.req.getDispatcherType();
+	}
+	public void setDispatcherType(DispatcherType dispatcherType) {
+		this.dispatcherType = dispatcherType;
 	}
 
 	@Override
@@ -323,7 +334,10 @@ public class MockHttpServletRequest implements HttpServletRequest {
 	public String getHeader(String arg0) {
 		arg0 = preProcessHeaderName(arg0);
 		if (this.headers != null && this.headers.containsKey(arg0)) {
-			return String.join(",", this.headers.get(arg0));
+			List<String> v = this.headers.get(arg0);
+			if(v!=null && !v.isEmpty()) {
+				return String.join(",", this.headers.get(arg0));
+			}
 		}
 		return this.req.getHeader(arg0);
 	}

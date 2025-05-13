@@ -119,10 +119,13 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			}
 		}
 		
+		boolean addSignalHub = false;
 		if(fruizioni && idAccordo!=null && ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(idAccordo, registryReader, modiProperties, log)) {
 			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.addSignaHubFruizioneConfig(modiProperties,
 					configuration, rest);
-			return configuration;
+			// è un accordo built-in che si assume esista, ma deve comunque essere configurabile anche nelle parti restanti
+			/**return configuration;*/
+			addSignalHub = true;
 		}
 		
 		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
@@ -231,7 +234,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 			
 		}
 		
-		if(pdnd) {
+		if(pdnd || addSignalHub) {
 			return configuration;
 		}
 		else {
@@ -295,7 +298,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaUtilities {
 		if(fruizioni && idAccordo!=null && ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(idAccordo, registryReader, modiProperties, log)) {
 			ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtilities.updateSignaHubFruizioneConfig(modiProperties,
 					consoleConfiguration, properties);
-			return true;
+			// è un accordo built-in che si assume esista, ma deve comunque essere configurabile anche nelle parti restanti
+			/**return true;*/
 		}
 		
 		boolean pdnd = ModISecurityUtils.isSicurezzaMessaggioGenerazioneTokenIdAuthPDND(api, portType);
