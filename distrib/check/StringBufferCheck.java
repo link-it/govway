@@ -103,7 +103,8 @@ public class StringBufferCheck {
 					jumpCheck = true;
 				else if( f.getAbsolutePath().indexOf("tools/web_interfaces/monitor/src/src_core/org/openspcoop2/web/monitor/core/utils/MessageManager.java")!= -1 )
 					jumpCheck = true;
-				
+				else if( f.getAbsolutePath().indexOf("protocolli/modipa/src/org/openspcoop2/protocol/modipa/utils/MockHttpServletRequest.java")!= -1 )
+					jumpCheck = true;
 
 				String TODO = "METTERE QUA EVENTUALE NUOVO PATH";
 				//if(!printTODO){		
