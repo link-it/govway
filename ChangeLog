@@ -1,3 +1,9 @@
+2025-05-13  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1606
+	Aggiunto supporto per wildfly 36.	
+
 2025-05-12  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [ProtocolloModIPA]

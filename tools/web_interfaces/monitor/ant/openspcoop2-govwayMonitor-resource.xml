@@ -215,7 +215,10 @@
 		
 		<!-- Copia del descrittore di deploy per wildfly -->
 		<if>
-			<equals arg1="${as}" arg2="wildfly35" />
+			<or>
+				<equals arg1="${as}" arg2="wildfly35" />
+				<equals arg1="${as}" arg2="wildfly36" />
+			</or>
 			<then>
 				<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
 					<filelist dir="${src_webinf_govwayMonitor}" files="jboss-deployment-structure.xml.wildfly35"/>

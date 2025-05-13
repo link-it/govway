@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openspcoop2</groupId>
 	<version>${revision}</version>
-	<artifactId>org.openspcoop2.testsuite.applicationServer.tomcat10</artifactId>
+	<artifactId>org.openspcoop2.testsuite.applicationServer.tomcat11</artifactId>
 	<packaging>pom</packaging>
-	<name>dependencies.testsuite.as.tomcat10</name>
+	<name>dependencies.testsuite.as.tomcat11</name>
 
 	<parent>
 		<groupId>org.openspcoop2</groupId>
@@ -15,9 +15,9 @@
 
 	<properties>
 
-		<jar.group.name>tomcat10</jar.group.name>
+		<jar.group.name>tomcat11</jar.group.name>
 		
-		<tomcat.version>10.1.40</tomcat.version>
+		<tomcat.version>11.0.6</tomcat.version>
 
 	</properties>
 

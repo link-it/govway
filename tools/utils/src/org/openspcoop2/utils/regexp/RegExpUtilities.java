@@ -41,9 +41,10 @@ public class RegExpUtilities {
 	private static final String domainIdentifier = "((\\p{Alnum})([-]|(\\p{Alnum}))*(\\p{Alnum}))|(\\p{Alnum})";
 	private static final String domainNameRule = "(" + RegExpUtilities.domainIdentifier + ")((\\.)(" + RegExpUtilities.domainIdentifier + "))*";
 	
-	public static boolean isDefinedByVariable(String value) throws java.net.MalformedURLException{
-		boolean definedByVariable = value!=null && value.contains("${") && value.contains("}");
-		return definedByVariable;
+	public static boolean isDefinedByVariable(String value) {
+		return value!=null && 
+				value.contains("{") &&  /**value.contains("${") && */
+				value.contains("}");
 	}
 	
 	public static boolean isUrlDefinedByVariable(String url) throws java.net.MalformedURLException{

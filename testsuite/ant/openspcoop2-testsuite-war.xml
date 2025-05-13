@@ -61,7 +61,10 @@
 
 		<!-- jboss-deployment-structure -->
 		<if>
-			<equals arg1="${as}" arg2="wildfly35" />
+			<or>
+				<equals arg1="${as}" arg2="wildfly35" />
+				<equals arg1="${as}" arg2="wildfly36" />
+			</or>
 			<then>
 				<copy file="${src_testsuite}/WEB-INF/jboss-deployment-structure.xml.wildfly35" tofile="${build_testsuite}/tmp/jboss-deployment-structure.xml" />
 			</then>
