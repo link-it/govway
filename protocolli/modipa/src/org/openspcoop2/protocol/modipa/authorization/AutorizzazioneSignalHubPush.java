@@ -68,14 +68,21 @@ public class AutorizzazioneSignalHubPush extends AbstractAutorizzazioneBase {
     		
     		return this.processEngine(datiInvocazione);
     	} catch (ProtocolException e) {
-    		EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
-    		esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR, ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-    				get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
-    		esito.setAutorizzato(false);
-    		esito.setDetails(GENERIC_ERROR);
-    		esito.setEccezioneProcessamento(e);
-    		return esito;
+    		return buildConfigurazioneNonDisponibile(null, e);
     	}
+    }
+    
+    private EsitoAutorizzazionePortaDelegata buildConfigurazioneNonDisponibile(String descrizioneErrore, Exception e) {
+    	EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
+		esito.setErroreIntegrazione(IntegrationFunctionError.INTERNAL_REQUEST_ERROR,
+				descrizioneErrore!=null ? 
+						 ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(descrizioneErrore, CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE)
+						:
+							 ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_536_CONFIGURAZIONE_NON_DISPONIBILE));
+		esito.setAutorizzato(false);
+		esito.setDetails(GENERIC_ERROR);
+		esito.setEccezioneProcessamento(e);
+		return esito;
     }
     
     public EsitoAutorizzazionePortaDelegata processEngine(DatiInvocazionePortaDelegata datiInvocazione) throws ProtocolException {
@@ -86,8 +93,25 @@ public class AutorizzazioneSignalHubPush extends AbstractAutorizzazioneBase {
 		// ottengo le proprieta del protocollo per avere gli applicativi/ruoli autorizzati
 		List<ProtocolProperty> eServiceProperties = SignalHubUtils.obtainSignalHubProtocolProperty(context);
     	
-		String allowedService = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
-		String allowedRole = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID);
+		String allowedService = null;
+		try {
+			allowedService = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
+		}catch(Exception e) {
+			if(getProtocolFactory().getLogger()!=null) {
+				getProtocolFactory().getLogger().error("Configurazione SignalHub non fornita per il servizio indicato: "+e.getMessage(),e);
+			}
+			return buildConfigurazioneNonDisponibile("Configurazione SignalHub non fornita per il servizio indicato", e);
+		}
+		String allowedRole = null;
+		try {
+			allowedRole = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID);
+		}catch(Exception e) {
+			if(getProtocolFactory().getLogger()!=null) {
+				getProtocolFactory().getLogger().error("Configurazione SignalHub non fornita per il servizio indicato: "+e.getMessage(),e);
+			}
+			return buildConfigurazioneNonDisponibile("Configurazione SignalHub non fornita per il servizio indicato", e);
+		}
+			
 
 		List<Ruolo> roles = List.of();
 		

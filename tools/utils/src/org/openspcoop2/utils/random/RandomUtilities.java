@@ -29,24 +29,23 @@ import java.security.SecureRandom;
  * @version $Rev$, $Date$
  */
 public class RandomUtilities {
+	
+	private RandomUtilities() {}
 
-	private static SecureRandom _rnd = null;
+	private static SecureRandom rndEngine = null;
 	private static synchronized void initRandom() {
-		if(_rnd==null) {
-			_rnd = new SecureRandom();
+		if(rndEngine==null) {
+			rndEngine = new SecureRandom();
 		}
 	}
 	public static SecureRandom getSecureRandom() {
-		if(_rnd==null) {
+		if(rndEngine==null) {
 			initRandom();
 		}
-		return _rnd;
+		return rndEngine;
 	}
 	public static java.util.Random getRandom() {
-		if(_rnd==null) {
-			initRandom();
-		}
-		return _rnd;
+		return getSecureRandom();
 	}
 	
 }

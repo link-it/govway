@@ -163,9 +163,9 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException {
 		
 		if(ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(id, registryReader, this.modiProperties, this.log)) {
-			// è un accordo built-in che si assume esista
-			return super.getDynamicConfigAccordoServizioParteComune(consoleOperationType, consoleHelper, registryReader,
-					configIntegrationReader, id);
+			// è un accordo built-in che si assume esista, la configurazone non è necessaria, ma per disattivarla andrebbe fatto anche per api-pdnd
+			/**return super.getDynamicConfigAccordoServizioParteComune(consoleOperationType, consoleHelper, registryReader,
+					configIntegrationReader, id);*/
 		}
 		
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
@@ -214,11 +214,11 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			throws ProtocolException {
 		
 		if(ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(id, registryReader, this.modiProperties, this.log)) {
-			// è un accordo built-in che si assume esista
-			super.updateDynamicConfigAccordoServizioParteComune(consoleConfiguration,
+			// è un accordo built-in che si assume esista, la configurazone non è necessaria, ma per disattivarla andrebbe fatto anche per api-pdnd
+			/**super.updateDynamicConfigAccordoServizioParteComune(consoleConfiguration,
 					consoleOperationType, consoleHelper, properties,
 					registryReader, configIntegrationReader, id);
-			return;
+			return;*/
 		}
 		
 		ModIDynamicConfigurationAccordiParteComuneUtilities.updateProfiloSicurezzaCanale(consoleConfiguration, properties);
@@ -235,10 +235,10 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDAccordo id) throws ProtocolException{
 		
 		if(ModIDynamicConfigurationAccordiParteComuneUtilities.isApiSignalHubPushAPI(id, registryReader, this.modiProperties, this.log)) {
-			// è un accordo built-in che si assume esista
-			super.validateDynamicConfigAccordoServizioParteComune(consoleConfiguration, consoleOperationType, consoleHelper, properties, 
+			// è un accordo built-in che si assume esista, la configurazone non è necessaria, ma per disattivarla andrebbe fatto anche per api-pdnd
+			/**super.validateDynamicConfigAccordoServizioParteComune(consoleConfiguration, consoleOperationType, consoleHelper, properties, 
 					registryReader, configIntegrationReader, id);
-			return;
+			return;*/
 		}
 		
 		ModIDynamicConfigurationAccordiParteComuneUtilities.validateDynamicConfigAccordoServizioParteComune(consoleOperationType, consoleHelper, properties, 

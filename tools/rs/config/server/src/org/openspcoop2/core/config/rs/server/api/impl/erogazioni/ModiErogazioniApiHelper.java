@@ -2230,7 +2230,9 @@ public class ModiErogazioniApiHelper {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.SICUREZZA_MESSAGGIO_NON_NECESSARIA);
 		}
 		
-		ModiErogazioniApiHelper.fillErogazioneModIInfoGenerali(p, modi.getInformazioniGenerali());
+		if(modi!=null) {
+			ModiErogazioniApiHelper.fillErogazioneModIInfoGenerali(p, modi.getInformazioniGenerali());
+		}
 	}
 	
 	private static void getRESTProperties(FruizioneModIRest modi, ProtocolProperties p, FruizioneConf fruizioneConf) {
@@ -2901,7 +2903,9 @@ public class ModiErogazioniApiHelper {
 			
 		}
 		
-		ModiErogazioniApiHelper.fillErogazioneModIInfoGenerali(p, modi.getInformazioniGenerali());
+		if(modi!=null) {
+			ModiErogazioniApiHelper.fillErogazioneModIInfoGenerali(p, modi.getInformazioniGenerali());
+		}
 	}
 	
 	private static void setKeystoreDefaultProperties(ProtocolProperties p) {
