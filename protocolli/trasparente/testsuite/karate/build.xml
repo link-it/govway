@@ -213,6 +213,18 @@
 		</java>
 		<echo message="Caricamento configurazione completata" />
 	</target>
+	
+	<target name="load_only_config">
+		<echo message="Caricamento configurazione in corso (create senza delete) ..." />
+		<java classname="org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader" fork="true">
+			<arg value="true" />
+		        <classpath>
+		                <path refid="karate_testsuite" />
+		                <pathelement path="${build_testsuite}"/>
+		        </classpath>
+		</java>
+		<echo message="Caricamento configurazione (senza delete) completata" />
+	</target>	
 
 	<target name="run_test">
 
