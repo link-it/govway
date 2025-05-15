@@ -201,13 +201,13 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	}
 
 	@Override
-	public void sendError(int arg0) throws IOException {
-		// ignore
+	public void sendError(int code) throws IOException {
+		this.status = code;
 	}
 
 	@Override
-	public void sendError(int arg0, String arg1) throws IOException {
-		// ignore
+	public void sendError(int code, String arg1) throws IOException {
+		this.status = code;
 	}
 
 	@Override

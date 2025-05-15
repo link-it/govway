@@ -13,7 +13,7 @@ In alternativa, è possibile delegare l'autenticazione ad un IdM esterno, interv
 
 .. note::
 
-  Abilitando l'autenticazione tramite IdM esterno, la gestione delle utenze applicative avviene sempore tramite la 'govwayConsole', associando ad ogni utenza i 'principal' ottenuti dall'IdM. Non saranno invece più gestite le password associate alle utenze.
+  Abilitando l'autenticazione tramite IdM esterno, la gestione delle utenze applicative avviene sempre tramite la 'govwayConsole', associando ad ogni utenza i 'principal' ottenuti dall'IdM. Non saranno invece più gestite le password associate alle utenze.
 
 Per attivare l'autenticazione delle utenze tramite un IdM esterno è necessario intervenire sui seguenti file di configurazione:
 
