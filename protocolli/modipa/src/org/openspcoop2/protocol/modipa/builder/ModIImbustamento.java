@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.SOAPEnvelope;
 
@@ -1029,9 +1028,9 @@ public class ModIImbustamento {
 				Transaction transaction = TransactionContext.removeTransaction(reqInfo.getIdTransazione());
 				
 				try {
-					req.getRequestDispatcher(req.getPathInfo()).include(req, res);
-				} catch (IOException | ServletException e) {
-					throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+					req.getRequestDispatcher(req.getPathInfo()).forward(req, res);
+				} catch (Exception e) {
+					throw newSeedUpdateException(e);
 				} finally {
 					try {
 						TransactionContext.setTransactionThreadLocal(reqInfo.getIdTransazione(), transaction);
@@ -1042,16 +1041,17 @@ public class ModIImbustamento {
 				
 				// controllo che il backend abbia ritornato una risposta positiva di creazione del seme
 				try {
-					if (res.getStatus() != HttpServletResponse.SC_OK)
-						throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+					if (res.getStatus() != HttpServletResponse.SC_OK) {
+						throw newSeedUpdateException("returnCode:"+res.getStatus());
+					}
 					byte[] out = ((MockServletOutputStream)res.getOutputStream()).getByteArrayOutputStream().toByteArray();
 					
 					JSONUtils jsonUtils = JSONUtils.getInstance();
 					JsonNode node = jsonUtils.getAsNode(out);
 					if (node.get(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID).isNull())
-						throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+						throw newSeedUpdateException("signalId is null");
 				} catch (IOException e) {
-					throw new ProtocolException(ERROR_MESSAGE_SEED_NOT_UPDATED);
+					throw newSeedUpdateException(e, "seed response invalid");
 				}
 				
 				// posso inserire le nuove informazioni crittografiche
@@ -1066,6 +1066,20 @@ public class ModIImbustamento {
 		}
 		
 		return param;
+	}
+	private ProtocolException newSeedUpdateException(Exception e) {
+		return newSeedUpdateException(e, null);
+	}
+	private ProtocolException newSeedUpdateException(String posizione) {
+		return newSeedUpdateException(null, posizione);
+	}
+	private ProtocolException newSeedUpdateException(Exception e, String posizione) {
+		String msgError = posizione!=null ? " ("+posizione+")" : "";
+		msgError = ERROR_MESSAGE_SEED_NOT_UPDATED + msgError;
+		if(this.log!=null && e!=null) {
+			this.log.error("{}: {}",msgError,e.getMessage(),e);
+		}
+		return new ProtocolException(msgError);
 	}
 	
 }

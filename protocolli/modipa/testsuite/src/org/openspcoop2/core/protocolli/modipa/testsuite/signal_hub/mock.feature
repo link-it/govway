@@ -32,7 +32,7 @@ Scenario: isTest('push_signal') && request.signalType != 'SEEDUPDATE'
   			signalType : 'UPDATE',
 		}
 		"""
-	* def objectId = requestHeaders['GovWay-TestSuite-Plain-Object-ID'][0]
+	* def objectId = (requestHeaders['GovWay-TestSuite-Plain-Object-ID'] || requestHeaders['govway-testsuite-plain-object-id'])[0]
 	* def hash = compute_digest('SHA-256', objectId + get_seed('DemoSoggettoErogatore','SignalHubTest'))
 	* karate.log("plain id: " + objectId + ", seed: " + get_seed('DemoSoggettoErogatore','SignalHubTest'))
 	* match hash == request.objectId
