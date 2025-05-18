@@ -75,6 +75,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 
 /**
  * SoggettiApiHelper
@@ -408,7 +409,7 @@ public class SoggettiApiHelper {
 
 	}
 	
-	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(org.openspcoop2.core.registry.Soggetto soggetto, SoggettiEnv env) throws DriverControlStationException, UtilsException, ProtocolException, DriverConfigurazioneException {
+	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(org.openspcoop2.core.registry.Soggetto soggetto, SoggettiEnv env) throws DriverControlStationException, UtilsException, ProtocolException, DriverConfigurazioneException, ValidationException {
 
 		ProtocolProperties prop = getProtocolProperties(soggetto, env);
 		Map<String, AbstractProperty<?>> p = new HashMap<>();
@@ -420,7 +421,7 @@ public class SoggettiApiHelper {
 		return p;
 	}
 	
-	public static ProtocolProperties getProtocolProperties(org.openspcoop2.core.registry.Soggetto soggetto, SoggettiEnv env) throws DriverControlStationException, UtilsException, ProtocolException, DriverConfigurazioneException {
+	public static ProtocolProperties getProtocolProperties(org.openspcoop2.core.registry.Soggetto soggetto, SoggettiEnv env) throws DriverControlStationException, UtilsException, ProtocolException, DriverConfigurazioneException, ValidationException {
 		ConsoleConfiguration consoleConf = getConsoleConfiguration(soggetto, env);
 
 		ProtocolProperties prop = env.soggettiHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);

@@ -34,6 +34,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.web.lib.mvc.security.exception.ValidationException;
 
 /**
  * ModiApplicativiApiHelper
@@ -63,7 +64,7 @@ public class ModiSoggettiApiHelper {
 	
 
 
-	public static void populateProtocolInfo(Soggetto soggetto, SoggettiEnv env, org.openspcoop2.core.config.rs.server.model.Soggetto ret) throws CoreException, UtilsException, ProtocolException, DriverConfigurazioneException {
+	public static void populateProtocolInfo(Soggetto soggetto, SoggettiEnv env, org.openspcoop2.core.config.rs.server.model.Soggetto ret) throws CoreException, UtilsException, ProtocolException, DriverConfigurazioneException, ValidationException {
 
 		Map<String, AbstractProperty<?>> p = SoggettiApiHelper.getProtocolPropertiesMap(soggetto, env);
 		String idEnte = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_SOGGETTI_ID_ENTE_ID, false);
