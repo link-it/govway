@@ -290,7 +290,7 @@ public class DigestServiceParamsDriver {
 		return true;
 	}
 	
-	private boolean isValid(DigestServiceParams param) {
+	public boolean isValid(DigestServiceParams param) {
 		if (param == null)
 			return false;
 		Instant now = Instant.now();
