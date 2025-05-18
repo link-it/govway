@@ -8669,6 +8669,8 @@ components:
               type: array
               items:
                 $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Proprieta4000OpzioneCifratura'
+            modi:
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ModISoggetto'             
     SoggettoItem:
       type: object
       allOf:

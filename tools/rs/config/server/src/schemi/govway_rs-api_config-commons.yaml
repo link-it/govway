@@ -2406,6 +2406,20 @@ components:
               type: string
               maxLength: 255 
 
+    # ModI Soggetto
+
+    ModISoggetto:
+      type: object
+      properties:
+        pdnd:
+           $ref: '#/components/schemas/ModISoggettoPDND'
+    ModISoggettoPDND:
+      type: object
+      properties:
+        id_ente:
+           type: string
+           maxLength: 4000           
+
     # ModI Applicativo
 
     ModIApplicativoEsterno:

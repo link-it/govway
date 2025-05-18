@@ -8831,6 +8831,8 @@ components:
             type: "array"
             items:
               $ref: "#/components/schemas/Proprieta4000OpzioneCifratura"
+          modi:
+            $ref: "#/components/schemas/ModISoggetto"
     SoggettoItem:
       type: "object"
       allOf:
@@ -11323,6 +11325,17 @@ components:
           nome:
             maxLength: 255
             type: "string"
+    ModISoggetto:
+      type: "object"
+      properties:
+        pdnd:
+          $ref: "#/components/schemas/ModISoggettoPDND"
+    ModISoggettoPDND:
+      type: "object"
+      properties:
+        id_ente:
+          maxLength: 4000
+          type: "string"
     ModIApplicativoEsterno:
       required:
       - "dominio"

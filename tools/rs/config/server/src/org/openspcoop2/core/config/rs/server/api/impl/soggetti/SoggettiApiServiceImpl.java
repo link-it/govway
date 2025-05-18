@@ -41,6 +41,9 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
@@ -88,6 +91,9 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 
+			if (profilo == null)
+				profilo = Helper.getProfiloDefault();
+			
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(),  profilo, context);
 
 			/**if (profilo == null)
@@ -124,6 +130,16 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			}
 			
 			org.openspcoop2.core.registry.Soggetto soggettoRegistro = SoggettiApiHelper.soggettoApiToRegistro(soggetto, env, keyInfo);
+			
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = SoggettiApiHelper.getProtocolProperties(body, profilo, soggettoRegistro, env);
+	
+				if(protocolProperties != null) {
+					soggettoRegistro.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
+				}
+			}
+			
 			
 			IDSoggetto idSogg = new IDSoggetto();
 			idSogg.setNome(soggettoRegistro.getNome());
@@ -249,6 +265,9 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
 			
+			if (profilo == null)
+				profilo = Helper.getProfiloDefault();
+			
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);                        
 			int idLista = Liste.SOGGETTI;
 			ConsoleSearch ricerca = Helper.setupRicercaPaginata(q, limit, offset, idLista, env.idSoggetto.toIDSoggetto(), env.tipo_protocollo);
@@ -315,6 +334,9 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
 			
+			if (profilo == null)
+				profilo = Helper.getProfiloDefault();
+			
 			SoggettiEnv env = new SoggettiEnv(context.getServletRequest(), profilo, context);			
 			IDSoggetto idSogg = new IDSoggetto(env.tipo_soggetto,nome);
 			
@@ -324,7 +346,8 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			
 			if (soggettoApi == null)
 				throw FaultCode.NOT_FOUND.toException("Nessun soggetto trovato corrisponde al nome " + nome + " e profilo " + profilo.toString());
-                       
+                     
+			SoggettiApiHelper.populateProtocolInfo(soggettoReg, soggettoApi, env, profilo);
         
 			context.getLogger().info("Invocazione completata con successo");
 			return soggettoApi;
@@ -403,8 +426,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			}catch(Exception e) {
 				throw new DriverRegistroServiziException(e.getMessage(),e);
 			}
-			
-			
+						
 			boolean isOk = env.soggettiHelper.soggettiCheckData(
 					TipoOperazione.CHANGE,
 					oldSoggetto.getId().toString(),
@@ -494,30 +516,41 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			
 			SoggettiApiHelper.convert(body, newSoggetto, env, keyInfo);
 			
-			if(ModalitaAccessoEnum.HTTP_BASIC.equals(body.getCredenziali().getModalitaAccesso())) {
-				AuthenticationHttpBasic httpBasic = (AuthenticationHttpBasic) body.getCredenziali();
-				if(httpBasic.getPassword()==null || StringUtils.isEmpty(httpBasic.getPassword())) {
-					// password in update non è obbligatoria
-					boolean set = false;
-					if(oldSoggetto.sizeCredenzialiList()>0) {
-						CredenzialiSoggetto cImageDB = oldSoggetto.getCredenziali(0);
-						CredenzialiSoggetto cTmp = newSoggetto.getCredenziali(0);
-						if(cImageDB!=null && cTmp!=null) {
-							cTmp.setPassword(cImageDB.getPassword());
-							cTmp.setCertificateStrictVerification(cImageDB.isCertificateStrictVerification());
-							set = true;
+			if(body.getCredenziali()!=null && body.getCredenziali().getModalitaAccesso()!=null) {
+				if(ModalitaAccessoEnum.HTTP_BASIC.equals(body.getCredenziali().getModalitaAccesso())) {
+					AuthenticationHttpBasic httpBasic = (AuthenticationHttpBasic) body.getCredenziali();
+					if(httpBasic.getPassword()==null || StringUtils.isEmpty(httpBasic.getPassword())) {
+						// password in update non è obbligatoria
+						boolean set = false;
+						if(oldSoggetto.sizeCredenzialiList()>0) {
+							CredenzialiSoggetto cImageDB = oldSoggetto.getCredenziali(0);
+							CredenzialiSoggetto cTmp = newSoggetto.getCredenziali(0);
+							if(cImageDB!=null && cTmp!=null) {
+								cTmp.setPassword(cImageDB.getPassword());
+								cTmp.setCertificateStrictVerification(cImageDB.isCertificateStrictVerification());
+								set = true;
+							}
+						}
+						if(!set) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autenticazione '"+body.getCredenziali().getModalitaAccesso()+"'; indicare la password");
 						}
 					}
-					if(!set) {
-						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autenticazione '"+body.getCredenziali().getModalitaAccesso()+"'; indicare la password");
+				}
+				else if(ModalitaAccessoEnum.API_KEY.equals(body.getCredenziali().getModalitaAccesso())) {
+					AuthenticationApiKey apiKeyCred = (AuthenticationApiKey) body.getCredenziali();
+					boolean appId = Helper.isAppId(apiKeyCred.isAppId());
+					if(appId != keyInfo.isMultipleApiKeys()) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autenticazione '"+body.getCredenziali().getModalitaAccesso()+"'; modifica del tipo (appId) non consentita");
 					}
 				}
 			}
-			else if(ModalitaAccessoEnum.API_KEY.equals(body.getCredenziali().getModalitaAccesso())) {
-				AuthenticationApiKey apiKeyCred = (AuthenticationApiKey) body.getCredenziali();
-				boolean appId = Helper.isAppId(apiKeyCred.isAppId());
-				if(appId != keyInfo.isMultipleApiKeys()) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autenticazione '"+body.getCredenziali().getModalitaAccesso()+"'; modifica del tipo (appId) non consentita");
+			
+			ProtocolProperties protocolProperties = null;
+			if(profilo != null) {
+				protocolProperties = SoggettiApiHelper.getProtocolProperties(body, profilo, newSoggetto, env);
+	
+				if(protocolProperties != null) {
+					newSoggetto.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(protocolProperties, ConsoleOperationType.ADD, null));
 				}
 			}
 			

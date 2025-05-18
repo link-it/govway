@@ -32,13 +32,17 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
  * 
  */
 public class FatturaPAApplicativiApiHelper {
+	
+	private FatturaPAApplicativiApiHelper() {}
 
 	public static void populateProtocolInfo(ServizioApplicativo sa, ApplicativiEnv env, Applicativo ret) {
-		// TODO Auto-generated method stub
+		// nop
 	}
 
 	public static ProtocolProperties getProtocolProperties(Applicativo body) {
-		// TODO Auto-generated method stub
+		if(body!=null) {
+			// nop
+		}
 		return null;
 	}
 
