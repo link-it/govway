@@ -1,0 +1,11 @@
+{
+ 	"nome": "SoggettoInternoJson",
+	"dominio": "interno",
+	"descrizione": "Descrizione Soggetto Json Interno",
+	"ruoli": [ ],
+	"modi":{
+		"pdnd":{
+			"id_ente": "testIdEnteInterno"
+		}
+	}
+}

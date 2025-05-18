@@ -21,7 +21,9 @@ package org.openspcoop2.core.config.rs.server.api.impl.soggetti;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.commons.Liste;
@@ -51,8 +53,18 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.pdd.core.autenticazione.ApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
+import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
+import org.openspcoop2.protocol.sdk.properties.ConsoleConfiguration;
+import org.openspcoop2.protocol.sdk.properties.IConsoleDynamicConfiguration;
+import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
+import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
@@ -267,13 +279,7 @@ public class SoggettiApiHelper {
 		Soggetto ret = new Soggetto();
 		ret.setNome(s.getNome());
 		ret.setDescrizione(s.getDescrizione());
-		
-		ret.setCredenziali(Helper.govwayCredenzialiToApi(
-				s.getCredenzialiList(),
-				CredenzialiSoggetto.class,
-				org.openspcoop2.core.registry.constants.CredenzialeTipo.class
-			));
-		
+				
 		ret.setDominio(DominioEnum.ESTERNO);
 		try {
 			if (s.getPortaDominio() != null) {
@@ -283,6 +289,14 @@ public class SoggettiApiHelper {
 			}
 		} catch (Exception e) {
 			throw new UtilsRuntimeException(e);
+		}
+		
+		if(DominioEnum.ESTERNO.equals(ret.getDominio())) {
+			ret.setCredenziali(Helper.govwayCredenzialiToApi(
+					s.getCredenzialiList(),
+					CredenzialiSoggetto.class,
+					org.openspcoop2.core.registry.constants.CredenzialeTipo.class
+				));
 		}
 		
 		ret.setRuoli(soggettiCore.soggettiRuoliList(s.getId(), new ConsoleSearch()));
@@ -349,5 +363,80 @@ public class SoggettiApiHelper {
 	}
 
 	
+	public static ProtocolProperties getProtocolProperties(Soggetto body, ProfiloEnum profilo, org.openspcoop2.core.registry.Soggetto soggetto, SoggettiEnv env) throws Exception {
 
+
+		if(!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA) && body.getModi() != null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione 'ModI' non conforme con il profilo '"+profilo+"' indicato");
+		}
+
+		switch(profilo) {
+		case APIGATEWAY:
+			return null;// trasparente 
+		case EDELIVERY:
+			return EDeliverySoggettiApiHelper.getProtocolProperties(body);
+		case FATTURAPA:
+			return FatturaPASoggettiApiHelper.getProtocolProperties(body);
+		case MODI:
+		case MODIPA:
+			return ModiSoggettiApiHelper.getProtocolProperties(body);
+		case SPCOOP:
+			return SPCoopSoggettiApiHelper.getProtocolProperties(body);
+		}
+		return null;
+	}
+
+
+	public static void populateProtocolInfo(org.openspcoop2.core.registry.Soggetto soggetto, Soggetto ret, SoggettiEnv env, ProfiloEnum profilo) throws Exception {
+		
+		if(profilo != null) {
+			switch(profilo) {
+			case APIGATEWAY: 
+				break;
+			case EDELIVERY: EDeliverySoggettiApiHelper.populateProtocolInfo(soggetto, env, ret);
+				break;
+			case FATTURAPA: FatturaPASoggettiApiHelper.populateProtocolInfo(soggetto, env, ret);
+				break;
+			case MODI: 
+			case MODIPA: ModiSoggettiApiHelper.populateProtocolInfo(soggetto, env, ret);
+				break;
+			case SPCOOP: SPCoopSoggettiApiHelper.populateProtocolInfo(soggetto, env, ret);
+				break;
+			default:
+				break;}
+		}
+
+	}
+	
+	public static Map<String, AbstractProperty<?>> getProtocolPropertiesMap(org.openspcoop2.core.registry.Soggetto soggetto, SoggettiEnv env) throws DriverControlStationException, UtilsException, ProtocolException, DriverConfigurazioneException {
+
+		ProtocolProperties prop = getProtocolProperties(soggetto, env);
+		Map<String, AbstractProperty<?>> p = new HashMap<>();
+
+		for(int i =0; i < prop.sizeProperties(); i++) {
+			p.put(prop.getIdProperty(i), prop.getProperty(i));
+		}
+		
+		return p;
+	}
+	
+	public static ProtocolProperties getProtocolProperties(org.openspcoop2.core.registry.Soggetto soggetto, SoggettiEnv env) throws DriverControlStationException, UtilsException, ProtocolException, DriverConfigurazioneException {
+		ConsoleConfiguration consoleConf = getConsoleConfiguration(soggetto, env);
+
+		ProtocolProperties prop = env.soggettiHelper.estraiProtocolPropertiesDaRequest(consoleConf, ConsoleOperationType.CHANGE);
+		ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(prop, soggetto.getProtocolPropertyList(), ConsoleOperationType.CHANGE);
+		return prop;
+	}
+	
+	public static ConsoleConfiguration getConsoleConfiguration(org.openspcoop2.core.registry.Soggetto soggetto, SoggettiEnv env) throws ProtocolException, DriverConfigurazioneException {
+		IConsoleDynamicConfiguration consoleDynamicConfiguration = env.protocolFactory.createDynamicConfigurationConsole();
+		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory); 
+		IConfigIntegrationReader configRegistryReader = env.soggettiCore.getConfigIntegrationReader(env.protocolFactory);
+
+		IDSoggetto idSoggetto = new IDSoggetto(env.tipo_soggetto, soggetto.getNome());
+		
+		return consoleDynamicConfiguration.getDynamicConfigSoggetto(ConsoleOperationType.ADD, env.soggettiHelper, 
+				registryReader, configRegistryReader, idSoggetto);
+
+	}
 }

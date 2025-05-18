@@ -1,0 +1,14 @@
+{
+    "connettore": {
+        "endpoint": "https://Erogatore:8445/TestService/echo"
+    },
+	"autenticazione": {
+                "tipo": "http-basic",
+                "opzionale": false
+        },
+	"fruizione_nome": "SignalHubPush",
+	"api_nome": "api-pdnd-push-signals",
+        "erogatore": "PDND",
+	"api_versione": 1
+}
+

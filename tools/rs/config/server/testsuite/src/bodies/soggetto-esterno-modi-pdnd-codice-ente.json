@@ -1,0 +1,16 @@
+{
+ 	"nome": "SoggettoJson",
+   	"credenziali": {
+       	"modalita_accesso": "http-basic",
+   		"username": "username",
+       	"password": "password"     
+	},
+	"dominio": "esterno",
+	"descrizione": "Descrizione Soggetto Json",
+	"ruoli": [ ],
+	"modi":{
+		"pdnd":{
+			"id_ente": "testIdEnte"
+		}
+	}
+}

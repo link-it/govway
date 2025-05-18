@@ -35,7 +35,7 @@ Background:
 * eval api_petstore_soap_signalhub.referente = soggettoDefault
 
 * def applicativo_signalhub = read('applicativo_client_signalhub.json')
-* eval randomize(applicativo_signalhub, ["nome"])
+* eval randomize(applicativo_signalhub, ["nome", "credenziali.username"])
 
 * def header_firmare_default = read('api_modi_header_firmare_default.json')
 
@@ -323,25 +323,64 @@ Examples:
 @CreatePetstore204_modi_signalhub_REST
 Scenario Outline: Erogazioni Creazione Petstore signalhub <nome>
 
-        * def erogazione_petstore = read('<nome>')
-        * eval erogazione_petstore.erogazione_nome = api_petstore_rest_signalhub.nome
-        * eval erogazione_petstore.api_nome = api_petstore_rest_signalhub.nome
-        * eval erogazione_petstore.api_versione = api_petstore_rest_signalhub.versione
+	# Creo soggetto fruitore del servizio signal-push
+	* def soggetto_signal_hub = {'nome': 'SoggettoPetStoreSignalHub', 'dominio': 'interno'}
+	* eval randomize(soggetto_signal_hub, ["nome"])
+	* call create ( { resourcePath: 'soggetti', body: soggetto_signal_hub, query_params: query_param_profilo_modi } )
+
+	* def query_param_profilo_signal_hub = ({'profilo': 'ModI', 'soggetto': soggetto_signal_hub.nome })
+	
+	# creo fruizione per il soggetto appena creato erogata da PDND	
+	* def fruizione_signalhub = read('fruizione_modi_rest_signalhub.json')
+	* eval randomize(fruizione_signalhub, ["fruizione_nome"])
+	* def fruizione_key = 'PDND/' + fruizione_signalhub.fruizione_nome + '/' + fruizione_signalhub.api_versione
+	* call create ( { resourcePath: 'fruizioni', body: fruizione_signalhub, query_params: query_param_profilo_signal_hub } )
+
+	# imposto l'autorizzazione della fruizione a puntuale
+	* def autorizzazione = read('classpath:bodies/controllo-accessi-autorizzazione-puntuale.json')
+	* call put ( { resourcePath: 'fruizioni/' + fruizione_key + '/configurazioni/controllo-accessi/autorizzazione', body: autorizzazione, query_params: query_param_profilo_signal_hub } )
+
+	# creo l'api di che pubblichera le informazioni di pseudonanonimizazzione
+	* call create ( { resourcePath: 'api', body: api_petstore_rest_signalhub, query_params: query_param_profilo_modi } )
+	
+	# creo l'applicativo http-basic per l'accesso alla pubblicazione dei segnali
+	* call create ( { resourcePath: 'applicativi', body: applicativo_signalhub, query_params: query_param_profilo_signal_hub } )
+
+	# associo l'applicativo alla pubblicazione dei segnali
+	* call create ( { resourcePath: 'fruizioni/' + fruizione_key + '/configurazioni/controllo-accessi/autorizzazione/applicativi', body: { applicativo: applicativo_signalhub.nome }, query_params: query_param_profilo_signal_hub} )
+
+	# creo l'erogazione che pubblichera le informazioni di pseudonanonimizazzione
+	* def erogazione_petstore = read('<nome>')
+	* eval erogazione_petstore.erogazione_nome = api_petstore_rest_signalhub.nome
+	* eval erogazione_petstore.api_nome = api_petstore_rest_signalhub.nome
+	* eval erogazione_petstore.api_versione = api_petstore_rest_signalhub.versione
 	* eval erogazione_petstore.modi.informazioni_generali.signal_hub.applicativo = applicativo_signalhub.nome
 
-        * def petstore_key = erogazione_petstore.erogazione_nome + '/' + erogazione_petstore.api_versione
-        * def api_petstore_path = 'api/' + api_petstore_rest_signalhub.nome + '/' + api_petstore_rest_signalhub.versione
-
-        * call create ( { resourcePath: 'api', body: api_petstore_rest_signalhub, query_params: query_param_profilo_modi } )
-        * call create ( { resourcePath: 'applicativi', body: applicativo_signalhub, query_params: query_param_profilo_modi } )
-	* call create ( { resourcePath: 'fruizioni/PDND/api-pdnd-push-signals/1/configurazioni/controllo-accessi/autorizzazione/applicativi', body: { applicativo: applicativo_signalhub.nome }, query_params: query_param_profilo_modi} )
-        * call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: petstore_key, query_params: query_param_profilo_modi } )
-		* call get ( { resourcePath: 'erogazioni', key: petstore_key + '/modi', query_params: query_param_profilo_modi } )
-        * match response.modi == erogazione_petstore.modi
-	* call delete ({ resourcePath: 'fruizioni/PDND/api-pdnd-push-signals/1/configurazioni/controllo-accessi/autorizzazione/applicativi/' + applicativo_signalhub.nome , query_params: query_param_profilo_modi })
-	* call delete ({ resourcePath: 'applicativi/' + applicativo_signalhub.nome , query_params: query_param_profilo_modi })
-	* call delete ({ resourcePath: 'erogazioni/' + petstore_key, query_params: query_param_profilo_modi } )
-        * call delete ({ resourcePath: api_petstore_path, query_params: query_param_profilo_modi } )
+	* def erogazione_key = erogazione_petstore.erogazione_nome + '/' + erogazione_petstore.api_versione
+	* call create ( { resourcePath: 'erogazioni', body: erogazione_petstore,  key: erogazione_key, query_params: query_param_profilo_signal_hub } )
+	
+	# controllo che le proprieta modi siano correttamente impostate
+	* call get ( { resourcePath: 'erogazioni', key: erogazione_key + '/modi', query_params: query_param_profilo_signal_hub } )
+	* match response.modi == erogazione_petstore.modi
+	
+	# rimuovo l'applicativo agli applicativi autorizzati alla fruizione
+	* call delete ({ resourcePath: 'fruizioni/' + fruizione_key +'/configurazioni/controllo-accessi/autorizzazione/applicativi/' + applicativo_signalhub.nome , query_params: query_param_profilo_signal_hub })
+	
+	# rimuovo l'applicativo
+	* call delete ({ resourcePath: 'applicativi/' + applicativo_signalhub.nome , query_params: query_param_profilo_signal_hub })
+	
+	# rimuovo l'erogazione
+	* call delete ({ resourcePath: 'erogazioni/' + erogazione_key, query_params: query_param_profilo_signal_hub } )
+	
+	# rimuovo l'api dell erogazione
+	* def api_key = api_petstore_rest_signalhub.nome + '/' + api_petstore_rest_signalhub.versione
+	* call delete ({ resourcePath: 'api/' + api_key, query_params: query_param_profilo_modi } )
+	
+	# rimuovo la fruizione
+	* call delete ({ resourcePath: 'fruizioni/' + fruizione_key, query_params: query_param_profilo_signal_hub } )
+	
+	# rimuovo il soggetto fruitore della fruizione
+	* call delete ({ resourcePath: 'soggetti/' + soggetto_signal_hub.nome, query_params: query_param_profilo_modi } )
 
 Examples:
 |nome|

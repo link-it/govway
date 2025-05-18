@@ -18,28 +18,27 @@
  *
  */
 
-package org.openspcoop2.core.config.rs.server.api.impl.applicativi;
+package org.openspcoop2.core.config.rs.server.api.impl.soggetti;
 
-import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.rs.server.model.Applicativo;
+import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 
 /**
- * SPCoopApplicativiApiHelper
+ * EDeliverySoggettiApiHelper
  * 
  * @author $Author$
  * @version $Rev$, $Date$
  * 
  */
-public class SPCoopApplicativiApiHelper {
-	
-	private SPCoopApplicativiApiHelper() {}
+public class EDeliverySoggettiApiHelper {
 
-	public static void populateProtocolInfo(ServizioApplicativo sa, ApplicativiEnv env, Applicativo ret) {
+	private EDeliverySoggettiApiHelper() {}
+	
+	public static void populateProtocolInfo(Soggetto soggetto, SoggettiEnv env, org.openspcoop2.core.config.rs.server.model.Soggetto ret) {
 		// nop
 	}
 
-	public static ProtocolProperties getProtocolProperties(Applicativo body) {
+	public static ProtocolProperties getProtocolProperties(org.openspcoop2.core.config.rs.server.model.Soggetto body) {
 		if(body!=null) {
 			// nop
 		}

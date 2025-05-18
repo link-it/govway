@@ -42,6 +42,9 @@ public class Soggetto extends BaseCredenziali {
   
   @Schema(description = "")
   private List<Proprieta4000OpzioneCifratura> proprieta = null;
+  
+  @Schema(description = "")
+  private ModISoggetto modi = null;
  /**
    * Get nome
    * @return nome
@@ -148,6 +151,25 @@ public class Soggetto extends BaseCredenziali {
     return this;
   }
 
+ /**
+   * Get modi
+   * @return modi
+  **/
+  @JsonProperty("modi")
+  @Valid
+  public ModISoggetto getModi() {
+    return this.modi;
+  }
+
+  public void setModi(ModISoggetto modi) {
+    this.modi = modi;
+  }
+
+  public Soggetto modi(ModISoggetto modi) {
+    this.modi = modi;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -159,6 +181,7 @@ public class Soggetto extends BaseCredenziali {
     sb.append("    descrizione: ").append(Soggetto.toIndentedString(this.descrizione)).append("\n");
     sb.append("    ruoli: ").append(Soggetto.toIndentedString(this.ruoli)).append("\n");
     sb.append("    proprieta: ").append(Soggetto.toIndentedString(this.proprieta)).append("\n");
+    sb.append("    modi: ").append(Soggetto.toIndentedString(this.modi)).append("\n");
     sb.append("}");
     return sb.toString();
   }
