@@ -31,6 +31,17 @@ Background:
 	* def auth_push_signal2 = { username: 'DemoSignalHub2', password: '123456' }
 	* def auth_push_signal_role = { username: 'DemoSignalHub1', password: '123456' }
 	* def auth_push_signal_role2 = { username: 'DemoSignalHubRole2', password: '123456' }
+    * def getHeader = 
+    """
+    function(name) {
+        headerArray = (karate.get("responseHeaders['" + name + "']") ||
+               karate.get("responseHeaders['" + name.toLowerCase() + "']"))   
+        if (headerArray == null)
+        	return null;
+        return headerArray[0];
+    }
+    """
+
 #
 # TEST SULL'OTTENIMENTO DELLE INFORMAZIONI DI PSEUDOANONIMIZZAZIONE	
 #
@@ -68,7 +79,7 @@ Scenario: Informazioni crittografiche non trovate (identificativo non presente)
 	Then status 404
 	And match response == not_found_resp
 	
-	* def id_transazione = responseHeaders['GovWay-Peer-Transaction-ID'][0]
+	* def id_transazione = getHeader('GovWay-Peer-Transaction-ID')
 	* def msgs = get_diagnostico(id_transazione, 'tentato di consegnare con connettore di tipo [signalHubPseudonymization] (location: govway://signalHubPseudonymization): errore http 404')
 	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
 	
@@ -145,6 +156,23 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	* def deleted = remove_seeds();
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
+	# il primo seme non ha alcun signalId associato
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectId'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectId'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTestID'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: '#number' }
+	
+	* def invalidates = wither_seeds(100)
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+	
+	# il secondo seme ha un signalId associato
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectId'
 	And header GovWay-TestSuite-Plain-Object-ID = 'objectId'
@@ -379,7 +407,7 @@ Scenario: push del segnale ad un servizio con un erogatore diverso da quello del
 	Then status 403
 	And match response == unauthorized_error
 	
-	* def id_transazione = responseHeaders['GovWay-Transaction-ID'][0]
+	* def id_transazione = getHeader('GovWay-Transaction-ID')
 	* def msgs = get_diagnostico(id_transazione, 'L%erogazione di servizio individuata con l%id servizio % appartiene ad un soggetto % differente dal soggetto pubblicatore %')
 	* match msgs[0].MESSAGGIO contains "'eServiceIDError'"
 	* match msgs[0].MESSAGGIO contains "'DemoSoggettoErogatore2'"
@@ -736,7 +764,7 @@ Scenario: push del segnale in cui genero anche il seme correttamnete
 	And param govway_testsuite_objectId = 'objectIdCretion'
 	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdCretion'
 	And header Authorization = call basic (auth_push_signal)
-	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
 	And header GovWay-Signal-ServiceId = 'eServiceTestID'
 	And request {data:[{signalType: "UPDATE"}]}
@@ -753,8 +781,28 @@ Scenario: push del segnale in cui non riesco a generare il seed dunque non invio
 	* def deleted = remove_seeds();
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
 	
+	# il primo seed viene creato senza inviare la SEEDUPDATE dunque non puo fallire
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectId'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectId'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceTestID'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: '#number' }
+	* def seeds = count_seeds()
+	And match seeds == 1
+	
+	* def invalidates = wither_seeds(100)
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+	
+	# il secondo seed viene creato inviando la SEEDUPDATE che fallira
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectId'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectId'
 	And header Authorization = call basic (auth_push_signal)
 	And header GovWay-TestSuite-Test-ID = 'seed_failing'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
@@ -764,9 +812,9 @@ Scenario: push del segnale in cui non riesco a generare il seed dunque non invio
 	Then status 400
 	And match response == bad_request
 	* def seeds = count_seeds()
-	And match seeds == 0
+	And match seeds == 1
 	
-	* def id_transazione = responseHeaders['GovWay-Transaction-ID'][0]
+	* def id_transazione = getHeader('GovWay-Transaction-ID')
 	* def msgs = get_diagnostico(id_transazione, 'seed update non riuscito')
 	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
 	
@@ -776,12 +824,12 @@ Scenario: push del segnale in cui mi tengo lo storico dei semi precedenti e cont
 
 	* def deleted = remove_seeds();
 	* call reset_cache { cache_name: 'ConfigurazionePdD' }
-	
+
 	Given url push_signal_url
 	And param govway_testsuite_objectId = 'objectIdReplace'
 	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdReplace'
 	And header Authorization = call basic (auth_push_signal)
-	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
 	And header GovWay-Signal-ServiceId = 'eServiceTestID'
 	And request {data:[{signalType: "UPDATE"}]}
@@ -853,7 +901,7 @@ Scenario: push del segnale in cui riutilizzo lo stesso seme fino alla scadenza
 	And param govway_testsuite_objectId = 'objectIdKeep'
 	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdKeep'
 	And header Authorization = call basic (auth_push_signal)
-	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-TestSuite-Test-ID = 'push_signal_no_seed'
 	And header GovWay-Testsuite-ObjectType = 'objectType'
 	And header GovWay-Signal-ServiceId = 'eServiceTestID'
 	And request {data:[{signalType: "UPDATE"}]}
@@ -949,7 +997,6 @@ Scenario: test per verificare la corretta rimozione dei record nella tabella ser
 	And header simulazionepdnd-audience = 'audience'
 	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
 	And header GovWay-TestSuite-Test-ID = 'crypto_info_not_found'
-
 	When method get
 	Then status 200
 

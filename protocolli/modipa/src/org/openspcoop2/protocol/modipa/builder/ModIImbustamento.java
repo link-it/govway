@@ -902,7 +902,7 @@ public class ModIImbustamento {
 	}
 	
 	private OpenSPCoop2Message computeSignalHubMessage(OpenSPCoop2Message msg, Context context, 
-			IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException, UtilsException, DriverConfigurazioneException, IOException {
+			IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException, UtilsException, DriverConfigurazioneException {
 		
 		// ottengo le informazioni inserite dall'handler
 		IDServizio idServizio = (IDServizio) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SERVICE);
@@ -979,7 +979,7 @@ public class ModIImbustamento {
 	}
 	
 	private static final String ERROR_MESSAGE_SEED_NOT_UPDATED = "seed update non riuscito";
-	private DigestServiceParams obtainDigestServiceParam(Context context, IDServizio idServizio, IDSerialGenerator serialGenerator, IDSerialGeneratorParameter serialGeneratorParameter) throws ProtocolException, UtilsException, DriverConfigurazioneException, IOException {		
+	private DigestServiceParams obtainDigestServiceParam(Context context, IDServizio idServizio, IDSerialGenerator serialGenerator, IDSerialGeneratorParameter serialGeneratorParameter) throws ProtocolException, UtilsException, DriverConfigurazioneException {		
 		
 		// ottengo il driver di configurazione
 		Object db = ConfigurazionePdDReader.getDriverConfigurazionePdD();
@@ -988,71 +988,36 @@ public class ModIImbustamento {
 		
 		// ottengo il driver per le informazioni diagnostiche
 		DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db);
-		DigestServiceParams param = driver.getValidEntry(idServizio);
+		DigestServiceParams param = driver.getLastEntry(idServizio);
 		
 		// non esiste informazioni crittografiche valide devo rigenerarle
-		if (param == null) {
+		if (param == null || !driver.isValid(param)) {
+			
 			RequestInfo reqInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 			
 			driver.acquireLock(reqInfo.getIdTransazione());
-			try (MockServletInputStream is = new MockServletInputStream()) {
+			try {
 				
 				// riprovo a vedere se esistono informaizoni crittografiche valide prodotte da un altro thread nel frattempo
-				param = driver.getValidEntry(idServizio);
-				if (param != null)
+				param = driver.getLastEntry(idServizio);
+				if (param != null && driver.isValid(param))
 					return param;
 				
 				// genero nuove informazioni crittografiche
 				List<ProtocolProperty> eServiceProperties = SignalHubUtils.obtainSignalHubProtocolProperty(context);
 				
+				// se non esiste un entry precedente so creando il primo seme, non devo inviare alcuna richiesta
+				if (param == null) {
+					param = SignalHubUtils.generateDigestServiceParams(idServizio, eServiceProperties, null);
+					driver.addNewEntry(param);
+					return param;
+				}
+				
 				String seedSignalId = serialGenerator.buildID(serialGeneratorParameter);
 				param = SignalHubUtils.generateDigestServiceParams(idServizio, eServiceProperties, Long.valueOf(seedSignalId));
 
-				String eServiceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
-				
-				
-				// creo una richiesta e risposta servlet mock per inviare un segnale di SEEDUPDATE alla stessa porta delegata con le stesse credenziali 
-				MockHttpServletRequest req = new MockHttpServletRequest(reqInfo.getProtocolContext().getHttpServletRequest());
-				MockHttpServletResponse res = new MockHttpServletResponse();
-				
-				// i segnali di SEEDUPDATE devono essere inserite negli header di default
-				req.setInputStream(is);
-				req.setHeader("GovWay-Signal-Type", List.of(ModISignalHubOperation.SEEDUPDATE.toString()));
-				req.setHeader("GovWay-Signal-ObjectId", List.of(seedSignalId));
-				req.setHeader("GovWay-Signal-ObjectType", List.of("seed"));
-				req.setHeader("GovWay-Signal-ServiceId", List.of(eServiceId));
-				req.setHeader("Content-Length", List.of("0"));
-				req.setHeader("Content-Type", null);
-				
-				// rimuove la transazione corrente dal contesto in quanto verra eseguita la transazione per il SEEDUPDATE
-				Transaction transaction = TransactionContext.removeTransaction(reqInfo.getIdTransazione());
-				
-				try {
-					req.getRequestDispatcher(req.getPathInfo()).forward(req, res);
-				} catch (Exception e) {
-					throw newSeedUpdateException(e);
-				} finally {
-					try {
-						TransactionContext.setTransactionThreadLocal(reqInfo.getIdTransazione(), transaction);
-					} catch (TransactionNotExistsException e) {
-						// ignore should never happen
-					}
-				}
-				
-				// controllo che il backend abbia ritornato una risposta positiva di creazione del seme
-				try {
-					if (res.getStatus() != HttpServletResponse.SC_OK) {
-						throw newSeedUpdateException("returnCode:"+res.getStatus());
-					}
-					byte[] out = ((MockServletOutputStream)res.getOutputStream()).getByteArrayOutputStream().toByteArray();
-					
-					JSONUtils jsonUtils = JSONUtils.getInstance();
-					JsonNode node = jsonUtils.getAsNode(out);
-					if (node.get(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID).isNull())
-						throw newSeedUpdateException("signalId is null");
-				} catch (IOException e) {
-					throw newSeedUpdateException(e, "seed response invalid");
-				}
+				// invio la richiesta di SEEDUPDATE
+				sendSeedUpdateRequest(context, eServiceProperties, seedSignalId);
 				
 				// posso inserire le nuove informazioni crittografiche
 				driver.addNewEntry(param);
@@ -1067,6 +1032,56 @@ public class ModIImbustamento {
 		
 		return param;
 	}
+	
+	private void sendSeedUpdateRequest(Context context, List<ProtocolProperty> eServiceProperties, String seedSignalId) throws ProtocolException {
+		RequestInfo reqInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
+		String eServiceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+		
+		// creo una richiesta e risposta servlet mock per inviare un segnale di SEEDUPDATE alla stessa porta delegata con le stesse credenziali 
+		MockHttpServletRequest req = new MockHttpServletRequest(reqInfo.getProtocolContext().getHttpServletRequest());
+		MockHttpServletResponse res = new MockHttpServletResponse();
+		
+		Transaction transaction = null;
+		try (MockServletInputStream is = new MockServletInputStream()) {
+			// i segnali di SEEDUPDATE devono essere inserite negli header di default
+			req.setInputStream(is);
+			req.setHeader("GovWay-Signal-Type", List.of(ModISignalHubOperation.SEEDUPDATE.toString()));
+			req.setHeader("GovWay-Signal-ObjectId", List.of(seedSignalId));
+			req.setHeader("GovWay-Signal-ObjectType", List.of("seed"));
+			req.setHeader("GovWay-Signal-ServiceId", List.of(eServiceId));
+			req.setHeader("Content-Length", List.of("0"));
+			req.setHeader("Content-Type", null);
+			
+			// rimuove la transazione corrente dal contesto in quanto verra eseguita la transazione per il SEEDUPDATE
+			transaction = TransactionContext.removeTransaction(reqInfo.getIdTransazione());
+		
+			req.getRequestDispatcher(req.getPathInfo()).forward(req, res);
+		} catch (Exception e) {
+			throw newSeedUpdateException(e);
+		} finally {
+			try {
+				if (transaction != null)
+					TransactionContext.setTransactionThreadLocal(reqInfo.getIdTransazione(), transaction);
+			} catch (TransactionNotExistsException e) {
+				// ignore should never happen
+			}
+		}
+		
+		// controllo che il backend abbia ritornato una risposta positiva di creazione del seme
+		try {
+			if (res.getStatus() != HttpServletResponse.SC_OK)
+				throw newSeedUpdateException("returnCode:"+res.getStatus());
+			byte[] out = ((MockServletOutputStream)res.getOutputStream()).getByteArrayOutputStream().toByteArray();
+			
+			JSONUtils jsonUtils = JSONUtils.getInstance();
+			JsonNode node = jsonUtils.getAsNode(out);
+			if (node.get(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID).isNull())
+				throw newSeedUpdateException("signalId is null");
+		} catch (IOException | UtilsException e) {
+			throw newSeedUpdateException(e, "seed response invalid");
+		}
+	}
+	
 	private ProtocolException newSeedUpdateException(Exception e) {
 		return newSeedUpdateException(e, null);
 	}
