@@ -64,7 +64,11 @@ import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.xml.MessageXMLUtils;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
+import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
@@ -115,14 +119,20 @@ public class PreLoadingConfig  {
 		}
 	}
 	
-	public void loadConfig(List<byte[]> zipContent) throws UtilsException, IOException, DriverConfigurazioneException, ServiceException, NotImplementedException {
+	public void loadConfig(List<PreloadingConfiguration> zipContent) throws UtilsException, IOException, DriverConfigurazioneException, ServiceException, NotImplementedException, ProtocolException {
 		if(zipContent!=null && !zipContent.isEmpty()) {
-			for (byte[] bs : zipContent) {
-				this.loadConfig(bs);
+			for (PreloadingConfiguration bs : zipContent) {
+				if(bs.getName().contains("signalHubPDND") &&
+					ProtocolFactoryManager.getInstance().existsProtocolFactory(Costanti.MODIPA_PROTOCOL_NAME) &&
+					!ModIUtils.isSignalHubEnabled()) {
+					logInfo("Pacchetto '"+bs.getName()+"' non caricato; funzionalità non attiva");
+					continue;
+				}
+				this.loadConfig(bs.getResource());
 			}
 		}
 	}
-	public void loadConfig(byte[] zipContent) throws UtilsException, IOException, DriverConfigurazioneException, ServiceException, NotImplementedException {
+	private void loadConfig(byte[] zipContent) throws UtilsException, IOException, DriverConfigurazioneException, ServiceException, NotImplementedException {
 		
 		List<String> configNameList = new ArrayList<>();
 		List<byte[]> configList = new ArrayList<>();
