@@ -42,7 +42,8 @@ public enum ModalitaRicercaTransazioni {
 	ID_APPLICATIVO_AVANZATA ("idApplicativo"), 
 	ID_APPLICATIVO_BASE ("idApplicativoBase"), 
 	ID_MESSAGGIO ("idMessaggio"),
-	ID_TRANSAZIONE ("idTransazione");
+	ID_TRANSAZIONE ("idTransazione"),
+	PURPOSE_ID ("purposeId");
 	
 	private String value;
 	ModalitaRicercaTransazioni(String ruolo) {
@@ -83,6 +84,7 @@ public enum ModalitaRicercaTransazioni {
 				case MITTENTE_SOGGETTO:
 				case MITTENTE_TOKEN_INFO:
 				case RICERCA_LIBERA:
+				case PURPOSE_ID:
 					return 1;
 				case ID_APPLICATIVO_AVANZATA:
 				case ID_APPLICATIVO_BASE:

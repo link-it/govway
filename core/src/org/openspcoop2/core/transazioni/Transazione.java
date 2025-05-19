@@ -126,6 +126,7 @@ import java.util.List;
  * 			&lt;element name="token-username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="token-mail" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="token-info" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="token-purpose-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="tempi-elaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="duplicati-richiesta" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="0"/&gt;
  * 			&lt;element name="duplicati-risposta" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="0"/&gt;
@@ -242,6 +243,7 @@ import java.util.List;
   	"tokenUsername",
   	"tokenMail",
   	"tokenInfo",
+  	"tokenPurposeId",
   	"tempiElaborazione",
   	"duplicatiRichiesta",
   	"duplicatiRisposta",
@@ -990,6 +992,14 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
     this.tokenInfo = tokenInfo;
   }
 
+  public java.lang.String getTokenPurposeId() {
+    return this.tokenPurposeId;
+  }
+
+  public void setTokenPurposeId(java.lang.String tokenPurposeId) {
+    this.tokenPurposeId = tokenPurposeId;
+  }
+
   public java.lang.String getTempiElaborazione() {
     return this.tempiElaborazione;
   }
@@ -1535,6 +1545,10 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="token-info",required=false,nillable=false)
   protected java.lang.String tokenInfo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-purpose-id",required=false,nillable=false)
+  protected java.lang.String tokenPurposeId;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="tempi-elaborazione",required=false,nillable=false)

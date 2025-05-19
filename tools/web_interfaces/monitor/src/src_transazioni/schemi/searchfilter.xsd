@@ -109,6 +109,8 @@
                     </xsd:simpleContent>
                 </xsd:complexType>
             </xsd:element>
+            <xsd:element name="purpose-id" minOccurs="0" maxOccurs="1"
+                type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
 

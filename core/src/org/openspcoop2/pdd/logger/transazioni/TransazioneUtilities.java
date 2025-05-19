@@ -1116,6 +1116,11 @@ public class TransazioneUtilities {
 					informazioniToken.setToken(TokenUtilities.deleteSignature(informazioniToken.getToken()));
 				}
 				
+				// token purpose id
+				if (informazioniToken.getClaims() != null && informazioniToken.getClaims().containsKey("purposeId")) {
+					transactionDTO.setTokenPurposeId(informazioniToken.getClaims().get("purposeId").toString());
+				}
+				
 				// token negoziazione
 				if(informazioniNegoziazioneToken!=null) {
 					informazioniToken.setRetrievedToken(informazioniNegoziazioneToken);
