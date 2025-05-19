@@ -4307,9 +4307,9 @@ public class OpenSPCoop2Properties {
 		return this.pathConfigurazionePDD;
 	} 
 
-	private List<byte[]> configPreLoadingLocale = null;
+	private List<PreloadingConfiguration> configPreLoadingLocale = null;
 	private Boolean configPreLoadingLocaleRead = null;
-	public List<byte[]> getConfigPreLoadingLocale() {	
+	public List<PreloadingConfiguration> getConfigPreLoadingLocale() {	
 		if(this.configPreLoadingLocaleRead==null){
 			try{ 
 				String resourceTmp = this.reader.getValueConvertEnvProperties("org.openspcoop2.pdd.config.preLoading.locale");
@@ -4324,7 +4324,8 @@ public class OpenSPCoop2Properties {
 					for (String resource : lResources) {
 						File f = new File(resource);
 						if(f.exists()) {
-							this.configPreLoadingLocale.add(FileSystemUtilities.readBytesFromFile(f));
+							PreloadingConfiguration pc = new PreloadingConfiguration(FileSystemUtilities.readBytesFromFile(f), resource);
+							this.configPreLoadingLocale.add(pc);
 						}
 						else {
 							if(!resource.startsWith("/")) {
@@ -4333,7 +4334,8 @@ public class OpenSPCoop2Properties {
 							InputStream is = OpenSPCoop2Properties.class.getResourceAsStream(resource);
 							if(is!=null) {
 								try {
-									this.configPreLoadingLocale.add(Utilities.getAsByteArray(is));
+									PreloadingConfiguration pc = new PreloadingConfiguration(Utilities.getAsByteArray(is), resource);
+									this.configPreLoadingLocale.add(pc);
 								}finally {
 									try {
 										is.close();

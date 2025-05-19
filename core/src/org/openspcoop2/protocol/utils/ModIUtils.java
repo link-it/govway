@@ -1167,6 +1167,16 @@ public class ModIUtils {
 		}
 	}
 	
+	public static boolean isSignalHubEnabled() throws ProtocolException {
+		try {
+			Object instance = getModiProperties();
+			Method mIsSignalHubEnabled = instance.getClass().getMethod("isSignalHubEnabled");
+			return (Boolean) mIsSignalHubEnabled.invoke(instance);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException {
 		try {
