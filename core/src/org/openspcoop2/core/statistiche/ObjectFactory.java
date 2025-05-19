@@ -39,6 +39,7 @@ import javax.xml.namespace.QName;
  * provided in this class.
  * 
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */
@@ -70,10 +71,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatisticaMensile }
+     * Create an instance of {@link StatisticaSettimanale }
      */
-    public StatisticaMensile createStatisticaMensile() {
-        return new StatisticaMensile();
+    public StatisticaSettimanale createStatisticaSettimanale() {
+        return new StatisticaSettimanale();
     }
 
     /**
@@ -84,10 +85,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link StatisticaSettimanale }
+     * Create an instance of {@link StatistichePdndTracing }
      */
-    public StatisticaSettimanale createStatisticaSettimanale() {
-        return new StatisticaSettimanale();
+    public StatistichePdndTracing createStatistichePdndTracing() {
+        return new StatistichePdndTracing();
+    }
+
+    /**
+     * Create an instance of {@link StatisticaMensile }
+     */
+    public StatisticaMensile createStatisticaMensile() {
+        return new StatisticaMensile();
     }
 
     /**

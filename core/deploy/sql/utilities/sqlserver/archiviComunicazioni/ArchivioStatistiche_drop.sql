@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX INDEX_PDND_TRACING_ACTIVE ON statistiche_pdnd_tracing ;
 -- DROP INDEX idx_stat_c_mensili_1 ON stat_mensili_contenuti ;
 -- DROP INDEX INDEX_STAT_MONTH ON statistiche_mensili ;
 -- DROP INDEX INDEX_STAT_MONTH_FULL ON statistiche_mensili ;
@@ -15,6 +16,7 @@
 -- DROP INDEX INDEX_STAT_HOUR ON statistiche_orarie ;
 -- DROP INDEX INDEX_STAT_HOUR_FULL ON statistiche_orarie ;
 -- DROP INDEX INDEX_STAT_HOUR_ENTRY ON statistiche_orarie ;
+DROP TABLE statistiche_pdnd_tracing;
 DROP TABLE stat_mensili_contenuti;
 DROP TABLE statistiche_mensili;
 DROP TABLE stat_settimane_contenuti;

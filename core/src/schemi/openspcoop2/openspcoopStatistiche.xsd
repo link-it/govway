@@ -42,6 +42,7 @@
 				<linkit:info version="1.0" project-name="statistiche">
 					<linkit:authors>
 						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
+						<linkit:author name="Tommaso Burlon" mail="tommaso.burlon@link.it"/>
 					</linkit:authors>
 				</linkit:info>
 				<linkit:jax-ws xml-annotations="true" xml-op2-types="true" ws="false"/>
@@ -74,6 +75,9 @@
 									object-type="statistica-mensile"/>
 								<linkit:sql-table object-name="statistica-mensile-contenuti"
 									object-type="statistica-contenuti"/>
+								<linkit:sql-comment><![CDATA[STATISTICHE TRACING PDND]]></linkit:sql-comment>
+                                                                <linkit:sql-table object-name="statistiche-pdnd-tracing"
+                                                                        object-type="statistiche-pdnd-tracing"/>
 							</linkit:sql-table-list>
 						</linkit:sql-script>
 						<linkit:sql-mapping single-table-mapping="true"
@@ -665,11 +669,186 @@
 	</xsd:element>
 
 
+	 <!-- ********* STATISTICHE PDND TRACING ************* -->
 
+	<xsd:element name="statistiche-pdnd-tracing">
+		<xsd:annotation>
+			<xsd:appinfo>
+				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+					<linkit:interface crud="true"/>
+						<linkit:sql-table-mapping name="statistiche_pdnd_tracing"
+						comment="Statistiche raccolte per il tracing da inviare alla PDND"
+						on-delete-cascade="true" sequence-cycle="true">
+						<linkit:sql-table-index name="INDEX_PDND_TRACING_ACTIVE">
+							<linkit:sql-table-index-column name="pdd_codice" />
+							<linkit:sql-table-index-column name="data_tracciamento" order="DESC" ignoreTypeCompatibility="true"/>
+							<linkit:sql-table-index-column name="history"/>
+						</linkit:sql-table-index>
+					</linkit:sql-table-mapping>
+				</linkit:generator>
+			</xsd:appinfo>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="data-tracciamento" type="xsd:dateTime">
+					<xsd:annotation>
+						<xsd:appinfo>
+						<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping name="data_tracciamento" />
+							<linkit:sql-ddl-column-comment>
+								Data a cui si riferisce il csv
+							</linkit:sql-ddl-column-comment>
+						</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-registrazione" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="data_registrazione" />
+								<linkit:sql-ddl-column-comment>
+									Data di caricamento del csv
+								</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="pdd-codice" type="xsd:string">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="pdd_codice" />
+								<linkit:sql-ddl-column-comment>
+									Codice del soggetto multitenant
+								</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="csv" type="xsd:hexBinary" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="csv" />
+								<linkit:sql-ddl-column-comment>
+									File csv prodotto dal batch o caricato dalla govway monitor
+								</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="method" type="pdnd-methods" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="method" varchar="20"/>
+								<linkit:sql-ddl-column-comment>
+									Metodo [SUBMIT, REPLACE, RECOVER] da chiamare per caricare il csv 
+								</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="stato-pdnd" type="possibili-stati-pdnd" default="WAITING">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="stato_pdnd" varchar="20"/>
+								<linkit:sql-ddl-column-comment>
+									Stato del record [OK, ERROR, WAITING, PENDING] rispetto alla PDND
+								</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tentativi-pubblicazione" type="xsd:integer" minOccurs="1" default="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tentativi_pubblicazione" />
+								<linkit:sql-ddl-column-comment>
+									Tentativi effettuati di invio alla PDND
+								</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="stato" type="possibili-stati-richieste" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="stato" varchar="20"/>
+								<linkit:sql-ddl-column-comment>
+									Stato della richiesta [PUBLISHED, FAILED] 
+								</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="tracing-id" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="tracing_id" varchar="36"/>
+								<linkit:sql-ddl-column-comment>
+									Tracing id ritornato dalla PDND
+								</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="error-details" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="error_details" />
+								<linkit:sql-ddl-column-comment>
+									Dettagli dell'errore ritornato se presente
+								</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="history" type="xsd:int">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="history" />
+								<linkit:sql-ddl-column-comment>
+									True se fa parte dei record storici, false se invece rappresenta l'ultimo record inserito
+								</linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 
-
-
-
+	<xsd:simpleType name="pdnd-methods">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="REPLACE"/>
+			<xsd:enumeration value="RECOVER"/>
+			<xsd:enumeration value="SUBMIT"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="possibili-stati-pdnd">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="WAITING"/>
+			<xsd:enumeration value="PENDING"/>
+			<xsd:enumeration value="OK"/>
+			<xsd:enumeration value="ERROR"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="possibili-stati-richieste">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="PUBLISHED"/>
+			<xsd:enumeration value="FAILED"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 
 
 
@@ -1439,6 +1618,8 @@
 			<xsd:enumeration value="StatisticheGiornaliere"/>
 			<xsd:enumeration value="StatisticheSettimanali"/>
 			<xsd:enumeration value="StatisticheMensili"/>
+			<xsd:enumeration value="PdndGenerazioneTracciamento"/>
+			<xsd:enumeration value="PdndPubblicazioneTracciamento"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 

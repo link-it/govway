@@ -31,6 +31,7 @@ import javax.xml.bind.JAXBElement;
  * XML Serializer of beans with jaxb
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

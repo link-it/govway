@@ -31,6 +31,7 @@ import org.openspcoop2.generic_project.beans.ComplexField;
  * Model StatisticaMensile 
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

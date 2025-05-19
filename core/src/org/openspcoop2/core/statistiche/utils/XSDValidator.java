@@ -29,6 +29,7 @@ import org.openspcoop2.core.statistiche.StatisticaInfo;
  * XSD Validator    
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -23,6 +23,7 @@ package org.openspcoop2.core.statistiche.model;
  * Factory
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -37,6 +38,8 @@ public class ModelFactory {
 	public static StatisticaSettimanaleModel STATISTICA_SETTIMANALE = new StatisticaSettimanaleModel();
 	
 	public static StatisticaMensileModel STATISTICA_MENSILE = new StatisticaMensileModel();
+	
+	public static StatistichePdndTracingModel STATISTICHE_PDND_TRACING = new StatistichePdndTracingModel();
 	
 
 }

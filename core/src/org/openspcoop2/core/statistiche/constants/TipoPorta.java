@@ -29,6 +29,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * Enumeration dell'elemento tipo-porta xsd (tipo:string) 
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

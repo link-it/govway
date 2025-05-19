@@ -27,6 +27,7 @@ import org.openspcoop2.generic_project.exception.NotImplementedException;
  * Manager with which 'can get the service for the management of the objects defined in the package org.openspcoop2.core.statistiche 
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -160,6 +161,32 @@ public interface IServiceManager {
 	 * @throws NotImplementedException Exception thrown when the method is not implemented
 	 */
 	public IStatisticaMensileService getStatisticaMensileService() throws ServiceException,NotImplementedException;
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:statistiche-pdnd-tracing type:statistiche-pdnd-tracing
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public IStatistichePdndTracingServiceSearch getStatistichePdndTracingServiceSearch() throws ServiceException,NotImplementedException;
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	public IStatistichePdndTracingService getStatistichePdndTracingService() throws ServiceException,NotImplementedException;
 	
 	
 	
