@@ -136,4 +136,12 @@ public class StatisticsLibrary {
 		generateStatistics(new StatisticheMensili(), "per generazione statistiche mensili");
 	}
 	
+	public void generatePdndGenerazioneTracciamento(){
+		generateStatistics(new PdndGenerazioneTracciamento(), "generazione pdnd tracciamento");
+	}
+	
+	public void generatePdndPubblicazioneTracciamento(){
+		generateStatistics(new PdndPublicazioneTracciamento(), "pubblicazione pdnd tracciamento");
+	}
+	
 }

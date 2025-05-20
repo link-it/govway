@@ -29,6 +29,7 @@ import org.openspcoop2.monitor.engine.statistic.StatisticsForceIndexConfig;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
+import org.openspcoop2.utils.transport.http.HttpRequest;
 
 /**
 * GeneratorProperties
@@ -80,6 +81,9 @@ public class GeneratorProperties {
 
 	private File pddMonitorFrameworkRepositoryJars = null;
 	
+	/** Richiesta configurata per effettuare chiamate al tracing pdnd **/
+	private HttpRequest pdndTracingRequest;
+	
 	private PropertiesReader props;
 	
 	
@@ -127,6 +131,19 @@ public class GeneratorProperties {
 		if(tmp!=null){
 			this.pddMonitorFrameworkRepositoryJars = new File(tmp);
 		}
+		
+		this.pdndTracingRequest = new HttpRequest();
+		String url = this.getProperty("pdnd.tracciamento.baseUrl", true);
+		String username = this.getProperty("pdnd.tracciamento.http.username", false);
+		String password = this.getProperty("pdnd.tracciamento.http.password", false);
+		String readTimeout = this.getProperty("pdnd.tracciamento.readTimeout", true);
+		String connectionTimeout = this.getProperty("pdnd.tracciamento.connectTimeout", true);
+		
+		this.pdndTracingRequest.setUrl(url);
+		this.pdndTracingRequest.setUsername(username);
+		this.pdndTracingRequest.setPassword(password);
+		this.pdndTracingRequest.setConnectTimeout(Integer.valueOf(connectionTimeout));
+		this.pdndTracingRequest.setReadTimeout(Integer.valueOf(readTimeout));
 	}
 	
 	private String getProperty(String name,boolean required) throws UtilsException{
@@ -264,6 +281,20 @@ public class GeneratorProperties {
 	public boolean isBYOKEnvSecretsConfigRequired() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(false, "byok.env.secrets.required");
 		return this.parse(b, false);
+	}
+	
+	public HttpRequest getPdndTracingRequest() {
+		HttpRequest copy = new HttpRequest();
+		copy.setUrl(this.pdndTracingRequest.getUrl());
+		copy.setUsername(this.pdndTracingRequest.getUsername());
+		copy.setPassword(this.pdndTracingRequest.getPassword());
+		copy.setConnectTimeout(this.pdndTracingRequest.getConnectTimeout());
+		copy.setReadTimeout(this.pdndTracingRequest.getReadTimeout());
+		return copy;
+	}
+
+	public void setPdndTracingRequest(HttpRequest pdndTracingRequest) {
+		this.pdndTracingRequest = pdndTracingRequest;
 	}
 	
 }

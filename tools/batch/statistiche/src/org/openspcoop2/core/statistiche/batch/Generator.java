@@ -98,6 +98,12 @@ public class Generator {
 		case STATISTICHE_MENSILI:
 			nomeLogger = "statistiche_mensili";
 			break;
+		case PDND_GENERAZIONE_TRACCIAMENTO:
+			nomeLogger = "pdnd_generazione_tracciamento";
+			break;
+		case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+			nomeLogger = "pdnd_pubblicazione_tracciamento";
+			break;
 		}
 		
 		Logger logCore = null;
@@ -235,6 +241,7 @@ public class Generator {
 			
 			statisticsConfig.setLogCore(logCore);
 			statisticsConfig.setLogSql(logSql);
+			statisticsConfig.setPdndTracingBaseRequest(generatorProperties.getPdndTracingRequest());
 			statisticsConfig.setGenerazioneStatisticheCustom(generatorProperties.isGenerazioneStatisticheCustom());
 			statisticsConfig.setAnalisiTransazioniCustom(generatorProperties.isAnalisiTransazioniCustom());
 			statisticsConfig.setDebug(generatorProperties.isStatisticheGenerazioneDebug());
@@ -255,6 +262,12 @@ public class Generator {
 			case STATISTICHE_MENSILI:
 				statisticsConfig.setStatisticheMensili(true);
 				statisticsConfig.setStatisticheMensiliGestioneUltimoIntervallo(true);
+				break;
+			case PDND_GENERAZIONE_TRACCIAMENTO:
+				statisticsConfig.setPdndGenerazioneTracciamento(true);
+				break;
+			case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+				statisticsConfig.setPdndPubblicazioneTracciamento(true);
 				break;
 			}
 			statisticsConfig.setWaitMsBeforeNextInterval(generatorProperties.getGenerazioneTradeOffMs());
@@ -287,7 +300,9 @@ public class Generator {
 				org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
 				org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM = null;
 				
-				if(generatorProperties.isGenerazioneStatisticheCustom()){
+				if(generatorProperties.isGenerazioneStatisticheCustom()
+						|| statisticsConfig.isPdndGenerazioneTracciamento()
+						|| statisticsConfig.isPdndPubblicazioneTracciamento()){
 					
 					pluginsStatisticheSM = (org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager) 
 						daoFactory.getServiceManager(
@@ -334,6 +349,12 @@ public class Generator {
 					break;
 				case STATISTICHE_MENSILI:
 					sLibrary.generateStatisticaMensile();
+					break;
+				case PDND_GENERAZIONE_TRACCIAMENTO:
+					sLibrary.generatePdndGenerazioneTracciamento();
+					break;
+				case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+					sLibrary.generatePdndPubblicazioneTracciamento();
 					break;
 				}	
 			}catch(Exception e){

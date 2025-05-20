@@ -24,6 +24,8 @@ import org.openspcoop2.monitor.engine.config.MonitorProperties;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.slf4j.Logger;
 
 /**
@@ -61,6 +63,8 @@ public class StatisticsConfig {
 	private boolean statisticheGiornaliere = false;
 	private boolean statisticheSettimanali = false;
 	private boolean statisticheMensili = false;
+	private boolean pdndGenerazioneTracciamento = false;
+	private boolean pdndPubblicazioneTracciamento = false;
 	
 	/** Tipologie di statistiche: gestione ultimo intervallo */
 	private boolean statisticheOrarieGestioneUltimoIntervallo = false;
@@ -70,6 +74,9 @@ public class StatisticsConfig {
 		
 	/** Lista di indici forzati */
 	private StatisticsForceIndexConfig forceIndexConfig = null;
+	
+	/** Richiesta configurata per effettuare chiamate al tracing pdnd **/
+	private HttpRequest pdndTracingRequest;
 	
 	private static final String FALSE = "false";
 	
@@ -131,6 +138,16 @@ public class StatisticsConfig {
 				} else {
 					this.statisticheMensili = false;
 				}
+				
+			    this.pdndGenerazioneTracciamento = parsePdndGenerazioneTracciamentoProperty(props);
+			    this.pdndPubblicazioneTracciamento = parsePdndPubblicazioneTracciamentoProperty(props);
+			    this.pdndTracingRequest = parsePdndTracingRequest(props);
+			    
+				if ("true".equals(props.getProperty(CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_ENABLED, "true", true))) {
+					this.pdndPubblicazioneTracciamento = true;
+				} else {
+					this.pdndPubblicazioneTracciamento = false;
+				}
 		
 				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_HOURLY_LASTINT, "true", true))) {
 					this.statisticheOrarieGestioneUltimoIntervallo = true;
@@ -160,6 +177,20 @@ public class StatisticsConfig {
 		}catch(Exception e){
 			throw new EngineException(e.getMessage(),e);
 		}
+	}
+	
+	private static boolean parsePdndGenerazioneTracciamentoProperty(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_GENERAZIONE_TRACCIAMENTO_ENABLED;
+		return "true".equals(props.getProperty(propId, "true", true));
+	}
+	
+	private static boolean parsePdndPubblicazioneTracciamentoProperty(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_ENABLED;
+		return "true".equals(props.getProperty(propId, "true", true));
+	}
+	
+	private static HttpRequest parsePdndTracingRequest(MonitorProperties props) throws UtilsException {
+		return new HttpRequest();
 	}
 	
 	public Logger getLogCore() {
@@ -233,10 +264,27 @@ public class StatisticsConfig {
 	public void setStatisticheMensili(boolean statisticheMensili) {
 		this.statisticheMensili = statisticheMensili;
 	}
+	
+	public boolean isPdndPubblicazioneTracciamento() {
+		return this.pdndPubblicazioneTracciamento;
+	}
+
+	public void setPdndPubblicazioneTracciamento(boolean pdndPubblicazioneTracciamento) {
+		this.pdndPubblicazioneTracciamento = pdndPubblicazioneTracciamento;
+	}
+	
+	public boolean isPdndGenerazioneTracciamento() {
+		return this.pdndGenerazioneTracciamento;
+	}
+
+	public void setPdndGenerazioneTracciamento(boolean pdndGenerazioneTracciamento) {
+		this.pdndGenerazioneTracciamento = pdndGenerazioneTracciamento;
+	}
 
 	public boolean isStatisticheOrarieGestioneUltimoIntervallo() {
 		return this.statisticheOrarieGestioneUltimoIntervallo;
 	}
+	
 
 	public void setStatisticheOrarieGestioneUltimoIntervallo(
 			boolean statisticheOrarieGestioneUltimoIntervallo) {
@@ -300,5 +348,19 @@ public class StatisticsConfig {
 
 	public void setWaitStatiInConsegna(boolean waitStatiInConsegna) {
 		this.waitStatiInConsegna = waitStatiInConsegna;
+	}
+	
+	public HttpRequest getPdndTracingBaseRequest() {
+		HttpRequest copy = new HttpRequest();
+		copy.setUrl(this.pdndTracingRequest.getUrl());
+		copy.setUsername(this.pdndTracingRequest.getUsername());
+		copy.setPassword(this.pdndTracingRequest.getPassword());
+		copy.setConnectTimeout(this.pdndTracingRequest.getConnectTimeout());
+		copy.setReadTimeout(this.pdndTracingRequest.getReadTimeout());
+		return copy;
+	}
+
+	public void setPdndTracingBaseRequest(HttpRequest pdndTracingRequest) {
+		this.pdndTracingRequest = pdndTracingRequest;
 	}
 }
