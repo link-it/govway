@@ -24,9 +24,9 @@ copyright = u'Copyright (c) 2005-2025 Link.it srl (https://link.it).'
 author = u'Link.it'
 
 # The short X.Y version
-version = u'3.3.16.p1'
+version = u'3.3.16.p2'
 # The full version, including alpha/beta/rc tags
-release = u'3.3.16.p1'
+release = u'3.3.16.p2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -177,7 +177,7 @@ epub_exclude_files = ['search.html']
 
 
 # -- Extension configuration -------------------------------------------------
-html_theme = 'sphinx_rtd_theme'
 import sphinx_rtd_theme
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_theme = 'sphinx_rtd_theme'
+#html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 

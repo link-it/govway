@@ -9,8 +9,9 @@ si può invece far riferimento al file ChangeLog di questa versione.
 
 .. note::
 
-   Per la versione 3.3.16 utilizzare l'ultima patch version che risolve bug importanti descritti nella sezione:
+   Per la versione 3.3.16 utilizzare l'ultima patch version che risolve bug importanti descritti nelle sezioni:
 
+   - :ref:`3.3.16.2_bug`
    - :ref:`3.3.16.1_bug`
 
 .. toctree::
@@ -30,4 +31,5 @@ si può invece far riferimento al file ChangeLog di questa versione.
 	console
         bug
 	bug_p1
+	bug_p2
 

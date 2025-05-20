@@ -13,9 +13,9 @@ author = 'Link.it'
 numfig = True
 
 # The short X.Y version
-version = '3.3.16.p1'
+version = '3.3.16.p2'
 # The full version, including alpha/beta/rc tags
-release = '3.3.16.p1'
+release = '3.3.16.p2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -92,4 +92,4 @@ html_static_path = ['_static']
 #---sphinx-themes-----
 import sphinx_rtd_theme
 html_theme = 'sphinx_rtd_theme'
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+#html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
