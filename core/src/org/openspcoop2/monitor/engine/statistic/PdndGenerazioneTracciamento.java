@@ -54,7 +54,6 @@ import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.csv.Format;
 import org.openspcoop2.utils.csv.Printer;
@@ -155,7 +154,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 				return cached;
 			CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.transazioniSM.getCredenzialeMittenteService()).get(Long.valueOf(event));
 			String cred = AbstractCredenzialeList.normalize(credenzialeMittente.getCredenziale());
-			String rawCode = cred.substring(CostantiPdD.PREFIX_HTTP_STATUS_CODE_OUT.length());
+			String rawCode = cred.substring("Out=".length());
 			Integer code = Integer.valueOf(rawCode);
 			this.eventsToCode.put(event, code);
 			return code;
