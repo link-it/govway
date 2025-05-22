@@ -24,6 +24,8 @@ package org.openspcoop2.core.mapping;
 
 import java.io.Serializable;
 
+import org.openspcoop2.utils.sql.LikeConfig;
+
 /**
  * Permette il filtro di ricerca attraverso i driver che implementano l'interfaccia 'get'
  * 
@@ -47,6 +49,8 @@ public class FiltroRicercaProtocolProperty implements Serializable{
 	
 	/** Valore */
 	private String valueAsString;
+	/** Valore */
+	private LikeConfig searchWithLike;
 	
 	/** ValoreNumerico */
 	private Long valueAsLong;
@@ -65,6 +69,12 @@ public class FiltroRicercaProtocolProperty implements Serializable{
 	}
 	public void setValueAsString(String valore) {
 		this.valueAsString = valore;
+	}
+	public LikeConfig getSearchWithLike() {
+		return this.searchWithLike;
+	}
+	public void setSearchWithLike(LikeConfig searchWithLike) {
+		this.searchWithLike = searchWithLike;
 	}
 	public Long getValueAsLong() {
 		return this.valueAsLong;
@@ -87,10 +97,9 @@ public class FiltroRicercaProtocolProperty implements Serializable{
 		StringBuilder bf = new StringBuilder();
 		bf.append("FiltroProtocolProperty: ");
 		this.addDetails(bf);
-		if(checkEmpty){
-			if(bf.length()=="FiltroProtocolProperty: ".length()){
-				bf.append(" nessun filtro presente");
-			}
+		if(checkEmpty &&
+			bf.length()=="FiltroProtocolProperty: ".length()){
+			bf.append(" nessun filtro presente");
 		}
 		return bf.toString();
 	}

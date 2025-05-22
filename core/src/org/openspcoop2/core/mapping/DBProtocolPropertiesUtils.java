@@ -952,7 +952,14 @@ public class DBProtocolPropertiesUtils {
 					else {
 						conditions[i] = "";
 					}
-					conditions[i] = conditions[i] + " " + aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING+"=?";
+					conditions[i] = conditions[i] + " ";
+					String nomeColonna = aliasTabella+"."+CostantiDB.PROTOCOL_PROPERTIES_COLUMN_VALUE_STRING;
+					if(f.getSearchWithLike()!=null){
+						conditions[i] = conditions[i] + sqlQueryObject.getWhereLikeCondition(nomeColonna, f.getValueAsString(), f.getSearchWithLike());
+					}
+					else {
+						conditions[i] = conditions[i] + nomeColonna+"=?";
+					}
 				}
 				else if(f.getValueAsLong()!=null){
 					if(conditions[i]!=null){
@@ -1014,7 +1021,7 @@ public class DBProtocolPropertiesUtils {
 	
 	public static void setProtocolPropertiesForSearch(PreparedStatement stmt, int index, 
 			List<FiltroRicercaProtocolProperty> list, ProprietariProtocolProperty proprietario,
-			String tipoDatabase, Logger log) throws SQLQueryObjectException, SQLException, JDBCAdapterException, UtilsException{
+			String tipoDatabase, Logger log) throws SQLException, JDBCAdapterException, UtilsException{
 		
 		JDBCParameterUtilities jdbcParameterUtilities = new JDBCParameterUtilities(TipiDatabase.toEnumConstant(tipoDatabase));
 		
@@ -1036,8 +1043,10 @@ public class DBProtocolPropertiesUtils {
 				}
 				
 				if(f.getValueAsString()!=null){
-					logDebug(log,prefix+"ValueAsString stmt.setString("+f.getValueAsString()+")");
-					jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsString(), String.class);
+					if(f.getSearchWithLike()==null){
+						logDebug(log,prefix+"ValueAsString stmt.setString("+f.getValueAsString()+")");
+						jdbcParameterUtilities.setParameter(stmt, index++, f.getValueAsString(), String.class);
+					}
 				}
 				else if(f.getValueAsLong()!=null){
 					logDebug(log,prefix+"ValueAsLong stmt.setLong("+f.getValueAsLong()+")");

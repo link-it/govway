@@ -107,8 +107,8 @@ import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
-import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.protocol.utils.ModISecurityUtils;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
@@ -3246,53 +3246,92 @@ public class ModiErogazioniApiHelper {
 	private static void fillErogazioneModIInfoGenerali(ProtocolProperties p, ErogazioneModIInfoGenerali informazioniGenerali) {
 		if (informazioniGenerali != null) {
 			if (informazioniGenerali.getServiceId() != null)
-				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID, informazioniGenerali.getServiceId());
-			if (informazioniGenerali.getSignalHub() != null) {
-				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, true);
-				
-				ErogazioneModISignalHub signalHubConf = informazioniGenerali.getSignalHub();
-				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID, signalHubConf.getAlgoritmo());
-				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, signalHubConf.getRisorsa());
-				if (signalHubConf.getRuolo() != null)
-					p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID, signalHubConf.getRuolo());
-				if (signalHubConf.getApplicativo() != null)
-					p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID, signalHubConf.getApplicativo());
-				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, signalHubConf.getGiorniRotazione());
-				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, signalHubConf.getDimensioneSeme());
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID, informazioniGenerali.getServiceId());
+			
+			if (informazioniGenerali.getDescriptorId() != null && !informazioniGenerali.getDescriptorId().isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+				for (String descriptorId : informazioniGenerali.getDescriptorId()) {
+					if(sb.length()>0) {
+						sb.append(",");
+					}
+					sb.append(descriptorId);
+				}
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID, sb.toString());
 			}
+			
+			fillErogazioneModIInfoGeneraliSignalHub(p, informazioniGenerali);
+		}
+	}
+	private static void fillErogazioneModIInfoGeneraliSignalHub(ProtocolProperties p, ErogazioneModIInfoGenerali informazioniGenerali) {
+		if (informazioniGenerali.getSignalHub() != null) {
+			p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, true);
+			
+			ErogazioneModISignalHub signalHubConf = informazioniGenerali.getSignalHub();
+			p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID, signalHubConf.getAlgoritmo());
+			p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, signalHubConf.getRisorsa());
+			if (signalHubConf.getRuolo() != null)
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID, signalHubConf.getRuolo());
+			if (signalHubConf.getApplicativo() != null)
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID, signalHubConf.getApplicativo());
+			p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, signalHubConf.getGiorniRotazione());
+			p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, signalHubConf.getDimensioneSeme());
 		}
 	}
 	
 	private static ErogazioneModIInfoGenerali getErogazioneModIInfoGenerali(Map<String, AbstractProperty<?>> p) throws CoreException {
-		ErogazioneModIInfoGenerali infoGenerali = null;
+		ErogazioneModIInfoGenerali infoGenerali = new ErogazioneModIInfoGenerali();
 		
-		String eServiceId = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID, false);
-				
+		boolean add = false;
+		
+		String eServiceId = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID, false);
 		if (eServiceId != null) {
-			infoGenerali = new ErogazioneModIInfoGenerali();
 			infoGenerali.setServiceId(eServiceId);
-			
-			Boolean signalHubEnabled = ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, false);
-			if (signalHubEnabled != null && signalHubEnabled.booleanValue()) {
-				String digestAlgorithm = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID, false);
-				String operation = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, false);
-				String role = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID, false);
-				String saName = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID, false);
-				Integer seedLifetime = ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, false);
-				Integer seedSize = ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, false);
-
-				ErogazioneModISignalHub signalHubConf = new ErogazioneModISignalHub();
-				signalHubConf.algoritmo(digestAlgorithm)
-					.applicativo(saName)
-					.dimensioneSeme(seedSize)
-					.risorsa(operation)
-					.ruolo(role)
-					.giorniRotazione(seedLifetime);
-				infoGenerali.setSignalHub(signalHubConf);
-			}
+			add = true;
 		}
 		
-		return infoGenerali;
+		String descriptorId = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID, false);
+		if (descriptorId != null) {
+			if(descriptorId.contains(",")) {
+				String[]tmp = descriptorId.split(",");
+				if(tmp!=null && tmp.length>0) {
+					for (String s : tmp) {
+						infoGenerali.addDescriptorIdItem(s);
+						add = true;
+					}
+				}
+			}
+			else {
+				infoGenerali.addDescriptorIdItem(descriptorId);
+				add = true;
+			}
+		}
+				
+		Boolean signalHubEnabled = ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, false);
+		if (signalHubEnabled != null && signalHubEnabled.booleanValue()) {
+			
+			add = true;
+			
+			fillErogazioneModIInfoGeneraliSignalHub(infoGenerali, p);
+		}
+		
+		return add ? infoGenerali : null; 
+	}
+	private static void fillErogazioneModIInfoGeneraliSignalHub(ErogazioneModIInfoGenerali infoGenerali, Map<String, AbstractProperty<?>> p) throws CoreException {
+		String digestAlgorithm = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID, false);
+		String operation = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, false);
+		String role = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID, false);
+		String saName = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID, false);
+		Integer seedLifetime = ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, false);
+		Integer seedSize = ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, false);
+
+		ErogazioneModISignalHub signalHubConf = new ErogazioneModISignalHub();
+		signalHubConf.algoritmo(digestAlgorithm)
+		.applicativo(saName)
+		.dimensioneSeme(seedSize)
+		.risorsa(operation)
+		.ruolo(role)
+		.giorniRotazione(seedLifetime);
+		infoGenerali.setSignalHub(signalHubConf);
 	}
 
 }

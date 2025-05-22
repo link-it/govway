@@ -10943,7 +10943,13 @@ components:
       type: "object"
       properties:
         service_id:
+          maxLength: 4000
           type: "string"
+        descriptor_id:
+          type: "array"
+          items:
+            maxLength: 100
+            type: "string"
         signal_hub:
           $ref: "#/components/schemas/ErogazioneModISignalHub"
     ErogazioneModISignalHub:

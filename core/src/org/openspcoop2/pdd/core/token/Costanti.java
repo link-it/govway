@@ -385,6 +385,9 @@ public class Costanti {
 	public static final String PDND_PURPOSE_ID = "purposeId";
 	public static final String PDND_SESSION_INFO = "sessionInfo";
 	public static final String PDND_PRODUCER_ID = "producerId";
+	public static final String PDND_SERVICE_ID = "eserviceId";
+	public static final String PDND_DESCRIPTOR_ID = "descriptorId";
+	public static final String PDND_CONSUMER_ID = "consumerId";
 	
 	public static final String PDND_DNONCE = "dnonce";
 	

@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.protocol.sdk.properties;
 
+import org.openspcoop2.utils.sql.LikeConfig;
+
 /**
  * StringProperty
  *
@@ -28,8 +30,21 @@ package org.openspcoop2.protocol.sdk.properties;
  */
 public class StringProperty extends AbstractProperty<String> {
 
+	private LikeConfig searchWithLike; 
+	
 	protected StringProperty(String id, String value) {
 		super(id, value);
 	}
+	protected StringProperty(String id, String value, LikeConfig searchWithLike) {
+		super(id, value);
+		this.searchWithLike = searchWithLike;
+	}
+	
+	public LikeConfig getSearchWithLike() {
+		return this.searchWithLike;
+	}
 
+	public void setSearchWithLike(LikeConfig searchWithLike) {
+		this.searchWithLike = searchWithLike;
+	}
 }

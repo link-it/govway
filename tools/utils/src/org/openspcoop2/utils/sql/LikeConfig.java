@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.sql;
 
+import java.io.Serializable;
+
 /**
  * LikeConfig
  *
@@ -27,7 +29,9 @@ package org.openspcoop2.utils.sql;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class LikeConfig {
+public class LikeConfig implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public static LikeConfig contains(boolean caseInsensitive) {
 		return contains(true, caseInsensitive);

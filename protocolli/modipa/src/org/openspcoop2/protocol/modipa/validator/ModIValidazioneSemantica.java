@@ -38,9 +38,12 @@ import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
@@ -267,8 +270,12 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 						if(registryReader==null) {
 							registryReader = this.getProtocolFactory().getCachedRegistryReader(this.state, requestInfo);
 						}
-						validateTokenAuthorizationProducerIdByModIConfig(registryReader, idSoggetto, 
-								isRichiesta, prefixAuthorization); 
+						boolean isOk = validateTokenAuthorizationProducerIdByModIConfig(registryReader, idSoggetto, 
+								isRichiesta, prefixAuthorization);
+						if(isOk) {
+							validateTokenAuthorizationServiceDescriptorIdByModIConfig(registryReader, busta, 
+									isRichiesta, prefixAuthorization);
+						}
 					}
 				}
 				
@@ -1218,14 +1225,14 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		return true;
 	}
 	
-	private boolean validateTokenAuthorizationProducerIdByModIConfig(IRegistryReader registriReader, IDSoggetto idSoggetto, 
+	private boolean validateTokenAuthorizationProducerIdByModIConfig(IRegistryReader registryReader, IDSoggetto idSoggetto, 
 			boolean isRichiesta, String prefixAuthorization) throws ProtocolException{
 		String producerIdClaimReceived = readProducerIdFromTokenOAuth();			
 		if(producerIdClaimReceived!=null && StringUtils.isNotEmpty(producerIdClaimReceived)) {
 
 			Soggetto s = null;
 			try {
-				s = registriReader.getSoggetto(idSoggetto);
+				s = registryReader.getSoggetto(idSoggetto);
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
@@ -1240,6 +1247,83 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 			
 		}
 		
+		return true;
+	}
+	
+	private boolean validateTokenAuthorizationServiceDescriptorIdByModIConfig(IRegistryReader registryReader, Busta busta, 
+			boolean isRichiesta, String prefixAuthorization) throws ProtocolException{
+		
+		IDServizio idServizio = null;
+		if(busta!=null && busta.getTipoServizio()!=null && busta.getServizio()!=null && busta.getVersioneServizio()!=null && busta.getTipoDestinatario()!=null && busta .getDestinatario()!=null) {
+			try {
+				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(busta.getTipoServizio(), busta.getServizio(), busta.getTipoDestinatario(), busta .getDestinatario(), busta.getVersioneServizio());
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			AccordoServizioParteSpecifica asps = null;
+			try {
+				asps = registryReader.getAccordoServizioParteSpecifica(idServizio, false);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+			if(!validateTokenAuthorizationServiceIdByModIConfig(asps, 
+					isRichiesta, prefixAuthorization) ) {
+				return false;
+			}
+			if(!validateTokenAuthorizationDescriptorIdByModIConfig(asps, 
+					isRichiesta, prefixAuthorization) ) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	private boolean validateTokenAuthorizationServiceIdByModIConfig(AccordoServizioParteSpecifica asps, 
+			boolean isRichiesta, String prefixAuthorization) throws ProtocolException{
+		String eServiceId = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(asps.getProtocolPropertyList(), ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID);
+		if(eServiceId!=null && StringUtils.isNotEmpty(eServiceId)) {
+			String serviceIdClaimReceived = readServiceIdFromTokenOAuth();	
+			if(serviceIdClaimReceived==null || StringUtils.isEmpty(serviceIdClaimReceived)) {
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+						isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+							prefixAuthorization+getErroreClaimNonPresente(org.openspcoop2.pdd.core.token.Costanti.PDND_SERVICE_ID)));
+				return false;
+			}
+			if(!serviceIdClaimReceived.equals(eServiceId)) {
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+						isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+							prefixAuthorization+getErroreClaimNonValido(org.openspcoop2.pdd.core.token.Costanti.PDND_SERVICE_ID)));
+				return false;
+			}
+		}
+		return true;
+	}
+	private boolean validateTokenAuthorizationDescriptorIdByModIConfig(AccordoServizioParteSpecifica asps, 
+			boolean isRichiesta, String prefixAuthorization) throws ProtocolException{
+		String tmpDescriptorId = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(asps.getProtocolPropertyList(), ModICostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID);
+		List<String> descriptorIdList = null;
+		if(tmpDescriptorId!=null && StringUtils.isNotEmpty(tmpDescriptorId)) {
+			descriptorIdList = ModISecurityConfig.convertToList(tmpDescriptorId);
+		}
+		if(descriptorIdList!=null && !descriptorIdList.isEmpty()) {
+			String descriptorIdClaimReceived = readDescriptorIdFromTokenOAuth();	
+			if(descriptorIdClaimReceived==null || StringUtils.isEmpty(descriptorIdClaimReceived)) {
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+						isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+							prefixAuthorization+getErroreClaimNonPresente(org.openspcoop2.pdd.core.token.Costanti.PDND_DESCRIPTOR_ID)));
+				return false;
+			}
+			if(!descriptorIdList.contains(descriptorIdClaimReceived)) {
+				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+						isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+							prefixAuthorization+getErroreClaimNonValido(org.openspcoop2.pdd.core.token.Costanti.PDND_DESCRIPTOR_ID)));
+				return false;
+			}
+		}
 		return true;
 	}
 	
@@ -1365,6 +1449,12 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	
 	private String readProducerIdFromTokenOAuth() {
 		return readClaimFromTokenOAuth(org.openspcoop2.pdd.core.token.Costanti.PDND_PRODUCER_ID);
+	}
+	private String readServiceIdFromTokenOAuth() {
+		return readClaimFromTokenOAuth(org.openspcoop2.pdd.core.token.Costanti.PDND_SERVICE_ID);
+	}
+	private String readDescriptorIdFromTokenOAuth() {
+		return readClaimFromTokenOAuth(org.openspcoop2.pdd.core.token.Costanti.PDND_DESCRIPTOR_ID);
 	}
 	private String readClaimFromTokenOAuth(String name) {
 		Object oInformazioniTokenNormalizzate = null;

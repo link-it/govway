@@ -1,3 +1,10 @@
+2025-05-22  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità #1608
+	Introdotta la possibilità di specificare i valori attesi per i claim 'eserviceId' e 'descriptorId' presenti in un voucher PDND.
+        In fase di validazione del voucher viene ora verificata la corrispondenza tra il claim eserviceId e/o il claim descriptorId con i corrispettivi valori configurati.
+
 2025-05-13  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore]

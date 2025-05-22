@@ -1120,7 +1120,8 @@ public final class CostantiDB {
     
     // Info
     
-    public static final String MODIPA_API_IMPL_INFO_ID_ESERVICE_ID = "modipaInfoGenEserviceId";
+    public static final String MODIPA_API_IMPL_INFO_ESERVICE_ID = "modipaInfoGenEserviceId";
+    public static final String MODIPA_API_IMPL_INFO_DESCRIPTOR_ID = "modipaInfoGenDescriptorId";
     
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID = "modipaInfoGenSignalHub";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID = "modipaInfoGenSignalHubOp";
