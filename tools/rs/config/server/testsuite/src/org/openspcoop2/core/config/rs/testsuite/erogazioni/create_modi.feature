@@ -351,6 +351,11 @@ Scenario Outline: Erogazioni Creazione Petstore signalhub <nome>
 
 	# creo l'erogazione che pubblichera le informazioni di pseudonanonimizazzione
 	* def erogazione_petstore = read('<nome>')
+	* eval randomize(erogazione_petstore.modi.informazioni_generali, ["service_id"])
+	* eval erogazione_petstore.modi.informazioni_generali.descriptor_id[0] = erogazione_petstore.modi.informazioni_generali.service_id
+	* eval randomize(erogazione_petstore.modi.informazioni_generali, ["service_id"])
+	* eval erogazione_petstore.modi.informazioni_generali.descriptor_id[1] = erogazione_petstore.modi.informazioni_generali.service_id
+	* eval randomize(erogazione_petstore.modi.informazioni_generali, ["service_id"])
 	* eval erogazione_petstore.erogazione_nome = api_petstore_rest_signalhub.nome
 	* eval erogazione_petstore.api_nome = api_petstore_rest_signalhub.nome
 	* eval erogazione_petstore.api_versione = api_petstore_rest_signalhub.versione

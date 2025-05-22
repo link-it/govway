@@ -11,7 +11,10 @@
         "modi": {
                 "protocollo": "rest",
                 "informazioni_generali": {
-                    "service_id": "PROVAAAA",
+                    "service_id": "PROVA_ID_SERVIZIO",
+                    "descriptor_id": [
+                    	"PROVA_IDDESCRITTORE_1","PROVA_IDDESCRITTORE_2"
+                    ],
                     "signal_hub": {
                         "risorsa": "GET_pseudonymization",
                         "algoritmo": "SHAKE128",

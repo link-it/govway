@@ -3295,6 +3295,9 @@ public class ModiErogazioniApiHelper {
 				String[]tmp = descriptorId.split(",");
 				if(tmp!=null && tmp.length>0) {
 					for (String s : tmp) {
+						if(infoGenerali.getDescriptorId()==null) {
+							infoGenerali.setDescriptorId(new ArrayList<>());
+						}
 						infoGenerali.addDescriptorIdItem(s);
 						add = true;
 					}
