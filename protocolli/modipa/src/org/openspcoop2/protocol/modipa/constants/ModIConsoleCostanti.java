@@ -897,11 +897,16 @@ public class ModIConsoleCostanti {
 	
 	// Informazioni Genrali
 	
-	public static final String MODIPA_API_IMPL_INFO_LABEL = MODIPA_TITLE_LABEL+" - Informazioni Generali";
+	public static final String MODIPA_API_IMPL_INFO_LABEL = MODIPA_TITLE_LABEL+" - "+CostantiLabel.MODIPA_API_IMPL_INFO_LABEL;
 	public static final String MODIPA_API_IMPL_INFO_ID = "modipaAPIImplInfoGenTitleId";
 	
-	public static final String MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL;
-	public static final String MODIPA_API_IMPL_INFO_ID_ESERVICE_ID = ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID;
+	public static final String MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_ESERVICE_ID_ID = ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID;
+	
+	public static final String MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL = CostantiLabel.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL;
+	public static final String MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_ID = ModICostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID;
+	public static final String MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_NOTE = "Elencare più descrittori separandoli con la ','";
+	
 	
 	// Signal Hub
 	

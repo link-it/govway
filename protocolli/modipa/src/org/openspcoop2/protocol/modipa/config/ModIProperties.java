@@ -230,6 +230,8 @@ public class ModIProperties {
 			
 			getValidazioneTokenOAuthClaimsRequired();
 			getValidazioneTokenPDNDClaimsRequired();
+			this.isPdndEServiceIdCheckUnique();
+			this.isPdndDescriptorIdCheckUnique();
 			
 			/* **** KEY STORE **** */
 			
@@ -983,6 +985,60 @@ public class ModIProperties {
     	}
     	
     	return this.validazioneTokenPDNDClaimsRequiredSoggetto.get(soggetto);
+	}
+	
+	private Boolean isPdndEServiceIdCheckUnique = null;
+	public boolean isPdndEServiceIdCheckUnique(){
+		if(this.isPdndEServiceIdCheckUnique==null){
+			
+			Boolean defaultValue =false;
+			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.eServiceId.checkUnique";
+			
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isPdndEServiceIdCheckUnique = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isPdndEServiceIdCheckUnique = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isPdndEServiceIdCheckUnique = defaultValue;
+			}
+		}
+
+		return this.isPdndEServiceIdCheckUnique;
+	}
+	
+	private Boolean isPdndDescriptorIdCheckUnique = null;
+	public boolean isPdndDescriptorIdCheckUnique(){
+		if(this.isPdndDescriptorIdCheckUnique==null){
+			
+			Boolean defaultValue =false;
+			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.descriptorId.checkUnique";
+			
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isPdndDescriptorIdCheckUnique = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isPdndDescriptorIdCheckUnique = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isPdndDescriptorIdCheckUnique = defaultValue;
+			}
+		}
+
+		return this.isPdndDescriptorIdCheckUnique;
 	}
 	
 	
@@ -4914,6 +4970,8 @@ public class ModIProperties {
 		}
 		return this.staticInstanceConfig;
 	}
+	
+	
 	
 	
     /* **** Signal Hub **** */

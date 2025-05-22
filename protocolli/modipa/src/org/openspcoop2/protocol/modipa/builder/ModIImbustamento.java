@@ -1035,7 +1035,7 @@ public class ModIImbustamento {
 	
 	private void sendSeedUpdateRequest(Context context, List<ProtocolProperty> eServiceProperties, String seedSignalId) throws ProtocolException {
 		RequestInfo reqInfo = (RequestInfo) context.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
-		String eServiceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+		String eServiceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID);
 		
 		// creo una richiesta e risposta servlet mock per inviare un segnale di SEEDUPDATE alla stessa porta delegata con le stesse credenziali 
 		MockHttpServletRequest req = new MockHttpServletRequest(reqInfo.getProtocolContext().getHttpServletRequest());

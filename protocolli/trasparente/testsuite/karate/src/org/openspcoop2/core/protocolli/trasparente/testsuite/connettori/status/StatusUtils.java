@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.connettori.ConnettoreStatus;
@@ -261,7 +262,12 @@ public class StatusUtils {
 		sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_STATUS_CACHE_LIFETIME, 200);
 		
 		// aspetto che il life time custom invalidi la cache
-		Utilities.sleep(5000); 
+		if(Utils.isJenkins()) {
+			Utilities.sleep(15000);
+		}
+		else {
+			Utilities.sleep(5000);
+		}
 
 		// invio richiesta per ottenere il nuovo risultato
 		sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_STATUS_CACHE_LIFETIME, getReturnCodeError(messageType));

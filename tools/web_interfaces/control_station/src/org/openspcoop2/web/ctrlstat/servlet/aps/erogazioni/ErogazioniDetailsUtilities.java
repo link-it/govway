@@ -846,7 +846,8 @@ public class ErogazioniDetailsUtilities {
 			else {
 				sb.append("-");
 			}
-						
+
+			boolean sicurezzaMessaggioPdnd = false;			
 			if(sicurezzaMessaggio) {
 				
 				// Sorgente Token
@@ -856,6 +857,7 @@ public class ErogazioniDetailsUtilities {
 					sb.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH);
 					sb.append(separator);
 					sb.append(v);
+					sicurezzaMessaggioPdnd = v.contains(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_PDND);
 				}
 				
 				if(rest) {
@@ -936,6 +938,42 @@ public class ErogazioniDetailsUtilities {
 							separator, newLine);
 				}
 				
+			}
+			
+			
+			if(sicurezzaMessaggioPdnd && gestioneErogatori) {
+				
+				StringBuilder sbPDND = new StringBuilder();
+				
+				v = map.get(ModIUtils.API_IMPL_INFO_ESERVICE_ID);
+				if(StringUtils.isNotEmpty(v)) {
+					sbPDND.append(newLine);
+					sbPDND.append(CostantiLabel.MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL);
+					sbPDND.append(separator);
+					sbPDND.append(v);
+				}
+				
+				v = map.get(ModIUtils.API_IMPL_INFO_DESCRIPTOR_ID);
+				if(StringUtils.isNotEmpty(v)) {
+					sbPDND.append(newLine);
+					sbPDND.append(CostantiLabel.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL);
+					sbPDND.append(separator);
+					sbPDND.append(v);
+				}
+				
+				v = map.get(ModIUtils.API_IMPL_INFO_SIGNAL_HUB);
+				if(StringUtils.isNotEmpty(v)) {
+					sbPDND.append(newLine);
+					sbPDND.append(CostantiLabel.MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL);
+					sbPDND.append(separator);
+					sbPDND.append(v);
+				}
+				
+				if(sbPDND.length()>0) {
+					sb.append(newLine);
+					sb.append("- "+CostantiLabel.MODIPA_API_IMPL_INFO_LABEL+" -");
+					sb.append(sbPDND.toString());
+				}
 			}
 		}
 

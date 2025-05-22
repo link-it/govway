@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.sdk.properties;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
+import org.openspcoop2.utils.sql.LikeConfig;
 
 /**
  * ProtocolPropertiesFactory
@@ -77,5 +78,8 @@ public class ProtocolPropertiesFactory {
 	}
 	public static StringProperty newProperty(String id, String value){
 		return new StringProperty(id, value);
+	}
+	public static StringProperty newProperty(String id, String value, LikeConfig searchWithLike){
+		return new StringProperty(id, value, searchWithLike);
 	}
 }

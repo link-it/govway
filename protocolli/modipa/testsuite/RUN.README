@@ -194,7 +194,7 @@ Prerequisiti:
 		# ----- PDND Configuration
 
 		# consente di indicare i claims obbligatori attesi nel token oauth
-		org.openspcoop2.protocol.modipa.DemoSoggettoErogatoreConIdEnte.token.pdnd.claims.required=producerId,consumerId,eServiceId,descriptorId
+		org.openspcoop2.protocol.modipa.DemoSoggettoErogatoreConIdEnte.token.pdnd.claims.required=producerId,consumerId,eserviceId,descriptorId
 
 		# ================================================
 		# -------- KeyStore -------- 

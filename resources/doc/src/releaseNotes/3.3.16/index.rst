@@ -27,6 +27,7 @@ si può invece far riferimento al file ChangeLog di questa versione.
 	trasformazioni
 	integrazione
 	modipa
+	pdnd
 	log
 	console
         bug

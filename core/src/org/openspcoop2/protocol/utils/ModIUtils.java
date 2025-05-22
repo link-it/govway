@@ -121,6 +121,10 @@ public class ModIUtils {
 	public static final String API_IMPL_SICUREZZA_OAUTH_IDENTIFICATIVO = "oauth-id";
 	public static final String API_IMPL_SICUREZZA_OAUTH_KID = "oauth-kid";
 	
+	public static final String API_IMPL_INFO_ESERVICE_ID = "info-eservice-id";
+	public static final String API_IMPL_INFO_DESCRIPTOR_ID = "info-descriptor-id";
+	public static final String API_IMPL_INFO_SIGNAL_HUB = "info-signal-hub";
+	
 		
 	
 	// COSTANTI SERVIZIO
@@ -231,6 +235,7 @@ public class ModIUtils {
 			}
 		}
 		
+		boolean sicurezzaMessaggioPdnd = false;
 		if(sicurezzaMessaggio) {
 			
 			// Sorgente Token ID AUTH
@@ -249,6 +254,7 @@ public class ModIUtils {
 							sbMes.append(", ");
 						}
 						sbMes.append(CostantiLabel.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_PDND);
+						sicurezzaMessaggioPdnd = true;
 					}
 					else if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH.equals(mode)) {
 						if(sbMes.length()>0) {
@@ -432,6 +438,28 @@ public class ModIUtils {
 				addStore(map, protocolPropertyList, "", false, false);
 			}
 			
+		}
+		
+		if(sicurezzaMessaggioPdnd && gestioneErogatori) {
+			
+			v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_API_IMPL_INFO_ESERVICE_ID);
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				map.put(API_IMPL_INFO_ESERVICE_ID, v);
+			}
+			
+			v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID);
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				map.put(API_IMPL_INFO_DESCRIPTOR_ID, v);
+			}
+			
+			
+			v = getStringValue(protocolPropertyList, CostantiDB.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID);
+			if(v!=null && StringUtils.isNotEmpty(v)) {
+				map.put(API_IMPL_INFO_SIGNAL_HUB, "true".equals(v) ? StatoFunzionalita.ABILITATO.getValue() : StatoFunzionalita.DISABILITATO.getValue());
+			}
+			else if(ModIUtils.isSignalHubEnabled()) {
+				map.put(API_IMPL_INFO_SIGNAL_HUB, StatoFunzionalita.DISABILITATO.getValue());
+			}
 		}
 		
 		return map;

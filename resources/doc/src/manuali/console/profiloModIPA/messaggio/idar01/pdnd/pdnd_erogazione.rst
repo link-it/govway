@@ -56,6 +56,33 @@ Per verificare l'audience presente nel token ricevuto dalla PDND deve essere uti
 
     Autorizzazione dell'audience presente nel token
 
+**Verifica Claims PDND**
+
+In un voucher PDND sono presenti:
+
+- producerId: identificativo unico dell’amministrazione erogatrice per ciascun ambiente (produzione, collaudo, attestazione);
+- eserviceId: identificativo unico dell’e-service;
+- descriptorId: identificativo della versione dell’e-service.
+
+Il controllo dei tre valori sopra indicati può essere attivato configurando i relativi valori attesi nei seguenti punti della console di gestione:
+
+- per 'eserviceId' e 'descriptorId' nella maschera ModI di configurazione dell’erogazione (:numref:`erogazione_secMessaggio_pdnd_serviceIdDescriptorId_fig`);
+- per 'producerID' nella maschera di configurazione del soggetto erogatore, all’interno del campo ID Ente (:numref:`erogazione_secMessaggio_pdnd_producerId_fig`).
+
+Durante la fase di validazione del voucher, il sistema verifica la corrispondenza tra i valori dei claims configurati nella console e quelli presenti nel voucher stesso.
+
+.. figure:: ../../../../_figure_console/modipa_erogazione_secMessaggio_pdnd_serviceIdDescriptorId.png
+    :scale: 70%
+    :name: erogazione_secMessaggio_pdnd_serviceIdDescriptorId_fig
+
+    Configurazione dei valori attesi per i claims 'eserviceId' e 'descriptorId'
+
+.. figure:: ../../../../_figure_console/modipa_erogazione_secMessaggio_pdnd_producerId.png
+    :scale: 70%
+    :name: erogazione_secMessaggio_pdnd_producerId_fig
+
+    Configurazione del valore atteso per il claim 'producerId'
+
 **Identificazione ed Autorizzazione dei fruitori**
 
 È possibile registrare gli applicativi dei domini esterni al fine di:

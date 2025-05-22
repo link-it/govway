@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.modipa.config.ModISignalHubConfig;
 import org.openspcoop2.protocol.modipa.config.ModISignalHubParamConfig;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
+import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemValueType;
@@ -83,11 +84,13 @@ import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaFruizioniServizio;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRuoli;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
 import org.openspcoop2.protocol.sdk.registry.RegistryException;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.digest.DigestEncoding;
+import org.openspcoop2.utils.sql.LikeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -2440,11 +2443,21 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		StringConsoleItem modiEServiceIdItem = (StringConsoleItem) 
 				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
 				ConsoleItemType.TEXT_AREA,
-				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID,
-				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_ID,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL
 					);
 		modiEServiceIdItem.setRows(1);
 		configuration.addConsoleItem(modiEServiceIdItem);
+		
+		StringConsoleItem modiDescriptorIdItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.TEXT_AREA,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_ID,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL
+					);
+		modiDescriptorIdItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_NOTE);
+		modiDescriptorIdItem.setRows(1);
+		configuration.addConsoleItem(modiDescriptorIdItem);
 		
 		if(modiProperties.isSignalHubEnabled()) {
 		
@@ -2577,7 +2590,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		
 		// eService id
 		AbstractConsoleItem<?> modiEServiceIdItem = 	
-				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_ID);
 		if(modiEServiceIdItem!=null) {
 			modiEServiceIdItem.setRequired(signalHub);
 		}
@@ -2989,23 +3002,20 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		
 		ModIProperties modiProperties = ModIProperties.getInstance();
 		
-		AbstractConsoleItem<?> modiEServiceIdItem = 	
-				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
-						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID
-						);
-		StringProperty modiEServiceIdItemValue = null;
-		if(modiEServiceIdItem!=null) {
-			
-			modiEServiceIdItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
-			if(modiEServiceIdItemValue!=null && modiEServiceIdItemValue.getValue()!=null && !"".equals(modiEServiceIdItemValue.getValue())) {
-				try {
-					InputValidationUtils.validateTextAreaInput(modiEServiceIdItemValue.getValue(), ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_LABEL);
-				}catch(Exception e) {
-					throw new ProtocolException(e.getMessage(),e);
-				}
-			}
-			
-		}
+		// eServiceId
+		
+		String modiEServiceIdItemValue = validatePdndInfoId(registryReader, idServizio, consoleConfiguration, properties,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_ID, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL,
+				ModIProperties.getInstance().isPdndEServiceIdCheckUnique());
+		
+		// descriptorId
+		
+		validatePdndInfoId(registryReader, idServizio, consoleConfiguration, properties,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_ID, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL,
+				ModIProperties.getInstance().isPdndDescriptorIdCheckUnique());
+		
+		
+		// signalHub
 		
 		boolean signalHub = false;
 		if(modiProperties.isSignalHubEnabled()) {
@@ -3017,6 +3027,76 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			if (modiEServiceIdItemValue == null)
 				throw new ProtocolException(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID_ESERVICE_UNDEFINED);
 			validatePdndInfoSignalHub(registryReader, configIntegrationReader, api, idServizio, portType, consoleConfiguration, properties);
+		}
+	}
+	private static String validatePdndInfoId(IRegistryReader registryReader, IDServizio idServizio, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			String id, String label, boolean checkUnique) throws ProtocolException {
+		AbstractConsoleItem<?> modiEServiceIdItem = 	
+				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
+						id
+						);
+		StringProperty modiEServiceIdItemValue = null;
+		if(modiEServiceIdItem!=null) {
+			
+			modiEServiceIdItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, id);
+			String idValue = null;
+			if(modiEServiceIdItemValue!=null && modiEServiceIdItemValue.getValue()!=null && !"".equals(modiEServiceIdItemValue.getValue())) {
+				try {
+					InputValidationUtils.validateTextAreaInput(modiEServiceIdItemValue.getValue(), label);
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
+				idValue = modiEServiceIdItemValue.getValue();
+			}
+			
+			validatePdndInfoIdExists(registryReader, idServizio,
+					id, label, checkUnique, idValue);
+			
+			return idValue;
+		}
+		return null;
+	}
+	private static void validatePdndInfoIdExists(IRegistryReader registryReader, IDServizio idServizio,
+			String id, String label, boolean checkUnique, String idValue) throws ProtocolException {
+		if(idValue!=null && checkUnique) {
+			if(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_ID.equals(id)) {
+				List<String> values = ModISecurityConfig.convertToList(idValue);
+				if(values!=null && !values.isEmpty()) {
+					for (String v : values) {
+						validatePdndInfoIdExists(registryReader, idServizio, 
+								id, label, v, LikeConfig.contains(false)); // gli uuid sono sempre univoci, una ricerca per contains va bene		
+					}
+				}
+			}
+			else {
+				validatePdndInfoIdExists(registryReader, idServizio, 
+						id, label, idValue, null);
+			}
+		}
+	}
+	private static void validatePdndInfoIdExists(IRegistryReader registryReader, IDServizio idServizio, 
+			String id, String label, String idValue, LikeConfig likeConfig) throws ProtocolException {
+		ProtocolFiltroRicercaServizi filtro = new ProtocolFiltroRicercaServizi();
+		filtro.setProtocolPropertiesServizi(new ProtocolProperties());
+		filtro.getProtocolPropertiesServizi().addProperty(id, idValue, likeConfig);
+		List<IDServizio> list = null;
+		try {
+			list = registryReader.findIdAccordiServizioParteSpecifica(filtro);
+			if(list!=null && !list.isEmpty()) {
+				for (IDServizio check : list) {
+					if(!check.equals(idServizio, false)) {
+						String msg = "L'erogazione '"+check.getNome()+" v"+check.getVersione()+"' erogata da '"+check.getSoggettoErogatore().getNome()+"' risulta già registrata con il campo '"+label+"' valorizzato con l'identificativo fornito";
+						if(likeConfig==null) {
+							msg = msg + " '"+idValue+"'";
+						}
+						throw new ProtocolException(msg);
+					}
+				}
+			}
+		}catch(RegistryNotFound notFound) {
+			// ignore
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
 	private static void validatePdndInfoSignalHub(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, AccordoServizioParteComune api, IDServizio idServizio, String portType, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {

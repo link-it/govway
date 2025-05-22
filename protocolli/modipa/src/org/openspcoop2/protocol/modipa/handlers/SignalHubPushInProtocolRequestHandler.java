@@ -287,7 +287,7 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 			// altrimenti ottengo l'id sdel servizio partendo dal serviceId
 			ProtocolFiltroRicercaServizi filter = new ProtocolFiltroRicercaServizi();
 			ProtocolProperties filterProps = new ProtocolProperties();
-			filterProps.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID, serviceId);
+			filterProps.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID, serviceId);
 			filter.setProtocolPropertiesServizi(filterProps);
 			
 			List<IDServizio> idServices = null;
@@ -316,7 +316,7 @@ public class SignalHubPushInProtocolRequestHandler implements InRequestHandler {
 		}
 		
 		try {
-			serviceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ID_ESERVICE_ID);
+			serviceId = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID);
 		}catch(Exception e) {
 			// succede nel caso di name e version
 			throw newHandlerException("L'erogazione del servizio indicato non contiene la configurazione relativa al serviceId", IntegrationFunctionError.BAD_REQUEST);

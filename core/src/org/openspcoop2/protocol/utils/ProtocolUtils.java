@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
+import org.openspcoop2.utils.UtilsRuntimeException;
 
 /**
  * ProtocolPropertiesUtils
@@ -133,7 +134,7 @@ public class ProtocolUtils {
 	public static List<FiltroRicercaProtocolPropertyRegistry> convert(ProtocolProperties protocolProperties){
 		List<FiltroRicercaProtocolPropertyRegistry> list = null;
 		if(protocolProperties!=null && protocolProperties.sizeProperties()>0){
-			list = new ArrayList<FiltroRicercaProtocolPropertyRegistry>();
+			list = new ArrayList<>();
 			for (int i = 0; i < protocolProperties.sizeProperties(); i++) {
 				FiltroRicercaProtocolPropertyRegistry fpp = new FiltroRicercaProtocolPropertyRegistry();
 				AbstractProperty<?> p = protocolProperties.getProperty(i);
@@ -142,6 +143,7 @@ public class ProtocolUtils {
 					StringProperty sp = (StringProperty) p;
 					if(sp.getValue()!=null && !"".equals(sp.getValue())) {
 						fpp.setValueAsString(sp.getValue());
+						fpp.setSearchWithLike(sp.getSearchWithLike());
 					}
 				}
 				else if(p instanceof NumberProperty){
@@ -153,7 +155,7 @@ public class ProtocolUtils {
 					fpp.setValueAsBoolean(bp.getValue());
 				}
 				else{
-					throw new RuntimeException("Tipo di Filtro ["+p.getClass().getName()+"] non supportato");
+					throw new UtilsRuntimeException("Tipo di Filtro ["+p.getClass().getName()+"] non supportato");
 				}
 				list.add(fpp);
 			}

@@ -19,6 +19,9 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import java.util.List;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
@@ -29,6 +32,9 @@ public class ErogazioneModIInfoGenerali  {
   private String serviceId = null;
   
   @Schema(description = "")
+  private List<String> descriptorId = null;
+  
+  @Schema(description = "")
   private ErogazioneModISignalHub signalHub = null;
  /**
    * Get serviceId
@@ -36,7 +42,7 @@ public class ErogazioneModIInfoGenerali  {
   **/
   @JsonProperty("service_id")
   @Valid
-  public String getServiceId() {
+ @Size(max=4000)  public String getServiceId() {
     return this.serviceId;
   }
 
@@ -46,6 +52,30 @@ public class ErogazioneModIInfoGenerali  {
 
   public ErogazioneModIInfoGenerali serviceId(String serviceId) {
     this.serviceId = serviceId;
+    return this;
+  }
+
+ /**
+   * Get descriptorId
+   * @return descriptorId
+  **/
+  @JsonProperty("descriptor_id")
+  @Valid
+  public List<String> getDescriptorId() {
+    return this.descriptorId;
+  }
+
+  public void setDescriptorId(List<String> descriptorId) {
+    this.descriptorId = descriptorId;
+  }
+
+  public ErogazioneModIInfoGenerali descriptorId(List<String> descriptorId) {
+    this.descriptorId = descriptorId;
+    return this;
+  }
+
+  public ErogazioneModIInfoGenerali addDescriptorIdItem(String descriptorIdItem) {
+    this.descriptorId.add(descriptorIdItem);
     return this;
   }
 
@@ -75,6 +105,7 @@ public class ErogazioneModIInfoGenerali  {
     sb.append("class ErogazioneModIInfoGenerali {\n");
     
     sb.append("    serviceId: ").append(ErogazioneModIInfoGenerali.toIndentedString(this.serviceId)).append("\n");
+    sb.append("    descriptorId: ").append(ErogazioneModIInfoGenerali.toIndentedString(this.descriptorId)).append("\n");
     sb.append("    signalHub: ").append(ErogazioneModIInfoGenerali.toIndentedString(this.signalHub)).append("\n");
     sb.append("}");
     return sb.toString();

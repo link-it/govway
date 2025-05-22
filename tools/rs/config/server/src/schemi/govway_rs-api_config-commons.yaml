@@ -2017,6 +2017,12 @@ components:
        properties:
           service_id:
              type: string
+             maxLength: 4000 
+          descriptor_id:
+             type: array
+             items:
+               type: string
+               maxLength: 100 # lista di id più piccola di 4000            
           signal_hub: 
              $ref: '#/components/schemas/ErogazioneModISignalHub'
     ErogazioneModISignalHub:
