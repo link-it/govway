@@ -3283,33 +3283,15 @@ public class ModiErogazioniApiHelper {
 		
 		boolean add = false;
 		
-		String eServiceId = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID, false);
-		if (eServiceId != null) {
-			infoGenerali.setServiceId(eServiceId);
+		if(fillErogazioneModIInfoGeneraliServiceId(infoGenerali, p)) {
 			add = true;
 		}
 		
-		String descriptorId = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID, false);
-		if (descriptorId != null) {
-			if(descriptorId.contains(",")) {
-				String[]tmp = descriptorId.split(",");
-				if(tmp!=null && tmp.length>0) {
-					for (String s : tmp) {
-						if(infoGenerali.getDescriptorId()==null) {
-							infoGenerali.setDescriptorId(new ArrayList<>());
-						}
-						infoGenerali.addDescriptorIdItem(s);
-						add = true;
-					}
-				}
-			}
-			else {
-				infoGenerali.addDescriptorIdItem(descriptorId);
-				add = true;
-			}
+		if(fillErogazioneModIInfoGeneraliDescriptorId(infoGenerali, p)) {
+			add = true;
 		}
 				
-		Boolean signalHubEnabled = ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, false);
+		Boolean signalHubEnabled = ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, false, true);
 		if (signalHubEnabled != null && signalHubEnabled.booleanValue()) {
 			
 			add = true;
@@ -3318,6 +3300,45 @@ public class ModiErogazioniApiHelper {
 		}
 		
 		return add ? infoGenerali : null; 
+	}
+	private static boolean fillErogazioneModIInfoGeneraliServiceId(ErogazioneModIInfoGenerali infoGenerali, Map<String, AbstractProperty<?>> p) throws CoreException {
+		boolean add = false;
+		
+		String eServiceId = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID, false);
+		if (eServiceId != null) {
+			infoGenerali.setServiceId(eServiceId);
+			add = true;
+		}
+		
+		return add;
+	}
+	private static boolean fillErogazioneModIInfoGeneraliDescriptorId(ErogazioneModIInfoGenerali infoGenerali, Map<String, AbstractProperty<?>> p) throws CoreException {
+		boolean add = false;
+		String descriptorId = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID, false);
+		if (descriptorId != null) {
+			if(descriptorId.contains(",")) {
+				String[]tmp = descriptorId.split(",");
+				add = fillErogazioneModIInfoGeneraliDescriptorId(infoGenerali, tmp);
+			}
+			else {
+				infoGenerali.addDescriptorIdItem(descriptorId);
+				add = true;
+			}
+		}
+		return add;
+	}
+	private static boolean fillErogazioneModIInfoGeneraliDescriptorId(ErogazioneModIInfoGenerali infoGenerali, String [] tmp) {
+		boolean add = false;
+		if(tmp!=null && tmp.length>0) {
+			for (String s : tmp) {
+				if(infoGenerali.getDescriptorId()==null) {
+					infoGenerali.setDescriptorId(new ArrayList<>());
+				}
+				infoGenerali.addDescriptorIdItem(s);
+				add = true;
+			}
+		}
+		return add;
 	}
 	private static void fillErogazioneModIInfoGeneraliSignalHub(ErogazioneModIInfoGenerali infoGenerali, Map<String, AbstractProperty<?>> p) throws CoreException {
 		String digestAlgorithm = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID, false);

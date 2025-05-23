@@ -217,6 +217,8 @@ Prerequisiti:
 
 		# consente di indicare i claims obbligatori attesi nel token oauth
 		org.openspcoop2.protocol.modipa.DemoSoggettoErogatoreConIdEnte.token.pdnd.claims.required=producerId,consumerId,eserviceId,descriptorId
+		# consente di non abilitare la verifica per i soggetti indicati
+		org.openspcoop2.protocol.modipa.pdnd.DemoSoggettoErogatore.eServiceId.check=false
 
 		# ================================================
 		# -------- KeyStore -------- 

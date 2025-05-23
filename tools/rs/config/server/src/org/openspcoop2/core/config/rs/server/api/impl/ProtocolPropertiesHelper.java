@@ -43,12 +43,22 @@ public class ProtocolPropertiesHelper {
 		return "Property "+key+" ";
 	}
 	
+	private static Object returnProperty(boolean permitReturnNull, String key, AbstractProperty<?> prop, String expectedClassName) throws CoreException {
+		if(permitReturnNull && prop==null) {
+			return null;
+		}
+		throw new CoreException(getPropertyPrefix(key)+"non è "+expectedClassName+": " + (prop!=null ? prop.getClass().getName() : "null prop" ) );
+	}
+	
 	public static Boolean getBooleanProperty(Map<String, AbstractProperty<?>> p, String key, boolean required) throws CoreException {
+		return getBooleanProperty(p, key, required, false);
+	}
+	public static Boolean getBooleanProperty(Map<String, AbstractProperty<?>> p, String key, boolean required, boolean permitReturnNull) throws CoreException {
 		AbstractProperty<?> prop = getProperty(p, key, required);
 		if(prop instanceof BooleanProperty) {
 			return ((BooleanProperty)prop).getValue();
 		} else {
-			throw new CoreException(getPropertyPrefix(key)+"non è una Boolean:" + (prop!=null ? prop.getClass().getName() : "null prop" ) );
+			return (Boolean) returnProperty(permitReturnNull, key, prop, "Boolean");
 		}
 	}
 

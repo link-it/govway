@@ -230,7 +230,11 @@ public class ModIProperties {
 			
 			getValidazioneTokenOAuthClaimsRequired();
 			getValidazioneTokenPDNDClaimsRequired();
+			this.isValidazioneTokenPDNDProducerIdCheck();
+			this.isPdndProducerIdCheckUnique();
+			this.isValidazioneTokenPDNDEServiceIdCheck();
 			this.isPdndEServiceIdCheckUnique();
+			this.isValidazioneTokenPDNDDescriptorIdCheck();
 			this.isPdndDescriptorIdCheckUnique();
 			
 			/* **** KEY STORE **** */
@@ -987,12 +991,125 @@ public class ModIProperties {
     	return this.validazioneTokenPDNDClaimsRequiredSoggetto.get(soggetto);
 	}
 	
+	private static final String PREFIX_PROPERTY_MODIPA_PDND = "org.openspcoop2.protocol.modipa.pdnd.";
+	
+	private Boolean isValidazioneTokenPDNDProducerIdCheck= null;
+	private boolean isValidazioneTokenPDNDProducerIdCheck() throws ProtocolException{
+    	if(this.isValidazioneTokenPDNDProducerIdCheck==null){
+    		String propertyName = "org.openspcoop2.protocol.modipa.pdnd.producerId.check";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+				if(value!=null && StringUtils.isNotEmpty(value)) {
+					this.isValidazioneTokenPDNDProducerIdCheck = Boolean.parseBoolean(value);
+				}
+				else {
+					this.isValidazioneTokenPDNDProducerIdCheck = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.isValidazioneTokenPDNDProducerIdCheck;
+	}
+	private Map<String,Boolean> isValidazioneTokenPDNDProducerIdCheckSoggetto = new HashMap<>();
+	public boolean isValidazioneTokenPDNDProducerIdCheck(String soggetto) throws ProtocolException{
+		if(!this.isValidazioneTokenPDNDProducerIdCheckSoggetto.containsKey(soggetto)){
+    		String propertyName = PREFIX_PROPERTY_MODIPA_PDND+soggetto+".producerId.check"; 
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+				if(value!=null && StringUtils.isNotEmpty(value)) {
+					this.isValidazioneTokenPDNDProducerIdCheckSoggetto.put(soggetto, Boolean.parseBoolean(value));
+				}
+				else {
+					this.isValidazioneTokenPDNDProducerIdCheckSoggetto.put(soggetto, isValidazioneTokenPDNDProducerIdCheck());
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.isValidazioneTokenPDNDProducerIdCheckSoggetto.get(soggetto);
+	}
+	
+	private Boolean isPdndProducerIdCheckUnique = null;
+	public boolean isPdndProducerIdCheckUnique(){
+		if(this.isPdndProducerIdCheckUnique==null){
+			
+			Boolean defaultValue =false;
+			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.producerId.console.checkUnique";
+			
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isPdndProducerIdCheckUnique = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isPdndProducerIdCheckUnique = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isPdndProducerIdCheckUnique = defaultValue;
+			}
+		}
+
+		return this.isPdndProducerIdCheckUnique;
+	}
+	
+	
+	
+	private Boolean isValidazioneTokenPDNDEServiceIdCheck= null;
+	private boolean isValidazioneTokenPDNDEServiceIdCheck() throws ProtocolException{
+    	if(this.isValidazioneTokenPDNDEServiceIdCheck==null){
+    		String propertyName = "org.openspcoop2.protocol.modipa.pdnd.eServiceId.check";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+				if(value!=null && StringUtils.isNotEmpty(value)) {
+					this.isValidazioneTokenPDNDEServiceIdCheck = Boolean.parseBoolean(value);
+				}
+				else {
+					this.isValidazioneTokenPDNDEServiceIdCheck = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.isValidazioneTokenPDNDEServiceIdCheck;
+	}
+	private Map<String,Boolean> isValidazioneTokenPDNDEServiceIdCheckSoggetto = new HashMap<>();
+	public boolean isValidazioneTokenPDNDEServiceIdCheck(String soggetto) throws ProtocolException{
+		if(!this.isValidazioneTokenPDNDEServiceIdCheckSoggetto.containsKey(soggetto)){
+    		String propertyName = PREFIX_PROPERTY_MODIPA_PDND+soggetto+".eServiceId.check"; 
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+				if(value!=null && StringUtils.isNotEmpty(value)) {
+					this.isValidazioneTokenPDNDEServiceIdCheckSoggetto.put(soggetto, Boolean.parseBoolean(value));
+				}
+				else {
+					this.isValidazioneTokenPDNDEServiceIdCheckSoggetto.put(soggetto, isValidazioneTokenPDNDEServiceIdCheck());
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.isValidazioneTokenPDNDEServiceIdCheckSoggetto.get(soggetto);
+	}
+	
 	private Boolean isPdndEServiceIdCheckUnique = null;
 	public boolean isPdndEServiceIdCheckUnique(){
 		if(this.isPdndEServiceIdCheckUnique==null){
 			
 			Boolean defaultValue =false;
-			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.eServiceId.checkUnique";
+			String propertyName = "org.openspcoop2.protocol.modipa.pdnd.eServiceId.console.checkUnique";
 			
 			try{  
 				String value = this.reader.getValueConvertEnvProperties(propertyName); 
@@ -1012,6 +1129,48 @@ public class ModIProperties {
 		}
 
 		return this.isPdndEServiceIdCheckUnique;
+	}
+	
+	
+	private Boolean isValidazioneTokenPDNDDescriptorIdCheck= null;
+	private boolean isValidazioneTokenPDNDDescriptorIdCheck() throws ProtocolException{
+    	if(this.isValidazioneTokenPDNDDescriptorIdCheck==null){
+    		String propertyName = "org.openspcoop2.protocol.modipa.pdnd.descriptorId.check";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+				if(value!=null && StringUtils.isNotEmpty(value)) {
+					this.isValidazioneTokenPDNDDescriptorIdCheck = Boolean.parseBoolean(value);
+				}
+				else {
+					this.isValidazioneTokenPDNDDescriptorIdCheck = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.isValidazioneTokenPDNDDescriptorIdCheck;
+	}
+	private Map<String,Boolean> isValidazioneTokenPDNDDescriptorIdCheckSoggetto = new HashMap<>();
+	public boolean isValidazioneTokenPDNDDescriptorIdCheck(String soggetto) throws ProtocolException{
+		if(!this.isValidazioneTokenPDNDDescriptorIdCheckSoggetto.containsKey(soggetto)){
+    		String propertyName = PREFIX_PROPERTY_MODIPA_PDND+soggetto+".eServiceId.check"; 
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+				if(value!=null && StringUtils.isNotEmpty(value)) {
+					this.isValidazioneTokenPDNDDescriptorIdCheckSoggetto.put(soggetto, Boolean.parseBoolean(value));
+				}
+				else {
+					this.isValidazioneTokenPDNDDescriptorIdCheckSoggetto.put(soggetto, isValidazioneTokenPDNDDescriptorIdCheck());
+				}
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioErroreProprietaNonImpostata(propertyName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}
+    	}
+    	
+    	return this.isValidazioneTokenPDNDDescriptorIdCheckSoggetto.get(soggetto);
 	}
 	
 	private Boolean isPdndDescriptorIdCheckUnique = null;
