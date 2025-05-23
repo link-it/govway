@@ -1227,6 +1227,12 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	
 	private boolean validateTokenAuthorizationProducerIdByModIConfig(IRegistryReader registryReader, IDSoggetto idSoggetto, 
 			boolean isRichiesta, String prefixAuthorization) throws ProtocolException{
+		
+		boolean checkEnabled = idSoggetto!=null && idSoggetto.getNome()!=null && this.modiProperties.isValidazioneTokenPDNDProducerIdCheck(idSoggetto.getNome());
+		if(!checkEnabled) {
+			return true;
+		}
+		
 		String producerIdClaimReceived = readProducerIdFromTokenOAuth();			
 		if(producerIdClaimReceived!=null && StringUtils.isNotEmpty(producerIdClaimReceived)) {
 
@@ -1280,6 +1286,12 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	}
 	private boolean validateTokenAuthorizationServiceIdByModIConfig(AccordoServizioParteSpecifica asps, 
 			boolean isRichiesta, String prefixAuthorization) throws ProtocolException{
+		
+		boolean checkEnabled = asps!=null && asps.getNomeSoggettoErogatore()!=null && this.modiProperties.isValidazioneTokenPDNDEServiceIdCheck(asps.getNomeSoggettoErogatore());
+		if(!checkEnabled) {
+			return true;
+		}
+		
 		String eServiceId = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(asps.getProtocolPropertyList(), ModICostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID);
 		if(eServiceId!=null && StringUtils.isNotEmpty(eServiceId)) {
 			String serviceIdClaimReceived = readServiceIdFromTokenOAuth();	
@@ -1302,27 +1314,39 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 	}
 	private boolean validateTokenAuthorizationDescriptorIdByModIConfig(AccordoServizioParteSpecifica asps, 
 			boolean isRichiesta, String prefixAuthorization) throws ProtocolException{
+		
+		boolean checkEnabled = asps!=null && asps.getNomeSoggettoErogatore()!=null && this.modiProperties.isValidazioneTokenPDNDDescriptorIdCheck(asps.getNomeSoggettoErogatore());
+		if(!checkEnabled) {
+			return true;
+		}
+		
 		String tmpDescriptorId = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(asps.getProtocolPropertyList(), ModICostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID);
 		List<String> descriptorIdList = null;
 		if(tmpDescriptorId!=null && StringUtils.isNotEmpty(tmpDescriptorId)) {
 			descriptorIdList = ModISecurityConfig.convertToList(tmpDescriptorId);
 		}
 		if(descriptorIdList!=null && !descriptorIdList.isEmpty()) {
-			String descriptorIdClaimReceived = readDescriptorIdFromTokenOAuth();	
-			if(descriptorIdClaimReceived==null || StringUtils.isEmpty(descriptorIdClaimReceived)) {
-				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
-						isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
-							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
-							prefixAuthorization+getErroreClaimNonPresente(org.openspcoop2.pdd.core.token.Costanti.PDND_DESCRIPTOR_ID)));
-				return false;
-			}
-			if(!descriptorIdList.contains(descriptorIdClaimReceived)) {
-				this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
-						isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
-							CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
-							prefixAuthorization+getErroreClaimNonValido(org.openspcoop2.pdd.core.token.Costanti.PDND_DESCRIPTOR_ID)));
-				return false;
-			}
+			return validateTokenAuthorizationDescriptorIdByModIConfig(descriptorIdList,
+					isRichiesta, prefixAuthorization);
+		}
+		return true;
+	}
+	private boolean validateTokenAuthorizationDescriptorIdByModIConfig(List<String> descriptorIdList,
+			boolean isRichiesta, String prefixAuthorization) throws ProtocolException{
+		String descriptorIdClaimReceived = readDescriptorIdFromTokenOAuth();	
+		if(descriptorIdClaimReceived==null || StringUtils.isEmpty(descriptorIdClaimReceived)) {
+			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+					isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+						CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+						prefixAuthorization+getErroreClaimNonPresente(org.openspcoop2.pdd.core.token.Costanti.PDND_DESCRIPTOR_ID)));
+			return false;
+		}
+		if(!descriptorIdList.contains(descriptorIdClaimReceived)) {
+			this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(
+					isRichiesta ? CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_EROGATORE_NON_VALIDO :
+						CodiceErroreCooperazione.SERVIZIO_APPLICATIVO_FRUITORE_NON_VALIDO, 
+						prefixAuthorization+getErroreClaimNonValido(org.openspcoop2.pdd.core.token.Costanti.PDND_DESCRIPTOR_ID)));
+			return false;
 		}
 		return true;
 	}

@@ -103,7 +103,8 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 		
 		ModIDynamicConfigurationSoggettiUtilities.validateDynamicConfigSoggetto(consoleConfiguration,
 				consoleOperationType, consoleHelper, properties, 
-				configIntegrationReader, id);
+				configIntegrationReader, id,
+				registryReader);
 		
 	}
 	

@@ -19,9 +19,12 @@
  */
 package org.openspcoop2.protocol.modipa.properties;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
+import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
@@ -37,6 +40,8 @@ import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaSoggetti;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 
 /**
  * ModIDynamicConfigurationSoggettiUtilities
@@ -86,7 +91,8 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 	
 	static void validateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties, 
-			IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException {
+			IConfigIntegrationReader configIntegrationReader, IDSoggetto id,
+			IRegistryReader registryReader) throws ProtocolException {
 		
 		if(consoleConfiguration!=null && consoleOperationType!=null && consoleHelper!=null && configIntegrationReader!=null && id!=null) {
 			// nop
@@ -100,6 +106,34 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
+			if(ModIProperties.getInstance().isPdndProducerIdCheckUnique()) {
+				validatePdndInfoIdExists(registryReader, id, 
+						ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_ID, ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_LABEL, idEnteItemValue.getValue());
+			}
+		}
+	}
+	
+	private static void validatePdndInfoIdExists(IRegistryReader registryReader, IDSoggetto idSoggetto, 
+			String id, String label, String idValue) throws ProtocolException {
+		ProtocolFiltroRicercaSoggetti filtro = new ProtocolFiltroRicercaSoggetti();
+		filtro.setProtocolProperties(new ProtocolProperties());
+		filtro.getProtocolProperties().addProperty(id, idValue);
+		List<IDSoggetto> list = null;
+		try {
+			list = registryReader.findIdSoggetti(filtro);
+			if(list!=null && !list.isEmpty()) {
+				for (IDSoggetto check : list) {
+					if(!check.equals(idSoggetto)) {
+						String msg = "Il soggetto '"+check.getNome()+"' risulta già registrata con il campo '"+label+"' valorizzato con l'identificativo fornito";
+						msg = msg + " '"+idValue+"'";
+						throw new ProtocolException(msg);
+					}
+				}
+			}
+		}catch(RegistryNotFound notFound) {
+			// ignore
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
 }
