@@ -1,1 +1,0 @@
-../../../../core/deploy/sql/patch/sqlserver/configurazionePdD/2025-04-14-patch.sql
