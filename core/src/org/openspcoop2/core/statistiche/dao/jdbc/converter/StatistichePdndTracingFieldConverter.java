@@ -145,7 +145,13 @@ public class StatistichePdndTracingFieldConverter extends AbstractSQLFieldConver
 				return "history";
 			}
 		}
-
+		if (field.getFieldName().equals("id") && field.getClassType().equals(StatistichePdndTracing.class)) {
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".id";
+			}else{
+				return "id";
+			}
+		}
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
 		
@@ -191,7 +197,9 @@ public class StatistichePdndTracingFieldConverter extends AbstractSQLFieldConver
 		if(field.equals(StatistichePdndTracing.model().HISTORY)){
 			return this.toTable(StatistichePdndTracing.model(), returnAlias);
 		}
-
+		if (field.getFieldName().equals("id") && field.getClassType().equals(StatistichePdndTracing.class)) {
+			return this.toTable(StatistichePdndTracing.model(), returnAlias);
+		}
 
 		return super.toTable(field,returnAlias);
 		

@@ -20,6 +20,8 @@ function fn() {
   return { 
     govway_base_path: karate.properties["govway_base_path"],
     govway_config_api_path: karate.properties["govway_config_api_path"],
+    batch_path: karate.properties["batch_path"],
+    url_mock: "http://127.0.0.1:" + karate.properties["http_mock_port"],
     config_api_username: karate.properties["config_api_username"],
     config_api_password: karate.properties["config_api_password"],    
     jmx_username: karate.properties["jmx_username"],

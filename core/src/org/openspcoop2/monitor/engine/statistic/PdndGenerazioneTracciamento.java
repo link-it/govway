@@ -74,6 +74,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 			super();
 	}
 	
+	private StatisticsConfig config;
 	private org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM;
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM;
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM;
@@ -89,6 +90,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM,
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM,
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM) {
+		this.config = config;
 		this.statisticheSM = statisticheSM;
 		this.transazioniSM = transazioniSM;
 		this.utilsSM = utilsSM;
@@ -118,8 +120,10 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		expr.equals(Soggetto.model().SERVER, internalPdd);
 		expr.equals(Soggetto.model().TIPO_SOGGETTO, CostantiLabel.MODIPA_PROTOCOL_NAME);
 		
+		Set<String> enabledName = this.config.getPdndTracingSoggettiEnabled();
 		return this.utilsSM.getSoggettoServiceSearch().findAll(expr)
 				.stream()
+				.filter(s -> enabledName.isEmpty() || enabledName.contains(s.getNomeSoggetto()))
 				.map(s -> s.getIdentificativoPorta())
 				.collect(Collectors.toSet());
 	}
@@ -210,9 +214,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 			this.logger.error("Errore nel generare il csv per il soggetto: {}, data tracciamento: {}", pddCode, tracingDate, e);
 			return;
 		}
-		
-		System.out.println("csv: " + new String(csv));
-		
+				
 		StatistichePdndTracing entry = new StatistichePdndTracing();
 		entry.setDataRegistrazione(new Date());
 		entry.setDataTracciamento(tracingDate);
@@ -265,7 +267,6 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		
 		for (String pddCode : this.internalPddCodes) {
 			
-			System.out.println(pddCode + ":");
 			List<Map<String, Object>> rows = Objects.requireNonNullElse(
 					pddCodeGroup.get(pddCode),
 					List.of()
@@ -317,21 +318,19 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		try {
 			lastDate = StatisticsInfoUtils.readDataUltimaGenerazioneStatistiche(this.statisticheSM.getStatisticaInfoServiceSearch(), TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO, this.logger);
 		} catch (NotFoundException e) {
-			lastDate = currDate;
+			lastDate = new Date(0);
 		} catch (NotImplementedException | ServiceException e) {
 			throw e;
 		}
 		
+		// se non e' presente l'ultima statistica iniziero da domani in quanto oggi non avrei i dati completi
 		if (lastDate.equals(new Date(0)))
-			lastDate = currDate;
+			lastDate = incrementDate(currDate);
 		
-		lastDate = truncDate(new Date());
-		currDate = incrementDate(lastDate);
-		
-		for (lastDate = truncDate(lastDate); !lastDate.equals(currDate); lastDate = nextDate) {
+		for (lastDate = truncDate(lastDate); lastDate.before(currDate); lastDate = nextDate) {
 			nextDate = truncDate(incrementDate(lastDate));
 			
-			System.out.println(lastDate + "-" + currDate);
+			System.out.println(lastDate + "->" + nextDate);
 			
 			try {
 				createRecords(lastDate, nextDate);

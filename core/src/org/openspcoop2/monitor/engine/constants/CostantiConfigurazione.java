@@ -45,8 +45,10 @@ public class CostantiConfigurazione {
 	public static final String STAT_DAILY = "org.openspcoop2.monitor.statistic.daily.enabled";
 	public static final String STAT_WEEKLY = "org.openspcoop2.monitor.statistic.weekly.enabled";
 	public static final String STAT_MONTHLY = "org.openspcoop2.monitor.statistic.monthly.enabled";
-	public static final String PDND_GENERAZIONE_TRACCIAMENTO_ENABLED  = "org.openspcoop2.monitor.statistic.pdnd.generazione.enabled";
-	public static final String PDND_PUBBLICAZIONE_TRACCIAMENTO_ENABLED = "org.openspcoop2.monitor.statistic.pdnd.pubblicazione.enabled";
+	public static final String PDND_GENERAZIONE_TRACCIAMENTO_ENABLED  = "org.openspcoop2.monitor.statistic.pdnd.tracciamento.generazione.enabled";
+	public static final String PDND_PUBBLICAZIONE_TRACCIAMENTO_ENABLED = "org.openspcoop2.monitor.statistic.pdnd.tracciamento.pubblicazione.enabled";
+	public static final String PDND_PUBBLICAZIONE_TRACCIAMENTO_SOGGETTI_ENABLED = "org.openspcoop2.monitor.statistic.pdnd.tracciamento.soggetti.enabled"
+			;
 	public static final String STAT_HOURLY_LASTINT = "org.openspcoop2.monitor.statistic.hourly.lastinterval.enabled";
 	public static final String STAT_DAILY_LASTINT = "org.openspcoop2.monitor.statistic.daily.lastinterval.enabled";
 	public static final String STAT_WEEKLY_LASTINT = "org.openspcoop2.monitor.statistic.weekly.lastinterval.enabled";

@@ -23,13 +23,16 @@ package org.openspcoop2.core.statistiche.batch;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openspcoop2.monitor.engine.statistic.StatisticsForceIndexConfig;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
-import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 
 /**
 * GeneratorProperties
@@ -82,7 +85,8 @@ public class GeneratorProperties {
 	private File pddMonitorFrameworkRepositoryJars = null;
 	
 	/** Richiesta configurata per effettuare chiamate al tracing pdnd **/
-	private HttpRequest pdndTracingRequest;
+	private HttpRequestConfig pdndTracingRequestConfig;
+	private Set<String> pdndTracingSoggettiEnabled;
 	
 	private PropertiesReader props;
 	
@@ -132,18 +136,16 @@ public class GeneratorProperties {
 			this.pddMonitorFrameworkRepositoryJars = new File(tmp);
 		}
 		
-		this.pdndTracingRequest = new HttpRequest();
-		String url = this.getProperty("pdnd.tracciamento.baseUrl", true);
-		String username = this.getProperty("pdnd.tracciamento.http.username", false);
-		String password = this.getProperty("pdnd.tracciamento.http.password", false);
-		String readTimeout = this.getProperty("pdnd.tracciamento.readTimeout", true);
-		String connectionTimeout = this.getProperty("pdnd.tracciamento.connectTimeout", true);
+		this.pdndTracingRequestConfig = new HttpRequestConfig("pdnd.tracciamento", this.props);
 		
-		this.pdndTracingRequest.setUrl(url);
-		this.pdndTracingRequest.setUsername(username);
-		this.pdndTracingRequest.setPassword(password);
-		this.pdndTracingRequest.setConnectTimeout(Integer.valueOf(connectionTimeout));
-		this.pdndTracingRequest.setReadTimeout(Integer.valueOf(readTimeout));
+		String value = getProperty("statistiche.generazione.pdnd.tracciamento.soggetti.enabled", false);
+		if (value == null)
+			this.pdndTracingSoggettiEnabled = Set.of();
+		else
+			this.pdndTracingSoggettiEnabled = Arrays.stream(value.split(","))
+				.map(String::trim)
+				.collect(Collectors.toSet());
+			
 	}
 	
 	private String getProperty(String name,boolean required) throws UtilsException{
@@ -283,18 +285,20 @@ public class GeneratorProperties {
 		return this.parse(b, false);
 	}
 	
-	public HttpRequest getPdndTracingRequest() {
-		HttpRequest copy = new HttpRequest();
-		copy.setUrl(this.pdndTracingRequest.getUrl());
-		copy.setUsername(this.pdndTracingRequest.getUsername());
-		copy.setPassword(this.pdndTracingRequest.getPassword());
-		copy.setConnectTimeout(this.pdndTracingRequest.getConnectTimeout());
-		copy.setReadTimeout(this.pdndTracingRequest.getReadTimeout());
-		return copy;
+	public HttpRequestConfig getPdndTracingRequestConfig() {
+		return this.pdndTracingRequestConfig;
 	}
 
-	public void setPdndTracingRequest(HttpRequest pdndTracingRequest) {
-		this.pdndTracingRequest = pdndTracingRequest;
+	public void setPdndTracingRequestConfig(HttpRequestConfig pdndTracingRequestConfig) {
+		this.pdndTracingRequestConfig = pdndTracingRequestConfig;
+	}
+	
+	public Set<String> getPdndTracingSoggettiEnabled() {
+		return this.pdndTracingSoggettiEnabled;
+	}
+
+	public void setPdndTracingSoggettiEnabled(Set<String> pdndTracingSoggettiEnabled) {
+		this.pdndTracingSoggettiEnabled = pdndTracingSoggettiEnabled;
 	}
 	
 }

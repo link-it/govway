@@ -19,5 +19,9 @@ public class StatisticsEngineException extends Exception {
 	public StatisticsEngineException(Throwable t, String message) {
 		super(message, t);
 	}
+	
+	public StatisticsEngineException(String message, Throwable t) {
+		super(message, t);
+	}
 
 }

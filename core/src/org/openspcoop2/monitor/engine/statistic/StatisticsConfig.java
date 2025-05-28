@@ -20,12 +20,17 @@
 package org.openspcoop2.monitor.engine.statistic;
 
 import org.openspcoop2.monitor.engine.exceptions.EngineException;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.openspcoop2.monitor.engine.config.MonitorProperties;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 import org.slf4j.Logger;
 
 /**
@@ -76,7 +81,10 @@ public class StatisticsConfig {
 	private StatisticsForceIndexConfig forceIndexConfig = null;
 	
 	/** Richiesta configurata per effettuare chiamate al tracing pdnd **/
-	private HttpRequest pdndTracingRequest;
+	private HttpRequestConfig pdndTracingRequestConfig;
+	private Set<String> pdndTracingSoggettiEnabled;
+	
+	private Integer maxAttempt = null;
 	
 	private static final String FALSE = "false";
 	
@@ -141,7 +149,8 @@ public class StatisticsConfig {
 				
 			    this.pdndGenerazioneTracciamento = parsePdndGenerazioneTracciamentoProperty(props);
 			    this.pdndPubblicazioneTracciamento = parsePdndPubblicazioneTracciamentoProperty(props);
-			    this.pdndTracingRequest = parsePdndTracingRequest(props);
+			    this.pdndTracingRequestConfig = parsePdndTracingRequestConfig(props);
+			    this.pdndTracingSoggettiEnabled = parsePdndTracingSoggettiEnabled(props);
 			    
 				if ("true".equals(props.getProperty(CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_ENABLED, "true", true))) {
 					this.pdndPubblicazioneTracciamento = true;
@@ -189,8 +198,24 @@ public class StatisticsConfig {
 		return "true".equals(props.getProperty(propId, "true", true));
 	}
 	
-	private static HttpRequest parsePdndTracingRequest(MonitorProperties props) throws UtilsException {
-		return new HttpRequest();
+	private static HttpRequestConfig parsePdndTracingRequestConfig(MonitorProperties props) {
+		return new HttpRequestConfig("pdnd.tracciamento", (str) -> {
+			try {
+				return props.getProperty(str, false, true);
+			} catch (UtilsException e) {
+				return null;
+			}
+		});
+	}
+	
+	private static Set<String> parsePdndTracingSoggettiEnabled(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_SOGGETTI_ENABLED;
+		String value = props.getProperty(propId, "", false);
+		if (value == null)
+			return Set.of();
+		return Arrays.stream(value.split(","))
+				.map(String::trim)
+				.collect(Collectors.toSet());
 	}
 	
 	public Logger getLogCore() {
@@ -350,17 +375,27 @@ public class StatisticsConfig {
 		this.waitStatiInConsegna = waitStatiInConsegna;
 	}
 	
-	public HttpRequest getPdndTracingBaseRequest() {
-		HttpRequest copy = new HttpRequest();
-		copy.setUrl(this.pdndTracingRequest.getUrl());
-		copy.setUsername(this.pdndTracingRequest.getUsername());
-		copy.setPassword(this.pdndTracingRequest.getPassword());
-		copy.setConnectTimeout(this.pdndTracingRequest.getConnectTimeout());
-		copy.setReadTimeout(this.pdndTracingRequest.getReadTimeout());
-		return copy;
+	public HttpRequestConfig getPdndTracingRequestConfig() {
+		return this.pdndTracingRequestConfig;
 	}
 
-	public void setPdndTracingBaseRequest(HttpRequest pdndTracingRequest) {
-		this.pdndTracingRequest = pdndTracingRequest;
+	public void setPdndTracingRequestConfig(HttpRequestConfig pdndTracingRequestConfig) {
+		this.pdndTracingRequestConfig = pdndTracingRequestConfig;
+	}
+	
+	public void setMaxAttempt(Integer maxAttempt) {
+		this.maxAttempt = maxAttempt;
+	}
+	
+	public Integer getMaxAttempt() {
+		return this.maxAttempt;
+	}
+	
+	public void setPdndTracingSoggettiEnabled(Set<String> pdndTracingSoggettiEnabled) {
+		this.pdndTracingSoggettiEnabled = pdndTracingSoggettiEnabled;
+	}
+	
+	public Set<String> getPdndTracingSoggettiEnabled() {
+		return this.pdndTracingSoggettiEnabled;
 	}
 }

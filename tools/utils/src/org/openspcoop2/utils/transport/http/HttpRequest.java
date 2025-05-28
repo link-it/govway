@@ -95,7 +95,13 @@ public class HttpRequest extends AbstractHttp {
 		this.followRedirects = followRedirects;
 	}
 
+	public String getBaseUrl() {
+		return this.url;
+	}
+	
 	public String getUrl() {
+		if (this.getParamsName().hasMoreElements())
+			return this.url + '?' + this.getQueryString();
 		return this.url;
 	}
 

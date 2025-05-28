@@ -241,7 +241,8 @@ public class Generator {
 			
 			statisticsConfig.setLogCore(logCore);
 			statisticsConfig.setLogSql(logSql);
-			statisticsConfig.setPdndTracingBaseRequest(generatorProperties.getPdndTracingRequest());
+			statisticsConfig.setPdndTracingRequestConfig(generatorProperties.getPdndTracingRequestConfig());
+			statisticsConfig.setPdndTracingSoggettiEnabled(generatorProperties.getPdndTracingSoggettiEnabled());
 			statisticsConfig.setGenerazioneStatisticheCustom(generatorProperties.isGenerazioneStatisticheCustom());
 			statisticsConfig.setAnalisiTransazioniCustom(generatorProperties.isAnalisiTransazioniCustom());
 			statisticsConfig.setDebug(generatorProperties.isStatisticheGenerazioneDebug());

@@ -21,10 +21,15 @@
 package org.openspcoop2.utils.transport.http;
 
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.openspcoop2.utils.transport.TransportUtils;
 
@@ -40,6 +45,7 @@ public abstract class AbstractHttp {
 	private String contentType;
 	private byte[] content;
 	private Map<String, List<String>> headers = new HashMap<>();
+	private Map<String, String> params = new HashMap<>();
 	
 	public byte[] getContent() {
 		return this.content;
@@ -106,4 +112,27 @@ public abstract class AbstractHttp {
 		this.contentType = contentType;
 	}
 	
+	
+	public Enumeration<String> getParamsName() {
+		return Collections.enumeration(this.params.keySet());
+	}
+	
+	public void removeParam(String key) {
+		this.params.remove(key);
+	}
+	
+	public String getParam(String key) {
+		return this.params.get(key);
+	}
+	
+	public void addParam(String key, String value) {
+		this.params.put(key, value);
+	}
+	
+	protected String getQueryString() {
+		return this.params.entrySet()
+				.stream()
+				.map(e -> URLEncoder.encode(e.getKey(), StandardCharsets.UTF_8) + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+				.collect(Collectors.joining("&"));
+	}
 }

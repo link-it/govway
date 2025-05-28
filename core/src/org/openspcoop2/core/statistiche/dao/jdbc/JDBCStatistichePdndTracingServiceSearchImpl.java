@@ -26,7 +26,6 @@ import java.util.Map;
 import java.sql.Connection;
 
 import org.slf4j.Logger;
-
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
@@ -35,6 +34,7 @@ import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceSearchWithoutId;
 import org.openspcoop2.generic_project.utils.UtilsTemplate;
 import org.openspcoop2.generic_project.beans.CustomField;
+import org.openspcoop2.generic_project.beans.Field;
 import org.openspcoop2.generic_project.beans.InUse;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
@@ -111,6 +111,8 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
         StatistichePdndTracingModel model = StatistichePdndTracing.model();
         
         List<Map<String, Object>> maps = this.select(jdbcProperties, log, connection, sqlQueryObject, expression,
+        		true,
+        		new Field("id",Long.class,this.getStatistichePdndTracingFieldConverter().toTable(model),StatistichePdndTracing.class),
         		model.CSV,
         		model.DATA_REGISTRAZIONE,
         		model.DATA_TRACCIAMENTO,
@@ -123,6 +125,7 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
         		model.TENTATIVI_PUBBLICAZIONE,
         		model.TRACING_ID);
         
+
         for (Map<String, Object> map : maps) {
         	list.add((StatistichePdndTracing) this.getStatistichePdndTracingFetch().fetch(
         			jdbcProperties.getDatabase(), 
