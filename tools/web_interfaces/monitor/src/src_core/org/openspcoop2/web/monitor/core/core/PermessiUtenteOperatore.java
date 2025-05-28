@@ -357,6 +357,26 @@ public class PermessiUtenteOperatore {
 			throw new CoreException(e.getMessage(),e);
 		}
 	}
+	
+	public IExpression toExpressionStatistichePdndTracing(IExpressionConstructor exprConstructor,IField fieldIdentificativoPorta) throws CoreException{
+		try{
+			IExpression expr = exprConstructor.newExpression();
+			expr.or();
+			
+			if(!this.listIDSoggetti.isEmpty()){
+				// I Soggetti rappresentano coloro che gestiscono la transazione, sia che siano fruizioni che erogazioni
+				List<String> identificativiPorta = new ArrayList<>();
+				for (IDSoggetto idSoggetto : this.listIDSoggetti) {
+					identificativiPorta.add(idSoggetto.getCodicePorta());
+				}
+				expr.in(fieldIdentificativoPorta, identificativiPorta);
+			}
+
+			return expr;
+		}catch(Exception e){
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
 
 	public static PermessiUtenteOperatore getPermessiUtenteOperatore(UserDetailsBean u,
 			String tipoSoggettoLocale, String nomeSoggettoLocale)

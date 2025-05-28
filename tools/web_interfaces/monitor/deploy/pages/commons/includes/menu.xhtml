@@ -51,17 +51,10 @@
 								rendered="#{applicationBean.showAllarmi}"
 								actionListener="#{allarmiBean.search.menuClickSearchListener}"
 								/>
-								
-							<!-- 
-							<rich:panelMenuItem label="Sonde Applicative" action="sondeApplicative" 
-								rendered="#{applicationBean.showSonde}"/>
-							-->
-							 
 							<rich:panelMenuItem id="processiMenuLink" label="#{msg['menu.monitoraggio.processi']}"
 								action="processi" rendered="#{applicationBean.showProcessi}"
 								actionListener="#{searchFormProcessi.initSearchListener}" />
 						</rich:panelMenuGroup>
-						<!-- iconExpanded="triangleDown" -->
 						<rich:panelMenuGroup iconCollapsed="triangle" label="#{msg['menu.reportistica.label']}" id="reportisticaMenuGroup"
 							expanded="true" rendered="#{applicationBean.showStatisticheBase}">
 							<rich:panelMenuItem label="#{msg['menu.reportistica.analisiStatistica']}" action="analisiStatisticaStart" />
@@ -73,6 +66,9 @@
 								label="#{msg['menu.reportistica.configurazioniGenerali']}" rendered="#{applicationBean.showStatisticheConfigurazioniGenerali}"
 								action="#{configurazioniGeneraliBean.submit}"
 								actionListener="#{configurazioniGeneraliBean.search.initSearchListener}" />
+							<rich:panelMenuItem label="#{msg['menu.reportistica.statistichePdndTracing']}" action="statistichePdndTracingStart" id="statistichePdndTracingMenuLnk"
+								rendered="#{applicationBean.showStatistichePdndTracing}"
+								/>
 						</rich:panelMenuGroup>
 					</rich:panelMenu>
 				</a4j:form>

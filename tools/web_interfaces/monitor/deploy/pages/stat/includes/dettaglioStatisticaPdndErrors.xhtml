@@ -1,0 +1,19 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+	<a4j:outputPanel layout="block" id="errorsPnlEsterno" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails}">	
+		<rich:panel id="errorsPnl" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails}">
+			<a4j:outputPanel layout="block" styleClass="height-350 overflow-y-scroll" id="errorsPnl2" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails}">
+				<pre class="brush: #{statistichePdndTracingBean.statisticaPdndTracing.brushErrorDetails}; toolbar: false;">#{statistichePdndTracingBean.statisticaPdndTracing.errorDetailsPretty}</pre>
+			</a4j:outputPanel>
+		</rich:panel>
+	</a4j:outputPanel>
+    
+</ui:composition>

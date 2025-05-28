@@ -111,6 +111,7 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
         StatistichePdndTracingModel model = StatistichePdndTracing.model();
         
         List<Map<String, Object>> maps = this.select(jdbcProperties, log, connection, sqlQueryObject, expression,
+        		new CustomField("id", Long.class, "id", this.getStatistichePdndTracingFieldConverter().toTable(model)),
         		model.CSV,
         		model.DATA_REGISTRAZIONE,
         		model.DATA_TRACCIAMENTO,

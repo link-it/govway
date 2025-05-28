@@ -30,6 +30,19 @@ package org.openspcoop2.web.monitor.statistiche.constants;
 public class StatisticheCostanti {
 	
 	private StatisticheCostanti() {}
+	
+	// Export 
+	public static final String PARAMETER_IDS = "ids";
+	public static final String PARAMETER_IS_ALL = "isAll";
+	public static final String PARAMETER_RUOLO = "ruolo";
+	
+	public static final String PARAMETER_IDS_ORIGINALI = "idsOriginali";
+	public static final String PARAMETER_IS_ALL_ORIGINALE = "isAllOriginale";
+	public static final String PARAMETER_RUOLO_ORIGINALE = "ruoloOriginale";
+	
+	public static final String STATISTICHE_PDND_EXPORTER_SERVLET_NAME = "tracingpdndexporter";
+
+	public static final String NON_SELEZIONATO = "--"; 
 
 	/* CHIAVI PROPERTIES DA FILE messages_it.properties */ 
 	
@@ -119,4 +132,30 @@ public class StatisticheCostanti {
 	public static final String  STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_CLIENTID_PDNDINFO = "stats.search.claim.clientIdConPDND";
 	
 	public static final String  STATS_ANALISI_STATISTICA_HEATMAP_TOOLTIP_CATEGORIA_ALTRI_PATTERN_KEY = "stats.analisiStatistica.heatmap.tooltip.categoriaAltri.pattern";
+	
+	public static final String STATS_PDND_TRACING_NOME_ACTION_RICERCA = "statistichePdndTracingList";
+	
+	public static final String STATS_PDND_TRACING_SEARCH_TIPO_RICERCA_TEMPORALE_LABEL_KEY = "statistichePdndTracing.search.tipoRicerca.temporale.label";
+	public static final String STATS_PDND_TRACING_SEARCH_TIPO_RICERCA_ID_LABEL_KEY = "statistichePdndTracing.search.tipoRicerca.id.label";
+	
+	public static final String STATS_PDND_TRACING_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_BASE_LABEL_KEY = "statistichePdndTracing.search.tipoRicerca.temporale.ricercaTemporale.label"; 
+	public static final String STATS_PDND_TRACING_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_BASE_ICON_KEY = "statistichePdndTracing.search.tipoRicerca.temporale.ricercaTemporale.icona"; 
+	public static final String STATS_PDND_TRACING_SEARCH_TIPO_RICERCA_TEMPORALE_RICERCA_BASE_BREADCUMP_KEY = "statistichePdndTracing.search.tipoRicerca.temporale.ricercaTemporale.breadcrumb"; 
+	
+	public static final String STATS_PDND_TRACING_SEARCH_TIPO_RICERCA_ID_RICERCA_TRACING_ID_LABEL_KEY = "statistichePdndTracing.search.tipoRicerca.id.tracingId.label"; 
+	public static final String STATS_PDND_TRACING_SEARCH_TIPO_RICERCA_ID_RICERCA_TRACING_ID_ICON_KEY = "statistichePdndTracing.search.tipoRicerca.id.tracingId.icona"; 
+	public static final String STATS_PDND_TRACING_SEARCH_TIPO_RICERCA_ID_RICERCA_TRACING_ID_BREADCUMP_KEY = "statistichePdndTracing.search.tipoRicerca.id.tracingId.breadcrumb"; 
+	
+	public static final String STATS_PDND_TRACING_STATO_PUBLISHED_LABEL_KEY = "statistichePdndTracing.stato.PUBLISHED.label";
+	public static final String STATS_PDND_TRACING_STATO_FAILED_LABEL_KEY = "statistichePdndTracing.stato.FAILED.label";
+	public static final String STATS_PDND_TRACING_STATO_PDND_WAITING_LABEL_KEY= "statistichePdndTracing.statoPdnd.WAITING.label";
+	public static final String STATS_PDND_TRACING_STATO_PDND_PENDING_LABEL_KEY = "statistichePdndTracing.statoPdnd.PENDING.label";
+	public static final String STATS_PDND_TRACING_STATO_PDND_OK_LABEL_KEY = "statistichePdndTracing.statoPdnd.OK.label";
+	public static final String STATS_PDND_TRACING_STATO_PDND_ERROR_LABEL_KEY = "statistichePdndTracing.statoPdnd.ERROR.label";
+	public static final String STATS_PDND_TRACING_METHOD_RECOVER_LABEL_KEY = "statistichePdndTracing.method.RECOVER.label";
+	public static final String STATS_PDND_TRACING_METHOD_REPLACE_LABEL_KEY = "statistichePdndTracing.method.REPLACE.label";
+	public static final String STATS_PDND_TRACING_METHOD_SUBMIT_LABEL_KEY = "statistichePdndTracing.method.SUBMIT.label";
+	
+	public static final String STATS_PDND_TRACING_MISSING_PARAMETERS_TRACING_ID_LABEL_KEY = "statistichePdndTracing.search.missing_parameters.tracingId";
+
 }
