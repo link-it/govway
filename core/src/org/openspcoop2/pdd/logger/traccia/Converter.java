@@ -725,6 +725,9 @@ public class Converter {
 						add=true;
 					}
 				}
+				if (transazioneDB.getTokenPurposeId() != null) {
+					informazioniToken.purposeId(transazioneDB.getTokenPurposeId());
+				}
 				if(add) {
 					((TransazioneExtInformazioniMittente)mittente).setInformazioniToken(informazioniToken);
 				}

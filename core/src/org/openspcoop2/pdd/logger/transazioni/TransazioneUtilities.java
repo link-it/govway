@@ -100,12 +100,14 @@ import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.MapKey;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**     
  * TransazioneUtilities
@@ -1099,6 +1101,7 @@ public class TransazioneUtilities {
 						op2Properties.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature()) {
 						informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().setToken(TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()));
 					}
+					
 				}
 			}
 									
@@ -1114,11 +1117,6 @@ public class TransazioneUtilities {
 				// token validazione
 				if(informazioniToken.getToken()!=null && op2Properties.isGestioneTokenSaveTokenInfoValidationFailedExcludeJwtSignature()) {
 					informazioniToken.setToken(TokenUtilities.deleteSignature(informazioniToken.getToken()));
-				}
-				
-				// token purpose id
-				if (informazioniToken.getClaims() != null && informazioniToken.getClaims().containsKey("purposeId")) {
-					transactionDTO.setTokenPurposeId(informazioniToken.getClaims().get("purposeId").toString());
 				}
 				
 				// token negoziazione
@@ -1138,6 +1136,15 @@ public class TransazioneUtilities {
 				}
 								
 			}
+			
+			// token purpose id
+			if (TipoPdD.DELEGATA.equals(info.getTipoPorta()) && informazioniNegoziazioneToken.getAccessToken() != null && informazioniNegoziazioneToken.isValid()) {
+				transactionDTO.setTokenPurposeId(extractClaimFromJWTAccessToken(informazioniNegoziazioneToken.getAccessToken(), org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID));
+			}
+			if (TipoPdD.APPLICATIVA.equals(info.getTipoPorta()) && transaction.getInformazioniToken().getClaims() != null && transaction.getInformazioniToken().getClaims().containsKey(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID)) {
+				transactionDTO.setTokenPurposeId(transaction.getInformazioniToken().getClaims().get(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID).toString());
+			}
+			
 			if(transactionDTO.getTokenInfo()==null && this.transazioniRegistrazioneAttributiInformazioniNormalizzate &&
 					transaction.getInformazioniAttributi()!=null) {
 				if(informazioniNegoziazioneToken!=null) {
@@ -1255,6 +1262,22 @@ public class TransazioneUtilities {
 		}
 	}
 	
+	
+	private static String extractClaimFromJWTAccessToken(String jwt, String claim) {
+		String[] infos = jwt.split("\\.");
+		JSONUtils json = JSONUtils.getInstance();
+		
+		try {
+			JsonNode node = json.getAsNode(java.util.Base64.getDecoder().decode(infos[1]));
+			JsonNode value = node.get(claim);
+			
+			if (value != null && value.isTextual())
+				return value.asText();
+		} catch (IllegalArgumentException | UtilsException e) {
+			// ignore
+		}
+		return null;
+	}
 	private static void setDataAccettazioneRichiesta(Transazione transactionDTO, InformazioniTransazione info, Transaction transaction) {
 		// Se data_accettazione_richiesta è null viene impostata a CURRENT_TIMESTAMP
 		if (transaction.getDataAccettazioneRichiesta()!=null){

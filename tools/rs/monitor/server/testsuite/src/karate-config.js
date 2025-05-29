@@ -25,10 +25,10 @@ function fn() {
         url: 'jdbc:postgresql://localhost:5432/govway',
         driverClassName: 'org.postgresql.Driver'
       },
+      govwayBasePath: govwayUrl + '/govway',
       configCred:  { username: 'amministratore', password: '123456'},
       configUrl: govwayUrl + '/govwayAPIConfig',
       soggettoDefault: 'ENTE',
-
       statsInterval: 16000
 
   };

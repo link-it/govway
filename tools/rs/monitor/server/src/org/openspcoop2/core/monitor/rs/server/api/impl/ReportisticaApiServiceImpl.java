@@ -21,8 +21,10 @@ package org.openspcoop2.core.monitor.rs.server.api.impl;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.UUID;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.monitor.rs.server.api.ReportisticaApi;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.Converter;
@@ -44,6 +46,7 @@ import org.openspcoop2.core.monitor.rs.server.model.FormatoReportConfigEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaRiepilogoApi;
+import org.openspcoop2.core.monitor.rs.server.model.ListaTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportDimensioni;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportMultiLine;
@@ -59,6 +62,8 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzio
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoRemoto;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneTokenInfo;
 import org.openspcoop2.core.monitor.rs.server.model.Riepilogo;
+import org.openspcoop2.core.monitor.rs.server.model.StatoTracing;
+import org.openspcoop2.core.monitor.rs.server.model.StatoTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.TipoIdentificazioneApplicativoEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
@@ -78,6 +83,7 @@ import org.openspcoop2.web.monitor.core.utils.ParseUtility;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
 import org.openspcoop2.web.monitor.statistiche.dao.ConfigurazioniGeneraliService;
+
 
 /**
  * ReportisticaApiServiceImpl
@@ -1490,5 +1496,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
+	
+    /**
+     * Recupera la lista di tracciati della pdnd
+     *
+     * Consente di recuperare la configurazione di un servizio esportandola in formato csv, xls
+     *
+     */
+	@Override
+    public ListaTracingPDND getTracingPdndList(StatoTracing stato, StatoTracingPDND statoPdnd, LocalDate dataInizio, LocalDate dataFine, String soggetto, Integer numeroTentativi, UUID tracingId) {
+    	return null;
+    }
+
 
 }
