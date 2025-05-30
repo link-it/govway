@@ -18,7 +18,7 @@
         <archive path="/op2_3.3.dev/lib/commons/commons-collections4-4.4.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-codec-1.15.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-chain-1.2.jar"/>
-        <archive path="/op2_3.3.dev/lib/commons/commons-beanutils-1.9.4.jar"/>
+        <archive path="/op2_3.3.dev/lib/commons/commons-beanutils-1.11.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-email-1.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-cli-1.5.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/commons/commons-csv-1.9.0.jar"/>

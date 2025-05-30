@@ -17,7 +17,7 @@
 
 		<jar.group.name>commons</jar.group.name>
 		
-		<commons.beanutils.version>1.9.4</commons.beanutils.version>
+		<commons.beanutils.version>1.11.0</commons.beanutils.version>
 		<commons.chain.version>1.2</commons.chain.version>
 		<commons.cli.version>1.5.0</commons.cli.version>
 		<commons.codec.version>1.15</commons.codec.version>

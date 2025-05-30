@@ -85,7 +85,7 @@
 				<include name="loader.datasource.properties"/>
 			</classes>
 			<lib dir="${required_lib_loaderConsole}/commons">
-				<include name="commons-beanutils-1.9.4.jar" />
+				<include name="commons-beanutils-1.11.0.jar" />
 				<include name="commons-chain-1.2.jar"/>
 				<include name="commons-collections-3.2.2.jar" />
 				<include name="commons-digester-2.1.jar"/>
