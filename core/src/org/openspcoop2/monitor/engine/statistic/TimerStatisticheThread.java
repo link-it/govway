@@ -153,6 +153,10 @@ public class TimerStatisticheThread extends Thread{
 			sLibrary.generateStatisticaSettimanale();
 			
 			sLibrary.generateStatisticaMensile();
+			
+			sLibrary.generatePdndGenerazioneTracciamento();
+			
+			sLibrary.generatePdndPubblicazioneTracciamento();
 					
 			// CheckInterval
 			if(this.stop==false){
@@ -217,7 +221,7 @@ public class TimerStatisticheThread extends Thread{
 		} 
 		
 		
-		if(this.statisticsConfig.isGenerazioneStatisticheCustom()){
+		if(this.statisticsConfig.isGenerazioneStatisticheCustom() || this.statisticsConfig.isPdndGenerazioneTracciamento() || this.statisticsConfig.isPdndPubblicazioneTracciamento()){
 			try{
 			 	
 				if(this.ds!=null){

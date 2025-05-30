@@ -20,6 +20,7 @@
 package org.openspcoop2.core.monitor.rs.server.api;
 
 import org.joda.time.DateTime;
+import org.openspcoop2.core.monitor.rs.server.model.DetailsTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportCustomEnum;
 import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
@@ -117,6 +118,27 @@ public interface ReportisticaApi  {
     public byte[] exportConfigurazioneApiBySimpleSearch(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("soggetto_remoto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggettoRemoto, @QueryParam("nome_servizio") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nomeServizio, @QueryParam("tipo_servizio") @Pattern(regexp="^[a-z]{2,20}$") @Size(max=20) String tipoServizio, @QueryParam("versione_servizio") @Min(1) @DefaultValue("1") Integer versioneServizio, @QueryParam("formato_report") FormatoReportConfigEnum formatoReport);
 
     /**
+     * esporta il csv inerente al tracciato
+     *
+     * Consente di recuperare il csv del tracciato
+     *
+     */
+    @GET
+    @Path("/reportistica/tracing-pdnd/{id}/esporta")
+    @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
+    @Operation(summary = "esporta il csv inerente al tracciato", tags={ "Reportistica" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public byte[] exportTracingPdnd(@PathParam("id") Long id);
+
+    /**
      * Consente di recuperare l'elenco delle erogazioni o fruizioni che coinvolgono il soggetto scelto
      *
      * Ricerca le erogazioni e fruizioni registrate sul sistema
@@ -136,6 +158,27 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
     public ListaRiepilogoApi getConfigurazioneApi(@QueryParam("tipo") @NotNull TransazioneRuoloEnum tipo, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("limit") Integer limit);
+
+    /**
+     * mostra i dettagli di un tracciamento
+     *
+     * mostra i dettagli di un tracciamento
+     *
+     */
+    @GET
+    @Path("/reportistica/tracing-pdnd/{id}/dettagli")
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "mostra i dettagli di un tracciamento", tags={ "Reportistica" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "valore del tracciato", content = @Content(schema = @Schema(implementation = DetailsTracingPDND.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public DetailsTracingPDND getDetailsTracingPdnd(@PathParam("id") Long id);
 
     /**
      * Genera per mezzo di una ricerca articolata, un report statistico raggruppato per servizi
@@ -671,5 +714,5 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaTracingPDND getTracingPdndList(@QueryParam("stato") @NotNull StatoTracing stato, @QueryParam("stato_pdnd") @NotNull StatoTracingPDND statoPdnd, @QueryParam("data_inizio") @NotNull LocalDate dataInizio, @QueryParam("data_fine") @NotNull LocalDate dataFine, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("numero_tentativi") Integer numeroTentativi, @QueryParam("tracing_id") UUID tracingId);
+    public ListaTracingPDND getTracingPdndList(@QueryParam("data_inizio") @NotNull LocalDate dataInizio, @QueryParam("data_fine") @NotNull LocalDate dataFine, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("limit") Integer limit, @QueryParam("tentativi_pubblicazione") Integer tentativiPubblicazione, @QueryParam("stato") StatoTracing stato, @QueryParam("stato_pdnd") StatoTracingPDND statoPdnd, @QueryParam("tracing_id") UUID tracingId);
 }

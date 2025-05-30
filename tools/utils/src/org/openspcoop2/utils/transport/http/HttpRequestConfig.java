@@ -21,6 +21,7 @@ package org.openspcoop2.utils.transport.http;
 
 import java.util.Arrays;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
@@ -63,7 +64,7 @@ public class HttpRequestConfig {
 		this.propSupplier = null;
 	}
 	
-	public HttpRequestConfig(String prefix, Function<String, String> props) {
+	public HttpRequestConfig(String prefix, UnaryOperator<String> props) {
 		this.prefix = prefix;
 		this.props = null;
 		this.propSupplier = props;

@@ -96,9 +96,12 @@ Scenario: Preparazione Test ModI
 Scenario: pulizia Test ModI
 	* configure headers = ({ "Authorization": govwayConfAuth })
 	
-	* def query_modi = { profilo: 'ModI', soggetto: 'DemoSoggettoErogatore' }
+	* def query_modi = { profilo: 'ModI', soggetto: 'DemoSoggettoFruitore' }
 	
 	* call delete ({ resourcePath: setup.fruizione_pdnd_path, query_params: query_modi })
+	
+	* eval query_modi.soggetto = 'DemoSoggettoErogatore'
+
 	* call delete ({ resourcePath: setup.erogazione_pdnd_path, query_params: query_modi })
 	
 	* eval query_modi.soggetto = null

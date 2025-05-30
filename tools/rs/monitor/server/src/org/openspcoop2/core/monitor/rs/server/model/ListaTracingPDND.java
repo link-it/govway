@@ -21,14 +21,14 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.openspcoop2.utils.service.beans.ListaSenzaTotale;
+import org.openspcoop2.utils.service.beans.Lista;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ListaTracingPDND extends ListaSenzaTotale {
+public class ListaTracingPDND extends Lista {
   
   @Schema(required = true, description = "")
   private List<ItemTracingPDND> items = new ArrayList<>();

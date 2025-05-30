@@ -257,6 +257,7 @@ public class TransazioniService implements ITransazioniService {
 		case MITTENTE_APPLICATIVO:
 		case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 		case MITTENTE_INDIRIZZO_IP:
+		case PURPOSE_ID:
 			return this.forceIndexAndamentoTemporaleFindAll;
 		case ID_APPLICATIVO_BASE:
 			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoRicerca = 
@@ -301,6 +302,7 @@ public class TransazioniService implements ITransazioniService {
 		case MITTENTE_APPLICATIVO:
 		case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 		case MITTENTE_INDIRIZZO_IP:
+		case PURPOSE_ID:
 			return this.forceIndexAndamentoTemporaleCount;
 		case ID_APPLICATIVO_BASE:
 			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoRicerca = 

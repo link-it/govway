@@ -87,7 +87,10 @@ public class GeneratorProperties {
 	/** Richiesta configurata per effettuare chiamate al tracing pdnd **/
 	private HttpRequestConfig pdndTracingRequestConfig;
 	private Set<String> pdndTracingSoggettiEnabled;
-	
+	private Integer pdndTracingMaxAttempt = null;
+	private boolean pdndTracingErogazioniEnabled = true;
+	private boolean pdndTracingFruizioniEnabled = true;
+
 	private PropertiesReader props;
 	
 	
@@ -145,7 +148,18 @@ public class GeneratorProperties {
 			this.pdndTracingSoggettiEnabled = Arrays.stream(value.split(","))
 				.map(String::trim)
 				.collect(Collectors.toSet());
-			
+		
+		value = getProperty("statistiche.generazione.pdnd.tracciamento.maxAttempt", false);
+		if (value != null)
+			this.pdndTracingMaxAttempt = Integer.valueOf(value);
+		
+		value = getProperty("statistiche.generazione.pdnd.tracciamento.erogazioni.enabled", false);
+		if (Boolean.FALSE.toString().equals(value))
+			this.pdndTracingErogazioniEnabled = false;
+		
+		value = getProperty("statistiche.generazione.pdnd.tracciamento.fruizioni.enabled", false);
+		if (Boolean.FALSE.toString().equals(value))
+			this.pdndTracingFruizioniEnabled = false;
 	}
 	
 	private String getProperty(String name,boolean required) throws UtilsException{
@@ -299,6 +313,28 @@ public class GeneratorProperties {
 
 	public void setPdndTracingSoggettiEnabled(Set<String> pdndTracingSoggettiEnabled) {
 		this.pdndTracingSoggettiEnabled = pdndTracingSoggettiEnabled;
+	}
+	
+	public boolean isPdndTracingErogazioniEnabled() {
+		return this.pdndTracingErogazioniEnabled;
+	}
+	
+	public void setPdndTracingErogazioniEnabled(boolean pdndTracingErogazioniEnabled) {
+		this.pdndTracingErogazioniEnabled = pdndTracingErogazioniEnabled;
+	}
+	
+	public boolean isPdndTracingFruizioniEnabled() {
+		return this.pdndTracingFruizioniEnabled;
+	}
+	
+	public void setPdndTracingFruizioniEnabled(boolean pdndTracingFruizioniEnabled) {
+		this.pdndTracingFruizioniEnabled = pdndTracingFruizioniEnabled;
+	}
+	public Integer getPdndTracingMaxAttempt() {
+		return this.pdndTracingMaxAttempt;
+	}
+	public void setPdndTracingMaxAttempt(Integer pdndTracingMaxAttempt) {
+		this.pdndTracingMaxAttempt = pdndTracingMaxAttempt;
 	}
 	
 }

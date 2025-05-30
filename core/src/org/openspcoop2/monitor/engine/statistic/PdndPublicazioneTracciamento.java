@@ -82,6 +82,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	
 	private static final String PDND_DATE_FORMAT = "yyyy-MM-dd";
+	private static final String TRACING_ID_FIELD = "tracingId";
 	
 	private IStatistichePdndTracingService pdndStatisticheSM;
 	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM;
@@ -176,9 +177,9 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	private String getUploadPath(StatistichePdndTracing stat) {
 		switch (stat.getMethod()) {
 		case REPLACE:
-			return "/tracings/" + stat.getTracingId() + "/replace";
+			return String.format("/tracings/%s/replace", stat.getTracingId());
 		case RECOVER:
-			return "/tracings/" + stat.getTracingId() + "/recover";
+			return String.format("/tracings/%s/recover", stat.getTracingId());
 		case SUBMIT:
 			return "/tracings/submit";
 		}
@@ -240,8 +241,10 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			return;
 		
 		// nel caso faccia una submit in ritardo dovro aggiornare il tracingId e fare una recover (in quanto sara diventato un MISSING)
-		if (stat.getMethod().equals(PdndMethods.SUBMIT) && Duration.between(stat.getDataTracciamento().toInstant(), new Date().toInstant()).compareTo(Duration.ofDays(2)) >= 0) {
-			stat.setMethod(PdndMethods.RECOVER);
+		if ((stat.getMethod().equals(PdndMethods.SUBMIT) && Duration.between(stat.getDataTracciamento().toInstant(), new Date().toInstant()).compareTo(Duration.ofDays(2)) >= 0) 
+				|| (!stat.getMethod().equals(PdndMethods.SUBMIT) && stat.getTracingId() == null)) {
+			if (stat.getMethod().equals(PdndMethods.SUBMIT))
+				stat.setMethod(PdndMethods.RECOVER);
 			this.updateTracingIdStats.put(stat.getDataTracciamento(), stat);
 			return;
 		}
@@ -285,7 +288,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		if (code != HttpServletResponse.SC_OK) {
 			writePdndError(stat, node);
 		} else {
-			String tracingId = node.get("tracingId").asText();
+			String tracingId = node.get(TRACING_ID_FIELD).asText();
 			
 			stat.setTracingId(tracingId);
 			stat.setStatoPdnd(PossibiliStatiPdnd.PENDING);
@@ -347,7 +350,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		
 		while (!this.updateTracingIdStats.isEmpty() && itr.hasNext()) {
 			JsonNode node = itr.next();
-			String tracingId = node.get("tracingId").asText();
+			String tracingId = node.get(TRACING_ID_FIELD).asText();
 			String tracingDate = node.get("date").asText();
 			
 			try {
@@ -503,7 +506,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		
 		while(itr.hasNext()) {
 			JsonNode node = itr.next();
-			String tracingId = node.get("tracingId").asText();
+			String tracingId = node.get(TRACING_ID_FIELD).asText();
 			String tracingDate = node.get("date").asText();
 			
 			try {

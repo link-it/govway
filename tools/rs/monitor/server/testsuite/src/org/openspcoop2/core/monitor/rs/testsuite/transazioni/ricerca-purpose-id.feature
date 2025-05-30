@@ -2,7 +2,7 @@
 Feature: Ricerca Transazioni tramite purposeId
 
 Background: 
-  * configure afterFeature = function(){ karate.log('mi ammazzo'); karate.call('classpath:prepare_modi_tests.feature@cleanup'); }
+  * configure afterFeature = function(){ karate.call('classpath:prepare_modi_tests.feature@cleanup'); }
 
   * def ricerca_url = monitorUrl + '/monitoraggio/transazioni/purpose-id'
   * call read('classpath:crud_commons.feature')
@@ -17,7 +17,6 @@ Scenario:
 	And param purpose_id = setup.purpose_ids.id1
 	When method get
 	Then status 200
-	* karate.log(response.items.length)
 	* match (response.items.length) == 4
 	
 	Given url ricerca_url

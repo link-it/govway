@@ -145,6 +145,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	public static final String TIMER_STATISTICHE_GIORNALIERE = "timerStatisticheGiornaliere";
 	public static final String TIMER_STATISTICHE_SETTIMANALI = "timerStatisticheSettimanali";
 	public static final String TIMER_STATISTICHE_MENSILI = "timerStatisticheMensili";
+	public static final String TIMER_TRACING_PDND_GENERAZIONE = "timerTracingPdndGenerazione";
+	public static final String TIMER_TRACING_PDND_PUBBLICAZIONE = "timerTracingPdndPubblicazione";
 	public static final String TIMER_GESTORE_CHIAVI_PDND = "timerGestoreChiaviPDND";
 	public static final String TIMER_GESTORE_CACHE_CHIAVI_PDND = "timerGestoreCacheChiaviPDND";
 	public static final String TIMER_GESTORE_OPERAZIONI_REMOTE = "timerGestoreOperazioniRemote";
@@ -353,6 +355,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		if(attributeName.equals(ConfigurazionePdD.TIMER_STATISTICHE_MENSILI))
 			return TimerStatisticheLib.getSTATE_STATISTICHE_MENSILI().name();
 		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_TRACING_PDND_GENERAZIONE))
+			return TimerStatisticheLib.getSTATE_PDND_TRACCIAMENTO_GENERAZIONE().name();
+		
+		if(attributeName.equals(ConfigurazionePdD.TIMER_TRACING_PDND_PUBBLICAZIONE))
+			return TimerStatisticheLib.getSTATE_PDND_TRACCIAMENTO_PUBBLICAZIONE().name();
+		
 		if(attributeName.equals(ConfigurazionePdD.TIMER_GESTORE_CHIAVI_PDND))
 			return TimerGestoreChiaviPDNDLib.getState().name();
 		
@@ -518,6 +526,12 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_STATISTICHE_MENSILI))
 				TimerStatisticheLib.setSTATE_STATISTICHE_MENSILI( getTimerState(attribute.getValue()) );
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_TRACING_PDND_GENERAZIONE))
+				TimerStatisticheLib.setSTATE_PDND_TRACCIAMENTO_GENERAZIONE( getTimerState(attribute.getValue()) );
+			
+			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_TRACING_PDND_PUBBLICAZIONE))
+				TimerStatisticheLib.setSTATE_PDND_TRACCIAMENTO_PUBBLICAZIONE( getTimerState(attribute.getValue()) );
 			
 			else if(attribute.getName().equals(ConfigurazionePdD.TIMER_GESTORE_CHIAVI_PDND))
 				TimerGestoreChiaviPDNDLib.setState( getTimerState(attribute.getValue()) );

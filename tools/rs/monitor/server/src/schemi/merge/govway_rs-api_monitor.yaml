@@ -1472,6 +1472,8 @@ paths:
         \ in formato csv, xls"
       operationId: "getTracingPdndList"
       parameters:
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/numero_tentativi_tracing"
       - $ref: "#/components/parameters/stato_tracing"
       - $ref: "#/components/parameters/stato_tracing_pdnd"
@@ -1501,6 +1503,62 @@ paths:
           $ref: "#/components/responses/default"
     parameters:
     - $ref: "#/components/parameters/soggetto"
+  /reportistica/tracing-pdnd/{id}/dettagli:
+    get:
+      tags:
+      - "Reportistica"
+      summary: "mostra i dettagli di un tracciamento"
+      description: "mostra i dettagli di un tracciamento"
+      operationId: "getDetailsTracingPdnd"
+      parameters:
+      - $ref: "#/components/parameters/id_tracing_pdnd"
+      responses:
+        "200":
+          description: "valore del tracciato"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetailsTracingPDND"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+  /reportistica/tracing-pdnd/{id}/esporta:
+    get:
+      tags:
+      - "Reportistica"
+      summary: "esporta il csv inerente al tracciato"
+      description: "Consente di recuperare il csv del tracciato"
+      operationId: "exportTracingPdnd"
+      parameters:
+      - $ref: "#/components/parameters/id_tracing_pdnd"
+      responses:
+        "200":
+          $ref: "#/components/responses/200ReportStatistico"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
   /status:
     get:
       tags:
@@ -2551,7 +2609,7 @@ components:
     ListaTracingPDND:
       type: "object"
       allOf:
-      - $ref: "#/components/schemas/ListaSenzaTotale"
+      - $ref: "#/components/schemas/Lista"
       - required:
         - "items"
         type: "object"
@@ -2560,7 +2618,7 @@ components:
             type: "array"
             items:
               $ref: "#/components/schemas/ItemTracingPDND"
-    ItemTracingPDND:
+    BaseTracingPDND:
       type: "object"
       properties:
         data_tracciamento:
@@ -2569,7 +2627,7 @@ components:
         data_registrazione:
           type: "string"
           format: "date-time"
-        numero_tentativi:
+        tentativi_pubblicazione:
           type: "integer"
           format: "int32"
         stato:
@@ -2579,8 +2637,23 @@ components:
         tracing_id:
           type: "string"
           format: "uuid"
-        method:
-          $ref: "#/components/schemas/MethodTracingPDND"
+        id:
+          type: "integer"
+          format: "int64"
+    ItemTracingPDND:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/BaseTracingPDND"
+    DetailsTracingPDND:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/BaseTracingPDND"
+      - type: "object"
+        properties:
+          metodo:
+            $ref: "#/components/schemas/MethodTracingPDND"
+          dettagli_errore:
+            type: "string"
     StatoTracingPDND:
       type: "string"
       enum:
@@ -3674,7 +3747,7 @@ components:
       schema:
         $ref: "#/components/schemas/TokenClaimDistribuzioneStatisticaEnum"
     numero_tentativi_tracing:
-      name: "numero_tentativi"
+      name: "tentativi_pubblicazione"
       in: "query"
       description: "Specifica il numero di tentativi effettuati da una pubblicazione\
         \ di tracing"
@@ -3686,7 +3759,7 @@ components:
       name: "stato_pdnd"
       in: "query"
       description: "Specifica lo stato PDND del tracing pubblicato"
-      required: true
+      required: false
       schema:
         $ref: "#/components/schemas/StatoTracingPDND"
     stato_tracing:
@@ -3694,7 +3767,7 @@ components:
       in: "query"
       description: "Specifica lo stato della richiesta inviata alla PDND del tracing\
         \ pubblicato"
-      required: true
+      required: false
       schema:
         $ref: "#/components/schemas/StatoTracing"
     data_tracing_inizio:
@@ -3721,6 +3794,14 @@ components:
       schema:
         type: "string"
         format: "uuid"
+    id_tracing_pdnd:
+      name: "id"
+      in: "path"
+      description: "identificativo del tracciato"
+      required: true
+      schema:
+        type: "integer"
+        format: "int64"
     profilo:
       name: "profilo"
       in: "query"

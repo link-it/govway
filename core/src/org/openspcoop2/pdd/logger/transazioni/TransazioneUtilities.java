@@ -107,7 +107,6 @@ import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**     
  * TransazioneUtilities
@@ -1138,10 +1137,16 @@ public class TransazioneUtilities {
 			}
 			
 			// token purpose id
-			if (TipoPdD.DELEGATA.equals(info.getTipoPorta()) && informazioniNegoziazioneToken.getAccessToken() != null && informazioniNegoziazioneToken.isValid()) {
+			if (TipoPdD.DELEGATA.equals(info.getTipoPorta()) 
+					&& informazioniNegoziazioneToken != null
+					&& informazioniNegoziazioneToken.getAccessToken() != null 
+					&& informazioniNegoziazioneToken.isValid()) {
 				transactionDTO.setTokenPurposeId(extractClaimFromJWTAccessToken(informazioniNegoziazioneToken.getAccessToken(), org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID));
 			}
-			if (TipoPdD.APPLICATIVA.equals(info.getTipoPorta()) && transaction.getInformazioniToken().getClaims() != null && transaction.getInformazioniToken().getClaims().containsKey(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID)) {
+			if (TipoPdD.APPLICATIVA.equals(info.getTipoPorta()) 
+					&& transaction.getInformazioniToken() != null 
+					&& transaction.getInformazioniToken().getClaims() != null 
+					&& transaction.getInformazioniToken().getClaims().containsKey(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID)) {
 				transactionDTO.setTokenPurposeId(transaction.getInformazioniToken().getClaims().get(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID).toString());
 			}
 			
@@ -1266,6 +1271,9 @@ public class TransazioneUtilities {
 	private static String extractClaimFromJWTAccessToken(String jwt, String claim) {
 		String[] infos = jwt.split("\\.");
 		JSONUtils json = JSONUtils.getInstance();
+		
+		if (infos.length <= 1)
+			return null;
 		
 		try {
 			JsonNode node = json.getAsNode(java.util.Base64.getDecoder().decode(infos[1]));

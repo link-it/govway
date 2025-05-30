@@ -735,6 +735,7 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_NOTIFICHE = "Consegna Notifiche";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_THREADS = "Thread Attivi";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_STATISTICHE = "Generazione Statistiche";
+	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND_TRACCIAMENTO = "Tracciamento PDND";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_RUNTIME = "Pulizia Repository di Runtime";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_MONITORAGGIO = "Monitoraggio Risorse";
 	public static final String LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_SISTEMA = "Attività di Sistema";
@@ -1085,6 +1086,8 @@ public class ConfigurazioneCostanti {
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE = "timerStatisticheGiornaliere";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI = "timerStatisticheSettimanali";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI = "timerStatisticheMensili";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_GENERAZIONE = "timerPdndTracciamentoGenerazione";
+	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_PUBBLICAZIONE = "timerPdndTracciamentoPubblicazione";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_THRESHOLD_THREAD = "timerThresholdThread";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI = "allarmiAttivi";
 	public static final String PARAMETRO_CONFIGURAZIONE_SISTEMA_ALLARMI_ATTIVI_MANAGER = "allarmiAttiviManager";
@@ -1688,6 +1691,8 @@ public class ConfigurazioneCostanti {
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_GIORNALIERE = "Giornaliere";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_SETTIMANALI = "Settimanali";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI = "Mensili";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_GENERAZIONE = "Generazione";
+	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_PUBBLICAZIONE = "Pubblicazione";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CHIAVI_PDND = "Gestione Eventi";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_CACHE_CHIAVI_PDND = "Gestione Cache";
 	public static final String LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_OPERAZIONI_REMOTE = "Esecuzione Operazioni Remote";

@@ -175,7 +175,7 @@ public class ConfigLoader {
 		if (inputFiles == null) {
 			paths = Stream.of(new File(TEST_BUNDLE_DIRECTORY).listFiles())
 		      .filter(file -> !file.isDirectory())
-		      .map(File::getName)
+		      .map(File::getAbsolutePath)
 		      .collect(Collectors.toSet());
 		} else {
 			paths = Set.of(inputFiles.split(","));
@@ -308,7 +308,7 @@ public class ConfigLoader {
 
 		String configLoaderPath = prop.getProperty("config_loader_path");
 		String scriptPath = Path.of(configLoaderPath, (FileUtils.isOsWindows() ? "createOrUpdate.cmd" : "createOrUpdate.sh")).toAbsolutePath().toString();
-		String bundle = Path.of(TEST_BUNDLE_DIRECTORY, pathToLoad).toAbsolutePath().toString();
+		String bundle = Path.of(pathToLoad).toAbsolutePath().toString();
 
 		logger.debug("Script path: {}", scriptPath);
 		logger.debug("Config loader path: {}", configLoaderPath);
@@ -327,7 +327,7 @@ public class ConfigLoader {
 
 		String configLoaderPath = prop.getProperty("config_loader_path");
 		String scriptPath = Path.of(configLoaderPath, (FileUtils.isOsWindows() ? "delete.cmd" : "delete.sh")).toAbsolutePath().toString();
-		String bundle = Path.of(TEST_BUNDLE_DIRECTORY, pathToDelete).toAbsolutePath().toString();
+		String bundle = Path.of(pathToDelete).toAbsolutePath().toString();
 
 		Logger logger = getLoggerKarate();
 

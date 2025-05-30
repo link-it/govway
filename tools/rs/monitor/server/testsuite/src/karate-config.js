@@ -29,7 +29,8 @@ function fn() {
       configCred:  { username: 'amministratore', password: '123456'},
       configUrl: govwayUrl + '/govwayAPIConfig',
       soggettoDefault: 'ENTE',
-      statsInterval: 16000
+      statsInterval: 16000,
+      batchPath='/var/govway/batch'
 
   };
   

@@ -91,6 +91,22 @@ public class TimerStatisticheLib {
 	public static void setSTATE_STATISTICHE_MENSILI(TimerState sTATE_STATISTICHE_MENSILI) {
 		STATE_STATISTICHE_MENSILI = sTATE_STATISTICHE_MENSILI;
 	}
+	
+	private static TimerState STATE_PDND_TRACCIAMENTO_PUBBLICAZIONE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_PDND_TRACCIAMENTO_PUBBLICAZIONE() {
+		return STATE_PDND_TRACCIAMENTO_PUBBLICAZIONE;
+	}
+	public static void setSTATE_PDND_TRACCIAMENTO_PUBBLICAZIONE(TimerState sTATE_PDND_TRACCIAMENTO_PUBBLICAZIONE) {
+		STATE_PDND_TRACCIAMENTO_PUBBLICAZIONE = sTATE_PDND_TRACCIAMENTO_PUBBLICAZIONE;
+	}
+
+	private static TimerState STATE_PDND_TRACCIAMENTO_GENERAZIONE = TimerState.OFF; // abilitato in OpenSPCoop2Startup al momento dell'avvio
+	public static TimerState getSTATE_PDND_TRACCIAMENTO_GENERAZIONE() {
+		return STATE_PDND_TRACCIAMENTO_GENERAZIONE;
+	}
+	public static void setSTATE_PDND_TRACCIAMENTO_GENERAZIONE(TimerState sTATE_PDND_TRACCIAMENTO_GENERAZIONE) {
+		STATE_PDND_TRACCIAMENTO_GENERAZIONE = sTATE_PDND_TRACCIAMENTO_GENERAZIONE;
+	}
 
 	/** Logger utilizzato per debug. */
 	private Logger logCore = null;
@@ -123,6 +139,8 @@ public class TimerStatisticheLib {
 	private boolean statisticheGiornaliere = false;
 	private boolean statisticheSettimanali = false;
 	private boolean statisticheMensili = false;
+	private boolean tracciamentoPdndGenerazione = false;
+	private boolean tracciamentoPdndPubblicazione = false;
 	
 	/** Tipologie di statistiche: gestione ultimo intervallo */
 	private boolean statisticheOrarie_gestioneUltimoIntervallo = false;
@@ -190,7 +208,11 @@ public class TimerStatisticheLib {
 			this.statisticheMensili = this.op2Properties.isStatisticheGenerazioneBaseMensileEnabled();
 			this.statisticheMensili_gestioneUltimoIntervallo = this.op2Properties.isStatisticheGenerazioneBaseMensileEnabledUltimoMese();
 			break;
-		default:
+		case PDND_GENERAZIONE_TRACCIAMENTO:
+			this.tracciamentoPdndGenerazione = this.op2Properties.isStatisticheTracciamentoPdndGenerazioneEnabled();
+			break;
+		case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+			this.tracciamentoPdndPubblicazione = this.op2Properties.isStatisticheTracciamentoPdndPubblicazioneEnabled();
 			break;
 		}
 		
@@ -276,12 +298,15 @@ public class TimerStatisticheLib {
 			this.statisticsConfig.setStatisticheGiornaliere(this.statisticheGiornaliere);
 			this.statisticsConfig.setStatisticheSettimanali(this.statisticheSettimanali);
 			this.statisticsConfig.setStatisticheMensili(this.statisticheMensili);
+			this.statisticsConfig.setPdndGenerazioneTracciamento(this.tracciamentoPdndGenerazione);
+			this.statisticsConfig.setPdndPubblicazioneTracciamento(this.tracciamentoPdndPubblicazione);
 			this.statisticsConfig.setStatisticheOrarieGestioneUltimoIntervallo(this.statisticheOrarie_gestioneUltimoIntervallo);
 			this.statisticsConfig.setStatisticheGiornaliereGestioneUltimoIntervallo(this.statisticheGiornaliere_gestioneUltimoIntervallo);
 			this.statisticsConfig.setStatisticheSettimanaliGestioneUltimoIntervallo(this.statisticheSettimanali_gestioneUltimoIntervallo);
 			this.statisticsConfig.setStatisticheMensiliGestioneUltimoIntervallo(this.statisticheMensili_gestioneUltimoIntervallo);
 			this.statisticsConfig.setWaitMsBeforeNextInterval(this.waitMsBeforeNextInterval);
 			this.statisticsConfig.setWaitStatiInConsegna(this.waitStatiInConsegna);
+			
 		}catch(Exception e){
 			throw new Exception("Errore durante la generazione delle statistiche (InitConfigurazione): "+e.getMessage(),e);
 		}
@@ -299,7 +324,11 @@ public class TimerStatisticheLib {
 		case STATISTICHE_MENSILI:
 			this.timerLock = new TimerLock(TipoLock.GENERAZIONE_STATISTICHE_MENSILI); 
 			break;
-		default:
+		case PDND_GENERAZIONE_TRACCIAMENTO:
+			this.timerLock = new TimerLock(TipoLock.GENERAZIONE_PDND_TRACCIAMENTO_GENERAZIONE); 
+			break;
+		case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+			this.timerLock = new TimerLock(TipoLock.GENERAZIONE_PDND_TRACCIAMENTO_PUBBLICAZIONE); 
 			break;
 		}
 		
@@ -359,7 +388,11 @@ public class TimerStatisticheLib {
 		case STATISTICHE_MENSILI:
 			enabled = TimerState.ENABLED.equals(STATE_STATISTICHE_MENSILI);
 			break;
-		default:
+		case PDND_GENERAZIONE_TRACCIAMENTO:
+			enabled = TimerState.ENABLED.equals(STATE_PDND_TRACCIAMENTO_GENERAZIONE);
+			break;
+		case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+			enabled = TimerState.ENABLED.equals(STATE_PDND_TRACCIAMENTO_PUBBLICAZIONE);
 			break;
 		}
 		if(!enabled) {
@@ -492,9 +525,18 @@ public class TimerStatisticheLib {
 						return; // problemi con il lock
 					}
 					break;
-				default:
+				case PDND_GENERAZIONE_TRACCIAMENTO:
+					if(!generaStatistica("pdnd tracciamento generazione", conStatistiche, sLibrary, TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO)) {
+						return; // problemi con il lock
+					}
+					break;
+				case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+					if(!generaStatistica("pdnd pubblicazione generazione", conStatistiche, sLibrary, TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO)) {
+						return; // problemi con il lock
+					}
 					break;
 				}
+				
 				
 			}finally{
 				try{
@@ -567,6 +609,12 @@ public class TimerStatisticheLib {
 			break;
 		case STATISTICHE_MENSILI:
 			sLibrary.generateStatisticaMensile();
+			break;
+		case PDND_GENERAZIONE_TRACCIAMENTO:
+			sLibrary.generatePdndGenerazioneTracciamento();
+			break;
+		case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+			sLibrary.generatePdndPubblicazioneTracciamento();
 			break;
 		}	
 				

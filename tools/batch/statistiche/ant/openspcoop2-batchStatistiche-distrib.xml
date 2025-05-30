@@ -75,6 +75,12 @@
 		<antcall target="-distrib_openspcoop2_batchStatistiche_script">
 			<param name="TipoStatistiche" value="StatisticheMensili"/>
                 </antcall>
+                <antcall target="-distrib_openspcoop2_batchStatistiche_script">
+                        <param name="TipoStatistiche" value="PdndGenerazioneTracciamento"/>
+                </antcall>
+                <antcall target="-distrib_openspcoop2_batchStatistiche_script">
+                        <param name="TipoStatistiche" value="PdndPubblicazioneTracciamento"/>
+                </antcall>
 
 	</target>
 

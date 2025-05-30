@@ -7032,7 +7032,22 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI, 
 				ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI);
 		
+
 		if(ProtocolFactoryManager.getInstance().existsProtocolFactory(CostantiLabel.MODIPA_PROTOCOL_NAME)) {
+			
+			de = newDataElementStyleRuntime();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND_TRACCIAMENTO);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+
+			
+			addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoGenerazione(alias), 
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_GENERAZIONE, 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_GENERAZIONE);
+			
+			addTimerState(dati, alias, this.confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione(alias), 
+					ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_PUBBLICAZIONE, 
+					ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_PUBBLICAZIONE);
 			
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND);

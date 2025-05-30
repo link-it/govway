@@ -247,6 +247,10 @@ public class Generator {
 			statisticsConfig.setAnalisiTransazioniCustom(generatorProperties.isAnalisiTransazioniCustom());
 			statisticsConfig.setDebug(generatorProperties.isStatisticheGenerazioneDebug());
 			statisticsConfig.setUseUnionForLatency(generatorProperties.isGenerazioneStatisticheUseUnionForLatency());
+			statisticsConfig.setPdndTracingFruizioniEnabled(generatorProperties.isPdndTracingFruizioniEnabled());
+			statisticsConfig.setPdndTracingErogazioniEnabled(generatorProperties.isPdndTracingErogazioniEnabled());
+			statisticsConfig.setMaxAttempt(generatorProperties.getPdndTracingMaxAttempt());
+			
 			switch (tipoStatistica) {
 			case STATISTICHE_ORARIE:
 				statisticsConfig.setStatisticheOrarie(true);

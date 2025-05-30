@@ -42,6 +42,7 @@ import org.openspcoop2.core.statistiche.constants.PossibiliStatiPdnd;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCCredenzialeMittenteServiceSearch;
 import org.openspcoop2.core.transazioni.utils.credenziali.AbstractCredenzialeList;
 import org.openspcoop2.generic_project.beans.Function;
@@ -214,14 +215,16 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 			this.logger.error("Errore nel generare il csv per il soggetto: {}, data tracciamento: {}", pddCode, tracingDate, e);
 			return;
 		}
-				
+		
+		Date endTraceDate = truncDate(incrementDate(tracingDate));
+		
 		StatistichePdndTracing entry = new StatistichePdndTracing();
 		entry.setDataRegistrazione(new Date());
 		entry.setDataTracciamento(tracingDate);
 		entry.setCsv(csv);
 		entry.setPddCodice(pddCode);
 		entry.setHistory(0);
-		entry.setMethod(PdndMethods.SUBMIT);
+		entry.setMethod(endTraceDate.before(truncDate(new Date())) ? PdndMethods.RECOVER : PdndMethods.SUBMIT);
 		entry.setStatoPdnd(PossibiliStatiPdnd.WAITING);
 
 		this.statisticheSM.getStatistichePdndTracingService().create(entry);
@@ -242,6 +245,11 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 			.between(Transazione.model().DATA_INGRESSO_RICHIESTA, start, end)
 			.isNotNull(Transazione.model().TOKEN_PURPOSE_ID)
 			.equals(Transazione.model().PROTOCOLLO, CostantiLabel.MODIPA_PROTOCOL_NAME);
+		
+		if (!this.config.isPdndTracingFruizioniEnabled())
+			expr.notEquals(Transazione.model().PDD_RUOLO, PddRuolo.DELEGATA);
+		if (!this.config.isPdndTracingErogazioniEnabled())
+			expr.notEquals(Transazione.model().PDD_RUOLO, PddRuolo.APPLICATIVA);
 		
 		if (pddCode != null)
 			expr.equals(Transazione.model().PDD_CODICE, pddCode);
@@ -282,8 +290,13 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		IPaginatedExpression expr = this.statisticheSM.getStatistichePdndTracingService().newPaginatedExpression();
 		expr.isNull(StatistichePdndTracing.model().CSV);
 		
-		List<StatistichePdndTracing> stats = this.statisticheSM.getStatistichePdndTracingService().findAll(expr);
 		
+		List<StatistichePdndTracing> stats = null;
+		try {
+			stats = this.statisticheSM.getStatistichePdndTracingService().findAll(expr);
+		} catch (ServiceException e) {
+			return;
+		}
 		
 		for (StatistichePdndTracing stat : stats) {
 			Date startTracing = stat.getDataTracciamento();
@@ -329,9 +342,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		
 		for (lastDate = truncDate(lastDate); lastDate.before(currDate); lastDate = nextDate) {
 			nextDate = truncDate(incrementDate(lastDate));
-			
-			System.out.println(lastDate + "->" + nextDate);
-			
+						
 			try {
 				createRecords(lastDate, nextDate);
 			} catch (ServiceException 
