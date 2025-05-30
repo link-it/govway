@@ -35,7 +35,7 @@ public class RateLimitingPolicyGroupBy  {
   private Boolean richiedente = false;
   
   @Schema(example = "[\"subject\",\"issuer\"]", description = "")
-  private List<TokenClaimEnum> token = null;
+  private List<RateLimitingPolicyGroupByTokenClaimEnum> token = null;
   
   @Schema(description = "")
   private RateLimitingChiaveEnum chiaveTipo = null;
@@ -89,20 +89,20 @@ public class RateLimitingPolicyGroupBy  {
   **/
   @JsonProperty("token")
   @Valid
-  public List<TokenClaimEnum> getToken() {
+  public List<RateLimitingPolicyGroupByTokenClaimEnum> getToken() {
     return this.token;
   }
 
-  public void setToken(List<TokenClaimEnum> token) {
+  public void setToken(List<RateLimitingPolicyGroupByTokenClaimEnum> token) {
     this.token = token;
   }
 
-  public RateLimitingPolicyGroupBy token(List<TokenClaimEnum> token) {
+  public RateLimitingPolicyGroupBy token(List<RateLimitingPolicyGroupByTokenClaimEnum> token) {
     this.token = token;
     return this;
   }
 
-  public RateLimitingPolicyGroupBy addTokenItem(TokenClaimEnum tokenItem) {
+  public RateLimitingPolicyGroupBy addTokenItem(RateLimitingPolicyGroupByTokenClaimEnum tokenItem) {
     this.token.add(tokenItem);
     return this;
   }

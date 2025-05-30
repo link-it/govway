@@ -12126,7 +12126,7 @@ components:
           - "subject"
           - "issuer"
           items:
-            $ref: "#/components/schemas/TokenClaimEnum"
+            $ref: "#/components/schemas/RateLimitingPolicyGroupByTokenClaimEnum"
         chiave_tipo:
           $ref: "#/components/schemas/RateLimitingChiaveEnum"
         chiave_nome:
@@ -12797,6 +12797,17 @@ components:
       - "indirizzo-ip"
       - "indirizzo-ip-forwarded"
       - "plugin-based"
+    RateLimitingPolicyGroupByTokenClaimEnum:
+      type: "string"
+      enum:
+      - "subject"
+      - "issuer"
+      - "client_id"
+      - "username"
+      - "email"
+      - "pdnd_organization_name"
+      - "pdnd_external_id"
+      - "pdnd_consumer_id"
     CorrelazioneApplicativaRichiestaEnum:
       type: "string"
       example: "content-based"

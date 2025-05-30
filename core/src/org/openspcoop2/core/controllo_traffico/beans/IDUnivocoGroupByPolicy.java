@@ -63,6 +63,8 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 	private String tokenClientId = QUALSIASI;
 	private String tokenEMail = QUALSIASI;
 	private String pdndOrganizationName = QUALSIASI;
+	private String pdndOrganizationExternalId = QUALSIASI;
+	private String pdndOrganizationConsumerId = QUALSIASI;
 	
 
 	
@@ -107,6 +109,10 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 				this.tokenEMail.equals(filtro.getTokenEMail())
 				&&
 				this.pdndOrganizationName.equals(filtro.getPdndOrganizationName())
+				&&
+				this.pdndOrganizationExternalId.equals(filtro.getPdndOrganizationExternalId())
+				&&
+				this.pdndOrganizationConsumerId.equals(filtro.getPdndOrganizationConsumerId())
 				;
 		
 	}
@@ -454,6 +460,40 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 			bf.append(this.pdndOrganizationName);
 		}
 		
+		if(!QUALSIASI.equals(this.pdndOrganizationExternalId) || !filterGroupByNotSet){
+			if(filterGroupByNotSet){
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append("\t");
+			}
+			else{
+				bf.append(" ");
+			}
+			bf.append("PDNDExternalId:");
+			if(filterGroupByNotSet){
+				bf.append(" ");
+			}
+			bf.append(this.pdndOrganizationExternalId);
+		}
+		
+		if(!QUALSIASI.equals(this.pdndOrganizationConsumerId) || !filterGroupByNotSet){
+			if(filterGroupByNotSet){
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+				bf.append("\t");
+			}
+			else{
+				bf.append(" ");
+			}
+			bf.append("PDNDConsumerId:");
+			if(filterGroupByNotSet){
+				bf.append(" ");
+			}
+			bf.append(this.pdndOrganizationConsumerId);
+		}
+		
 		if(bf.length()<=0){
 			if(filterGroupByNotSet){
 				bf.append("\t");
@@ -782,6 +822,40 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 	}
 	
 	
+	public String getPdndOrganizationExternalId() {
+		return this.pdndOrganizationExternalId;
+	}
+	
+	public String getPdndOrganizationExternalIdIfDefined() {
+		if(this.pdndOrganizationExternalId!=null && !this.pdndOrganizationExternalId.equals(QUALSIASI) ){
+			return this.pdndOrganizationExternalId;
+		}
+		return null;
+	}
+
+	public void setPdndOrganizationExternalId(String pdndOrganizationExternalId) {
+		if(pdndOrganizationExternalId!=null)
+			this.pdndOrganizationExternalId = pdndOrganizationExternalId;
+	}
+	
+	
+	public String getPdndOrganizationConsumerId() {
+		return this.pdndOrganizationConsumerId;
+	}
+	
+	public String getPdndOrganizationConsumerIdIfDefined() {
+		if(this.pdndOrganizationConsumerId!=null && !this.pdndOrganizationConsumerId.equals(QUALSIASI) ){
+			return this.pdndOrganizationConsumerId;
+		}
+		return null;
+	}
+
+	public void setPdndOrganizationConsumerId(String pdndOrganizationConsumerId) {
+		if(pdndOrganizationConsumerId!=null)
+			this.pdndOrganizationConsumerId = pdndOrganizationConsumerId;
+	}
+	
+	
 	
 	// **** UTILITIES ****
 	
@@ -853,6 +927,14 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		
 		bf.append(id.pdndOrganizationName);
 		
+		bf.append("\n");
+		
+		bf.append(id.pdndOrganizationExternalId);
+		
+		bf.append("\n");
+		
+		bf.append(id.pdndOrganizationConsumerId);
+		
 		return bf.toString();
 	}
 	
@@ -866,8 +948,9 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 		int newLength2 = newLength+1;	// Aggiunto uniqueMapId
 		int newLength3 = newLength2+1;	// nella 3.3.8 aggiunto servizioApplicativoToken
 		int newLength4 = newLength3+1;	// nella 3.3.15 aggiunto pdndOrganizationName
+		int newLength5 = newLength4+2;	// nella 3.3.16.p2 aggiunto pdndOrganizationExternalId e pdndOrganizationConsumerId
 		
-		if(tmp.length!=oldLength && tmp.length!=newLength && tmp.length!=newLength2 && tmp.length!=newLength3 && tmp.length!=newLength4){
+		if(tmp.length!=oldLength && tmp.length!=newLength && tmp.length!=newLength2 && tmp.length!=newLength3 && tmp.length!=newLength4  && tmp.length!=newLength5){
 			throw new CoreException("Wrong Format (size: "+tmp.length+")");
 		}
 		
@@ -973,6 +1056,12 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 			}
 			else if(i==19){
 				id.pdndOrganizationName = tmp[i].trim();
+			}
+			else if(i==20){
+				id.pdndOrganizationExternalId = tmp[i].trim();
+			}
+			else if(i==21){
+				id.pdndOrganizationConsumerId = tmp[i].trim();
 			}
 		}
 		return id;

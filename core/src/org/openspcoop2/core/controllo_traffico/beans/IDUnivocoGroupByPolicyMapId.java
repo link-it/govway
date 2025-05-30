@@ -57,6 +57,8 @@ public class IDUnivocoGroupByPolicyMapId extends IDUnivocoGroupByPolicy implemen
 		this.setTokenClientId(idSuper.getTokenClientId());
 		this.setTokenEMail(idSuper.getTokenEMail());
 		this.setPdndOrganizationName(idSuper.getPdndOrganizationName());
+		this.setPdndOrganizationExternalId(idSuper.getPdndOrganizationExternalId());
+		this.setPdndOrganizationConsumerId(idSuper.getPdndOrganizationConsumerId());
 		
 		// aggiunta
 		this.setUniqueMapId(uniqueMapId);

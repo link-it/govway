@@ -1528,6 +1528,8 @@ components:
           type: "string"
         external_id:
           $ref: "#/components/schemas/PDNDOrganizationExternalId"
+        consumer_id:
+          type: "string"
     PDNDOrganizationExternalId:
       type: "object"
       properties:
@@ -2434,6 +2436,8 @@ components:
       - "token_username"
       - "token_email"
       - "token_pdnd_organization"
+      - "token_pdnd_external_id"
+      - "token_pdnd_consumer_id"
       - "principal"
       - "client"
       - "token_client"
@@ -2464,6 +2468,7 @@ components:
       - "username"
       - "email"
       - "pdnd_organization_name"
+      - "pdnd_external_o_consumer_id"
     TokenClaimDistribuzioneStatisticaEnum:
       type: "string"
       enum:
@@ -3672,7 +3677,7 @@ components:
     data_fine:
       name: "data_fine"
       in: "query"
-      description: "data inizio dell'intervallo di ricerca"
+      description: "data fine dell'intervallo di ricerca"
       required: true
       schema:
         type: "string"

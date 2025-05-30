@@ -125,6 +125,7 @@ public class Enums {
 		Enums.toTokenSearchClaim.put(TokenClaimSearchEnum.SUBJECT, CostantiExporter.CLAIM_SUBJECT);
 		Enums.toTokenSearchClaim.put(TokenClaimSearchEnum.USERNAME, CostantiExporter.CLAIM_USERNAME);
 		Enums.toTokenSearchClaim.put(TokenClaimSearchEnum.PDND_ORGANIZATION_NAME, CostantiExporter.CLAIM_PDND_ORGANIZATION_NAME);
+		Enums.toTokenSearchClaim.put(TokenClaimSearchEnum.PDND_EXTERNAL_O_CONSUMER_ID, CostantiExporter.CLAIM_PDND_EXTERNAL_O_CONSUMER_ID);
 	}
 
 	public static final Map<FormatoReportEnum, String> toTipoFormato = new HashMap<>();
@@ -202,6 +203,10 @@ public class Enums {
 				DimensioneCustom.TOKEN_EMAIL);
 		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TOKEN_PDND_ORGANIZATION,
 				DimensioneCustom.TOKEN_PDND_ORGANIZATION);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TOKEN_PDND_EXTERNAL_ID,
+				DimensioneCustom.TOKEN_PDND_ORGANIZATION_EXTERNAL_ID);
+		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.TOKEN_PDND_CONSUMER_ID,
+				DimensioneCustom.TOKEN_PDND_ORGANIZATION_CONSUMER_ID);
 		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.PRINCIPAL,
 				DimensioneCustom.PRINCIPAL);
 		Enums.toInformazioneDimensioneCustom.put(DimensioniReportCustomEnum.CLIENT,
@@ -304,6 +309,7 @@ public class Enums {
 		case SUBJECT: return TipoCredenzialeMittente.TOKEN_SUBJECT;
 		case USERNAME: return TipoCredenzialeMittente.TOKEN_USERNAME;
 		case PDND_ORGANIZATION_NAME: return TipoCredenzialeMittente.PDND_ORGANIZATION_NAME;
+		case PDND_EXTERNAL_O_CONSUMER_ID: return TipoCredenzialeMittente.PDND_ORGANIZATION_EXTERNAL_ID; // viene usato questo
 		default: return null;
 		}
 	}

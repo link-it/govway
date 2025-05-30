@@ -340,6 +340,8 @@ public class CostantiGrafici {
 	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_USERNAME = "stats.search.numeroDimensioniCustom.tokenInfo.username";
 	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_EMAIL = "stats.search.numeroDimensioniCustom.tokenInfo.email";
 	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_PDND_ORGANIZATION = "stats.search.numeroDimensioniCustom.tokenInfo.clientID.pdnd";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_PDND_ORGANIZATION_EXTERNAL_ID = "stats.search.numeroDimensioniCustom.tokenInfo.clientID.pdnd.externalId";
+	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_PDND_ORGANIZATION_CONSUMER_ID = "stats.search.numeroDimensioniCustom.tokenInfo.clientID.pdnd.consumerId";
 	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_PRINCIPAL = "stats.search.numeroDimensioniCustom.principal";
 	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_INDIRIZZO_IP = "stats.search.numeroDimensioniCustom.indirizzoIP";
 	public static final String SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_ESITO = "stats.search.numeroDimensioniCustom.esito";

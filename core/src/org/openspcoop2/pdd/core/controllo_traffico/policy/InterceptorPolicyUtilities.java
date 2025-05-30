@@ -61,6 +61,7 @@ import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -209,6 +210,37 @@ public class InterceptorPolicyUtilities {
 							}
 						}
 						break;
+					case PDND_ORGANIZATION_EXTERNAL_ID:
+						if(datiTransazione.getPdndOrganizationJson()!=null && StringUtils.isNotEmpty(datiTransazione.getPdndOrganizationJson())) {
+							groupBy.setPdndOrganizationExternalId(readPdndOrganizationExternalId(log, datiTransazione.getPdndOrganizationJson(), 
+									abortTransactionPdndOrganizationName(log, context.getPddContext()), nonDisponibile));
+						}
+						else {
+							if(abortTransactionPdndOrganizationName(log, context.getPddContext())) {
+								throw new CoreException("PDND Organization external id not available");
+							}
+							else {
+								groupBy.setPdndOrganizationExternalId(nonDisponibile);
+							}
+						}
+						break;
+					case PDND_ORGANIZATION_CONSUMER_ID:
+						if( (datiTransazione.getPdndOrganizationJson()!=null && StringUtils.isNotEmpty(datiTransazione.getPdndOrganizationJson()))
+								||
+								(datiTransazione.getTokenClaims()!=null && !datiTransazione.getTokenClaims().isEmpty())
+								) {
+							groupBy.setPdndOrganizationConsumerId(readPdndOrganizationConsumerId(log, datiTransazione.getTokenClaims(), datiTransazione.getPdndOrganizationJson(), 
+									abortTransactionPdndOrganizationName(log, context.getPddContext()), nonDisponibile));
+						}
+						else {
+							if(abortTransactionPdndOrganizationName(log, context.getPddContext())) {
+								throw new CoreException("PDND Organization consumer id not available");
+							}
+							else {
+								groupBy.setPdndOrganizationName(nonDisponibile);
+							}
+						}
+						break;						
 					default:
 						break;
 					}
@@ -217,6 +249,76 @@ public class InterceptorPolicyUtilities {
 		}
 		
 		return groupBy;
+	}
+	private static String readPdndOrganizationExternalId(Logger log, String json, boolean throwException, String nonDisponibile) throws CoreException {
+		try {
+			String origin = PDNDTokenInfo.readOrganizationExternalOriginFromJson(log, json);
+			String id = PDNDTokenInfo.readOrganizationExternalIdFromJson(log, json);
+			String pdndOrganizationExternalId = null;
+			if(origin!=null && StringUtils.isNotEmpty(origin) &&
+					id!=null && StringUtils.isNotEmpty(id)) {
+				pdndOrganizationExternalId = origin + " "+id;
+			}
+			else if(origin!=null && StringUtils.isNotEmpty(origin)) {
+				pdndOrganizationExternalId = origin;
+			}
+			else if(id!=null && StringUtils.isNotEmpty(id)) {
+				pdndOrganizationExternalId = id;
+			}
+			if(pdndOrganizationExternalId!=null && StringUtils.isNotEmpty(pdndOrganizationExternalId)){
+				return pdndOrganizationExternalId;
+			}
+			else if(throwException) {
+				throw new CoreException("PDND Organization externalId not available");
+			}
+		}catch(Exception e) {
+			if(throwException) {
+				throw new CoreException("PDND Organization externalId not available",e);
+			}
+			else {
+				log.error("PDND Organization externalId not available: "+e.getMessage(),e);
+			}
+		}
+		return nonDisponibile;
+	}
+	private static String readPdndOrganizationConsumerId(Logger log, Map<String, String> tokenClaims, String json, boolean throwException, String nonDisponibile) throws CoreException {
+		try {
+			String idFromToken = readPdndOrganizationConsumerId(tokenClaims) ;
+			if(idFromToken!=null) {
+				return idFromToken;
+			}
+			
+			String pdndOrganizationlId = null;
+			if(json!=null && StringUtils.isNotEmpty(json)) {
+				String id = PDNDTokenInfo.readOrganizationIdFromJson(log, json);
+				if(id!=null && StringUtils.isNotEmpty(id)) {
+					pdndOrganizationlId = id;
+				}
+			}
+			if(pdndOrganizationlId!=null && StringUtils.isNotEmpty(pdndOrganizationlId)){
+				return pdndOrganizationlId;
+			}
+			else if(throwException) {
+				throw new CoreException("PDND Organization consumerId not available");
+			}
+		}catch(Exception e) {
+			if(throwException) {
+				throw new CoreException("PDND Organization consumerId not available",e);
+			}
+			else {
+				log.error("PDND Organization consumerId not available: "+e.getMessage(),e);
+			}
+		}
+		return nonDisponibile;
+	}
+	private static String readPdndOrganizationConsumerId(Map<String, String> tokenClaims) throws CoreException {
+		if(tokenClaims!=null && !tokenClaims.isEmpty() && tokenClaims.containsKey(org.openspcoop2.pdd.core.token.Costanti.PDND_CONSUMER_ID)) {
+			String id = tokenClaims.get(org.openspcoop2.pdd.core.token.Costanti.PDND_CONSUMER_ID);
+			if(id!=null && StringUtils.isNotEmpty(id)){
+				return id;
+			}
+		}
+		return null;
 	}
 	
 	private static boolean abortTransactionPdndOrganizationName(Logger log, Context context) throws CoreException {

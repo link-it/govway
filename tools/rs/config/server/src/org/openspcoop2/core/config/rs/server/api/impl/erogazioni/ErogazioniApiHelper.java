@@ -5379,7 +5379,7 @@ public class ErogazioniApiHelper {
 		if(src.getToken()!=null) {
 			String [] tmp = src.getToken().split(",");
 			if(tmp!=null && tmp.length>0) {
-				List<TokenClaimEnum> token = new ArrayList<>();
+				List<RateLimitingPolicyGroupByTokenClaimEnum> token = new ArrayList<>();
 				for (int i = 0; i < tmp.length; i++) {
 					TipoCredenzialeMittente tipo = null;
 					try {
@@ -5390,19 +5390,29 @@ public class ErogazioniApiHelper {
 					if(tipo!=null) {
 						switch (tipo) {
 						case TOKEN_SUBJECT:
-							token.add(TokenClaimEnum.SUBJECT);
+							token.add(RateLimitingPolicyGroupByTokenClaimEnum.SUBJECT);
 							break;
 						case TOKEN_ISSUER:
-							token.add(TokenClaimEnum.ISSUER);
+							token.add(RateLimitingPolicyGroupByTokenClaimEnum.ISSUER);
 							break;
 						case TOKEN_CLIENT_ID:
-							token.add(TokenClaimEnum.CLIENT_ID);
+							token.add(RateLimitingPolicyGroupByTokenClaimEnum.CLIENT_ID);
 							break;
 						case TOKEN_USERNAME:
-							token.add(TokenClaimEnum.USERNAME);
+							token.add(RateLimitingPolicyGroupByTokenClaimEnum.USERNAME);
 							break;
 						case TOKEN_EMAIL:
-							token.add(TokenClaimEnum.EMAIL);
+							token.add(RateLimitingPolicyGroupByTokenClaimEnum.EMAIL);
+							break;
+							
+						case PDND_ORGANIZATION_NAME:
+							token.add(RateLimitingPolicyGroupByTokenClaimEnum.PDND_ORGANIZATION_NAME);
+							break;
+						case PDND_ORGANIZATION_EXTERNAL_ID:
+							token.add(RateLimitingPolicyGroupByTokenClaimEnum.PDND_EXTERNAL_ID);
+							break;
+						case PDND_ORGANIZATION_CONSUMER_ID:
+							token.add(RateLimitingPolicyGroupByTokenClaimEnum.PDND_CONSUMER_ID);
 							break;
 						default:
 							break;
@@ -5838,7 +5848,8 @@ public class ErogazioniApiHelper {
 			);	
 	}
 	
-	public static final void override(	RateLimitingPolicyGroupBy body,  IDSoggetto idPropietarioSa, HttpRequestWrapper wrap )
+	private static final void override(	RateLimitingPolicyGroupBy body,  HttpRequestWrapper wrap,
+			String protocollo, boolean applicativa)
 	{
 		if (body == null) return;
 
@@ -5867,8 +5878,10 @@ public class ErogazioniApiHelper {
 					evalnull(  () -> ServletUtils.boolToCheckBoxStatus( true ) )
 				);
 			
+			boolean modiPdnd = applicativa && org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(protocollo);
+			
 			List<String> values = new ArrayList<>();
-			for (TokenClaimEnum tokenClaim : body.getToken()) {
+			for (RateLimitingPolicyGroupByTokenClaimEnum tokenClaim : body.getToken()) {
 				switch (tokenClaim) {
 				case SUBJECT:
 					values.add(TipoCredenzialeMittente.TOKEN_SUBJECT.getRawValue());
@@ -5885,6 +5898,25 @@ public class ErogazioniApiHelper {
 				case EMAIL:
 					values.add(TipoCredenzialeMittente.TOKEN_EMAIL.getRawValue());
 					break;
+					
+				case PDND_ORGANIZATION_NAME:
+					if(!modiPdnd) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il criterio di raggruppamento per nome organizzazione PDND è utilizzabile solamente per erogazioni con profilo di interoperabilità ModI");
+					}
+					values.add(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.getRawValue());
+					break;	
+				case PDND_EXTERNAL_ID:
+					if(!modiPdnd) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il criterio di raggruppamento per identificativo esterno dell'organizzazione è utilizzabile solamente per erogazioni con profilo di interoperabilità ModI");
+					}
+					values.add(TipoCredenzialeMittente.PDND_ORGANIZATION_EXTERNAL_ID.getRawValue());
+					break;	
+				case PDND_CONSUMER_ID:
+					if(!modiPdnd) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il criterio di raggruppamento per consumerId dell'organizzazione PDND è utilizzabile solamente per erogazioni con profilo di interoperabilità ModI");
+					}
+					values.add(TipoCredenzialeMittente.PDND_ORGANIZATION_CONSUMER_ID.getRawValue());
+					break;	
 				default:
 					break;
 				}
@@ -5939,7 +5971,8 @@ public class ErogazioniApiHelper {
 		}
 		
 		RateLimitingPolicyGroupBy groupCriteria = body.getRaggruppamento();
-		override( groupCriteria, idPropietarioSa, wrap );
+		override( groupCriteria, wrap,
+				protocollo, true);
 
 	}
 	public static final void override(TipoRisorsa tipoRisorsa, RateLimitingPolicyErogazione body, String protocollo, IDSoggetto idPropietarioSa, HttpRequestWrapper wrap ) {
@@ -5968,7 +6001,8 @@ public class ErogazioniApiHelper {
 		}
 		
 		RateLimitingPolicyGroupBy groupCriteria = body.getRaggruppamento();
-		override( groupCriteria, idPropietarioSa, wrap );
+		override( groupCriteria, wrap,
+				protocollo, true );
 
 	}
 	
@@ -5979,7 +6013,8 @@ public class ErogazioniApiHelper {
 
 		override ( tipoRisorsa, (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
 		override ( body.getFiltro(), idPropietarioSa, wrap );
-		override ( body.getRaggruppamento() , idPropietarioSa, wrap );
+		override ( body.getRaggruppamento() , wrap,
+				protocollo, false );
 		
 		wrap.overrideParameter(
 			ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD,
@@ -5991,7 +6026,8 @@ public class ErogazioniApiHelper {
 
 		override ( tipoRisorsa, (RateLimitingPolicyBase) body, protocollo, idPropietarioSa, wrap );
 		override ( body.getFiltro(), idPropietarioSa, wrap );
-		override ( body.getRaggruppamento() , idPropietarioSa, wrap );
+		override ( body.getRaggruppamento() , wrap,
+				protocollo, false  );
 		
 		wrap.overrideParameter(
 			ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_RUOLO_PDD,

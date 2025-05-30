@@ -268,6 +268,10 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 							return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_USERNAME_LABEL_KEY);
 						case PDND_ORGANIZATION_NAME:
 							return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_PDND_ORGANIZATION_NAME_LABEL_KEY);
+						case PDND_ORGANIZATION_EXTERNAL_ID:
+							return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_PDND_ORGANIZATION_EXTERNAL_ID_LABEL_KEY);
+						case PDND_ORGANIZATION_CONSUMER_ID:
+							return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_PDND_ORGANIZATION_CONSUMER_ID_LABEL_KEY);
 						case TRASPORTO:
 						default:
 							// caso impossibile

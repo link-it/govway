@@ -11,7 +11,13 @@ La figura :numref:`modiaRateLimitingPDNDorganization` mostra un esempio di polit
 
     Rate Limiting: conteggio per organizzazione ottenuta tramite API PDND
 
-Se viene attivato il conteggio per organizzazione e l'informazione non è disponibile la transazione termina con un errore di Rate Limiting 429 dovuto all'informazione mancante.
+I possibili tipi di conteggio relativi ad informazioni ottenute dalla PDND sono:
+
+- 'PDND Organization Name': nome dell'organizzazione;
+- 'PDND Organization ExternalId': identificativo esterno dell'organizzazione (es. Codice IPA);
+- 'PDND ConsumerId': identificativo dell'organizzazione sul registro della PDND.
+
+Se viene attivato il conteggio per una delle informazioni PDND e tale informazione non è disponibile la transazione termina con un errore di Rate Limiting 429 dovuto all'informazione mancante.
 È possibile modificare il comportamento di default in modo da non far terminare con errore la transazione registrando la :ref:`configProprieta` *pdnd.rateLimitingByOrganization.infoNotAvailable.abortTransaction* valorizzata a *false*.
 
 È inoltre possibile filtrare per informazioni prelevate dalla PDND, visualizzabili anche nel dettaglio di una transazione, nella voce 'token' all'interno della sezione 'Informazioni Mittente' di (:numref:`modiDatiTransazionePDNDorganization`). Nella figura :numref:`modiRateLimitingFiltroTramiteInfoPDND` viene mostrato un esempio.

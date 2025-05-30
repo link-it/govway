@@ -1,3 +1,13 @@
+2025-05-30  Andrea Poli <apoli@link.it>
+	
+	* [ProtocolloModIPA, GovWayConsole, GovWayMonitor, ApiRsConfigurazione, ApiRsMonitoraggio]
+	Aggiunta funzionalità #1608
+	Le informazioni recuperate tramite le API PDND relative all'identificativo esterno (externalId) e all'identificativo di registro della PDND (consumerId) di una organizzazione sono adesso utilizzabili per:
+	- filtrare le transazioni nelle ricerche dello storico e nella generazione di report statistici;
+	- generare report '3D' che utilizzano gli identificativi come informazione da visualizzare;
+	- raggruppare le richieste nel criterio di conteggio di una policy di Rate Limiting.
+	Infine il consumerId viene adesso visualizzato tra le informazioni di dettaglio di una transazione. 
+
 2025-05-28  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.16.p2

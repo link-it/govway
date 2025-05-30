@@ -41,7 +41,9 @@ public enum TipoCredenzialeMittente {
 	
 	PDND_CLIENT_JSON("pdnd_client_json"), 
 	PDND_ORGANIZATION_JSON("pdnd_org_json"), 
-	PDND_ORGANIZATION_NAME("pdnd_org_name"),
+	PDND_ORGANIZATION_NAME("pdnd_org_name"), 
+	PDND_ORGANIZATION_EXTERNAL_ID("pdnd_org_ext_id"), 
+	PDND_ORGANIZATION_CONSUMER_ID("pdnd_org_con_id"),
 	
 	CLIENT_ADDRESS("client_address"), 
 	EVENTI("eventi"),

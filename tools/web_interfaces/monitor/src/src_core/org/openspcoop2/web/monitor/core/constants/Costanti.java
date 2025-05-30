@@ -137,6 +137,7 @@ public class Costanti {
 	public static final String AUTENTICAZIONE_KEY = "commons.autenticazione.label";
 	
 	public static final String TOKEN_CLIENT_ID_PDND_EXTERNAL_ID_KEY = "commons.tokenInfo.clientID.pdnd.externalId.label";
+	public static final String TOKEN_CLIENT_ID_PDND_CONSUMER_ID_KEY = "commons.tokenInfo.clientID.pdnd.consumerId.label";
 	public static final String TOKEN_CLIENT_ID_PDND_ORGANIZATION_ID_KEY = "commons.tokenInfo.clientID.pdnd.id.label";
 	public static final String TOKEN_CLIENT_ID_PDND_CATEGORIA_KEY = "commons.tokenInfo.clientID.pdnd.categoria.label";
 	
@@ -166,6 +167,9 @@ public class Costanti {
 	public static final String SEARCH_TOKEN_EMAIL = "transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.email.label";
 	
 	public static final String SEARCH_PDND_PREFIX_ORGANIZATION_NAME = "transazioni.search.sezioneFiltroRicercaLibera.pdndPrefix.organization.name.label";
+	public static final String SEARCH_PDND_PREFIX_ORGANIZATION_EXTERNAL_ID = "transazioni.search.sezioneFiltroRicercaLibera.pdndPrefix.organization.externalId.label";
+	public static final String SEARCH_PDND_PREFIX_ORGANIZATION_CONSUMER_ID = "transazioni.search.sezioneFiltroRicercaLibera.pdndPrefix.organization.consumerId.label";
+	public static final String SEARCH_PDND_PREFIX_ORGANIZATION_EXTERNAL_CONSUMER_ID = "transazioni.search.sezioneFiltroRicercaLibera.pdndPrefix.organization.externalConsumerId.label";
 	public static final String SEARCH_PDND_ORGANIZATION_NAME = "transazioni.search.sezioneFiltroRicercaLibera.pdnd.organization.name.label";
 	
 	

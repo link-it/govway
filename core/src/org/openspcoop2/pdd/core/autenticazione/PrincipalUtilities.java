@@ -206,6 +206,8 @@ public class PrincipalUtilities {
 			case PDND_CLIENT_JSON:
 			case PDND_ORGANIZATION_JSON:
 			case PDND_ORGANIZATION_NAME:
+			case PDND_ORGANIZATION_EXTERNAL_ID:
+			case PDND_ORGANIZATION_CONSUMER_ID:
 			case CLIENT_ADDRESS:
 			case GRUPPI:
 			case API:

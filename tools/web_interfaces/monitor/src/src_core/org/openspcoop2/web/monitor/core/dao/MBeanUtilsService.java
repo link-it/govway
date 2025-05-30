@@ -22,6 +22,7 @@ package org.openspcoop2.web.monitor.core.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServiceSearch;
@@ -42,6 +43,7 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.LikeMode;
 import org.openspcoop2.generic_project.expression.SortOrder;
+import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
 import org.slf4j.Logger;
@@ -221,7 +223,10 @@ public class MBeanUtilsService {
 		if(cm!=null) {
 			return cm;
 		}
-		else if(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tipo) || TipoCredenzialeMittente.PDND_ORGANIZATION_JSON.equals(tipo) ) {
+		else if(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tipo) || 
+				TipoCredenzialeMittente.PDND_ORGANIZATION_EXTERNAL_ID.equals(tipo) || 
+				TipoCredenzialeMittente.PDND_ORGANIZATION_CONSUMER_ID.equals(tipo) || 
+				TipoCredenzialeMittente.PDND_ORGANIZATION_JSON.equals(tipo) ) {
 			// provo a cercare se l'informazione sull'organizzazione è stata asssociata ad un altro clientId della stessa organizzazione
 			try {
 				cm = getPdndOrganizationJsonFromClientIdLong(search, tipo, id);
@@ -339,20 +344,39 @@ public class MBeanUtilsService {
 				return cmJson;
 			}
 			else {
-				String pattern =  "$.name";
-				String name = null;
+				String value = null;
 				try {
-					name = JsonPathExpressionEngine.extractAndConvertResultAsString(cmJson.getCredenziale(), pattern, this.log);
+					if(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tipo)) {
+						value = PDNDTokenInfo.readOrganizationNameFromJson(this.log, cmJson.getCredenziale());
+					}
+					else if(TipoCredenzialeMittente.PDND_ORGANIZATION_EXTERNAL_ID.equals(tipo)) {
+						String origin = PDNDTokenInfo.readOrganizationExternalOriginFromJson(this.log, cmJson.getCredenziale());
+						String externalId = PDNDTokenInfo.readOrganizationExternalIdFromJson(this.log, cmJson.getCredenziale());
+						if(origin!=null && StringUtils.isNotEmpty(origin) &&
+								externalId!=null && StringUtils.isNotEmpty(externalId)) {
+							value = origin + " "+externalId;
+						}
+						else if(origin!=null && StringUtils.isNotEmpty(origin)) {
+							value = origin;
+						}
+						else if(externalId!=null && StringUtils.isNotEmpty(externalId)) {
+							value = externalId;
+						}
+					}
+					else if(TipoCredenzialeMittente.PDND_ORGANIZATION_CONSUMER_ID.equals(tipo)) {
+						value = PDNDTokenInfo.readOrganizationIdFromJson(this.log, cmJson.getCredenziale());
+					}
 				}catch(Exception e) {
 					// fatalError
-					this.log.error("getPdndOrganizationJsonFromClientIdLong name read failed from ["+cmJson.getCredenziale()+"] with pattern ["+pattern+"]: "+e.getMessage(),e);
+					this.log.error("getPdndOrganizationJsonFromClientIdLong name read failed from ["+cmJson.getCredenziale()+"]: "+e.getMessage(),e);
 				}
-				if(name!=null) {
+				
+				if(value!=null && StringUtils.isNotEmpty(value)) {
 					CredenzialeMittente cmName = new CredenzialeMittente();
-					cmName.setCredenziale(name);
+					cmName.setCredenziale(value);
 					cmName.setOraRegistrazione(cmJson.getOraRegistrazione()); // metto stessa data
 					cmName.setRefCredenziale(id); // aggiorno ref
-					cmName.setTipo(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.getRawValue());
+					cmName.setTipo(tipo.getRawValue());
 					/**System.out.println("RECUPERATO PDND_ORGANIZATION_NAME ["+cmName.getCredenziale()+"]");*/
 					return cmName;
 				}

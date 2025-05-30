@@ -9979,6 +9979,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			case PDND_CLIENT_JSON:
 			case PDND_ORGANIZATION_JSON:
 			case PDND_ORGANIZATION_NAME:
+			case PDND_ORGANIZATION_EXTERNAL_ID:
+			case PDND_ORGANIZATION_CONSUMER_ID:
 				// caso impossibile
 				break; 
 			}
@@ -10029,14 +10031,24 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			if(searchForm.getRiconoscimento().equals(org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO)) {
 				org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente tcm = org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.toEnumConstant(searchForm.getTokenClaim(), true);
 				AbstractSearchCredenziale searchToken = null;
+				String valoreRiconoscimento = searchForm.getValoreRiconoscimento();
 				if(TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm)) {
 					searchToken = new CredenzialeSearchTokenClient(true, false, true);
+				}
+				else if(TipoCredenzialeMittente.PDND_ORGANIZATION_EXTERNAL_ID.equals(tcm) ||
+						TipoCredenzialeMittente.PDND_ORGANIZATION_CONSUMER_ID.equals(tcm)) {
+					searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.PDND_ORGANIZATION_JSON);
+					searchByRefCredentials = true;
+					if(ricercaEsatta) {
+						valoreRiconoscimento = "\""+valoreRiconoscimento+"\"";
+					}
+					ricercaEsatta = false; // sono entrambi identificativi, non devo fare una ricerca esatta
 				}
 				else {
 					searchToken = new CredenzialeSearchToken(tcm);
 					searchByRefCredentials = TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm);
 				}
-				pagExpr = searchToken.createExpression(credenzialeMittentiService, searchForm.getValoreRiconoscimento(), ricercaEsatta, caseSensitive);
+				pagExpr = searchToken.createExpression(credenzialeMittentiService, valoreRiconoscimento, ricercaEsatta, caseSensitive);
 			}
 			
 			findAll = credenzialeMittentiService.findAll(pagExpr);
@@ -10219,6 +10231,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				case TRASPORTO:
 				case PDND_CLIENT_JSON:
 				case PDND_ORGANIZATION_JSON:
+				case PDND_ORGANIZATION_EXTERNAL_ID:
+				case PDND_ORGANIZATION_CONSUMER_ID:
 					// caso impossibile
 					break; 
 				}
@@ -10273,6 +10287,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					return model.URI_API;
 					
 				case PDND_ORGANIZATION_NAME: 
+				case PDND_ORGANIZATION_EXTERNAL_ID:
+				case PDND_ORGANIZATION_CONSUMER_ID: 
 					// Verro poi risolto per riferimento
 					return model.TOKEN_CLIENT_ID;
 					
@@ -10538,6 +10554,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			case TOKEN_CLIENT_ID:
 			case TOKEN_PDND_ORGANIZATION:
+			case TOKEN_PDND_ORGANIZATION_EXTERNAL_ID:
+			case TOKEN_PDND_ORGANIZATION_CONSUMER_ID:
 			case APPLICATIVO_TOKEN:{
 				filter.notEquals(model.TOKEN_CLIENT_ID, Costanti.INFORMAZIONE_NON_DISPONIBILE);
 				filter.addGroupBy(model.TOKEN_CLIENT_ID);
@@ -10703,6 +10721,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				break;
 			case TOKEN_CLIENT_ID:
 			case TOKEN_PDND_ORGANIZATION:
+			case TOKEN_PDND_ORGANIZATION_EXTERNAL_ID:
+			case TOKEN_PDND_ORGANIZATION_CONSUMER_ID:
 			case APPLICATIVO_TOKEN:{
 				filter.addOrder(model.TOKEN_CLIENT_ID);
 				break;
@@ -10794,6 +10814,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			case TOKEN_CLIENT_ID:
 			case TOKEN_PDND_ORGANIZATION:
+			case TOKEN_PDND_ORGANIZATION_EXTERNAL_ID:
+			case TOKEN_PDND_ORGANIZATION_CONSUMER_ID:
 			case APPLICATIVO_TOKEN:{
 				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"tc";
 				expr.addSelectField(model.TOKEN_CLIENT_ID, a);
@@ -10984,6 +11006,8 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 			case TOKEN_CLIENT_ID:
 			case TOKEN_PDND_ORGANIZATION:
+			case TOKEN_PDND_ORGANIZATION_EXTERNAL_ID:
+			case TOKEN_PDND_ORGANIZATION_CONSUMER_ID:
 			case APPLICATIVO_TOKEN:{
 				String a = ALIAS_FIELD_DATA_3D_CUSTOM+"tc";
 				expr.addSelectField(new ConstantField(a, StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE,
@@ -11191,6 +11215,12 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			case TOKEN_PDND_ORGANIZATION:{
 				return getCustomDataCredenzialeTokenPDNDOrganization(row, res, "tc", bSkip);
 			}
+			case TOKEN_PDND_ORGANIZATION_EXTERNAL_ID:{
+				return getCustomDataCredenzialeTokenPDNDOrganizationExternalId(row, res, "tc", bSkip);
+			}
+			case TOKEN_PDND_ORGANIZATION_CONSUMER_ID:{
+				return getCustomDataCredenzialeTokenPDNDOrganizationConsumerId(row, res, "tc", bSkip);
+			}
 			case TOKEN_ISSUER:{
 				return getCustomDataCredenziale(row, res, "ti");
 			}
@@ -11308,6 +11338,85 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			}
 		}
 		bSkip.setValue(true);
+		return null;
+	}
+	private String getCustomDataCredenzialeTokenPDNDOrganizationExternalId(Map<String, Object> row, StringBuilder res, String alias, BooleanNullable bSkip) throws NumberFormatException, ServiceException, NotFoundException, NotImplementedException {
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+alias);
+		res.append(oRisultato);
+		if(oRisultato instanceof String) {
+			String risultato = (String) oRisultato;
+			String pdndOrganizationExternalId = null;
+			try {
+				String json = getCustomDataCredenzialeTokenPDNDOrganizationJson(row, res, alias, bSkip, risultato);
+				if(json!=null) {
+					pdndOrganizationExternalId = getCustomDataCredenzialeTokenPDNDOrganizationExternalId(json);
+				}
+			}catch(Exception tApp) {
+				StatisticheGiornaliereService.logError(tApp.getMessage(), tApp);
+			}
+			if(pdndOrganizationExternalId==null) {
+				bSkip.setValue(true);
+			}
+			else {
+				return pdndOrganizationExternalId;
+			}
+		}
+		bSkip.setValue(true);
+		return null;
+	}
+	private String getCustomDataCredenzialeTokenPDNDOrganizationExternalId(String json) throws ProtocolException {
+		String pdndOrganizationExternalId = null;
+		String origin = PDNDTokenInfo.readOrganizationExternalOriginFromJson(log, json);
+		String id = PDNDTokenInfo.readOrganizationExternalIdFromJson(log, json);
+		if(origin!=null && StringUtils.isNotEmpty(origin) &&
+				id!=null && StringUtils.isNotEmpty(id)) {
+			pdndOrganizationExternalId = origin + " "+id;
+		}
+		else if(origin!=null && StringUtils.isNotEmpty(origin)) {
+			pdndOrganizationExternalId = origin;
+		}
+		else if(id!=null && StringUtils.isNotEmpty(id)) {
+			pdndOrganizationExternalId = id;
+		}
+		return pdndOrganizationExternalId;
+	}
+	private String getCustomDataCredenzialeTokenPDNDOrganizationConsumerId(Map<String, Object> row, StringBuilder res, String alias, BooleanNullable bSkip) throws NumberFormatException, ServiceException, NotFoundException, NotImplementedException {
+		Object oRisultato = row.get(ALIAS_FIELD_DATA_3D_CUSTOM+alias);
+		res.append(oRisultato);
+		if(oRisultato instanceof String) {
+			String risultato = (String) oRisultato;
+			String pdndConsumerId = null;
+			try {
+				String json = getCustomDataCredenzialeTokenPDNDOrganizationJson(row, res, alias, bSkip, risultato);
+				if(json!=null) {
+					String id = PDNDTokenInfo.readOrganizationIdFromJson(log, json);
+					if(id!=null && StringUtils.isNotEmpty(id)) {
+						pdndConsumerId = id;
+					}
+				}
+			}catch(Exception tApp) {
+				StatisticheGiornaliereService.logError(tApp.getMessage(), tApp);
+			}
+			if(pdndConsumerId==null) {
+				bSkip.setValue(true);
+			}
+			else {
+				return pdndConsumerId;
+			}
+		}
+		bSkip.setValue(true);
+		return null;
+	}
+	private String getCustomDataCredenzialeTokenPDNDOrganizationJson(Map<String, Object> row, StringBuilder res, String alias, BooleanNullable bSkip, String risultato) throws NumberFormatException, ServiceException, NotFoundException, NotImplementedException {
+		try {
+			MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, StatisticheGiornaliereService.log);
+			CredenzialeMittente credenzialeMittentePDNDOrganization = mBeanUtilsService.getCredenzialeMittenteByReferenceFromCache(TipoCredenzialeMittente.PDND_ORGANIZATION_JSON,Long.parseLong(risultato));
+			if(credenzialeMittentePDNDOrganization!=null) {
+				return credenzialeMittentePDNDOrganization.getCredenziale();
+			}
+		}catch(Exception tApp) {
+			StatisticheGiornaliereService.logError(tApp.getMessage(), tApp);
+		}
 		return null;
 	}
 	private String getCustomDataApplicativoTrasporto(Map<String, Object> row, StringBuilder res) throws ProtocolException {

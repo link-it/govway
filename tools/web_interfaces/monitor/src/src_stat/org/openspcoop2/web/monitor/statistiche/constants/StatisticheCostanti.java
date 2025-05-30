@@ -54,6 +54,8 @@ public class StatisticheCostanti {
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_USERNAME_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.username.label";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_EMAIL_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.email.label";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_PDND_ORGANIZATION_NAME_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.pdndOrganizationName.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_PDND_ORGANIZATION_EXTERNAL_ID_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.pdndOrganizationExternalId.label";
+	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TOKEN_INFO_PDND_ORGANIZATION_CONSUMER_ID_LABEL_KEY = "stats.analisiStatistica.tipoDistribuzione.tokenInfo.pdndOrganizationConsumerId.label";
 	
 	/**public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_SHORT_KEY = STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_TEMPORALE_LABEL_KEY + ".short";
 	public static final String STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_SHORT_KEY = STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_ESITI_LABEL_KEY + ".short";

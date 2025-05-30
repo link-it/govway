@@ -8,10 +8,6 @@ Background:
 * eval randomize(api_petstore, ["nome"])
 * eval api_petstore.referente = soggettoDefault
 
-* def api_spcoop = read('../api_spcoop.json')
-* eval randomize(api_spcoop, ["nome"])
-* eval api_spcoop.referente = soggettoDefault
-
 * def erogazione_petstore = read('../erogazione_petstore.json')
 * eval erogazione_petstore.api_nome = api_petstore.nome
 * eval erogazione_petstore.api_versione = api_petstore.versione
@@ -20,8 +16,25 @@ Background:
 * def erogazione_petstore_path = 'erogazioni/' + petstore_key
 * def api_petstore_path = 'api/' + petstore_key
 
+* def api_modi_rest = read('../api_modi_rest.json')
+* eval randomize(api_modi_rest, ["nome"])
+* eval api_modi_rest.referente = soggettoDefault
+
 * def policy = read('classpath:bodies/rate-limiting-policy-erogazione.json')
 * def policy_update = read('classpath:bodies/rate-limiting-policy-erogazione-update.json')
+
+* def erogazione_modi_rest = read('../erogazione_modi_rest.json')
+* eval erogazione_modi_rest.api_nome = api_modi_rest.nome
+* eval erogazione_modi_rest.api_versione = api_modi_rest.versione
+
+* def erogazione_modi_rest_key = erogazione_modi_rest.api_nome + '/' + erogazione_modi_rest.api_versione
+* def erogazione_modi_rest_path = 'erogazioni/' + erogazione_modi_rest_key
+* def api_modi_rest_path = 'api/' + erogazione_modi_rest_key
+
+* def query_param_profilo_modi = {'profilo': 'ModI'}
+
+* def policy_pdnd = read('classpath:bodies/rate-limiting-policy-erogazione-pdnd.json')
+* def policy_update_pdnd = read('classpath:bodies/rate-limiting-policy-erogazione-update-pdnd.json')
 
 * def policy_types = [ 'numero-richieste', 'occupazione-banda', 'tempo-medio-risposta', 'tempo-complessivo-risposta', 'numero-richieste-ok', 'numero-richieste-fallite', 'numero-fault-applicativi', 'numero-richieste-fallite-o-fault-applicativi', 'numero-richieste-ok-o-fault-applicativi' ]
 * def policy_intervalli = [ 'minuti', 'orario', 'giornaliero' ]
@@ -49,6 +62,22 @@ Background:
         for (var idx=0; idx < policy_types.length; idx++) {
 	   for (var idy=0; idy < policy_intervalli.length; idy++) {
               ret.push({servizio_path: servizio_path, policy: policy_body, policy_update: policy_body_update, policy_type: policy_types[idx] } )
+	   }
+        }
+
+        return ret;
+    }
+    """
+
+* def policy_types_modi = [ 'numero-richieste' ]
+* def policy_intervalli_modi = [ 'minuti' ]
+* def build_data_modi = 
+    """
+    function(policy_types_modi, policy_body, policy_body_update, servizio_path, query_params) {
+        var ret = [];
+        for (var idx=0; idx < policy_types_modi.length; idx++) {
+	   for (var idy=0; idy < policy_intervalli_modi.length; idy++) {
+              ret.push({servizio_path: servizio_path, policy: policy_body, policy_update: policy_body_update, policy_type: policy_types_modi[idx], policy_intervallo: policy_intervalli_modi[idy], query_params: query_params } )
 	   }
         }
 
@@ -84,6 +113,18 @@ Scenario: Configurazione Erogazioni Rate Limiting, tutti i tipi di policy vengon
     * call delete ({ resourcePath: 'soggetti/' + soggetto_http.nome })
     * call delete ({ resourcePath: erogazione_petstore_path })
     * call delete ({ resourcePath: api_petstore_path })
+
+@RateLimitingAllPolicyTypesPDNDGroupBy
+Scenario: Configurazione Erogazioni Rate Limiting, tutti i tipi di policy vengono considerati (eccezione: dimensione massima messaggio non presente).
+ 
+    * call create ({ resourcePath: 'api', body: api_modi_rest, query_params: query_param_profilo_modi })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_modi_rest, query_params: query_param_profilo_modi })
+    
+    * def data = build_data_modi(policy_types_modi, policy_pdnd, policy_update_pdnd, erogazione_modi_rest_path, query_param_profilo_modi )
+    * def conf = call read('classpath:servizi-configurazione/rate-limiting.feature') data
+
+    * call delete ({ resourcePath: erogazione_modi_rest_path, query_params: query_param_profilo_modi })
+    * call delete ({ resourcePath: api_modi_rest_path, query_params: query_param_profilo_modi })
 
 @RateLimitingPolicyDimensioneMessaggio
 Scenario: Configurazione Erogazioni Rate Limiting, policy dimensione massima messaggio
@@ -143,6 +184,25 @@ Scenario: Configurazione del Rate Limiting filtrando per un'azione inesistente
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
     * eval policy.filtro.azione = ["AzioneInesistente"]
+# la funzione randomize non preserva l'array, e quindi genera una richiesta errata:        * eval randomize(policy, ["nome", "filtro.azione"])
+
+    Given url configUrl
+    And path erogazione_petstore_path, 'configurazioni', 'rate-limiting'
+    And header Authorization = govwayConfAuth
+    And request policy
+    And params query_params
+    When method post
+    Then status 400
+
+    * call delete ({ resourcePath: erogazione_petstore_path })
+    * call delete ({ resourcePath: api_petstore_path })
+
+@GroupByPDNDErogazioneTrasparente400
+Scenario: Configurazione del Rate Limiting raggruppando per criteri PDND su un profilo trasparente
+
+    * call create ({ resourcePath: 'api', body: api_petstore })
+    * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+    * eval policy.raggruppamento.token = ["pdnd_organization_name"]
 # la funzione randomize non preserva l'array, e quindi genera una richiesta errata:        * eval randomize(policy, ["nome", "filtro.azione"])
 
     Given url configUrl

@@ -1405,11 +1405,14 @@ public class TransazioniService implements ITransazioniService {
 
 				normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationExternalId(transazioneBean, pdndTokenOrganizationInfo);
 				
+				normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationConsumerId(transazioneBean, pdndTokenOrganizationInfo);
+				
 			}
 		} catch(NumberFormatException | ExpressionException e) {
 			// informazione non valida
 			transazioneBean.setPdndOrganizationCategory(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
 			transazioneBean.setPdndOrganizationExternalId(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+			transazioneBean.setPdndOrganizationConsumerId(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
 		} catch(NotFoundException e) {
 			// informazione non piu disponibile
 			// oppure può davvero non essere stata acquisita l'informazione per la raccolta da PDND è disabilitata.
@@ -1417,6 +1420,7 @@ public class TransazioniService implements ITransazioniService {
 			transazioneBean.setPdndOrganizationExternalId(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); **/
 			transazioneBean.setPdndOrganizationCategory(null); 
 			transazioneBean.setPdndOrganizationExternalId(null);
+			transazioneBean.setPdndOrganizationConsumerId(null);
 		}
 	}
 	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationCategory(TransazioneBean transazioneBean, PDNDTokenInfo pdndTokenOrganizationInfo) {
@@ -1447,6 +1451,15 @@ public class TransazioniService implements ITransazioniService {
 		} catch(Exception e) {
 			// informazione non valida
 			transazioneBean.setPdndOrganizationExternalId(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+		}		
+	}
+	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationConsumerId(TransazioneBean transazioneBean, PDNDTokenInfo pdndTokenOrganizationInfo) {
+		try {
+			String id = pdndTokenOrganizationInfo.getOrganizationId(this.log);
+			transazioneBean.setPdndOrganizationConsumerId(id);
+		} catch(Exception e) {
+			// informazione non valida
+			transazioneBean.setPdndOrganizationConsumerId(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
 		}		
 	}
 		
@@ -4099,6 +4112,8 @@ public class TransazioniService implements ITransazioniService {
 				break;
 				
 			case PDND_ORGANIZATION_NAME:
+			case PDND_ORGANIZATION_EXTERNAL_ID:
+			case PDND_ORGANIZATION_CONSUMER_ID:
 				// viene cercata per riferimento
 				fieldCredenziale = model.TOKEN_CLIENT_ID;
 				break;
@@ -4163,6 +4178,15 @@ public class TransazioniService implements ITransazioniService {
 				AbstractSearchCredenziale searchToken = null;
 				if(TipoCredenzialeMittente.TOKEN_CLIENT_ID.equals(tcm)) {
 					searchToken = new CredenzialeSearchTokenClient(true, false, true);
+				}
+				else if(TipoCredenzialeMittente.PDND_ORGANIZATION_EXTERNAL_ID.equals(tcm) ||
+						TipoCredenzialeMittente.PDND_ORGANIZATION_CONSUMER_ID.equals(tcm)) {
+					searchToken = new CredenzialeSearchToken(TipoCredenzialeMittente.PDND_ORGANIZATION_JSON);
+					searchByRefCredentials = true;
+					if(ricercaEsatta) {
+						valoreRiconoscimento = "\""+valoreRiconoscimento+"\"";
+					}
+					ricercaEsatta = false; // sono entrambi identificativi, non devo fare una ricerca esatta
 				}
 				else {
 					searchToken = new CredenzialeSearchToken(tcm);

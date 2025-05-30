@@ -157,6 +157,9 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readClientIdFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readClientId(log, tokenInfo, true);
 	}
+	public static String readClientIdFromJson(Logger log, String json) throws ProtocolException {
+		return readClientId(log, json, false);
+	}
 	private static String readClientId(Logger log, String json, boolean tokenInfo) throws ProtocolException {
 		String pattern =  getPatternClientJsonExtract("id", tokenInfo);
 		try {
@@ -180,6 +183,9 @@ public class PDNDTokenInfo implements Serializable {
 	}
 	public static String readClientConsumerIdFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readClientConsumerId(log, tokenInfo, true);
+	}
+	public static String readClientConsumerIdFromJson(Logger log, String json) throws ProtocolException {
+		return readClientConsumerId(log, json, false);
 	}
 	private static String readClientConsumerId(Logger log, String json, boolean tokenInfo) throws ProtocolException {
 		String pattern =  getPatternClientJsonExtract("consumerId", tokenInfo);
@@ -205,6 +211,9 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readOrganizationIdFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readOrganizationId(log, tokenInfo, true);
 	}
+	public static String readOrganizationIdFromJson(Logger log, String json) throws ProtocolException {
+		return readOrganizationId(log, json, false);
+	}
 	private static String readOrganizationId(Logger log, String json, boolean tokenInfo) throws ProtocolException {
 		String pattern =  getPatternOrganizationJsonExtract("id", tokenInfo);
 		try {
@@ -228,6 +237,9 @@ public class PDNDTokenInfo implements Serializable {
 	}
 	public static String readOrganizationNameFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readOrganizationName(log, tokenInfo, true);
+	}
+	public static String readOrganizationNameFromJson(Logger log, String json) throws ProtocolException {
+		return readOrganizationName(log, json, false);
 	}
 	private static String readOrganizationName(Logger log, String json, boolean tokenInfo) throws ProtocolException {
 		String pattern =  getPatternOrganizationJsonExtract("name", tokenInfo);
@@ -253,6 +265,9 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readOrganizationCategoryFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readOrganizationCategory(log, tokenInfo, true);
 	}
+	public static String readOrganizationCategoryFromJson(Logger log, String json) throws ProtocolException {
+		return readOrganizationCategory(log, json, false);
+	}
 	private static String readOrganizationCategory(Logger log, String json, boolean tokenInfo) throws ProtocolException {
 		String pattern =  getPatternOrganizationJsonExtract("category", tokenInfo);
 		try {
@@ -277,6 +292,9 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readOrganizationExternalOriginFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readOrganizationExternalOrigin(log, tokenInfo, true);
 	}
+	public static String readOrganizationExternalOriginFromJson(Logger log, String json) throws ProtocolException {
+		return readOrganizationExternalOrigin(log, json, false);
+	}
 	private static String readOrganizationExternalOrigin(Logger log, String json, boolean tokenInfo) throws ProtocolException {
 		String pattern =  getPatternOrganizationJsonExtract(tokenInfo ? "['externalId.origin']" : "externalId.origin", tokenInfo);
 		try {
@@ -300,6 +318,9 @@ public class PDNDTokenInfo implements Serializable {
 	}
 	public static String readOrganizationExternalIdFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readOrganizationExternalId(log, tokenInfo, true);
+	}
+	public static String readOrganizationExternalIdFromJson(Logger log, String json) throws ProtocolException {
+		return readOrganizationExternalId(log, json, false);
 	}
 	private static String readOrganizationExternalId(Logger log, String json, boolean tokenInfo) throws ProtocolException {
 		String pattern =  getPatternOrganizationJsonExtract(tokenInfo ? "['externalId.id']" : "externalId.id", tokenInfo);

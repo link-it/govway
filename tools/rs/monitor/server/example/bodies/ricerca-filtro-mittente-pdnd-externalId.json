@@ -1,0 +1,15 @@
+{
+        "intervallo_temporale": {
+		"data_inizio": "2012-07-21T17:32:28Z",
+		"data_fine": "2032-07-21T17:32:28Z"
+	},
+	"tipo": "erogazione",
+	"mittente": {
+		"identificazione": "token_info",
+		"ricerca_esatta": false,
+		"case_sensitive": true,
+		"id": "55c953c4-217c-462e-b81b-4147f2af5fa0",
+		"claim": "pdnd_external_o_consumer_id"
+	}
+}
+
