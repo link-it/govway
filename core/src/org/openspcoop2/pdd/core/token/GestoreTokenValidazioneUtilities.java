@@ -1214,6 +1214,62 @@ public class GestoreTokenValidazioneUtilities {
 						}
 					}
 				}
+				if(informazioniTokenNormalizzate.getClaims().containsKey(Costanti.PDND_CONSUMER_ID)) {
+					Object oPid = informazioniTokenNormalizzate.getClaims().get(Costanti.PDND_CONSUMER_ID);
+					if(oPid instanceof String) {
+						String pId = (String) oPid;
+						if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CONSUMER_ID).booleanValue()) {
+							if(op2headers) {
+								TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_CONSUMER_ID), pId);
+							}
+							else {
+								jsonNode.put("consumerId", pId);
+							}
+						}
+					}
+				}
+				if(informazioniTokenNormalizzate.getClaims().containsKey(Costanti.PDND_PRODUCER_ID)) {
+					Object oPid = informazioniTokenNormalizzate.getClaims().get(Costanti.PDND_PRODUCER_ID);
+					if(oPid instanceof String) {
+						String pId = (String) oPid;
+						if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PRODUCER_ID).booleanValue()) {
+							if(op2headers) {
+								TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PRODUCER_ID), pId);
+							}
+							else {
+								jsonNode.put("producerId", pId);
+							}
+						}
+					}
+				}
+				if(informazioniTokenNormalizzate.getClaims().containsKey(Costanti.PDND_SERVICE_ID)) {
+					Object oPid = informazioniTokenNormalizzate.getClaims().get(Costanti.PDND_SERVICE_ID);
+					if(oPid instanceof String) {
+						String pId = (String) oPid;
+						if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SERVICE_ID).booleanValue()) {
+							if(op2headers) {
+								TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SERVICE_ID), pId);
+							}
+							else {
+								jsonNode.put("eserviceId", pId);
+							}
+						}
+					}
+				}
+				if(informazioniTokenNormalizzate.getClaims().containsKey(Costanti.PDND_DESCRIPTOR_ID)) {
+					Object oPid = informazioniTokenNormalizzate.getClaims().get(Costanti.PDND_DESCRIPTOR_ID);
+					if(oPid instanceof String) {
+						String pId = (String) oPid;
+						if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_DESCRIPTOR_ID).booleanValue()) {
+							if(op2headers) {
+								TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_DESCRIPTOR_ID), pId);
+							}
+							else {
+								jsonNode.put("descriptorId", pId);
+							}
+						}
+					}
+				}
 				if(informazioniTokenNormalizzate.getPdnd()!=null && !informazioniTokenNormalizzate.getPdnd().isEmpty()) {
 					
 					ObjectNode pdndNode = null;
@@ -1504,8 +1560,6 @@ public class GestoreTokenValidazioneUtilities {
 		}
 		
 	}
-	
-	
 	
 	
 	

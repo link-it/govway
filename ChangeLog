@@ -1,4 +1,10 @@
 2025-05-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1608
+	Tra gli header di integrazione inoltrati al backend sono adesso presenti anche le informazioni relative al consumerId, producerId, eserviceId e descriptorId presenti nel voucher PDND.
+
+2025-05-30  Andrea Poli <apoli@link.it>
 	
 	* [ProtocolloModIPA, GovWayConsole, GovWayMonitor, ApiRsConfigurazione, ApiRsMonitoraggio]
 	Aggiunta funzionalità #1608
