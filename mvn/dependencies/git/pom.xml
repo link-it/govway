@@ -17,7 +17,7 @@
 
 		<jar.group.name>git</jar.group.name>
 		
-		<git-task.version>1.0</git-task.version>
+		<git-task.version>2.0</git-task.version>
 		<org.eclipse.jgit.version>${lib.org.eclipse.jgit.version}</org.eclipse.jgit.version>
 
 	</properties>

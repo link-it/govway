@@ -224,10 +224,10 @@ then
 	infoPrintln "Generazione distribuzione sorgente ..."
 	cd ${WORKING_COPY}
 	sed -i -e "s#<module>git</module>#<!-- <module>git</module> -->#g" ${WORKING_COPY}/mvn/dependencies/pom.xml
-	mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar.rename
+	mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-2.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-2.0.jar.rename
 	mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-7.2.1.202505142326-r.jar ${WORKING_COPY}/lib/git/org.eclipse.jgit-7.2.1.202505142326-r.jar.rename
 	tar -h -c -z -f ${TMP_DIR}/${OPENSPCOOP_SRC_FILE}.tgz --xform="s@^@${OPENSPCOOP_SRC_FILE}/@" --exclude-vcs --exclude lib/svn * 
-	mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar.rename ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar
+	mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-2.0.jar.rename ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-2.0.jar
 	mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-7.2.1.202505142326-r.jar.rename ${WORKING_COPY}/lib/git/org.eclipse.jgit-7.2.1.202505142326-r.jar
 	mv ${TMP_DIR}/${OPENSPCOOP_SRC_FILE}.tgz ${WORK_DIR}/
 	infoPrintln "Generazione distribuzione sorgente completata. Archivio generato: ${WORK_DIR}/${OPENSPCOOP_SRC_FILE}.tgz"
@@ -253,7 +253,7 @@ then
 	if [ "${READ_GIT_INFO}" == "false" ]
 	then
 		debugPrintln "Disabilitazione jar per accesso informazioni git ..."
-		mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar.rename
+		mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-2.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-2.0.jar.rename
 		mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-7.2.1.202505142326-r.jar ${WORKING_COPY}/lib/git/org.eclipse.jgit-7.2.1.202505142326-r.jar.rename
 	fi
 
@@ -282,7 +282,7 @@ then
 	if [ "${READ_GIT_INFO}" == "false" ]
 	then
 		debugPrintln "Ripristino jar per accesso informazioni git ..."
-		mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar.rename ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-1.0.jar
+		mv ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-2.0.jar.rename ${WORKING_COPY}/lib/git/openspcoop2_git-status-task-2.0.jar
 		mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-7.2.1.202505142326-r.jar.rename ${WORKING_COPY}/lib/git/org.eclipse.jgit-7.2.1.202505142326-r.jar
 	fi
 fi

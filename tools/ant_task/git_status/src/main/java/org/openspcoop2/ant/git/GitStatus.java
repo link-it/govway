@@ -268,7 +268,10 @@ public class GitStatus extends Task{
 		}
 
 		if(getCommitterCommitDateProperty() != null) {
-			Date committerdate = committer.getWhen();
+			Date committerdate = null;
+			if(committer.getWhenAsInstant()!=null) {
+				committerdate = Date.from(committer.getWhenAsInstant());
+			}
 			if (committerdate != null ) 
 				antproject.setProperty(getCommitterCommitDateProperty(),chosenformat.format(committerdate));
 			else 
@@ -293,7 +296,10 @@ public class GitStatus extends Task{
 		}
 
 		if(getAuthorCommitDateProperty() != null) {
-			Date authordate = author.getWhen();
+			Date authordate = null;
+			if(author.getWhenAsInstant()!=null) {
+				authordate = Date.from(author.getWhenAsInstant());
+			}
 			if (authordate != null)
 				antproject.setProperty(getAuthorCommitDateProperty(), chosenformat.format(authordate));
 			else

@@ -7,12 +7,12 @@
 
 	<groupId>org.gov4j.govway</groupId>
 	<artifactId>openspcoop2_git-status-task</artifactId>
-	<version>1.0</version>
+	<version>2.0</version>
 	<packaging>jar</packaging>
 
-	<name>git-status-task-1.0.jar</name>
+	<name>git-status-task-2.0.jar</name>
 	<description>Fornisce un task ant per ottenere le informazioni di un repository git per committer, author e hashCommitId</description>
-	<url>https://gov4j.org/maven/openspcoop2/ant/git-status-task/1.0</url>
+	<url>https://gov4j.org/maven/openspcoop2/ant/git-status-task/2.0</url>
 
         <parent>
                 <groupId>org.openspcoop2</groupId>
