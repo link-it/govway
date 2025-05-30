@@ -38,7 +38,10 @@ le seguenti informazioni:
    una tra le opzioni seguenti:
 
    .. note::
-         Le informazioni sull'organizzazione PDND sono presente solamente se è stata attivata l'integrazione con le API PDND descritta nella sezione :ref:`modipa_passiPreliminari_api_pdnd`
+         Le informazioni riguardanti il purposeId, consumerId, producerId, eserviceId e descriptorId sono presenti in caso di validazione di voucher PDND.
+
+   .. note::
+         Le informazioni sull'organizzazione PDND sono presenti solamente se è stata attivata l'integrazione con le API PDND descritta nella sezione :ref:`modipa_passiPreliminari_api_pdnd`.
 
    -  *GovWay Headers*: I dati raccolti dal token vengono inseriti nei
       seguenti header HTTP:
@@ -59,8 +62,12 @@ le seguenti informazioni:
           GovWay-Token-MiddleName
           GovWay-Token-FamilyName
           GovWay-Token-EMail
-	  GovWay-Token-PurposeId
 	  GovWay-Token-Jti
+  	  GovWay-Token-PurposeId
+  	  GovWay-Token-ConsumerId
+  	  GovWay-Token-ProducerId
+  	  GovWay-Token-EServiceId
+  	  GovWay-Token-DescriptorId
 	  GovWay-Token-PDND-OrganizationName
 	  GovWay-Token-PDND-OrganizationCategory
 	  GovWay-Token-PDND-OrganizationExternal
@@ -115,6 +122,10 @@ le seguenti informazioni:
 		},
 		"jti": {"type": "string"},
 		"purposeId": {"type": "string"},
+		"consumerId": {"type": "string"},        
+		"producerId": {"type": "string"},
+		"eserviceId": {"type": "string"},
+		"descriptorId": {"type": "string"},		
 		"pdnd": {
 		   "type": "object",
 		   "properties": {

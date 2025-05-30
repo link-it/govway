@@ -455,6 +455,10 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		expectedHeaders.put("govway-token-email", values.get("email").get(0));
 		expectedHeaders.put("govway-token-jti", values.get("jti").get(0));
 		expectedHeaders.put("govway-token-purposeid", values.get("purposeId").get(0));
+		expectedHeaders.put("govway-token-consumerid", values.get("consumerId").get(0));
+		expectedHeaders.put("govway-token-producerid", values.get("producerId").get(0));
+		expectedHeaders.put("govway-token-eserviceid", values.get("eserviceId").get(0));
+		expectedHeaders.put("govway-token-descriptorid", values.get("descriptorId").get(0));
 		expectedHeaders.put("govway-token-customclaim", values.get("customclaim").get(0));
 		
 		for (String hdrAtteso: expectedHeaders.keySet()) {
@@ -686,6 +690,10 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		expectedField.put(govway ? "$.userInfo.eMail" : "$.email", values.get("email").get(0));
 		expectedField.put("$.jti", values.get("jti").get(0));
 		expectedField.put("$.purposeId", values.get("purposeId").get(0));
+		expectedField.put("$.consumerId", values.get("consumerId").get(0));
+		expectedField.put("$.producerId", values.get("producerId").get(0));
+		expectedField.put("$.eserviceId", values.get("eserviceId").get(0));
+		expectedField.put("$.descriptorId", values.get("descriptorId").get(0));
 		if(govway) {
 			expectedField.put("$.claims[0].name", "customClaim");
 			expectedField.put("$.claims[0].value", values.get("customclaim").get(0));

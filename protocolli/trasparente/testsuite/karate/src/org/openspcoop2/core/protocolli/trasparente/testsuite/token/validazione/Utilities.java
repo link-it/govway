@@ -752,6 +752,38 @@ public class Utilities extends ConfigLoader {
 		purposeIdList.add(purposeId);
 		values.put("purposeId", purposeIdList);
 		
+		String consumerId = "66aa1676-1f9e-34e2-9915-0cfca111a133-consumer";
+		String consumerIdS = "  \"consumerId\":\""+consumerId+"\"";
+		jsonInput = jsonInput +
+				" "+consumerIdS+" ,\n";
+		List<String> consumerIdList = new ArrayList<>();
+		consumerIdList.add(consumerId);
+		values.put("consumerId", consumerIdList);
+		
+		String producerId = "66aa1676-1f9e-34e2-9915-0cfca111a133-producer";
+		String producerIdS = "  \"producerId\":\""+producerId+"\"";
+		jsonInput = jsonInput +
+				" "+producerIdS+" ,\n";
+		List<String> producerIdList = new ArrayList<>();
+		producerIdList.add(producerId);
+		values.put("producerId", producerIdList);
+		
+		String eserviceId = "66aa1676-1f9e-34e2-9915-0cfca111a133-eservice";
+		String eserviceIdS = "  \"eserviceId\":\""+eserviceId+"\"";
+		jsonInput = jsonInput +
+				" "+eserviceIdS+" ,\n";
+		List<String> eserviceIdList = new ArrayList<>();
+		eserviceIdList.add(eserviceId);
+		values.put("eserviceId", eserviceIdList);
+		
+		String descriptorId = "66aa1676-1f9e-34e2-9915-0cfca111a133-descriptor";
+		String descriptorIdS = "  \"descriptorId\":\""+descriptorId+"\"";
+		jsonInput = jsonInput +
+				" "+descriptorIdS+" ,\n";
+		List<String> descriptorIdList = new ArrayList<>();
+		descriptorIdList.add(descriptorId);
+		values.put("descriptorId", descriptorIdList);
+		
 		String customclaim = "valoreCustom";
 		String customclaimS = "  \"customClaim\":\""+customclaim+"\"";
 		jsonInput = jsonInput +

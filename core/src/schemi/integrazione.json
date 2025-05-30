@@ -43,6 +43,10 @@
         },
 	"jti": {"type": "string"},
         "purposeId": {"type": "string"},
+        "consumerId": {"type": "string"},        
+        "producerId": {"type": "string"},
+        "eserviceId": {"type": "string"},
+        "descriptorId": {"type": "string"},
         "pdnd": {
            "type": "object",
            "properties": {

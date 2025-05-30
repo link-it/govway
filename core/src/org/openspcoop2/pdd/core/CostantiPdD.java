@@ -268,6 +268,10 @@ public class CostantiPdD {
     // Payload
     public static final String HEADER_INTEGRAZIONE_TOKEN_IDENTIFIER = "identifier";
     public static final String HEADER_INTEGRAZIONE_TOKEN_PURPOSE_ID = "purposeId";
+	public static final String HEADER_INTEGRAZIONE_TOKEN_PRODUCER_ID = "producerId";
+	public static final String HEADER_INTEGRAZIONE_TOKEN_SERVICE_ID = "eserviceId";
+	public static final String HEADER_INTEGRAZIONE_TOKEN_DESCRIPTOR_ID = "descriptorId";
+	public static final String HEADER_INTEGRAZIONE_TOKEN_CONSUMER_ID = "consumerId";
     public static final String HEADER_INTEGRAZIONE_TOKEN_SESSION_INFO = "sessionInfo";
     public static final String HEADER_INTEGRAZIONE_TOKEN_CLAIMS = "claims";
     public static final String HEADER_INTEGRAZIONE_TOKEN_AUDIT_DIGEST = "auditDigest";
