@@ -3213,7 +3213,7 @@ components:
         token:
           type: array
           items:
-            $ref: 'govway_core.yaml#/components/schemas/TokenClaimEnum'
+            $ref: '#/components/schemas/RateLimitingPolicyGroupByTokenClaimEnum'
           example: [subject, issuer] 
         chiave_tipo:
           $ref: '#/components/schemas/RateLimitingChiaveEnum'
@@ -3796,6 +3796,17 @@ components:
       type: string
       enum: ['content-based', 'header-based', 'soap-action-based', 'url-based', 'form-based', 'indirizzo-ip', 'indirizzo-ip-forwarded', 'plugin-based']
       example: 'content-based'   
+    RateLimitingPolicyGroupByTokenClaimEnum:
+      type: "string"
+      enum:
+      - "subject"
+      - "issuer"
+      - "client_id"
+      - "username"
+      - "email"
+      - "pdnd_organization_name"
+      - "pdnd_external_id"
+      - "pdnd_consumer_id"      
     CorrelazioneApplicativaRichiestaEnum:
       type: string
       enum: ['content-based', 'header-based', 'url-based', 'input-based', 'template', 'freemarker-template', 'velocity-template', 'disabilitato']

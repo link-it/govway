@@ -1,0 +1,29 @@
+{
+    "nome": "PolicyProvaKarate",
+    "stato": "abilitato",
+    
+    "configurazione": {
+        "identificazione": "criteri",
+	"metrica": "occupazione-banda",
+        "intervallo": "orario",
+	"congestione": false, 
+	"degrado": false
+    },
+
+    "soglia_ridefinita": true,
+    "soglia_valore": 10,
+
+    "filtro": {
+        "chiave_tipo": "content-based",
+        "chiave_nome": "chiave1",
+        "filtro_chiave_valore": "chiave_valore1"
+    },
+
+    "raggruppamento": {
+        "richiedente": false,
+        "azione": true,
+        "token": ["pdnd_organization_name"],
+        "chiave_tipo": "content-based",
+        "chiave_nome": "chiave_nome1"
+    }
+}

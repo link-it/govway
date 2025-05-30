@@ -145,6 +145,7 @@ public class TransazioneBean extends Transazione{
 		metodiEsclusi.add(new BlackListElement("setPdndOrganizationName", String.class));
 		metodiEsclusi.add(new BlackListElement("setPdndOrganizationExternalId", String.class));
 		metodiEsclusi.add(new BlackListElement("setPdndOrganizationCategory", String.class));
+		metodiEsclusi.add(new BlackListElement("setPdndOrganizationConsumerId", String.class));
 		metodiEsclusi.add(new BlackListElement("setEventiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setGruppiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setOperazioneLabel", String.class));
@@ -734,6 +735,45 @@ public class TransazioneBean extends Transazione{
 		return this.pdndOrganizationCategory;
 	}
 	
+	private String pdndOrganizationConsumerId;
+	public void setPdndOrganizationConsumerId(String pdndOrganizationConsumerId) {
+		this.pdndOrganizationConsumerId = pdndOrganizationConsumerId;
+	}
+	public String getPdndOrganizationConsumerId() {
+		if(this.pdndOrganizationConsumerId!=null) {
+			
+			boolean esaminaTokenInfo = org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocollo()) &&
+					(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE.equals(this.pdndOrganizationConsumerId) || StringUtils.isEmpty(this.pdndOrganizationConsumerId));
+			
+			if(esaminaTokenInfo &&
+				this.tokenInfo!=null && StringUtils.isNotEmpty(this.tokenInfo)) {
+				
+				setPdndOrganizationConsumerIdFromTokenInfo();
+			}
+			
+			if(StringUtils.isEmpty(this.pdndOrganizationConsumerId)) {
+				return null;
+			}
+			return this.pdndOrganizationConsumerId;
+			
+		}
+		else {
+			this.pdndOrganizationConsumerId = "";
+		}
+		return this.pdndOrganizationConsumerId;
+	}
+	private void setPdndOrganizationConsumerIdFromTokenInfo() {
+		try {
+			Logger log = LoggerManager.getPddMonitorCoreLogger();
+			String id = PDNDTokenInfo.readOrganizationIdFromTokenInfo(log, this.tokenInfo);
+			if(id!=null && StringUtils.isNotEmpty(id)) {
+				this.pdndOrganizationConsumerId = id;
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+	}
+	
 	public void setPdndOrganization(String pdndOrganizationCategory) {
 		// nop
 	}
@@ -761,6 +801,15 @@ public class TransazioneBean extends Transazione{
 			}
 			sb.append("externalId: ");
 			sb.append(extId);
+		}
+		
+		String consumerId = getPdndOrganizationConsumerId();
+		if(consumerId!=null && StringUtils.isNotEmpty(consumerId)) {
+			if(sb.length()>0){
+				sb.append("<BR/>");
+			}
+			sb.append("consumerId: ");
+			sb.append(consumerId);
 		}
 		
 		return sb.length()>0 ? sb.toString() : null;

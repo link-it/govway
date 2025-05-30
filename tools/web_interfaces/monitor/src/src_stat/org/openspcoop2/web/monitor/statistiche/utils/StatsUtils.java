@@ -1824,6 +1824,10 @@ public class StatsUtils {
 			return MessageManager.getInstance().getMessage(Costanti.TOKEN_EMAIL_KEY);
 		case TOKEN_PDND_ORGANIZATION:
 			return MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_ORGANIZZAZIONE_KEY);
+		case TOKEN_PDND_ORGANIZATION_EXTERNAL_ID:
+			return MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_EXTERNAL_ID_KEY);
+		case TOKEN_PDND_ORGANIZATION_CONSUMER_ID:
+			return MessageManager.getInstance().getMessage(Costanti.TOKEN_CLIENT_ID_PDND_CONSUMER_ID_KEY);
 		case PRINCIPAL:
 			return MessageManager.getInstance().getMessage(Costanti.IDENTIFICATIVO_AUTENTICATO_KEY);
 		case APPLICATIVO_TRASPORTO:

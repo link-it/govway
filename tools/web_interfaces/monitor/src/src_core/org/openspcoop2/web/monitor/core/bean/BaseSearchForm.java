@@ -2403,6 +2403,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		if(showPDNDFilters) {
 			/**lst.add(new SelectItem(Costanti.NON_SELEZIONATO, Costanti.NON_SELEZIONATO));*/
 			lst.add(new SelectItem(TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.getRawValue(), mm.getMessage(Costanti.SEARCH_PDND_PREFIX_ORGANIZATION_NAME)));   
+			// poichè cerco per id sia che sia external che consumer non importa
+			/**lst.add(new SelectItem(TipoCredenzialeMittente.PDND_ORGANIZATION_EXTERNAL_ID.getRawValue(), mm.getMessage(Costanti.SEARCH_PDND_PREFIX_ORGANIZATION_EXTERNAL_ID)));     
+			lst.add(new SelectItem(TipoCredenzialeMittente.PDND_ORGANIZATION_CONSUMER_ID.getRawValue(), mm.getMessage(Costanti.SEARCH_PDND_PREFIX_ORGANIZATION_CONSUMER_ID)));*/
+			lst.add(new SelectItem(TipoCredenzialeMittente.PDND_ORGANIZATION_EXTERNAL_ID.getRawValue(), // uso external, uno vale l'altro 
+					mm.getMessage(Costanti.SEARCH_PDND_PREFIX_ORGANIZATION_EXTERNAL_CONSUMER_ID))); 
 		}
 		
 		return lst;

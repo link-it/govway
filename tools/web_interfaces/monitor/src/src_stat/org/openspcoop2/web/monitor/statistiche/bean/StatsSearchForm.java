@@ -1311,11 +1311,15 @@ public class StatsSearchForm extends BaseSearchForm{
 		if(!this.tipoStatistica.equals(TipoStatistica.DISTRIBUZIONE_SERVIZIO_APPLICATIVO) ||
 				(StringUtils.isEmpty(this.getRiconoscimento())) ||
 				!org.openspcoop2.web.monitor.core.constants.Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO.equals(this.getRiconoscimento()) ||
-				!org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm)
+				!org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_NAME.equals(tcm) ||
+				!org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_EXTERNAL_ID.equals(tcm) ||
+				!org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente.PDND_ORGANIZATION_CONSUMER_ID.equals(tcm)
 				) {
 			boolean showPDNDFilters = isShowPDNDFilters();
 			if(showPDNDFilters) {
 				dimensioniDisponibili.put(DimensioneCustom.TOKEN_PDND_ORGANIZATION.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_PDND_ORGANIZATION));
+				dimensioniDisponibili.put(DimensioneCustom.TOKEN_PDND_ORGANIZATION_EXTERNAL_ID.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_PDND_ORGANIZATION_EXTERNAL_ID));
+				dimensioniDisponibili.put(DimensioneCustom.TOKEN_PDND_ORGANIZATION_CONSUMER_ID.toString(), MessageManager.getInstance().getMessage(CostantiGrafici.SEARCH_NUMERO_DIMENSIONI_3D_CUSTOM_LABEL_TOKEN_PDND_ORGANIZATION_CONSUMER_ID));
 			}
 		}
 	}

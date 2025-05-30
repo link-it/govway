@@ -31,7 +31,8 @@ SUBJECT("subject"),
   CLIENT_ID("client_id"),
   USERNAME("username"),
   EMAIL("email"),
-  PDND_ORGANIZATION_NAME("pdnd_organization_name");
+  PDND_ORGANIZATION_NAME("pdnd_organization_name"),
+  PDND_EXTERNAL_O_CONSUMER_ID("pdnd_external_o_consumer_id");
 
   private String value;
 

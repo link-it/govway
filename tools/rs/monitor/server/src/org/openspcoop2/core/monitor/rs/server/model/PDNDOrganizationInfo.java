@@ -33,6 +33,9 @@ public class PDNDOrganizationInfo  {
   
   @Schema(description = "")
   private PDNDOrganizationExternalId externalId = null;
+  
+  @Schema(description = "")
+  private String consumerId = null;
  /**
    * Get nome
    * @return nome
@@ -90,6 +93,25 @@ public class PDNDOrganizationInfo  {
     return this;
   }
 
+ /**
+   * Get consumerId
+   * @return consumerId
+  **/
+  @JsonProperty("consumer_id")
+  @Valid
+  public String getConsumerId() {
+    return this.consumerId;
+  }
+
+  public void setConsumerId(String consumerId) {
+    this.consumerId = consumerId;
+  }
+
+  public PDNDOrganizationInfo consumerId(String consumerId) {
+    this.consumerId = consumerId;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -99,6 +121,7 @@ public class PDNDOrganizationInfo  {
     sb.append("    nome: ").append(PDNDOrganizationInfo.toIndentedString(this.nome)).append("\n");
     sb.append("    categoria: ").append(PDNDOrganizationInfo.toIndentedString(this.categoria)).append("\n");
     sb.append("    externalId: ").append(PDNDOrganizationInfo.toIndentedString(this.externalId)).append("\n");
+    sb.append("    consumerId: ").append(PDNDOrganizationInfo.toIndentedString(this.consumerId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

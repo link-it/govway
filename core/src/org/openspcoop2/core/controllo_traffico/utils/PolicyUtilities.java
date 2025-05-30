@@ -439,6 +439,12 @@ public class PolicyUtilities {
 							case PDND_ORGANIZATION_NAME:
 								bf.append(datiGroupBy.getPdndOrganizationName());
 								break;
+							case PDND_ORGANIZATION_EXTERNAL_ID:
+								bf.append(datiGroupBy.getPdndOrganizationExternalId());
+								break;
+							case PDND_ORGANIZATION_CONSUMER_ID:
+								bf.append(datiGroupBy.getPdndOrganizationConsumerId());
+								break;
 							default:
 								bf.append("N.D.");
 								break;

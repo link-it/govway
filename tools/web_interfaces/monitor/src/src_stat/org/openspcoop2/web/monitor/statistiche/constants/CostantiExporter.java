@@ -289,6 +289,7 @@ public class CostantiExporter {
 	public static final String CLAIM_EMAIL = "eMail";
 	public static final String CLAIM_CLIENT_ID = "clientId";
 	public static final String CLAIM_PDND_ORGANIZATION_NAME = "pdndOrganizationName";
+	public static final String CLAIM_PDND_EXTERNAL_O_CONSUMER_ID = "pdndOrganizationExternalOrConsumerId";
 	private static final List<String> claims = new ArrayList<> ();
 	public static List<String> getClaims() {
 		return claims;
@@ -300,6 +301,7 @@ public class CostantiExporter {
 		claims.add(CLAIM_EMAIL);
 		claims.add(CLAIM_CLIENT_ID);
 		claims.add(CLAIM_PDND_ORGANIZATION_NAME);
+		claims.add(CLAIM_PDND_EXTERNAL_O_CONSUMER_ID);
 	}
 	
 	public static final String TIPO_FORMATO_CONFIGURAZIONE_CSV = "csv";

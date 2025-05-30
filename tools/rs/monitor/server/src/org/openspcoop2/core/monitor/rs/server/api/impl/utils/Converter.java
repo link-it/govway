@@ -228,6 +228,7 @@ public class Converter {
 		String pdndOrganizationName = transazioneDB.getPdndOrganizationName();
 		String pdndOrganizationCategory = transazioneDB.getPdndOrganizationCategory();
 		String pdndExternalId = transazioneDB.getPdndOrganizationExternalId();
+		String pdndConsumerId = transazioneDB.getPdndOrganizationConsumerId();
 		if(StringUtils.isNotEmpty(pdndOrganizationName) || StringUtils.isNotEmpty(pdndOrganizationCategory) || StringUtils.isNotEmpty(pdndExternalId)) {
 			PDNDOrganizationInfo pdndOrganizationInfo = new PDNDOrganizationInfo();
 			pdndOrganizationInfo.setNome(pdndOrganizationName);
@@ -246,6 +247,7 @@ public class Converter {
 					// ignore
 				}
 			}
+			pdndOrganizationInfo.setConsumerId(pdndConsumerId);
 			detail.setPdndOrganization(pdndOrganizationInfo);
 		}
 		

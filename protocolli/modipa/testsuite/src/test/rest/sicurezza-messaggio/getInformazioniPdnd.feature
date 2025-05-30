@@ -814,6 +814,212 @@ And match header X-RateLimit-Limit == '4'
 
 
 
+
+
+
+
+
+@getInformazioniClientOrganizationApiIDAUTHGroupByExternalId
+Scenario: Test che arricchisce le informazioni sul client prelevandole dalla PDND, senza prima aver mai prelevata la chiave essendo solamente un pattern ID_AUTH. È attiva una politica di rate limiting che conteggia per externalId
+
+* def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01ExampleClient3')
+* def result = clean_remote_store_key_client_id_prefix('DemoSoggettoFruitore/ApplicativoBlockingIDA01ExampleClient3')
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDAuth/v1"
+And path 'rateLimitingGroupByExternalId'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDAuth/v1'
+And header simulazionepdnd-filtrorate = 'TestGroupByExternalId'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header X-RateLimit-Remaining == '2'
+And match header X-RateLimit-Limit == '3'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
+
+
+# Effettuo nuovamente l'invocazione, ora dovrebbe essere in cache
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDAuth/v1"
+And path 'rateLimitingGroupByExternalId'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDAuth/v1'
+And header simulazionepdnd-filtrorate = 'TestGroupByExternalId'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header X-RateLimit-Remaining == '1'
+And match header X-RateLimit-Limit == '3'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
+
+
+
+# Effettuo nuovamente l'invocazione per l'ultima volta ok, ora dovrebbe essere in cache
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDAuth/v1"
+And path 'rateLimitingGroupByExternalId'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDAuth/v1'
+And header simulazionepdnd-filtrorate = 'TestGroupByExternalId'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header X-RateLimit-Remaining == '0'
+And match header X-RateLimit-Limit == '3'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
+
+
+
+
+# Effettuo nuovamente l'invocazione, ora dovrebbe essere violata la policy di Rate Limiting
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDAuth/v1"
+And path 'rateLimitingGroupByExternalId'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDAuth/v1'
+And header simulazionepdnd-filtrorate = 'TestGroupByExternalId'
+When method post
+Then status 429
+And match response == read('error-bodies/rate-limiting-violato.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header PDND-ExternalId == '#notpresent'
+And match header X-RateLimit-Remaining == '0'
+And match header X-RateLimit-Limit == '3'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationName == '#notpresent'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationCategory == '#notpresent'
+And match header GovWay-TestSuite-Reply-GovWay-Token-PDND-OrganizationExternal == '#notpresent'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'violate(1)'
+* match result[0].MESSAGGIO contains 'rispettate(0)'
+* def result = get_diagnostico(tiderogazione, 'Il numero massimo di richieste (rilevato:4 soglia:3) risulta raggiunto') 
+* match result[0].MESSAGGIO contains 'PDNDExternalId'
+
+
+
+
+
+
+
+
+
+
+
+
+@getInformazioniClientOrganizationApiIDAUTHGroupByConsumerId
+Scenario: Test che arricchisce le informazioni sul client prelevandole dalla PDND, senza prima aver mai prelevata la chiave essendo solamente un pattern ID_AUTH. È attiva una politica di rate limiting che conteggia per consumer
+
+* def result = clean_remote_store_key('KID-ApplicativoBlockingIDA01ExampleClient3')
+* def result = clean_remote_store_key_client_id_prefix('DemoSoggettoFruitore/ApplicativoBlockingIDA01ExampleClient3')
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDAuth/v1"
+And path 'rateLimitingGroupByConsumerId'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDAuth/v1'
+And header simulazionepdnd-filtrorate = 'TestGroupByConsumerId'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header X-RateLimit-Remaining == '0'
+And match header X-RateLimit-Limit == '1'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(0), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(1)'
+* match result[0].MESSAGGIO contains 'violate(0)'
+
+
+# Effettuo nuovamente l'invocazione, ora dovrebbe essere in cache
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/TestRecuperoInformazioniPDNDAuth/v1"
+And path 'rateLimitingGroupByConsumerId'
+And request read('request.json')
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01ExampleClient3', password: 'ApplicativoBlockingIDA01ExampleClient3' })
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-audience = 'TestRecuperoInformazioniPDNDAuth/v1'
+And header simulazionepdnd-filtrorate = 'TestGroupByConsumerId'
+When method post
+Then status 200
+And match response == read('request.json')
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header X-RateLimit-Remaining == '0'
+And match header X-RateLimit-Limit == '1'
+
+# controllo applicazione filtro rate limiting
+
+* def tiderogazione = responseHeaders['GovWay-Transaction-ID-EROGAZIONE'][0]
+* def result = get_diagnostico(tiderogazione, 'Verifica Policy di Rate Limiting (%) completata: rispettate(%), violate(%), violate-warningOnly(%), filtrate(%), nonApplicabili(0), disabilitate(0), inErrore(0).') 
+* match result[0].MESSAGGIO contains 'rispettate(0)'
+* match result[0].MESSAGGIO contains 'violate(0)'
+* match result[0].MESSAGGIO contains 'violate-warningOnly(1)'
+* def result = get_diagnostico(tiderogazione, 'Il numero massimo di richieste (rilevato:2 soglia:1) risulta raggiunto') 
+* match result[0].MESSAGGIO contains 'PDNDConsumerId'
+
+
+
+
+
+
+
+
+
+
+
 @getInformazioniClientOrganizationApiIDAUTH_NonValido
 Scenario: Test che arricchisce le informazioni sul client prelevandole dalla PDND, senza prima aver mai prelevata la chiave essendo solamente un pattern ID_AUTH. L'invocazione fallisce perchè il token non è valido.
 
