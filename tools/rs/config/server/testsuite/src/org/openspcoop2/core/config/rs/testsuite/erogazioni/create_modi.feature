@@ -371,12 +371,12 @@ Scenario Outline: Erogazioni Creazione Petstore signalhub <nome>
 	# rimuovo l'applicativo agli applicativi autorizzati alla fruizione
 	* call delete ({ resourcePath: 'fruizioni/' + fruizione_key +'/configurazioni/controllo-accessi/autorizzazione/applicativi/' + applicativo_signalhub.nome , query_params: query_param_profilo_signal_hub })
 	
+        # rimuovo l'erogazione
+        * call delete ({ resourcePath: 'erogazioni/' + erogazione_key, query_params: query_param_profilo_signal_hub } )
+
 	# rimuovo l'applicativo
 	* call delete ({ resourcePath: 'applicativi/' + applicativo_signalhub.nome , query_params: query_param_profilo_signal_hub })
-	
-	# rimuovo l'erogazione
-	* call delete ({ resourcePath: 'erogazioni/' + erogazione_key, query_params: query_param_profilo_signal_hub } )
-	
+
 	# rimuovo l'api dell erogazione
 	* def api_key = api_petstore_rest_signalhub.nome + '/' + api_petstore_rest_signalhub.versione
 	* call delete ({ resourcePath: 'api/' + api_key, query_params: query_param_profilo_modi } )

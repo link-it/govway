@@ -154,7 +154,10 @@ public class OCSPTest {
 			_check(host, port, "govway");
 			
 			// validazione completata, anche se prima viene invocata una url inesistente
+			/** Il test serve a verificare che dopo l'utilizzo delle url alternative veniva considerata l'url presente nel certificato. 
+			I certificati lest encrypt da fine maggio 2025 non hanno più la url del servizio OCSP al loro interno
 			_check(host, port, "govway-alternative-url");
+			*/
 			
 			System.out.println("\n\nTest 'checkGovWay' terminato");
 			
@@ -174,6 +177,8 @@ public class OCSPTest {
 			int port = 443;
 			
 			_check(host, port, "google");
+			
+			_check(host, port, "google-alternative-url");
 			
 			System.out.println("\n\nTest 'checkGoogle' terminato");
 			
