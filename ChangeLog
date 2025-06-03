@@ -1,3 +1,10 @@
+2025-06-03  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità #1619
+	Migliorata la gestione della cache per i token di audit e per i token di autenticazione generati localmente dal fruitore.
+	Un token viene adesso rigenerato prima della scadenza effettiva per evitare che il suo utilizzo prossimo alla scadenza comporti che risulti scaduto una volta ricevuto dall'erogatore.
+
 2025-05-30  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

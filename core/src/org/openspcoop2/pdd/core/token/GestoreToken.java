@@ -2387,7 +2387,8 @@ public class GestoreToken {
 	
 	// ********* [GENERIC-TOKEN] ****************** */
 	
-	public static TokenCacheItem getTokenCacheItem(String keyCache, String funzione, Date now) throws TokenException {
+	public static TokenCacheItem getTokenCacheItem(String keyCache, String funzione, Date now, String debugMetodoChiamante, 
+			Integer refreshTokenBeforeExpirePercent, Integer refreshTokenBeforeExpireSeconds) throws TokenException {
 		TokenCacheItem item = null;
 		
 		if(GestoreToken.cacheGestioneToken!=null){
@@ -2408,17 +2409,21 @@ public class GestoreToken {
 			}
 			
 			if(item!=null) {
-				item = checkTokenCacheItem(item, keyCache, now, true);
+				item = checkTokenCacheItem(item, keyCache, now, true, debugMetodoChiamante,
+						refreshTokenBeforeExpirePercent, refreshTokenBeforeExpireSeconds);
 			}
 		}
 		
 		return item;
 	}
-	private static TokenCacheItem checkTokenCacheItem(TokenCacheItem item, String keyCache, Date now, boolean debug) {
+	private static TokenCacheItem checkTokenCacheItem(TokenCacheItem item, String keyCache, Date nowParam, boolean debug, String debugMetodoChiamante, 
+			Integer refreshTokenBeforeExpirePercent, Integer refreshTokenBeforeExpireSeconds) {
 		boolean tokenExpired = false;
-		if(item.getExp()!=null) {
+		if( item.getExp()!=null) {
 			try{
-				tokenExpired = GestoreTokenValidazioneUtilities.isExpired(now, item.getExp());
+				Date now = GestoreTokenNegoziazioneUtilities.updateNowForExpire(debugMetodoChiamante, nowParam, item.getIat(), item.getExp(), 
+						refreshTokenBeforeExpirePercent, refreshTokenBeforeExpireSeconds);
+				tokenExpired = !now.before(item.getExp());
 			}catch(Exception e) {
 				GestoreToken.loggerError("Token presente in cache con chiave '"+keyCache+"', verifica scadenza '"+DateUtils.getSimpleDateFormatMs().format(item.getExp())+"' fallita: "+e.getMessage(),e);
 			}
@@ -2432,7 +2437,8 @@ public class GestoreToken {
 		return item;
 	}
 	
-	public static void putTokenCacheItem(TokenCacheItem item, String keyCache, String funzione, Date now) {
+	public static void putTokenCacheItem(TokenCacheItem item, String keyCache, String funzione, Date now, String debugMetodoChiamante, 
+			Integer refreshTokenBeforeExpirePercent, Integer refreshTokenBeforeExpireSeconds) {
 		
 		if(GestoreToken.cacheGestioneToken!=null){
 			
@@ -2455,7 +2461,8 @@ public class GestoreToken {
 					itemInCache.setInCache(true);
 				}
 				if(itemInCache!=null) {
-					itemInCache = checkTokenCacheItem(itemInCache, keyCache, now, false);
+					itemInCache = checkTokenCacheItem(itemInCache, keyCache, now, false, debugMetodoChiamante,
+							refreshTokenBeforeExpirePercent, refreshTokenBeforeExpireSeconds);
 				}
 
 				if(itemInCache==null) {

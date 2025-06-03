@@ -469,11 +469,14 @@ public class ModIImbustamentoRest {
 		boolean apiSoap = ServiceBinding.SOAP.equals(msg.getServiceBinding());
 		
 		boolean cacheable = false;
+		String cacheMetodoChiamante = null;
 		if(tokenAudit) {
-			cacheable = true; // verrà perfezionato sotto rispetto ai claim
+			cacheable = this.modiProperties.isTokenAuditCacheable(); // verrà perfezionato sotto rispetto ai claim
+			cacheMetodoChiamante = "AUDIT";
 		}
-		else {
-			cacheable = !integrita && !filtroDuplicati; 
+		else if(!integrita && !filtroDuplicati) {
+			cacheable = this.modiProperties.isTokenAuthCacheable(); 
+			cacheMetodoChiamante = "AUTH";
 		}
 		
 		String idTransazione = msg.getTransactionId();
@@ -510,6 +513,7 @@ public class ModIImbustamentoRest {
 		Date nowDateUsatoPerProprietaTraccia = new Date((nowSeconds*1000)); // e' inutile che traccio i millisecondi, tanto poi nel token non viaggiano
 		
 		// iat
+		Date iatDateUsatoPerProprietaTraccia = new Date(nowSeconds*1000);
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT, nowSeconds);
 		String iatValue = DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia);
 		if(!headerDuplicati || HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
@@ -556,6 +560,7 @@ public class ModIImbustamentoRest {
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_INTEGRITY_EXP, nbfValue);
 			}
 		}
+		modiToken.setIat(iatDateUsatoPerProprietaTraccia);
 		modiToken.setExp(expiredDateUsatoPerProprietaTraccia);
 		modiTokenClaims.setExp(expiredDateUsatoPerProprietaTraccia);
 		modiTokenClaims.setExpValue(expValue);
@@ -1279,7 +1284,9 @@ public class ModIImbustamentoRest {
 			ModIJWTToken moditokenFromCache = null;
 			try {
 				nowCacheDate = new Date(nowMs);
-				moditokenFromCache = (ModIJWTToken) GestoreToken.getTokenCacheItem(keyCache, funzioneCache, nowCacheDate);
+				moditokenFromCache = (ModIJWTToken) GestoreToken.getTokenCacheItem(keyCache, funzioneCache, nowCacheDate,
+						cacheMetodoChiamante,
+						this.modiProperties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent(), this.modiProperties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds());
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
@@ -1362,7 +1369,9 @@ public class ModIImbustamentoRest {
 			
 			
 			if(cacheable) {
-				GestoreToken.putTokenCacheItem(modiToken, keyCache, funzioneCache, nowCacheDate); 
+				GestoreToken.putTokenCacheItem(modiToken, keyCache, funzioneCache, nowCacheDate, 
+						cacheMetodoChiamante,
+						this.modiProperties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent(), this.modiProperties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds()); 
 			}
 		}
 		

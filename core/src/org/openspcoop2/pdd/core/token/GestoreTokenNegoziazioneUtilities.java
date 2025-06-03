@@ -164,30 +164,11 @@ public class GestoreTokenNegoziazioneUtilities {
 				// Verico scadenza refresh
 				if(previousToken.getRefreshExpiresIn()!=null) {
 					Date now = DateManager.getDate();
-					int secondsPreExpire = -1;
+					
 					OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-					if(properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent()!=null && properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent()>0) {
-						int percent = properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent();
-						long secondsExpire = previousToken.getRefreshExpiresIn().getTime() / 1000l;
-						long secondsIat = previousToken.getRetrievedRefreshTokenIn().getTime() / 1000l;
-						long secondsDiff = secondsExpire - secondsIat;
-						if(secondsDiff>0) {
-							float perc1 = Float.parseFloat(secondsDiff+"") / 100f;
-							float perc2 = perc1 * Float.parseFloat(percent+"");
-							int s = Math.round(perc2);
-							if(s>0) {
-								secondsPreExpire = s;
-							}
-						}
-					}
-					else if(properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds()!=null && properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds()>0) {
-						secondsPreExpire = properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds();
-					}
-					if(secondsPreExpire>0) {
-						now = new Date(now.getTime() + (secondsPreExpire*1000));
-						/**System.out.println("Controllo scadenza per refresh token now+tollerance("+secondsPreExpire+")["+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(now)+"] exp["+
-						//		org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(previousToken.getRefreshExpiresIn())+"]");*/
-					}			
+					now = updateNowForExpire("RefreshToken", now, previousToken.getRetrievedRefreshTokenIn(), previousToken.getRefreshExpiresIn(), 
+							properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent(), properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds());
+					
 					if(!now.before(previousToken.getRefreshExpiresIn())){
 						// scaduto refresh token
 						log.debug("Refresh token scaduto");
@@ -368,30 +349,11 @@ public class GestoreTokenNegoziazioneUtilities {
 			esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn()!=null) {			
 				
 			if(checkPerRinegoziazione) {
-				int secondsPreExpire = -1;
+				
 				OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-				if(properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent()!=null && properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent()>0) {
-					int percent = properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent();
-					long secondsExpire = esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn().getTime() / 1000l;
-					long secondsIat = esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getRetrievedIn().getTime() / 1000l;
-					long secondsDiff = secondsExpire - secondsIat;
-					if(secondsDiff>0) {
-						float perc1 = Float.parseFloat(secondsDiff+"") / 100f;
-						float perc2 = perc1 * Float.parseFloat(percent+"");
-						int s = Math.round(perc2);
-						if(s>0) {
-							secondsPreExpire = s;
-						}
-					}
-				}
-				else if(properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds()!=null && properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds()>0) {
-					secondsPreExpire = properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds();
-				}
-				if(secondsPreExpire>0) {
-					now = new Date(now.getTime() + (secondsPreExpire*1000));
-					/**System.out.println("Controllo scadenza per rinegoziazione now+tollerance("+secondsPreExpire+")["+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(now)+"] exp["+
-					//		org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn())+"]");*/
-				}
+				now = updateNowForExpire("NegoziazioneToken", now, esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getRetrievedIn(), esitoNegoziazioneToken.getInformazioniNegoziazioneToken().getExpiresIn(), 
+						properties.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent(), properties.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds());
+				
 			}
 			
 			/*
@@ -1348,5 +1310,40 @@ public class GestoreTokenNegoziazioneUtilities {
 			throw new TokenException("JWT Signed mode unknown");
 		}
 		
+	}
+	
+	
+	
+	
+	// ********* [NEGOZIAZIONE-TOKEN] UTILITIES INTERNE ****************** */
+	
+	public static Date updateNowForExpire(String debugMetodoChiamante, Date nowParam, Date iat, Date exp, Integer refreshTokenBeforeExpirePercent, Integer refreshTokenBeforeExpireSeconds) {
+		Date now = nowParam;
+		int secondsPreExpire = -1;
+		if(iat!=null && refreshTokenBeforeExpirePercent!=null && refreshTokenBeforeExpirePercent>0) {
+			int percent = refreshTokenBeforeExpirePercent;
+			long secondsExpire = exp.getTime() / 1000l;
+			long secondsIat = iat.getTime() / 1000l;
+			long secondsDiff = secondsExpire - secondsIat;
+			if(secondsDiff>0) {
+				float perc1 = Float.parseFloat(secondsDiff+"") / 100f;
+				float perc2 = perc1 * Float.parseFloat(percent+"");
+				int s = Math.round(perc2);
+				if(s>0) {
+					secondsPreExpire = s;
+				}
+			}
+		}
+		else if(refreshTokenBeforeExpireSeconds!=null && refreshTokenBeforeExpireSeconds>0) {
+			secondsPreExpire = refreshTokenBeforeExpireSeconds;
+		}
+		if(secondsPreExpire>0) {
+			now = new Date(now.getTime() + (secondsPreExpire*1000));
+			if(debugMetodoChiamante!=null) {
+				/**System.out.println("Controllo scadenza per rinegoziazione '"+debugMetodoChiamante+"' now+tollerance("+secondsPreExpire+")["+org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(now)+"] exp["+
+					org.openspcoop2.utils.date.DateUtils.getSimpleDateFormatMs().format(exp)+"] isExpired["+!now.before(exp)+"]");*/
+			}
+		}
+		return now;
 	}
 }
