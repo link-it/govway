@@ -37,6 +37,7 @@ public class TokenCacheItem implements Serializable {
 	
 	private String token;
 	
+	private Date iat;
 	private Date exp;
 	
 	private String digestAlgorithm;
@@ -78,6 +79,14 @@ public class TokenCacheItem implements Serializable {
 
 	public void setInCache(boolean inCache) {
 		this.inCache = inCache;
+	}
+	
+	public Date getIat() {
+		return this.iat;
+	}
+
+	public void setIat(Date iat) {
+		this.iat = iat;
 	}
 	
 	public Date getExp() {

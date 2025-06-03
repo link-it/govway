@@ -283,6 +283,12 @@ public class ModIProperties {
 			getSecurityTokenAuditDnonceSize();
 			getSecurityTokenAuditDigestAlgorithm();
 					
+			/* **** CACHE **** */
+			
+			this.isTokenAuthCacheable();
+			this.isTokenAuditCacheable();
+			this.getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent();
+			this.getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds();
 			
 			/* **** TRACCE **** */ 
 			
@@ -1999,6 +2005,111 @@ public class ModIProperties {
 	
 	
 	
+	 /* **** CACHE **** */ 
+	
+	private Boolean isTokenAuthCacheable = null;
+	public Boolean isTokenAuthCacheable(){
+		if(this.isTokenAuthCacheable==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.auth.cacheable";
+			
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isTokenAuthCacheable = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isTokenAuthCacheable = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isTokenAuthCacheable = defaultValue;
+			}
+		}
+
+		return this.isTokenAuthCacheable;
+	}
+	
+	private Boolean isTokenAuditCacheable = null;
+	public Boolean isTokenAuditCacheable(){
+		if(this.isTokenAuditCacheable==null){
+			
+			Boolean defaultValue = true;
+			String propertyName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.cacheable";
+			
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isTokenAuditCacheable = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.isTokenAuditCacheable = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.isTokenAuditCacheable = defaultValue;
+			}
+		}
+
+		return this.isTokenAuditCacheable;
+	}
+	
+	private Integer isGestioneTokenCacheableRefreshTokenBeforeExpirePercent = null;
+	private Boolean isGestioneTokenCacheableRefreshTokenBeforeExpirePercentRead = null;
+	private String isGestioneTokenCacheableRefreshTokenBeforeExpirePercentPName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.cache.refreshTokenBeforeExpire.percent";
+	public Integer getGestioneRetrieveTokenRefreshTokenBeforeExpirePercent(){
+
+		if(this.isGestioneTokenCacheableRefreshTokenBeforeExpirePercentRead==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(this.isGestioneTokenCacheableRefreshTokenBeforeExpirePercentPName); 
+
+				if (value != null){
+					value = value.trim();
+					this.isGestioneTokenCacheableRefreshTokenBeforeExpirePercent = Integer.parseInt(value);
+				}
+				
+				this.isGestioneTokenCacheableRefreshTokenBeforeExpirePercentRead=true;
+
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+this.isGestioneTokenCacheableRefreshTokenBeforeExpirePercentPName+"' non impostata, errore:"+e.getMessage(),e);
+				this.isGestioneTokenCacheableRefreshTokenBeforeExpirePercent = null;
+			}
+		}
+
+		return this.isGestioneTokenCacheableRefreshTokenBeforeExpirePercent;
+	}
+	
+	private Integer sGestioneTokenCacheableRefreshTokenBeforeExpireSeconds = null;
+	private Boolean sGestioneTokenCacheableRefreshTokenBeforeExpireSecondsRead = null;
+	private String sGestioneTokenCacheableRefreshTokenBeforeExpireSecondsPName = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.cache.refreshTokenBeforeExpire.seconds";
+	public Integer getGestioneRetrieveTokenRefreshTokenBeforeExpireSeconds(){
+
+		if(this.sGestioneTokenCacheableRefreshTokenBeforeExpireSecondsRead==null){
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(this.sGestioneTokenCacheableRefreshTokenBeforeExpireSecondsPName); 
+
+				if (value != null){
+					value = value.trim();
+					this.sGestioneTokenCacheableRefreshTokenBeforeExpireSeconds = Integer.parseInt(value);
+				}
+				
+				this.sGestioneTokenCacheableRefreshTokenBeforeExpireSecondsRead=true;
+
+			}catch(java.lang.Exception e) {
+				this.logError("Proprieta' di openspcoop '"+this.sGestioneTokenCacheableRefreshTokenBeforeExpireSecondsPName+"' non impostata, errore:"+e.getMessage(),e);
+				this.sGestioneTokenCacheableRefreshTokenBeforeExpireSeconds = null;
+			}
+		}
+
+		return this.sGestioneTokenCacheableRefreshTokenBeforeExpireSeconds;
+	}
 	
 	
 	
