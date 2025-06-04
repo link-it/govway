@@ -4,7 +4,7 @@
 Le Funzionalità di Reportistica
 ===============================
 
-La sezione "Reportistica" della govwayMonitor permette di generare due
+La sezione "Reportistica" della govwayMonitor permette di generare tre
 differenti tipologie di report:
 
 -  *Analisi Statistica*, che mostrano aggregazioni su base periodica
@@ -16,9 +16,13 @@ differenti tipologie di report:
    relativamente ai servizi configurati, erogazioni e fruizioni, su
    GovWay.
 
+- *Tracciamento PDND*, che mostra nel caso il protocollo modipa sia 
+  abilitato i tracciati prodotti e pubblicati sulla PDND con base 
+  giornaliera
 
 .. toctree::
         :maxdepth: 2
 
         analisiStatistica/index
-	reportConfigurazione/index
+        reportConfigurazione/index
+        tracciamentoPdnd/index
