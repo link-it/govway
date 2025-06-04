@@ -62,7 +62,10 @@ import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.json.AbstractUtils;
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.json.JsonPathException;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
+import org.openspcoop2.utils.json.JsonPathNotFoundException;
+import org.openspcoop2.utils.json.JsonPathNotValidException;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.ADDITIONAL;
 import org.openspcoop2.utils.json.JsonSchemaValidatorConfig.POLITICA_INCLUSIONE_TIPI;
@@ -307,9 +310,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						
 						if(apiRawIsYaml) {
 							// Fix merge key '<<: *'
-							if(YAMLUtils.containsMergeKeyAnchor(apiRaw)) {
+							if(YAMLUtils.containsKeyAnchor(apiRaw)) {
 								// Risoluzione merge key '<<: *'
-								String jsonRepresentation = YAMLUtils.resolveMergeKeyAndConvertToJson(apiRaw);
+								String jsonRepresentation = YAMLUtils.resolveKeyAnchorAndConvertToJson(apiRaw);
 								schemaNodeRoot = jsonUtils.getAsNode(jsonRepresentation);
 							}
 							else {
@@ -341,9 +344,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 										// Vedi fix descritto sopra
 										String sSchema = new String(schema);
 										// Fix merge key '<<: *'
-										if(YAMLUtils.containsMergeKeyAnchor(sSchema)) {
+										if(YAMLUtils.containsKeyAnchor(sSchema)) {
 											// Risoluzione merge key '<<: *'
-											String jsonRepresentation = YAMLUtils.resolveMergeKeyAndConvertToJson(sSchema);
+											String jsonRepresentation = YAMLUtils.resolveKeyAnchorAndConvertToJson(sSchema);
 											schemaNodeInternal = jsonUtils.getAsNode(jsonRepresentation);
 										}
 										else {
@@ -507,7 +510,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							
 							// Verifico se gli elementi definition, a loro volta importano altri schemi
 							JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-							List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
+							List<String> refPath = getRefPath(engine, schemaNode);
 							if(refPath!=null && !refPath.isEmpty()) {
 								for (String ref : refPath) {
 									String path = this.getRefPath(ref);
@@ -655,10 +658,10 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							if(!existsRefInternal && !tmpByteArraySchema.isEmpty()) {
 								Iterator<String> itSchemas = tmpByteArraySchema.keySet().iterator();
 								while (itSchemas.hasNext()) {
-									String apiSchemaName = (String) itSchemas.next();
+									String apiSchemaName = itSchemas.next();
 									JsonNode schemaNode = tmpNode.get(apiSchemaName);
 									JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-									List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
+									List<String> refPath = getRefPath(engine, schemaNode); 
 									if(refPath!=null && !refPath.isEmpty()) {
 										for (String ref : refPath) {
 											String path = this.getRefPath(ref);
@@ -682,7 +685,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 									byte [] schemaContent = tmpByteArraySchema.get(apiSchemaName);
 									
 									JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-									List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
+									List<String> refPath = getRefPath(engine, schemaNode); 
 									String schemaRebuild = null;
 									if(refPath!=null && !refPath.isEmpty()) {
 										for (String ref : refPath) {
@@ -819,7 +822,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 							JsonNode schemaNode = nodeValidatorePrincipale.get(schemaName);
 						
 							JsonPathExpressionEngine engine = new JsonPathExpressionEngine();
-							List<String> refPath = engine.getStringMatchPattern(schemaNode, "$..$ref");
+							List<String> refPath = getRefPath(engine, schemaNode);
 							String schemaRebuild = null;
 							if(refPath!=null && !refPath.isEmpty()) {
 								for (String ref : refPath) {
@@ -894,6 +897,16 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 	}
 
+	private List<String> getRefPath(JsonPathExpressionEngine engine, JsonNode schemaNode) throws JsonPathException, JsonPathNotValidException {
+		List<String> l = null;
+		try {
+			l = engine.getStringMatchPattern(schemaNode, "$..$ref");
+		}catch(JsonPathNotFoundException notFound) {
+			// ignore
+		}
+		return l;
+	}
+	
 	private String getRefPath(String ref) {
 		if(ref.trim().startsWith("#")) {
 			return null;

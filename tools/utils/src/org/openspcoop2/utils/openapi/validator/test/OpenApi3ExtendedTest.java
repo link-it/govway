@@ -127,6 +127,7 @@ public class OpenApi3ExtendedTest {
 	}
 	private static void test(OpenAPILibrary openAPILibrary, boolean mergeSpec) throws Exception {
 
+		
 		// *** TEST per il Parser e validazione dello schema *** //
 		
 		{
@@ -4030,13 +4031,21 @@ public class OpenApi3ExtendedTest {
 		
 		
 		
-		// ** Test per validazione con openapi che usano testMergeKey ... **
+		// ** Test per validazione con openapi che usano mergeKey (<<: *) ... **
 		
-		System.out.println("Test #24 openapi che usano testMergeKey ...");
+		System.out.println("Test #24.a openapi che usano mergeKey (<<: *) ...");
 		
 		testMergeKey(openAPILibrary, mergeSpec);
 		
-		System.out.println("Test #24 openapi che usano testMergeKey completato\n\n");
+		System.out.println("Test #24.a openapi che usano mergeKey (<<: *) completato\n\n");
+		
+		// ** Test per validazione con openapi che usano achor ref key (*) ... **
+		
+		System.out.println("Test #24.b openapi che usano achor ref key (*) ...");
+		
+		testAnchorRefKey(openAPILibrary, mergeSpec);
+		
+		System.out.println("Test #24.b openapi che usano achor ref key (*) completato\n\n");
 		
 		
 		
@@ -4119,6 +4128,28 @@ public class OpenApi3ExtendedTest {
 		testAccept(openAPILibrary, mergeSpec);
 	
 		System.out.println("Test #29 header Accept\n\n");
+		
+		
+		
+		
+		// ** Test per validare tipo definito come schema: {}  **
+		/**
+		 * In OpenAPI 3.0, schema: {} è interpretato come uno schema JSON Schema vuoto, cioè:
+			schema: {} equivale a: schema: type: any
+			ma "type: any" non è supportato esplicitamente.
+		 */
+	
+		System.out.println("Test #30.yaml schema: {}  ...");
+		
+		testSchemaEmpty(openAPILibrary, mergeSpec, true);
+	
+		System.out.println("Test #30.yaml schema: {} completato\n\n");
+		
+		System.out.println("Test #30.json schema: {}  ...");
+		
+		testSchemaEmpty(openAPILibrary, mergeSpec, false);
+	
+		System.out.println("Test #30.json schema: {} completato\n\n");
 	
 		
 		System.out.println("Testsuite completata");
@@ -4587,6 +4618,132 @@ public class OpenApi3ExtendedTest {
 		System.out.println("Test Risposta Superato!");
 		
 		System.out.println("TEST OpenAPI YAML con mergeKey completato!");
+
+	}
+	
+	private static void testAnchorRefKey(OpenAPILibrary openAPILibrary, boolean mergeSpec)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica OpenAPI YAML con anchorRefKey ####");
+		
+		URL url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/anchorRefKey.yaml");
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi4j);
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+					
+		try {
+			apiOpenApi4j.validate();
+		}catch(ProcessingException pe) {
+			pe.printStackTrace(System.out);
+			throw new Exception(" Documento contenente errori: "+pe.getMessage(), pe);
+		}catch(ParseWarningException warning) {
+			//warning.printStackTrace(System.out);
+			System.out.println("Documento contenente anomalie: "+warning.getMessage());
+		}
+		
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+
+		List<String> operations = new ArrayList<>();
+		operations.add("/opDefinisceAnchor");
+		operations.add("/opRiferisceAnchor");
+		
+		for (String op : operations) {
+			System.out.println("Test Richiesta ("+op+")...");
+	
+			{ 
+				
+				TextHttpRequestEntity requestS1 = new TextHttpRequestEntity();
+				
+				requestS1.setMethod(HttpRequestMethod.POST);
+				requestS1.setUrl(op);	
+				Map<String, List<String>> headersS1 = new HashMap<>();
+				TransportUtils.setHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+				requestS1.setHeaders(headersS1);
+				requestS1.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+				requestS1.setContent("{ \"id\": \"01043931007\", \"codice\": \"xx\" }");
+						
+				try {				
+					apiValidatorOpenApi4j.validate(requestS1);
+					
+				} catch (ValidatorException e) {
+					System.out.println(e.getMessage());
+					throw new Exception("Errore non atteso");
+				}
+				
+			}
+			System.out.println("Test Richiesta ("+op+") Superato!");
+			
+			System.out.println("Test Risposta ("+op+")...");
+			
+			{
+				TextHttpResponseEntity httpResponseTestS1 = new TextHttpResponseEntity();
+				
+				httpResponseTestS1.setStatus(200);		
+				httpResponseTestS1.setMethod(HttpRequestMethod.POST);
+				httpResponseTestS1.setUrl("/opRiferisceAnchor");	
+				Map<String, List<String>> headersS1 = new HashMap<>();
+				TransportUtils.addHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+				TransportUtils.addHeader(headersS1,"X-RateLimit-Limit", "10");
+				TransportUtils.addHeader(headersS1,"X-RateLimit-Remaining", "5");
+				TransportUtils.addHeader(headersS1,"X-RateLimit-Reset", "10");
+				httpResponseTestS1.setHeaders(headersS1);
+				httpResponseTestS1.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+				httpResponseTestS1.setContent("{ \"detail\": \"01043931007\", \"status\": 200 }");
+			
+				try {				
+					apiValidatorOpenApi4j.validate(httpResponseTestS1);
+				} catch (ValidatorException e) {
+					System.out.println(e.getMessage());
+					throw new Exception("Errore non atteso");
+				}
+				
+				
+				headersS1 = new HashMap<>();
+				TransportUtils.addHeader(headersS1,HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+				httpResponseTestS1.setHeaders(headersS1);
+				httpResponseTestS1.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+				httpResponseTestS1.setContent("{ \"detail\": \"01043931007\", \"status\": 200 }");
+				
+				String erroreAttesoRisposta = null;
+				switch (openAPILibrary) {
+				case json_schema:
+					erroreAttesoRisposta = "Content-Type 'application/json' (http response status '400') unsupported";
+					break;
+				case openapi4j:
+					erroreAttesoRisposta = "Parameter 'X-RateLimit-Remaining' is required. (code: 206)";
+					break;
+				case swagger_request_validator:
+					erroreAttesoRisposta = "[ERROR][RESPONSE][] Response Content-Type header 'application/json' does not match any allowed types. Must be one of: [application/problem+json].";
+					break;
+				}
+				try {				
+					apiValidatorOpenApi4j.validate(httpResponseTestS1);
+					
+					//if (openAPILibrary != OpenAPILibrary.json_schema) {
+						throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
+				//	}
+					
+				} catch (ValidatorException e) {
+					System.out.println(e.getMessage());
+					if (!e.getMessage().contains(erroreAttesoRisposta)) {
+						throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
+					}
+				}
+			}
+			
+			System.out.println("Test Risposta ("+op+") Superato!");
+		}
+		
+		System.out.println("TEST OpenAPI YAML con anchorRefKey completato!");
 
 	}
 	
@@ -8082,6 +8239,183 @@ public class OpenApi3ExtendedTest {
 			
 			
 		System.out.println("TEST Format Accept completato!");
+
+	}
+	
+	
+	
+	private static void testSchemaEmpty(OpenAPILibrary openAPILibrary, boolean mergeSpec, boolean yamlTest)
+			throws UtilsException, ProcessingException, URISyntaxException, Exception {
+		System.out.println("#### Verifica schema empty ####");
+		
+		URL url = null;
+		ApiSchema apiSchema = null;
+		if(yamlTest) {
+			url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.yaml");
+						
+			apiSchema = new ApiSchema("teamdigitale-openapi_definitions.yaml", 
+					Utilities.getAsByteArray(OpenApi3ExtendedTest.class.getResourceAsStream("/org/openspcoop2/utils/service/schemi/standard/teamdigitale-openapi_definitions.yaml")), ApiSchemaType.YAML);
+		}
+		else {
+			url = OpenApi3ExtendedTest.class.getResource("/org/openspcoop2/utils/openapi/test/allegati.json");
+		}
+					
+		IApiReader apiReaderOpenApi4j = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+		ApiReaderConfig configOpenApi4j = new ApiReaderConfig();
+		configOpenApi4j.setProcessInclude(false);
+		if(apiSchema!=null) {
+			apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi4j, apiSchema);
+		}else {
+			apiReaderOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), new File(url.toURI()), configOpenApi4j);
+		}
+		
+		Api apiOpenApi4j = apiReaderOpenApi4j.read();
+		
+		ApiOperation apiOp = null;
+		for (ApiOperation op : apiOpenApi4j.getOperations()) {
+			if("/test-tipo-vuto/{esempio_path}".equals(op.getPath())) {
+				apiOp = op;
+				break;
+			}
+		}
+		if(apiOp==null) {
+			throw new UtilsException("Operation not found");
+		}
+		
+		IApiValidator apiValidatorOpenApi4j = ApiFactory.newApiValidator(ApiFormats.OPEN_API_3);
+		OpenapiApiValidatorConfig configO = new OpenapiApiValidatorConfig();
+		configO.setEmitLogError(logSystemOutError);
+		configO.setOpenApiValidatorConfig(new OpenapiLibraryValidatorConfig());
+		configO.getOpenApiValidatorConfig().setOpenApiLibrary(openAPILibrary);
+		configO.getOpenApiValidatorConfig().setValidateAPISpec(true);
+		configO.getOpenApiValidatorConfig().setMergeAPISpec(mergeSpec);
+		apiValidatorOpenApi4j.init(LoggerWrapperFactory.getLogger(OpenApi3ExtendedTest.class), apiOpenApi4j, configO);
+		
+		
+		String pathPrefix = "/test-tipo-vuto/";
+		HttpRequestMethod method = HttpRequestMethod.GET;
+		String contentType = HttpConstants.CONTENT_TYPE_PLAIN;
+
+		List<String> valoriTest = new ArrayList<>();
+		
+		valoriTest.add("provaqualsiasitest");
+		valoriTest.add("3");
+		valoriTest.add("true");
+		
+		int sizeTest = 5;
+		
+		for (int i = 0; i < sizeTest; i++) {
+		
+			for (int j = 0; j < valoriTest.size(); j++) {
+				
+				String valoreTest = valoriTest.get(j);
+			
+				String verifica = null;
+				if(i==0) {
+					verifica = "path";
+				}
+				else if(i==1) {
+					verifica = "query";
+				}
+				else if(i==2) {
+					verifica = "header";
+				}
+				else if(i==3) {
+					verifica = "cookie";
+				}
+				else if(i==4) {
+					verifica = "header_risposta";
+				}
+				
+				String path = pathPrefix + ( "path".equals(verifica) ? valoreTest : "pathcasuale" );
+				
+				System.out.println("\tTest Richiesta path:"+path+" ("+verifica+") param:'"+valoreTest+"' ...");
+					
+				if(apiOp.getRequest().getDynamicPathParameter(0).getApiParameterSchema()==null) {
+					throw new UtilsException("Schema is null for path");
+				}
+				if(apiOp.getRequest().getDynamicPathParameter(0).getApiParameterSchema().getType()==null) {
+					throw new UtilsException("Schema type is null for path");
+				}
+				if(apiOp.getRequest().getQueryParameter(0).getApiParameterSchema()==null) {
+					throw new UtilsException("Schema is null for query");
+				}
+				if(apiOp.getRequest().getQueryParameter(0).getApiParameterSchema().getType()==null) {
+					throw new UtilsException("Schema type is null for query");
+				}
+				if(apiOp.getRequest().getHeaderParameter(0).getApiParameterSchema()==null) {
+					throw new UtilsException("Schema is null for header");
+				}
+				if(apiOp.getRequest().getHeaderParameter(0).getApiParameterSchema().getType()==null) {
+					throw new UtilsException("Schema type is null for header");
+				}
+				if(apiOp.getRequest().getCookieParameter(0).getApiParameterSchema()==null) {
+					throw new UtilsException("Schema is null for cookie");
+				}
+				if(apiOp.getRequest().getCookieParameter(0).getApiParameterSchema().getType()==null) {
+					throw new UtilsException("Schema type is null for cookie");
+				}
+				
+				if(apiOp.getResponse(0).getHeaderParameter(0).getApiParameterSchema()==null) {
+					throw new UtilsException("Schema is null for response header");
+				}
+				if(apiOp.getResponse(0).getHeaderParameter(0).getApiParameterSchema().getType()==null) {
+					throw new UtilsException("Schema type is null for response header");
+				}
+				
+				HttpBaseRequestEntity<?> request = new TextHttpRequestEntity();
+				request.setUrl(path);	
+				request.setMethod(method);
+				Map<String, List<String>> parametersTrasporto = new HashMap<>();
+				TransportUtils.setHeader(parametersTrasporto,HttpConstants.CONTENT_TYPE, contentType);
+				TransportUtils.addHeader(parametersTrasporto, "esempio_header", "header".equals(verifica) ? valoreTest : "valorecasuale");
+				request.setHeaders(parametersTrasporto);		
+				Map<String, List<String>> parametersQuery = new HashMap<>();
+				TransportUtils.addParameter(parametersQuery, "esempio_query", "query".equals(verifica) ? valoreTest : "valorecasuale");
+				request.setParameters(parametersQuery);
+				List<Cookie> cookies = new ArrayList<>();
+				Cookie c1 = new Cookie("esempio_cookie", "cookie".equals(verifica) ? valoreTest : "valorecasuale");
+				cookies.add(c1);
+				request.setCookies(cookies);
+				request.setContentType(contentType);
+				((TextHttpRequestEntity)request).setContent("valorecasuale");
+				try {				
+					apiValidatorOpenApi4j.validate(request);
+				} catch (ValidatorException e) {
+					throw new UtilsException("Errore non atteso: "+e.getMessage(),e);
+				}
+				
+				System.out.println("\tTest Richiesta path:"+path+" ("+verifica+") param:'"+valoreTest+"' verifica superata");
+				
+					
+				System.out.println("\tTest Risposta path:"+path+" ("+verifica+") param:'"+valoreTest+"' ...");
+					
+				HttpBaseResponseEntity<?> response = new TextHttpResponseEntity();
+				((TextHttpResponseEntity)response).setContent("PROVA");
+				response.setStatus(200);		
+				response.setMethod(method);
+				response.setUrl(path);	
+				Map<String, List<String>> responseHeaders = new HashMap<>();
+				TransportUtils.setHeader(responseHeaders,HttpConstants.CONTENT_TYPE, contentType);
+				TransportUtils.addHeader(responseHeaders,"esempio_header_risposta", "header_risposta".equals(verifica) ? valoreTest : "valorecasuale");
+				response.setHeaders(responseHeaders);
+				response.setContentType(contentType);
+				((TextHttpRequestEntity)request).setContent("valorecasuale");
+				
+				try {				
+					apiValidatorOpenApi4j.validate(response);
+				} catch (ValidatorException e) {
+					throw new UtilsException("Errore non atteso: "+e.getMessage());
+				}
+				
+				
+				System.out.println("\tTest Risposta path:"+path+" ("+verifica+") param:'"+valoreTest+"' verifica superata");
+				
+			}
+		}
+			
+			
+		System.out.println("Verifica schema empty completato!");
 
 	}
 }

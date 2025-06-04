@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openspcoop2.utils.SemaphoreLock;
 import org.slf4j.Logger;
@@ -227,6 +229,24 @@ public class JSONUtils extends AbstractUtils {
 	
 	public boolean isJson(String jsonString){
 		return this.isValid(jsonString);
+	}
+	
+	
+	/** UTILS per tipi vuoi schema: {} */
+	
+	// Fix: 1620
+	public static boolean containsEmptySchema(String json) {
+		String pattern = "(?m)\"schema\"\\s*:\\s*\\{\\s*\\}";
+		try {
+			Pattern p = Pattern.compile(pattern);
+			Matcher matcher = p.matcher(json);
+			return matcher.find();
+		}catch(Exception e) {
+			return false;
+		}
+	}
+	public static String resolveEmptySchema(String json) {
+        return json.replaceAll("(?m)\"schema\"\\s*:\\s*\\{\\s*\\}", "\"schema\": {\n  \"type\": \"string\"\n}");
 	}
 	
 	

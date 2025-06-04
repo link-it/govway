@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
@@ -233,14 +235,29 @@ public class YAMLUtils extends AbstractUtils {
 	
 	// UTILS per ANCHOR
 	
+	public static boolean containsKeyAnchor(String yaml) {
+		return containsMergeKeyAnchor(yaml) || containsRefKeyAnchor(yaml);
+	}
 	public static boolean containsMergeKeyAnchor(String yaml) {
 		return yaml!=null && yaml.contains("<<: *");
+	}
+	public static boolean containsRefKeyAnchor(String yaml) {
+		return yaml!=null && yaml.contains(" *") && yaml.contains(" &");
 	}
 	
 	public static String resolveMergeKeyAndConvertToJson(String yaml) throws UtilsException {
 		return resolveMergeKeyAndConvertToJson(yaml, JSONUtils.getInstance());
 	}
 	public static String resolveMergeKeyAndConvertToJson(String yaml, JSONUtils jsonUtils) throws UtilsException {
+		return  resolveAnchorAndConvertToJson(yaml, jsonUtils, false);
+	}
+	public static String resolveKeyAnchorAndConvertToJson(String yaml) throws UtilsException {
+		return resolveKeyAnchorAndConvertToJson(yaml, JSONUtils.getInstance());
+	}
+	public static String resolveKeyAnchorAndConvertToJson(String yaml, JSONUtils jsonUtils) throws UtilsException {
+		return  resolveAnchorAndConvertToJson(yaml, jsonUtils, true);
+	}
+	private static String resolveAnchorAndConvertToJson(String yaml, JSONUtils jsonUtils, boolean resolveAllAnchor) throws UtilsException {
 		// Fix merge key '<<: *'
 		// La funzionalità di merge key è supportata fino allo yaml 1.1 (https://ktomk.github.io/writing/yaml-anchor-alias-and-merge-key.html)
 		// Mentre OpenAPI dice di usare preferibilmente YAML 1.2 (https://swagger.io/specification/):
@@ -249,14 +266,34 @@ public class YAMLUtils extends AbstractUtils {
 		//   https://github.com/FasterXML/jackson-dataformats-text/issues/98
 		// Mentre vengono gestite correttamente da snake (https://linuxtut.com/convert-json-and-yaml-in-java-(using-jackson-and-snakeyaml)-0ad0a/)
 		// Come fix quindi nel caso siano presenti viene fatta una serializzazione tramite snake che le risolve.
-		if(containsMergeKeyAnchor(yaml)) {
+		boolean contains = resolveAllAnchor ? containsKeyAnchor(yaml) : containsMergeKeyAnchor(yaml);
+		if(contains) {
 			// Risoluzione merge key '<<: *'
 			Map<String, Object> obj = new org.yaml.snakeyaml.Yaml().load(yaml);
+			System.out.println("COSTRUITO ["+jsonUtils.toString(obj)+"]");
 			return jsonUtils.toString(obj); // jsonRepresentation
 		}
 		return null;
 	}
 	
+	
+	/** UTILS per tipi vuoi schema: {} */
+	
+	// Fix: 1620
+	public static boolean containsEmptySchema(String yaml) {
+		String pattern = "(?m)^([ \\t]*)schema\\s*:\\s*\\{\\s*\\}\\s*$";
+		try {
+			Pattern p = Pattern.compile(pattern);
+			Matcher matcher = p.matcher(yaml);
+			return matcher.find();
+		}catch(Exception e) {
+			return false;
+		}
+	}
+	public static String resolveEmptySchema(String yaml) {
+		 // Regex: trova righe con "schema: {}" e sostituisce con due righe correttamente indentate
+        return yaml.replaceAll("(?m)^([ \\t]*)schema:\\s*\\{\\s*\\}", "$1schema:\n$1  type: string");
+	}
 	
 	// CONVERT TO MAP 
 	
