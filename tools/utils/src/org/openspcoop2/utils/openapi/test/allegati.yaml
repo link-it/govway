@@ -44,6 +44,8 @@ tags:
     description: test su path dinamico
   - name: composed-schema-parameters
     description: test con parametri con composed schema
+  - name: tipo-vuoto
+    description: test con schema vuoti
     
 paths:
           
@@ -2284,6 +2286,50 @@ paths:
           $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /test-tipo-vuto/{esempio_path}:
+    get:
+      tags:
+        - tipo-vuoto
+      summary: getUserByName
+      description: Get user by user name
+      operationId: getUserByName
+      parameters:
+        - name: esempio_path
+          in: path
+          required: true
+          schema: {}
+        - name: esempio_header
+          in: header
+          required: true
+          schema:  {}   
+        - name: esempio_query
+          in: query
+          required: true
+          schema: { } 
+        - name: esempio_cookie
+          in: cookie
+          required: true
+          schema: {} 
+      requestBody:
+        content:
+          text/plain:
+            schema: {}         
+      responses:
+        "200":     
+          description: |-
+            Esempio di Risposta         
+          content:
+            text/plain:
+              schema: {}
+          headers:
+            esempio_header_risposta:
+               required: true
+               schema: {}
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
 
 components:
 

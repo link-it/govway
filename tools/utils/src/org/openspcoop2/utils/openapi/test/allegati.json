@@ -1,0 +1,94 @@
+{
+  "openapi": "3.0.3",
+  "servers": [
+    {
+      "url": "http://petstore.swagger.io/api",
+      "description": "esempio"
+    }
+  ],
+  "info": {
+    "title": "Document Retrieve",
+    "description": "Servizio demo che consente di comprendere le varie modalità di scambio degli allegati",
+    "version": "0.1",
+    "contact": {
+      "email": "info@link.it"
+    },
+    "license": {
+      "name": "GPL v3.0",
+      "url": "https://www.gnu.org/licenses/gpl-3.0.txt"
+    }
+  },
+  "tags": [
+    {
+      "name": "tipo-vuoto",
+      "description": "test con schema vuoti"
+    }
+  ],
+  "paths": {
+    "/test-tipo-vuto/{esempio_path}": {
+      "get": {
+        "tags": [
+          "tipo-vuoto"
+        ],
+        "summary": "getUserByName",
+        "description": "Get user by user name",
+        "operationId": "getUserByName",
+        "parameters": [
+          {
+            "name": "esempio_path",
+            "in": "path",
+            "required": true,
+            "schema": {}
+          },
+          {
+            "name": "esempio_header",
+            "in": "header",
+            "required": true,
+            "schema":  {}
+          },
+          {
+            "name": "esempio_query",
+            "in": "query",
+            "required": true,
+            "schema": { }
+          },
+          {
+            "name": "esempio_cookie",
+            "in": "cookie",
+            "required": true,
+            "schema": {}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "text/plain": {
+              "schema": {}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Esempio di Risposta         ",
+            "content": {
+              "text/plain": {
+                "schema": {}
+              }
+            },
+            "headers": {
+              "esempio_header_risposta": {
+                "required": true,
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,3 +1,11 @@
+2025-06-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, Utils]
+	Risolto Bug #1620
+	Aggiunto il supporto per le seguenti casistiche, precedentemente segnalate erroneamente come anomalie:
+	- utilizzo delle anchor YAML (&chiave) e dei relativi riferimenti (*chiave);
+	- definizione di parametri con schema: {}
+
 2025-06-03  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
