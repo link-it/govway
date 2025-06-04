@@ -55,15 +55,16 @@ public class PdndTracciamentoUtils {
 		if (!(utilsSM.getSoggettoServiceSearch() instanceof JDBCSoggettoServiceSearch)) {
 			throw new StatisticsEngineException("service manager non di tipo JDBC");
 		}
+		JDBCSoggettoServiceSearch soggettiSM = (JDBCSoggettoServiceSearch) utilsSM.getSoggettoServiceSearch();
 		
 		// Set contenente i nomi dei soggetti abilitati dal file di properties
 		Set<String> defaultEnabled = config.getPdndTracciamentoSoggettiEnabled();
 		
 		// Mappa nome, valore del codice porta e nome soggetto per  tutti i soggetti interno
-		Map<String, String> internalPdd = getCodesSoggettiInterni(utilsSM);
+		Map<String, String> internalPdd = getCodesSoggettiInterni(soggettiSM);
 		
 		// Mappa nome, valore del codice porta e proprieta custom per l'abilitazione
-		Map<String, String> ridefinedEnabled = getCodesSoggettiProtocolProperty(utilsSM);
+		Map<String, String> ridefinedEnabled = getCodesSoggettiProtocolProperty(soggettiSM);
 		
 		// se non sono stati abilitati soggetti allora tutti i soggetti interni sono abilitati
 		if (defaultEnabled.isEmpty())
@@ -86,12 +87,10 @@ public class PdndTracciamentoUtils {
 		return merged;
 	}
 	
-	private static Map<String, String> getCodesSoggettiInterni(IServiceManager utilsSM) throws SQLQueryObjectException, StatisticsEngineException, ServiceException, NotImplementedException, ExpressionException, NotFoundException {
+	private static Map<String, String> getCodesSoggettiInterni(JDBCSoggettoServiceSearch soggettiSM) throws SQLQueryObjectException, ServiceException, NotImplementedException, ExpressionException, NotFoundException {
 		
-		if (!(utilsSM.getSoggettoServiceSearch() instanceof JDBCSoggettoServiceSearch)) {
-			throw new StatisticsEngineException("service manager non di tipo JDBC");
-		}
-		TipiDatabase tipoDb = ((JDBCSoggettoServiceSearch)utilsSM.getSoggettoServiceSearch()).getFieldConverter().getDatabaseType();
+
+		TipiDatabase tipoDb = soggettiSM.getFieldConverter().getDatabaseType();
 		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(tipoDb);
 		
 		query.addFromTable(CostantiDB.SOGGETTI);
@@ -105,19 +104,16 @@ public class PdndTracciamentoUtils {
 				CostantiDB.PDD + "." + CostantiDB.PDD_COLUMN_TIPO + "= 'operativo'",
 				CostantiDB.SOGGETTI + "." + CostantiDB.SOGGETTI_COLUMN_TIPO_SOGGETTO + "='" + CostantiLabel.MODIPA_PROTOCOL_NAME + "'");
 
-		return utilsSM.getSoggettoServiceSearch()
+		return soggettiSM
 				.nativeQuery(query.createSQLQuery(), List.of(String.class, String.class))
 				.stream()
 				.collect(Collectors.toMap(e -> e.get(0).toString(), e -> e.get(1).toString()));
 
 	}
 	
-	private static Map<String, String> getCodesSoggettiProtocolProperty(IServiceManager utilsSM) throws SQLQueryObjectException, StatisticsEngineException, ServiceException, NotImplementedException, ExpressionException, NotFoundException {
+	private static Map<String, String> getCodesSoggettiProtocolProperty(JDBCSoggettoServiceSearch soggettiSM) throws SQLQueryObjectException, ServiceException, NotImplementedException, ExpressionException, NotFoundException {
 		
-		if (!(utilsSM.getSoggettoServiceSearch() instanceof JDBCSoggettoServiceSearch)) {
-			throw new StatisticsEngineException("service manager non di tipo JDBC");
-		}
-		TipiDatabase tipoDb = ((JDBCSoggettoServiceSearch)utilsSM.getSoggettoServiceSearch()).getFieldConverter().getDatabaseType();
+		TipiDatabase tipoDb = soggettiSM.getFieldConverter().getDatabaseType();
 		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(tipoDb);
 		
 		query.addFromTable(CostantiDB.SOGGETTI);
@@ -134,7 +130,7 @@ public class PdndTracciamentoUtils {
 				CostantiDB.PROTOCOL_PROPERTIES + "." + CostantiDB.PROTOCOL_PROPERTIES_COLUMN_TIPO_PROPRIETARIO + "= 'SOGGETTO'",
 				CostantiDB.PROTOCOL_PROPERTIES + "." + CostantiDB.PROTOCOL_PROPERTIES_COLUMN_NAME + "= '" + CostantiDB.MODIPA_SOGGETTI_PDND_TRACING_ID + "'");
 
-		return utilsSM.getSoggettoServiceSearch()
+		return soggettiSM
 				.nativeQuery(query.createSQLQuery(), List.of(String.class, String.class))
 				.stream()
 				.collect(Collectors.toMap(

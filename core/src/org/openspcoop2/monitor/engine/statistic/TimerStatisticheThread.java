@@ -141,7 +141,7 @@ public class TimerStatisticheThread extends Thread{
 		
 		this.initResources();
 		
-		while(this.stop == false){
+		while(!this.stop){
 					
 			StatisticsLibrary sLibrary = new StatisticsLibrary(this.statisticsConfig, this.statisticheSM, this.transazioniSM, 
 					this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM);
@@ -159,7 +159,7 @@ public class TimerStatisticheThread extends Thread{
 			sLibrary.generatePdndPubblicazioneTracciamento();
 					
 			// CheckInterval
-			if(this.stop==false){
+			if(!this.stop){
 				int i=0;
 				while(i<this.timeout){
 					Utilities.sleep(1000);		

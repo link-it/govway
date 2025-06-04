@@ -213,7 +213,7 @@ public class StatisticsConfig {
 	}
 	
 	private static HttpRequestConfig parsePdndTracingRequestConfig(MonitorProperties props) {
-		return new HttpRequestConfig("pdnd.tracciamento", (str) -> {
+		return new HttpRequestConfig("pdnd.tracciamento", str -> {
 			try {
 				return props.getProperty(str, false, true);
 			} catch (UtilsException e) {
