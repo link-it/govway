@@ -19,9 +19,14 @@
  */
 package org.openspcoop2.protocol.modipa.properties;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
+import org.openspcoop2.core.registry.Soggetto;
+import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleItemType;
@@ -37,6 +42,8 @@ import org.openspcoop2.protocol.sdk.properties.StringConsoleItem;
 import org.openspcoop2.protocol.sdk.properties.StringProperty;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
+import org.openspcoop2.protocol.sdk.registry.RegistryException;
+import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 
 /**
  * ModIDynamicConfigurationSoggettiUtilities
@@ -52,8 +59,31 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 	static ConsoleConfiguration getDynamicConfigSoggetto(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException {
 		
-		if(consoleOperationType!=null && consoleHelper!=null && registryReader!=null && configIntegrationReader!=null && id!=null) {
-			// nop
+		boolean esterno = false;
+		try {
+			String dominio = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_SOGGETTO_DOMINIO);
+			if( 
+					(dominio==null || "".equals(dominio)) 
+					&&
+					ConsoleOperationType.CHANGE.equals(consoleOperationType)
+				) {
+				Soggetto soggetto = registryReader.getSoggetto(id);
+				if(soggetto.getPortaDominio()==null || "".equals(soggetto.getPortaDominio())) {
+					dominio = PddTipologia.ESTERNO.toString();
+				}
+				else {
+					List<String> pddOperative = getPddOperative(registryReader);
+					if(pddOperative==null || pddOperative.isEmpty() || !pddOperative.contains(soggetto.getPortaDominio())) {
+						dominio = PddTipologia.ESTERNO.toString();	
+					}
+					else {
+						dominio = PddTipologia.OPERATIVO.toString();
+					}
+				}
+			}
+			esterno = PddTipologia.ESTERNO.toString().equals(dominio);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
 		}
 		
 		ConsoleConfiguration configuration = new ConsoleConfiguration();
@@ -70,7 +100,6 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 		configuration.addConsoleItem(subTitlePdnd );
 		
 		
-		
 		StringConsoleItem tokenClientIdItem = (StringConsoleItem) 
 				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
 				ConsoleItemType.TEXT_AREA,
@@ -80,6 +109,19 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 		tokenClientIdItem.setRequired(false);
 		configuration.addConsoleItem(tokenClientIdItem);
 		
+		
+		if (!esterno) {
+			StringConsoleItem soggettoPdndTracingEnabledItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.SELECT,
+					ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ID, 
+					ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_LABEL);
+			soggettoPdndTracingEnabledItem.addLabelValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_LABEL, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID);
+			soggettoPdndTracingEnabledItem.addLabelValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_LABEL, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_ID);
+			soggettoPdndTracingEnabledItem.addLabelValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DISABLE_LABEL, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DISABLE_ID);
+			soggettoPdndTracingEnabledItem.setDefaultValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID);
+			configuration.addConsoleItem(soggettoPdndTracingEnabledItem);
+		}
 		return configuration;
 	}
 	
@@ -101,5 +143,25 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 				throw new ProtocolException(e.getMessage(),e);
 			}
 		}
+		
+		StringProperty pdndTracingItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ID);
+		if(pdndTracingItemValue!=null && pdndTracingItemValue.getValue()!=null && StringUtils.isNotEmpty(pdndTracingItemValue.getValue())) {
+			try {
+				InputValidationUtils.validateTextInput(pdndTracingItemValue.getValue(), 
+						ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_LABEL);
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
+			}
+		}
+	}
+	
+	private static List<String> getPddOperative(IRegistryReader registryReader) throws RegistryException{
+		List<String> pddOperative = null;
+		try {
+			pddOperative = registryReader.findIdPorteDominio(true);
+		}catch(RegistryNotFound notFound) {
+			// ignore
+		}
+		return pddOperative;
 	}
 }

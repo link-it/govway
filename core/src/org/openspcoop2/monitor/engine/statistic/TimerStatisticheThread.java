@@ -221,7 +221,7 @@ public class TimerStatisticheThread extends Thread{
 		} 
 		
 		
-		if(this.statisticsConfig.isGenerazioneStatisticheCustom() || this.statisticsConfig.isPdndGenerazioneTracciamento() || this.statisticsConfig.isPdndPubblicazioneTracciamento()){
+		if(this.statisticsConfig.isGenerazioneStatisticheCustom() || this.statisticsConfig.isPdndTracciamentoGenerazione() || this.statisticsConfig.isPdndTracciamentoPubblicazione()){
 			try{
 			 	
 				if(this.ds!=null){

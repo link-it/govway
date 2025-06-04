@@ -32,20 +32,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.mail.BodyPart;
 import javax.mail.internet.InternetHeaders;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openspcoop2.core.commons.search.PortaDominio;
-import org.openspcoop2.core.commons.search.Soggetto;
-import org.openspcoop2.core.constants.CostantiLabel;
-import org.openspcoop2.core.registry.constants.PddTipologia;
+
 import org.openspcoop2.core.statistiche.StatistichePdndTracing;
 import org.openspcoop2.core.statistiche.constants.PdndMethods;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiPdnd;
@@ -62,6 +57,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.mime.MimeMultipart;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -71,6 +67,7 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * PdndPublicazioneTracciamento
@@ -85,7 +82,6 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	private static final String TRACING_ID_FIELD = "tracingId";
 	
 	private IStatistichePdndTracingService pdndStatisticheSM;
-	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM;
 	private Logger logger;
 	private StatisticsConfig config;
 	private Map<String, String> internalPddCodeName;
@@ -104,45 +100,27 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM,
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM) {
 		this.logger = config.getLogCore();
-		this.utilsSM = utilsSM;
 		this.config = config;
+		
 		this.updateTracingIdStats = new HashMap<>();
 		
 		try {
 			this.pdndStatisticheSM = statisticheSM.getStatistichePdndTracingService();
-			this.internalPddCodeName = getCodesSoggettiInterni();
-		} catch (ExpressionNotImplementedException 
-				| ExpressionException 
+			this.internalPddCodeName = PdndTracciamentoUtils.getEnabledPddCodes(utilsSM, this.config);
+			
+			this.logger.debug("Soggetti abilitati a signal-hub: {}", this.internalPddCodeName.values());
+		} catch ( ExpressionException 
 				| ServiceException 
 				| NotImplementedException 
 				| NotFoundException 
-				| MultipleResultException e) {
+				| SQLQueryObjectException 
+				| StatisticsEngineException e) {
 			this.logger.error("Impossibile inizializzare la classe PdndGenerazioneTracciamento", e);
 		}
 	}
 	
-	private Map<String, String> getCodesSoggettiInterni() throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException, NotFoundException, MultipleResultException {
-		String internalPdd = getPddOperativa();
-		
-		IPaginatedExpression expr = this.utilsSM.getSoggettoServiceSearch().newPaginatedExpression();
-		expr.equals(Soggetto.model().SERVER, internalPdd);
-		expr.equals(Soggetto.model().TIPO_SOGGETTO, CostantiLabel.MODIPA_PROTOCOL_NAME);
-		
-		Set<String> enabledName = this.config.getPdndTracingSoggettiEnabled();
-		return this.utilsSM.getSoggettoServiceSearch().findAll(expr)
-				.stream()
-				.filter(s -> enabledName.isEmpty() || enabledName.contains(s.getNomeSoggetto()))
-				.collect(Collectors.toMap(Soggetto::getIdentificativoPorta, Soggetto::getNomeSoggetto));
-	}
-	
-	private String getPddOperativa() throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException, NotFoundException, MultipleResultException {
-		IExpression expr = this.utilsSM.getPortaDominioServiceSearch().newExpression();
-		expr.equals(PortaDominio.model().TIPO, PddTipologia.OPERATIVO.toString());
-		return this.utilsSM.getPortaDominioServiceSearch().find(expr).getNome();
-	}
-	
 	private HttpRequest getBaseRequest(String pddCode) {
-		return this.config.getPdndTracingRequestConfig().getBaseRequest(this.internalPddCodeName.get(pddCode));
+		return this.config.getPdndTracciamentoRequestConfig().getBaseRequest(this.internalPddCodeName.get(pddCode));
 	}
 	
 	private Iterator<JsonNode> iteratorHttpList(HttpRequest req) {
@@ -206,13 +184,14 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		return multipart;
 	}
 	
-	private void writePdndError(StatistichePdndTracing stat, JsonNode response) {
+	private void writePdndError(StatistichePdndTracing stat, JsonNode response) throws StatisticsEngineException {
 		ArrayNode errors = (ArrayNode) response.get("errors");
 		
 		try {
-			stat.setErrorDetails(JSONUtils.getInstance().toString(errors));
+			stat.setErrorDetails(getErrorDetails("PDND_SEND_ERROR", JSONUtils.getInstance().toString(errors)));
 		} catch (UtilsException e) {
-			stat.setErrorDetails(e.getMessage());
+			stat.setStatoPdnd(PossibiliStatiPdnd.ERROR);
+			stat.setErrorDetails(getErrorDetails("PDND_SEND_ERROR", e.getMessage()));
 			return;
 		}
 		
@@ -229,15 +208,29 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		}
 	}
 	
+	private String getErrorDetails(String type, String errMsg) throws StatisticsEngineException {
+		JSONUtils json = JSONUtils.getInstance();
+		
+		try {
+			ObjectNode errorNode = json.newObjectNode();
+			
+			errorNode.put("details", errMsg);
+			errorNode.put("type", type);
+			return json.toString(errorNode);
+		} catch (UtilsException e) {
+			throw new StatisticsEngineException("Errore nella generazione del nodeo di errore", e);
+		}
+	}
 	/**
 	 * Invio un tracciamento alla PDND
 	 * @param pddCode: codice pdd del soggetto multitenante a cui si riferiscono i tracciati
 	 * @param stat: tracciamento da inviare
+	 * @throws StatisticsEngineException 
 	 */
-	private void sendTrace(String pddCode, StatistichePdndTracing stat) {
+	private void sendTrace(String pddCode, StatistichePdndTracing stat) throws StatisticsEngineException {
 		
 		// controllo che non sia stato superato il massimo numero di tentativi
-		if (this.config.getMaxAttempt() != null && this.config.getMaxAttempt() <= stat.getTentativiPubblicazione())
+		if (this.config.getPdndTracciamentoMaxAttempt() != null && this.config.getPdndTracciamentoMaxAttempt() <= stat.getTentativiPubblicazione())
 			return;
 		
 		// nel caso faccia una submit in ritardo dovro aggiornare il tracingId e fare una recover (in quanto sara diventato un MISSING)
@@ -261,6 +254,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		String errMsg = null;
 		JsonNode node = null;
 		Integer code = null;
+		JSONUtils jsonUtils = JSONUtils.getInstance();
 		
 		try (ByteArrayOutputStream os = new ByteArrayOutputStream()){
 			MimeMultipart multipart = getUploadBody(stat);
@@ -270,7 +264,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			res = HttpUtilities.httpInvoke(req);	
 			code = res.getResultHTTPOperation();
 			
-			JSONUtils jsonUtils = JSONUtils.getInstance();
+			
 			node = jsonUtils.getAsNode(res.getContent());
 		} catch (UtilsException | IOException e) {
 			errMsg = e.getMessage();
@@ -279,10 +273,11 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		
 		// errore nella comunicazione con la pdnd
 		if (code == null || node == null) {
-			stat.setErrorDetails(errMsg);
+			stat.setErrorDetails(getErrorDetails("CONNECTION_ERROR", errMsg));
 			stat.setStato(PossibiliStatiRichieste.FAILED);
 			return;
 		}
+		
 		stat.setStato(PossibiliStatiRichieste.PUBLISHED);
 		
 		if (code != HttpServletResponse.SC_OK) {
@@ -304,8 +299,9 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	 * @throws NotImplementedException
 	 * @throws ExpressionNotImplementedException
 	 * @throws ExpressionException
+	 * @throws StatisticsEngineException 
 	 */
-	private void publishRecords(String pddCode) throws ServiceException, NotFoundException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+	private void publishRecords(String pddCode) throws ServiceException, NotFoundException, NotImplementedException, ExpressionNotImplementedException, ExpressionException, StatisticsEngineException {
 		
 		// ottengo la lista dei record in stato WAITING con csv valorizzzato
 		IPaginatedExpression expr = this.pdndStatisticheSM.newPaginatedExpression();
@@ -318,12 +314,15 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		try {
 			stats = this.pdndStatisticheSM.findAll(expr);
 		} catch (ServiceException e) {
-			if (e.getCause() instanceof NotFoundException)
+			if (e.getCause() instanceof NotFoundException) {
+				this.logger.debug("Nessun record da pubblicare per il soggetto: {} trovato", pddCode);
 				return;
-			throw e;
+			}
+			throw new StatisticsEngineException("Errore inaspettato nella ricerca delle transazioni", e);
 		}
 		
 		// per ogni record invio la traccia alla pdnd e poi aggiorno il db
+		this.logger.debug("Trovati {} record da pubblicare per il soggetto: {}", stats.size(), pddCode);
 		for (StatistichePdndTracing stat : stats) {
 			sendTrace(pddCode, stat);
 			this.pdndStatisticheSM.update(stat);
@@ -406,12 +405,11 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			}
 			
 			stat.setStatoPdnd(PossibiliStatiPdnd.ERROR);
-			stat.setErrorDetails(JSONUtils.getInstance().toString(arr));
+			stat.setErrorDetails(getErrorDetails("PDND_PARSING_ERROR", JSONUtils.getInstance().toString(arr)));
 		} catch (UtilsException e) {
 			stat.setStatoPdnd(PossibiliStatiPdnd.ERROR);
-			throw new StatisticsEngineException(e, "Errore fatale, la classe JSONUtils non risulta configurata correttamente");
+			stat.setErrorDetails(getErrorDetails("RESPONSE_CONTENT_ERROR", e.getMessage()));
 		}
-		
 	}
 	
 	/**
@@ -563,15 +561,19 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		try {
 			
 			// pubblico i record che sono nello stato WAITING e con un csv valorizzato
+			this.logger.debug("------- FASE 1 [codice: {}] pubblicazione record -------", pddCode);
 			publishRecords(pddCode);
 			
 			// alcuni record potrebbero essere stati rifiutati e devono avere il tracingId valorizzato
+			this.logger.debug("------- FASE 2 [codice: {}] patch dei record senza tracingId -------", pddCode);
 			fixPublishRecords(pddCode);
 			
 			// controllo lo stato delle varie richieste pending
+			this.logger.debug("------- FASE 3 [codice: {}] controllo record pending -------", pddCode);
 			checkPending(pddCode);
 			
 			// aggiorno i record che la pdnd mi sta informando mancanti
+			this.logger.debug("------- FASE 4 [codice: {}] creazione record MISSING -------", pddCode);
 			updateMissing(pddCode);
 			
 		} catch (ServiceException 
@@ -592,6 +594,6 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	
 	@Override
 	public boolean isEnabled(StatisticsConfig config) {
-		return config.isPdndPubblicazioneTracciamento();
+		return config.isPdndTracciamentoPubblicazione();
 	}
 }

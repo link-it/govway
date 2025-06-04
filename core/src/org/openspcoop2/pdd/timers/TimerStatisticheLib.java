@@ -209,10 +209,10 @@ public class TimerStatisticheLib {
 			this.statisticheMensili_gestioneUltimoIntervallo = this.op2Properties.isStatisticheGenerazioneBaseMensileEnabledUltimoMese();
 			break;
 		case PDND_GENERAZIONE_TRACCIAMENTO:
-			this.tracciamentoPdndGenerazione = this.op2Properties.isStatisticheTracciamentoPdndGenerazioneEnabled();
+			this.tracciamentoPdndGenerazione = this.op2Properties.isStatistichePdndTracciamentoGenerazioneEnabled();
 			break;
 		case PDND_PUBBLICAZIONE_TRACCIAMENTO:
-			this.tracciamentoPdndPubblicazione = this.op2Properties.isStatisticheTracciamentoPdndPubblicazioneEnabled();
+			this.tracciamentoPdndPubblicazione = this.op2Properties.isStatistichePdndTracciamentoPubblicazioneEnabled();
 			break;
 		}
 		
@@ -298,8 +298,6 @@ public class TimerStatisticheLib {
 			this.statisticsConfig.setStatisticheGiornaliere(this.statisticheGiornaliere);
 			this.statisticsConfig.setStatisticheSettimanali(this.statisticheSettimanali);
 			this.statisticsConfig.setStatisticheMensili(this.statisticheMensili);
-			this.statisticsConfig.setPdndGenerazioneTracciamento(this.tracciamentoPdndGenerazione);
-			this.statisticsConfig.setPdndPubblicazioneTracciamento(this.tracciamentoPdndPubblicazione);
 			this.statisticsConfig.setStatisticheOrarieGestioneUltimoIntervallo(this.statisticheOrarie_gestioneUltimoIntervallo);
 			this.statisticsConfig.setStatisticheGiornaliereGestioneUltimoIntervallo(this.statisticheGiornaliere_gestioneUltimoIntervallo);
 			this.statisticsConfig.setStatisticheSettimanaliGestioneUltimoIntervallo(this.statisticheSettimanali_gestioneUltimoIntervallo);
@@ -307,6 +305,13 @@ public class TimerStatisticheLib {
 			this.statisticsConfig.setWaitMsBeforeNextInterval(this.waitMsBeforeNextInterval);
 			this.statisticsConfig.setWaitStatiInConsegna(this.waitStatiInConsegna);
 			
+			this.statisticsConfig.setPdndTracciamentoGenerazione(this.tracciamentoPdndGenerazione);
+			this.statisticsConfig.setPdndTracciamentoPubblicazione(this.tracciamentoPdndPubblicazione);
+			this.statisticsConfig.setPdndTracciamentoErogazioniEnabled(this.op2Properties.isStatistichePdndTracciamentoErogazioniEnabled());
+			this.statisticsConfig.setPdndTracciamentoFruizioniEnabled(this.op2Properties.isStatistichePdndTracciamentoFruizioniEnabled());
+			this.statisticsConfig.setPdndTracciamentoRequestConfig(this.op2Properties.getStatistichePdndTracciamentoHttpRequestConfig());
+			this.statisticsConfig.setPdndTracciamentoSoggettiEnabled(this.op2Properties.getStatistichePdndTracciamentoSoggettiEnabled());
+			this.statisticsConfig.setPdndTracciamentoMaxAttempt(this.op2Properties.getStatistichePdndTracciamentoMaxAttempts());
 		}catch(Exception e){
 			throw new Exception("Errore durante la generazione delle statistiche (InitConfigurazione): "+e.getMessage(),e);
 		}

@@ -24,18 +24,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
-import org.openspcoop2.core.commons.search.PortaDominio;
-import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.constants.CostantiLabel;
-import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.statistiche.StatistichePdndTracing;
 import org.openspcoop2.core.statistiche.constants.PdndMethods;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiPdnd;
@@ -58,6 +53,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.csv.Format;
 import org.openspcoop2.utils.csv.Printer;
+import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
 /**
@@ -78,9 +74,8 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 	private StatisticsConfig config;
 	private org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM;
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM;
-	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM;
 	private Map<String, Integer> eventsToCode;
-	private Set<String> internalPddCodes;
+	private Map<String, String> internalPddCodes;
 	private Logger logger;
 	
 	@Override
@@ -94,45 +89,23 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		this.config = config;
 		this.statisticheSM = statisticheSM;
 		this.transazioniSM = transazioniSM;
-		this.utilsSM = utilsSM;
 		
 		this.logger = config.getLogCore();
 		
 		this.eventsToCode = new HashMap<>();
-		this.internalPddCodes = new HashSet<>();
+		this.internalPddCodes = new HashMap<>();
 		
 		try {
-			this.internalPddCodes = getCodesSoggettiInterni();
-		} catch (ExpressionNotImplementedException 
-				| ExpressionException 
+			this.internalPddCodes = PdndTracciamentoUtils.getEnabledPddCodes(utilsSM, config);
+		} catch ( ExpressionException 
 				| ServiceException 
 				| NotImplementedException 
 				| NotFoundException 
-				| MultipleResultException e) {
+			    | SQLQueryObjectException 
+			    | StatisticsEngineException e) {
 			this.logger.error("Impossibile inizializzare la classe PdndGenerazioneTracciamento", e);
 		}
 		
-	}
-	
-	private Set<String> getCodesSoggettiInterni() throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException, NotFoundException, MultipleResultException {
-		String internalPdd = getPddOperativa();
-		
-		IPaginatedExpression expr = this.utilsSM.getSoggettoServiceSearch().newPaginatedExpression();
-		expr.equals(Soggetto.model().SERVER, internalPdd);
-		expr.equals(Soggetto.model().TIPO_SOGGETTO, CostantiLabel.MODIPA_PROTOCOL_NAME);
-		
-		Set<String> enabledName = this.config.getPdndTracingSoggettiEnabled();
-		return this.utilsSM.getSoggettoServiceSearch().findAll(expr)
-				.stream()
-				.filter(s -> enabledName.isEmpty() || enabledName.contains(s.getNomeSoggetto()))
-				.map(s -> s.getIdentificativoPorta())
-				.collect(Collectors.toSet());
-	}
-	
-	private String getPddOperativa() throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException, NotFoundException, MultipleResultException {
-		IExpression expr = this.utilsSM.getPortaDominioServiceSearch().newExpression();
-		expr.equals(PortaDominio.model().TIPO, PddTipologia.OPERATIVO.toString());
-		return this.utilsSM.getPortaDominioServiceSearch().find(expr).getNome();
 	}
 	
 	private Date truncDate(Date date) {
@@ -246,9 +219,9 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 			.isNotNull(Transazione.model().TOKEN_PURPOSE_ID)
 			.equals(Transazione.model().PROTOCOLLO, CostantiLabel.MODIPA_PROTOCOL_NAME);
 		
-		if (!this.config.isPdndTracingFruizioniEnabled())
+		if (!this.config.isPdndTracciamentoFruizioniEnabled())
 			expr.notEquals(Transazione.model().PDD_RUOLO, PddRuolo.DELEGATA);
-		if (!this.config.isPdndTracingErogazioniEnabled())
+		if (!this.config.isPdndTracciamentoErogazioniEnabled())
 			expr.notEquals(Transazione.model().PDD_RUOLO, PddRuolo.APPLICATIVA);
 		
 		if (pddCode != null)
@@ -273,7 +246,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 				.stream()
 				.collect(Collectors.groupingBy(row -> (String)row.get(Transazione.model().PDD_CODICE.getFieldName())));
 		
-		for (String pddCode : this.internalPddCodes) {
+		for (String pddCode : this.internalPddCodes.keySet()) {
 			
 			List<Map<String, Object>> rows = Objects.requireNonNullElse(
 					pddCodeGroup.get(pddCode),
@@ -387,6 +360,6 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 	
 	@Override
 	public boolean isEnabled(StatisticsConfig config) {
-		return config.isPdndGenerazioneTracciamento();
+		return config.isPdndTracciamentoGenerazione();
 	}
 }

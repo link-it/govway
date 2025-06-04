@@ -3819,10 +3819,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// pdnd generazione tracciamento
 				String idTimerPdndTracciamentoGenerazione = "Timer"+TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO.getValue();
-				if(propertiesReader.isStatisticheTracciamentoPdndGenerazioneEnabled()) {
+				if(propertiesReader.isStatistichePdndTracciamentoGenerazioneEnabled()) {
 					try{
 						OpenSPCoop2Startup.this.threadPdndTracciamentoGenerazione = 
-								new TimerStatisticheThread(propertiesReader.getPdndTracciamentoGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO);
+								new TimerStatisticheThread(propertiesReader.getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO);
 						OpenSPCoop2Startup.this.threadPdndTracciamentoGenerazione.start();
 						TimerStatisticheLib.setSTATE_PDND_TRACCIAMENTO_GENERAZIONE(TimerState.ENABLED);
 					}catch(Exception e){
@@ -3837,10 +3837,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// pdnd generazione pubblicazione
 				String idTimerPdndTracciamentoPubblicazione = "Timer"+TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO.getValue();
-				if(propertiesReader.isStatisticheTracciamentoPdndPubblicazioneEnabled()) {
+				if(propertiesReader.isStatistichePdndTracciamentoPubblicazioneEnabled()) {
 					try{
 						OpenSPCoop2Startup.this.threadPdndTracciamentoPubblicazione = 
-								new TimerStatisticheThread(propertiesReader.getPdndTracciamentoPubblicazioneTimerIntervalSeconds(), TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO);
+								new TimerStatisticheThread(propertiesReader.getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds(), TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO);
 						OpenSPCoop2Startup.this.threadPdndTracciamentoPubblicazione.start();
 						TimerStatisticheLib.setSTATE_PDND_TRACCIAMENTO_PUBBLICAZIONE(TimerState.ENABLED);
 					}catch(Exception e){
@@ -4425,7 +4425,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(debugStatistiche)
 						logPdndTracciamentoGenerazione.debug("Richiesto stop al thread per la generazione dei tracciamenti PDND");
 				}else{
-					if(properties.isStatisticheTracciamentoPdndGenerazioneEnabled()) {
+					if(properties.isStatistichePdndTracciamentoGenerazioneEnabled()) {
 						throw new CoreException("Thread per la generazione dei tracciamenti PDND non trovato");
 					}
 				}
@@ -4438,7 +4438,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(debugStatistiche)
 						logPdndTracciamentoPubblicazione.debug("Richiesto stop al thread per la pubblicazione dei tracciamenti PDND");
 				}else{
-					if(properties.isStatisticheTracciamentoPdndPubblicazioneEnabled()) {
+					if(properties.isStatistichePdndTracciamentoPubblicazioneEnabled()) {
 						throw new CoreException("Thread per la pubblicazione dei tracciamenti PDND non trovato");
 					}
 				}

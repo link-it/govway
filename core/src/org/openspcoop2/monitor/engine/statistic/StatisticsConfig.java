@@ -68,8 +68,6 @@ public class StatisticsConfig {
 	private boolean statisticheGiornaliere = false;
 	private boolean statisticheSettimanali = false;
 	private boolean statisticheMensili = false;
-	private boolean pdndGenerazioneTracciamento = false;
-	private boolean pdndPubblicazioneTracciamento = false;
 	
 	/** Tipologie di statistiche: gestione ultimo intervallo */
 	private boolean statisticheOrarieGestioneUltimoIntervallo = false;
@@ -80,12 +78,14 @@ public class StatisticsConfig {
 	/** Lista di indici forzati */
 	private StatisticsForceIndexConfig forceIndexConfig = null;
 	
-	/** Richiesta configurata per effettuare chiamate al tracing pdnd **/
-	private HttpRequestConfig pdndTracingRequestConfig;
-	private Set<String> pdndTracingSoggettiEnabled;
-	private Integer pdndTracingMaxAttempt = null;
-	private boolean pdndTracingErogazioniEnabled = true;
-	private boolean pdndTracingFruizioniEnabled = true;
+	/** PDND Tracing **/
+	private boolean pdndTracciamentoGenerazione = false;
+	private boolean pdndTracciamentoPubblicazione = false;
+	private HttpRequestConfig pdndTracciamentoRequestConfig;
+	private Set<String> pdndTracciamentoSoggettiEnabled;
+	private Integer pdndTracciamentoMaxAttempt = null;
+	private boolean pdndTracciamentoErogazioniEnabled = true;
+	private boolean pdndTracciamentoFruizioniEnabled = true;
 	
 	private static final String FALSE = "false";
 	
@@ -148,17 +148,17 @@ public class StatisticsConfig {
 					this.statisticheMensili = false;
 				}
 				
-			    this.pdndGenerazioneTracciamento = parsePdndGenerazioneTracciamentoProperty(props);
-			    this.pdndPubblicazioneTracciamento = parsePdndPubblicazioneTracciamentoProperty(props);
-			    this.pdndTracingRequestConfig = parsePdndTracingRequestConfig(props);
-			    this.pdndTracingSoggettiEnabled = parsePdndTracingSoggettiEnabled(props);
-			    this.pdndTracingErogazioniEnabled = parsePdndTracingErogazioniEnabled(props);
-			    this.pdndTracingFruizioniEnabled = parsePdndTracingFruizioniEnabled(props);
+			    this.pdndTracciamentoGenerazione = parsePdndGenerazioneTracciamentoProperty(props);
+			    this.pdndTracciamentoPubblicazione = parsePdndPubblicazioneTracciamentoProperty(props);
+			    this.pdndTracciamentoRequestConfig = parsePdndTracingRequestConfig(props);
+			    this.pdndTracciamentoSoggettiEnabled = parsePdndTracingSoggettiEnabled(props);
+			    this.pdndTracciamentoErogazioniEnabled = parsePdndTracingErogazioniEnabled(props);
+			    this.pdndTracciamentoFruizioniEnabled = parsePdndTracingFruizioniEnabled(props);
 			    
 				if ("true".equals(props.getProperty(CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_ENABLED, "true", true))) {
-					this.pdndPubblicazioneTracciamento = true;
+					this.pdndTracciamentoPubblicazione = true;
 				} else {
-					this.pdndPubblicazioneTracciamento = false;
+					this.pdndTracciamentoPubblicazione = false;
 				}
 		
 				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_HOURLY_LASTINT, "true", true))) {
@@ -303,22 +303,6 @@ public class StatisticsConfig {
 	public void setStatisticheMensili(boolean statisticheMensili) {
 		this.statisticheMensili = statisticheMensili;
 	}
-	
-	public boolean isPdndPubblicazioneTracciamento() {
-		return this.pdndPubblicazioneTracciamento;
-	}
-
-	public void setPdndPubblicazioneTracciamento(boolean pdndPubblicazioneTracciamento) {
-		this.pdndPubblicazioneTracciamento = pdndPubblicazioneTracciamento;
-	}
-	
-	public boolean isPdndGenerazioneTracciamento() {
-		return this.pdndGenerazioneTracciamento;
-	}
-
-	public void setPdndGenerazioneTracciamento(boolean pdndGenerazioneTracciamento) {
-		this.pdndGenerazioneTracciamento = pdndGenerazioneTracciamento;
-	}
 
 	public boolean isStatisticheOrarieGestioneUltimoIntervallo() {
 		return this.statisticheOrarieGestioneUltimoIntervallo;
@@ -389,43 +373,59 @@ public class StatisticsConfig {
 		this.waitStatiInConsegna = waitStatiInConsegna;
 	}
 	
-	public HttpRequestConfig getPdndTracingRequestConfig() {
-		return this.pdndTracingRequestConfig;
+	public boolean isPdndTracciamentoPubblicazione() {
+		return this.pdndTracciamentoPubblicazione;
 	}
 
-	public void setPdndTracingRequestConfig(HttpRequestConfig pdndTracingRequestConfig) {
-		this.pdndTracingRequestConfig = pdndTracingRequestConfig;
+	public void setPdndTracciamentoPubblicazione(boolean pdndPubblicazioneTracciamento) {
+		this.pdndTracciamentoPubblicazione = pdndPubblicazioneTracciamento;
 	}
 	
-	public void setMaxAttempt(Integer maxAttempt) {
-		this.pdndTracingMaxAttempt = maxAttempt;
+	public boolean isPdndTracciamentoGenerazione() {
+		return this.pdndTracciamentoGenerazione;
+	}
+
+	public void setPdndTracciamentoGenerazione(boolean pdndGenerazioneTracciamento) {
+		this.pdndTracciamentoGenerazione = pdndGenerazioneTracciamento;
 	}
 	
-	public Integer getMaxAttempt() {
-		return this.pdndTracingMaxAttempt;
+	public HttpRequestConfig getPdndTracciamentoRequestConfig() {
+		return this.pdndTracciamentoRequestConfig;
+	}
+
+	public void setPdndTracciamentoRequestConfig(HttpRequestConfig pdndTracingRequestConfig) {
+		this.pdndTracciamentoRequestConfig = pdndTracingRequestConfig;
 	}
 	
-	public void setPdndTracingSoggettiEnabled(Set<String> pdndTracingSoggettiEnabled) {
-		this.pdndTracingSoggettiEnabled = pdndTracingSoggettiEnabled;
+	public void setPdndTracciamentoMaxAttempt(Integer maxAttempt) {
+		this.pdndTracciamentoMaxAttempt = maxAttempt;
 	}
 	
-	public Set<String> getPdndTracingSoggettiEnabled() {
-		return this.pdndTracingSoggettiEnabled;
+	public Integer getPdndTracciamentoMaxAttempt() {
+		return this.pdndTracciamentoMaxAttempt;
+	}
+	
+	public void setPdndTracciamentoSoggettiEnabled(Set<String> pdndTracingSoggettiEnabled) {
+		this.pdndTracciamentoSoggettiEnabled = pdndTracingSoggettiEnabled;
+	}
+	
+	public Set<String> getPdndTracciamentoSoggettiEnabled() {
+		return this.pdndTracciamentoSoggettiEnabled;
 	}
 
-	public boolean isPdndTracingErogazioniEnabled() {
-		return this.pdndTracingErogazioniEnabled;
+	public boolean isPdndTracciamentoErogazioniEnabled() {
+		return this.pdndTracciamentoErogazioniEnabled;
 	}
 
-	public void setPdndTracingErogazioniEnabled(boolean pdndTracingErogazioniEnabled) {
-		this.pdndTracingErogazioniEnabled = pdndTracingErogazioniEnabled;
+	public void setPdndTracciamentoErogazioniEnabled(boolean pdndTracingErogazioniEnabled) {
+		this.pdndTracciamentoErogazioniEnabled = pdndTracingErogazioniEnabled;
 	}
 
-	public boolean isPdndTracingFruizioniEnabled() {
-		return this.pdndTracingFruizioniEnabled;
+	public boolean isPdndTracciamentoFruizioniEnabled() {
+		return this.pdndTracciamentoFruizioniEnabled;
 	}
 
-	public void setPdndTracingFruizioniEnabled(boolean pdndTracingFruizioniEnabled) {
-		this.pdndTracingFruizioniEnabled = pdndTracingFruizioniEnabled;
+	public void setPdndTracciamentoFruizioniEnabled(boolean pdndTracingFruizioniEnabled) {
+		this.pdndTracciamentoFruizioniEnabled = pdndTracingFruizioniEnabled;
 	}
 }

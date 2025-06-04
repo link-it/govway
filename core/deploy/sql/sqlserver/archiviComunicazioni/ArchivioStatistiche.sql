@@ -460,7 +460,7 @@ CREATE TABLE statistiche_pdnd_tracing
 	tentativi_pubblicazione INT NOT NULL DEFAULT 0,
 	stato VARCHAR(20),
 	tracing_id VARCHAR(36),
-	error_details VARCHAR(255),
+	error_details VARCHAR(max),
 	history INT NOT NULL,
 	-- fk/pk columns
 	id BIGINT IDENTITY,

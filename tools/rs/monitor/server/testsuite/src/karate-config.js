@@ -30,7 +30,7 @@ function fn() {
       configUrl: govwayUrl + '/govwayAPIConfig',
       soggettoDefault: 'ENTE',
       statsInterval: 16000,
-      batchPath='/var/govway/batch'
+      batchPath: '/var/govway/batch'
 
   };
   

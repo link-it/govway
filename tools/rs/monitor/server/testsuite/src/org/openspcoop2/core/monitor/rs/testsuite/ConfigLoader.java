@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -87,6 +86,11 @@ public class ConfigLoader {
 		return prop.getProperty(PROP_JMX_CACHE_RESOURCES).split(",");
 	}
 	
+	private static final String PROP_CONFIG_LOADER_PATH = "config_loader_path";
+	protected static String getConfigLoaderPath() {
+		return prop.getProperty(PROP_CONFIG_LOADER_PATH);
+	}
+	
 	protected static Logger getLoggerKarate() {
 		return LoggerWrapperFactory.getLogger("com.intuit.karate");
 	}
@@ -123,20 +127,6 @@ public class ConfigLoader {
 	public void before() {
 		logCore.info("\n###################" + "\nEseguo test: {}.{}" + "\n##################",
 				this.getClass().getName(), this.testName.getMethodName());
-	}
-
-	@BeforeClass
-	public static void setupDbUtils() {
-		Map<String, Object> dbConfig = new HashMap<>();
-		dbConfig.put("username", System.getProperty("db_username"));
-		dbConfig.put("password", System.getProperty("db_password"));
-		dbConfig.put("url", System.getProperty("db_url"));
-		dbConfig.put("driverClassName", System.getProperty("db_driverClassName"));
-		String type = System.getProperty("db_type");
-		if (type != null) {
-			dbConfig.put("dbType", type);
-		}
-		dbUtils = new DbUtils(dbConfig);
 	}
 
 	@BeforeClass
@@ -306,7 +296,7 @@ public class ConfigLoader {
 
 		Logger logger = getLoggerKarate();
 
-		String configLoaderPath = prop.getProperty("config_loader_path");
+		String configLoaderPath = getConfigLoaderPath();
 		String scriptPath = Path.of(configLoaderPath, (FileUtils.isOsWindows() ? "createOrUpdate.cmd" : "createOrUpdate.sh")).toAbsolutePath().toString();
 		String bundle = Path.of(pathToLoad).toAbsolutePath().toString();
 
@@ -325,7 +315,7 @@ public class ConfigLoader {
 	
 	public static void deleteConfig(String pathToDelete) throws UtilsException {
 
-		String configLoaderPath = prop.getProperty("config_loader_path");
+		String configLoaderPath = getConfigLoaderPath();
 		String scriptPath = Path.of(configLoaderPath, (FileUtils.isOsWindows() ? "delete.cmd" : "delete.sh")).toAbsolutePath().toString();
 		String bundle = Path.of(pathToDelete).toAbsolutePath().toString();
 

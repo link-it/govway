@@ -14,7 +14,7 @@ CREATE TABLE statistiche_pdnd_tracing
 	tentativi_pubblicazione NUMBER NOT NULL,
 	stato VARCHAR2(20),
 	tracing_id VARCHAR2(36),
-	error_details VARCHAR2(255),
+	error_details CLOB,
 	history NUMBER NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,

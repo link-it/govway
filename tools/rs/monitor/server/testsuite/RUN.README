@@ -1,5 +1,17 @@
 Prerequisito:
 Configurare l'ambiente di esecuzione dei test:
+
+        - Impostare la proprieta nel src/testsuite.properites `config_loader_path` con il percorso agli script del config loader e i parametri `jmx_username` e `jmx_password`
+
+        - Modificare le properties del config_loader in modo che vengano caricate le policy utente.
+          Impostare in <.../distrib/properties/config_loader.cli.properties>
+
+                policy.enable=true
+                plugin.enable=true
+                configurazioneGenerale.enable=true
+
+        - Sostituire in ./src/karate-config.js il percorso ai programmi di batch
+
 	- Sostituire in ./src/karate-config.js il nome del soggettoDefault con quello scelto per mezzo dell'installer di GovWay.
 	
 	- Sempre in ./src/karate-config.js Configurare l'oggetto 'govwayDbConfig' con le informazioni per la connessione al database 
@@ -27,15 +39,19 @@ Configurare l'ambiente di esecuzione dei test:
 
 	- Copiare il keystore keystore_testsuite/testsuite_petstore.jks in /etc/govway/keys/testsuite_petstore.jks
 
+        - 
 	- Riavviare GovWay e procedere con i test
 
 Compilare i test con il comando 'ant clean build'
 
 Per eseguire tutti i test:
-  ant run_test
+  ant run_test -Dload=false -Ddelete=false
+
++ Caricare la configurazione con
+        ant load_config
 
 Per eseguire una sola feature:
-  ant run_test -Dkarate.options=org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature
+  ant run_test -Dload=false -Ddelete=false -Dkarate.options=org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature
 
 Per eseguire un solo scenario all'interno della feature:
-  ant run_test -Dkarate.options="org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature --tags=FiltroApi"
+  ant run_test -Dload=false -Ddelete=false -Dkarate.options="org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature --tags=FiltroApi"

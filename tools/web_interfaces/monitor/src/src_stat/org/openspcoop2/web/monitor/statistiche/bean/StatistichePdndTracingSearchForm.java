@@ -181,12 +181,7 @@ public class StatistichePdndTracingSearchForm extends BaseSearchForm implements 
 	@Override
 	public String getProtocollo() {
 		// protocollo della sezione consente di gestire solo soggetti modiPA
-		String protocollo = super.getProtocollo();
-		
-		if(protocollo.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
-			return CostantiLabel.MODIPA_PROTOCOL_NAME; 
-		}
-		return protocollo;
+		return CostantiLabel.MODIPA_PROTOCOL_NAME;
 	}
 	
 	public int getLivelloRicerca() {

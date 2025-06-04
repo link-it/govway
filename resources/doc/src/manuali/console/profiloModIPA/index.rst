@@ -19,3 +19,5 @@ La struttura complessiva del processo di configurazione si mantiene analoga a qu
         sicurezzaCanale
         sicurezzaMessaggio
         profiliInterazione
+        signalHub
+        tracingPdnd

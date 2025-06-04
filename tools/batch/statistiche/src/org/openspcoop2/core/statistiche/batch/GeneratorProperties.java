@@ -139,9 +139,9 @@ public class GeneratorProperties {
 			this.pddMonitorFrameworkRepositoryJars = new File(tmp);
 		}
 		
-		this.pdndTracingRequestConfig = new HttpRequestConfig("pdnd.tracciamento", this.props);
+		this.pdndTracingRequestConfig = new HttpRequestConfig("statistiche.pdnd.tracciamento", this.props);
 		
-		String value = getProperty("statistiche.generazione.pdnd.tracciamento.soggetti.enabled", false);
+		String value = getProperty("statistiche.pdnd.tracciamento.soggetti.enabled", false);
 		if (value == null)
 			this.pdndTracingSoggettiEnabled = Set.of();
 		else
@@ -149,15 +149,15 @@ public class GeneratorProperties {
 				.map(String::trim)
 				.collect(Collectors.toSet());
 		
-		value = getProperty("statistiche.generazione.pdnd.tracciamento.maxAttempt", false);
+		value = getProperty("statistiche.pdnd.tracciamento.maxAttempts", false);
 		if (value != null)
 			this.pdndTracingMaxAttempt = Integer.valueOf(value);
 		
-		value = getProperty("statistiche.generazione.pdnd.tracciamento.erogazioni.enabled", false);
+		value = getProperty("statistiche.pdnd.tracciamento.erogazioni.enabled", false);
 		if (Boolean.FALSE.toString().equals(value))
 			this.pdndTracingErogazioniEnabled = false;
 		
-		value = getProperty("statistiche.generazione.pdnd.tracciamento.fruizioni.enabled", false);
+		value = getProperty("statistiche.pdnd.tracciamento.fruizioni.enabled", false);
 		if (Boolean.FALSE.toString().equals(value))
 			this.pdndTracingFruizioniEnabled = false;
 	}

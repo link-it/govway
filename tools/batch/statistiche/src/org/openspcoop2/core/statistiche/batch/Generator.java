@@ -241,15 +241,15 @@ public class Generator {
 			
 			statisticsConfig.setLogCore(logCore);
 			statisticsConfig.setLogSql(logSql);
-			statisticsConfig.setPdndTracingRequestConfig(generatorProperties.getPdndTracingRequestConfig());
-			statisticsConfig.setPdndTracingSoggettiEnabled(generatorProperties.getPdndTracingSoggettiEnabled());
+			statisticsConfig.setPdndTracciamentoRequestConfig(generatorProperties.getPdndTracingRequestConfig());
+			statisticsConfig.setPdndTracciamentoSoggettiEnabled(generatorProperties.getPdndTracingSoggettiEnabled());
 			statisticsConfig.setGenerazioneStatisticheCustom(generatorProperties.isGenerazioneStatisticheCustom());
 			statisticsConfig.setAnalisiTransazioniCustom(generatorProperties.isAnalisiTransazioniCustom());
 			statisticsConfig.setDebug(generatorProperties.isStatisticheGenerazioneDebug());
 			statisticsConfig.setUseUnionForLatency(generatorProperties.isGenerazioneStatisticheUseUnionForLatency());
-			statisticsConfig.setPdndTracingFruizioniEnabled(generatorProperties.isPdndTracingFruizioniEnabled());
-			statisticsConfig.setPdndTracingErogazioniEnabled(generatorProperties.isPdndTracingErogazioniEnabled());
-			statisticsConfig.setMaxAttempt(generatorProperties.getPdndTracingMaxAttempt());
+			statisticsConfig.setPdndTracciamentoFruizioniEnabled(generatorProperties.isPdndTracingFruizioniEnabled());
+			statisticsConfig.setPdndTracciamentoErogazioniEnabled(generatorProperties.isPdndTracingErogazioniEnabled());
+			statisticsConfig.setPdndTracciamentoMaxAttempt(generatorProperties.getPdndTracingMaxAttempt());
 			
 			switch (tipoStatistica) {
 			case STATISTICHE_ORARIE:
@@ -269,10 +269,10 @@ public class Generator {
 				statisticsConfig.setStatisticheMensiliGestioneUltimoIntervallo(true);
 				break;
 			case PDND_GENERAZIONE_TRACCIAMENTO:
-				statisticsConfig.setPdndGenerazioneTracciamento(true);
+				statisticsConfig.setPdndTracciamentoGenerazione(true);
 				break;
 			case PDND_PUBBLICAZIONE_TRACCIAMENTO:
-				statisticsConfig.setPdndPubblicazioneTracciamento(true);
+				statisticsConfig.setPdndTracciamentoPubblicazione(true);
 				break;
 			}
 			statisticsConfig.setWaitMsBeforeNextInterval(generatorProperties.getGenerazioneTradeOffMs());
@@ -306,8 +306,8 @@ public class Generator {
 				org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM = null;
 				
 				if(generatorProperties.isGenerazioneStatisticheCustom()
-						|| statisticsConfig.isPdndGenerazioneTracciamento()
-						|| statisticsConfig.isPdndPubblicazioneTracciamento()){
+						|| statisticsConfig.isPdndTracciamentoGenerazione()
+						|| statisticsConfig.isPdndTracciamentoPubblicazione()){
 					
 					pluginsStatisticheSM = (org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager) 
 						daoFactory.getServiceManager(
