@@ -270,7 +270,7 @@ public class YAMLUtils extends AbstractUtils {
 		if(contains) {
 			// Risoluzione merge key '<<: *'
 			Map<String, Object> obj = new org.yaml.snakeyaml.Yaml().load(yaml);
-			System.out.println("COSTRUITO ["+jsonUtils.toString(obj)+"]");
+			/**System.out.println("COSTRUITO ["+jsonUtils.toString(obj)+"]");*/
 			return jsonUtils.toString(obj); // jsonRepresentation
 		}
 		return null;

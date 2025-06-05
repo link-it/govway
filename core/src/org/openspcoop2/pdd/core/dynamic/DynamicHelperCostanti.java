@@ -45,7 +45,7 @@ public class DynamicHelperCostanti {
 	
 	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PREFIX = "Il valore può essere definito come costante o contenere parti dinamiche risolte a runtime dal Gateway.";
 	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SUFFIX = "Le espressioni utilizzabili sono:";
-	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO = LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PREFIX+"<br/>"+LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SUFFIX;
+	public static final String LABEL_CONFIGURAZIONE_INFO_TRASPORTO = LABEL_CONFIGURAZIONE_INFO_TRASPORTO_PREFIX+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SUFFIX;
 	
 	public static final String LABEL_CONFIGURAZIONE_INFO_TEMPLATE = "Il template fornito può contenere parti dinamiche risolte a runtime dal Gateway.<br/>Le espressioni utilizzabili sono:";
 	
@@ -77,7 +77,18 @@ public class DynamicHelperCostanti {
 	        DOPPIO_A_CAPO_HTML+StringEscapeUtils.escapeHtml("Per convertire una lista json di tipi primitivi in lista di stringhe è possibile attuare un cast come ad esempio:<BR/> claimTest=cast([1,2,3] as string array)")+
 	        DOPPIO_A_CAPO_HTML+LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SUFFIX;
 	
-	
+	public static final String LABEL_CONFIGURAZIONE_PURPOSE_ID = StringEscapeUtils.escapeHtml("Il purposeId può essere configurato attraverso differenti modalità.")+
+			DOPPIO_A_CAPO_HTML+
+			StringEscapeUtils.escapeHtml("Staticamente nella token policy dove viene indicato direttamente il valore; questa modalità richiede la registrazione di una token policy per ogni finalità.")+
+			DOPPIO_A_CAPO_HTML+
+			StringEscapeUtils.escapeHtml("Dinamicamente indicando nella token policy un valore che indirizza proprietà degli oggetti del registro consentento di supportare differenti scenari:")+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+			StringEscapeUtils.escapeHtml("- 1-1 con la fruizione: utilizzando il valore '${config:purposeId}' viene richiesta la registrazione della proprietà 'purposeId' nella fruizione dove viene utilizzata la policy.")+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+			StringEscapeUtils.escapeHtml("- 1-1 con l'applicativo fruitore: utilizzando il valore '${clientApplicationConfig}' viene richiesta la registrazione della proprietà 'purposeId' nell'applicativo fruitore.")+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+			StringEscapeUtils.escapeHtml("- N applicativi fruitore censiti sulla fruzione: utilizzando il valore '${dynamicConfig:apiSearchByClientApplication(purposeId)}' è possibile registrare molteplici proprietà '&lt;clientApplicationName&gt;.purposeId' sulla fruizione, una per ogni applicativo fruitore il cui nome va indicato come prefisso della proprietà stessa. È possibile utilizzare la proprietà senza prefisso come finalità di default.")+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
+			StringEscapeUtils.escapeHtml("- N fruizioni censite sull’applicativo fruitore: utilizzando il valore '${dynamicConfig:clientApplicationSearch(purposeId)}' è possibile registrare molteplici proprietà '&lt;nomeApiImpl&gt;.v&lt;nomeApiImpl&gt;.purposeId' sull’applicativo, una per ogni fruizione di API che l’applicativo fruisce indicando il nome come prefisso della proprietà. È possibile utilizzare la proprietà senza prefisso come finalità di default.")+
+			DOPPIO_A_CAPO_HTML+
+			StringEscapeUtils.escapeHtml("Contenere parti dinamiche risolte a runtime dal Gateway.")+LABEL_CONFIGURAZIONE_INFO_TRASPORTO_SUFFIX;
+			
 	
 	// ****** CONTENT-TYPE (TRASFORMAZIONI, MODI)
 	
