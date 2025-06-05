@@ -443,7 +443,9 @@ public class Costanti {
 	public static final String ID_RETRIEVE_HTTP_FREEMARKER_PAYLOAD = "httpFreemarkerPayload";
 	public static final String ID_RETRIEVE_HTTP_VELOCITY_PAYLOAD = "httpVelocityPayload";
 	
+	// PURPOSE ID
 	
+	public static final String VALORE_RETRIEVE_JWT_PURPOSE_ID_DEFAULT = "${dynamicConfig:apiSearchByClientApplication(purposeId)}";	
 	// ELEMENTI SELECT
 	
 	public static final String ID_RETRIEVE_TOKEN_METHOD = "retrieveTokenMethod";

@@ -725,9 +725,12 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_RETRIEVE_HTTP_METHOD.equals(id)) {
 			return HttpRequestMethod.GET.name();
 		}
+		else if(Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id)) {
+			return Costanti.VALORE_RETRIEVE_JWT_PURPOSE_ID_DEFAULT;
+		}
 		return null;
 	}
-
+	
 	private boolean isProviderInfoStandard(String id) {
 		return 
 			Costanti.ID_RETRIEVE_ENDPOINT_URL.equals(id) ||
@@ -781,11 +784,16 @@ public class NegoziazioneTokenProvider implements IProvider {
 		else if(Costanti.ID_RETRIEVE_JWT_CLIENT_ID.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_CLIENT_ID_APPLICATIVO_MODI_CUSTOM.equals(id) ||
 				Costanti.ID_RETRIEVE_JWT_AUDIENCE.equals(id) ||
-				Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id) ||
 				Costanti.ID_RETRIEVE_FORM_RESOURCE.equals(id)
 				) {
 			ProviderInfo pInfo = new ProviderInfo();
 			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
+			return pInfo;
+		}
+		else if(Costanti.ID_RETRIEVE_JWT_PURPOSE_ID.equals(id)) {
+			ProviderInfo pInfo = new ProviderInfo();
+			pInfo.setHeaderBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_PURPOSE_ID);
 			pInfo.setListBody(DynamicHelperCostanti.LABEL_CONFIGURAZIONE_NEGOZIAZIONE_TOKEN_INFO_VALORI_CON_OPZIONE_VALORE_NON_DEFINITO);
 			return pInfo;
 		}

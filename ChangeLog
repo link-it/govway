@@ -1,3 +1,12 @@
+2025-06-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayCore]
+	Aggiunta funzionalità #1611
+	Aggiornamenti alla token policy di negoziazione PDND: è stato introdotto un valore di default per il campo 'purposeId',
+	che consente di definire e gestire purposeId differenti in funzione degli applicativi fruitori associati alla fruizione.
+	Inoltre, il box informativo relativo al campo purposeId è stato arricchito con una descrizione dettagliata dei valori ammessi, 
+	fornendo indicazioni utili per l’implementazione di diversi scenari configurativi.
+
 2025-06-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, Utils]
