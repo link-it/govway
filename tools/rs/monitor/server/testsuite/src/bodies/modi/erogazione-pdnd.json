@@ -1,0 +1,13 @@
+{
+    "connettore": {
+        "endpoint": "http://127.0.0.1:8080/TestService/echo"
+    },
+    "api_nome": "PetStorePDND",
+    "api_versione": 1,
+    "autenticazione": {
+        "tipo": "disabilitato"
+    },
+   "modi": {
+     "protocollo": "rest"
+   }
+}

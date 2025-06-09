@@ -257,6 +257,7 @@ public class TransazioniService implements ITransazioniService {
 		case MITTENTE_APPLICATIVO:
 		case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 		case MITTENTE_INDIRIZZO_IP:
+		case PURPOSE_ID:
 			return this.forceIndexAndamentoTemporaleFindAll;
 		case ID_APPLICATIVO_BASE:
 			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoRicerca = 
@@ -301,6 +302,7 @@ public class TransazioniService implements ITransazioniService {
 		case MITTENTE_APPLICATIVO:
 		case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 		case MITTENTE_INDIRIZZO_IP:
+		case PURPOSE_ID:
 			return this.forceIndexAndamentoTemporaleCount;
 		case ID_APPLICATIVO_BASE:
 			org.openspcoop2.web.monitor.core.constants.TipoMessaggio tipoRicerca = 
@@ -3141,6 +3143,28 @@ public class TransazioniService implements ITransazioniService {
 			}
 			else{
 				throw new Exception("ID Messaggio non fornito");
+			}
+		}
+		
+		// ricerca is null in modalità live
+		if(ricerca!=null && ModalitaRicercaTransazioni.PURPOSE_ID.equals(ricerca) ){
+			if (StringUtils.isNotEmpty(this.searchForm.getPurposeId())) {
+				
+				String value = this.searchForm.getPurposeId().trim();
+				filter.equals(Transazione.model().TOKEN_PURPOSE_ID, value);					
+				
+				// permessi utente operatore
+				if(this.searchForm.getPermessiUtenteOperatore()!=null){
+					IExpression permessi = this.searchForm.getPermessiUtenteOperatore().toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
+							Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
+							Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
+					filter.and(permessi);
+					filter.and();
+				}
+				return;
+			}
+			else{
+				throw new Exception("Finalita non fornita");
 			}
 		}
 		

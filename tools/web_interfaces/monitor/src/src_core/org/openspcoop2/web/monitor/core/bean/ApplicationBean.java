@@ -40,16 +40,21 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.Search;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.IVersionInfo;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean.RuoloBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
@@ -124,7 +129,7 @@ public class ApplicationBean implements Serializable {
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger(); 
 
 	private transient LoginBean loginBean;
-	private Map<String, Boolean> funzionalita = new HashMap<String, Boolean>();
+	private Map<String, Boolean> funzionalita = new HashMap<>();
 	private Map<String, Boolean> roles = null;
 	
 	private boolean permessoTransazioni = false;
@@ -135,12 +140,12 @@ public class ApplicationBean implements Serializable {
 	private Locale locale;
 
 	private static Map<String, Boolean> funzionalitaStaticInstance = null;
-	private void initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws Exception{
+	private void initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws UtilsException{
 		_initializeFunzionalita(govwayMonitorProperties);
 	}
-	private static synchronized void _initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws Exception{
+	private static synchronized void _initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws UtilsException {
 		if(ApplicationBean.funzionalitaStaticInstance==null){
-			ApplicationBean.funzionalitaStaticInstance = new HashMap<String, Boolean>();
+			ApplicationBean.funzionalitaStaticInstance = new HashMap<>();
 			
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE, govwayMonitorProperties.isAttivoModuloTransazioniBase());
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE, govwayMonitorProperties.isAttivoModuloTransazioniBase());
@@ -676,6 +681,38 @@ public class ApplicationBean implements Serializable {
 			return true;
 
 		return false;
+	}
+	
+	public boolean getShowStatistichePdndTracing() {
+
+		checkRoles();
+
+		if (!this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE))
+			return false;
+
+		if(this.roles == null)
+			return false;
+
+		if(this.roles.isEmpty())
+			return false;
+		
+		if(!this.permessoStatistiche)
+			return false;
+		
+		// non deve essere selezionato nessun profilo oppure solo il modI
+		String loggedUtenteModalita = Utility.getLoggedUtenteModalita();
+
+		boolean modalitaOk = (Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteModalita) || CostantiLabel.MODIPA_PROTOCOL_NAME.equals(loggedUtenteModalita)); 
+		
+		try {
+			modalitaOk = modalitaOk && ModIUtils.isTracingPDNDEnabled();
+		}catch(Exception e) {
+			throw new UtilsRuntimeException("isTracingPDNDEnabled failed: "+e.getMessage(),e);
+		}
+		
+		// le statistiche sono visualizzabili dall' amministratore e operatore se la modalita' e' corretta
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE) || this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)) && modalitaOk;
+	
 	}
 
 

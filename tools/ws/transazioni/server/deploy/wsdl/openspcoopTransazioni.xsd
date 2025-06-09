@@ -357,6 +357,9 @@
 				<xsd:element minOccurs="0" name="token-info" type="xsd:string">
 					
 				</xsd:element>
+				<xsd:element minOccurs="0" name="token-purpose-id" type="xsd:string">
+                                        
+                                </xsd:element>
 				
 				<!-- Tempi Elaborazione -->
 				<xsd:element minOccurs="0" name="tempi-elaborazione" type="xsd:string">

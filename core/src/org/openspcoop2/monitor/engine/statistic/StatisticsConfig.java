@@ -20,10 +20,18 @@
 package org.openspcoop2.monitor.engine.statistic;
 
 import org.openspcoop2.monitor.engine.exceptions.EngineException;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.monitor.engine.config.MonitorProperties;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 import org.slf4j.Logger;
 
 /**
@@ -70,6 +78,16 @@ public class StatisticsConfig {
 		
 	/** Lista di indici forzati */
 	private StatisticsForceIndexConfig forceIndexConfig = null;
+	
+	/** PDND Tracing **/
+	private boolean pdndTracciamentoGenerazione = false;
+	private boolean pdndTracciamentoPubblicazione = false;
+	private HttpRequestConfig pdndTracciamentoRequestConfig;
+	private boolean pdndTracciamentoSoggettiDisabled = false;
+	private Set<String> pdndTracciamentoSoggettiEnabled;
+	private Integer pdndTracciamentoMaxAttempt = null;
+	private boolean pdndTracciamentoErogazioniEnabled = true;
+	private boolean pdndTracciamentoFruizioniEnabled = true;
 	
 	private static final String FALSE = "false";
 	
@@ -131,6 +149,20 @@ public class StatisticsConfig {
 				} else {
 					this.statisticheMensili = false;
 				}
+				
+			    this.pdndTracciamentoGenerazione = parsePdndGenerazioneTracciamentoProperty(props);
+			    this.pdndTracciamentoPubblicazione = parsePdndPubblicazioneTracciamentoProperty(props);
+			    this.pdndTracciamentoRequestConfig = parsePdndTracingRequestConfig(props);
+			    this.pdndTracciamentoSoggettiEnabled = parsePdndTracingSoggettiEnabled(props);
+			    this.pdndTracciamentoSoggettiDisabled = parsePdndTracingSoggettiDisabled(props);
+			    this.pdndTracciamentoErogazioniEnabled = parsePdndTracingErogazioniEnabled(props);
+			    this.pdndTracciamentoFruizioniEnabled = parsePdndTracingFruizioniEnabled(props);
+			    
+				if ("true".equals(props.getProperty(CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_ENABLED, "true", true))) {
+					this.pdndTracciamentoPubblicazione = true;
+				} else {
+					this.pdndTracciamentoPubblicazione = false;
+				}
 		
 				if ("true".equals(props.getProperty(CostantiConfigurazione.STAT_HOURLY_LASTINT, "true", true))) {
 					this.statisticheOrarieGestioneUltimoIntervallo = true;
@@ -155,11 +187,57 @@ public class StatisticsConfig {
 				} else {
 					this.statisticheMensiliGestioneUltimoIntervallo = false;
 				}
+				
 			}
 			
 		}catch(Exception e){
 			throw new EngineException(e.getMessage(),e);
 		}
+	}
+	
+	private static boolean parsePdndGenerazioneTracciamentoProperty(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_GENERAZIONE_TRACCIAMENTO_ENABLED;
+		return "true".equals(props.getProperty(propId, "true", true));
+	}
+	
+	private static boolean parsePdndPubblicazioneTracciamentoProperty(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_ENABLED;
+		return "true".equals(props.getProperty(propId, "true", true));
+	}
+	
+	private static boolean parsePdndTracingErogazioniEnabled(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_EROGAZIONI_ENABLED;
+		return "true".equals(props.getProperty(propId, "true", true));
+	}
+	
+	private static boolean parsePdndTracingFruizioniEnabled(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_FRUIZIONI_ENABLED;
+		return "true".equals(props.getProperty(propId, "true", true));
+	}
+	
+	private static HttpRequestConfig parsePdndTracingRequestConfig(MonitorProperties props) {
+		return new HttpRequestConfig("pdnd.tracciamento", str -> {
+			try {
+				return props.getProperty(str, false, true);
+			} catch (UtilsException e) {
+				return null;
+			}
+		});
+	}
+	
+	private static Set<String> parsePdndTracingSoggettiEnabled(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_SOGGETTI_ENABLED;
+		String value = props.getProperty(propId, "", false);
+		if (value == null || StringUtils.isEmpty(value.trim()) || "*".equals(value.trim()))
+			return Set.of();
+		return Arrays.stream(value.split(","))
+				.map(String::trim)
+				.collect(Collectors.toSet());
+	}
+	private boolean parsePdndTracingSoggettiDisabled(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_SOGGETTI_ENABLED;
+		String value = props.getProperty(propId, "", false);
+		return value==null || StringUtils.isEmpty(value.trim());
 	}
 	
 	public Logger getLogCore() {
@@ -237,6 +315,7 @@ public class StatisticsConfig {
 	public boolean isStatisticheOrarieGestioneUltimoIntervallo() {
 		return this.statisticheOrarieGestioneUltimoIntervallo;
 	}
+	
 
 	public void setStatisticheOrarieGestioneUltimoIntervallo(
 			boolean statisticheOrarieGestioneUltimoIntervallo) {
@@ -300,5 +379,69 @@ public class StatisticsConfig {
 
 	public void setWaitStatiInConsegna(boolean waitStatiInConsegna) {
 		this.waitStatiInConsegna = waitStatiInConsegna;
+	}
+	
+	public boolean isPdndTracciamentoPubblicazione() {
+		return this.pdndTracciamentoPubblicazione;
+	}
+
+	public void setPdndTracciamentoPubblicazione(boolean pdndPubblicazioneTracciamento) {
+		this.pdndTracciamentoPubblicazione = pdndPubblicazioneTracciamento;
+	}
+	
+	public boolean isPdndTracciamentoGenerazione() {
+		return this.pdndTracciamentoGenerazione;
+	}
+
+	public void setPdndTracciamentoGenerazione(boolean pdndGenerazioneTracciamento) {
+		this.pdndTracciamentoGenerazione = pdndGenerazioneTracciamento;
+	}
+	
+	public HttpRequestConfig getPdndTracciamentoRequestConfig() {
+		return this.pdndTracciamentoRequestConfig;
+	}
+
+	public void setPdndTracciamentoRequestConfig(HttpRequestConfig pdndTracingRequestConfig) {
+		this.pdndTracciamentoRequestConfig = pdndTracingRequestConfig;
+	}
+	
+	public void setPdndTracciamentoMaxAttempt(Integer maxAttempt) {
+		this.pdndTracciamentoMaxAttempt = maxAttempt;
+	}
+	
+	public Integer getPdndTracciamentoMaxAttempt() {
+		return this.pdndTracciamentoMaxAttempt;
+	}
+	
+	public void setPdndTracciamentoSoggettiEnabled(Set<String> pdndTracingSoggettiEnabled) {
+		this.pdndTracciamentoSoggettiEnabled = pdndTracingSoggettiEnabled;
+	}
+	
+	public Set<String> getPdndTracciamentoSoggettiEnabled() {
+		return this.pdndTracciamentoSoggettiEnabled;
+	}
+
+	public boolean isPdndTracciamentoSoggettiDisabled() {
+		return this.pdndTracciamentoSoggettiDisabled;
+	}
+
+	public void setPdndTracciamentoSoggettiDisabled(boolean pdndTracciamentoSoggettiDisabled) {
+		this.pdndTracciamentoSoggettiDisabled = pdndTracciamentoSoggettiDisabled;
+	}
+	
+	public boolean isPdndTracciamentoErogazioniEnabled() {
+		return this.pdndTracciamentoErogazioniEnabled;
+	}
+
+	public void setPdndTracciamentoErogazioniEnabled(boolean pdndTracingErogazioniEnabled) {
+		this.pdndTracciamentoErogazioniEnabled = pdndTracingErogazioniEnabled;
+	}
+
+	public boolean isPdndTracciamentoFruizioniEnabled() {
+		return this.pdndTracciamentoFruizioniEnabled;
+	}
+
+	public void setPdndTracciamentoFruizioniEnabled(boolean pdndTracingFruizioniEnabled) {
+		this.pdndTracciamentoFruizioniEnabled = pdndTracingFruizioniEnabled;
 	}
 }

@@ -36,11 +36,14 @@ import org.openspcoop2.core.statistiche.dao.IStatisticaSettimanaleServiceSearch;
 import org.openspcoop2.core.statistiche.dao.IStatisticaSettimanaleService;
 import org.openspcoop2.core.statistiche.dao.IStatisticaMensileServiceSearch;
 import org.openspcoop2.core.statistiche.dao.IStatisticaMensileService;
+import org.openspcoop2.core.statistiche.dao.IStatistichePdndTracingServiceSearch;
+import org.openspcoop2.core.statistiche.dao.IStatistichePdndTracingService;
 
 /**     
  * Manager that allows you to obtain the services of research and management of objects
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -234,6 +237,38 @@ public class JDBCLimitedServiceManager extends JDBCServiceManager {
 	@Override
 	public IStatisticaMensileService getStatisticaMensileService() throws ServiceException,NotImplementedException{
 		return new JDBCStatisticaMensileService(this.unlimitedJdbcServiceManager);
+	}
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:statistiche-pdnd-tracing type:statistiche-pdnd-tracing
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IStatistichePdndTracingServiceSearch getStatistichePdndTracingServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCStatistichePdndTracingServiceSearch(this.unlimitedJdbcServiceManager);
+	}
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public IStatistichePdndTracingService getStatistichePdndTracingService() throws ServiceException,NotImplementedException{
+		return new JDBCStatistichePdndTracingService(this.unlimitedJdbcServiceManager);
 	}
 	
 	

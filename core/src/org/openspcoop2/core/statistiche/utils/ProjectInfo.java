@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.beans.IProjectInfo;
  * Project information
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

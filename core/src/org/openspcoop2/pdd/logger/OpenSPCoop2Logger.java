@@ -164,6 +164,10 @@ public class OpenSPCoop2Logger {
 	protected static Logger loggerOpenSPCoopStatisticheSettimanaliError = null;
 	protected static Logger loggerOpenSPCoopStatisticheMensili = null;
 	protected static Logger loggerOpenSPCoopStatisticheMensiliError = null;
+	protected static Logger loggerOpenSPCoopStatistichePdndGenerazione = null;
+	protected static Logger loggerOpenSPCoopStatistichePdndGenerazioneError = null;
+	protected static Logger loggerOpenSPCoopStatistichePdndPubblicazione = null;
+	protected static Logger loggerOpenSPCoopStatistichePdndPubblicazioneError = null;
 	/**  Logger log4j utilizzato per le statistiche */
 	protected static Logger loggerOpenSPCoopStatisticheOrarieSql = null;
 	protected static Logger loggerOpenSPCoopStatisticheOrarieSqlError = null;
@@ -173,6 +177,10 @@ public class OpenSPCoop2Logger {
 	protected static Logger loggerOpenSPCoopStatisticheSettimanaliSqlError = null;
 	protected static Logger loggerOpenSPCoopStatisticheMensiliSql = null;
 	protected static Logger loggerOpenSPCoopStatisticheMensiliSqlError = null;
+	protected static Logger loggerOpenSPCoopStatistichePdndGenerazioneSql = null;
+	protected static Logger loggerOpenSPCoopStatistichePdndGenerazioneSqlError = null;
+	protected static Logger loggerOpenSPCoopStatistichePdndPubblicazioneSql = null;
+	protected static Logger loggerOpenSPCoopStatistichePdndPubblicazioneSqlError = null;
 	/**  Logger log4j utilizzato per consegna contenuti */
 	protected static Logger loggerOpenSPCoopConsegnaContenuti = null;
 	protected static Logger loggerOpenSPCoopConsegnaContenutiError = null;
@@ -693,7 +701,55 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSqlError = LoggerWrapperFactory.getLogger("govway.statistiche_mensili.generazione.sql.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSqlError==null)
 				throw new CoreException("Logger govway.statistiche.generazione.sql.error non trovato");
-				
+
+			// STATISTICHE LOG 'Pdnd Generazione'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazione = LoggerWrapperFactory
+					.getLogger("govway.statistiche_pdnd_tracciamento.generazione");
+			if (OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazione == null)
+				throw new CoreException("Logger govway.statistiche_pdnd_tracciamento.generazione non trovato");
+
+			// STATISTICHE LOG (ERROR) 'Pdnd Generazione'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazioneError = LoggerWrapperFactory
+					.getLogger("govway.statistiche_pdnd_tracciamento.generazione.error");
+			if (OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazioneError == null)
+				throw new CoreException("Logger govway.statistiche_pdnd_tracciamento.generazione.error non trovato");
+
+			// STATISTICHE SQL LOG 'Pdnd Generazione'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazioneSql = LoggerWrapperFactory
+					.getLogger("govway.statistiche_pdnd_tracciamento.generazione.sql");
+			if (OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazioneSql == null)
+				throw new CoreException("Loggergovway.statistiche_pdnd_tracciamento.generazione.sql non trovato");
+
+			// STATISTICHE SQL LOG (ERROR) 'Pdnd Generazione'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazioneSqlError = LoggerWrapperFactory
+					.getLogger("govway.statistiche_pdnd_tracciamento.generazione.sql.error");
+			if (OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazioneSqlError == null)
+				throw new CoreException("Logger govway.statistiche_pdnd_tracciamento.generazione.sql.error non trovato");
+			
+			// STATISTICHE LOG 'Pdnd Pubblicazione'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazione = LoggerWrapperFactory
+					.getLogger("govway.statistiche_pdnd_tracciamento.pubblicazione");
+			if (OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazione == null)
+				throw new CoreException("Logger govway.statistiche_pdnd_tracciamento.pubblicazione non trovato");
+
+			// STATISTICHE LOG (ERROR) 'Pdnd Pubblicazione'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazioneError = LoggerWrapperFactory
+					.getLogger("govway.statistiche_pdnd_tracciamento.pubblicazione.error");
+			if (OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazioneError == null)
+				throw new CoreException("Logger govway.statistiche_pdnd_tracciamento.pubblicazione.error non trovato");
+
+			// STATISTICHE SQL LOG 'Pdnd Pubblicazione'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazioneSql = LoggerWrapperFactory
+					.getLogger("govway.statistiche_pdnd_tracciamento.pubblicazione.sql");
+			if (OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazioneSql == null)
+				throw new CoreException("Logger govway.statistiche_pdnd_tracciamento.pubblicazione.sql non trovato");
+
+			// STATISTICHE SQL LOG (ERROR) 'Pdnd Pubblicazione'
+			OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazioneSqlError = LoggerWrapperFactory
+					.getLogger("govway.statistiche_pdnd_tracciamento.pubblicazione.sql.error");
+			if (OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazioneSqlError == null)
+				throw new CoreException("Logger govway.statistiche_pdnd_tracciamento.pubblicazione.sql.error non trovato");
+			
 			// CONSEGNA_CONTENUTI LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenuti = LoggerWrapperFactory.getLogger("govway.consegna_messaggi");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenuti==null)
@@ -1355,6 +1411,10 @@ public class OpenSPCoop2Logger {
 				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanali;
 			case STATISTICHE_MENSILI:
 				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensili;
+			case PDND_GENERAZIONE_TRACCIAMENTO:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazione;
+			case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazione;
 			}
 		}
 		else {
@@ -1367,6 +1427,10 @@ public class OpenSPCoop2Logger {
 				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliError;
 			case STATISTICHE_MENSILI:
 				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliError;
+			case PDND_GENERAZIONE_TRACCIAMENTO:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazioneError;
+			case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazioneError;
 			}
 		}
 		return null;
@@ -1383,6 +1447,10 @@ public class OpenSPCoop2Logger {
 				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSql;
 			case STATISTICHE_MENSILI:
 				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSql;
+			case PDND_GENERAZIONE_TRACCIAMENTO:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazioneSql;
+			case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazioneSql;
 			}
 		}
 		else {
@@ -1395,6 +1463,10 @@ public class OpenSPCoop2Logger {
 				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSettimanaliSqlError;
 			case STATISTICHE_MENSILI:
 				return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheMensiliSqlError;
+			case PDND_GENERAZIONE_TRACCIAMENTO:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndGenerazioneSqlError;
+			case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+				return OpenSPCoop2Logger.loggerOpenSPCoopStatistichePdndPubblicazioneSqlError;
 			}
 		}
 		return null;

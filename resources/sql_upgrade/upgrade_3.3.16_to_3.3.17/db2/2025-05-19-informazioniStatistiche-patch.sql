@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/db2/informazioniStatistiche/2025-05-19-patch.sql

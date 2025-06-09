@@ -33,7 +33,6 @@ import org.openspcoop2.monitor.sdk.statistic.IStatistic;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.slf4j.Logger;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 
@@ -52,19 +51,17 @@ public class StatisticheGiornaliere extends AbstractStatistiche {
 	StatisticheGiornaliere(){
 			super();
 	}
-	public StatisticheGiornaliere( 
-			Logger logger, boolean logQuery,boolean useUnionForLatency,  
-			boolean generazioneStatisticheCustom, boolean analisiTransazioniCustom,
-			StatisticsForceIndexConfig forceIndexConfig,
+	
+	@Override
+	public void init( 
+			StatisticsConfig config,
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM,
 			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM,
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM,
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM) {
-		super(logger,logQuery,useUnionForLatency,
-				generazioneStatisticheCustom,analisiTransazioniCustom,
-				forceIndexConfig,
+		super.init(config,
 				statisticheSM,transazioniSM,
 				pluginsStatisticheSM,pluginsBaseSM,utilsSM,pluginsTransazioniSM);
 		
@@ -151,7 +148,7 @@ public class StatisticheGiornaliere extends AbstractStatistiche {
 	
 	@Override
 	public TipoIntervalloStatistico getTipoStatistiche(){
-		return TipoIntervalloStatistico.STATISTICHE_GIORNALIERE; //"StatisticheGiornaliere";
+		return TipoIntervalloStatistico.STATISTICHE_GIORNALIERE;
 	}
  
 	@Override
@@ -199,5 +196,15 @@ public class StatisticheGiornaliere extends AbstractStatistiche {
 			throw new StatisticException(e.getMessage(),e);
 		}
 
+	}
+	
+	@Override
+	protected boolean isGestioneUltimoIntervallo(StatisticsConfig config) {
+		return config.isStatisticheGiornaliereGestioneUltimoIntervallo();
+	}
+	
+	@Override
+	public boolean isEnabled(StatisticsConfig config) {
+		return config.isStatisticheGiornaliere();
 	}
 }

@@ -287,6 +287,8 @@ components:
           type: string
         mail:
           type: string
+        purpose_id:
+           type: string
 
     # Diagnostico
     Diagnostico:

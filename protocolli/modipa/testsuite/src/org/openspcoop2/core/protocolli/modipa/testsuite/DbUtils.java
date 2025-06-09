@@ -63,6 +63,10 @@ public class DbUtils {
     public Map<String, Object> readRow(String query) {
         return this.jdbc.queryForMap(query);
     }
+    
+    public Map<String, Object> readRow(String query, Object ... args) {
+        return this.jdbc.queryForMap(query, args);
+    }
 
     public List<Map<String, Object>> readRows(String query) {
         return this.jdbc.queryForList(query);

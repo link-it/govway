@@ -1,5 +1,17 @@
 Prerequisito:
 Configurare l'ambiente di esecuzione dei test:
+
+        - Impostare la proprieta nel src/testsuite.properites `config_loader_path` con il percorso agli script del config loader e i parametri `jmx_username` e `jmx_password`
+
+        - Modificare le properties del config_loader in modo che vengano caricate le policy utente.
+          Impostare in <.../distrib/properties/config_loader.cli.properties>
+
+                policy.enable=true
+                plugin.enable=true
+                configurazioneGenerale.enable=true
+
+        - Sostituire in ./src/karate-config.js nella proprietà 'batchPath' con il path alla cartella dei batch
+
 	- Sostituire in ./src/karate-config.js il nome del soggettoDefault con quello scelto per mezzo dell'installer di GovWay.
 	
 	- Sempre in ./src/karate-config.js Configurare l'oggetto 'govwayDbConfig' con le informazioni per la connessione al database 
@@ -13,6 +25,13 @@ Configurare l'ambiente di esecuzione dei test:
 	  Alla fine dei test tale proprietà andrà rimosssa.
 
 	- Nel file /etc/govway/govway_local.properties abilitare la proprietà 'org.openspcoop2.pdd.cluster_id'
+
+	- Se l'installer è stato fatto girare facendo produrre il batch delle statistiche allora è necessario per la testsuite forzare l'abilitazione dei timer statistici in GovWay con le seguenti proprieta nel file govway_local.properties:
+		org.openspcoop2.pdd.statistiche.generazione.enabled=true
+		org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled=true
+		org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled=true
+		org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled=false
+		org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled=false
 		
 	  Alla fine dei test disabilitare tale proprietà
 
@@ -27,15 +46,33 @@ Configurare l'ambiente di esecuzione dei test:
 
 	- Copiare il keystore keystore_testsuite/testsuite_petstore.jks in /etc/govway/keys/testsuite_petstore.jks
 
+	- Per i test sul tracing PDND, installare i timer come batch esterni ed inserire nel file batch-statistiche.properties le seguenti proprieta:
+		statistiche.pdnd.tracciamento.soggetti.enabled=DemoSoggettoErogatore,DemoSoggettoErogatore2
+		statistiche.pdnd.tracciamento.maxAttempts = 3
+
+		statistiche.pdnd.tracciamento.baseUrl=http://127.0.0.1:8091
+		statistiche.pdnd.tracciamento.readTimeout=15000
+		statistiche.pdnd.tracciamento.connectTimeout=10000
+
+		# Credenziali http-basic
+		statistiche.pdnd.tracciamento.http.username=govway
+		statistiche.pdnd.tracciamento.http.password=govway
+
+		statistiche.pdnd.tracciamento.DemoSoggettoErogatore.http.headers=pdd:DemoSoggettoErogatore
+		statistiche.pdnd.tracciamento.DemoSoggettoErogatore2.http.headers=pdd:DemoSoggettoErogatore2
+ 
 	- Riavviare GovWay e procedere con i test
 
 Compilare i test con il comando 'ant clean build'
 
 Per eseguire tutti i test:
-  ant run_test
+  ant run_test -Dload=false -Ddelete=false
+
++ Caricare la configurazione con
+        ant load_config
 
 Per eseguire una sola feature:
-  ant run_test -Dkarate.options=org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature
+  ant run_test -Dload=false -Ddelete=false -Dkarate.options=org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature
 
 Per eseguire un solo scenario all'interno della feature:
-  ant run_test -Dkarate.options="org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature --tags=FiltroApi"
+  ant run_test -Dload=false -Ddelete=false -Dkarate.options="org/openspcoop2/core/monitor/rs/testsuite/transazioni/ricerca-transazioni.feature --tags=FiltroApi"

@@ -1,0 +1,13 @@
+{
+  "ridefinito": true,
+  "autorizzazione": {
+    "tipo": "abilitato",
+    "richiedente": false,
+    "ruoli": false,
+    "scope": false,
+    "token": true,
+    "token_richiedente": false,
+    "token_ruoli": false,
+    "token_claims": ["aud=audience"]
+  }
+}

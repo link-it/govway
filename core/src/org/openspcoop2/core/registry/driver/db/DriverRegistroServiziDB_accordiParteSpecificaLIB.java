@@ -640,12 +640,14 @@ public class DriverRegistroServiziDB_accordiParteSpecificaLIB {
 				
 				
 				// Delete tabella informazioni digest
-				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
-				sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_DIGEST_PARAMS);
-				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_DIGEST_PARAMS_COLUMN_ID_SERVIZIO_REF + "=?");
-				try (PreparedStatement stmt = con.prepareStatement(sqlQueryObject.createSQLDelete())) {
-					stmt.setLong(1, idServizio);
-					n = stmt.executeUpdate();
+				if(CostantiDB.isServiziDigestEnabled()) {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverRegistroServiziDB_LIB.tipoDB);
+					sqlQueryObject.addDeleteTable(CostantiDB.SERVIZI_DIGEST_PARAMS);
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_DIGEST_PARAMS_COLUMN_ID_SERVIZIO_REF + "=?");
+					try (PreparedStatement stmt = con.prepareStatement(sqlQueryObject.createSQLDelete())) {
+						stmt.setLong(1, idServizio);
+						n = stmt.executeUpdate();
+					}
 				}
 
 				

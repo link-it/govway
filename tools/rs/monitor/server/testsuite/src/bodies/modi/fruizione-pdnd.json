@@ -1,0 +1,18 @@
+{
+    "connettore": {
+        "endpoint": "http://localhost:8080/govway/rest/in/ENTE/PetStorePDND/v1",
+        "token_policy": "SimulazionePDNDProduzioneTokenKid-PurposeId"
+    },
+    "api_nome": "PetStorePDND",
+    "erogatore": "DemoSoggettoErogatore",
+    "api_versione": 1,
+    "autenticazione": {
+        "tipo": "disabilitato"
+    },
+   "modi": {
+     "protocollo" : "oauth",
+     "keystore" : {
+       "modalita" : "default"
+     }
+   }
+}

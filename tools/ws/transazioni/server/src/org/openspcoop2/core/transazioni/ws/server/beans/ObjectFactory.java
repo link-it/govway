@@ -43,17 +43,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link UseInfo }
+     * Create an instance of {@link WrapperIdTransazione }
      */
-    public UseInfo createUseInfo() {
-        return new UseInfo();
-    }
-    
-    /**
-     * Create an instance of {@link IdEntity }
-     */
-    public IdEntity createIdEntity() {
-        return new IdEntity();
+    public WrapperIdTransazione createWrapperIdTransazione() {
+        return new WrapperIdTransazione();
     }
     
     /**
@@ -64,6 +57,13 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link IdEntity }
+     */
+    public IdEntity createIdEntity() {
+        return new IdEntity();
+    }
+    
+    /**
      * Create an instance of {@link WrapperIdDumpMessaggio }
      */
     public WrapperIdDumpMessaggio createWrapperIdDumpMessaggio() {
@@ -71,17 +71,17 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link UseInfo }
+     */
+    public UseInfo createUseInfo() {
+        return new UseInfo();
+    }
+    
+    /**
      * Create an instance of {@link InUseCondition }
      */
     public InUseCondition createInUseCondition() {
         return new InUseCondition();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdTransazione }
-     */
-    public WrapperIdTransazione createWrapperIdTransazione() {
-        return new WrapperIdTransazione();
     }
     
 

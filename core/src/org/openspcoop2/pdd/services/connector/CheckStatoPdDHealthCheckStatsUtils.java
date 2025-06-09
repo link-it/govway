@@ -176,6 +176,8 @@ public class CheckStatoPdDHealthCheckStatsUtils {
 			case STATISTICHE_MENSILI:
 				dataUltimaGenerazioneMensile = statisticaInfo.getDataUltimaGenerazione();
 				break;
+			default:
+				break;
 			}
 		}
 		

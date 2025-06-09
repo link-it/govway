@@ -110,6 +110,7 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="token-username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="token-mail" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="token-info" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="token-purpose-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="tempi-elaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
  *         &lt;element name="socket-client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
@@ -223,6 +224,7 @@ import java.util.Date;
     "tokenUsername",
     "tokenMail",
     "tokenInfo",
+    "tokenPurposeId",
     "tempiElaborazione",
     "clusterId",
     "socketClientAddress",
@@ -1331,6 +1333,19 @@ public class SearchFilterTransazione extends org.openspcoop2.utils.beans.BaseBea
 	
 	public String getTokenInfo(){
 		return this.tokenInfo;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="token-purpose-id",required=false,nillable=false)
+	private String tokenPurposeId;
+	
+	public void setTokenPurposeId(String tokenPurposeId){
+		this.tokenPurposeId = tokenPurposeId;
+	}
+	
+	public String getTokenPurposeId(){
+		return this.tokenPurposeId;
 	}
 	
 	

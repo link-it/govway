@@ -100,6 +100,10 @@ public class TransazioniCostanti {
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoTransazione.icona"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoTransazione.breadcrumb"; 
 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.icona"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.breadcrumb"; 
+
 	public static final String TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_ERRORE = "col-latenza-errore";
 	public static final String TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_FAULT = "col-latenza-fault";
 	public static final String TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_OK = "col-latenza-ok";

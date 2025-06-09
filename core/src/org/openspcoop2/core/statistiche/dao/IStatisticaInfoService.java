@@ -26,6 +26,7 @@ import org.openspcoop2.generic_project.dao.IServiceWithoutId;
  * Service can be used both for research that will make persistent objects on the backend of type org.openspcoop2.core.statistiche.StatisticaInfo 
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

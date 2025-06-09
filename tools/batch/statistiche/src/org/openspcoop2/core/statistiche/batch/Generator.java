@@ -36,7 +36,9 @@ import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
@@ -85,6 +87,7 @@ public class Generator {
 		}
 
 		String nomeLogger = null;
+		String tipologia = "generazione";
 		switch (tipoStatistica) {
 		case STATISTICHE_ORARIE:
 			nomeLogger = "statistiche_orarie";
@@ -98,6 +101,13 @@ public class Generator {
 		case STATISTICHE_MENSILI:
 			nomeLogger = "statistiche_mensili";
 			break;
+		case PDND_GENERAZIONE_TRACCIAMENTO:
+			nomeLogger = "pdnd_tracciamento";
+			break;
+		case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+			nomeLogger = "pdnd_tracciamento";
+			tipologia = "pubblicazione";
+			break;
 		}
 		
 		Logger logCore = null;
@@ -108,8 +118,8 @@ public class Generator {
 				props.load(fis);
 				LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
 				LoggerWrapperFactory.setLogConfiguration(props);
-				logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+".generazione.error");
-				logSql = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+".generazione.sql.error");
+				logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+"."+tipologia+".error");
+				logSql = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+"."+tipologia+".sql.error");
 			}
 		}catch(Exception e) {
 			throw new UtilsException("Impostazione logging fallita: "+e.getMessage());
@@ -118,8 +128,8 @@ public class Generator {
 		GeneratorProperties generatorProperties = GeneratorProperties.getInstance();
 		
 		if(generatorProperties.isStatisticheGenerazioneDebug()) {
-			logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+".generazione");
-			logSql = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+".generazione.sql");
+			logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+"."+tipologia);
+			logSql = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+"."+tipologia+".sql");
 		}
 		
 		// Map (environment)
@@ -235,10 +245,17 @@ public class Generator {
 			
 			statisticsConfig.setLogCore(logCore);
 			statisticsConfig.setLogSql(logSql);
+			statisticsConfig.setPdndTracciamentoRequestConfig(generatorProperties.getPdndTracingRequestConfig());
+			statisticsConfig.setPdndTracciamentoSoggettiEnabled(generatorProperties.getPdndTracingSoggettiEnabled());
+			statisticsConfig.setPdndTracciamentoSoggettiDisabled(generatorProperties.isPdndTracingSoggettiDisabled());
 			statisticsConfig.setGenerazioneStatisticheCustom(generatorProperties.isGenerazioneStatisticheCustom());
 			statisticsConfig.setAnalisiTransazioniCustom(generatorProperties.isAnalisiTransazioniCustom());
 			statisticsConfig.setDebug(generatorProperties.isStatisticheGenerazioneDebug());
 			statisticsConfig.setUseUnionForLatency(generatorProperties.isGenerazioneStatisticheUseUnionForLatency());
+			statisticsConfig.setPdndTracciamentoFruizioniEnabled(generatorProperties.isPdndTracingFruizioniEnabled());
+			statisticsConfig.setPdndTracciamentoErogazioniEnabled(generatorProperties.isPdndTracingErogazioniEnabled());
+			statisticsConfig.setPdndTracciamentoMaxAttempt(generatorProperties.getPdndTracingMaxAttempt());
+			
 			switch (tipoStatistica) {
 			case STATISTICHE_ORARIE:
 				statisticsConfig.setStatisticheOrarie(true);
@@ -255,6 +272,20 @@ public class Generator {
 			case STATISTICHE_MENSILI:
 				statisticsConfig.setStatisticheMensili(true);
 				statisticsConfig.setStatisticheMensiliGestioneUltimoIntervallo(true);
+				break;
+			case PDND_GENERAZIONE_TRACCIAMENTO:
+				if(ProtocolFactoryManager.getInstance().existsProtocolFactory(Costanti.MODIPA_PROTOCOL_NAME) 
+						&&
+						ModIUtils.isTracingPDNDEnabled()) {
+					statisticsConfig.setPdndTracciamentoGenerazione(true);
+				}
+				break;
+			case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+				if(ProtocolFactoryManager.getInstance().existsProtocolFactory(Costanti.MODIPA_PROTOCOL_NAME) 
+						&&
+						ModIUtils.isTracingPDNDEnabled()) {
+					statisticsConfig.setPdndTracciamentoPubblicazione(true);
+				}
 				break;
 			}
 			statisticsConfig.setWaitMsBeforeNextInterval(generatorProperties.getGenerazioneTradeOffMs());
@@ -287,7 +318,9 @@ public class Generator {
 				org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
 				org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM = null;
 				
-				if(generatorProperties.isGenerazioneStatisticheCustom()){
+				if(generatorProperties.isGenerazioneStatisticheCustom()
+						|| statisticsConfig.isPdndTracciamentoGenerazione()
+						|| statisticsConfig.isPdndTracciamentoPubblicazione()){
 					
 					pluginsStatisticheSM = (org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager) 
 						daoFactory.getServiceManager(
@@ -334,6 +367,12 @@ public class Generator {
 					break;
 				case STATISTICHE_MENSILI:
 					sLibrary.generateStatisticaMensile();
+					break;
+				case PDND_GENERAZIONE_TRACCIAMENTO:
+					sLibrary.generatePdndGenerazioneTracciamento();
+					break;
+				case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+					sLibrary.generatePdndPubblicazioneTracciamento();
 					break;
 				}	
 			}catch(Exception e){

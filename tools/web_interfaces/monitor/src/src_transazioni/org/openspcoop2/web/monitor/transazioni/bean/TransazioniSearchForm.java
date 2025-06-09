@@ -418,13 +418,14 @@ Context, Cloneable {
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_IDENTIFICATIVO_AUTENTICATO_BREADCUMP_KEY);
 			case MITTENTE_INDIRIZZO_IP:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_MITENTE_RICERCA_INDIRIZZO_IP_BREADCUMP_KEY);
-				
 			case ID_APPLICATIVO_BASE:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_BASE_BREADCRUMB_KEY);
 			case ID_APPLICATIVO_AVANZATA:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_BREADCRUMB_KEY);
 			case ID_MESSAGGIO:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_BREADCUMP_KEY);
+			case PURPOSE_ID:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_BREADCUMP_KEY);				
 			case ID_TRANSAZIONE:
 			default:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_BREADCUMP_KEY);
@@ -538,6 +539,7 @@ Context, Cloneable {
 				case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 				case MITTENTE_INDIRIZZO_IP:
 				case ID_APPLICATIVO_AVANZATA:
+				case PURPOSE_ID:
 					return true; // non c'e' motivo per non farli vedere
 				
 				case MITTENTE_TOKEN_INFO: // nelle erogazioni vi è anche il soggetto mittente
@@ -973,6 +975,12 @@ Context, Cloneable {
 					case ID_TRANSAZIONE:
 						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdTransazione())){
 							MessageUtils.addErrorMsg("Indicare un identificativo transazione");
+							return null;
+						}
+						break;
+					case PURPOSE_ID:
+						if(org.apache.commons.lang.StringUtils.isEmpty(this.getPurposeId())){
+							MessageUtils.addErrorMsg("Indicare la finalita della transazione");
 							return null;
 						}
 						break;

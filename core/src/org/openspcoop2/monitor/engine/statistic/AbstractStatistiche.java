@@ -95,7 +95,7 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public abstract class AbstractStatistiche {
+public abstract class AbstractStatistiche implements IStatisticsEngine {
 
 	protected Logger logger = LoggerWrapperFactory.getLogger(AbstractStatistiche.class);
 	private void logDebug(String msg) {
@@ -117,13 +117,15 @@ public abstract class AbstractStatistiche {
 	protected boolean useUnionForLatency = true;
 	protected boolean generazioneStatisticheCustom = false;
 	protected boolean analisiTransazioniCustom = false;
+	protected long waitMsBeforeNextInterval = 0;
+	protected boolean waitStatiInConsegna = false;
+	protected boolean gestioneUltimoIntervallo = false;
 	protected IServiceManager statisticheSM = null;
 	protected IServiceWithoutId<?> statisticaServiceDAO = null;
 	protected IServiceSearchWithoutId<?> statisticaServiceSearchDAO = null;
 	protected StatisticaModel model = null;
 	private IStatisticaInfoServiceSearch statisticaInfoSearchDAO = null;
 	private IStatisticaInfoService statisticaInfoDAO = null;
-	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = null;
 	private ITransazioneServiceSearch transazioneSearchDAO = null;
 	private org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM = null;
 	private org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM = null;
@@ -141,22 +143,26 @@ public abstract class AbstractStatistiche {
 	AbstractStatistiche(){
 		
 	}
-	protected AbstractStatistiche(Logger logger,boolean debug,boolean useUnionForLatency, 
-			boolean generazioneStatisticheCustom, boolean analisiTransazioniCustom,
-			StatisticsForceIndexConfig forceIndexConfig,
+
+	@Override
+	public void init(StatisticsConfig config,
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM,
 			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM,
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM,
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM){
-		if(logger!=null){
-			this.logger = logger;
+		if(config.getLogCore()!=null){
+			this.logger = config.getLogCore();
 		}
-		this.debug = debug;
-		this.useUnionForLatency = useUnionForLatency;
-		this.generazioneStatisticheCustom = generazioneStatisticheCustom;
-		this.analisiTransazioniCustom = analisiTransazioniCustom;
+		
+		this.debug = config.isDebug();
+		this.useUnionForLatency = config.isUseUnionForLatency();
+		this.generazioneStatisticheCustom = config.isGenerazioneStatisticheCustom();
+		this.analisiTransazioniCustom = config.isAnalisiTransazioniCustom();
+		this.waitMsBeforeNextInterval = config.getWaitMsBeforeNextInterval();
+		this.waitStatiInConsegna = config.isWaitStatiInConsegna();
+		this.gestioneUltimoIntervallo = this.isGestioneUltimoIntervallo(config);
 		
 		try {
 			if(statisticheSM==null){
@@ -172,8 +178,7 @@ public abstract class AbstractStatistiche {
 
 			this.databaseType = DAOFactoryProperties.getInstance(this.logger).getTipoDatabaseEnum(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance());
 			
-			this.transazioniSM = transazioniSM;
-			this.transazioneSearchDAO = this.transazioniSM.getTransazioneServiceSearch();
+			this.transazioneSearchDAO = transazioniSM.getTransazioneServiceSearch();
 
 			if(this.generazioneStatisticheCustom){
 				
@@ -201,7 +206,7 @@ public abstract class AbstractStatistiche {
 				}
 			}
 			
-			this.forceIndexConfig = forceIndexConfig;
+			this.forceIndexConfig = config.getForceIndexConfig();
 			
 			this.initialized = true;
 			
@@ -244,6 +249,8 @@ public abstract class AbstractStatistiche {
 	public abstract Date incrementDate(Date date,boolean print);
 
 	public abstract Date decrementDate(Date date,boolean print);
+	
+	protected abstract boolean isGestioneUltimoIntervallo(StatisticsConfig config);
 
 	public Date decrementDate1Millisecond(Date date){
 		Calendar cTmp = Calendar.getInstance();
@@ -266,10 +273,11 @@ public abstract class AbstractStatistiche {
 	public abstract String getStatisticPluginMethodName() throws StatisticException;
 
 
-	public void generaStatistiche( boolean gestioneUltimoIntervallo, long waitMsBeforeNextInterval, boolean waitStatiInConsegna) throws Exception{
+	@Override
+	public void generate() throws StatisticsEngineException {
 
 		if(!this.initialized){
-			throw new ServiceException("Inizializzazione fallita (verificare errori precedenti)");
+			throw new StatisticsEngineException("Inizializzazione fallita (verificare errori precedenti)");
 		}
 
 		try{
@@ -304,8 +312,8 @@ public abstract class AbstractStatistiche {
 
 				// genera
 				boolean generazioneCompletataConSuccesso = generaStatistica(dataUltimaGenerazioneStatistiche, 
-						dataAvvioBatch, waitMsBeforeNextInterval, 
-						waitStatiInConsegna);
+						dataAvvioBatch, this.waitMsBeforeNextInterval, 
+						this.waitStatiInConsegna);
 				if(!generazioneCompletataConSuccesso) {
 					saveDataStatistica = false;
 				}
@@ -328,7 +336,7 @@ public abstract class AbstractStatistiche {
 
 
 			// Genero statistiche parziali della data di oggi
-			if(gestioneUltimoIntervallo){
+			if(this.gestioneUltimoIntervallo){
 
 				Date dataUltimoIntervallo = dataUltimaGenerazioneStatistiche;
 
@@ -341,7 +349,7 @@ public abstract class AbstractStatistiche {
 
 		}catch(Exception e){
 			this.logError(e.getMessage(), e);
-			throw e;
+			throw new StatisticsEngineException(e);
 		}
 	}
 
@@ -974,6 +982,9 @@ public abstract class AbstractStatistiche {
 					}
 				}
 				break;
+			case PDND_GENERAZIONE_TRACCIAMENTO:
+			case PDND_PUBBLICAZIONE_TRACCIAMENTO:
+				return false;
 		}
 		return false;
 	}

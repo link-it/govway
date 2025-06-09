@@ -100,7 +100,7 @@ public class StatisticsInfoUtils {
 		} catch (ExpressionException e) {
 			logger.error(e.getMessage(), e);
 		} catch (NotFoundException e) {
-			logger.error(e.getMessage(), e);
+			logger.debug(e.getMessage(), e);
 
 			// non ho trovato nessuna data valida, inserisco l'ultima generata
 

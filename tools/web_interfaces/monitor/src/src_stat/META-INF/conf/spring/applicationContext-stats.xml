@@ -79,4 +79,15 @@
 	<!-- Report Esiti -->
 	<bean id="statisticaReportManager" class="org.openspcoop2.web.monitor.statistiche.report.StatisticaReportManager" scope="request"/>
 	
+	<!-- Tracing PDND -->
+	<bean id="statistichePdndTracingSearchForm" class="org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingSearchForm" scope="session"/>
+	
+	<bean id="statistichePdndTracingService" class="org.openspcoop2.web.monitor.statistiche.dao.StatistichePdndTracingService" scope="request">
+		<property name="search" ref="statistichePdndTracingSearchForm"/>
+	</bean>
+	<bean id="statistichePdndTracingBean" class="org.openspcoop2.web.monitor.statistiche.mbean.StatistichePdndTracingBean" scope="request">
+		<property name="service" ref="statistichePdndTracingService"/>
+		<property name="search" ref="statistichePdndTracingSearchForm"/>
+	</bean>
+	
 </beans>

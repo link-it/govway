@@ -44,6 +44,7 @@ import org.openspcoop2.utils.sql.ISQLQueryObject;
  * Service can be used to search for and manage the backend objects of type {@link org.openspcoop2.core.statistiche.StatisticaSettimanale} 
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

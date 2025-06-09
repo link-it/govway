@@ -364,6 +364,14 @@
 				    		<linkit:sql-table-index-field name="risposta-ingresso-bytes"/>
 				    		<linkit:sql-table-index-field name="risposta-uscita-bytes"/>
 				    	</linkit:sql-table-index>
+					<linkit:sql-table-index name="INDEX_TR_PDND_STATS">
+						<linkit:sql-table-index-field name="data-ingresso-richiesta" ignoreTypeCompatibility="true"/>
+                                                <linkit:sql-table-index-field name="pdd-codice"/>
+                                                <linkit:sql-table-index-field name="token-purpose-id"/>
+                                                <linkit:sql-table-index-field name="id-messaggio-richiesta"/>
+                                                <linkit:sql-table-index-field name="eventi-gestione"/>
+                                                <linkit:sql-table-index-field name="pdd-ruolo"/>
+					</linkit:sql-table-index>
 						<!-- Indici per ottimizzare le ricerche in base a id e id porta -->
 						<linkit:sql-table-index name="INDEX_TR_FILTROD_REQ">
 							<linkit:sql-table-index-field name="id-messaggio-richiesta"/>
@@ -398,7 +406,11 @@
 				    	</linkit:sql-table-index>
 				    	<linkit:sql-table-index name="INDEX_TR_CORRELAZIONE_RES">
 				    		<linkit:sql-table-index-field name="id-correlazione-applicativa-risposta"/>
-				    	</linkit:sql-table-index>
+                                        </linkit:sql-table-index>
+                                        <!-- Indici per ottimizzare la ricerca per purpose id -->
+                                        <linkit:sql-table-index name="INDEX_TR_PURPOSE_ID">
+                                                <linkit:sql-table-index-field name="token-purpose-id"/>
+                                        </linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>
@@ -1482,6 +1494,17 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="token-purpose-id" type="xsd:string" minOccurs="0">
+                                        <xsd:annotation>
+                                                <xsd:appinfo>
+                                                        <linkit:generator
+                                                                xmlns:linkit="http://www.link.it/project_generator">
+                                                                <linkit:sql-column-mapping name="token_purpose_id" varchar="4000" />
+                                                                <linkit:sql-ddl-column-comment><![CDATA[Id di finalita della richiesta]]></linkit:sql-ddl-column-comment>
+                                                        </linkit:generator>
+                                                </xsd:appinfo>
+                                        </xsd:annotation>
+                                </xsd:element>
 				
 				<!-- Tempi Elaborazione -->
 				<xsd:element name="tempi-elaborazione" type="xsd:string" minOccurs="0">

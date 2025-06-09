@@ -384,6 +384,39 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 	}
+	
+    /**
+     * Ricerca semplificata delle transazioni in base all'identificativo finalita
+     *
+     * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base all'identificativo della finalita
+     *
+     */
+	@Override
+    public ListaTransazioni findAllTransazioniByPurposeId(String purposeId, String soggetto, Integer offset, Integer limit, String sort) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+			TransazioniSearchForm search = searchFormUtilities.getPurposeIdSearchForm(context, soggetto);
+			
+			MonitoraggioEnv env = new MonitoraggioEnv(context, ProfiloEnum.MODIPA, soggetto, this.log);
+			search.setPurposeId(purposeId);
+
+			ListaTransazioni ret = TransazioniHelper.searchTransazioni(search, offset, limit, sort, env);
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
     
 	/**
 	 * Ricerca semplificata delle transazioni in base ai parametri di uso più comune

@@ -1205,6 +1205,16 @@ public class ModIUtils {
 		}
 	}
 	
+	public static boolean isTracingPDNDEnabled() throws ProtocolException {
+		try {
+			Object instance = getModiProperties();
+			Method mIsTracingPDNDEnabled = instance.getClass().getMethod("isTracingPDNDEnabled");
+			return (Boolean) mIsTracingPDNDEnabled.invoke(instance);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException {
 		try {
