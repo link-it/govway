@@ -255,6 +255,17 @@
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
  
+ <managed-bean>
+		<managed-bean-name>statistichePdndTracingDM</managed-bean-name>
+		<managed-bean-class>org.openspcoop2.web.monitor.statistiche.datamodel.StatistichePdndTracingDM</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>dataProvider</property-name>
+			<property-class>org.openspcoop2.web.monitor.statistiche.dao.IStatistichePdndTracingService</property-class>
+			<value>#{statistichePdndTracingService}</value>
+		</managed-property>
+	</managed-bean>
+ 
 <navigation-rule>
   <from-view-id>*</from-view-id>
    <navigation-case>
@@ -264,6 +275,10 @@
    <navigation-case>
    <from-outcome>configurazioniGenerali</from-outcome>
    <to-view-id>/stat/pages/list/configurazioniGenerali.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>statistichePdndTracingStart</from-outcome>
+   <to-view-id>/stat/pages/form/statistichePdndTracingTipiRicerca.xhtml</to-view-id>
   </navigation-case>
  </navigation-rule>
  
@@ -399,3 +414,39 @@
 			<to-view-id>/stat/pages/form/analisiStatisticaFiltriRicerca.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- Scelta tipo ricerca Tracing Pdnd -->
+	<navigation-rule>
+	   <from-view-id>/stat/pages/form/statistichePdndTracingTipiRicerca.xhtml</from-view-id>
+ 		<navigation-case>
+		<from-outcome>statistichePdndTracingList</from-outcome>
+			<to-view-id>/stat/pages/list/statistichePdndTracingList.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- Lista Tracing PDND -->
+	<navigation-rule>
+		<from-view-id>/stat/pages/list/statistichePdndTracingList.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>statisticaPdndTracingDettaglio</from-outcome>
+			<to-view-id>/stat/pages/form/statistichePdndTracingDettaglio.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>statistichePdndTracingStart</from-outcome>
+			<to-view-id>/stat/pages/form/statistichePdndTracingTipiRicerca.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- Dettaglio Tracing PDND -->
+	<navigation-rule>
+		<from-view-id>/stat/pages/form/statistichePdndTracingDettaglio.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>statistichePdndTracingList</from-outcome>
+			<to-view-id>/stat/pages/list/statistichePdndTracingList.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>statistichePdndTracingStart</from-outcome>
+			<to-view-id>/stat/pages/form/statistichePdndTracingTipiRicerca.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	

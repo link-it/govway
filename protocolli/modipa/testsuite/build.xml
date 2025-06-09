@@ -46,6 +46,9 @@
                         <include name="snakeyaml-2.2-gov4j-1.jar"/>
 			<include name="joda-time-2.12.7.jar"/>
                 </fileset>
+                <fileset dir="${required_lib}/jakarta" >
+                        <include name="jakarta.activation-api-2.1.3.jar"/>
+                </fileset>
                 <fileset dir="${required_lib}/cxf" >
                         <include name="asm-9.7.1.jar"/>
                 </fileset>

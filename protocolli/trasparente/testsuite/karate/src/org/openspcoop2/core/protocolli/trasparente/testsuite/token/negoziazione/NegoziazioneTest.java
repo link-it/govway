@@ -125,7 +125,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret2\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret2\"",
-				"\"accessToken\":\"ewogICJhbGciOiAibm9uZSIKfQ==.ewogICJleHAiOiAxNzAxMTcwMTUyODE5LAogICJjb25zdW1lcktleSI6ICJYWFgiLAogICJhdWQiOiAiQkJCIgp9.==SIGNATURE==\"",
+				"\"accessToken\":\"ewogICJhbGciOiAibm9uZSIKfQ==.ewogICJleHAiOiAxNzAxMTcwMTUyODE5LAogICJjb25zdW1lcktleSI6ICJYWFgiLAogICJhdWQiOiAiQkJCIgp9.__SIGNATURE__\"",
 				"\"policy\":\"TestNegoziazioneClientCredentials2\"",
 				"\"test_client_credentials_2\":\"vTest2\"",
 			    "\"test_client_credentials_1\":\"vTest1\"",
@@ -193,7 +193,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"grantType\":\"clientCredentials\"",
 				"\"clientId\":\"ClientIDVerificaNegoziazioneConSecret2\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/clientid_clientsecret2\"",
-				"\"accessToken\":\"ewogICJhbGciOiAibm9uZSIKfQ==.ewogICJleHAiOiAxNzAxMTcwMTUyODE5LAogICJjb25zdW1lcktleSI6ICJYWFgiLAogICJhdWQiOiAiQkJCIgp9.==SIGNATURE==\"",
+				"\"accessToken\":\"ewogICJhbGciOiAibm9uZSIKfQ==.ewogICJleHAiOiAxNzAxMTcwMTUyODE5LAogICJjb25zdW1lcktleSI6ICJYWFgiLAogICJhdWQiOiAiQkJCIgp9.__SIGNATURE__\"",
 				"\"policy\":\"TestNegoziazioneClientCredentials2\"",
 				"\"test_client_credentials_2\":\"vTest2\"",
 			    "\"test_client_credentials_1\":\"vTest1\"",
@@ -379,7 +379,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret\"",
-				"\"accessToken\":\"2YotnFZFEjr1zCsicMWpAA\"", // il ==SIGNATURE== per l'access token viene verificato nel test 'clientid_clientsecret2'
+				"\"accessToken\":\"2YotnFZFEjr1zCsicMWpAA\"", // il __SIGNATURE__ per l'access token viene verificato nel test 'clientid_clientsecret2'
 				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret\"",
 				"\"expires_in\":\"3600\"",
 				"\"expiresIn\":1",
@@ -394,7 +394,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.",
-				".==SIGNATURE==\""
+				".__SIGNATURE__\""
 				);
 		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
@@ -430,7 +430,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		
@@ -490,7 +490,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
 				);
 		
@@ -516,7 +516,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
 				);
 	}
@@ -541,7 +541,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret2\"",
-				"\"accessToken\":\"2YotnFZFEjr1zCsicMWpAA\"", // il ==SIGNATURE== per l'access token viene verificato nel test 'clientid_clientsecret2'
+				"\"accessToken\":\"2YotnFZFEjr1zCsicMWpAA\"", // il __SIGNATURE__ per l'access token viene verificato nel test 'clientid_clientsecret2'
 				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret2\"",
 				"\"expires_in\":\"3600\"",
 				"\"expiresIn\":1",
@@ -559,7 +559,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"p2\":\"testNegoziazioneP2\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6ImFwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCIsImtpZCI6ImNsaWVudElERFlOQU1JQyJ9.",
-				".==SIGNATURE==\""
+				".__SIGNATURE__\""
 				);
 		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
@@ -599,7 +599,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"p2\":\"testNegoziazioneP2\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6ImFwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCIsImtpZCI6ImNsaWVudElERFlOQU1JQyJ9.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		
@@ -678,7 +678,7 @@ public class NegoziazioneTest extends ConfigLoader {
 					"\"p2\":\"testNegoziazioneP2\"",
 					"\"jwtClientAssertion\":",
 					"\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6ImFwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCIsImtpZCI6ImNsaWVudElERFlOQU1JQyJ9.",
-					".==SIGNATURE==\"",
+					".__SIGNATURE__\"",
 					"\"transactionId\":\""+idRichiestaOriginale_0+"\""
 					);
 		
@@ -706,7 +706,7 @@ public class NegoziazioneTest extends ConfigLoader {
 					"\"p2\":\"testNegoziazioneP2\"",
 					"\"jwtClientAssertion\":",
 					"\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6ImFwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCIsImtpZCI6ImNsaWVudElERFlOQU1JQyJ9.",
-					".==SIGNATURE==\"",
+					".__SIGNATURE__\"",
 					"\"transactionId\":\""+idRichiestaOriginale_1+"\""
 					);
 	}
@@ -730,7 +730,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"grantType\":\"rfc7523_clientSecret\"",
 				"\"jwtClientAssertion\":{\"token\":\"",
 				"\"endpoint\":\"http://localhost:8080/govway/SoggettoInternoTest/AuthorizationServerClientCredentialsDummy/v1/signedJWT_clientSecret3\"",
-				"\"accessToken\":\"2YotnFZFEjr1zCsicMWpAA\"", // il ==SIGNATURE== per l'access token viene verificato nel test 'clientid_clientsecret2'
+				"\"accessToken\":\"2YotnFZFEjr1zCsicMWpAA\"", // il __SIGNATURE__ per l'access token viene verificato nel test 'clientid_clientsecret2'
 				"\"policy\":\"TestNegoziazioneSignedJWTwithClientSecret3\"",
 				"\"expires_in\":\"3600\"",
 				"\"expiresIn\":1",
@@ -745,7 +745,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJIUzI1NiIsImtpZCI6IlBFUlMtRFlOQU1JQyJ9.",
-				".==SIGNATURE==\""
+				".__SIGNATURE__\""
 				);
 		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
@@ -781,7 +781,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJIUzI1NiIsImtpZCI6IlBFUlMtRFlOQU1JQyJ9.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		
@@ -841,7 +841,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJIUzI1NiIsImtpZCI6IlBFUlMtRFlOQU1JQyJ9.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
 				);
 		
@@ -867,7 +867,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJIUzI1NiIsImtpZCI6IlBFUlMtRFlOQU1JQyJ9.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
 				);
 	}
@@ -908,7 +908,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.",
-				".==SIGNATURE==\""
+				".__SIGNATURE__\""
 				);
 		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
@@ -944,7 +944,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		
@@ -1004,7 +1004,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_0+"\"");
 
 		_test(logCore, api_negoziazione, "signedJWT", headers_1,
@@ -1029,7 +1029,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_1+"\"");
 	}
 	
@@ -1073,7 +1073,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"p2\":\"testNegoziazioneP2\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6ImFwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCIsImtpZCI6ImVyb2dhdG9yZSIsIng1YyI6WyJNSUlEakRDQ0FuU2dBd0lCQWdJRVlXYVVvakFOQmdrcWhraUc5dzBCQVFzRkFEQ0JoakVjTUJvR0NTcUdTSWIzRFFFSkFSWU5ZWEJ2YkdsQWJHbHVheTVwZERFTE1Ba0dBMVVFQmhNQ1NWUXhEakFNQmdOVkJBZ01CVWwwWVd4NU1RMHdDd1lEVlFRSERBUlFhWE5oTVJjd0ZRWURWUVFLREE1dmNHVnVjM0JqYjI5d0xtOXlaekVOTUFzR0ExVUVDd3dFZEdWemRERVNNQkFHQTFVRUF3d0pSWEp2WjJGMGIzSmxNQ0FYRFRJeE1UQXhNekE0TVRFeE5Gb1lEekl4TWpFd09URTVNRGd4TVRFMFdqQ0JoakVjTUJvR0NTcUdTSWIzRFFFSkFSWU5ZWEJ2YkdsQWJHbHVheTVwZERFTE1Ba0dBMVVFQmhNQ1NWUXhEakFNQmdOVkJBZ01CVWwwWVd4NU1RMHdDd1lEVlFRSERBUlFhWE5oTVJjd0ZRWURWUVFLREE1dmNHVnVjM0JqYjI5d0xtOXlaekVOTUFzR0ExVUVDd3dFZEdWemRERVNNQkFHQTFVRUF3d0pSWEp2WjJGMGIzSmxNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXo4b3ptb1R3c3ZHL1VMdXcxQ0lJbGovSzhxbng2cVRQZ1ZKdTBCamxqMjBpYkNnLzlHcHhkWjA4bHoyTmFPU21mOVhzdTFTYk1wMHBRTUppT0JMZ2ROck1aWGpCYk9jUmo4Vm9tdFBFVkoyZFJWeWh4aVV6WnVJb0lQM0pCSDZQSVRkYkxqRXF3RmV4ODhsTnJoaVR4bW1IRlBwaWQzUm5keERmdHFaRWxWQTU5SUg2alNVRXN2d054OWtrOUNrYlhPb3JNV0RIVnVteFVPZmNUd1ByOXZDNkI4eDdTbVcvK1htd2w4OGpXbmtpSXJwQkVtQ3Y4eEQ0S3JkVGoyT2RNZVdkOFU2S3VLWXNZT0ZmMzljckROemFBVEx6NHNtMm1RMzRQaGZ2UG1QUHpxVDAzNHRua2IvWVZQRXhtaDBaa25LamRlcFk1eTNNNVZReGpOUVpYUUlEQVFBQk1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQkVEa1piVTFOV2dXQ1ZUZVB3RFEwNm45ZUxhT3RkVkZnS3NTQnl3Y0VMTkZVUFNBazduUUttenhRRFVna2dGTFFZcDJwOHFKRXRIQ2dxeFU1OVJHRHJQUEpXSDB3UWZhcU8zRW5kYS9hK2ZFcTdLeElTaS9peWZRM0tOeGV3aURJSVNTQWJUZ1ptcng0R1g1bWNwSjJ1YUlhSDBYdlV1cGFZNHFac3pndlEwdGVBSnNDSHgxNW8zbk1CV0tUQmNlcGlCYVAvRm1wZm1KdXBoQzNxc2dESHRLS2lxaGZURGk5Y1VhelYyZTI5alpFOHdUZjhlWVBBeHhtVER5MGdoQ2l1ZVFPaG11dXZveHkrNkN4SS91TkhsZHMzbXBJQmx0bGY2OHNha0FYN2RNcFFvd0l6enZWQmVwWjQ2Z21KaCtOYStLNk53aStoSGx6RFhMb21QK1dNIl0sIng1dCI6IlVnUXZHblNNUnBVTkNnZFZseFAyQk1BVlBySSJ9.",
-				".==SIGNATURE==\""
+				".__SIGNATURE__\""
 				);
 		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
@@ -1113,7 +1113,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"p2\":\"testNegoziazioneP2\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6ImFwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCIsImtpZCI6ImVyb2dhdG9yZSIsIng1YyI6WyJNSUlEakRDQ0FuU2dBd0lCQWdJRVlXYVVvakFOQmdrcWhraUc5dzBCQVFzRkFEQ0JoakVjTUJvR0NTcUdTSWIzRFFFSkFSWU5ZWEJ2YkdsQWJHbHVheTVwZERFTE1Ba0dBMVVFQmhNQ1NWUXhEakFNQmdOVkJBZ01CVWwwWVd4NU1RMHdDd1lEVlFRSERBUlFhWE5oTVJjd0ZRWURWUVFLREE1dmNHVnVjM0JqYjI5d0xtOXlaekVOTUFzR0ExVUVDd3dFZEdWemRERVNNQkFHQTFVRUF3d0pSWEp2WjJGMGIzSmxNQ0FYRFRJeE1UQXhNekE0TVRFeE5Gb1lEekl4TWpFd09URTVNRGd4TVRFMFdqQ0JoakVjTUJvR0NTcUdTSWIzRFFFSkFSWU5ZWEJ2YkdsQWJHbHVheTVwZERFTE1Ba0dBMVVFQmhNQ1NWUXhEakFNQmdOVkJBZ01CVWwwWVd4NU1RMHdDd1lEVlFRSERBUlFhWE5oTVJjd0ZRWURWUVFLREE1dmNHVnVjM0JqYjI5d0xtOXlaekVOTUFzR0ExVUVDd3dFZEdWemRERVNNQkFHQTFVRUF3d0pSWEp2WjJGMGIzSmxNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXo4b3ptb1R3c3ZHL1VMdXcxQ0lJbGovSzhxbng2cVRQZ1ZKdTBCamxqMjBpYkNnLzlHcHhkWjA4bHoyTmFPU21mOVhzdTFTYk1wMHBRTUppT0JMZ2ROck1aWGpCYk9jUmo4Vm9tdFBFVkoyZFJWeWh4aVV6WnVJb0lQM0pCSDZQSVRkYkxqRXF3RmV4ODhsTnJoaVR4bW1IRlBwaWQzUm5keERmdHFaRWxWQTU5SUg2alNVRXN2d054OWtrOUNrYlhPb3JNV0RIVnVteFVPZmNUd1ByOXZDNkI4eDdTbVcvK1htd2w4OGpXbmtpSXJwQkVtQ3Y4eEQ0S3JkVGoyT2RNZVdkOFU2S3VLWXNZT0ZmMzljckROemFBVEx6NHNtMm1RMzRQaGZ2UG1QUHpxVDAzNHRua2IvWVZQRXhtaDBaa25LamRlcFk1eTNNNVZReGpOUVpYUUlEQVFBQk1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQkVEa1piVTFOV2dXQ1ZUZVB3RFEwNm45ZUxhT3RkVkZnS3NTQnl3Y0VMTkZVUFNBazduUUttenhRRFVna2dGTFFZcDJwOHFKRXRIQ2dxeFU1OVJHRHJQUEpXSDB3UWZhcU8zRW5kYS9hK2ZFcTdLeElTaS9peWZRM0tOeGV3aURJSVNTQWJUZ1ptcng0R1g1bWNwSjJ1YUlhSDBYdlV1cGFZNHFac3pndlEwdGVBSnNDSHgxNW8zbk1CV0tUQmNlcGlCYVAvRm1wZm1KdXBoQzNxc2dESHRLS2lxaGZURGk5Y1VhelYyZTI5alpFOHdUZjhlWVBBeHhtVER5MGdoQ2l1ZVFPaG11dXZveHkrNkN4SS91TkhsZHMzbXBJQmx0bGY2OHNha0FYN2RNcFFvd0l6enZWQmVwWjQ2Z21KaCtOYStLNk53aStoSGx6RFhMb21QK1dNIl0sIng1dCI6IlVnUXZHblNNUnBVTkNnZFZseFAyQk1BVlBySSJ9.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		
@@ -1177,7 +1177,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"p2\":\"testNegoziazioneP2\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6ImFwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCIsImtpZCI6ImVyb2dhdG9yZSIsIng1YyI6WyJNSUlEakRDQ0FuU2dBd0lCQWdJRVlXYVVvakFOQmdrcWhraUc5dzBCQVFzRkFEQ0JoakVjTUJvR0NTcUdTSWIzRFFFSkFSWU5ZWEJ2YkdsQWJHbHVheTVwZERFTE1Ba0dBMVVFQmhNQ1NWUXhEakFNQmdOVkJBZ01CVWwwWVd4NU1RMHdDd1lEVlFRSERBUlFhWE5oTVJjd0ZRWURWUVFLREE1dmNHVnVjM0JqYjI5d0xtOXlaekVOTUFzR0ExVUVDd3dFZEdWemRERVNNQkFHQTFVRUF3d0pSWEp2WjJGMGIzSmxNQ0FYRFRJeE1UQXhNekE0TVRFeE5Gb1lEekl4TWpFd09URTVNRGd4TVRFMFdqQ0JoakVjTUJvR0NTcUdTSWIzRFFFSkFSWU5ZWEJ2YkdsQWJHbHVheTVwZERFTE1Ba0dBMVVFQmhNQ1NWUXhEakFNQmdOVkJBZ01CVWwwWVd4NU1RMHdDd1lEVlFRSERBUlFhWE5oTVJjd0ZRWURWUVFLREE1dmNHVnVjM0JqYjI5d0xtOXlaekVOTUFzR0ExVUVDd3dFZEdWemRERVNNQkFHQTFVRUF3d0pSWEp2WjJGMGIzSmxNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXo4b3ptb1R3c3ZHL1VMdXcxQ0lJbGovSzhxbng2cVRQZ1ZKdTBCamxqMjBpYkNnLzlHcHhkWjA4bHoyTmFPU21mOVhzdTFTYk1wMHBRTUppT0JMZ2ROck1aWGpCYk9jUmo4Vm9tdFBFVkoyZFJWeWh4aVV6WnVJb0lQM0pCSDZQSVRkYkxqRXF3RmV4ODhsTnJoaVR4bW1IRlBwaWQzUm5keERmdHFaRWxWQTU5SUg2alNVRXN2d054OWtrOUNrYlhPb3JNV0RIVnVteFVPZmNUd1ByOXZDNkI4eDdTbVcvK1htd2w4OGpXbmtpSXJwQkVtQ3Y4eEQ0S3JkVGoyT2RNZVdkOFU2S3VLWXNZT0ZmMzljckROemFBVEx6NHNtMm1RMzRQaGZ2UG1QUHpxVDAzNHRua2IvWVZQRXhtaDBaa25LamRlcFk1eTNNNVZReGpOUVpYUUlEQVFBQk1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQkVEa1piVTFOV2dXQ1ZUZVB3RFEwNm45ZUxhT3RkVkZnS3NTQnl3Y0VMTkZVUFNBazduUUttenhRRFVna2dGTFFZcDJwOHFKRXRIQ2dxeFU1OVJHRHJQUEpXSDB3UWZhcU8zRW5kYS9hK2ZFcTdLeElTaS9peWZRM0tOeGV3aURJSVNTQWJUZ1ptcng0R1g1bWNwSjJ1YUlhSDBYdlV1cGFZNHFac3pndlEwdGVBSnNDSHgxNW8zbk1CV0tUQmNlcGlCYVAvRm1wZm1KdXBoQzNxc2dESHRLS2lxaGZURGk5Y1VhelYyZTI5alpFOHdUZjhlWVBBeHhtVER5MGdoQ2l1ZVFPaG11dXZveHkrNkN4SS91TkhsZHMzbXBJQmx0bGY2OHNha0FYN2RNcFFvd0l6enZWQmVwWjQ2Z21KaCtOYStLNk53aStoSGx6RFhMb21QK1dNIl0sIng1dCI6IlVnUXZHblNNUnBVTkNnZFZseFAyQk1BVlBySSJ9.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
 				);
 		
@@ -1206,7 +1206,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"p2\":\"testNegoziazioneP2\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6ImFwcGxpY2F0aW9uL3gtd3d3LWZvcm0tdXJsZW5jb2RlZCIsImtpZCI6ImVyb2dhdG9yZSIsIng1YyI6WyJNSUlEakRDQ0FuU2dBd0lCQWdJRVlXYVVvakFOQmdrcWhraUc5dzBCQVFzRkFEQ0JoakVjTUJvR0NTcUdTSWIzRFFFSkFSWU5ZWEJ2YkdsQWJHbHVheTVwZERFTE1Ba0dBMVVFQmhNQ1NWUXhEakFNQmdOVkJBZ01CVWwwWVd4NU1RMHdDd1lEVlFRSERBUlFhWE5oTVJjd0ZRWURWUVFLREE1dmNHVnVjM0JqYjI5d0xtOXlaekVOTUFzR0ExVUVDd3dFZEdWemRERVNNQkFHQTFVRUF3d0pSWEp2WjJGMGIzSmxNQ0FYRFRJeE1UQXhNekE0TVRFeE5Gb1lEekl4TWpFd09URTVNRGd4TVRFMFdqQ0JoakVjTUJvR0NTcUdTSWIzRFFFSkFSWU5ZWEJ2YkdsQWJHbHVheTVwZERFTE1Ba0dBMVVFQmhNQ1NWUXhEakFNQmdOVkJBZ01CVWwwWVd4NU1RMHdDd1lEVlFRSERBUlFhWE5oTVJjd0ZRWURWUVFLREE1dmNHVnVjM0JqYjI5d0xtOXlaekVOTUFzR0ExVUVDd3dFZEdWemRERVNNQkFHQTFVRUF3d0pSWEp2WjJGMGIzSmxNSUlCSWpBTkJna3Foa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXo4b3ptb1R3c3ZHL1VMdXcxQ0lJbGovSzhxbng2cVRQZ1ZKdTBCamxqMjBpYkNnLzlHcHhkWjA4bHoyTmFPU21mOVhzdTFTYk1wMHBRTUppT0JMZ2ROck1aWGpCYk9jUmo4Vm9tdFBFVkoyZFJWeWh4aVV6WnVJb0lQM0pCSDZQSVRkYkxqRXF3RmV4ODhsTnJoaVR4bW1IRlBwaWQzUm5keERmdHFaRWxWQTU5SUg2alNVRXN2d054OWtrOUNrYlhPb3JNV0RIVnVteFVPZmNUd1ByOXZDNkI4eDdTbVcvK1htd2w4OGpXbmtpSXJwQkVtQ3Y4eEQ0S3JkVGoyT2RNZVdkOFU2S3VLWXNZT0ZmMzljckROemFBVEx6NHNtMm1RMzRQaGZ2UG1QUHpxVDAzNHRua2IvWVZQRXhtaDBaa25LamRlcFk1eTNNNVZReGpOUVpYUUlEQVFBQk1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQkVEa1piVTFOV2dXQ1ZUZVB3RFEwNm45ZUxhT3RkVkZnS3NTQnl3Y0VMTkZVUFNBazduUUttenhRRFVna2dGTFFZcDJwOHFKRXRIQ2dxeFU1OVJHRHJQUEpXSDB3UWZhcU8zRW5kYS9hK2ZFcTdLeElTaS9peWZRM0tOeGV3aURJSVNTQWJUZ1ptcng0R1g1bWNwSjJ1YUlhSDBYdlV1cGFZNHFac3pndlEwdGVBSnNDSHgxNW8zbk1CV0tUQmNlcGlCYVAvRm1wZm1KdXBoQzNxc2dESHRLS2lxaGZURGk5Y1VhelYyZTI5alpFOHdUZjhlWVBBeHhtVER5MGdoQ2l1ZVFPaG11dXZveHkrNkN4SS91TkhsZHMzbXBJQmx0bGY2OHNha0FYN2RNcFFvd0l6enZWQmVwWjQ2Z21KaCtOYStLNk53aStoSGx6RFhMb21QK1dNIl0sIng1dCI6IlVnUXZHblNNUnBVTkNnZFZseFAyQk1BVlBySSJ9.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
 				);
 		
@@ -1249,7 +1249,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsImtpZCI6IlBFUlMtRFlOQU1JQyIsIng1dSI6Imh0dHA6Ly90ZXN0L0RZTkFNSUMiLCJ4NXQjUzI1NiI6IjZtQ29CbG1VUTY4T3M4RGJfdGxrbVI5WTZvNmFBVEFXWDY2Sl83ZGZ3TjQifQ.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
@@ -1284,7 +1284,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsImtpZCI6IlBFUlMtRFlOQU1JQyIsIng1dSI6Imh0dHA6Ly90ZXN0L0RZTkFNSUMiLCJ4NXQjUzI1NiI6IjZtQ29CbG1VUTY4T3M4RGJfdGxrbVI5WTZvNmFBVEFXWDY2Sl83ZGZ3TjQifQ.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		
@@ -1345,7 +1345,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsImtpZCI6IlBFUlMtRFlOQU1JQyIsIng1dSI6Imh0dHA6Ly90ZXN0L0RZTkFNSUMiLCJ4NXQjUzI1NiI6IjZtQ29CbG1VUTY4T3M4RGJfdGxrbVI5WTZvNmFBVEFXWDY2Sl83ZGZ3TjQifQ.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
 				);
 		
@@ -1371,7 +1371,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"processComplete\":1",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsImtpZCI6IlBFUlMtRFlOQU1JQyIsIng1dSI6Imh0dHA6Ly90ZXN0L0RZTkFNSUMiLCJ4NXQjUzI1NiI6IjZtQ29CbG1VUTY4T3M4RGJfdGxrbVI5WTZvNmFBVEFXWDY2Sl83ZGZ3TjQifQ.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
 				);
 		
@@ -1430,7 +1430,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"p2\":\"testNegoziazioneP2\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBETkQifQ.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
@@ -1484,7 +1484,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"p2\":\"testNegoziazioneP2\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBETkQifQ.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		
@@ -1532,7 +1532,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"p2\":\"testNegoziazioneP2\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBETkQifQ.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
 				);
 		
@@ -1561,7 +1561,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"p2\":\"testNegoziazioneP2\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBETkQifQ.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
 				);
 		
@@ -1627,7 +1627,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"clientId\":\"client-form-DYNAMIC\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBETkQifQ.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
@@ -1683,7 +1683,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"clientId\":\"client-form-DYNAMIC\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBETkQifQ.",
-				".==SIGNATURE==\"");
+				".__SIGNATURE__\"");
 		String idRichiestaOriginale_1 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
 		
@@ -1732,7 +1732,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"clientId\":\"client-form-DYNAMIC\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBETkQifQ.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
 				);
 		
@@ -1762,7 +1762,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"clientId\":\"client-form-DYNAMIC\"",
 				"\"jwtClientAssertion\":",
 				"\"token\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBETkQifQ.",
-				".==SIGNATURE==\"",
+				".__SIGNATURE__\"",
 				"\"transactionId\":\""+idRichiestaOriginale_1+"\""
 				);
 		

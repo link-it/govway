@@ -69,6 +69,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.controllo_traffico.constants.CacheAlgorithm;
@@ -216,6 +217,7 @@ import org.openspcoop2.protocol.sdk.state.RequestConfig;
 import org.openspcoop2.protocol.sdk.state.RequestThreadContext;
 import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.ErroriProperties;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
 import org.openspcoop2.security.message.WsuIdAllocator;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
@@ -343,6 +345,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 	private TimerStatisticheThread threadGenerazioneStatisticheGiornaliere;
 	private TimerStatisticheThread threadGenerazioneStatisticheSettimanali;
 	private TimerStatisticheThread threadGenerazioneStatisticheMensili;
+	private TimerStatisticheThread threadPdndTracciamentoGenerazione;
+	private TimerStatisticheThread threadPdndTracciamentoPubblicazione;
 	
 	/** Timer per la gestione delle chiavi da PDND */
 	private TimerGestoreChiaviPDND threadGestoreChiaviPDND;
@@ -2303,6 +2307,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					}
 				}
 				
+				// Inizializzazione SignalHub
+				if(ProtocolFactoryManager.getInstance().existsProtocolFactory(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME)) {
+					CostantiDB.setServiziDigestEnabled(ModIUtils.isSignalHubEnabled());
+				}
+				
 				OpenSPCoop2Startup.logStartupInfo("ProtocolFactory default: "+protocolFactoryManager.getDefaultProtocolFactory().getProtocol());
 			} catch(Exception e) {
 				this.logError("Initialize ProtocolFactoryManager failed: "+e.getMessage());
@@ -3848,6 +3857,42 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					msgDiag.logPersonalizzato("disabilitato");
 					msgDiag.setPrefixMsgPersonalizzati(null);
 				}
+				
+				// pdnd generazione tracciamento
+				String idTimerPdndTracciamentoGenerazione = "Timer"+TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO.getValue();
+				if(propertiesReader.isStatistichePdndTracciamentoGenerazioneEnabled()) {
+					try{
+						OpenSPCoop2Startup.this.threadPdndTracciamentoGenerazione = 
+								new TimerStatisticheThread(propertiesReader.getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO);
+						OpenSPCoop2Startup.this.threadPdndTracciamentoGenerazione.start();
+						TimerStatisticheLib.setSTATE_PDND_TRACCIAMENTO_GENERAZIONE(TimerState.ENABLED);
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Avvio timer (thread) '"+idTimerPdndTracciamentoGenerazione+"'");
+					}
+				}else{
+					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE);
+					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, idTimerPdndTracciamentoGenerazione);
+					msgDiag.logPersonalizzato("disabilitato");
+					msgDiag.setPrefixMsgPersonalizzati(null);
+				}
+				
+				// pdnd generazione pubblicazione
+				String idTimerPdndTracciamentoPubblicazione = "Timer"+TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO.getValue();
+				if(propertiesReader.isStatistichePdndTracciamentoPubblicazioneEnabled()) {
+					try{
+						OpenSPCoop2Startup.this.threadPdndTracciamentoPubblicazione = 
+								new TimerStatisticheThread(propertiesReader.getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds(), TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO);
+						OpenSPCoop2Startup.this.threadPdndTracciamentoPubblicazione.start();
+						TimerStatisticheLib.setSTATE_PDND_TRACCIAMENTO_PUBBLICAZIONE(TimerState.ENABLED);
+					}catch(Exception e){
+						msgDiag.logStartupError(e,"Avvio timer (thread) '"+idTimerPdndTracciamentoPubblicazione+"'");
+					}
+				}else{
+					msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_STATISTICHE);
+					msgDiag.addKeyword(CostantiPdD.KEY_TIMER, idTimerPdndTracciamentoPubblicazione);
+					msgDiag.logPersonalizzato("disabilitato");
+					msgDiag.setPrefixMsgPersonalizzati(null);
+				}
 			}
 			else{
 				// Tutti i timers sono disabilitati
@@ -4409,7 +4454,33 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(properties.isStatisticheGenerazioneBaseMensileEnabled()) {
 						throw new CoreException("Thread per la generazione delle statistiche mensili non trovato");
 					}
-				}	
+				}
+				
+				Logger logPdndTracciamentoGenerazione = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO, debugStatistiche);
+				if(debugStatistiche)
+					logPdndTracciamentoGenerazione.debug("Recupero thread per la generazione dei tracciamenti PDND ...");
+				if(OpenSPCoop2Startup.this.threadPdndTracciamentoGenerazione!=null){
+					OpenSPCoop2Startup.this.threadPdndTracciamentoGenerazione.setStop(true);
+					if(debugStatistiche)
+						logPdndTracciamentoGenerazione.debug("Richiesto stop al thread per la generazione dei tracciamenti PDND");
+				}else{
+					if(properties.isStatistichePdndTracciamentoGenerazioneEnabled()) {
+						throw new CoreException("Thread per la generazione dei tracciamenti PDND non trovato");
+					}
+				}
+				
+				Logger logPdndTracciamentoPubblicazione = OpenSPCoop2Logger.getLoggerOpenSPCoopStatistiche(TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO, debugStatistiche);
+				if(debugStatistiche)
+					logPdndTracciamentoPubblicazione.debug("Recupero thread per la pubblicazione dei tracciamenti PDND ...");
+				if(OpenSPCoop2Startup.this.threadPdndTracciamentoPubblicazione!=null){
+					OpenSPCoop2Startup.this.threadPdndTracciamentoPubblicazione.setStop(true);
+					if(debugStatistiche)
+						logPdndTracciamentoPubblicazione.debug("Richiesto stop al thread per la pubblicazione dei tracciamenti PDND");
+				}else{
+					if(properties.isStatistichePdndTracciamentoPubblicazioneEnabled()) {
+						throw new CoreException("Thread per la pubblicazione dei tracciamenti PDND non trovato");
+					}
+				}
 				
 			}
 		}catch (Throwable e) {

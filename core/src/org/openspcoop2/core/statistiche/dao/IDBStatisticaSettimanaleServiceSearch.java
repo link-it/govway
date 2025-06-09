@@ -27,6 +27,7 @@ import org.openspcoop2.generic_project.dao.IDBServiceSearchWithoutId;
 * Service can be used for research objects on the backend of type org.openspcoop2.core.statistiche.StatisticaSettimanale  
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

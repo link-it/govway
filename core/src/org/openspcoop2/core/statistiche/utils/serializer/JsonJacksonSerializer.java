@@ -25,6 +25,7 @@ import org.openspcoop2.utils.beans.WriteToSerializerType;
  * Serializer of beans with json
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

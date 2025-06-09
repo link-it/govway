@@ -54,6 +54,8 @@ import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.logger.filetrace.FileTraceGovWayState;
 import org.openspcoop2.pdd.services.ServicesUtils;
 import org.openspcoop2.protocol.basic.archive.BasicArchive;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.SemaphoreLock;
@@ -600,6 +602,20 @@ public class InitListener implements ServletContextListener {
 				BasicArchive.setNormalizeDescription4000(consoleProperties.isApiDescriptionTruncate4000());
 			} catch (Exception e) {
 				String msgErrore = "Errore durante l'inizializzazione del BasicArchive: " + e.getMessage();
+				InitListener.logError(
+						//					throw new ServletException(
+						msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
+			
+			// SignalHub
+			try {
+				// Inizializzazione SignalHub
+				if(ProtocolFactoryManager.getInstance().existsProtocolFactory(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME)) {
+					CostantiDB.setServiziDigestEnabled(ModIUtils.isSignalHubEnabled());
+				}
+			} catch (Exception e) {
+				String msgErrore = "Errore durante l'inizializzazione del SignalHub: " + e.getMessage();
 				InitListener.logError(
 						//					throw new ServletException(
 						msgErrore,e);

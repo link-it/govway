@@ -187,6 +187,8 @@ public class Costanti {
 	public static final String SEARCH_MISSING_PARAMETERS_VALORE_LABEL_KEY = "commons.search.missing_parameters.valore";
 	public static final String SEARCH_MISSING_PARAMETERS_TIPO_LABEL_KEY = "commons.search.missing_parameters.tipo";
 	public static final String SEARCH_MISSING_PARAMETERS_3D_INFO_LABEL_KEY = "commons.search.missing_parameters.3dInfo";
+	public static final String SEARCH_MISSING_PARAMETERS_PERIODO_DATA_INIZIO_LABEL_KEY = "commons.search.missing_parameters.periodo.dataInizio";
+	public static final String SEARCH_MISSING_PARAMETERS_PERIODO_DATA_FINE_LABEL_KEY = "commons.search.missing_parameters.periodo.dataFine";
 	
 	public static final String SEARCH_TOKEN_ISSUER = "transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.issuer.label";
 	public static final String SEARCH_TOKEN_CLIENT_ID = "transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.clientID.label";

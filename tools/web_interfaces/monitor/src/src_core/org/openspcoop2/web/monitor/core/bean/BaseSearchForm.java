@@ -124,6 +124,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private String idEgov;
 	private String tipoIdMessaggio = TipoMessaggio.Richiesta.name();
 	private String idTransazione;
+	private String purposeId;
 
 	private String tipoNomeMittente;
 	private String tipoNomeDestinatario;
@@ -376,6 +377,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.idEgov = null;
 			this.tipoIdMessaggio = TipoMessaggio.Richiesta.name();
 			this.idTransazione = null;
+			this.purposeId = null;
 
 			this.sortOrder = SortOrder.DESC;
 			this.sortField = null;
@@ -1460,6 +1462,14 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 
 	public void setIdTransazione(String idTransazione) {
 		this.idTransazione = idTransazione;
+	}
+	
+	public String getPurposeId() {
+		return this.purposeId;
+	}
+
+	public void setPurposeId(String purposeId) {
+		this.purposeId = purposeId;
 	}
 
 	public List<SelectItem> getEsitiGruppo() {

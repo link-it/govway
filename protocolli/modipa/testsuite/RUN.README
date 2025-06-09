@@ -300,6 +300,30 @@ Prerequisiti:
 		plugin.enable=true
 		configurazioneGenerale.enable=true
 
++ Per i test sul tracing PDND, installare i timer come batch esterni ed inserire nel file batch-statistiche.properties le seguenti proprieta:
+	statistiche.pdnd.tracciamento.soggetti.enabled=DemoSoggettoErogatore,DemoSoggettoErogatore2
+	statistiche.pdnd.tracciamento.maxAttempts = 3
+
+	statistiche.pdnd.tracciamento.baseUrl=http://127.0.0.1:8091
+	statistiche.pdnd.tracciamento.readTimeout=15000
+	statistiche.pdnd.tracciamento.connectTimeout=10000
+
+	# Credenziali http-basic
+	statistiche.pdnd.tracciamento.http.username=govway
+	statistiche.pdnd.tracciamento.http.password=govway
+
+	statistiche.pdnd.tracciamento.DemoSoggettoErogatore.http.headers=pdd:DemoSoggettoErogatore
+	statistiche.pdnd.tracciamento.DemoSoggettoErogatore2.http.headers=pdd:DemoSoggettoErogatore2
+
++ Impostare la proprieta `batch_path` nel file src/testsuite.properties con il path alla cartella dei batch
+ 
++ Se l'installer è stato fatto girare facendo produrre il batch delle statistiche allora è necessario per la testsuite forzare l'abilitazione dei timer statistici in GovWay con le seguenti proprieta nel file govway_local.properties:
+	org.openspcoop2.pdd.statistiche.generazione.enabled=true
+	org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled=true
+	org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled=true
+	org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled=false
+	org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled=false
+
 + Compilare i test con
 	ant build
 

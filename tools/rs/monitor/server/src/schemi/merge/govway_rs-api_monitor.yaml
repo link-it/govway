@@ -281,6 +281,43 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
+  /monitoraggio/transazioni/purpose-id:
+    get:
+      tags:
+      - "Monitoraggio"
+      summary: "Ricerca semplificata delle transazioni in base all'identificativo\
+        \ finalita"
+      description: "Permette di recuperare i dettagli delle transazioni, gestite su\
+        \ GovWay, ricercandole in base all'identificativo della finalita"
+      operationId: "findAllTransazioniByPurposeId"
+      parameters:
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/sort"
+      - $ref: "#/components/parameters/purpose_id"
+      responses:
+        "200":
+          description: "dettaglio transazione restituito correttamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaTransazioni"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/soggetto"
   /monitoraggio/transazioni/{id}:
     get:
       tags:
@@ -1426,6 +1463,102 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
+  /reportistica/tracing-pdnd:
+    get:
+      tags:
+      - "Reportistica"
+      summary: "Recupera la lista di tracciati della pdnd"
+      description: "Consente di recuperare la configurazione di un servizio esportandola\
+        \ in formato csv, xls"
+      operationId: "getTracingPdndList"
+      parameters:
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/numero_tentativi_tracing"
+      - $ref: "#/components/parameters/stato_tracing"
+      - $ref: "#/components/parameters/stato_tracing_pdnd"
+      - $ref: "#/components/parameters/data_tracing_inizio"
+      - $ref: "#/components/parameters/data_tracing_fine"
+      - $ref: "#/components/parameters/tracing_id"
+      responses:
+        "200":
+          description: "lista dei tracing attivi che rispettano i filtri di ricerca"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaTracingPDND"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/soggetto"
+  /reportistica/tracing-pdnd/{id}/dettagli:
+    get:
+      tags:
+      - "Reportistica"
+      summary: "mostra i dettagli di un tracciamento"
+      description: "mostra i dettagli di un tracciamento"
+      operationId: "getDetailsTracingPdnd"
+      parameters:
+      - $ref: "#/components/parameters/id_tracing_pdnd"
+      responses:
+        "200":
+          description: "valore del tracciato"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetailsTracingPDND"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+  /reportistica/tracing-pdnd/{id}/esporta:
+    get:
+      tags:
+      - "Reportistica"
+      summary: "esporta il csv inerente al tracciato"
+      description: "Consente di recuperare il csv del tracciato"
+      operationId: "exportTracingPdnd"
+      parameters:
+      - $ref: "#/components/parameters/id_tracing_pdnd"
+      responses:
+        "200":
+          $ref: "#/components/responses/200ReportStatistico"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
   /status:
     get:
       tags:
@@ -2478,6 +2611,73 @@ components:
       - "client_id_pdnd_informazioni"
       - "username"
       - "email"
+    ListaTracingPDND:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/Lista"
+      - required:
+        - "items"
+        type: "object"
+        properties:
+          items:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/ItemTracingPDND"
+    BaseTracingPDND:
+      type: "object"
+      properties:
+        data_tracciamento:
+          type: "string"
+          format: "date"
+        data_registrazione:
+          type: "string"
+          format: "date-time"
+        tentativi_pubblicazione:
+          type: "integer"
+          format: "int32"
+        stato:
+          $ref: "#/components/schemas/StatoTracing"
+        stato_pdnd:
+          $ref: "#/components/schemas/StatoTracingPDND"
+        tracing_id:
+          type: "string"
+          format: "uuid"
+        id:
+          type: "integer"
+          format: "int64"
+    ItemTracingPDND:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/BaseTracingPDND"
+    DetailsTracingPDND:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/BaseTracingPDND"
+      - type: "object"
+        properties:
+          metodo:
+            $ref: "#/components/schemas/MethodTracingPDND"
+          dettagli_errore:
+            type: "string"
+    StatoTracingPDND:
+      type: "string"
+      enum:
+      - "Qualsiasi"
+      - "Errore"
+      - "Attesa"
+      - "Ok"
+    MethodTracingPDND:
+      type: "string"
+      enum:
+      - "RECOVER"
+      - "REPLACE"
+      - "SUBMIT"
+    StatoTracing:
+      type: "string"
+      enum:
+      - "Qualsiasi"
+      - "Fallita"
+      - "Pubblicata"
     TransazioneExt:
       type: "object"
       allOf:
@@ -2736,6 +2936,8 @@ components:
         username:
           type: "string"
         mail:
+          type: "string"
+        purpose_id:
           type: "string"
     Diagnostico:
       required:
@@ -3361,6 +3563,13 @@ components:
       required: true
       schema:
         type: "string"
+    purpose_id:
+      name: "purpose_id"
+      in: "query"
+      description: "l'identificativo di finalita del token usato (purposeId)"
+      required: true
+      schema:
+        type: "string"
     id_messaggio:
       name: "id"
       in: "query"
@@ -3542,6 +3751,62 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/TokenClaimDistribuzioneStatisticaEnum"
+    numero_tentativi_tracing:
+      name: "tentativi_pubblicazione"
+      in: "query"
+      description: "Specifica il numero di tentativi effettuati da una pubblicazione\
+        \ di tracing"
+      required: false
+      schema:
+        type: "integer"
+        format: "int32"
+    stato_tracing_pdnd:
+      name: "stato_pdnd"
+      in: "query"
+      description: "Specifica lo stato PDND del tracing pubblicato"
+      required: false
+      schema:
+        $ref: "#/components/schemas/StatoTracingPDND"
+    stato_tracing:
+      name: "stato"
+      in: "query"
+      description: "Specifica lo stato della richiesta inviata alla PDND del tracing\
+        \ pubblicato"
+      required: false
+      schema:
+        $ref: "#/components/schemas/StatoTracing"
+    data_tracing_inizio:
+      name: "data_inizio"
+      in: "query"
+      description: "Specifica la data di inizio della ricerca"
+      required: true
+      schema:
+        type: "string"
+        format: "date"
+    data_tracing_fine:
+      name: "data_fine"
+      in: "query"
+      description: "Specifica la data di fine della ricerca"
+      required: true
+      schema:
+        type: "string"
+        format: "date"
+    tracing_id:
+      name: "tracing_id"
+      in: "query"
+      description: "Specifica il tracing id del tracciato"
+      required: false
+      schema:
+        type: "string"
+        format: "uuid"
+    id_tracing_pdnd:
+      name: "id"
+      in: "path"
+      description: "identificativo del tracciato"
+      required: true
+      schema:
+        type: "integer"
+        format: "int64"
     profilo:
       name: "profilo"
       in: "query"

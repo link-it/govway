@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it" template="/templates/defaultTemplate.xhtml">
+	<ui:param
+		value="#{msg['statistichePdndTracing.dettaglio.label']}"
+		name="title" />
+	<ui:define name="navbar">
+		<ul>
+			<li>
+				<a4j:htmlCommandLink action="statistichePdndTracingStart" value="#{msg['menu.reportistica.statistichePdndTracing']}" />
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li>
+				<a4j:htmlCommandLink action="statistichePdndTracingList" value="#{statistichePdndTracingSearchForm.tipoRicercaLabel}" >
+					<f:setPropertyActionListener value="#{true}" target="#{statistichePdndTracingSearchForm.backRicerca}" />
+				</a4j:htmlCommandLink>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:outputText value="#{msg['statistichePdndTracing.dettaglio.label']}" styleClass="ultimo-path"/></li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:keepAlive beanName="statistichePdndTracingBean" />
+		<a4j:loadScript src="/scripts/XRegExp.js" />
+		<a4j:loadScript src="/scripts/shCore.js" />
+		<a4j:loadScript src="/scripts/shBrushXml.js" />
+		<a4j:loadScript src="/scripts/shBrushJson.js" />
+		<a4j:loadStyle src="resource:///css/shCore.css" />
+		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
+		
+		<script type="text/javascript" nonce="#{_csp_random_nonce}">
+		//<![CDATA[
+// 			   var xmlPnl = jQuery("#errorsPnl"); 
+// 			   var bodyWrapperPanel = jQuery("#bodyWrapper");
+// 			   jQuery(window).resize(function(){lineWrap()});
+// 			   jQuery(document).ready(inizializza);
+			   
+// 			   SyntaxHighlighter.all();
+// 			   lineWrap();
+			   
+// 			   function inizializza(){
+// 				   checkWidth(xmlPnl,bodyWrapperPanel);
+// 				   lineWrap();
+// 			   }
+			   
+			   function visualizzaErrori() {
+				   var xmlPnl = jQuery("#errorsPnl"); 
+				   var bodyWrapperPanel = jQuery("#bodyWrapper");
+				   jQuery(window).resize(function(){lineWrap()});
+				   
+				   SyntaxHighlighter.highlight();
+				   checkWidth(xmlPnl,bodyWrapperPanel);
+				   lineWrap();
+				
+				}
+			//]]>
+		</script>
+		
+		
+		<rich:panel id="panelDettaglioTransazione" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing}">
+			<f:facet name="header">
+				<h:outputText id="outDettagli" value="#{msg['statistichePdndTracing.dettaglio.label']}" />
+			</f:facet>
+			
+			<rich:tabPanel switchType="ajax" selectedTab="#{statistichePdndTracingBean.selectedTab}">
+				<rich:tab name="informazioniGenerali">
+					<f:facet name="label">
+						<h:outputText id="outTitleTabInfo" value="#{msg['statistichePdndTracing.dettaglio.informazioniGenerali.tab.label']}" />
+				    </f:facet>
+				    <ui:include src="/stat/includes/dettaglioStatisticaPdndInformazioniGenerali.xhtml" >
+				    </ui:include>
+			    </rich:tab>
+				<rich:tab name="errorDetails" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.errorDetails}" oncomplete="visualizzaErrori()">
+					<f:facet name="label">
+						<h:outputText id="outTitleTabErrors" value="#{msg['statistichePdndTracing.dettaglio.errori.tab.label']}" />
+				    </f:facet>
+				    <ui:include src="/stat/includes/dettaglioStatisticaPdndErrors.xhtml" >
+				    </ui:include>
+			    </rich:tab>
+			
+			</rich:tabPanel>
+			
+		</rich:panel>
+		
+	</ui:define>
+
+</ui:composition>

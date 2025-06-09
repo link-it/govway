@@ -14,6 +14,7 @@
 -- DROP INDEX INDEX_TRSA_SEND ON transazioni_sa ;
 -- DROP INDEX INDEX_TRSA_IN_QUEUE ON transazioni_sa ;
 -- DROP INDEX index_transazioni_sa_1 ON transazioni_sa ;
+-- DROP INDEX INDEX_TR_PURPOSE_ID ON transazioni ;
 -- DROP INDEX INDEX_TR_CORRELAZIONE_RES ON transazioni ;
 -- DROP INDEX INDEX_TR_CORRELAZIONE_REQ ON transazioni ;
 -- DROP INDEX INDEX_TR_RIF_RICHIESTA ON transazioni ;
@@ -22,6 +23,7 @@
 -- DROP INDEX INDEX_TR_FILTROD_REQ_2 ON transazioni ;
 -- DROP INDEX INDEX_TR_FILTROD_RES ON transazioni ;
 -- DROP INDEX INDEX_TR_FILTROD_REQ ON transazioni ;
+-- DROP INDEX INDEX_TR_PDND_STATS ON transazioni ;
 -- DROP INDEX INDEX_TR_STATS ON transazioni ;
 -- DROP INDEX INDEX_TR_SEARCH ON transazioni ;
 -- DROP INDEX INDEX_TR_FULL ON transazioni ;

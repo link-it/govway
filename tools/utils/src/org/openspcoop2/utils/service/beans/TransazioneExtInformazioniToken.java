@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtInformazioniToken", propOrder =
-    { "clientId", "issuer", "subject", "username", "mail"
+    { "clientId", "issuer", "subject", "username", "mail", "purposeId"
 })
 
 @XmlRootElement(name="TransazioneExtInformazioniToken")
@@ -55,6 +55,10 @@ public class TransazioneExtInformazioniToken  {
   
   @Schema(description = "")
   private String mail = null;
+  @XmlElement(name="purpose_id")
+  
+  @Schema(description = "")
+  private String purposeId = null;
  /**
    * Get clientId
    * @return clientId
@@ -150,6 +154,25 @@ public class TransazioneExtInformazioniToken  {
     return this;
   }
 
+ /**
+   * Get purposeId
+   * @return purposeId
+  **/
+  @JsonProperty("purpose_id")
+  @Valid
+  public String getPurposeId() {
+    return this.purposeId;
+  }
+
+  public void setPurposeId(String purposeId) {
+    this.purposeId = purposeId;
+  }
+
+  public TransazioneExtInformazioniToken purposeId(String purposeId) {
+    this.purposeId = purposeId;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -161,6 +184,7 @@ public class TransazioneExtInformazioniToken  {
     sb.append("    subject: ").append(TransazioneExtInformazioniToken.toIndentedString(this.subject)).append("\n");
     sb.append("    username: ").append(TransazioneExtInformazioniToken.toIndentedString(this.username)).append("\n");
     sb.append("    mail: ").append(TransazioneExtInformazioniToken.toIndentedString(this.mail)).append("\n");
+    sb.append("    purposeId: ").append(TransazioneExtInformazioniToken.toIndentedString(this.purposeId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

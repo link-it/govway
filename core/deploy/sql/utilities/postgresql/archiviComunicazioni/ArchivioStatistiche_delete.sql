@@ -1,3 +1,4 @@
+DELETE FROM statistiche_pdnd_tracing;
 DELETE FROM stat_mensili_contenuti;
 DELETE FROM statistiche_mensili;
 DELETE FROM stat_settimane_contenuti;

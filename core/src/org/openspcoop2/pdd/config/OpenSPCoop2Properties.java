@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
@@ -173,6 +174,7 @@ import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.CertificateValidityCheck;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.slf4j.Logger;
 
@@ -2774,17 +2776,34 @@ public class OpenSPCoop2Properties {
 				if(this.isStatisticheGenerazioneBaseMensileEnabled()) {
 					this.isStatisticheGenerazioneBaseMensileEnabledUltimoMese();
 				}
+				this.isStatistichePdndTracciamentoGenerazioneEnabled();
+				this.isStatistichePdndTracciamentoPubblicazioneEnabled();
 				this.isStatisticheGenerazioneAttendiCompletamentoTransazioniInFasiIntermedie();
 				this.getStatisticheGenerazioneTradeOffMs();
 				this.getStatisticheOrarieGenerazioneTimerIntervalSeconds();
 				this.getStatisticheGiornaliereGenerazioneTimerIntervalSeconds();
 				this.getStatisticheSettimanaliGenerazioneTimerIntervalSeconds();
 				this.getStatisticheMensiliGenerazioneTimerIntervalSeconds();
+				
+				
 				this.getStatisticheGenerazioneTimerLockMaxLife();
 				this.getStatisticheGenerazioneTimerLockIdleTime();
 				this.getStatisticheGenerazioneTimerLockAttesaAttiva();
 				this.getStatisticheGenerazioneTimerLockCheckInterval();
 				this.getStatisticheGenerazioneExternalForceIndexRepository();
+				
+				
+				this.isStatistichePdndTracciamentoErogazioniEnabled();
+				this.isStatistichePdndTracciamentoFruizioniEnabled();
+				this.isStatistichePdndTracciamentoGenerazioneEnabled();
+				this.isStatistichePdndTracciamentoPubblicazioneEnabled();
+				
+				this.getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds();
+				this.getStatistichePdndTracciamentoHttpRequestConfig();
+				this.getStatistichePdndTracciamentoMaxAttempts();
+				this.getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds();
+				this.getStatistichePdndTracciamentoSoggettiEnabled();
+				
 			}
 			
 			if(this.isGestoreChiaviPDNDEnabled()) {
@@ -34629,8 +34648,212 @@ public class OpenSPCoop2Properties {
 		return null;
 	}
 	
+	/* ------------- Tracing PDND ---------------------*/
+
+	private Integer getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds = null;
+	public int getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds() throws CoreException {	
+		if(this.getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds==null){
+			String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.generazione.timer.intervalloSecondi";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key +"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds;
+	}
 	
+	private Integer getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds = null;
+	public int getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds() throws CoreException {	
+		if(this.getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds==null){
+			String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.pubblicazione.timer.intervalloSecondi";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key +"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds;
+	}
 	
+	private Boolean isStatistichePdndTracciamentoGenerazione = null;
+	public boolean isStatistichePdndTracciamentoGenerazioneEnabled() {	
+		String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.generazione.enabled";
+		if(this.isStatistichePdndTracciamentoGenerazione==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop '" + key + "' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				this.isStatistichePdndTracciamentoGenerazione = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key + "', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isStatistichePdndTracciamentoGenerazione = true;
+			}    
+		}
+
+		return this.isStatistichePdndTracciamentoGenerazione;
+	}
+	
+	private Boolean isStatistichePdndTracciamentoPubblicazione = null;
+	public boolean isStatistichePdndTracciamentoPubblicazioneEnabled() {	
+		String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.pubblicazione.enabled";
+		if(this.isStatistichePdndTracciamentoPubblicazione==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop '" + key + "' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				this.isStatistichePdndTracciamentoPubblicazione = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key + "', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isStatistichePdndTracciamentoPubblicazione = true;
+			}    
+		}
+
+		return this.isStatistichePdndTracciamentoPubblicazione;
+	}
+	
+	private Set<String> getStatistichePdndTracciamentoSoggettiEnabled = null;
+	private boolean isStatistichePdndTracciamentoSoggettiDisabled = false;
+	public boolean isStatistichePdndTracciamentoSoggettiDisabled() {
+		return this.isStatistichePdndTracciamentoSoggettiDisabled;
+	}
+	public Set<String> getStatistichePdndTracciamentoSoggettiEnabled() throws CoreException {	
+		if(this.getStatistichePdndTracciamentoSoggettiEnabled==null){
+			String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.soggetti.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if (name == null || StringUtils.isEmpty(name)) {
+					this.isStatistichePdndTracciamentoSoggettiDisabled = true;
+					this.getStatistichePdndTracciamentoSoggettiEnabled = Set.of();
+				} 
+				else {
+					name = name.trim();
+					if("*".equals(name)) {
+						this.getStatistichePdndTracciamentoSoggettiEnabled = Set.of();
+					}
+					else {
+						this.getStatistichePdndTracciamentoSoggettiEnabled = Set.of(name.split(","));
+					}
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key +"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getStatistichePdndTracciamentoSoggettiEnabled;
+	}
+	
+	private Integer getStatistichePdndTracciamentoMaxAttempts = null;
+	public Integer getStatistichePdndTracciamentoMaxAttempts() throws CoreException {	
+		if(this.getStatistichePdndTracciamentoMaxAttempts==null){
+			String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.maxAttempts";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					this.getStatistichePdndTracciamentoMaxAttempts = 0;
+				} else {
+					name = name.trim();
+					this.getStatistichePdndTracciamentoMaxAttempts = Integer.valueOf(name);
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key +"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getStatistichePdndTracciamentoMaxAttempts == 0 ? null : this.getStatistichePdndTracciamentoMaxAttempts;
+	}
+	
+	private Boolean isStatistichePdndTracciamentoErogazioniEnabled = null;
+	public boolean isStatistichePdndTracciamentoErogazioniEnabled() {	
+		String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.erogazioni.enabled";
+		if(this.isStatistichePdndTracciamentoErogazioniEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop '" + key + "' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				this.isStatistichePdndTracciamentoErogazioniEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key + "', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isStatistichePdndTracciamentoErogazioniEnabled = true;
+			}    
+		}
+
+		return this.isStatistichePdndTracciamentoErogazioniEnabled;
+	}
+	
+	private Boolean isStatistichePdndTracciamentoFruizioniEnabled = null;
+	public boolean isStatistichePdndTracciamentoFruizioniEnabled() {	
+		String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.fruizioni.enabled";
+		if(this.isStatistichePdndTracciamentoFruizioniEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					this.logWarn("Proprieta' di openspcoop '" + key + "' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				this.isStatistichePdndTracciamentoFruizioniEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key + "', viene utilizzato il default=true : "+e.getMessage(),e);
+				this.isStatistichePdndTracciamentoFruizioniEnabled = true;
+			}    
+		}
+
+		return this.isStatistichePdndTracciamentoFruizioniEnabled;
+	}
+	
+	private HttpRequestConfig statistichePdndTracciamentoHttpRequestConfig = null;
+	public HttpRequestConfig getStatistichePdndTracciamentoHttpRequestConfig() {	
+		String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.fruizioni.enabled";
+		if(this.statistichePdndTracciamentoHttpRequestConfig==null){
+			try{ 
+				this.statistichePdndTracciamentoHttpRequestConfig = new HttpRequestConfig("org.openspcoop2.pdd.statistiche.pdnd.tracciamento", p -> {
+					try {
+						return this.reader.getValueConvertEnvProperties(key);
+					} catch (UtilsException e) {
+						return null;
+					}
+				});
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key + "', viene utilizzato il default=true : "+e.getMessage(),e);
+			}    
+		}
+
+		return this.statistichePdndTracciamentoHttpRequestConfig;
+	}
 	
 	
 	

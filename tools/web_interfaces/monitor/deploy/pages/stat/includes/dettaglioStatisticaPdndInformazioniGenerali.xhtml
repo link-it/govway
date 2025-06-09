@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="informazioniGeneraliPnl">
+		<h:panelGrid id="panelGridInformazioniGeneraliDettaglio" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth170,valueAllineataSx">
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="#{msg['statistichePdndTracing.dettaglio.informazioniGenerali.label']}" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<h:outputLabel value="#{msg['statistichePdndTracing.dataTracciamento.label']}" id="dataTracciamentoLabel" styleClass="outputFieldLabel" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.dataTracciamento}"/>
+			<h:outputText id="outDataTracciamento" value="#{statistichePdndTracingBean.statisticaPdndTracing.dataTracciamento}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.dataTracciamento}">
+				<f:convertDateTime pattern="yyyy-MM-dd" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
+		
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelSoggetto" value="#{msg['statistichePdndTracing.soggetto.label']}" rendered="#{statistichePdndTracingBean.showFiltroSoggetti}" />
+			<h:outputText id="outSoggetto" value="#{statistichePdndTracingBean.statisticaPdndTracing.soggettoReadable}" rendered="#{statistichePdndTracingBean.showFiltroSoggetti}" />
+		
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelStato" value="#{msg['statistichePdndTracing.stato.label']}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.stato}" />
+			<h:outputText id="outStato" value="#{statistichePdndTracingBean.statisticaPdndTracing.statoReadable}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.stato}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelStatoPdnd" value="#{msg['statistichePdndTracing.statoPdnd.label']}" rendered="#{statistichePdndTracingBean.statisticaPdndTracing.showStatoPdnd}" />
+			<h:outputText id="outStatoPdnd" value="#{statistichePdndTracingBean.statisticaPdndTracing.statoPdndReadable}" rendered="#{statistichePdndTracingBean.statisticaPdndTracing.showStatoPdnd}" />
+
+			<h:outputLabel value="#{msg['statistichePdndTracing.dataRegistrazione.label']}" id="dataRegistrazioneLabel" styleClass="outputFieldLabel" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.dataRegistrazione}"/>
+			<h:outputText id="outDataRegistrazione" value="#{statistichePdndTracingBean.statisticaPdndTracing.dataRegistrazione}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.dataRegistrazione}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
+
+		</h:panelGrid>
+		
+		<h:panelGrid id="panelGridInformazioniPubblicazioneDettaglio" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth170,valueAllineataSx">
+		
+			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="#{msg['statistichePdndTracing.dettaglio.informazioniPubblicazione.label']}" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTracingId" value="#{msg['statistichePdndTracing.tracingId.label']}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.tracingId}" />
+			<h:outputText id="outTracingId" value="#{statistichePdndTracingBean.statisticaPdndTracing.tracingId}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.tracingId}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelMethod" value="#{msg['statistichePdndTracing.method.label']}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.method}" />
+			<h:outputText id="outMethod" value="#{statistichePdndTracingBean.statisticaPdndTracing.methodReadable}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.method}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTentativiPubblicazione" value="#{msg['statistichePdndTracing.tentativiPubblicazione.label']}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.tentativiPubblicazione}" />
+			<h:outputText id="outTentativiPubblicazione" value="#{statistichePdndTracingBean.statisticaPdndTracing.tentativiPubblicazioneReadable}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.tentativiPubblicazione}" />
+			
+			<h:outputLabel id="outLabelCsv" styleClass="outputFieldLabel icon-xml" value="Csv" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.csv}"/>
+			<h:panelGroup id="panelCsv" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.csv}">
+				<h:form id="formCsv">
+					<input type="hidden" id="_csrfFormCsv" name="_csrf" value="#{loginBean.csrf}"/>
+                   	<h:commandLink id="exportCsv-iconLink" target="_blank" styleClass="icon-compress" action="#{statistichePdndTracingBean.downloadCsv}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.csv}">
+						<h:outputText id="outEsportaCsv" value="Esporta" />
+					</h:commandLink>
+				</h:form>
+			</h:panelGroup>
+
+		</h:panelGrid>
+		
+	</a4j:outputPanel>
+</ui:composition>

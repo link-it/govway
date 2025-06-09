@@ -1,0 +1,45 @@
+<ui:composition template="/templates/defaultTemplate.xhtml"
+xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:link="http://www.link.it"
+	xmlns:c="http://java.sun.com/jstl/core">
+		
+	<ui:define name="body">
+		<style type="text/css" nonce="#{_csp_random_nonce}">
+			#crumbs {display: none;	}		
+			}
+		</style>
+		<a4j:keepAlive beanName="statistichePdndTracingBean" />
+		<rich:panel id="statistichePdndTracingSearch" >
+		    <f:facet name="header">
+		    	<h:outputText id="titoloFiltri" value="#{msg['menu.reportistica.statistichePdndTracing']}" />
+		    </f:facet>
+		    <div class="form-container noborder">
+				<h:form prependId="false">
+					<input type="hidden" id="_csrfFormTipoRicerca" name="_csrf" value="#{loginBean.csrf}"/>
+					<c:forEach items="#{statistichePdndTracingBean.tipiRicerca}" var="gruppoRicerca">
+						<link:fieldset legend="#{gruppoRicerca.label}" rendered="#{true}" collapsible="false" closed="false">
+							<div class="tipologie">
+								<c:forEach items="#{gruppoRicerca.listaRicerche}" var="tipoRicerca">
+									<a4j:outputPanel styleClass="tipologia-button-div" layout="block">
+										<a4j:htmlCommandLink action="#{tipoRicerca.action}"  rendered="#{tipoRicerca.rendered}" styleClass="tipologia-button"
+											 actionListener="#{statistichePdndTracingBean.search.initSearchListener}" >
+											<i class="material-icons md-48">#{tipoRicerca.icona}</i>
+											<span class="tipologia-button-text">#{tipoRicerca.label}</span>
+											<f:setPropertyActionListener value="true" target="#{statistichePdndTracingBean.updateTipoRicerca}" />
+											<f:setPropertyActionListener value="#{tipoRicerca.value}" target="#{statistichePdndTracingBean.tipoRicerca}" />
+										</a4j:htmlCommandLink>
+									</a4j:outputPanel>
+								</c:forEach>
+							</div>
+						</link:fieldset>
+					</c:forEach>
+				</h:form>
+			</div>
+		</rich:panel>
+	</ui:define>
+</ui:composition>

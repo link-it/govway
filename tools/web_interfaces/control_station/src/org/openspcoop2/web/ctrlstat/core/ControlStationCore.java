@@ -1735,6 +1735,8 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoGenerazione = new HashMap<>();
+	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND = new HashMap<>();
 	private Map<String, String> jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote = new HashMap<>();
@@ -2086,6 +2088,12 @@ public class ControlStationCore {
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili.get(alias);
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoGenerazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoGenerazione.get(alias);
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione(String alias) {
+		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione.get(alias);
 	}
 	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND(String alias) {
 		return this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND.get(alias);
@@ -2906,6 +2914,8 @@ public class ControlStationCore {
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoGenerazione = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoGenerazione;
+		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND;
 		this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote = core.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreOperazioniRemote;
@@ -3437,6 +3447,9 @@ public class ControlStationCore {
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheOrarie(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheGiornaliere(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheSettimanali(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoGenerazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoGenerazione(alias));
+					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND(alias));
 					this.jmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND.put(alias,consoleProperties.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreCacheChiaviPDND(alias));

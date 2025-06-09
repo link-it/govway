@@ -39,6 +39,7 @@ import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.eventi.bean.EventiSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
+import org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 
@@ -213,6 +214,14 @@ public class SearchFormUtilities {
 		return searchForm;
 	}
 	
+	public TransazioniSearchForm getPurposeIdSearchForm(IContext context, String soggetto) throws Exception {
+		TransazioniSearchForm searchForm = new TransazioniSearchForm();
+		initBaseInfo(searchForm, context, ProfiloEnum.MODIPA, soggetto, null);
+		searchForm.setModalitaRicercaStorico(ModalitaRicercaTransazioni.PURPOSE_ID.getValue());
+		
+		return searchForm;
+	}
+	
 	public TransazioniSearchForm getIdApplicativoBaseSearchForm(IContext context, ProfiloEnum profilo, String soggetto) throws Exception {
 		TransazioniSearchForm searchForm = new TransazioniSearchForm();
 		initBaseInfo(searchForm, context, profilo, soggetto, null);
@@ -254,6 +263,12 @@ public class SearchFormUtilities {
 				break;
 			}
 		}
+		return searchForm;
+	}
+	
+	public StatistichePdndTracingSearchForm getStatistichePdndTracingSearchForm(IContext context, String soggetto) throws Exception {
+		StatistichePdndTracingSearchForm searchForm = new StatistichePdndTracingSearchForm();
+		initBaseInfo(searchForm, context, ProfiloEnum.MODI, soggetto);
 		return searchForm;
 	}
 }

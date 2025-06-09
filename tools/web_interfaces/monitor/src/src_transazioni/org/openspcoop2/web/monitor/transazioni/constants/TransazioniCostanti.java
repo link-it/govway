@@ -119,6 +119,10 @@ public class TransazioniCostanti {
 	public static final String TRANSAZIONI_SEARCH_ESAMINA_ARCHIVIO_ZIP_MESSAGGIO_ERRORE_FILE_ELEMENTO_TRANSAZIONE_MANIFEST_NON_VALIDO_KEY = "transazioni.search.esaminaArchivioZip.messaggioErrore.elementoTransazioneManifestNonValido";
 	public static final String TRANSAZIONI_SEARCH_ESAMINA_ARCHIVIO_ZIP_MESSAGGIO_ERRORE_FILE_ELEMENTO_TRANSAZIONE_MANIFEST_CONSEGNA_NON_VALIDO_KEY = "transazioni.search.esaminaArchivioZip.messaggioErrore.elementoTransazioneManifestConsegnaNonValido";
 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.icona"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.breadcrumb"; 
+
 	public static final String TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_ERRORE = "col-latenza-errore";
 	public static final String TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_FAULT = "col-latenza-fault";
 	public static final String TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_OK = "col-latenza-ok";

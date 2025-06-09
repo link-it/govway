@@ -632,6 +632,8 @@ public class TokenUtilities {
 		}
 	}
 	
+	public static String SIGNATURE_SUFFIX = "__SIGNATURE__"; // viene sostituito = con _ per far diventare la stringa un base64 valido.
+	
 	public static String deleteSignature(String token) {
 		// verifico che sia un JWT
 		if(token.contains(".")) {
@@ -639,16 +641,16 @@ public class TokenUtilities {
 			if(tmp!=null && tmp.length==3 &&
 				tmp[2]!=null) {
 				if(tmp[0]!=null && tmp[1]!=null) {
-					return tmp[0]+"."+tmp[1]+".==SIGNATURE==";
+					return tmp[0]+"."+tmp[1]+"."+SIGNATURE_SUFFIX;
 				}
 				else if(tmp[0]==null && tmp[1]!=null) {
-					return "."+tmp[1]+".==SIGNATURE==";
+					return "."+tmp[1]+"."+SIGNATURE_SUFFIX;
 				}
 				else if(tmp[0]!=null && tmp[1]==null) {
-					return tmp[0]+"..==SIGNATURE==";
+					return tmp[0]+".."+SIGNATURE_SUFFIX;
 				}
 				else {
-					return "..==SIGNATURE==";
+					return ".."+SIGNATURE_SUFFIX;
 				}
 			}
 		}

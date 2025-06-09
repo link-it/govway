@@ -123,6 +123,13 @@
 			<param name="value" value="${work_dir}/govway.secrets.properties"/>
 		</antcall>
 		
+		<!-- TracingPDND -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="statistiche.pdnd.tracciamento.baseUrl"/>
+			<param name="value" value="http://localhost:8080/govway/rest/out/${antinstaller_nomesoggetto}/api-pdnd-tracing-attestazione/v1"/>
+		</antcall>
+		
 	</target>
 	
 	<!-- daoFactory.properties -->

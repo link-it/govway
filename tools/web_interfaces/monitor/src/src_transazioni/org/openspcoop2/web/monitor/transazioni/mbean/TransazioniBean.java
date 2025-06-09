@@ -976,20 +976,31 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			GruppoStorico gruppoId = new GruppoStorico();
 			gruppoId.setLabel(MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_LABEL_KEY));
 			List<Storico> listaGruppoId = new ArrayList<>();
-			listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue(), 
+			Storico storicoIdTransazione = new Storico(ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue(), 
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_LABEL_KEY), 
 					ModalitaRicercaTransazioni.ID_TRANSAZIONE,
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_ICON_KEY)));
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_ICON_KEY));
+			listaGruppoId.add(storicoIdTransazione);
+			
 			Storico storicoIdApplicativo = new Storico(ModalitaRicercaTransazioni.ID_APPLICATIVO_AVANZATA.getValue(), 
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LABEL_KEY), 
 					ModalitaRicercaTransazioni.ID_APPLICATIVO_AVANZATA,
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_ICON_KEY));
 			storicoIdApplicativo.setAction(TransazioniCostanti.NOME_ACTION_RICERCA_LVL2);
 			listaGruppoId.add(storicoIdApplicativo);
-			listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue(), 
+			
+			Storico storicoIdMessaggio = new Storico(ModalitaRicercaTransazioni.ID_MESSAGGIO.getValue(), 
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_LABEL_KEY), 
 					ModalitaRicercaTransazioni.ID_MESSAGGIO,
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_ICON_KEY)));
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_ICON_KEY));
+			listaGruppoId.add(storicoIdMessaggio);
+			
+			Storico storicoPurposeId = new Storico(ModalitaRicercaTransazioni.PURPOSE_ID.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_LABEL_KEY), 
+					ModalitaRicercaTransazioni.PURPOSE_ID,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_ICON_KEY));
+			listaGruppoId.add(storicoPurposeId);
+			
 			gruppoId.setListaStorico(listaGruppoId);
 			this.tipiStorico.add(gruppoId);
 		}

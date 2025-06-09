@@ -1,0 +1,23 @@
+{
+  "nome" : "PetStorePDND",
+  "tipo_interfaccia" : {
+    "protocollo" : "rest",
+    "formato" : "OpenApi3.0"
+  },
+  "versione" : 1,
+  "interfaccia" : "b3BlbmFwaTogMy4wLjAKaW5mbzoKICB0aXRsZTogU2ltcGxlIGFwaSB1c2luZyBQRE5ECiAgZGVzY3JpcHRpb246ID4tCiAgICBTaW1wbGUgYXBpIHVzaW5nIFBETkQKICB2ZXJzaW9uOiAxLjAuMAp0YWdzOgogIC0gbmFtZTogTWlzYwogICAgZGVzY3JpcHRpb246IGdlbmVyaWMgdGFnCnBhdGhzOgogIC9vazoKICAgIGdldDoKICAgICAgdGFnczoKICAgICAgICAtIE1pc2MKICAgICAgc3VtbWFyeTogcmV0dXJuIDIwMAogICAgICBkZXNjcmlwdGlvbjogUmV0dXJuIG9rCiAgICAgIG9wZXJhdGlvbklkOiBvawogICAgICByZXNwb25zZXM6CiAgICAgICAgIjIwMCI6CiAgICAgICAgICBkZXNjcmlwdGlvbjogc3VjY2Vzc2Z1bCBvcGVyYXRpb24KICAvZXJyb3I1MDA6CiAgICBnZXQ6CiAgICAgIHRhZ3M6CiAgICAgICAgLSBNaXNjCiAgICAgIHN1bW1hcnk6IHJldHVybiA1MDAKICAgICAgZGVzY3JpcHRpb246IFJldHVybiBvawogICAgICBvcGVyYXRpb25JZDogZXJyb3I1MDAKICAgICAgcmVzcG9uc2VzOgogICAgICAgICIyMDAiOgogICAgICAgICAgZGVzY3JpcHRpb246IHN1Y2Nlc3NmdWwgb3BlcmF0aW9uCiAgL2Vycm9yNDA0OgogICAgZ2V0OgogICAgICB0YWdzOgogICAgICAgIC0gTWlzYwogICAgICBzdW1tYXJ5OiByZXR1cm4gNDA0CiAgICAgIGRlc2NyaXB0aW9uOiBSZXR1cm4gb2sKICAgICAgb3BlcmF0aW9uSWQ6IGVycm9yNDA0CiAgICAgIHJlc3BvbnNlczoKICAgICAgICAiMjAwIjoKICAgICAgICAgIGRlc2NyaXB0aW9uOiBzdWNjZXNzZnVsIG9wZXJhdGlvbg==",
+  "modi": {
+    "sicurezza_canale" : {
+      "pattern" : "auth01"
+    },
+    "sicurezza_messaggio" : {
+      "pattern" : "auth01",
+      "generazione_token" : "pdnd",
+      "digest_richiesta" : false,
+      "informazioni_utente" : false,
+      "rest_header" : "bearer",
+      "soap_firma_allegati" : false,
+      "applicabilita" : "richiesta"
+    }
+  }
+}

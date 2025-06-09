@@ -188,6 +188,9 @@ public class ContentAuthorizationCostanti {
 		"/stat/pages/form/statsPersonalizzateGrafico.jsf",
 		"/stat/pages/list/configurazioniGenerali.jsf",
 		"/stat/pages/form/dettaglioConfigurazione.jsf",
+		"/stat/pages/list/statistichePdndTracingList.jsf",
+		"/stat/pages/form/statistichePdndTracingDettaglio.jsf",
+		"/stat/pages/form/statistichePdndTracingTipiRicerca.jsf",
 		
 		// Allarmi
 		"/allarmi/pages/form/allarme.jsf",
@@ -196,7 +199,10 @@ public class ContentAuthorizationCostanti {
 		"/allarmi/pages/list/allarmeHistory.jsf",
 		
 		//Servlet Configurazioni Exporter
-		"/configurazioniexporter"
+		"/configurazioniexporter",
+		
+		//Servlet Tracing PDND Exporter
+		"/tracingpdndexporter"
 	};
 
 	public static String[][] listaPagineModuli ={
@@ -274,6 +280,14 @@ public class ContentAuthorizationCostanti {
 		// Statistiche personalizzate
 		{"/stat/pages/form/statsPersonalizzate.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
 		{"/stat/pages/form/statsPersonalizzateGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
+		
+		// Tracing PDND
+		{"/stat/pages/list/statistichePdndTracingList.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/statistichePdndTracingDettaglio.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		{"/stat/pages/form/statistichePdndTracingTipiRicerca.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
+		
+		//Servlet Tracing PDND Exporter
+		{"/tracingpdndexporter",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		
 		// Allarmi
 		{"/allarmi/pages/form/allarme.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},

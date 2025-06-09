@@ -66,6 +66,9 @@ public class ModIProperties {
 	/** Copia Statica */
 	private static ModIProperties modipaProperties = null;
 
+	private static final String PREFIX_PROPRIETA = "Proprietà '";
+	private static final String SUFFIX_NON_TROVATA = " non trovata";
+	
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
 	/** Reader delle proprieta' impostate nel file 'modipa.properties' */
@@ -157,7 +160,7 @@ public class ModIProperties {
 		this.log.error(msg);
 	}
 	private String getPrefixProprieta(String propertyName) {
-		return "Proprietà '"+propertyName+"'";
+		return PREFIX_PROPRIETA+propertyName+"'";
 	}
 	private String getPrefixValoreIndicatoProprieta(String value, String name) {
 		return "Valore '"+value+"' indicato nella proprietà '"+name+"'";
@@ -453,6 +456,13 @@ public class ModIProperties {
 				this.getSignalHubSeedSize();
 				this.getSignalHubDigestHistroy();
 			}
+			
+
+			this.getStaticInstanceConfig();
+			
+			/* **** TracingPDND **** */
+			isTracingPDNDEnabled();
+
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo modipa, "+e.getMessage();
 			this.logError(msg,e);
@@ -825,7 +835,7 @@ public class ModIProperties {
 				String propertyPrefix = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore."+rsc+".";
 				Properties p = this.reader.readPropertiesConvertEnvProperties(propertyPrefix);
 				if(p==null || p.isEmpty()) {
-					throw new ProtocolException(debugPrefix+" non trovata");
+					throw new ProtocolException(debugPrefix+SUFFIX_NON_TROVATA);
 				}
 				RemoteStoreConfig config = RemoteStoreConfigPropertiesUtils.read(p, null);
 				forceBaseUrlPDNDEndsWithKeys(rsc, config);
@@ -871,7 +881,7 @@ public class ModIProperties {
 			}
 			return force;			
 		}catch(java.lang.Exception e) {
-			this.logWarn("Proprietà '"+propertyPrefix+"' non impostata; viene forzato il suffisso /keys");
+			this.logWarn(PREFIX_PROPRIETA+propertyPrefix+"' non impostata; viene forzato il suffisso /keys");
 			return true;
 		}
 	}
@@ -1672,7 +1682,7 @@ public class ModIProperties {
 				String propertyPrefix = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.audit.pattern."+auditConf;
 				Properties p = this.reader.readProperties(propertyPrefix+"."); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
 				if(p==null || p.isEmpty()) {
-					throw new ProtocolException(debugPrefix+" non trovata");
+					throw new ProtocolException(debugPrefix+SUFFIX_NON_TROVATA);
 				}
 				ModIAuditConfig config = new ModIAuditConfig(propertyPrefix, propertyPrefix, p);
 				this.auditConfig.add(config);
@@ -4740,7 +4750,7 @@ public class ModIProperties {
 				this.isTokenOAuthUseJtiIntegrityAsMessageIdRead = true;
 				
 			}catch(java.lang.Exception e) {
-				this.logWarn("Proprietà '"+pName+"' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
+				this.logWarn(PREFIX_PROPRIETA+pName+"' non impostata, viene utilizzato il default 'true', errore:"+e.getMessage());
 				this.isTokenOAuthUseJtiIntegrityAsMessageId = true;
 				
 				this.isTokenOAuthUseJtiIntegrityAsMessageIdRead = true;
@@ -5246,6 +5256,7 @@ public class ModIProperties {
 	
     /* **** Signal Hub **** */
 	
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
 	private Boolean signalHubEnabled = null;
 	public boolean isSignalHubEnabled(){
 		if(this.signalHubEnabled==null){
@@ -5494,7 +5505,7 @@ public class ModIProperties {
         		String debugPrefix = "Param signal hub '"+propertyPrefix+"'";
 				Properties p = this.reader.readProperties(propertyPrefix+"."); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
 				if(p==null || p.isEmpty()) {
-					throw new ProtocolException(debugPrefix+" non trovata");
+					throw new ProtocolException(debugPrefix+SUFFIX_NON_TROVATA);
 				}
         		this.signalHubConfig = new ModISignalHubConfig(propertyPrefix, p);
 			}catch(java.lang.Exception e) {
@@ -5513,7 +5524,7 @@ public class ModIProperties {
         	try{
 				String value = this.reader.getValue(name); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
 				if(value == null || value.isBlank()) {
-					throw new ProtocolException(name + " non trovata");
+					throw new ProtocolException(name + SUFFIX_NON_TROVATA);
 				}
         		this.signalHubHashCompose = value;
 			}catch(java.lang.Exception e) {
@@ -5533,7 +5544,7 @@ public class ModIProperties {
 				String rawValue = this.reader.getValue(name); // non devo convertire le properties poiche' possoono contenere ${ che useremo per la risoluzione dinamica
 				if(rawValue == null || rawValue.isBlank()) {
 					
-					throw new ProtocolException(name + " non trovata");
+					throw new ProtocolException(name + SUFFIX_NON_TROVATA);
 				}
 				Integer value = Integer.valueOf(rawValue);
 				this.signalHubDigestHistroy = value;
@@ -5545,5 +5556,38 @@ public class ModIProperties {
     	
     	return this.signalHubDigestHistroy;
 	}
+
 	
+	
+	
+	
+    /* **** TracingPDND **** */
+	
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	private Boolean tracingPDNDEnabled = null;
+	public boolean isTracingPDNDEnabled(){
+		if(this.tracingPDNDEnabled==null){
+			
+			Boolean defaultValue =false;
+			String propertyName = "org.openspcoop2.protocol.modipa.tracingPDND.enabled";
+			
+			try{  
+				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					this.tracingPDNDEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue));
+					this.tracingPDNDEnabled = defaultValue;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(propertyName, defaultValue)+getSuffixErrore(e));
+				this.tracingPDNDEnabled = defaultValue;
+			}
+		}
+
+		return this.tracingPDNDEnabled;
+	}
 }

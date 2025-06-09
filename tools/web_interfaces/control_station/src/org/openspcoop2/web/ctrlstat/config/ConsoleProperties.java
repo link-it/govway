@@ -1264,6 +1264,12 @@ public class ConsoleProperties {
 	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerStatisticheMensili(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerStatisticheMensili");
 	}
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoGenerazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerPdndTracciamentoGenerazione");
+	}
+	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerPdndTracciamentoPubblicazione");
+	}
 	public String getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreChiaviPDND(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeAttributo.timerGestoreChiaviPDND");
 	}

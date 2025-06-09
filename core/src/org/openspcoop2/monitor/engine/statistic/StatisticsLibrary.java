@@ -93,29 +93,23 @@ public class StatisticsLibrary {
 		}
 	}
 	
-	public void generateStatisticaOraria(){
+	public void generateStatistics(IStatisticsEngine engine, String name) {
 		try{
 			
-			if(this.config.isStatisticheOrarie()){
+			if(engine.isEnabled(this.config)){
 				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche orarie ....");
+					this.config.getLogCore().debug("Esecuzione thread {} ....", name);
 				}
-				StatisticheOrarie sg = new StatisticheOrarie( this.config.getLogCore(), this.config.isDebug(), 
-						this.config.isUseUnionForLatency(),
-						this.config.isGenerazioneStatisticheCustom(),
-						this.config.isAnalisiTransazioniCustom(),
-						this.config.getForceIndexConfig(),
+				engine.init( this.config,
 						this.statisticheSM, this.transazioniSM, 
 						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
-				sg.generaStatistiche( this.config.isStatisticheOrarieGestioneUltimoIntervallo(),
-						this.config.getWaitMsBeforeNextInterval(),
-						this.config.isWaitStatiInConsegna());
+				engine.generate();
 				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche orarie  terminata");
+					this.config.getLogCore().debug("Esecuzione thread {} terminata", name);
 				}
 			}else{
 				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Thread per generazione statistiche orarie disabilitato");
+					this.config.getLogCore().debug("Thread {} disabilitato", name);
 				}
 			}
 			
@@ -124,95 +118,30 @@ public class StatisticsLibrary {
 			this.config.getLogCore().error(msg,e);
 		} 
 	}
+
+	
+	public void generateStatisticaOraria(){
+		generateStatistics(new StatisticheOrarie(), "per generazione statistiche orarie");
+	}
 	
 	public void generateStatisticaGiornaliera(){
-		try{
-			
-			if(this.config.isStatisticheGiornaliere()){
-				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche giornaliere ....");
-				}
-				StatisticheGiornaliere sg = new StatisticheGiornaliere( this.config.getLogCore(), this.config.isDebug(), 
-						this.config.isUseUnionForLatency(),
-						this.config.isGenerazioneStatisticheCustom(),
-						this.config.isAnalisiTransazioniCustom(),
-						this.config.getForceIndexConfig(),
-						this.statisticheSM, this.transazioniSM, 
-						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
-				sg.generaStatistiche( this.config.isStatisticheGiornaliereGestioneUltimoIntervallo(),
-						this.config.getWaitMsBeforeNextInterval(),
-						this.config.isWaitStatiInConsegna() );
-				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche giornaliere  terminata");
-				}
-			}else{
-				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Thread per generazione statistiche giornaliere disabilitato");
-				}
-			}
-			
-		}catch(Exception e){
-			this.config.getLogCore().error(ERRORE+e.getMessage(),e);
-		} 
+		generateStatistics(new StatisticheGiornaliere(), "per generazione statistiche giornaliere");
 	}
 			
 	public void generateStatisticaSettimanale(){
-		try{
-			if(this.config.isStatisticheSettimanali()){
-				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche settimanali ....");
-				}
-				StatisticheSettimanali sg = new StatisticheSettimanali( this.config.getLogCore(), this.config.isDebug(), 
-						this.config.isUseUnionForLatency(),
-						this.config.isGenerazioneStatisticheCustom(),
-						this.config.isAnalisiTransazioniCustom(),
-						this.config.getForceIndexConfig(),
-						this.statisticheSM, this.transazioniSM, 
-						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
-				sg.generaStatistiche( this.config.isStatisticheSettimanaliGestioneUltimoIntervallo(),
-						this.config.getWaitMsBeforeNextInterval(),
-						this.config.isWaitStatiInConsegna() );
-				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche settimanali  terminata");
-				}
-			}else{
-				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Thread per generazione statistiche settimanali disabilitato");
-				}
-			}
-		}catch(Exception e){
-			this.config.getLogCore().error(ERRORE+e.getMessage(),e);
-		} 
+		generateStatistics(new StatisticheSettimanali(), "per generazione statistiche settimanali");
 	}
 			
 	public void generateStatisticaMensile(){
-		try{
-			if(this.config.isStatisticheMensili()){
-				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche mensili ....");
-				}
-				StatisticheMensili sg = new StatisticheMensili( this.config.getLogCore(), this.config.isDebug(), 
-						this.config.isUseUnionForLatency(),
-						this.config.isGenerazioneStatisticheCustom(),
-						this.config.isAnalisiTransazioniCustom(),
-						this.config.getForceIndexConfig(),
-						this.statisticheSM, this.transazioniSM, 
-						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
-				sg.generaStatistiche( this.config.isStatisticheMensiliGestioneUltimoIntervallo(),
-						this.config.getWaitMsBeforeNextInterval(),
-						this.config.isWaitStatiInConsegna() );
-				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Esecuzione thread per generazione statistiche mensili  terminata");
-				}
-			}else{
-				if(this.config.isDebug()){
-					this.config.getLogCore().debug("Thread per generazione statistiche mensili disabilitato");
-				}
-			}
-			
-		}catch(Exception e){
-			this.config.getLogCore().error(ERRORE+e.getMessage(),e);
-		} 
+		generateStatistics(new StatisticheMensili(), "per generazione statistiche mensili");
+	}
+	
+	public void generatePdndGenerazioneTracciamento(){
+		generateStatistics(new PdndGenerazioneTracciamento(), "generazione pdnd tracciamento");
+	}
+	
+	public void generatePdndPubblicazioneTracciamento(){
+		generateStatistics(new PdndPublicazioneTracciamento(), "pubblicazione pdnd tracciamento");
 	}
 	
 }

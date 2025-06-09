@@ -415,6 +415,13 @@ a.titleLinkRight:hover {
 	vertical-align: top;
 }
 
+.labelAllineataDxFixedWidth170 {
+	text-align: right;
+	padding: 0px 10px;
+	width: 170px;
+	line-height: 24px;
+}
+
 .labelAllineataDxFixedWidth270 {
     text-align: right;
     padding: 0px 10px;
@@ -670,6 +677,46 @@ span[id$='iconLink']{
 
 .icona-allarme-disabilitato {
 	color: #C2C2C9 !important;
+}
+
+.icona-tracingcsv-error {
+	color: #FF2D39 !important;
+}
+
+.icona-tracingcsv-warning {
+	color: #FFAB4D !important;
+}
+
+.icona-tracingcsv-ok {
+	color: #00B658 !important;
+}
+
+.icona-tracingcsv-grey {
+	color: #C2C2C9 !important;
+}
+
+.icona-tracingcsv-error > i {
+	color: #FF2D39 !important;
+	cursor: default;
+	vertical-align: middle;
+}
+
+.icona-tracingcsv-warning > i{
+	color: #FFAB4D !important;
+	cursor: default;
+	vertical-align: middle;
+}
+
+.icona-tracingcsv-ok > i {
+	color: #00B658 !important;
+	cursor: default;
+	vertical-align: middle;
+}
+
+.icona-tracingcsv-grey > i{
+	color: #C2C2C9 !important;
+	cursor: default;
+	vertical-align: middle;
 }
 
 .height-8 {

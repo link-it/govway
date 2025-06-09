@@ -342,7 +342,14 @@ public final class CostantiDB {
     public static final String REMOTE_STORE_KEY = "remote_store_key";
     
     /** Costanti Digest Service params **/
-    public static final String SERVIZI_DIGEST_PARAMS = "servizi_digest_params";
+    public static boolean serviziDigestEnabled = true;
+    public static boolean isServiziDigestEnabled() {
+		return serviziDigestEnabled;
+	}
+	public static void setServiziDigestEnabled(boolean serviziDigestEnabled) {
+		CostantiDB.serviziDigestEnabled = serviziDigestEnabled;
+	}
+	public static final String SERVIZI_DIGEST_PARAMS = "servizi_digest_params";
     public static final String SERVIZI_DIGEST_PARAMS_COLUMN_ID_SERVIZIO_REF = "id_servizio";
     public static final String SERVIZI_DIGEST_PARAMS_COLUMN_SERIAL_NUMBER = "serial_number";
     public static final String SERVIZI_DIGEST_PARAMS_COLUMN_ALGORITHM = "algorithm";
@@ -471,6 +478,8 @@ public final class CostantiDB {
     public static final int STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO = 2;
     public static final int STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO = 0;
     public static final int STATISTICHE_STATO_RECORD_ELIMINATO = -2;
+    
+    public static final String STATISTICHE_PDND_TRACING =  "statistiche_pdnd_tracing";
 	
 	public static final String TRANSAZIONI_EXTENDED_INFO = "transazione_extended_info";
 	
@@ -888,6 +897,11 @@ public final class CostantiDB {
 	public static final String MODIPA_SICUREZZA_TOKEN_KID_ID = "modipaSecurityTokenKID";
 	
 	public static final String MODIPA_SOGGETTI_ID_ENTE_ID = "modipaSoggettoIDEnte";
+	
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_ID = "modipaSoggettoPdndTracingEnabled";
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_ENABLE_ID = "1";
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_DISABLE_ID = "0";
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID = "-1";
 	
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE = "modipaSecurityMessageProfileActionMode";
     

@@ -19,4 +19,8 @@
 			<param-value>config</param-value>
 		</init-param>
 	</servlet>
+	<servlet>
+		<servlet-name>tracingpdndexporter</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.statistiche.servlet.StatistichePdndTracingExporter</servlet-class>
+	</servlet>
 	

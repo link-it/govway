@@ -20,6 +20,11 @@
 
 package org.openspcoop2.core.monitor.rs.testsuite;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -68,5 +73,29 @@ public class DbUtils {
     public int update(String query) {
         return this.jdbc.update(query);
     }
+    
+    public int update(String query, Object ...params) {
+        return this.jdbc.update(query, params);
+    }
+    
+	public Timestamp now() {
+		return Timestamp.from(Instant.now());
+	}
+	
+	public Timestamp addTimestamp(Timestamp timestamp, int days) {
+    	return Timestamp.from(timestamp.toInstant().plus(Duration.ofDays(days)));
+    }
+	
+	public String formatTimestamp(Timestamp timestamp, String format) {
+		return new SimpleDateFormat(format).format(timestamp);
+	}
+	
+	public Timestamp parseTimestamp(String timestamp, String format) {
+		try {
+			return Timestamp.from(new SimpleDateFormat(format).parse(timestamp).toInstant());
+		} catch (ParseException e) {
+			return null;
+		}
+	}
 
 }

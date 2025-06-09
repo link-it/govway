@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j" xmlns:link="http://www.link.it">
+
+<ui:composition template="/templates/defaultTemplate.xhtml">
+	<ui:define name="navbar">
+		<a4j:outputPanel id="statistichePdndTracingCrumbsCtr">	
+		<ul>
+			<li>
+				<a4j:htmlCommandLink action="statistichePdndTracingStart" value="#{msg['menu.reportistica.statistichePdndTracing']}" />
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li><h:outputText id="msgLabelRicercaSceltaDiag" value="#{statistichePdndTracingSearchForm.tipoRicercaLabel}" styleClass="ultimo-path"/></li>
+		</ul>	
+		</a4j:outputPanel>
+	</ui:define>	
+	<ui:define name="body">
+		<a4j:keepAlive beanName="statistichePdndTracingBean" />
+		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
+			<rich:simpleTogglePanel id="panelFiltri1" opened="#{statistichePdndTracingSearchForm.visualizzaFiltroAperto}"
+				label="#{statistichePdndTracingSearchForm.tipoRicercaLabel}" switchType="client">
+				<f:facet name="openMarker">
+					<a4j:outputPanel id="openMarkerPnl" stuleClass="icon-search-box">
+						<input type="hidden" id="_csrfFormTogglePanel" name="_csrf" value="#{loginBean.csrf}"/>
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+						<rich:toolTip for="openMarkerPnl" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
+					</a4j:outputPanel>
+				</f:facet>
+				
+				<f:facet name="closeMarker">
+					<a4j:outputPanel id="closeMarkerPnl" stuleClass="icon-search-box">
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+						<rich:toolTip for="closeMarkerPnl" value="#{msg['commons.search.filtroRicerca.nascondi.tooltip']}" />
+					</a4j:outputPanel>
+				</f:facet>
+	
+				<div class="form-container noborder">
+	
+					<a4j:form id="formSearchStatistichePdndTracing" prependId="false" ajaxSingle="true"
+						ajaxSubmit="true">
+						<a4j:region id="genSearchPnl" renderRegionOnly="true">
+							<a4j:outputPanel id="searchPnl" ajaxRendered="false"
+								layout="block">
+								<input type="hidden" id="_csrfFormStatistichePdndTracingSearchPanel" name="_csrf" value="#{loginBean.csrf}"/>
+								<h:inputHidden value="#{statistichePdndTracingBean.tipoRicerca}" />
+								
+								<a4j:outputPanel id="dataCtr" layout="block" rendered="#{statistichePdndTracingSearchForm.showRicercaPanel}">
+								
+									<div class="subtitle">
+										<h:outputText id="idTemporale" value="#{msg['statistichePdndTracing.search.sezioneFiltroTemporale.label']}" styleClass="subtitle"/>
+									</div>
+								
+									<link:prop label="#{msg['commons.search.periodo.label']}" labelId="labelPeriodoCombo">
+										<rich:comboBox id="periodoCombo" value="#{statistichePdndTracingSearchForm.periodo}" defaultLabel="Seleziona Periodo"
+											required="true"
+											requiredMessage="E' necessario selezionare un periodo" width="416" enableManualInput="false">
+											<f:selectItem itemValue="Ultime 24 ore" />
+											<f:selectItem itemValue="Ultima settimana" />
+											<f:selectItem itemValue="Ultimo mese" />
+											<f:selectItem itemValue="Personalizzato" />
+											<a4j:support status="mainStatus" event="onselect" reRender="dataCtr,searchPnl"  actionListener="#{statistichePdndTracingSearchForm.periodoListener}"/>
+										</rich:comboBox>
+										<rich:toolTip for="labelPeriodoCombo" value="#{statistichePdndTracingSearchForm.printPeriodo}"/>
+									</link:prop>
+						
+									<link:prop label="#{msg['commons.search.periodo.dataInizio.label']}"
+										rendered="#{statistichePdndTracingSearchForm.periodo eq 'Personalizzato' }">
+										<rich:calendar id="dataInizioCalendar" value="#{statistichePdndTracingSearchForm.dataInizio}" datePattern="yyyy-MM-dd HH:mm"
+											defaultTime="00:00" rendered="#{statistichePdndTracingSearchForm.periodo eq 'Personalizzato'}" buttonIcon="/images/tema_link/calendar.png"
+											required="true" requiredMessage="Selezionare Data Inizio" enableManualInput="false">
+											<a4j:support status="mainStatus" event="onchanged" reRender="searchPnl" />
+										</rich:calendar>
+									</link:prop>
+									
+									<link:prop label="#{msg['commons.search.periodo.dataFine.label']}"
+										rendered="#{statistichePdndTracingSearchForm.periodo eq 'Personalizzato'}">
+										<rich:calendar id="dataFineCalendar" value="#{statistichePdndTracingSearchForm.dataFine}" datePattern="yyyy-MM-dd HH:mm"
+											defaultTime="23:59" rendered="#{statistichePdndTracingSearchForm.periodo eq 'Personalizzato'}" buttonIcon="/images/tema_link/calendar.png"
+											required="true" requiredMessage="Selezionare Data Fine" enableManualInput="false">
+											<a4j:support status="mainStatus" event="onchanged" reRender="searchPnl" />
+										</rich:calendar>	
+									</link:prop>
+										
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="statisticaPdndTracingCtr" layout="block" rendered="#{statistichePdndTracingSearchForm.showRicercaPanel}">					
+								
+									<div class="subtitle">
+										<h:outputText id="idDatiStatisticaPdndTracing" value="#{msg['statistichePdndTracing.search.sezioneFiltroDatiStatisticaPdndTracing.label']}" styleClass="subtitle"/>
+									</div>
+									
+									
+									
+									<a4j:outputPanel layout="block" id="soggettoErogatoreComboCtr" rendered="#{statistichePdndTracingSearchForm.showFiltroSoggettoLocale}">
+										<ui:include src="/stat/includes/searchFormStatistichePdndFiltroSoggetto.xhtml">
+											<ui:param name="sf_bean" value="#{statistichePdndTracingSearchForm}" />
+											<ui:param name="sf_mbean" value="#{statistichePdndTracingBean}" />
+										</ui:include>
+									</a4j:outputPanel>
+								
+									<link:prop label="#{msg['statistichePdndTracing.search.stato.label']}">
+										<rich:comboBox id="statoCombo" value="#{statistichePdndTracingSearchForm.stato}" converter="selectItemConverter"
+											defaultLabel="Seleziona Stato" width="416" enableManualInput="false">
+											<f:selectItems value="#{statistichePdndTracingBean.stati}" />
+											<a4j:support status="mainStatus" event="onselect" 
+											reRender="statisticaPdndTracingCtr"  actionListener="#{statistichePdndTracingSearchForm.statoListener}"/>
+										</rich:comboBox>
+									</link:prop>
+									
+									<a4j:outputPanel layout="block" id="statoPdndComboCtr" rendered="#{statistichePdndTracingSearchForm.showFiltroStatoPdnd}">
+										<link:prop label="#{msg['statistichePdndTracing.search.statoPdnd.label']}">
+											<rich:comboBox id="statoPdndCombo" value="#{statistichePdndTracingSearchForm.statoPdnd}" converter="selectItemConverter"
+												defaultLabel="Seleziona Stato Pdnd" width="416" enableManualInput="false">
+												<f:selectItems value="#{statistichePdndTracingBean.statiPdnd}" />
+											</rich:comboBox>
+										</link:prop>
+									</a4j:outputPanel>
+									
+									<link:prop label="#{msg['statistichePdndTracing.search.tentativiPubblicazione.label']}" rendered="#{true}">
+										<rich:inputNumberSpinner id="tentativiPubblicazioneInput" value="#{statistichePdndTracingSearchForm.tentativiPubblicazione}" 
+											minValue="#{statistichePdndTracingBean.minTentativiPubblicazione}" cycled="false"  styleClass="inputLinkLong" />
+									</link:prop>
+									
+								</a4j:outputPanel>
+								
+								<a4j:outputPanel id="filtriRicercaIdentificativiCtr" layout="block" rendered="#{not statistichePdndTracingSearchForm.showRicercaPanel}">
+								
+									<div class="subtitle">
+										<h:outputText id="idDatiTracingId" value="#{msg['statistichePdndTracing.search.sezioneFiltroDatiTracingId.label']}" styleClass="subtitle"/>
+									</div>
+									
+									<link:prop label="#{msg['statistichePdndTracing.search.tracingId.label']}" rendered="#{true}" required="true">
+										<h:inputText id="tracingID" value="#{statistichePdndTracingSearchForm.tracingId}"
+											styleClass="inputLinkLong" />
+									</link:prop>									
+								</a4j:outputPanel>
+								
+							</a4j:outputPanel>
+						</a4j:region>
+						<div class="buttonrow">
+							<a4j:commandButton id="filtra" value="Cerca"
+								styleClass="icon-refresh" process="genSearchPnl"
+								reRender="panelPaginaRicerca" rendered="#{true}"
+								action="#{statistichePdndTracingSearchForm.filtra}" oncomplete="completaRicerca(event)" />
+							<a4j:commandButton id="svuota" value="Ripulisci"
+								styleClass="icon-refresh" process="genSearchPnl"
+								reRender="panelPaginaRicerca" rendered="#{true}"
+								action="#{statistichePdndTracingSearchForm.ripulisci}"
+								oncomplete="completa(event)" />
+						</div>
+					</a4j:form>
+				</div>
+			</rich:simpleTogglePanel>
+	
+			<div class="spacer"></div>
+	
+			<a4j:outputPanel id="statistichePdndTracingTbl" layout="block" styleClass="panelLista" rendered="#{statistichePdndTracingDM.executeQuery}">
+			
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
+					//<![CDATA[
+					   jQuery(document).ready(nascondiChk);
+					   
+					   function nascondiChk(){
+						
+						   jQuery("th[id$='colEsitoImgheader']").css('padding','8px');
+						   jQuery("th[id$='colEsitoImgheader']").css('width','16px');
+						   
+						   jQuery("div[id$='chkClmnPg']").attr('style', '');
+						   jQuery("th[id$='ckbClmnheader']").css('padding','8px');
+						   jQuery("th[id$='ckbClmnheader']").css('width','16px');
+						   jQuery("input[id$='tableStatistichePdndTracing_column_ckb']").parent().attr('width','16px');
+						   jQuery("input[id$='tableStatistichePdndTracing_column_ckb']").parent().css('padding','12px');
+						   jQuery("input[id$='tableStatistichePdndTracing_column_ckb']").parent().addClass('align-center');
+						   jQuery("input[id$='tableStatistichePdndTracing_column_ckb']").css('padding','0px');
+						   jQuery("input[id$='tableStatistichePdndTracing_checkAll']").css('margin-top','0px');
+						   
+							// nascondi il tasto esporta se la tabella e' vuota
+						   visualizzaTastoEsporta('tableStatistichePdndTracing','esportaButton-iconLink');
+					   }
+					   
+					   function completa(evt){   }
+					   
+					   function completaRicerca(evt){   
+						   collapseSearchPanel('panelFiltri1');
+					   }
+					   
+					   function collapseSearchPanel(panelId) {  
+					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")  
+						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);  
+					 	}
+					   
+					   function visualizzaTastoEsporta(containerId,exportButtonId){
+							 var n = jQuery("div [id$='"+containerId+"_tbl'] input:checkbox[id$='column_ckb']").length;
+							 var exportBtn = jQuery("[id$='" + exportButtonId + "']");
+							if(n==0){
+								exportBtn.hide();
+							}else{
+								exportBtn.show();
+							}
+						};
+					 //]]>	
+				</script>
+				
+				
+				<h:form>
+					<input type="hidden" id="_csrfFormTabellaStatistichePdndTracing" name="_csrf" value="#{loginBean.csrf}"/>
+					<link:dataTable value="#{statistichePdndTracingDM}" id="tableStatistichePdndTracing"
+						mBean="#{statistichePdndTracingBean}" showSelectAll="true"
+						selectionMapTarget="#{statistichePdndTracingBean.selectedIds[item]}"
+						headerText="Lista StatistichePdndTracing" enableDelete="false"
+						reRenderIds="statistichePdndTracingTbl" mostraComandiFooterSelezionePageSize="true"
+						useCount="#{statistichePdndTracingSearchForm.useCount}">
+						
+						<rich:column id="statusColumn" align="center" width="40px">
+							<f:facet name="header">
+								<h:outputText value="Stato" id="outStato"/>
+							</f:facet>
+							<h:panelGroup layout="block" styleClass="width-40">
+								<a4j:outputPanel rendered="#{true}" id="statoInvioPnl" styleClass="#{item.coloreIconaStato}">
+									<i class="material-icons md-18" id="iconaStatoCsv">lens</i>
+									<rich:toolTip for="statoInvioPnl" mode="client" value="#{item.statoTooltip}"/>
+								</a4j:outputPanel>
+							</h:panelGroup>
+						</rich:column>
+		
+						<rich:column id="colData" width="170">
+							<f:facet name="header">
+								<h:outputText id="outDataTracciamento" value="#{msg['statistichePdndTracing.dataTracciamento.label']}" />
+							</f:facet>
+							<a4j:htmlCommandLink id="edit-iconLink" styleClass="icon-details" action="statisticaPdndTracingDettaglio">
+								<f:setPropertyActionListener value="#{item}" target="#{statistichePdndTracingBean.statisticaPdndTracing}" />
+								<f:setPropertyActionListener value="informazioniGenerali" target="#{statistichePdndTracingBean.selectedTab}"/>
+								<h:outputText id="outData2" value="#{item.dataTracciamento}">
+								<f:convertDateTime pattern="yyyy-MM-dd" timeZone="#{applicationBean.timeZone}" />
+							</h:outputText>
+							</a4j:htmlCommandLink>
+						</rich:column>
+						
+						<rich:column id="colSoggetto" rendered="#{statistichePdndTracingBean.showFiltroSoggetti}">
+							<f:facet name="header">
+								<h:outputText id="outSoggetto1" value="#{msg['statistichePdndTracing.soggetto.label']}" />
+							</f:facet>
+							<h:outputText id="outSoggetto2" value="#{item.soggettoReadable}" rendered="#{not empty item.soggettoReadable}" />
+							<rich:toolTip for="outSoggetto2" value="#{item.soggettoReadable}" rendered="#{not empty item.soggettoReadable}"/>
+						</rich:column>
+		
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msg['statistichePdndTracing.tentativiPubblicazione.label']}"  id="outTentativiPubblicazione"/>
+							</f:facet>
+							<h:outputText value="#{item.tentativiPubblicazioneReadable}" />
+						</rich:column>
+						
+						<rich:column>
+							<f:facet name="header">
+								<h:outputText value="#{msg['statistichePdndTracing.tracingId.label']}" id="outTracingId" />
+							</f:facet>
+							<h:outputText value="#{item.tracingId}" />
+						</rich:column>
+						
+						<ui:define name="buttons">
+							<a4j:htmlCommandLink id="esportaButton-iconLink" styleClass="icon-csv positive" target="_blank" 
+								title="#{msg['commons.search.esportaRicerche.button.title']}"
+							 	value="#{msg['commons.search.esportaRicerche.button.label']}" action="#{statistichePdndTracingBean.exportSelected}"  ajaxSingle="true"
+							 onclick="if(!checkSelection('tableStatistichePdndTracing','tableStatistichePdndTracing_checkSelection')) { return false;}" >
+									<f:setPropertyActionListener value="#{statistichePdndTracingBean.elencoID}" target="#{statistichePdndTracingBean.elencoID}" />
+							</a4j:htmlCommandLink>
+						</ui:define>
+	
+					</link:dataTable>
+				</h:form>
+				
+				<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{statistichePdndTracingDM.timeoutEvent}">
+					<script type="text/javascript" nonce="#{_csp_random_nonce}">
+						//<![CDATA[
+						   jQuery(document).ready(controllaStatisticaPdndTracingTimeout);
+				
+						   function controllaStatisticaPdndTracingTimeout(){  
+							   if(#{statistichePdndTracingDM.timeoutEvent}){
+									Richfaces.showModalPanel('tableStatistichePdndTracing_timeoutModal');
+								}
+						   }
+						 //]]>	
+					</script>
+				</a4j:outputPanel>
+			</a4j:outputPanel>
+		</a4j:outputPanel>
+	</ui:define>
+</ui:composition>
+
+</html>

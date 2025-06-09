@@ -29,6 +29,7 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  * Enumeration dell'elemento tipo-intervallo-statistico xsd (tipo:string) 
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -43,7 +44,11 @@ public enum TipoIntervalloStatistico implements IEnumeration , Serializable , Cl
 	@jakarta.xml.bind.annotation.XmlEnumValue("StatisticheSettimanali")
 	STATISTICHE_SETTIMANALI ("StatisticheSettimanali"),
 	@jakarta.xml.bind.annotation.XmlEnumValue("StatisticheMensili")
-	STATISTICHE_MENSILI ("StatisticheMensili");
+	STATISTICHE_MENSILI ("StatisticheMensili"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("PdndGenerazioneTracciamento")
+	PDND_GENERAZIONE_TRACCIAMENTO ("PdndGenerazioneTracciamento"),
+	@jakarta.xml.bind.annotation.XmlEnumValue("PdndPubblicazioneTracciamento")
+	PDND_PUBBLICAZIONE_TRACCIAMENTO ("PdndPubblicazioneTracciamento");
 	
 	
 	/** Value */

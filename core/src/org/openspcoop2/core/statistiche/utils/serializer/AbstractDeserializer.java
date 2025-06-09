@@ -25,6 +25,7 @@ import org.openspcoop2.core.statistiche.Statistica;
 import org.openspcoop2.core.statistiche.StatisticaMensile;
 import org.openspcoop2.core.statistiche.StatisticaContenuti;
 import org.openspcoop2.core.statistiche.StatisticaGiornaliera;
+import org.openspcoop2.core.statistiche.StatistichePdndTracing;
 import org.openspcoop2.core.statistiche.StatisticaSettimanale;
 import org.openspcoop2.core.statistiche.StatisticaOraria;
 import org.openspcoop2.core.statistiche.StatisticaInfo;
@@ -36,6 +37,7 @@ import java.io.File;
  * XML Deserializer of beans
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -292,6 +294,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public StatisticaGiornaliera readStatisticaGiornalieraFromString(String in) throws DeserializerException {
 		return (StatisticaGiornaliera) this.xmlToObj(in.getBytes(), StatisticaGiornaliera.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: statistiche-pdnd-tracing
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatistichePdndTracing readStatistichePdndTracing(String fileName) throws DeserializerException {
+		return (StatistichePdndTracing) this.xmlToObj(fileName, StatistichePdndTracing.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatistichePdndTracing readStatistichePdndTracing(File file) throws DeserializerException {
+		return (StatistichePdndTracing) this.xmlToObj(file, StatistichePdndTracing.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatistichePdndTracing readStatistichePdndTracing(InputStream in) throws DeserializerException {
+		return (StatistichePdndTracing) this.xmlToObj(in, StatistichePdndTracing.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatistichePdndTracing readStatistichePdndTracing(byte[] in) throws DeserializerException {
+		return (StatistichePdndTracing) this.xmlToObj(in, StatistichePdndTracing.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @return Object type {@link org.openspcoop2.core.statistiche.StatistichePdndTracing}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public StatistichePdndTracing readStatistichePdndTracingFromString(String in) throws DeserializerException {
+		return (StatistichePdndTracing) this.xmlToObj(in.getBytes(), StatistichePdndTracing.class);
 	}	
 	
 	

@@ -22,25 +22,37 @@ package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.SoggettiConfig;
+import org.openspcoop2.core.monitor.rs.server.model.BaseTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.DetailTransazione;
+import org.openspcoop2.core.monitor.rs.server.model.DetailsTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.Evento;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
+import org.openspcoop2.core.monitor.rs.server.model.ItemTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.ItemTransazione;
+import org.openspcoop2.core.monitor.rs.server.model.ListaTracingPDND;
+import org.openspcoop2.core.monitor.rs.server.model.MethodTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.PDNDOrganizationExternalId;
 import org.openspcoop2.core.monitor.rs.server.model.PDNDOrganizationInfo;
 import org.openspcoop2.core.monitor.rs.server.model.PDNDOrganizationInfoItemTransazione;
 import org.openspcoop2.core.monitor.rs.server.model.Riepilogo;
 import org.openspcoop2.core.monitor.rs.server.model.RiepilogoApiItem;
+import org.openspcoop2.core.monitor.rs.server.model.StatoTracing;
+import org.openspcoop2.core.monitor.rs.server.model.StatoTracingPDND;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.statistiche.constants.PdndMethods;
+import org.openspcoop2.core.statistiche.constants.PossibiliStatiPdnd;
+import org.openspcoop2.core.statistiche.constants.PossibiliStatiRichieste;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
@@ -61,11 +73,14 @@ import org.openspcoop2.utils.service.beans.DiagnosticoSeveritaEnum;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.TransazioneExt;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
+import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
+import org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingBean;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.dao.TransazioniService;
@@ -566,5 +581,102 @@ public class Converter {
 				IDServizioFactory.getInstance().getIDServizioFromValues(tipoServizioEffettivo, nomeServizio, tipoSoggetto, nomeSoggettoErogatore, 
 						versioneServizio==null ? 1 : versioneServizio);
 		return idServizio;
+	}
+	
+	
+	private static void fillBaseTracingPDND(BaseTracingPDND out, StatistichePdndTracingBean bean) {
+		out.tentativiPubblicazione(bean.getTentativiPubblicazione())
+				.statoPdnd(toStatoTracingPDND(bean.getStatoPdnd()))
+				.stato(toStatoTracing(bean.getStato()))
+				.dataRegistrazione(new DateTime(bean.getDataRegistrazione().getTime()))
+				.dataTracciamento(new LocalDate(bean.getDataTracciamento().getTime()))
+				.id(bean.getId());
+		if (bean.getTracingId() != null)
+			out.setTracingId(UUID.fromString(bean.getTracingId()));
+	}
+	
+	private static void fillDetailsTracingPDND(DetailsTracingPDND out, StatistichePdndTracingBean bean) {
+		fillBaseTracingPDND(out, bean);
+		
+		out.dettagliErrore(bean.getErrorDetails())
+			.metodo(toMethodTracingPDND(bean.getMethod()));
+	}
+	
+	public static ListaTracingPDND toListaTracingPDND(IContext context, List<StatistichePdndTracingBean> listDB, int offset, int limit, int totalCount) throws InstantiationException, IllegalAccessException {
+		ListaTracingPDND list = ListaUtils.costruisciLista(context.getUriInfo(),
+				Converter.toOffset(offset), Converter.toLimit(limit), totalCount,
+				ListaTracingPDND.class);
+		
+		List<ItemTracingPDND> items = new ArrayList<>();
+		for (StatistichePdndTracingBean bean : listDB) {
+			ItemTracingPDND item = new ItemTracingPDND();
+			fillBaseTracingPDND(item, bean);
+			
+			items.add(item);
+		}
+		list.setItems(items);
+		
+		return list;
+	}
+	
+	public static DetailsTracingPDND toDetailsTracingPDND(StatistichePdndTracingBean bean) throws InstantiationException, IllegalAccessException {
+		DetailsTracingPDND details = new DetailsTracingPDND();
+		fillDetailsTracingPDND(details, bean);
+		return details;
+	}
+	
+	public static StatoTracingPDND toStatoTracingPDND(PossibiliStatiPdnd state) {
+		if (state == null)
+			return null;
+		switch (state) {
+		case ERROR: return StatoTracingPDND.ERRORE;
+		case OK: return StatoTracingPDND.OK;
+		case PENDING: return StatoTracingPDND.ATTESA;
+		case WAITING: return StatoTracingPDND.ATTESA;
+		default: return null;
+		}
+	}
+	
+	public static StatoTracing toStatoTracing(PossibiliStatiRichieste state) {
+		if (state == null)
+			return null;
+		switch (state) {
+		case FAILED: return StatoTracing.FALLITA;
+		case PUBLISHED: return StatoTracing.PUBBLICATA;
+		default: return null;
+		}
+	}
+	
+	public static PossibiliStatiPdnd toStatoTracingPDND(StatoTracingPDND state) {
+		if (state == null)
+			return null;
+		switch (state) {
+		case ERRORE: return PossibiliStatiPdnd.ERROR;
+		case OK: return PossibiliStatiPdnd.OK;
+		case ATTESA: return PossibiliStatiPdnd.PENDING;
+		default: return null;
+		}
+	}
+	
+	public static PossibiliStatiRichieste toStatoTracing(StatoTracing state) {
+		if (state == null)
+			return null;
+		switch (state) {
+		case FALLITA: return PossibiliStatiRichieste.FAILED;
+		case PUBBLICATA: return PossibiliStatiRichieste.PUBLISHED;
+		default: return null;
+		}
+		
+	}
+	
+	public static MethodTracingPDND toMethodTracingPDND(PdndMethods method) {
+		if (method == null)
+			return null;
+		switch (method) {
+		case RECOVER: return MethodTracingPDND.RECOVER;
+		case REPLACE: return MethodTracingPDND.REPLACE;
+		case SUBMIT: return MethodTracingPDND.SUBMIT;
+		default: return null;
+		}
 	}
 }

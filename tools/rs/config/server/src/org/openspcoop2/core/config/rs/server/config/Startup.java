@@ -39,6 +39,9 @@ import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.services.ServicesUtils;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.certificate.byok.BYOKManager;
@@ -304,6 +307,23 @@ public class Startup implements ServletContextListener {
 			}
 			Startup.log.info("Inizializzazione NodiRuntime effettuata con successo");
 		
+			// Protocol Factory Manager
+			Startup.log.info("Inizializzazione ProtocolFactoryManager in corso...");
+			ServerProperties properties = null;
+			try {
+				properties = ServerProperties.getInstance();
+				ConfigurazionePdD configPdD = new ConfigurazionePdD();
+				configPdD.setAttesaAttivaJDBC(-1);
+				configPdD.setCheckIntervalJDBC(-1);
+				configPdD.setLoader(new Loader(Startup.class.getClassLoader()));
+				configPdD.setLog(Startup.log);
+				ProtocolFactoryManager.initialize(Startup.log, configPdD,
+						properties.getProtocolloDefault());
+			} catch (Exception e) {
+				throw new UtilsRuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("ProtocolFactoryManager DBManager effettuata con successo");
+			
 			initConsoleResources();
 			
 			initConnettori(confDir);
@@ -372,6 +392,11 @@ public class Startup implements ServletContextListener {
 			Properties consoleInputSanitizerConfiguration = serverProperties.getConsoleInputSanitizerConfiguration();
 			InputSanitizerProperties.init(consoleInputSanitizerConfiguration, log);
 			Validatore.init(SecurityProperties.getInstance(), InputSanitizerProperties.getInstance(), log);
+			
+			// Inizializzazione SignalHub
+			if(ProtocolFactoryManager.getInstance().existsProtocolFactory(org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME)) {
+				CostantiDB.setServiziDigestEnabled(ModIUtils.isSignalHubEnabled());
+			}
 			
 		} catch (Exception e) {
 			logAndThrow(e.getMessage(),e);

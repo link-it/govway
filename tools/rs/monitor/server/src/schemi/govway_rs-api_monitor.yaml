@@ -310,7 +310,47 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /monitoraggio/transazioni/purpose-id:
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+    get:
+      tags:
+        - Monitoraggio
+      summary: >-
+        Ricerca semplificata delle transazioni in base all'identificativo
+        finalita
+      operationId: findAllTransazioniByPurposeId
+      description: >-
+        Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
+        ricercandole in base all'identificativo della finalita
+      parameters:
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
+        - $ref: '#/components/parameters/purpose_id'
 
+      responses:
+        "200":
+          description: dettaglio transazione restituito correttamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaTransazioni'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+          
   /monitoraggio/transazioni/{id}:
     get:
       tags:
@@ -1519,6 +1559,105 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /reportistica/tracing-pdnd:
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+    get:
+      tags:
+        - Reportistica
+      summary: Recupera la lista di tracciati della pdnd
+      operationId: getTracingPdndList
+      description: >-
+        Consente di recuperare la configurazione di un servizio esportandola in formato csv, xls
+      parameters:
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+        - $ref: '#/components/parameters/numero_tentativi_tracing'
+        - $ref: '#/components/parameters/stato_tracing'
+        - $ref: '#/components/parameters/stato_tracing_pdnd'
+        - $ref: '#/components/parameters/data_tracing_inizio'
+        - $ref: '#/components/parameters/data_tracing_fine'
+        - $ref: '#/components/parameters/tracing_id'
+      responses:
+        "200":
+          description: lista dei tracing attivi che rispettano i filtri di ricerca
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaTracingPDND'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+  
+  /reportistica/tracing-pdnd/{id}/dettagli:
+    get:
+      tags:
+        - Reportistica
+      summary: mostra i dettagli di un tracciamento
+      operationId: getDetailsTracingPdnd
+      description: >-
+        mostra i dettagli di un tracciamento
+      parameters:
+       - $ref: '#/components/parameters/id_tracing_pdnd'
+      responses:
+        "200":
+          description: valore del tracciato
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailsTracingPDND'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default' 
+  /reportistica/tracing-pdnd/{id}/esporta:
+    get:
+      tags:
+        - Reportistica
+      summary: esporta il csv inerente al tracciato
+      operationId: exportTracingPdnd
+      description: >-
+        Consente di recuperare il csv del tracciato
+      parameters:
+        - $ref: '#/components/parameters/id_tracing_pdnd'
+      responses:
+        "200":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/200ReportStatistico'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'    
   /status:
     get:
       tags:
@@ -1624,6 +1763,15 @@ components:
       in: query
       name: id_applicativo
       description: l'identificativo di correlazione applicativa della richiesta o della risposta
+      required: true
+      schema:
+        type: string
+        
+            
+    purpose_id:
+      in: query
+      name: purpose_id
+      description: l'identificativo di finalita del token usato (purposeId)
       required: true
       schema:
         type: string
@@ -1832,7 +1980,70 @@ components:
       schema:
         $ref: "govway_core.yaml#/components/schemas/TokenClaimDistribuzioneStatisticaEnum"
       required: true
-
+          
+    numero_tentativi_tracing:
+      in: query
+      name: tentativi_pubblicazione
+      description: Specifica il numero di tentativi effettuati da una pubblicazione di tracing
+      schema:
+        type: integer
+        format: int32
+        min: 0
+      required: false
+    
+    stato_tracing_pdnd:
+      in: query
+      name: stato_pdnd
+      description: Specifica lo stato PDND del tracing pubblicato
+      schema:
+        $ref: '#/components/schemas/StatoTracingPDND'
+      required: false
+      default: 'Qualsiasi'
+    
+    stato_tracing:
+      in: query
+      name: stato
+      description: Specifica lo stato della richiesta inviata alla PDND del tracing pubblicato
+      schema:
+        $ref: '#/components/schemas/StatoTracing'
+      required: false
+      default: 'Qualsiasi'
+      
+    data_tracing_inizio:
+      in: query
+      name: data_inizio
+      description: Specifica la data di inizio della ricerca
+      schema:
+        type: string
+        format: date
+      required: true
+    
+    data_tracing_fine:
+      in: query
+      name: data_fine
+      description: Specifica la data di fine della ricerca
+      schema:
+        type: string
+        format: date
+      required: true
+    
+    tracing_id:
+      in: query
+      name: tracing_id
+      description: Specifica il tracing id del tracciato
+      schema:
+        type: string
+        format: uuid
+      required: false
+      
+    id_tracing_pdnd:
+      name: id
+      in: path
+      description: identificativo del tracciato
+      required: true
+      schema:
+        type: integer
+        format: int64
  
   schemas:
 
@@ -2976,3 +3187,68 @@ components:
         - client_id_pdnd_informazioni
         - username
         - email
+    
+    ListaTracingPDND:
+      type: object
+      allOf:
+        - $ref: 'govway_core.yaml#/components/schemas/Lista'
+        - type: object
+          required:
+          - items
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ItemTracingPDND'
+
+    BaseTracingPDND:
+      type: object
+      properties:
+        data_tracciamento:
+          type: string
+          format: date
+        data_registrazione:
+          type: string
+          format: date-time
+        tentativi_pubblicazione:
+          type: integer
+          format: int32
+          min: 0
+        stato:
+          $ref: '#/components/schemas/StatoTracing'
+        stato_pdnd:
+          $ref: '#/components/schemas/StatoTracingPDND'
+        tracing_id:
+          type: string
+          format: uuid
+        id:
+          type: integer
+          format: int64
+    
+    ItemTracingPDND:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseTracingPDND'
+    
+    DetailsTracingPDND:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseTracingPDND'
+        - type: object
+          properties:
+            metodo:
+              $ref: '#/components/schemas/MethodTracingPDND'
+            dettagli_errore:
+              type: string
+    
+    StatoTracingPDND:
+        type: string
+        enum: ['Qualsiasi', 'Errore', 'Attesa', 'Ok']
+    
+    MethodTracingPDND:
+        type: string
+        enum: ['RECOVER', 'REPLACE', 'SUBMIT']
+    
+    StatoTracing:
+        type: string
+        enum: ['Qualsiasi', 'Fallita', 'Pubblicata']

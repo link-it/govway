@@ -119,6 +119,8 @@ public class HttpConstants {
 	/** Download */
 	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 	public static final String CONTENT_DISPOSITION_ATTACH_FILE_PREFIX = "attachment; filename=";
+	public static final String CONTENT_DISPOSITION_FORM_DATA_FILE_PREFIX = "form-data; filename=";
+	public static final String CONTENT_DISPOSITION_FORM_DATA_NAME_PREFIX = "form-data; name=";
 	public static final String CONTENT_DISPOSITION_NAME_PREFIX = "name=";
 	public static final String CONTENT_DISPOSITION_FILENAME_PREFIX = "filename=";
 	
@@ -190,6 +192,7 @@ public class HttpConstants {
 	public static final String CONTENT_TYPE_APPLICATION_XOP_XML = MimeTypeConstants.MEDIA_TYPE_APPLICATION_XOP_XML;
 	public static final String CONTENT_TYPE_HTML = MimeTypeConstants.MEDIA_TYPE_HTML;
 	public static final String CONTENT_TYPE_PLAIN = MimeTypeConstants.MEDIA_TYPE_PLAIN;
+	public static final String CONTENT_TYPE_CSV = MimeTypeConstants.MEDIA_TYPE_CSV;
 	public static final String CONTENT_TYPE_XML = MimeTypeConstants.MEDIA_TYPE_XML;
 	public static final String CONTENT_TYPE_TEXT_XML = CONTENT_TYPE_SOAP_1_1;
 	public static final String CONTENT_TYPE_JSON = MimeTypeConstants.MEDIA_TYPE_JSON;

@@ -682,6 +682,15 @@ public class PddMonitorProperties {
 	}
 
 	
+	public Integer getIntervalloTimeoutRicercaStatistichePdndTracing() throws UtilsException{
+		String timeoutS = this.appProperties.getProperty("statistiche.timeoutRicercaStatistichePdndTracing", false, true);
+		return StringUtils.isNotBlank(timeoutS) ? Integer.parseInt(timeoutS) : null;
+	}
+	
+	public boolean isAttivoUtilizzaCountStatistichePdndTracingLista() throws UtilsException{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.tracingPdnd.lista.utilizzaCount.enabled", true, true));
+	}
+	
 	// periodo refresh live
 	
 	public String getIntervalloRefreshTransazioniLive() throws UtilsException{

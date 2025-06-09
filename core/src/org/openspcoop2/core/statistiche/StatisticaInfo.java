@@ -44,6 +44,7 @@ import java.io.Serializable;
  * @version $Rev$, $Date$
  * 
  * @author Poli Andrea (poli@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * */
 

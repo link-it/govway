@@ -122,13 +122,28 @@ public class PreLoadingConfig  {
 	public void loadConfig(List<PreloadingConfiguration> zipContent) throws UtilsException, IOException, DriverConfigurazioneException, ServiceException, NotImplementedException, ProtocolException {
 		if(zipContent!=null && !zipContent.isEmpty()) {
 			for (PreloadingConfiguration bs : zipContent) {
+				boolean load = true;
 				if(bs.getName().contains("signalHubPDND") &&
-					ProtocolFactoryManager.getInstance().existsProtocolFactory(Costanti.MODIPA_PROTOCOL_NAME) &&
-					!ModIUtils.isSignalHubEnabled()) {
-					logInfo("Pacchetto '"+bs.getName()+"' non caricato; funzionalità non attiva");
-					continue;
+					(
+							!ProtocolFactoryManager.getInstance().existsProtocolFactory(Costanti.MODIPA_PROTOCOL_NAME) 
+							||
+							!ModIUtils.isSignalHubEnabled())
+						){
+					logInfo("Pacchetto '"+bs.getName()+"' non caricato; funzionalità 'Signal Hub' non attiva");
+					load = false;
 				}
-				this.loadConfig(bs.getResource());
+				else if(bs.getName().contains("tracingPDND") &&
+					(
+							!ProtocolFactoryManager.getInstance().existsProtocolFactory(Costanti.MODIPA_PROTOCOL_NAME) 
+							||
+							!ModIUtils.isTracingPDNDEnabled())
+						){
+					logInfo("Pacchetto '"+bs.getName()+"' non caricato; funzionalità 'Tracing PDND' non attiva");
+					load = false;
+				}
+				if(load) {
+					this.loadConfig(bs.getResource());
+				}
 			}
 		}
 	}
