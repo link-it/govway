@@ -26,8 +26,10 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.rs.server.api.impl.ProtocolPropertiesHelper;
+import org.openspcoop2.core.config.rs.server.model.DominioEnum;
 import org.openspcoop2.core.config.rs.server.model.ModISoggetto;
 import org.openspcoop2.core.config.rs.server.model.ModISoggettoPDND;
+import org.openspcoop2.core.config.rs.server.model.TracciamentoPDNDSoggettoEnum;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -46,16 +48,30 @@ public class ModiSoggettiApiHelper {
 	
 	private ModiSoggettiApiHelper() {}
 
-	public static ProtocolProperties getProtocolProperties(org.openspcoop2.core.config.rs.server.model.Soggetto body) {
+	public static ProtocolProperties getProtocolProperties(org.openspcoop2.core.config.rs.server.model.Soggetto body) throws ProtocolException {
 		/**		if(body.getModi() == null) {
 		//			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare la configurazione 'ModI'");
 		//		}*/
 
 		ProtocolProperties p = new ProtocolProperties();
 
-		if(body.getModi() != null && body.getModi().getPdnd()!=null && body.getModi().getPdnd().getIdEnte()!=null && StringUtils.isNotEmpty(body.getModi().getPdnd().getIdEnte())) {
-			p.addProperty(ModICostanti.MODIPA_SOGGETTI_ID_ENTE_ID, body.getModi().getPdnd().getIdEnte());
+		if(body.getModi() != null && body.getModi().getPdnd()!=null ) {
+			if(body.getModi().getPdnd().getIdEnte()!=null && StringUtils.isNotEmpty(body.getModi().getPdnd().getIdEnte())) {
+				p.addProperty(ModICostanti.MODIPA_SOGGETTI_ID_ENTE_ID, body.getModi().getPdnd().getIdEnte());
+			}
+			
+			TracciamentoPDNDSoggettoEnum tracciamentoPdnd = body.getModi().getPdnd().getTracciamentoPdnd();
+			if (tracciamentoPdnd != null) {
+				
+				if (DominioEnum.INTERNO.equals(body.getDominio())) {
+					p.addProperty(ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_ID, toTracciamentoPDNDSoggettoId(tracciamentoPdnd));
+				} else {
+					throw new ProtocolException("Il campo tracing_pdnd è valido solo per soggetti con dominio interno");
+				}
+			
+			}
 		}
+		
 
 		return p;
 
@@ -63,20 +79,51 @@ public class ModiSoggettiApiHelper {
 	
 
 
+	public static void initializePdnd(org.openspcoop2.core.config.rs.server.model.Soggetto ret) {
+		if(ret.getModi()==null) {
+			ret.setModi(new ModISoggetto());
+		}
+		if(ret.getModi().getPdnd()==null) {
+			ret.getModi().setPdnd(new  ModISoggettoPDND());
+		}
+	}
+	
 	public static void populateProtocolInfo(Soggetto soggetto, SoggettiEnv env, org.openspcoop2.core.config.rs.server.model.Soggetto ret) throws CoreException, UtilsException, ProtocolException, DriverConfigurazioneException {
 
 		Map<String, AbstractProperty<?>> p = SoggettiApiHelper.getProtocolPropertiesMap(soggetto, env);
 		String idEnte = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_SOGGETTI_ID_ENTE_ID, false);
 		if(idEnte != null && StringUtils.isNotEmpty(idEnte)) {
-			if(ret.getModi()==null) {
-				ret.setModi(new ModISoggetto());
-			}
-			if(ret.getModi().getPdnd()==null) {
-				ret.getModi().setPdnd(new  ModISoggettoPDND());
-			}
+			initializePdnd(ret);
 			ret.getModi().getPdnd().setIdEnte(idEnte);
 		}
 		
+		String tracciamentoPdnd = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_ID, false);
+		if (tracciamentoPdnd != null && DominioEnum.INTERNO.equals(ret.getDominio())) {
+			initializePdnd(ret);
+			ret.getModi().getPdnd().setTracciamentoPdnd(toTracciamentoPDNDSoggettoEnum(tracciamentoPdnd));
+		}
+		
+	}
+	
+	private static TracciamentoPDNDSoggettoEnum toTracciamentoPDNDSoggettoEnum(String idValue) {
+		if (ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_DISABLE_ID.equals(idValue))
+			return TracciamentoPDNDSoggettoEnum.DISABILITATO;
+		if (ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_ID.equals(idValue))
+			return TracciamentoPDNDSoggettoEnum.ABILITATO;
+		return TracciamentoPDNDSoggettoEnum.DEFAULT;
+	}
+	
+	private static String toTracciamentoPDNDSoggettoId(TracciamentoPDNDSoggettoEnum enumValue) {
+		if (enumValue == null)
+			return  ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID;
+		
+		switch (enumValue) {
+		case ABILITATO: return ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_ID;
+		case DEFAULT: return ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID;
+		case DISABILITATO: return ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_DISABLE_ID;
+		}
+		
+		return ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID;
 	}
 
 }

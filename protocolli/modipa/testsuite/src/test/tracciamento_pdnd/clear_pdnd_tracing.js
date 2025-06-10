@@ -26,5 +26,13 @@ function clear_pdnd_tracing(days) {
     date = new Date(0)
     dbquery = "UPDATE statistiche SET data_ultima_generazione = ? WHERE tipo='PdndGenerazioneTracciamento'"
     karate.log(dbquery)
-    db.update(dbquery, db.addTimestamp(utils.now(), -days));
+    prev_date = db.addTimestamp(utils.now(), -days)
+    effected = db.update(dbquery, prev_date);
+    
+    karate.log("effected=" + effected)
+    if (effected == 0) {
+    	dbquery = "INSERT INTO statistiche(data_ultima_generazione, tipo) VALUES (?, 'PdndGenerazioneTracciamento')";
+     	karate.log(dbquery)
+    	db.update(dbquery, prev_date);
+    }
 }

@@ -29,8 +29,12 @@ Background:
 
 @prepare
 Scenario: Preparazione Test ModI
+    * def query_modi = { profilo: 'ModI' }
 
-	* def query_modi = { profilo: 'ModI' }
+    * def soggetto_erogatore_pdnd = read('classpath:bodies/modi/soggetto-erogatore-pdnd.json')
+    * eval soggetto_erogatore_pdnd.modi.pdnd.tracciamento_pdnd = 'Abilitato'
+    * call put ({ resourcePath: 'soggetti/' + soggetto_erogatore_pdnd.nome, body: soggetto_erogatore_pdnd, query_params: query_modi })
+    
     * def api_pdnd = read('classpath:bodies/modi/api-pdnd.json')
     * eval randomize(api_pdnd, ["nome"])
     * def api_pdnd_path = 'api/' + api_pdnd.nome + '/' + api_pdnd.versione
@@ -38,7 +42,7 @@ Scenario: Preparazione Test ModI
 	
     * call create ({ resourcePath: 'api', body: api_pdnd, query_params: query_modi })
 
-	* eval query_modi.soggetto = 'DemoSoggettoErogatore'
+    * eval query_modi.soggetto = 'rs-monitor-DemoSoggettoErogatore'
 	
     * def erogazione_pdnd = read('classpath:bodies/modi/erogazione-pdnd.json')
     * eval erogazione_pdnd.api_nome = api_pdnd.nome
@@ -52,43 +56,43 @@ Scenario: Preparazione Test ModI
 	* def autorizzazione_erogazione_pdnd = read('classpath:bodies/modi/erogazione-pdnd-autorizzazione.json')
 	* call put ({ resourcePath: erogazione_pdnd_path + '/configurazioni/controllo-accessi/autorizzazione', body: autorizzazione_erogazione_pdnd, query_params: query_modi })
 
-	* eval query_modi.soggetto = 'DemoSoggettoFruitore'
+	* eval query_modi.soggetto = 'rs-monitor-DemoSoggettoFruitore'
 	
     * def fruizione_pdnd = read('classpath:bodies/modi/fruizione-pdnd.json')
     * set fruizione_pdnd.api_nome = api_pdnd.nome
     * set fruizione_pdnd.api_versione = api_pdnd.versione
-    * set fruizione_pdnd.connettore.endpoint = 'http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/' + erogazione_pdnd.api_nome + '/v1'
+    * set fruizione_pdnd.connettore.endpoint = 'http://localhost:8080/govway/rest/in/rs-monitor-DemoSoggettoErogatore/' + erogazione_pdnd.api_nome + '/v1'
     * def fruizione_pdnd_path = 'fruizioni/' +  fruizione_pdnd.erogatore + '/' + fruizione_pdnd.api_nome + '/' + fruizione_pdnd.api_versione
     * call create ({ resourcePath: 'fruizioni', body: fruizione_pdnd, query_params: query_modi })
     
     * def purpose_ids = ({ id1: 'purposeId1', id2: 'purposeId2', id3: 'purposeId3' })
     * randomize(purpose_ids, ['id1', 'id2', 'id3'])
     
-    Given url govwayBasePath + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/' + fruizione_pdnd.api_nome + '/v' + fruizione_pdnd.api_versione + '/ok'
+    Given url govwayBasePath + '/rest/out/rs-monitor-DemoSoggettoFruitore/rs-monitor-DemoSoggettoErogatore/' + fruizione_pdnd.api_nome + '/v' + fruizione_pdnd.api_versione + '/ok'
 	And header simulazionepdnd-purposeId = purpose_ids.id1
 	And header simulazionepdnd-audience = 'audience'
-	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header simulazionepdnd-username = 'rs-monitor-ApplicativoBlockingJWK'
 	When method get
 	Then status 200
 	
-	Given url govwayBasePath + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/' + fruizione_pdnd.api_nome + '/v' + fruizione_pdnd.api_versione + '/ok'
+	Given url govwayBasePath + '/rest/out/rs-monitor-DemoSoggettoFruitore/rs-monitor-DemoSoggettoErogatore/' + fruizione_pdnd.api_nome + '/v' + fruizione_pdnd.api_versione + '/ok'
 	And header simulazionepdnd-purposeId = purpose_ids.id1
 	And header simulazionepdnd-audience = 'audience'
-	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header simulazionepdnd-username = 'rs-monitor-ApplicativoBlockingJWK'
 	When method get
 	Then status 200
 	
-	Given url govwayBasePath + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/' + fruizione_pdnd.api_nome + '/v' + fruizione_pdnd.api_versione + '/ok'
+	Given url govwayBasePath + '/rest/out/rs-monitor-DemoSoggettoFruitore/rs-monitor-DemoSoggettoErogatore/' + fruizione_pdnd.api_nome + '/v' + fruizione_pdnd.api_versione + '/ok'
 	And header simulazionepdnd-purposeId = purpose_ids.id2
 	And header simulazionepdnd-audience = 'audience'
-	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header simulazionepdnd-username = 'rs-monitor-ApplicativoBlockingJWK'
 	When method get
 	Then status 200
 	
-	Given url govwayBasePath + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/' + fruizione_pdnd.api_nome + '/v' + fruizione_pdnd.api_versione + '/ok'
+	Given url govwayBasePath + '/rest/out/rs-monitor-DemoSoggettoFruitore/rs-monitor-DemoSoggettoErogatore/' + fruizione_pdnd.api_nome + '/v' + fruizione_pdnd.api_versione + '/ok'
 	And header simulazionepdnd-purposeId = purpose_ids.id3
 	And header simulazionepdnd-audience = 'audience'
-	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header simulazionepdnd-username = 'rs-monitor-ApplicativoBlockingJWK'
 	When method get
 	Then status 200
     
@@ -96,11 +100,15 @@ Scenario: Preparazione Test ModI
 Scenario: pulizia Test ModI
 	* configure headers = ({ "Authorization": govwayConfAuth })
 	
-	* def query_modi = { profilo: 'ModI', soggetto: 'DemoSoggettoFruitore' }
+	* def query_modi = { profilo: 'ModI', soggetto: 'rs-monitor-DemoSoggettoFruitore' }
 	
+	* def soggetto_erogatore_pdnd = read('classpath:bodies/modi/soggetto-erogatore-pdnd.json')
+    * eval soggetto_erogatore_pdnd.modi.pdnd.tracciamento_pdnd = 'Default'
+    * call put ({ resourcePath: 'soggetti/' + soggetto_erogatore_pdnd.nome, body: soggetto_erogatore_pdnd, query_params: query_modi })
+    
 	* call delete ({ resourcePath: setup.fruizione_pdnd_path, query_params: query_modi })
 	
-	* eval query_modi.soggetto = 'DemoSoggettoErogatore'
+	* eval query_modi.soggetto = 'rs-monitor-DemoSoggettoErogatore'
 
 	* call delete ({ resourcePath: setup.erogazione_pdnd_path, query_params: query_modi })
 	

@@ -1,8 +1,8 @@
 Feature: Feature test supporto tracciamento PDND
 
 Background:
-	* def generate_tracing = (['bash', '-c', 'cd ' + batch_path + '/generatoreStatistiche &&  ./generaPdndGenerazioneTracciamento.sh'])
-	* def pubblish_tracing = (['bash', '-c', 'cd ' + batch_path + '/generatoreStatistiche &&  ./generaPdndPubblicazioneTracciamento.sh'])
+	* def generate_tracing = (['bash', '-c', 'cd ' + batch_path + '/generatoreStatistiche &&  ./generaReportPDND.sh'])
+	* def pubblish_tracing = (['bash', '-c', 'cd ' + batch_path + '/generatoreStatistiche &&  ./pubblicaReportPDND.sh'])
 	* def wither_transactions = read('classpath:test/tracciamento_pdnd/wither_transactions.js')
 	* def clear_pdnd_tracing = read('classpath:test/tracciamento_pdnd/clear_pdnd_tracing.js')
 	* def get_state = read('classpath:test/tracciamento_pdnd/get_state.js')

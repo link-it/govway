@@ -48,6 +48,7 @@ Scenario: pathMatches('/tracings') && methodIs('GET')
  		if (disabled[soggetto].tracings) {
     		res = "disabilitato"
     		status = 500
+    		karate.fail("Fallimento controllato")
     	} else {
     		res = ({ totalCount: filtered_size, results: page })
     		status = 200
@@ -66,6 +67,7 @@ Scenario: pathMatches('/tracings/{id}/errors') && methodIs('GET')
  		if (disabled[soggetto].errors) {
     		res = "disabilitato"
     		status = 500
+    		karate.fail("Fallimento controllato")
     	} else if(entry.state == "ERROR") {
     		pdnd_error = { size: 0 }
     		push(pdnd_error, { "purposeId": "string", "errorCode": "string", "message": "string", "rowNumber": 0 })
@@ -96,6 +98,7 @@ Scenario: pathMatches('/tracings/{id}/recover') && methodIs('POST')
    		if (disabled[soggetto].recover) {
    			status = 500
    			res = response_error('disabled') 
+   			karate.fail("Fallimento controllato")
    		} else if (entry == null) {
    			status = 500
    			res = response_error('not present') 
@@ -123,6 +126,7 @@ Scenario: pathMatches('/tracings/{id}/replace') && methodIs('POST')
    		if (disabled[soggetto].replace) {
    			status = 500
    			res = response_error('disabled') 
+   			karate.fail("Fallimento controllato")
    		} else if (entry == null) {
    			status = 500
    			res = response_error('Boh') 
@@ -152,6 +156,7 @@ Scenario: pathMatches('/tracings/submit') && methodIs('POST')
  		if (disabled[soggetto].submit) {
  			res = "disabilitato"
     		status = 500
+    		karate.fail("Fallimento controllato")
     	} else {
     		push(traces[soggetto], { tracingId: tracingId + "", state: 'PENDING', date: now, content: trace })
     		res = ({ tracingId: tracingId + "", errors: false})
@@ -171,6 +176,7 @@ Scenario: pathMatches('/status') && methodIs('GET')
  		if (disabled[soggetto].status) {
     		res = "disabilitato"
     		status = 500
+    		karate.fail("Fallimento controllato")
     	} else {
     		res = "{}"
     		status = 200

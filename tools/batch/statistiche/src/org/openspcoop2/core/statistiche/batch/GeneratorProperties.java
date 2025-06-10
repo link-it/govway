@@ -24,6 +24,7 @@ package org.openspcoop2.core.statistiche.batch;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -92,7 +93,8 @@ public class GeneratorProperties {
 	private Integer pdndTracingMaxAttempt = null;
 	private boolean pdndTracingErogazioniEnabled = true;
 	private boolean pdndTracingFruizioniEnabled = true;
-
+	private List<Integer> pdndTracingPendingCheck = null;
+	
 	private PropertiesReader props;
 	
 	
@@ -167,6 +169,11 @@ public class GeneratorProperties {
 		value = getProperty("statistiche.pdnd.tracciamento.fruizioni.enabled", false);
 		if (Boolean.FALSE.toString().equals(value))
 			this.pdndTracingFruizioniEnabled = false;
+		
+		value = getProperty("statistiche.pdnd.tracciamento.pending.check", false);
+		this.pdndTracingPendingCheck = (value == null || StringUtils.isEmpty(value.trim())) ? List.of(0) : Arrays.stream(value.split(","))
+				.map(Integer::valueOf)
+				.collect(Collectors.toList());
 	}
 	
 	private String getProperty(String name,boolean required) throws UtilsException{
@@ -350,6 +357,12 @@ public class GeneratorProperties {
 	}
 	public void setPdndTracingMaxAttempt(Integer pdndTracingMaxAttempt) {
 		this.pdndTracingMaxAttempt = pdndTracingMaxAttempt;
+	}
+	public List<Integer> getPdndTracingPendingCheck() {
+		return this.pdndTracingPendingCheck;
+	}
+	public void setPdndTracingPendingCheck( List<Integer> pdndTracingPendingCheck) {
+		this.pdndTracingPendingCheck = pdndTracingPendingCheck;
 	}
 	
 }

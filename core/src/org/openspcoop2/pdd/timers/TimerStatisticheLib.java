@@ -324,6 +324,7 @@ public class TimerStatisticheLib {
 			this.statisticsConfig.setPdndTracciamentoSoggettiEnabled(this.op2Properties.getStatistichePdndTracciamentoSoggettiEnabled());
 			this.statisticsConfig.setPdndTracciamentoSoggettiDisabled(this.op2Properties.isStatistichePdndTracciamentoSoggettiDisabled());
 			this.statisticsConfig.setPdndTracciamentoMaxAttempt(this.op2Properties.getStatistichePdndTracciamentoMaxAttempts());
+			this.statisticsConfig.setPdndTracciamentoPendingCheck(this.op2Properties.getStatistichePdndTracciamentoPendingCheck());
 		}catch(Exception e){
 			throw new Exception("Errore durante la generazione delle statistiche (InitConfigurazione): "+e.getMessage(),e);
 		}

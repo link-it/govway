@@ -255,7 +255,8 @@ public class Generator {
 			statisticsConfig.setPdndTracciamentoFruizioniEnabled(generatorProperties.isPdndTracingFruizioniEnabled());
 			statisticsConfig.setPdndTracciamentoErogazioniEnabled(generatorProperties.isPdndTracingErogazioniEnabled());
 			statisticsConfig.setPdndTracciamentoMaxAttempt(generatorProperties.getPdndTracingMaxAttempt());
-			
+			statisticsConfig.setPdndTracciamentoPendingCheck(generatorProperties.getPdndTracingPendingCheck());
+
 			switch (tipoStatistica) {
 			case STATISTICHE_ORARIE:
 				statisticsConfig.setStatisticheOrarie(true);

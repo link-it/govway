@@ -34,6 +34,7 @@ import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -44,6 +45,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
@@ -173,6 +175,8 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.slf4j.Logger;
+
+import com.hazelcast.client.impl.CollectRemoteTransactionsOperationSupplier;
 
 /**
  * Contiene un lettore del file di proprieta' di OpenSPCoop.
@@ -2685,6 +2689,7 @@ public class OpenSPCoop2Properties {
 				this.getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds();
 				this.getStatistichePdndTracciamentoHttpRequestConfig();
 				this.getStatistichePdndTracciamentoMaxAttempts();
+				this.getStatistichePdndTracciamentoPendingCheck();
 				this.getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds();
 				this.getStatistichePdndTracciamentoSoggettiEnabled();
 				
@@ -33650,6 +33655,30 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getStatistichePdndTracciamentoMaxAttempts == 0 ? null : this.getStatistichePdndTracciamentoMaxAttempts;
+	}
+	
+	private List<Integer> getStatistichePdndTracciamentoPendingCheck = null;
+	public List<Integer> getStatistichePdndTracciamentoPendingCheck() throws CoreException {	
+		if(this.getStatistichePdndTracciamentoPendingCheck==null){
+			String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.pending.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					this.getStatistichePdndTracciamentoPendingCheck = List.of(0);
+				} else {
+					name = name.trim();
+					this.getStatistichePdndTracciamentoPendingCheck = Arrays.stream(name.split(","))
+							.map(Integer::valueOf)
+							.collect(Collectors.toList());
+				}
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key +"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getStatistichePdndTracciamentoPendingCheck;
 	}
 	
 	private Boolean isStatistichePdndTracciamentoErogazioniEnabled = null;
