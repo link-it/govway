@@ -1,3 +1,10 @@
+2025-06-11  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [ApiRsConfigurazione]
+	Risolto Bug #1616
+	Corretta un'anomalia relativa all'utilizzo del parametro profilo_qualsiasi impostato a true nelle chiamate che restituiscono la lista delle erogazioni, delle fruizioni o delle API.
+	Gli oggetti presenti nella lista risultante venivano erroneamente associati al profilo di interoperabilità di default, anziché a quello effettivamente configurato.
+
 2025-06-06  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [ProtocolloModIPA, GovWayMonitor, ApiRsMonitoraggio]

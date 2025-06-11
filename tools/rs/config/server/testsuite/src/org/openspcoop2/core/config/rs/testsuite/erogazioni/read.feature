@@ -138,17 +138,38 @@ Scenario: Erogazioni FindAll di Api con Tags definiti
 
 
 @FindAllProfiloSoggettoQualsiasi
-Scenario: Erogazioni FindAll di Api con qualsiasi profilo e soggetto
+Scenario Outline: Erogazioni FindAll di Api <profilo> con qualsiasi profilo e soggetto
 
-* call create ({ resourcePath: 'api', body: api_petstore })
-* call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
+* def api_test = read('<api>') 
+* eval api_test.tags = (['TESTSUITE'])
+* eval randomize(api_test, ["nome"])
+* eval randomize(api_test, ["tags.0"])
 
-* def erogazioni_response = call read('classpath:findall_stub.feature') { resourcePath: 'erogazioni', query_params:  { profilo_qualsiasi: true, soggetto_qualsiasi: true } }
-* assert erogazioni_response.findall_response_body.items.length > 0
+* def erogazione_test = read('<erogazione>') 
+* eval erogazione_test.api_tags = ([api_test.tags[0]])
+* eval erogazione_test.api_nome = api_test.nome
+* eval erogazione_test.erogazione_nome = api_test.nome
+* eval erogazione_test.api_versione = api_test.versione
 
-* call delete ({ resourcePath: 'erogazioni/' + petstore_key })
-* call delete ({ resourcePath: api_petstore_path })
+* def key = api_test.nome + '/' + api_test.versione
+* def api_test_path = 'api/' + key
+* def erogazione_test_path = 'erogazioni/' + key
 
+* call create ({ resourcePath: 'api', body: api_test, query_params: { profilo: '<profilo>'}})
+* call create ({ resourcePath: 'erogazioni', body: erogazione_test, query_params: { profilo: '<profilo>'}})
+
+* def erogazioni_response = call read('classpath:findall_stub.feature') ({ resourcePath: 'erogazioni', query_params:  { profilo_qualsiasi: true, soggetto_qualsiasi: true, tag: api_test.tags[0] } })
+* assert erogazioni_response.findall_response_body.items.length == 1
+* assert erogazioni_response.findall_response_body.items[0].nome == erogazione_test.erogazione_nome
+* assert erogazioni_response.findall_response_body.items[0].profilo == '<profilo>'
+
+* call delete ({ resourcePath: erogazione_test_path, query_params: { profilo: '<profilo>'} })
+* call delete ({ resourcePath: api_test_path, query_params: { profilo: '<profilo>'} })
+
+Examples:
+| api                | erogazione                | profilo    |
+| api_petstore.json  | erogazione_petstore.json  | APIGateway |
+| api_modi_soap.json | erogazione_modi_soap.json | ModI     |
 
 @FindAllUriApiImplementata
 Scenario: Erogazioni FindAll di Api con indicazione della uri implementata

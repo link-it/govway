@@ -20,9 +20,11 @@
 package org.openspcoop2.core.config.rs.server.api.impl.api;
 
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
+import static org.openspcoop2.utils.service.beans.utils.ProfiloUtils.toProfilo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
@@ -764,10 +766,11 @@ public class ApiApiHelper {
 	public static final ApiItem apiToItem(Api api, AccordoServizioParteComuneSintetico as, ApiEnv env) {
 		ApiItem ret = new ApiItem();
 
+		ProfiloEnum profilo = toProfilo(as.getSoggettoReferente().getTipo());
 		ret.setDescrizione(api.getDescrizione());
 		ret.setTipoInterfaccia(api.getTipoInterfaccia());
 		ret.setNome(api.getNome());
-		ret.setProfilo(env.profilo);	// TODO: In multitenant questo va cambiato al profilo relativo al tip del soggetto referente dell'as
+		ret.setProfilo(Objects.requireNonNullElse(profilo, ProfiloEnum.APIGATEWAY));
 		ret.setSoggetto(api.getReferente());
 		ret.setVersione(api.getVersione());
 		ret.setReferente(api.getReferente());

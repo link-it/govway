@@ -74,7 +74,8 @@ public class ProfiloUtils {
 		return getMapProfiloToProtocollo().get(profiloEnum);
 	}
 	public static ProfiloEnum toProfilo(String protocollo) {
-		return getMapProtocolloToProfilo().get(protocollo);
+		ProfiloEnum out = getMapProtocolloToProfilo().get(protocollo);
+		return ProfiloEnum.MODI.equals(out) ? ProfiloEnum.MODIPA : out;
 	}
 	
 }

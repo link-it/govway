@@ -21,6 +21,7 @@ package org.openspcoop2.core.config.rs.server.api.impl.erogazioni;
 
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializeDefault;
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
+import static org.openspcoop2.utils.service.beans.utils.ProfiloUtils.toProfilo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -2626,7 +2628,8 @@ public class ErogazioniApiHelper {
 		try {
 			final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
 			final AccordoServizioParteComuneSintetico aspc = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
-			
+			ProfiloEnum profilo = toProfilo(asps.getTipo());
+
 			toFill.setTipoServizio(idServizio.getTipo());
 			toFill.setNome(asps.getNome());
 			toFill.setVersione(asps.getVersione());
@@ -2634,7 +2637,7 @@ public class ErogazioniApiHelper {
 			toFill.setApiNome(aspc.getNome());
 			toFill.setApiTipo(TipoApiEnum.valueOf(aspc.getServiceBinding().name()));
 			toFill.setApiVersione(aspc.getVersione());
-			toFill.setProfilo(env.profilo);
+			toFill.setProfilo(Objects.requireNonNullElse(profilo, ProfiloEnum.APIGATEWAY));
 			toFill.setConnettore(urlConnettore);		
 			toFill.setApiSoapServizio(asps.getPortType());
 			toFill.setGestioneCors(Helper.boolToStatoFunzionalita(gestioneCors != null).toString());

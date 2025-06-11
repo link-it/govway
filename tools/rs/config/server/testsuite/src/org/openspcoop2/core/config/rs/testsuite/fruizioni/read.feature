@@ -172,19 +172,43 @@ Scenario: Fruizioni FindAll di Api con Tags definiti
 
 
 @FindAllProfiloSoggettoQualsiasi
-Scenario: Fruizioni FindAll di Api con qualsiasi profilo e soggetto
+Scenario Outline: Fruizioni FindAll di Api con qualsiasi profilo e soggetto
 
-* call create ({ resourcePath: 'api', body: api_petstore })
-* call create ({ resourcePath: 'soggetti', body: erogatore })
-* call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
 
-* def fruizioni_response = call read('classpath:findall_stub.feature') { resourcePath: 'fruizioni', query_params:  { profilo_qualsiasi: true, soggetto_qualsiasi: true } }
-* assert fruizioni_response.findall_response_body.items.length > 0
+* def api_test = read('<api>') 
+* eval api_test.tags = (['TESTSUITE'])
+* eval randomize(api_test, ["nome"])
+* eval randomize(api_test, ["tags.0"])
 
-* call delete ({ resourcePath: 'fruizioni/' + fruizione_key })
-* call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
-* call delete ({ resourcePath: api_petstore_path })
+* def fruizione_test = read('<fruizione>') 
+* eval fruizione_test.api_tags = ([api_test.tags[0]])
+* eval fruizione_test.api_nome = api_test.nome
+* eval fruizione_test.fruizione_nome = api_test.nome
+* eval fruizione_test.erogatore = erogatore.nome
+* eval fruizione_test.api_versione = api_test.versione
 
+* def key = api_test.nome + '/' + api_test.versione
+* def api_test_path = 'api/' + key
+* def fruizione_test_path = 'fruizioni/' + erogatore.nome + '/' + key
+
+
+* call create ({ resourcePath: 'api', body: api_test, query_params: { profilo: '<profilo>' } })
+* call create ({ resourcePath: 'soggetti', body: erogatore, query_params: { profilo: '<profilo>' }  })
+* call create ({ resourcePath: 'fruizioni', body: fruizione_test,  query_params: { profilo: '<profilo>' }  })
+
+* def fruizioni_response = call read('classpath:findall_stub.feature') ({ resourcePath: 'fruizioni', query_params:  { profilo_qualsiasi: true, soggetto_qualsiasi: true, tag: api_test.tags[0] } })
+* assert fruizioni_response.findall_response_body.items.length == 1
+* assert fruizioni_response.findall_response_body.items[0].nome == fruizione_test.fruizione_nome
+* assert fruizioni_response.findall_response_body.items[0].profilo == '<profilo>'
+
+* call delete ({ resourcePath:  fruizione_test_path,  query_params: { profilo: '<profilo>' }  })
+* call delete ({ resourcePath: 'soggetti/' + erogatore.nome,  query_params: { profilo: '<profilo>' }  })
+* call delete ({ resourcePath: api_test_path, query_params: { profilo: '<profilo>' }  })
+
+Examples:
+| api                | fruizione                | profilo    |
+| api_petstore.json  | fruizione_petstore.json  | APIGateway |
+| api_modi_soap.json | fruizione_modi_soap.json | ModI       |
 
 @FindAllUriApiImplementata
 Scenario: Fruizioni FindAll di Api con indicazione della uri implementata
