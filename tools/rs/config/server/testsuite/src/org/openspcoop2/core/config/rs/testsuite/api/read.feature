@@ -14,9 +14,23 @@ Scenario: Api FindAll 200 OK
     * call findall_200 ( { resourcePath: 'api', body: api, key: api.nome + '/' + api.versione } )
 
 @FindAll200ProfiloQualsiasi
-Scenario: Api FindAll ProfiloQualsiasi 200 OK
+Scenario Outline: Api <profilo> FindAll ProfiloQualsiasi 200 OK
     
-    * call findall_200 ( { resourcePath: 'api', body: api, key: api.nome + '/' + api.versione, query_params:  { profilo_qualsiasi: true } } )
+    * def api_test = read('<api>') 
+    * eval api_test.tags = (['TESTSUITE'])
+    * eval randomize(api_test, ["nome"])
+    * eval randomize(api_test, ["tags.0"])
+    
+    * def res = call findall_200 ({ resourcePath: 'api', body: api_test, key: api_test.nome + '/' + api_test.versione, query_params:  { profilo_qualsiasi: true, tag: api_test.tags[0], profilo: '<profilo>' } })
+	
+	* match res.findall_response_body.total == 1
+	* match res.findall_response_body.items[0].nome == api_test.nome
+	* match res.findall_response_body.items[0].profilo == '<profilo>'
+
+Examples:
+| api                | profilo    |
+| api_modi_soap.json | ModI       |
+| api.json           | APIGateway |
 
 @Get200
 Scenario: Api Get 200 OK
