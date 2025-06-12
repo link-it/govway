@@ -69,9 +69,12 @@ public class Semaphore {
 		defaultDebug = d;
 	}
 	
-	private long instanceLockAcquisitionTimeoutMs = -1;
+	private Long instanceLockAcquisitionTimeoutMs = null;
 	public long getInstanceLockAcquisitionTimeoutMs() {
-		return this.instanceLockAcquisitionTimeoutMs>0 ? this.instanceLockAcquisitionTimeoutMs : defaultLockAcquisitionTimeoutMs;
+		return this.instanceLockAcquisitionTimeoutMs != null && this.instanceLockAcquisitionTimeoutMs.longValue()>0 ? this.instanceLockAcquisitionTimeoutMs : defaultLockAcquisitionTimeoutMs;
+	}
+	public void setInstanceLockAcquisitionTimeoutMs(Long timeoutMs) {
+		this.instanceLockAcquisitionTimeoutMs = timeoutMs;
 	}
 	public void setInstanceLockAcquisitionTimeoutMs(long timeoutMs) {
 		this.instanceLockAcquisitionTimeoutMs = timeoutMs;

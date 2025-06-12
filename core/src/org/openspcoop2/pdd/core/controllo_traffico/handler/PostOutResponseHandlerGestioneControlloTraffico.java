@@ -30,7 +30,6 @@ import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyShutdownException;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
-import org.openspcoop2.pdd.core.controllo_traffico.GeneratoreMessaggiErrore;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.config.PolicyConfiguration;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.driver.GestorePolicyAttive;
@@ -64,23 +63,7 @@ public class PostOutResponseHandlerGestioneControlloTraffico {
 				timeStart = DateManager.getTimeMillis();
 			}
 			try {
-				
-				Long maxThreads = null;
-				Integer threshold = null;
-				
-				if(context!=null){
-					Object maxThreadsObject = context.getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_MAX_THREADS_THRESHOLD);
-					if(maxThreadsObject instanceof Long){
-						maxThreads = (Long) maxThreadsObject;
-					}
-					
-					Object thresholdObject = context.getObject(GeneratoreMessaggiErrore.PDD_CONTEXT_CONTROLLO_TRAFFICO_THRESHOLD);
-					if(thresholdObject!=null && maxThreadsObject instanceof Long){
-						threshold = (Integer) thresholdObject;
-					}
-				}
-				
-				GestoreControlloTraffico.getInstance().removeThread(maxThreads,threshold,idTransazione);
+				GestoreControlloTraffico.getInstance().removeThread();
 			} catch (Exception e) {
 				logger.error("["+idTransazione+"] Errore durante la rimozione del thread all'interno della lista dei threads attivi",e);
 			}
