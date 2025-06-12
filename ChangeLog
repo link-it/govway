@@ -1,3 +1,10 @@
+2025-06-12  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1617
+	In alcune condizioni limite, il contatore delle richieste in corso non veniva decrementato correttamente, causando il rifiuto delle richieste con errore 429, 
+	anche in assenza del numero effettivo di richieste simultanee previsto dal limite.
+
 2025-06-11  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [ApiRsConfigurazione]
