@@ -619,7 +619,7 @@ public class Converter {
 		return list;
 	}
 	
-	public static DetailsTracingPDND toDetailsTracingPDND(StatistichePdndTracingBean bean) throws InstantiationException, IllegalAccessException {
+	public static DetailsTracingPDND toDetailsTracingPDND(StatistichePdndTracingBean bean){
 		DetailsTracingPDND details = new DetailsTracingPDND();
 		fillDetailsTracingPDND(details, bean);
 		return details;

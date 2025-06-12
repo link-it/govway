@@ -1587,6 +1587,9 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				StatistichePdndTracingService pdndService = new StatistichePdndTracingService(connection, true, smp, LoggerProperties.getLoggerDAO());
 
 				StatistichePdndTracingBean bean = pdndService.findById(id);
+				if(bean==null) {
+					FaultCode.NOT_FOUND.throwException("Traccia con id '"+id+"' non esistente");
+				}
 				DetailsTracingPDND details = Converter.toDetailsTracingPDND(bean);
 				
 				context.getLogger().info("Invocazione completata con successo");
