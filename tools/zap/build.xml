@@ -30,6 +30,10 @@
 	<property name="run_zap" value="${scripts_zap}/runZAProxy.sh" />
 	<property name="stop_zap" value="${scripts_zap}/stopZAProxy.sh" />
 	<property name="wait_start_zap" value="${scripts_zap}/waitStartZAProxy.sh" />
+
+	<!-- <echo message="INPUT zaproxy.report.dir [${zaproxy.report.dir}]"/>
+	<echo message="INPUT zap_dir [${zap_dir}]"/>
+	<echo message="INPUT govway.console.config.scanUrls [${govway.console.config.scanUrls}]"/> -->
 		
 	<!-- CLASSPATH -->
 	<path id="classpath_run" >
@@ -755,11 +759,13 @@
                         </then>
                 </if>
 
+
 		<antcall target="-executeZap">
 			<param name="zap_target" value="-analizeGovWayMonitor"/>
 		</antcall>
 	</target>
 	<target name="-analizeGovWayMonitor">
+
 		<echo message="GovWayMonitor Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.GovWayMonitor" fork="true">
 			<arg value="${zaproxy.address}" />
@@ -831,7 +837,7 @@
 				<echo message="WARN: Istanziazione template config non abilitata; verificare che tutte le variabili zaproxy.jdbc.* siano state configurate"/>
 			</else>
                 </if>
-		<foreach param="file" target="-analizeGovWayConsoleGestioneReadConfig">
+		<foreach param="file" target="-analizeGovWayConsoleGestioneReadConfig" inheritall="true" inheritrefs="true">
 			<path>
 				<dirset dir="${govway.console.config.scanUrls}">
 					<filename name="*" />
@@ -1027,8 +1033,9 @@
 	</target>
 	<!-- govwayMonitor -->
 	<target name="analizeGovWayConsoleMonitoraggio">
+
 		<delete dir="${zaproxy.report.dir}/console-monitoraggio" />
-		<foreach param="file" target="-analizeGovWayConsoleMonitoraggioReadConfig">
+		<foreach param="file" target="-analizeGovWayConsoleMonitoraggioReadConfig" inheritall="true" inheritrefs="true">
 			<path>
 				<dirset dir="${govway.console.monitor.scanUrls}">
 					<filename name="*" />
@@ -1037,6 +1044,7 @@
 		</foreach>
 	</target>
 	<target name="-analizeGovWayConsoleMonitoraggioReadConfig">
+
 		<basename property="configBaseName" file="${file}"/>
 		<dirname property="configDirName" file="${file}"/>
 
@@ -1148,5 +1156,5 @@
 	</target>
 
 	<!-- Effettuata tutti i test -->
-	<target name="analizeGovWay" depends="analizeGovWayAPI"/> <!-- da agganciare ,analizeGovWayConsoles"/> -->
+	<target name="analizeGovWay" depends="analizeGovWayAPI,analizeGovWayConsoles"/>
 </project>

@@ -128,6 +128,8 @@ Scaricare i sorgenti del software, disponibili all'indirizzo:
     - api-soap-status: vengono verificate le vulnerabilità tipiche per API di tipo SOAP utilizzando il servizio di health check SOAP di govway 
     - api-config: viene verificata l'API di GovWay per la configurazione
     - api-monitor: viene verificata l'API di GoWay per il monitoraggio
+    - console-configurazione: viene verificata la console di GovWay per la configurazione (govwayConsole)
+    - console-monitoraggio: viene verificata la console di GovWay per il monitoraggio (govwayMonitor)
 
     Per evitare la verifica di alcuni componenti è possibile utilizzare la proprietà 'zaproxy.skipTests'.
 
