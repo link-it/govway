@@ -112,7 +112,7 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 		configuration.addConsoleItem(tokenClientIdItem);
 		
 		
-		if (!esterno) {
+		if (!esterno && ModIProperties.getInstance().isTracingPDNDEnabled()) {
 			StringConsoleItem soggettoPdndTracingEnabledItem = (StringConsoleItem) 
 					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
 					ConsoleItemType.SELECT,

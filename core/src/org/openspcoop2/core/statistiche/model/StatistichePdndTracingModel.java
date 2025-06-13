@@ -43,6 +43,7 @@ public class StatistichePdndTracingModel extends AbstractModel<StatistichePdndTr
 	
 		this.DATA_TRACCIAMENTO = new Field("data-tracciamento",java.util.Date.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.DATA_REGISTRAZIONE = new Field("data-registrazione",java.util.Date.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
+		this.DATA_PUBBLICAZIONE = new Field("data-pubblicazione",java.util.Date.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.PDD_CODICE = new Field("pdd-codice",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.CSV = new Field("csv",byte[].class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.METHOD = new Field("method",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
@@ -61,6 +62,7 @@ public class StatistichePdndTracingModel extends AbstractModel<StatistichePdndTr
 	
 		this.DATA_TRACCIAMENTO = new ComplexField(father,"data-tracciamento",java.util.Date.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.DATA_REGISTRAZIONE = new ComplexField(father,"data-registrazione",java.util.Date.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
+		this.DATA_PUBBLICAZIONE = new ComplexField(father,"data-pubblicazione",java.util.Date.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.PDD_CODICE = new ComplexField(father,"pdd-codice",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.CSV = new ComplexField(father,"csv",byte[].class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.METHOD = new ComplexField(father,"method",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
@@ -78,6 +80,8 @@ public class StatistichePdndTracingModel extends AbstractModel<StatistichePdndTr
 	public IField DATA_TRACCIAMENTO = null;
 	 
 	public IField DATA_REGISTRAZIONE = null;
+	 
+	public IField DATA_PUBBLICAZIONE = null;
 	 
 	public IField PDD_CODICE = null;
 	 

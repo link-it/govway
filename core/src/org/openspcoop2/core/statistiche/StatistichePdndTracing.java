@@ -64,6 +64,7 @@ import java.io.Serializable;
   propOrder = {
   	"dataTracciamento",
   	"dataRegistrazione",
+  	"dataPubblicazione",
   	"pddCodice",
   	"csv",
   	"method",
@@ -97,6 +98,14 @@ public class StatistichePdndTracing extends org.openspcoop2.utils.beans.BaseBean
 
   public void setDataRegistrazione(java.util.Date dataRegistrazione) {
     this.dataRegistrazione = dataRegistrazione;
+  }
+
+  public java.util.Date getDataPubblicazione() {
+    return this.dataPubblicazione;
+  }
+
+  public void setDataPubblicazione(java.util.Date dataPubblicazione) {
+    this.dataPubblicazione = dataPubblicazione;
   }
 
   public java.lang.String getPddCodice() {
@@ -232,6 +241,11 @@ public class StatistichePdndTracing extends org.openspcoop2.utils.beans.BaseBean
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-registrazione",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataRegistrazione;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-pubblicazione",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataPubblicazione;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="pdd-codice",required=true,nillable=false)

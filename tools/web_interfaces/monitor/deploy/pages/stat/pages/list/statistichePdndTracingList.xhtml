@@ -180,6 +180,7 @@
 						   
 							// nascondi il tasto esporta se la tabella e' vuota
 						   visualizzaTastoEsporta('tableStatistichePdndTracing','esportaButton-iconLink');
+						   visualizzaTastoEsporta('tableStatistichePdndTracing','resetAttempts-iconLink');
 					   }
 					   
 					   function completa(evt){   }
@@ -263,6 +264,16 @@
 						</rich:column>
 						
 						<ui:define name="buttons">
+							<a4j:htmlCommandLink id="resetAttempts-iconLink" styleClass="icon-csv positive" 
+								title="#{msg['commons.search.resetAttempts.button.title']}"
+							 	value="#{msg['commons.search.resetAttempts.button.label']}" 
+							 	action="#{statistichePdndTracingBean.resetAttemptsSelected}"  
+							 	ajaxSingle="true"
+							 	reRender="statistichePdndTracingTbl"
+							 	onclick="if(!checkSelection('tableStatistichePdndTracing','tableStatistichePdndTracing_checkSelection')) { return false;}">
+									<f:setPropertyActionListener value="#{statistichePdndTracingBean.elencoID}" target="#{statistichePdndTracingBean.elencoID}" />
+							</a4j:htmlCommandLink>
+							
 							<a4j:htmlCommandLink id="esportaButton-iconLink" styleClass="icon-csv positive" target="_blank" 
 								title="#{msg['commons.search.esportaRicerche.button.title']}"
 							 	value="#{msg['commons.search.esportaRicerche.button.label']}" action="#{statistichePdndTracingBean.exportSelected}"  ajaxSingle="true"

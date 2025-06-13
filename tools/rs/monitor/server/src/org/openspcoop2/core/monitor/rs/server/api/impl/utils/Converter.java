@@ -599,7 +599,8 @@ public class Converter {
 		fillBaseTracingPDND(out, bean);
 		
 		out.dettagliErrore(bean.getErrorDetails())
-			.metodo(toMethodTracingPDND(bean.getMethod()));
+			.metodo(toMethodTracingPDND(bean.getMethod()))
+			.dataPubblicazione(new DateTime(bean.getDataRegistrazione().getTime()));
 	}
 	
 	public static ListaTracingPDND toListaTracingPDND(IContext context, List<StatistichePdndTracingBean> listDB, int offset, int limit, int totalCount) throws InstantiationException, IllegalAccessException {

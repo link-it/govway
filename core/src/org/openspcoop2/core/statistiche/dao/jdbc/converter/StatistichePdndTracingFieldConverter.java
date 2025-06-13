@@ -82,6 +82,13 @@ public class StatistichePdndTracingFieldConverter extends AbstractSQLFieldConver
 				return "data_registrazione";
 			}
 		}
+		if(field.equals(StatistichePdndTracing.model().DATA_PUBBLICAZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_pubblicazione";
+			}else{
+				return "data_pubblicazione";
+			}
+		}
 		if(field.equals(StatistichePdndTracing.model().PDD_CODICE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".pdd_codice";
@@ -168,6 +175,9 @@ public class StatistichePdndTracingFieldConverter extends AbstractSQLFieldConver
 			return this.toTable(StatistichePdndTracing.model(), returnAlias);
 		}
 		if(field.equals(StatistichePdndTracing.model().DATA_REGISTRAZIONE)){
+			return this.toTable(StatistichePdndTracing.model(), returnAlias);
+		}
+		if(field.equals(StatistichePdndTracing.model().DATA_PUBBLICAZIONE)){
 			return this.toTable(StatistichePdndTracing.model(), returnAlias);
 		}
 		if(field.equals(StatistichePdndTracing.model().PDD_CODICE)){

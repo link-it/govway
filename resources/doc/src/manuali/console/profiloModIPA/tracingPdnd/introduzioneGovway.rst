@@ -3,20 +3,20 @@
 Supporto offerto da GovWay
 --------------------------
 
-*Panoramica*
+**Panoramica**
 
-GovWay rende completamente trasparente il supporto al tracing PDND per il soggetto erogatore, fornendo un sistema che consente la generazione e pubblicazione dei tracciati verso la PDND.
+Il supporto al tracing PDND si divide in due fasi: nella prima fase (fase di generazione) GovWay produce il tracciato CSV da inviare alla PDND mentre nella seconda fase (fase di pubblicazione) GovWay procede a pubblicare sulla PDND tutti i record prodotti in fase di generazione.
 
 La raccolta delle informazioni avviene monitorando tutte le transazioni relative alle erogazioni/fruizioni derivanti da API con generazione token di tipo "Authorization PDND".
 
-Tali sistemi di generazione e pubblicazione possono essere implementati tramite:
+La fase di generazione e/o pubblicazione può avvenire in due modalità:
 
- - Timer interni a GovWay
- - Programmi batch esterni, eseguibili direttamente dall’utente
+ - Tramite timer interni a GovWay
+ - Tramite batch esterni, eseguibili direttamente dall’utente
 
 *Batch*
 
-Nel caso di installazione avanzata, è possibile installare questi componenti come batch esterni. In tal caso, nella cartella ``batch/`` generata dall’installer, saranno presenti gli script ``generaPdndGenerazioneTracciamento`` e ``generaPdndPubblicazioneTracciamento`` che permettono rispettivamente:
+Nel caso di installazione avanzata, è possibile installare questi componenti come batch esterni. In tal caso, nella cartella ``batch/`` generata dall’installer, saranno presenti gli script ``generaReportPDND`` e ``pubblicaReportPDND`` che permettono rispettivamente:
 
  - La generazione dei dati da inviare alla PDND
  - La pubblicazione, ovvero l’invio effettivo dei file CSV

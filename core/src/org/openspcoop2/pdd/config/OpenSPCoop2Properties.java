@@ -176,8 +176,6 @@ import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.slf4j.Logger;
 
-import com.hazelcast.client.impl.CollectRemoteTransactionsOperationSupplier;
-
 /**
  * Contiene un lettore del file di proprieta' di OpenSPCoop.
  *
@@ -33727,19 +33725,14 @@ public class OpenSPCoop2Properties {
 	
 	private HttpRequestConfig statistichePdndTracciamentoHttpRequestConfig = null;
 	public HttpRequestConfig getStatistichePdndTracciamentoHttpRequestConfig() {	
-		String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.fruizioni.enabled";
 		if(this.statistichePdndTracciamentoHttpRequestConfig==null){
-			try{ 
-				this.statistichePdndTracciamentoHttpRequestConfig = new HttpRequestConfig("org.openspcoop2.pdd.statistiche.pdnd.tracciamento", p -> {
-					try {
-						return this.reader.getValueConvertEnvProperties(key);
-					} catch (UtilsException e) {
-						return null;
-					}
-				});
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key + "', viene utilizzato il default=true : "+e.getMessage(),e);
-			}    
+			this.statistichePdndTracciamentoHttpRequestConfig = new HttpRequestConfig("org.openspcoop2.pdd.statistiche.pdnd.tracciamento", p -> {
+				try {
+					return this.reader.getValueConvertEnvProperties(p);
+				} catch (UtilsException e) {
+					return null;
+				}
+			});   
 		}
 
 		return this.statistichePdndTracciamentoHttpRequestConfig;

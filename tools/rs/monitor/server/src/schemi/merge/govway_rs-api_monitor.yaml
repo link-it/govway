@@ -2659,6 +2659,9 @@ components:
             $ref: "#/components/schemas/MethodTracingPDND"
           dettagli_errore:
             type: "string"
+          data_pubblicazione:
+            type: "string"
+            format: "date-time"
     StatoTracingPDND:
       type: "string"
       enum:

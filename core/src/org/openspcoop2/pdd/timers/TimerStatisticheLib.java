@@ -476,7 +476,7 @@ public class TimerStatisticheLib {
 			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM = null;
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM = null;
-			if(this.generazioneStatisticheCustom){
+			if(this.generazioneStatisticheCustom || this.tracciamentoPdndGenerazione || this.tracciamentoPdndPubblicazione){
 				
 				IDriverConfigurazioneGet driverConfigurazione = ConfigurazionePdDReader.getDriverConfigurazionePdD();
 				if(driverConfigurazione instanceof DriverConfigurazioneDB) {

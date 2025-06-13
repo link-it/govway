@@ -44,6 +44,7 @@ import org.openspcoop2.core.statistiche.StatistichePdndTracing;
 import org.openspcoop2.core.statistiche.constants.PdndMethods;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiPdnd;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiRichieste;
+import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.core.statistiche.dao.IStatistichePdndTracingService;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -94,6 +95,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 
 	
 	private IStatistichePdndTracingService pdndStatisticheSM;
+	private org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM;
 	private Logger logger;
 	private StatisticsConfig config;
 	private Map<String, String> internalPddCodeName;
@@ -117,6 +119,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		this.updateTracingIdStats = new HashMap<>();
 		
 		try {
+			this.statisticheSM = statisticheSM;
 			this.pdndStatisticheSM = statisticheSM.getStatistichePdndTracingService();
 			this.internalPddCodeName = PdndTracciamentoUtils.getEnabledPddCodes(utilsSM, this.config);
 			
@@ -326,6 +329,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		
 		// aggiorno i tentativi
 		stat.setTentativiPubblicazione(stat.getTentativiPubblicazione() + 1);
+		stat.setDataPubblicazione(new Date());
 		
 		// provo ad inviare il tracciato alla PDND
 		HttpRequest req = getBaseRequest(pddCode);
@@ -350,7 +354,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	}
 	
 	
-	private void logPublishResults(StatistichePdndTracing stat, String nomeSoggetto, String pddCode) {
+	private void logPublishResults(StatistichePdndTracing stat, String nomeSoggetto) {
 		String dataTracciamentoFormat = dataTracciamentoFormat(stat.getDataTracciamento());
 
 		if (PossibiliStatiRichieste.FAILED.equals(stat.getStato())
@@ -403,7 +407,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			sendTrace(pddCode, stat);
 			this.pdndStatisticheSM.update(stat);
 					
-			this.logPublishResults(stat, nomeSoggetto, pddCode);
+			this.logPublishResults(stat, nomeSoggetto);
 		}
 		
 	}
@@ -458,7 +462,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 					
 					this.pdndStatisticheSM.update(stat);
 					
-					this.logPublishResults(stat, nomeSoggetto, pddCode);
+					this.logPublishResults(stat, nomeSoggetto);
 				}
 			} catch (ParseException e) {
 				throw new StatisticsEngineException(e, "Errore nel parsing della data ritornata dalla PDND, " + tracingDate + " data non riconosciuta");
@@ -741,8 +745,23 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	@Override
 	public void generate() throws StatisticsEngineException {
 		this.logger.info("********************* INIZIO PUBBLICAZIONE TRACCIATO PDND *********************");
+		
+		Date currDate = new Date();
+		
 		for (Map.Entry<String, String> soggetto : this.internalPddCodeName.entrySet())
 			this.generate(soggetto.getValue(), soggetto.getKey());
+		
+		
+		try {
+			StatisticsInfoUtils.updateDataUltimaGenerazioneStatistiche(
+					this.statisticheSM.getStatisticaInfoServiceSearch(), 
+					this.statisticheSM.getStatisticaInfoService(), 
+					TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO,
+					this.config.getLogSql(), currDate);
+		} catch (Exception e) {
+			this.logger.error("Errore nell'aggiornamento della data ultima statistica {}", TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO, e);
+		}
+		
 		this.logger.info("********************* FINE PUBBLICAZIONE TRACCIATO PDND *********************");
 	}
 	

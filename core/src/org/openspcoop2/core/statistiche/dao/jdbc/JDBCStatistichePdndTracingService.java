@@ -20,7 +20,7 @@
 package org.openspcoop2.core.statistiche.dao.jdbc;
 
 import org.openspcoop2.generic_project.dao.jdbc.IJDBCServiceCRUDWithoutId;
-
+import org.openspcoop2.generic_project.beans.CustomField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.beans.UpdateModel;
@@ -37,6 +37,8 @@ import org.openspcoop2.core.statistiche.dao.IDBStatistichePdndTracingService;
 import org.openspcoop2.core.statistiche.utils.ProjectInfo;
 
 import java.sql.Connection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 
@@ -947,6 +949,55 @@ public class JDBCStatistichePdndTracingService extends JDBCStatistichePdndTracin
 			this.releaseResources(rollback, connection, oldValueAutoCommit);
 		}
 	
+	}
+	
+	@Override
+	public void updateTentativiPubblicazione(List<Long> ids, Integer value) throws Exception {
+		
+		IExpression expr = this.newExpression();
+		expr.in(new CustomField("id", Long.class, "id", this.getFieldConverter().toTable(StatistichePdndTracing.model())), ids);
+		
+		this.updateTentativiPubblicazione(expr, value);
+	}
+	
+	@Override
+	public void updateTentativiPubblicazione(IExpression expr, Integer value) throws Exception {
+		Connection connection = null;
+		boolean oldValueAutoCommit = false;
+		boolean rollback = false;
+		try{
+			
+			// check parameters
+			if(value==null){
+				throw this.newServiceExceptionParameterIsNull();
+			}
+
+			// ISQLQueryObject
+			ISQLQueryObject sqlQueryObject = this.jdbcSqlObjectFactory.createSQLQueryObject(this.jdbcProperties.getDatabase());
+			sqlQueryObject.setANDLogicOperator(true);
+			// Connection sql
+			connection = this.jdbcServiceManager.getConnection();
+		
+			// transaction
+			if(this.jdbcProperties.isAutomaticTransactionManagement()){
+				oldValueAutoCommit = connection.getAutoCommit();
+				connection.setAutoCommit(false);
+			}
+
+			((JDBCStatistichePdndTracingServiceImpl)this.serviceCRUD).updateTentativiPubblicazione(this.jdbcProperties,this.log,connection,sqlQueryObject, expr, value);
+			
+		}catch(ServiceException | NotImplementedException e){
+			rollback = true;
+			this.logError(e); throw e;
+		}catch(NotFoundException e){
+			rollback = true;
+			this.logDebug(e); throw e;
+		}catch(Exception e){
+			rollback = true;
+			this.logError(e); throw this.newServiceExceptionUpdateFieldsNotCompleted(e);
+		}finally{
+			this.releaseResources(rollback, connection, oldValueAutoCommit);
+		}
 	}
 	
 }

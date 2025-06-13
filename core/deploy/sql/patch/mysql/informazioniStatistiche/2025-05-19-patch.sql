@@ -7,6 +7,8 @@ CREATE TABLE statistiche_pdnd_tracing
 	data_tracciamento TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_registrazione TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_pubblicazione TIMESTAMP(3) DEFAULT 0,
 	pdd_codice VARCHAR(255) NOT NULL,
 	csv MEDIUMBLOB,
 	method VARCHAR(20),

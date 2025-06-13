@@ -685,7 +685,7 @@ public class PddMonitorProperties {
 	}
 	
 	public boolean isAttivoUtilizzaCountStatistichePdndTracingLista() throws UtilsException{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.tracingPdnd.lista.utilizzaCount.enabled", true, true));
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.tracingPdnd.lista.utilizzaCount.enabled", false, true));
 	}
 	
 	// periodo refresh live

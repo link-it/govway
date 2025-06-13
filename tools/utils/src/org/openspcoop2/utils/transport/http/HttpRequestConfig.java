@@ -136,10 +136,12 @@ public class HttpRequestConfig {
 		req.setUrl(getProperty(code, PROP_URL));
 		
 		String connectTimeout = getProperty(code, PROP_CONNECTION_TIMEOUT);
-		req.setConnectTimeout(Integer.valueOf(connectTimeout));
+		if (!"false".equals(connectTimeout))
+			req.setConnectTimeout(Integer.valueOf(connectTimeout));
 		
 		String readTimeout = getProperty(code, PROP_READ_TIMEOUT);
-		req.setReadTimeout(Integer.valueOf(readTimeout));
+		if (!"false".equals(readTimeout))
+			req.setReadTimeout(Integer.valueOf(readTimeout));
 		
 		fillHttpProperties(req, code);
 		fillHttpsProperties(req, code);

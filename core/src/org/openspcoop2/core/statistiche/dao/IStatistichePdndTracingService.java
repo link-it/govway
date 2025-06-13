@@ -19,8 +19,11 @@
  */
 package org.openspcoop2.core.statistiche.dao;
 
+import java.util.List;
+
 import org.openspcoop2.core.statistiche.StatistichePdndTracing;
 import org.openspcoop2.generic_project.dao.IServiceWithoutId;
+import org.openspcoop2.generic_project.expression.IExpression;
 
 /**     
  * Service can be used both for research that will make persistent objects on the backend of type org.openspcoop2.core.statistiche.StatistichePdndTracing 
@@ -32,5 +35,8 @@ import org.openspcoop2.generic_project.dao.IServiceWithoutId;
  */
 
 public interface IStatistichePdndTracingService extends IServiceWithoutId<StatistichePdndTracing> {
-
+	
+	public void updateTentativiPubblicazione(List<Long> ids, Integer value) throws Exception;
+	
+	public void updateTentativiPubblicazione(IExpression expr, Integer value) throws Exception;
 }

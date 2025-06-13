@@ -44,6 +44,11 @@
 				<h:outputText value="#{msg['statistichePdndTracing.dettaglio.informazioniPubblicazione.label']}" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
 			
+			<h:outputLabel styleClass="outputFieldLabel" id="ouLabeltDataPubblicazioneId" value="#{msg['statistichePdndTracing.dataPubblicazione.label']}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.dataPubblicazione}" />
+			<h:outputText id="outDataPubblicazioneId" value="#{statistichePdndTracingBean.statisticaPdndTracing.dataPubblicazione}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.dataPubblicazione}" >
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="#{applicationBean.timeZone}"/>
+			</h:outputText>
+			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTracingId" value="#{msg['statistichePdndTracing.tracingId.label']}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.tracingId}" />
 			<h:outputText id="outTracingId" value="#{statistichePdndTracingBean.statisticaPdndTracing.tracingId}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.tracingId}" />
 			
@@ -51,14 +56,26 @@
 			<h:outputText id="outMethod" value="#{statistichePdndTracingBean.statisticaPdndTracing.methodReadable}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.method}" />
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTentativiPubblicazione" value="#{msg['statistichePdndTracing.tentativiPubblicazione.label']}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.tentativiPubblicazione}" />
-			<h:outputText id="outTentativiPubblicazione" value="#{statistichePdndTracingBean.statisticaPdndTracing.tentativiPubblicazioneReadable}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.tentativiPubblicazione}" />
+			<h:panelGroup id="panelAttempts">
+				<h:outputText id="outTentativiPubblicazione" value="#{statistichePdndTracingBean.statisticaPdndTracing.tentativiPubblicazioneReadable}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.tentativiPubblicazione}" />
+				<h:outputText id="isMaxAttemptsReached" value=" #{msg['statistichePdndTracing.dettaglio.maxAttemptReached.label']}" rendered="#{statistichePdndTracingBean.maxAttemptReached}" />
+				<h:form id="formResetAttempts">
+					<input type="hidden" id="_csrfFormResetAttempts" name="_csrf" value="#{loginBean.csrf}"/>
+					<a4j:htmlCommandLink id="formResetAttempts" 
+						action="#{statistichePdndTracingBean.resetAttempts}" 
+						value="#{msg['statistichePdndTracing.dettaglio.resetAttempts.label']}" 
+						rendered='#{statistichePdndTracingBean.statisticaPdndTracing.failed}' 
+						reRender="panelAttempts">
+	                </a4j:htmlCommandLink>
+				</h:form>
+			</h:panelGroup>
 			
 			<h:outputLabel id="outLabelCsv" styleClass="outputFieldLabel icon-xml" value="Csv" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.csv}"/>
 			<h:panelGroup id="panelCsv" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.csv}">
 				<h:form id="formCsv">
 					<input type="hidden" id="_csrfFormCsv" name="_csrf" value="#{loginBean.csrf}"/>
                    	<h:commandLink id="exportCsv-iconLink" target="_blank" styleClass="icon-compress" action="#{statistichePdndTracingBean.downloadCsv}" rendered="#{not empty statistichePdndTracingBean.statisticaPdndTracing.csv}">
-						<h:outputText id="outEsportaCsv" value="Esporta" />
+						<h:outputText id="outEsportaCsv" value="#{msg['statistichePdndTracing.dettaglio.csvExport.label']}" />
 					</h:commandLink>
 				</h:form>
 			</h:panelGroup>

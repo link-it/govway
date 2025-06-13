@@ -1,7 +1,7 @@
 .. _modipa_signalhub_properties:
 
-Configurazione GovWay Properties
---------------------------------
+Configurazione Avanzata delle Proprietà
+---------------------------------------
 
 Per personalizzare il supporto a Signal-Hub, sono disponibili alcune proprietà configurabili nel file `modipa.properties`, elencate di seguito:
 

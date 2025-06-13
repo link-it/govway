@@ -1,7 +1,7 @@
 .. _modipa_tracingpdnd_properties:
 
-Configurazione Properties
--------------------------
+Configurazione Avanzata Proprietà
+---------------------------------
 
 Nel caso in cui le componenti di generazione e pubblicazione vengano installate sotto forma di batch esterni, le proprietà descritte di seguito dovranno essere inserite nella directory ``batch/generatoreStatistiche/properties``. In alternativa, nella modalità predefinita (componenti gestite tramite timer), tali proprietà possono essere impostate direttamente nel file `govway_local.properties`.
 
@@ -40,7 +40,7 @@ Per abilitare o disabilitare la raccolta delle transazioni che riguardano le ero
    Esempio:
    ``statistiche.pdnd.tracciamento.ENTE.baseUrl=[URL]`` sovrascrive il valore globale di ``statistiche.pdnd.tracciamento.baseUrl`` solo per il soggetto ``ENTE``.
 
-Per comunicare con la PDND è necessario configurare una fruizione su GovWay. Le seguenti proprietà permettono di definire come interfacciarsi con essa:
+Le seguenti proprietà devono essere impostate per permetterre alla componente di pubblicazione dei tracciati di comunicare con la fruizione built-in installata automaticamente su GovWay come descritto nella sezione precedente :doc:`fruizioneBuiltIn`
 
 - URL della fruizione usata per la comunicazione:
 
