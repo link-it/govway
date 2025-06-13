@@ -1138,10 +1138,10 @@ public class TransazioneUtilities {
 			
 			// token purpose id
 			if (TipoPdD.DELEGATA.equals(info.getTipoPorta()) 
-					&& informazioniNegoziazioneToken != null
-					&& informazioniNegoziazioneToken.getAccessToken() != null 
-					&& informazioniNegoziazioneToken.isValid()) {
-				transactionDTO.setTokenPurposeId(extractClaimFromJWTAccessToken(informazioniNegoziazioneToken.getAccessToken(), org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID));
+					&& transaction.getInformazioniNegoziazioneToken() != null
+					&& transaction.getInformazioniNegoziazioneToken().getAccessToken() != null 
+					&& transaction.getInformazioniNegoziazioneToken().isValid()) {
+				transactionDTO.setTokenPurposeId(extractClaimFromJWTAccessToken(transaction.getInformazioniNegoziazioneToken().getAccessToken(), org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID));
 			}
 			if (TipoPdD.APPLICATIVA.equals(info.getTipoPorta()) 
 					&& transaction.getInformazioniToken() != null 

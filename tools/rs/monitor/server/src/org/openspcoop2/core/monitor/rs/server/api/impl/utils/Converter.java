@@ -603,7 +603,7 @@ public class Converter {
 	}
 	
 	public static ListaTracingPDND toListaTracingPDND(IContext context, List<StatistichePdndTracingBean> listDB, int offset, int limit, int totalCount) throws InstantiationException, IllegalAccessException {
-		ListaTracingPDND list = ListaUtils.costruisciLista(context.getUriInfo(),
+		ListaTracingPDND list = ListaUtils.costruisciListaPaginata(context.getUriInfo(),
 				Converter.toOffset(offset), Converter.toLimit(limit), totalCount,
 				ListaTracingPDND.class);
 		

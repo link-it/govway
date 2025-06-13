@@ -668,10 +668,13 @@ public class LoadBalanceConsegnaCondizionaleTest extends ConfigLoader {
 			List<HttpResponse> responses = responsesByPool.get(pool);
 			List<String> connettoriPool = Common.connettoriPools.get(pool);
 
+			logCore.info("Lista connettori pool: " + connettoriPool);
+			
 			assertTrue(responses.size() > 0);
 			// Verifico che le richieste siano arrivate ai pools adeguati
 			for (var resp : responses) {
 				String connettore_utilizzato = resp.getHeaderFirstValue(Common.HEADER_ID_CONNETTORE);
+				logCore.info("ConnettoreUtilizzato: " + connettore_utilizzato);
 				assertTrue(connettoriPool.contains(connettore_utilizzato));
 				assertEquals(200, resp.getResultHTTPOperation());
 			}

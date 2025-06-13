@@ -1352,7 +1352,7 @@ public class TransazioneBean extends Transazione{
 			bf.append(api);	
 		}
 		else {
-			return "API non individuata";
+			return getLabelAPIConErogatoreAPInonTrovata();			
 		}
 		
 		
@@ -1376,6 +1376,21 @@ public class TransazioneBean extends Transazione{
 		}
 		
 		return bf.toString();
+	}
+	public String getLabelAPIConErogatoreAPInonTrovata() throws Exception {
+		if(this.esito>0) {
+			try{
+				EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
+				String label = esitiProperties.getEsitoLabel(this.esito);
+				if(label!=null && StringUtils.isNotEmpty(label)) {
+					return label;
+				}
+			}catch(Exception e){
+				LoggerManager.getPddMonitorCoreLogger().error("Errore durante l'ottenimento della label a partire dall'esito: "+e.getMessage(),e);
+			}
+		}
+		
+		return "API non individuata";
 	}
 		
 	public java.lang.String getTipoOperazioneLabel() {
