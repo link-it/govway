@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.service.beans.utils;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -34,11 +35,13 @@ import org.openspcoop2.utils.service.beans.ProfiloEnum;
  * @version $Rev$, $Date$
  */
 public class ProfiloUtils {
+	
+	private ProfiloUtils() {}
 
-	private static final Map<ProfiloEnum,String> MAP_PROFILO_TO_PROTOCOLLO = new HashMap<ProfiloEnum,String>();
+	private static final Map<ProfiloEnum,String> MAP_PROFILO_TO_PROTOCOLLO = new EnumMap<>(ProfiloEnum.class);
 	static {
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.APIGATEWAY, "trasparente");
-		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.MODIPA, "modipa");
+		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.MODIPA, "modipa"); // si lascia per retrocompatibilità ma si vuole utilizzare ModI
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.MODI, "modipa");
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.SPCOOP, "spcoop");
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.FATTURAPA, "sdi");
@@ -48,24 +51,24 @@ public class ProfiloUtils {
 		return MAP_PROFILO_TO_PROTOCOLLO;
 	}
 	
-	private static Map<String, ProfiloEnum> MAP_PROTOCOLLO_TO_PROFILO = null;
+	private static Map<String, ProfiloEnum> mapProtocolloToProfilo = null;
 	public static Map<String, ProfiloEnum> getMapProtocolloToProfilo() {
-		if(MAP_PROTOCOLLO_TO_PROFILO==null) {
+		if(mapProtocolloToProfilo==null) {
 			initMapProtocolloToProfilo();
 		}
-		return MAP_PROTOCOLLO_TO_PROFILO;
+		return mapProtocolloToProfilo;
 	}
 	private static synchronized void initMapProtocolloToProfilo() {
-		if(MAP_PROTOCOLLO_TO_PROFILO==null) {
-			MAP_PROTOCOLLO_TO_PROFILO = new HashMap<String,ProfiloEnum>();
+		if(mapProtocolloToProfilo==null) {
+			mapProtocolloToProfilo = new HashMap<>();
 			Iterator<ProfiloEnum> it = MAP_PROFILO_TO_PROTOCOLLO.keySet().iterator();
 			while (it.hasNext()) {
-				ProfiloEnum profiloEnum = (ProfiloEnum) it.next();
+				ProfiloEnum profiloEnum = it.next();
 				if(ProfiloEnum.MODIPA.equals(profiloEnum)) {
 					continue; // utilizzo MODI
 				}
 				String protocollo = MAP_PROFILO_TO_PROTOCOLLO.get(profiloEnum);
-				MAP_PROTOCOLLO_TO_PROFILO.put(protocollo, profiloEnum);
+				mapProtocolloToProfilo.put(protocollo, profiloEnum);
 			}
 		}
 	}
@@ -75,7 +78,7 @@ public class ProfiloUtils {
 	}
 	public static ProfiloEnum toProfilo(String protocollo) {
 		ProfiloEnum out = getMapProtocolloToProfilo().get(protocollo);
-		return ProfiloEnum.MODI.equals(out) ? ProfiloEnum.MODIPA : out;
+		return ProfiloEnum.MODIPA.equals(out) ? ProfiloEnum.MODI : out;
 	}
 	
 }

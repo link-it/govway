@@ -107,18 +107,26 @@ public class GestoreControlloTraffico {
 			boolean errorSync = false;
 			boolean pddCongestionataSync = false; 
 			
-			
 			/**
 			 * Gestione della concorrenza lock-free, la gestione dei thread massimi
 			 * consentiti viene fatta usando una variabile atomica, in questo caso 
 			 * l'unica situazione negativa si verifica nel caso n thread contemporaneamente
 			 * prendano 
 			 */
+			
+			/**String idTransazione = null;
+			if(pddContext!=null) {
+				idTransazione = (String) pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
+			}
+			System.out.println("["+idTransazione+"] PRIMA: "+this.activeThreads.get());*/
+			
 			// utilizzo una variabile atomica per gestire la concorrenza
 			long currentActiveThreads = this.activeThreads.incrementAndGet();
 			
+			/**System.out.println("["+idTransazione+"] DOPO: "+currentActiveThreads);*/
+			
 			// nel caso l'incremento abbia superato il massimo di thread consentiti devo decrementare il contatore
-			if (currentActiveThreads >= maxThreadsPrimitive) {
+			if (currentActiveThreads > maxThreadsPrimitive) {
 				errorSync = true;
 				
 				// nel caso warningOnly posso continuare indisturbato
