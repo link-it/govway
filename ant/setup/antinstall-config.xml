@@ -188,7 +188,7 @@
 		<option value="wildfly35" text="WildFly 35-36" />
 
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
-		<option value="tomcat10" text="Apache Tomcat 10"/> 
+		<option value="tomcat10" text="Apache Tomcat 10-11"/> 
 
         </large-select>
 

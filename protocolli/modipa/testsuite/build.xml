@@ -52,6 +52,9 @@
                 <fileset dir="${required_lib}/cxf" >
                         <include name="asm-9.7.1.jar"/>
                 </fileset>
+		<fileset dir="${required_lib}/angus" >
+			<include name="*.jar"/>
+		</fileset>                           
 	</path>
 	<path id="karate_testsuite_dist_govway_java11" >
 		<fileset dir="${openspcoop2.utils.dist_java11}" >

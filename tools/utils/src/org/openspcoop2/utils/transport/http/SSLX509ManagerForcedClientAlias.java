@@ -84,8 +84,8 @@ public class SSLX509ManagerForcedClientAlias extends X509ExtendedKeyManager{
 	@Override
 	public String chooseEngineServerAlias(String keyType, Principal[] issuers, SSLEngine engine) {
 		/**System.out.println("DEBUG chooseEngineServerAlias("+keyType+")");*/
-		if(this.wrappedX509KeyManager instanceof X509ExtendedKeyManager x509extendedkeymanager) {
-			return x509extendedkeymanager.chooseEngineServerAlias(keyType, issuers, engine);
+		if(this.wrappedX509KeyManager instanceof X509ExtendedKeyManager) {
+			return ((X509ExtendedKeyManager)this.wrappedX509KeyManager).chooseEngineServerAlias(keyType, issuers, engine);
 		}
 		else {
 			return super.chooseEngineServerAlias(keyType, issuers, engine);

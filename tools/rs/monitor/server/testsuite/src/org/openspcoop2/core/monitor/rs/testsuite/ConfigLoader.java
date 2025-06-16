@@ -36,7 +36,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpUtilsException;
@@ -241,6 +240,14 @@ public class ConfigLoader {
 
 	}
 
+	// definiti in CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE
+	// vengono ridefiniti per non avere dipendenze di compilazione
+	private static final String CHECK_STATO_PDD_PARAM_LONG_VALUE = "paramLongValue";
+	private static final String CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_2 = "paramBooleanValue2";
+	private static final String CHECK_STATO_PDD_PARAM_LONG_VALUE_3 = "paramLongValue3";
+	private static final String CHECK_STATO_PDD_PARAM_LONG_VALUE_4 = "paramLongValue4";
+
+	
 	public static void enableCaches(String... caches) throws UtilsException, HttpUtilsException {
 		Logger logger = getLoggerKarate();
 		logger.debug("---- enableCache  cache:{} ----", Arrays.asList(caches));
@@ -250,9 +257,9 @@ public class ConfigLoader {
 
 		String[] govwayCaches = getJmxCacheResources();
 
-		Map<String, String> params = Map.of("methodName", "abilitaCache", CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE,
-				"0", CostantiPdD.CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_2, "true",
-				CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_3, "0", CostantiPdD.CHECK_STATO_PDD_PARAM_LONG_VALUE_4,
+		Map<String, String> params = Map.of("methodName", "abilitaCache", CHECK_STATO_PDD_PARAM_LONG_VALUE,
+				"0", CHECK_STATO_PDD_PARAM_BOOLEAN_VALUE_2, "true",
+				CHECK_STATO_PDD_PARAM_LONG_VALUE_3, "0", CHECK_STATO_PDD_PARAM_LONG_VALUE_4,
 				"0");
 		String encodedParams = params.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
 				.collect(Collectors.joining("&"));

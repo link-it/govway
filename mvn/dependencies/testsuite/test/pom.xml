@@ -19,6 +19,7 @@
                 <module>spring5</module>
                 <module>spring-ldap2</module>
                 <module>apacheds</module>
+                <module>cxf3</module>
 	</modules>
 
 	<parent>

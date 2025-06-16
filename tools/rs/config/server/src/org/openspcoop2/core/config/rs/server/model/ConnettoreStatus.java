@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ConnettoreStatus  implements OneOfApplicativoServerConnettore, OneOfConnettoreErogazioneConnettore, OneOfConnettoreFruizioneConnettore {
   
-  @Schema(required = true, description = "")
+  @Schema(description = "")
   private ConnettoreEnum tipo = null;
   
-  @Schema(required = true, description = "")
+  @Schema(description = "")
   private TipoRispostaStatusEnum risposta = null;
   
   @Schema(description = "")

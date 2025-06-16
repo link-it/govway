@@ -23,8 +23,13 @@
 			<then>
 		
 				<!-- Info git -->
-				<runtarget target="checkgit" />
-				<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
+				<if>
+					<istrue value="${runCheckGit}"/>
+					<then>
+						<runtarget target="checkgit" />
+						<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
+					</then>
+				</if>	
 		
 				<!-- Package non compatibili con versioni precedenti di java -->
 				<var name="skipJavaIncompatiblePackageIo" value=""/>
@@ -856,8 +861,13 @@
 			<then>
 		
 				<!-- Info git -->
-				<runtarget target="checkgit" />
-				<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
+				<if>
+					<istrue value="${runCheckGit}"/>
+					<then>
+						<runtarget target="checkgit" />
+						<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
+					</then>
+				</if>							
 				
 				<var name="packagesCompiled" value="" />
 				

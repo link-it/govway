@@ -43,6 +43,16 @@
 			<fail message="JAVA_HOME non impostata"/>
 		</then>
 	</if>
+	<var name="javaVersion11" value="11"/>
+	<if>
+		<not>
+			<equals arg1="${javaSourceVersion}" arg2="$${javaSourceVersion}"/>
+		</not>
+		<then>
+			<echo message="WARN: consento utilizzo java v11"/>
+			<var name="javaVersion11" value="consentoJava11"/>
+		</then>
+	</if>
 	<if>
 		<or>
 			<equals arg1="${ant.java.version}" arg2="1.3" />
@@ -53,7 +63,7 @@
 			<equals arg1="${ant.java.version}" arg2="1.8" />
 			<equals arg1="${ant.java.version}" arg2="9" />
 			<equals arg1="${ant.java.version}" arg2="10" />
-			<equals arg1="${ant.java.version}" arg2="11" />
+			<equals arg1="${ant.java.version}" arg2="${javaVersion11}" />
 			<equals arg1="${ant.java.version}" arg2="12" />
 			<equals arg1="${ant.java.version}" arg2="13" />
 			<equals arg1="${ant.java.version}" arg2="14" />

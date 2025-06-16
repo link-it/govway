@@ -23,21 +23,44 @@
 	
 	<property name="src_utils" location="src" />
 	<property name="build_utils" location="build" />
-	<property name="dist_utils" location="dist" />
 	<property name="doc_utils" location="doc" />
 
 	<!-- Libreria spring non compatibile con versioni precedenti di java -->
 	<var name="excludeSpringJars" value=""/>
 	<var name="excludeSpring5jars" value="**/testsuite/spring5/*"/>
+	<var name="excludeSpringLdapJars" value=""/>
+	<var name="excludeSpringLdap2jars" value="**/testsuite/spring-ldap2/*"/>	
+	<var name="excludeCxfJars" value=""/>
+	<var name="excludeCxf3jars" value="**/testsuite/cxf3/*"/>	
+	<var name="excludeGitJars" value=""/>
+	<var name="runCheckGit" value="true"/>
 	<if>
 		<not>
 			<equals arg1="${javaSourceVersion}" arg2="$${javaSourceVersion}"/>
 		</not>
 		<then>
-			<echo message="!!!ATTENZIONE!!! Impostazione spring v5"/>
+			<echo message="!!!ATTENZIONE!!! Impostazione librerie compatibili con java 11 e disabilito java doc e git info."/>
+			<!-- spring -->
 			<var name="excludeSpringJars" value="**/spring/*"/>
 			<var name="excludeSpring5jars" value=""/>
+			<!-- spring-ldap -->
+			<var name="excludeSpringLdapJars" value="**/spring-ldap/*"/>
+			<var name="excludeSpringLdap2jars" value=""/>			
+			<!-- cxf -->
+			<var name="excludeCxfJars" value="**/cxf/*"/>
+			<var name="excludeCxf3jars" value=""/>			
+			<!-- git -->
+			<var name="excludeGitJars" value="**/git/*"/>
+			<var name="compile_src_openspcoop2.GITINFO" value="false"/>
+			<var name="runCheckGit" value="false"/>
+			<!-- disabilito java doc -->
+			<var name="buildAPI" value="false" />
+			<!-- imposto dist dir differente -->
+			<property name="dist_utils" location="dist_java11" />
 		</then>
+		<else>
+			<property name="dist_utils" location="dist" />
+		</else>
 	</if>
 
 	<!-- CLASSPATH -->
@@ -45,6 +68,11 @@
 		<fileset dir="${required_lib}" >
 			<exclude name="${excludeSpringJars}"/>
 			<exclude name="${excludeSpring5jars}"/>
+			<exclude name="${excludeSpringLdapJars}"/>
+			<exclude name="${excludeSpringLdap2jars}"/>			
+			<exclude name="${excludeCxfJars}"/>
+			<exclude name="${excludeCxf3jars}"/>			
+			<exclude name="${excludeGitJars}"/>
 			<exclude name="**/axis14/*"/>
 			<exclude name="**/applicationServer/**/*.jar"/>
 			<exclude name="**/swagger-codegen/*"/>

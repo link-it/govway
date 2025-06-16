@@ -246,7 +246,7 @@
 		</not>
 		<then>
 			<copy file="${cli.configLoader.dir}/local_env.xml.template" tofile="${cli.configLoader.dir}/local_env.xml"/>
-			<replace file="${cli.configLoader.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
+			<replace file="${cli.configLoader.dir}/local_env.xml" token="wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${cli.configLoader.dir}/build.xml" />
@@ -260,7 +260,7 @@
 		</not>
 		<then>
 			<copy file="${cli.govwayVault.dir}/local_env.xml.template" tofile="${cli.govwayVault.dir}/local_env.xml"/>
-			<replace file="${cli.govwayVault.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
+			<replace file="${cli.govwayVault.dir}/local_env.xml" token="wildfly/tomcat" value="${as}"/>
 		</then>
 	</if>
 	<import file="${cli.govwayVault.dir}/build.xml" />

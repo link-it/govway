@@ -4,7 +4,7 @@
 
       <!-- root di OpenSPCoop -->
       <property name="openspcoop2" location="../../../../.."/>
-      <property name="openspcoop2.dist" location="${openspcoop2}/core/dist"/>
+      <property name="openspcoop2.dist" location="${openspcoop2}/tools/utils/dist_java11"/>
       
       <property name="required_lib_govwayConfigApiRSTestSuite" location="${openspcoop2}/lib/"/>
       <property name="required_lib" value="${required_lib_govwayConfigApiRSTestSuite}"/>
