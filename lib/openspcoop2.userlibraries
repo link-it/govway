@@ -211,7 +211,7 @@
 	<archive path="/op2_3.4.dev/lib/shared/xmlunit-legacy-2.10.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/xmlunit-core-2.10.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/ehcache-3.10.8.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/rhino-1.7.15.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/rhino-1.8.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/hazelcast-5.3.8.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/hibernate-core-6.6.0.Final.jar"/>
 	<!-- spring -->
@@ -236,20 +236,20 @@
 	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-crypto-6.4.4.jar"/>
 	<archive path="/op2_3.4.dev/lib/spring-security/spring-security-config-6.4.4.jar"/>
 	<!-- swagger -->
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-annotations-2.2.23.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-2.2.23.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-2.2.23.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-jaxrs2-jakarta-2.2.23.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-integration-2.2.23.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-2.1.22.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-core-2.1.22.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v3-2.1.22-gov4j-1.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v2-converter-2.1.22.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-safe-url-resolver-2.1.22.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-1.0.71.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-1.6.14.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-1.6.14.jar"/>
-	<archive path="/op2_3.4.dev/lib/swagger/swagger-request-validator-core-2.41.0-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-annotations-jakarta-2.2.33.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-jakarta-2.2.33.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-jakarta-2.2.33.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-jaxrs2-jakarta-2.2.33.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-integration-jakarta-2.2.33.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-2.1.29.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-core-2.1.29.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v3-2.1.29-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-v2-converter-2.1.29.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-safe-url-resolver-2.1.29.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-parser-1.0.75.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-core-1.6.16.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-1.6.16.jar"/>
+	<archive path="/op2_3.4.dev/lib/swagger/swagger-request-validator-core-2.44.9-gov4j-1.jar"/>
 	<!-- wss4j -->
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-bindings-3.0.3.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-integration-3.0.3.jar"/>

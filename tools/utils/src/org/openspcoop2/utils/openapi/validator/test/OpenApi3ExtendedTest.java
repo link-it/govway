@@ -4722,15 +4722,15 @@ public class OpenApi3ExtendedTest {
 					erroreAttesoRisposta = "Parameter 'X-RateLimit-Remaining' is required. (code: 206)";
 					break;
 				case swagger_request_validator:
-					erroreAttesoRisposta = "[ERROR][RESPONSE][] Response Content-Type header 'application/json' does not match any allowed types. Must be one of: [application/problem+json].";
+					erroreAttesoRisposta = "[ERROR][RESPONSE][] Header 'X-RateLimit-Limit' is expected on path '/opRiferisceAnchor' but not found in response.";
 					break;
 				}
 				try {				
 					apiValidatorOpenApi4j.validate(httpResponseTestS1);
 					
-					//if (openAPILibrary != OpenAPILibrary.json_schema) {
+					if (openAPILibrary != OpenAPILibrary.json_schema) {
 						throw new Exception("Errore atteso '"+erroreAttesoRisposta+"' non rilevato");
-				//	}
+					}
 					
 				} catch (ValidatorException e) {
 					System.out.println(e.getMessage());

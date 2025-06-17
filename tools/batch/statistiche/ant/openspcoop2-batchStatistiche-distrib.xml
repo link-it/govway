@@ -57,8 +57,8 @@
                         <fileset dir="${openspcoop2.lib}" includes="security/neethi-3.2.0.jar"/>
                         <fileset dir="${openspcoop2.lib}" includes="security/jasypt-1.9.3.jar"/>
                         <fileset dir="${openspcoop2.lib}" includes="security/nimbus-jose-jwt-9.40.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="swagger/swagger-models-2.2.23.jar"/>			
-			<fileset dir="${openspcoop2.lib}" includes="swagger/swagger-core-2.2.23.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="swagger/swagger-models-jakarta-2.2.33.jar"/>			
+			<fileset dir="${openspcoop2.lib}" includes="swagger/swagger-core-jakarta-2.2.33.jar"/>
 		</copy>
 
 		<mkdir dir="${distrib_batchStatistiche}/jdbc"/>

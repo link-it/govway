@@ -314,7 +314,7 @@
 				<include name="java-uuid-generator-5.1.0.jar"/>
 				<include name="freemarker-2.3.33.jar"/>
 				<include name="snakeyaml-2.2-gov4j-1.jar"/>
-				<include name="rhino-1.7.15.jar"/>
+				<include name="rhino-1.8.0.jar"/>
 				<include name="${hazelcast-all_jar}"/>
 				<include name="${hazelcast-hibernate_jar}"/>
 				<include name="${hazelcast-jboss-logging_jar}"/>
