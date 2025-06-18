@@ -60,8 +60,8 @@ In ogni caso, sarà possibile accedere ai dettagli del tracciato cliccando sulla
 
     Dettagli errore tracciato
  
-Sarà inoltre possibile:
+Sarà inoltre possibile effettuare le seguenti operazione sia attraverso la pagina dedicata ai dettagli che selezionando i record relativi nella pagina di risultato di ricerca:
 
- - esportare il CSV di un singolo tracciato dalla relativa scheda di dettaglio
- - esportare più CSV relativi a tracciati selezionati direttamente dalla lista dei risultati di ricerca
+ - esportare il CSV dei record
+ - forzare un nuovo invio in caso di pubblicazione fallita
 

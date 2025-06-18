@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import org.joda.time.DateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
@@ -30,6 +31,9 @@ public class DetailsTracingPDND extends BaseTracingPDND {
   
   @Schema(description = "")
   private String dettagliErrore = null;
+  
+  @Schema(description = "")
+  private DateTime dataPubblicazione = null;
  /**
    * Get metodo
    * @return metodo
@@ -68,6 +72,25 @@ public class DetailsTracingPDND extends BaseTracingPDND {
     return this;
   }
 
+ /**
+   * Get dataPubblicazione
+   * @return dataPubblicazione
+  **/
+  @JsonProperty("data_pubblicazione")
+  @Valid
+  public DateTime getDataPubblicazione() {
+    return this.dataPubblicazione;
+  }
+
+  public void setDataPubblicazione(DateTime dataPubblicazione) {
+    this.dataPubblicazione = dataPubblicazione;
+  }
+
+  public DetailsTracingPDND dataPubblicazione(DateTime dataPubblicazione) {
+    this.dataPubblicazione = dataPubblicazione;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -76,6 +99,7 @@ public class DetailsTracingPDND extends BaseTracingPDND {
     sb.append("    ").append(DetailsTracingPDND.toIndentedString(super.toString())).append("\n");
     sb.append("    metodo: ").append(DetailsTracingPDND.toIndentedString(this.metodo)).append("\n");
     sb.append("    dettagliErrore: ").append(DetailsTracingPDND.toIndentedString(this.dettagliErrore)).append("\n");
+    sb.append("    dataPubblicazione: ").append(DetailsTracingPDND.toIndentedString(this.dataPubblicazione)).append("\n");
     sb.append("}");
     return sb.toString();
   }

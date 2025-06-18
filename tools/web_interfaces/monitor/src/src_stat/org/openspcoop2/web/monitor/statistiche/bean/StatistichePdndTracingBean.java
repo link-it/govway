@@ -217,4 +217,8 @@ public class StatistichePdndTracingBean extends StatistichePdndTracing {
 			}
 		}
 	}
+	
+	public boolean getFailed() {
+		return PossibiliStatiRichieste.FAILED.equals(this.stato);	
+	}
 }

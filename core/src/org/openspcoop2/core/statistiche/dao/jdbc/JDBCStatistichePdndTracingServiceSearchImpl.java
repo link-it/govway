@@ -114,6 +114,7 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
         		model.CSV,
         		model.DATA_REGISTRAZIONE,
         		model.DATA_TRACCIAMENTO,
+        		model.DATA_PUBBLICAZIONE,
         		model.ERROR_DETAILS,
         		model.HISTORY,
         		model.METHOD,
@@ -410,6 +411,7 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 		sqlQueryObjectGet.addSelectField("id");
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().DATA_TRACCIAMENTO,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().DATA_REGISTRAZIONE,true));
+		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().DATA_PUBBLICAZIONE,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().PDD_CODICE,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().CSV,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().METHOD,true));
@@ -468,16 +470,8 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 	protected java.util.List<Object> _getRootTablePrimaryKeyValues(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, StatistichePdndTracing statistichePdndTracing) throws NotFoundException, ServiceException, NotImplementedException, Exception{
 	    // Identificativi
         java.util.List<Object> rootTableIdValues = new java.util.ArrayList<Object>();
-        // TODO: Define the column values used to identify the primary key
 		rootTableIdValues.add(statistichePdndTracing.getId());
-        
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
-        
+
         return rootTableIdValues;
 	}
 	
@@ -486,23 +480,12 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 		StatistichePdndTracingFieldConverter converter = this.getStatistichePdndTracingFieldConverter();
 		Map<String, List<IField>> mapTableToPKColumn = new java.util.HashMap<String, List<IField>>();
 		UtilsTemplate<IField> utilities = new UtilsTemplate<IField>();
-
-		// TODO: Define the columns used to identify the primary key
-		//		  If a table doesn't have a primary key, don't add it to this map
-
+		
 		// StatistichePdndTracing.model()
 		mapTableToPKColumn.put(converter.toTable(StatistichePdndTracing.model()),
 			utilities.newList(
 				new CustomField("id", Long.class, "id", converter.toTable(StatistichePdndTracing.model()))
 			));
-
-
-        // Delete this line when you have verified the method
-		int throwNotImplemented = 1;
-		if(throwNotImplemented==1){
-		        throw new NotImplementedException("NotImplemented");
-		}
-		// Delete this line when you have verified the method
         
         return mapTableToPKColumn;		
 	}

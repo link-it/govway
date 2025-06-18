@@ -59,8 +59,49 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 	private ModIDynamicConfigurationSoggettiUtilities() {}
 	
 	static ConsoleConfiguration getDynamicConfigSoggetto(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader,
-			IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException {
+			IDSoggetto id) throws ProtocolException {
 		
+		boolean esterno = isEsterno(consoleOperationType, consoleHelper, registryReader, id);
+		
+		ConsoleConfiguration configuration = new ConsoleConfiguration();
+		
+		BaseConsoleItem titolo = ProtocolPropertiesFactory.newTitleItem(
+				ModIConsoleCostanti.MODIPA_SOGGETTI_ID, 
+				ModIConsoleCostanti.MODIPA_SOGGETTI_LABEL);
+		configuration.addConsoleItem(titolo );
+		
+		
+		BaseConsoleItem subTitlePdnd = ProtocolPropertiesFactory.newSubTitleItem(
+				ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_ID, 
+				ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_LABEL);
+		configuration.addConsoleItem(subTitlePdnd );
+		
+		
+		StringConsoleItem tokenClientIdItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.TEXT_AREA,
+				ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_ID, 
+				ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_LABEL);
+		tokenClientIdItem.setRows(ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_ROWS);
+		tokenClientIdItem.setRequired(false);
+		configuration.addConsoleItem(tokenClientIdItem);
+		
+		
+		if (!esterno && ModIProperties.getInstance().isTracingPDNDEnabled()) {
+			StringConsoleItem soggettoPdndTracingEnabledItem = (StringConsoleItem) 
+					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+					ConsoleItemType.SELECT,
+					ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ID, 
+					ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_LABEL);
+			soggettoPdndTracingEnabledItem.addLabelValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_LABEL, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID);
+			soggettoPdndTracingEnabledItem.addLabelValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_LABEL, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_ID);
+			soggettoPdndTracingEnabledItem.addLabelValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DISABLE_LABEL, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DISABLE_ID);
+			soggettoPdndTracingEnabledItem.setDefaultValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID);
+			configuration.addConsoleItem(soggettoPdndTracingEnabledItem);
+		}
+		return configuration;
+	}
+	private static boolean isEsterno(ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, IRegistryReader registryReader, IDSoggetto id) throws ProtocolException {
 		boolean esterno = false;
 		try {
 			String dominio = consoleHelper.getParameter(Costanti.CONSOLE_PARAMETRO_SOGGETTO_DOMINIO);
@@ -87,44 +128,7 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
-		
-		ConsoleConfiguration configuration = new ConsoleConfiguration();
-		
-		BaseConsoleItem titolo = ProtocolPropertiesFactory.newTitleItem(
-				ModIConsoleCostanti.MODIPA_SOGGETTI_ID, 
-				ModIConsoleCostanti.MODIPA_SOGGETTI_LABEL);
-		configuration.addConsoleItem(titolo );
-		
-		
-		BaseConsoleItem subTitlePdnd = ProtocolPropertiesFactory.newSubTitleItem(
-				ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_ID, 
-				ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_LABEL);
-		configuration.addConsoleItem(subTitlePdnd );
-		
-		
-		StringConsoleItem tokenClientIdItem = (StringConsoleItem) 
-				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
-				ConsoleItemType.TEXT_AREA,
-				ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_ID, 
-				ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_LABEL);
-		tokenClientIdItem.setRows(ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_ROWS);
-		tokenClientIdItem.setRequired(false);
-		configuration.addConsoleItem(tokenClientIdItem);
-		
-		
-		if (!esterno) {
-			StringConsoleItem soggettoPdndTracingEnabledItem = (StringConsoleItem) 
-					ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
-					ConsoleItemType.SELECT,
-					ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ID, 
-					ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_LABEL);
-			soggettoPdndTracingEnabledItem.addLabelValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_LABEL, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID);
-			soggettoPdndTracingEnabledItem.addLabelValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_LABEL, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_ID);
-			soggettoPdndTracingEnabledItem.addLabelValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DISABLE_LABEL, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DISABLE_ID);
-			soggettoPdndTracingEnabledItem.setDefaultValue(ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID);
-			configuration.addConsoleItem(soggettoPdndTracingEnabledItem);
-		}
-		return configuration;
+		return esterno;
 	}
 	
 	

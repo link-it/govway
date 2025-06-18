@@ -75,8 +75,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException {
 		
-		ConsoleConfiguration configuration = ModIDynamicConfigurationSoggettiUtilities.getDynamicConfigSoggetto(consoleOperationType, consoleHelper, registryReader,
-				configIntegrationReader, id);
+		ConsoleConfiguration configuration = ModIDynamicConfigurationSoggettiUtilities.getDynamicConfigSoggetto(consoleOperationType, consoleHelper, registryReader, id);
 		if(configuration!=null) {
 			return configuration;
 		}

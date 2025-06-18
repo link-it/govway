@@ -1,15 +1,15 @@
 .. _modipa_signalhub_properties:
 
-Configurazione GovWay Properties
---------------------------------
+Configurazione Avanzata
+---------------------------------------
 
-Per personalizzare il supporto a Signal-Hub, sono disponibili alcune proprietà configurabili nel file `modipa.properties`, elencate di seguito:
+Per personalizzare il supporto a Signal-Hub, sono registrabili alcune proprietà da aggiungere nel file `modipa_local.properties` presente nella connfigurazione esterna di GovWay. 
 
 **Abilitazione del supporto**
 
-Per abilitare il supporto a Signal-Hub, è necessario inserire la seguente proprietà:
+Per disabilitare il supporto a Signal-Hub, è possibile inserire la seguente proprietà:
 
-``org.openspcoop2.protocol.modipa.signalHub.enabled=true``
+``org.openspcoop2.protocol.modipa.signalHub.enabled=false``
 
 **Funzioni di hash**
 
@@ -50,23 +50,6 @@ Nome e versione dell’API della fruizione abilitata al deposito dei segnali:
 
 ``org.openspcoop2.protocol.modipa.signalHub.api.name=api-pdnd-push-signals``
 ``org.openspcoop2.protocol.modipa.signalHub.api.version=1``
-
-**Parametri deposito segnale**
-
-Per ciascun parametro utilizzato nel deposito dei segnali, sono disponibili le seguenti proprietà:
-
-- Etichetta utilizzata per identificare il parametro:
-
-  ``org.openspcoop2.protocol.modipa.signalHub.params.<NOME_PARAMETRO>.label=LABEL_PARAMETRO``
-
-- Regole di default per la valorizzazione del parametro:
-
-  ``org.openspcoop2.protocol.modipa.signalHub.params.<NOME_PARAMETRO>.rule=RULE_1,RULE_2``
-
-- Definizione di obbligatorietà del parametro:
-
-  ``org.openspcoop2.protocol.modipa.signalHub.params.<NOME_PARAMETRO>.required=true``
-
 
 
 

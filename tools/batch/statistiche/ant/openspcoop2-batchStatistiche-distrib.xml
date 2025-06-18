@@ -65,42 +65,48 @@
 		
 		<antcall target="-distrib_openspcoop2_batchStatistiche_script">
 			<param name="TipoStatistiche" value="StatisticheOrarie"/>
+                        <param name="BatchName" value="generaStatisticheOrarie"/>
                 </antcall>
 		<antcall target="-distrib_openspcoop2_batchStatistiche_script">
 			<param name="TipoStatistiche" value="StatisticheGiornaliere"/>
+                        <param name="BatchName" value="generaStatisticheGiornaliere"/>
                 </antcall>
 		<antcall target="-distrib_openspcoop2_batchStatistiche_script">
 			<param name="TipoStatistiche" value="StatisticheSettimanali"/>
+                        <param name="BatchName" value="generaStatisticheSettimanali"/>
                 </antcall>
 		<antcall target="-distrib_openspcoop2_batchStatistiche_script">
 			<param name="TipoStatistiche" value="StatisticheMensili"/>
+			<param name="BatchName" value="generaStatisticheMensili"/>
                 </antcall>
                 <antcall target="-distrib_openspcoop2_batchStatistiche_script">
                         <param name="TipoStatistiche" value="PdndGenerazioneTracciamento"/>
+                        <param name="BatchName" value="generaReportPDND"/>
                 </antcall>
                 <antcall target="-distrib_openspcoop2_batchStatistiche_script">
                         <param name="TipoStatistiche" value="PdndPubblicazioneTracciamento"/>
+			<param name="BatchName" value="pubblicaReportPDND"/>
                 </antcall>
 
 	</target>
 
 	<target name="-distrib_openspcoop2_batchStatistiche_script">
 
-		<copy file="${script_batchStatistiche}/run.sh" tofile="${distrib_batchStatistiche}/genera${TipoStatistiche}.sh"/>
+		<copy file="${script_batchStatistiche}/run.sh" tofile="${distrib_batchStatistiche}/${BatchName}.sh"/>
 		<antcall target="replace_token">
-			<param name="file" value="${distrib_batchStatistiche}/genera${TipoStatistiche}.sh"/>
+			<param name="file" value="${distrib_batchStatistiche}/${BatchName}.sh"/>
 			<param name="token" value="TIPOSTATISTICA"/>
 			<param name="value" value="${TipoStatistiche}"/>
                 </antcall>
-		<chmod file="${distrib_batchStatistiche}/genera${TipoStatistiche}.sh" perm="a+x"/>
+		<chmod file="${distrib_batchStatistiche}/${BatchName}.sh" perm="a+x"/>
 
-		<copy file="${script_batchStatistiche}/run.cmd" tofile="${distrib_batchStatistiche}/genera${TipoStatistiche}.cmd"/>
+		<copy file="${script_batchStatistiche}/run.cmd" tofile="${distrib_batchStatistiche}/${BatchName}.cmd"/>
 		<antcall target="replace_token">
-			<param name="file" value="${distrib_batchStatistiche}/genera${TipoStatistiche}.cmd"/>
+			<param name="file" value="${distrib_batchStatistiche}/${BatchName}.cmd"/>
 			<param name="token" value="TIPOSTATISTICA"/>
 			<param name="value" value="${TipoStatistiche}"/>
                 </antcall>
-		<chmod file="${distrib_batchStatistiche}/genera${TipoStatistiche}.cmd" perm="a+x"/>
+		<chmod file="${distrib_batchStatistiche}/${BatchName}.cmd" perm="a+x"/>
 
 
 	</target>

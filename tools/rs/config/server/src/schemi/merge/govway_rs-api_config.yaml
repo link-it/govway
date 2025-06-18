@@ -11342,6 +11342,8 @@ components:
         id_ente:
           maxLength: 4000
           type: "string"
+        tracciamento_pdnd:
+          $ref: "#/components/schemas/TracciamentoPDNDSoggettoEnum"
     ModIApplicativoEsterno:
       required:
       - "dominio"
@@ -12566,6 +12568,13 @@ components:
       - "ok"
       - "warn"
       - "error"
+    TracciamentoPDNDSoggettoEnum:
+      type: "string"
+      default: "Default"
+      enum:
+      - "Default"
+      - "Abilitato"
+      - "Disabilitato"
     DominioEnum:
       type: "string"
       example: "esterno"

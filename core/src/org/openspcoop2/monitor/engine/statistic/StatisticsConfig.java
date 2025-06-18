@@ -22,6 +22,7 @@ package org.openspcoop2.monitor.engine.statistic;
 import org.openspcoop2.monitor.engine.exceptions.EngineException;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -86,6 +87,7 @@ public class StatisticsConfig {
 	private boolean pdndTracciamentoSoggettiDisabled = false;
 	private Set<String> pdndTracciamentoSoggettiEnabled;
 	private Integer pdndTracciamentoMaxAttempt = null;
+	private List<Integer> pdndTracciamentoPendingCheck = null;
 	private boolean pdndTracciamentoErogazioniEnabled = true;
 	private boolean pdndTracciamentoFruizioniEnabled = true;
 	
@@ -157,6 +159,8 @@ public class StatisticsConfig {
 			    this.pdndTracciamentoSoggettiDisabled = parsePdndTracingSoggettiDisabled(props);
 			    this.pdndTracciamentoErogazioniEnabled = parsePdndTracingErogazioniEnabled(props);
 			    this.pdndTracciamentoFruizioniEnabled = parsePdndTracingFruizioniEnabled(props);
+			    this.pdndTracciamentoPendingCheck = parsePdndTracciamentoPendingCheck(props);
+			    this.pdndTracciamentoMaxAttempt = parsePdndTracciamentoMaxAttempts(props);
 			    
 				if ("true".equals(props.getProperty(CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_ENABLED, "true", true))) {
 					this.pdndTracciamentoPubblicazione = true;
@@ -238,6 +242,20 @@ public class StatisticsConfig {
 		String propId = CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_SOGGETTI_ENABLED;
 		String value = props.getProperty(propId, "", false);
 		return value==null || StringUtils.isEmpty(value.trim());
+	}
+	
+	private List<Integer> parsePdndTracciamentoPendingCheck(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_TRACCIAMENTO_PUBBLICAZIONE_PENDING_CHECK;
+		String value = props.getProperty(propId, "", false);
+		return value == null || StringUtils.isEmpty(value.trim()) ? List.of(0) : Arrays.stream(value.split(","))
+				.map(Integer::valueOf)
+				.collect(Collectors.toList());
+	}
+	
+	private Integer parsePdndTracciamentoMaxAttempts(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_TRACCIAMENTO_PUBBLICAZIONE_MAX_ATTEMPTS;
+		String value = props.getProperty(propId, "", false);
+		return value == null || StringUtils.isEmpty(value.trim()) ? null : Integer.valueOf(value);
 	}
 	
 	public Logger getLogCore() {
@@ -411,6 +429,14 @@ public class StatisticsConfig {
 	
 	public Integer getPdndTracciamentoMaxAttempt() {
 		return this.pdndTracciamentoMaxAttempt;
+	}
+	
+	public void setPdndTracciamentoPendingCheck(List<Integer> pdndTracciamentoPendingCheck) {
+		this.pdndTracciamentoPendingCheck = pdndTracciamentoPendingCheck;
+	}
+	
+	public List<Integer> getPdndTracciamentoPendingCheck() {
+		return this.pdndTracciamentoPendingCheck;
 	}
 	
 	public void setPdndTracciamentoSoggettiEnabled(Set<String> pdndTracingSoggettiEnabled) {

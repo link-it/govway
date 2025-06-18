@@ -127,7 +127,7 @@
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="statistiche.pdnd.tracciamento.baseUrl"/>
-			<param name="value" value="http://localhost:8080/govway/rest/out/${antinstaller_nomesoggetto}/api-pdnd-tracing-attestazione/v1"/>
+			<param name="value" value="http://localhost:8080/govway/rest/out/${antinstaller_nomesoggetto}/PDND/api-pdnd-tracing/v1"/>
 		</antcall>
 		
 	</target>

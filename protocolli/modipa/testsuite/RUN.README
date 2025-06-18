@@ -281,6 +281,7 @@ Prerequisiti:
 + Per i test sul tracing PDND, installare i timer come batch esterni ed inserire nel file batch-statistiche.properties le seguenti proprieta:
 	statistiche.pdnd.tracciamento.soggetti.enabled=DemoSoggettoErogatore,DemoSoggettoErogatore2
 	statistiche.pdnd.tracciamento.maxAttempts = 3
+	statistiche.pdnd.tracciamento.pending.check=0
 
 	statistiche.pdnd.tracciamento.baseUrl=http://127.0.0.1:8091
 	statistiche.pdnd.tracciamento.readTimeout=15000

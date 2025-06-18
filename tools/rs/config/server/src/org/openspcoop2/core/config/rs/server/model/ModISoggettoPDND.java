@@ -29,6 +29,9 @@ public class ModISoggettoPDND  {
   
   @Schema(description = "")
   private String idEnte = null;
+  
+  @Schema(description = "")
+  private TracciamentoPDNDSoggettoEnum tracciamentoPdnd = null;
  /**
    * Get idEnte
    * @return idEnte
@@ -48,6 +51,25 @@ public class ModISoggettoPDND  {
     return this;
   }
 
+ /**
+   * Get tracciamentoPdnd
+   * @return tracciamentoPdnd
+  **/
+  @JsonProperty("tracciamento_pdnd")
+  @Valid
+  public TracciamentoPDNDSoggettoEnum getTracciamentoPdnd() {
+    return this.tracciamentoPdnd;
+  }
+
+  public void setTracciamentoPdnd(TracciamentoPDNDSoggettoEnum tracciamentoPdnd) {
+    this.tracciamentoPdnd = tracciamentoPdnd;
+  }
+
+  public ModISoggettoPDND tracciamentoPdnd(TracciamentoPDNDSoggettoEnum tracciamentoPdnd) {
+    this.tracciamentoPdnd = tracciamentoPdnd;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -55,6 +77,7 @@ public class ModISoggettoPDND  {
     sb.append("class ModISoggettoPDND {\n");
     
     sb.append("    idEnte: ").append(ModISoggettoPDND.toIndentedString(this.idEnte)).append("\n");
+    sb.append("    tracciamentoPdnd: ").append(ModISoggettoPDND.toIndentedString(this.tracciamentoPdnd)).append("\n");
     sb.append("}");
     return sb.toString();
   }
