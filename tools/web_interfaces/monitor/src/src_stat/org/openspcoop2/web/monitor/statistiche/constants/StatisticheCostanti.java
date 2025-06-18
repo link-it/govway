@@ -182,6 +182,7 @@ public class StatisticheCostanti {
 	
 	public static final String STATS_PDND_TRACING_STATO_PUBLISHED_LABEL_KEY = "statistichePdndTracing.stato.PUBLISHED.label";
 	public static final String STATS_PDND_TRACING_STATO_FAILED_LABEL_KEY = "statistichePdndTracing.stato.FAILED.label";
+	public static final String STATS_PDND_TRACING_STATO_IN_ATTESA_LABEL_KEY = "statistichePdndTracing.stato.IN_ATTESA.label";
 	public static final String STATS_PDND_TRACING_STATO_PDND_WAITING_LABEL_KEY= "statistichePdndTracing.statoPdnd.WAITING.label";
 	public static final String STATS_PDND_TRACING_STATO_PDND_PENDING_LABEL_KEY = "statistichePdndTracing.statoPdnd.PENDING.label";
 	public static final String STATS_PDND_TRACING_STATO_PDND_OK_LABEL_KEY = "statistichePdndTracing.statoPdnd.OK.label";
@@ -191,5 +192,7 @@ public class StatisticheCostanti {
 	public static final String STATS_PDND_TRACING_METHOD_SUBMIT_LABEL_KEY = "statistichePdndTracing.method.SUBMIT.label";
 	
 	public static final String STATS_PDND_TRACING_MISSING_PARAMETERS_TRACING_ID_LABEL_KEY = "statistichePdndTracing.search.missing_parameters.tracingId";
+	
+	public static final String STATS_PDND_TRACING_STATO_IN_ATTESA_VALUE = "IN_ATTESA";
 
 }

@@ -264,7 +264,8 @@ public class StatistichePdndTracingSearchForm extends BaseSearchForm implements 
 	}
 	
 	public void statoListener(ActionEvent ae) {
-		//donothing
+		if (!PossibiliStatiRichieste.PUBLISHED.equals(this.stato))
+			this.statoPdnd = Costanti.NON_SELEZIONATO;
 	}
 
 	@Override

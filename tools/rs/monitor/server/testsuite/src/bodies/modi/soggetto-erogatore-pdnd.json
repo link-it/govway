@@ -1,0 +1,15 @@
+{
+  "nome" : "rs-monitor-DemoSoggettoErogatore",
+  "dominio" : "interno",
+  "ruoli" : [ ],
+  "proprieta" : [ {
+    "nome" : "pCustom",
+    "valore" : "exampleErogatorePCustom",
+    "encrypted" : false
+  } ],
+  "modi": {
+    "pdnd": {
+      "tracciamento_pdnd": "Default"
+    }
+  }
+}

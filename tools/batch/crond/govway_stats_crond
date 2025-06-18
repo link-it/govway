@@ -19,7 +19,7 @@
 #
 #
 # Per la generazione dei report csv da pubblicare sulla PDND si consiglia un'esecuzione ogni 30 minuti del batch
-#*/30 * * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/generatoreStatistiche generaPdndGenerazioneTracciamento.sh false
+#*/30 * * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/generatoreStatistiche generaReportPDND.sh false
 #
 # Per la pubblicazione dei report csv sulla PDND si consiglia un'esecuzione ogni 30 minuti del batch
-#*/30 * * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/generatoreStatistiche generaPdndPubblicazioneTracciamento.sh false
+#*/30 * * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/generatoreStatistiche pubblicaReportPDND.sh false

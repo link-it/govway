@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -13,8 +14,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.statistiche.StatistichePdndTracing;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiPdnd;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiRichieste;
+import org.openspcoop2.generic_project.beans.UpdateField;
+import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -29,6 +35,7 @@ import org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingSearch
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
 import org.openspcoop2.web.monitor.statistiche.constants.ModalitaRicercaStatistichePdnd;
 import org.openspcoop2.web.monitor.statistiche.constants.StatisticheCostanti;
+import org.openspcoop2.web.monitor.statistiche.dao.StatistichePdndTracingService;
 import org.openspcoop2.web.monitor.statistiche.servlet.StatistichePdndTracingExporter;
 import org.slf4j.Logger;
 
@@ -102,23 +109,28 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 		return _getTipiNomiSoggettiAssociati(true);
 	}
 
+	private List<String> getIdSelected() {
+		List<String> idReport = new ArrayList<>();
+
+		// se nn sono in select all allore prendo solo quelle selezionate
+		if (!this.isSelectedAll()) {
+
+			Iterator<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingBean> it = this.selectedIds.keySet().iterator();
+			while (it.hasNext()) {
+				org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingBean bean = it.next();
+				if (this.selectedIds.get(bean).booleanValue()) {
+					idReport.add(bean.getId().toString());
+					it.remove();
+				}
+			}
+		}
+		return idReport;
+	}
+	
 	public String exportSelected() {
 		try {
 			// recupero lista diagnostici
-			List<String> idReport = new ArrayList<>();
-
-			// se nn sono in select all allore prendo solo quelle selezionate
-			if (!this.isSelectedAll()) {
-
-				Iterator<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingBean> it = this.selectedIds.keySet().iterator();
-				while (it.hasNext()) {
-					org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingBean bean = it.next();
-					if (this.selectedIds.get(bean).booleanValue()) {
-						idReport.add(bean.getId().toString());
-						it.remove();
-					}
-				}
-			}
+			List<String> idReport = getIdSelected();
 
 			// We must get first our context
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -153,7 +165,7 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 	}
 
 	public String downloadCsv(){
-		StatistichePdndTracingBean.log.debug("downloading csv: "+this.statisticaPdndTracing.getId());
+		StatistichePdndTracingBean.log.debug("downloading csv: {}", this.statisticaPdndTracing.getId());
 		//recupero informazioni sul file
 
 
@@ -206,6 +218,7 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 		this.stati.add(new SelectItem(StatisticheCostanti.NON_SELEZIONATO));
 		this.stati.add(new SelectItem(PossibiliStatiRichieste.PUBLISHED.getValue(), MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_PDND_TRACING_STATO_PUBLISHED_LABEL_KEY)));
 		this.stati.add(new SelectItem(PossibiliStatiRichieste.FAILED.getValue(), MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_PDND_TRACING_STATO_FAILED_LABEL_KEY)));
+		this.stati.add(new SelectItem(StatisticheCostanti.STATS_PDND_TRACING_STATO_IN_ATTESA_VALUE, MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_PDND_TRACING_STATO_IN_ATTESA_LABEL_KEY)));
 
 		return this.stati;
 	}
@@ -296,5 +309,42 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 
 	public void setUpdateTipoRicerca(boolean updateTipoRicerca) {
 		this.updateTipoRicerca = updateTipoRicerca;
+	}
+	
+	public boolean isMaxAttemptReached() {
+		return false;
+	}
+	
+	public String resetAttemptsSelected() {
+		List<Long> idReport = getIdSelected().stream().map(Long::valueOf).collect(Collectors.toList());
+		StatistichePdndTracingService pdndService = (StatistichePdndTracingService) this.service;
+
+		try {
+			pdndService.updateTentativiPubblicazione(idReport, 0);
+		} catch (Exception e) {
+			StatistichePdndTracingBean.log.error("errore nell'azzeramento dei tentativi di pubblicazione, ids: {}", idReport, e);
+		}
+		
+		return null;
+	}
+	
+	public String resetAttempts() {
+		
+		String soggettoReadable = this.statisticaPdndTracing.getSoggettoReadable();
+		
+		StatistichePdndTracingService pdndService = (StatistichePdndTracingService) this.service;
+		this.statisticaPdndTracing.setTentativiPubblicazione(0);
+		try {
+			UpdateField tentativi = new UpdateField(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE, 0);
+			pdndService.updateFields(this.statisticaPdndTracing, tentativi);
+		
+			this.statisticaPdndTracing = new org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingBean(pdndService.findById(this.statisticaPdndTracing.getId()));
+		} catch (NotImplementedException | ServiceException | NotFoundException e) {
+			StatistichePdndTracingBean.log.error("errore nell'azzeramento dei tentativi di pubblicazione, id: {}", this.statisticaPdndTracing.getId(), e);
+		}
+		
+		this.statisticaPdndTracing.setSoggettoReadable(soggettoReadable);
+		
+		return null;
 	}
 }

@@ -33,10 +33,12 @@ import org.openspcoop2.core.commons.dao.DAOFactoryException;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.statistiche.StatistichePdndTracing;
+import org.openspcoop2.core.statistiche.constants.PossibiliStatiRichieste;
 import org.openspcoop2.core.statistiche.dao.IDBStatistichePdndTracingServiceSearch;
 import org.openspcoop2.core.statistiche.dao.IStatistichePdndTracingServiceSearch;
 import org.openspcoop2.core.statistiche.model.StatistichePdndTracingModel;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.beans.UpdateField;
 import org.openspcoop2.generic_project.dao.IServiceSearchWithoutId;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
@@ -192,6 +194,21 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 		// unimplemented
 	}
 
+	public void updateFields(StatistichePdndTracingBean bean, UpdateField field) throws ServiceException, NotFoundException, NotImplementedException {
+		this.statisticheServiceManager.getStatistichePdndTracingService().updateFields(bean, field);
+	}
+	
+	public void updateTentativiPubblicazione(List<Long> ids, Integer value) throws Exception {
+		this.statisticheServiceManager.getStatistichePdndTracingService().updateTentativiPubblicazione(ids, value);
+	}
+	
+	public void updateTentativiPubblicazione(Integer value) throws  Exception {
+		IExpression expr = createQuery(false, this.statistichePdndTracingServiceSearchDAO, StatistichePdndTracing.model());
+		expr.equals(StatistichePdndTracing.model().STATO, PossibiliStatiRichieste.FAILED);
+		
+		this.statisticheServiceManager.getStatistichePdndTracingService().updateTentativiPubblicazione(expr, value);
+	}
+	
 	@Override
 	public StatistichePdndTracingBean findById(Long key) {
 		IDBStatistichePdndTracingServiceSearch idSearch = (IDBStatistichePdndTracingServiceSearch) this.statistichePdndTracingServiceSearchDAO;
@@ -312,7 +329,12 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 				// Stato
 				if (this.search.getStato() != null  && StringUtils.isNotEmpty(this.search.getStato())
 						&& !StatisticheCostanti.NON_SELEZIONATO.equals(this.search.getStato())) {
-					expr.equals(model.STATO, this.search.getStato());
+					if(StatisticheCostanti.STATS_PDND_TRACING_STATO_IN_ATTESA_VALUE.equals(this.search.getStato())) {
+						expr.isNull(model.STATO);
+					}
+					else {
+						expr.equals(model.STATO, this.search.getStato());
+					}
 				}
 
 				// Stato PDND
@@ -347,6 +369,7 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 			
 			if(!isCount) {
 				expr.addOrder(model.DATA_TRACCIAMENTO, SortOrder.DESC);
+				expr.addOrder(model.PDD_CODICE, SortOrder.DESC);
 			}
 
 		} catch (NotImplementedException | ExpressionNotImplementedException | ExpressionException | CoreException | UserInvalidException e) {

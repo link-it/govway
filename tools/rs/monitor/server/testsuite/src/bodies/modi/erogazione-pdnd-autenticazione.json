@@ -1,7 +1,7 @@
 {
   "ridefinito": true,
   "abilitato": true,
-  "policy": "SimulazionePDND-JWK",
+  "policy": "rs-monitor-SimulazionePDND-JWK",
   "token_opzionale": false,
   "validazione_jwt": "abilitato",
   "introspection": "disabilitato",

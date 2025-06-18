@@ -324,6 +324,7 @@ public class TimerStatisticheLib {
 			this.statisticsConfig.setPdndTracciamentoSoggettiEnabled(this.op2Properties.getStatistichePdndTracciamentoSoggettiEnabled());
 			this.statisticsConfig.setPdndTracciamentoSoggettiDisabled(this.op2Properties.isStatistichePdndTracciamentoSoggettiDisabled());
 			this.statisticsConfig.setPdndTracciamentoMaxAttempt(this.op2Properties.getStatistichePdndTracciamentoMaxAttempts());
+			this.statisticsConfig.setPdndTracciamentoPendingCheck(this.op2Properties.getStatistichePdndTracciamentoPendingCheck());
 		}catch(Exception e){
 			throw new Exception("Errore durante la generazione delle statistiche (InitConfigurazione): "+e.getMessage(),e);
 		}
@@ -475,7 +476,7 @@ public class TimerStatisticheLib {
 			org.openspcoop2.core.plugins.dao.IServiceManager pluginsBaseSM = null;
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM = null;
-			if(this.generazioneStatisticheCustom){
+			if(this.generazioneStatisticheCustom || this.tracciamentoPdndGenerazione || this.tracciamentoPdndPubblicazione){
 				
 				IDriverConfigurazioneGet driverConfigurazione = ConfigurazionePdDReader.getDriverConfigurazionePdD();
 				if(driverConfigurazione instanceof DriverConfigurazioneDB) {

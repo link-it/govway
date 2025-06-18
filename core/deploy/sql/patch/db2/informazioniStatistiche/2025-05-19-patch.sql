@@ -4,6 +4,7 @@ CREATE TABLE statistiche_pdnd_tracing
 (
 	data_tracciamento TIMESTAMP NOT NULL,
 	data_registrazione TIMESTAMP,
+	data_pubblicazione TIMESTAMP,
 	pdd_codice VARCHAR(255) NOT NULL,
 	csv BLOB,
 	method VARCHAR(20),

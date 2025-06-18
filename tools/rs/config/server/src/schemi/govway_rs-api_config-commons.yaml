@@ -2424,7 +2424,10 @@ components:
       properties:
         id_ente:
            type: string
-           maxLength: 4000           
+           maxLength: 4000
+        tracciamento_pdnd:
+           $ref: '#/components/schemas/TracciamentoPDNDSoggettoEnum'  
+    
 
     # ModI Applicativo
 
@@ -3663,6 +3666,10 @@ components:
     StatoApiEnum:
       type: string
       enum: ['ok', 'warn','error']
+    TracciamentoPDNDSoggettoEnum:
+      type: string
+      enum: ['Default', 'Abilitato', 'Disabilitato']
+      default: 'Default'
     DominioEnum:
       type: string
       enum: ['interno', 'esterno']

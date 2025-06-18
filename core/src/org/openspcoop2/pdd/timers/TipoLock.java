@@ -66,6 +66,9 @@ public enum TipoLock implements Serializable {
 	
 	
 	private static final String getLockStatistico(TipoIntervalloStatistico tipo) {
+		if(TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO.equals(tipo) || TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO.equals(tipo)) {
+			return tipo.getValue();
+		}
 		return "Generazione"+tipo.getValue();
 	}
 	

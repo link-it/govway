@@ -2,8 +2,8 @@
 Feature: Ricerca Transazioni tramite purposeId
 
 Background: 
-  * def generate_tracing = (['bash', '-c', 'cd ' + batchPath + '/generatoreStatistiche &&  ./generaPdndGenerazioneTracciamento.sh'])
-  * def pubblish_tracing = (['bash', '-c', 'cd ' + batchPath + '/generatoreStatistiche &&  ./generaPdndPubblicazioneTracciamento.sh'])
+  * def generate_tracing = (['bash', '-c', 'cd ' + batchPath + '/generatoreStatistiche &&  ./generaReportPDND.sh'])
+  * def pubblish_tracing = (['bash', '-c', 'cd ' + batchPath + '/generatoreStatistiche &&  ./pubblicaReportPDND.sh'])
   * def clear_pdnd_tracing = read('classpath:org/openspcoop2/core/monitor/rs/testsuite/reportistica/clear_pdnd_tracing.js')
 
   * configure afterFeature = function(){ karate.call('classpath:prepare_modi_tests.feature@cleanup'); }
@@ -25,7 +25,7 @@ Background:
 
   * def db = new DbUtils(govwayDbConfig)
 
-  * def pdd = db.readValue("SELECT identificativo_porta FROM soggetti WHERE nome_soggetto='DemoSoggettoErogatore' AND tipo_soggetto = 'modipa'")
+  * def pdd = db.readValue("SELECT identificativo_porta FROM soggetti WHERE nome_soggetto='rs-monitor-DemoSoggettoErogatore' AND tipo_soggetto = 'modipa'")
   
   * def tracing_id = 'd376c74a-bc3e-4c9d-8bb1-6d63e8a78da4'
   * def dettagli_errori = '{ "error": "strano" }'
@@ -49,7 +49,7 @@ Scenario:
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
   
   Given url ricerca_url
-  And param soggetto = 'DemoSoggettoErogatore'
+  And param soggetto = 'rs-monitor-DemoSoggettoErogatore'
   And param data_inizio = data_inizio
   And param data_fine = data_fine
   When method get 
@@ -63,7 +63,7 @@ Scenario:
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
   
   Given url ricerca_url
-  And param soggetto = 'DemoSoggettoErogatore'
+  And param soggetto = 'rs-monitor-DemoSoggettoErogatore'
   And param data_inizio = data_inizio
   And param data_fine = data_fine
   And param tracing_id = tracing_id
@@ -80,7 +80,7 @@ Scenario:
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
   
   Given url ricerca_url
-  And param soggetto = 'DemoSoggettoErogatore'
+  And param soggetto = 'rs-monitor-DemoSoggettoErogatore'
   And param data_inizio = data_inizio
   And param data_fine = data_fine
   And param stato = 'Fallita'
@@ -97,7 +97,7 @@ Scenario:
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
   
   Given url ricerca_url
-  And param soggetto = 'DemoSoggettoErogatore'
+  And param soggetto = 'rs-monitor-DemoSoggettoErogatore'
   And param data_inizio = data_inizio
   And param data_fine = data_fine
   And param stato_pdnd = 'Errore'
@@ -114,7 +114,7 @@ Scenario:
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
   
   Given url ricerca_url
-  And param soggetto = 'DemoSoggettoErogatore'
+  And param soggetto = 'rs-monitor-DemoSoggettoErogatore'
   And param data_inizio = data_inizio
   And param data_fine = data_fine
   And param tentativi_pubblicazione = 27
@@ -131,7 +131,7 @@ Scenario:
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
   
   Given url ricerca_url
-  And param soggetto = 'DemoSoggettoErogatore'
+  And param soggetto = 'rs-monitor-DemoSoggettoErogatore'
   And param data_inizio = data_inizio
   And param data_fine = data_fine
   And param tracing_id = tracing_id
@@ -155,7 +155,7 @@ Scenario:
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
   
   Given url ricerca_url
-  And param soggetto = 'DemoSoggettoErogatore'
+  And param soggetto = 'rs-monitor-DemoSoggettoErogatore'
   And param data_inizio = data_inizio
   And param data_fine = data_fine
   And param tracing_id = tracing_id
