@@ -49,7 +49,6 @@
 	<var name="xalan_jar" value="" />
 	<var name="xalan_serializer_jar" value="" />
 	<var name="jaxb_jar" value=""/>
-	<var name="axis_saaj_jar" value=""/>
 	<var name="jackson_jar" value=""/>
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
@@ -103,15 +102,6 @@
 		</or>
 		<then>
 			<var name="jaxb_jar" value="*.jar"/>
-		</then>
-	</if>
-	<!-- axis_saaj_jar -->
-	<if>
-		<or>
-			<matches string="${as}" pattern="wildfly.*"/>
-		</or>
-		<then>
-			<var name="axis_saaj_jar" value="axis-saaj-1.4.jar"/>
 		</then>
 	</if>
 	<!-- jackson_jar -->

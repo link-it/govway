@@ -5,7 +5,7 @@ Esempio di connettore da impostare in apache tomcat 10.x, 11.x (viene aggiunto l
            emptySessionPath="true"
            scheme="https" secure="true" sslProtocol = "TLS">
 <SSLHostConfig     certificateVerification="true"
-                   protocols="TLSv1.2"
+                   protocols="TLSv1.2,TLSv1.3"
                    truststoreFile="/etc/govway/keys/erogatore.jks"
                    truststorePassword="openspcoop"
                    truststoreType="JKS">
