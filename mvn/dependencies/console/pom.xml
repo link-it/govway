@@ -17,8 +17,8 @@
 
 		<jar.group.name>console</jar.group.name>
 		
-		<govway-console-ui.version>20250610</govway-console-ui.version>
-		<govway-monitor-ui.version>20250610</govway-monitor-ui.version>
+		<govway-console-ui.version>20250619</govway-console-ui.version>
+		<govway-monitor-ui.version>20250619</govway-monitor-ui.version>
 
 		<jquery.version>3.6.4</jquery.version>
 		<jquery-ui.version>1.14.0</jquery-ui.version>
