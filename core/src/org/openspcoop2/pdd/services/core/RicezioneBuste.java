@@ -1171,9 +1171,6 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		// Logger
 		this.logCore = inRequestContext.getLogCore();
 		
-		// Data Ingresso Richiesta
-		Date dataIngressoRichiesta = this.msgContext.getDataIngressoRichiesta();
-		
 		// ID Transazione
 		this.idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, inRequestContext.getPddContext());
 		
@@ -2974,15 +2971,10 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				this.identitaPdD,
 				this.parametriGenerazioneBustaErrore, this.parametriInvioBustaErrore);
 		
-		GestioneTokenAutenticazione gestioneTokenAutenticazione = null;
-		String token = null;
-		
 		if(!gestioneToken.process()) {
 			return;
 		}
 		
-		gestioneTokenAutenticazione = gestioneToken.getGestioneTokenAutenticazione();
-		token = gestioneToken.getToken();
 		
 		
 		
@@ -3014,7 +3006,61 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		
 		
 		
+		this.midProcess(validatore, soapHeaderElement, infoServizio, properties, servizioApplicativoFruitore, inRequestPAMessage, gestioneToken, idPA, idPD, inoltroMSG, asincronoSimmetricoRisposta, soggettoVirtuale);
 		
+		} finally{ // try vedi  #try-finally-openspcoopstate#
+			try{
+				if(this.openspcoopstate!=null){
+					this.openspcoopstate.forceFinallyReleaseResource();
+				}
+			}catch(Throwable e){
+				if(this.msgDiag!=null){
+					try{
+						this.msgDiag.logErroreGenerico(e, "Rilascio risorsa");
+					}catch(Throwable eLog){
+						this.logCore.error("Diagnostico errore per Rilascio risorsa: "+eLog.getMessage(),eLog);
+					}
+				}
+				else{
+					this.logCore.error("Rilascio risorsa: "+e.getMessage(),e);
+				}
+			}
+		}
+		
+	}
+
+
+	private void midProcess(
+			Validatore validatore, 
+			BustaRawContent<?> soapHeaderElement,
+			Servizio infoServizio, 
+			ProprietaValidazione properties, 
+			String servizioApplicativoFruitore, 
+			InRequestPAMessage inRequestPAMessage,
+			RicezioneBusteGestioneToken gestioneToken,
+			IDPortaApplicativa idPA,
+			IDPortaDelegata idPD,
+			InoltroBusteMessage inoltroMSG,
+			boolean asincronoSimmetricoRisposta,
+			boolean soggettoVirtuale) throws TracciamentoException, ProtocolException {
+
+		RicezioneBusteUtils ricezioneBusteUtils = new RicezioneBusteUtils();
+		
+		// RequestInfo
+		RequestInfo requestInfo = this.msgContext.getRequestInfo();
+		
+		// OpenSPCoop Properties
+		OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+		
+		// Parametri della porta applicativa invocata
+		URLProtocolContext urlProtocolContext = this.msgContext.getUrlProtocolContext();
+		
+		InRequestContext inRequestContext = this.inRequestContext;
+		
+		PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+		GestioneTokenAutenticazione gestioneTokenAutenticazione = gestioneToken.getGestioneTokenAutenticazione();
+		
+		Credenziali credenziali = this.msgContext.getCredenziali();
 		/*
 		 * ---------------- Mittente / Autenticazione ---------------------
 		 */
@@ -3034,8 +3080,6 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		
 		boolean soggettoFruitoreIdentificatoTramiteProtocollo = false;
 		boolean soggettoAutenticato = false;
-		boolean supportatoAutenticazioneSoggetti = false;
-		IDServizioApplicativo idApplicativoToken = null;
 		
 		if(!gestioneAutenticazione.process()) {
 			return;
@@ -3043,10 +3087,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		
 		soggettoFruitoreIdentificatoTramiteProtocollo = gestioneAutenticazione.isSoggettoFruitoreIdentificatoTramiteProtocollo();
 		soggettoAutenticato = gestioneAutenticazione.isSoggettoAutenticato();
-		supportatoAutenticazioneSoggetti = gestioneAutenticazione.isSupportatoAutenticazioneSoggetti();
-		idApplicativoToken = gestioneAutenticazione.getIdApplicativoToken();
 		this.soggettoFruitore = gestioneAutenticazione.getSoggettoFruitore();
-		boolean autenticazioneOpzionale = gestioneAutenticazione.isAutenticazioneOpzionale();
 		servizioApplicativoFruitore = gestioneAutenticazione.getServizioApplicativoFruitore();
 		
 		
@@ -5024,16 +5065,49 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				return;
 			}
 		}
-
-
-
-
-
 		
+		this.finalProcess(validatore, servizioApplicativoFruitore, gestioneToken, idPA, idPD, inoltroMSG, gestioneAutenticazione, implementazionePdDDestinatario, richiestaApplicativa, dettaglioEccezione, integrationFunctionErrorValidazione);
+	}
+
+
+
+	private void finalProcess(
+			Validatore validatore, 
+			String servizioApplicativoFruitore, 
+			RicezioneBusteGestioneToken gestioneToken,
+			IDPortaApplicativa idPA,
+			IDPortaDelegata idPD,
+			InoltroBusteMessage inoltroMSG,
+			RicezioneBusteGestioneAutenticazione gestioneAutenticazione,
+			String implementazionePdDDestinatario,
+			RichiestaApplicativa richiestaApplicativa,
+			DettaglioEccezione dettaglioEccezione,
+			IntegrationFunctionError integrationFunctionErrorValidazione) throws ProtocolException {
+				
+		// RequestInfo
+		RequestInfo requestInfo = this.msgContext.getRequestInfo();
 		
+		// OpenSPCoop Properties
+		OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+				
+		// Loader
+		Loader loader = Loader.getInstance();
+		
+		String token = gestioneToken.getToken();
+		
+		// Data Ingresso Richiesta
+		Date dataIngressoRichiesta = this.msgContext.getDataIngressoRichiesta();
 
+		ClassNameProperties className = ClassNameProperties.getInstance();
+		
+		InRequestContext inRequestContext = this.inRequestContext;
 
+		boolean soggettoAutenticato = gestioneAutenticazione.isSoggettoAutenticato();
+		boolean supportatoAutenticazioneSoggetti = gestioneAutenticazione.isSupportatoAutenticazioneSoggetti();
+		IDServizioApplicativo idApplicativoToken = gestioneAutenticazione.getIdApplicativoToken();
+		boolean autenticazioneOpzionale = gestioneAutenticazione.isAutenticazioneOpzionale();
 
+		Credenziali credenziali = this.msgContext.getCredenziali();
 
 
 
@@ -6557,25 +6631,6 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 
 		if(this.asyncResponseCallback==null || this.terminataGestioneStatelessErrorBeforeAsyncrConnettore) {
 			this._statelessComplete(false);
-		}
-
-		}finally{ // try vedi  #try-finally-openspcoopstate#
-			try{
-				if(this.openspcoopstate!=null){
-					this.openspcoopstate.forceFinallyReleaseResource();
-				}
-			}catch(Throwable e){
-				if(this.msgDiag!=null){
-					try{
-						this.msgDiag.logErroreGenerico(e, "Rilascio risorsa");
-					}catch(Throwable eLog){
-						this.logCore.error("Diagnostico errore per Rilascio risorsa: "+eLog.getMessage(),eLog);
-					}
-				}
-				else{
-					this.logCore.error("Rilascio risorsa: "+e.getMessage(),e);
-				}
-			}
 		}
 	}
 	

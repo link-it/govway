@@ -1047,9 +1047,6 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		// Logger
 		this.logCore = inRequestContext.getLogCore();
 		
-		// Data Ingresso Richiesta
-		Date dataIngressoRichiesta = this.msgContext.getDataIngressoRichiesta();
-		
 		// ID Transazione
 		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, inRequestContext.getPddContext());
 		
@@ -1095,9 +1092,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 
 		// ProtocolFactory
 		this.protocolFactory = requestInfo.getProtocolFactory();
-		ITraduttore traduttore = this.protocolFactory.createTraduttore();
 		IProtocolManager protocolManager = this.protocolFactory.createProtocolManager();
-		IProtocolConfiguration protocolConfig = this.protocolFactory.createProtocolConfiguration();
 		
 		// ProprietaErroreApplicativo
 		ProprietaErroreApplicativo proprietaErroreAppl = propertiesReader
@@ -2620,10 +2615,57 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 
 		
 		
-		
-		
+		this.finalEngine(transaction, sa, identificativoPortaDelegata, richiestaDelegata, idCorrelazioneApplicativa, inRequestPDMessage, token, corsTrasparente, nomeUtilizzatoPerErrore);
 		
 
+		}finally{ // try vedi  #try-finally-openspcoopstate#
+			try{
+				if(this.openspcoopstate!=null){
+					this.openspcoopstate.forceFinallyReleaseResource();
+				}
+			}catch(Throwable e){
+				if(this.msgDiag!=null){
+					try{
+						this.msgDiag.logErroreGenerico(e, "Rilascio risorsa");
+					}catch(Throwable eLog){
+						this.logCore.error("Diagnostico errore per Rilascio risorsa: "+eLog.getMessage(),eLog);
+					}
+				}
+				else{
+					this.logCore.error("Rilascio risorsa: "+e.getMessage(),e);
+				}
+			}
+		}
+	}
+	
+	private void finalEngine(Transaction transaction, ServizioApplicativo sa, IDPortaDelegata identificativoPortaDelegata, RichiestaDelegata richiestaDelegata, String idCorrelazioneApplicativa, InRequestPDMessage inRequestPDMessage, String token, boolean corsTrasparente, String nomeUtilizzatoPerErrore) throws ProtocolException {
+		
+		PdDContext pddContext = this.inRequestContext.getPddContext();
+		OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+		ITraduttore traduttore = this.protocolFactory.createTraduttore();
+		IProtocolConfiguration protocolConfig = this.protocolFactory.createProtocolConfiguration();
+		
+		// Data Ingresso Richiesta
+		Date dataIngressoRichiesta = this.msgContext.getDataIngressoRichiesta();
+				
+		InRequestContext inRequestContext = this.inRequestContext;
+		
+		// ID Transazione
+		String idTransazione = PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, inRequestContext.getPddContext());
+		
+		// RequestInfo
+		RequestInfo requestInfo = this.msgContext.getRequestInfo();
+
+		// Credenziali utilizzate nella richiesta
+		Credenziali credenziali = this.msgContext.getCredenziali();
+		
+		// Autenticazione/Autorizzazione registrate
+		ClassNameProperties className = ClassNameProperties.getInstance();
+		
+		// Loader classi dinamiche
+		Loader loader = Loader.getInstance();
+		PddPluginLoader pluginLoader = PddPluginLoader.getInstance();
+		
 		/*
 		  * --------- Informazioni protocollo ----------
 		 */
@@ -4689,25 +4731,6 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		
 		if(this.asyncResponseCallback==null) {
 			this.statelessComplete(false);
-		}
-
-		}finally{ // try vedi  #try-finally-openspcoopstate#
-			try{
-				if(this.openspcoopstate!=null){
-					this.openspcoopstate.forceFinallyReleaseResource();
-				}
-			}catch(Throwable e){
-				if(this.msgDiag!=null){
-					try{
-						this.msgDiag.logErroreGenerico(e, "Rilascio risorsa");
-					}catch(Throwable eLog){
-						this.logCore.error("Diagnostico errore per Rilascio risorsa: "+eLog.getMessage(),eLog);
-					}
-				}
-				else{
-					this.logCore.error("Rilascio risorsa: "+e.getMessage(),e);
-				}
-			}
 		}
 	}
 	
