@@ -318,7 +318,7 @@ public class Parser {
 		CSVParser parser = null;
 		ParserResult parserResult = null;
 		try{
-			parser = new CSVParser(reader, format.getCsvFormat());
+			parser = CSVParser.builder().setReader(reader).setFormat(format.getCsvFormat()).get();
 			
 			parserResult = new ParserResult();
 			parserResult.setHeaderMap(parser.getHeaderMap());

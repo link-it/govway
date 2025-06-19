@@ -156,7 +156,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		
 		CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
 		        .setHeader(CSV_HEADERS)
-		        .build();
+		        .get();
 		
 		Format format = new Format();
 		format.setSkipEmptyRecord(false);

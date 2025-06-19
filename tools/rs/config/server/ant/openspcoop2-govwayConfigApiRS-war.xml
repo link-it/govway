@@ -159,11 +159,11 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/commons">
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-lang3-3.16.0.jar"/>
+				<include name="commons-lang3-3.17.0.jar"/>
 				<include name="commons-beanutils-1.11.0.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
-				<include name="commons-io-2.17.0.jar"/>
-				<include name="commons-codec-1.17.1.jar"/>
+				<include name="commons-io-2.19.0.jar"/>
+				<include name="commons-codec-1.18.0.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">

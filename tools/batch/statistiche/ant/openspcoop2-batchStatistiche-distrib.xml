@@ -37,10 +37,10 @@
 			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-databind-2.18.3.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-core-2.18.3.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="log/*"/>
-			<fileset dir="${openspcoop2.lib}" includes="commons/commons-csv-1.11.0.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="commons/commons-csv-1.14.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-collections-*.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-lang-2.6.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="commons/commons-codec-1.17.1.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="commons/commons-codec-1.18.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="jax/jaxb-*.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="saaj/jakarta.xml.soap-api-3.0.2.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="saaj/saaj-impl-3.0.4-gov4j-1.jar"/>

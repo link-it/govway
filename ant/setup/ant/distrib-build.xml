@@ -571,7 +571,7 @@ org.openspcoop2.pdd.idGenerator=UUIDv1
 							<classpath>
 								<path id="classpath_run">
 									<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.17.1.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.18.0.jar"/>
 									<fileset dir="${deploy_sw}" includes="jars/commons-lang-2.6.jar"/>
 							   	</path>				
 							</classpath>
@@ -598,7 +598,7 @@ org.openspcoop2.pdd.idGenerator=UUIDv1
 							<classpath>
 								<path id="classpath_run">
 									<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.17.1.jar"/>
+									<fileset dir="${deploy_sw}" includes="jars/commons-codec-1.18.0.jar"/>
 									<fileset dir="${deploy_sw}" includes="jars/commons-lang-2.6.jar"/>
 							   	</path>				
 							</classpath>

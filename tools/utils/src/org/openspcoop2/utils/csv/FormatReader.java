@@ -250,7 +250,7 @@ public class FormatReader {
 			this.skipEmptyRecord = skipEmptyRecord.getValue();
 		}
 		
-		this.format = builder.build();
+		this.format = builder.get();
 	}
 	
 	public Format getFormat() {
