@@ -14,4 +14,16 @@
       <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-web@.*$</packageUrl>
       <cve>CVE-2016-1000027</cve>
    </suppress>
+   <suppress>
+      <notes><![CDATA[
+      file name: spring-web-5.3.39.jar
+      La vulnerabilità indicata viene descritta come:
+       "In Spring Framework, versions 6.0.x as of 6.0.5, versions 6.1.x and 6.2.x, an application is vulnerable to a reflected file download (RFD) attack when it sets a “Content-Disposition” header with a non-ASCII charset, where the filename attribute is derived from user-supplied input."
+      La versione utilizzata è la '5.3.39' facendo diventare la segnalazione un falso positivo.
+      Sempre nella descrizione dell'issue https://spring.io/security/cve-2025-41234 viene indicato:
+      "Affected Spring Products and Versions: 6.2.0 - 6.2.7, 6.1.0 - 6.1.20, 6.0.5 - 6.0.28, Older, unsupported versions are not affected"
+      ]]></notes>
+      <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-web@.*$</packageUrl>
+      <cve>CVE-2025-41234</cve>
+   </suppress>   
 </suppressions>
