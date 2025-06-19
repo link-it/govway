@@ -75,7 +75,7 @@
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
 								<fileset>
-									<directory>../../../../../lib/${jar.group.name}</directory>
+									<directory>../../../../../lib/applicationServer/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>

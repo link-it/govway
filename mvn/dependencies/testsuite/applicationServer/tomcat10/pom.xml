@@ -17,7 +17,7 @@
 
 		<jar.group.name>tomcat10</jar.group.name>
 		
-		<tomcat.version>10.1.40</tomcat.version>
+		<tomcat.version>10.1.42</tomcat.version>
 
 	</properties>
 
@@ -88,7 +88,7 @@
 							<excludeDefaultDirectories>true</excludeDefaultDirectories>
 							<filesets>
 								<fileset>
-									<directory>../../../../../lib/${jar.group.name}</directory>
+									<directory>../../../../../lib/applicationServer/${jar.group.name}</directory>
 									<includes>
 										<include>*.jar</include>
 									</includes>
