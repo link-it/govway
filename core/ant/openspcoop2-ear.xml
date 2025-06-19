@@ -29,9 +29,9 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.2.1-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.11.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-4.1.0-gov4j-2.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-4.1.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-4.1.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-4.1.2-gov4j-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-4.1.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-4.1.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jakarta.ws.rs-api-3.1.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.2.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-4.3.2.jar"/>
@@ -81,7 +81,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-3.0.3-gov4j-3.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-3.0.3.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-3.0.3.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-7.1.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-7.1.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.12.7.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-33.3.0-jre.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />
@@ -506,7 +506,7 @@
 			<then>
 				<var name="hazelcast-all_jar" value="hazelcast-5.3.8.jar" />
 				<var name="hazelcast-hibernate_jar" value="hibernate-core-6.6.0.Final.jar" />
-				<var name="hazelcast-jboss-logging_jar" value="jboss-logging-3.6.0.Final.jar" />
+				<var name="hazelcast-jboss-logging_jar" value="jboss-logging-3.6.1.Final.jar" />
 				<var name="hazelcast_properties" value="govway.hazelcast*" />
 			</then>
 		</if>

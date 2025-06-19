@@ -56,8 +56,8 @@
 			<include name="cxf-core-*.jar"/>
 			<include name="cxf-rt-rs-json-basic-*.jar"/>
 			<include name="cxf-rt-rs-security-jose-*.jar"/>
-			<include name="asm-9.7.1.jar"/>
-			<include name="woodstox-core-7.1.0.jar"/>
+			<include name="asm-9.8.jar"/>
+			<include name="woodstox-core-7.1.1.jar"/>
 			<include name="xmlschema-core-2.3.1.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/security">

@@ -17,7 +17,7 @@
 
 		<jar.group.name>bean-validation</jar.group.name>
 		
-		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
+		<hibernate-validator.version>8.0.2.Final</hibernate-validator.version>
 		<classmate.version>1.5.1</classmate.version>
 
 	</properties>

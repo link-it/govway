@@ -176,7 +176,7 @@
 			<lib dir="${libs}/cxf">
 				<include name="cxf-core-*.jar" />
 				<include name="cxf-rt-*.jar" />
-				<exclude name="cxf-rt-transports-http-4.1.0.jar" /> <!-- warning su wildfly al deploy -->
+				<exclude name="cxf-rt-transports-http-4.1.2.jar" /> <!-- warning su wildfly al deploy -->
 			</lib>
 			<lib dir="${libs}/saaj">
 				<include name="*.jar"/>

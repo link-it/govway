@@ -50,7 +50,7 @@
                         <include name="jakarta.activation-api-2.1.3.jar"/>
                 </fileset>
                 <fileset dir="${required_lib}/cxf" >
-                        <include name="asm-9.7.1.jar"/>
+                        <include name="asm-9.8.jar"/>
                 </fileset>
 		<fileset dir="${required_lib}/angus" >
 			<include name="*.jar"/>
