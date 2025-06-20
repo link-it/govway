@@ -17,9 +17,9 @@
 
 		<jar.group.name>httpcore</jar.group.name>
 		
-		<httpcore5.version>5.2.5</httpcore5.version>
+		<httpcore5.version>5.3.4</httpcore5.version>
 
-		<httpclient5.version>5.3.1</httpclient5.version>
+		<httpclient5.version>5.5</httpclient5.version>
 		
 	</properties>
 

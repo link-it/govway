@@ -39,6 +39,6 @@
         <archive path="/op2_3.4.dev/lib/testsuite/apacheds/apacheds-all-2.0.0.AM27-gov4j-1.jar"/>
     </library>    
     <library name="openspcoop2_3.4_lib_dynamicAnalysis" systemlibrary="false">
-        <archive path="/op2_3.4.dev/lib/dynamicAnalysis/zap-clientapi-1.14.0.jar"/>
+        <archive path="/op2_3.4.dev/lib/dynamicAnalysis/zap-clientapi-1.16.0.jar"/>
     </library>
 </eclipse-userlibraries>
