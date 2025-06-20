@@ -158,6 +158,7 @@
 			<arg value="true" />
 		        <classpath>
 		                <path refid="karate_testsuite" />
+				<path refid="karate_testsuite_dist_govway"/>
 		                <pathelement path="${build_testsuite}"/>
 		        </classpath>
 		</java>
