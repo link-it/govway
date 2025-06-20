@@ -31,11 +31,11 @@
 			<fileset dir="${openspcoop2.dist}" includes="openspcoop2_*.jar"/>
 		</copy>
 		<copy todir="${distrib_batchStatistiche}/lib" flatten="true">
-			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-annotations-2.18.3.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-datatype-jsr310-2.18.3.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-datatype-joda-2.18.3.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-databind-2.18.3.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-core-2.18.3.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-annotations-2.19.1.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-datatype-jsr310-2.19.1.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-datatype-joda-2.19.1.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-databind-2.19.1.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="jackson/jackson-core-2.19.1.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="log/*"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-csv-1.14.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-collections-*.jar"/>
