@@ -17,10 +17,10 @@
 
 		<jar.group.name>json</jar.group.name>
 		
-		<org.json.json.version>20240303</org.json.json.version>
+		<org.json.json.version>20250517</org.json.json.version>
 
-		<networknt_json-schema-validator.version>1.5.1</networknt_json-schema-validator.version>
-		<com-ethlo-time.version>1.10.2</com-ethlo-time.version>
+		<networknt_json-schema-validator.version>1.5.7</networknt_json-schema-validator.version>
+		<com-ethlo-time.version>1.10.3</com-ethlo-time.version>
 
 		<github-java-json-tools_json-schema-validator.version>2.2.14</github-java-json-tools_json-schema-validator.version>
 		<github-java-json-tools_json-schema-validator.gov4j.version>2.2.14-gov4j-1</github-java-json-tools_json-schema-validator.gov4j.version>
