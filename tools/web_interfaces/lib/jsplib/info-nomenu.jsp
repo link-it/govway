@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <!DOCTYPE html>
+<%@page import="java.text.MessageFormat"%>
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ page session="true" import="org.openspcoop2.web.lib.mvc.*" %>
 
@@ -37,6 +38,8 @@ GeneralData gd = ServletUtils.getObjectFromSession(request, session, GeneralData
 String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE);
 
 String styleClassColonnaSX = ""; // "td1PageBodyNoMenu"
+
+String jQueryVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_JQUERY_VERSION);
 %>
 
 <html lang="it">
@@ -46,7 +49,7 @@ String styleClassColonnaSX = ""; // "td1PageBodyNoMenu"
 	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="css/<%= gd.getCss() %>" type="text/css">
 	<!-- JQuery lib-->
-	<script type="text/javascript" src="webjars/jquery/3.6.4/jquery.min.js" nonce="<%= randomNonce %>"></script>
+	<script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
 	<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
 	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 	<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>

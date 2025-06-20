@@ -20,9 +20,9 @@
 		<govway-console-ui.version>20250619</govway-console-ui.version>
 		<govway-monitor-ui.version>20250619</govway-monitor-ui.version>
 
-		<jquery.version>3.6.4</jquery.version>
-		<jquery-ui.version>1.14.0</jquery-ui.version>
-		<jsoup.version>1.18.3</jsoup.version>
+		<jquery.version>3.7.1</jquery.version>
+		<jquery-ui.version>1.14.1</jquery-ui.version>
+		<jsoup.version>1.20.1</jsoup.version>
 
 	</properties>
 

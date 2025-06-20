@@ -54,11 +54,11 @@
    		<filter-class>org.openspcoop2.web.monitor.core.filters.HeadersFilter</filter-class>
 		<init-param>
 			<param-name>jquery_version</param-name>
-			<param-value>3.6.4</param-value>
+			<param-value>3.7.1</param-value>
 		</init-param>
 		<init-param>
 			<param-name>jquery-ui_version</param-name>
-			<param-value>1.14.0</param-value>
+			<param-value>1.14.1</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>
@@ -103,11 +103,11 @@
    		<filter-class>org.openspcoop2.web.monitor.core.filters.ContentAuthorizationFilter</filter-class>
 		<init-param>
 			<param-name>jquery_version</param-name>
-			<param-value>3.6.4</param-value>
+			<param-value>3.7.1</param-value>
 		</init-param>
 		<init-param>
 			<param-name>jquery-ui_version</param-name>
-			<param-value>1.14.0</param-value>
+			<param-value>1.14.1</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>

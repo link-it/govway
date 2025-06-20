@@ -364,10 +364,10 @@
 				<include name="commons-jcs3-core-3.2.1-gov4j-1.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/console">
-				<include name="jquery-3.6.4.jar"/>
-				<include name="jquery-ui-1.14.0.jar"/>
+				<include name="jquery-3.7.1.jar"/>
+				<include name="jquery-ui-1.14.1.jar"/>
 				<include name="govway-console-ui-*.jar"/>
-				<include name="jsoup-1.18.3.jar"/>
+				<include name="jsoup-1.20.1.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/jakarta">
 				<include name="${jakarta_activation_jar}"/>
