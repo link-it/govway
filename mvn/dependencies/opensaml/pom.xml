@@ -17,8 +17,9 @@
 
 		<jar.group.name>opensaml</jar.group.name>
 		
+		<opensaml.version>5.1.4</opensaml.version>
 		<java-support.version>8.4.2</java-support.version>
-		<opensaml.version>4.3.2</opensaml.version>
+		<shib-support.version>9.1.4</shib-support.version>
 
 	</properties>
 
@@ -26,7 +27,7 @@
 
 		<dependency>
 			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-core</artifactId>
+			<artifactId>opensaml-core-api</artifactId>
 			<version>${opensaml.version}</version>
 			<exclusions>
 				<exclusion>
@@ -37,7 +38,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-messaging-api</artifactId>
+			<artifactId>opensaml-core-impl</artifactId>
 			<version>${opensaml.version}</version>
 			<exclusions>
 				<exclusion>
@@ -45,18 +46,8 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-messaging-impl</artifactId>
-			<version>${opensaml.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+		</dependency>	
+			
 		<dependency>
 			<groupId>org.opensaml</groupId>
 			<artifactId>opensaml-profile-api</artifactId>
@@ -67,18 +58,8 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-profile-impl</artifactId>
-			<version>${opensaml.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+		</dependency>	
+			
 		<dependency>
 			<groupId>org.opensaml</groupId>
 			<artifactId>opensaml-saml-api</artifactId>
@@ -101,6 +82,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.opensaml</groupId>
 			<artifactId>opensaml-security-api</artifactId>
@@ -122,7 +104,8 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>	
+		
 		<dependency>
 			<groupId>org.opensaml</groupId>
 			<artifactId>opensaml-soap-api</artifactId>
@@ -134,39 +117,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-soap-impl</artifactId>
-			<version>${opensaml.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-storage-api</artifactId>
-			<version>${opensaml.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.opensaml</groupId>
-			<artifactId>opensaml-storage-impl</artifactId>
-			<version>${opensaml.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+	
 		<dependency>
 			<groupId>org.opensaml</groupId>
 			<artifactId>opensaml-xacml-api</artifactId>
@@ -177,7 +128,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>	
 		<dependency>
 			<groupId>org.opensaml</groupId>
 			<artifactId>opensaml-xacml-impl</artifactId>
@@ -189,6 +140,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.opensaml</groupId>
 			<artifactId>opensaml-xacml-saml-api</artifactId>
@@ -210,7 +162,8 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>		
+		
 		<dependency>
 			<groupId>org.opensaml</groupId>
 			<artifactId>opensaml-xmlsec-api</artifactId>
@@ -233,7 +186,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>net.shibboleth.utilities</groupId>
 			<artifactId>java-support</artifactId>
@@ -245,6 +198,19 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<dependency>
+			<groupId>net.shibboleth</groupId>
+			<artifactId>shib-support</artifactId>
+			<version>${shib-support.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
 
 	</dependencies>
 
@@ -321,8 +287,8 @@
 
 	<repositories>
 		<repository>
-			<id>shibboleth</id>
-			<url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
+			<id>nexus</id>
+			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
 

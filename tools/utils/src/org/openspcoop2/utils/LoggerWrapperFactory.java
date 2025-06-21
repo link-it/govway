@@ -28,6 +28,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -348,7 +350,6 @@ public class LoggerWrapperFactory {
 			}
 		}
 	}
-
 	
 	private static void newConfiguration(LoggerContext context, URI configUri) {
 		context.setConfigLocation(configUri);
@@ -735,8 +736,29 @@ public class LoggerWrapperFactory {
 		patchClusterIdPath(loggerProperties, propertyToEnv);
 		patchLoggersStdout(loggerProperties, propertyToEnv, vars);
 		patchLoggersJSON(loggerProperties, propertyToEnv, vars);
+		cleanOptions(loggerProperties); // altrimenti log4j non le carica
 		return loggerProperties;
 	}
 
+	private static void cleanOptions(Properties loggerProperties) {
+		
+		List<String> deleteKeys = new ArrayList<>();
+		Enumeration<Object> keys = loggerProperties.keys();
+		while (keys.hasMoreElements()) {
+			Object object = keys.nextElement();
+			if(object instanceof String) {
+				String key = (String) object;
+				if(key.startsWith(Costanti.PROP_PREFIX)) {
+					deleteKeys.add(key);
+				}
+			}
+		}
+		
+		while (!deleteKeys.isEmpty()) {
+			String key = deleteKeys.remove(0);
+			loggerProperties.remove(key);
+		}
+		
+	}
 
 }
