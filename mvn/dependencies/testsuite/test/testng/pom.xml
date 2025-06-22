@@ -17,10 +17,10 @@
 
 		<jar.group.name>testng</jar.group.name>
 		
-		<testng.version>7.10.2</testng.version>
+		<testng.version>7.11.0</testng.version>
 		<testng-ant.version>1.0.0</testng-ant.version>
 		<jquery.version>3.6.1</jquery.version>
-		<jcommander.version>1.82</jcommander.version>
+		<jcommander.version>1.83</jcommander.version>
 		<guice.version>5.1.0</guice.version>
 		<slf4j-testng.version>2.0.0</slf4j-testng.version>
 
@@ -68,7 +68,7 @@
 		</dependency>	
 	
 		<dependency>
-			<groupId>com.beust</groupId>
+			<groupId>org.jcommander</groupId>
 			<artifactId>jcommander</artifactId>
 			<version>${jcommander.version}</version>
 			<exclusions>

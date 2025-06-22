@@ -21,8 +21,8 @@
         <archive path="/op2_3.4.dev/lib/stub/axis14/openspcoop2_integrationManagerStub_axis14.jar"/>
     </library>
     <library name="openspcoop2_3.4_lib_testng" systemlibrary="false">
-        <archive path="/op2_3.4.dev/lib/testsuite/testng/testng-7.10.2.jar"/>
-        <archive path="/op2_3.4.dev/lib/testsuite/testng/jcommander-1.82.jar"/>
+        <archive path="/op2_3.4.dev/lib/testsuite/testng/testng-7.11.0.jar"/>
+        <archive path="/op2_3.4.dev/lib/testsuite/testng/jcommander-1.83.jar"/>
         <archive path="/op2_3.4.dev/lib/testsuite/testng/guice-5.1.0.jar"/>
     </library>
     <library name="openspcoop2_3.4_lib_junit4" systemlibrary="false">

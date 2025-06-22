@@ -75,10 +75,8 @@
 			<include name="*.jar"/>
 		</fileset>	
 	</path>	
-	<path id="classpath_run">
+	<path id="classpath_run_without_build">
 						
-		<pathelement path="${build_testunits}/NG_UNITS"/>
-		
 		<fileset dir="${openspcoop2}/core/dist" >
 			<include name="*.jar"/>
 		</fileset>
@@ -159,9 +157,13 @@
 		</fileset>
 
 	</path>
+	<path id="classpath_run">
+		<path refid="classpath_run_without_build"/>
+		<pathelement path="${build_testunits}/NG_UNITS"/>
+	</path>
 	
 	<!-- estensione per testNG -->
-	<taskdef classpathref="classpath_run"
+	<taskdef classpathref="classpath_run_without_build"
                  resource="testngtasks" classpath="${openspcoop2_lib}/testsuite/testng/testng-ant-1.0.0.jar"/>
 	
 	<!-- Ripulisce la distribuzione -->
