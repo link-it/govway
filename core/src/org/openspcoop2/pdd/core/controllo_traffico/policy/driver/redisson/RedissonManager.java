@@ -26,6 +26,7 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.redisson.config.ReadMode;
+import org.redisson.config.SslVerificationMode;
 import org.slf4j.Logger;
 
 /**     
@@ -68,7 +69,7 @@ public class RedissonManager {
 				redisConf.useClusterServers()
 					.addNodeAddress(RedissonManager.connectionUrl.toArray(new String[1]))
 					.setReadMode(ReadMode.MASTER_SLAVE)
-					.setSslEnableEndpointIdentification(true);
+					.setSslVerificationMode(SslVerificationMode.STRICT);
 				redisson = Redisson.create(redisConf);
 				RedissonManager.logStartup.info("Inizializzazione RedissonClient effettuata con successo");
 				RedissonManager.log.info("Inizializzazione RedissonClient effettuata con successo");

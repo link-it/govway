@@ -17,11 +17,11 @@
 
 		<jar.group.name>redis</jar.group.name>
 		
-		<redisson.version>3.35.0</redisson.version>
-		<netty.version>4.1.118.Final</netty.version>
-		<jboss-marshalling.version>2.2.0.Final</jboss-marshalling.version>
+		<redisson.version>3.50.0</redisson.version>
+		<netty.version>4.1.122.Final</netty.version>
+		<jboss-marshalling.version>2.2.3.Final</jboss-marshalling.version>
 		<objenesis.version>3.4</objenesis.version>
-		<esotericsoftware.kryo.version>5.6.0</esotericsoftware.kryo.version>
+		<esotericsoftware.kryo.version>5.6.2</esotericsoftware.kryo.version>
 
 	</properties>
 
@@ -116,6 +116,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-transport-native-unix-common</artifactId>
+			<version>${netty.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
 
 		<dependency>
 			<groupId>org.jboss.marshalling</groupId>
