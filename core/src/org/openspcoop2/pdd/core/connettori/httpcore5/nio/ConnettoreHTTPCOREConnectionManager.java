@@ -475,7 +475,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 		ClientTlsStrategyBuilder tlsBuilder = ClientTlsStrategyBuilder.create();
 		tlsBuilder.setSslContext(sslContext);
 		tlsBuilder.setHostnameVerifier(hostnameVerifier);
-		return tlsBuilder.buildAsync(); // TODO: usare buildAsync o buildClassic per levare il deprecato ?
+		return tlsBuilder.buildAsync();
 	}
 	private static SSLContext buildSSLContext(SSLConfig httpsProperties, RequestInfo requestInfo, 
 			ConnettoreLogger logger, StringBuilder bfLog) throws UtilsException {

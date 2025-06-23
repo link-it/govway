@@ -39,7 +39,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
-import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
 import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
 import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.ConnectionReuseStrategy;
@@ -438,10 +438,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			SSLContext sslContext = sslSocketFactory.getSSLContext();
 
 			
-			tlsSocketStrategy = new ClientTlsStrategyBuilder()
-					.setSslContext(sslContext)
-					.setHostnameVerifier(hostnameVerifier)
-					.buildClassic();
+			tlsSocketStrategy = new DefaultClientTlsStrategy(sslContext, hostnameVerifier);
 			
 			if(connectionConfig.isDebug()) {
 				String clientCertificateConfigurated = connectionConfig.getSslContextProperties().getKeyStoreLocation();
