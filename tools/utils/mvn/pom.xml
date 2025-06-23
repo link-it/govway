@@ -42,6 +42,7 @@
 										<exclude name="*.userlibraries"/>
 										<exclude name="**/testsuite/karate*/**"/>
 										<exclude name="**/testsuite/junit*/**"/>
+										<exclude name="**/testsuite/logback/**"/>
 										<exclude name="**/applicationServer/**"/><!-- Non vanno aggiunti, poiche' la sua presenta fa fallire la serializzazione xml: java.lang.NoSuchMethodError: 'com.fasterxml.jackson.databind.cfg.MutableCoercionConfig com.fasterxml.jackson.dataformat.xml.XmlMapper.coercionConfigDefaults()' -->
 										<include name="**/*.jar"/>
 									</fileset>

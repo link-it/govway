@@ -199,14 +199,14 @@
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>	
-				<include name="xmlunit-legacy-2.10.0.jar" />
-				<include name="xmlunit-core-2.10.0.jar" />
-				<include name="snakeyaml-2.2-gov4j-1.jar" />
-				<include name="freemarker-2.3.33.jar" />
-				<include name="joda-time-2.12.7.jar" />
+				<include name="xmlunit-legacy-2.10.2.jar" />
+				<include name="xmlunit-core-2.10.2.jar" />
+				<include name="snakeyaml-2.4-gov4j-1.jar" />
+				<include name="freemarker-2.3.34.jar" />
+				<include name="joda-time-2.14.0.jar" />
 				<include name="reactive-streams-1.0.4.jar" />
 				<include name="velocity-*.jar"/>
-				<include name="micrometer-observation-1.13.3.jar"/>
+				<include name="micrometer-observation-1.14.8.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />

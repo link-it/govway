@@ -70,8 +70,8 @@ public class LdapServerTest {
 	}
 	public LdapServerTest(Resource ldif, org.apache.logging.log4j.Level level) throws IOException, UtilsException {
 		this.ldif = ldif;
-		
-		String propertiesLog = "log4j.logger.org.apache.directory.server="+level.name();
+
+		String propertiesLog = "logger.apacheds.name = org.apache.directory.server\n"+ "logger.apacheds.level="+level.name()+"\n"+"logger.apacheds.additivity = false";
 		Properties p = new Properties();
 		p.load(new StringReader(propertiesLog));
 		LoggerWrapperFactory.setLogConfiguration(p);

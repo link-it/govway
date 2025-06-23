@@ -22,6 +22,7 @@
  */
 package org.openspcoop2.utils.xml2json.test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +33,6 @@ import org.openspcoop2.utils.xml2json.IXml2Json;
 import org.openspcoop2.utils.xml2json.MappedXml2Json;
 import org.openspcoop2.utils.xml2json.Xml2JsonFactory;
 import org.w3c.dom.Node;
-
-import com.google.common.base.Charsets;
 
 /**
  * @author Bussu Giovanni (bussu@link.it)
@@ -50,7 +49,7 @@ public class Xml2JsonTest {
 	
 	public static void test() throws Exception {
 
-		String xmlString = Utilities.getAsString(Xml2JsonTest.class.getResource("file.xml"), Charsets.ISO_8859_1.name());
+		String xmlString = Utilities.getAsString(Xml2JsonTest.class.getResource("file.xml"), StandardCharsets.ISO_8859_1.name());
 		Map<String, String> xmlToJsonNamespaces = new HashMap<>(1);
 		xmlToJsonNamespaces.put("http://www.link.it/", "b");
 		xmlToJsonNamespaces.put("http://www.link.it/employee", "a");

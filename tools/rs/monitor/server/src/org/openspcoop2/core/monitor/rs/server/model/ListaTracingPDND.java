@@ -25,12 +25,14 @@ import org.openspcoop2.utils.service.beans.Lista;
 import jakarta.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 
 public class ListaTracingPDND extends Lista {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = RequiredMode.REQUIRED, description = "")
   private List<ItemTracingPDND> items = new ArrayList<>();
  /**
    * Get items

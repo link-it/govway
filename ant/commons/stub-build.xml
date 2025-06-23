@@ -185,7 +185,7 @@
 						<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.bind-api-3.0.1.jar"/>
 						<fileset dir="${required_lib}/jakarta" includes="jakarta.jws-api-3.0.0.jar"/>
 						<fileset dir="${required_lib}/jaxb" includes="*.jar"/>
-						<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.4.jar"/>
+						<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.4.1.jar"/>
 						<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
 						<fileset dir="${required_lib}/security" includes="neethi-3.2.1.jar"/>
 						<fileset dir="${required_lib}/commons" includes="*.jar"/>
@@ -208,7 +208,7 @@
 						<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.bind-api-3.0.1.jar"/>
 						<fileset dir="${required_lib}/jakarta" includes="jakarta.jws-api-3.0.0.jar"/>
 						<fileset dir="${required_lib}/jaxb" includes="*.jar"/>
-						<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.4.jar"/>
+						<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.4.1.jar"/>
 						<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
 						<fileset dir="${required_lib}/security" includes="neethi-3.2.1.jar"/>
 						<fileset dir="${required_lib}/commons" includes="*.jar"/>
@@ -257,7 +257,7 @@
 				<fileset dir="${required_lib}/jakarta" includes="jakarta.xml.bind-api-3.0.1.jar"/>
 				<fileset dir="${required_lib}/jakarta" includes="jakarta.jws-api-3.0.0.jar"/>
 				<fileset dir="${required_lib}/jaxb" includes="*.jar"/>
-				<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.4.jar"/>
+				<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.4.1.jar"/>
 				<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
 				<fileset dir="${required_lib}/security" includes="neethi-3.2.1.jar"/>
 				<fileset dir="${required_lib}/commons" includes="*.jar"/>
