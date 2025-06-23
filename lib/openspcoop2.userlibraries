@@ -152,8 +152,8 @@
         <archive path="/op2_3.4.dev/lib/opensaml/java-support-8.4.2.jar"/>
         <archive path="/op2_3.4.dev/lib/opensaml/shib-support-9.1.4.jar"/>
 	<!-- pdf -->
-	<archive path="/op2_3.4.dev/lib/pdf/pdfbox-2.0.32.jar"/>
-	<archive path="/op2_3.4.dev/lib/pdf/fontbox-2.0.32.jar"/>
+	<archive path="/op2_3.4.dev/lib/pdf/pdfbox-2.0.34.jar"/>
+	<archive path="/op2_3.4.dev/lib/pdf/fontbox-2.0.34.jar"/>
 	<archive path="/op2_3.4.dev/lib/pdf/boxable-1.7.0.jar"/>
 	<!-- redis -->
 	<archive path="/op2_3.4.dev/lib/redis/redisson-3.50.0.jar"/>

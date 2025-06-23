@@ -250,8 +250,8 @@
 				<include name="xmlbeans-5.3.0.jar"/>
 			</lib>
 			<lib dir="${required_lib}/pdf">
-				<include name="pdfbox-2.0.32.jar"/>
-				<include name="fontbox-2.0.32.jar"/>	
+				<include name="pdfbox-2.0.34.jar"/>
+				<include name="fontbox-2.0.34.jar"/>	
 				<include name="boxable-1.7.0.jar"/>
 			</lib>
 			<lib dir="${dist_govwayMonitor}">
