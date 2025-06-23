@@ -104,8 +104,8 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
-				<include name="neethi-3.2.0.jar"/>
-				<include name="xmlsec-3.0.4.jar"/>
+				<include name="neethi-3.2.1.jar"/>
+				<include name="xmlsec-4.0.4.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/swagger">
 				<exclude name="${excludeSwagger}"/>
@@ -178,9 +178,9 @@
 
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="herasaf-xacml-core-3.0.2.jar"/>
-				<include name="bcpkix-jdk18on-1.78.1.jar"/>
-				<include name="bcprov-jdk18on-1.78.1.jar"/>
-				<include name="bcutil-jdk18on-1.78.1.jar"/>
+				<include name="bcpkix-jdk18on-1.81.jar"/>
+				<include name="bcprov-jdk18on-1.81.jar"/>
+				<include name="bcutil-jdk18on-1.81.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 			</lib>
 			

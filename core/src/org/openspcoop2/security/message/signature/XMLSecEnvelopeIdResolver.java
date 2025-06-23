@@ -24,7 +24,9 @@ import java.util.Iterator;
 
 import jakarta.xml.soap.AttachmentPart;
 
+import org.apache.xml.security.signature.XMLSignatureByteInput;
 import org.apache.xml.security.signature.XMLSignatureInput;
+import org.apache.xml.security.signature.XMLSignatureNodeInput;
 import org.apache.xml.security.utils.resolver.ResourceResolverContext;
 import org.apache.xml.security.utils.resolver.ResourceResolverException;
 import org.apache.xml.security.utils.resolver.ResourceResolverSpi;
@@ -99,7 +101,7 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
 				if(wsuId.equals(contentId)){
 					try{
 						byte[]raw = ap.getRawContentBytes();
-						XMLSignatureInput result = new XMLSignatureInput(raw);
+						XMLSignatureInput result = new XMLSignatureByteInput(raw);
 						result.setMIMEType(ap.getContentType());
 						return result;
 					}catch(Exception e){
@@ -121,7 +123,7 @@ public class XMLSecEnvelopeIdResolver extends ResourceResolverSpi {
         		throw new ResourceResolverException("Cannot resoulve uri "+uri.getNodeValue()+" : "+e.getMessage(),e,uri.getLocalName(),BaseURI);
         	}
 	
-	        XMLSignatureInput result = new XMLSignatureInput(refElem);
+	        XMLSignatureInput result = new XMLSignatureNodeInput(refElem);
 	        result.setMIMEType("text/xml");
 	        try {
 	            URI uriNew = new URI(new URI(BaseURI), uri.getNodeValue());

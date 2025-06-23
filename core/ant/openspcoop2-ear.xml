@@ -18,9 +18,9 @@
 	<target name="build_manifest" description="Crea il Manifest di OpenSPCoop2">
 		
 		<var name="tmp_prefix" value="lib" />
-		<var name="tmp" value="${tmp_prefix}/bcprov-jdk18on-1.78.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk18on-1.78.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/bcutil-jdk18on-1.78.1.jar"/>
+		<var name="tmp" value="${tmp_prefix}/bcprov-jdk18on-1.81.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcpkix-jdk18on-1.81.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/bcutil-jdk18on-1.81.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-codec-1.18.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections-3.2.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-collections4-4.5.0.jar"/>
@@ -33,7 +33,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-4.1.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-4.1.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jakarta.ws.rs-api-3.1.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.2.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.2.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-profile-api-5.1.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-security-api-5.1.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-security-impl-5.1.4.jar"/>
@@ -66,7 +66,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xalan-2.7.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xml-resolver-1.2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlschema-core-2.3.1.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-3.0.4.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/xmlsec-4.0.4.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cryptacular-1.2.7.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jasypt-1.9.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wsdl4j-1.6.3.jar"/>
@@ -688,15 +688,15 @@
 				<include name="commons-fileupload2-*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/security">
-				<include name="bcprov-jdk18on-1.78.1.jar"/>
-				<include name="bcpkix-jdk18on-1.78.1.jar"/>
-				<include name="bcutil-jdk18on-1.78.1.jar"/>
-				<include name="neethi-3.2.0.jar"/>
-				<include name="xmlsec-3.0.4.jar"/>
+				<include name="bcprov-jdk18on-1.81.jar"/>
+				<include name="bcpkix-jdk18on-1.81.jar"/>
+				<include name="bcutil-jdk18on-1.81.jar"/>
+				<include name="neethi-3.2.1.jar"/>
+				<include name="xmlsec-4.0.4.jar"/>
 				<include name="cryptacular-1.2.7.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 				<include name="herasaf-xacml-core-3.0.2.jar"/>
-				<include name="nimbus-jose-jwt-9.40.jar"/>
+				<include name="nimbus-jose-jwt-10.3.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/wss4j">
 				<include name="*.jar"/>
