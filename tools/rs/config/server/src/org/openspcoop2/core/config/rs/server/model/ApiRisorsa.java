@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ApiRisorsa  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private HttpMethodEnum httpMethod = null;
   
-  @Schema(example = "/libri", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(example = "/libri", required = true, description = "")
   private String path = null;
   
   @Schema(description = "")

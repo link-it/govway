@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class CorrelazioneApplicativaRispostaItem  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String elemento = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private CorrelazioneApplicativaRispostaEnum identificazioneTipo = null;
  /**
    * Get elemento

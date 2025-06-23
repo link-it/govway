@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class FruizioneViewItem extends ApiImplViewItem {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String erogatore = null;
  /**
    * Get erogatore

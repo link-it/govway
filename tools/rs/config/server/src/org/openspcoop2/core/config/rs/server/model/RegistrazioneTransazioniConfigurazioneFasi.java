@@ -27,16 +27,16 @@ import jakarta.validation.Valid;
 
 public class RegistrazioneTransazioniConfigurazioneFasi  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TracciamentoTransazioniStatoFaseBloccante richiestaIngresso = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TracciamentoTransazioniStatoFaseBloccante richiestaUscita = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TracciamentoTransazioniStatoFaseBloccante rispostaUscita = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TracciamentoTransazioniStatoFase rispostaConsegnata = null;
  /**
    * Get richiestaIngresso

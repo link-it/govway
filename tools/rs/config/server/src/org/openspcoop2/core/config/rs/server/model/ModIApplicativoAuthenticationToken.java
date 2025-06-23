@@ -30,7 +30,7 @@ public class ModIApplicativoAuthenticationToken  {
   @Schema(description = "")
   private String tokenPolicy = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String identificativo = null;
   
   @Schema(description = "")

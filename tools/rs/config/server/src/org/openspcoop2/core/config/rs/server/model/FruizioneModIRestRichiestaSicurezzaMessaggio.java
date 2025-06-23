@@ -35,7 +35,7 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   @Schema(description = "")
   private List<String> headerHttpFirmare = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = new ArrayList<>();
   
   @Schema(description = "")

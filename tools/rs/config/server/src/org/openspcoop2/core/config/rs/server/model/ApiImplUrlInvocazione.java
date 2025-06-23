@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiImplUrlInvocazione  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModalitaIdentificazioneAzioneEnum modalita = null;
   
   @Schema(description = "XPath/JsonPath nel caso di modalità 'content-based' o espressione regolare nel caso 'url-based'")

@@ -35,7 +35,7 @@ public enum ConnettoreEnum {
   NULL("null"),
   
   ECHO("echo"),
-
+  
   STATUS("status"),
   
   PLUGIN("plugin"),

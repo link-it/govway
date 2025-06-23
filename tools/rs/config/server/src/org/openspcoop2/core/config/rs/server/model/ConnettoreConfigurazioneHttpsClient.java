@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ConnettoreConfigurazioneHttpsClient extends BaseKeyStoreFile {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private KeystoreEnum keystoreTipo = null;
   
   @Schema(example = "SunX509", description = "")

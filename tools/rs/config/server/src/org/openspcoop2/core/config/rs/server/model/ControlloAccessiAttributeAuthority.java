@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class ControlloAccessiAttributeAuthority  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(description = "")

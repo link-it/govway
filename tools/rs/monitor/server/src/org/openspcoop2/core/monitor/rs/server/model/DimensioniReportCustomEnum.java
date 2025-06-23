@@ -26,26 +26,46 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets DimensioniReportCustomEnum
  */
 public enum DimensioniReportCustomEnum {
-TAG("tag"),
+  TAG("tag"),
+  
   API("api"),
+  
   API_IMPLEMENTATION("api_implementation"),
+  
   OPERATION("operation"),
+  
   LOCAL_ORGANIZATION("local_organization"),
+  
   REMOTE_ORGANIZATION("remote_organization"),
+  
   CLIENT_ORGANIZATION("client_organization"),
+  
   PROVIDER_ORGANIZATION("provider_organization"),
+  
   TOKEN_ISSUER("token_issuer"),
+  
   TOKEN_CLIENTID("token_clientid"),
+  
   TOKEN_SUBJECT("token_subject"),
+  
   TOKEN_USERNAME("token_username"),
+  
   TOKEN_EMAIL("token_email"),
+  
   TOKEN_PDND_ORGANIZATION("token_pdnd_organization"),
+  
   TOKEN_PDND_EXTERNAL_ID("token_pdnd_external_id"),
+  
   TOKEN_PDND_CONSUMER_ID("token_pdnd_consumer_id"),
+  
   PRINCIPAL("principal"),
+  
   CLIENT("client"),
+  
   TOKEN_CLIENT("token_client"),
+  
   IP_ADDRESS("ip_address"),
+  
   RESULT("result");
 
   private String value;

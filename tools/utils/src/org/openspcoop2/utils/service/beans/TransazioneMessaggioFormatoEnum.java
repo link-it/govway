@@ -32,17 +32,22 @@ import jakarta.xml.bind.annotation.XmlEnumValue;
 @XmlEnum(String.class)
 public enum TransazioneMessaggioFormatoEnum {
   @XmlEnumValue("soap11")
-SOAP11("soap11"),
-    @XmlEnumValue("soap12")
-SOAP12("soap12"),
-    @XmlEnumValue("xml")
-XML("xml"),
-    @XmlEnumValue("json")
-JSON("json"),
-    @XmlEnumValue("multipart")
-MULTIPART("multipart"),
-    @XmlEnumValue("binary")
-BINARY("binary");
+  SOAP11("soap11"),
+  
+  @XmlEnumValue("soap12")
+  SOAP12("soap12"),
+  
+  @XmlEnumValue("xml")
+  XML("xml"),
+  
+  @XmlEnumValue("json")
+  JSON("json"),
+  
+  @XmlEnumValue("multipart")
+  MULTIPART("multipart"),
+  
+  @XmlEnumValue("binary")
+  BINARY("binary");
 
   private String value;
 

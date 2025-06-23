@@ -32,13 +32,16 @@ import jakarta.xml.bind.annotation.XmlEnumValue;
 @XmlEnum(String.class)
 public enum ProfiloCollaborazioneEnum {
   @XmlEnumValue("oneway")
-ONEWAY("oneway"),
-    @XmlEnumValue("sincrono")
-SINCRONO("sincrono"),
-    @XmlEnumValue("asincronoSimmetrico")
-ASINCRONOSIMMETRICO("asincronoSimmetrico"),
-    @XmlEnumValue("asincronoAsimmetrico")
-ASINCRONOASIMMETRICO("asincronoAsimmetrico");
+  ONEWAY("oneway"),
+  
+  @XmlEnumValue("sincrono")
+  SINCRONO("sincrono"),
+  
+  @XmlEnumValue("asincronoSimmetrico")
+  ASINCRONOSIMMETRICO("asincronoSimmetrico"),
+  
+  @XmlEnumValue("asincronoAsimmetrico")
+  ASINCRONOASIMMETRICO("asincronoAsimmetrico");
 
   private String value;
 

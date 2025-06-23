@@ -27,13 +27,13 @@ import jakarta.validation.Valid;
 
 public class ApiImplViewItem extends ApiImplItem {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String urlInvocazione = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String connettore = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String gestioneCors = null;
  /**
    * Get urlInvocazione

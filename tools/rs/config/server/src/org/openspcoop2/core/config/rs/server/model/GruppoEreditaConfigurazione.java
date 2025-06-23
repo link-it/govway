@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class GruppoEreditaConfigurazione  implements OneOfGruppoConfigurazione {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModalitaConfigurazioneGruppoEnum modalita = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
  /**
    * Get modalita

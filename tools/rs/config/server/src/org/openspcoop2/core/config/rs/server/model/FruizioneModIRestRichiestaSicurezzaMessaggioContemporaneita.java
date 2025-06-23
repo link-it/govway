@@ -28,13 +28,13 @@ import jakarta.validation.Valid;
 
 public class FruizioneModIRestRichiestaSicurezzaMessaggioContemporaneita  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModISicurezzaMessaggioRestSameDifferentEnum identificativo = null;
   
   @Schema(description = "")
   private ModISicurezzaMessaggioRestTokenChoiseEnum usaComeIdMessaggio = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModISicurezzaMessaggioRestSameDifferentEnum audience = null;
   
   @Schema(description = "")

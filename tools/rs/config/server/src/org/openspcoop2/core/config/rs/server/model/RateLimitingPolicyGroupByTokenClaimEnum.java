@@ -26,13 +26,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets RateLimitingPolicyGroupByTokenClaimEnum
  */
 public enum RateLimitingPolicyGroupByTokenClaimEnum {
-SUBJECT("subject"),
+  SUBJECT("subject"),
+  
   ISSUER("issuer"),
+  
   CLIENT_ID("client_id"),
+  
   USERNAME("username"),
+  
   EMAIL("email"),
+  
   PDND_ORGANIZATION_NAME("pdnd_organization_name"),
+  
   PDND_EXTERNAL_ID("pdnd_external_id"),
+  
   PDND_CONSUMER_ID("pdnd_consumer_id");
 
   private String value;

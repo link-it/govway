@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class RateLimitingPolicyErogazioneView extends RateLimitingPolicyErogazione {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String descrizione = null;
  /**
    * Get descrizione

@@ -29,7 +29,7 @@ public enum ModITruststoreEnum {
   JKS("jks"),
   
   PKCS11("pkcs11"),
-
+  
   PDND("pdnd");
 
   private String value;

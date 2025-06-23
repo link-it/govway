@@ -32,9 +32,10 @@ import jakarta.xml.bind.annotation.XmlEnumValue;
 @XmlEnum(String.class)
 public enum TransazioneContestoEnum {
   @XmlEnumValue("standard")
-STANDARD("standard"),
-    @XmlEnumValue("sonda")
-SONDA("sonda");
+  STANDARD("standard"),
+  
+  @XmlEnumValue("sonda")
+  SONDA("sonda");
 
   private String value;
 

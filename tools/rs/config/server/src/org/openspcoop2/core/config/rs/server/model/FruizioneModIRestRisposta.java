@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class FruizioneModIRestRisposta  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private FruizioneModIRestRispostaSicurezzaMessaggio sicurezzaMessaggio = null;
  /**
    * Get sicurezzaMessaggio

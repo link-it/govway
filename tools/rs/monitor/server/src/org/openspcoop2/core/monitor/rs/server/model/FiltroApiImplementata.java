@@ -30,10 +30,10 @@ public class FiltroApiImplementata  {
   @Schema(description = "")
   private String referente = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private Integer versione = null;
  /**
    * Get referente

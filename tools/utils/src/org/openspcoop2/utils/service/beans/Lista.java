@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class Lista extends ListaSenzaTotale {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "Number of items matching the filter criteria")
+  @Schema(required = true, description = "Number of items matching the filter criteria")
  /**
    * Number of items matching the filter criteria  
   **/

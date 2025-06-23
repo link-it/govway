@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ConnettoreEcho  implements OneOfApplicativoServerConnettore, OneOfConnettoreErogazioneConnettore, OneOfConnettoreFruizioneConnettore {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ConnettoreEnum tipo = null;
   
   @Schema(description = "")

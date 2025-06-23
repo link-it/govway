@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ModITrustStore extends BaseTrustStore {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModITruststoreEnum truststoreTipo = null;
   
   @Schema(description = "")

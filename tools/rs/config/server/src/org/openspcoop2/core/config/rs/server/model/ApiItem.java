@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ApiItem extends ApiBaseConSoggetto {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private StatoApiEnum stato = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String statoDescrizione = null;
   
   @Schema(description = "")

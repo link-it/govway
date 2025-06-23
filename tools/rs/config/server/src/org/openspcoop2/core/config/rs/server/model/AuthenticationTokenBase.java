@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class AuthenticationTokenBase  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String tokenPolicy = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String identificativo = null;
  /**
    * Get tokenPolicy

@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class AuthenticationHttpsConfigurazioneManuale  implements OneOfAuthenticationHttpsCertificato {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TipoAutenticazioneHttps tipo = null;
   
-  @Schema(example = "cn=esterno", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(example = "cn=esterno", required = true, description = "")
   private String subject = null;
   
   @Schema(example = "cn=esterno", description = "")

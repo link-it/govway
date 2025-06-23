@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiReferente  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String referente = null;
  /**
    * Get referente

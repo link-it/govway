@@ -45,7 +45,7 @@ public enum RateLimitingCriteriMetricaEnum {
   NUMERO_FAULT_APPLICATIVI("numero-fault-applicativi"),
   
   NUMERO_RICHIESTE_FALLITE_O_FAULT_APPLICATIVI("numero-richieste-fallite-o-fault-applicativi"),
-
+  
   NUMERO_RICHIESTE_OK_O_FAULT_APPLICATIVI("numero-richieste-ok-o-fault-applicativi");
 
   private String value;

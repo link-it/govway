@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class APIImplAutorizzazioneXACMLView  implements OneOfControlloAccessiAutorizzazioneViewAutorizzazione {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TipoAutorizzazioneEnum tipo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private FonteEnum ruoliFonte = null;
  /**
    * Get tipo

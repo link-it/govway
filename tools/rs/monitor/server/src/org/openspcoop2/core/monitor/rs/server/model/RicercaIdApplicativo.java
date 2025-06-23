@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class RicercaIdApplicativo extends RicercaBaseTransazione {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private FiltroRicercaId idApplicativo = null;
  /**
    * Get idApplicativo

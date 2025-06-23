@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 
 public class ListaCorrelazioneApplicativaRichiesta extends Lista {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private List<CorrelazioneApplicativaRichiestaItem> items = new ArrayList<>();
  /**
    * Get items

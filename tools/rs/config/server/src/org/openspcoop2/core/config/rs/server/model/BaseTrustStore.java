@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class BaseTrustStore  {
   
-  @Schema(example = "/path/to/truststore", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(example = "/path/to/truststore", required = true, description = "")
   private String truststorePath = null;
   
   @Schema(example = "pwd", description = "")

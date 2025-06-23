@@ -32,9 +32,10 @@ import jakarta.xml.bind.annotation.XmlEnumValue;
 @XmlEnum(String.class)
 public enum TransazioneRuoloEnum {
   @XmlEnumValue("fruizione")
-FRUIZIONE("fruizione"),
-    @XmlEnumValue("erogazione")
-EROGAZIONE("erogazione");
+  FRUIZIONE("fruizione"),
+  
+  @XmlEnumValue("erogazione")
+  EROGAZIONE("erogazione");
 
   private String value;
 

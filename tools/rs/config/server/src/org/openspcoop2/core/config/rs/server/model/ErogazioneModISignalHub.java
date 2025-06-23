@@ -27,16 +27,16 @@ import jakarta.validation.Valid;
 
 public class ErogazioneModISignalHub  {
   
-  @Schema(example = "/pseudonymization", description = "")
+  @Schema(example = "/pseudonymization", required = true, description = "")
   private String risorsa = null;
   
-  @Schema(example = "SHA-256", description = "")
+  @Schema(example = "SHA-256", required = true, description = "")
   private String algoritmo = null;
   
-  @Schema(example = "16", description = "")
+  @Schema(example = "16", required = true, description = "")
   private Integer dimensioneSeme = null;
   
-  @Schema(example = "15", description = "")
+  @Schema(example = "15", required = true, description = "")
   private Integer giorniRotazione = null;
   
   @Schema(description = "")

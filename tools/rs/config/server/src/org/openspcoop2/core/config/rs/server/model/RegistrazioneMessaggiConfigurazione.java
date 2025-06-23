@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class RegistrazioneMessaggiConfigurazione  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private Boolean abilitato = null;
   
   @Schema(description = "")

@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 public class DetailTransazione extends TransazioneExt {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private DateTime data = null;
   
   @Schema(example = "8", description = "")

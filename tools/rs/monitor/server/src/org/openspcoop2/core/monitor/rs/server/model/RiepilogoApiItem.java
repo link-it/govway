@@ -30,7 +30,7 @@ public class RiepilogoApiItem  {
   @Schema(description = "")
   private String fruitore = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String erogatore = null;
   
   @Schema(description = "")

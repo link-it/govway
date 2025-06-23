@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class RicercaStatisticaDistribuzioneTokenInfo extends RicercaStatisticaDistribuzioneApplicativo {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TokenClaimDistribuzioneStatisticaEnum claim = null;
   
   @Schema(description = "")

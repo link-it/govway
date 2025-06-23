@@ -26,15 +26,24 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets DiagnosticiSeverita
  */
 public enum DiagnosticiSeverita {
-OFF("off"),
+  OFF("off"),
+  
   FATAL("fatal"),
+  
   ERROR_PROTOCOL("error-protocol"),
+  
   ERROR_INTEGRATION("error-integration"),
+  
   INFO_PROTOCOL("info-protocol"),
+  
   INFO_INTEGRATION("info-integration"),
+  
   DEBUG_LOW("debug-low"),
+  
   DEBUG_MEDIUM("debug-medium"),
+  
   DEBUG_HIGH("debug-high"),
+  
   ALL("all");
 
   private String value;

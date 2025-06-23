@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiModISicurezzaCanale  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModISicurezzaCanaleEnum pattern = null;
  /**
    * Get pattern

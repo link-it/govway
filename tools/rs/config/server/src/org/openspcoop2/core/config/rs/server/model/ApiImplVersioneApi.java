@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiImplVersioneApi  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private Integer apiVersione = null;
  /**
    * Get apiVersione

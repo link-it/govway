@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ControlloAccessiAutorizzazioneApplicativo  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String applicativo = null;
  /**
    * Get applicativo

@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ConnettoreConfigurazioneHttpBasic  {
   
-  @Schema(example = "user", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(example = "user", required = true, description = "")
   private String username = null;
   
-  @Schema(example = "pwd", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(example = "pwd", required = true, description = "")
   private String password = null;
  /**
    * Get username

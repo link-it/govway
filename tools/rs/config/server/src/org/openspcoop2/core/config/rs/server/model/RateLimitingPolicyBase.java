@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class RateLimitingPolicyBase extends ApiImplConfigurazioneStato {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private StatoFunzionalitaConWarningEnum stato = null;
   
   @Schema(description = "")

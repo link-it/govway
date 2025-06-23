@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class APIImplAutenticazionePrincipal  implements OneOfAPIImplAutenticazione, OneOfControlloAccessiAutenticazioneAutenticazione, OneOfGruppoNuovaConfigurazioneAutenticazione {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TipoAutenticazioneEnum tipo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TipoAutenticazionePrincipal tipoPrincipal = null;
   
   @Schema(description = "")

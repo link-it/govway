@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class ApiImplUrlInvocazioneView extends ApiImplUrlInvocazione {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String urlInvocazione = null;
   
   @Schema(example = "[\"az1\",\"az2\",\"az3\"]", description = "")

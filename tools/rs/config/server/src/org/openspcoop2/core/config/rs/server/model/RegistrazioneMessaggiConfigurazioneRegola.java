@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class RegistrazioneMessaggiConfigurazioneRegola  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private Boolean headers = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private Boolean payload = null;
   
   @Schema(description = "")

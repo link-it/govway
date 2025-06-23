@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ConnettoreApplicativoServer  implements OneOfApplicativoServerConnettore, OneOfConnettoreErogazioneConnettore {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ConnettoreEnum tipo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String applicativo = null;
  /**
    * Get tipo

@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class RicercaConfigurazioneApi  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TransazioneRuoloEnum tipo = null;
   
   @Schema(description = "")

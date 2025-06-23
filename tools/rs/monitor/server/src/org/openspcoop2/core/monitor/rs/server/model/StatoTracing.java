@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets StatoTracing
  */
 public enum StatoTracing {
-QUALSIASI("Qualsiasi"),
+  QUALSIASI("Qualsiasi"),
+  
   FALLITA("Fallita"),
+  
   PUBBLICATA("Pubblicata");
 
   private String value;

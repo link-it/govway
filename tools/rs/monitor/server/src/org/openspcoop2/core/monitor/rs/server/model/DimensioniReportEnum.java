@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets DimensioniReportEnum
  */
 public enum DimensioniReportEnum {
-_2D("2d"),
+  _2D("2d"),
+  
   _3D("3d"),
+  
   _3DCUSTOM("3dcustom");
 
   private String value;

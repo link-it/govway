@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class RateLimitingPolicyItem  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
  /**
    * Get nome

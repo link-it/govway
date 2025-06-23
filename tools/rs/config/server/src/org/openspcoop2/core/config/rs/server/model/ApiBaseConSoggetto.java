@@ -28,10 +28,10 @@ import jakarta.validation.Valid;
 
 public class ApiBaseConSoggetto extends ApiBase {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ProfiloEnum profilo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String soggetto = null;
  /**
    * Get profilo

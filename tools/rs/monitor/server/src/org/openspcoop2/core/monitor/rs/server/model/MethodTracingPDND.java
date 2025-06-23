@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets MethodTracingPDND
  */
 public enum MethodTracingPDND {
-RECOVER("RECOVER"),
+  RECOVER("RECOVER"),
+  
   REPLACE("REPLACE"),
+  
   SUBMIT("SUBMIT");
 
   private String value;

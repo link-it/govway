@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ModIKeyStoreFile extends BaseKeyStoreFile implements OneOfModIKeyStoreRidefinitoDatiKeystore {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModIKeystoreTipologiaEnum tipologia = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModIKeystoreEnum keystoreTipo = null;
  /**
    * Get tipologia

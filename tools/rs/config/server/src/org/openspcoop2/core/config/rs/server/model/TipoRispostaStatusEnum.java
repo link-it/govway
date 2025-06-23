@@ -26,10 +26,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TipoRispostaStatusEnum
  */
 public enum TipoRispostaStatusEnum {
-MODI("ModI"),
+  MODI("ModI"),
+  
   VUOTO("vuoto"),
+  
   XML("xml"),
+  
   JSON("json"),
+  
   TEXT("text");
 
   private String value;

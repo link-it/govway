@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class Scope  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(example = "descrizione dello scope", description = "")

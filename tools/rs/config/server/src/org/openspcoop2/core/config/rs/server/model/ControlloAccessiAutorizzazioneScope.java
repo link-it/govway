@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ControlloAccessiAutorizzazioneScope  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String scope = null;
  /**
    * Get scope

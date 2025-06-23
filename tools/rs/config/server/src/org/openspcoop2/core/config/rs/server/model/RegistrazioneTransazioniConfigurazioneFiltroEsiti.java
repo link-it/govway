@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 public class RegistrazioneTransazioniConfigurazioneFiltroEsiti  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "Indicare i codici degli esiti richiesti")
+  @Schema(required = true, description = "Indicare i codici degli esiti richiesti")
  /**
    * Indicare i codici degli esiti richiesti  
   **/

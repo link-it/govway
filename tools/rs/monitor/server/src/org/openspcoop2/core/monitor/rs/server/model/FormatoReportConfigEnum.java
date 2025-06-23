@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets FormatoReportConfigEnum
  */
 public enum FormatoReportConfigEnum {
-CSV("csv"),
+  CSV("csv"),
+  
   XLS("xls");
 
   private String value;

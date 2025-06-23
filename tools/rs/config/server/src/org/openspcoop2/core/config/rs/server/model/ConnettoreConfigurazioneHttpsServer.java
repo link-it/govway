@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ConnettoreConfigurazioneHttpsServer extends BaseTrustStore {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private KeystoreEnum truststoreTipo = null;
   
   @Schema(example = "PKIX", description = "")

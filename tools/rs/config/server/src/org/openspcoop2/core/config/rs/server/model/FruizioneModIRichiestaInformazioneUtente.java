@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class FruizioneModIRichiestaInformazioneUtente  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private StatoDefaultRidefinitoEnum modalita = null;
   
   @Schema(description = "")

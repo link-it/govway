@@ -33,7 +33,7 @@ public class FiltroRicercaId  {
   @Schema(example = "false", description = "")
   private Boolean caseSensitive = true;
   
-  @Schema(example = "abc123", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(example = "abc123", required = true, description = "")
   private String id = null;
  /**
    * Get ricercaEsatta

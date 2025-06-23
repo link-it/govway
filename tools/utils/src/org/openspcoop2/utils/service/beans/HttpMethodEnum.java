@@ -32,25 +32,34 @@ import jakarta.xml.bind.annotation.XmlEnumValue;
 @XmlEnum(String.class)
 public enum HttpMethodEnum {
   @XmlEnumValue("GET")
-GET("GET"),
-    @XmlEnumValue("POST")
-POST("POST"),
-    @XmlEnumValue("PUT")
-PUT("PUT"),
-    @XmlEnumValue("DELETE")
-DELETE("DELETE"),
-    @XmlEnumValue("OPTIONS")
-OPTIONS("OPTIONS"),
-    @XmlEnumValue("HEAD")
-HEAD("HEAD"),
-    @XmlEnumValue("TRACE")
-TRACE("TRACE"),
-    @XmlEnumValue("PATCH")
-PATCH("PATCH"),
-    @XmlEnumValue("LINK")
-LINK("LINK"),
-    @XmlEnumValue("UNLINK")
-UNLINK("UNLINK");
+  GET("GET"),
+  
+  @XmlEnumValue("POST")
+  POST("POST"),
+  
+  @XmlEnumValue("PUT")
+  PUT("PUT"),
+  
+  @XmlEnumValue("DELETE")
+  DELETE("DELETE"),
+  
+  @XmlEnumValue("OPTIONS")
+  OPTIONS("OPTIONS"),
+  
+  @XmlEnumValue("HEAD")
+  HEAD("HEAD"),
+  
+  @XmlEnumValue("TRACE")
+  TRACE("TRACE"),
+  
+  @XmlEnumValue("PATCH")
+  PATCH("PATCH"),
+  
+  @XmlEnumValue("LINK")
+  LINK("LINK"),
+  
+  @XmlEnumValue("UNLINK")
+  UNLINK("UNLINK");
 
   private String value;
 

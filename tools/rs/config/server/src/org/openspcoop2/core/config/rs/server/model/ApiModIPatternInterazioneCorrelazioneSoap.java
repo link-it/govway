@@ -27,13 +27,13 @@ import jakarta.validation.Valid;
 
 public class ApiModIPatternInterazioneCorrelazioneSoap  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String apiNome = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private Integer apiVersione = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String servizio = null;
   
   @Schema(description = "")

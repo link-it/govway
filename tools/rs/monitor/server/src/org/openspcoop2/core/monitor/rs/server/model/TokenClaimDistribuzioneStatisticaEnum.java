@@ -26,11 +26,16 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TokenClaimDistribuzioneStatisticaEnum
  */
 public enum TokenClaimDistribuzioneStatisticaEnum {
-SUBJECT("subject"),
+  SUBJECT("subject"),
+  
   ISSUER("issuer"),
+  
   CLIENT_ID("client_id"),
+  
   CLIENT_ID_PDND_INFORMAZIONI("client_id_pdnd_informazioni"),
+  
   USERNAME("username"),
+  
   EMAIL("email");
 
   private String value;

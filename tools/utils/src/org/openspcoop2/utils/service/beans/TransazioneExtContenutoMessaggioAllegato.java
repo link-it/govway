@@ -40,11 +40,11 @@ import jakarta.validation.Valid;
 public class TransazioneExtContenutoMessaggioAllegato  {
   @XmlElement(name="contenuto", required = true)
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private byte[] contenuto = null;
   @XmlElement(name="content_type", required = true)
   
-  @Schema(example = "application/json", requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(example = "application/json", required = true, description = "")
   private String contentType = null;
   @XmlElement(name="content_id")
   

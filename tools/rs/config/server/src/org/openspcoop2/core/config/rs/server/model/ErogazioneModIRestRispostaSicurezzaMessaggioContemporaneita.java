@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class ErogazioneModIRestRispostaSicurezzaMessaggioContemporaneita  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModISicurezzaMessaggioRestSameDifferentEnum identificativo = null;
   
   @Schema(description = "")

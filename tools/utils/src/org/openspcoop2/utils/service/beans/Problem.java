@@ -19,14 +19,16 @@
  */
 package org.openspcoop2.utils.service.beans;
 
-import jakarta.validation.constraints.*;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Problem   {
+public class Problem {
   
   @Schema(example = "https://tools.ietf.org/html/rfc7231#section-6.6.4", description = "An absolute URI that identifies the problem type.  When dereferenced, it SHOULD provide human-readable documentation for the problem type (e.g., using HTML). ")
  /**
@@ -62,6 +64,7 @@ public class Problem   {
    * @return type
   **/
   @JsonProperty("type")
+  @Valid
   public String getType() {
     return this.type;
   }
@@ -80,6 +83,7 @@ public class Problem   {
    * @return title
   **/
   @JsonProperty("title")
+  @Valid
   public String getTitle() {
     return this.title;
   }
@@ -100,6 +104,7 @@ public class Problem   {
    * @return status
   **/
   @JsonProperty("status")
+  @Valid
  @Min(100) @Max(600)  public Integer getStatus() {
     return this.status;
   }
@@ -118,6 +123,7 @@ public class Problem   {
    * @return detail
   **/
   @JsonProperty("detail")
+  @Valid
   public String getDetail() {
     return this.detail;
   }
@@ -136,6 +142,7 @@ public class Problem   {
    * @return instance
   **/
   @JsonProperty("instance")
+  @Valid
   public String getInstance() {
     return this.instance;
   }

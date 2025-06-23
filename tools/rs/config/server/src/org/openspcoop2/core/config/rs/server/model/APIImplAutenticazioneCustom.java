@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class APIImplAutenticazioneCustom  implements OneOfControlloAccessiAutenticazioneAutenticazione {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TipoAutenticazioneEnum tipo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "nome autenticazione 'custom', set tipo='custom'")
+  @Schema(required = true, description = "nome autenticazione 'custom', set tipo='custom'")
  /**
    * nome autenticazione 'custom', set tipo='custom'  
   **/

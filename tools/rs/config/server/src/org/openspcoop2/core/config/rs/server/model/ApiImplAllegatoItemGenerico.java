@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ApiImplAllegatoItemGenerico  implements OneOfApiImplAllegatoItemAllegato {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private RuoloAllegatoAPIImpl ruolo = null;
  /**
    * Get nome

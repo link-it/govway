@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class ApplicativoServer  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
   @Schema(example = "descrizione dell'applicativo", description = "")

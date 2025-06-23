@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class FruizioneModIOAuth extends BaseFruizioneModIOAuth implements OneOfFruizioneModi, OneOfFruizioneModIModi {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TipoConfigurazioneFruizioneEnum protocollo = null;
   
   @Schema(description = "")

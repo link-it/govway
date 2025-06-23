@@ -26,9 +26,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TracciamentoTransazioniStato
  */
 public enum TracciamentoTransazioniStato {
-ABILITATO("abilitato"),
+  ABILITATO("abilitato"),
+  
   DISABILITATO("disabilitato"),
+  
   PERSONALIZZATO("personalizzato"),
+  
   CONFIGURAZIONEESTERNA("configurazioneEsterna");
 
   private String value;

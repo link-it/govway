@@ -32,17 +32,22 @@ import jakarta.xml.bind.annotation.XmlEnumValue;
 @XmlEnum(String.class)
 public enum DiagnosticoSeveritaEnum {
   @XmlEnumValue("fatal")
-FATAL("fatal"),
-    @XmlEnumValue("error")
-ERROR("error"),
-    @XmlEnumValue("warning")
-WARNING("warning"),
-    @XmlEnumValue("info")
-INFO("info"),
-    @XmlEnumValue("debug")
-DEBUG("debug"),
-    @XmlEnumValue("trace")
-TRACE("trace");
+  FATAL("fatal"),
+  
+  @XmlEnumValue("error")
+  ERROR("error"),
+  
+  @XmlEnumValue("warning")
+  WARNING("warning"),
+  
+  @XmlEnumValue("info")
+  INFO("info"),
+  
+  @XmlEnumValue("debug")
+  DEBUG("debug"),
+  
+  @XmlEnumValue("trace")
+  TRACE("trace");
 
   private String value;
 

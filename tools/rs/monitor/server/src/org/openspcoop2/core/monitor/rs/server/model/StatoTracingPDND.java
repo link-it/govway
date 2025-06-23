@@ -26,9 +26,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets StatoTracingPDND
  */
 public enum StatoTracingPDND {
-QUALSIASI("Qualsiasi"),
+  QUALSIASI("Qualsiasi"),
+  
   ERRORE("Errore"),
+  
   ATTESA("Attesa"),
+  
   OK("Ok");
 
   private String value;

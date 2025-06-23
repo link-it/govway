@@ -27,13 +27,13 @@ import jakarta.validation.Valid;
 
 public class ModIKeyStoreHSM  implements OneOfModIKeyStoreRidefinitoDatiKeystore {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModIKeystoreTipologiaEnum tipologia = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String pcks11Tipo = null;
   
-  @Schema(example = "pwd", requiredMode = Schema.RequiredMode.REQUIRED, description = "alias della chiave privata")
+  @Schema(example = "pwd", required = true, description = "alias della chiave privata")
  /**
    * alias della chiave privata  
   **/

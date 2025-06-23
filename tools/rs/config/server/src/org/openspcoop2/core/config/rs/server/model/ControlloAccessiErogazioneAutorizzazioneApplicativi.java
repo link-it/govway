@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 public class ControlloAccessiErogazioneAutorizzazioneApplicativi  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private List<ControlloAccessiErogazioneAutorizzazioneApplicativo> applicativi = new ArrayList<>();
  /**
    * Get applicativi

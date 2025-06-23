@@ -26,8 +26,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Gets or Sets TracciamentoPDNDSoggettoEnum
  */
 public enum TracciamentoPDNDSoggettoEnum {
-DEFAULT("Default"),
+  DEFAULT("Default"),
+  
   ABILITATO("Abilitato"),
+  
   DISABILITATO("Disabilitato");
 
   private String value;

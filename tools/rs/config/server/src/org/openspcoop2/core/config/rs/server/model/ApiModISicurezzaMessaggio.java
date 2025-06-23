@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiModISicurezzaMessaggio  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModISicurezzaMessaggioEnum pattern = null;
   
   @Schema(description = "")

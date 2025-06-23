@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ApiCanale  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private CanaleEnum configurazione = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
  /**
    * Get configurazione

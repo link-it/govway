@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 
 public class ListaGruppi extends Lista {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private List<GruppoItem> items = new ArrayList<>();
  /**
    * Get items

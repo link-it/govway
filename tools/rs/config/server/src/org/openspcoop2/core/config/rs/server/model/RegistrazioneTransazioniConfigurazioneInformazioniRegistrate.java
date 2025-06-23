@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class RegistrazioneTransazioniConfigurazioneInformazioniRegistrate  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TracciamentoTransazioniStatoFase token = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TracciamentoTransazioniStatoFase tempiElaborazione = null;
  /**
    * Get token

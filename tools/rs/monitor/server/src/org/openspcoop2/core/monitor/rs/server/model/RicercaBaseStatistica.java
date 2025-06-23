@@ -30,10 +30,10 @@ public class RicercaBaseStatistica  {
   @Schema(description = "")
   private UnitaTempoReportEnum unitaTempo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private FiltroTemporale intervalloTemporale = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private FiltroRicercaRuoloTransazioneEnum tipo = null;
   
   @Schema(description = "Identificativo del nodo su cui e' stata emessa la transazione")

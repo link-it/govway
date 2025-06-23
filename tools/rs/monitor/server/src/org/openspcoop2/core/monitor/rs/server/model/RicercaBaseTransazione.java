@@ -36,10 +36,10 @@ public class RicercaBaseTransazione  {
   @Schema(example = "+name", description = "")
   private String sort = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private FiltroTemporale intervalloTemporale = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private FiltroRicercaRuoloTransazioneEnum tipo = null;
   
   @Schema(description = "Identificativo del nodo su cui e' stata emessa la transazione")

@@ -27,13 +27,13 @@ import jakarta.validation.Valid;
 
 public class FruizioneModISoap  implements OneOfFruizioneModi, OneOfFruizioneModIModi {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TipoConfigurazioneFruizioneEnum protocollo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private FruizioneModISoapRichiesta richiesta = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private FruizioneModISoapRisposta risposta = null;
  /**
    * Get protocollo

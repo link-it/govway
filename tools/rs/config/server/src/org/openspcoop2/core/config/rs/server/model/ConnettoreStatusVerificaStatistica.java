@@ -31,10 +31,10 @@ import jakarta.validation.Valid;
 @Schema(description="parametri di un periodo statistico per il connettore status")
 public class ConnettoreStatusVerificaStatistica  {
   
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   private TipoPeriodoStatisticoEnum frequenza = null;
   
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   private Integer intervallo = null;
   
   @Schema(description = "tempo di permanenza in cache di un risultato, se non impostato viene usato il tempo di default della cache del controllo traffico")

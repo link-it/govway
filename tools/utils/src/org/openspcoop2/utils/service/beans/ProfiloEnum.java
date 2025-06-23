@@ -32,17 +32,22 @@ import jakarta.xml.bind.annotation.XmlEnumValue;
 @XmlEnum(String.class)
 public enum ProfiloEnum {
   @XmlEnumValue("APIGateway")
-APIGATEWAY("APIGateway"),
-    @XmlEnumValue("ModIPA")
-MODIPA("ModIPA"),
-    @XmlEnumValue("ModI")
-MODI("ModI"),
-    @XmlEnumValue("SPCoop")
-SPCOOP("SPCoop"),
-    @XmlEnumValue("FatturaPA")
-FATTURAPA("FatturaPA"),
-    @XmlEnumValue("eDelivery")
-EDELIVERY("eDelivery");
+  APIGATEWAY("APIGateway"),
+  
+  @XmlEnumValue("ModIPA")
+  MODIPA("ModIPA"),
+  
+  @XmlEnumValue("ModI")
+  MODI("ModI"),
+  
+  @XmlEnumValue("SPCoop")
+  SPCOOP("SPCoop"),
+  
+  @XmlEnumValue("FatturaPA")
+  FATTURAPA("FatturaPA"),
+  
+  @XmlEnumValue("eDelivery")
+  EDELIVERY("eDelivery");
 
   private String value;
 

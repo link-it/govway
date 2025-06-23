@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ControlloAccessiAutorizzazioneRuolo  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String ruolo = null;
  /**
    * Get ruolo

@@ -36,10 +36,10 @@ import jakarta.validation.Valid;
 
 public class ItemTransazione extends TransazioneBase {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ProfiloEnum profilo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TransazioneContestoEnum contesto = null;
   
   @Schema(description = "")
@@ -51,7 +51,7 @@ public class ItemTransazione extends TransazioneBase {
   @Schema(description = "")
   private String stato = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private DateTime data = null;
   
   @Schema(example = "8", description = "")

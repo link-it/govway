@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ApiInterfacciaRest  implements OneOfApiBaseTipoInterfaccia, OneOfApiInterfacciaViewTipoInterfaccia {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private TipoApiEnum protocollo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private FormatoRestEnum formato = null;
  /**
    * Get protocollo

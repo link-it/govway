@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiModIPatternInterazione  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private ModIPatternInterazioneEnum pattern = null;
   
   @Schema(description = "")

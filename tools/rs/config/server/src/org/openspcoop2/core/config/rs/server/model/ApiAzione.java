@@ -28,10 +28,10 @@ import jakarta.validation.Valid;
 
 public class ApiAzione  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private Boolean profiloRidefinito = false;
   
   @Schema(description = "")

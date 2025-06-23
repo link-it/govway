@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ModITrustStoreDefault  implements OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststore, OneOfErogazioneModIRestRichiestaSicurezzaMessaggioTruststoreSsl, OneOfErogazioneModISoapRichiestaSicurezzaMessaggioTruststore, OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststore, OneOfFruizioneModIRestRispostaSicurezzaMessaggioTruststoreSsl, OneOfFruizioneModISoapRispostaSicurezzaMessaggioTruststore {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private StatoDefaultRidefinitoEnum modalita = null;
  /**
    * Get modalita

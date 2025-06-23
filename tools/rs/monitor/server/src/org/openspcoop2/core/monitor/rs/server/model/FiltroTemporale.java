@@ -28,10 +28,10 @@ import jakarta.validation.Valid;
 
 public class FiltroTemporale  {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private DateTime dataInizio = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private DateTime dataFine = null;
  /**
    * Get dataInizio

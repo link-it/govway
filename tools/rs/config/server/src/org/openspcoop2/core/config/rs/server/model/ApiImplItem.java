@@ -29,10 +29,10 @@ import jakarta.validation.Valid;
 
 public class ApiImplItem extends BaseSoggettoItem {
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String apiNome = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private Integer apiVersione = null;
   
   @Schema(description = "")
@@ -47,19 +47,19 @@ public class ApiImplItem extends BaseSoggettoItem {
   @Schema(description = "")
   private String tipoServizio = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String nome = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private Integer versione = null;
   
   @Schema(description = "")
   private TipoApiEnum apiTipo = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private StatoApiEnum stato = null;
   
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "")
+  @Schema(required = true, description = "")
   private String statoDescrizione = null;
   
   @Schema(description = "")
