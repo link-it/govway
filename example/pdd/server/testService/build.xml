@@ -7,6 +7,7 @@
 
 	<import file="local_env.xml" />
 	<import file="${rootDir}/ant/commons/as-check.xml" />
+	<import file="${rootDir}/ant/commons/utils.xml" />
 	
 	<!-- estensione di ant (if .... ) -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
@@ -157,15 +158,63 @@
 			</elseif>
 		</if>
 		
+		<if>
+			<or>
+				<equals arg1="${as}" arg2="wildfly35" />
+				<equals arg1="${as}" arg2="wildfly36" />
+			</or>
+			<then>
+				<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly35" 
+					tofile="${build}/example/${jboss_deployment_structure}" />
+			</then>
+			<elseif>
+				<or>
+					<equals arg1="${as}" arg2="wildfly27" />
+					<equals arg1="${as}" arg2="wildfly28" />
+					<equals arg1="${as}" arg2="wildfly29" />
+				</or>
+				<then>
+					<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly27" 
+						tofile="${build}/example/${jboss_deployment_structure}" />
+				</then>
+			</elseif>
+		</if>
+		
+		<mkdir dir="${build}/props" />
+		<copy file="deploy/properties/testService.properties" 
+			tofile="${build}/props/testService.properties" />
+		<if>
+			<matches string="${as}" pattern="tomcat.*"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/props/testService.properties"/>
+					<param name="token" value="addTransferEncodingHeader"/>
+					<param name="value" value="false"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${build}/props/testService.properties"/>
+					<param name="token" value="addTransferEncodingHeader"/>
+					<param name="value" value="true"/>
+				</antcall>			
+			</else>
+		</if>
+
 		<war destfile="${dist}/TestService.war" webxml="${src}/WEB-INF/web.xml">
 			<webinf dir="${build}/example">
 				<include name="${jboss_deployment_structure}" />
 			</webinf>
 			<classes dir="${build}">
 				<include name="**/*"/>
+				<exclude name="props/*"/>
 			</classes>
+			<classes dir="${build}/props">
+				<include name="testService.properties"/>
+			</classes>			
 			<classes dir="deploy/properties">
-				<include name="**/*.properties"/>
+				<include name="log4j2.properties"/>
+				<include name="testService.log4j2.properties"/>
 			</classes>
 			<lib dir="${libs}/commons">
 				<include name="commons-io-2.19.0.jar"/>

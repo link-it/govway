@@ -56,7 +56,19 @@
 					<param name="token" value="org.openspcoop2.testsuite.server.mailcap.load"/>
 					<param name="value" value="true"/>
 				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testsuite}/tmp/testsuite.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.server.trasporto.addTransferEncodingHeader"/>
+					<param name="value" value="true"/>
+				</antcall>				
 			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${build_testsuite}/tmp/testsuite.properties"/>
+					<param name="token" value="org.openspcoop2.testsuite.server.trasporto.addTransferEncodingHeader"/>
+					<param name="value" value="false"/>
+				</antcall>				
+			</else>
 		</if>
 
 		<!-- jboss-deployment-structure -->

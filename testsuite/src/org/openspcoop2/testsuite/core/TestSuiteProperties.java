@@ -451,6 +451,16 @@ public class TestSuiteProperties {
 		}
 	}
 	
+	public boolean isAddTransferEncodingHeader(){
+		try{
+			return "true".equalsIgnoreCase(this.reader.getValueConvertEnvProperties(CostantiTestSuite.PROPERTY_ADD_TRANSFER_ENCODING_HEADER).trim());
+		}catch(Exception e){
+			String msgErrore = "TestSuiteProperties, errore durante la lettura della proprieta' '"+CostantiTestSuite.PROPERTY_ADD_TRANSFER_ENCODING_HEADER+"':"+e.getMessage();
+			this.log.error(msgErrore);
+			return false;
+		}
+	}
+	
 	
 	
 	/* ************* URL BASED ************ */

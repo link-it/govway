@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLContext;
 
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.config.ConnectionConfig;
@@ -39,8 +39,9 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.ClientTlsStrategyBuilder;
 import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
-import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.TlsSocketStrategy;
 import org.apache.hc.core5.http.ConnectionReuseStrategy;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.impl.DefaultConnectionReuseStrategy;
@@ -57,7 +58,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
-import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
+import org.openspcoop2.utils.transport.http.WrappedLogTlsSocketStrategy;
 
 /**
  * ConnettoreHTTPCOREConnectionManager
@@ -111,7 +112,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 		return null;
 	}
 	
-	private static void initialize(String key, SSLConnectionSocketFactory sslConnectionSocketFactory, 
+	private static void initialize(String key, TlsSocketStrategy tlsSocketStrategy, 
 			ConnettoreHTTPCOREConnectionConfig connectionConfig, ConnettoreLogger logger) throws ConnettoreException {
 		
 		String idTransazione = logger!=null ? logger.getIdTransazione() : null;
@@ -127,8 +128,8 @@ public class ConnettoreHTTPCOREConnectionManager {
 				try {			
 					PoolingHttpClientConnectionManagerBuilder poolingConnectionManagerBuilder = PoolingHttpClientConnectionManagerBuilder.create();
 					
-					if(sslConnectionSocketFactory!=null) {
-						poolingConnectionManagerBuilder.setSSLSocketFactory(sslConnectionSocketFactory);
+					if(tlsSocketStrategy!=null) {
+						poolingConnectionManagerBuilder.setTlsSocketStrategy(tlsSocketStrategy);
 					}
 					else {
 						poolingConnectionManagerBuilder.useSystemProperties();
@@ -288,7 +289,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 		}
 	}
 	
-	private static void init(ConnettoreHTTPCOREConnectionConfig connectionConfig,SSLSocketFactory sslSocketFactory,
+	private static void init(ConnettoreHTTPCOREConnectionConfig connectionConfig,org.openspcoop2.security.keystore.SSLSocketFactory sslSocketFactory,
 			Loader loader, ConnettoreLogger logger, 
 			ConnectionKeepAliveStrategy keepAliveStrategy,
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException {
@@ -312,7 +313,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 			semaphoreConnection.release(lock, "initConnection",idTransazione);
 		}
 	}
-	private static ConnettoreHTTPCOREConnection update(ConnettoreHTTPCOREConnectionConfig connectionConfig,SSLSocketFactory sslSocketFactory,
+	private static ConnettoreHTTPCOREConnection update(ConnettoreHTTPCOREConnectionConfig connectionConfig,org.openspcoop2.security.keystore.SSLSocketFactory sslSocketFactory,
 			Loader loader, ConnettoreLogger logger, 
 			ConnectionKeepAliveStrategy keepAliveStrategy,
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException {
@@ -340,7 +341,7 @@ public class ConnettoreHTTPCOREConnectionManager {
 		}
 	}
 
-	private static ConnettoreHTTPCOREConnection buildClient(ConnettoreHTTPCOREConnectionConfig connectionConfig,SSLSocketFactory sslSocketFactory,
+	private static ConnettoreHTTPCOREConnection buildClient(ConnettoreHTTPCOREConnectionConfig connectionConfig,org.openspcoop2.security.keystore.SSLSocketFactory sslSocketFactory,
 			Loader loader, ConnettoreLogger logger, String key,
 			ConnectionKeepAliveStrategy keepAliveStrategy,
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException {
@@ -360,10 +361,11 @@ public class ConnettoreHTTPCOREConnectionManager {
 			String keyPool = connectionConfig.toKeyConnectionManager();
 			
 			if(!ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.containsKey(keyPool)){
-				SSLConnectionSocketFactory sslConnectionSocketFactory = buildSSLConnectionSocketFactory(connectionConfig,
+				
+				TlsSocketStrategy tlsStrategy = buildSSLConnectionSocketFactory(connectionConfig,
 						sslSocketFactory,
 						loader, logger);
-				ConnettoreHTTPCOREConnectionManager.initialize(keyPool, sslConnectionSocketFactory, connectionConfig, logger);
+				ConnettoreHTTPCOREConnectionManager.initialize(keyPool, tlsStrategy, connectionConfig, logger);
 			}
 			PoolingHttpClientConnectionManager cm = ConnettoreHTTPCOREConnectionManager.mapPoolingConnectionManager.get(keyPool);
 			
@@ -416,17 +418,11 @@ public class ConnettoreHTTPCOREConnectionManager {
 		}
 	}
 	
-	private static SSLConnectionSocketFactory buildSSLConnectionSocketFactory(AbstractConnettoreConnectionConfig connectionConfig,
-			SSLSocketFactory sslSocketFactory,
+	private static TlsSocketStrategy buildSSLConnectionSocketFactory(AbstractConnettoreConnectionConfig connectionConfig,
+			org.openspcoop2.security.keystore.SSLSocketFactory sslSocketFactory,
 			Loader loader, ConnettoreLogger logger) throws UtilsException {
-		SSLConnectionSocketFactory sslConnectionSocketFactory = null;
+		TlsSocketStrategy tlsSocketStrategy = null;
 		if(connectionConfig.getSslContextProperties()!=null) {
-			if(connectionConfig.isDebug()) {
-				String clientCertificateConfigurated = connectionConfig.getSslContextProperties().getKeyStoreLocation();
-				sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
-						logger.getLogger(), logger.buildMsg(""),
-						clientCertificateConfigurated);
-			}		
 			
 			StringBuilder bfLog = new StringBuilder();
 			HostnameVerifier hostnameVerifier = SSLUtilities.generateHostnameVerifier(connectionConfig.getSslContextProperties(), bfLog, 
@@ -438,12 +434,27 @@ public class ConnettoreHTTPCOREConnectionManager {
 			if(hostnameVerifier==null) {
 				hostnameVerifier = new DefaultHostnameVerifier();
 			}
-			sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslSocketFactory, hostnameVerifier);
+			
+			SSLContext sslContext = sslSocketFactory.getSSLContext();
+
+			
+			tlsSocketStrategy = new ClientTlsStrategyBuilder()
+					.setSslContext(sslContext)
+					.setHostnameVerifier(hostnameVerifier)
+					.buildClassic();
+			
+			if(connectionConfig.isDebug()) {
+				String clientCertificateConfigurated = connectionConfig.getSslContextProperties().getKeyStoreLocation();
+				tlsSocketStrategy = new WrappedLogTlsSocketStrategy(tlsSocketStrategy, 
+						logger.getLogger(), logger.buildMsg(""),
+						clientCertificateConfigurated);
+			}
+			
 		}
-		return sslConnectionSocketFactory;
+		return tlsSocketStrategy;
 	}
 	
-	public static ConnettoreHTTPCOREConnection getConnettoreHTTPCOREConnection(ConnettoreHTTPCOREConnectionConfig connectionConfig,SSLSocketFactory sslSocketFactory,
+	public static ConnettoreHTTPCOREConnection getConnettoreHTTPCOREConnection(ConnettoreHTTPCOREConnectionConfig connectionConfig,org.openspcoop2.security.keystore.SSLSocketFactory sslSocketFactory,
 			Loader loader, ConnettoreLogger logger,
 			ConnectionKeepAliveStrategy keepAliveStrategy,
 			ConnettoreHttpRequestInterceptor httpRequestInterceptor) throws ConnettoreException  {

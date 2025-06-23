@@ -98,36 +98,45 @@ public class ServletTestService extends HttpServlet {
 	protected File repositoryResponseFiles = null;
 	protected List<String> whitePropertiesList = null;
 	protected boolean genericError = false;
+	protected boolean addTransferEncodingHeader = false;
 	
 	public ServletTestService(Logger log, 
 			int thresholdRequestDump, File repositoryRequestDump,
-			File repositoryResponseFiles,List<String> whitePropertiesList,boolean genericError){
+			File repositoryResponseFiles,List<String> whitePropertiesList,boolean genericError,
+			boolean addTransferEncodingHeader){
 		this.log = log;
 		this.thresholdRequestDump = thresholdRequestDump;
 		this.repositoryRequestDump = repositoryRequestDump;
 		this.repositoryResponseFiles = repositoryResponseFiles;
 		this.whitePropertiesList = whitePropertiesList;
 		this.genericError = genericError;
+		this.addTransferEncodingHeader = addTransferEncodingHeader;
 	}
 	public ServletTestService(Logger log, 
 			int thresholdRequestDump, File repositoryRequestDump,
-			File repositoryResponseFiles,boolean genericError){
+			File repositoryResponseFiles,boolean genericError,
+			boolean addTransferEncodingHeader){
 		this(log, 
 			thresholdRequestDump, repositoryRequestDump,
-			repositoryResponseFiles, null,genericError);
+			repositoryResponseFiles, null,genericError,
+			addTransferEncodingHeader);
 	}
 	public ServletTestService(Logger log, 
 			int thresholdRequestDump, File repositoryRequestDump,
-			File repositoryResponseFiles){
+			File repositoryResponseFiles,
+			boolean addTransferEncodingHeader){
 		this(log, 
 			thresholdRequestDump, repositoryRequestDump,
-			repositoryResponseFiles, null, false);
+			repositoryResponseFiles, null, false,
+			addTransferEncodingHeader);
 	}
 	public ServletTestService(Logger log,
-			int thresholdRequestDump, File repositoryRequestDump){
+			int thresholdRequestDump, File repositoryRequestDump,
+			boolean addTransferEncodingHeader){
 		this(log, 
 			thresholdRequestDump, repositoryRequestDump,
-			null, null, false);
+			null, null, false,
+			addTransferEncodingHeader);
 	}
 	
 	private static String getParameterCheckWhiteList(HttpServletRequest request, List<String> whitePropertiesList, String parameter) {
@@ -1620,9 +1629,11 @@ public class ServletTestService extends HttpServlet {
 				
 				// modalita'
 				if(!forceContentLength && chunked){
-					res.setHeader("Transfer-Encoding","chunked");
-					if(debug) {
-						this.log.info("Response send with Transfer-Encoding: chunked");
+					if(this.addTransferEncodingHeader) {
+						res.setHeader("Transfer-Encoding","chunked");
+						if(debug) {
+							this.log.info("Response send with Transfer-Encoding: chunked");
+						}
 					}
 				}
 				else{

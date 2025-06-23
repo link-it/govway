@@ -50,7 +50,8 @@ public class EchoService extends ServletTestService {
 	public EchoService(){
 		super(Startup.logEcho,
 				Startup.thresholdRequestDump, Startup.repositoryRequestDump,
-				Startup.repositoryResponseFiles,Startup.whitePropertiesList,Startup.genericError);
+				Startup.repositoryResponseFiles,Startup.whitePropertiesList,Startup.genericError,
+				Startup.addTransferEncodingHeader);
 	}
 
 	@Override

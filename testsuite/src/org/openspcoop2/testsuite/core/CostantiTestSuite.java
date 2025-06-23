@@ -103,6 +103,8 @@ public class CostantiTestSuite {
 	public static final String PROPERTY_ID_TRANSAZIONE_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.integrazione.idTransazione";
 	/** Cache Key */
 	public static final String PROPERTY_CACHE_KEY_TRASPORTO="org.openspcoop2.testsuite.server.trasporto.integrazione.cacheKey";
+	/** Cache Key */
+	public static final String PROPERTY_ADD_TRANSFER_ENCODING_HEADER="org.openspcoop2.testsuite.server.trasporto.addTransferEncodingHeader";
 	
 	
 	/** Nome della Proprieta' che contiene l'id della richiesta in corso */

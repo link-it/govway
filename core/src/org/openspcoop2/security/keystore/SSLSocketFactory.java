@@ -54,8 +54,8 @@ public class SSLSocketFactory implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private SSLConfig sslConfig;
+	private SSLContext sslContext;
 	private transient javax.net.ssl.SSLSocketFactory sslSocketFactoryObject;
-	
 
 	@Override
 	public String toString() {
@@ -143,8 +143,8 @@ public class SSLSocketFactory implements Serializable {
 					}
 					
 					StringBuilder bfSSLConfig = new StringBuilder();
-					SSLContext sslContext = SSLUtilities.generateSSLContext(this.sslConfig, ocspValidator, byokManager, bfSSLConfig);
-					this.sslSocketFactoryObject = sslContext.getSocketFactory();
+					this.sslContext = SSLUtilities.generateSSLContext(this.sslConfig, ocspValidator, byokManager, bfSSLConfig);
+					this.sslSocketFactoryObject = this.sslContext.getSocketFactory();
 					
 					if(this.sslConfig.getLoggerBuffer()!=null) {
 						String msgDebug = bfSSLConfig.toString();
@@ -161,7 +161,11 @@ public class SSLSocketFactory implements Serializable {
 	public javax.net.ssl.SSLSocketFactory getSslSocketFactory(RequestInfo requestInfo) throws SecurityException {
 		this.checkInit(requestInfo); // per ripristino da Serializable
 		return this.sslSocketFactoryObject;
-	}	
+	}
+	
+	public SSLContext getSSLContext() {
+		return this.sslContext;
+	}
 
 
 }

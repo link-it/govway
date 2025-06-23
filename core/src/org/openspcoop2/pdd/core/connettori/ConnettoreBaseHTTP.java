@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.net.ssl.SSLSocketFactory;
-
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloContesto;
@@ -329,7 +327,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			}
 	}
 	
-	protected SSLSocketFactory buildSSLContextFactory() throws UtilsException {
+	protected org.openspcoop2.security.keystore.SSLSocketFactory buildSSLContextFactory() throws UtilsException {
 		// Gestione https
 		if(this.sslContextProperties!=null){
 			
@@ -346,7 +344,7 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				Map<String,Object> dynamicMap = DynamicMapBuilderUtils.buildDynamicMap(this.busta, this.requestInfo, this.getPddContext(), 
 						this.logger!=null ? this.logger.getLogger() : null);
 				this.sslContextProperties.setDynamicMap(dynamicMap);
-				return GestoreKeystoreCaching.getSSLSocketFactory(this.requestInfo, this.sslContextProperties).getSslSocketFactory(this.requestInfo);
+				return GestoreKeystoreCaching.getSSLSocketFactory(this.requestInfo, this.sslContextProperties);
 			}catch(Exception e) {
 				if(this.logger!=null) {
 					this.logger.error("Lettura SSLSocketFactory '"+this.sslContextProperties.toString()+"' dalla cache fallita: "+e.getMessage(),e);

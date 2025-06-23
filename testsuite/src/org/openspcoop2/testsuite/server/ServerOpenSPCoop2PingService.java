@@ -62,7 +62,8 @@ public class ServerOpenSPCoop2PingService extends ServerCore{
 	public void engine(HttpServletRequest request,HttpServletResponse response, Properties pHeaderRisposta) throws IOException, ServletException{
 		
 		ServletTestService servlet = new ServletTestService(this.log, 
-				this.testsuiteProperties.getDumpRequestThresholdRequestDump(), this.testsuiteProperties.getDumpRequestRepository());
+				this.testsuiteProperties.getDumpRequestThresholdRequestDump(), this.testsuiteProperties.getDumpRequestRepository(),
+				this.testsuiteProperties.isAddTransferEncodingHeader());
 		servlet.doEngine(request, response, true, pHeaderRisposta);
 		
 		try{

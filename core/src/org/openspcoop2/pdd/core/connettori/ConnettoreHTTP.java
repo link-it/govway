@@ -171,7 +171,7 @@ public class ConnettoreHTTP extends ConnettoreExtBaseHTTP {
 			// Imposta Contesto SSL se attivo
 			if(this.sslContextProperties!=null){
 				HttpsURLConnection httpsConn = (HttpsURLConnection) this.httpConn;
-				SSLSocketFactory sslSocketFactory = buildSSLContextFactory();
+				SSLSocketFactory sslSocketFactory = buildSSLContextFactory().getSslSocketFactory(this.requestInfo);
 				if(this.debug) {
 					String clientCertificateConfigurated = this.sslContextProperties.getKeyStoreLocation();
 					sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 

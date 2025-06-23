@@ -47,6 +47,7 @@ public class Startup implements ServletContextListener {
 	public static File repositoryResponseFiles;
 	public static List<String> whitePropertiesList;
 	public static boolean genericError = false;
+	public static boolean addTransferEncodingHeader = false;
 	
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
@@ -136,6 +137,12 @@ public class Startup implements ServletContextListener {
 			if(genErr!=null) {
 				genErr = genErr.trim();
 				Startup.genericError = "true".equalsIgnoreCase(genErr);
+			}
+			
+			String addTransferEncodingHeaderP = p.getProperty("addTransferEncodingHeader");
+			if(addTransferEncodingHeaderP!=null) {
+				addTransferEncodingHeaderP = addTransferEncodingHeaderP.trim();
+				Startup.addTransferEncodingHeader = "true".equalsIgnoreCase(addTransferEncodingHeaderP);
 			}
 			
 		}catch(Exception e){
