@@ -21,6 +21,7 @@ package org.openspcoop2.core.protocolli.modipa.testsuite;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,16 +47,22 @@ public class TestUtils {
 	
 	public static String getPart(String request, String contentType, Integer part) throws MimeTypeParseException, MessagingException {
 
-		String content = null;
 		
 		try (ByteArrayInputStream is = new ByteArrayInputStream(request.getBytes())) {
 			
 			jakarta.activation.DataSource ds = new ByteArrayDataSource(is, contentType);
 			jakarta.mail.internet.MimeMultipart mimeMultipartObject = new jakarta.mail.internet.MimeMultipart(ds);
-			return (String) mimeMultipartObject.getBodyPart(part).getContent();
+			
+			Object content = mimeMultipartObject.getBodyPart(part).getContent();
+			
+			if (content instanceof InputStream)
+				return new String(((InputStream)content).readAllBytes());
+			if (content instanceof String)
+				return (String)content;
+			return content.toString();
 
 		} catch (IOException e) {
-			return content;
+			return null;
 		}
 	}
 	
