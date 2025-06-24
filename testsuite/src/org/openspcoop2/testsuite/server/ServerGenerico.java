@@ -97,7 +97,9 @@ public class ServerGenerico extends ServerCore{
 				
 				int length=request.getContentLength();
 				if(length<0){
-					response.setHeader("Transfer-Encoding","chunked");
+					if(this.testsuiteProperties.isAddTransferEncodingHeader()) {
+						response.setHeader("Transfer-Encoding","chunked");
+					}
 				}else{
 					response.setContentLength(length);
 				}
