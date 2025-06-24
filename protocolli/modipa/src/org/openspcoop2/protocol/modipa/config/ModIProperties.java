@@ -450,6 +450,7 @@ public class ModIProperties {
 				this.getSignalHubDefaultSeedSize();
 				this.isSignalHubSeedLifetimeUnlimited();
 				this.getSignalHubDeSeedSeedLifetimeDaysDefault();
+				this.getSignalHubSoapNamespace();
 				this.getSignalHubApiName();
 				this.getSignalHubApiVersion();
 				this.getSignalHubConfig();
@@ -5442,6 +5443,31 @@ public class ModIProperties {
     	}
     	
     	return this.signalHubDefaultSeedLifetimeDaysDefault;
+	}
+	
+	private String signalHubSoapNamespace = null;
+	public String getSignalHubSoapNamespace() throws ProtocolException{
+    	if(this.signalHubSoapNamespace==null){
+	    	String name = "org.openspcoop2.protocol.modipa.signalHub.soap.namespace";
+    		try{  
+				String value = this.reader.getValueConvertEnvProperties(name); 
+				
+				if (value != null){
+					value = value.trim();
+					this.signalHubSoapNamespace = value;
+				}
+				else {
+					throw newProtocolExceptionPropertyNonDefinita();
+				}
+				
+			}catch(java.lang.Exception e) {
+				String msgErrore = getMessaggioErroreProprietaNonImpostata(name, e); 
+				this.logError(msgErrore);
+				throw new ProtocolException(msgErrore,e);
+			}
+    	}
+    	
+    	return this.signalHubSoapNamespace;
 	}
 	
 	private String signalHubApiName= null;

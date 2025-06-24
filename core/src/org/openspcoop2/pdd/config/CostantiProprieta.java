@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -1185,11 +1186,15 @@ public class CostantiProprieta {
 	
 	// ****  PDND *****
 	
+	
 	private static final String PDND_ABORT_TRANSACTION_ORGANIZATION_READ_ERROR = "pdnd.readByApiInterop.organization.failed.abortTransaction";
 	private static final String PDND_ABORT_TRANSACTION_CLIENT_READ_ERROR = "pdnd.readByApiInterop.client.failed.abortTransaction";
 
 	private static final String PDND_ABORT_TRANSACTION_ORGANIZATION_NOT_AVAILABLE_RATE_LIMITING = "pdnd.rateLimitingByOrganization.infoNotAvailable.abortTransaction";
 	
+	public static final String PDND_SIGNAL_HUB_NAMESPACE = "pdnd.signalHub.namespace";
+
+
 	public static final String PDND_VALUE_ENABLED = VALUE_ENABLED;
 	public static final String PDND_VALUE_DISABLED = VALUE_DISABLED;
 	
@@ -1217,6 +1222,12 @@ public class CostantiProprieta {
 			return valueS.equalsIgnoreCase(PDND_VALUE_ENABLED);
 		}
 		return defaultValue;
+	}
+	
+	public static String getPdndSignalHubNamespace(List<Proprieta> props, String defaultValue) {
+		String p = PDND_SIGNAL_HUB_NAMESPACE;
+		String valueS = readValue(props, p);
+		return Objects.requireNonNullElse(valueS, defaultValue);
 	}
 	
 	
