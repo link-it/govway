@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 
 public class ListaRateLimitingPolicy extends Lista {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private List<RateLimitingPolicyItem> items = new ArrayList<>();
  /**
    * Get items

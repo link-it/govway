@@ -27,13 +27,13 @@ import jakarta.validation.Valid;
 
 public class RuoloItem  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private FonteEnum fonte = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ContestoEnum contesto = null;
  /**
    * Get nome

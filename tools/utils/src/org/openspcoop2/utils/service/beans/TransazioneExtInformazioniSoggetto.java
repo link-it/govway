@@ -39,11 +39,11 @@ import jakarta.validation.Valid;
 public class TransazioneExtInformazioniSoggetto  {
   @XmlElement(name="tipo", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String tipo = null;
   @XmlElement(name="codice", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String codice = null;
   @XmlElement(name="indirizzo")
   

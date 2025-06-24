@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class GruppoEreditaConfigurazione  implements OneOfGruppoConfigurazione {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ModalitaConfigurazioneGruppoEnum modalita = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
  /**
    * Get modalita

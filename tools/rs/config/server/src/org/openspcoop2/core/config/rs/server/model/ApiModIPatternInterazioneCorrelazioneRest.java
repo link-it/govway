@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ApiModIPatternInterazioneCorrelazioneRest  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String apiNome = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private Integer apiVersione = null;
   
   @Schema(description = "")

@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ConnettoreHttp extends BaseConnettoreHttp implements OneOfApplicativoServerConnettore, OneOfConnettoreErogazioneConnettore, OneOfConnettoreFruizioneConnettore {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ConnettoreEnum tipo = null;
  /**
    * Get tipo

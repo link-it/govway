@@ -30,7 +30,7 @@ public class ModIApplicativoAuthenticationToken  {
   @Schema(description = "")
   private String tokenPolicy = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String identificativo = null;
   
   @Schema(description = "")

@@ -30,10 +30,10 @@ public class FiltroApiImplementata  {
   @Schema(description = "")
   private String referente = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String nome = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private Integer versione = null;
  /**
    * Get referente

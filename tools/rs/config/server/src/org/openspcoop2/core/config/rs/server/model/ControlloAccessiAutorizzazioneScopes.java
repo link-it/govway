@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 public class ControlloAccessiAutorizzazioneScopes  {
   
-  @Schema(example = "[\"Scope1\",\"Scope2\",\"Scope3\"]", required = true, description = "")
+  @Schema(example = "[\"Scope1\",\"Scope2\",\"Scope3\"]", requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private List<String> scope = new ArrayList<>();
  /**
    * Get scope

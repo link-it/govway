@@ -43,7 +43,7 @@ public class TransazioneExtDettaglioRispostaBase extends TransazioneExtDettaglio
   private DateTime dataRicezione = null;
   @XmlElement(name="data_consegna", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private DateTime dataConsegna = null;
   @XmlElement(name="esito_ricezione")
   

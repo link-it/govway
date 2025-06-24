@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class GestioneCorsAccessControl  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private Boolean allAllowOrigins = true;
   
   @Schema(description = "")

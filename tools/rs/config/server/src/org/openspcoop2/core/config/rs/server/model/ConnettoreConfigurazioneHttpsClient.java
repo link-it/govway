@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ConnettoreConfigurazioneHttpsClient extends BaseKeyStoreFile {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private KeystoreEnum keystoreTipo = null;
   
   @Schema(example = "SunX509", description = "")

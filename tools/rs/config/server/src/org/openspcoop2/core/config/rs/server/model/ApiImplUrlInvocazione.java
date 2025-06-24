@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ApiImplUrlInvocazione  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ModalitaIdentificazioneAzioneEnum modalita = null;
   
   @Schema(description = "XPath/JsonPath nel caso di modalità 'content-based' o espressione regolare nel caso 'url-based'")

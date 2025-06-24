@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class APIImplAutenticazioneCustom  implements OneOfControlloAccessiAutenticazioneAutenticazione {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private TipoAutenticazioneEnum tipo = null;
   
-  @Schema(required = true, description = "nome autenticazione 'custom', set tipo='custom'")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "nome autenticazione 'custom', set tipo='custom'")
  /**
    * nome autenticazione 'custom', set tipo='custom'  
   **/

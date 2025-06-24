@@ -35,7 +35,7 @@ public class FruizioneModIRestRichiestaSicurezzaMessaggio  {
   @Schema(description = "")
   private List<String> headerHttpFirmare = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private List<ModISicurezzaMessaggioRestRiferimentoX509> riferimentoX509 = new ArrayList<>();
   
   @Schema(description = "")

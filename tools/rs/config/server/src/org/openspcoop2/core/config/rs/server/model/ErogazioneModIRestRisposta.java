@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class ErogazioneModIRestRisposta  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ErogazioneModIRestRispostaSicurezzaMessaggio sicurezzaMessaggio = null;
  /**
    * Get sicurezzaMessaggio

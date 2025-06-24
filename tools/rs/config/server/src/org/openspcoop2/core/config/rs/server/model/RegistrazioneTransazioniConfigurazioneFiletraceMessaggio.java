@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class RegistrazioneTransazioniConfigurazioneFiletraceMessaggio  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private Boolean headers = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private Boolean payload = null;
  /**
    * Get headers

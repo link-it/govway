@@ -36,7 +36,7 @@ public class Fruizione extends APIImpl {
   @Schema(description = "")
   private Integer fruizioneVersione = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String erogatore = null;
   
   @Schema(description = "")

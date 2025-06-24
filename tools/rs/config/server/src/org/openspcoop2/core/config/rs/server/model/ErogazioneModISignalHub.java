@@ -27,16 +27,16 @@ import jakarta.validation.Valid;
 
 public class ErogazioneModISignalHub  {
   
-  @Schema(example = "/pseudonymization", required = true, description = "")
+  @Schema(example = "/pseudonymization", requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String risorsa = null;
   
-  @Schema(example = "SHA-256", required = true, description = "")
+  @Schema(example = "SHA-256", requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String algoritmo = null;
   
-  @Schema(example = "16", required = true, description = "")
+  @Schema(example = "16", requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private Integer dimensioneSeme = null;
   
-  @Schema(example = "15", required = true, description = "")
+  @Schema(example = "15", requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private Integer giorniRotazione = null;
   
   @Schema(description = "")

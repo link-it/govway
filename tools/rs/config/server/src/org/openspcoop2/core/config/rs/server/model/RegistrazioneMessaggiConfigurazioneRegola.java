@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class RegistrazioneMessaggiConfigurazioneRegola  {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private Boolean headers = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private Boolean payload = null;
   
   @Schema(description = "")

@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 
 public class BaseTrustStore  {
   
-  @Schema(example = "/path/to/truststore", required = true, description = "")
+  @Schema(example = "/path/to/truststore", requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String truststorePath = null;
   
   @Schema(example = "pwd", description = "")

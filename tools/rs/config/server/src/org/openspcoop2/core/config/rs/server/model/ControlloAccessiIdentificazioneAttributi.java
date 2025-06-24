@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 
 public class ControlloAccessiIdentificazioneAttributi extends ApiImplConfigurazioneStato {
   
-  @Schema(required = true, description = "indica se la gestione del token è abilitata o meno")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "indica se la gestione del token è abilitata o meno")
  /**
    * indica se la gestione del token è abilitata o meno  
   **/

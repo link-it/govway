@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 
 public class ListaErogazioni extends Lista {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private List<ErogazioneItem> items = new ArrayList<>();
  /**
    * Get items

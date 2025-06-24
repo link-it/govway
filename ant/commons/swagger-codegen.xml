@@ -150,6 +150,9 @@
 		<antcall target="-swagger_codegen_fix_jakarta">
 			<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/api"/>
 		</antcall>
+		<antcall target="-swagger_codegen_fix_required_annotation">
+			<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}/${swaggerCodeGen.packagePath}/model"/>
+		</antcall>
 
 		<!-- Aggiunta GPL ai nuovi sorgenti generati -->	
 		<if>
@@ -321,7 +324,7 @@ paths:
 			<then>
 				<antcall target="-swagger_codegen_fix_bug_header_param">
 					<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}"/>
-				</antcall>	
+				</antcall>
 			</then>
 		</if>
 
@@ -339,6 +342,9 @@ paths:
 		<!-- Impostazione package jakarta -->
 		<antcall target="-swagger_codegen_fix_jakarta">
 			<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}"/>
+		</antcall>
+		<antcall target="-swagger_codegen_fix_required_annotation">
+			<param name="swaggerCodeGen.srcDir" value="${swaggerCodeGen.outputDir}/"/>
 		</antcall>
 
 		<!-- Aggiunta GPL ai nuovi sorgenti generati -->
@@ -404,6 +410,29 @@ public class @CLASS_NAME@</replacevalue>
 		<replace dir="${swaggerCodeGen.srcDir}" token="${replacetoken}">
 			<replacevalue> body, @HeaderParam(</replacevalue>				
 		</replace>
+		
+	</target>
+	
+	<target name="-swagger_codegen_fix_required_annotation">
+
+		<!-- 
+			Risolve il warning di deprecation di utilizzo della sintassi @Schema(required = true,
+		-->
+		<echo message="Risoluzione utilizzo deprecato di 'required' in src dir '${swaggerCodeGen.srcDir}'"/>	
+		<var name="replacetoken" value="@Schema(required = true" />
+		<replace dir="${swaggerCodeGen.srcDir}" token="${replacetoken}">
+			<replacevalue>@Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED</replacevalue>				
+		</replace>
+		<!--<var name="replacetoken" value=", required = true" />
+		<replace dir="${swaggerCodeGen.srcDir}" token="${replacetoken}">
+			<replacevalue>, requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED</replacevalue>				
+		</replace>-->
+		<replaceregexp byline="true"
+		    match='(@Schema\([^\)]*?),\s*required\s*=\s*true'
+		    replace='\1, requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED'
+		    flags="g">
+		    <fileset dir="${swaggerCodeGen.srcDir}" includes="**/*.java" />
+		</replaceregexp>
 		
 	</target>
 

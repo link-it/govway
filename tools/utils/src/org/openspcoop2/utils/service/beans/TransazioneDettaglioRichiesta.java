@@ -39,7 +39,7 @@ import jakarta.validation.Valid;
 public class TransazioneDettaglioRichiesta extends TransazioneDettaglioMessaggio {
   @XmlElement(name="data_ricezione", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private DateTime dataRicezione = null;
   @XmlElement(name="data_consegna")
   

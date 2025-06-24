@@ -28,10 +28,10 @@ import jakarta.validation.Valid;
 
 public class ApiBaseConSoggetto extends ApiBase {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ProfiloEnum profilo = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String soggetto = null;
  /**
    * Get profilo

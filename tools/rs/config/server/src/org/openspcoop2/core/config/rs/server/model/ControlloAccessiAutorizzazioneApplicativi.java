@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 
 public class ControlloAccessiAutorizzazioneApplicativi  {
   
-  @Schema(example = "[\"Applicativo1\",\"Applicativo2\",\"Applicativo3\"]", required = true, description = "")
+  @Schema(example = "[\"Applicativo1\",\"Applicativo2\",\"Applicativo3\"]", requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private List<String> applicativi = new ArrayList<>();
  /**
    * Get applicativi

@@ -30,7 +30,7 @@ public class RiepilogoApiItem  {
   @Schema(description = "")
   private String fruitore = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private String erogatore = null;
   
   @Schema(description = "")

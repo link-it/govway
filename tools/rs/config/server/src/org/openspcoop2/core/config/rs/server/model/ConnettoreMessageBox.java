@@ -27,10 +27,10 @@ import jakarta.validation.Valid;
 
 public class ConnettoreMessageBox  implements OneOfApplicativoServerConnettore, OneOfConnettoreErogazioneConnettore {
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ConnettoreEnum tipo = null;
   
-  @Schema(required = true, description = "")
+  @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ConnettoreConfigurazioneHttpBasic autenticazioneHttp = null;
  /**
    * Get tipo
