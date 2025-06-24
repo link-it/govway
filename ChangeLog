@@ -1,3 +1,9 @@
+2025-06-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolta la seguente vulnerabilità relative ai jar di terza parte:
+	- CVE-2025-48976: aggiornata libreria 'commons-fileupload:commons-fileupload' alla versione 1.6.0
+
 2025-06-12  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore]
