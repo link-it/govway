@@ -247,13 +247,13 @@
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-models-1.6.16.jar"/>
 	<archive path="/op2_3.4.dev/lib/swagger/swagger-request-validator-core-2.44.9-gov4j-1.jar"/>
 	<!-- wss4j -->
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-bindings-3.0.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-integration-3.0.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-policy-3.0.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-common-3.0.3-gov4j-3.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-dom-3.0.3-gov4j-3.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-policy-stax-3.0.3.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-stax-3.0.3.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-bindings-4.0.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-integration-4.0.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-policy-4.0.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-common-4.0.0-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-dom-4.0.0-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-policy-stax-4.0.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-stax-4.0.0.jar"/>
     </library>
     <library name="openspcoop2_3.4_lib_impl" systemlibrary="false">
 	<!-- angus (implementazione mail) -->

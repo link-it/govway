@@ -17,8 +17,8 @@
 
 		<jar.group.name>wss4j</jar.group.name>
 		
-		<wss4j.version>3.0.3</wss4j.version>
-		<wss4j.gov4j.version>3.0.3-gov4j-3</wss4j.gov4j.version>
+		<wss4j.version>4.0.0</wss4j.version>
+		<wss4j.gov4j.version>4.0.0-gov4j-1</wss4j.gov4j.version>
 
 	</properties>
 

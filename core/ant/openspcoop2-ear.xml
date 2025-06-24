@@ -70,13 +70,13 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cryptacular-1.2.7.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jasypt-1.9.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wsdl4j-1.6.3.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-bindings-3.0.3.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-integration-3.0.3.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-policy-3.0.3.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-common-3.0.3-gov4j-3.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-3.0.3-gov4j-3.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-3.0.3.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-3.0.3.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-bindings-4.0.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-integration-4.0.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-policy-4.0.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-common-4.0.0-gov4j-1.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-4.0.0-gov4j-1.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-4.0.0.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-4.0.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-7.1.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.14.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-33.4.8-jre.jar"/>	

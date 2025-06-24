@@ -161,7 +161,7 @@
 			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-2.4-gov4j-1.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="freemarker-2.3.34.jar"/>
 			<fileset dir="${openspcoop2.lib}/shared" includes="velocity-*.jar"/>
-			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-3.0.3-gov4j-3.jar"/>
+			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-4.0.0-gov4j-1.jar"/>
 		</copy>
 		
 		<antcall target="-distrib_script_cliVault">
