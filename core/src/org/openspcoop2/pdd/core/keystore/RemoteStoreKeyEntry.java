@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.pdd.core.keystore;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -28,8 +29,10 @@ import java.util.Date;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class RemoteStoreKeyEntry {
+public class RemoteStoreKeyEntry implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private long id;
 	private long idRemoteStore;
 	private Date dataRegistrazione;
