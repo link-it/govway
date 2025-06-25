@@ -18,11 +18,11 @@ I sorgenti sono disponibili in `protocolli/modi/testsuite/src <https://github.co
 
 Evidenze disponibili in:
 
-- `API REST - Pattern Interazione Bloccante <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/rest/bloccante/>`_
-- `API SOAP - Pattern Interazione Bloccante <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/soap/bloccante/>`_
-- `API REST - Pattern Interazione Non Bloccante Push <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/rest/non_bloccante/push/>`_
-- `API SOAP - Pattern Interazione Non Bloccante Push <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/soap/non_bloccante/push/>`_
-- `API REST - Pattern Interazione Non Bloccante Pull <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/rest/non_bloccante/pull/>`_
-- `API SOAP - Pattern Interazione Non Bloccante Pull <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/soap/non_bloccante/pull/>`_
-- `API REST - Pattern Sicurezza <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/rest/sicurezza_messaggio/>`_
-- `API SOAP - Pattern Sicurezza <https://jenkins.link.it/govway-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/>`_
+- `API REST - Pattern Interazione Bloccante <https://jenkins.link.it/govway4-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/rest/bloccante/>`_
+- `API SOAP - Pattern Interazione Bloccante <https://jenkins.link.it/govway4-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/soap/bloccante/>`_
+- `API REST - Pattern Interazione Non Bloccante Push <https://jenkins.link.it/govway4-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/rest/non_bloccante/push/>`_
+- `API SOAP - Pattern Interazione Non Bloccante Push <https://jenkins.link.it/govway4-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/soap/non_bloccante/push/>`_
+- `API REST - Pattern Interazione Non Bloccante Pull <https://jenkins.link.it/govway4-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/rest/non_bloccante/pull/>`_
+- `API SOAP - Pattern Interazione Non Bloccante Pull <https://jenkins.link.it/govway4-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/soap/non_bloccante/pull/>`_
+- `API REST - Pattern Sicurezza <https://jenkins.link.it/govway4-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/rest/sicurezza_messaggio/>`_
+- `API SOAP - Pattern Sicurezza <https://jenkins.link.it/govway4-testsuite/modipa/html/org/openspcoop2/core/protocolli/modipa/testsuite/soap/sicurezza_messaggio/>`_

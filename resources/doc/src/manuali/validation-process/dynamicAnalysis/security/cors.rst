@@ -12,5 +12,5 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/src <https://gi
 
 Evidenze disponibili in:
 
-- `CORS <https://jenkins.link.it/govway-testsuite/trasparente/CORS/default/>`_
+- `CORS <https://jenkins.link.it/govway4-testsuite/trasparente/CORS/default/>`_
 

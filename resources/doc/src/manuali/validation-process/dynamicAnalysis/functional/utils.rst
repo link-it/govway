@@ -58,5 +58,5 @@ I sorgenti sono disponibili in `tools/utils/src/org/openspcoop2/utils/test <http
 
 Evidenze disponibili in:
 
-- `Utility di base <https://jenkins.link.it/govway-testsuite/core/utils/#/>`_  
-- `Utility di base per il database <https://jenkins.link.it/govway-testsuite/core/utils-sql/#/>`_   
+- `Utility di base <https://jenkins.link.it/govway4-testsuite/core/utils/#/>`_  
+- `Utility di base per il database <https://jenkins.link.it/govway4-testsuite/core/utils-sql/#/>`_   

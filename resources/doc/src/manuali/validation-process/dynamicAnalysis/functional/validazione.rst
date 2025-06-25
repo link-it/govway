@@ -15,11 +15,11 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `risultati dei test del gruppo 'validazione.parametri' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ValidazioneParametri/html/>`_
-- `risultati dei test del gruppo 'validazione.multipart' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ValidazioneMultipart/html/>`_
-- `risultati dei test del gruppo 'validazione.swagger_request_validator' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ValidazioneSwaggerRequestValidator/html/>`_
-- `risultati dei test del gruppo 'validazione.rpc' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ValidazioneRPC/html/>`_ 
-- `risultati dei test del gruppo 'other.api_grandi' <https://jenkins.link.it/govway-testsuite/trasparente_karate/OtherApiGrandi/html/>`_ 
+- `risultati dei test del gruppo 'validazione.parametri' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ValidazioneParametri/html/>`_
+- `risultati dei test del gruppo 'validazione.multipart' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ValidazioneMultipart/html/>`_
+- `risultati dei test del gruppo 'validazione.swagger_request_validator' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ValidazioneSwaggerRequestValidator/html/>`_
+- `risultati dei test del gruppo 'validazione.rpc' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ValidazioneRPC/html/>`_ 
+- `risultati dei test del gruppo 'other.api_grandi' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/OtherApiGrandi/html/>`_ 
 
 Sono inoltre disponibili ulteriori test realizzati tramite il tool `TestNG <https://testng.org/doc/>`_ che verificano la validazione effettuata tramite interfaccia WSDL e schemi XSD di un servizio dummy definito tramite molteplici port-types, operations e stili/usi differenti (wrapped document literal, rpc literal, encoded ...) che consentono di validare la conformità dei messaggi sui vari stili.
 
@@ -29,7 +29,7 @@ I sorgenti sono disponibili in:
 
 Evidenze disponibili in:
 
-- `risultati dei test di validazione <https://jenkins.link.it/govway-testsuite/spcoop/ValidazioneContenutiApplicativi/default/>`_
+- `risultati dei test di validazione <https://jenkins.link.it/govway4-testsuite/spcoop/ValidazioneContenutiApplicativi/default/>`_
 
 
 

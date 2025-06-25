@@ -7,6 +7,6 @@ I test realizzati tramite il tool `JUnit <https://junit.org/junit4/>`_  verifica
 
 I sorgenti sono disponibili in `tools/command_line_interfaces/govway_vault/testsuite/src/ <https://github.com/link-it/govway/tree/master/tools/command_line_interfaces/govway_vault/testsuite/src//>`_.
 
-Evidenze disponibili in `Informazioni confidenziali <https://jenkins.link.it/govway-testsuite/byok/html/>`_
+Evidenze disponibili in `Informazioni confidenziali <https://jenkins.link.it/govway4-testsuite/byok/html/>`_
 
 

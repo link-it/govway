@@ -27,25 +27,25 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `risultati dei test del gruppo 'rate_limiting.numero_richieste' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingNumeroRichieste/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.numero_richieste_fallite' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingNumeroRichiesteFallite/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.numero_richieste_fallite_o_fault' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingNumeroRichiesteFalliteOFault/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.numero_richieste_fault' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingNumeroRichiesteFault/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.numero_richieste_completate_con_successo' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingNumeroRichiesteCompletateSuccesso/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.numero_richieste_completate_con_successo_o_fault' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingNumeroRichiesteCompletateSuccessoOFault/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.dimensione_messaggi' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingDimensioneMessaggi/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.occupazione_banda' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingOccupazioneBanda/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.tempo_complessivo_risposta' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingTempoComplessivoRisposta/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.tempo_medio_risposta' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingTempoMedioRisposta/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.filtri' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingFiltri/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.raggruppamento' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingRaggruppamento/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.flusso' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingFlusso/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.warning_only' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingWarningOnly/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.congestione' per API Rest <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingCongestioneREST/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.congestione' per API Soap <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingCongestioneSOAP/html/>`_  
-- `risultati dei test del gruppo 'rate_limiting.global_policy' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingGlobalPolicy/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.custom_policy' per API Rest <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingCustomPolicyREST/html/>`_
-- `risultati dei test del gruppo 'rate_limiting.custom_policy' per API Soap <https://jenkins.link.it/govway-testsuite/trasparente_karate/RateLimitingCustomPolicySOAP/html/>`_  
+- `risultati dei test del gruppo 'rate_limiting.numero_richieste' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingNumeroRichieste/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.numero_richieste_fallite' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingNumeroRichiesteFallite/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.numero_richieste_fallite_o_fault' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingNumeroRichiesteFalliteOFault/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.numero_richieste_fault' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingNumeroRichiesteFault/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.numero_richieste_completate_con_successo' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingNumeroRichiesteCompletateSuccesso/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.numero_richieste_completate_con_successo_o_fault' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingNumeroRichiesteCompletateSuccessoOFault/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.dimensione_messaggi' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingDimensioneMessaggi/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.occupazione_banda' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingOccupazioneBanda/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.tempo_complessivo_risposta' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingTempoComplessivoRisposta/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.tempo_medio_risposta' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingTempoMedioRisposta/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.filtri' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingFiltri/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.raggruppamento' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingRaggruppamento/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.flusso' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingFlusso/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.warning_only' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingWarningOnly/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.congestione' per API Rest <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingCongestioneREST/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.congestione' per API Soap <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingCongestioneSOAP/html/>`_  
+- `risultati dei test del gruppo 'rate_limiting.global_policy' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingGlobalPolicy/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.custom_policy' per API Rest <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingCustomPolicyREST/html/>`_
+- `risultati dei test del gruppo 'rate_limiting.custom_policy' per API Soap <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RateLimitingCustomPolicySOAP/html/>`_  
 
 
 

@@ -27,12 +27,12 @@ I sorgenti sono disponibili in `protocolli/spcoop/testsuite/src <https://github.
 
 Evidenze disponibili in:
 
-- `risultati dei test per la gestione del profilo SPCoop <https://jenkins.link.it/govway-testsuite/spcoop/Profili/default/>`_
-- `risultati dei test per la gestione del profilo SPCoop rispetto alle linee guida 1.1 <https://jenkins.link.it/govway-testsuite/spcoop/ProfiliLineeGuida/default/>`_
-- `risultati dei test effettuati con buste non corrette <https://jenkins.link.it/govway-testsuite/spcoop/Buste/default/>`_
-- `risultati dei test per il riconoscimento del corretto profilo di gestione <https://jenkins.link.it/govway-testsuite/spcoop/Others/default/>`_
-- `risultati dei test per la gestione del dettaglio 'eGov_IT_Ecc:MessaggioDiErroreApplicativo' di un SOAPFault <https://jenkins.link.it/govway-testsuite/spcoop/ErroreApplicativoCNIPA/default/>`_
-- `risultati dei test per la gestione del dettaglio 'dettaglio-eccezione' di un SOAPFault <https://jenkins.link.it/govway-testsuite/spcoop/OpenSPCoopDetail/default/>`_
+- `risultati dei test per la gestione del profilo SPCoop <https://jenkins.link.it/govway4-testsuite/spcoop/Profili/default/>`_
+- `risultati dei test per la gestione del profilo SPCoop rispetto alle linee guida 1.1 <https://jenkins.link.it/govway4-testsuite/spcoop/ProfiliLineeGuida/default/>`_
+- `risultati dei test effettuati con buste non corrette <https://jenkins.link.it/govway4-testsuite/spcoop/Buste/default/>`_
+- `risultati dei test per il riconoscimento del corretto profilo di gestione <https://jenkins.link.it/govway4-testsuite/spcoop/Others/default/>`_
+- `risultati dei test per la gestione del dettaglio 'eGov_IT_Ecc:MessaggioDiErroreApplicativo' di un SOAPFault <https://jenkins.link.it/govway4-testsuite/spcoop/ErroreApplicativoCNIPA/default/>`_
+- `risultati dei test per la gestione del dettaglio 'dettaglio-eccezione' di un SOAPFault <https://jenkins.link.it/govway4-testsuite/spcoop/OpenSPCoopDetail/default/>`_
 
 
 

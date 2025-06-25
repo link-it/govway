@@ -14,10 +14,10 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `risultati dei test del gruppo 'trasformazione.protocollo' <https://jenkins.link.it/govway-testsuite/trasparente_karate/TrasformazioneProtocollo/html/>`_
-- `risultati dei test del gruppo 'trasformazione.form' <https://jenkins.link.it/govway-testsuite/trasparente_karate/TrasformazioneForm/html/>`_
-- `risultati dei test del gruppo 'trasformazione.soap_action' <https://jenkins.link.it/govway-testsuite/trasparente_karate/TrasformazioneSoapAction/html/>`_
-- `risultati dei test del gruppo 'trasformazione.info_integrazione' <https://jenkins.link.it/govway-testsuite/trasparente_karate/TrasformazioneInfoIntegrazione/html/>`_
+- `risultati dei test del gruppo 'trasformazione.protocollo' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/TrasformazioneProtocollo/html/>`_
+- `risultati dei test del gruppo 'trasformazione.form' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/TrasformazioneForm/html/>`_
+- `risultati dei test del gruppo 'trasformazione.soap_action' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/TrasformazioneSoapAction/html/>`_
+- `risultati dei test del gruppo 'trasformazione.info_integrazione' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/TrasformazioneInfoIntegrazione/html/>`_
 
 Sono inoltre disponibili ulteriori test che verificano l'utilizzo di variabili dinamiche risolte a runtime dal gateway.
 
@@ -28,7 +28,7 @@ I sorgenti sono disponibili in `core/src/org/openspcoop2/pdd_test/ <https://gith
 
 Evidenze disponibili in:
 
-- `risultati dei test di trasformazione <https://jenkins.link.it/govway-testsuite/core/pdd/#/>`_
+- `risultati dei test di trasformazione <https://jenkins.link.it/govway4-testsuite/core/pdd/#/>`_
 
 
 

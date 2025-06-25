@@ -8,7 +8,7 @@ I test realizzati tramite il tool `JUnit <https://junit.org/junit4/>`_ verifican
 I sorgenti sono disponibili nella classe `tools/utils/src/org/openspcoop2/utils/test/certificate/TestOCSP.java <https://github.com/link-it/govway/tree/master/tools/utils/src/org/openspcoop2/utils/test/certificate/TestOCSP.java>`_.
 Evidenze disponibili in:
 
-- `Utilità di base <https://jenkins.link.it/govway-testsuite/core/utils/>`_
+- `Utilità di base <https://jenkins.link.it/govway4-testsuite/core/utils/>`_
 
 Sono inoltre disponibili ulteriori test che verificano l'utilizzo del protocollo OCSP nelle varie funzionalità di GovWay dove è necessaria una validazione del certificato: connettore https, autenticazione, gestione delle credenziali, validazione token di sicurezza JOSE su API REST e WSSecurity su API SOAP, validazione dei token OAuth2 e risposte JWS di AttributeAuthority.
 
@@ -18,4 +18,4 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `OCSP <https://jenkins.link.it/govway-testsuite/trasparente_karate/OtherOCSP/html/>`_
+- `OCSP <https://jenkins.link.it/govway4-testsuite/trasparente_karate/OtherOCSP/html/>`_

@@ -19,7 +19,7 @@ Vengono eseguiti oltre 8.800 test realizzati con il tool `TestNG <https://testng
 
 - test delle API di monitoraggio disponibili in `tools/rs/monitor/server/testsuite <https://github.com/link-it/govway/tree/master/tools/rs/config/monitor/testsuite>`_.
 
-L'analisi produce un `report di dettaglio TestNG <https://jenkins.link.it/govway/job/GovWay/lastCompletedBuild/testngreports/>`_ e un `report di dettaglio JUnit <https://jenkins.link.it/govway/job/GovWay/lastCompletedBuild/testngreports/>`_ che si differenzia per il tool di test utilizzato (es. :numref:`dynamicAnalysis_testng_details` e :numref:`dynamicAnalysis_junit_details`). 
+L'analisi produce un `report di dettaglio TestNG <https://jenkins.link.it/govway4/job/GovWay/lastCompletedBuild/testngreports/>`_ e un `report di dettaglio JUnit <https://jenkins.link.it/govway4/job/GovWay/lastCompletedBuild/testngreports/>`_ che si differenzia per il tool di test utilizzato (es. :numref:`dynamicAnalysis_testng_details` e :numref:`dynamicAnalysis_junit_details`). 
 
 .. figure:: ../../_figure_console/dynamicAnalysis_testng_details.png
   :scale: 60%
@@ -33,7 +33,7 @@ L'analisi produce un `report di dettaglio TestNG <https://jenkins.link.it/govway
 
   JUnit: dettagli dei test
 
-Nella `homepage dell'ambiente CI Jenkins di GovWay <https://jenkins.link.it/govway/job/GovWay/>`_ è anche disponibile un report che visualizza il trend delle problematiche rilevate rispetto ai commit effettuati nel tempo (es. :numref:`dynamicAnalysis_testng_trend` e :numref:`dynamicAnalysis_junit_trend`).
+Nella `homepage dell'ambiente CI Jenkins di GovWay <https://jenkins.link.it/govway4/job/GovWay/>`_ è anche disponibile un report che visualizza il trend delle problematiche rilevate rispetto ai commit effettuati nel tempo (es. :numref:`dynamicAnalysis_testng_trend` e :numref:`dynamicAnalysis_junit_trend`).
 
 .. figure:: ../../_figure_console/dynamicAnalysis_testng_trend.png
   :scale: 80%
@@ -47,7 +47,7 @@ Nella `homepage dell'ambiente CI Jenkins di GovWay <https://jenkins.link.it/govw
 
   JUnit Results Trend
 
-Sono inoltre disponibili `report di dettaglio in vari formati <https://jenkins.link.it/govway-testsuite/>`_ (:numref:`dynamicAnalysis_reports_elenco`). 
+Sono inoltre disponibili `report di dettaglio in vari formati <https://jenkins.link.it/govway4-testsuite/>`_ (:numref:`dynamicAnalysis_reports_elenco`). 
 
 .. figure:: ../../_figure_console/dynamicAnalysis_reports_elenco.png
   :scale: 80%

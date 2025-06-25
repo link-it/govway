@@ -13,8 +13,8 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `risultati dei test del gruppo 'tracciamento.database' <https://jenkins.link.it/govway-testsuite/trasparente_karate/TracciamentoDatabase/html/>`_
-- `risultati dei test del gruppo 'tracciamento.filetrace' <https://jenkins.link.it/govway-testsuite/trasparente_karate/TracciamentoFiletrace/html/>`_
+- `risultati dei test del gruppo 'tracciamento.database' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/TracciamentoDatabase/html/>`_
+- `risultati dei test del gruppo 'tracciamento.filetrace' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/TracciamentoFiletrace/html/>`_
 
 
 

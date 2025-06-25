@@ -7,13 +7,13 @@ I test realizzati tramite il tool `JUnit <https://junit.org/junit4/>`_ verifican
 
 I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src/.../plugin/test <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/plugin/test>`_.
 
-Evidenze disponibili in `risultati dei test del gruppo 'plugins' <https://jenkins.link.it/govway-testsuite/trasparente_karate/PluginTest/html/>`_
+Evidenze disponibili in `risultati dei test del gruppo 'plugins' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/PluginTest/html/>`_
 
 Sono inoltre disponibili ulteriori test realizzati tramite il tool `TestNG <https://testng.org/doc/>`_ che verificano la personalizzazione di handlers.
 
 I sorgenti sono disponibili in `protocolli/spcoop/testsuite/src/.../others/Handlers.java <https://github.com/link-it/govway/tree/master/protocolli/spcoop/testsuite/src/org/openspcoop2/protocol/spcoop/testsuite/units/others/Handlers.java>`_.
 
-Evidenze disponibili in `risultati dei test <https://jenkins.link.it/govway-testsuite/spcoop/Others/default/>`_
+Evidenze disponibili in `risultati dei test <https://jenkins.link.it/govway4-testsuite/spcoop/Others/default/>`_
 
 
 

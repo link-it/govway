@@ -26,22 +26,22 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `risultati dei test del gruppo 'connettori.timeout' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriTimeout/html/>`_
-- `risultati dei test del gruppo 'connettori.errori' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriErrori/html/>`_
-- `risultati dei test del gruppo 'connettori.applicativo_server' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriApplicativoServer/html/>`_
-- `risultati dei test del gruppo 'connettori.redirect' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriRedirect/html/>`_ 
-- `risultati dei test del gruppo 'connettori.consegna_condizionale' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriConsegnaCondizionale/html/>`_ 
-- `risultati dei test del gruppo 'connettori.load_balancer' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriLoadBalancer/html/>`_ 
-- `risultati dei test del gruppo 'connettori.consegna_multipla' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriConsegnaMultipla/html/>`_ 
-- `risultati dei test del gruppo 'connettori.consegna_con_notifiche' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriConsegnaConNotifiche/html/>`_ 
-- `risultati dei test del gruppo 'connettori.proxy_pass' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriProxyPass/html/>`_ 
-- `risultati dei test del gruppo 'connettori.override_jvm' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriOverrideJvm/html/>`_ 
-- `risultati dei test del gruppo 'connettori.tls' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriTls/html/>`_ 
-- `risultati dei test del gruppo 'connettori.forward_proxy' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriForwardProxy/html/>`_ 
-- `risultati dei test del gruppo 'connettori.autenticazione' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriAutenticazione/html/>`_ 
-- `risultati dei test del gruppo 'connettori.header' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriHeader/html/>`_ 
-- `risultati dei test del gruppo 'connettori.status' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriStatus/html/>`_ 
-- `risultati dei test del gruppo 'connettori.opzioni_avanzate' <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriOpzioniAvanzate/html/>`_ 
+- `risultati dei test del gruppo 'connettori.timeout' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriTimeout/html/>`_
+- `risultati dei test del gruppo 'connettori.errori' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriErrori/html/>`_
+- `risultati dei test del gruppo 'connettori.applicativo_server' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriApplicativoServer/html/>`_
+- `risultati dei test del gruppo 'connettori.redirect' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriRedirect/html/>`_ 
+- `risultati dei test del gruppo 'connettori.consegna_condizionale' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriConsegnaCondizionale/html/>`_ 
+- `risultati dei test del gruppo 'connettori.load_balancer' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriLoadBalancer/html/>`_ 
+- `risultati dei test del gruppo 'connettori.consegna_multipla' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriConsegnaMultipla/html/>`_ 
+- `risultati dei test del gruppo 'connettori.consegna_con_notifiche' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriConsegnaConNotifiche/html/>`_ 
+- `risultati dei test del gruppo 'connettori.proxy_pass' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriProxyPass/html/>`_ 
+- `risultati dei test del gruppo 'connettori.override_jvm' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriOverrideJvm/html/>`_ 
+- `risultati dei test del gruppo 'connettori.tls' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriTls/html/>`_ 
+- `risultati dei test del gruppo 'connettori.forward_proxy' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriForwardProxy/html/>`_ 
+- `risultati dei test del gruppo 'connettori.autenticazione' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriAutenticazione/html/>`_ 
+- `risultati dei test del gruppo 'connettori.header' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriHeader/html/>`_ 
+- `risultati dei test del gruppo 'connettori.status' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriStatus/html/>`_ 
+- `risultati dei test del gruppo 'connettori.opzioni_avanzate' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriOpzioniAvanzate/html/>`_ 
 
 Sono inoltre disponibili ulteriori test realizzati tramite il tool `TestNG <https://testng.org/doc/>`_ i cui sorgenti sono disponibili in `protocolli/spcoop/testsuite/src <https://github.com/link-it/govway/tree/master/protocolli/spcoop/testsuite/src/org/openspcoop2/protocol/spcoop/testsuite/units/connettori>`_ relativamente ai seguenti gruppi:
 
@@ -54,7 +54,7 @@ Sono inoltre disponibili ulteriori test realizzati tramite il tool `TestNG <http
 
 Evidenze disponibili in:
 
-- `risultati dei test sui connettori <https://jenkins.link.it/govway-testsuite/spcoop/Connettori/default/>`_
-- `risultati dei test sul servizio Integration Manager <https://jenkins.link.it/govway-testsuite/spcoop/IntegrationManager/default/>`_
-- `risultati dei test sulla funzionalità di 'UrlPrefixRewriter' <https://jenkins.link.it/govway-testsuite/spcoop/Others/default/>`_
+- `risultati dei test sui connettori <https://jenkins.link.it/govway4-testsuite/spcoop/Connettori/default/>`_
+- `risultati dei test sul servizio Integration Manager <https://jenkins.link.it/govway4-testsuite/spcoop/IntegrationManager/default/>`_
+- `risultati dei test sulla funzionalità di 'UrlPrefixRewriter' <https://jenkins.link.it/govway4-testsuite/spcoop/Others/default/>`_
 

@@ -13,7 +13,7 @@ I sorgenti sono disponibili in `protocolli/spcoop/testsuite/src <https://github.
 
 Evidenze disponibili in:
 
-- `WSSecurity <https://jenkins.link.it/govway-testsuite/spcoop/Sicurezza/default/>`_
+- `WSSecurity <https://jenkins.link.it/govway4-testsuite/spcoop/Sicurezza/default/>`_
 
 Sono inoltre disponibili ulteriori test che verificano la funzionalità 'Username Token'.
 
@@ -23,7 +23,7 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `WSSecurity (Username) <https://jenkins.link.it/govway-testsuite/trasparente_karate/OtherWSSecurity/html/>`_
+- `WSSecurity (Username) <https://jenkins.link.it/govway4-testsuite/trasparente_karate/OtherWSSecurity/html/>`_
 
 **JOSE per API REST**
 
@@ -35,4 +35,4 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/src <https://gi
 
 Evidenze disponibili in:
 
-- `JOSE <https://jenkins.link.it/govway-testsuite/trasparente/JOSE/default/>`_
+- `JOSE <https://jenkins.link.it/govway4-testsuite/trasparente/JOSE/default/>`_

@@ -11,6 +11,6 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `Inoltro API Key al backend <https://jenkins.link.it/govway-testsuite/trasparente_karate/ConnettoriAutenticazione/html/>`_
+- `Inoltro API Key al backend <https://jenkins.link.it/govway4-testsuite/trasparente_karate/ConnettoriAutenticazione/html/>`_
 
 

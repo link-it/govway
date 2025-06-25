@@ -14,8 +14,8 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `Validazione e autorizzazione dei token OAuth2 <https://jenkins.link.it/govway-testsuite/trasparente_karate/TokenValidazione/html/>`_
-- `Negoziazione dei token OAuth2 <https://jenkins.link.it/govway-testsuite/trasparente_karate/TokenNegoziazione/html/>`_
-- `Scambio di attributi con AttributeAuthority <https://jenkins.link.it/govway-testsuite/trasparente_karate/TokenAttributeAuthority/html/>`_
+- `Validazione e autorizzazione dei token OAuth2 <https://jenkins.link.it/govway4-testsuite/trasparente_karate/TokenValidazione/html/>`_
+- `Negoziazione dei token OAuth2 <https://jenkins.link.it/govway4-testsuite/trasparente_karate/TokenNegoziazione/html/>`_
+- `Scambio di attributi con AttributeAuthority <https://jenkins.link.it/govway4-testsuite/trasparente_karate/TokenAttributeAuthority/html/>`_
 
 

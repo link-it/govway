@@ -3,7 +3,7 @@
 Dynamic Analysis
 ~~~~~~~~~~~~~~~~~~~~~
 
-L'analisi dinamica cerca vulnerabilità del software durante l'effettiva esecuzione del prodotto. L'analisi viene effettuata ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway/job/GovWay/>`_ dove vengono avviati oltre 8.800 test realizzati con il tool `TestNG <https://testng.org/doc/>`_ e oltre 7.300 test realizzati tramite i tool `JUnit <https://junit.org/junit4/>`_ e `Karate <https://karatelabs.github.io/karate/>`_. 
+L'analisi dinamica cerca vulnerabilità del software durante l'effettiva esecuzione del prodotto. L'analisi viene effettuata ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway4/job/GovWay/>`_ dove vengono avviati oltre 8.800 test realizzati con il tool `TestNG <https://testng.org/doc/>`_ e oltre 7.300 test realizzati tramite i tool `JUnit <https://junit.org/junit4/>`_ e `Karate <https://karatelabs.github.io/karate/>`_. 
 
 All'interno degli oltre 16.100 test, quelli mirati agli aspetti di sicurezza vengono descritti nella sezione :ref:`releaseProcessGovWay_dynamicAnalysis_security`. 
 

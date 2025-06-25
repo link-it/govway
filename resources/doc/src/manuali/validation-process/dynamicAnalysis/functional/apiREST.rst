@@ -9,11 +9,11 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/src/.../rest/me
 
 Evidenze disponibili in :
 
-- `risultati dei test su API REST per fruizioni <https://jenkins.link.it/govway-testsuite/trasparente/REST.PD/default/>`_
-- `risultati dei test su API REST per erogazioni <https://jenkins.link.it/govway-testsuite/trasparente/REST.PA/default/>`_
+- `risultati dei test su API REST per fruizioni <https://jenkins.link.it/govway4-testsuite/trasparente/REST.PD/default/>`_
+- `risultati dei test su API REST per erogazioni <https://jenkins.link.it/govway4-testsuite/trasparente/REST.PA/default/>`_
 
 Sono inoltre disponibili ulteriori test che verificano la corretta gestione dell'header 'Content-Type' valorizzato con altri parametri oltre quelli previsti o valorizzato in maniera errata. I sorgenti sono disponibili in `protocolli/trasparente/testsuite/src/.../rest/integrazione <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/src/org/openspcoop2/protocol/trasparente/testsuite/units/rest/integrazione/>`_.
 
-Evidenze disponibili in `risultati dei test su header Content-Type per API REST <https://jenkins.link.it/govway-testsuite/trasparente/Integrazione/default/>`_.
+Evidenze disponibili in `risultati dei test su header Content-Type per API REST <https://jenkins.link.it/govway4-testsuite/trasparente/Integrazione/default/>`_.
 
 

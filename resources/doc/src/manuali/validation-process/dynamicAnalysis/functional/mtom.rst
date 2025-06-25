@@ -9,13 +9,13 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/src/.../soap/mt
 
 Evidenze disponibili in :
 
-- `risultati dei test sulla gestione MTOM per le fruizioni <https://jenkins.link.it/govway-testsuite/trasparente/MTOMPortaDelegata/default/>`_
-- `risultati dei test sulla gestione MTOM per le erogazioni <https://jenkins.link.it/govway-testsuite/trasparente/MTOMPortaApplicativa/default/>`_
+- `risultati dei test sulla gestione MTOM per le fruizioni <https://jenkins.link.it/govway4-testsuite/trasparente/MTOMPortaDelegata/default/>`_
+- `risultati dei test sulla gestione MTOM per le erogazioni <https://jenkins.link.it/govway4-testsuite/trasparente/MTOMPortaApplicativa/default/>`_
 
 Sono inoltre disponibili ulteriori test che verifica la gestione del protocollo MTOM.
 
 I sorgenti sono disponibili in `core/src/org/openspcoop2/pdd_test/.../message/TestMTOM.java <https://github.com/link-it/govway/tree/master/core/src/org/openspcoop2/pdd_test/message/TestMTOM.java/>`_.
 
-Evidenze disponibili in `risultati dei test MTOM <https://jenkins.link.it/govway-testsuite/core/pdd/#/>`_
+Evidenze disponibili in `risultati dei test MTOM <https://jenkins.link.it/govway4-testsuite/core/pdd/#/>`_
 
 

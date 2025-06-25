@@ -9,8 +9,8 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/src/.../soap/su
 
 Evidenze disponibili in :
 
-- `risultati dei test su API SOAP per fruizioni <https://jenkins.link.it/govway-testsuite/trasparente/PortaDelegata/default/>`_
-- `risultati dei test su API SOAP per erogazioni <https://jenkins.link.it/govway-testsuite/trasparente/PortaApplicativa/default/>`_
+- `risultati dei test su API SOAP per fruizioni <https://jenkins.link.it/govway4-testsuite/trasparente/PortaDelegata/default/>`_
+- `risultati dei test su API SOAP per erogazioni <https://jenkins.link.it/govway4-testsuite/trasparente/PortaApplicativa/default/>`_
 
 Sono disponibili ulteriori test che verificano le funzionalità SOAP descritte dai seguenti gruppi:
 
@@ -23,16 +23,16 @@ Sono disponibili ulteriori test che verificano le funzionalità SOAP descritte d
 
 Evidenze disponibili in:
 
-- `risultati dei gruppi 'SOAPWithAttachments', 'SOAPAction', 'SOAPBodyEmpty' e 'SOAPHeaderEmpty' <https://jenkins.link.it/govway-testsuite/spcoop/SOAP/default/>`_
-- `risultati del gruppo 'SOAPMessageScorretti' <https://jenkins.link.it/govway-testsuite/spcoop/SOAPMessageScorretti/default/>`_
-- `risultati del gruppo 'TunnelSOAP' <https://jenkins.link.it/govway-testsuite/spcoop/Tunnel/default/>`_
+- `risultati dei gruppi 'SOAPWithAttachments', 'SOAPAction', 'SOAPBodyEmpty' e 'SOAPHeaderEmpty' <https://jenkins.link.it/govway4-testsuite/spcoop/SOAP/default/>`_
+- `risultati del gruppo 'SOAPMessageScorretti' <https://jenkins.link.it/govway4-testsuite/spcoop/SOAPMessageScorretti/default/>`_
+- `risultati del gruppo 'TunnelSOAP' <https://jenkins.link.it/govway4-testsuite/spcoop/Tunnel/default/>`_
 
 Altri test disponibili verificano la corretta gestione dell'header 'Content-Type' valorizzato con altri parametri oltre quelli previsti o valorizzato in maniera errata. I sorgenti sono disponibili in `protocolli/trasparente/testsuite/src/.../soap/integrazione <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/src/org/openspcoop2/protocol/trasparente/testsuite/units/soap/integrazione/>`_.
 
-Evidenze disponibili in `risultati dei test su header Content-Type per API SOAP <https://jenkins.link.it/govway-testsuite/trasparente/Integrazione/default/>`_.
+Evidenze disponibili in `risultati dei test su header Content-Type per API SOAP <https://jenkins.link.it/govway4-testsuite/trasparente/Integrazione/default/>`_.
 
 Sono infine disponibili ulteriori test che verificano la 'funzionalità 'SOAPReader' per la lettura ottimizzata dei messaggi soap.
 
 I sorgenti sono disponibili in `core/src/org/openspcoop2/pdd_test/.../message/TestSoapReader.java <https://github.com/link-it/govway/tree/master/core/src/org/openspcoop2/pdd_test/message/TestSoapReader.java/>`_.
 
-Evidenze disponibili in `risultati dei test per la funzionalità 'SOAPReader' <https://jenkins.link.it/govway-testsuite/core/pdd/#/>`_
+Evidenze disponibili in `risultati dei test per la funzionalità 'SOAPReader' <https://jenkins.link.it/govway4-testsuite/core/pdd/#/>`_

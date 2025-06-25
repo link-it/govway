@@ -11,4 +11,4 @@ I sorgenti sono disponibili in `tools/rs/monitor/server/testsuite/src <https://g
 - `Reports Statistici <https://github.com/link-it/govway/tree/master/tools/rs/monitor/server/testsuite/src/org/openspcoop2/core/monitor/rs/testsuite/reportistica>`_
 - `Stato di funzionamento dell'API <https://github.com/link-it/govway/tree/master/tools/rs/monitor/server/testsuite/src/org/openspcoop2/core/monitor/rs/testsuite/status>`_
 
-Evidenze disponibili in `risultati dei test sull'API di Monitoraggio <https://jenkins.link.it/govway-testsuite/api_monitor/html/>`_
+Evidenze disponibili in `risultati dei test sull'API di Monitoraggio <https://jenkins.link.it/govway4-testsuite/api_monitor/html/>`_

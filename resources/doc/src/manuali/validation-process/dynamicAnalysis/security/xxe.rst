@@ -11,4 +11,4 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `XXE <https://jenkins.link.it/govway-testsuite/trasparente_karate/EncodingDTDs/html/>`_
+- `XXE <https://jenkins.link.it/govway4-testsuite/trasparente_karate/EncodingDTDs/html/>`_

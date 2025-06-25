@@ -13,7 +13,7 @@ I sorgenti sono disponibili in `tools/utils/src/org/openspcoop2/utils/test <http
 
 Evidenze disponibili in:
 
-- `Utilità di base <https://jenkins.link.it/govway-testsuite/core/utils/>`_
+- `Utilità di base <https://jenkins.link.it/govway4-testsuite/core/utils/>`_
 
 Sono inoltre disponibili ulteriori test che verificano tutte le funzionalità di cifratura e firma tramite JOSE su API REST e tramite WSSecurity su API SOAP, la validazione e negoziazione dei token OAuth2, la connessione TLS etc utilizzando keystore di tipo PKCS11.
 
@@ -23,4 +23,4 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `PKCS11 <https://jenkins.link.it/govway-testsuite/trasparente_karate/PKCS11x509/html/>`_
+- `PKCS11 <https://jenkins.link.it/govway4-testsuite/trasparente_karate/PKCS11x509/html/>`_

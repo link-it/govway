@@ -21,4 +21,4 @@ I sorgenti sono disponibili in `tools/rs/config/server/testsuite/src <https://gi
 - `Scope <https://github.com/link-it/govway/tree/master/tools/rs/config/server/testsuite/src/org/openspcoop2/core/config/rs/testsuite/scope>`_
 - `Stato di funzionamento dell'API <https://github.com/link-it/govway/tree/master/tools/rs/config/server/testsuite/src/org/openspcoop2/core/config/rs/testsuite/status>`_
 
-Evidenze disponibili in `risultati dei test sull'API di Configurazione <https://jenkins.link.it/govway-testsuite/api_config/html/>`_
+Evidenze disponibili in `risultati dei test sull'API di Configurazione <https://jenkins.link.it/govway4-testsuite/api_config/html/>`_

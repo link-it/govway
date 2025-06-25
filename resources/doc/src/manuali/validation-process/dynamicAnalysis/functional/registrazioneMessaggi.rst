@@ -13,8 +13,8 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `risultati dei test del gruppo 'registrazione_messaggi.dump_binario' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RegistrazioneMessaggiDumpBinario/html/>`_
-- `risultati dei test del gruppo 'registrazione_messaggi.dump_normale' <https://jenkins.link.it/govway-testsuite/trasparente_karate/RegistrazioneMessaggiDumpNormale/html/>`_
+- `risultati dei test del gruppo 'registrazione_messaggi.dump_binario' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RegistrazioneMessaggiDumpBinario/html/>`_
+- `risultati dei test del gruppo 'registrazione_messaggi.dump_normale' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/RegistrazioneMessaggiDumpNormale/html/>`_
 
 
 

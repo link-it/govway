@@ -11,5 +11,5 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/src <https://gi
 
 Evidenze disponibili in:
 
-- `Autorizzazione per le API Fruite <https://jenkins.link.it/govway-testsuite/trasparente/AutorizzazionePortaDelegata/default/>`_
-- `Autorizzazione per le API Erogatore <https://jenkins.link.it/govway-testsuite/trasparente/AutorizzazionePortaApplicativa/default/>`_
+- `Autorizzazione per le API Fruite <https://jenkins.link.it/govway4-testsuite/trasparente/AutorizzazionePortaDelegata/default/>`_
+- `Autorizzazione per le API Erogatore <https://jenkins.link.it/govway4-testsuite/trasparente/AutorizzazionePortaApplicativa/default/>`_

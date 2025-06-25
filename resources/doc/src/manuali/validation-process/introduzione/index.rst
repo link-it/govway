@@ -11,4 +11,4 @@ Ogni nuova versione di GovWay prima del rilascio viene sottoposta a 3 diversi ti
 
 - :ref:`releaseProcessGovWay_thirdPartyDynamicAnalysis`: assicura che tutte le librerie terza parte utilizzate non siano soggette a vulnerabilità di sicurezza note, utilizzando il tool `OWASP Dependency-Check <https://owasp.org/www-project-dependency-check/>`_.
 
-Ognuna di tali fasi viene anche verificata per ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway/job/GovWay/>`_. 
+Ognuna di tali fasi viene anche verificata per ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway4/job/GovWay/>`_. 

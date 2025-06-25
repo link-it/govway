@@ -12,14 +12,14 @@ I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <htt
 
 Evidenze disponibili in:
 
-- `risultati dei test del gruppo 'encoding.charset' <https://jenkins.link.it/govway-testsuite/trasparente_karate/EncodingCharset/html/>`_
-- `risultati dei test del gruppo 'encoding.entity_reference' <https://jenkins.link.it/govway-testsuite/trasparente_karate/EncodingEntityReference/html/>`_
+- `risultati dei test del gruppo 'encoding.charset' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/EncodingCharset/html/>`_
+- `risultati dei test del gruppo 'encoding.entity_reference' <https://jenkins.link.it/govway4-testsuite/trasparente_karate/EncodingEntityReference/html/>`_
 
 Sono inoltre disponibili ulteriori test realizzati tramite il tool `TestNG <https://testng.org/doc/>`_ che verificano la corretta gestione di messaggi che contengono caratteri non compresi nel set ASCII.
 
 I sorgenti sono disponibili in `protocolli/spcoop/testsuite/src/.../others/XMLEncoding.java <https://github.com/link-it/govway/tree/master/protocolli/spcoop/testsuite/src/org/openspcoop2/protocol/spcoop/testsuite/units/others/XMLEncoding.java>`_.
 
-Evidenze disponibili in `risultati dei test <https://jenkins.link.it/govway-testsuite/spcoop/Others/default/>`_
+Evidenze disponibili in `risultati dei test <https://jenkins.link.it/govway4-testsuite/spcoop/Others/default/>`_
 
 
 
