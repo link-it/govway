@@ -7,6 +7,14 @@ NOTA con java 11:
 
 - per caricare le configurazioni deve invece essere utilizzato java21 con il comando: ant load_config
   
+  
+NOTA x Tomcat:
+  su Tomcat9 adnava aggiunta la seguente opzione JVM in setenv.sh:
+      JAVA_OPTS="$JAVA_OPTS -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
+  su Tomcat10/11 è stata deprecata in favore dell'impostazione sul connettore
+     #<Connector ...
+     #           ... encodedSolidusHandling="passthrough">
+  
 
 Prerequisiti:
 
