@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -71,6 +72,14 @@ public class OpenAPI30_CookieParameterSerializationTest extends ConfigLoader {
 	
 	static void testCookie(TipoServizio tipoServizio, String path, String requestValue) throws Exception {
 		
+		if(Utils.isJenkins()) {
+			// In tomcat11 non esiste più il 
+			// Su application server tomcat10 andava abilitata la gestione dei cookies tramite 'LegacyCookieProcessor'.
+			// Il processore di default 'Rfc6265CookieProcessor' non supporta il formato richiesto dai parametri OpenAPI dei cookie 'form/explode' e 'form/unexplode' (https://swagger.io/docs/specification/serialization/)
+			// Su tomcat 11 non esiste più questo processore quindi la verifica non e' attuabile.
+			System.out.println("WARN: test non attuabile su tomcat11: cookie processor LegacyCookieProcessor non più attivabile");
+			return;
+		}
 
 		final String url = tipoServizio == TipoServizio.EROGAZIONE
 				? System.getProperty("govway_base_path") + "/SoggettoInternoTest/ParameterSerialization/v1/cookie/"+path

@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -52,6 +53,14 @@ public class OpenAPI30_CookieEnumParameterSerializationTest extends ConfigLoader
 		_array_form_explode_false(TipoServizio.FRUIZIONE);
 	}
 	private void _array_form_explode_false(TipoServizio tipo) throws Exception {
+		if(Utils.isJenkins()) {
+			// In tomcat11 non esiste più il 
+			// Su application server tomcat10 andava abilitata la gestione dei cookies tramite 'LegacyCookieProcessor'.
+			// Il processore di default 'Rfc6265CookieProcessor' non supporta il formato richiesto dai parametri OpenAPI dei cookie 'form/explode' e 'form/unexplode' (https://swagger.io/docs/specification/serialization/)
+			// Su tomcat 11 non esiste più questo processore quindi la verifica non e' attuabile.
+			System.out.println("WARN: test non attuabile su tomcat11: cookie processor LegacyCookieProcessor non più attivabile");
+			return;
+		}
 		testCookie(tipo, "array_form_explode_false", "Valore1,Valore2,Valore33");
 	}
 

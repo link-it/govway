@@ -723,6 +723,7 @@ public class RestTestEngine extends ConfigLoader {
 				assertEquals(msg+" (getCommentURL)", c1.getCommentURL(), c2.getCommentURL());
 			}
 			if(c1.getPath().contains("?") && !Utils.isJenkins()){
+				// per condizione isJenkins, vedi spiegazione sottostante per la versione
 				assertEquals(msg+" (getDiscard)", true, c2.getDiscard());
 			}
 			else {
@@ -745,12 +746,23 @@ public class RestTestEngine extends ConfigLoader {
 			if(c1.getValue()!=null) {
 				assertEquals(msg+" (getValue)", c1.getValue(), c2.getValue());
 			}
-			if(c1.getPath().contains("?")){
+			
+			if(Utils.isJenkins()) {
+				// differenza di comportamento tra WildFly e Tomcat nella serializzazione del cookie JSESSIONID, e il punto cruciale è:
+				// WildFly imposta Version=1, mentre Tomcat no (usa Version=0), anche se il contenuto del Path è formalmente "irregolare" (con ?p1=a1).
+				// RFC 2109 e Version=1
+				// Il path /TestService/echo?p1=a1 non è valido secondo lo standard per Path nei cookie (che non prevede ?), ma è comunque accettato in alcuni contesti.
+				// WildFly, notando il carattere ?, passa in modalità RFC 2109, che richiede l'uso di Version=1, Discard, e virgolette su Path.
+				// Anche la soluzione di usare org.apache.tomcat.util.http.Rfc2109CookieProcessor non è perseguibile poichè non più esistente in tomcat
+				assertEquals(msg+" (getVersion)", 0, c2.getVersion());
+			}
+			else if(c1.getPath().contains("?")){
 				assertEquals(msg+" (getVersion)", 1, c2.getVersion());
 			}
 			else {
 				assertEquals(msg+" (getVersion)", c1.getVersion(), c2.getVersion());
 			}
+			
 		}
 	}
 	
