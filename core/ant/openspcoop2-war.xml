@@ -91,14 +91,25 @@
 		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
 
 		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
-		<unzip src="${required_lib}/angus/jakarta.mail-2.0.3.jar" dest="${build}/tmp/mailapi"/>
-		<concat destfile="${build}/tmp/mailapi/META-INF/mailcap" append="yes">
+		<!-- Modifica messa in entrambi i jar per supportare qualsiasi ordinamento e quindi se viene letto prima uno dell'altro -->
+		<!-- angus-mail-2.0.3.jar -->
+		<unzip src="${required_lib}/angus/angus-mail-2.0.3.jar" dest="${build}/tmp/angus-mail"/>
+		<concat destfile="${build}/tmp/angus-mail/META-INF/mailcap" append="yes">
 			<filelist dir="${data_content_handler_dir}"
                            files="mailcap"/>
 		</concat>
-		<jar jarfile="${build}/tmp/jakarta.mail-2.0.3.gw.jar" manifest="${build}/tmp/mailapi/META-INF/MANIFEST.MF">
-			<zipfileset dir="${build}/tmp/mailapi"/>
+		<jar jarfile="${build}/tmp/angus-mail-2.0.3.gw.jar" manifest="${build}/tmp/angus-mail/META-INF/MANIFEST.MF">
+			<zipfileset dir="${build}/tmp/angus-mail"/>
 		</jar>
+		<!-- jakarta.mail-2.0.3.jar -->
+		<unzip src="${required_lib}/angus/jakarta.mail-2.0.3.jar" dest="${build}/tmp/mail"/>
+                <concat destfile="${build}/tmp/mail/META-INF/mailcap" append="yes">
+                        <filelist dir="${data_content_handler_dir}"
+                           files="mailcap"/>
+                </concat>
+                <jar jarfile="${build}/tmp/jakarta.mail-2.0.3.gw.jar" manifest="${build}/tmp/mail/META-INF/MANIFEST.MF">
+                        <zipfileset dir="${build}/tmp/mail"/>
+                </jar>
 
 		<!-- Creazione war normale -->
 		<antcall target="-create_openspcoop_web">
@@ -373,11 +384,14 @@
 			</lib>
 			<!-- Mail api esteso con activation data handler openspcoop -->
 			<lib dir="${build}/tmp">
+				<include name="angus-mail-2.0.3.gw.jar" />
 				<include name="jakarta.mail-2.0.3.gw.jar" />
 			</lib>
 			<lib dir="${required_lib}/angus">
 				<include name="*.jar"/>
-				<exclude name="jakarta.mail-2.0.3.jar"/>
+				<!-- le escludo poichè vengono inserite quelli modificati con mailcap -->
+				<exclude name="angus-mail-2.0.3.jar"/>
+				<exclude name="jakarta.mail-2.0.3.jar" />
 			</lib>
 			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
 			<classes dir="${properties_dir}">
