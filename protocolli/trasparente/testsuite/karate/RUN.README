@@ -35,6 +35,10 @@
 
   JAVA_OPTS="$JAVA_OPTS --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED --add-opens java.base/sun.net.www.protocol.https=ALL-UNNAMED"
 
+Su tomcat 11, essendo i controlli più rigidi, è necessario aggiungere anche queste direttive:
+
+  JAVA_OPTS="$JAVA_OPTS --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.net.HttpURLConnection=ALL-UNNAMED --add-exports java.base/sun.net.www.protocol.http=ALL-UNNAMED"
+
 - Deve essere abilitato il TRACE METHOD http, altrimenti risulta '405 Not Allowed'
   Per farlo su wildfly aggiungere l'attributo disallowed-methods valorizzato vuoto in tutti gli http e https listener:
      <http-listener name="default" socket-binding="http" redirect-socket="https" disallowed-methods=""/>

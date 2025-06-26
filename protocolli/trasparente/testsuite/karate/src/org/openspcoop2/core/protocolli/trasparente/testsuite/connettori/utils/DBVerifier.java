@@ -107,7 +107,7 @@ public class DBVerifier {
 			try {
 				DBVerifier.verifyConnettoreResponse(idTransazione, esitoExpected, patterns);
 				err = false;
-			} catch (AssertionError | SQLQueryObjectException e) {
+			} catch (Throwable e) {
 				log().warn("tentativo fallito: {}", e.getCause(), e);
 				err = true;
 				if (index >= timeouts.length)
