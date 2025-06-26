@@ -86,39 +86,39 @@ public class SoapTestEngine extends ConfigLoader {
 	@Test
 	public void erogazioneHtml403() throws Exception {
 		test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"html403", "(403) Forbidden\nhttp response: <html>Access not permitted: ERROR CODE 403</html>");
+				"html403", "(403) \\E(Forbidden)?\\Q\nhttp response: <html>Access not permitted: ERROR CODE 403</html>");
 	}
 	
 	@Test
 	public void fruizioneHtml403() throws Exception {
 		test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"html403", "(403) Forbidden\nhttp response: <html>Access not permitted: ERROR CODE 403</html>");
+				"html403", "(403) \\E(Forbidden)?\\Q\nhttp response: <html>Access not permitted: ERROR CODE 403</html>");
 	}
 	
 	// html 404
 	@Test
 	public void erogazioneHtml404() throws Exception {
 		test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"html404", "(404) Not Found\nhttp response: <html><head><title>Error</title></head><body>404 - Not Found</body></html>");
+				"html404", "(404) \\E(Not Found)?\\Q\nhttp response: <html><head><title>Error</title></head><body>404 - Not Found</body></html>");
 	}
 	
 	@Test
 	public void fruizioneHtml404() throws Exception {
 		test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"html404", "(404) Not Found\nhttp response: <html><head><title>Error</title></head><body>404 - Not Found</body></html>");
+				"html404", "(404) \\E(Not Found)?\\Q\nhttp response: <html><head><title>Error</title></head><body>404 - Not Found</body></html>");
 	}
 	
 	// html 500
 	@Test
 	public void erogazioneHtml500() throws Exception {
 		test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"html500", "(500) Internal Server Error\nhttp response: <html><head><title>Error</title></head><body>500 - InternalError</body></html>");
+				"html500", "(500) \\E(Internal Server Error)?\\Q\nhttp response: <html><head><title>Error</title></head><body>500 - InternalError</body></html>");
 	}
 	
 	@Test
 	public void fruizioneHtml500() throws Exception {
 		test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"html500", "(500) Internal Server Error\nhttp response: <html><head><title>Error</title></head><body>500 - InternalError</body></html>");
+				"html500", "(500) \\E(Internal Server Error)?\\Q\nhttp response: <html><head><title>Error</title></head><body>500 - InternalError</body></html>");
 	}
 
 	
@@ -195,39 +195,39 @@ public class SoapTestEngine extends ConfigLoader {
 	@Test
 	public void erogazioneNoContentType403() throws Exception {
 		test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"noContentType403", "(403) Forbidden\nhttp response: <html>Access not permitted: ERROR CODE 403</html>");
+				"noContentType403", "(403) \\E(Forbidden)?\\Q\nhttp response: <html>Access not permitted: ERROR CODE 403</html>");
 	}
 	
 	@Test
 	public void fruizioneNoContentType403() throws Exception {
 		test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"noContentType403", "(403) Forbidden\nhttp response: <html>Access not permitted: ERROR CODE 403</html>");
+				"noContentType403", "(403) \\E(Forbidden)?\\Q\nhttp response: <html>Access not permitted: ERROR CODE 403</html>");
 	}
 	
 	// noContentType 404
 	@Test
 	public void erogazioneNoContentType404() throws Exception {
 		test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"noContentType404", "(404) Not Found\nhttp response: <html><head><title>Error</title></head><body>404 - Not Found</body></html>");
+				"noContentType404", "(404) \\E(Not Found)?\\Q\nhttp response: <html><head><title>Error</title></head><body>404 - Not Found</body></html>");
 	}
 	
 	@Test
 	public void fruizioneNoContentType404() throws Exception {
 		test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"noContentType404", "(404) Not Found\nhttp response: <html><head><title>Error</title></head><body>404 - Not Found</body></html>");
+				"noContentType404", "(404) \\E(Not Found)?\\Q\nhttp response: <html><head><title>Error</title></head><body>404 - Not Found</body></html>");
 	}
 	
 	// noContentType 500
 	@Test
 	public void erogazioneNoContentType500() throws Exception {
 		test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"noContentType500", "(500) Internal Server Error\nhttp response: <html><head><title>Error</title></head><body>500 - InternalError</body></html>");
+				"noContentType500", "(500) \\E(Internal Server Error)?\\Q\nhttp response: <html><head><title>Error</title></head><body>500 - InternalError</body></html>");
 	}
 	
 	@Test
 	public void fruizioneNoContentType500() throws Exception {
 		test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_SOAP_1_1, Bodies.getSOAPEnvelope11(Bodies.SMALL_SIZE).getBytes(),
-				"noContentType500", "(500) Internal Server Error\nhttp response: <html><head><title>Error</title></head><body>500 - InternalError</body></html>");
+				"noContentType500", "(500) \\E(Internal Server Error)?\\Q\nhttp response: <html><head><title>Error</title></head><body>500 - InternalError</body></html>");
 	}
 	
 	

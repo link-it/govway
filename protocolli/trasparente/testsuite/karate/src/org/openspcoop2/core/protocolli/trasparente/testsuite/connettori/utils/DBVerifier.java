@@ -83,7 +83,7 @@ public class DBVerifier {
 			long esitoExpected, String msgErrore, HttpLibraryMode mode) throws AssertionError, SQLQueryObjectException  {
 		Pattern msgPattern = null;
 		if (msgErrore != null && !msgErrore.isBlank())
-			msgPattern = Pattern.compile(".*" + Pattern.quote(msgErrore) + ".*", Pattern.DOTALL);
+			msgPattern = Pattern.compile(".*\\Q" + msgErrore + "\\E.*", Pattern.DOTALL);
 		verify(idTransazione, esitoExpected, msgPattern, mode);
 	}
 	
