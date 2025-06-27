@@ -1974,11 +1974,6 @@
 						    <param name="templateDataSourceFile" value="${tmp_ds}/govwayMonitor.xml"/>
 						    <param name="log_for_runtime" value="false"/>
 						</antcall>
-						<antcall target="replace_token">
-						    <param name="file" value="${tmp_ds}/domibus-ds.xml"/>
-							<param name="token" value="${datasource_pdd_name}"/>
-							<param name="value" value="${datasource_domibus_name}"/>
-						</antcall>
 					</then>
 					<elseif>
 						<!-- se le tracce sono nel database di runtime e il database delle configurazioni e' a se, le applicazioni "console" dovranno usare un datasource differente -->
