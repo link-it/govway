@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -46,6 +47,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -54,6 +56,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
+
 
 import net.minidev.json.JSONObject;
 
@@ -544,9 +547,9 @@ public class RestTestEngine extends ConfigLoader {
 		IDSoggetto idErogatore = new IDSoggetto("gw", "SoggettoInternoTest");
 		IDServizio idServizioObject = null;
 		
-		String idServizio = "SoggettoInternoTest/TempiRispostaREST/v1";
+		String nomeServizio = "TempiRispostaREST";
 		if(operazione.startsWith("negoziazione/") || operazione.startsWith("validazione/") || operazione.startsWith("attributeAuthority/") ) {
-			idServizio = "SoggettoInternoTest/TempiRispostaPolicy/v1";
+			nomeServizio = "TempiRispostaPolicy";
 			config = new PolicyTimeoutConfig();
 			if(operazione.startsWith("negoziazione/") ) {
 				config.setPolicyNegoziazione(policyName);
@@ -577,14 +580,16 @@ public class RestTestEngine extends ConfigLoader {
 			idServizioObject = IDServizioFactory.getInstance().getIDServizioFromValues("gw", "TempiRispostaREST", idErogatore, 1);
 		}
 		
+		String idServizio = "SoggettoInternoTest/" + nomeServizio + "/v1";
 		String idEventoServizio = idServizio;
 		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
 			idEventoServizio = "SoggettoInternoTestFruitore/"+idServizio;
 		}
 		
+		String azione = operazione;
 		String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/in/"+idServizio+"/"+operazione
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/"+idServizio+"/"+operazione;
+				? System.getProperty("govway_base_path") + "/in/"+idServizio
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/"+idServizio;
 		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
 			if(!operazione.startsWith("negoziazione/") && 
 					!operazione.startsWith("validazione/") && 
@@ -594,10 +599,10 @@ public class RestTestEngine extends ConfigLoader {
 					!"connessioneClientInterrotta".equals(operazione) && 
 					!"sendRegistrazioneAbilitataClientSendSlow".equals(operazione) && 
 					!"sendRegistrazioneDisabilitataClientSendSlow".equals(operazione)) {
-				url=url+"/"+tipoTest;
+				azione=operazione+"/"+tipoTest;
 			}
 		}
-		url=url+"?test="+tipoTest;
+		url=url + "/" + azione+"?test="+tipoTest;
 		
 		HttpRequest request = new HttpRequest();
 		
@@ -629,6 +634,7 @@ public class RestTestEngine extends ConfigLoader {
 			request.addHeader(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+"token_opaco");
 		}
 		
+		Date now = new Date();
 		HttpResponse response = null;
 		try {
 			response = HttpUtilities.httpInvoke(request);
@@ -643,13 +649,24 @@ public class RestTestEngine extends ConfigLoader {
 				response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 				Utilities.sleep(5000); // aspetto che termina il server
 				response.addHeader("GovWay-Transaction-ID", DBVerifier.getIdTransazioneByIdApplicativoRichiesta(applicativeId));
-			}
-			// caso su tomcat 11
-			else if(tipoEvento!=null && TipoEvento.CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT.equals(tipoEvento) &&
-					t.getMessage()!=null && t.getMessage().contains("Error writing request body to server")) {
-				
-			}
-			else {
+			}else if (t instanceof UtilsException u && u.getMessage().equals("Error writing request body to server")) {
+				Utilities.sleep(5000); // aspetto che termina il server
+				String idTransazione = DBVerifier.getIdTransazioneLastRequest(nomeServizio, 1, azione.replace("/", "."), now);
+								
+				JSONObject problem = new JSONObject();
+				problem.put("type", "https://govway.org/handling-errors/400/RequestReadTimeout.html");
+				problem.put("status", 400);
+				problem.put("govway_id", idTransazione);
+				problem.put("title", REQUEST_TIMED_OUT);
+				problem.put("detail", REQUEST_TIMED_OUT_MESSAGE);
+								
+				response = new HttpResponse();
+				response.setResultHTTPOperation(400);
+				response.setContent(problem.toString().getBytes());
+				response.setContentType(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
+				response.addHeader(Headers.GovWayTransactionErrorType, REQUEST_TIMED_OUT);
+				response.addHeader("GovWay-Transaction-ID", idTransazione);
+			} else {
 				throw t;
 			}
 		}

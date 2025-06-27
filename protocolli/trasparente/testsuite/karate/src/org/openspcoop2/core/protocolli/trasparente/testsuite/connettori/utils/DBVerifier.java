@@ -472,6 +472,47 @@ public class DBVerifier {
 
 	}
 	
+	public static String getIdTransazioneLastRequest(String nomeServizio, Integer versioneServizio, String operazione, Date now) throws Exception  {
+		int[] timeouts = {100, 250, 500, 2000, 5000};
+		int index = 0;
+		boolean err = true;
+		
+		// se non trovo nessun messaggio aspetto che magari govway non ha ancora scritto il messaggio sul db
+		while (err && index < timeouts.length) {
+			
+			Utilities.sleep(timeouts[index++]); 
+			
+			try {
+				return DBVerifier.getIdTransazioneLastRequestEngine(nomeServizio, versioneServizio, operazione, now);
+			} catch (AssertionError | SQLQueryObjectException e) {
+				log().warn("tentativo fallito: {}", e.getCause(), e);
+				err = true;
+				if (index >= timeouts.length)
+					throw e;
+			}
+		}
+		
+		return null;
+	}
+	private static String getIdTransazioneLastRequestEngine(String nomeServizio, Integer versioneServizio, String operazione, Date now) throws SQLQueryObjectException {
+		
+		ISQLQueryObject query = SQLObjectFactory.createSQLQueryObject(dbUtils().tipoDatabase);
+		
+		query.addFromTable(CostantiDB.TRANSAZIONI);
+		query.addSelectField("id");
+		query.setANDLogicOperator(true);
+		
+		query.addWhereCondition("data_ingresso_richiesta > ?");
+		query.addWhereCondition("nome_servizio = ?");
+		query.addWhereCondition("tipo_servizio = 'gw'");
+		query.addWhereCondition("versione_servizio = ?");
+		query.addWhereCondition("azione = ?");
+
+		query.addOrderBy("data_ingresso_richiesta", false);
+		
+		return dbUtils().readValue(query.createSQLQuery(), now, nomeServizio, versioneServizio, operazione).toString();
+	}
+	
 	
 	public static String getIdCorrelazioneApplicativaRichiesta(String idTransazione) throws Exception  {
 		return _getIdCorrelazioneApplicativa(idTransazione, true, true);
