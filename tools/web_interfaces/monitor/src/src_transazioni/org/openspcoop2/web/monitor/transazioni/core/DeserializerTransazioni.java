@@ -91,6 +91,7 @@ import org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaTy
 import org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DatiIntegrationManager;
 import org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.Esito.DettaglioEsito;
 import org.openspcoop2.web.monitor.transazioni.mbean.TracciaBean;
+import org.slf4j.Logger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -1131,7 +1132,7 @@ public class DeserializerTransazioni {
 		return dataMap;
 	}
 
-	public static List<MsgDiagnostico> readMsgDiagnostici(byte[] fileContent, TransazioneBean tr, TransazioneApplicativoServerBean tAS, boolean exportDiagnosticiUseProtocolSerialization) 
+	public static List<MsgDiagnostico> readMsgDiagnostici(byte[] fileContent, TransazioneBean tr, TransazioneApplicativoServerBean tAS, boolean exportDiagnosticiUseProtocolSerialization, Logger log) 
 			throws IOException, JAXBException, ProtocolException, ParserConfigurationException, SAXException, XMLUtilsException, TransformerException, XMLException, XPathException, XPathNotValidException {
 		List<MsgDiagnostico> msgs = new ArrayList<>();
 
@@ -1174,7 +1175,7 @@ public class DeserializerTransazioni {
 				}
 			} catch (XPathNotFoundException e) {
 				// non trovato, restituisce lista vuota
-				e.printStackTrace();
+				log.error(e.getMessage(),e);
 			}
 		}finally {
 			//donothing
@@ -1183,7 +1184,7 @@ public class DeserializerTransazioni {
 		return msgs;
 	}
 
-	public static List<TracciaBean> readTracce(byte[] fileContent, TransazioneBean tr, boolean exportTracceUseProtocolSerialization) 
+	public static List<TracciaBean> readTracce(byte[] fileContent, TransazioneBean tr, boolean exportTracceUseProtocolSerialization, Logger log) 
 			throws IOException, SAXException, ParserConfigurationException, XMLException, ProtocolException, XPathException, XPathNotValidException, TransformerException, org.openspcoop2.core.tracciamento.utils.XMLUtilsException 
 	{
 		List<TracciaBean> msgs = new ArrayList<>();
@@ -1234,7 +1235,7 @@ public class DeserializerTransazioni {
 				}
 			} catch (XPathNotFoundException e) {
 				// non trovato, restituisce lista vuota
-				e.printStackTrace();
+				log.error(e.getMessage(),e);
 			}
 		}finally {
 			//donothing

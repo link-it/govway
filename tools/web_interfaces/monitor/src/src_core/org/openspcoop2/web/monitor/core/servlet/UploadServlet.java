@@ -79,7 +79,7 @@ public class UploadServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		throw new ServletException("Operazione non consentita"); 
+		UploadServlet.log.error("Operazione non consentita!");
 	}
 	
 	@Override
@@ -146,7 +146,11 @@ public class UploadServlet extends HttpServlet {
 			UploadServlet.log.error("Errore: " + e.getMessage(), e);
 			resp.setStatus(500);
 		} finally {
-			resp.flushBuffer();	
+			try {
+				resp.flushBuffer();
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 	}
 
@@ -242,7 +246,11 @@ public class UploadServlet extends HttpServlet {
 			UploadServlet.log.error("Errore: " + e.getMessage(), e);
 			resp.setStatus(500);
 		} finally {
-			resp.flushBuffer();	
+			try {
+				resp.flushBuffer();
+			}catch(Exception e) {
+				// ignore
+			}
 		}
 	}
 

@@ -74,18 +74,17 @@ public class RicercheExporter extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		this.processRequest(req,resp);		
+		this.processRequest(req,resp);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-
-		this.processRequest(req,resp);		
+		this.processRequest(req,resp);
 	}
 
 
-	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
+	private void processRequest(HttpServletRequest req, HttpServletResponse resp) {
 		try{
 			ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 			if(context==null) {
@@ -100,8 +99,8 @@ public class RicercheExporter extends HttpServlet {
 
 			// prelevo le informazioni sull'utente loggato
 			User utente =null;
-			LoginBean lbInSession = (LoginBean) context.getBean(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
-			if(lbInSession != null && lbInSession.isLoggedIn()) {
+			Object olbInSession = context.getBean(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
+			if(olbInSession instanceof LoginBean lbInSession && lbInSession.isLoggedIn()) {
 				utente = lbInSession.getUtente();
 			}
 			searchForm.setUser(utente);
@@ -143,7 +142,6 @@ public class RicercheExporter extends HttpServlet {
 			
 		}catch(Exception e){
 			logError(e.getMessage(),e);
-			throw new ServletException(e.getMessage(),e);
 		}finally {
 			// donothing
 		}
@@ -233,6 +231,10 @@ public class RicercheExporter extends HttpServlet {
 			return false;
 		}
 
+		return checkParametriStep2(ids, idsFromSession);
+
+	}
+	private static boolean checkParametriStep2(String[] ids, String[] idsFromSession) {
 		// numero di id ricevuti non coincidente.
 		if(ids!=null && idsFromSession!=null && ids.length != idsFromSession.length)
 			return false;
@@ -254,7 +256,6 @@ public class RicercheExporter extends HttpServlet {
 		}
 		
 		return true;
-
 	}
 	
 }

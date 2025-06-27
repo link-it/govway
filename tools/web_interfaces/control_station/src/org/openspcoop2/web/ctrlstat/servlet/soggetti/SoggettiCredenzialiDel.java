@@ -32,6 +32,7 @@ import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -92,12 +93,14 @@ public final class SoggettiCredenzialiDel extends Action {
 			
 			if(soggettiCore.isRegistroServiziLocale()){
 				soggettoRegistry = soggettiCore.getSoggettoRegistro(idSogg);// core.getSoggettoRegistro(new
-				// IDSoggetto(tipoprov,nomeprov));
 			}
 
 			soggettoConfig = soggettiCore.getSoggetto(idSogg);// core.getSoggetto(new
 			
 			if(soggettiCore.isRegistroServiziLocale()){
+				if(soggettoRegistry==null) {
+					throw new CoreException("Soggetto con id '"+idSogg+"' non trovato");
+				}
 				nomeprov = soggettoRegistry.getNome();
 				tipoprov = soggettoRegistry.getTipo();
 			}

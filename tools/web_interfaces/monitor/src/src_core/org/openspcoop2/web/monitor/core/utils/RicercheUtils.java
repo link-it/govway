@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
@@ -81,7 +82,7 @@ public class RicercheUtils {
 					// Aggiungi alla mappa solo se il campo non è null
 					if (value != null) {
 						// Se è una stringa, controlla che non sia vuota
-						if (value instanceof String && !((String) value).isEmpty()) {
+						if (value instanceof String s && !s.isEmpty()) {
 			                if (Costanti.PERIODO_PARAMETER.equals(fieldName) && Costanti.PERIODO_PERSONALIZZATO.equals(value)) {
 			                    log.debug("Field [{}] con valore '{}' viene ignorato.", fieldName, value);
 			                    continue;
@@ -106,8 +107,7 @@ public class RicercheUtils {
 							fieldMap.put(fieldName, value);
 						} 
 						// Gestione per array di stringhe
-	                    else if (value instanceof String[]) {
-	                        String[] array = (String[]) value;
+	                    else if (value instanceof String[] array) {
 	                        // Controlla che l'array non sia vuoto
 	                        if (array.length > 0) {
 	                            fieldMap.put(fieldName, array);
@@ -118,7 +118,7 @@ public class RicercheUtils {
 						}
 					} 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace(); // Gestisci l'eccezione se il campo non è accessibile
+					log.error(e.getMessage(),e); // Gestisci l'eccezione se il campo non è accessibile
 				}
 			}
 
@@ -143,7 +143,7 @@ public class RicercheUtils {
 	                field.setAccessible(true); // Rendi accessibile il campo privato
 
 	                // Gestisci i tipi Enum separatamente
-	                if (field.getType().isEnum() && fieldValue instanceof String) {
+	                if (field.getType().isEnum() && fieldValue instanceof String s) {
 	                	
 	                	Object enumValue = null;
 	                    try {
@@ -152,16 +152,16 @@ public class RicercheUtils {
 	                        
 	                        if (toEnumConstantMethod != null && Modifier.isStatic(toEnumConstantMethod.getModifiers())) {
 	                            // Invoca il metodo toEnumConstant dinamicamente
-	                            enumValue = toEnumConstantMethod.invoke(null, (String) fieldValue);
+	                            enumValue = toEnumConstantMethod.invoke(null, s);
 	                        } else {
 	                            // Usa Enum.valueOf come fallback
-	                            enumValue = Enum.valueOf((Class<Enum>) field.getType(), (String) fieldValue);
+	                            enumValue = Enum.valueOf((Class<Enum>) field.getType(), s);
 	                        }
 	                    } catch (NoSuchMethodException e) {
 	                        // Se non esiste il metodo toEnumConstant, usa Enum.valueOf
-	                        enumValue = Enum.valueOf((Class<Enum>) field.getType(), (String) fieldValue);
+	                        enumValue = Enum.valueOf((Class<Enum>) field.getType(), s);
 	                    } catch (Exception e) {
-	                        throw new RuntimeException("Errore durante la conversione dell'Enum", e);
+	                        throw new UtilsRuntimeException("Errore durante la conversione dell'Enum", e);
 	                    }
 	                    
 	                    log.debug("Field di tipo Enum [{}], Valore [{}]", fieldName, enumValue);
@@ -173,7 +173,7 @@ public class RicercheUtils {
 	                    Collection<?> collection = (Collection<?>) fieldValue;
 	                    String[] stringArray = collection.toArray(new String[0]);
 
-	                    log.debug("Field di tipo Array di String [{}], Valore [{}]", fieldName, Arrays	.toString(stringArray));
+	                    log.debug("Field di tipo Array di String [{}], Valore [{}]", fieldName, Arrays.toString(stringArray));
 
 	                    field.set(bean, stringArray);
 	                } else {
@@ -185,7 +185,7 @@ public class RicercheUtils {
 	            	log.debug("Campo {} non trovato nella gerarchia delle classi.", fieldName);
 	            }
 	        } catch (IllegalAccessException e) {
-	            e.printStackTrace(); // Gestisci eventuali errori di accesso
+	        	log.error(e.getMessage(),e); // Gestisci eventuali errori di accesso
 	        }
 	    }
 	}

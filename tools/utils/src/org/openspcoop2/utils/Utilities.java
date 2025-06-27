@@ -89,8 +89,7 @@ public class Utilities {
 	
 	@SuppressWarnings("unchecked")
 	public static <T> T execute(int secondsTimeout, Callable<?> callable) throws TimeoutException, UtilsException {
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		try {
+		try(ExecutorService executor = Executors.newSingleThreadExecutor()){
 			Future<?> future = executor.submit(callable);
 			return (T) future.get(secondsTimeout, TimeUnit.SECONDS); //timeout is in 2 seconds
 		} catch (TimeoutException e) {
@@ -100,8 +99,6 @@ public class Utilities {
 			throw new UtilsException(e.getMessage(),e);
 		} catch (ExecutionException e) {
 			throw new UtilsException(e.getMessage(),e);
-		}finally {
-			executor.shutdownNow();
 		}
 	}
 	

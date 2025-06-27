@@ -212,7 +212,7 @@ public class ArchivioZipManager {
 			try { 
 				log.debug("Estraggo informazioni diagnostici per la transazione {}:", idTransazione);
 
-				List<MsgDiagnostico> diagnostici = DeserializerTransazioni.readMsgDiagnostici(transazioneArchivioBean.getDiagnosticiRaw(), transazioneBean, null, this.exportDiagnosticiUseProtocolSerialization); 
+				List<MsgDiagnostico> diagnostici = DeserializerTransazioni.readMsgDiagnostici(transazioneArchivioBean.getDiagnosticiRaw(), transazioneBean, null, this.exportDiagnosticiUseProtocolSerialization, log); 
 
 
 				log.debug("Lettura diagnostici completata.");
@@ -234,7 +234,7 @@ public class ArchivioZipManager {
 			try {
 				log.debug("Decodifica tracce per la transazione {}:", idTransazione);
 
-				List<TracciaBean> tracce = DeserializerTransazioni.readTracce(transazioneArchivioBean.getTracceRaw(), transazioneBean, this.exportTracceUseProtocolSerialization);
+				List<TracciaBean> tracce = DeserializerTransazioni.readTracce(transazioneArchivioBean.getTracceRaw(), transazioneBean, this.exportTracceUseProtocolSerialization, log);
 
 				log.debug("Lettura tracce completata.");
 
@@ -290,7 +290,7 @@ public class ArchivioZipManager {
 				log.debug("Estraggo informazioni diagnostici per la consegna {} della transazione {}:", nomeSA, idTransazione);
 
 				List<MsgDiagnostico> diagnostici = DeserializerTransazioni.readMsgDiagnostici(transazioneApplicativoServerArchivioBean.getDiagnosticiRaw(),
-						transazioneBean, transazioneApplicativoServerBean, this.exportDiagnosticiUseProtocolSerialization);
+						transazioneBean, transazioneApplicativoServerBean, this.exportDiagnosticiUseProtocolSerialization, log);
 
 				log.debug("Lettura diagnostici completata.");
 

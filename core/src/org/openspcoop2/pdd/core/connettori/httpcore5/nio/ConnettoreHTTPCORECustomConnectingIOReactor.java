@@ -28,6 +28,7 @@ import org.apache.hc.core5.reactor.IOEventHandlerFactory;
 import org.apache.hc.core5.reactor.IOReactorConfig;
 import org.apache.hc.core5.reactor.IOSession;
 import org.apache.hc.core5.reactor.IOSessionListener;
+import org.slf4j.Logger;
 
 /**
  * ConnettoreHTTPCoreCustomConnectingIOReactor
@@ -42,28 +43,30 @@ public class ConnettoreHTTPCORECustomConnectingIOReactor extends org.apache.hc.c
 	// classe riferita nel commento del ConnettoreHTTPCOREConnectionManager ma rimane da capire come si aggancia
 	
 	private ExecutorService executorService;
+	private Logger log;
 	
 	public ConnettoreHTTPCORECustomConnectingIOReactor(IOEventHandlerFactory eventHandlerFactory,
-			IOReactorConfig config, Callback<IOSession> sessionShutdownCallback) {
+			IOReactorConfig config, Callback<IOSession> sessionShutdownCallback, Logger log) {
 		super(eventHandlerFactory, config, sessionShutdownCallback);
-		init();
+		init(log);
 	}
 
-	public ConnettoreHTTPCORECustomConnectingIOReactor(IOEventHandlerFactory eventHandlerFactory, IOReactorConfig config,
+	/**public ConnettoreHTTPCORECustomConnectingIOReactor(IOEventHandlerFactory eventHandlerFactory, IOReactorConfig config,
 			ThreadFactory threadFactory, Decorator<IOSession> ioSession, Callback<Exception> callbackException, IOSessionListener sessionListener,
-			Callback<IOSession> sessionCallback) {
+			Callback<IOSession> sessionCallback, Logger log) {
 		super(eventHandlerFactory, config, threadFactory, ioSession, callbackException, sessionListener, sessionCallback);
-		init();
-	}
+		init(log);
+	}*/
 
-	public ConnettoreHTTPCORECustomConnectingIOReactor(IOEventHandlerFactory eventHandlerFactory) {
+	public ConnettoreHTTPCORECustomConnectingIOReactor(IOEventHandlerFactory eventHandlerFactory, Logger log) {
 		super(eventHandlerFactory);
-		init();
+		init(log);
 	}
 	
-	private void init() {
+	private void init(Logger log) {
 		int size = Runtime.getRuntime().availableProcessors();
 		this.executorService = java.util.concurrent.Executors.newFixedThreadPool(size);
+		this.log = log;
 	}
 
 	public void startReactor() {
@@ -71,7 +74,7 @@ public class ConnettoreHTTPCORECustomConnectingIOReactor extends org.apache.hc.c
             try {
                 this.start(); // Avvia il ciclo del reactor
             } catch (Exception e) {
-                e.printStackTrace();
+            	this.log.error(e.getMessage(),e);
             }
         });
     }
@@ -80,7 +83,7 @@ public class ConnettoreHTTPCORECustomConnectingIOReactor extends org.apache.hc.c
         try {
             this.executorService.shutdown();
         } catch (Exception e) {
-            e.printStackTrace();
+        	this.log.error(e.getMessage(),e);
         }
     }
 }

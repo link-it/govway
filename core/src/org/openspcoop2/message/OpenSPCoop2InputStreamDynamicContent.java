@@ -66,7 +66,7 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 		if(this.buffer!=null && r!=-1) {
 			this.buffer.write(r);
 		}
-		//System.out.println("read(); [readAll:"+this.isReadAll+"] (r:"+r+") buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));
+		/**System.out.println("read(); [readAll:"+this.isReadAll+"] (r:"+r+") buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));*/
 		if(r==-1) {
 			this.isReadAll = true;
 		}
@@ -79,8 +79,8 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 		if(this.buffer!=null && r!=-1) {
 			this.buffer.write(b, off, r);
 		}
-		//System.out.println("read(byte[],off:"+off+",len:"+len+"); [readAll:"+this.isReadAll+"] (r:"+r+") buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));
-		//System.out.println("\t\t (leng:"+b.length+") ["+new String(b, off, r)+"]");
+		/**System.out.println("read(byte[],off:"+off+",len:"+len+"); [readAll:"+this.isReadAll+"] (r:"+r+") buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));*/
+		/**System.out.println("\t\t (leng:"+b.length+") ["+new String(b, off, r)+"]");*/
 		if(r==-1) {
 			this.isReadAll = true;
 		}
@@ -93,8 +93,8 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 		if(this.buffer!=null && r!=-1) {
 			this.buffer.write(b, 0, r);
 		}
-		//System.out.println("read(byte[]); [readAll:"+this.isReadAll+"] (r:"+r+") buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));
-		//System.out.println("\t\t (leng:"+b.length+") ["+new String(b)+"]");
+		/**System.out.println("read(byte[]); [readAll:"+this.isReadAll+"] (r:"+r+") buffer size: "+((this.buffer!=null) ? this.buffer.size() : "--n.d.--"));*/
+		/**System.out.println("\t\t (leng:"+b.length+") ["+new String(b)+"]");*/
 		if(r==-1) {
 			this.isReadAll = true;
 		}
@@ -103,13 +103,13 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 	
 	// wrapped only
 	
-//	@Override
-//	protected synchronized void afterRead(int n) {
-//		this.is.afterRead(n);
-//	}
+	/**@Override
+	protected synchronized void afterRead(int n) {
+		this.is.afterRead(n);
+	}*/
 
 	@Override
-	public long getCount() {
+	public synchronized long getCount() {
 		return this.is.getCount();
 	}
 
@@ -123,20 +123,20 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 		return this.is.available();
 	}
 
-//	@Override
-//	protected void beforeRead(int n) throws IOException {
-//		this.is.beforeRead(n);
-//	}
+	/**@Override
+	protected void beforeRead(int n) throws IOException {
+		this.is.beforeRead(n);
+	}*/
 
 	@Override
 	public void close() throws IOException {
 		this.is.close();
 	}
 
-//	@Override
-//	protected void handleIOException(IOException e) throws IOException {
-//		this.is.handleIOException(e);
-//	}
+	/**@Override
+	protected void handleIOException(IOException e) throws IOException {
+		this.is.handleIOException(e);
+	}*/
 
 	@Override
 	public synchronized void mark(int readlimit) {
@@ -183,18 +183,18 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 		return this.is.equals(obj);
 	}
 
-//	@Override
-//	protected Object clone() throws CloneNotSupportedException {
-//		return this.is.clone();
-//	}
+	/**@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return this.is.clone();
+	}*/
 
 	@Override
 	public String toString() {
 		return this.is.toString();
 	}
 
-//	@Override
-//	protected void finalize() throws Throwable {
-//		this.is.finalize();
-//	}
+	/**@Override
+	protected void finalize() throws Throwable {
+		this.is.finalize();
+	}*/
 }

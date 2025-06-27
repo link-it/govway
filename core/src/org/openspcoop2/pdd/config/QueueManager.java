@@ -287,10 +287,10 @@ public class QueueManager implements IMonitoraggioRisorsa{
 
 			// Sessione
 			Session s = con.createSession(false,QueueManager.openspcoopProperties.getAcknowledgeModeSessioneConnectionFactory());
-			if(s == null){
+			/**if(s == null){
 				con.close();
 				throw new OpenSPCoop2ConfigurationException("SessioneNonDisponibile");
-			}
+			}*/
 
 			// Object JMS
 			

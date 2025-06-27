@@ -2273,7 +2273,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				entries[index][1] = GruppiCostanti.SERVLET_NAME_GRUPPI_LIST;
 				index++;
 				// link utenti sotto quello di configurazione  generale
-				if (pu.isUtenti()) {
+				if (pu.isUtenti() && entriesUtenti!=null) {
 					for (int j = 0; j < entriesUtenti.length; j++) {
 						entries[index][0] = entriesUtenti[j][0];
 						entries[index][1] = entriesUtenti[j][1];
