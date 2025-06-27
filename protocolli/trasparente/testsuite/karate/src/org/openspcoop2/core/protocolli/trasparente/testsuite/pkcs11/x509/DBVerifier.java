@@ -89,7 +89,7 @@ public class DBVerifier {
 		
 		
 		String query = "select count(*) from transazioni where id = ?";
-		log().info(query);
+		log().info(query+"   (id:"+idTransazione+")");
 		
 		int count = dbUtils().readValue(query, Integer.class, idTransazione);
 		assertEquals("IdTransazione: "+idTransazione, 1, count);
