@@ -3950,7 +3950,8 @@ public class TransazioniService implements ITransazioniService {
 
 	}
 	private boolean isRicercaArchivioZip() {
-		return this.searchForm.isRicercaArchivioZip();
+		return this.searchForm!=null && // e' null nelle API
+				this.searchForm.isRicercaArchivioZip();
 	}
 	private boolean isRicercaLibera() {
 		if(!this.searchForm.isLive() && StringUtils.isNotEmpty(this.searchForm.getModalitaRicercaStorico())) {

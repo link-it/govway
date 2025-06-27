@@ -157,13 +157,6 @@
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_web-lib-mvc*.jar"/>
 		</antcall>
-		<!-- WEB Lib queue -->
-		<antcall target="_findBugs">
-			<param name="analyzeType" value="web-lib-queue"/>
-			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/lib/queue/src"/>
-			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
-			<param name="analyzeJar" value="openspcoop2_web-lib-queue*.jar"/>
-		</antcall>
 		<!-- WEB Lib users -->
 		<antcall target="_findBugs">
 			<param name="analyzeType" value="web-lib-users"/>

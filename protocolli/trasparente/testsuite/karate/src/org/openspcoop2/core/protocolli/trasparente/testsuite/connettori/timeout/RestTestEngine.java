@@ -644,6 +644,11 @@ public class RestTestEngine extends ConfigLoader {
 				Utilities.sleep(5000); // aspetto che termina il server
 				response.addHeader("GovWay-Transaction-ID", DBVerifier.getIdTransazioneByIdApplicativoRichiesta(applicativeId));
 			}
+			// caso su tomcat 11
+			else if(tipoEvento!=null && TipoEvento.CONTROLLO_TRAFFICO_REQUEST_READ_TIMEOUT.equals(tipoEvento) &&
+					t.getMessage()!=null && t.getMessage().contains("Error writing request body to server")) {
+				
+			}
 			else {
 				throw t;
 			}

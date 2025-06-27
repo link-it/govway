@@ -329,11 +329,6 @@
   </Match>
 
   <Match>
-    <Class name="org.openspcoop2.web.lib.queue.ClassQueue" />
-    <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
-  </Match>
-
-  <Match>
     <Class name="org.openspcoop2.web.lib.users.DriverUsersDB" />
     <Bug pattern="SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING" />
   </Match>
