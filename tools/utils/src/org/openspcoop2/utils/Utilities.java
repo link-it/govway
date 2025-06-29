@@ -33,6 +33,7 @@ import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,6 +52,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -87,19 +89,39 @@ public class Utilities {
 		}
 	}
 	
+	public static Executor newSingleThreadExecutor() {
+		return Executors.newSingleThreadExecutor();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static <T> T execute(int secondsTimeout, Callable<?> callable) throws TimeoutException, UtilsException {
-		try(ExecutorService executor = Executors.newSingleThreadExecutor()){
-			Future<?> future = executor.submit(callable);
-			return (T) future.get(secondsTimeout, TimeUnit.SECONDS); //timeout is in 2 seconds
-		} catch (TimeoutException e) {
-		    throw e;
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new UtilsException(e.getMessage(),e);
-		} catch (ExecutionException e) {
-			throw new UtilsException(e.getMessage(),e);
+		// Deve essere compilabile con java 11 per la testsuite
+		Executor ex = newSingleThreadExecutor();
+		if(ex instanceof ExecutorService) {
+			ExecutorService executor = (ExecutorService) ex;
+			try {
+				Future<?> future = executor.submit(callable);
+				return (T) future.get(secondsTimeout, TimeUnit.SECONDS); //timeout is in 2 seconds
+			} catch (TimeoutException e) {
+			    throw e;
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new UtilsException(e.getMessage(),e);
+			} catch (ExecutionException e) {
+				throw new UtilsException(e.getMessage(),e);
+			}finally {
+				executor.shutdownNow();
+				try {
+	                Method closeMethod = executor.getClass().getMethod("close");
+	                closeMethod.invoke(executor);
+	            } catch (NoSuchMethodException ignore) {
+	                // Java 11: ok, il metodo non c'è
+	            } catch (Exception e) {
+	            	throw new UtilsException(e.getMessage(),e);
+	            }
+			}
 		}
+		throw new UtilsException("ExecutorService unab");
 	}
 	
 	
