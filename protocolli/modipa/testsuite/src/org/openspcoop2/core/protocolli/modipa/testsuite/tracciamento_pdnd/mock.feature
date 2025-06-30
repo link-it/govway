@@ -19,8 +19,8 @@ Background:
     * def disabled = {}
     * def push = function(obj, elem) { obj[obj.size + ""] = elem; obj.size++; }
     * def filter = function(obj, state) { v = { size: 0 }; for (i = 0; i < obj.size; i++) { if (obj[i + ""].state == state) { push(v, obj[i + ""]) }}; return v; }
-    * def get = function(obj, id) { for (i = 0; i < obj.size; i++) { if ((obj[i + ""].tracingId + "") == (id + "")) { return obj[i + ""] }}; return null; }
-    * def set = function(obj, id, val) { for (i = 0; i < obj.size; i++) { if ((obj[i + ""].tracingId + "") == (id + "")) { obj[i + ""] = val; }}; }
+    * def get = function(obj, id) { for (i = 0; i < obj.size; i++) { if (obj[i + ""].tracingId == id) { return obj[i + ""] }}; return null; }
+    * def set = function(obj, id, val) { for (i = 0; i < obj.size; i++) { if (obj[i + ""].tracingId == id) { obj[i + ""] = val; }}; }
     * def slice = function(obj, i, j) { v  = { size: 0 }; for(;i<obj.size && i < j;i++){ push(v, obj[i + ""]); }; return v; }
     * def clear = function(pdd) { traces[pdd] = {size: 0}; disabled[pdd] = { tracings: false, submit: false, recover: false, replace: false, errors: false, status: false }; }
     * def array = function(obj) { arr = []; for(i=0;i<obj.size;i++){ arr.push(obj[i + ""]); }; return arr; }
@@ -149,7 +149,7 @@ Scenario: pathMatches('/tracings/submit') && methodIs('POST')
 	* def now = utils.getPart(request, contentType, 1)
 	* def trace = utils.getPart(request, contentType, 0)
 	
-	* def tracingId = traces[getHeader('pdd')].size
+	* def tracingId = utils.uuidFromInteger(traces[soggetto].size)
  	
  	* eval
  	"""
@@ -158,8 +158,8 @@ Scenario: pathMatches('/tracings/submit') && methodIs('POST')
     		status = 500
     		karate.fail("Fallimento controllato")
     	} else {
-    		push(traces[soggetto], { tracingId: tracingId + "", state: 'PENDING', date: now, content: trace })
-    		res = ({ tracingId: tracingId + "", errors: false})
+    		push(traces[soggetto], { tracingId: tracingId, state: 'PENDING', date: now, content: trace })
+    		res = ({ tracingId: tracingId, errors: false})
     		status = 200
     	}
     	karate.log(res, status, disabled[soggetto], traces)

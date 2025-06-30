@@ -497,6 +497,7 @@ CREATE TABLE statistiche_pdnd_tracing
 	method VARCHAR(20),
 	stato_pdnd VARCHAR(20) NOT NULL,
 	tentativi_pubblicazione INT NOT NULL,
+	force_publish BOOLEAN NOT NULL,
 	stato VARCHAR(20),
 	tracing_id VARCHAR(36),
 	error_details VARCHAR(65535),
@@ -516,6 +517,7 @@ CREATE INDEX INDEX_PDND_TRACING_ACTIVE ON statistiche_pdnd_tracing (pdd_codice,d
 
 ALTER TABLE statistiche_pdnd_tracing ALTER COLUMN stato_pdnd SET DEFAULT 'WAITING';
 ALTER TABLE statistiche_pdnd_tracing ALTER COLUMN tentativi_pubblicazione SET DEFAULT 0;
+ALTER TABLE statistiche_pdnd_tracing ALTER COLUMN force_publish SET DEFAULT false;
 
 CREATE TABLE statistiche_pdnd_tracing_init_seq (id BIGINT);
 INSERT INTO statistiche_pdnd_tracing_init_seq VALUES (NEXT VALUE FOR seq_statistiche_pdnd_tracing);

@@ -13,6 +13,7 @@ CREATE TABLE statistiche_pdnd_tracing
 	method VARCHAR2(20),
 	stato_pdnd VARCHAR2(20) NOT NULL,
 	tentativi_pubblicazione NUMBER NOT NULL,
+	force_publish NUMBER NOT NULL,
 	stato VARCHAR2(20),
 	tracing_id VARCHAR2(36),
 	error_details CLOB,
@@ -32,6 +33,7 @@ CREATE INDEX INDEX_PDND_TRACING_ACTIVE ON statistiche_pdnd_tracing (pdd_codice,d
 
 ALTER TABLE statistiche_pdnd_tracing MODIFY stato_pdnd DEFAULT 'WAITING';
 ALTER TABLE statistiche_pdnd_tracing MODIFY tentativi_pubblicazione DEFAULT 0;
+ALTER TABLE statistiche_pdnd_tracing MODIFY force_publish DEFAULT 0;
 
 CREATE TRIGGER trg_statistiche_pdnd_tracing
 BEFORE
