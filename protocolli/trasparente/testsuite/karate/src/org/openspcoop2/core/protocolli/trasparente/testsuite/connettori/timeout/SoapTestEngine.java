@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -53,6 +54,7 @@ import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -505,27 +507,29 @@ public class SoapTestEngine extends ConfigLoader {
 		IDSoggetto idErogatore = new IDSoggetto("gw", "SoggettoInternoTest");
 		IDServizio idServizioObject = IDServizioFactory.getInstance().getIDServizioFromValues("gw", "TempiRispostaSOAP", idErogatore, 1);
 		
-		String idServizio = "SoggettoInternoTest/TempiRispostaSOAP/v1";
-		
+		String nomeServizio = "TempiRispostaSOAP";
+		String idServizio = "SoggettoInternoTest/" + nomeServizio + "/v1";
 		String idEventoServizio = idServizio;
 		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
 			idEventoServizio = "SoggettoInternoTestFruitore/"+idServizio;
 		}
 
+		String azione = operazione;
 		String url = tipoServizio == TipoServizio.EROGAZIONE
-				? System.getProperty("govway_base_path") + "/in/"+idServizio+"/"+operazione
-				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/"+idServizio+"/"+operazione;
+				? System.getProperty("govway_base_path") + "/in/"+idServizio+"/"
+				: System.getProperty("govway_base_path") + "/out/SoggettoInternoTestFruitore/"+idServizio+"/";
 		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
 			if(!"connectionTimeoutGlobale".equals(operazione) && 
 					!"readTimeoutGlobale".equals(operazione) && 
 					!"connessioneClientInterrotta".equals(operazione) && 
 					!"sendRegistrazioneAbilitataClientSendSlow".equals(operazione) && 
 					!"sendRegistrazioneDisabilitataClientSendSlow".equals(operazione)) {
-				url=url+"."+tipoTest;
+				azione=operazione+"."+tipoTest;
 			}
 		}
-		url=url+"?test="+tipoTest;
+		url=url + azione +"?test="+tipoTest;
 		
+		Date now = new Date();
 		HttpRequest request = new HttpRequest();
 		request.addHeader(HttpConstants.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION, "\"test\"");
 		
@@ -567,8 +571,37 @@ public class SoapTestEngine extends ConfigLoader {
 				response.setContentType(HttpConstants.CONTENT_TYPE_SOAP_1_1);
 				Utilities.sleep(5000); // aspetto che termina il server
 				response.addHeader("GovWay-Transaction-ID", DBVerifier.getIdTransazioneByIdApplicativoRichiesta(applicativeId));
-			}
-			else {
+			}else if (t instanceof UtilsException u && u.getMessage().equals("Error writing request body to server")) {
+				Utilities.sleep(5000); // aspetto che termina il server
+				String idTransazione = DBVerifier.getIdTransazioneLastRequest(nomeServizio, 1, azione.replace("/", "."), now);
+				
+				String error = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+						+ "    <SOAP-ENV:Header/>\n"
+						+ "    <SOAP-ENV:Body>\n"
+						+ "        <SOAP-ENV:Fault>\n"
+						+ "            <faultcode>SOAP-ENV:Client.RequestReadTimeout</faultcode>\n"
+						+ "            <faultstring xml:lang=\"en-US\">" + REQUEST_TIMED_OUT_MESSAGE + "</faultstring>\n"
+						+ "            <faultactor>http://govway.org/integration</faultactor>\n"
+						+ "            <detail>\n"
+						+ "                <problem xmlns=\"urn:ietf:rfc:7807\">\n"
+						+ "                    <type>https://govway.org/handling-errors/400/"+REQUEST_TIMED_OUT+".html</type>\n"
+						+ "                    <title>" + REQUEST_TIMED_OUT + "</title>\n"
+						+ "                    <status>400</status>\n"
+						+ "                    <detail>" + REQUEST_TIMED_OUT_MESSAGE + "</detail>\n"
+						+ "                    <govway_id>" + idTransazione + "</govway_id>\n"
+						+ "                </problem>\n"
+						+ "            </detail>\n"
+						+ "        </SOAP-ENV:Fault>\n"
+						+ "    </SOAP-ENV:Body>\n"
+						+ "    </SOAP-ENV:Envelope>";
+								
+				response = new HttpResponse();
+				response.setResultHTTPOperation(500);
+				response.setContent(error.getBytes());
+				response.setContentType(HttpConstants.CONTENT_TYPE_TEXT_XML);
+				response.addHeader(Headers.GovWayTransactionErrorType, REQUEST_TIMED_OUT);
+				response.addHeader("GovWay-Transaction-ID", idTransazione);
+			} else {
 				throw t;
 			}
 		}
