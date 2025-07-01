@@ -113,13 +113,13 @@ public class LoginBean extends AbstractLoginBean {
 	private Boolean visualizzaMenuModalita = null;
 	private Boolean visualizzaSezioneModalita = null;
 	private List<MenuModalitaItem> vociMenuModalita = null;
-	private Semaphore vociMenuModalitaSemaphore = new Semaphore("LoginBean.vociMenuModalita");
+	private transient Semaphore vociMenuModalitaSemaphore = new Semaphore("LoginBean.vociMenuModalita");
 	
 	private String soggettoPddMonitor = null;
 	private Boolean visualizzaMenuSoggetto = null;
 	private Boolean visualizzaSezioneSoggetto = null;
 	private List<MenuModalitaItem> vociMenuSoggetto = null;
-	private Semaphore vociMenuSoggettoSemaphore = new Semaphore("LoginBean.vociMenuSoggetto");
+	private transient Semaphore vociMenuSoggettoSemaphore = new Semaphore("LoginBean.vociMenuSoggetto");
 	private Boolean visualizzaLinkSelezioneSoggetto = null;
 	
 	private Configurazione configurazioneGenerale = null;

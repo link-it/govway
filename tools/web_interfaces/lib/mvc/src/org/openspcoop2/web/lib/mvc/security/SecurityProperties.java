@@ -53,7 +53,7 @@ public class SecurityProperties {
 		}
 	}
 
-	public static SecurityProperties getInstance() {
+	public static synchronized SecurityProperties getInstance() {
 		return instance;
 	}
 

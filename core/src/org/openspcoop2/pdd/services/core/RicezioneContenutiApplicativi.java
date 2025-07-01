@@ -392,7 +392,7 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 	private String[] tipiIntegrazionePD;
 	
 	private boolean portaStateless = false;
-	private boolean oneWayVers11;
+	private boolean oneWayVers11 = false;
 	private boolean richiestaAsincronaSimmetricaStateless;
 	
 	private boolean localForward;

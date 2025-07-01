@@ -97,11 +97,14 @@ public class Utilities {
 	public static <T> T execute(int secondsTimeout, Callable<?> callable) throws TimeoutException, UtilsException {
 		// Deve essere compilabile con java 11 per la testsuite
 		Executor ex = newSingleThreadExecutor();
+		T res = null;
+		Exception exc = null;
 		if(ex instanceof ExecutorService) {
+			
 			ExecutorService executor = (ExecutorService) ex;
 			try {
 				Future<?> future = executor.submit(callable);
-				return (T) future.get(secondsTimeout, TimeUnit.SECONDS); //timeout is in 2 seconds
+				res = (T) future.get(secondsTimeout, TimeUnit.SECONDS); //timeout is in 2 seconds
 			} catch (TimeoutException e) {
 			    throw e;
 			} catch (InterruptedException e) {
@@ -117,10 +120,15 @@ public class Utilities {
 	            } catch (NoSuchMethodException ignore) {
 	                // Java 11: ok, il metodo non c'è
 	            } catch (Exception e) {
-	            	throw new UtilsException(e.getMessage(),e);
+	            	exc = e;
 	            }
 			}
 		}
+		
+		if (res != null)
+			return res;
+		if (exc != null)
+			throw new UtilsException(exc.getMessage(), exc);
 		throw new UtilsException("ExecutorService unab");
 	}
 	

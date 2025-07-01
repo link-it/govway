@@ -3384,7 +3384,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 
 
 			/* ------------------------- Gestione Errori Consegna ---------------------------- */
-			this.msgDiag.mediumDebug("Gestione errore consegna della risposta...");
+			if (this.msgDiag != null)
+				this.msgDiag.mediumDebug("Gestione errore consegna della risposta...");
 			// Invoker Non Supportato
 			if( this.invokerNonSupportato  ){
 				String msgErroreConnettoreNonSupportato = "Connettore non supportato [tipo:"+this.tipoConnector+" class:"+this.connectorClass+"]";
@@ -3496,9 +3497,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 							responseLimitExceeded = limitedExceededMessage;
 						}
 					}
-					if(connettoreMsgRequest.getParseException() != null || 
+					if(this.pddContext != null && (connettoreMsgRequest.getParseException() != null || 
 							requestReadTimeout!=null || 
-							requestLimitExceeded!=null){
+							requestLimitExceeded!=null)){
 						
 						ParseException parseException = null;
 						Throwable tParsing = null;
@@ -3547,7 +3548,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,errorMsg);
 						return esito;
-					} else if(this.responseMessage==null && 
+					} else if(this.responseMessage==null && this.pddContext != null && 
 							!this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)){
 						// Genero una risposta di errore
 						IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.SERVICE_UNAVAILABLE;
@@ -3580,7 +3581,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,messaggioErroreConsegnaConnettore);
 						return esito;
-					} else if(this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION) ||
+					} else if(this.pddContext != null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION) ||
 							this.responseMessage.getParseException() != null ||
 							responseReadTimeout!=null ||
 							responseLimitExceeded!=null){
@@ -3710,7 +3711,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
                   - Se si riceve un Fault, il fault viene loggato.
 	        ------------- */
 			
-			this.msgDiag.mediumDebug("Registrazione eventuale fault...");
+			if (this.msgDiag != null)
+				this.msgDiag.mediumDebug("Registrazione eventuale fault...");
 			// Effettuo log del fault
 			if(this.soapFault!=null){
 				this.msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.safe_toString(this.faultMessageFactory, this.soapFault, this.log));
@@ -3882,7 +3884,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 						}
 					}
 
-					this.msgDiag.mediumDebug("Gestione risposta...");
+					if (this.msgDiag != null)
+						this.msgDiag.mediumDebug("Gestione risposta...");
+					
 					boolean rispostaVuotaValidaPerAsincroniStatelessModalitaAsincrona = false;
 					if(this.responseMessage == null && 
 							!(this.localForward && this.richiestaApplicativa!=null && Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(this.richiestaApplicativa.getScenario())) ){
@@ -4570,12 +4574,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 
 			/* ---------- Gestione Transazione Modulo ---------------- */
 
-			// messaggio finale
-			this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, this.tipoConnector);
-			this.msgDiag.logPersonalizzato("gestioneConsegnaTerminata");
-
-			// Commit JDBC della risposta
-			this.msgDiag.mediumDebug("Commit delle operazioni per la gestione della richiesta...");
+			if (this.msgDiag != null) {
+				// messaggio finale
+				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_CONNETTORE, this.tipoConnector);
+				this.msgDiag.logPersonalizzato("gestioneConsegnaTerminata");
+	
+				// Commit JDBC della risposta
+				this.msgDiag.mediumDebug("Commit delle operazioni per la gestione della richiesta...");
+			}
+			
 			this.openspcoopstate.commit();
 
 			// Aggiornamento cache messaggio

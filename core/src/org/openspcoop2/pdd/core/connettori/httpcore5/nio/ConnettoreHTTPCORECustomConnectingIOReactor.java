@@ -20,14 +20,11 @@
 package org.openspcoop2.pdd.core.connettori.httpcore5.nio;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadFactory;
 
 import org.apache.hc.core5.function.Callback;
-import org.apache.hc.core5.function.Decorator;
 import org.apache.hc.core5.reactor.IOEventHandlerFactory;
 import org.apache.hc.core5.reactor.IOReactorConfig;
 import org.apache.hc.core5.reactor.IOSession;
-import org.apache.hc.core5.reactor.IOSessionListener;
 import org.slf4j.Logger;
 
 /**

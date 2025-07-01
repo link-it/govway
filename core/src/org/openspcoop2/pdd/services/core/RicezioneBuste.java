@@ -4472,7 +4472,8 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 			this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC)) {
 			Object o = this.pddContext.get(org.openspcoop2.core.constants.Costanti.MODI_JTI_REQUEST_ID_UPDATE_DIAGNOSTIC);
 			if(o instanceof String s) {
-				this.msgDiag.updateKeywordIdMessaggioRichiesta(s);
+				if (this.msgDiag != null)
+					this.msgDiag.updateKeywordIdMessaggioRichiesta(s);
 				this.idMessageRequest = (String)o;
 				this.msgContext.getProtocol().setIdRichiesta(this.idMessageRequest);
 			}
@@ -4506,8 +4507,11 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 					}
 					bf.append(this.tipiIntegrazionePA[i]);
 				}
-				this.msgDiag.addKeyword(CostantiPdD.KEY_TIPI_INTEGRAZIONE ,bf.toString() );
-				this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"riferimentoIdRichiesta.nonFornito");
+				
+				if (this.msgDiag != null) {
+					this.msgDiag.addKeyword(CostantiPdD.KEY_TIPI_INTEGRAZIONE ,bf.toString() );
+					this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE,"riferimentoIdRichiesta.nonFornito");
+				}
 				
 				// Tracciamento richiesta: non ancora registrata
 				if(this.msgContext.isTracciamentoAbilitato()){
@@ -6367,7 +6371,8 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		try{
 			if(this.functionAsRouter){ // solo stateful
 				this.msgDiag.mediumDebug("Invio messaggio al modulo di InoltroBuste (router)...");
-				this.msgRequest.aggiornaProprietarioMessaggio(org.openspcoop2.pdd.mdb.InoltroBuste.ID_MODULO);
+				if (this.msgRequest != null)
+					this.msgRequest.aggiornaProprietarioMessaggio(org.openspcoop2.pdd.mdb.InoltroBuste.ID_MODULO);
 				// Creazione InoltroBuste
 				this.msgDiag.highDebug("Creazione ObjectMessage for send nell'infrastruttura.");
 				inoltroMSG.setBusta(this.bustaRichiesta);

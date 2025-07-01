@@ -817,7 +817,7 @@ public class AccordoServizioParteComuneMappingCore extends ControlStationCore {
 					if(FormatoSpecifica.OPEN_API_3.equals(formato)) {
 						apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
 					}
-					else if(FormatoSpecifica.SWAGGER_2.equals(formato)) {
+					else {
 						apiReader = ApiFactory.newApiReader(ApiFormats.SWAGGER_2);
 					}
 					ApiReaderConfig config = new ApiReaderConfig();

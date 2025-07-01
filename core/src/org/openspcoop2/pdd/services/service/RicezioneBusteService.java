@@ -1073,24 +1073,28 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 			if(requestReadTimeout != null) {
 				tParsing = (TimeoutIOException) this.pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
 				sParsing = tParsing;
-				msgErrore = tParsing.getMessage();
+				if (tParsing != null)
+					msgErrore = tParsing.getMessage();
 			}
 			else if(requestLimitExceeded != null) {
 				tParsing = (LimitExceededIOException) this.pddContext.getObject(LimitedInputStream.EXCEPTION_KEY);
 				sParsing = tParsing;
-				msgErrore = tParsing.getMessage();
+				if (tParsing != null)
+					msgErrore = tParsing.getMessage();
 			}
 			else if( this.requestMessage!=null && this.requestMessage.getParseException() != null ){
 				parseException = this.requestMessage.getParseException();
 				tParsing = parseException.getParseException();
 				sParsing = parseException.getSourceException();
-				msgErrore = tParsing.getMessage();
+				if (tParsing != null)
+					msgErrore = tParsing.getMessage();
 			}
 			else {
 				parseException = (ParseException) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
 				tParsing = parseException.getParseException();
 				sParsing = parseException.getSourceException();
-				msgErrore = tParsing.getMessage();
+				if (tParsing != null)
+					msgErrore = tParsing.getMessage();
 			}	
 			
 			if(msgErrore==null && tParsing!=null){
@@ -1132,24 +1136,28 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 			if(responseReadTimeout != null) {
 				tParsing = (TimeoutIOException) this.pddContext.getObject(TimeoutInputStream.EXCEPTION_KEY);
 				sParsing = tParsing;
-				msgErrore = tParsing.getMessage();
+				if (tParsing != null)
+					msgErrore = tParsing.getMessage();
 			}
 			else if(responseLimitExceeded != null) {
 				tParsing = (LimitExceededIOException) this.pddContext.getObject(LimitedInputStream.EXCEPTION_KEY);
 				sParsing = tParsing;
-				msgErrore = tParsing.getMessage();
+				if (tParsing != null)
+					msgErrore = tParsing.getMessage();
 			}
 			else if( this.responseMessage!=null && this.responseMessage.getParseException() != null ){
 				parseException = this.responseMessage.getParseException();
 				tParsing = parseException.getParseException();
 				sParsing = parseException.getSourceException();
-				msgErrore = tParsing.getMessage();
+				if (tParsing != null)
+					msgErrore = tParsing.getMessage();
 			}
 			else{
 				parseException = (ParseException) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
 				tParsing = parseException.getParseException();
 				sParsing = parseException.getSourceException();
-				msgErrore = tParsing.getMessage();
+				if (tParsing != null)
+					msgErrore = tParsing.getMessage();
 			}
 
 			if(msgErrore==null && tParsing!=null){
@@ -1223,16 +1231,20 @@ public class RicezioneBusteService implements IRicezioneService, IAsyncResponseC
 		Date dataRispostaSpedita = null; 
 		Transazione transazioneDaAggiornare = null;
 
-		if(this.context.getMsgDiagnostico()!=null){
-			this.msgDiag = this.context.getMsgDiagnostico();
+		if(this.context != null) {
+			if (this.context.getMsgDiagnostico()!=null){
+				this.msgDiag = this.context.getMsgDiagnostico();
+			}
+			if(this.context.getResponseHeaders()==null) {
+				this.context.setResponseHeaders(new HashMap<>());
+			}
+			
+			ServicesUtils.setGovWayHeaderResponse(this.requestMessage!=null ? this.requestMessage.getServiceBinding() : this.requestInfo.getProtocolServiceBinding(),
+					this.responseMessage, this.openSPCoopProperties,
+					this.context.getResponseHeaders(), this.logCore, false, this.context.getPddContext(), this.requestInfo);
 		}
-		if(this.context.getResponseHeaders()==null) {
-			this.context.setResponseHeaders(new HashMap<>());
-		}
-		ServicesUtils.setGovWayHeaderResponse(this.requestMessage!=null ? this.requestMessage.getServiceBinding() : this.requestInfo.getProtocolServiceBinding(),
-				this.responseMessage, this.openSPCoopProperties,
-				this.context.getResponseHeaders(), this.logCore, false, this.context.getPddContext(), this.requestInfo);
-		if(this.context.getResponseHeaders()!=null){
+		
+		if(this.context != null && this.context.getResponseHeaders()!=null){
 			Iterator<String> keys = this.context.getResponseHeaders().keySet().iterator();
 			while (keys.hasNext()) {
 				String key = keys.next();

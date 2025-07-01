@@ -24,8 +24,8 @@ public class TransazioneArchivioBean implements Serializable {
 	private byte[] tracceRaw;
 	private byte[] diagnosticiRaw;
 	
-	private Map<String,TransazioneApplicativoServerArchivioBean> consegne;
-	private Map<TipoMessaggio, ContenutiTransazioneArchivioBean> contenuti;
+	private transient Map<String,TransazioneApplicativoServerArchivioBean> consegne;
+	private transient Map<TipoMessaggio, ContenutiTransazioneArchivioBean> contenuti;
 	
 	public TransazioneArchivioBean(String idTransazione) {
 		this.idTransazione = idTransazione;

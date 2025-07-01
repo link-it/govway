@@ -86,6 +86,10 @@ public class ArchivioZipManager {
 	
 	private boolean inizializzaInformazioniSupplementari = false;
 
+	private static final long MAX_ZIP_SIZE = 1_000_000_000_000l; // MAX SIZE 1Gb
+	private static final long MAX_NUMBER_ENTRY = 10_000;
+	private static final long UNCOMPRESS_COMPRESS_RATIO = 10;
+	
 	public ArchivioZipManager() {
 		this.mapTransazioni = new HashMap<>();
 
@@ -136,15 +140,26 @@ public class ArchivioZipManager {
 
 	public void leggiArchivio(UploadItem uploadItem) throws ArchivioZipException {
 		String fileName = uploadItem.getFileName(); // nome del file caricato
+		long entryRead = 0;
+		long totalSize = 0;
+		
 		try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(uploadItem.getData()))) {
 			ZipEntry entry;
 			String chiave = null;
 			String chiaveConsegna = null;
 			// Itera attraverso il contenuto del file ZIP
 			while ((entry = zis.getNextEntry()) != null) {
+				
+				entryRead++;
+				if (entryRead > MAX_NUMBER_ENTRY)
+					throw new ArchivioZipException("numero di entry dell'archivio zip troppo grande >= " + MAX_NUMBER_ENTRY);
 				log.debug("Analisi file: {}", entry.getName());
-				byte[] fileContent = readFileContent(zis);
-
+				byte[] fileContent = readFileContent(entry, zis);
+				totalSize += fileContent.length;
+				
+				if (totalSize > MAX_ZIP_SIZE)
+					throw new ArchivioZipException("archivio zip troppo grande (Zip bomb?) >= " + MAX_ZIP_SIZE);
+				
 				// filtro ricerca
 				if (entry.getName().endsWith(File.separatorChar + NOME_FILE_SEARCH_FILTER_XML)) {
 					log.debug("File filtro: {}", entry.getName());
@@ -756,12 +771,17 @@ public class ArchivioZipManager {
 		return chiaveConsegna;
 	}
 
-	private static byte[] readFileContent(ZipInputStream zis) throws IOException {
+	private static byte[] readFileContent(ZipEntry entry, ZipInputStream zis) throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		byte[] buffer = new byte[1024];
 		int bytesRead;
+		int totalSize = 0;
 		while ((bytesRead = zis.read(buffer)) != -1) {
 			outputStream.write(buffer, 0, bytesRead);
+			totalSize += bytesRead;
+			
+			if ((double)totalSize / entry.getCompressedSize() >= UNCOMPRESS_COMPRESS_RATIO)
+				throw new IOException("Compress ratio to high (Zip bomb?) >= " + UNCOMPRESS_COMPRESS_RATIO);
 		}
 		return outputStream.toByteArray();
 	}

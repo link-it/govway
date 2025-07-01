@@ -206,7 +206,7 @@ public class HeadersFilter implements Filter {
 		Path path = Paths.get(requestUri);
 
 		// Ottieni l'ultimo sotto-path es. pagina.jsf
-		String lastPathSegment = path.getFileName().toString();
+		String lastPathSegment = (path == null || path.getFileName() == null) ? "" : path.getFileName().toString();
 
 		// Ottenere tutti i parametri dalla richiesta
 		Enumeration<String> paramNames = seqReq.getParameterNames();

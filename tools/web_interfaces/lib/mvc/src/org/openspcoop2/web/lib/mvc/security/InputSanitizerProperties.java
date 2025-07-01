@@ -48,7 +48,7 @@ public class InputSanitizerProperties {
 		}
 	}
 
-	public static InputSanitizerProperties getInstance() {
+	public static synchronized InputSanitizerProperties getInstance() {
 		return instance;
 	}
 

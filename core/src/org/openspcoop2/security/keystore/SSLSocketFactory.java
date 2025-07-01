@@ -54,7 +54,7 @@ public class SSLSocketFactory implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private SSLConfig sslConfig;
-	private SSLContext sslContext;
+	private transient SSLContext sslContext;
 	private transient javax.net.ssl.SSLSocketFactory sslSocketFactoryObject;
 
 	@Override

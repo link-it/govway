@@ -88,8 +88,8 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	private String id;
 
 	private boolean gestionePassword = true;
-	private ICrypt passwordManager;
-	private ICrypt passwordManager_backwardCompatibility;
+	private transient ICrypt passwordManager;
+	private transient ICrypt passwordManager_backwardCompatibility;
 
 	private PasswordVerifier passwordVerifier = null;
 	

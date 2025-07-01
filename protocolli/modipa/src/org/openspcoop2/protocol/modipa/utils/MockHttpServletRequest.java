@@ -473,12 +473,12 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
 	@Override
 	public String getRequestId() {
-		return this.getRequestId();
+		return this.req.getRequestId();
 	}
 
 	@Override
 	public ServletConnection getServletConnection() {
-		return this.getServletConnection();
+		return this.req.getServletConnection();
 	}
 	
 	public void setHeaders(Map<String, List<String>> headers) {

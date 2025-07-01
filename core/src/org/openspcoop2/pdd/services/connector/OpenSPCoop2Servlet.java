@@ -286,11 +286,12 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			op2Properties = OpenSPCoop2Properties.getInstance();
 			
-			boolean nioEnabled = op2Properties.isNIOEnabled();
+			boolean nioEnabled = false;
 			
 			boolean printCertificate = false;
 			FunctionContextsCustom customContexts = null;
 			if(op2Properties!=null) {
+				nioEnabled = op2Properties.isNIOEnabled();
 				printCertificate = op2Properties.isPrintInfoCertificate();
 				customContexts = op2Properties.getCustomContexts();
 			}

@@ -210,111 +210,112 @@ public class Loader {
 				connectionSQL = DriverManager.getConnection(connectionURL);
 			}
 			
-			DataSource ds = new SingleConnectionDataSource(connectionSQL, true); 
-			System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-			System.setProperty(Context.URL_PKG_PREFIXES, "org.apache.naming");
-			bindDatasource(ds, DS_JNDI_NAME);
+			try (SingleConnectionDataSource ds = new SingleConnectionDataSource(connectionSQL, true)) {
+				System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
+				System.setProperty(Context.URL_PKG_PREFIXES, "org.apache.naming");
+				bindDatasource(ds, DS_JNDI_NAME);
+				
+				logCoreDebug("Inizializzazione connessione database terminata");
+				
+				
+				
+				logCoreDebug("Inizializzazione risorse libreria in corso...");
+				
+				ConfigurazionePdD configPdD = initProtocolFactory(protocolloDefault);
+				
+				initExtendedInfoManager();
+				
+				initCorePluginLoader(configPdD, loaderProperties, databaseProperties);
+				
+				Properties p = new Properties();
+				p.put("dataSource", DS_JNDI_NAME);
+				p.put("tipoDatabase", tipoDatabase);
+				if(!org.openspcoop2.web.ctrlstat.config.DatasourceProperties.initialize(p,logCore)){
+					throw new CoreException("Inizializzazione fallita");
+				}
 			
-			logCoreDebug("Inizializzazione connessione database terminata");
-			
-			
-			
-			logCoreDebug("Inizializzazione risorse libreria in corso...");
-			
-			ConfigurazionePdD configPdD = initProtocolFactory(protocolloDefault);
-			
-			initExtendedInfoManager();
-			
-			initCorePluginLoader(configPdD, loaderProperties, databaseProperties);
-			
-			Properties p = new Properties();
-			p.put("dataSource", DS_JNDI_NAME);
-			p.put("tipoDatabase", tipoDatabase);
-			if(!org.openspcoop2.web.ctrlstat.config.DatasourceProperties.initialize(p,logCore)){
-				throw new CoreException("Inizializzazione fallita");
+				initUtenze(loaderProperties);
+				
+				initConnettori(confDir, protocolloDefault);
+							
+				logCoreDebug("Inizializzazione risorse libreria terminata");
+	
+				
+	
+				logCoreDebug("Inizializzazione driver ...");
+				
+				// istanzio il driver
+				DriverConfigurazioneDB driverConfigDB = new DriverConfigurazioneDB(connectionSQL, logSql, tipoDatabase);
+				DriverRegistroServiziDB driverRegistroDB = new DriverRegistroServiziDB(connectionSQL, logSql,tipoDatabase);
+							
+				// Reader
+				RegistryReader registryReader = new RegistryReader(driverRegistroDB,logSql);
+				ConfigIntegrationReader configReader = new ConfigIntegrationReader(driverConfigDB,logSql);
+							
+				// istanzio driver per Plugins
+				ServiceManagerProperties propertiesPlugins = new ServiceManagerProperties();
+				propertiesPlugins.setDatabaseType(tipoDatabase);
+				propertiesPlugins.setShowSql(true);
+				org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager jdbcServiceManagerPlugins = 
+						new org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesPlugins, logSql);
+				
+				// istanzio driver per ControlloTraffico
+				ServiceManagerProperties propertiesControlloTraffico = new ServiceManagerProperties();
+				propertiesControlloTraffico.setDatabaseType(tipoDatabase);
+				propertiesControlloTraffico.setShowSql(true);
+				org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager jdbcServiceManagerControlloTraffico = 
+						new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesControlloTraffico, logSql);
+				
+				// istanzio driver per Allarmi
+				ServiceManagerProperties propertiesAllarmi = new ServiceManagerProperties();
+				propertiesAllarmi.setDatabaseType(tipoDatabase);
+				propertiesAllarmi.setShowSql(true);
+				org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager jdbcServiceManagerAllarmi = 
+						new org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesAllarmi, logSql);
+				
+				// Istanzio ArchiviEngineControlStation
+				ControlStationCore core = new ControlStationCore(true, null, protocolloDefault);
+				ArchiviCore archiviCore = new ArchiviCore(core);
+				ArchiveEngine importerEngine = new ArchiveEngine(driverRegistroDB, 
+						driverConfigDB,
+						jdbcServiceManagerPlugins,
+						jdbcServiceManagerControlloTraffico,
+						jdbcServiceManagerAllarmi,
+						archiviCore, smista, userLogin);
+				
+				logCoreDebug("Inizializzazione driver terminata");
+				
+				logCoreInfo("Inizializzazione engine terminata");			
+				
+				
+				
+				// parsing
+				logCoreInfo("Lettura archivio ...");
+				IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolloDefault);
+				IArchive archiveEngine = pf.createArchive();
+				Archive archive = archiveEngine.importArchive(archiveFile, mode, modeType, registryReader, configReader,
+						validateDocuments, importInformationMissingGlobalPlaceholder);
+				logCoreInfo("Lettura archivio effettuata");
+				
+				
+				// validate
+				logCoreInfo("Validazione archivio ...");
+				ArchiveValidator validator = new ArchiveValidator(registryReader);
+				ImportInformationMissingCollection importInformationMissingCollection = new ImportInformationMissingCollection();
+				validator.validateArchive(archive, protocolloDefault, validateDocuments, importInformationMissingCollection, userLogin, 
+						showCorrelazioneAsincronaInAccordi,delete);
+				logCoreInfo("Validazione archivio effettuata");
+				
+				// finalize
+				logCoreInfo("Finalizzazione archivio ...");
+				archiveEngine.finalizeImportArchive(archive, mode, modeType, registryReader, configReader,
+						validateDocuments, importInformationMissingGlobalPlaceholder);
+				logCoreInfo("Finalizzazione archivio effettuata");
+				
+				// store
+				process(importerEngine, userLogin, loaderProperties,
+						archiveEngine, archive);	
 			}
-		
-			initUtenze(loaderProperties);
-			
-			initConnettori(confDir, protocolloDefault);
-						
-			logCoreDebug("Inizializzazione risorse libreria terminata");
-
-			
-
-			logCoreDebug("Inizializzazione driver ...");
-			
-			// istanzio il driver
-			DriverConfigurazioneDB driverConfigDB = new DriverConfigurazioneDB(connectionSQL, logSql, tipoDatabase);
-			DriverRegistroServiziDB driverRegistroDB = new DriverRegistroServiziDB(connectionSQL, logSql,tipoDatabase);
-						
-			// Reader
-			RegistryReader registryReader = new RegistryReader(driverRegistroDB,logSql);
-			ConfigIntegrationReader configReader = new ConfigIntegrationReader(driverConfigDB,logSql);
-						
-			// istanzio driver per Plugins
-			ServiceManagerProperties propertiesPlugins = new ServiceManagerProperties();
-			propertiesPlugins.setDatabaseType(tipoDatabase);
-			propertiesPlugins.setShowSql(true);
-			org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager jdbcServiceManagerPlugins = 
-					new org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesPlugins, logSql);
-			
-			// istanzio driver per ControlloTraffico
-			ServiceManagerProperties propertiesControlloTraffico = new ServiceManagerProperties();
-			propertiesControlloTraffico.setDatabaseType(tipoDatabase);
-			propertiesControlloTraffico.setShowSql(true);
-			org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager jdbcServiceManagerControlloTraffico = 
-					new org.openspcoop2.core.controllo_traffico.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesControlloTraffico, logSql);
-			
-			// istanzio driver per Allarmi
-			ServiceManagerProperties propertiesAllarmi = new ServiceManagerProperties();
-			propertiesAllarmi.setDatabaseType(tipoDatabase);
-			propertiesAllarmi.setShowSql(true);
-			org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager jdbcServiceManagerAllarmi = 
-					new org.openspcoop2.core.allarmi.dao.jdbc.JDBCServiceManager(connectionSQL, propertiesAllarmi, logSql);
-			
-			// Istanzio ArchiviEngineControlStation
-			ControlStationCore core = new ControlStationCore(true, null, protocolloDefault);
-			ArchiviCore archiviCore = new ArchiviCore(core);
-			ArchiveEngine importerEngine = new ArchiveEngine(driverRegistroDB, 
-					driverConfigDB,
-					jdbcServiceManagerPlugins,
-					jdbcServiceManagerControlloTraffico,
-					jdbcServiceManagerAllarmi,
-					archiviCore, smista, userLogin);
-			
-			logCoreDebug("Inizializzazione driver terminata");
-			
-			logCoreInfo("Inizializzazione engine terminata");			
-			
-			
-			
-			// parsing
-			logCoreInfo("Lettura archivio ...");
-			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocolloDefault);
-			IArchive archiveEngine = pf.createArchive();
-			Archive archive = archiveEngine.importArchive(archiveFile, mode, modeType, registryReader, configReader,
-					validateDocuments, importInformationMissingGlobalPlaceholder);
-			logCoreInfo("Lettura archivio effettuata");
-			
-			
-			// validate
-			logCoreInfo("Validazione archivio ...");
-			ArchiveValidator validator = new ArchiveValidator(registryReader);
-			ImportInformationMissingCollection importInformationMissingCollection = new ImportInformationMissingCollection();
-			validator.validateArchive(archive, protocolloDefault, validateDocuments, importInformationMissingCollection, userLogin, 
-					showCorrelazioneAsincronaInAccordi,delete);
-			logCoreInfo("Validazione archivio effettuata");
-			
-			// finalize
-			logCoreInfo("Finalizzazione archivio ...");
-			archiveEngine.finalizeImportArchive(archive, mode, modeType, registryReader, configReader,
-					validateDocuments, importInformationMissingGlobalPlaceholder);
-			logCoreInfo("Finalizzazione archivio effettuata");
-			
-			// store
-			process(importerEngine, userLogin, loaderProperties,
-					archiveEngine, archive);		
 		}
 		catch(Exception t) {
 			if(logCore!=null) {

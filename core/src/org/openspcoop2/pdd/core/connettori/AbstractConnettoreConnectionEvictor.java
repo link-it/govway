@@ -165,29 +165,27 @@ public abstract class AbstractConnettoreConnectionEvictor extends BaseThread {
 				}
 			}
 			
-			if(!removedKeys.isEmpty()) {
-				while(!removedKeys.isEmpty()) {
-					String key = removedKeys.remove(0);
-					
-					String prefix = "Client ("+key+") ";
-					
-					this.logDebug(prefix+"close unused connection ...");
-					Object o = this.mapConnection.get(key);
-					AbstractConnettoreConnection<?> connection = null;
-					if(o instanceof AbstractConnettoreConnection) {
-						connection = (AbstractConnettoreConnection<?>) o;
-					}
-					else {
-						printError(sb,prefix+"close unused connection failed: incompatible type '"+o.getClass().getName()+"'");
-						continue;
-					}
-					try {
-						connection.close();
-						print(sb,prefix+"close unused connection ok");
-						this.mapConnection.remove(key);
-					}catch(Exception e) {
-						printError(sb,prefix+"close unused connection failed: "+e.getMessage(),e);
-					}
+			while(!removedKeys.isEmpty()) {
+				String key = removedKeys.remove(0);
+				
+				String prefix = "Client ("+key+") ";
+				
+				this.logDebug(prefix+"close unused connection ...");
+				Object o = this.mapConnection.get(key);
+				AbstractConnettoreConnection<?> connection = null;
+				if(o instanceof AbstractConnettoreConnection) {
+					connection = (AbstractConnettoreConnection<?>) o;
+				}
+				else {
+					printError(sb,prefix+"close unused connection failed: incompatible type '"+o.getClass().getName()+"'");
+					continue;
+				}
+				try {
+					connection.close();
+					print(sb,prefix+"close unused connection ok");
+					this.mapConnection.remove(key);
+				}catch(Exception e) {
+					printError(sb,prefix+"close unused connection failed: "+e.getMessage(),e);
 				}
 			}
 		}

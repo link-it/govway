@@ -1136,7 +1136,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 			Utilities.printFreeMemory("InoltroBuste - Controllo scadenza busta...");
 
 			/* ------------  Controllo Scadenza Busta  ------------- */
-			if(this.bustaRichiesta.getScadenza() != null){
+			if(this.bustaRichiesta != null && this.bustaRichiesta.getScadenza() != null){
 				this.msgDiag.mediumDebug("Controllo scadenza busta...");
 
 				Timestamp now = DateManager.getTimestamp();
@@ -1402,10 +1402,12 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 				headerIntegrazione.getBusta().setVersioneServizio(this.idServizio.getVersione());
 				headerIntegrazione.getBusta().setAzione(this.idServizio.getAzione());
 			}
-			headerIntegrazione.getBusta().setID(this.bustaRichiesta.getID());
-			headerIntegrazione.getBusta().setRiferimentoMessaggio(this.bustaRichiesta.getRiferimentoMessaggio());
-			headerIntegrazione.getBusta().setIdCollaborazione(this.bustaRichiesta.getCollaborazione());
-			headerIntegrazione.getBusta().setProfiloDiCollaborazione(this.bustaRichiesta.getProfiloDiCollaborazione());
+			if (this.bustaRichiesta != null) {
+				headerIntegrazione.getBusta().setID(this.bustaRichiesta.getID());
+				headerIntegrazione.getBusta().setRiferimentoMessaggio(this.bustaRichiesta.getRiferimentoMessaggio());
+				headerIntegrazione.getBusta().setIdCollaborazione(this.bustaRichiesta.getCollaborazione());
+				headerIntegrazione.getBusta().setProfiloDiCollaborazione(this.bustaRichiesta.getProfiloDiCollaborazione());
+			}
 			headerIntegrazione.setIdApplicativo(this.idCorrelazioneApplicativa);
 			headerIntegrazione.setServizioApplicativo(this.servizioApplicativoFruitore);
 			if(servizioApplicativoToken!=null) {
@@ -3349,17 +3351,17 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 						this.configurazionePdDManager.isValidazioneManifestAttachments(this.implementazionePdDDestinatario) &&
 						this.gestioneManifest);
 				/**validator = new ValidatoreSPCoop(responseMessage,property,this.openspcoopstate.getStatoRichiesta(),this.readQualifiedAttribute);*/
-				if(this.openspcoopstate.getStatoRisposta() instanceof StatelessMessage statelessMessage){
-					statelessMessage.setBustaCorrelata(this.bustaRichiesta);
-				}
 				if(this.openspcoopstate!=null) {
+					if(this.openspcoopstate.getStatoRisposta() instanceof StatelessMessage statelessMessage){
+						statelessMessage.setBustaCorrelata(this.bustaRichiesta);
+					}
 					property.setRuntimeState(this.openspcoopstate.getStatoRisposta());
 					if(this.propertiesReader.isTransazioniUsePddRuntimeDatasource()) {
 						property.setTracceState(this.openspcoopstate.getStatoRisposta());
 					}
+					this.validatore = new Validatore(this.responseMessage,this.pddContext,property,this.openspcoopstate.getStatoRisposta(),this.readQualifiedAttribute, this.protocolFactory);
 				}
-				this.validatore = new Validatore(this.responseMessage,this.pddContext,property,this.openspcoopstate.getStatoRisposta(),this.readQualifiedAttribute, this.protocolFactory);
-						
+				
 				this.msgDiag.logPersonalizzato("validazioneSintattica");
 				presenzaRispostaProtocollo  = this.validatore.validazioneSintattica(this.bustaRichiesta, Boolean.FALSE);
 				if(presenzaRispostaProtocollo){
@@ -3970,10 +3972,10 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,errorMsg);
 								return esito;
 							}
-							else if(this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)
+							else if(this.pddContext != null && (this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION)
 									//|| responseReadTimeout!=null deve essere gestito dopo per generare un errore di connessione. Viene gestito all'interno del metodo 'getIntegrationFunctionErroreConnectionError' dell'else sottostante
 									|| responseLimitExceeded!=null
-									){
+									)){
 								
 								ParseException parseException = null;
 								Throwable tParsing = null;

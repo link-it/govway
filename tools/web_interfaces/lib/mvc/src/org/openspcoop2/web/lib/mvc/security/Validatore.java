@@ -57,7 +57,7 @@ public class Validatore {
 		}
 	}
 
-	public static Validatore getInstance() {
+	public static synchronized Validatore getInstance() {
 		return instance;
 	}
 

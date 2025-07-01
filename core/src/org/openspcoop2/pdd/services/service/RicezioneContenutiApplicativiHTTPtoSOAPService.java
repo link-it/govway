@@ -958,12 +958,16 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			else{
 				parseException = (ParseException) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO_PARSE_EXCEPTION);
 			}
-			String msgErrore = parseException.getParseException().getMessage();
+			String msgErrore = null;
+			if (parseException != null && parseException.getParseException() != null)
+				msgErrore = parseException.getParseException().getMessage();
 			if(msgErrore==null){
 				msgErrore = parseException.getParseException().toString();
 			}
 			this.msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
-			this.logCore.error(MsgDiagnosticiProperties.MSG_DIAG_PARSING_EXCEPTION_RICHIESTA,parseException.getSourceException());
+			
+			if (parseException != null)
+				this.logCore.error(MsgDiagnosticiProperties.MSG_DIAG_PARSING_EXCEPTION_RICHIESTA,parseException.getSourceException());
 			this.msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_PARSING_EXCEPTION_RICHIESTA);
 			
 			IntegrationFunctionError integrationFunctionError = IntegrationFunctionError.UNPROCESSABLE_REQUEST_CONTENT;
@@ -974,12 +978,12 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 			else if( parseException!=null && parseException.getSourceException()!=null &&
 					LimitExceededIOException.isLimitExceededIOException(parseException.getSourceException())) {
 				integrationFunctionError = IntegrationFunctionError.REQUEST_SIZE_EXCEEDED;
+			} else if (parseException != null) {
+				this.responseMessage = this.generatoreErrore.build(this.pddContext, integrationFunctionError,
+						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
+						getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()),
+						parseException.getParseException(),null);
 			}
-			
-			this.responseMessage = this.generatoreErrore.build(this.pddContext, integrationFunctionError,
-					ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
-					getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()),
-					parseException.getParseException(),null);
 		}
 		else if( (this.responseMessage!=null && this.responseMessage.getParseException() != null) ||
 				(this.pddContext!=null && this.pddContext.containsKey(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION))){
@@ -1050,16 +1054,18 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 		Date dataRispostaSpedita = null; 
 		Transazione transazioneDaAggiornare = null;
 		
-		if(this.context.getMsgDiagnostico()!=null){
-			this.msgDiag = this.context.getMsgDiagnostico();
+		if(this.context != null) {
+			if(this.context.getMsgDiagnostico()!=null)
+				this.msgDiag = this.context.getMsgDiagnostico();
+			if(this.context.getResponseHeaders()==null)
+				this.context.setResponseHeaders(new HashMap<>());
+			
+			ServicesUtils.setGovWayHeaderResponse(this.requestMessage!=null ? this.requestMessage.getServiceBinding() : this.requestInfo.getProtocolServiceBinding(),
+					this.responseMessage, this.openSPCoopProperties,
+					this.context.getResponseHeaders(), this.logCore, true, this.context.getPddContext(), this.requestInfo);
 		}
-		if(this.context.getResponseHeaders()==null) {
-			this.context.setResponseHeaders(new HashMap<>());
-		}
-		ServicesUtils.setGovWayHeaderResponse(this.requestMessage!=null ? this.requestMessage.getServiceBinding() : this.requestInfo.getProtocolServiceBinding(),
-				this.responseMessage, this.openSPCoopProperties,
-				this.context.getResponseHeaders(), this.logCore, true, this.context.getPddContext(), this.requestInfo);
-		if(this.context.getResponseHeaders()!=null){
+		
+		if(this.context != null && this.context.getResponseHeaders()!=null){
 			Iterator<String> keys = this.context.getResponseHeaders().keySet().iterator();
 			while (keys.hasNext()) {
 				String key = keys.next();
@@ -1365,11 +1371,13 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService implements IRicezion
 				}
 				this.res.setStatus(statoServletResponse);
 				
-				// esito calcolato prima del sendResponse, per non consumare il messaggio
-				esito = this.protocolFactory.createEsitoBuilder().getEsito(this.req.getURLProtocolContext(), 
-						statoServletResponse, this.requestInfo.getIntegrationServiceBinding(),
-						this.responseMessage, this.context.getProprietaErroreAppl(),informazioniErrori,
-						this.pddContext);
+				if (this.context != null) {
+					// esito calcolato prima del sendResponse, per non consumare il messaggio
+					esito = this.protocolFactory.createEsitoBuilder().getEsito(this.req.getURLProtocolContext(), 
+							statoServletResponse, this.requestInfo.getIntegrationServiceBinding(),
+							this.responseMessage, this.context.getProprietaErroreAppl(),informazioniErrori,
+							this.pddContext);
+				}
 				
 				// se il tracciamento lo prevedo emetto un log
 				registraTracciaOutResponse = true;

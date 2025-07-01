@@ -387,16 +387,16 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 			return this.getBIOWorkerThreadPoolStatus();
 		}
 		
-		else if(actionName.equals(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_STATUS) || actionName.equals(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_STATUS_METHOD2)){
+		else if(actionName.equals(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_STATUS)){
 			return this.getNIOHttpClientConnectionManagerStatus();
 		}
-		else if(actionName.equals(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_IO_THREAD_COUNT) || actionName.equals(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_IO_THREAD_COUNT_METHOD2)){
+		else if(actionName.equals(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_IO_THREAD_COUNT)){
 			return this.getNIOHttpClientConnectionManagerIOThreadCount();
 		}
 		else if(actionName.equals(MonitoraggioRisorse.NIO_HTTP_CLIENT_CONNECTION_MANAGER_RESTART)){
 			return this.restartNIOHttpClientConnectionManager();
 		}
-		else if(actionName.equals(MonitoraggioRisorse.NIO_WORKER_THREAD_POOL_STATUS) || actionName.equals(MonitoraggioRisorse.NIO_WORKER_THREAD_POOL_STATUS_METHOD2)){
+		else if(actionName.equals(MonitoraggioRisorse.NIO_WORKER_THREAD_POOL_STATUS)){
 			return this.getNIOWorkerThreadPoolStatus();
 		}
 		
