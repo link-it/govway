@@ -174,7 +174,7 @@
 		<!-- WEB Monitor -->
 		<antcall target="_findBugs">
 			<param name="analyzeType" value="web-govwayMonitor"/>
-			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/monitor/src"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/web_interfaces/monitor/src/src_transazioni:${openspcoop2}/tools/web_interfaces/monitor/src/src_allarmi:${openspcoop2}/tools/web_interfaces/monitor/src/src_core:${openspcoop2}/tools/web_interfaces/monitor/src/src_eventi:${openspcoop2}/tools/web_interfaces/monitor/src/src_stat"/>
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_web-govwayMonitor*.jar"/>
 		</antcall>

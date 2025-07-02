@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -200,13 +201,19 @@ public class HeadersFilter implements Filter {
 	}
 
 	private void validazioneSintatticaParametri(SecurityWrappedHttpServletRequest seqReq) throws ValidationException {
-		String requestUri = seqReq.getRequestURI();
+		String requestUri = Objects.requireNonNullElse(seqReq.getRequestURI(), "");
 
 		// Ottieni il percorso dalla richiesta URI
 		Path path = Paths.get(requestUri);
 
 		// Ottieni l'ultimo sotto-path es. pagina.jsf
-		String lastPathSegment = (path == null || path.getFileName() == null) ? "" : path.getFileName().toString();
+		String lastPathSegment = requestUri;
+		
+		if (path != null) {
+			Path fileName = path.getFileName();
+			if (fileName != null)
+				lastPathSegment = fileName.toString();
+		}
 
 		// Ottenere tutti i parametri dalla richiesta
 		Enumeration<String> paramNames = seqReq.getParameterNames();
