@@ -86,7 +86,7 @@ public class ArchivioZipManager {
 	
 	private boolean inizializzaInformazioniSupplementari = false;
 
-	private static final long MAX_ZIP_SIZE = 1_000_000_000_000l; // MAX SIZE 1Gb
+	private static final long MAX_ZIP_SIZE = 5_000_000_000_000l; // MAX SIZE 5Gb
 	private static final long MAX_NUMBER_ENTRY = 10_000;
 	private static final long UNCOMPRESS_COMPRESS_RATIO = 10;
 	
@@ -154,7 +154,21 @@ public class ArchivioZipManager {
 				if (entryRead > MAX_NUMBER_ENTRY)
 					throw new ArchivioZipException("numero di entry dell'archivio zip troppo grande >= " + MAX_NUMBER_ENTRY);
 				log.debug("Analisi file: {}", entry.getName());
-				byte[] fileContent = readFileContent(entry, zis);
+				
+				
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				byte[] buffer = new byte[1024];
+				int bytesRead;
+				int entrySize = 0;
+				while ((bytesRead = zis.read(buffer)) != -1) {
+					outputStream.write(buffer, 0, bytesRead);
+					entrySize += bytesRead;
+					
+					if ((double)entrySize / entry.getCompressedSize() >= UNCOMPRESS_COMPRESS_RATIO)
+						throw new IOException("Compress ratio to high (Zip bomb?) >= " + UNCOMPRESS_COMPRESS_RATIO);
+				}
+				
+				byte[] fileContent = outputStream.toByteArray();
 				totalSize += fileContent.length;
 				
 				if (totalSize > MAX_ZIP_SIZE)
@@ -509,6 +523,8 @@ public class ArchivioZipManager {
 			}
 		}
 	}
+	
+	
 
 	private void estraiTracce(ZipEntry entry, String chiave, String chiaveConsegna, byte[] fileContent) {
 		if (entry.getName().endsWith(File.separatorChar + NOME_FILE_TRACCE_XML)) {
@@ -654,7 +670,7 @@ public class ArchivioZipManager {
 		}
 	}
 
-	private void estraiDiagnostici(ZipEntry entry, String chiave, String chiaveConsegna, byte[] fileContent) throws ArchivioZipException {
+	private void estraiDiagnostici(ZipEntry entry, String chiave, String chiaveConsegna, byte[] fileContent) {
 		// diagnostici
 		if (entry.getName().endsWith(File.separatorChar + NOME_FILE_MSG_DIAGNOSTICI_XML)) {
 			TransazioneArchivioBean transazionearchivioBean =  this.mapTransazioni.remove(chiave);
@@ -769,21 +785,6 @@ public class ArchivioZipManager {
 		}
 
 		return chiaveConsegna;
-	}
-
-	private static byte[] readFileContent(ZipEntry entry, ZipInputStream zis) throws IOException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		byte[] buffer = new byte[1024];
-		int bytesRead;
-		int totalSize = 0;
-		while ((bytesRead = zis.read(buffer)) != -1) {
-			outputStream.write(buffer, 0, bytesRead);
-			totalSize += bytesRead;
-			
-			if ((double)totalSize / entry.getCompressedSize() >= UNCOMPRESS_COMPRESS_RATIO)
-				throw new IOException("Compress ratio to high (Zip bomb?) >= " + UNCOMPRESS_COMPRESS_RATIO);
-		}
-		return outputStream.toByteArray();
 	}
 
 	private static String extractKeyFromPath(String path) {
