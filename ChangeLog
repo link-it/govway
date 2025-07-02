@@ -1,3 +1,10 @@
+2025-07-02  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1604
+	In condizioni limite, caratterizzate da un numero elevato di richieste simultanee verso le API SOAP, 
+	si è riscontrata la possibilità che alcune di esse fallissero, generando il seguente errore nei log: "Couldn't get a SAX parser while constructing a envelope".
+
 2025-07-02  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
