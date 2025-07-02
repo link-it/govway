@@ -369,7 +369,7 @@ public class ConnettoreUtils {
 
 			String headerForceLibrary = props.getHeaderForceHttpLibrary();
 			TransportRequestContext transportContext = connettoreMsg.getTransportRequestContext();
-			if (impl == null && headerForceLibrary != null && transportContext.getHeaderFirstValue(headerForceLibrary) != null) {
+			if (impl == null && headerForceLibrary != null && transportContext != null && transportContext.getHeaderFirstValue(headerForceLibrary) != null) {
 				impl = transportContext.getHeaderFirstValue(headerForceLibrary);
 			}
 			
