@@ -57,6 +57,8 @@ import org.openspcoop2.core.config.rs.server.model.ModISicurezzaMessaggioOperazi
 import org.openspcoop2.core.config.rs.server.model.ModISicurezzaMessaggioPatternAuditEnum;
 import org.openspcoop2.core.config.rs.server.model.ModISicurezzaMessaggioRestHeaderEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortTypeAzione;
@@ -71,11 +73,11 @@ import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.HttpMethod;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.engine.utils.AzioniUtils;
+import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.config.ModIAuditConfig;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
-import org.openspcoop2.protocol.modipa.constants.ModIConsoleCostanti;
-import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.properties.ModIProfiliInterazioneRESTConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
@@ -146,18 +148,18 @@ public class ModiApiApiHelper {
 
 		ApiModIPatternInterazioneSoap interazione = new ApiModIPatternInterazioneSoap();
 
-		if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD)) {
+		if(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE, true).equals(CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD)) {
 			interazione.setPattern(ModIPatternInterazioneEnum.CRUD);
-		} else if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE)) {
+		} else if(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE, true).equals(CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE)) {
 			interazione.setPattern(ModIPatternInterazioneEnum.BLOCCANTE);
-		} else if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE)) {
+		} else if(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE, true).equals(CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE)) {
 
-			ModIPatternInterazioneTipoEnum tipo = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL) ?
+			ModIPatternInterazioneTipoEnum tipo = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, true).equals(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL) ?
 					ModIPatternInterazioneTipoEnum.PULL : ModIPatternInterazioneTipoEnum.PUSH;
 			
 			interazione.setTipo(tipo);
 
-			ModIPatternInterazioneFunzioneEnum funzione = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA) ?
+			ModIPatternInterazioneFunzioneEnum funzione = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, true).equals(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA) ?
 					ModIPatternInterazioneFunzioneEnum.RICHIESTA: ModIPatternInterazioneFunzioneEnum.RISPOSTA;
 			
 			interazione.setFunzione(funzione);
@@ -172,7 +174,7 @@ public class ModiApiApiHelper {
 		apimodi.setInterazione(interazione);
 
 
-		if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true).equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
+		if(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true).equals(CostantiDB.MODIPA_PROFILO_DEFAULT)) {
 			ApiModISicurezzaMessaggioOperazione op = new ApiModISicurezzaMessaggioOperazione();
 			op.setStato(ModISicurezzaMessaggioOperazioneEnum.API);
 			apimodi.setSicurezzaMessaggio(op);
@@ -210,18 +212,18 @@ public class ModiApiApiHelper {
 
 		ApiModIPatternInterazioneRest interazione = new ApiModIPatternInterazioneRest();
 
-		if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD)) {
+		if(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE, true).equals(CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD)) {
 			interazione.setPattern(ModIPatternInterazioneEnum.CRUD);
-		} else if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE)) {
+		} else if(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE, true).equals(CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE)) {
 			interazione.setPattern(ModIPatternInterazioneEnum.BLOCCANTE);
-		} else if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE)) {
+		} else if(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE, true).equals(CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE)) {
 
-			ModIPatternInterazioneTipoEnum tipo = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL) ?
+			ModIPatternInterazioneTipoEnum tipo = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, true).equals(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL) ?
 					ModIPatternInterazioneTipoEnum.PULL : ModIPatternInterazioneTipoEnum.PUSH;
 			
 			interazione.setTipo(tipo);
 
-			ModIPatternInterazioneFunzioneEnum funzione = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, true).equals(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA) ?
+			ModIPatternInterazioneFunzioneEnum funzione = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, true).equals(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA) ?
 					ModIPatternInterazioneFunzioneEnum.RICHIESTA: ModIPatternInterazioneFunzioneEnum.RISPOSTA;
 			
 			interazione.setFunzione(funzione);
@@ -236,7 +238,7 @@ public class ModiApiApiHelper {
 		apimodi.setInterazione(interazione);
 
 
-		if(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true).equals(ModICostanti.MODIPA_PROFILO_DEFAULT)) {
+		if(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, true).equals(CostantiDB.MODIPA_PROFILO_DEFAULT)) {
 			ApiModISicurezzaMessaggioOperazione op = new ApiModISicurezzaMessaggioOperazione();
 			op.setStato(ModISicurezzaMessaggioOperazioneEnum.API);
 			apimodi.setSicurezzaMessaggio(op);
@@ -254,10 +256,10 @@ public class ModiApiApiHelper {
 	}
 
 	private static ApiModIPatternInterazioneCorrelazioneRest getRisorsaCorrelata(Map<String, AbstractProperty<?>> p, ApiEnv env) throws DriverRegistroServiziException, CoreException, RegistryNotFound, RegistryException, DriverConfigurazioneException {
-		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromUri(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, true));
+		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromUri(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, true));
 		IDResource id = new IDResource();
 		id.setIdAccordo(idAccordoFromAccordo);
-		id.setNome(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, true));
+		id.setNome(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, true));
 		IRegistryReader registryReader = env.soggettiCore.getRegistryReader(env.protocolFactory);
 		Resource resource = registryReader.getResourceAccordo(id);
 
@@ -299,14 +301,14 @@ public class ModiApiApiHelper {
 
 	private static ApiModIPatternInterazioneCorrelazioneSoap getAzioneCorrelata(Map<String, AbstractProperty<?>> p, ApiEnv env) throws DriverRegistroServiziException, CoreException {
 
-		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromUri(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, true));
+		IDAccordo idAccordoFromAccordo = env.idAccordoFactory.getIDAccordoFromUri(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, true));
 
 		ApiModIPatternInterazioneCorrelazioneSoap risorsaCorrelata = new ApiModIPatternInterazioneCorrelazioneSoap();
 		risorsaCorrelata.setApiNome(idAccordoFromAccordo.getNome());
 		risorsaCorrelata.setApiVersione(idAccordoFromAccordo.getVersione());
 		
-		risorsaCorrelata.setServizio(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, true));
-		risorsaCorrelata.setAzione(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, true));
+		risorsaCorrelata.setServizio(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, true));
+		risorsaCorrelata.setAzione(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, true));
 		
 		return risorsaCorrelata;
 	}
@@ -333,9 +335,9 @@ public class ModiApiApiHelper {
 
 		ApiModISicurezzaCanale sicurezzaCanale = new ApiModISicurezzaCanale();
 
-		String sicurezzaCanalePatternString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE, true);
+		String sicurezzaCanalePatternString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE, true);
 
-		sicurezzaCanale.setPattern(sicurezzaCanalePatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01) ? ModISicurezzaCanaleEnum.AUTH01:ModISicurezzaCanaleEnum.AUTH02);
+		sicurezzaCanale.setPattern(sicurezzaCanalePatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE_VALUE_IDAC01) ? ModISicurezzaCanaleEnum.AUTH01:ModISicurezzaCanaleEnum.AUTH02);
 		apimodi.setSicurezzaCanale(sicurezzaCanale);
 
 		apimodi.setSicurezzaMessaggio(getSicurezzaMessaggio(p, as.getServiceBinding().equals(org.openspcoop2.core.registry.constants.ServiceBinding.SOAP)));
@@ -346,34 +348,34 @@ public class ModiApiApiHelper {
 	private static ApiModISicurezzaMessaggio getSicurezzaMessaggio(Map<String, AbstractProperty<?>> p, boolean isSOAP) throws CoreException {
 		ApiModISicurezzaMessaggio sicurezzaMessaggio = new ApiModISicurezzaMessaggio();
 
-		String sicurezzaMessaggioPatternString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, true);
+		String sicurezzaMessaggioPatternString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, true);
 
 		ModISicurezzaMessaggioEnum profiloSicurezzaMessaggioPattern = null;
-		if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01)) {
+		if(sicurezzaMessaggioPatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01)) {
 			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.AUTH01;
-		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02)) {
+		} else if(sicurezzaMessaggioPatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM02)) {
 			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.AUTH02;
-		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED)) {
+		} else if(sicurezzaMessaggioPatternString.equals(Costanti.MODIPA_VALUE_UNDEFINED)) {
 			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.DISABILITATO;
-		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301)) {
+		} else if(sicurezzaMessaggioPatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301)) {
 			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY01_AUTH01;
-		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302)) {
+		} else if(sicurezzaMessaggioPatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302)) {
 			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY01_AUTH02;
-		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401)) {
+		} else if(sicurezzaMessaggioPatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401)) {
 			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY02_AUTH01;
-		} else if(sicurezzaMessaggioPatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402)) {
+		} else if(sicurezzaMessaggioPatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402)) {
 			profiloSicurezzaMessaggioPattern = ModISicurezzaMessaggioEnum.INTEGRITY02_AUTH02;
 		}
 		sicurezzaMessaggio.setPattern(profiloSicurezzaMessaggioPattern);
 
-		String sicurezzaMessaggioGnerazioneTokenString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, false);
+		String sicurezzaMessaggioGnerazioneTokenString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, false);
 		if(sicurezzaMessaggioGnerazioneTokenString!=null && StringUtils.isNotEmpty(sicurezzaMessaggioGnerazioneTokenString)) {
 			ModISicurezzaMessaggioGenerazioneTokenEnum generazioneToken = null;
-			if(sicurezzaMessaggioGnerazioneTokenString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE)) {
+			if(sicurezzaMessaggioGnerazioneTokenString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_LOCALE)) {
 				generazioneToken = ModISicurezzaMessaggioGenerazioneTokenEnum.LOCALE;
-			} else if(sicurezzaMessaggioGnerazioneTokenString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND)) {
+			} else if(sicurezzaMessaggioGnerazioneTokenString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_PDND)) {
 				generazioneToken = ModISicurezzaMessaggioGenerazioneTokenEnum.PDND;
-			} else if(sicurezzaMessaggioGnerazioneTokenString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH)) {
+			} else if(sicurezzaMessaggioGnerazioneTokenString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH_VALUE_OAUTH)) {
 				generazioneToken = ModISicurezzaMessaggioGenerazioneTokenEnum.OAUTH;
 			} 
 			sicurezzaMessaggio.setGenerazioneToken(generazioneToken);
@@ -386,24 +388,24 @@ public class ModiApiApiHelper {
 				populateSicurezzaMessaggioREST(p, sicurezzaMessaggio);
 			}
 
-			sicurezzaMessaggio.setDigestRichiesta(ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, true));
-			sicurezzaMessaggio.setInformazioniUtente(ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, true));
+			sicurezzaMessaggio.setDigestRichiesta(ProtocolPropertiesHelper.getBooleanProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, true));
+			sicurezzaMessaggio.setInformazioniUtente(ProtocolPropertiesHelper.getBooleanProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA, true));
 			if(sicurezzaMessaggio.isInformazioniUtente()!=null && sicurezzaMessaggio.isInformazioniUtente().booleanValue()) {
 				
-				String sicurezzaMessaggioInformazioniUtentePatternString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, false);
+				String sicurezzaMessaggioInformazioniUtentePatternString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, false);
 				if(sicurezzaMessaggioInformazioniUtentePatternString!=null && StringUtils.isNotEmpty(sicurezzaMessaggioInformazioniUtentePatternString)) {
 					ModISicurezzaMessaggioPatternAuditEnum patternAudit = null;
-					if(sicurezzaMessaggioInformazioniUtentePatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_OLD)) {
+					if(sicurezzaMessaggioInformazioniUtentePatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_OLD)) {
 						patternAudit = ModISicurezzaMessaggioPatternAuditEnum.LEGACY;
-					} else if(sicurezzaMessaggioInformazioniUtentePatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_AUDIT_REST_01)) {
+					} else if(sicurezzaMessaggioInformazioniUtentePatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_01)) {
 						patternAudit = ModISicurezzaMessaggioPatternAuditEnum.REST01;
-					} else if(sicurezzaMessaggioInformazioniUtentePatternString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_VALUE_AUDIT_REST_02)) {
+					} else if(sicurezzaMessaggioInformazioniUtentePatternString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN_AUDIT_REST_02)) {
 						patternAudit = ModISicurezzaMessaggioPatternAuditEnum.REST02;
 					} 
 					sicurezzaMessaggio.setPatternAudit(patternAudit);
 				}
 				
-				String sicurezzaMessaggioInformazioniUtenteSchemaString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA, false);
+				String sicurezzaMessaggioInformazioniUtenteSchemaString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_SCHEMA, false);
 				if(sicurezzaMessaggioInformazioniUtenteSchemaString!=null && StringUtils.isNotEmpty(sicurezzaMessaggioInformazioniUtenteSchemaString)) {
 					sicurezzaMessaggio.setSchemaAudit(sicurezzaMessaggioInformazioniUtenteSchemaString);
 				}
@@ -422,22 +424,22 @@ public class ModiApiApiHelper {
 	private static void populateSicurezzaMessaggioSOAP(Map<String, AbstractProperty<?>> p, ApiModISicurezzaMessaggio sicurezzaMessaggio) throws CoreException {
 		ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
 
-		String sicurezzaMessaggioApplicabilitaString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
+		String sicurezzaMessaggioApplicabilitaString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE, true);
 
-		if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI_CON_ATTACHMENTS)) {
+		if(sicurezzaMessaggioApplicabilitaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI_CON_ATTACHMENTS)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
 			sicurezzaMessaggio.setSoapFirmaAllegati(true);
-		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA_CON_ATTACHMENTS)) {
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA_CON_ATTACHMENTS)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
 			sicurezzaMessaggio.setSoapFirmaAllegati(true);
-		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS)) {
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA_CON_ATTACHMENTS)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
 			sicurezzaMessaggio.setSoapFirmaAllegati(true);
-		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
-		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA)) {
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
-		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA)) {
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
 		}
 		sicurezzaMessaggio.setApplicabilita(applicabilita);
@@ -446,76 +448,76 @@ public class ModiApiApiHelper {
 
 	private static void populateSicurezzaMessaggioREST(Map<String, AbstractProperty<?>> p, ApiModISicurezzaMessaggio sicurezzaMessaggio) throws CoreException {
 		ModISicurezzaMessaggioRestHeaderEnum restHeader = null;
-		String restHeaderString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, true);
+		String restHeaderString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER, true);
 
 		boolean custom = false;
-		if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA)) {
+		if(restHeaderString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_MODIPA)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID;
-		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION)) {
+		} else if(restHeaderString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.BEARER;
-		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA)) {
+		} else if(restHeaderString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID_BEARER_REQUEST;
-		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE)) {
+		} else if(restHeaderString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA_AUTH_IN_RESPONSE)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.AGID_BEARER;
-		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM)) {
+		} else if(restHeaderString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_CUSTOM)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.CUSTOM;
 			custom = true;
-		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM)) {
+		} else if(restHeaderString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.CUSTOM_BEARER_REQUEST;
 			custom = true;
-		} else if(restHeaderString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE)) {
+		} else if(restHeaderString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_CUSTOM_AUTH_IN_RESPONSE)) {
 			restHeader = ModISicurezzaMessaggioRestHeaderEnum.CUSTOM_BEARER;
 			custom = true;
 		}
 		sicurezzaMessaggio.setRestHeader(restHeader);
 		
 		if(custom) {
-			String restHeaderCustomString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM, true);
+			String restHeaderCustomString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM, true);
 			sicurezzaMessaggio.setRestHeaderCustom(restHeaderCustomString);
 		}
 
 		ModISicurezzaMessaggioApplicabilitaEnum applicabilita = null;
 
-		String sicurezzaMessaggioApplicabilitaString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE, true);
+		String sicurezzaMessaggioApplicabilitaString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE, true);
 
-		if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
+		if(sicurezzaMessaggioApplicabilitaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_ENTRAMBI)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.QUALSIASI;
-		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA)) {
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RICHIESTA)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RICHIESTA;
-		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA)) {
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_RISPOSTA)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.RISPOSTA;
-		} else if(sicurezzaMessaggioApplicabilitaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO)) {
+		} else if(sicurezzaMessaggioApplicabilitaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_MODE_VALUE_PERSONALIZZATO)) {
 			applicabilita = ModISicurezzaMessaggioApplicabilitaEnum.CUSTOM;
 
 			ApiModISicurezzaMessaggioApplicabilitaCustom appCustom = new ApiModISicurezzaMessaggioApplicabilitaCustom();
 			appCustom.setApplicabilita(applicabilita);
-			String applicabilitaCustomRichiestaString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE, true);
+			String applicabilitaCustomRichiestaString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE, true);
 			ModISicurezzaMessaggioApplicabilitaCustomEnum applicabilitaCustomRichiesta = null;
 
-			if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO)) {
+			if(applicabilitaCustomRichiestaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_ABILITATO)) {
 				applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.ABILITATO;
-			} else if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO)) {
+			} else if(applicabilitaCustomRichiestaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO)) {
 				applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.DISABILITATO;
-			} else if(applicabilitaCustomRichiestaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO)) {
+			} else if(applicabilitaCustomRichiestaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO)) {
 				applicabilitaCustomRichiesta = ModISicurezzaMessaggioApplicabilitaCustomEnum.CUSTOM;
-				appCustom.setRichiestaContentType(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID, true));
+				appCustom.setRichiestaContentType(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID, true));
 			} 
 
 			appCustom.setRichiesta(applicabilitaCustomRichiesta);
 
 
-			String applicabilitaCustomRispostaString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE, true);
+			String applicabilitaCustomRispostaString = ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE, true);
 			ModISicurezzaMessaggioApplicabilitaCustomEnum applicabilitaCustomRisposta = null;
 
-			if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO)) {
+			if(applicabilitaCustomRispostaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO)) {
 				applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.ABILITATO;
-			} else if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO)) {
+			} else if(applicabilitaCustomRispostaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO)) {
 				applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.DISABILITATO;
-			} else if(applicabilitaCustomRispostaString.equals(ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO)) {
+			} else if(applicabilitaCustomRispostaString.equals(CostantiDB.MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO)) {
 				applicabilitaCustomRisposta = ModISicurezzaMessaggioApplicabilitaCustomEnum.CUSTOM;
 
-				appCustom.setRispostaContentType(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID, true));
-				appCustom.setRispostaCodice(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_CONFIGURAZIONE_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID, true));
+				appCustom.setRispostaContentType(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID, true));
+				appCustom.setRispostaCodice(ProtocolPropertiesHelper.getStringProperty(p, CostantiDB.MODIPA_PROFILO_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID, true));
 			} 
 
 			appCustom.setRisposta(applicabilitaCustomRisposta);
@@ -559,7 +561,7 @@ public class ModiApiApiHelper {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
 			} 
 
-			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE);
+			p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE, CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE);
 
 		} else if(modi.getInterazione().getPattern().equals(ModIPatternInterazioneEnum.NON_BLOCCANTE)) {
 
@@ -571,27 +573,27 @@ public class ModiApiApiHelper {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
 				} 
 
-				p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL);
+				p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL);
 				
 				if(isRichiesta) {
 					if(!config.isCompatibileNonBloccantePullRequest()) {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
 					} 
 					
-					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
+					p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
 				} else {
 					if(!config.isCompatibileNonBloccantePullResponse()) {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
 					} 
 					
-					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
+					p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
 				}
 			} else {
 				if(!config.isCompatibileNonBloccantePush()) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
 				} 
 				
-				p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH);
+				p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH);
 				
 				
 				if(isRichiesta) {
@@ -599,13 +601,13 @@ public class ModiApiApiHelper {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
 					} 
 					
-					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
+					p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
 				} else {
 					if(!config.isCompatibileNonBloccantePushResponse()) {
 						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern "+modi.getInterazione().getPattern()+" non compatibile");
 					} 
 					
-					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
+					p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
 				}
 				
 			}
@@ -614,17 +616,17 @@ public class ModiApiApiHelper {
 				addRisorsaCorrelata(modi.getInterazione().getRisorsaCorrelata(), env, p, isPull);
 			}
 
-			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE);
+			p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE, CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE);
 			
 		} else if(modi.getInterazione().getPattern().equals(ModIPatternInterazioneEnum.CRUD)) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD);
+			p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE, CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_CRUD);
 		}
 
 
 		if(modi.getSicurezzaMessaggio().getStato().equals(ModISicurezzaMessaggioOperazioneEnum.API)) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
+			p.addProperty(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, CostantiDB.MODIPA_PROFILO_DEFAULT);
 		} else {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
+			p.addProperty(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, CostantiDB.MODIPA_PROFILO_RIDEFINISCI);
 			ApiModISicurezzaMessaggioOperazioneRidefinito rid = ((ApiModISicurezzaMessaggioOperazioneRidefinito)modi.getSicurezzaMessaggio());
 
 			if(!rid.getConfigurazione().getPattern().equals(ModISicurezzaMessaggioEnum.DISABILITATO)) {
@@ -682,9 +684,9 @@ public class ModiApiApiHelper {
 		String nomeRisorsa = found.getNome();
 		checkAzione(idAccordoFromAccordo, null, nomeRisorsa, isPull, registryReader);
 
-		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, idAccordoFromAccordo.toString());
-		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, nomeRisorsa);
-		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED);
+		p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, idAccordoFromAccordo.toString());
+		p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, nomeRisorsa);
+		p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, CostantiLabel.MODIPA_LABEL_UNDEFINED);
 
 	}
 
@@ -731,7 +733,7 @@ public class ModiApiApiHelper {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile specificare interazione.azione_correlata con funzione " + modi.getInterazione().getFunzione());
 			}
 
-			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE);
+			p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE, CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_BLOCCANTE);
 
 		} else if(modi.getInterazione().getPattern().equals(ModIPatternInterazioneEnum.NON_BLOCCANTE)) {
 			
@@ -739,21 +741,21 @@ public class ModiApiApiHelper {
 			boolean isRichiesta = modi.getInterazione().getFunzione().equals(ModIPatternInterazioneFunzioneEnum.RICHIESTA);
 			
 			if(isPull) {
-				p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL);
+				p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL);
 				
 				if(isRichiesta) {
-					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
+					p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
 				} else {
-					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
+					p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
 				}
 			} else {
-				p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH);
+				p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PUSH);
 				
 				
 				if(isRichiesta) {
-					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
+					p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA);
 				} else {
-					p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
+					p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RISPOSTA);
 				}
 			}
 
@@ -761,7 +763,7 @@ public class ModiApiApiHelper {
 				addAzioneCorrelata(modi.getInterazione().getAzioneCorrelata(), env, p, isPull);
 			}
 
-			p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE, ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE);
+			p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE, CostantiDB.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE);
 			
 		} else if(modi.getInterazione().getPattern().equals(ModIPatternInterazioneEnum.CRUD)) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Pattern interazione CRUD non permesso per servizi SOAP");
@@ -769,10 +771,10 @@ public class ModiApiApiHelper {
 
 
 		if(modi.getSicurezzaMessaggio().getStato().equals(ModISicurezzaMessaggioOperazioneEnum.API)) {
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, ModICostanti.MODIPA_PROFILO_DEFAULT);
+			p.addProperty(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, CostantiDB.MODIPA_PROFILO_DEFAULT);
 		} else {
 			ApiModISicurezzaMessaggioOperazioneRidefinito rid = ((ApiModISicurezzaMessaggioOperazioneRidefinito)modi.getSicurezzaMessaggio());
-			p.addProperty(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, ModICostanti.MODIPA_PROFILO_RIDEFINISCI);
+			p.addProperty(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_ACTION_MODE, CostantiDB.MODIPA_PROFILO_RIDEFINISCI);
 			getSOAPProperties(rid.getConfigurazione(), p, modIProperties);
 
 		}
@@ -788,9 +790,9 @@ public class ModiApiApiHelper {
 		
 		checkAzione(idAccordoFromAccordo, azioneCorrelata.getServizio(), azioneCorrelata.getAzione(), isPull, registryReader);
 
-		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, idAccordoFromAccordo.toString());
-		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, azioneCorrelata.getServizio());
-		p.addProperty(ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, azioneCorrelata.getAzione());
+		p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_API_RICHIESTA_CORRELATA, idAccordoFromAccordo.toString());
+		p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_SERVIZIO_RICHIESTA_CORRELATA, azioneCorrelata.getServizio());
+		p.addProperty(CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_AZIONE_RICHIESTA_CORRELATA, azioneCorrelata.getAzione());
 
 	}
 
@@ -808,23 +810,23 @@ public class ModiApiApiHelper {
 		AccordoServizioParteComuneSintetico aspc = new AccordoServizioParteComuneSintetico(as);
 
 		Map<String,String> azioni = AzioniUtils.getAzioniConLabel(asps, aspc, false, false, 
-		new ArrayList<>(), ModIConsoleCostanti.MODIPA_VALUE_UNDEFINED, ModIConsoleCostanti.MODIPA_LABEL_UNDEFINED, org.slf4j.LoggerFactory.getLogger(ApiApiServiceImpl.class));
+		new ArrayList<>(), ModICostanti.MODIPA_VALUE_UNDEFINED, CostantiLabel.MODIPA_LABEL_UNDEFINED, org.slf4j.LoggerFactory.getLogger(ApiApiServiceImpl.class));
 		
 		
 		
 		if(azioni!=null && !azioni.isEmpty()) {
 			
 			for (String azioneId : azioni.keySet()) {
-				String tmpInterazione = AzioniUtils.getProtocolPropertyStringValue(as, servizio, azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ID);
-				if(!ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE.equals(tmpInterazione)) {
+				String tmpInterazione = AzioniUtils.getProtocolPropertyStringValue(as, servizio, azioneId, CostantiDB.MODIPA_PROFILO_INTERAZIONE);
+				if(!ModICostanti.MODIPA_PROFILO_INTERAZIONE_VALUE_NON_BLOCCANTE.equals(tmpInterazione)) {
 					continue;
 				}
-				String tmpRuolo = AzioniUtils.getProtocolPropertyStringValue(as, servizio, azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_ID);
-				if(isPull != ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL.equals(tmpRuolo)) {
+				String tmpRuolo = AzioniUtils.getProtocolPropertyStringValue(as, servizio, azioneId, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA);
+				if(isPull != ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_VALUE_PULL.equals(tmpRuolo)) {
 					continue;
 				}
-				String tmpRelazione = AzioniUtils.getProtocolPropertyStringValue(as, servizio, azioneId, ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_ID);
-				if(!ModIConsoleCostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(tmpRelazione)) {
+				String tmpRelazione = AzioniUtils.getProtocolPropertyStringValue(as, servizio, azioneId, CostantiDB.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO);
+				if(!ModICostanti.MODIPA_PROFILO_INTERAZIONE_ASINCRONA_RUOLO_VALUE_RICHIESTA.equals(tmpRelazione)) {
 					continue;
 				}
 				

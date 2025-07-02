@@ -530,6 +530,93 @@ And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
 
 
 
+@doppi-header-get-with-custom-always-request
+Scenario: Test con presenza sia dell'header Authorization che Custom-JWT-Signature per una risorsa GET senza payload in cui l'header di integrita verrà prodotto solo per la richiesta
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
+And path 'resources', 1, 'M', 'customAlwaysRequest'
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-get-with-custom-always-request'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_2_base64
+When method get
+Then status 200
+And match response == ''
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def client_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Integrity-Token'][0], "AGID")
+* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
+
+* def other_checks_richiesta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Custom-JWT-Signature', value: 'CustomTestSuiteDoppi-JWT-Signature' }
+])
+"""
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Custom-JWT-Signature', value: 'CustomTestSuiteDoppi-JWT-Signature' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_richiesta, profilo_interazione: 'crud' })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
+
+
+
+
+@doppi-header-get-with-custom-always-response
+Scenario: Test con presenza sia dell'header Authorization che Custom-JWT-Signature per una risorsa GET senza payload
+
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
+And path 'resources', 1, 'M', 'customAlwaysResponse'
+And header GovWay-TestSuite-Test-ID = 'idar03-custom-doppi-header-get-with-custom-always-response'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-Integration = integration_header_2_base64
+When method get
+Then status 200
+And match response == ''
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+And match header CustomTestSuite-JWT-Signature == '#notpresent'
+And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
+
+* def client_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Client-Authorization-Token'][0], "Bearer")
+* def server_authorization_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Authorization-Token'][0], "Bearer")
+* def server_integrity_token = decode_token(responseHeaders['GovWay-TestSuite-GovWay-Server-Integrity-Token'][0], "AGID")
+
+* def other_checks_risposta = 
+"""
+([
+    { name: 'ProfiloSicurezzaMessaggio-Custom-JWT-Signature', value: 'CustomTestSuiteDoppi-JWT-Signature' }
+])
+"""
+
+* def tid = responseHeaders['GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud',  profilo_interazione: 'crud' })
+
+* def tid = responseHeaders['GovWay-TestSuite-GovWay-Transaction-ID'][0]
+* call check_traccia ({ tid: tid, tipo: 'Richiesta', token: client_authorization_token, x509sub: 'CN=ExampleClient1, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', profilo_interazione: 'crud' })
+* call check_traccia ({ tid: tid, tipo: 'Risposta', token: server_authorization_token, x509sub: 'CN=ExampleServer, O=Example, L=Pisa, ST=Italy, C=IT', profilo_sicurezza: 'IDAR0301', profilo_interazione: 'crud', other_checks: other_checks_risposta, profilo_interazione: 'crud', requestMessageId:client_authorization_token.payload.jti })
+
+* def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+* match tidMessaggio == client_authorization_token.payload.jti
+
+
+
+
+
 
 @doppi-header-multipart
 Scenario: Test con presenza sia dell'header Authorization che Custom-JWT-Signature su una richiesta Multipart

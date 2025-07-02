@@ -12,6 +12,8 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 
 - :ref:`modipa_sicurezza_avanzate_header`: può essere selezionato l'header http utilizzato per veicolare il token JWT su API REST.
 
+- :ref:`modipa_sicurezza_avanzate_empty_payload_signature`: può essere attivata la generazione di un token 'JWT-Signature' anche per richieste e/o risposte prive di payload, utilizzando come valore del Digest un body vuoto ("").
+
 - :ref:`modipa_sicurezza_avanzate_custom_signature`: può essere attivato un token 'JWT-Signature' personalizzato per API REST.
 
 - :ref:`modipa_sicurezza_avanzate_claims`: possono essere configurati ulteriori claims da aggiungere nel payload del JWT su API REST.
@@ -39,6 +41,7 @@ La gestione dei pattern di sicurezza messaggio possono essere personalizzati su 
 	azioni
 	applicabilita
 	header/index
+        empty_payload_signature
         custom_signature
 	claims
 	header_soap

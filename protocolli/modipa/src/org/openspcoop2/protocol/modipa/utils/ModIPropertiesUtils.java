@@ -141,6 +141,10 @@ public class ModIPropertiesUtils {
 		}
 		return header;
 	}
+	private static final String RAW_VALUE = "--RAW-VALUE";
+	public static String readPropertySecurityMessageHeaderRawOptionValue(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean request) throws ProtocolException {
+		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER+RAW_VALUE, request);
+	}
 	public static String readPropertySecurityMessageSorgenteToken(AccordoServizioParteComune aspc, String nomePortType, String azione, boolean request) throws ProtocolException {
 		return readPropertyEngine(aspc, nomePortType, azione, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, request);
 	}
@@ -487,6 +491,9 @@ public class ModIPropertiesUtils {
 		}
 		else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH.equals(propertyName)) {
 			return securityMessageProfileSorgenteTokenIdAuth;
+		}
+		else if((ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER+RAW_VALUE).equals(propertyName)) {
+			return securityMessageProfileHeader;
 		}
 		else if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER.equals(propertyName)) {
 			

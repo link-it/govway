@@ -1,3 +1,10 @@
+2025-07-02  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità #1625
+	In ottemperanza a quanto indicato nella segnalazione issue 'https://github.com/AgID/specifiche-tecniche-DPR-160-2010/issues/198',
+	è stata introdotta la possibilità di generare un token di integrità anche per richieste e/o risposte prive di payload, utilizzando come valore del Digest un body vuoto ("").
+
 2025-06-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

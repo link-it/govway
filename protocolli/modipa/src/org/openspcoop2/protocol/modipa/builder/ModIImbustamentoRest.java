@@ -437,7 +437,7 @@ public class ModIImbustamentoRest {
 			Busta busta, String securityMessageProfile, boolean useKIDtokenHeader, String headerTokenRest, 
 			boolean corniceSicurezza, String corniceSicurezzaPattern, String corniceSicurezzaSchema,
 			RuoloMessaggio ruoloMessaggio, boolean includiRequestDigest,
-			Long nowParam, String jti, ModIHeaderType headerType, boolean integritaCustom,
+			Long nowParam, String jti, ModIHeaderType headerType, boolean integritaCustom, String integrityMode,
 			Map<String, Object> dynamicMap, RequestInfo requestInfo,
 			String purposeId, boolean sicurezzaRidefinitaOperazione) throws ProtocolException {
 				
@@ -955,23 +955,42 @@ public class ModIImbustamentoRest {
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
 			}
+			byte[]content = null;
+			boolean generateDigest = false;
 			if(hasContent) {
-			
 				// Produco Digest Headers
 				try {
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
 					msg.writeTo(bout, false);
 					bout.flush();
 					bout.close();
-					
-					digestValue = HttpUtilities.getDigestHeaderValue(bout.toByteArray(), securityConfig.getDigestAlgorithm(), securityConfig.getDigestEncoding());
+					content = bout.toByteArray();
+					generateDigest = true;
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}			
+			}
+			else if (
+					ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(integrityMode)
+					||
+					( request && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RISPOSTE_CON_PAYLOAD_HTTP_QUALSIASI_RICHIESTA.equals(integrityMode) )
+					||
+					( !request && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RICHIESTE_CON_PAYLOAD_HTTP_QUALSIASI_RISPOSTA.equals(integrityMode) )
+				){
+				content = "".getBytes();
+				generateDigest = true;
+			}
+			if(generateDigest) {
+				// Produco Digest Headers
+				try {
+					digestValue = HttpUtilities.getDigestHeaderValue(content, securityConfig.getDigestAlgorithm(), securityConfig.getDigestEncoding());
 				}catch(Exception e) {
 					throw new ProtocolException(e.getMessage(),e);
 				}
 				msg.forceTransportHeader(HttpConstants.DIGEST, digestValue);
 				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_DIGEST, digestValue);
-			
 			}
+			
 				
 			if(securityConfig.getHttpHeaders()!=null && !securityConfig.getHttpHeaders().isEmpty()) {
 				

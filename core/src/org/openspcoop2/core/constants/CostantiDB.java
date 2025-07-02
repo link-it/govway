@@ -916,10 +916,16 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_DISABILITATO = "false";
     public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_MODE_VALUE_PERSONALIZZATO = "custom";
     
+    public static final String MODIPA_PROFILO_SICUREZZA_RICHIESTA_CONTENT_TYPE_MODE_ID = "modipaSecurityRequestContentType";
+    
     public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE = "modipaSecurityResponse";
     public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_ABILITATO = "true";
     public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_DISABILITATO = "false";
     public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_MODE_VALUE_PERSONALIZZATO = "custom";
+    
+    public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_CONTENT_TYPE_MODE_ID = "modipaSecurityResponseContentType";
+
+    public static final String MODIPA_PROFILO_SICUREZZA_RISPOSTA_RETURN_CODE_MODE_ID = "modipaSecurityResponseReturnCode";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO = "modipaSecurityMessageProfile";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM01 = "idam01";
@@ -948,6 +954,8 @@ public final class CostantiDB {
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE = "modipaSecurityMessageHeaderCustomMode";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_PAYLOAD_HTTP = "payload";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS = "always";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RICHIESTE_CON_PAYLOAD_HTTP_QUALSIASI_RISPOSTA = "requestPayload";
+    public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RISPOSTE_CON_PAYLOAD_HTTP_QUALSIASI_RICHIESTA = "responsePayload";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_AGID_SIGNATURE = "modipaSecurityMessageHeaderSignatureMode";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_AGID_SIGNATURE_VALUE_STANDARD = "standard";

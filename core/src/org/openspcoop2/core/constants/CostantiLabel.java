@@ -275,7 +275,9 @@ public final class CostantiLabel {
 	
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL = "";
 	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_PAYLOAD_HTTP = "Presente solo con payload HTTP";
-	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_ALWAYS = "Presente per tutte le risorse";
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_ALWAYS = "Presente sempre";
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_RICHIESTE_CON_PAYLOAD_HTTP_QUALSIASI_RISPOSTA = "Presente su richieste con payload e su qualsiasi risposta";
+	public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_RISPOSTE_CON_PAYLOAD_HTTP_QUALSIASI_RICHIESTA = "Presente su qualsiasi richiesta e su risposte con payload";
     
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_AGID_SIGNATURE_LABEL = "Gestione Integrità";
     public static final String MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_AGID_SIGNATURE_LABEL_STANDARD = "Standard (INTEGRITY_REST_01)";
