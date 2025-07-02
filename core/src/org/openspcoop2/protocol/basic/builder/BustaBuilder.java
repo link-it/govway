@@ -94,7 +94,7 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 			try{
 				return UniqueIdentifierManager.newUniqueIdentifier().getAsString();
 			}catch(Exception e){
-				throw new ProtocolException(e.getMessage());
+				throw new ProtocolException(e.getMessage(), e);
 			}
 			
 		}

@@ -45,6 +45,7 @@ import org.openspcoop2.message.soap.AbstractOpenSPCoop2Message_soap_impl;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.io.notifier.NotifierInputStream;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.json.JsonPathExpressionEngine;
@@ -104,11 +105,11 @@ public abstract class OpenSPCoop2MessageFactory {
 				SOAPDocumentImpl.setCustomDocumentBuilderFactory(OpenSPCoop2MessageFactory.openspcoopMessageFactory.getDocumentBuilderFactoryClass());
 				SOAPDocumentImpl.setCustomSAXParserFactory(OpenSPCoop2MessageFactory.openspcoopMessageFactory.getSAXParserFactoryClass());
 				
-				//System.out.println("CREATO F("+force+") ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"] ["+OpenSPCoop2MessageFactory.messageFactoryImpl+"]");
+				/**System.out.println("CREATO F("+force+") ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"] ["+OpenSPCoop2MessageFactory.messageFactoryImpl+"]");*/
 			}
-	//		else{
-	//			System.out.println("GIA ESISTE ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"]");
-	//		}
+			/**else{
+				System.out.println("GIA ESISTE ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"]");
+			}*/
 		}catch(Exception e) {
 			throw new MessageException(e.getMessage(),e);
 		}
@@ -191,18 +192,18 @@ public abstract class OpenSPCoop2MessageFactory {
 	
 	// ********** SOAP Utilities mediati dall'implementazione dell'OpenSPCoop2Message *************
 	
-	private static HashMap<String, OpenSPCoop2Message> _instanceForSOAPUtilities = new HashMap<>();
+	private static HashMap<String, OpenSPCoop2Message> internalInstanceForSOAPUtilities = new HashMap<>();
 	private static synchronized void initInstanceForSOAPUtilities(OpenSPCoop2MessageFactory messageFactory, MessageType messageType) {
-		if(!_instanceForSOAPUtilities.containsKey(messageType.name())) {
+		if(!internalInstanceForSOAPUtilities.containsKey(messageType.name())) {
 			OpenSPCoop2Message msg = messageFactory.createEmptyMessage(messageType,MessageRole.NONE);
-			_instanceForSOAPUtilities.put(messageType.name(), msg);
+			internalInstanceForSOAPUtilities.put(messageType.name(), msg);
 		}
 	}
 	private static OpenSPCoop2Message getInstanceForSOAPUtilities(OpenSPCoop2MessageFactory messageFactory, MessageType messageType) {
-		if(!_instanceForSOAPUtilities.containsKey(messageType.name())) {
+		if(!internalInstanceForSOAPUtilities.containsKey(messageType.name())) {
 			initInstanceForSOAPUtilities(messageFactory, messageType);
 		}
-		return _instanceForSOAPUtilities.get(messageType.name());
+		return internalInstanceForSOAPUtilities.get(messageType.name());
 	}
 	
 	public static SOAPElement createSOAPElement(OpenSPCoop2MessageFactory messageFactory, MessageType messageType,byte[] element) throws MessageException, MessageNotSupportedException{
@@ -256,7 +257,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	public MessageType getMessageType(SOAPMessage soapMessage) throws MessageException {
 		try{
 			Object o = soapMessage.getProperty(Costanti.SOAP_MESSAGE_PROPERTY_MESSAGE_TYPE);
-			if(o!=null && o instanceof MessageType){
+			if(o instanceof MessageType){
 				return (MessageType) o;
 			}
 			return null;
@@ -272,11 +273,17 @@ public abstract class OpenSPCoop2MessageFactory {
 	
 	// ********** INTERNAL CREATE (chiamate dai metodi pubblici) *************
 	
-    private OpenSPCoop2Message _internalCreateMessage(MessageType messageType, MessageRole role, SOAPMessage msg) throws MessageException{
+    private OpenSPCoop2Message internalCreateMessage(MessageType messageType, MessageRole role, SOAPMessage msg) throws MessageException{
     	
     	if(!MessageType.SOAP_11.equals(messageType) && !MessageType.SOAP_12.equals(messageType)){
 			throw new MessageException("Message Type ["+messageType+"] unsupported");
 		}
+    	
+    	if (role.equals(MessageRole.FAULT) && Thread.currentThread().isInterrupted()) {
+    		// Fix 1604
+    		Thread.interrupted();
+    	}
+    	
     	
     	OpenSPCoop2Message msgNew = this._createMessage(messageType, msg);
     	
@@ -288,7 +295,12 @@ public abstract class OpenSPCoop2MessageFactory {
     	return msgNew;
     }
     
-    private OpenSPCoop2Message _internalCreateEmptyMessage(MessageType messageType, MessageRole role) throws MessageException{
+    private OpenSPCoop2Message internalCreateEmptyMessage(MessageType messageType, MessageRole role) throws MessageException{
+    	
+    	if (role.equals(MessageRole.FAULT) && Thread.currentThread().isInterrupted()) {
+    		// Fix 1604
+    		Thread.interrupted();
+    	}
     	
     	OpenSPCoop2Message msgNew = this._createEmptyMessage(messageType);
     	
@@ -301,11 +313,16 @@ public abstract class OpenSPCoop2MessageFactory {
     	
     }
     
-    private OpenSPCoop2MessageParseResult _internalCreateMessage(MessageType messageType, MessageRole messageRole, Object context, 
+    private OpenSPCoop2MessageParseResult internalCreateMessage(MessageType messageType, MessageRole messageRole, Object context, 
 			Object msgParam, NotifierInputStreamParams notifierInputStreamParams,
 			AttachmentsProcessingMode attachmentsProcessingMode, long overhead,
 			OpenSPCoop2MessageSoapStreamReader soapStreamReader) {	
 		
+    	if (messageRole.equals(MessageRole.FAULT) && Thread.currentThread().isInterrupted()) {
+    		// Fix 1604
+    		Thread.interrupted();
+    	}
+    	
 		OpenSPCoop2MessageParseResult result = new OpenSPCoop2MessageParseResult();
 		try{
 			InputStream is = null;
@@ -317,16 +334,16 @@ public abstract class OpenSPCoop2MessageFactory {
 					is = (InputStream) msgParam;
 				}
 				else{
-					throw new Exception("Tipo di messaggio non supportato: "+msgParam.getClass().getName());
+					throw new MessageException("Tipo di messaggio non supportato: "+msgParam.getClass().getName());
 				}
 			}
 			
 			InputStream nis = null;
 			
-//			if(is==null){
-//				throw new Exception("Original InputStream undefined");
-//			}
-//			
+			/**if(is==null){
+				throw new Exception("Original InputStream undefined");
+			}*/
+			
 			String contentType = null;
 			TransportRequestContext transportRequestContext = null; 
 			TransportResponseContext transportResponseContext = null;
@@ -401,7 +418,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				op2Msg = this._createMessage(messageType, contentType, nis, attachmentsProcessingMode, overhead, soapStreamReader);
 			}
 			if(op2Msg==null){
-				throw new Exception("Create message failed");
+				throw new MessageException("Create message failed");
 			}
 			if(notifierInputStreamParams!=null && nis!=null){
 				op2Msg.setNotifierInputStream((NotifierInputStream)nis);
@@ -434,17 +451,17 @@ public abstract class OpenSPCoop2MessageFactory {
 			try {
 				result.setParseException(ParseExceptionUtils.buildParseException(t,messageRole));
 			}catch(Throwable e) {
-//				System.err.println("ECCEZIONE?");
-//				e.printStackTrace(System.err);
+				/**System.err.println("ECCEZIONE?");
+				e.printStackTrace(System.err);*/
 				System.err.println("Message reading error: "+t.getMessage());
 				t.printStackTrace(System.err);
-				throw new RuntimeException(t.getMessage(),t);
+				throw new UtilsRuntimeException(t.getMessage(),t);
 			}
 		}
 		return result;
 	}
 	
-	private OpenSPCoop2MessageParseResult _internalEnvelopingMessage(MessageType messageType, MessageRole messageRole, 
+	private OpenSPCoop2MessageParseResult internalEnvelopingMessage(MessageType messageType, MessageRole messageRole, 
 			String contentTypeForEnvelope, String soapAction,
 			Object context, 
 			Object msgParam, NotifierInputStreamParams notifierInputStreamParams, 
@@ -462,11 +479,11 @@ public abstract class OpenSPCoop2MessageFactory {
 				byteMsg = Utilities.getAsByteArray((InputStream)msgParam);
 			}
 			else{
-				throw new Exception("Tipo di messaggio non supportato: "+msgParam.getClass().getName());
+				throw new MessageException("Tipo di messaggio non supportato: "+msgParam.getClass().getName());
 			}
 			
 			if(byteMsg==null || byteMsg.length==0) 
-				throw new Exception("Nessun contenuto fornito da inserire all'interno del SoapBody");
+				throw new MessageException("Nessun contenuto fornito da inserire all'interno del SoapBody");
 			
 			if(MessageType.SOAP_11.equals(messageType)){
 				if(contentTypeForEnvelope==null){
@@ -497,37 +514,37 @@ public abstract class OpenSPCoop2MessageFactory {
 				int firstBound = msg.indexOf(boundary);
 				int secondBound = msg.indexOf(boundary,firstBound+boundary.length());
 				if(firstBound==-1 || secondBound==-1)
-					throw new Exception("multipart/related non correttamente formato (bound not found)");
+					throw new MessageException("multipart/related non correttamente formato (bound not found)");
 				String bodyOriginal = msg.substring(firstBound+boundary.length(), secondBound);
 				
-				// Cerco "\r\n\r\n";
+				/** Cerco "\r\n\r\n"; */
 				int indexCarriage = bodyOriginal.indexOf("\r\n\r\n");
 				if(indexCarriage==-1)
-					throw new Exception("multipart/related non correttamente formato (\\r\\n\\r\\n not found)");
+					throw new MessageException("multipart/related non correttamente formato (\\r\\n\\r\\n not found)");
 				String contenutoBody = bodyOriginal.substring(indexCarriage+"\r\n\r\n".length());
 				
 				// brucio spazi vuoti
-				int puliziaSpaziBianchi_e_XML = 0;
-				for( ; puliziaSpaziBianchi_e_XML<contenutoBody.length(); puliziaSpaziBianchi_e_XML++){
-					if(contenutoBody.charAt(puliziaSpaziBianchi_e_XML)!=' '){
+				int puliziaSpaziBianchiConXML = 0;
+				for( ; puliziaSpaziBianchiConXML<contenutoBody.length(); puliziaSpaziBianchiConXML++){
+					if(contenutoBody.charAt(puliziaSpaziBianchiConXML)!=' '){
 						break;
 					}
 				}
-				String bodyPulito = contenutoBody.substring(puliziaSpaziBianchi_e_XML);
+				String bodyPulito = contenutoBody.substring(puliziaSpaziBianchiConXML);
 				
 				// se presente <?xml && eraserXMLTag
 				if(bodyPulito.startsWith("<?xml")){
 					if(eraserXmlTag){
 						// eliminazione tag <?xml
-						for(puliziaSpaziBianchi_e_XML=0 ; puliziaSpaziBianchi_e_XML<contenutoBody.length(); puliziaSpaziBianchi_e_XML++){
-							if(contenutoBody.charAt(puliziaSpaziBianchi_e_XML)=='>'){
+						for(puliziaSpaziBianchiConXML=0 ; puliziaSpaziBianchiConXML<contenutoBody.length(); puliziaSpaziBianchiConXML++){
+							if(contenutoBody.charAt(puliziaSpaziBianchiConXML)=='>'){
 								break;
 							}
 						}
-						bodyPulito = bodyPulito.substring(puliziaSpaziBianchi_e_XML+1);
+						bodyPulito = bodyPulito.substring(puliziaSpaziBianchiConXML+1);
 					}else{
 						// lancio eccezione
-						throw new Exception("Tag <?xml non permesso con la funzionalita di imbustamento SOAP");
+						throw new MessageException("Tag <?xml non permesso con la funzionalita di imbustamento SOAP");
 					}
 				}
 									
@@ -600,14 +617,14 @@ public abstract class OpenSPCoop2MessageFactory {
 			
 			OpenSPCoop2MessageParseResult result = null;
 			if(context==null){
-				result = _internalCreateMessage(messageType, messageRole, contentTypeForEnvelope, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, soapReader);
+				result = internalCreateMessage(messageType, messageRole, contentTypeForEnvelope, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, soapReader);
 			}
 			else if(context instanceof TransportRequestContext){
 				TransportRequestContext trc = (TransportRequestContext) context;
 				TransportUtils.removeObject(trc.getHeaders(), HttpConstants.CONTENT_TYPE);
 				TransportUtils.addHeader(trc.getHeaders(), HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
-				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, soapReader);
+				result = internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, soapReader);
 				
 			}
 			else if(context instanceof TransportResponseContext){
@@ -615,7 +632,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				TransportUtils.removeObject(trc.getHeaders(), HttpConstants.CONTENT_TYPE);
 				TransportUtils.addHeader(trc.getHeaders(), HttpConstants.CONTENT_TYPE, contentTypeForEnvelope);
 				
-				result = _internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, soapReader);
+				result = internalCreateMessage(messageType, messageRole, trc, messageInput, notifierInputStreamParams, attachmentsProcessingMode, 0, soapReader);
 			}
 			else{
 				throw new MessageException("Unsupported Context ["+context.getClass().getName()+"]");
@@ -646,7 +663,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	}
 	
 	private static int readOffsetXmlInstruction(byte[]byteMsg, int startFrom,boolean eraserXmlTag, int offsetParam, boolean cleanEmptyChar) throws Exception{
-		//System.out.println("START["+(startFrom)+"] OFFSET["+offsetParam+"]");
+		/**System.out.println("START["+(startFrom)+"] OFFSET["+offsetParam+"]");*/
 		int offset = offsetParam;
 		int i = startFrom;
 		
@@ -662,7 +679,7 @@ public abstract class OpenSPCoop2MessageFactory {
 		String xml = "";
 		if(byteMsg.length>i+5){
 			xml = "" + ((char)byteMsg[i]) + ((char)byteMsg[i+1]) + ((char)byteMsg[i+2]) +((char)byteMsg[i+3]) + ((char)byteMsg[i+4]);
-			//System.out.println("CHECK ["+xml+"]");
+			/**System.out.println("CHECK ["+xml+"]");*/
 			if(xml.equals("<?xml")){
 				if(eraserXmlTag){
 					// eliminazione tag <?xml
@@ -674,18 +691,18 @@ public abstract class OpenSPCoop2MessageFactory {
 					offset = i+1;
 				}else{
 					// lancio eccezione
-					throw new Exception("Tag <?xml non permesso con la funzionalita di imbustamento SOAP");
+					throw new MessageException("Tag <?xml non permesso con la funzionalita di imbustamento SOAP");
 				}
-				//System.out.println("RIGIRO CON START["+(i+1)+"] OFFSET["+offset+"]");
+				/**System.out.println("RIGIRO CON START["+(i+1)+"] OFFSET["+offset+"]");*/
 				return readOffsetXmlInstruction(byteMsg, (i+1), eraserXmlTag, offset, true);
 			}
 			else{
-				//System.out.println("FINE A["+offset+"]");
+				/**System.out.println("FINE A["+offset+"]");*/
 				return offset;
 			}
 		}
 		else{
-			//System.out.println("FINE B["+offset+"]");
+			/**System.out.println("FINE B["+offset+"]");*/
 			return offset;
 		}
 	}
@@ -708,7 +725,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
 			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
-		return _internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
+		return internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
 				attachmentsProcessingMode, 0, null);
 	}
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
@@ -721,7 +738,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams,
 			OpenSPCoop2MessageSoapStreamReader soapStreamReader, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
-		return _internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
+		return internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
 				attachmentsProcessingMode, 0, soapStreamReader);
 	}
 	
@@ -744,7 +761,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportRequestContext requestContext, 
 			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
-		return _internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
+		return internalCreateMessage(messageType, MessageRole.REQUEST, requestContext, messageInput, notifierInputStreamParams,  
 				attachmentsProcessingMode, 0, null);
 	}
 	
@@ -756,7 +773,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
 			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
-		return _internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
+		return internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
 				attachmentsProcessingMode, 0, null);
 	}
 	
@@ -770,7 +787,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams,
 			OpenSPCoop2MessageSoapStreamReader soapStreamReader, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
-		return _internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
+		return internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
 				attachmentsProcessingMode, 0, soapStreamReader);
 	}
 	
@@ -793,7 +810,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, TransportResponseContext responseContext, 
 			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
-		return _internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
+		return internalCreateMessage(messageType, MessageRole.RESPONSE, responseContext, messageInput, notifierInputStreamParams,  
 				attachmentsProcessingMode, 0, null);
 	}
 	
@@ -805,7 +822,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
 			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
-		return _internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
+		return internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
 				attachmentsProcessingMode, 0, null);
 	}
 	
@@ -819,7 +836,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			InputStream messageInput, NotifierInputStreamParams notifierInputStreamParams,
 			OpenSPCoop2MessageSoapStreamReader soapStreamReader, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
-		return _internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
+		return internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
 				attachmentsProcessingMode, 0, soapStreamReader);
 	}
 	
@@ -842,7 +859,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	public OpenSPCoop2MessageParseResult createMessage(MessageType messageType, MessageRole messageRole, String contentType, 
 			byte[] messageInput, NotifierInputStreamParams notifierInputStreamParams, 
 			AttachmentsProcessingMode attachmentsProcessingMode) {	
-		return _internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
+		return internalCreateMessage(messageType, messageRole, contentType, messageInput, notifierInputStreamParams, 
 				attachmentsProcessingMode, 0, null);
 	}
 	
@@ -868,7 +885,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag,
 			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
-		return this._internalEnvelopingMessage(messageType, MessageRole.REQUEST, contentTypeForEnvelope, soapAction, requestContext, 
+		return this.internalEnvelopingMessage(messageType, MessageRole.REQUEST, contentTypeForEnvelope, soapAction, requestContext, 
 				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
 				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
@@ -888,7 +905,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag,
 			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
-		return this._internalEnvelopingMessage(messageType, MessageRole.REQUEST, contentTypeForEnvelope, soapAction, requestContext, 
+		return this.internalEnvelopingMessage(messageType, MessageRole.REQUEST, contentTypeForEnvelope, soapAction, requestContext, 
 				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
 				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
@@ -908,7 +925,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag,
 			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
-		return this._internalEnvelopingMessage(messageType, MessageRole.RESPONSE, contentTypeForEnvelope, soapAction, responseContext, 
+		return this.internalEnvelopingMessage(messageType, MessageRole.RESPONSE, contentTypeForEnvelope, soapAction, responseContext, 
 				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
 				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
@@ -928,7 +945,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag,
 			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
-		return this._internalEnvelopingMessage(messageType, MessageRole.RESPONSE, contentTypeForEnvelope, soapAction, responseContext, 
+		return this.internalEnvelopingMessage(messageType, MessageRole.RESPONSE, contentTypeForEnvelope, soapAction, responseContext, 
 				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
 				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
@@ -948,7 +965,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag,
 			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
-		return this._internalEnvelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction, null, 
+		return this.internalEnvelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction, null, 
 				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
 				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
@@ -968,7 +985,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			AttachmentsProcessingMode attachmentsProcessingMode,
 			boolean eraserXmlTag,
 			boolean useSoapMessageReader, int soapMessageReaderBufferThresholdKb) {
-		return this._internalEnvelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction, null, 
+		return this.internalEnvelopingMessage(messageType, messageRole, contentTypeForEnvelope, soapAction, null, 
 				messageInput, notifierInputStreamParams, attachmentsProcessingMode, eraserXmlTag,
 				useSoapMessageReader, soapMessageReaderBufferThresholdKb);
 	}
@@ -981,7 +998,7 @@ public abstract class OpenSPCoop2MessageFactory {
 	 */
 	
 	public OpenSPCoop2Message createMessage(MessageType messageType, MessageRole role, SOAPMessage msg) throws MessageException{
-		return this._internalCreateMessage(messageType, role, msg);
+		return this.internalCreateMessage(messageType, role, msg);
 	}
 	
 	
@@ -998,7 +1015,7 @@ public abstract class OpenSPCoop2MessageFactory {
 			// Fix per performance: creare un messaggio vuoto tramite il meccanismo sottostante, faceva utilizzare il metodo 'createMessage -> _internalCreateMessage' che portava
 			// a richiemare la struttura del messaggio tramite il controllo: op2Msg.castAsSoap().getSOAPHeader(); // Verifica struttura
 			// Tale controllo era costoso in termini di performance per questi messaggi vuoti.
-			/*
+			/**
 			if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
 				
 				byte[] xml = null;
@@ -1019,12 +1036,12 @@ public abstract class OpenSPCoop2MessageFactory {
 			}
 			else{
 			*/
-			OpenSPCoop2Message msgEmpty = _internalCreateEmptyMessage(messageType, role);
+			OpenSPCoop2Message msgEmpty = internalCreateEmptyMessage(messageType, role);
 			if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
 				msgEmpty.setContentType(MessageUtilities.getDefaultContentType(messageType));
 			}
 			return msgEmpty;
-			//}
+			/**}*/
 				
 		}catch(Throwable e){
 			System.err.println("Exception non gestibile durante la creazione di un messaggio vuoto. " + e);
@@ -1084,6 +1101,11 @@ public abstract class OpenSPCoop2MessageFactory {
 	public OpenSPCoop2Message createFaultMessage(MessageType messageType,boolean useProblemRFC7807, FaultBuilderConfig faultBuilderConfig, 
 			String erroreParam,NotifierInputStreamParams notifierInputStreamParams){ 
 	
+		if (Thread.currentThread().isInterrupted()) {
+			// Fix 1604
+			Thread.interrupted();
+		}
+		
 		if(faultBuilderConfig==null) {
 			faultBuilderConfig = new FaultBuilderConfig();
 		}
@@ -1242,10 +1264,10 @@ public abstract class OpenSPCoop2MessageFactory {
 			}
 			else{
 				// default uso xml
-//				fault = "<op2:Fault xmlns:op2=\""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\">"
-//						+"<op2:Message>"+errore+"</op2:Message>"
-//						+"</op2:Fault>";
-//				contentType = MessageUtilities.getDefaultContentType(MessageType.XML);
+				/**fault = "<op2:Fault xmlns:op2=\""+Costanti.DEFAULT_SOAP_FAULT_ACTOR+"\">"
+						+"<op2:Message>"+errore+"</op2:Message>"
+						+"</op2:Fault>";
+				contentType = MessageUtilities.getDefaultContentType(MessageType.XML);*/
 				
 				// modifica default in json
 				if(useProblemRFC7807) {
@@ -1281,7 +1303,7 @@ public abstract class OpenSPCoop2MessageFactory {
 				}
 			}
 			
-			//System.out.println("XML ["+versioneSoap+"] ["+xml+"]");
+			/**System.out.println("XML ["+versioneSoap+"] ["+xml+"]");*/
 			
 			byte[] xmlByte = fault.getBytes();
 			OpenSPCoop2MessageParseResult result = this.createMessage(messageType, MessageRole.FAULT , contentType, 
@@ -1322,29 +1344,20 @@ public abstract class OpenSPCoop2MessageFactory {
 	
 	public static boolean isFaultXmlMessage(Node nodeXml){
 		try{
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_ERRORE_APPLICATIVO+"]vs["+nodeXml.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+nodeXml.getNamespaceURI()+"]");
-			if("Fault".equals(nodeXml.getLocalName()) && 
-					Costanti.DEFAULT_SOAP_FAULT_ACTOR.equals(nodeXml.getNamespaceURI() ) 
-				){
-				return true;
-			}
-			else{
-				return false;
-			}
+			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_ERRORE_APPLICATIVO+"]vs["+nodeXml.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+nodeXml.getNamespaceURI()+"]");*/
+			return "Fault".equals(nodeXml.getLocalName()) && 
+					Costanti.DEFAULT_SOAP_FAULT_ACTOR.equals(nodeXml.getNamespaceURI());
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isFaultJsonMessage(String jsonBody, Logger log){
 		try{
 			String namespace = JsonPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.fault.namespace", log);
-			if(namespace!=null && Costanti.DEFAULT_SOAP_FAULT_ACTOR.equals(namespace)) {
-				return true;
-			}
-			return  false;
+			return namespace!=null && Costanti.DEFAULT_SOAP_FAULT_ACTOR.equals(namespace);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
