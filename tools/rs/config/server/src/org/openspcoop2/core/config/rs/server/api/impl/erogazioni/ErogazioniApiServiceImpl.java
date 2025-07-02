@@ -70,6 +70,7 @@ import org.openspcoop2.core.config.rs.server.model.ListaErogazioni;
 import org.openspcoop2.core.config.rs.server.model.ModalitaIdentificazioneAzioneEnum;
 import org.openspcoop2.core.config.rs.server.model.OneOfConnettoreErogazioneConnettore;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -86,7 +87,6 @@ import org.openspcoop2.core.registry.beans.OperationSintetica;
 import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
@@ -200,9 +200,9 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 					
 					if(accordoFull.sizeProtocolPropertyList()>0) {
 						for (org.openspcoop2.core.registry.ProtocolProperty pp : accordoFull.getProtocolPropertyList()) {
-							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
+							if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
 								String v = pp.getValue();
-								if(v!=null && StringUtils.isNotEmpty(v) && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(v)) {
+								if(v!=null && StringUtils.isNotEmpty(v) && !CostantiDB.MODIPA_VALUE_UNDEFINED.equals(v)) {
 									required = true;
 								}
 							}

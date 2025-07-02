@@ -589,7 +589,9 @@ Scenario: isTest('idar03-custom-doppi-header-get-without-custom') ||
     * configure responseHeaders = newHeaders
     * def response = ''
 
-Scenario: isTest('idar03-custom-doppi-header-get-with-custom')
+Scenario: isTest('idar03-custom-doppi-header-get-with-custom') ||
+          isTest('idar03-custom-doppi-header-get-with-custom-always-request') ||
+          isTest('idar03-custom-doppi-header-get-with-custom-always-response')
 
     * def integration_header_2 = karate.readAsString('classpath:test/rest/sicurezza-messaggio/integration_info_2.json')
     * def integration_header_2_base64 = encode_base64(integration_header_2);
@@ -790,6 +792,8 @@ Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta')
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
 
 Scenario: isTest('idar04-custom-header-pdnd-get-with-custom') ||
+	  isTest('idar04-custom-header-pdnd-get-with-custom-always-request') ||
+	  isTest('idar04-custom-header-pdnd-get-with-custom-always-response') ||
             isTest('idar04-custom-header-pdnd-get-without-custom') ||
             isTest('idar04-custom-header-pdnd-assenza-header-integrity-risposta-metodo-get-senza-payload')
 

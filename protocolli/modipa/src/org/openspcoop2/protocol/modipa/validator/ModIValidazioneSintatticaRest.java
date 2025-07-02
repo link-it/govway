@@ -418,7 +418,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			boolean includiRequestDigest, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig,
-			boolean buildSecurityTokenInRequest, ModIHeaderType headerType, boolean integritaCustom, boolean securityHeaderObbligatorio,
+			boolean buildSecurityTokenInRequest, ModIHeaderType headerType, boolean integritaCustom, String integrityMode, boolean securityHeaderObbligatorio,
 			Map<String, Object> dynamicMapParameter, Busta datiRichiesta,
 			IDSoggetto idSoggetto, MsgDiagnostico msgDiag) throws ProtocolException {
 		
@@ -1167,7 +1167,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 			String digestHeader = HttpConstants.DIGEST;
 			String digestValueInHeaderHTTP = null;
 			if(integrita && !integritaCustom) {
-				
+							
 				List<String> digests = null;
 				if(msg!=null) {
 					if(request && msg.getTransportRequestContext()!=null) {
@@ -1199,9 +1199,19 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 					}
 					
 					if(!msg.castAsRest().hasContent()) {
-						String role = MessageRole.REQUEST.equals(msg.getMessageRole()) ? "richiesta" : "risposta";
-						erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_VALIDA, 
-								getErrorHeaderHttpPrefix(digestHeader)+" presente in una "+role+" con http payload vuoto"));
+						
+						boolean canExists = 
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(integrityMode)
+								||
+								( request && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RISPOSTE_CON_PAYLOAD_HTTP_QUALSIASI_RICHIESTA.equals(integrityMode) )
+								||
+								( !request && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RICHIESTE_CON_PAYLOAD_HTTP_QUALSIASI_RISPOSTA.equals(integrityMode) );
+						
+						if(!canExists) {
+							String role = MessageRole.REQUEST.equals(msg.getMessageRole()) ? "richiesta" : "risposta";
+							erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_FIRMA_INTESTAZIONE_NON_VALIDA, 
+									getErrorHeaderHttpPrefix(digestHeader)+" presente in una "+role+" con http payload vuoto"));
+						}
 					}
 				}
 			}

@@ -543,7 +543,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 												
 						if(rest) {
 							boolean securityHeaderObbligatorio = true;
-
+							
 							if(headerTokenRestIntegrity==null) {
 								
 								String token = null;
@@ -557,19 +557,55 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								try {
 									msgDiag.logPersonalizzato(prefixMsgDiag+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 									
-									// Nel caso di 1 solo header da generare localmente, l'integrity, e l'authorization prodotto tramite token policy, 
-									//    l'integrity è obbligatorio solo se c'è un payload o se atteso per un integrity cystom. 
-									//    Nel caso non sia atteso se presente viene validato, altrimenti non da errore.
-									if(!sorgenteLocale) {
-										securityHeaderObbligatorio = msg.castAsRest().hasContent() || 
-												(integritaCustom && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(ModIPropertiesUtils.getPropertySecurityMessageHeaderCustomMode(aspc, nomePortType, azione, request)));
+									String integrityMode = ModIPropertiesUtils.getPropertySecurityMessageHeaderCustomMode(aspc, nomePortType, azione, request);
+									
+									boolean expectedIntegrity = false;
+									if(msg.castAsRest().hasContent()) {
+										expectedIntegrity = true;
 									}
+									else {
+										expectedIntegrity = ( /** *Rilascio con issue 1625 integritaCustom && */ 
+												ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(integrityMode)
+												||
+												( request && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RISPOSTE_CON_PAYLOAD_HTTP_QUALSIASI_RICHIESTA.equals(integrityMode) )
+												||
+												( !request && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RICHIESTE_CON_PAYLOAD_HTTP_QUALSIASI_RISPOSTA.equals(integrityMode) )
+											);
+									}
+									
+									// Il caso di 1 solo header da generare può succedere: 
+									// In presenza di un authorization prodotto tramite token policy dove a questo punto il token è per forza l'integrity
+									// In presenza di un authorization locale con pattern senza integrity
+									// In presenza di un authorization locale con pattern integrity e utilizzo di un solo header unico che contiene entrambe le funzionalità auth e integrity
+									// In presenza di un authorization locale durante la fase della risposta, con indicazione di usare 2 header solo nella richiesta (opzione includi authorization nella risposta non selezionata)
+									boolean validateToken = false;
+									if(sorgenteLocale) {
+										// devo validarlo se rappresenta anche l'authorization o se viene richiesto integrity
+										if(request) {
+											validateToken = true; // sicuramente rappresente l'identità di authorization
+										}
+										else {
+											String headerTokenRestOption = ModIPropertiesUtils.readPropertySecurityMessageHeaderRawOptionValue(aspc, nomePortType, azione, request);
+											boolean opzioneDueHeaderRichiestaGeneraSoloIntegrityRisposta = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(headerTokenRestOption);
+											// il token deve essere validato sempre se rappresenta l'authorization come unica informazione. Se suddiviso tra due header il caso in cui non debba essere validato è se siamo nella risposta con indicazione di non generare authorization
+											if(!opzioneDueHeaderRichiestaGeneraSoloIntegrityRisposta) {
+												validateToken = true;
+											}
+											else {
+												validateToken = expectedIntegrity;
+											}					
+										}
+									}
+									else {
+										validateToken = expectedIntegrity;
+									}
+									securityHeaderObbligatorio = validateToken;
 									token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, false, headerTokenRest, 
 											corniceSicurezza, patternCorniceSicurezza, 
 											null, // devo fornirlo solo durante la validazione dell'Audit Token 
 											includiRequestDigest, bustaRitornata, 
 											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-											buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
+											buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, integrityMode, securityHeaderObbligatorio,
 											dynamicMap, datiRichiesta,
 											idSoggetto, msgDiag);
 									
@@ -668,7 +704,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											null, // devo fornirlo solo durante la validazione dell'Audit Token   
 											includiRequestDigest, bustaRitornata, 
 											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig,
-											buildSecurityTokenInRequest, ModIHeaderType.BOTH_AUTH, integritaCustom, securityHeaderObbligatorio,
+											buildSecurityTokenInRequest, ModIHeaderType.BOTH_AUTH, integritaCustom, null, securityHeaderObbligatorio,
 											dynamicMap, datiRichiesta,
 											idSoggetto, msgDiag);
 									
@@ -712,10 +748,23 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 								try {
 									msgDiag.logPersonalizzato(DIAGNOSTIC_VALIDATE_TOKEN_INTEGRITY+tipoDiagnostico+DIAGNOSTIC_IN_CORSO);
 									
+									String integrityMode = ModIPropertiesUtils.getPropertySecurityMessageHeaderCustomMode(aspc, nomePortType, azione, request);
+									
 									// !! Nel caso di 2 header, quello integrity è obbligatorio solo se c'è un payload o se atteso per un integrity cystom. 
 									//                          Nel caso non sia atteso se presente viene validato, altrimenti non da errore.
-									boolean securityHeaderIntegrityObbligatorio = msg.castAsRest().hasContent() || 
-											(integritaCustom && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(ModIPropertiesUtils.getPropertySecurityMessageHeaderCustomMode(aspc, nomePortType, azione, request)));
+									boolean securityHeaderIntegrityObbligatorio = false;
+									if(msg.castAsRest().hasContent()) {
+										securityHeaderIntegrityObbligatorio = true;
+									}
+									else {
+										securityHeaderIntegrityObbligatorio = ( /** *Rilascio con issue 1625 integritaCustom && */ 
+												ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(integrityMode)
+												||
+												( request && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RISPOSTE_CON_PAYLOAD_HTTP_QUALSIASI_RICHIESTA.equals(integrityMode) )
+												||
+												( !request && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RICHIESTE_CON_PAYLOAD_HTTP_QUALSIASI_RISPOSTA.equals(integrityMode) )
+											);
+									}
 											
 									boolean keystoreKidModeIntegrity = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile)
 											||
@@ -730,7 +779,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 											null, // devo fornirlo solo durante la validazione dell'Audit Token 
 											includiRequestDigest, bustaRitornata, 
 											erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigIntegrity,
-											buildSecurityTokenInRequest, ModIHeaderType.BOTH_INTEGRITY, integritaCustom, securityHeaderIntegrityObbligatorio,
+											buildSecurityTokenInRequest, ModIHeaderType.BOTH_INTEGRITY, integritaCustom, integrityMode, securityHeaderIntegrityObbligatorio,
 											null, null,
 											idSoggetto, msgDiag); // gia' inizializzato sopra
 												
@@ -918,7 +967,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 									corniceSicurezza, patternCorniceSicurezza, schemaCorniceSicurezza,
 									false, bustaRitornata, 
 									erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfigAudit,
-									buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, securityHeaderObbligatorio,
+									buildSecurityTokenInRequest, ModIHeaderType.SINGLE, integritaCustom, null, securityHeaderObbligatorio,
 									dynamicMap, datiRichiesta,
 									idSoggetto, msgDiag);
 							

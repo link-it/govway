@@ -618,11 +618,21 @@ public class ModIImbustamento {
 						
 					if(rest) {
 						
+						boolean integritaX509 = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0302.equals(securityMessageProfile);
+						boolean integritaKid = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0401.equals(securityMessageProfile) || 
+								ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0402.equals(securityMessageProfile);
+						boolean integrita = integritaX509 || integritaKid;
+						if(integrita) {
+							// nop
+						}
+						
 						// Integrity verrà generato solo se:
 						// Nel caso di 2 header da generare localmente, quello integrity viene prodotto solo se c'è un payload o uno degli header indicati da firmare.
 						// Nel caso di 1 solo header da generare localmente, l'integrity, e l'authorization prodotto tramite token policy lo stesso verrà generato solo se c'è un payload o uno degli header indicati da firmare.
 						boolean addIntegrity = false;
 						boolean signedHeaders = false;
+						String integrityMode = null;
 						if(securityConfig.getHttpHeaders()!=null && !securityConfig.getHttpHeaders().isEmpty()) {
 							Map<String, List<String>> mapForceTransportHeaders = msg.getForceTransportHeaders();
 							for (String httpHeader : securityConfig.getHttpHeaders()) {
@@ -638,15 +648,47 @@ public class ModIImbustamento {
 						if(msg.castAsRest().hasContent() || signedHeaders) {
 							addIntegrity = true;
 						}
-						else if(integritaCustom) {
-							addIntegrity = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(ModIPropertiesUtils.getPropertySecurityMessageHeaderCustomMode(aspc, nomePortType, azione, isRichiesta));
+						else {/**Rilascio con issue 1625 else if(integritaCustom) {*/
+							integrityMode = ModIPropertiesUtils.getPropertySecurityMessageHeaderCustomMode(aspc, nomePortType, azione, isRichiesta);
+							addIntegrity = 
+									(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS.equals(integrityMode))
+									||
+									( isRichiesta && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RISPOSTE_CON_PAYLOAD_HTTP_QUALSIASI_RICHIESTA.equals(integrityMode) )
+									||
+									( !isRichiesta && ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RICHIESTE_CON_PAYLOAD_HTTP_QUALSIASI_RISPOSTA.equals(integrityMode) )
+									;
 						}
 						
 						
 						if(headerTokenRestIntegrity==null) {
 							
-							// Nel caso di 1 solo header da generare localmente, l'integrity, e l'authorization prodotto tramite token policy lo stesso verrà generato solo se c'è un payload o uno degli header indicati da firmare.
-							if(sorgenteLocale || addIntegrity) {
+							// Il caso di 1 solo header da generare può succedere: 
+							// In presenza di un authorization prodotto tramite token policy dove a questo punto il token è per forza l'integrity
+							// In presenza di un authorization locale con pattern senza integrity
+							// In presenza di un authorization locale con pattern integrity e utilizzo di un solo header unico che contiene entrambe le funzionalità auth e integrity
+							// In presenza di un authorization locale durante la fase della risposta, con indicazione di usare 2 header solo nella richiesta (opzione includi authorization nella risposta non selezionata)
+							boolean addToken = false;
+							if(sorgenteLocale) {
+								// devo generarlo se rappresenta anche l'authorization o se viene richiesto integrity
+								if(isRichiesta) {
+									addToken = true; // sicuramente rappresente l'identità di authorization
+								}
+								else {
+									String headerTokenRestOption = ModIPropertiesUtils.readPropertySecurityMessageHeaderRawOptionValue(aspc, nomePortType, azione, isRichiesta);
+									boolean opzioneDueHeaderRichiestaGeneraSoloIntegrityRisposta = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_VALUE_AUTHORIZATION_MODIPA.equals(headerTokenRestOption);
+									// il token deve essere generato sempre se rappresenta l'authorization come unica informazione. Se suddiviso tra due header il caso in cui non debba essere generato è se siamo nella risposta con indicazione di non generare authorization
+									if(!opzioneDueHeaderRichiestaGeneraSoloIntegrityRisposta) {
+										addToken = true;
+									}
+									else {
+										addToken = addIntegrity;
+									}					
+								}
+							}
+							else {
+								addToken = addIntegrity;
+							}
+							if(addToken) {
 							
 								String prefixMsgDiag = null;
 								if(HttpConstants.AUTHORIZATION.equalsIgnoreCase(headerTokenRest)) {
@@ -663,7 +705,7 @@ public class ModIImbustamento {
 											corniceSicurezza, patternCorniceSicurezza, 
 											null, // devo fornirlo solo durante la generazione dell'Audit Token 
 											ruoloMessaggio, includiRequestDigest,
-											now, busta.getID(), ModIHeaderType.SINGLE, integritaCustom,
+											now, busta.getID(), ModIHeaderType.SINGLE, integritaCustom, integrityMode,
 											dynamicMap, requestInfo,
 											purposeId, sicurezzaRidefinitaOperazione);
 									protocolMessage.setBustaRawContent(new ModIBustaRawContent(headerTokenRest, modiToken.getToken()));
@@ -718,7 +760,7 @@ public class ModIImbustamento {
 										corniceSicurezza, patternCorniceSicurezza, 
 										null, // devo fornirlo solo durante la generazione dell'Audit Token 
 										ruoloMessaggio, includiRequestDigest,
-										now, jtiAuthorization, ModIHeaderType.BOTH_AUTH, integritaCustom,
+										now, jtiAuthorization, ModIHeaderType.BOTH_AUTH, integritaCustom, integrityMode,
 										dynamicMap, requestInfo,
 										purposeId, sicurezzaRidefinitaOperazione);
 								
@@ -756,7 +798,7 @@ public class ModIImbustamento {
 											corniceSicurezza, patternCorniceSicurezza, 
 											null, // devo fornirlo solo durante la generazione dell'Audit Token 
 											ruoloMessaggio, includiRequestDigest,
-											now, jtiIntegrity, ModIHeaderType.BOTH_INTEGRITY, integritaCustom,
+											now, jtiIntegrity, ModIHeaderType.BOTH_INTEGRITY, integritaCustom, integrityMode,
 											dynamicMap, requestInfo,
 											purposeId, sicurezzaRidefinitaOperazione);
 									
@@ -864,7 +906,7 @@ public class ModIImbustamento {
 								securityMessageProfileAudit, useKIDforAudit, headerTokenAudit, 
 								corniceSicurezza, patternCorniceSicurezza, schemaCorniceSicurezza,
 								ruoloMessaggio, false,
-								now, jtiAudit, ModIHeaderType.SINGLE, false,
+								now, jtiAudit, ModIHeaderType.SINGLE, false, null,
 								dynamicMap, requestInfo,
 								purposeId, sicurezzaRidefinitaOperazione);
 						if(protocolMessage.getBustaRawContent() instanceof ModIBustaRawContent) {

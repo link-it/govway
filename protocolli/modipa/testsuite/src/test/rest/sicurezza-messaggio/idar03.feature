@@ -2888,3 +2888,53 @@ Examples:
 | keystorePkcs12NoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyNoPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyNoPassword |
 | keystorePkcs12NoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyWithPassword | ApplicativoBlockingIDA01ExampleClient1_keystorePkcs12NoPassword-KeyWithPassword |
 
+
+
+
+@IntegritySenzaPayload
+Scenario Outline: Verifica di scenari dove l'integrity <descrizione>
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1"
+And path '<azione>'
+And header GovWay-TestSuite-forward-resource = '<forward>'
+And header GovWay-TestSuite-Test-ID = 'doppi-header-idar03-integrity-payload-<atteso>'
+When method get
+Then status 200
+And match response == ''
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| descrizione | azione | forward | atteso |
+| viene prodotto sempre | sempre | sempre | requestResponse |
+| non viene prodotto | soloConPayload | soloConPayload | nonAtteso |
+| viene prodotto solo nella richiesta | sempreRichiesta | sempreRichiesta | request |
+| viene prodotto solo nella risposta | sempreRisposta | sempreRisposta | response |
+
+
+
+@IntegritySenzaPayloadErrore
+Scenario Outline: Verifica di scenari dove l'integrity <descrizione>
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1"
+And path '<azione>'
+And header GovWay-TestSuite-forward-resource = '<forward>'
+And header GovWay-TestSuite-expected-status = '<expected-status>'
+And header GovWay-TestSuite-expected-response-error = '<expected-response-error>'
+And header GovWay-TestSuite-expected-response-error-type = '<expected-response-error-type>'
+And header GovWay-TestSuite-Test-ID = 'doppi-header-idar03-integrity-payload-<atteso>'
+When method get
+Then status <expected-status>
+And match response == read(('classpath:test/rest/sicurezza-messaggio/error-bodies/'+'<expected-response-error>'))
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'
+
+Examples:
+| descrizione | azione | forward | atteso | expected-status | expected-response-error | expected-response-error-type |
+| viene atteso dal server nella richiesta, ma il client non lo produce (cliente solo con payload; server sempre) | soloConPayload | sempre | nonAtteso-errore | 400 | assenza-header-agid-jwt-signature-richiesta.json | InteroperabilityInvalidRequest |
+| viene atteso dal server nella richiesta, ma il client non lo produce (client solo con payload nella richiesta; server sempreRichiesta) | sempreRisposta | sempreRichiesta | nonAtteso-errore | 400 | assenza-header-agid-jwt-signature-richiesta.json | InteroperabilityInvalidRequest |
+| viene prodotto dal client nella richiesta, ma il server non lo attende (client sempre; server solo con payload) | sempre | soloConPayload | request-errore | 400 | digest-payload-richiesta-vuota-non-atteso.json | InteroperabilityInvalidRequest |
+| viene prodotto dal client nella richiesta, ma il server non lo attende (client sempre nella richiesta; server sempre nella ricsposta) | sempreRichiesta | sempreRisposta | request-errore | 400 | digest-payload-richiesta-vuota-non-atteso.json | InteroperabilityInvalidRequest |
+| viene atteso dal client nella risposta, ma il server non lo produce (client sempre; server sempre nella richiesta) | sempre | sempreRichiesta | request | 502 | assenza-header-integrity-risposta.json | InteroperabilityInvalidRequest |
+| viene atteso dal client nella risposta, ma il server non lo produce (client sempre nella risposta; server solo con payload) | sempreRisposta | soloConPayload | nonAtteso | 502 | assenza-header-integrity-risposta.json | InteroperabilityInvalidRequest |
+| viene prodotto dal server nella risposta, ma il client non lo attende (client sempre nella richiesta; server sempre) | sempreRichiesta | sempre | requestResponse | 502 | digest-payload-risposta-vuota-non-atteso.json | InteroperabilityInvalidRequest |
+| viene prodotto dal server nella risposta, ma il client non lo attende (client solo con payload; server sempre nella risposta) | soloConPayload | sempreRisposta | response | 502 | digest-payload-risposta-vuota-non-atteso.json | InteroperabilityInvalidRequest |
+

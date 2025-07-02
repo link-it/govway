@@ -227,6 +227,10 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_PAYLOAD_HTTP);
 			profiloSicurezzaMessaggioHeaderCustomModeItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_ALWAYS,
 					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_ALWAYS);
+			profiloSicurezzaMessaggioHeaderCustomModeItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_RICHIESTE_CON_PAYLOAD_HTTP_QUALSIASI_RISPOSTA,
+					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RICHIESTE_CON_PAYLOAD_HTTP_QUALSIASI_RISPOSTA);
+			profiloSicurezzaMessaggioHeaderCustomModeItem.addLabelValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_LABEL_RISPOSTE_CON_PAYLOAD_HTTP_QUALSIASI_RICHIESTA,
+					ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_VALUE_RISPOSTE_CON_PAYLOAD_HTTP_QUALSIASI_RICHIESTA);
 			profiloSicurezzaMessaggioHeaderCustomModeItem.setDefaultValue(ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_DEFAULT_VALUE);
 			profiloSicurezzaMessaggioHeaderCustomModeItem.setType(ConsoleItemType.HIDDEN);
 			configuration.addConsoleItem(profiloSicurezzaMessaggioHeaderCustomModeItem);
@@ -835,10 +839,16 @@ public class ModIDynamicConfigurationAccordiParteComuneSicurezzaMessaggioUtiliti
 						}
 					}
 					if(profiloSicurezzaMessaggioHeaderCustomModeItem!=null) {
-						profiloSicurezzaMessaggioHeaderCustomModeItem.setType(ConsoleItemType.HIDDEN);
-						StringProperty profiloSicurezzaMessaggioHeaderCustomModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_ID);
-						if(profiloSicurezzaMessaggioHeaderCustomModeItemValue!=null) {
-							profiloSicurezzaMessaggioHeaderCustomModeItemValue.setValue(null);
+						if(isSicurezza03or04) {
+							/***Rilascio con issue 1625 */ 
+							profiloSicurezzaMessaggioHeaderCustomModeItem.setType(ConsoleItemType.SELECT);
+						}
+						else {
+							profiloSicurezzaMessaggioHeaderCustomModeItem.setType(ConsoleItemType.HIDDEN);
+							StringProperty profiloSicurezzaMessaggioHeaderCustomModeItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_HEADER_CUSTOM_MODE_ID);
+							if(profiloSicurezzaMessaggioHeaderCustomModeItemValue!=null) {
+								profiloSicurezzaMessaggioHeaderCustomModeItemValue.setValue(null);
+							}
 						}
 					}
 					if(profiloSicurezzaMessaggioHeaderItem!=null) {

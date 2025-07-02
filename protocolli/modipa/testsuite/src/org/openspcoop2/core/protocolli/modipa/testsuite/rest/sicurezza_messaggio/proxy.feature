@@ -67,6 +67,32 @@ Background:
         return components[0] + '.' + components[1] + '.' + components[2]
     }
     """
+
+    * def base64ToHex = 
+    """    
+    function base64ToHex(digestHeader) {
+       var parts = digestHeader.split("=");
+       if (parts.length < 2) {
+          throw "Invalid Digest header format: " + digestHeader;
+       }
+       var b64url = parts[1];
+       var b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
+       // Aggiungi padding se necessario
+       while (b64.length % 4 !== 0) {
+         b64 += "=";
+       }    
+       var Base64 = Java.type("java.util.Base64");
+       var decoder = Base64.getDecoder();
+       var bytes = decoder.decode(b64); // byte[] Java
+       var hex = "";
+       for (var i = 0; i < bytes.length; i++) {
+          var byte = (bytes[i] & 0xFF).toString(16); // gestisci byte negativi
+          if (byte.length === 1) byte = "0" + byte;
+              hex += byte;
+       }
+       return hex;
+    }
+    """    
    
 Scenario: isTest('connettivita-base')
 
@@ -4592,6 +4618,175 @@ Scenario: isTest('doppi-header-idar03-security-token-trasformazione-integrity-to
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
+Scenario: isTest('doppi-header-idar03-integrity-payload-requestResponse')
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestInHexMode = base64ToHex(requestHeaders['Digest'][0])
+    * match digestInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            signed_headers: [
+                { digest: requestHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestResponseInHexMode = base64ToHex(responseHeaders['Digest'][0])
+    * match digestResponseInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+
+    * def server_token_integrity_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            client_id: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            signed_headers: [
+                { digest: responseHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_integrity_match, kind: "AGID"  })
+    
+Scenario: isTest('doppi-header-idar03-integrity-payload-nonAtteso')
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
+    
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'    
+    
+Scenario: isTest('doppi-header-idar03-integrity-payload-request')
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestInHexMode = base64ToHex(requestHeaders['Digest'][0])
+    * match digestInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            signed_headers: [
+                { digest: requestHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent' 
+
+Scenario: isTest('doppi-header-idar03-integrity-payload-response')
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestResponseInHexMode = base64ToHex(responseHeaders['Digest'][0])
+    * match digestResponseInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+
+    * def server_token_integrity_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            client_id: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            signed_headers: [
+                { digest: responseHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_integrity_match, kind: "AGID"  })
+
+Scenario: isTest('doppi-header-idar03-integrity-payload-nonAtteso-errore')
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
+    
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * match (responseStatus+'') == customResponseStatus
+    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
+    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * match header GovWay-Transaction-ErrorType == customResponseErrorType
+
+Scenario: isTest('doppi-header-idar03-integrity-payload-request-errore')
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestInHexMode = base64ToHex(requestHeaders['Digest'][0])
+    * match digestInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'RestBlockingIDAR03IntegrityPayloadVuoto/v1',
+            signed_headers: [
+                { digest: requestHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * match (responseStatus+'') == customResponseStatus
+    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
+    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * match header GovWay-Transaction-ErrorType == customResponseErrorType
 
 ##########################
 #       IDAR0302         #
@@ -5550,8 +5745,310 @@ Scenario: isTest('idar03-custom-doppi-header') || isTest('idar0302-custom-doppi-
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+    
+    
+Scenario: isTest('idar03-custom-doppi-header-get-with-custom-always-request')
+
+    * def integrationInfoStringCheckValue =
+    * eval
+    """
+    if (isTest('idar03-custom-doppi-header-get-with-custom-always-request')  ) {
+    integrationInfoStringCheckValue = 'valoreClientString2'
+    }
+    """
 
 
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            integrationInfoString: integrationInfoStringCheckValue,
+            level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
+            integrationInfoAuthorizationBoolean: true,
+            integrationInfoAuthorizationList0: 'val1',
+            integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
+            optional_integrationInfoAuthorizationString: integrationInfoStringCheckValue,
+            optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
+            optional_complex_integrationInfoAuthorization: {
+               clientClaimLeve3String: 'valoreClientLeve3String', 
+               clientClaimLeve3Boolean: false, 
+               clientClaimLeve3Int: 12467, 
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: 'valoreClientLeve4String', 
+                  clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                  clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                  clientClaimLeve4ListString: [ 'val1' , 'val2']
+               }
+           }
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            integrationInfoString: integrationInfoStringCheckValue,
+            level2_integrationInfoIntegrityString: 'valoreClientLeve2String',
+            complex_integrationInfoIntegrityListTest1: [ '666' , '999' ],
+            complex_integrationInfoIntegrityListTest2: [ '666' , '999' ],
+            complex_integrationInfoIntegrity: {
+              clientClaimLeve3String: 'valoreClientLeve3String', 
+              clientClaimLeve3Boolean: false, 
+              clientClaimLeve3Int: 12467, 
+              clientClaimLeve4Complex: {
+                clientClaimLeve4String: 'valoreClientLeve4String', 
+                clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                clientClaimLeve4ListString: [ 'val1' , 'val2' ]
+              }
+            },
+            optional_integrationInfoIntegrityBoolean: true,
+            optional_integrationInfoIntegrityLong: 2.147483747E9,
+            optional_integrationInfoIntegrityDouble: 1399.56
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def client_token_authorization = decodeToken(requestHeaders['Authorization'][0], "Bearer")
+    * def client_token_integrity = decodeToken(requestHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], "AGID")
+    
+    * def client_token_authorization_jti = get client_token_authorization $.payload.jti
+    * def client_token_integrity_jti = get client_token_integrity $.payload.jti
+    * match client_token_authorization_jti == client_token_integrity_jti
+
+    * def client_token_authorization_iat = get client_token_authorization $.payload.iat
+    * def client_token_integrity_iat = get client_token_integrity $.payload.iat
+    * match client_token_authorization_iat == client_token_integrity_iat
+    
+    * def client_token_authorization_nbf = get client_token_authorization $.payload.nbf
+    * def client_token_integrity_nbf = get client_token_integrity $.payload.nbf
+    * match client_token_authorization_nbf == client_token_integrity_nbf
+    
+    * def client_token_authorization_exp = get client_token_authorization $.payload.exp
+    * def client_token_integrity_exp = get client_token_integrity $.payload.exp
+    * match client_token_authorization_exp == client_token_integrity_exp
+
+    * match client_token_authorization.payload.signed_headers == "#notpresent"
+    * match client_token_integrity.payload.signed_headers == "#notpresent"
+
+    * def request_id = get client_token_authorization $.payload.jti
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
+
+
+    * def server_token_authorization_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            integrationInfoString: integrationInfoStringCheckValue,
+            level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
+            integrationInfoAuthorizationBoolean: true,
+            integrationInfoAuthorizationList0: 'val1',
+            integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
+            optional_integrationInfoAuthorizationString: integrationInfoStringCheckValue,
+            optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
+            optional_complex_integrationInfoAuthorization: {
+               clientClaimLeve3String: 'valoreClientLeve3String', 
+               clientClaimLeve3Boolean: false, 
+               clientClaimLeve3Int: 12467, 
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: 'valoreClientLeve4String', 
+                  clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                  clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                  clientClaimLeve4ListString: [ 'val1' , 'val2']
+               }
+           }
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['Authorization'][0], match_to: server_token_authorization_match, kind: "Bearer"  })
+    
+    * match responseHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
+    
+    * def server_token_authorization = decodeToken(responseHeaders['Authorization'][0], "Bearer")
+        
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Integrity-Token': requestHeaders['CustomTestSuiteDoppi-JWT-Signature'][0],
+        'GovWay-TestSuite-GovWay-Server-Authorization-Token': responseHeaders['Authorization'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+
+
+
+Scenario: isTest('idar03-custom-doppi-header-get-with-custom-always-response')
+
+    * def integrationInfoStringCheckValue =
+    * eval
+    """
+    if (isTest('idar03-custom-doppi-header-get-with-custom-always-response')  ) {
+    integrationInfoStringCheckValue = 'valoreClientString2'
+    }
+    """
+
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: 'ExampleClient1' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            integrationInfoString: integrationInfoStringCheckValue,
+            level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
+            integrationInfoAuthorizationBoolean: true,
+            integrationInfoAuthorizationList0: 'val1',
+            integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
+            optional_integrationInfoAuthorizationString: integrationInfoStringCheckValue,
+            optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
+            optional_complex_integrationInfoAuthorization: {
+               clientClaimLeve3String: 'valoreClientLeve3String', 
+               clientClaimLeve3Boolean: false, 
+               clientClaimLeve3Int: 12467, 
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: 'valoreClientLeve4String', 
+                  clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                  clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                  clientClaimLeve4ListString: [ 'val1' , 'val2']
+               }
+           }
+        }
+    })
+    """
+    * call checkToken ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * match requestHeaders['CustomTestSuiteDoppi-JWT-Signature'] == '#notpresent'
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def client_token_authorization = decodeToken(requestHeaders['Authorization'][0], "Bearer")
+
+    * def request_id = get client_token_authorization $.payload.jti
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1')
+    
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
+
+
+    * def server_token_authorization_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            integrationInfoString: integrationInfoStringCheckValue,
+            level2_integrationInfoAuthorizationString: 'valoreClientLeve2String',
+            integrationInfoAuthorizationBoolean: true,
+            integrationInfoAuthorizationList0: 'val1',
+            integrationInfoAuthorizationList: [ 'val1' , 'val2' ],
+            optional_integrationInfoAuthorizationString: integrationInfoStringCheckValue,
+            optional_integrationInfoAuthorizationListTest: [ '666' , '999' ],
+            optional_complex_integrationInfoAuthorization: {
+               clientClaimLeve3String: 'valoreClientLeve3String', 
+               clientClaimLeve3Boolean: false, 
+               clientClaimLeve3Int: 12467, 
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: 'valoreClientLeve4String', 
+                  clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                  clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                  clientClaimLeve4ListString: [ 'val1' , 'val2']
+               }
+           }
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['Authorization'][0], match_to: server_token_authorization_match, kind: "Bearer"  })
+    
+    * def server_token_integrity_match =
+    """
+    ({
+        header: { kid: 'ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR03CustomHeaderDuplicati/v1',
+            integrationInfoString: integrationInfoStringCheckValue,
+            level2_integrationInfoIntegrityString: 'valoreClientLeve2String',
+            complex_integrationInfoIntegrityListTest1: [ '666' , '999' ],
+            complex_integrationInfoIntegrityListTest2: [ '666' , '999' ],
+            complex_integrationInfoIntegrity: {
+              clientClaimLeve3String: 'valoreClientLeve3String', 
+              clientClaimLeve3Boolean: false, 
+              clientClaimLeve3Int: 12467, 
+              clientClaimLeve4Complex: {
+                clientClaimLeve4String: 'valoreClientLeve4String', 
+                clientClaimLeve4ListInt: [ 33 , 1234 ], 
+                clientClaimLeve4ListStringInt: [ '666' , '999' ], 
+                clientClaimLeve4ListString: [ 'val1' , 'val2' ]
+              }
+            },
+            optional_integrationInfoIntegrityBoolean: true,
+            optional_integrationInfoIntegrityLong: 2.147483747E9,
+            optional_integrationInfoIntegrityDouble: 1399.56
+        }
+    })
+    """
+    * call checkToken ({token: responseHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], match_to: server_token_integrity_match, kind: "AGID"  })
+
+    * def server_token_authorization = decodeToken(responseHeaders['Authorization'][0], "Bearer")
+    * def server_token_integrity = decodeToken(responseHeaders['CustomTestSuiteDoppi-JWT-Signature'][0], "AGID")
+    
+    * match server_token_authorization.payload.signed_headers == "#notpresent"
+    * match server_token_integrity.payload.signed_headers == "#notpresent"
+    
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+        'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Server-Authorization-Token': responseHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Server-Integrity-Token': responseHeaders['CustomTestSuiteDoppi-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+    
 
 Scenario: isTest('idar03-custom-doppi-header-solo-richiesta') || isTest('idar0302-custom-doppi-header-solo-richiesta')
 
@@ -7495,6 +7992,175 @@ Scenario: isTest('connettivita-base-idar04-audience-response-custom')
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 
+Scenario: isTest('idar04-integrity-payload-requestResponse')
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestInHexMode = base64ToHex(requestHeaders['Digest'][0])
+    * match digestInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'KID-ApplicativoBlockingIDA01' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: requestHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestResponseInHexMode = base64ToHex(responseHeaders['Digest'][0])
+    * match digestResponseInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+
+    * def server_token_integrity_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'ClientId-ExampleServer',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR04IntegrityPayloadVuoto/v1',
+            signed_headers: [
+                { digest: responseHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_integrity_match, kind: "AGID"  })
+    
+Scenario: isTest('idar04-integrity-payload-nonAtteso')
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
+    
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'    
+    
+Scenario: isTest('idar04-integrity-payload-request')
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestInHexMode = base64ToHex(requestHeaders['Digest'][0])
+    * match digestInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'KID-ApplicativoBlockingIDA01' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: requestHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent' 
+
+Scenario: isTest('idar04-integrity-payload-response')
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestResponseInHexMode = base64ToHex(responseHeaders['Digest'][0])
+    * match digestResponseInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+
+    * def server_token_integrity_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'ClientId-ExampleServer',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR04IntegrityPayloadVuoto/v1',
+            signed_headers: [
+                { digest: responseHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_integrity_match, kind: "AGID"  })
+
+Scenario: isTest('idar04-integrity-payload-nonAtteso-errore')
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
+    
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * match (responseStatus+'') == customResponseStatus
+    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
+    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * match header GovWay-Transaction-ErrorType == customResponseErrorType
+
+Scenario: isTest('idar04-integrity-payload-request-errore')
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestInHexMode = base64ToHex(requestHeaders['Digest'][0])
+    * match digestInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'KID-ApplicativoBlockingIDA01' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: requestHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * match (responseStatus+'') == customResponseStatus
+    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
+    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * match header GovWay-Transaction-ErrorType == customResponseErrorType
 
 
 
@@ -7807,6 +8473,183 @@ Scenario: isTest('riutilizzo-token-risposta-idar0402-pdnd') ||
     * def responseHeaders =  ({ 'Agid-JWT-Signature': getRequestHeader("GovWay-TestSuite-Server-Token"), 'Digest': getRequestHeader("GovWay-TestSuite-Digest") })
     * def responseStatus = 200
     * def response = read('classpath:test/rest/sicurezza-messaggio/response.json')
+    
+    
+    
+Scenario: isTest('idar0402-integrity-payload-requestResponse')
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestInHexMode = base64ToHex(requestHeaders['Digest'][0])
+    * match digestInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'KID-ApplicativoBlockingIDA01' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: requestHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestResponseInHexMode = base64ToHex(responseHeaders['Digest'][0])
+    * match digestResponseInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+
+    * def request_token = decodeToken(requestHeaders['Agid-JWT-Signature'][0], "AGID")
+    * def request_digest = get request_token $.payload.signed_headers..digest
+
+    * def server_token_integrity_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'ClientId-ExampleServer',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1',
+            signed_headers: [
+                { digest: responseHeaders['Digest'][0] }
+            ],
+            request_digest: request_digest[0]
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_integrity_match, kind: "AGID"  })
+    
+Scenario: isTest('idar0402-integrity-payload-nonAtteso')
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
+    
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'    
+    
+Scenario: isTest('idar0402-integrity-payload-request')
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestInHexMode = base64ToHex(requestHeaders['Digest'][0])
+    * match digestInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'KID-ApplicativoBlockingIDA01' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: requestHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent' 
+
+Scenario: isTest('idar0402-integrity-payload-response')
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestResponseInHexMode = base64ToHex(responseHeaders['Digest'][0])
+    * match digestResponseInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+
+    * def server_token_integrity_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            client_id: 'ClientId-ExampleServer',
+            iss: 'DemoSoggettoErogatore',
+            sub: 'RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1',
+            signed_headers: [
+                { digest: responseHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['Agid-JWT-Signature'][0], match_to: server_token_integrity_match, kind: "AGID"  })
+
+Scenario: isTest('idar0402-integrity-payload-nonAtteso-errore')
+
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
+    
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * match (responseStatus+'') == customResponseStatus
+    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
+    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * match header GovWay-Transaction-ErrorType == customResponseErrorType
+
+Scenario: isTest('idar0402-integrity-payload-request-errore')
+
+    # https://gitlab.link.it/gitlab/linkit/dev/govway/govway/-/issues/1625
+    * def digestInHexMode = base64ToHex(requestHeaders['Digest'][0])
+    * match digestInHexMode == 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    
+    * def client_token_integrity_match = 
+    """
+    ({
+        header: { kid: 'KID-ApplicativoBlockingIDA01' },
+        payload: { 
+            aud: 'testsuite',
+            client_id: 'DemoSoggettoFruitore/ApplicativoBlockingIDA01',
+            iss: 'DemoSoggettoFruitore',
+            sub: 'ApplicativoBlockingIDA01',
+            signed_headers: [
+                { digest: requestHeaders['Digest'][0] }
+            ]
+        }
+    })
+    """
+    * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
+
+    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
+    * karate.proceed (newPath)
+
+    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * match (responseStatus+'') == customResponseStatus
+    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
+    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * match header GovWay-Transaction-ErrorType == customResponseErrorType    
+    
 
 
 
@@ -8026,7 +8869,293 @@ Scenario: isTest('idar04-custom-header-pdnd') ||
     })
     """
     * def responseHeaders = karate.merge(responseHeaders,newHeaders)
+    
 
+Scenario: isTest('idar04-custom-header-pdnd-get-with-custom-always-request')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('idar04-custom-header-pdnd-get-with-custom-always-request')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04Custom-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('idar04-custom-header-pdnd-get-with-custom-always-request')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: 'purposeId-'+subExpected
+        }
+    })
+    """
+
+    * def client_token_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    integrationInfoString: 'valoreClientString',
+            integrationInfoInt: 13,
+            integrationInfoBoolean: true,
+	    integrationInfoFloat: 24.2,
+            integrationInfoList0: 'val1',
+            integrationInfoList1: 'val2',
+	    integrationInfoList: ['val1','val2'],
+	    level2_integrationInfoString: 'valoreClientLeve2String',
+            level2_integrationInfoInt: 99,
+            level2_integrationInfoBoolean: false,
+	    level2_integrationInfoFloat: 102.29,
+            level2_integrationInfoList0: 33,
+            level2_integrationInfoList1: 1234,
+	    level2_integrationInfoList: [33,1234],
+	    level3_integrationInfoString: 'valoreClientLeve3String',
+            level3_integrationInfoInt: 12467,
+            level3_integrationInfoBoolean: false,
+	    level3_claims_integrationInfoString: 'valoreClientLeve3String',
+            level3_claims_integrationInfoInt: 12467,
+            level3_claims_integrationInfoBoolean: false,
+	    complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            },
+            complex_integrationInfoListTest1: [ '666' , '999' ],
+            complex_integrationInfoListTest2: [ '666' , '999' ],
+            optional_integrationInfoString: 'valoreClientString',
+            optional_integrationInfoBoolean: true,
+            optional_integrationInfoLong: 2147483747,
+            optional_integrationInfoDouble: 1399.56,
+            optional_integrationInfoListTest: [ '666' , '999' ],
+            optional_complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            }
+        }
+    })
+    """
+
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * call checkTokenKid ({token: requestHeaders['CustomTestSuite-JWT-Signature'][0], match_to: client_token_match, kind: "AGID" })
+   
+    * def request_token = decodeToken(requestHeaders['CustomTestSuite-JWT-Signature'][0], "AGID")
+    * karate.log("Ret: ", request_token)
+    * match request_token.payload.signed_headers == "#notpresent"
+    
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#present'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['GovWay-Integration'] == '#notpresent'
+
+    * def request_id = get request_token $.payload.jti
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-'+tipoTest+'/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
+
+    * karate.log("Ret: ", responseHeaders)
+
+    * match responseHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Authorization'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match responseHeaders['GovWay-Integration'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Client-Token': requestHeaders['CustomTestSuite-JWT-Signature'][0]
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)    
+
+
+Scenario: isTest('idar04-custom-header-pdnd-get-with-custom-always-response')
+
+    * def tipoTest = 'N.D.'
+    * eval
+    """
+    if (isTest('idar04-custom-header-pdnd-get-with-custom-always-response')) {
+      tipoTest = 'PDND'
+    }
+    """
+
+    * def clientIdExpected = 'N.D.'
+    * def subExpected = 'N.D.'
+    * def kidExpected = 'N.D.'
+    * def audExpected = 'RestBlockingIDAR04Custom-'+tipoTest+'/v1'
+
+    * eval
+    """
+    if (isTest('idar04-custom-header-pdnd-get-with-custom-always-response')) {
+      kidExpected = 'KID-ApplicativoBlockingIDA01'
+      clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
+      subExpected = 'ApplicativoBlockingIDA01'
+    }
+    """
+
+    * def client_token_authorization_match = 
+    """
+    ({
+        header: { kid: kidExpected },
+        payload: { 
+            aud: audExpected,
+            client_id: clientIdExpected,
+            iss: 'DemoSoggettoFruitore',
+            sub: subExpected,
+	    purposeId: 'purposeId-'+subExpected
+        }
+    })
+    """
+
+    
+    * karate.log("Ret: ", requestHeaders)
+
+    * call checkTokenKid ({token: requestHeaders['Authorization'][0], match_to: client_token_authorization_match, kind: "Bearer" })
+
+    * match requestHeaders['CustomTestSuite-JWT-Signature'] == '#notpresent'
+    
+    * match requestHeaders['Digest'] == '#notpresent'
+    * match requestHeaders['Authorization'] == '#present'
+    * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match requestHeaders['GovWay-Integration'] == '#notpresent'
+
+    * def request_token = decodeToken(requestHeaders['Authorization'][0], "Bearer")
+    * karate.log("Ret: ", request_token)
+
+    * def request_id = get request_token $.payload.jti
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04Custom-'+tipoTest+'/v1')
+
+    * def tidMessaggio = responseHeaders['GovWay-Message-ID'][0]
+    * match tidMessaggio == request_id
+
+
+    * karate.log("Ret: ", responseHeaders)
+
+
+    * def server_token_match =
+    """
+    ({
+        header: { kid: 'KID-ExampleServer'},
+        payload: {
+            aud: clientIdExpected,
+            client_id: 'ExampleServer'+tipoTest,
+            iss: 'DemoSoggettoErogatore',
+            sub: audExpected,
+	    integrationInfoString: 'valoreClientString',
+            integrationInfoInt: 13,
+            integrationInfoBoolean: true,
+	    integrationInfoFloat: 24.2,
+            integrationInfoList0: 'val1',
+            integrationInfoList1: 'val2',
+	    integrationInfoList: ['val1','val2'],
+	    level2_integrationInfoString: 'valoreClientLeve2String',
+            level2_integrationInfoInt: 99,
+            level2_integrationInfoBoolean: false,
+	    level2_integrationInfoFloat: 102.29,
+            level2_integrationInfoList0: 33,
+            level2_integrationInfoList1: 1234,
+	    level2_integrationInfoList: [33,1234],
+	    level3_integrationInfoString: 'valoreClientLeve3String',
+            level3_integrationInfoInt: 12467,
+            level3_integrationInfoBoolean: false,
+	    level3_claims_integrationInfoString: 'valoreClientLeve3String',
+            level3_claims_integrationInfoInt: 12467,
+            level3_claims_integrationInfoBoolean: false,
+	    complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            },
+            complex_integrationInfoListTest1: [ '666' , '999' ],
+            complex_integrationInfoListTest2: [ '666' , '999' ],
+            optional_integrationInfoString: 'valoreClientString',
+            optional_integrationInfoBoolean: true,
+            optional_integrationInfoLong: 2147483747,
+            optional_integrationInfoDouble: 1399.56,
+            optional_integrationInfoListTest: [ '666' , '999' ],
+            optional_complex_integrationInfo: {
+               clientClaimLeve3String: 'valoreClientLeve3String',
+               clientClaimLeve3Boolean: false,
+               clientClaimLeve3Int: 12467,
+               clientClaimLeve4Complex: {
+                  clientClaimLeve4String: "valoreClientLeve4String",
+                  clientClaimLeve4ListInt: [ 33, 1234 ],
+                  clientClaimLeve4ListStringInt: [ '666', '999' ],
+                  clientClaimLeve4ListString: [ 'val1', 'val2' ]
+               }
+            }
+        }
+    })
+    """
+    * call checkTokenKid ({token: responseHeaders['CustomTestSuite-JWT-Signature'][0], match_to: server_token_match, kind: "AGID"  })
+
+    * def response_token = decodeToken(responseHeaders['CustomTestSuite-JWT-Signature'][0], "AGID")
+    * match response_token.payload.signed_headers == "#notpresent"
+    
+    * match responseHeaders['Digest'] == '#notpresent'
+    * match responseHeaders['Authorization'] == '#notpresent'
+    * match responseHeaders['Agid-JWT-Signature'] == '#notpresent'
+    * match responseHeaders['GovWay-Integration'] == '#notpresent'
+
+    * def newHeaders = 
+    """
+    ({
+	'GovWay-TestSuite-GovWay-Client-Authorization-Token': requestHeaders['Authorization'][0],
+        'GovWay-TestSuite-GovWay-Server-Token': responseHeaders['CustomTestSuite-JWT-Signature'][0],
+    })
+    """
+    * def responseHeaders = karate.merge(responseHeaders,newHeaders)
 
 Scenario: isTest('idar04-custom-header-pdnd-assenza-header-integrity-richiesta')
 

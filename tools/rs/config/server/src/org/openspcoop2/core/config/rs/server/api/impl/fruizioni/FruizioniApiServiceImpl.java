@@ -59,6 +59,7 @@ import org.openspcoop2.core.config.rs.server.model.ListaFruizioni;
 import org.openspcoop2.core.config.rs.server.model.ModalitaIdentificazioneAzioneEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.utils.UpdateProprietaOggetto;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -79,7 +80,6 @@ import org.openspcoop2.core.registry.beans.PortTypeSintetico;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.information_missing.constants.StatoType;
-import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.constants.ConsoleInterfaceType;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
@@ -220,9 +220,9 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 							body.getApiVersione(), idReferente, env.apcCore);
 					if(accordoFull.sizeProtocolPropertyList()>0) {
 						for (org.openspcoop2.core.registry.ProtocolProperty pp : accordoFull.getProtocolPropertyList()) {
-							if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
+							if(CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
 								String v = pp.getValue();
-								if(v!=null && StringUtils.isNotEmpty(v) && !ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_UNDEFINED.equals(v)) {
+								if(v!=null && StringUtils.isNotEmpty(v) && !CostantiDB.MODIPA_VALUE_UNDEFINED.equals(v)) {
 									required = true;
 								}
 							}

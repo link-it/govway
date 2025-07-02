@@ -125,6 +125,7 @@ import org.openspcoop2.core.config.rs.server.model.StatoFunzionalitaConWarningEn
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipalToken;
 import org.openspcoop2.core.config.rs.server.model.Validazione;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyRaggruppamento;
@@ -149,7 +150,6 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
-import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
@@ -267,10 +267,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					boolean sicurezzaToken = false;
 					if(sa.sizeProtocolPropertyList()>0) {
 						for (ProtocolProperty pp : sa.getProtocolPropertyList()) {
-							if(ModICostanti.MODIPA_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
+							if(CostantiDB.MODIPA_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
 								sicurezzaMessaggio = pp.getBooleanValue()!=null && pp.getBooleanValue();
 							}
-							else if(ModICostanti.MODIPA_SICUREZZA_TOKEN.equals(pp.getName())) {
+							else if(CostantiDB.MODIPA_SICUREZZA_TOKEN.equals(pp.getName())) {
 								sicurezzaToken = pp.getBooleanValue()!=null && pp.getBooleanValue();
 							}
 						}
@@ -561,10 +561,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					boolean sicurezzaToken = false;
 					if(sa.sizeProtocolPropertyList()>0) {
 						for (ProtocolProperty pp : sa.getProtocolPropertyList()) {
-							if(ModICostanti.MODIPA_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
+							if(CostantiDB.MODIPA_SICUREZZA_MESSAGGIO.equals(pp.getName())) {
 								sicurezzaMessaggio = pp.getBooleanValue()!=null && pp.getBooleanValue();
 							}
-							else if(ModICostanti.MODIPA_SICUREZZA_TOKEN.equals(pp.getName())) {
+							else if(CostantiDB.MODIPA_SICUREZZA_TOKEN.equals(pp.getName())) {
 								sicurezzaToken = pp.getBooleanValue()!=null && pp.getBooleanValue();
 							}
 						}

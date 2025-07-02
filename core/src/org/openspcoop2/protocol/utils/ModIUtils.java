@@ -1151,7 +1151,8 @@ public class ModIUtils {
 		return false;
 	}
 	
-	private static final String CLASS_MODIPA_PROPERTIES = "org.openspcoop2.protocol.modipa.config.ModIProperties";
+	// NOTA: tutti i metodi seguenti devono essere riportati in org.openspcoop2.protocol.engine.utils.ModITestUtils
+	public static final String CLASS_MODIPA_PROPERTIES = "org.openspcoop2.protocol.modipa.config.ModIProperties";
 	private static final String CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD = "getInstance";
 	
 	public static Object getModiProperties() throws ProtocolException {
@@ -1164,7 +1165,7 @@ public class ModIUtils {
 		}
 	}
 	
-	private static String getHeaderModI() throws ProtocolException {
+	public static String getHeaderModI() throws ProtocolException {
 		try {
 			Object instance = getModiProperties();
 			Method mGetRestSecurityTokenHeaderModI = instance.getClass().getMethod("getRestSecurityTokenHeaderModI");
@@ -1236,7 +1237,7 @@ public class ModIUtils {
 		}
 	}
 	
-	private static KeystoreParams getSicurezzaMessaggioCertificatiTrustStore() throws ProtocolException {
+	public static KeystoreParams getSicurezzaMessaggioCertificatiTrustStore() throws ProtocolException {
 		try {
 			Object instance = getModiProperties();
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiTrustStore");
@@ -1246,7 +1247,7 @@ public class ModIUtils {
 		}
 	}
 	
-	private static KeystoreParams getSicurezzaMessaggioSslTrustStore() throws ProtocolException {
+	public static KeystoreParams getSicurezzaMessaggioSslTrustStore() throws ProtocolException {
 		try {
 			Object instance = getModiProperties();
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioSslTrustStore");
@@ -1256,7 +1257,7 @@ public class ModIUtils {
 		}
 	}
 	
-	private static KeystoreParams getSicurezzaMessaggioCertificatiKeyStore() throws ProtocolException {
+	public static KeystoreParams getSicurezzaMessaggioCertificatiKeyStore() throws ProtocolException {
 		try {
 			Object instance = getModiProperties();
 			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyStore");

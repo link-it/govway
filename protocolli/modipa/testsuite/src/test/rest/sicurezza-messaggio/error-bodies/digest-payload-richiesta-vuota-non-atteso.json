@@ -1,0 +1,7 @@
+{
+    "type": "https://govway.org/handling-errors/400/InteroperabilityInvalidRequest.html",
+    "title": "InteroperabilityInvalidRequest",
+    "status": 400,
+    "detail": "Header HTTP 'Digest' presente in una richiesta con http payload vuoto",
+    "govway_id": "#uuid"
+}
