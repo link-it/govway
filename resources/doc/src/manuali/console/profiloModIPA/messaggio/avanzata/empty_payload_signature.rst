@@ -14,10 +14,10 @@ La gestione da applicare può essere configurata sulla singola API, nella sezion
 - 'Presente su richieste con payload e su qualsiasi risposta'
 - 'Presente su qualsiasi richiesta e su risposte con payload'
 
-Il comportamento di default rimane quello di non generare il token di integrità (Presente solo con payload HTTP) per garantire la retrocompatibilità. 
+Il comportamento di default rimane quello di non generare il token di integrità con payload vuoto (opzione: "Presente solo con payload HTTP") per garantire la retrocompatibilità.
 
 .. figure:: ../../../_figure_console/modipa_digest_payload_vuoti.png
-    :scale: 50%
+    :scale: 80%
     :align: center
     :name: modipa_digest_payload_vuoti
 
