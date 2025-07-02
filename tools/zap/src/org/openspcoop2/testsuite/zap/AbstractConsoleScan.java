@@ -55,6 +55,8 @@ public abstract class AbstractConsoleScan {
 	protected abstract boolean isUniqueClientApi();
 	
 	private String reportDir = null;
+	private List<String> urlVisitateSpiderScan = null;
+	private List<String> urlVisitateActiveScan = null;
 	
 	public void scan(String[] args) throws UtilsException, ClientApiException, IOException {
 				
@@ -62,16 +64,14 @@ public abstract class AbstractConsoleScan {
 		
 		ConsoleParams consoleParams = new ConsoleParams(args);
 		
-		List<String> urlVisitateSpiderScan = new ArrayList<>();
-		List<String> urlVisitateActiveScan = new ArrayList<>();
-		
 		try {
-			scan(args, context, consoleParams,
-					urlVisitateSpiderScan, urlVisitateActiveScan);
+			scan(args, context, consoleParams);
 			
-			ConsoleUtils.writeVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_SPIDER, urlVisitateSpiderScan);
-			if(!urlVisitateActiveScan.isEmpty()) {
-				ConsoleUtils.writeVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_ACTIVE, urlVisitateActiveScan);
+			if(this.urlVisitateSpiderScan!=null && !this.urlVisitateSpiderScan.isEmpty()) {
+				ConsoleUtils.writeVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_SPIDER, this.urlVisitateSpiderScan);
+			}
+			if(this.urlVisitateActiveScan!=null && !this.urlVisitateActiveScan.isEmpty()) {
+				ConsoleUtils.writeVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_ACTIVE, this.urlVisitateActiveScan);
 			}
 		
 			LoggerManager.info("Analisi complessiva terminata");
@@ -83,8 +83,7 @@ public abstract class AbstractConsoleScan {
 
 	}
 		
-	private void scan(String[] args, ZAPContext context, ConsoleParams consoleParams,
-			List<String> urlVisitateSpiderScan, List<String> urlVisitateActiveScan) throws UtilsException, ClientApiException, IOException {
+	private void scan(String[] args, ZAPContext context, ConsoleParams consoleParams) throws UtilsException, ClientApiException, IOException {
 		
 		String baseUrl = consoleParams.getBaseUrl();
 		String username = consoleParams.getUsername();
@@ -136,10 +135,11 @@ public abstract class AbstractConsoleScan {
 			
 			List<String> urlVisitateIterazioneInCorso = new ArrayList<>();
 	        if(scanTypes.isSpider()) {
+	        	this.urlVisitateSpiderScan = ConsoleUtils.initVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_SPIDER);
 	        	ConsoleUtils.spider(zapClientApi, userId, 
 	        			report, pathParams,
 	        			urlVisitateIterazioneInCorso);
-	        	ConsoleUtils.addVisitedUrls(urlVisitateIterazioneInCorso, urlVisitateSpiderScan);
+	        	ConsoleUtils.addVisitedUrls(urlVisitateIterazioneInCorso, this.urlVisitateSpiderScan);
 	        }
 			
 	        if(scanTypes.isAjaxspider() && !urlVisitateIterazioneInCorso.isEmpty()) {
@@ -149,9 +149,10 @@ public abstract class AbstractConsoleScan {
 	        }
 	        
 	        if(scanTypes.isActive()) {
+	        	this.urlVisitateActiveScan =ConsoleUtils.initVisitedUrlsFile(this.reportDir, ConsoleScanTypes.SCAN_TYPE_ACTIVE);
 	        	ConsoleUtils.active(baseUrl, zapClientApi, userId, 
 	        			report, pathParams,
-	        			urlVisitateActiveScan);
+	        			this.urlVisitateActiveScan);
 	        }
 	        
 			LoggerManager.info("Analisi "+scanNum+"/"+targetUrls.size()+" '"+tipoTestUrl+"' (url:"+url+") terminata");

@@ -21,13 +21,15 @@
 package org.openspcoop2.testsuite.zap;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
-import org.ehcache.shadow.org.terracotta.utilities.io.Files;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -370,6 +372,40 @@ public class ConsoleUtils {
 			
 			String fileScanTypeName = rt.fileName.replace(ConsoleScanTypes.SCAN_TYPE, type);
 			
+			/**System.out.println("===========================================================================");
+			System.out.println("TIPO REPORT ["+rt.fileName+" TEMPLATE["+rt.template+"]]");*/
+			String includeRisk = report.getIncludedRisks();
+			if("sarif-json".equals(rt.template)) {
+				 // usato da jenkins per riportare nel grafico le issue; obiettivo è non generare nel file serif le issue informational
+				
+				// genreale per qualsiasi report
+				String envJenkins = System.getProperty("zaproxy.report.includedRisks.serif");
+				/**System.out.println("JENKINS CONFIG  ["+envJenkins+"]]");*/
+				if (envJenkins!=null && org.apache.commons.lang.StringUtils.isNotEmpty(envJenkins) && !"${zaproxy.report.includedRisks.serif}".equals(envJenkins.trim())) {
+					includeRisk = envJenkins;
+					LoggerManager.info("Generate '"+type+"' report with includedRisks customized by 'zaproxy.report.includedRisks.serif':  "+includeRisk);
+				}
+				else {
+					// specifico per le console
+					envJenkins = System.getProperty("zaproxy.report.includedRisks.console.serif");
+					/**System.out.println("JENKINS CONFIG  ["+envJenkins+"]]");*/
+					if (envJenkins!=null && org.apache.commons.lang.StringUtils.isNotEmpty(envJenkins) && !"${zaproxy.report.includedRisks.console.serif}".equals(envJenkins.trim())) {
+						includeRisk = envJenkins;
+						LoggerManager.info("Generate '"+type+"' report with includedRisks customized by 'zaproxy.report.includedRisks.console.serif':  "+includeRisk);
+					}
+					else {
+						// specifico per le api
+						envJenkins = System.getProperty("zaproxy.report.includedRisks.api.serif");
+						/**System.out.println("JENKINS CONFIG  ["+envJenkins+"]]");*/
+						if (envJenkins!=null && org.apache.commons.lang.StringUtils.isNotEmpty(envJenkins) && !"${zaproxy.report.includedRisks.api.serif}".equals(envJenkins.trim())) {
+							includeRisk = envJenkins;
+							LoggerManager.info("Generate '"+type+"' report with includedRisks customized by 'zaproxy.report.includedRisks.api.serif':  "+includeRisk);
+						}
+					}
+				}
+				/**System.out.println("RISK USATO CONFIG  ["+includeRisk+"]]");*/
+			}
+			
 			api.reports.generate(report.getTitle(), 
 					rt.template, 
 					rt.theme,
@@ -378,7 +414,7 @@ public class ConsoleUtils {
 					pathParams.getUrl(),
 					rt.sections,
 					report.getIncludedConfidences(),
-					report.getIncludedRisks(),
+					includeRisk,
 	        		null, 
 	        		fileScanTypeName, 
 	        		dir.getAbsolutePath(), 
@@ -432,8 +468,34 @@ public class ConsoleUtils {
 		}
 	}
 	
+	public static File getVisitedUrlsFile(String reportDir, String type) {
+		return new File(reportDir,type+"_urlVisitate.txt");
+	}
+	
+	public static List<String> initVisitedUrlsFile(String reportDir, String type){
+		List<String> l = new ArrayList<>();
+		
+		File f = getVisitedUrlsFile(reportDir, type);
+		if(!f.exists()) {
+			/**System.out.println("NEW FILE ["+f.getAbsolutePath()+"]");*/
+			return l;
+		}
+		else {
+			 try (Scanner scanner = new Scanner(f)) {
+		            while (scanner.hasNextLine()) {
+		            	String line = scanner.nextLine();
+		            	l.add(line);
+		            }
+		            /**System.out.println("ALREADY EXISTS ["+l.size()+"]");*/
+		        } catch (FileNotFoundException e) {
+		        	// ignore
+		        }
+		}
+		return l;
+	}
+	
 	public static void writeVisitedUrlsFile(String reportDir, String type, List<String> urlVisitate) throws UtilsException {
-		File f = new File(reportDir,type+"_urlVisitate.txt");
+		File f = getVisitedUrlsFile(reportDir, type);
 		try {
 			Files.delete(f.toPath());
 		}catch(Exception e) {
@@ -451,7 +513,7 @@ public class ConsoleUtils {
 		LoggerManager.info("Scan '"+type+"'; URL visitate scritte in file: " + f.getAbsolutePath());
 	}
 
-	
+
 	
 	
 	// ** UTILS **

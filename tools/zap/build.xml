@@ -238,6 +238,7 @@
        	 description="compila il ZAPClient" >
 		<!-- Compile the java code  -->
 		<javac includeantruntime="false" destdir="${build_zap}" debug="true">
+			<compilerarg value="-proc:full"/>
 			<src path="${src_zap}"/>
 			<classpath>
 				<path refid="classpath_run"/>
@@ -357,6 +358,8 @@
 	<target name="-analizeOpenAPI">	
 		<echo message="OpenAPI Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.OpenAPI" fork="true">
+			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
+			<sysproperty key="zaproxy.report.includedRisks.api.serif" value="${zaproxy.report.includedRisks.api.serif}" />
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -429,6 +432,8 @@
 	<target name="-analizeSoap">
 		<echo message="SOAP Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.Soap" fork="true">
+			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
+			<sysproperty key="zaproxy.report.includedRisks.api.serif" value="${zaproxy.report.includedRisks.api.serif}" />
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -652,6 +657,8 @@
 	<target name="-analizeGovWayConsole">
 		<echo message="GovWayConsole Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.GovWayConsole" fork="true">
+			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
+			<sysproperty key="zaproxy.report.includedRisks.console.serif" value="${zaproxy.report.includedRisks.console.serif}" />
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />
@@ -768,6 +775,8 @@
 
 		<echo message="GovWayMonitor Api Key: '${zap-api-key}'"/>
 		<java classname="org.openspcoop2.testsuite.zap.GovWayMonitor" fork="true">
+			<sysproperty key="zaproxy.report.includedRisks.serif" value="${zaproxy.report.includedRisks.serif}" />
+			<sysproperty key="zaproxy.report.includedRisks.console.serif" value="${zaproxy.report.includedRisks.console.serif}" />
 			<arg value="${zaproxy.address}" />
 			<arg value="${zaproxy.port}" />
 			<arg value="${zaproxy.session}" />

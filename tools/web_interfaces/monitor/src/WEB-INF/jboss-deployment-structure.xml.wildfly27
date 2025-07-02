@@ -23,8 +23,8 @@
 				Si ottiene un errore simile al seguente: 
 				com.sun.faces.config.ConfigurationException: CONFIGURATION FAILED! DTD factory class 
 					com.sun.org.apache.xerces.internal.impl.dv.dtd.DTDDVFactoryImpl does not extend from DTDDVFactory.
-			--> 
 			<module name="org.apache.xerces" />
+			--> 
 		</dependencies>
         </deployment>
 </jboss-deployment-structure>
