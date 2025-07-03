@@ -6,7 +6,7 @@ Autorizzazione Contenuti
 L'autorizzazione dei contenuti è un ulteriore meccanismo per il controllo degli
 accessi tramite il quale è possibile specificare regole di autorizzazione che verificano aspetti della richiesta quali ad esempio gli header http, l'url di invocazione, parti del messaggio etc.
 
-Una volta abilitata l'autorizzazione per contenuto si possono configuare una serie di controlli di autorizzazione nella forma (risorsa=valore).
+Una volta abilitata l'autorizzazione per contenuto si possono configuare una serie di controlli di autorizzazione nella forma (risorsa=valore) come descritto nel resto della sezione. Selezionando invece la voce 'plugin' è possibile indicare un metodo di autorizzazione personalizzato fornito attraverso l'implementazione di un plugin di GovWay (per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`).
 
 Una risorsa identifica un header, una parte dell'url o del messaggio, un claim del token o un principal etc.
 Per identificare una risorsa sono utilizzabili le seguenti espressioni dinamiche:

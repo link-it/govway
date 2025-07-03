@@ -79,7 +79,7 @@ del servizio di Token Introspection:
 
 	   -  *Personalizzato*: consente di definire un mapping puntuale tra il nome di un claim e l'informazione che GovWay cerca di estrarre dal token (:numref:`validazioneJWTpersonalizzato`);
 
-	   -  *Plugin*: consente di indicare il nome di una classe che implementa una logica di parsing personalizzata (deve implementare l'interfaccia 'org.openspcoop2.pdd.core.token.parser.ITokenParser').
+	   -  *Plugin*: consente di selezionare un plugin che implementa una logica di parsing personalizzata (deve implementare l'interfaccia 'org.openspcoop2.pdd.core.token.parser.ITokenParser').
 
    .. figure:: ../../_figure_console/TokenIntrospectionCustom.png
     :scale: 100%

@@ -38,48 +38,43 @@ import org.w3c.dom.Node;
 
 public class XMLUtils  {
 
+	private XMLUtils() {}
 	
 	public static boolean isAttivazionePolicy(byte [] doc){
 		try{
 			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isAttivazionePolicy_engine(elemXML);
+			return XMLUtils.isAttivazionePolicyEngine(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isAttivazionePolicy(Document docXML){
 		try{
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isAttivazionePolicy_engine(elemXML);
+			return XMLUtils.isAttivazionePolicyEngine(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isAttivazionePolicy(Element elemXML){
-		return isAttivazionePolicy_engine(elemXML);
+		return isAttivazionePolicyEngine(elemXML);
 	}
 	public static boolean isAttivazionePolicy(Node nodeXml){
-		return isAttivazionePolicy_engine(nodeXml);
+		return isAttivazionePolicyEngine(nodeXml);
 	}
-	private static boolean isAttivazionePolicy_engine(Node nodeXml){
+	private static boolean isAttivazionePolicyEngine(Node nodeXml){
 		try{
 			ProjectInfo pInfo = new ProjectInfo();
 			
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if("attivazione-policy".equals(nodeXml.getLocalName()) && 
-					pInfo.getProjectNamespace().equals(nodeXml.getNamespaceURI() ) 
-				){
-				return true;
-			}
-			else{
-				return false;
-			}
+			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");*/
+			return "attivazione-policy".equals(nodeXml.getLocalName()) && 
+					pInfo.getProjectNamespace().equals(nodeXml.getNamespaceURI()); 
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
@@ -90,42 +85,36 @@ public class XMLUtils  {
 			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isConfigurazionePolicy_engine(elemXML);
+			return XMLUtils.isConfigurazionePolicyEngine(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isConfigurazionePolicy(Document docXML){
 		try{
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isConfigurazionePolicy_engine(elemXML);
+			return XMLUtils.isConfigurazionePolicyEngine(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isConfigurazionePolicy(Element elemXML){
-		return isConfigurazionePolicy_engine(elemXML);
+		return isConfigurazionePolicyEngine(elemXML);
 	}
 	public static boolean isConfigurazionePolicy(Node nodeXml){
-		return isConfigurazionePolicy_engine(nodeXml);
+		return isConfigurazionePolicyEngine(nodeXml);
 	}
-	private static boolean isConfigurazionePolicy_engine(Node nodeXml){
+	private static boolean isConfigurazionePolicyEngine(Node nodeXml){
 		try{
 			ProjectInfo pInfo = new ProjectInfo();
 			
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if("configurazione-policy".equals(nodeXml.getLocalName()) && 
-					pInfo.getProjectNamespace().equals(nodeXml.getNamespaceURI() ) 
-				){
-				return true;
-			}
-			else{
-				return false;
-			}
+			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");*/
+			return "configurazione-policy".equals(nodeXml.getLocalName()) && 
+					pInfo.getProjectNamespace().equals(nodeXml.getNamespaceURI() ); 
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}

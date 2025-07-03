@@ -32,7 +32,7 @@ Di seguito vengono descritte le opzioni richieste per ogni tipo.
 
        Risposta di Attributi nel formato JSON
 
--  *Personalizzata*: la risposta viene processata tramite la classe indicata nel campo '*ClassName*'. La classe fornita deve implementare l'interfaccia 'org.openspcoop2.pdd.core.token.attribute_authority.IRetrieveAttributeAuthorityResponseParser'.
+-  *Personalizzata*: la risposta viene processata tramite un plugin che implementa una logica di parsing personalizzata. La classe fornita deve implementare l'interfaccia 'org.openspcoop2.pdd.core.token.attribute_authority.IRetrieveAttributeAuthorityResponseParser'. Per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`.
 
    .. figure:: ../../_figure_console/AA-risposta-custom.png
        :scale: 100%

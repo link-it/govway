@@ -54,6 +54,7 @@ import org.openspcoop2.core.config.utils.CleanerOpenSPCoop2Extensions;
 import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.plugins.IdPlugin;
 import org.openspcoop2.core.registry.RegistroServizi;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
@@ -149,6 +150,9 @@ public class PreLoadingConfig  {
 	}
 	private void loadConfig(byte[] zipContent) throws UtilsException, IOException, DriverConfigurazioneException, ServiceException, NotImplementedException {
 		
+		List<String> pluginNameList = new ArrayList<>();
+		List<byte[]> pluginList = new ArrayList<>();
+		
 		List<String> configNameList = new ArrayList<>();
 		List<byte[]> configList = new ArrayList<>();
 		
@@ -232,7 +236,11 @@ public class PreLoadingConfig  {
 							else {
 							
 								Element element = MessageXMLUtils.DEFAULT.newElement(bytes);
-								if(org.openspcoop2.core.config.utils.XMLUtils.isConfigurazione(element)) {
+								if(org.openspcoop2.core.plugins.utils.XMLUtils.isPlugin(element)) {
+									pluginNameList.add(entryName);
+									pluginList.add(bytes);
+								}
+								else if(org.openspcoop2.core.config.utils.XMLUtils.isConfigurazione(element)) {
 									configNameList.add(entryName);
 									configList.add(bytes);
 								}
@@ -275,6 +283,49 @@ public class PreLoadingConfig  {
 			}
 		}
 
+		if(!pluginNameList.isEmpty()) {
+			
+			org.openspcoop2.core.plugins.utils.serializer.JaxbDeserializer deserializerCT = new  org.openspcoop2.core.plugins.utils.serializer.JaxbDeserializer (); 
+			DriverConfigurazioneDB driverConfigurazione = (DriverConfigurazioneDB) ConfigurazionePdDReader.getDriverConfigurazionePdD();
+			Connection con = null;
+			try {
+				con = driverConfigurazione.getConnection("preloading plugins");
+				ServiceManagerProperties jdbcProperties = new ServiceManagerProperties();
+				jdbcProperties.setDatabaseType(driverConfigurazione.getTipoDB());
+				jdbcProperties.setShowSql(true);
+				org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager serviceManager = 
+						new org.openspcoop2.core.plugins.dao.jdbc.JDBCServiceManager(con, jdbcProperties, this.log);
+				org.openspcoop2.core.plugins.dao.IPluginService service = serviceManager.getPluginService();
+				
+				org.openspcoop2.core.plugins.utils.CleanerOpenSPCoop2Extensions cleaner = new org.openspcoop2.core.plugins.utils.CleanerOpenSPCoop2Extensions();
+				
+				for (int i = 0; i < pluginNameList.size(); i++) {
+					String name = pluginNameList.get(i);
+					byte [] content = pluginList.get(i);
+					
+					try {
+						this.logInfo(getMessageInCorso(ID_PLUGIN, name));
+						org.openspcoop2.core.plugins.Plugin plugin = deserializerCT.readPlugin(content);
+						IdPlugin id = new IdPlugin();
+						id.setClassName(plugin.getClassName());
+						id.setLabel(plugin.getLabel());
+						id.setTipo(plugin.getTipo());
+						id.setTipoPlugin(plugin.getTipoPlugin());
+						if(!service.exists(id)) {
+							cleaner.clean(plugin);
+							service.create(plugin);
+						}
+						this.logInfo(getMessageEffettuataConSuccesso(ID_PLUGIN, name));
+		
+					}catch(Exception e) {
+						this.logError(getMessageError(ID_PLUGIN, name, e),e);
+					}
+				}
+			}finally {
+				driverConfigurazione.releaseConnection(con);
+			}
+		}
+		
 		if(!registryNameList.isEmpty()) {
 			org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer deserializerRegistry = new  org.openspcoop2.core.registry.utils.serializer.JaxbDeserializer (); 
 			java.util.Map<String, IDriverRegistroServiziGet> mapRegistri = RegistroServiziReader.getDriverRegistroServizi();
@@ -458,6 +509,7 @@ public class PreLoadingConfig  {
 	private String getMessageError(String type, String name, Exception e) {
 		return PRELOADING_PREFIX+type+" ["+name+"] failed: "+e.getMessage();
 	}
+	private static final String ID_PLUGIN= "Plugin";
 	private static final String ID_REGISTRY = "Registry";
 	private static final String ID_CONFIG = "Config";
 	private static final String ID_CONTROLLO_TRAFFICO_CONFIG_POLICY = "ControlloTraffico ConfigPolicy";

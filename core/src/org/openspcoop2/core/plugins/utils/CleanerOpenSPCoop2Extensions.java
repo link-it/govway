@@ -35,8 +35,7 @@ public class CleanerOpenSPCoop2Extensions {
 	// per adesso nop
 	
 	public void clean(Plugin plugin){
-
-		
+		// nop
 	}
 
 }

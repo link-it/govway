@@ -14,15 +14,9 @@ Una configurazione personalizzata richiede la realizzazione di un plugin che con
                  public String estraiValoreCollezionamentoDati(Logger log,Dati datiRichiesta) throws PluginsException;
              }
 
-         La classe realizzata deve essere successivamente registrata tramite
-         una entry da aggiungere all'interno del file (da creare se non esiste) */etc/govway/govway_local.classRegistry.properties* di GovWay:
+         La classe realizzata deve essere successivamente registrata su GovWay come descritto nella sezione :ref:`configAvanzataPlugins`).
 
-         ::
-
-             org.openspcoop2.pdd.controlloTraffico.rateLimiting.<tipo>=<fully qualified class name>
-
-         La stringa <tipo> diventa
-         utilizzabile come “Tipo Personalizzato” da indicare in fase di configurazione per un criterio di filtro personalizzato (:numref:`filtroPersonalizzato`) e/o per un criterio di raggruppamento personalizzato (:numref:`raggruppamentoPersonalizzato`).
+         Il plugin sarà selezionabile in fase di configurazione per un criterio di filtro personalizzato (:numref:`filtroPersonalizzato`) e/o per un criterio di raggruppamento personalizzato (:numref:`raggruppamentoPersonalizzato`).
 
 	   .. figure:: ../../_figure_console/RateLimiting_filtroPersonalizzato.png
 	    :scale: 100%

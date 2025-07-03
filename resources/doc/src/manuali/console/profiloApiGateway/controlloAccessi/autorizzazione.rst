@@ -173,5 +173,5 @@ sono i seguenti:
 
     Configurazione Autorizzazione XACML-Policy
 
--  *Custom*: Sulla lista "Stato", è possibile selezionare questo metodo
-   di autorizzazione eventualmente fornito tramite estensione di GovWay.
+-  *Plugin*: Sulla lista "Stato", è possibile selezionare questo metodo
+   di autorizzazione per selezionare un meccanismo personalizzato attraverso l'implementazione di un plugin di GovWay (per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`).

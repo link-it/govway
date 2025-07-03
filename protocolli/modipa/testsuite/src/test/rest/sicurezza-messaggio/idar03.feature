@@ -2895,7 +2895,7 @@ Examples:
 Scenario Outline: Verifica di scenari dove l'integrity <descrizione>
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1"
 And path '<azione>'
-And header GovWay-TestSuite-forward-resource = '<forward>'
+And header govway-testsuite-forward-resource = '<forward>'
 And header GovWay-TestSuite-Test-ID = 'doppi-header-idar03-integrity-payload-<atteso>'
 When method get
 Then status 200
@@ -2916,10 +2916,10 @@ Examples:
 Scenario Outline: Verifica di scenari dove l'integrity <descrizione>
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1"
 And path '<azione>'
-And header GovWay-TestSuite-forward-resource = '<forward>'
-And header GovWay-TestSuite-expected-status = '<expected-status>'
-And header GovWay-TestSuite-expected-response-error = '<expected-response-error>'
-And header GovWay-TestSuite-expected-response-error-type = '<expected-response-error-type>'
+And header govway-testsuite-forward-resource = '<forward>'
+And header govway-testsuite-expected-status = '<expected-status>'
+And header govway-testsuite-expected-response-error = '<expected-response-error>'
+And header govway-testsuite-expected-response-error-type = '<expected-response-error-type>'
 And header GovWay-TestSuite-Test-ID = 'doppi-header-idar03-integrity-payload-<atteso>'
 When method get
 Then status <expected-status>

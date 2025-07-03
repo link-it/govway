@@ -1,3 +1,8 @@
+2025-07-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunto plugin che consente di adeguare il formato di errori a quanto previsto dai servizi del SUAP.
+
 2025-07-02  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore]

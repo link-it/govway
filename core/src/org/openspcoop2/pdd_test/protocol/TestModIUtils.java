@@ -40,7 +40,7 @@ public class TestModIUtils {
 	public void testModIUtils() throws ProtocolException {
 		
 		TestLogger.info("Run test '"+ID_TEST+"' ...");
-		org.openspcoop2.protocol.engine.utils.ModITestUtils.main(null);
+		org.openspcoop2.protocol.engine.utils.ModITestUtils.verify();
 		TestLogger.info("Run test '"+ID_TEST+"' ok");
 	
 	}

@@ -581,6 +581,8 @@
         <checkbox defaultValue="false" property="antinstaller_rs_soap_status" value="rsSoapStatus" displayText="API SOAP"/>
 
 	<hidden property="antinstaller_token_google" value="true"/>
+	
+	<hidden property="antinstaller_plugin_suap_errors" value="true"/>
 
     </page>
 
