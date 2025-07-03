@@ -66,6 +66,8 @@ ulteriori connettori:
    corretto funzionamento della servizio sul quale
    è impostato.
 
+- *Plugin*: consente di implementare un connettore personalizzato attraverso l'implementazione di un plugin di GovWay (per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`).
+
 Nel seguito vengono descritte alcune funzionalità specifiche dei
 connettori HTTP e HTTPS. Inoltre viene fornita una descrizione del
 connettore built-in JMS, File e Status.

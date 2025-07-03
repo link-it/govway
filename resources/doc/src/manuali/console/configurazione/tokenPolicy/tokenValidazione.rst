@@ -48,7 +48,7 @@ passaggio.
 
          - 'Personalizzato': consente di definire un mapping puntuale tra il nome di un claim e l’informazione che GovWay cerca di estrarre dalla risposta (:numref:`tokenPolicyDynamicCustomFig`);
 
-         - 'Plugin': consente di indicare il nome di una classe che implementa una logica di parsing personalizzata (deve implementare l’interfaccia "org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser").
+         - 'Plugin': consente di selezionare un plugin che implementi una logica di parsing personalizzata (deve implementare l’interfaccia "org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser"). Per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`.
 
   .. figure:: ../../_figure_console/TokenPolicyDynamic.png
     :scale: 100%

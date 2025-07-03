@@ -38,48 +38,43 @@ import org.w3c.dom.Node;
 
 public class XMLUtils  {
 
+	private XMLUtils() {}
 	
 	public static boolean isConfigurazione(byte [] doc){
 		try{
 			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isConfigurazione_engine(elemXML);
+			return XMLUtils.isConfigurazioneEngine(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isConfigurazione(Document docXML){
 		try{
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isConfigurazione_engine(elemXML);
+			return XMLUtils.isConfigurazioneEngine(elemXML);
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
 	public static boolean isConfigurazione(Element elemXML){
-		return isConfigurazione_engine(elemXML);
+		return isConfigurazioneEngine(elemXML);
 	}
 	public static boolean isConfigurazione(Node nodeXml){
-		return isConfigurazione_engine(nodeXml);
+		return isConfigurazioneEngine(nodeXml);
 	}
-	private static boolean isConfigurazione_engine(Node nodeXml){
+	private static boolean isConfigurazioneEngine(Node nodeXml){
 		try{
 			ProjectInfo pInfo = new ProjectInfo();
 			
-			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
-			if("openspcoop2".equals(nodeXml.getLocalName()) && 
-					pInfo.getProjectNamespace().equals(nodeXml.getNamespaceURI() ) 
-				){
-				return true;
-			}
-			else{
-				return false;
-			}
+			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");*/
+			return "openspcoop2".equals(nodeXml.getLocalName()) && 
+					pInfo.getProjectNamespace().equals(nodeXml.getNamespaceURI()) ;
 		}catch(Exception e){
-			//System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());
+			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}

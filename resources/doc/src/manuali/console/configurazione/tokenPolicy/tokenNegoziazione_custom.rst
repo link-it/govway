@@ -89,7 +89,7 @@ In alternativa è possibile indicare di utilizzare direttamente il payload di ri
 
     Utilizzo del payload di risposta HTTP come access token
 
-Infine è possibile indicare il nome di una classe che implementa una logica di parsing personalizzata. La classe deve implementare l’interfaccia "org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser" (:numref:`tokenNegoziazionePolicyCustomParserPlugin`).
+Infine è possibile selezionare un plugin che implementa una logica di parsing personalizzata. La classe deve implementare l’interfaccia "org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser" (:numref:`tokenNegoziazionePolicyCustomParserPlugin`). Per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`.
 
 .. figure:: ../../_figure_console/TokenPolicy-negoziazione-custom-parser-plugin.png
     :scale: 100%

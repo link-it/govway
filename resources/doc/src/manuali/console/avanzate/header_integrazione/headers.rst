@@ -152,3 +152,5 @@ configurazione della voce *Metadati* nella sezione *Integrazione* per attivare g
    - Parametri Url: le informazioni sono veicolate come parametri della url
    - Header SOAP: le informazioni sono incluse in uno specifico header SOAP proprietario di OpenSPCoop 2.x o 1.x
 
+- *Plugin*: consente di personalizzare i metadati scambiati attraverso l'implementazione di un plugin di GovWay (per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`).
+

@@ -28,4 +28,6 @@ Funzionalità Avanzate
 	info_confidenziali
 	byokNodiManager
 	logger/index.rst
+	plugins/index.rst
+	suap
 	health_check

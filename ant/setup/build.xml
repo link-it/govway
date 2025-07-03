@@ -167,6 +167,7 @@
 			antinstaller_rs_rest_status=true/false
 			antinstaller_rs_soap_status=true/false
 			antinstaller_token_google=true/false
+			antinstaller_plugin_suap_errors=true/false
 
 		Cooperazione Applicativa
 			antinstaller_protocollo_trasparente=true

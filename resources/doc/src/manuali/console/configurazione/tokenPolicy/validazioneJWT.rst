@@ -25,7 +25,7 @@ I dati da inserire sono:
 
    -  *Personalizzato*: consente di definire un mapping puntuale tra il nome di un claim e l'informazione che GovWay cerca di estrarre dal token (:numref:`validazioneJWTpersonalizzato`);
 
-   -  *Plugin*: consente di indicare il nome di una classe che implementa una logica di parsing personalizzata (deve implementare l'interfaccia 'org.openspcoop2.pdd.core.token.parser.ITokenParser').
+   -  *Plugin*: consente di selezionare un plugin che implementa una logica di parsing personalizzata (deve implementare l'interfaccia 'org.openspcoop2.pdd.core.token.parser.ITokenParser'). Per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`.
 
 -  *Header*: presente solo in caso di token di tipo JWS, consente di abilitare una validazione dei valori dei claim 'typ', 'cty' o 'alg' presenti nell'header.
 

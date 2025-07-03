@@ -4641,7 +4641,7 @@ Scenario: isTest('doppi-header-idar03-integrity-payload-requestResponse')
     """
     * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -4671,7 +4671,7 @@ Scenario: isTest('doppi-header-idar03-integrity-payload-nonAtteso')
     * match requestHeaders['Digest'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
     
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -4701,7 +4701,7 @@ Scenario: isTest('doppi-header-idar03-integrity-payload-request')
     """
     * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -4713,7 +4713,7 @@ Scenario: isTest('doppi-header-idar03-integrity-payload-response')
     * match requestHeaders['Digest'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -4743,15 +4743,15 @@ Scenario: isTest('doppi-header-idar03-integrity-payload-nonAtteso-errore')
     * match requestHeaders['Digest'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
     
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
-    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * def customResponseStatus = requestHeaders['govway-testsuite-expected-status'][0]
     * match (responseStatus+'') == customResponseStatus
-    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * def customResponse = requestHeaders['govway-testsuite-expected-response-error'][0]
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
-    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * def customResponseErrorType = requestHeaders['govway-testsuite-expected-response-error-type'][0]
     * match header GovWay-Transaction-ErrorType == customResponseErrorType
 
 Scenario: isTest('doppi-header-idar03-integrity-payload-request-errore')
@@ -4777,15 +4777,15 @@ Scenario: isTest('doppi-header-idar03-integrity-payload-request-errore')
     """
     * call checkToken ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR03IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
-    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * def customResponseStatus = requestHeaders['govway-testsuite-expected-status'][0]
     * match (responseStatus+'') == customResponseStatus
-    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * def customResponse = requestHeaders['govway-testsuite-expected-response-error'][0]
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
-    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * def customResponseErrorType = requestHeaders['govway-testsuite-expected-response-error-type'][0]
     * match header GovWay-Transaction-ErrorType == customResponseErrorType
 
 ##########################
@@ -8015,7 +8015,7 @@ Scenario: isTest('idar04-integrity-payload-requestResponse')
     """
     * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -8045,7 +8045,7 @@ Scenario: isTest('idar04-integrity-payload-nonAtteso')
     * match requestHeaders['Digest'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
     
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -8075,7 +8075,7 @@ Scenario: isTest('idar04-integrity-payload-request')
     """
     * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -8087,7 +8087,7 @@ Scenario: isTest('idar04-integrity-payload-response')
     * match requestHeaders['Digest'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -8117,15 +8117,15 @@ Scenario: isTest('idar04-integrity-payload-nonAtteso-errore')
     * match requestHeaders['Digest'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
     
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
-    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * def customResponseStatus = requestHeaders['govway-testsuite-expected-status'][0]
     * match (responseStatus+'') == customResponseStatus
-    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * def customResponse = requestHeaders['govway-testsuite-expected-response-error'][0]
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
-    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * def customResponseErrorType = requestHeaders['govway-testsuite-expected-response-error-type'][0]
     * match header GovWay-Transaction-ErrorType == customResponseErrorType
 
 Scenario: isTest('idar04-integrity-payload-request-errore')
@@ -8151,15 +8151,15 @@ Scenario: isTest('idar04-integrity-payload-request-errore')
     """
     * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR04IntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
-    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * def customResponseStatus = requestHeaders['govway-testsuite-expected-status'][0]
     * match (responseStatus+'') == customResponseStatus
-    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * def customResponse = requestHeaders['govway-testsuite-expected-response-error'][0]
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
-    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * def customResponseErrorType = requestHeaders['govway-testsuite-expected-response-error-type'][0]
     * match header GovWay-Transaction-ErrorType == customResponseErrorType
 
 
@@ -8499,7 +8499,7 @@ Scenario: isTest('idar0402-integrity-payload-requestResponse')
     """
     * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -8533,7 +8533,7 @@ Scenario: isTest('idar0402-integrity-payload-nonAtteso')
     * match requestHeaders['Digest'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
     
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -8563,7 +8563,7 @@ Scenario: isTest('idar0402-integrity-payload-request')
     """
     * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -8575,7 +8575,7 @@ Scenario: isTest('idar0402-integrity-payload-response')
     * match requestHeaders['Digest'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
@@ -8605,15 +8605,15 @@ Scenario: isTest('idar0402-integrity-payload-nonAtteso-errore')
     * match requestHeaders['Digest'] == '#notpresent'
     * match requestHeaders['Agid-JWT-Signature'] == '#notpresent'    
     
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
-    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * def customResponseStatus = requestHeaders['govway-testsuite-expected-status'][0]
     * match (responseStatus+'') == customResponseStatus
-    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * def customResponse = requestHeaders['govway-testsuite-expected-response-error'][0]
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
-    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * def customResponseErrorType = requestHeaders['govway-testsuite-expected-response-error-type'][0]
     * match header GovWay-Transaction-ErrorType == customResponseErrorType
 
 Scenario: isTest('idar0402-integrity-payload-request-errore')
@@ -8639,15 +8639,15 @@ Scenario: isTest('idar0402-integrity-payload-request-errore')
     """
     * call checkTokenKid ({token: requestHeaders['Agid-JWT-Signature'][0], match_to: client_token_integrity_match, kind: "AGID" })
 
-    * def customContext = requestHeaders['GovWay-TestSuite-forward-resource'][0]
+    * def customContext = requestHeaders['govway-testsuite-forward-resource'][0]
     * def newPath = govway_base_path + '/rest/in/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1/'+customContext
     * karate.proceed (newPath)
 
-    * def customResponseStatus = requestHeaders['GovWay-TestSuite-expected-status'][0]
+    * def customResponseStatus = requestHeaders['govway-testsuite-expected-status'][0]
     * match (responseStatus+'') == customResponseStatus
-    * def customResponse = requestHeaders['GovWay-TestSuite-expected-response-error'][0]
+    * def customResponse = requestHeaders['govway-testsuite-expected-response-error'][0]
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/'+customResponse)
-    * def customResponseErrorType = requestHeaders['GovWay-TestSuite-expected-response-error-type'][0]
+    * def customResponseErrorType = requestHeaders['govway-testsuite-expected-response-error-type'][0]
     * match header GovWay-Transaction-ErrorType == customResponseErrorType    
     
 

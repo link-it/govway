@@ -131,7 +131,7 @@ Se è presente un principal, il gateway cercherà di identificare un applicativo
 
 **- plugin** 
 	
-Metodo di autenticazione fornito tramite personalizzazioni di GovWay.
+Metodo di autenticazione personalizzato fornito attraverso l'implementazione di un plugin di GovWay (per dettagli si rimanda alla sezione :ref:`configAvanzataPlugins`).
 
 
 

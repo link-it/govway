@@ -413,7 +413,7 @@ Scenario Outline: Verifica di scenari dove l'integrity <descrizione>
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1"
 And path '<azione>'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
-And header GovWay-TestSuite-forward-resource = '<forward>'
+And header govway-testsuite-forward-resource = '<forward>'
 And header GovWay-TestSuite-Test-ID = 'idar0402-integrity-payload-<atteso>'
 And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
 And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'
@@ -440,10 +440,10 @@ Scenario Outline: Verifica di scenari dove l'integrity <descrizione>
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR0402DigestRichiestaIntegrityPayloadVuoto/v1"
 And path '<azione>'
 And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
-And header GovWay-TestSuite-forward-resource = '<forward>'
-And header GovWay-TestSuite-expected-status = '<expected-status>'
-And header GovWay-TestSuite-expected-response-error = '<expected-response-error>'
-And header GovWay-TestSuite-expected-response-error-type = '<expected-response-error-type>'
+And header govway-testsuite-forward-resource = '<forward>'
+And header govway-testsuite-expected-status = '<expected-status>'
+And header govway-testsuite-expected-response-error = '<expected-response-error>'
+And header govway-testsuite-expected-response-error-type = '<expected-response-error-type>'
 And header GovWay-TestSuite-Test-ID = 'idar0402-integrity-payload-<atteso>'
 And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
 And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'

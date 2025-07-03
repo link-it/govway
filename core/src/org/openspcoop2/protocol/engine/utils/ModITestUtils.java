@@ -46,6 +46,10 @@ public class ModITestUtils {
 	// lo scopo è verificare che i metodi esistano
 	
 	public static void main(String[] args) throws ProtocolException {
+		verify();
+	}
+	
+	public static void verify() throws ProtocolException {
 		
 		Logger log = LoggerWrapperFactory.getLogger(ModITestUtils.class);
 		LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ALL);

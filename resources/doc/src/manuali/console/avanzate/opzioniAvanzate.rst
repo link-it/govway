@@ -12,7 +12,7 @@ All'interno di tale sezione è possibile configurare (:numref:`opzioniAvanzateAP
 
 - *Rate Limiting*: per default non impostato, consente di personalizzare le impostazioni che riguardano gli Header HTTP informativi restituiti ai client (vedi sezione :ref:`headerGWRateLimiting`) e il tipo di Rate Limiting in presenza di un cluster di nodi (vedi sezione :ref:`headerGWRateLimitingCluster`).
 
-- *Handlers*: consente di attivare handler sul pipeline relativo alla gestione delle richieste o delle risposte di GovWay.
+- *Handlers*: consente di attivare handler sul pipeline relativo alla gestione delle richieste o delle risposte di GovWay. Per la registrazione di handler si rimanda alla sezione :ref:`configAvanzataPlugins`.
 
 - *SOAP With Attachments - Gestione Body*: presente solamente per API di tipo SOAP consente tramite la voce 'allega' di spostare il contenuto presente nel body in un attachment o di eliminare il body dalla richiesta prima di inoltrare il messaggio.
 

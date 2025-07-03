@@ -20,7 +20,7 @@
 
 
 
-package org.openspcoop2.core.registry.utils;
+package org.openspcoop2.core.plugins.utils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
 
 
 /**
- * Classe utilizzata per la generazione del registro dei servizi
+ * Classe utilizzata per la gestione dei plugins
  *
  *
  * @author Poli Andrea (apoli@link.it)
@@ -40,38 +40,38 @@ public class XMLUtils  {
 
 	private XMLUtils() {}
 	
-	public static boolean isRegistroServizi(byte [] doc){
+	public static boolean isPlugin(byte [] doc){
 		try{
 			org.openspcoop2.message.xml.MessageXMLUtils xmlUtils = org.openspcoop2.message.xml.MessageXMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isRegistroServiziEngine(elemXML);
+			return XMLUtils.isPluginEngine(elemXML);
 		}catch(Exception e){
 			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
-	public static boolean isRegistroServizi(Document docXML){
+	public static boolean isPlugin(Document docXML){
 		try{
 			Element elemXML = docXML.getDocumentElement();
-			return XMLUtils.isRegistroServiziEngine(elemXML);
+			return XMLUtils.isPluginEngine(elemXML);
 		}catch(Exception e){
 			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/
 			return false;
 		}
 	}
-	public static boolean isRegistroServizi(Element elemXML){
-		return isRegistroServiziEngine(elemXML);
+	public static boolean isPlugin(Element elemXML){
+		return isPluginEngine(elemXML);
 	}
-	public static boolean isRegistroServizi(Node nodeXml){
-		return isRegistroServiziEngine(nodeXml);
+	public static boolean isPlugin(Node nodeXml){
+		return isPluginEngine(nodeXml);
 	}
-	private static boolean isRegistroServiziEngine(Node nodeXml){
+	private static boolean isPluginEngine(Node nodeXml){
 		try{
 			ProjectInfo pInfo = new ProjectInfo();
 			
 			/**System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME_DETTAGLIO_ECCEZIONE+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");*/
-			return "registro-servizi".equals(nodeXml.getLocalName()) && 
+			return "plugin".equals(nodeXml.getLocalName()) && 
 					pInfo.getProjectNamespace().equals(nodeXml.getNamespaceURI()) ;
 		}catch(Exception e){
 			/**System.out.println("NON e' un DOCUMENTO VALIDO: "+e.getMessage());*/

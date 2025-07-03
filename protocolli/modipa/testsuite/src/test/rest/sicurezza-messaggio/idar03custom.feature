@@ -567,7 +567,7 @@ And match header CustomTestSuiteDoppi-JWT-Signature == '#notpresent'
 
 
 @doppi-header-get-with-custom-always-response
-Scenario: Test con presenza sia dell'header Authorization che Custom-JWT-Signature per una risorsa GET senza payload
+Scenario: Test con presenza sia dell'header Authorization che Custom-JWT-Signature per una risorsa GET senza payload in cui viene prodotto sempre nella risposta
 
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/RestBlockingIDAR03CustomHeaderDuplicati/v1"
 And path 'resources', 1, 'M', 'customAlwaysResponse'
