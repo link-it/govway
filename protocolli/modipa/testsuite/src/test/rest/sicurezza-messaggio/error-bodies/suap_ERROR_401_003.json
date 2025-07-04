@@ -1,0 +1,4 @@
+{
+    "code": "ERROR_401_003",
+    "message": "AgID-JWT-Signature token not found"
+}
