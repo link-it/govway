@@ -12681,6 +12681,84 @@ Scenario: isTest('audit-rest-jwk-0401-differentAudienceAsArray')
 
 
 
+
+########################
+#       SUAP           #
+########################
+
+
+Scenario: isTest('suap-ERROR_400_001')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1')
+
+    * match responseStatus == 400
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_400_001.json')
+    * match header GovWay-Transaction-ErrorType == '#notpresent'
+
+Scenario: isTest('suap-ERROR_401_002')
+
+    * set requestHeaders['Authorization'][0] = tamper_token(requestHeaders['Authorization'][0])
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1')
+
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_401_002.json')
+    * match header GovWay-Transaction-ErrorType == '#notpresent'
+    
+Scenario: isTest('suap-ERROR_401_002_audience')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1')
+
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_401_002.json')
+    * match header GovWay-Transaction-ErrorType == '#notpresent'    
+
+Scenario: isTest('suap-ERROR_401_003')
+
+    * set requestHeaders['Agid-JWT-Signature'][0] = ''
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1')
+
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_401_003.json')
+    * match header GovWay-Transaction-ErrorType == '#notpresent'
+
+Scenario: isTest('suap-ERROR_401_004')
+
+    * set requestHeaders['Agid-JWT-Signature'][0] = tamper_token(requestHeaders['Agid-JWT-Signature'][0])
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1')
+
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_401_004.json')
+    * match header GovWay-Transaction-ErrorType == '#notpresent'
+
+Scenario: isTest('suap-ERROR_401_004_audience')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1')
+
+    * match responseStatus == 401
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_401_004.json')
+    * match header GovWay-Transaction-ErrorType == '#notpresent'
+
+Scenario: isTest('suap-ERROR_500_007')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1')
+
+    * match responseStatus == 500
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_500_007.json')
+    * match header GovWay-Transaction-ErrorType == '#notpresent'
+    
+    * def tid = responseHeaders['GovWay-Transaction-ID'][0]
+    * def result = get_diagnostici(tid) 
+
+    * def errorExpected = requestHeaders['govway-testsuite-expected-diagnostico'][0]
+    * match result[0].MESSAGGIO contains errorExpected    
+
+
+
+
+
 Scenario: isTest('tengo-da-parte') 
 
     * def tamper_token_authorization_digest_value = 

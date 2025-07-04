@@ -17,6 +17,8 @@ Configurare l'ambiente di esecuzione dei test:
 
 	- ATTENZIONE!!! Non abilitare il byok tramite la proprietà 'govway.security' nel file 'byok.properties' altrimenti i test di comparazione falliscono
 
+	- il file build/karate-config.js deve dichiare nella proprietà configUrl il contesto dell'API invocata attraverso GovWay (es. configUrl: govwayUrl + '/govway/ENTE/api-config/v1'). Inoltre l'API su GovWay deve essere configurata con validazione dei contenuti abilitata.
+
 	- Riavviare GovWay e procedere con i test
 
 Compilare i test con il comando 'ant clean build'
