@@ -22,6 +22,8 @@ package org.openspcoop2.utils.certificate.remote;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * RemoteStoreClientInfo
  *
@@ -65,4 +67,13 @@ public class RemoteStoreClientInfo implements Serializable {
 		this.organizationDetails = organizationDetails;
 	}
 	
+	public boolean isInfoUncomplete() {
+		return this.clientId==null || StringUtils.isEmpty(this.clientId) ||
+				this.clientDetails==null || StringUtils.isEmpty(this.clientDetails) ||
+				this.organizationId==null || StringUtils.isEmpty(this.organizationId) ||
+				this.organizationDetails==null || StringUtils.isEmpty(this.organizationDetails);
+	}
+	public boolean isInfoComplete() {
+		return !this.isInfoUncomplete();
+	}
 }

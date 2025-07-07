@@ -219,6 +219,7 @@ import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.utils.ErroriProperties;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;
+import org.openspcoop2.security.keystore.cache.RemoteStoreClientInfoCache;
 import org.openspcoop2.security.message.WsuIdAllocator;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.security.utils.ExternalPWCallback;
@@ -3912,8 +3913,11 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				RemoteStoreProviderDriver.setKeyMaxLifeMinutes(propertiesReader.getGestoreChiaviPDNDkeysMaxLifeMinutes());
 				OpenSPCoop2Startup.logStartupInfo("PDND Key max life minutes: "+RemoteStoreProviderDriver.getKeyMaxLifeMinutes());
 				
-				RemoteStoreProviderDriver.setClientDetailsMaxLifeMinutes(propertiesReader.getGestoreChiaviPDNDclientInfoMaxLifeMinutes());
-				OpenSPCoop2Startup.logStartupInfo("PDND ClientId details max life minutes: "+RemoteStoreProviderDriver.getClientDetailsMaxLifeMinutes());
+				RemoteStoreClientInfoCache.setClientDetailsMaxLifeMinutes(propertiesReader.getGestoreChiaviPDNDclientInfoMaxLifeMinutes());
+				OpenSPCoop2Startup.logStartupInfo("PDND ClientId details max life minutes: "+RemoteStoreClientInfoCache.getClientDetailsMaxLifeMinutes());
+				
+				RemoteStoreClientInfoCache.setClientDetailsCacheFallbackMaxLifeMinutes(propertiesReader.getGestoreChiaviPDNDclientInfoCacheFallbackMaxLifeMinutes());
+				OpenSPCoop2Startup.logStartupInfo("PDND ClientId details max life minutes (cache fallback): "+RemoteStoreClientInfoCache.getClientDetailsCacheFallbackMaxLifeMinutes());
 				
 				
 				List<PDNDConfig> listRemoteConfig = null;

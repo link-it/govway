@@ -35,6 +35,7 @@ import org.openspcoop2.pdd.core.eventi.GestoreEventi;
 import org.openspcoop2.pdd.timers.TimerException;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDEvent;
 import org.openspcoop2.pdd.timers.pdnd.TimerGestoreChiaviPDNDLib;
+import org.openspcoop2.security.keystore.cache.RemoteStoreClientInfoCache;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
@@ -68,15 +69,6 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 	}
 	
 	
-	private static int clientDetailsMaxLifeMinutes = -1; // infinito
-	public static int getClientDetailsMaxLifeMinutes() {
-		return clientDetailsMaxLifeMinutes;
-	}
-	public static void setClientDetailsMaxLifeMinutes(int clientDetailsMaxLifeMinutes) {
-		RemoteStoreProviderDriver.clientDetailsMaxLifeMinutes = clientDetailsMaxLifeMinutes;
-	}
-
-
 	private static final Map<String, RemoteStoreProviderDriver> _providerStore = new HashMap<>();
 	public static synchronized void initialize(Logger log, RemoteStoreConfig remoteStoreConfig) throws KeystoreException {
 		String storeConfigName = getRemoteStoreConfigName(remoteStoreConfig);
@@ -434,16 +426,24 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 			this.log.debug(msg);
 			return true;
 		}
-		if(clientDetails!=null && clientDetailsMaxLifeMinutes>0 && clientDetails.getDataAggiornamento()!=null) {
-			long maxLifeSeconds = clientDetailsMaxLifeMinutes * 60l;
-			long maxLifeMs = maxLifeSeconds * 1000l;
-			Date tooOld = new Date(DateManager.getTimeMillis()-maxLifeMs);
-			if(clientDetails.getDataAggiornamento().before(tooOld)) {
-				String msg = getPrefixKidClientDetails(keyId)+" è più vecchia di "+clientDetailsMaxLifeMinutes+" minuti (data aggiornamento: "+DateUtils.getSimpleDateFormatMs().format(clientDetails.getDataAggiornamento())+")";
-				this.log.debug(msg);
-				return true;
+		return isUpdateRequiredByMaxLife(clientDetails, keyId);
+	}
+	
+	private boolean isUpdateRequiredByMaxLife(RemoteStoreClientDetails clientDetails, String keyId) {
+		if(clientDetails!=null) {
+			int maxLife =  clientDetails.isInfoComplete() ? RemoteStoreClientInfoCache.getClientDetailsMaxLifeMinutes() : RemoteStoreClientInfoCache.getClientDetailsCacheFallbackMaxLifeMinutes();
+			if(maxLife>0 && clientDetails.getDataAggiornamento()!=null) {
+				long maxLifeSeconds = maxLife * 60l;
+				long maxLifeMs = maxLifeSeconds * 1000l;
+				Date tooOld = new Date(DateManager.getTimeMillis()-maxLifeMs);
+				if(clientDetails.getDataAggiornamento().before(tooOld)) {
+					String msg = getPrefixKidClientDetails(keyId)+" è più vecchia di "+maxLife+" minuti (data aggiornamento: "+DateUtils.getSimpleDateFormatMs().format(clientDetails.getDataAggiornamento())+")(info-complete:"+clientDetails.isInfoComplete()+")";
+					this.log.debug(msg);
+					return true;
+				}
 			}
 		}
+			
 		return false;
 	}
 }

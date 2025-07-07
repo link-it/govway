@@ -122,6 +122,7 @@ Per consentire a GovWay di utilizzare le risorse precedentemente descritte, vien
 
 	- *clientInfo.enabled*: impostare a true la proprietà per abilitare la raccolta delle informazioni sul client;
 	- *clientInfo.maxLifeMinutes*: indica la vita in minuti delle informazioni scaricate dalla PDND e salvate nella cache locale (default: 43200, 30 giorni);
+	- *clientInfo.cacheFallbackMaxLifeMinutes*: indica la durata, espressa in minuti, delle informazioni sul client ottenute dalla PDND in forma incompleta o non disponibili. Tali informazioni vengono comunque memorizzate temporaneamente nella cache locale (default: 5 minuti) per evitare chiamate ripetute e inutili verso la PDND;
 	- *clients.error.abortTransaction* indicazione se far fallire la transazione in caso il recupero delle informazioni sul client fallisca (default: false, vedi :ref:`modipa_sicurezza_avanzate_pdndFailed`);
 	- *organizations.error.abortTransaction* indicazione se far fallire la transazione in caso il recupero delle informazioni sull'organizzazione fallisca (default: false, vedi :ref:`modipa_sicurezza_avanzate_pdndFailed`).
 
