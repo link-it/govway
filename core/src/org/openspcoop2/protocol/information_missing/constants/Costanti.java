@@ -29,13 +29,15 @@ import org.openspcoop2.protocol.information_missing.utils.ProjectInfo;
  * @version $Rev$, $Date$
  */
 public class Costanti {
+	
+	private Costanti() {}
 
 	public static final String ROOT_LOCAL_NAME_INFORMATION_MISSING = "openspcoop2";
 	public static final String LOCAL_NAME_SOGGETTO = "soggetto";
 	public static final String LOCAL_NAME_SERVIZIO_APPLICATIVO = "servizio-applicativo";
 	public static final String TARGET_NAMESPACE = (new ProjectInfo()).getProjectNamespace();
 	
-	// IL TIPO DEVE ESSERE DEFINITO PER POTER POI COMPRENDERE IL PROTOCOLLO public static final String TIPO_SOGGETTO_DEFAULT = "@OPENSPCOOP2_TIPO_SOGGETTO_DEFAULT@";
+	/** IL TIPO DEVE ESSERE DEFINITO PER POTER POI COMPRENDERE IL PROTOCOLLO public static final String TIPO_SOGGETTO_DEFAULT = "@OPENSPCOOP2_TIPO_SOGGETTO_DEFAULT@";*/
 	public static final String NOME_SOGGETTO_DEFAULT = "@OPENSPCOOP2_NOME_SOGGETTO_DEFAULT@";
 	
 	// sinonimi

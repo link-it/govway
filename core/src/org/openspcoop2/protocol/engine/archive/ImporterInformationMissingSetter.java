@@ -49,6 +49,7 @@ import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -74,6 +75,8 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
  * @version $Rev$, $Date$
  */
 public class ImporterInformationMissingSetter {
+	
+	private ImporterInformationMissingSetter() {}
 
 	public static void setInformationMissingReferenteAPI(Archive archive, IRegistryReader registryReader) throws ProtocolException {
 		// Accordi di Servizio Parte Comune 
@@ -112,10 +115,10 @@ public class ImporterInformationMissingSetter {
 		
 		switch (soggetto.getTipo()) {
 		case RIFERIMENTO:
-			setInformationMissing_RiferimentoSoggetto(archive, soggetto, idSoggetto);
+			setInformationMissingRiferimentoSoggetto(archive, soggetto, idSoggetto);
 			break;
 		case CONNETTORE:
-			setInformationMissing_ConnettoreSoggetto(archive, soggetto, connettore);
+			setInformationMissingConnettoreSoggetto(archive, soggetto, connettore);
 			break;
 		}
 		
@@ -129,13 +132,13 @@ public class ImporterInformationMissingSetter {
 			// non ancora gestito
 			break;
 		case CONNETTORE:
-			setInformationMissing_ConnettoreSA(archive, sa, invocazioneServizio, credenziali);
+			setInformationMissingConnettoreSA(archive, sa, invocazioneServizio, credenziali);
 			break;
 		case CREDENZIALI_ACCESSO_PDD:
-			setInformationMissing_CredenzialiSA(archive, sa, credenziali);
+			setInformationMissingCredenzialiSA(archive, sa, credenziali);
 			break;
 		case ALLINEA_CREDENZIALI_PD:
-			setInformationMissing_AllineaCredenzialiPD(archive, sa);
+			setInformationMissingAllineaCredenzialiPD(archive, sa);
 			break;
 		}
 		
@@ -145,13 +148,13 @@ public class ImporterInformationMissingSetter {
 		
 		switch (ac.getTipo()) {
 		case RIFERIMENTO:
-			setInformationMissing_RiferimentoAccordoCooperazione(archive, ac, idAccordo);
+			setInformationMissingRiferimentoAccordoCooperazione(archive, ac, idAccordo);
 			break;
 		case STATO_ARCHIVIO:
 			if(ac.getStato()==null){
 				throw new ProtocolException("Stato non fornito, è richiesto con tipo di operazione ["+ac.getTipo().name()+"]");
 			}
-			setInformationMissing_StatoAccordoCooperazione(archive, ac);
+			setInformationMissingStatoAccordoCooperazione(archive, ac);
 			break;
 		}
 		
@@ -161,13 +164,13 @@ public class ImporterInformationMissingSetter {
 		
 		switch (as.getTipo()) {
 		case RIFERIMENTO:
-			setInformationMissing_RiferimentoAccordoServizioParteComune(archive, as, idAccordo);
+			setInformationMissingRiferimentoAccordoServizioParteComune(archive, as, idAccordo);
 			break;
 		case STATO_ARCHIVIO:
 			if(as.getStato()==null){
 				throw new ProtocolException("Stato non fornito, è richiesto con tipo di operazione ["+as.getTipo().name()+"]");
 			}
-			setInformationMissing_StatoAccordoServizioParteComune(archive, as);
+			setInformationMissingStatoAccordoServizioParteComune(archive, as);
 			break;
 		}
 		
@@ -178,13 +181,13 @@ public class ImporterInformationMissingSetter {
 		
 		switch (asps.getTipo()) {
 		case CONNETTORE:
-			setInformationMissing_ConnettoreASPS(archive, asps, connettore);
+			setInformationMissingConnettoreASPS(archive, asps, connettore);
 			break;
 		case STATO_ARCHIVIO:
 			if(asps.getStato()==null){
 				throw new ProtocolException("Stato non fornito, è richiesto con tipo di operazione ["+asps.getTipo().name()+"]");
 			}
-			setInformationMissing_StatoAccordoServizioParteSpecifica(archive, asps);
+			setInformationMissingStatoAccordoServizioParteSpecifica(archive, asps);
 			break;
 		}
 		
@@ -194,47 +197,47 @@ public class ImporterInformationMissingSetter {
 		
 		switch (as.getTipo()) {
 		case RIFERIMENTO:
-			setInformationMissing_RiferimentoAccordoServizioComposto(archive, as, idAccordo);
+			setInformationMissingRiferimentoAccordoServizioComposto(archive, as, idAccordo);
 			break;
 		case STATO_ARCHIVIO:
 			if(as.getStato()==null){
 				throw new ProtocolException("Stato non fornito, è richiesto con tipo di operazione ["+as.getTipo().name()+"]");
 			}
-			setInformationMissing_StatoAccordoServizioComposto(archive, as);
+			setInformationMissingStatoAccordoServizioComposto(archive, as);
 			break;
 		}
 		
 	}
 	
 	public static void setInformationMissingFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitore,
-			Connettore connettore) throws ProtocolException{
+			Connettore connettore) {
 		
 		switch (fruitore.getTipo()) {
 		case CONNETTORE:
-			setInformationMissing_ConnettoreFruitore(archive, fruitore, connettore);
+			setInformationMissingConnettoreFruitore(archive, fruitore, connettore);
 			break;
 		case STATO_ARCHIVIO:
-			setInformationMissing_StatoFruitore(archive, fruitore);
+			setInformationMissingStatoFruitore(archive, fruitore);
 			break;
 		}
 		
 	}
 	
-	public static void setInformationMissingPortaDelegata(Archive archive, org.openspcoop2.protocol.information_missing.PortaDelegata portaDelegata) throws ProtocolException{
+	public static void setInformationMissingPortaDelegata(Archive archive, org.openspcoop2.protocol.information_missing.PortaDelegata portaDelegata) {
 		
 		switch (portaDelegata.getTipo()) {
 		case STATO:
-			setInformationMissing_StatoPortaDelegata(archive, portaDelegata);
+			setInformationMissingStatoPortaDelegata(archive, portaDelegata);
 			break;
 		}
 		
 	}
 	
-	public static void setInformationMissingPortaApplicativa(Archive archive, org.openspcoop2.protocol.information_missing.PortaApplicativa portaApplicativa) throws ProtocolException{
+	public static void setInformationMissingPortaApplicativa(Archive archive, org.openspcoop2.protocol.information_missing.PortaApplicativa portaApplicativa) {
 		
 		switch (portaApplicativa.getTipo()) {
 		case STATO:
-			setInformationMissing_StatoPortaApplicativa(archive, portaApplicativa);
+			setInformationMissingStatoPortaApplicativa(archive, portaApplicativa);
 			break;
 		}
 		
@@ -286,16 +289,14 @@ public class ImporterInformationMissingSetter {
 			return false; // per trovare un soggetto almeno un criterio di ricerca deve essere fornito
 		}
 		
-		if(nome!=null){
-			if(match(nome, nomeSoggetto)==false){
-				return false;
-			}
+		if(nome!=null &&
+			!match(nome, nomeSoggetto)){
+			return false;
 		}
 		
-		if(tipo!=null){
-			if(match(tipo, tipoSoggetto)==false){
-				return false;
-			}
+		if(tipo!=null &&
+			!match(tipo, tipoSoggetto)){
+			return false;
 		}
 		
 		return true;
@@ -310,16 +311,14 @@ public class ImporterInformationMissingSetter {
 			return false; // per trovare un servizio almeno un criterio di ricerca deve essere fornito
 		}
 		
-		if(nome!=null){
-			if(match(nome, nomeServizio)==false){
-				return false;
-			}
+		if(nome!=null &&
+			!match(nome, nomeServizio)){
+			return false;
 		}
 		
-		if(tipo!=null){
-			if(match(tipo, tipoServizio)==false){
-				return false;
-			}
+		if(tipo!=null &&
+			!match(tipo, tipoServizio)){
+			return false;
 		}
 		
 		return true;
@@ -345,44 +344,38 @@ public class ImporterInformationMissingSetter {
 		
 		// tipo/nome soggetto
 		
-		if(nome!=null){
-			if(match(nome, nomeSoggetto)==false){
-				return false;
-			}
+		if(nome!=null &&
+			!match(nome, nomeSoggetto)){
+			return false;
 		}
 		
-		if(tipo!=null){
-			if(match(tipo, tipoSoggetto)==false){
-				return false;
-			}
+		if(tipo!=null &&
+			!match(tipo, tipoSoggetto)){
+			return false;
 		}
 		
 		// tipo/nome servizio
 
-		if(rNomeServizio!=null){
-			if(match(rNomeServizio, nomeServizio)==false){
-				return false;
-			}
+		if(rNomeServizio!=null &&
+			!match(rNomeServizio, nomeServizio)){
+			return false;
 		}
 		
-		if(rTipoServizio!=null){
-			if(match(rTipoServizio, tipoServizio)==false){
-				return false;
-			}
+		if(rTipoServizio!=null &&
+			!match(rTipoServizio, tipoServizio)){
+			return false;
 		}
 		
 		// tipo/nome erogatore
 
-		if(rNomeSoggettoErogatore!=null){
-			if(match(rNomeSoggettoErogatore, nomeSoggettoErogatore)==false){
-				return false;
-			}
+		if(rNomeSoggettoErogatore!=null &&
+			!match(rNomeSoggettoErogatore, nomeSoggettoErogatore)){
+			return false;
 		}
 		
-		if(rTipoSoggettoErogatore!=null){
-			if(match(rTipoSoggettoErogatore, tipoSoggettoErogatore)==false){
-				return false;
-			}
+		if(rTipoSoggettoErogatore!=null &&
+			!match(rTipoSoggettoErogatore, tipoSoggettoErogatore)){
+			return false;
 		}
 		
 		return true;
@@ -394,14 +387,7 @@ public class ImporterInformationMissingSetter {
 		if(nome==null){
 			return false; // per trovare un servizio applicativo un criterio di ricerca deve essere fornito
 		}
-		
-		if(nome!=null){
-			if(match(nome, nomeServizio)==false){
-				return false;
-			}
-		}
-		
-		return true;
+		return match(nome, nomeServizio);
 	}
 	
 	private static boolean matchAccordo(ReplaceMatchType replaceMatch,
@@ -410,14 +396,7 @@ public class ImporterInformationMissingSetter {
 		if(nome==null){
 			return false; // per trovare un accordo un criterio di ricerca deve essere fornito
 		}
-		
-		if(nome!=null){
-			if(match(nome, nomeAccordo)==false){
-				return false;
-			}
-		}
-		
-		return true;
+		return match(nome, nomeAccordo);
 	}
 	
 	private static boolean matchPorta(ReplaceMatchType replaceMatch,
@@ -426,14 +405,7 @@ public class ImporterInformationMissingSetter {
 		if(nome==null){
 			return false; // per trovare un accordo un criterio di ricerca deve essere fornito
 		}
-		
-		if(nome!=null){
-			if(match(nome, nomePorta)==false){
-				return false;
-			}
-		}
-		
-		return true;
+		return match(nome, nomePorta);
 	}
 	
 
@@ -441,7 +413,7 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* SOGGETTI **********
 	
-	private static void setInformationMissing_RiferimentoSoggetto(Archive archive, Soggetto soggetto, IDSoggetto idSoggetto) throws ProtocolException{
+	private static void setInformationMissingRiferimentoSoggetto(Archive archive, Soggetto soggetto, IDSoggetto idSoggetto) throws ProtocolException{
 		
 		// ServiziApplicativi
 		for (int i = 0; i < archive.getServiziApplicativi().size(); i++) {
@@ -463,13 +435,12 @@ public class ImporterInformationMissingSetter {
 				pd.setNomeSoggettoProprietario(idSoggetto.getNome());
 				archive.getPorteDelegate().get(i).update(pd, false);
 			}
-			if(pd.getSoggettoErogatore()!=null){
-				if(matchSoggetto(soggetto.getReplaceMatch(), 
+			if(pd.getSoggettoErogatore()!=null &&
+				matchSoggetto(soggetto.getReplaceMatch(), 
 						pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome())){
-					pd.getSoggettoErogatore().setTipo(idSoggetto.getTipo());
-					pd.getSoggettoErogatore().setNome(idSoggetto.getNome());
-					archive.getPorteDelegate().get(i).update(pd, false);
-				}
+				pd.getSoggettoErogatore().setTipo(idSoggetto.getTipo());
+				pd.getSoggettoErogatore().setNome(idSoggetto.getNome());
+				archive.getPorteDelegate().get(i).update(pd, false);
 			}
 		}
 		
@@ -655,24 +626,23 @@ public class ImporterInformationMissingSetter {
 		}
 	}
 
-	private static void setInformationMissing_ConnettoreSoggetto(Archive archive, Soggetto soggetto, Connettore connettore) throws ProtocolException{
+	private static void setInformationMissingConnettoreSoggetto(Archive archive, Soggetto soggetto, Connettore connettore) {
 		
 		// Soggetti
 		for (int i = 0; i < archive.getSoggetti().size(); i++) {
 			org.openspcoop2.core.registry.Soggetto soggettoRegistro = archive.getSoggetti().get(i).getSoggettoRegistro();
-			if(soggettoRegistro!=null){
-				if(matchSoggetto(soggetto.getReplaceMatch(), 
+			if(soggettoRegistro!=null &&
+				matchSoggetto(soggetto.getReplaceMatch(), 
 						soggettoRegistro.getTipo(), soggettoRegistro.getNome())){
-					if(soggettoRegistro.getConnettore()==null)
-						soggettoRegistro.setConnettore(connettore);
-					else{
-						soggettoRegistro.getConnettore().setCustom(connettore.getCustom());
-						soggettoRegistro.getConnettore().setTipo(connettore.getTipo());
-						while(soggettoRegistro.getConnettore().sizePropertyList()>0)
-							soggettoRegistro.getConnettore().removeProperty(0);
-						if(connettore.sizePropertyList()>0)
-							soggettoRegistro.getConnettore().getPropertyList().addAll(connettore.getPropertyList());
-					}
+				if(soggettoRegistro.getConnettore()==null)
+					soggettoRegistro.setConnettore(connettore);
+				else{
+					soggettoRegistro.getConnettore().setCustom(connettore.getCustom());
+					soggettoRegistro.getConnettore().setTipo(connettore.getTipo());
+					while(soggettoRegistro.getConnettore().sizePropertyList()>0)
+						soggettoRegistro.getConnettore().removeProperty(0);
+					if(connettore.sizePropertyList()>0)
+						soggettoRegistro.getConnettore().getPropertyList().addAll(connettore.getPropertyList());
 				}
 			}
 		}
@@ -684,8 +654,8 @@ public class ImporterInformationMissingSetter {
 	
 	// ***** SERVIZI APPLICATIVI ******
 	
-	private static void setInformationMissing_ConnettoreSA(Archive archive,  org.openspcoop2.protocol.information_missing.ServizioApplicativo saMissingInfo, 
-			InvocazioneServizio invocazioneServizio, Credenziali credenziali) throws ProtocolException{
+	private static void setInformationMissingConnettoreSA(Archive archive,  org.openspcoop2.protocol.information_missing.ServizioApplicativo saMissingInfo, 
+			InvocazioneServizio invocazioneServizio, Credenziali credenziali) {
 		
 		// ServiziApplicativi
 		for (int i = 0; i < archive.getServiziApplicativi().size(); i++) {
@@ -739,8 +709,8 @@ public class ImporterInformationMissingSetter {
 		}
 	}
 	
-	private static void setInformationMissing_CredenzialiSA(Archive archive,  org.openspcoop2.protocol.information_missing.ServizioApplicativo saMissingInfo, 
-			 Credenziali credenziali) throws ProtocolException{
+	private static void setInformationMissingCredenzialiSA(Archive archive,  org.openspcoop2.protocol.information_missing.ServizioApplicativo saMissingInfo, 
+			 Credenziali credenziali) {
 		
 		// ServiziApplicativi
 		for (int i = 0; i < archive.getServiziApplicativi().size(); i++) {
@@ -760,7 +730,7 @@ public class ImporterInformationMissingSetter {
 			}
 		}
 	}
-	private static void setInformationMissing_AllineaCredenzialiPD(Archive archive,  org.openspcoop2.protocol.information_missing.ServizioApplicativo saMissingInfo) throws ProtocolException{
+	private static void setInformationMissingAllineaCredenzialiPD(Archive archive,  org.openspcoop2.protocol.information_missing.ServizioApplicativo saMissingInfo) throws ProtocolException{
 		
 		// ServiziApplicativi
 		for (int i = 0; i < archive.getServiziApplicativi().size(); i++) {
@@ -802,7 +772,7 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* ACCORDI COOPERAZIONE **********
 	
-	private static void setInformationMissing_RiferimentoAccordoCooperazione(Archive archive, org.openspcoop2.protocol.information_missing.AccordoCooperazione ac, IDAccordoCooperazione idAccordo) throws ProtocolException{
+	private static void setInformationMissingRiferimentoAccordoCooperazione(Archive archive, org.openspcoop2.protocol.information_missing.AccordoCooperazione ac, IDAccordoCooperazione idAccordo) throws ProtocolException{
 		
 		// Accordi di Servizio Composti
 		for (int i = 0; i < archive.getAccordiServizioComposto().size(); i++) {
@@ -828,7 +798,7 @@ public class ImporterInformationMissingSetter {
 			
 	}
 	
-	private static void setInformationMissing_StatoAccordoCooperazione(Archive archive, org.openspcoop2.protocol.information_missing.AccordoCooperazione ac) throws ProtocolException{
+	private static void setInformationMissingStatoAccordoCooperazione(Archive archive, org.openspcoop2.protocol.information_missing.AccordoCooperazione ac) throws ProtocolException{
 		
 		// Accordi di Cooperazione
 		if(ac.getStato()!=null){
@@ -862,7 +832,7 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* ACCORDI SERVIZIO PARTE COMUNE **********
 	
-	private static void setInformationMissing_RiferimentoAccordoServizioParteComune(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteComune as, IDAccordo idAccordo) throws ProtocolException{
+	private static void setInformationMissingRiferimentoAccordoServizioParteComune(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteComune as, IDAccordo idAccordo) throws ProtocolException{
 		
 		// Accordi di Servizio Parte Specifica 
 		for (int i = 0; i < archive.getAccordiServizioParteSpecifica().size(); i++) {
@@ -884,7 +854,7 @@ public class ImporterInformationMissingSetter {
 			
 	}
 	
-	private static void setInformationMissing_StatoAccordoServizioParteComune(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteComune as) throws ProtocolException{
+	private static void setInformationMissingStatoAccordoServizioParteComune(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteComune as) throws ProtocolException{
 		
 		// Accordi di Servizio Parte Comune 
 		if(as.getStato()!=null){
@@ -916,7 +886,7 @@ public class ImporterInformationMissingSetter {
 	
 	// ***** ACCORDI SERVIZIO PARTE SPECIFICA ******
 	
-	private static void setInformationMissing_ConnettoreASPS(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica aspsMissingInfo, 
+	private static void setInformationMissingConnettoreASPS(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica aspsMissingInfo, 
 			Connettore connettore) throws ProtocolException{
 		
 		// Accordi
@@ -956,7 +926,7 @@ public class ImporterInformationMissingSetter {
 		
 	}
 
-	private static void setInformationMissing_StatoAccordoServizioParteSpecifica(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica aspsMissingInfo) throws ProtocolException{
+	private static void setInformationMissingStatoAccordoServizioParteSpecifica(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteSpecifica aspsMissingInfo) {
 		
 		// Accordi di Servizio Parte Specifica
 		if(aspsMissingInfo.getStato()!=null){
@@ -986,13 +956,13 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* ACCORDI SERVIZIO COMPOSTO **********
 	
-	private static void setInformationMissing_RiferimentoAccordoServizioComposto(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteComune as, IDAccordo idAccordo) throws ProtocolException{
+	private static void setInformationMissingRiferimentoAccordoServizioComposto(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteComune as, IDAccordo idAccordo) throws ProtocolException{
 		
-		setInformationMissing_RiferimentoAccordoServizioParteComune(archive, as, idAccordo);
+		setInformationMissingRiferimentoAccordoServizioParteComune(archive, as, idAccordo);
 			
 	}
 	
-	private static void setInformationMissing_StatoAccordoServizioComposto(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteComune as) throws ProtocolException{
+	private static void setInformationMissingStatoAccordoServizioComposto(Archive archive, org.openspcoop2.protocol.information_missing.AccordoServizioParteComune as) throws ProtocolException{
 		
 		// Accordi di Servizio Composto
 		if(as.getStato()!=null){
@@ -1024,8 +994,8 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* FRUITORE **********
 	
-	private static void setInformationMissing_ConnettoreFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo, 
-			Connettore connettore) throws ProtocolException{
+	private static void setInformationMissingConnettoreFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo, 
+			Connettore connettore) {
 		
 		// Accordi
 		for (int i = 0; i < archive.getAccordiFruitori().size(); i++) {
@@ -1045,25 +1015,23 @@ public class ImporterInformationMissingSetter {
 				}
 			}
 				
-			if(fruitore!=null){
+			if(fruitore!=null &&
 				
-				if(matchFruitore(fruitoreMissingInfo.getReplaceMatch(), 
+				matchFruitore(fruitoreMissingInfo.getReplaceMatch(), 
 						fruitore.getTipo(), fruitore.getNome(),
 						tipoServizio,nomeServizio,
 						tipoSoggettoErogatore,nomeSoggettoErogatore)){
 					
-					if(fruitore.getConnettore()==null) {
-						fruitore.setConnettore(connettore);
-					}
-					else {
-						fruitore.getConnettore().setCustom(connettore.getCustom());
-						fruitore.getConnettore().setTipo(connettore.getTipo());
-						while(fruitore.getConnettore().sizePropertyList()>0)
-							fruitore.getConnettore().removeProperty(0);
-						if(connettore.sizePropertyList()>0)
-							fruitore.getConnettore().getPropertyList().addAll(connettore.getPropertyList());
-					}
-					
+				if(fruitore.getConnettore()==null) {
+					fruitore.setConnettore(connettore);
+				}
+				else {
+					fruitore.getConnettore().setCustom(connettore.getCustom());
+					fruitore.getConnettore().setTipo(connettore.getTipo());
+					while(fruitore.getConnettore().sizePropertyList()>0)
+						fruitore.getConnettore().removeProperty(0);
+					if(connettore.sizePropertyList()>0)
+						fruitore.getConnettore().getPropertyList().addAll(connettore.getPropertyList());
 				}
 				
 			}
@@ -1071,7 +1039,7 @@ public class ImporterInformationMissingSetter {
 		
 	}
 	
-	private static void setInformationMissing_StatoFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo) throws ProtocolException{
+	private static void setInformationMissingStatoFruitore(Archive archive, org.openspcoop2.protocol.information_missing.Fruitore fruitoreMissingInfo) {
 		
 		// Fruitori
 		if(fruitoreMissingInfo.getStato()!=null){
@@ -1111,7 +1079,7 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* PORTA DELEGATA **********
 	
-	private static void setInformationMissing_StatoPortaDelegata(Archive archive, org.openspcoop2.protocol.information_missing.PortaDelegata portaDelegataMissingInfo) throws ProtocolException{
+	private static void setInformationMissingStatoPortaDelegata(Archive archive, org.openspcoop2.protocol.information_missing.PortaDelegata portaDelegataMissingInfo) {
 		
 		// portaDelegataMissingInfo
 		if(portaDelegataMissingInfo.getStato()!=null){
@@ -1134,7 +1102,7 @@ public class ImporterInformationMissingSetter {
 	
 	// ******* PORTA APPLICATIVA **********
 	
-	private static void setInformationMissing_StatoPortaApplicativa(Archive archive, org.openspcoop2.protocol.information_missing.PortaApplicativa portaApplicativaMissingInfo) throws ProtocolException{
+	private static void setInformationMissingStatoPortaApplicativa(Archive archive, org.openspcoop2.protocol.information_missing.PortaApplicativa portaApplicativaMissingInfo) {
 		
 		// portaDelegataMissingInfo
 		if(portaApplicativaMissingInfo.getStato()!=null){
@@ -1163,7 +1131,7 @@ public class ImporterInformationMissingSetter {
 			return null;
 		}
 		
-		String returnValue = new String(original);
+		String returnValue = original+"";
 		
 		if(tipoSoggetto!=null && !"".equals(tipoSoggetto)){
 			returnValue = returnValue.replace(Costanti.TIPO_SOGGETTO, tipoSoggetto);
@@ -1199,7 +1167,7 @@ public class ImporterInformationMissingSetter {
 			return null;
 		}
 		
-		String returnValue = new String(original);
+		String returnValue = original+"";
 		
 		if(tipoSoggetto!=null && !"".equals(tipoSoggetto)){
 			returnValue = returnValue.replace(Costanti.TIPO_SOGGETTO_EROGATORE, tipoSoggetto);
@@ -1218,7 +1186,7 @@ public class ImporterInformationMissingSetter {
 			return null;
 		}
 		
-		String returnValue = new String(original);
+		String returnValue = original+"";
 		
 		if(tipoServizio!=null && !"".equals(tipoServizio)){
 			returnValue = returnValue.replace(Costanti.TIPO_SERVIZIO, tipoServizio);
@@ -1237,7 +1205,7 @@ public class ImporterInformationMissingSetter {
 			return null;
 		}
 		
-		String returnValue = new String(original);
+		String returnValue = original+"";
 		
 		if(nome!=null && !"".equals(nome)){
 			returnValue = returnValue.replace(Costanti.AZIONE, nome);
@@ -1252,7 +1220,7 @@ public class ImporterInformationMissingSetter {
 			return null;
 		}
 		
-		String returnValue = new String(original);
+		String returnValue = original+"";
 		
 		if(tipoSoggetto!=null && !"".equals(tipoSoggetto)){
 			returnValue = returnValue.replace(Costanti.TIPO_FRUITORE, tipoSoggetto);
@@ -1271,15 +1239,14 @@ public class ImporterInformationMissingSetter {
 		for (int i = 0; i < archive.getSoggetti().size(); i++) {
 			org.openspcoop2.core.registry.Soggetto soggetto = archive.getSoggetti().get(i).getSoggettoRegistro();
 			if(soggetto!=null) {
-				if(soggetto.getConnettore()!=null){
-					if(soggetto.getConnettore().sizePropertyList()>0){
-						for (int j = 0; j < soggetto.getConnettore().sizePropertyList(); j++) {
-							org.openspcoop2.core.registry.Property p = soggetto.getConnettore().getProperty(j);
-							p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), 
-									soggetto.getTipo(),soggetto.getNome()));
-							p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), 
-									soggetto.getTipo(),soggetto.getNome()));
-						}
+				if(soggetto.getConnettore()!=null &&
+					soggetto.getConnettore().sizePropertyList()>0){
+					for (int j = 0; j < soggetto.getConnettore().sizePropertyList(); j++) {
+						org.openspcoop2.core.registry.Property p = soggetto.getConnettore().getProperty(j);
+						p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), 
+								soggetto.getTipo(),soggetto.getNome()));
+						p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), 
+								soggetto.getTipo(),soggetto.getNome()));
 					}
 				}
 				if(soggetto.getIdentificativoPorta()!=null) {
@@ -1290,6 +1257,18 @@ public class ImporterInformationMissingSetter {
 					soggetto.setPortaDominio(replaceSoggettoProprietarioOrDefault(registryReader,soggetto.getPortaDominio(), 
 							soggetto.getTipo(),soggetto.getNome()));
 				}
+				if(soggetto.getProtocolPropertyList()!=null && soggetto.sizeProtocolPropertyList()>0) {
+					for (ProtocolProperty p : soggetto.getProtocolPropertyList()) {
+						if(p.getName()!=null) {
+							p.setName(replaceSoggettoProprietarioOrDefault(registryReader,p.getName(), 
+									soggetto.getTipo(),soggetto.getNome()));
+						}
+						if(p.getValue()!=null) {
+							p.setValue(replaceSoggettoProprietarioOrDefault(registryReader,p.getValue(), 
+									soggetto.getTipo(),soggetto.getNome()));
+						}
+					}
+				}
 			}
 		}
 		
@@ -1298,17 +1277,16 @@ public class ImporterInformationMissingSetter {
 			ServizioApplicativo sa = archive.getServiziApplicativi().get(i).getServizioApplicativo();			
 			sa.setNome(replaceSoggettoProprietarioOrDefault(registryReader,sa.getNome(), 
 					sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));			
-			if(sa.getInvocazionePorta()!=null){
-				if(sa.getInvocazionePorta().sizeCredenzialiList()>0){
-					for (int j = 0; j < sa.getInvocazionePorta().sizeCredenzialiList(); j++) {
-						Credenziali c  = sa.getInvocazionePorta().getCredenziali(j);
-						c.setUser(replaceSoggettoProprietarioOrDefault(registryReader,c.getUser(), 
-								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-						c.setPassword(replaceSoggettoProprietarioOrDefault(registryReader,c.getPassword(), 
-								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-						c.setSubject(replaceSoggettoProprietarioOrDefault(registryReader,c.getSubject(), 
-								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-					}
+			if(sa.getInvocazionePorta()!=null &&
+				sa.getInvocazionePorta().sizeCredenzialiList()>0){
+				for (int j = 0; j < sa.getInvocazionePorta().sizeCredenzialiList(); j++) {
+					Credenziali c  = sa.getInvocazionePorta().getCredenziali(j);
+					c.setUser(replaceSoggettoProprietarioOrDefault(registryReader,c.getUser(), 
+							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+					c.setPassword(replaceSoggettoProprietarioOrDefault(registryReader,c.getPassword(), 
+							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+					c.setSubject(replaceSoggettoProprietarioOrDefault(registryReader,c.getSubject(), 
+							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 				}
 			}
 			if(sa.getInvocazioneServizio()!=null){
@@ -1319,15 +1297,14 @@ public class ImporterInformationMissingSetter {
 					c.setPassword(replaceSoggettoProprietarioOrDefault(registryReader,c.getPassword(), 
 							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 				}
-				if(sa.getInvocazioneServizio().getConnettore()!=null){
-					if(sa.getInvocazioneServizio().getConnettore().sizePropertyList()>0){
-						for (int j = 0; j < sa.getInvocazioneServizio().getConnettore().sizePropertyList(); j++) {
-							org.openspcoop2.core.config.Property p = sa.getInvocazioneServizio().getConnettore().getProperty(j);
-							p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), 
-									sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-							p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), 
-									sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-						}
+				if(sa.getInvocazioneServizio().getConnettore()!=null &&
+					sa.getInvocazioneServizio().getConnettore().sizePropertyList()>0){
+					for (int j = 0; j < sa.getInvocazioneServizio().getConnettore().sizePropertyList(); j++) {
+						org.openspcoop2.core.config.Property p = sa.getInvocazioneServizio().getConnettore().getProperty(j);
+						p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), 
+								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+						p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), 
+								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 					}
 				}
 			}
@@ -1339,15 +1316,26 @@ public class ImporterInformationMissingSetter {
 					c.setPassword(replaceSoggettoProprietarioOrDefault(registryReader,c.getPassword(), 
 							sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 				}
-				if(sa.getRispostaAsincrona().getConnettore()!=null){
-					if(sa.getRispostaAsincrona().getConnettore().sizePropertyList()>0){
-						for (int j = 0; j < sa.getRispostaAsincrona().getConnettore().sizePropertyList(); j++) {
-							org.openspcoop2.core.config.Property p = sa.getRispostaAsincrona().getConnettore().getProperty(j);
-							p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), 
-									sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-							p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), 
-									sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-						}
+				if(sa.getRispostaAsincrona().getConnettore()!=null &&
+					sa.getRispostaAsincrona().getConnettore().sizePropertyList()>0){
+					for (int j = 0; j < sa.getRispostaAsincrona().getConnettore().sizePropertyList(); j++) {
+						org.openspcoop2.core.config.Property p = sa.getRispostaAsincrona().getConnettore().getProperty(j);
+						p.setNome(replaceSoggettoProprietarioOrDefault(registryReader,p.getNome(), 
+								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+						p.setValore(replaceSoggettoProprietarioOrDefault(registryReader,p.getValore(), 
+								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+					}
+				}
+			}
+			if(sa.getProtocolPropertyList()!=null && sa.sizeProtocolPropertyList()>0) {
+				for (org.openspcoop2.core.config.ProtocolProperty p : sa.getProtocolPropertyList()) {
+					if(p.getName()!=null) {
+						p.setName(replaceSoggettoProprietarioOrDefault(registryReader,p.getName(), 
+								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+					}
+					if(p.getValue()!=null) {
+						p.setValue(replaceSoggettoProprietarioOrDefault(registryReader,p.getValue(), 
+								sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
 					}
 				}
 			}
@@ -1401,36 +1389,36 @@ public class ImporterInformationMissingSetter {
 				}
 			}
 			
-			if(pd.getAzione()!=null){
-				if(pd.getAzione().getPattern()!=null &&
-						!"".equals(pd.getAzione().getPattern())){
-					pd.getAzione().setPattern(replaceSoggettoProprietarioOrDefault(registryReader,pd.getAzione().getPattern(), 
-							pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
-					if(pd.getSoggettoErogatore()!=null && 
-							pd.getSoggettoErogatore().getNome()!=null && 
-							!"".equals(pd.getSoggettoErogatore().getNome()) ){
-						pd.getAzione().setPattern(replaceSoggettoErogatore(pd.getAzione().getPattern(), 
-								pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
-					}
-					if(pd.getServizio()!=null && 
-							pd.getServizio().getNome()!=null && 
-							!"".equals(pd.getServizio().getNome()) ){
-						pd.getAzione().setPattern(replaceServizio(pd.getAzione().getPattern(), 
-								pd.getServizio().getTipo(), pd.getServizio().getNome()));
-					}
-					// se ho il pattern configurato, non c'è il nome dell'azione
-//					pd.getAzione().setPattern(replaceAzione(pd.getAzione().getPattern(), 
-//							pd.getAzione().getNome()));
-					// se ho il pattern configurato, non c'è il nome dell'azione
+			if(pd.getAzione()!=null &&
+				(pd.getAzione().getPattern()!=null &&
+						!"".equals(pd.getAzione().getPattern()))
+				){
+				pd.getAzione().setPattern(replaceSoggettoProprietarioOrDefault(registryReader,pd.getAzione().getPattern(), 
+						pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
+				if(pd.getSoggettoErogatore()!=null && 
+						pd.getSoggettoErogatore().getNome()!=null && 
+						!"".equals(pd.getSoggettoErogatore().getNome()) ){
+					pd.getAzione().setPattern(replaceSoggettoErogatore(pd.getAzione().getPattern(), 
+							pd.getSoggettoErogatore().getTipo(), pd.getSoggettoErogatore().getNome()));
 				}
+				if(pd.getServizio()!=null && 
+						pd.getServizio().getNome()!=null && 
+						!"".equals(pd.getServizio().getNome()) ){
+					pd.getAzione().setPattern(replaceServizio(pd.getAzione().getPattern(), 
+							pd.getServizio().getTipo(), pd.getServizio().getNome()));
+				}
+				// se ho il pattern configurato, non c'è il nome dell'azione
+				/**	pd.getAzione().setPattern(replaceAzione(pd.getAzione().getPattern(), 
+							pd.getAzione().getNome()));*/
+				// se ho il pattern configurato, non c'è il nome dell'azione
 			}
 			
-			if(pd.getAzione()!=null) {
-				if(pd.getAzione().getNomePortaDelegante()!=null &&
-						!"".equals(pd.getAzione().getNomePortaDelegante())){
-					pd.getAzione().setNomePortaDelegante(replaceSoggettoProprietarioOrDefault(registryReader,pd.getAzione().getNomePortaDelegante(), 
-							pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
-				}
+			if(pd.getAzione()!=null &&
+				(pd.getAzione().getNomePortaDelegante()!=null &&
+						!"".equals(pd.getAzione().getNomePortaDelegante()))
+				){
+				pd.getAzione().setNomePortaDelegante(replaceSoggettoProprietarioOrDefault(registryReader,pd.getAzione().getNomePortaDelegante(), 
+						pd.getTipoSoggettoProprietario(), pd.getNomeSoggettoProprietario()));
 			}
 			
 			for (int j = 0; j < pd.sizeServizioApplicativoList(); j++) {
@@ -1591,12 +1579,12 @@ public class ImporterInformationMissingSetter {
 						pa.getAzione().getNome()));
 			}
 			
-			if(pa.getAzione()!=null) {
-				if(pa.getAzione().getNomePortaDelegante()!=null &&
-						!"".equals(pa.getAzione().getNomePortaDelegante())){
-					pa.getAzione().setNomePortaDelegante(replaceSoggettoProprietarioOrDefault(registryReader,pa.getAzione().getNomePortaDelegante(), 
-							pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
-				}
+			if(pa.getAzione()!=null &&
+				(pa.getAzione().getNomePortaDelegante()!=null &&
+						!"".equals(pa.getAzione().getNomePortaDelegante()))
+				){
+				pa.getAzione().setNomePortaDelegante(replaceSoggettoProprietarioOrDefault(registryReader,pa.getAzione().getNomePortaDelegante(), 
+						pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 			}
 			
 			for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
@@ -1736,7 +1724,7 @@ public class ImporterInformationMissingSetter {
 					}
 					
 					// cerco fruitori di questo accordo
-					List<Fruitore> listFruitori = new ArrayList<Fruitore>();
+					List<Fruitore> listFruitori = new ArrayList<>();
 					for (int j = 0; j < archive.getAccordiFruitori().size(); j++) {
 						Fruitore fr = archive.getAccordiFruitori().get(j).getFruitore();
 						IDServizio idAccordo = archive.getAccordiFruitori().get(j).getIdAccordoServizioParteSpecifica();
@@ -1744,14 +1732,31 @@ public class ImporterInformationMissingSetter {
 							listFruitori.add(fr);
 						}
 					}
-					if(listFruitori.size()==1){
-						if(as.getConfigurazioneServizio()!=null && as.getConfigurazioneServizio().getConnettore()!=null){
-							for (int j = 0; j < as.getConfigurazioneServizio().getConnettore().sizePropertyList(); j++) {
-								Property p = as.getConfigurazioneServizio().getConnettore().getProperty(j);
-								p.setNome(replaceFruitore(p.getNome(), listFruitori.get(0).getTipo(), listFruitori.get(0).getNome()));
-								p.setValore(replaceFruitore(p.getValore(), listFruitori.get(0).getTipo(), listFruitori.get(0).getNome()));
-							}
+					if(listFruitori.size()==1 &&
+						(as.getConfigurazioneServizio()!=null && as.getConfigurazioneServizio().getConnettore()!=null)
+						){
+						for (int j = 0; j < as.getConfigurazioneServizio().getConnettore().sizePropertyList(); j++) {
+							Property p = as.getConfigurazioneServizio().getConnettore().getProperty(j);
+							p.setNome(replaceFruitore(p.getNome(), listFruitori.get(0).getTipo(), listFruitori.get(0).getNome()));
+							p.setValore(replaceFruitore(p.getValore(), listFruitori.get(0).getTipo(), listFruitori.get(0).getNome()));
 						}
+					}
+				}
+			}
+			
+			if(as.getProtocolPropertyList()!=null && as.sizeProtocolPropertyList()>0) {
+				for (ProtocolProperty p : as.getProtocolPropertyList()) {
+					if(p.getName()!=null) {
+						p.setName(replaceSoggettoProprietarioOrDefault(registryReader,p.getName(), 
+								as.getTipoSoggettoErogatore(), as.getNomeSoggettoErogatore()));
+						p.setName(replaceSoggettoErogatore(p.getName(), 
+								as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
+					}
+					if(p.getValue()!=null) {
+						p.setValue(replaceSoggettoProprietarioOrDefault(registryReader,p.getValue(), 
+								as.getTipoSoggettoErogatore(), as.getNomeSoggettoErogatore()));
+						p.setValue(replaceSoggettoErogatore(p.getValue(), 
+								as.getTipoSoggettoErogatore(),as.getNomeSoggettoErogatore()));
 					}
 				}
 			}
@@ -1774,6 +1779,7 @@ public class ImporterInformationMissingSetter {
 					}
 				}
 			}
+			
 		}
 		
 		// Fruitori
@@ -1813,6 +1819,27 @@ public class ImporterInformationMissingSetter {
 				}
 			}
 			
+			if(fr.getProtocolPropertyList()!=null && fr.sizeProtocolPropertyList()>0) {
+				for (ProtocolProperty p : fr.getProtocolPropertyList()) {
+					if(p.getName()!=null) {
+						p.setName(replaceSoggettoProprietarioOrDefault(registryReader,p.getName(), 
+								fr.getTipo(), fr.getNome()));
+						if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null){
+							p.setName(replaceSoggettoErogatore(p.getName(), 
+									tipoSoggettoErogatore, nomeSoggettoErogatore));
+						}
+					}
+					if(p.getValue()!=null) {
+						p.setValue(replaceSoggettoProprietarioOrDefault(registryReader,p.getValue(), 
+								fr.getTipo(), fr.getNome()));
+						if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null){
+							p.setValue(replaceSoggettoErogatore(p.getValue(), 
+									tipoSoggettoErogatore, nomeSoggettoErogatore));
+						}
+					}
+				}
+			}
+			
 			if(archiveFr.getMappingPorteDelegateAssociate()!=null && !archiveFr.getMappingPorteDelegateAssociate().isEmpty()) {
 				for (MappingFruizionePortaDelegata mappingPD : archiveFr.getMappingPorteDelegateAssociate()) {
 					if(mappingPD.getIdPortaDelegata()!=null && mappingPD.getIdPortaDelegata().getNome()!=null) {
@@ -1829,13 +1856,13 @@ public class ImporterInformationMissingSetter {
 						mappingPD.getIdPortaDelegata().setNome(replaceFruitore(mappingPD.getIdPortaDelegata().getNome(), 
 								fr.getTipo(), fr.getNome()));
 					}
-					if(mappingPD.getIdServizio()!=null) {
-						if(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null && tipoServizio!=null && nomeServizio!=null){
-							replaceTemplatesNames(registryReader,mappingPD.getIdServizio(),
-									tipoSoggettoErogatore,nomeSoggettoErogatore,
-									tipoServizio,nomeServizio,
-									false);
-						}
+					if(mappingPD.getIdServizio()!=null &&
+						(tipoSoggettoErogatore!=null && nomeSoggettoErogatore!=null && tipoServizio!=null && nomeServizio!=null)
+						){
+						replaceTemplatesNames(registryReader,mappingPD.getIdServizio(),
+								tipoSoggettoErogatore,nomeSoggettoErogatore,
+								tipoServizio,nomeServizio,
+								false);
 					}
 					if(mappingPD.getIdFruitore()!=null) {
 						if(mappingPD.getIdFruitore().getTipo()!=null) {
