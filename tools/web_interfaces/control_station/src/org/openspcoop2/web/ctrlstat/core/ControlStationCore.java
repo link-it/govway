@@ -8422,6 +8422,9 @@ public class ControlStationCore {
 	
 	public void setSearchAfterAdd(int idLista, String search, HttpServletRequest request, HttpSession session, ISearch ricerca) {
 		ricerca.setSearchString(idLista, search);
+		ricerca.setIndexIniziale(idLista, Costanti.INDEX_DEFAULT);
+		/**ricerca.setPageSize(idLista, Costanti.PAGE_SIZE_DEFAULT);*/
+		ricerca.setNumEntries(idLista, Costanti.NUM_ENTRIES_DEFAULT);
 		ServletUtils.removeRisultatiRicercaFromSession(request, session, idLista);		
 	}
 	

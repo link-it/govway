@@ -362,7 +362,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setType(DataElementType.HIDDEN);
 				de.setName(UtentiCostanti.PARAMETRO_UTENTI_ABILITAZIONI_SOGGETTI_ALL);
-				de.setValue(isSoggettiAll);
+				de.setValue(Costanti.CHECK_BOX_ENABLED);
 				dati.add(de);
 				
 			}
