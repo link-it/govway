@@ -26,12 +26,14 @@ import org.openspcoop2.core.monitor.rs.server.model.DimensioniReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
 import java.io.File;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
+import org.openspcoop2.core.monitor.rs.server.model.ForcePublishBodyTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportConfigEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaRiepilogoApi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTracingPDND;
 import org.joda.time.LocalDate;
+import org.openspcoop2.core.monitor.rs.server.model.OperationStatus;
 import org.openspcoop2.core.monitor.rs.server.model.Problem;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaConfigurazioneApi;
@@ -715,4 +717,26 @@ public interface ReportisticaApi  {
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(mediaType = "application/problem+json", schema = @Schema(implementation = Problem.class))) })
     public ListaTracingPDND getTracingPdndList(@QueryParam("data_inizio") @NotNull LocalDate dataInizio, @QueryParam("data_fine") @NotNull LocalDate dataFine, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z][\\-A-Za-z0-9]*$") @Size(max=255) String soggetto, @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("limit") Integer limit, @QueryParam("tentativi_pubblicazione") Integer tentativiPubblicazione, @QueryParam("stato") StatoTracing stato, @QueryParam("stato_pdnd") StatoTracingPDND statoPdnd, @QueryParam("tracing_id") UUID tracingId);
+
+    /**
+     * forza un nuovo invio del tracciato indipendentemente dal numero di tentativi
+     *
+     * forza un nuovo invio del tracciato indipendentemente dal numero di tentativi
+     *
+     */
+    @PUT
+    @Path("/reportistica/tracing-pdnd/{id}/force-publish")
+    @Consumes({ "application/json" })
+    @Produces({ "application/json", "application/problem+json" })
+    @Operation(summary = "forza un nuovo invio del tracciato indipendentemente dal numero di tentativi", tags={ "Reportistica" })
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "empty", content = @Content(schema = @Schema(implementation = OperationStatus.class))),
+        @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
+        @ApiResponse(responseCode = "500", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
+    public OperationStatus tracingPdndForcePubblish(@PathParam("id") Long id, @Valid ForcePublishBodyTracingPDND body);
 }

@@ -325,8 +325,10 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	 */
 	private void sendTrace(String pddCode, StatistichePdndTracing stat) throws StatisticsEngineException {
 		
-		// controllo che non sia stato superato il massimo numero di tentativi
-		if (this.config.getPdndTracciamentoMaxAttempt() != null && this.config.getPdndTracciamentoMaxAttempt() <= stat.getTentativiPubblicazione())
+		// controllo che non sia stato superato il massimo numero di tentativi a meno che la pubblicazione non sia forzata
+		if (this.config.getPdndTracciamentoMaxAttempt() != null 
+				&& this.config.getPdndTracciamentoMaxAttempt() <= stat.getTentativiPubblicazione()
+				&& !stat.isForcePublish())
 			return;
 		
 		// ripulisco eventuali errori precedenti
@@ -341,6 +343,8 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			this.updateTracingIdStats.put(stat.getDataTracciamento(), stat);
 			return;
 		}
+		
+		stat.setForcePublish(false);
 		
 		HttpResponse res =  null;
 		String errMsg = null;
@@ -408,8 +412,15 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		expr.isNotNull(StatistichePdndTracing.model().CSV);
 		expr.equals(StatistichePdndTracing.model().STATO_PDND, PossibiliStatiPdnd.WAITING);
 		expr.equals(StatistichePdndTracing.model().PDD_CODICE, pddCode);
-		if (this.config.getPdndTracciamentoMaxAttempt() != null)
-			expr.lessThan(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE, this.config.getPdndTracciamentoMaxAttempt());
+		
+		// se i tentativi di pubblicazione sono inferiori al massimo o la flag di force pubblicazione risulta abilitata
+		if (this.config.getPdndTracciamentoMaxAttempt() != null) {
+			IExpression attemptsExpr = this.pdndStatisticheSM.newExpression();
+			attemptsExpr.or().lessThan(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE, this.config.getPdndTracciamentoMaxAttempt());
+			attemptsExpr.or().equals(StatistichePdndTracing.model().FORCE_PUBLISH, true);
+			expr.and(attemptsExpr);
+		}
+		
 		expr.addOrder(StatistichePdndTracing.model().DATA_TRACCIAMENTO, SortOrder.ASC);
 		
 		List<StatistichePdndTracing> stats = null; 
@@ -773,11 +784,6 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		this.logger.info("********************* INIZIO PUBBLICAZIONE TRACCIATO PDND *********************");
 		
 		Date currDate = new Date();
-		
-		for (Map.Entry<String, String> soggetto : this.internalPddCodeName.entrySet())
-			this.generate(soggetto.getValue(), soggetto.getKey());
-		
-		
 		try {
 			StatisticsInfoUtils.updateDataUltimaGenerazioneStatistiche(
 					this.statisticheSM.getStatisticaInfoServiceSearch(), 
@@ -787,6 +793,11 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		} catch (Exception e) {
 			this.logger.error("Errore nell'aggiornamento della data ultima statistica {}", TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO, e);
 		}
+		
+		for (Map.Entry<String, String> soggetto : this.internalPddCodeName.entrySet())
+			this.generate(soggetto.getValue(), soggetto.getKey());
+		
+		
 		
 		this.logger.info("********************* FINE PUBBLICAZIONE TRACCIATO PDND *********************");
 	}

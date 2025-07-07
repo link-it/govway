@@ -49,6 +49,7 @@ public class StatistichePdndTracingModel extends AbstractModel<StatistichePdndTr
 		this.METHOD = new Field("method",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.STATO_PDND = new Field("stato-pdnd",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.TENTATIVI_PUBBLICAZIONE = new Field("tentativi-pubblicazione",java.lang.Integer.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
+		this.FORCE_PUBLISH = new Field("force-publish",boolean.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.STATO = new Field("stato",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.TRACING_ID = new Field("tracing-id",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.ERROR_DETAILS = new Field("error-details",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
@@ -68,6 +69,7 @@ public class StatistichePdndTracingModel extends AbstractModel<StatistichePdndTr
 		this.METHOD = new ComplexField(father,"method",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.STATO_PDND = new ComplexField(father,"stato-pdnd",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.TENTATIVI_PUBBLICAZIONE = new ComplexField(father,"tentativi-pubblicazione",java.lang.Integer.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
+		this.FORCE_PUBLISH = new ComplexField(father,"force-publish",boolean.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.TRACING_ID = new ComplexField(father,"tracing-id",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
 		this.ERROR_DETAILS = new ComplexField(father,"error-details",java.lang.String.class,"statistiche-pdnd-tracing",StatistichePdndTracing.class);
@@ -92,6 +94,8 @@ public class StatistichePdndTracingModel extends AbstractModel<StatistichePdndTr
 	public IField STATO_PDND = null;
 	 
 	public IField TENTATIVI_PUBBLICAZIONE = null;
+	 
+	public IField FORCE_PUBLISH = null;
 	 
 	public IField STATO = null;
 	 

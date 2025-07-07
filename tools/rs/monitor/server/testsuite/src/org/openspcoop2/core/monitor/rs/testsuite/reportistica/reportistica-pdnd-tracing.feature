@@ -43,7 +43,7 @@ Background:
   * eval db.update("UPDATE statistiche_pdnd_tracing SET tentativi_pubblicazione = ? WHERE data_tracciamento = ? AND pdd_codice = ?", 27, day3, pdd);
 
 @search_all
-Scenario: 
+Scenario: Ricerca usando come filtro il soggetto
 
   * def data_inizio = db.formatTimestamp(db.addTimestamp(db.now(), -20), 'yyyy-MM-dd')
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
@@ -57,7 +57,7 @@ Scenario:
   * match (response.items.length) == 5
   
 @filter_tracing_id
-Scenario: 
+Scenario: Ricerca usando come filtro il tracing id
 
   * def data_inizio = db.formatTimestamp(db.addTimestamp(db.now(), -20), 'yyyy-MM-dd')
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
@@ -74,7 +74,7 @@ Scenario:
   Then match (response.items[0].data_tracciamento) == db.formatTimestamp(day0, 'yyyy-MM-dd')
 
 @filter_stato
-Scenario: 
+Scenario: Ricerca usando come filtro lo stato di pubblicazione
 
   * def data_inizio = db.formatTimestamp(db.addTimestamp(db.now(), -20), 'yyyy-MM-dd')
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
@@ -91,7 +91,7 @@ Scenario:
   Then match (response.items[0].data_tracciamento) == db.formatTimestamp(day1, 'yyyy-MM-dd')
 
 @filter_stato_pdnd
-Scenario: 
+Scenario: Ricerca usando come filtro lo stato pdnd
 
   * def data_inizio = db.formatTimestamp(db.addTimestamp(db.now(), -20), 'yyyy-MM-dd')
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
@@ -108,7 +108,7 @@ Scenario:
   Then match (response.items[0].data_tracciamento) == db.formatTimestamp(day2, 'yyyy-MM-dd')
 
 @filter_tentativi_pubblicazione
-Scenario: 
+Scenario: Ricerca usando come filtro i tentativi di pubblicazione
 
   * def data_inizio = db.formatTimestamp(db.addTimestamp(db.now(), -20), 'yyyy-MM-dd')
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
@@ -125,7 +125,7 @@ Scenario:
   Then match (response.items[0].data_tracciamento) == db.formatTimestamp(day3, 'yyyy-MM-dd')
   
 @export
-Scenario: 
+Scenario: Controlla la corretta esportazione del CSV prodotto dal batch di generazione
 
   * def data_inizio = db.formatTimestamp(db.addTimestamp(db.now(), -20), 'yyyy-MM-dd')
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
@@ -149,7 +149,7 @@ Scenario:
   Then match response == csv_data
   
 @details
-Scenario: 
+Scenario: controlla la corretta ricezione della struttura dettagliata del tracciato PDND
 
   * def data_inizio = db.formatTimestamp(db.addTimestamp(db.now(), -20), 'yyyy-MM-dd')
   * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
@@ -171,6 +171,31 @@ Scenario:
   When method get 
   Then status 200
   Then match (response.dettagli_errore) == dettagli_errori
+  
+@force-publish
+Scenario: controlla che l'operazione di force publish fallisca se non sono nello stato corretto
+
+  * def data_inizio = db.formatTimestamp(db.addTimestamp(db.now(), -20), 'yyyy-MM-dd')
+  * def data_fine = db.formatTimestamp(db.now(), 'yyyy-MM-dd')
+  
+  Given url ricerca_url
+  And param soggetto = 'rs-monitor-DemoSoggettoErogatore'
+  And param data_inizio = data_inizio
+  And param data_fine = data_fine
+  And param tracing_id = tracing_id
+  When method get
+  Then status 200
+  Then match (response.items.length) == 1
+  Then match (response.items[0].tracing_id) == tracing_id
+  Then match (response.items[0].data_tracciamento) == db.formatTimestamp(day0, 'yyyy-MM-dd')
+  
+  * def id = response.items[0].id
+  
+  Given url ricerca_url + '/' + id + '/force-publish'
+  And request { force_publish: true }
+  When method put 
+  Then status 500
+  Then match (response.detail) == 'Il tracciato non risulta essere in uno stato in cui può essere abilitata la pubblicazione forzata: non ha ancora superato il numero massimo di tentativi o non è nello stato FAILED'
   
 
   

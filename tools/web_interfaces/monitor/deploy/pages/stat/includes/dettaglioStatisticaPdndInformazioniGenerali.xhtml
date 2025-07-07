@@ -74,7 +74,7 @@
 					<a4j:htmlCommandLink id="formResetAttempts" 
 						action="#{statistichePdndTracingBean.resetAttempts}" 
 						value="#{msg['statistichePdndTracing.dettaglio.resetAttempts.label']}" 
-						rendered='#{statistichePdndTracingBean.statisticaPdndTracing.failed}' 
+						rendered='#{statistichePdndTracingBean.forcePublishEnabled}' 
 						reRender="panelAttempts">
 	                </a4j:htmlCommandLink>
 				</h:form>

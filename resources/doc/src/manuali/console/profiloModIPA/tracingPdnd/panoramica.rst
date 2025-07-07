@@ -3,7 +3,7 @@
 Panoramica
 ----------------------
 
-La PDND mette a disposizione delle API che permettono agli e-service di depositare informazioni relative all’esito delle transazioni effettuate, con riferimento a specifiche date, finalità e identificativo del token negoziato.
+La PDND mette a disposizione un'interfaccia `API <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-tracing/panoramica-dellapi>`__ che permette agli e-service di depositare informazioni relative all’esito delle transazioni effettuate, con riferimento a specifiche date, finalità e identificativo del token negoziato.
 
 Un ente erogatore o fruitore di e-service registrati sulla PDND deve quindi, con cadenza giornaliera, depositare un file CSV contenente le informazioni relative a tutte le transazioni effettuate in un determinato giorno. (e.g. ':numref:`TracingPDNDTransazioni`')
 
@@ -15,7 +15,7 @@ Un ente erogatore o fruitore di e-service registrati sulla PDND deve quindi, con
 
   Diagramma di sequenza del caricamento sulla PDND delle informazioni sulle transazioni
 
-Questo CSV deve includere i seguenti campi:
+Questo `CSV <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-tracing/integrarsi-con-il-tracing>`__ deve includere i seguenti campi:
 
 .. list-table:: Campi richiesti dal tracciamento PDND
    :widths: 10 50

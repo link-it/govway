@@ -58,9 +58,15 @@ public class ConfigLoader {
             }
             
             System.setProperty("govway_base_path", prop.getProperty("govway_base_path"));
+            
             System.setProperty("config_api_username", prop.getProperty("config_api_username"));
             System.setProperty("config_api_password", prop.getProperty("config_api_password"));
             System.setProperty("govway_config_api_path", prop.getProperty("govway_config_api_path"));
+            
+            System.setProperty("monitor_api_username", prop.getProperty("monitor_api_username"));
+            System.setProperty("monitor_api_password", prop.getProperty("monitor_api_password"));
+            System.setProperty("govway_monitor_api_path", prop.getProperty("govway_monitor_api_path"));
+            
             System.setProperty("batch_path", prop.getProperty("batch_path")); 
             System.setProperty("http_mock_port", prop.getProperty("http_mock_port"));
             System.setProperty("connect_timeout", prop.getProperty("connect_timeout"));

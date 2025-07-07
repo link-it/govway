@@ -14,13 +14,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.statistiche.StatistichePdndTracing;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiPdnd;
 import org.openspcoop2.core.statistiche.constants.PossibiliStatiRichieste;
-import org.openspcoop2.generic_project.beans.UpdateField;
-import org.openspcoop2.generic_project.exception.NotFoundException;
-import org.openspcoop2.generic_project.exception.NotImplementedException;
-import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -315,12 +312,15 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 		return false;
 	}
 	
-	public String resetAttemptsSelected() {
+	public String forcePublishSelected() {
 		List<Long> idReport = getIdSelected().stream().map(Long::valueOf).collect(Collectors.toList());
 		StatistichePdndTracingService pdndService = (StatistichePdndTracingService) this.service;
 
 		try {
-			pdndService.updateTentativiPubblicazione(idReport, 0);
+			if (!this.isSelectedAll())
+				pdndService.forcePublish(idReport);
+			else
+				pdndService.forcePublish();
 		} catch (Exception e) {
 			StatistichePdndTracingBean.log.error("errore nell'azzeramento dei tentativi di pubblicazione, ids: {}", idReport, e);
 		}
@@ -328,23 +328,40 @@ DynamicPdDBean<org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTraci
 		return null;
 	}
 	
+	public boolean getForcePublishSelectedEnabled() {
+		return ((StatistichePdndTracingSearchForm)this.search).getStato().equals(PossibiliStatiRichieste.FAILED.toString());
+	}
+	
 	public String resetAttempts() {
 		
 		String soggettoReadable = this.statisticaPdndTracing.getSoggettoReadable();
 		
 		StatistichePdndTracingService pdndService = (StatistichePdndTracingService) this.service;
-		this.statisticaPdndTracing.setTentativiPubblicazione(0);
 		try {
-			UpdateField tentativi = new UpdateField(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE, 0);
-			pdndService.updateFields(this.statisticaPdndTracing, tentativi);
+			pdndService.forcePublish(this.getStatisticaPdndTracing());
 		
 			this.statisticaPdndTracing = new org.openspcoop2.web.monitor.statistiche.bean.StatistichePdndTracingBean(pdndService.findById(this.statisticaPdndTracing.getId()));
-		} catch (NotImplementedException | ServiceException | NotFoundException e) {
+		} catch (Exception e) {
 			StatistichePdndTracingBean.log.error("errore nell'azzeramento dei tentativi di pubblicazione, id: {}", this.statisticaPdndTracing.getId(), e);
 		}
 		
 		this.statisticaPdndTracing.setSoggettoReadable(soggettoReadable);
 		
 		return null;
+	}
+	
+	public boolean isForcePublishEnabled() {
+		StatistichePdndTracingService pdndService = (StatistichePdndTracingService) this.service;
+		return pdndService.isForcePublishEnabled(this.statisticaPdndTracing);
+	}
+	
+	
+	public StatistichePdndTracingBean(){
+		super();
+	}
+	
+	public StatistichePdndTracingBean(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager,
+			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB){
+		super(serviceManager, pluginsServiceManager, driverRegistroServiziDB, driverConfigurazioneDB);
 	}
 }

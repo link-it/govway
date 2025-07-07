@@ -122,6 +122,7 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
         		model.STATO,
         		model.STATO_PDND,
         		model.TENTATIVI_PUBBLICAZIONE,
+        		model.FORCE_PUBLISH,
         		model.TRACING_ID);
         
 
@@ -417,6 +418,7 @@ public class JDBCStatistichePdndTracingServiceSearchImpl implements IJDBCService
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().METHOD,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().STATO_PDND,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE,true));
+		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().FORCE_PUBLISH,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().STATO,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().TRACING_ID,true));
 		sqlQueryObjectGet.addSelectField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().ERROR_DETAILS,true));

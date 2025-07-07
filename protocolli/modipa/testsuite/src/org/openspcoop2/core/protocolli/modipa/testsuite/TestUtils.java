@@ -22,11 +22,13 @@ package org.openspcoop2.core.protocolli.modipa.testsuite;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.UUID;
 
 import jakarta.activation.MimeTypeParseException;
 import jakarta.mail.MessagingException;
@@ -84,5 +86,9 @@ public class TestUtils {
 	
 	public static Timestamp addDays(Timestamp t, int days) {
 		return Timestamp.from(Instant.ofEpochMilli(t.getTime()).plus(Duration.ofDays(days)));
+	}
+	
+	public static String uuidFromInteger(Integer i) {
+		return UUID.nameUUIDFromBytes(ByteBuffer.allocate(4).putInt(i).array()).toString();
 	}
 }

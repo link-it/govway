@@ -124,6 +124,13 @@ public class StatistichePdndTracingFieldConverter extends AbstractSQLFieldConver
 				return "tentativi_pubblicazione";
 			}
 		}
+		if(field.equals(StatistichePdndTracing.model().FORCE_PUBLISH)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".force_publish";
+			}else{
+				return "force_publish";
+			}
+		}
 		if(field.equals(StatistichePdndTracing.model().STATO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".stato";
@@ -193,6 +200,9 @@ public class StatistichePdndTracingFieldConverter extends AbstractSQLFieldConver
 			return this.toTable(StatistichePdndTracing.model(), returnAlias);
 		}
 		if(field.equals(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE)){
+			return this.toTable(StatistichePdndTracing.model(), returnAlias);
+		}
+		if(field.equals(StatistichePdndTracing.model().FORCE_PUBLISH)){
 			return this.toTable(StatistichePdndTracing.model(), returnAlias);
 		}
 		if(field.equals(StatistichePdndTracing.model().STATO)){

@@ -949,25 +949,21 @@ public class JDBCStatistichePdndTracingService extends JDBCStatistichePdndTracin
 	}
 	
 	@Override
-	public void updateTentativiPubblicazione(List<Long> ids, Integer value) throws Exception {
+	public void forcePublish(List<Long> ids) throws Exception {
 		
 		IExpression expr = this.newExpression();
 		expr.in(new CustomField("id", Long.class, "id", this.getFieldConverter().toTable(StatistichePdndTracing.model())), ids);
 		
-		this.updateTentativiPubblicazione(expr, value);
+		this.forcePublish(expr);
 	}
 	
+	
 	@Override
-	public void updateTentativiPubblicazione(IExpression expr, Integer value) throws Exception {
+	public void forcePublish(IExpression expr) throws Exception {
 		Connection connection = null;
 		boolean oldValueAutoCommit = false;
 		boolean rollback = false;
 		try{
-			
-			// check parameters
-			if(value==null){
-				throw this.newServiceExceptionParameterIsNull();
-			}
 
 			// ISQLQueryObject
 			ISQLQueryObject sqlQueryObject = this.jdbcSqlObjectFactory.createSQLQueryObject(this.jdbcProperties.getDatabase());
@@ -981,7 +977,7 @@ public class JDBCStatistichePdndTracingService extends JDBCStatistichePdndTracin
 				connection.setAutoCommit(false);
 			}
 
-			((JDBCStatistichePdndTracingServiceImpl)this.serviceCRUD).updateTentativiPubblicazione(this.jdbcProperties,this.log,connection,sqlQueryObject, expr, value);
+			((JDBCStatistichePdndTracingServiceImpl)this.serviceCRUD).forcePublish(this.jdbcProperties,this.log,connection,sqlQueryObject, expr);
 			
 		}catch(ServiceException | NotImplementedException e){
 			rollback = true;

@@ -3860,7 +3860,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// pdnd generazione tracciamento
 				String idTimerPdndTracciamentoGenerazione = "Timer"+TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO.getValue();
-				if(propertiesReader.isStatistichePdndTracciamentoGenerazioneEnabled()) {
+				if(ModIUtils.isTracingPDNDEnabledSafe() && propertiesReader.isStatistichePdndTracciamentoGenerazioneEnabled()) {
 					try{
 						OpenSPCoop2Startup.this.threadPdndTracciamentoGenerazione = 
 								new TimerStatisticheThread(propertiesReader.getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds(), TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO);
@@ -3878,7 +3878,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 				// pdnd generazione pubblicazione
 				String idTimerPdndTracciamentoPubblicazione = "Timer"+TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO.getValue();
-				if(propertiesReader.isStatistichePdndTracciamentoPubblicazioneEnabled()) {
+				if(ModIUtils.isTracingPDNDEnabledSafe() && propertiesReader.isStatistichePdndTracciamentoPubblicazioneEnabled()) {
 					try{
 						OpenSPCoop2Startup.this.threadPdndTracciamentoPubblicazione = 
 								new TimerStatisticheThread(propertiesReader.getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds(), TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO);

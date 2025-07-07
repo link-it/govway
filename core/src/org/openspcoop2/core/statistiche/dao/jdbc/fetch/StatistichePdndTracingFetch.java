@@ -71,6 +71,8 @@ public class StatistichePdndTracingFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "stato_pdnd", StatistichePdndTracing.model().STATO_PDND.getFieldType())+"");
 				setParameter(object, "setTentativiPubblicazione", StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "tentativi_pubblicazione", StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE.getFieldType()));
+				setParameter(object, "setForcePublish", StatistichePdndTracing.model().FORCE_PUBLISH.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "force_publish", StatistichePdndTracing.model().FORCE_PUBLISH.getFieldType()));
 				setParameter(object, "setStatoRawEnumValue", String.class,
 					jdbcParameterUtilities.readParameter(rs, "stato", StatistichePdndTracing.model().STATO.getFieldType())+"");
 				setParameter(object, "setTracingId", StatistichePdndTracing.model().TRACING_ID.getFieldType(),
@@ -117,6 +119,8 @@ public class StatistichePdndTracingFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"stato-pdnd"));
 				setParameter(object, "setTentativiPubblicazione", StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"tentativi-pubblicazione"));
+				setParameter(object, "setForcePublish", StatistichePdndTracing.model().FORCE_PUBLISH.getFieldType(),
+					this.getObjectFromMap(map,"force-publish"));
 				setParameter(object, "setStatoRawEnumValue", String.class,
 					this.getObjectFromMap(map,"stato"));
 				setParameter(object, "setTracingId", StatistichePdndTracing.model().TRACING_ID.getFieldType(),

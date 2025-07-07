@@ -39,11 +39,13 @@ import java.io.Serializable;
  * 		&lt;sequence&gt;
  * 			&lt;element name="data-tracciamento" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="data-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="data-pubblicazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="pdd-codice" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
  * 			&lt;element name="csv" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="method" type="{http://www.openspcoop2.org/core/statistiche}pdnd-methods" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="stato-pdnd" type="{http://www.openspcoop2.org/core/statistiche}possibili-stati-pdnd" minOccurs="1" maxOccurs="1" default="WAITING"/&gt;
  * 			&lt;element name="tentativi-pubblicazione" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1" default="0"/&gt;
+ * 			&lt;element name="force-publish" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
  * 			&lt;element name="stato" type="{http://www.openspcoop2.org/core/statistiche}possibili-stati-richieste" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="tracing-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
  * 			&lt;element name="error-details" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
@@ -70,6 +72,7 @@ import java.io.Serializable;
   	"method",
   	"statoPdnd",
   	"tentativiPubblicazione",
+  	"forcePublish",
   	"stato",
   	"tracingId",
   	"errorDetails",
@@ -172,6 +175,18 @@ public class StatistichePdndTracing extends org.openspcoop2.utils.beans.BaseBean
     this.tentativiPubblicazione = tentativiPubblicazione;
   }
 
+  public boolean isForcePublish() {
+    return this.forcePublish;
+  }
+
+  public boolean getForcePublish() {
+    return this.forcePublish;
+  }
+
+  public void setForcePublish(boolean forcePublish) {
+    this.forcePublish = forcePublish;
+  }
+
   public void setStatoRawEnumValue(String value) {
     this.stato = (PossibiliStatiRichieste) PossibiliStatiRichieste.toEnumConstantFromString(value);
   }
@@ -271,6 +286,10 @@ public class StatistichePdndTracing extends org.openspcoop2.utils.beans.BaseBean
   @jakarta.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="tentativi-pubblicazione",required=true,nillable=false,defaultValue="0")
   protected java.lang.Integer tentativiPubblicazione = java.lang.Integer.valueOf("0");
+
+  @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="force-publish",required=true,nillable=false,defaultValue="false")
+  protected boolean forcePublish = false;
 
   @jakarta.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;

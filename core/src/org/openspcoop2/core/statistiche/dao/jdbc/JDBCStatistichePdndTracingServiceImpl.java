@@ -71,6 +71,7 @@ public class JDBCStatistichePdndTracingServiceImpl extends JDBCStatistichePdndTr
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().METHOD,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().STATO_PDND,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().FORCE_PUBLISH,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().STATO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().TRACING_ID,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().ERROR_DETAILS,false),"?");
@@ -87,6 +88,7 @@ public class JDBCStatistichePdndTracingServiceImpl extends JDBCStatistichePdndTr
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getMethod(),StatistichePdndTracing.model().METHOD.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getStatoPdnd(),StatistichePdndTracing.model().STATO_PDND.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getTentativiPubblicazione(),StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getForcePublish(),StatistichePdndTracing.model().FORCE_PUBLISH.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getStato(),StatistichePdndTracing.model().STATO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getTracingId(),StatistichePdndTracing.model().TRACING_ID.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(statistichePdndTracing.getErrorDetails(),StatistichePdndTracing.model().ERROR_DETAILS.getFieldType()),
@@ -141,6 +143,8 @@ public class JDBCStatistichePdndTracingServiceImpl extends JDBCStatistichePdndTr
 		lstObjects.add(new JDBCObject(statistichePdndTracing.getStatoPdnd(), StatistichePdndTracing.model().STATO_PDND.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE,false), "?");
 		lstObjects.add(new JDBCObject(statistichePdndTracing.getTentativiPubblicazione(), StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().FORCE_PUBLISH,false), "?");
+		lstObjects.add(new JDBCObject(statistichePdndTracing.getForcePublish(), StatistichePdndTracing.model().FORCE_PUBLISH.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().STATO,false), "?");
 		lstObjects.add(new JDBCObject(statistichePdndTracing.getStato(), StatistichePdndTracing.model().STATO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getStatistichePdndTracingFieldConverter().toColumn(StatistichePdndTracing.model().TRACING_ID,false), "?");
@@ -326,9 +330,9 @@ public class JDBCStatistichePdndTracingServiceImpl extends JDBCStatistichePdndTr
 	
 	}
 	
-	public void updateTentativiPubblicazione(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IExpression expr, Integer value) throws Exception {
+	public void forcePublish(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IExpression expr) throws Exception {
 		
-		UpdateField field = new UpdateField(StatistichePdndTracing.model().TENTATIVI_PUBBLICAZIONE, value);
+		UpdateField field = new UpdateField(StatistichePdndTracing.model().FORCE_PUBLISH, true);
 
 		GenericJDBCUtilities.updateFields(jdbcProperties, log, connection, sqlQueryObject, 
 				this.getStatistichePdndTracingFieldConverter().toTable(StatistichePdndTracing.model()), 

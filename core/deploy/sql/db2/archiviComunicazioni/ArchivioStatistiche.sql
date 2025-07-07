@@ -459,6 +459,7 @@ CREATE TABLE statistiche_pdnd_tracing
 	method VARCHAR(20),
 	stato_pdnd VARCHAR(20) NOT NULL DEFAULT 'WAITING',
 	tentativi_pubblicazione INT NOT NULL DEFAULT 0,
+	force_publish SMALLINT NOT NULL DEFAULT 0,
 	stato VARCHAR(20),
 	tracing_id VARCHAR(36),
 	error_details CLOB,

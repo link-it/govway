@@ -36,7 +36,7 @@ import org.openspcoop2.generic_project.expression.IExpression;
 
 public interface IStatistichePdndTracingService extends IServiceWithoutId<StatistichePdndTracing> {
 	
-	public void updateTentativiPubblicazione(List<Long> ids, Integer value) throws Exception;
+	public void forcePublish(IExpression expr) throws Exception;
 	
-	public void updateTentativiPubblicazione(IExpression expr, Integer value) throws Exception;
+	public void forcePublish(List<Long> ids) throws Exception;
 }

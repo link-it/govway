@@ -21,12 +21,17 @@
 package org.openspcoop2.protocol.modipa.connettori;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
@@ -40,8 +45,12 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.exception.MessageException;
+import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.message.xml.MessageDynamicNamespaceContextFactory;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.DigestServiceParams;
 import org.openspcoop2.pdd.config.DigestServiceParamsDriver;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -50,12 +59,14 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreBaseWithResponse;
 import org.openspcoop2.pdd.core.connettori.ConnettoreException;
 import org.openspcoop2.pdd.core.connettori.ConnettoreLogger;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.SignalHubUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.digest.DigestType;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.rest.problem.JsonSerializer;
@@ -64,6 +75,17 @@ import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.xml.DynamicNamespaceContext;
+import org.openspcoop2.utils.xml.XMLException;
+import org.openspcoop2.utils.xml.XMLUtils;
+import org.openspcoop2.utils.xml.XPathException;
+import org.openspcoop2.utils.xml.XPathExpressionEngine;
+import org.openspcoop2.utils.xml.XPathNotFoundException;
+import org.openspcoop2.utils.xml.XPathNotValidException;
+import org.openspcoop2.utils.xml.XPathReturnType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -112,7 +134,115 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 		return param;
 	}
 	
-	private void retrieveCryptoInfo(PdDContext pddContext) throws UtilsException, DriverConfigurazioneException, ProtocolException, ConnettoreException {
+	private String getSignalHubNS() throws ProtocolException {
+		List<Proprieta> props = null;
+		if (this.pa != null)
+			props = this.pa.getProprieta();
+		if (this.pd != null)
+			props = this.pd.getProprieta();
+		return CostantiProprieta.getPdndSignalHubNamespace(
+				props, ModIProperties.getInstance().getSignalHubSoapNamespace());
+	}
+	
+	private String getSoapNS() {
+		return this.messageTypeResponse == MessageType.SOAP_11 ?
+				Costanti.SOAP_ENVELOPE_NAMESPACE : Costanti.SOAP12_ENVELOPE_NAMESPACE;
+	}
+	
+	private void setResponseOk(boolean isSoap, DigestType digest, byte[] seed) throws UtilsException, IOException, SAXException, ParserConfigurationException, XMLException, TransformerException, ProtocolException {
+		if (isSoap) {
+			//serializzo il messsaggio SOAP
+			XMLUtils xmlUtils = XMLUtils.getInstance();
+			
+			String signalHubNS = getSignalHubNS();
+			Document doc = xmlUtils.newDocument();
+			Element response = doc.createElementNS(signalHubNS, "cr:pseudonymizationResponse");
+			Element seedElement = doc.createElementNS(signalHubNS, "cr:seed");
+			seedElement.appendChild(doc.createTextNode(new String(seed)));
+			
+			Element digestElement = doc.createElementNS(signalHubNS, "cr:cryptoHashFunction");
+			digestElement.appendChild(doc.createTextNode(digest.toString()));
+			
+			response.appendChild(digestElement);
+			response.appendChild(seedElement);
+			
+			String envNS = getSoapNS();
+			this.isResponse = new ByteArrayInputStream(("<?xml version='1.0' encoding='UTF-8'?>"
+				+ "<soapenv:Envelope xmlns:soapenv=\""+envNS+"\">"
+				+ "<soapenv:Body>"
+				+ xmlUtils.toString(response, true)
+				+ "</soapenv:Body>"
+				+ "</soapenv:Envelope>").getBytes());
+			
+			this.tipoRisposta = this.messageTypeResponse == MessageType.SOAP_11 ?
+				HttpConstants.CONTENT_TYPE_SOAP_1_1 : HttpConstants.CONTENT_TYPE_SOAP_1_2;
+			this.codice = 200;			
+		} else {
+			// serializzo il messsaggio JSON
+			JSONUtils jsonUtils = JSONUtils.getInstance();
+			ObjectNode node = jsonUtils.newObjectNode();
+			node.put("seed", new String(seed));
+			node.put("cryptoHashFunction",digest.toString());
+			
+			this.isResponse = new ByteArrayInputStream(jsonUtils.toByteArray(node));
+			this.tipoRisposta = HttpConstants.CONTENT_TYPE_JSON;
+			this.codice = 200;
+		}
+	}
+	
+	private void setResponse404(boolean isSoap) throws UtilsException {
+		String detail = "Informazioni di pseudoanonimizzazione non trovate";
+		
+		if (isSoap) {		
+			this.responseMsg = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(this.requestMsg.getMessageType(), true, detail);
+			
+		} else {
+			JsonSerializer jsonSerializer = new JsonSerializer();
+			
+			ProblemRFC7807 problemRFC7807 = new ProblemRFC7807();
+			problemRFC7807.setStatus(404);
+			problemRFC7807.setDetail(detail);
+			problemRFC7807.setTitle("Not Found");
+			problemRFC7807.setType("https://httpstatuses.com/404");
+			
+			this.isResponse = new ByteArrayInputStream(jsonSerializer.toByteArray(problemRFC7807));
+			this.tipoRisposta = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
+			this.codice = 404;
+			this.responseMsg = null;			
+		}
+	}
+	
+	private Long retrieveSignalId(boolean isSoap, RequestInfo reqInfo) throws MessageException, MessageNotSupportedException, ProtocolException, XPathException, XPathNotValidException {
+		String signalId = null;
+		if (isSoap) {
+			String signalHubNS = getSignalHubNS();
+			String soapNS = getSoapNS();
+			
+			DynamicNamespaceContext nsc = MessageDynamicNamespaceContextFactory
+					.getInstance(this.requestMsg.getFactory())
+					.getNamespaceContext(this.requestMsg.castAsSoap().getSOAPPart());
+			
+			if (nsc.getPrefix(signalHubNS) == null || nsc.getPrefix(signalHubNS).isBlank()) {
+				this.responseMsg = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(this.requestMsg.getMessageType(), true, "namespace per signal hub (" + signalHubNS + ") non individuato");
+				return null;
+			}
+			
+			XPathExpressionEngine engine = new XPathExpressionEngine();
+			String query = String.format("/{%1$s}:Envelope/{%1$s}:Body/{%2$s}:pseudonymization/{%2$s}:signalId/text()", soapNS, signalHubNS);
+			
+			try {
+				signalId = (String) engine.getMatchPattern(this.requestMsg.castAsSoap().getSOAPPart(), nsc, query, XPathReturnType.STRING);
+			} catch (XPathNotFoundException e) {
+				// ignore
+			}
+		} else {
+			signalId = reqInfo.getProtocolContext().getParameterFirstValue(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID);
+		}
+		
+		return signalId != null && !signalId.trim().isBlank() ? Long.parseLong(signalId) : null;
+	}
+	
+	private void retrieveCryptoInfo(boolean isSoap, PdDContext pddContext) throws UtilsException, DriverConfigurazioneException, ProtocolException, ConnettoreException, IOException, SAXException, ParserConfigurationException, XMLException, TransformerException {
 		
 		RequestInfo reqInfo = (RequestInfo) pddContext.getObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO);
 		IDServizio idServizio = reqInfo.getIdServizio();
@@ -124,11 +254,13 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 		
 		
 		// cerco di ottenere l'id del segnale per fare una ricerca puntuale delle informazioni crittografiche
-		String signalIdRaw = reqInfo.getProtocolContext().getParameterFirstValue(ModICostanti.MODIPA_SIGNAL_HUB_ID_SIGNAL_ID);
 		DigestServiceParams param = null;
 		
 		try {
-			Long signalId = signalIdRaw != null ? Long.parseLong(signalIdRaw) : null;
+			Long signalId = retrieveSignalId(isSoap, reqInfo);
+			if (this.responseMsg != null)
+				return;
+			
 			DigestServiceParamsDriver driver = new DigestServiceParamsDriver((DriverConfigurazioneDB) db);
 			
 			// se signalId risulta uguale a null ritornero le informazioni critoogtafiche piu recenti
@@ -139,35 +271,18 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 				param = this.initCryptoInfo(driver, pddContext);
 			}
 			
-		} catch (NumberFormatException e) {
+		} catch (NumberFormatException | MessageException | MessageNotSupportedException | XPathException | XPathNotValidException e) {
 			throw new ConnettoreException("signalId params non int64");
 		}
 		
 		
 		// se non ho trovato alcuna informazione crittografica ritorno 404
 		if (param == null) {
-			ProblemRFC7807 problemRFC7807 = new ProblemRFC7807();
-			problemRFC7807.setStatus(404);
-			problemRFC7807.setDetail("Informazioni di pseudoanonimizzazione non trovate");
-			problemRFC7807.setTitle("Not Found");
-			problemRFC7807.setType("https://httpstatuses.com/404");
-			
-			JsonSerializer jsonSerializer = new JsonSerializer();
-			this.isResponse = new ByteArrayInputStream(jsonSerializer.toByteArray(problemRFC7807));
-			this.tipoRisposta = HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807;
-			this.codice = 404;
+			this.setResponse404(isSoap);
 			return;
 		}
-
-		// serializzo il messsaggio
-		JSONUtils jsonUtils = JSONUtils.getInstance();
-		ObjectNode node = jsonUtils.newObjectNode();
-		node.put("seed", new String(param.getSeed()));
-		node.put("cryptoHashFunction", param.getDigestAlgorithm().toString());
 		
-		this.isResponse = new ByteArrayInputStream(jsonUtils.toByteArray(node));
-		this.tipoRisposta = HttpConstants.CONTENT_TYPE_JSON;
-		this.codice = 200;
+		this.setResponseOk(isSoap, param.getDigestAlgorithm(), param.getSeed());
 	}
 	
 	/* ********  METODI  ******** */
@@ -296,7 +411,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 			
 			
 			// SIMULAZIONE WRITE_TO
-			boolean consumeRequestMessage = true;
+			boolean consumeRequestMessage = false;
 			if(this.debug)
 				this.logger.debug("Serializzazione (consume-request-message:"+consumeRequestMessage+")...");
 			if(this.isDumpBinarioRichiesta()) {
@@ -348,14 +463,15 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 			}
 			
 			// operazione di gestione delle informaizoni crittografiche
-			this.retrieveCryptoInfo(pddContext);
+			this.messageTypeResponse = this.requestMsg.getMessageType();
+			this.responseMsg = null;
+			this.retrieveCryptoInfo(this.isSoap, pddContext);
 			
 
 			this.normalizeInputStreamResponse(readConnectionTimeout, readConnectionTimeoutConfigurazioneGlobale);
 			
 			this.initCheckContentTypeConfiguration();
 			
-			this.messageTypeResponse = this.requestMsg.getMessageType();
 			
 			if(this.isDumpBinarioRisposta()){
 				this.dumpResponse(this.propertiesTrasportoRisposta);
@@ -366,7 +482,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 			}
 			
 			OpenSPCoop2MessageFactory messageFactory = Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo, MessageRole.RESPONSE);
-			OpenSPCoop2MessageParseResult pr;
+			OpenSPCoop2MessageParseResult pr = null;
 			
 			if (this.isResponse != null) {
 				
@@ -379,7 +495,7 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 				pr = messageFactory.createMessage(this.messageTypeResponse, responseContext,
 						this.isResponse,notifierInputStreamParams,
 						this.openspcoopProperties.getAttachmentsProcessingMode());
-			} else {
+			} else if (this.responseMsg == null){
 				TransportResponseContext responseContext = new TransportResponseContext(this.logger.getLogger());
 				responseContext.setContentLength(0);
 				
@@ -387,14 +503,16 @@ public class ConnettoreSignalHubPseudonymization extends ConnettoreBaseWithRespo
 						this.isResponse,notifierInputStreamParams,
 						this.openspcoopProperties.getAttachmentsProcessingMode());
 			}
-			if(pr.getParseException()!=null){
+			
+			if(pr != null && pr.getParseException()!=null){
 				this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 			}
 			
-			this.responseMsg = pr.getMessage_throwParseException();
+			if (this.responseMsg == null && pr != null)
+				this.responseMsg = pr.getMessage_throwParseException();
 			
 			// content length
-			if(this.responseMsg!=null){
+			if(this.responseMsg != null){
 				this.contentLength = this.responseMsg.getIncomingMessageContentLength();
 			}
 			

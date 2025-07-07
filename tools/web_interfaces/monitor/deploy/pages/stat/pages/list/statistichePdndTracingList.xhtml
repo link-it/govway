@@ -206,7 +206,14 @@
 					 //]]>	
 				</script>
 				
-				
+				<h:form id="formGestioneTastiFooter" rendered="#{not(statistichePdndTracingSearchForm.useCount)}">
+					<input type="hidden" id="_csrfFormGestioneTastiFooter" name="_csrf" value="#{loginBean.csrf}"/>
+					<a4j:outputPanel layout="block" ajaxRendered="false">
+						<a4j:jsFunction name="checkVisualizzaSelezionePrimiElementi" reRender="tableStatistichePdndTracing_checkVisualizzaSelezionePrimiElementiPanel" limitToList="true">
+						</a4j:jsFunction>
+					</a4j:outputPanel>
+				</h:form>
+
 				<h:form>
 					<input type="hidden" id="_csrfFormTabellaStatistichePdndTracing" name="_csrf" value="#{loginBean.csrf}"/>
 					<link:dataTable value="#{statistichePdndTracingDM}" id="tableStatistichePdndTracing"
@@ -214,6 +221,7 @@
 						selectionMapTarget="#{statistichePdndTracingBean.selectedIds[item]}"
 						headerText="Lista StatistichePdndTracing" enableDelete="false"
 						reRenderIds="statistichePdndTracingTbl" mostraComandiFooterSelezionePageSize="true"
+						mostraComandiFooter="true"
 						useCount="#{statistichePdndTracingSearchForm.useCount}">
 						
 						<rich:column id="statusColumn" align="center" width="40px">
@@ -267,9 +275,10 @@
 							<a4j:htmlCommandLink id="resetAttempts-iconLink" styleClass="icon-csv positive" 
 								title="#{msg['commons.search.resetAttempts.button.title']}"
 							 	value="#{msg['commons.search.resetAttempts.button.label']}" 
-							 	action="#{statistichePdndTracingBean.resetAttemptsSelected}"  
+							 	action="#{statistichePdndTracingBean.forcePublishSelected}"  
 							 	ajaxSingle="true"
 							 	reRender="statistichePdndTracingTbl"
+							 	rendered="#{statistichePdndTracingBean.forcePublishSelectedEnabled}"
 							 	onclick="if(!checkSelection('tableStatistichePdndTracing','tableStatistichePdndTracing_checkSelection')) { return false;}">
 									<f:setPropertyActionListener value="#{statistichePdndTracingBean.elencoID}" target="#{statistichePdndTracingBean.elencoID}" />
 							</a4j:htmlCommandLink>

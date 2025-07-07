@@ -1215,6 +1215,13 @@ public class ModIUtils {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 	}
+	public static boolean isTracingPDNDEnabledSafe() {
+		try {
+			return isTracingPDNDEnabled();
+		}catch(Exception e) {
+			return false;
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException {

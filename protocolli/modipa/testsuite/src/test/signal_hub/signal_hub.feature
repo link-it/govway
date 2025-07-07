@@ -3,6 +3,8 @@ Feature: Feature test supporto signal hub
 Background:
 
 	* def crypto_info_url = govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SignalHubTest/v1/pseudonymization'
+	* def crypto_info_soap11_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SignalHubTestSOAP11/v1/pseudonymization'
+	* def crypto_info_soap12_url = govway_base_path + '/soap/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SignalHubTestSOAP12/v1/pseudonymization'
 	* def crypto_info_url_echo = govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SignalHubTest/v1/echo'
 	* def push_signal_url = govway_base_path + '/rest/out/DemoSoggettoErogatore/PDND/api-pdnd-push-signals/v1/signals'
 	* def push_signal_url_default = govway_base_path + '/rest/out/DemoSoggettoErogatore/PDND/api-pdnd-push-signals-default/v1/signals'
@@ -60,6 +62,54 @@ Scenario: Invocazione della risorsa base dell'API
 	When method post
 	Then status 200
 	And match response == read('classpath:test/rest/sicurezza-messaggio/request.json')
+	
+@test-pseudonymization
+@test-pseudonymization-SOAP-11
+Scenario: Informazioni crittografiche create alla prima richiesta del seme con messaggio SOAP11
+
+	* def deleted = remove_seeds();
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+	
+	Given url crypto_info_soap11_url
+	And request read('classpath:test/signal_hub/bodies/soap11.xml')
+	And header Content-Type = 'text/xml'
+	And header SOAPAction = '"pseudonymization"'
+	And header simulazionepdnd-purposeId = 'purposeId'
+	And header simulazionepdnd-audience = 'audience'
+	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
+		 
+	When method post
+	Then status 200
+	
+	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTestSOAP11')
+	And match header Content-Type contains 'text/xml'
+	And match response/Envelope/Body/pseudonymizationResponse/cryptoHashFunction == 'SHAKE128'
+	And match response/Envelope/Body/pseudonymizationResponse/seed == seed
+	
+@test-pseudonymization
+@test-pseudonymization-SOAP-12-custom-ns
+Scenario: Informazioni crittografiche create alla prima richiesta del seme con messaggio SOAP12 e custom namespace
+
+	* def deleted = remove_seeds();
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+	
+	Given url crypto_info_soap12_url
+	And request read('classpath:test/signal_hub/bodies/soap12.xml')
+	And header Content-Type = 'application/soap+xml'
+	And header SOAPAction = '"pseudonymization"'
+	And header simulazionepdnd-purposeId = 'purposeId'
+	And header simulazionepdnd-audience = 'audience'
+	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header GovWay-TestSuite-Test-ID = 'crypto_info_found'
+		 
+	When method post
+	Then status 200
+	
+	* def seed = get_seed('DemoSoggettoErogatore','SignalHubTestSOAP12')
+	And match header Content-Type contains 'application/soap+xml'
+	And match response/Envelope/Body/pseudonymizationResponse/cryptoHashFunction == 'SHA512_256'
+	And match response/Envelope/Body/pseudonymizationResponse/seed == seed
 
 
 @test-pseudonymization
