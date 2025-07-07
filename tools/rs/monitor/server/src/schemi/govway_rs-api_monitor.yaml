@@ -1631,6 +1631,42 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default' 
+  /reportistica/tracing-pdnd/{id}/force-publish:
+    put:
+      tags:
+        - Reportistica
+      summary: forza un nuovo invio del tracciato indipendentemente dal numero di tentativi
+      operationId: tracingPdndForcePubblish
+      description: >-
+        forza un nuovo invio del tracciato indipendentemente dal numero di tentativi
+      parameters:
+       - $ref: '#/components/parameters/id_tracing_pdnd'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForcePublishBodyTracingPDND'
+      responses:
+        "200":
+          description: empty
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/OperationStatus'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default' 
   /reportistica/tracing-pdnd/{id}/esporta:
     get:
       tags:
@@ -3243,6 +3279,8 @@ components:
             data_pubblicazione:
               type: string
               format: date-time
+            force_publish:
+              type: boolean
     
     StatoTracingPDND:
         type: string
@@ -3255,3 +3293,18 @@ components:
     StatoTracing:
         type: string
         enum: ['Qualsiasi', 'Fallita', 'Pubblicata']
+        
+    ForcePublishBodyTracingPDND:
+      type: object
+      description: Empty JSON object
+      properties:
+         force_publish:
+            type: boolean
+            required: true
+    
+    OperationStatus:
+      type: object
+      description: ritorna true se l'operazione ha successo
+      properties:
+         success:
+            type: boolean

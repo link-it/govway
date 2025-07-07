@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.openspcoop2.core.id.IDServizio;
@@ -45,11 +44,13 @@ import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearch
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
+import org.openspcoop2.core.monitor.rs.server.model.ForcePublishBodyTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportConfigEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaRiepilogoApi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTracingPDND;
+import org.openspcoop2.core.monitor.rs.server.model.OperationStatus;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportDimensioni;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportMultiLine;
@@ -1655,5 +1656,44 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
     }
+	
+	@Override
+	public OperationStatus tracingPdndForcePubblish(Long id, ForcePublishBodyTracingPDND body) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			DBManager dbManager = DBManager.getInstance();
+			Connection connection = null;
+			try {
+				connection = dbManager.getConnectionConfig();
+				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
+				StatistichePdndTracingService pdndService = new StatistichePdndTracingService(connection, true, smp, LoggerProperties.getLoggerDAO());
+				
+				StatistichePdndTracingBean bean = pdndService.findById(id);
+				if(bean==null) {
+					FaultCode.NOT_FOUND.throwException("Traccia con id '"+id+"' non esistente");
+				}
+				
+				if (body.isForcePublish())
+					pdndService.forcePublish(bean);
+				
+				return new OperationStatus().success(true);
+				
+			} finally {
+				dbManager.releaseConnectionConfig(connection);
+			}
+
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			throw e;
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+	}
 
 }

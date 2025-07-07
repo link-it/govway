@@ -1533,6 +1533,43 @@ paths:
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
+  /reportistica/tracing-pdnd/{id}/force-publish:
+    put:
+      tags:
+      - "Reportistica"
+      summary: "forza un nuovo invio del tracciato indipendentemente dal numero di\
+        \ tentativi"
+      description: "forza un nuovo invio del tracciato indipendentemente dal numero\
+        \ di tentativi"
+      operationId: "tracingPdndForcePubblish"
+      parameters:
+      - $ref: "#/components/parameters/id_tracing_pdnd"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForcePublishBodyTracingPDND"
+      responses:
+        "200":
+          description: "empty"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OperationStatus"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
   /reportistica/tracing-pdnd/{id}/esporta:
     get:
       tags:
@@ -2662,6 +2699,8 @@ components:
           data_pubblicazione:
             type: "string"
             format: "date-time"
+          force_publish:
+            type: "boolean"
     StatoTracingPDND:
       type: "string"
       enum:
@@ -2681,6 +2720,18 @@ components:
       - "Qualsiasi"
       - "Fallita"
       - "Pubblicata"
+    ForcePublishBodyTracingPDND:
+      type: "object"
+      properties:
+        force_publish:
+          type: "boolean"
+      description: "Empty JSON object"
+    OperationStatus:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+      description: "ritorna true se l'operazione ha successo"
     TransazioneExt:
       type: "object"
       allOf:

@@ -3,9 +3,9 @@
 Panoramica
 ------------
 
-Signal Hub è una funzionalità offerta dalla PDND che permette di rimanere aggiornati sulle modifiche dei dati di determinati servizi registrati nella PDND.
+`Signal Hub <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-signal-hub>`__ è un funzionalità offerta dalla PDND che permette di rimanere aggiornati sulle modifiche dei dati di determinati servizi registrati nella PDND.
 
-Gli erogatori di tali servizi possono pubblicare dei segnali che avvertono la PDND di un cambiamento relativo ad un oggetto all'interno del proprio sistema.
+Gli erogatori di tali servizi possono pubblicare dei segnali che avvertono la PDND di un cambiamento relativo ad un oggetto all'interno del proprio sistema.: il segnale (signal) è la notifica della variazione di un dato.
 
 Successivamente, un consumatore di tale servizio può reperire la lista dei segnali depositati dall'erogatore per identificare quali oggetti sono cambiati. In tal modo, può recuperare puntualmente l'oggetto modificato comunicando con il servizio erogato, senza dover richiedere l'intero database.
 
@@ -16,13 +16,11 @@ Ogni segnale depositato conterrà le seguenti informazioni:
    - signalType: tipologia di modifica sull'oggetto [``CREATE``, ``UPDATE``, ``DELETE``, ``SEEDUPDATE``]
    - signalId: ID univoco del segnale
 
-La PDND si occuperà di mantenere i segnali relativi a un determinato servizio per 30 giorni.
+Il segnale depositato su Signal Hub ha un (`retention period <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-signal-hub/la-guida-tecnica/retention-period-e-api-polling>`__) di 30 giorni, al termine del quale il segnale verrà eliminato e non sarà più recuperabile.
 
-Per garantire l'anonimità dell'ID di un oggetto, l'informazione objectId deve passare attraverso un processo di pseudoanonimizzazione prima di essere inviata alla PDND. Per fare ciò, tale campo dovrà essere processato tramite una funzione di hash insieme a un seme, al fine di impedire attacchi di tipo "rainbow tables".
+Per garantire l'anonimità dell'ID di un oggetto, l'informazione objectId deve passare attraverso un processo di pseudoanonimizzazione prima di essere inviata alla PDND. Per fare ciò, tale campo dovrà essere processato tramite una funzione di hash insieme a un seme, al fine di impedire attacchi di tipo "rainbow tables" seguendo le `norme che regolano il prodotto <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-signal-hub/il-prodotto/norme-che-regolano-il-prodotto>`__.
 
-Il servizio erogato dovrà esporre, tramite un endpoint specifico, una risorsa che contenga le informazioni di pseudoanonimizzazione (funzione di hash + seme).
-
-Le informazioni di pseudoanonimizzazione dovranno essere aggiornate periodicamente per garantire una maggiore sicurezza.
+Il servizio erogato dovrà esporre, tramite un endpoint specifico, una risorsa che contenga le informazioni di pseudoanonimizzazione (funzione di hash + seme). Le informazioni di pseudoanonimizzazione dovranno essere aggiornate periodicamente, per garantire una maggiore sicurezza, seguendo le indicazioni fornite da PDND su come `esporre le informazioni crittografiche per la pseudonimizzazione <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-signal-hub/tutorial/come-esporre-le-informazioni-crittografiche-pseudonimizzazione>`__.
 
 **Diagramma di sequenza**
 
@@ -37,17 +35,19 @@ Il diagramma di sequenza è rappresentato nella figura ':numref:`SignalHubSequen
 
 1-2) Quando un Consumatore vuole tenere traccia dei cambiamenti all'interno di una base dati di un e-service, dopo essersi iscritto tramite la PDND a tale servizio, deve richiedere a tale e-service le informazioni di pseudoanonimizzazione (hash e seme). Il formato di tale richiesta non è esplicitamente fornito dalle specifiche della PDND, ma dovrà essere correttamente documentato dall'e-service specifico.
 
-3-5) Quando un oggetto all'interno della base dati subisce un cambiamento (eliminazione, creazione o modifica), il soggetto Erogatore deve inviare un segnale di deposito alla PDND come descritto nell' `openapi <https://raw.githubusercontent.com/pagopa/interop-signalhub-core/refs/tags/1.0.1/docs/openAPI/push-signals.yaml>`__.
+3-5) Quando un oggetto all'interno della base dati subisce un cambiamento (eliminazione, creazione o modifica), il soggetto Erogatore deve inviare un segnale di deposito alla PDND come descritto nell'`interfaccia OpenAPI per il Deposito Segnali - PUSH <https://raw.githubusercontent.com/pagopa/interop-signalhub-core/refs/tags/1.0.1/docs/openAPI/push-signals.yaml>`__.
 
-6-12) A quel punto, la PDND manterrà in memoria il segnale depositato, durante i quali un soggetto Consumatore potrà accedere alla lista dei segnali depositati, come descritto nell' `openapi <https://raw.githubusercontent.com/pagopa/interop-signalhub-core/refs/tags/1.0.1/docs/openAPI/pull-signals.yaml>`__. Tramite l'objectId pseudoanonimizzato ricevuto, potrà risalire al nuovo valore dell'oggetto riferito, chiamando direttamente l'e-service. Per fare ciò, dovrà usare le informazioni di pseudoanonimizzazione per individuare a quale ID si riferisce.
+6-12) A quel punto, la PDND manterrà in memoria il segnale depositato, durante i quali un soggetto Consumatore potrà accedere alla lista dei segnali depositati, come descritto nell'`interfaccia OpenAPI per il Recupero Segnali - PULL <https://raw.githubusercontent.com/pagopa/interop-signalhub-core/refs/tags/1.0.1/docs/openAPI/pull-signals.yaml>`__. Tramite l'objectId pseudoanonimizzato ricevuto, potrà risalire al nuovo valore dell'oggetto riferito, chiamando direttamente l'e-service. Per fare ciò, dovrà usare le informazioni di pseudoanonimizzazione per individuare a quale ID si riferisce.
 
 Periodicamente, l'e-service dovrà aggiornare le informazioni crittografiche inviando alla PDND un segnale di tipo ``SEEDUPDATE``. Tale segnale informerà il Consumatore che dovrà aggiornare il proprio DB per ricalcolare l'hash degli ID di tutti gli oggetti di cui vuole tenere traccia.
 
 **Cifratura**
 
-La PDND fornisce indicazioni sulle funzioni di hashing da utilizzare, la lunghezza del seme e il periodo di rotazione delle informazioni crittografiche.
+La PDND fornisce indicazioni sulle funzioni di hashing da utilizzare, la lunghezza del seme e il periodo di rotazione delle informazioni crittografiche nella pagina `Esporre le informazioni crittografiche per la pseudonimizzazione <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-signal-hub/tutorial/come-esporre-le-informazioni-crittografiche-pseudonimizzazione>`__.
 
-Il modo in cui concatenare l'ID e il seme non è formalizzato e può essere deciso e documentato dall'e-service.
+Il valore di algoritmo e seme è specifico per e-service: tutti i consumatori otterranno lo stesso algoritmo e lo stesso seme. Il consumatore deve mantenere riservate le informazioni ricevute.
+
+Il modo in cui concatenare l'ID e il seme non è formalizzato e deve essere documentato sull'e-service.
 
 Le seguenti funzioni di hash sono disponibili:
 

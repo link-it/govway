@@ -32,6 +32,9 @@ Configurare l'ambiente di esecuzione dei test:
 		org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled=true
 		org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled=false
 		org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled=false
+        in alternativa devono essere disabilitati i timer PDND
+               org.openspcoop2.pdd.statistiche.pdnd.tracciamento.generazione.enabled=false
+               org.openspcoop2.pdd.statistiche.pdnd.tracciamento.pubblicazione.enabled=false		
 		
 	  Alla fine dei test disabilitare tale proprietà
 

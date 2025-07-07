@@ -3,7 +3,9 @@
 Tracing PDND
 ----------------------
 
-La PDND richiede agli enti di caricare quotidianamente le informazioni relative a tutte le transazioni effettuate, utilizzando un apposito servizio esposto dalla PDND che consente la pubblicazione di report in formato CSV. Maggiorni informazioni sul servizio di tracing vengono fornite in :doc:`tracingPdnd/panoramica`.
+Come descritto in `Tracing <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-tracing>`__, gli scambi di informazioni tra erogatore e fruitore avvengono al di fuori del perimetro dell'infrastruttura tecnica di PDND Interoperabilità, che non ne ha visibilità. Una volta che PDND Interoperabilità ha rilasciato un voucher valido al fruitore, questo può contattare direttamente l'erogatore. Il servizio di `Tracing <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-tracing>`__ consente alla PDND di raccogliere informazioni quantitative relative a queste transazioni.
+
+La PDND richiede agli enti di caricare quotidianamente le informazioni relative a tutte le transazioni effettuate, utilizzando il servizio `Tracing <https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-tracing>`__ che consente la pubblicazione di report in formato CSV. 
 
 GovWay semplifica l’integrazione con la funzionalità di Tracing della PDND rendendola trasparente al soggetto erogatore o fruitore di servizi su PDND.
 

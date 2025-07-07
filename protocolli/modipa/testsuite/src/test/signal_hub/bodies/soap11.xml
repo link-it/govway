@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:cr="http://govway.org/pdnd/signalhub">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cr:pseudonymization>
+      </cr:pseudonymization>
+   </soapenv:Body>
+</soapenv:Envelope>

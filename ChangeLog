@@ -1,3 +1,9 @@
+2025-07-07  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [ProtocolloModIPA, GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità #1591 e #1609
+	Completate attività riguardanti le funzionalità Signal Hub e Tracing della PDND.
+
 2025-07-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

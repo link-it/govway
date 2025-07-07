@@ -29,6 +29,8 @@ Prerequisiti:
 		
 		+ Indicare il path base dell'api di configurazione <govway_config_api> e le utenze per poterci accedere <config_api_username, config_api_password>
  
+		+ Indicare il path base dell'api di monitoraggio <govway_monitor_api> e le utenze per poterci accedere <monitor_api_username, monitor_api_password>
+
 		+ Indicare per la proprietà <config_loader_path> il percorso assoluto verso gli script di caricamento sul db degli archivi zip 
 			di configurazione.
 
@@ -302,6 +304,9 @@ Prerequisiti:
 	org.openspcoop2.pdd.statistiche.generazione.baseGiornaliera.enabled=true
 	org.openspcoop2.pdd.statistiche.generazione.baseSettimanale.enabled=false
 	org.openspcoop2.pdd.statistiche.generazione.baseMensile.enabled=false
+  in alternativa devono essere disabilitati i timer PDND
+       org.openspcoop2.pdd.statistiche.pdnd.tracciamento.generazione.enabled=false
+       org.openspcoop2.pdd.statistiche.pdnd.tracciamento.pubblicazione.enabled=false
 
 + Compilare i test con
 	ant build

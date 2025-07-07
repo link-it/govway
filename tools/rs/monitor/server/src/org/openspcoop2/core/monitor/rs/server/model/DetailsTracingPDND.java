@@ -34,6 +34,9 @@ public class DetailsTracingPDND extends BaseTracingPDND {
   
   @Schema(description = "")
   private DateTime dataPubblicazione = null;
+  
+  @Schema(description = "")
+  private Boolean forcePublish = null;
  /**
    * Get metodo
    * @return metodo
@@ -91,6 +94,25 @@ public class DetailsTracingPDND extends BaseTracingPDND {
     return this;
   }
 
+ /**
+   * Get forcePublish
+   * @return forcePublish
+  **/
+  @JsonProperty("force_publish")
+  @Valid
+  public Boolean isForcePublish() {
+    return this.forcePublish;
+  }
+
+  public void setForcePublish(Boolean forcePublish) {
+    this.forcePublish = forcePublish;
+  }
+
+  public DetailsTracingPDND forcePublish(Boolean forcePublish) {
+    this.forcePublish = forcePublish;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -100,6 +122,7 @@ public class DetailsTracingPDND extends BaseTracingPDND {
     sb.append("    metodo: ").append(DetailsTracingPDND.toIndentedString(this.metodo)).append("\n");
     sb.append("    dettagliErrore: ").append(DetailsTracingPDND.toIndentedString(this.dettagliErrore)).append("\n");
     sb.append("    dataPubblicazione: ").append(DetailsTracingPDND.toIndentedString(this.dataPubblicazione)).append("\n");
+    sb.append("    forcePublish: ").append(DetailsTracingPDND.toIndentedString(this.forcePublish)).append("\n");
     sb.append("}");
     return sb.toString();
   }

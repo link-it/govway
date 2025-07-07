@@ -21,6 +21,7 @@ package org.openspcoop2.web.monitor.statistiche.dao;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +34,7 @@ import org.openspcoop2.core.commons.dao.DAOFactoryException;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.statistiche.StatistichePdndTracing;
-import org.openspcoop2.core.statistiche.constants.PossibiliStatiRichieste;
+import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.core.statistiche.dao.IDBStatistichePdndTracingServiceSearch;
 import org.openspcoop2.core.statistiche.dao.IStatistichePdndTracingServiceSearch;
 import org.openspcoop2.core.statistiche.model.StatistichePdndTracingModel;
@@ -50,6 +51,7 @@ import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.monitor.engine.statistic.StatisticsInfoUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;
@@ -198,15 +200,38 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 		this.statisticheServiceManager.getStatistichePdndTracingService().updateFields(bean, field);
 	}
 	
-	public void updateTentativiPubblicazione(List<Long> ids, Integer value) throws Exception {
-		this.statisticheServiceManager.getStatistichePdndTracingService().updateTentativiPubblicazione(ids, value);
+	public void forcePublish() throws Exception {
+		IExpression expr = createQuery(false, this.statistichePdndTracingServiceSearchDAO, StatistichePdndTracing.model());
+		this.statisticheServiceManager.getStatistichePdndTracingService().forcePublish(expr);
 	}
 	
-	public void updateTentativiPubblicazione(Integer value) throws  Exception {
-		IExpression expr = createQuery(false, this.statistichePdndTracingServiceSearchDAO, StatistichePdndTracing.model());
-		expr.equals(StatistichePdndTracing.model().STATO, PossibiliStatiRichieste.FAILED);
-		
-		this.statisticheServiceManager.getStatistichePdndTracingService().updateTentativiPubblicazione(expr, value);
+	public void forcePublish(List<Long> ids) throws  Exception {
+		this.statisticheServiceManager.getStatistichePdndTracingService().forcePublish(ids);
+	}
+	
+	
+	public boolean isForcePublishEnabled(StatistichePdndTracingBean tracing) {
+		if (tracing.getFailed() && !tracing.isForcePublish()) {
+			
+			
+			try {
+				Date date = StatisticsInfoUtils.readDataUltimaGenerazioneStatistiche(
+						this.statisticheServiceManager.getStatisticaInfoServiceSearch(), 
+						TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO,
+						log);
+				
+				return date.after(tracing.getDataPubblicazione());
+			} catch (Exception e) {
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	public void forcePublish(StatistichePdndTracingBean tracing) throws  Exception {
+		if (!isForcePublishEnabled(tracing))
+			throw new ServiceException("Il tracciato non risulta essere in uno stato in cui può essere abilitata la pubblicazione forzata: non ha ancora superato il numero massimo di tentativi o non è nello stato FAILED");
+		forcePublish(List.of(tracing.getId()));
 	}
 	
 	@Override
