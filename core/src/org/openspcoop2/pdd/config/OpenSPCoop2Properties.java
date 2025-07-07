@@ -2718,6 +2718,7 @@ public class OpenSPCoop2Properties {
 				
 				isGestoreChiaviPDNDclientInfoEnabled();
 				getGestoreChiaviPDNDclientInfoMaxLifeMinutes();
+				getGestoreChiaviPDNDclientInfoCacheFallbackMaxLifeMinutes();
 				isGestoreChiaviPDNDclientsErrorAbortTransaction();
 				isGestoreChiaviPDNDorganizationsErrorAbortTransaction();
 				isGestoreChiaviPDNDRateLimitingInfoNotAvailableAbortTransaction();
@@ -34314,6 +34315,32 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.getGestoreChiaviPDNDclientInfoMaxLifeMinutes;
+	}
+	
+	private Integer getGestoreChiaviPDNDclientInfoCacheFallbackMaxLifeMinutes = null;
+	public int getGestoreChiaviPDNDclientInfoCacheFallbackMaxLifeMinutes() {	
+		if(this.getGestoreChiaviPDNDclientInfoCacheFallbackMaxLifeMinutes==null){
+			String pName = "org.openspcoop2.pdd.gestorePDND.clientInfo.cacheFallbackMaxLifeMinutes";
+			int defaultValue = 5;
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName,defaultValue));
+					name=defaultValue+"";
+				}
+				name = name.trim();
+				this.getGestoreChiaviPDNDclientInfoCacheFallbackMaxLifeMinutes = Integer.valueOf(name);
+				/**if(this.getGestoreChiaviPDNDclientInfoCacheFallbackMaxLifeMinutes<=0) {
+					throw new CoreException("Atteso un limite maggiore di zero");
+				}*/ // Se la proprietà viene valorizzata con un valore <=0 le informazioni hanno vita infinita
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"', viene utilizzato il default="+defaultValue+" : "+e.getMessage(),e);
+				this.getGestoreChiaviPDNDclientInfoCacheFallbackMaxLifeMinutes = defaultValue;
+			}    
+		}
+
+		return this.getGestoreChiaviPDNDclientInfoCacheFallbackMaxLifeMinutes;
 	}
 		
 	private Boolean isGestoreChiaviPDNDclientsErrorAbortTransaction = null;

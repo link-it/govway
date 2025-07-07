@@ -58,4 +58,7 @@ public class RemoteStoreClientDetails implements Serializable {
 		this.invalid = invalid;
 	}
 	
+	public boolean isInfoComplete() {
+		return this.clientInfo!=null && this.clientInfo.isInfoComplete();
+	}
 }

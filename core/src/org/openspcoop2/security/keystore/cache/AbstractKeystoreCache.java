@@ -216,10 +216,15 @@ public abstract class AbstractKeystoreCache<T extends Serializable> {
 		
 		T keystore = entry.getKeystore();
 		if(this.cacheLifeSecond>-1){
-			long scadenza = entry.getDate().getTime()+this.cacheLifeSecond*1000;
+			long scadenza = entry.getDate().getTime()+((this.cacheLifeSecond*1000l));
 			long now = DateManager.getTimeMillis();
 			if(scadenza<now){
-				/**System.out.println("SCADUTO PER DATA ["+entry.getKey()+"] ["+scadenza+"] ["+now+"]");*/
+				/**System.out.println("SCADUTO PER DATA ["+entry.getDate()+"] ["+entry.getKey()+"] ["+scadenza+"] ["+now+"]");
+				System.out.println("SCA["+scadenza+"]");
+				System.out.println("NOW["+scadenza+"]");
+				System.out.println("THIS["+this.cacheLifeSecond+"]");
+				System.out.println("THIS*1000["+(this.cacheLifeSecond*1000)+"]");
+				System.out.println("THIS*1000l["+(this.cacheLifeSecond*1000l)+"]");*/
 				removeKeystore(entry.getKey());
 			}
 		}

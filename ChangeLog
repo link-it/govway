@@ -1,3 +1,10 @@
+2025-07-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	È stata migliorata la gestione delle informazioni parziali o non disponibili ottenute dalla PDND in relazione al clientId.
+	In tali casi, le informazioni vengono comunque memorizzate temporaneamente nella cache locale, al fine di evitare chiamate ripetute e non necessarie verso la PDND. 
+	Tuttavia, rispetto alle informazioni acquisite correttamente, la loro permanenza in cache è ora ridotta: il valore predefinito è fissato a 5 minuti, contro i 30 giorni previsti per i dati completi.
+
 2025-07-07  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [ProtocolloModIPA, GovWayMonitor, ApiRsMonitoraggio]

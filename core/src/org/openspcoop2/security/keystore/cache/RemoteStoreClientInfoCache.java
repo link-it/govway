@@ -34,6 +34,22 @@ import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
  */
 public class RemoteStoreClientInfoCache extends AbstractKeystoreCache<RemoteStoreClientInfo> {	
 
+	private static int clientDetailsMaxLifeMinutes = -1; // infinito
+	public static int getClientDetailsMaxLifeMinutes() {
+		return clientDetailsMaxLifeMinutes;
+	}
+	public static void setClientDetailsMaxLifeMinutes(int clientDetailsMaxLifeMinutes) {
+		RemoteStoreClientInfoCache.clientDetailsMaxLifeMinutes = clientDetailsMaxLifeMinutes;
+	}
+	
+	private static int clientDetailsCacheFallbackMaxLifeMinutes = -1; // infinito
+	public static int getClientDetailsCacheFallbackMaxLifeMinutes() {
+		return clientDetailsCacheFallbackMaxLifeMinutes;
+	}
+	public static void setClientDetailsCacheFallbackMaxLifeMinutes(int clientDetailsCacheFallbackMaxLifeMinutes) {
+		RemoteStoreClientInfoCache.clientDetailsCacheFallbackMaxLifeMinutes = clientDetailsCacheFallbackMaxLifeMinutes;
+	}
+	
 	@Override
 	public RemoteStoreClientInfo createKeystore(String key, Object... params) throws SecurityException{
 		if(params==null){
@@ -61,10 +77,26 @@ public class RemoteStoreClientInfoCache extends AbstractKeystoreCache<RemoteStor
 			RemoteStoreConfig remoteStoreConfig = (RemoteStoreConfig) params[2];
 			IRemoteStoreProvider provider = (IRemoteStoreProvider) params[3];
 			org.openspcoop2.utils.Map<Object> context = readMapUtils(params);
-			return new RemoteStoreClientInfo(keyId, clientId, remoteStoreConfig, provider, context);
+			RemoteStoreClientInfo rsci = new RemoteStoreClientInfo(keyId, clientId, remoteStoreConfig, provider, context);
+			setCacheLifeSecond(rsci); 
+			return rsci;
 		}
 		else{
 			throw new SecurityException("Params [lenght:"+params.length+"] not supported");
+		}
+	}
+	private void setCacheLifeSecond(RemoteStoreClientInfo rsci) {
+		if(rsci.getClientInfo()!=null) {
+			if(rsci.getClientInfo().isInfoComplete()) {
+				if(clientDetailsMaxLifeMinutes>0) {
+					this.updateCacheLifeSecond(clientDetailsMaxLifeMinutes*60);
+				}
+			}
+			else{
+				if(clientDetailsCacheFallbackMaxLifeMinutes>0) {
+					this.updateCacheLifeSecond(clientDetailsCacheFallbackMaxLifeMinutes*60);
+				}
+			}
 		}
 	}
 	@SuppressWarnings("unchecked")
