@@ -1,6 +1,16 @@
 2025-07-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
+	Risolto Bug #1631
+	È stato corretto un malfunzionamento relativo alla creazione di un utente amministratore in ambiente single-tenant con successiva abilitazione dei flag DR. 
+	Sebbene il sistema impedisse correttamente la selezione dei soggetti (non previsti in modalità single-tenant), 
+	l'utenza creata nella base dati risultava non conforme e non era utilizzabile per l’accesso alla console di monitoraggio.
+	Contestualmente, è stato risolto anche un problema di paginazione: durante la creazione di un nuovo oggetto, 
+	se l’utente si trovava su una pagina successiva alla prima all’interno di una lista paginata, l’interfaccia presentava comportamenti anomali.
+
+2025-07-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
 	Risolto Bug #1630
 	All'interno della funzionalità wizard, utilizzata per modificare i dati di una govlet mediante input acquisiti in fase di importazione, 
 	è stato corretto un malfunzionamento che impediva la corretta sostituzione del segnaposto @OPENSPCOOP2_NOME_SOGGETTO@ (e simili) nelle proprietà associate ai profili di interoperabilità.
