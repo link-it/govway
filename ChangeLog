@@ -1,5 +1,12 @@
 2025-07-07  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug #1630
+	All'interno della funzionalità wizard, utilizzata per modificare i dati di una govlet mediante input acquisiti in fase di importazione, 
+	è stato corretto un malfunzionamento che impediva la corretta sostituzione del segnaposto @OPENSPCOOP2_NOME_SOGGETTO@ (e simili) nelle proprietà associate ai profili di interoperabilità.
+
+2025-07-07  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	È stata migliorata la gestione delle informazioni parziali o non disponibili ottenute dalla PDND in relazione al clientId.
 	In tali casi, le informazioni vengono comunque memorizzate temporaneamente nella cache locale, al fine di evitare chiamate ripetute e non necessarie verso la PDND. 
