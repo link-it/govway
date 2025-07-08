@@ -168,7 +168,7 @@ Examples:
 | Descrizione | tipo | risorsa | diag |
 | connectionRefused | connectionRefused | cancel | Connection refused |
 | non viene fornito un content-type nella risposta | default | notify | is not allowed for body content  |
-| connectionTimeout | connectionTimeout | cancel | connect timed out |
+| connectionTimeout | connectionTimeout | cancel | Connect timed out |
 | readTimeout | readTimeout | cancel | Read timed out |
 | htmlResponse | htmlResponse | cancel | errore HTTP 500 |
 | multipartResponse | multipartResponse | cancel | errore HTTP 500 |
