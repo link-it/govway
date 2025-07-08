@@ -19,7 +19,7 @@ hanno accesso alla funzionalità di consultazione dei dati presenti nel
 repository del servizio di auditing.
 
 Per accedere al servizio di consultazione selezionare la voce
-**Auditing** nella sezione **Reportistica** del menu laterale sinistro.
+**Auditing** nella sezione **Strumenti** del menu laterale sinistro.
 La consultazione dei dati di auditing avviene tramite ricerche
 effettuate impostando i criteri attraverso il form riportato in :numref:`auditingSearch`.
 
