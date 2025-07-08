@@ -46,7 +46,6 @@ import org.openspcoop2.generic_project.beans.Function;
 import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
-import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
@@ -55,6 +54,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.csv.Format;
 import org.openspcoop2.utils.csv.Printer;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
 
@@ -128,24 +128,19 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		return cTmp.getTime();
 	}
 	
-	private Integer convertEvent(String event) {
+	private Integer convertEvent(String event) throws UtilsException {
 		try {
 			Integer cached = this.eventsToCode.get(event);
 			if (cached != null)
 				return cached;
 			CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.transazioniSM.getCredenzialeMittenteService()).get(Long.valueOf(event));
 			String cred = AbstractCredenzialeList.normalize(credenzialeMittente.getCredenziale());
-			String rawCode = cred.substring("Out=".length());
+			String rawCode = RegularExpressionEngine.getStringFindPattern(cred, "Out=(\\d+)");
 			Integer code = Integer.valueOf(rawCode);
 			this.eventsToCode.put(event, code);
 			return code;
-		} catch (NumberFormatException
-				| ServiceException
-				| NotFoundException 
-				| MultipleResultException 
-				| NotImplementedException e) {
-			this.logger.error("Errore nella risoluzione del campo eventi_gestione della transazione, id={}", event, e);
-			return null;
+		} catch (Exception e) {
+			throw new UtilsException("Errore nella risoluzione del campo eventi_gestione della transazione, id={"+event+"}: "+e.getMessage(),e);
 		}
 	}
 	
@@ -180,7 +175,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		return os.toByteArray();
 	}
 	
-	public void createRecord(Date tracingDate, String pddCode, List<Map<String, Object>> data) throws ServiceException, NotImplementedException {
+	public boolean createRecord(Date tracingDate, String pddCode, List<Map<String, Object>> data) throws ServiceException, NotImplementedException {
 		
 		byte[] csv = null;
 		try {	
@@ -188,7 +183,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		} catch (UtilsException e) {
 			String dataTracciamento = dataTracciamentoFormat(tracingDate);
 			this.logger.error("Errore nel generare il csv per il soggetto: {}, data tracciamento: {}", pddCode, dataTracciamento, e);
-			return;
+			return false;
 		}
 		
 		Date endTraceDate = truncDate(incrementDate(tracingDate));
@@ -203,6 +198,8 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		entry.setStatoPdnd(PossibiliStatiPdnd.WAITING);
 
 		this.statisticheSM.getStatistichePdndTracingService().create(entry);
+		
+		return true;
 
 	}
 	
@@ -258,11 +255,16 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 					List.of()
 			);
 			
-			createRecord(start, pddCode, rows);
-			
-			this.logger.info("Tracciato [{}] generato correttamente per il soggetto: {}",
-					dataTracciamento,
-					soggettoEntry.getValue());
+			if(createRecord(start, pddCode, rows)) {
+				this.logger.info("Tracciato [{}] generato correttamente per il soggetto: {}",
+						dataTracciamento,
+						soggettoEntry.getValue());
+			}
+			else {
+				this.logger.info("Tracciato [{}] non generato per il soggetto: {}",
+						dataTracciamento,
+						soggettoEntry.getValue());
+			}
 		}
 		
 	}
