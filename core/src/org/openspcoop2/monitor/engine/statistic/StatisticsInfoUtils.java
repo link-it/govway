@@ -44,6 +44,7 @@ import org.openspcoop2.generic_project.expression.IExpression;
  */
 public class StatisticsInfoUtils {
 
+	private StatisticsInfoUtils() {}
 	
 	public static Date readDataUltimaGenerazioneStatistiche(IStatisticaInfoServiceSearch statisticaInfoSearchDAO,TipoIntervalloStatistico tipoStatistica,Logger logger) throws NotFoundException  {
 
