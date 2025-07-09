@@ -37,6 +37,7 @@ import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PDNDConfigUtilities;
+import org.openspcoop2.pdd.config.PDNDResolver;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo;
@@ -921,13 +922,28 @@ public class RemoteStoreProviderDriverUtils {
 			sqlQueryObject.addFromTable(CostantiDB.REMOTE_STORE_KEY);
 			sqlQueryObject.addWhereCondition(COLUMN_ID_REMOTE_STORE+"=?");
 			if(filtroKid!=null) {
-				sqlQueryObject.addWhereLikeCondition(COLUMN_KID, filtroKid, LikeConfig.contains(true));
+				if(filtroKid.equals("-")) {
+					sqlQueryObject.addWhereLikeCondition(COLUMN_KID, PDNDResolver.REMOTE_STORE_KEY_KID_STARTS_WITH_CLIENT_ID, LikeConfig.startsWith(false));
+				}
+				else {
+					sqlQueryObject.addWhereLikeCondition(COLUMN_KID, filtroKid, LikeConfig.contains(true));
+				}
 			}
 			if(filtroClientId!=null) {
-				sqlQueryObject.addWhereLikeCondition(COLUMN_CLIENT_ID, filtroClientId, LikeConfig.contains(true));
+				if(filtroClientId.equals("-")) {
+					sqlQueryObject.addWhereIsNullCondition(COLUMN_CLIENT_ID);
+				}
+				else {
+					sqlQueryObject.addWhereLikeCondition(COLUMN_CLIENT_ID, filtroClientId, LikeConfig.contains(true));
+				}
 			}
 			if(filtroOrganizzazione!=null) {
-				sqlQueryObject.addWhereLikeCondition(COLUMN_ORGANIZATION_DETAILS, filtroOrganizzazione, LikeConfig.contains(true));
+				if(filtroOrganizzazione.equals("-")) {
+					sqlQueryObject.addWhereIsNullCondition(COLUMN_ORGANIZATION_DETAILS);
+				}
+				else {
+					sqlQueryObject.addWhereLikeCondition(COLUMN_ORGANIZATION_DETAILS, filtroOrganizzazione, LikeConfig.contains(true));
+				}
 			}
 			sqlQueryObject.setANDLogicOperator(true);
 		}
