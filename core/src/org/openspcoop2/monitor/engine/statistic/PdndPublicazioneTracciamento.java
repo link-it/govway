@@ -412,6 +412,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		expr.isNotNull(StatistichePdndTracing.model().CSV);
 		expr.equals(StatistichePdndTracing.model().STATO_PDND, PossibiliStatiPdnd.WAITING);
 		expr.equals(StatistichePdndTracing.model().PDD_CODICE, pddCode);
+		expr.equals(StatistichePdndTracing.model().HISTORY, 0);
 		
 		// se i tentativi di pubblicazione sono inferiori al massimo o la flag di force pubblicazione risulta abilitata
 		if (this.config.getPdndTracciamentoMaxAttempt() != null) {
@@ -564,6 +565,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		IPaginatedExpression expr = this.pdndStatisticheSM.newPaginatedExpression();
 		expr.equals(StatistichePdndTracing.model().STATO_PDND, PossibiliStatiPdnd.PENDING);
 		expr.equals(StatistichePdndTracing.model().PDD_CODICE, pddCode);
+		expr.equals(StatistichePdndTracing.model().HISTORY, 0);
 		expr.addOrder(StatistichePdndTracing.model().DATA_TRACCIAMENTO, SortOrder.ASC);
 
 		// ottengo tutte le tabelle che sono in stato pending

@@ -175,7 +175,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		return os.toByteArray();
 	}
 	
-	public boolean createRecord(Date tracingDate, String pddCode, List<Map<String, Object>> data) throws ServiceException, NotImplementedException {
+	public boolean createRecord(Date tracingDate, String pddCode, List<Map<String, Object>> data) {
 		
 		byte[] csv = null;
 		try {	
@@ -197,7 +197,14 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		entry.setMethod(endTraceDate.before(truncDate(new Date())) ? PdndMethods.RECOVER : PdndMethods.SUBMIT);
 		entry.setStatoPdnd(PossibiliStatiPdnd.WAITING);
 
-		this.statisticheSM.getStatistichePdndTracingService().create(entry);
+		
+		try {
+			this.statisticheSM.getStatistichePdndTracingService().create(entry);
+		} catch (ServiceException | NotImplementedException e) {
+			String dataTracciamento = dataTracciamentoFormat(tracingDate);
+			this.logger.error("Errore nel generare il csv per il soggetto: {}, data tracciamento: {}", pddCode, dataTracciamento, e);
+			return false;
+		}
 		
 		return true;
 
@@ -237,9 +244,10 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		}
 	}
 	
-	private void createRecords(Date start, Date end, Set<String> ignorePdd) throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
+	private boolean createRecords(Date start, Date end, Set<String> ignorePdd) throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
 		List<Map<String, Object>> groups = aggregateTransactions(start, end);
 		String dataTracciamento = dataTracciamentoFormat(start);
+		boolean errors = false;
 		
 		Map<String, List<Map<String, Object>>> pddCodeGroup = groups
 				.stream()
@@ -247,8 +255,12 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		
 		for (Map.Entry<String, String> soggettoEntry : this.internalPddCodes.entrySet()) {
 			String pddCode = soggettoEntry.getKey();
-			if (ignorePdd.contains(pddCode))
+			if (ignorePdd.contains(pddCode)) {
+				this.logger.info("Tracciato [{}] già presente per il soggetto: {}, non genero",
+						dataTracciamento,
+						soggettoEntry.getValue());
 				continue;
+			}
 			
 			List<Map<String, Object>> rows = Objects.requireNonNullElse(
 					pddCodeGroup.get(pddCode),
@@ -264,9 +276,12 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 				this.logger.info("Tracciato [{}] non generato per il soggetto: {}",
 						dataTracciamento,
 						soggettoEntry.getValue());
+				errors = true;
 			}
 		}
 		
+		
+		return !errors;
 	}
 	
 	public void scanNull() throws ServiceException, NotImplementedException, ExpressionNotImplementedException, ExpressionException {
@@ -315,37 +330,17 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 	}
 	
 	
-	
-	public void scanDates() throws NotImplementedException, ServiceException {
-		Date lastDate = null;
-		Date nextDate = null;
-		Date currDate = truncDate(new Date());
+	private Map<Date, Set<String>> getAlreadyExistsPddRecords(Date lastDate) throws NotImplementedException, ServiceException {
+		Map<Date, Set<String>> ignorePddCodes = null;
 		
 		try {
-			lastDate = StatisticsInfoUtils.readDataUltimaGenerazioneStatistiche(this.statisticheSM.getStatisticaInfoServiceSearch(), TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO,
-					this.config.getLogSql());
-		} catch (NotFoundException e) {
-			lastDate = new Date(0);
-		} catch (NotImplementedException | ServiceException e) {
-			throw e;
-		}
-		
-		// se non e' presente l'ultima statistica iniziero da domani in quanto oggi non avrei i dati completi
-		if (lastDate.equals(new Date(0)))
-			lastDate = incrementDate(currDate);
-		lastDate = truncDate(lastDate);
-				
-		Map<Date, Set<String>> ignorePddCodes = Map.of();
-		
-		if (this.logger.isInfoEnabled())
-			this.logger.info("Intervallo di generazione PDND tracciamento {} -> {}", 
-					dataTracciamentoFormat(lastDate),
-					dataTracciamentoFormat(currDate));
-		
-		try {
+			
+			// ottengo tutti i record presenti a partire dalla data della prima generazione
 			IPaginatedExpression expr = this.statisticheSM.getStatistichePdndTracingService().newPaginatedExpression();
 			expr.greaterEquals(StatistichePdndTracing.model().DATA_TRACCIAMENTO, lastDate);
 			expr.equals(StatistichePdndTracing.model().HISTORY, 0);
+			
+			// creo la mappa per capire quali record non devo generare
 			List<StatistichePdndTracing> stats = this.statisticheSM.getStatistichePdndTracingService().findAll(expr);
 			ignorePddCodes = stats.stream()
 					.collect(Collectors.toMap(
@@ -357,7 +352,11 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		} catch (ExpressionException 
 				| ExpressionNotImplementedException 
 				| ServiceException e) {
-			ignorePddCodes = Map.of();
+			// nessun record trovato allora la mappa risulta vuota altrimenti rilancio l'eccezione, errore fatale
+			if (e.getCause() instanceof NotFoundException || e instanceof NotFoundException)
+				ignorePddCodes = Map.of();
+			else
+				throw new ServiceException("Impossibile ottenere record tracciati PDND già presenti", e);
 		}
 		
 		if (!ignorePddCodes.isEmpty()) {
@@ -365,11 +364,48 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 					ignorePddCodes);
 		}
 		
+		return ignorePddCodes;
+	}
+	
+	private Date getLastTracingDate(Date currDate) throws ServiceException {
+		Date lastDate = null;
+		
+		try {
+			lastDate = StatisticsInfoUtils.readDataUltimaGenerazioneStatistiche(this.statisticheSM.getStatisticaInfoServiceSearch(), TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO,
+					this.config.getLogSql());
+		} catch (NotFoundException e) {
+			lastDate = new Date(0);
+		} catch (NotImplementedException | ServiceException e) {
+			throw new ServiceException(e);
+		}
+		
+		// se non e' presente l'ultima statistica iniziero da domani in quanto oggi non avrei i dati completi
+		if (lastDate.equals(new Date(0)))
+			lastDate = incrementDate(currDate);
+		return truncDate(lastDate);
+	}
+	
+	public void scanDates() throws NotImplementedException, ServiceException {
+		Date nextDate = null;
+		Date lastNoErrorDate = null;
+		Date currDate = truncDate(new Date());
+		Date lastDate = getLastTracingDate(currDate);
+
+		
+		// mappa che contiene per ogni data quali record per uno specifico codice pdd sono presenti per non aggiungerli
+		Map<Date, Set<String>> ignorePddCodes = getAlreadyExistsPddRecords(lastDate);
+		
+		if (this.logger.isInfoEnabled())
+			this.logger.info("Intervallo di generazione PDND tracciamento {} -> {}", 
+					dataTracciamentoFormat(lastDate),
+					dataTracciamentoFormat(currDate));
+		
 		for (; lastDate.before(currDate); lastDate = nextDate) {
 			nextDate = truncDate(incrementDate(lastDate));
 						
 			try {
-				createRecords(lastDate, nextDate, ignorePddCodes.getOrDefault(lastDate, Set.of()));
+				if (!createRecords(lastDate, nextDate, ignorePddCodes.getOrDefault(lastDate, Set.of())) && lastNoErrorDate == null)
+					lastNoErrorDate = lastDate;
 			} catch (ServiceException 
 					| NotImplementedException 
 					| ExpressionNotImplementedException 
@@ -378,16 +414,25 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 						dataTracciamentoFormat(lastDate), 
 						dataTracciamentoFormat(nextDate), 
 						e);
+				if (lastNoErrorDate == null)
+					lastNoErrorDate = lastDate;
 			}
 		}
 		
+		if (lastNoErrorDate == null) {
+			if (this.logger.isInfoEnabled())
+				this.logger.info("Data ultima generazione aggiornata alla data corrente: {}", dataTracciamentoFormat(currDate));
+			lastNoErrorDate = currDate;
+		} else if (this.logger.isInfoEnabled()){
+			this.logger.info("A causa di errori per la generazione di data: {}, la data di ultima generazione sarà impostata a tale data", dataTracciamentoFormat(lastNoErrorDate));
+		}
 		
 		try {
 			StatisticsInfoUtils.updateDataUltimaGenerazioneStatistiche(
 					this.statisticheSM.getStatisticaInfoServiceSearch(), 
 					this.statisticheSM.getStatisticaInfoService(), 
 					TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO,
-					this.config.getLogSql(), currDate);
+					this.config.getLogSql(), lastNoErrorDate);
 		} catch (Exception e) {
 			this.logger.error("Errore nell'aggiornamento della data ultima statistica {}", TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO, e);
 		}
