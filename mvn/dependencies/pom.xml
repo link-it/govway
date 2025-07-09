@@ -96,6 +96,7 @@
 							<suppressionFiles>
 								<suppressionFile>${owasp.falsePositives.dir}/swagger-codegen-linkit.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
+								<suppressionFile>${owasp.falsePositives.dir}/CVE-2025-48976.xml</suppressionFile>
 							</suppressionFiles>
 							<nvdApiDelay>120000</nvdApiDelay><!-- 2 minuti -->
 							<nvdMaxRetryCount>3</nvdMaxRetryCount> <!-- 3 max tentativi visto il timeout alto -->
