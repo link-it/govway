@@ -251,7 +251,23 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 					<param name="token" value="-- CREATE INDEX INDEX_TR_STATS"/>
 					<param name="value" value="CREATE INDEX INDEX_TR_STATS"/>
 				</antcall>
-
+			</then>
+		</if>
+		<if>
+			<not>
+				<istrue value="${antinstaller_protocollo_modipa}" />
+			</not>
+			<then>				
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="CREATE INDEX INDEX_TR_PDND_STATS"/>
+					<param name="value" value="-- CREATE INDEX INDEX_TR_PDND_STATS"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="CREATE INDEX INDEX_TR_PURPOSE_ID"/>
+					<param name="value" value="-- CREATE INDEX INDEX_TR_PURPOSE_ID"/>
+				</antcall>						
 			</then>
 		</if>
 	

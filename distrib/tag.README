@@ -63,12 +63,7 @@ Per creare una tag version:
 15. Validare i sql generati dall'installer su tutti i database (anche mysql e sqlserver) per prevenire eventuali errori di vincoli come unique e index che non vengono creati per la lunghezza delle chiavi.
     Inoltre validare le patch SQL partendo dalla precedente versione per tutti i database, anche qua per prevenire errori di sintassi.
 
-16. Sistemare migratore delle configurazioni da OpenSPCoop
-    Per verificare:
-    - export da openspcoop2
-    - fare una importazione per ogni modalità e verificare che non vi siano errori (o ce ne siano di coerenti) con il comando:  grep -r "ERROR" log/ | grep -v "HTTP 409 Conflict"
-    NOTA: prima dell'import verificare che esista 1 solo soggetto di default per ogni profilo tramite il comando: "select * from soggetti where is_default=1"
-    NOTA2: inoltre eliminare tutte le API, Erogazioni e Fruizioni già esistenti sul db di destinazione che stiamo migrando.
+16. Migratore delle configurazioni da OpenSPCoop non più supportato dalla 3.4
 
 17. Verificare che gli indirizzi dei webSite principali dei protocolli siano ancora attivi.
     find protocolli/ -name openspcoop2-manifest.xml | xargs grep webSite
