@@ -151,7 +151,7 @@ CREATE TABLE transazioni
 	token_username VARCHAR(20),
 	token_mail VARCHAR(20),
 	token_info VARCHAR(65535),
-	token_purpose_id VARCHAR(4000),
+	token_purpose_id VARCHAR(50),
 	tempi_elaborazione VARCHAR(4000),
 	-- filtro duplicati (0=originale,-1=duplicata,N=quanti duplicati esistono)
 	duplicati_richiesta INT,
