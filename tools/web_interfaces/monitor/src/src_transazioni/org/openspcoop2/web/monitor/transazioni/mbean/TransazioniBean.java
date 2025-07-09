@@ -33,6 +33,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
@@ -921,7 +922,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 
 	public List<GruppoStorico> getTipiStorico() {
 		if(this.tipiStorico == null){
-			this.tipiStorico = new ArrayList<GruppoStorico>();
+			this.tipiStorico = new ArrayList<>();
 
 			GruppoStorico gruppoTemporale = new GruppoStorico();
 			gruppoTemporale.setLabel(MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_LABEL_KEY));
@@ -985,11 +986,17 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_ICON_KEY));
 			listaGruppoId.add(storicoIdMessaggio);
 			
-			Storico storicoPurposeId = new Storico(ModalitaRicercaTransazioni.PURPOSE_ID.getValue(), 
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_LABEL_KEY), 
-					ModalitaRicercaTransazioni.PURPOSE_ID,
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_ICON_KEY));
-			listaGruppoId.add(storicoPurposeId);
+			
+			// non deve essere selezionato nessun profilo oppure solo il modI
+			String loggedUtenteModalita = Utility.getLoggedUtenteModalita();
+			boolean visualizzaPurposeId = (Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteModalita) || CostantiLabel.MODIPA_PROTOCOL_NAME.equals(loggedUtenteModalita)); 
+			if(visualizzaPurposeId) {
+				Storico storicoPurposeId = new Storico(ModalitaRicercaTransazioni.PURPOSE_ID.getValue(), 
+						MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_LABEL_KEY), 
+						ModalitaRicercaTransazioni.PURPOSE_ID,
+						MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_ICON_KEY));
+				listaGruppoId.add(storicoPurposeId);
+			}
 			
 			gruppoId.setListaStorico(listaGruppoId);
 			this.tipiStorico.add(gruppoId);
