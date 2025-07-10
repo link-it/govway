@@ -1149,6 +1149,12 @@ public class TransazioneUtilities {
 					&& transaction.getInformazioniToken().getClaims().containsKey(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID)) {
 				transactionDTO.setTokenPurposeId(transaction.getInformazioniToken().getClaims().get(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID).toString());
 			}
+			if(transactionDTO.getTokenPurposeId()!=null && transactionDTO.getTokenPurposeId().length()>50) {
+				// colonna DB 50
+				String msg = "Errore durante il salvataggio del purposeId '"+transactionDTO.getTokenPurposeId()+"': attesa una dimensione<=50, riscontrata:"+transactionDTO.getTokenPurposeId().length()+"";
+				this.logger.error(msg);
+				transactionDTO.setTokenPurposeId(transactionDTO.getTokenPurposeId().substring(0, 45)+"...");
+			}
 			
 			if(transactionDTO.getTokenInfo()==null && this.transazioniRegistrazioneAttributiInformazioniNormalizzate &&
 					transaction.getInformazioniAttributi()!=null) {

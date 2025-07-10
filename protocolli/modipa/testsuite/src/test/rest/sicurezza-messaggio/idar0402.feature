@@ -103,7 +103,7 @@ And match header Authorization == '#notpresent'
 
 Examples:
 | tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
-| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01-CredenzialePrincipal | de606068-01cb-49a5-824d-fb171b5d5ae4 | RestBlockingIDAR0402-PDND/v1 |
+| PDND | pdnd | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01-CredPrincipal | de606068-01cb-49a5-824d-fb171b5d5ae4 | RestBlockingIDAR0402-PDND/v1 |
 
 
 
@@ -194,7 +194,7 @@ And match header Authorization == '#notpresent'
 
 Examples:
 | tipo-test | tipo-test-minuscolo | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
-| KeyPair | keypair | servizio che genera una risposta tramite keyPair. La validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01-CredenzialePrincipal | KID-ApplicativoBlockingKeyPair | DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair |
+| KeyPair | keypair | servizio che genera una risposta tramite keyPair. La validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01-CredPrincipal | KID-ApplicativoBlockingKeyPair | DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair |
 
 
 
@@ -298,7 +298,7 @@ And match header GovWay-Transaction-ErrorType == 'ConflictResponse'
 
 Examples:
 | tipo-test | tipo-test-minuscolo | id-utilizzato-filtro-duplicato-richiesta | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
-| PDND | pdnd | agid | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01-CredenzialePrincipal | de606068-01cb-49a5-824d-fb171b5d5ae4 | RestBlockingIDAR0402-PDND/v1 |
+| PDND | pdnd | agid | servizio che genera una risposta tramite jwk. La validazione dei certificati token è basata su PDND | pkcs12 | ApplicativoBlockingIDA01 | ApplicativoBlockingIDA01 | purposeId-ApplicativoBlockingIDA01-CredPrincipal | de606068-01cb-49a5-824d-fb171b5d5ae4 | RestBlockingIDAR0402-PDND/v1 |
 
 
 
@@ -403,7 +403,7 @@ And match header GovWay-Transaction-ErrorType == 'ConflictResponse'
 
 Examples:
 | tipo-test | tipo-test-minuscolo | id-utilizzato-filtro-duplicato-richiesta | descrizione | tipo-keystore-client | username | password | purposeId | kid | clientId |
-| KeyPair | keypair | authorization | servizio che genera una risposta tramite keyPair. La validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK-CredenzialePrincipal | KID-ApplicativoBlockingKeyPair | DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair |
+| KeyPair | keypair | authorization | servizio che genera una risposta tramite keyPair. La validazione dei certificati token è tramite jwk | pkcs12 | ApplicativoBlockingJWK | ApplicativoBlockingJWK | purposeId-ApplicativoBlockingJWK-CredPrincipal | KID-ApplicativoBlockingKeyPair | DemoSoggettoFruitore/KeyPair/ApplicativoBlockingKeyPair |
 
 
 

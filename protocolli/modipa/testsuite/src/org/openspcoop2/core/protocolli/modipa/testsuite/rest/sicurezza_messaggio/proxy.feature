@@ -8185,7 +8185,8 @@ Scenario: isTest('connettivita-base-idar0402-pdnd')
     """
 
     * def clientIdExpected = 'N.D.'
-    * def subExpected = 'N.D.'
+    * def subExpected = 'N.D.'    
+    * def purposeIdExpected = 'N.D.'
     * def kidExpected = 'N.D.'
     * def audExpected = 'RestBlockingIDAR0402-'+tipoTest+'/v1'
 
@@ -8195,6 +8196,7 @@ Scenario: isTest('connettivita-base-idar0402-pdnd')
       kidExpected = 'KID-ApplicativoBlockingIDA01'
       clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
       subExpected = 'ApplicativoBlockingIDA01-CredenzialePrincipal'
+      purposeIdExpected = 'ApplicativoBlockingIDA01-CredPrincipal'
     }
     """
 
@@ -8237,7 +8239,7 @@ Scenario: isTest('connettivita-base-idar0402-pdnd')
             client_id: clientIdExpected,
             iss: 'DemoSoggettoFruitore',
             sub: subExpected,
-	    purposeId: 'purposeId-'+subExpected
+	    purposeId: 'purposeId-'+purposeIdExpected
         }
     })
     """
@@ -8310,6 +8312,7 @@ Scenario: isTest('connettivita-base-idar0402-keypair')
 
     * def clientIdExpected = 'N.D.'
     * def subExpected = 'N.D.'
+    * def purposeIdExpected = 'N.D.'
     * def kidExpected = 'N.D.'
     * def audExpected = 'RestBlockingIDAR0402-'+tipoTest+'/v1'
 
@@ -8319,6 +8322,7 @@ Scenario: isTest('connettivita-base-idar0402-keypair')
       kidExpected = 'KID-ApplicativoBlockingIDA01'
       clientIdExpected = 'DemoSoggettoFruitore/ApplicativoBlockingIDA01'
       subExpected = 'ApplicativoBlockingIDA01-CredenzialePrincipal'
+      purposeIdExpected = 'ApplicativoBlockingIDA01-CredPrincipal'
     }
     """
 
@@ -8361,7 +8365,7 @@ Scenario: isTest('connettivita-base-idar0402-keypair')
             client_id: clientIdExpected,
             iss: 'DemoSoggettoFruitore',
             sub: subExpected,
-	    purposeId: 'purposeId-'+subExpected
+	    purposeId: 'purposeId-'+purposeIdExpected
         }
     })
     """
