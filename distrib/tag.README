@@ -69,6 +69,7 @@ Per creare una tag version:
     - fare una importazione per ogni modalità e verificare che non vi siano errori (o ce ne siano di coerenti) con il comando:  grep -r "ERROR" log/ | grep -v "HTTP 409 Conflict"
     NOTA: prima dell'import verificare che esista 1 solo soggetto di default per ogni profilo tramite il comando: "select * from soggetti where is_default=1"
     NOTA2: inoltre eliminare tutte le API, Erogazioni e Fruizioni già esistenti sul db di destinazione che stiamo migrando.
+    NOTA3: non più disponibile dalla versione 3.4
 
 17. Verificare che gli indirizzi dei webSite principali dei protocolli siano ancora attivi.
     find protocolli/ -name openspcoop2-manifest.xml | xargs grep webSite
