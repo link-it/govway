@@ -45,7 +45,7 @@ And request read('request.json')
 And header Authorization = call basic ({ username: 'MultitenantApplicativoBlockingIDA01ExampleClient3', password: 'MultitenantApplicativoBlockingIDA01ExampleClient3' })
 And header simulazionepdnd-username = 'MultitenantApplicativoBlockingIDA01ExampleClient3'
 And header simulazionepdnd-password = 'MultitenantApplicativoBlockingIDA01ExampleClient3'
-And header simulazionepdnd-purposeId = 'purposeId-MultitenantApplicativoBlockingIDA01ExampleClient3'
+And header simulazionepdnd-purposeId = 'purposeId-MultitenantAppBlocIDA01ExampleClient3'
 And header simulazionepdnd-audience = 'DemoSoggettoErogatore2/TestRecuperoInformazioniPDNDAuth/v1'
 When method post
 Then status 200
