@@ -91,6 +91,16 @@
 					<param name="token" value="org.openspcoop2.pdd.statistiche.generazione.enabled"/>
 					<param name="value" value="false"/>
 				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.statistiche.pdnd.tracciamento.generazione.enabled"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.statistiche.pdnd.tracciamento.pubblicazione.enabled"/>
+					<param name="value" value="false"/>
+				</antcall>
 			</then>
 			<else>
 				<antcall target="set_property">
