@@ -132,7 +132,7 @@
 		</or>
 		<then>
 			<var name="bean-validation_jars" value="*.jar" />
-			<var name="jboss-logging_jar" value="*.jar" /> <!-- richiesto da hibernate-validation -->
+			<var name="jboss-logging_jar" value="jboss-logging-3.6.1.Final.jar" /> <!-- richiesto da hibernate-validation -->
 		</then>
 	</if>	
 
