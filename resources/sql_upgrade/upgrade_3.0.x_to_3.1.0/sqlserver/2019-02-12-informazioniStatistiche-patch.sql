@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/sqlserver/informazioniStatistiche/2019-02-12-patch.sql

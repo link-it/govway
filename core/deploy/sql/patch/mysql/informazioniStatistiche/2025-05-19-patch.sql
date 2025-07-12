@@ -35,3 +35,5 @@ CREATE INDEX INDEX_PDND_TRACING_ACTIVE ON statistiche_pdnd_tracing (pdd_codice,d
 -- constraint
 -- necessario con MySQL ≥ 8.0.16: ALTER TABLE statistiche DROP CONSTRAINT chk_statistiche_1;
 ALTER TABLE statistiche ADD CONSTRAINT chk_statistiche_1 CHECK (tipo IN ('StatisticheOrarie','StatisticheGiornaliere','StatisticheSettimanali','StatisticheMensili','PdndGenerazioneTracciamento','PdndPubblicazioneTracciamento'));
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('PdndGenerazioneTracciamento');
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('PdndPubblicazioneTracciamento');

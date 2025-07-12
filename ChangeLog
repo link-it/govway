@@ -1,3 +1,13 @@
+2025-07-12  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug
+	Nel caso di utilizzo dell’installer in modalità avanzata, con base dati dedicata alle informazioni statistiche, sono state rilevate le seguenti anomalie nelle patch di aggiornamento da versioni precedenti:
+	- l'aggiunta della colonna id nella tabella statistiche risultava inclusa erroneamente nello script SQL relativo alle tracce, anziché in quello dedicato alla base dati statistica;
+	- le inizializzazioni dei semafori per la generazione delle statistiche erano presenti nello script SQL relativo alle configurazioni, anziché in quello dedicato alla base dati statistica.
+	Tale errata inizializzazione dei semafori poteva comportare malfunzionamenti nella generazione delle statistiche, 
+	in particolare nelle installazioni in cui la gestione delle statistiche avviene direttamente sul nodo run, anziché tramite il modulo batch.
+
 2025-07-11  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.17

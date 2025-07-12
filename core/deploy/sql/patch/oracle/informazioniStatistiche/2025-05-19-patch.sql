@@ -50,3 +50,5 @@ end;
 -- constraint
 ALTER TABLE statistiche DROP CONSTRAINT chk_statistiche_1;
 ALTER TABLE statistiche ADD CONSTRAINT chk_statistiche_1 CHECK (tipo IN ('StatisticheOrarie','StatisticheGiornaliere','StatisticheSettimanali','StatisticheMensili','PdndGenerazioneTracciamento','PdndPubblicazioneTracciamento'));
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('PdndGenerazioneTracciamento');
+INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('PdndPubblicazioneTracciamento');

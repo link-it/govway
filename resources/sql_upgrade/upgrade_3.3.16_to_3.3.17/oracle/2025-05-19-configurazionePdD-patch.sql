@@ -1,1 +1,0 @@
-../../../../core/deploy/sql/patch/oracle/configurazionePdD/2025-05-19-patch.sql

@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/mysql/informazioniStatistiche/2019-02-12-patch.sql
