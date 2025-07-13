@@ -42,7 +42,7 @@ I dati da inserire sono:
 
 È possibile personalizzare il comportamento dell’engine di validazione dei token JWT rendendo obbligatoria la presenza dei claim 'iat', 'exp' e 'nbf'.
 
-Nella configurazione predefinita, tali claim sono richiesti esclusivamente per le erogazioni che adottano il profilo di interoperabilità 'ModI'. Per estendere questa obbligatorietà ad altri contesti, è necessario configurare esplicitamente le seguenti proprietà, da applicare a livello di erogazione o fruizione, come descritto nella sezione :ref:configProprieta. Le proprietà supportano i valori booleani 'true' o 'false':
+Nella configurazione predefinita, i claim 'iat' e 'exp' sono richiesti esclusivamente per le erogazioni che adottano il profilo di interoperabilità 'ModI'. Il claim nbf, invece, è richiesto solo per le erogazioni 'ModI' veicolate tramite la piattaforma PDND. Per estendere questa obbligatorietà ad altri contesti, è necessario configurare esplicitamente le seguenti proprietà, da applicare a livello di erogazione o fruizione, come descritto nella sezione :ref:configProprieta. Le proprietà supportano i valori booleani 'true' o 'false':
 
 - *tokenValidation.iat.required*
 - *tokenValidation.exp.required*
