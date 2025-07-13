@@ -1,3 +1,10 @@
+2025-07-13  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto Bug
+	È stato rilasciato un adeguamento al controllo relativo alla presenza del claim 'nbf', precedentemente applicato in modo troppo stringente a tutte le erogazioni con profilo di interoperabilità ModI.
+	Con la nuova logica, la presenza obbligatoria del claim nbf è richiesta esclusivamente per le erogazioni ModI veicolate tramite la piattaforma PDND.
+
 2025-07-12  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]
