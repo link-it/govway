@@ -40,6 +40,8 @@ Escludendo le ricerche per Identificativo, dopo aver effettuato una ricerca (tra
 
 -  **Filtra Risultati**: per effettuare una ricerca usando come insieme di partenza le transazioni restituite dalla precedente ricerca.
 
+-  **Salva Ricerca**: consente di salvare i criteri di ricerca per facilitarne il riutilizzo. Le ricerche salvate possono essere definite con visibilità privata, accessibili solo all’utente che le ha create, oppure con visibilità pubblica, rendendole disponibili all’intera utenza della piattaforma (:numref:`mon_salvataggioRicerca_fig`).
+
 
 .. figure:: ../_figure_monitoraggio/BottoniRicerca2.png
     :scale: 80%
@@ -48,7 +50,16 @@ Escludendo le ricerche per Identificativo, dopo aver effettuato una ricerca (tra
 
     Pulsanti di aggiornamento della ricerca delle transazioni
 
+.. figure:: ../_figure_monitoraggio/SalvataggioRicerca.png
+    :scale: 80%
+    :align: center
+    :name: mon_salvataggioRicerca_fig
+
+    Criteri di salvataggio della ricerca delle transazioni
+
 Ogni ricerca consente di ottenere una lista di transazioni gestite da GovWay che soddisfano i criteri di ricerca impostati come mostrato nella sezione :ref:`mon_transazioni_lista`.
+
+
 
 .. toctree::
     :maxdepth: 2

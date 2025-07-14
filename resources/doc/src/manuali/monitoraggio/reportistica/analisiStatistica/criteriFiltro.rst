@@ -7,6 +7,8 @@ Per ogni report è possibile specificare dei criteri di filtro, per
 limitare i dati da presentare (:numref:`mon_filtroStatistiche_fig`). I criteri di filtro selezionabili
 variano in funzione del tipo di report selezionato.
 
+È inoltre possibile salvare i criteri di filtro configurati, al fine di facilitarne il riutilizzo nella generazione dei report. I criteri possono essere salvati con visibilità privata, rendendoli accessibili esclusivamente all’utente che li ha creati, oppure con visibilità pubblica, consentendone la condivisione con l’intera utenza della piattaforma.
+
 .. figure:: ../../_figure_monitoraggio/FiltroStatistiche.png
     :scale: 100%
     :align: center

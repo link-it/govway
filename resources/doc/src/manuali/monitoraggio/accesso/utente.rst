@@ -23,4 +23,18 @@ Durante l'utilizzo della Console di Monitoraggio è preferibile configurare il p
 .. note::
     Il profilo di interoperabilità e il soggetto operativo sono modificabili anche una volta effettuato il login sulla console, agendo nelle voci presenti nel menù in alto a destra. Le modifiche attuate in questa modalità non sono persistenti e al successivo login verranno nuovamente presentate le scelte impostate come default nel profilo utente.
 
-È infine possibile modificare la password associata all'utente.
+È inoltre possibile modificare la password associata all'utente.
+
+Infine, se l'utente ha salvato in precedenza criteri di ricerca delle transazioni o criteri di generazione dei report statistici, potrà gestirli all'interno della sezione 'Ricerche' dove è possibile:
+
+.. figure:: ../_figure_monitoraggio/ProfiloUtenteCriteriRicerca.png
+    :scale: 50%
+    :align: center
+    :name: profiloUtenteCriteriRicerca
+
+    Profilo Utente della Console di Monitoraggio: criteri di ricerca
+
+- eliminare ricerche precedentemente salvate;
+- esportare ricerche per importarle su altre istanze;
+- importare ricerche esportate da altri ambienti;
+- modificare label, descrizione o visibilità di una ricerca.

@@ -2,11 +2,13 @@
 
 Ricerca Generica
 ~~~~~~~~~~~~~~~~
-La ricerca generica è il meccanismo base per la consultazione delle transazioni al quale appartengono due diverse modalità:
+La ricerca generica è il meccanismo base per la consultazione delle transazioni al quale appartengono diverse modalità:
 
 - Base
 
 - Avanzata
+
+- Esamina archivio
 
 La **Ricerca Base** consente di effettuare in maniera semplice la ricerca delle transazioni, specificando l'API, l'intervallo temporale e l'esito (:numref:`mon_RicercaBase_fig`).
 
@@ -29,6 +31,8 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
    -  **Soggetto Locale**: opzione, disponibile se attiva la modalità
       multi-tenant, che consente di filtrare rispetto al soggetto del
       dominio interno che partecipa nella transazione. L'elemento è visibile se in testata il soggetto selezionato è "Tutti".
+
+   -  **Ricerca Utente**: questa opzione permette di richiamare criteri di ricerca salvati in precedenza (come indicato nella sezione :ref:`mon_transazioni`), sia dallo stesso utente, sia da altri utenti che li abbiano resi disponibili con visibilità pubblica all’interno della console.
 
    -  **Tipo**: Indica se le transazioni da visualizzare riguardano
       "erogazioni", "fruizioni".
@@ -313,3 +317,14 @@ Rispetto alla ricerca base sono previsti i seguenti ulteriori elementi di filtro
 
     - **ID**: Modalità che consente di effettuare ricerche di transazioni contenenti uno specifico identificativo applicativo estratto dalle comunicazioni in transito tramite la funzionalità di Correlazione Applicativa.
 
+
+La modalità **Esamina archivio** consente di caricare archivi ZIP contenenti transazioni precedentemente esportate, come descritto nella sezione :ref:`mon_export`, al fine di consultarne i dati direttamente dalla console.
+
+Consente inoltre di filtrare le transazioni presenti all'interno dell'archivio tramite l'esito (:numref:`mon_RicercaCaricamentoArchivio_fig`) come già precedentemente descritto per le precedenti ricerche.
+
+.. figure:: ../../_figure_monitoraggio/RicercaCaricamentoArchivio.png
+    :scale: 100%
+    :align: center
+    :name: mon_RicercaCaricamentoArchivio_fig
+
+    Filtro per la Ricerca tramite il caricamento dell'archivio zip
