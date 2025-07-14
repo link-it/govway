@@ -403,7 +403,7 @@
 				<include name="commons-lang-2.6.jar" />
 				<include name="commons-codec-1.15.jar"/>
 				<include name="${commons_logging_jar}"/>
-				<include name="commons-lang3-3.12.0.jar"/>
+				<include name="commons-lang3-3.18.0.jar"/>
 				<include name="commons-compress-1.26.0.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/shared">
@@ -460,7 +460,7 @@
 				<include name="bcprov-jdk18on-1.78.1.jar"/>
 				<include name="bcutil-jdk18on-1.78.1.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
-				<include name="nimbus-jose-jwt-9.37.3.jar"/>
+				<include name="nimbus-jose-jwt-10.3.1.jar"/>
 			</lib>
 			<lib dir="${required_lib}/httpcore">
 				<include name="${govwayConsoleRemota_httpcore}"/>

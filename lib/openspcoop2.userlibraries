@@ -8,7 +8,7 @@
         <archive path="/op2_3.3.dev/lib/commons/commons-net-3.9.0.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-logging-1.2.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-lang-2.6.jar"/>
-	<archive path="/op2_3.3.dev/lib/commons/commons-lang3-3.12.0.jar"/>
+	<archive path="/op2_3.3.dev/lib/commons/commons-lang3-3.18.0.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-io-2.15.1.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-fileupload-1.6.0.jar"/>
         <archive path="/op2_3.3.dev/lib/commons/commons-discovery-0.5.jar"/>
@@ -208,7 +208,7 @@
 	<archive path="/op2_3.3.dev/lib/security/bcpkix-jdk18on-1.78.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/bcutil-jdk18on-1.78.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/herasaf-xacml-core-2.0.4.jar"/>
-	<archive path="/op2_3.3.dev/lib/security/nimbus-jose-jwt-9.37.3.jar"/>
+	<archive path="/op2_3.3.dev/lib/security/nimbus-jose-jwt-10.3.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/security/jasypt-1.9.3.jar"/>
 	<!-- shared -->
         <archive path="/op2_3.3.dev/lib/shared/xom-1.2.11.jar"/>

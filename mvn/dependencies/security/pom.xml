@@ -27,7 +27,7 @@
 		<xmlsec.version>2.3.4</xmlsec.version>
 		<xmlsec.gov4j.version>2.3.4-gov4j-1</xmlsec.gov4j.version>
 		<xml-security-impl.version>1.0</xml-security-impl.version>
-		<nimbus-jose.version>9.37.3</nimbus-jose.version>
+		<nimbus-jose.version>10.3.1</nimbus-jose.version>
 
 	</properties>
 

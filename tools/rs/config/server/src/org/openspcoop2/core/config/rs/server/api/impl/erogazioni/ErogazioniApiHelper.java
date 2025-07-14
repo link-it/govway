@@ -2333,7 +2333,7 @@ public class ErogazioniApiHelper {
 		newDoc.setId(oldDoc.getId());
 		newDoc.setOraRegistrazione(new Date());
 		
-		if (! StringUtils.equals(newDoc.getRuolo(), oldDoc.getRuolo())) {
+		if (! org.apache.commons.lang.StringUtils.equals(newDoc.getRuolo(), oldDoc.getRuolo())) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non puoi modificare il ruolo di un allegato");
 		}
 
