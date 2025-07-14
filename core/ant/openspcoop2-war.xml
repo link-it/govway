@@ -273,7 +273,7 @@
 				<include name="commons-jcs3-core-3.2.1-gov4j-1.jar"/>
 				<include name="commons-validator-1.9.0.jar"/>
 				<include name="commons-beanutils-1.11.0.jar"/> <!--jmx mini console -->
-				<include name="commons-lang3-3.17.0.jar"/>
+				<include name="commons-lang3-3.18.0.jar"/>
 				<include name="commons-compress-1.27.1.jar"/>
 				<include name="commons-fileupload2-*.jar"/>
 			</lib>
@@ -290,7 +290,7 @@
 				<include name="cryptacular-1.2.7.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 				<include name="herasaf-xacml-core-3.0.2.jar"/>
-				<include name="nimbus-jose-jwt-10.3.jar"/>
+				<include name="nimbus-jose-jwt-10.3.1.jar"/>
 			</lib>
 			<lib dir="${required_lib}/wss4j">
 				<include name="*.jar"/>

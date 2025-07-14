@@ -1415,7 +1415,7 @@ public class ReportisticaHelper {
 		if (tipo == FiltroRicercaRuoloTransazioneEnum.FRUIZIONE 
 				&& !StringUtils.isEmpty(soggettoErogatore)
 				&& !StringUtils.isEmpty(soggettoRemoto) 
-				&& !StringUtils.equals(soggettoRemoto, soggettoErogatore)) {
+				&& !org.apache.commons.lang.StringUtils.equals(soggettoRemoto, soggettoErogatore)) {
 			
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Ricerca ambigua. Nel caso di ruolo <"
 					+ tipo

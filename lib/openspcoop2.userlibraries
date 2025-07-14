@@ -8,7 +8,7 @@
         <archive path="/op2_3.4.dev/lib/commons/commons-net-3.11.1.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-logging-1.3.5.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-lang-2.6.jar"/>
-	<archive path="/op2_3.4.dev/lib/commons/commons-lang3-3.17.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/commons/commons-lang3-3.18.0.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-io-2.19.0.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-jcs3-core-3.2.1-gov4j-1.jar"/>
         <archive path="/op2_3.4.dev/lib/commons/commons-fileupload2-core-2.0.0-M4.jar"/>
@@ -184,7 +184,7 @@
 	<archive path="/op2_3.4.dev/lib/security/bcpkix-jdk18on-1.81.jar"/>
 	<archive path="/op2_3.4.dev/lib/security/bcutil-jdk18on-1.81.jar"/>
 	<archive path="/op2_3.4.dev/lib/security/herasaf-xacml-core-3.0.2.jar"/>
-	<archive path="/op2_3.4.dev/lib/security/nimbus-jose-jwt-10.3.jar"/>
+	<archive path="/op2_3.4.dev/lib/security/nimbus-jose-jwt-10.3.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/security/jasypt-1.9.3.jar"/>
 	<!-- shared -->
 	<archive path="/op2_3.4.dev/lib/shared/reactive-streams-1.0.4.jar"/>

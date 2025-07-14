@@ -174,7 +174,7 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/commons">
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-lang3-3.17.0.jar"/>
+				<include name="commons-lang3-3.18.0.jar"/>
 				<include name="commons-beanutils-1.11.0.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-collections4-4.5.0.jar" />

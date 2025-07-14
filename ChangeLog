@@ -2,6 +2,14 @@
 
 	* Rilasciata versione 3.4.0
 
+2025-07-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2025-53864: aggiornate librerie 'com.nimbusds:nimbus-jose-jwt' alla versione 10.3.1
+	- CVE-2025-48924: aggiornate librerie 'org.apache.commons:commons-lang3' alla versione 3.18.0
+
 2025-07-13  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

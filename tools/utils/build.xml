@@ -180,7 +180,7 @@
 			<include name="snakeyaml-2.4-gov4j-1.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/commons">
-			<include name="commons-lang3-3.17.0.jar"/>
+			<include name="commons-lang3-3.18.0.jar"/>
 		</fileset>
 	</path>	
 		

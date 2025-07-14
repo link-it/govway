@@ -78,7 +78,7 @@
 			<include name="bcprov-jdk18on-1.81.jar"/>
 			<include name="bcpkix-jdk18on-1.81.jar"/>
 			<include name="bcutil-jdk18on-1.81.jar"/>
-			<include name="nimbus-jose-jwt-10.3.jar"/>
+			<include name="nimbus-jose-jwt-10.3.1.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/stub/cxf">
 			<include name="openspcoop2_integrationManagerStub_messageBox_cxf.jar"/>

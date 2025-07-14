@@ -258,7 +258,7 @@
 			</lib>
 			<!-- Risoluzione Warning WARN  [org.jboss.as.ee] (MSC service thread 1-5) WFLYEE0007: Not installing optional component org.springframework ... -->
 			<lib dir="${libs}/commons">
-				<include name="commons-lang3-3.17.0.jar"/>
+				<include name="commons-lang3-3.18.0.jar"/>
 			</lib>
 			<lib dir="${libs}/shared">
 				<include name="reactive-streams-1.0.4.jar"/>

@@ -26,7 +26,7 @@
 		<neethi.version>3.2.1</neethi.version>
 		<xmlsec.version>4.0.4</xmlsec.version>
 		<!-- <xml-security-impl.version>1.0</xml-security-impl.version> -->
-		<nimbus-jose.version>10.3</nimbus-jose.version>
+		<nimbus-jose.version>10.3.1</nimbus-jose.version>
 
 	</properties>
 
