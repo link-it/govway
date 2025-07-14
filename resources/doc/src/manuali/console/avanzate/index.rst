@@ -14,6 +14,7 @@ Funzionalità Avanzate
         multitenant
         header_integrazione/index.rst
         connettori/index.rst
+        canale/index.rst        
 	pkcs11
 	ocsp
 	correlazione

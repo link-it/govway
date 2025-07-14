@@ -9,7 +9,7 @@ Nel seguito di questa documentazione verrà indica con *<prefix-erogazione>* e *
 
 **erogazioni**
 
-<prefix-erogazione>/\ **<profilo>[/in]**/\ <soggettoDominioInterno>/<nomeErogazione>/v<versioneErogazione>
+<prefix-erogazione>/\ **<profilo>[/in]/**/\ <soggettoDominioInterno>/<nomeErogazione>/v<versioneErogazione>
 
 - <profilo> assume i seguenti differenti valori in funzione del profilo di interoperabilità a cui l'API appartiene:
 
@@ -33,4 +33,8 @@ Nel seguito di questa documentazione verrà indica con *<prefix-erogazione>* e *
 
 .. note::
       Nell'URL di invocazione può essere omesso anche il profilo, sia per un'erogazione che per una fruizione; in tal caso, l'API verrà ricercata all'interno del profilo 'API Gateway'.
+      
+.. note::
+      La modalità di gestione dell'I/O (BIO o NIO) può essere specificata direttamente nell'URL di invocazione, come descritto nella sezione :ref:`avanzate_canaleIO`.
+      
 
