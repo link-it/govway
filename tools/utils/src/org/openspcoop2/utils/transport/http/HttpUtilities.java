@@ -21,19 +21,12 @@
 
 package org.openspcoop2.utils.transport.http;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.Provider;
@@ -41,12 +34,10 @@ import java.security.cert.CertStore;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.CertPathTrustManagerParameters;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -58,9 +49,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.KeystoreUtils;
@@ -99,6 +88,8 @@ public class HttpUtilities {
 	public static final int HTTP_CONNECTION_TIMEOUT = 10000; 
 	/** TIMEOUT_READ (2 minuti) */
 	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000; 
+
+	public static final HttpLibrary DEFAULT_HTTP_LIBRARY = HttpLibrary.HTTPCORE;
 
 	
 	public static List<String> getClientAddressHeaders() {
@@ -2049,6 +2040,10 @@ public class HttpUtilities {
 	public static HttpResponse httpInvoke(HttpRequest request) throws UtilsException{
 		
 		String path = request.getUrl();
+		
+		/**
+		 * Gestione del path file://[path]
+		 */
 		if(path!=null && path.startsWith(TEST_FILE_ORIGIN)){
 			String filePath = path.substring(TEST_FILE_ORIGIN.length());
 			File f = new File(filePath);
@@ -2070,8 +2065,6 @@ public class HttpUtilities {
 		}
 		
 		
-		InputStream is = null;
-		ByteArrayOutputStream outResponse = null;
 		InputStream finKeyStore = null;
 		InputStream finTrustStore = null;
 		try {
@@ -2335,194 +2328,11 @@ public class HttpUtilities {
 				boolean encodeBaseLocation = true; // la base location può contenere dei parametri
 				connectionUrl = TransportUtils.buildUrlWithParameters(parameters, request.getForwardProxyEndpoint(), encodeBaseLocation, LoggerWrapperFactory.getLogger(HttpUtilities.class));
 			}
-			URL url = new URI(connectionUrl).toURL();
-			URLConnection connection = null;
-			if(request.getProxyType()==null){
-				connection = url.openConnection();
-			}
-			else {
-				if(request.getProxyHostname()==null) {
-					throw new UtilsException("Proxy require a hostname");
-				}
-				Proxy proxy = new Proxy(request.getProxyType(), new InetSocketAddress(request.getProxyHostname(), request.getProxyPort()));
-				connection = url.openConnection(proxy);
-				
-				// Proxy Authentication BASIC
-				if(request.getProxyUsername()!=null && request.getProxyPassword()!=null){
-					String authentication = request.getProxyUsername() + ":" + request.getProxyPassword();
-					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
-					request.addHeader(HttpConstants.PROXY_AUTHORIZATION,authentication);
-				}
-			}
-			HttpURLConnection httpConn = (HttpURLConnection) connection;
-			if(sslContext!=null) {
-				
-				HttpsURLConnection httpsConn = (HttpsURLConnection) httpConn;
-				httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
-				if(!request.isHostnameVerifier()) {
-					SSLHostNameVerifierDisabled disabilitato = new SSLHostNameVerifierDisabled(LoggerWrapperFactory.getLogger(HttpUtilities.class));
-					httpsConn.setHostnameVerifier(disabilitato);
-				}
-			}
-
-			String contentType = request.getContentType();
-			if(contentType!=null){
-				httpConn.setRequestProperty(HttpConstants.CONTENT_TYPE,contentType);
-			}
-			else if(request.getContent()!=null){
-				String ct = request.getHeaderFirstValue(HttpConstants.CONTENT_TYPE);
-				if(ct==null || StringUtils.isEmpty(ct)) {
-					throw new UtilsException("Content require a Content Type");
-				}
-				else {
-					contentType = ct; // negli header verra impostato sotto
-				}
-			}
 			
-			httpConn.setConnectTimeout(request.getConnectTimeout());
-			httpConn.setReadTimeout(request.getReadTimeout());
+			HttpLibraryConnection conn = HttpLibraryConnection.fromLibrary(request.getHttpLibrary());
+			return conn.send(request, sslContext, ocspTrustManager);
 			
-			if(request.getFollowRedirects()!=null) {
-				httpConn.setInstanceFollowRedirects(request.getFollowRedirects());
-			}
-			else {
-				httpConn.setInstanceFollowRedirects(false);
-			}
-			
-			if(request.getUsername()!=null && request.getPassword()!=null){
-				String authentication = request.getUsername() + ":" + request.getPassword();
-				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
-				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
-			}
-			
-			Map<String, List<String>> requestHeaders = request.getHeadersValues();
-			if(requestHeaders!=null && requestHeaders.size()>0){
-				Iterator<String> itReq = requestHeaders.keySet().iterator();
-				while (itReq.hasNext()) {
-					String key = itReq.next();
-					List<String> values = requestHeaders.get(key);
-					if(values!=null && !values.isEmpty()) {
-						for (String value : values) {
-							httpConn.addRequestProperty(key, value);		
-						}
-					}
-				}
-			}
-			
-			boolean sendThrottling = false;
-			if(request.getThrottlingSendByte()!=null && request.getThrottlingSendByte()>0 && 
-					request.getThrottlingSendMs()!=null && request.getThrottlingSendMs()>0) {
-				sendThrottling = true;
-			}
-			
-			if(request.getMethod()==null){
-				throw new UtilsException("HttpMethod required");
-			}
-			if(sendThrottling || request.isForceTransferEncodingChunked()) {
-				httpConn.setChunkedStreamingMode(0);
-			}
-			setStream(httpConn, request.getMethod(), contentType);
-
-			HttpBodyParameters httpContent = new  HttpBodyParameters(request.getMethod(), contentType);
-			// Spedizione byte
-			if(httpContent.isDoOutput() && request.getContent() != null){
-				OutputStream out = httpConn.getOutputStream();
-				/**System.out.println("Classe '"+out.getClass().getName()+"'");*/
-				if(sendThrottling) {
-					int lengthSendContent = request.getContent().length;
-					for (int i = 0; i < lengthSendContent; ) {
-						int length = request.getThrottlingSendByte();
-						int remaining = lengthSendContent-i;
-						if(remaining<length) {
-							length = remaining;
-						}
-						out.write(request.getContent(),i,length);
-						i = i+length;
-						out.flush();
-						/**System.out.println("Spediti "+length+" bytes");*/
-						Utilities.sleep(request.getThrottlingSendMs());
-					}
-				}
-				else {
-					out.write(request.getContent());
-				}
-				out.flush();
-				out.close();
-			}
-			else if(httpContent.isDoOutput() && request.getContentStream() != null){
-				OutputStream out = httpConn.getOutputStream();
-				CopyStream.copy(request.getContentStream(), out);
-			}
-			
-			HttpResponse response = new HttpResponse();
-			
-			// Ricezione header
-			Map<String, List<String>> mapHeaderHttpResponse = httpConn.getHeaderFields();
-			if(mapHeaderHttpResponse!=null && mapHeaderHttpResponse.size()>0){
-				Iterator<String> itHttpResponse = mapHeaderHttpResponse.keySet().iterator();
-				while(itHttpResponse.hasNext()){
-					String keyHttpResponse = itHttpResponse.next();
-					List<String> valueHttpResponse = mapHeaderHttpResponse.get(keyHttpResponse);
-					if(keyHttpResponse==null){ // Check per evitare la coppia che ha come chiave null e come valore HTTP OK 200
-						keyHttpResponse=HttpConstants.RETURN_CODE;
-					}
-					response.addHeader(keyHttpResponse, valueHttpResponse);
-				}
-			}
-			
-			// ContentType Risposta
-			if(response.getHeadersValues()!=null && !response.getHeadersValues().isEmpty()){
-				response.setContentType(response.getHeaderFirstValue(HttpConstants.CONTENT_TYPE));
-			}
-
-			// Ricezione Result HTTP Code
-			int resultHTTPOperation = httpConn.getResponseCode();
-
-			response.setResultHTTPOperation(resultHTTPOperation);
-			
-			// Ricezione Risposta
-			if(httpContent.isDoInput()){
-				outResponse = new ByteArrayOutputStream();
-				if(resultHTTPOperation>399){
-					is = httpConn.getErrorStream();
-					if(is==null){
-						is = httpConn.getInputStream();
-					}
-				}else{
-					is = httpConn.getInputStream();
-					if(is==null){
-						is = httpConn.getErrorStream();
-					}
-				}
-				CopyStream.copy(is, outResponse);
-				is.close();
-				outResponse.flush();
-				outResponse.close();
-				response.setContent(outResponse.toByteArray());
-			}
-				
-			// fine HTTP.
-			httpConn.disconnect();
-	
-			// certificati server
-			if(ocspTrustManager!=null) {
-				response.setServerCertificate(ocspTrustManager.getPeerCertificates());
-			}
-			
-			return response;
 		}catch(Exception e){
-			try{
-				if(is!=null)
-					is.close();
-			}catch(Exception eis){
-				// ignore
-			}
-			try{
-				if(outResponse!=null)
-					outResponse.close();
-			}catch(Exception eis){
-				// ignore
-			}
 			throw new UtilsException(e.getMessage(),e);
 		}
 		finally{
