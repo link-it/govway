@@ -59,7 +59,6 @@ String jQueryVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_
 	<link rel="stylesheet" href="css/materialIcons.css" type="text/css">
 		<!-- JQuery lib-->
 	<script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
-	<script type="text/javascript" src="js/HtmlSanitizer.js" nonce="<%= randomNonce %>"></script>
 	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
 	<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
 	<script type="text/javascript" src="js/login-utils.js" nonce="<%= randomNonce %>"></script>
