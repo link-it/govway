@@ -211,7 +211,7 @@ public class ConfigurazioneAllarmiChange extends Action {
 						confHelper.removePluginFromSession(request, session);
 					} else {
 						for (Plugin pluginBean : listaPlugin) {
-							String key = pluginBean.getLabel() + ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN_NOME_SEP + pluginBean.getClassName();
+							String key = confHelper.getSelectValue(pluginBean);
 							if(key.equals(nomePlugin)) {
 								plugin = pluginBean;
 								break;

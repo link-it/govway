@@ -20820,6 +20820,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return null;
 	}
 	
+	public String getSelectValue(Plugin pluginBean) {
+		return pluginBean.getTipo() + ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN_NOME_SEP + pluginBean.getClassName();
+	}
+	
 	public void addAllarmeToDati(List<DataElement> dati, TipoOperazione tipoOperazione, ConfigurazioneAllarmeBean allarme, AlarmEngineConfig alarmEngineConfig, List<Plugin> listaPlugin,
 			List<org.openspcoop2.monitor.sdk.parameters.Parameter<?>> parameters, RuoloPorta ruoloPorta, String nomePorta, ServiceBinding serviceBinding
 			) throws Exception { 
@@ -21121,7 +21125,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			List<String> pluginLabels = new ArrayList<>();
 			
 			for (Plugin pluginBean : listaPlugin) {
-				String key = pluginBean.getLabel() + ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN_NOME_SEP + pluginBean.getClassName();
+				String key = getSelectValue(pluginBean);
 				
 				pluginValues.add(key);
 				pluginLabels.add(pluginBean.getLabel());
@@ -21135,8 +21139,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(first) {
 				de.setSelected(ConfigurazioneCostanti.DEFAULT_VALUE_NESSUNO);
 			} else {
-				if(allarme.getPlugin() != null)
-					de.setSelected(allarme.getPlugin().getLabel() + ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_PLUGIN_NOME_SEP + allarme.getPlugin().getClassName());	
+				if(allarme.getPlugin() != null) {
+					de.setSelected(getSelectValue(allarme.getPlugin()));
+				}
 			}
 			
 			de.setPostBack_viaPOST(true);
