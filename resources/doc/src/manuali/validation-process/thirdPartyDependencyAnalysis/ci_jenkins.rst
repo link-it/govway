@@ -3,7 +3,7 @@
 OWASP Dependency-Check Jenkins Plugin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ viene avviata automaticamente una verifica delle librerie terza parte nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway4/job/GovWay/>`_. 
+Ad ogni commit sul `branch 3.4.x dei sorgenti del progetto <https://github.com/link-it/govway/tree/3.4.x/>`_ viene avviata automaticamente una verifica delle librerie terza parte nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway4/job/GovWay/>`_. 
 
 L'analisi produce un `report di dettaglio <https://jenkins.link.it/govway4/job/GovWay/lastCompletedBuild/dependency-check-findings/>`_ sulle vulnerabilità trovate. Per ogni vulnerabilità identificata vengono forniti maggiori dettagli come la severità, il codice identificativo e la base dati dove di appartenenza (es. :numref:`owasp_vulnerability_details`). 
 

@@ -3,7 +3,7 @@
 SonarQube Jenkins Plugin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ viene effettuata automaticamente una verifica dei sorgenti nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway4/job/GovWay/>`_.
+Ad ogni commit sul `branch 3.4.x dei sorgenti del progetto <https://github.com/link-it/govway/tree/3.4.x/>`_ viene effettuata automaticamente una verifica dei sorgenti nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway4/job/GovWay/>`_.
 
 L'icona :numref:`sonarqube_ci_icon` certifica l'avvenuta integrazione con `SonarQube disponibile nell'ambiente jenkins <https://jenkins.link.it/govway4-sonarqube/>`_.
 

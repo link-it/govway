@@ -9,9 +9,7 @@ del software di base nell'ambiente di esercizio. Verificare i passi
 seguenti, procedendo eventualmente all'installazione dei componenti
 mancanti.
 
-#. *Java Runtime Environment (JRE) 11* (è possibile scaricare
-   JRE al seguente indirizzo:
-   https://jdk.java.net/archive/)
+#. *Java Runtime Environment (JRE) 21* 
 
    Verificare la configurazione dell'ambiente Java dell'Application
    Server. Si raccomanda una configurazione minima dei parametri della
@@ -23,8 +21,8 @@ mancanti.
 
    - -Dfile.encoding=UTF-8
 
-#. *Application Server WildFly* (http://wildfly.org); viene supportato dalla versione 18 alla versione 26. In alternativa è possibile effettuare
-   l'installazione su Apache Tomcat (http://tomcat.apache.org) versione 9.
+#. *Application Server WildFly* (http://wildfly.org); viene supportata la versione 27-28 (compatibile con JBoss EAP 8.0) e le versioni dalla 35 alla 36. In alternativa è possibile effettuare
+   l'installazione su Apache Tomcat (http://tomcat.apache.org) versione 11.
 
    .. note::
       GovWay supporta anche altri application server j2ee diversi da
@@ -47,8 +45,8 @@ mancanti.
 La distribuzione GovWay è stata estesamente testata prima del rilascio
 sulla seguente piattaforma di riferimento:
 
--  *Openjdk 11 (version: 11.0.24+8)*
+-  *Openjdk 21 (version: 21.0.7+6)*
 
--  *PostgreSQL 13 (version: 13.7)*, *PostgreSQL 16 (version: 16.2)* e *Oracle 11g ExpressEdition (version: 11.2.0.2.0)*
+-  *PostgreSQL 13 (version: 13.21)*, *PostgreSQL 16 (version: 16.1)* e *Oracle 11g ExpressEdition (version: 11.2.0.2.0)*
 
--  *WildFly 18 (version: 18.0.1.Final)*, *WildFly 25 (version: 25.0.0.Final)*, *WildFly 26 (version: 26.1.3.Final)* e *Tomcat 9 (version: 9.0.91)*
+-  *WildFly 28 (version: 28.0.1.Final)*, *WildFly 36 (version: 36.0.1.Final)* e *Tomcat 11 (version: 11.0.8)*

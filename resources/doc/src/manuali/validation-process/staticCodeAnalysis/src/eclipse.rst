@@ -23,7 +23,7 @@ Nei `sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ sia i m
 
   Eclipse Project: import user libraries
 
-- importare le librerie `lib/openspcoop2.userlibraries <https://github.com/link-it/govway/blob/master/lib/openspcoop2.userlibraries/>`_ e `lib/openspcoop2-testsuite.userlibraries <https://github.com/link-it/govway/blob/master/lib/openspcoop2-testsuite.userlibraries/>`_ (:numref:`Eclipse_lib_2`);
+- importare le librerie `lib/openspcoop2.userlibraries <https://github.com/link-it/govway/blob/3.4.x/lib/openspcoop2.userlibraries/>`_ e `lib/openspcoop2-testsuite.userlibraries <https://github.com/link-it/govway/blob/3.4.x/lib/openspcoop2-testsuite.userlibraries/>`_ (:numref:`Eclipse_lib_2`);
 
 .. figure:: ../../_figure_console/Eclipse_lib_2.png
   :scale: 80%

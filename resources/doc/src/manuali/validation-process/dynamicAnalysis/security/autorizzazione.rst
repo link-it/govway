@@ -5,9 +5,9 @@ Autorizzazione
 
 I test realizzati tramite il tool `TestNG <https://testng.org/doc/>`_ verificano i criteri di autorizzazione puntuale e per ruolo.
 
-I sorgenti sono disponibili in `protocolli/trasparente/testsuite/src <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/src>`_ relativamente ai seguenti package:
+I sorgenti sono disponibili in `protocolli/trasparente/testsuite/src <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/src>`_ relativamente ai seguenti package:
 
-- `org.openspcoop2.protocol.trasparente.testsuite.units.soap.authz <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/src/org/openspcoop2/protocol/trasparente/testsuite/units/soap/authz>`_
+- `org.openspcoop2.protocol.trasparente.testsuite.units.soap.authz <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/src/org/openspcoop2/protocol/trasparente/testsuite/units/soap/authz>`_
 
 Evidenze disponibili in:
 

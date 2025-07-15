@@ -31,7 +31,7 @@ Gli identificativi dei moduli sono classificati come segue:
 
 - cli: cli-config-loader, cli-govway-vault.
 
-I reports prodotti nella directory 'spotbugs-reports' sono analizzabili tramite la `SpotBugs GUI <https://spotbugs.readthedocs.io/en/stable/gui.html>`_ avviabile tramite lo script presente in `tools/spotbugs/startSpotBugsAnalysisConsole.sh <https://github.com/link-it/govway/blob/master/tools/spotbugs/startSpotBugsAnalysisConsole.sh>`_. La figura :numref:`SpotBugs_gui` mostra un esempio di report analizzato con la console di SpotBugs.
+I reports prodotti nella directory 'spotbugs-reports' sono analizzabili tramite la `SpotBugs GUI <https://spotbugs.readthedocs.io/en/stable/gui.html>`_ avviabile tramite lo script presente in `tools/spotbugs/startSpotBugsAnalysisConsole.sh <https://github.com/link-it/govway/blob/3.4.x/tools/spotbugs/startSpotBugsAnalysisConsole.sh>`_. La figura :numref:`SpotBugs_gui` mostra un esempio di report analizzato con la console di SpotBugs.
 
 .. figure:: ../../_figure_console/SpotBugs_gui.png
   :scale: 60%

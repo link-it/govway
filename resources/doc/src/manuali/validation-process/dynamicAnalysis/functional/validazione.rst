@@ -5,13 +5,13 @@ Validazione dei messaggi
 
 I test realizzati tramite il tool `JUnit <https://junit.org/junit4/>`_ verificano le funzionalità di validazione dei messaggi tramite interfacce OpenAPI 3, Swagger 2 e WSDL.
 
-I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/>`_ relativamente ai seguenti gruppi:
+I sorgenti sono disponibili in `protocolli/trasparente/testsuite/karate/src <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/>`_ relativamente ai seguenti gruppi:
 
-- `validazione.parametri <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/parametri>`_; viene verificata la serializzazione dei parametri descritta in `Swagger.io - Parameter Serialization <https://swagger.io/docs/specification/serialization/>`_. I test verificano anche la possibilità che http header e parametri della url possano esistere molteplici volte nella richiesta e nella risposta.
-- `validazione.multipart <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/multipart>`_; vengono verificati i messaggi multipart descritti in `Swagger.io - Multipart Requests <https://swagger.io/docs/specification/describing-request-body/multipart-requests/>`_ e `Swagger.io - File Upload <https://swagger.io/docs/specification/describing-request-body/file-upload/>`_.
-- `validazione.swagger_request_validator <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/swagger_request_validator>`_; viene verificata la funzionalità di validazione dei contenuti attuata tramite la libreria `swagger-request-validator <https://bitbucket.org/atlassian/swagger-request-validator>`_. Tra i vari test è presente anche la validazione tramite API complesse di dimensioni notevoli.
-- `validazione.rpc <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/rpc>`_; verifica il funzionamento con messaggi definiti in interfacce WSDL con 'style RPC' e 'use literal' o 'encoded'. I test oltre alla validazione verificano anche il riconoscimento dell'operazione tramite l'ottimizzazione 'soap reader'.
-- `other.api_grandi <https://github.com/link-it/govway/tree/master/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/other/api_grandi>`_; verifica l'utilizzo di API REST con un numero elevato di risorse.
+- `validazione.parametri <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/parametri>`_; viene verificata la serializzazione dei parametri descritta in `Swagger.io - Parameter Serialization <https://swagger.io/docs/specification/serialization/>`_. I test verificano anche la possibilità che http header e parametri della url possano esistere molteplici volte nella richiesta e nella risposta.
+- `validazione.multipart <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/multipart>`_; vengono verificati i messaggi multipart descritti in `Swagger.io - Multipart Requests <https://swagger.io/docs/specification/describing-request-body/multipart-requests/>`_ e `Swagger.io - File Upload <https://swagger.io/docs/specification/describing-request-body/file-upload/>`_.
+- `validazione.swagger_request_validator <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/swagger_request_validator>`_; viene verificata la funzionalità di validazione dei contenuti attuata tramite la libreria `swagger-request-validator <https://bitbucket.org/atlassian/swagger-request-validator>`_. Tra i vari test è presente anche la validazione tramite API complesse di dimensioni notevoli.
+- `validazione.rpc <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/validazione/rpc>`_; verifica il funzionamento con messaggi definiti in interfacce WSDL con 'style RPC' e 'use literal' o 'encoded'. I test oltre alla validazione verificano anche il riconoscimento dell'operazione tramite l'ottimizzazione 'soap reader'.
+- `other.api_grandi <https://github.com/link-it/govway/tree/3.4.x/protocolli/trasparente/testsuite/karate/src/org/openspcoop2/core/protocolli/trasparente/testsuite/other/api_grandi>`_; verifica l'utilizzo di API REST con un numero elevato di risorse.
 
 Evidenze disponibili in:
 
@@ -25,7 +25,7 @@ Sono inoltre disponibili ulteriori test realizzati tramite il tool `TestNG <http
 
 I sorgenti sono disponibili in:
 
-- `validazione wsdl <https://github.com/link-it/govway/tree/master/protocolli/spcoop/testsuite/src/org/openspcoop2/protocol/spcoop/testsuite/units/validazione>`_
+- `validazione wsdl <https://github.com/link-it/govway/tree/3.4.x/protocolli/spcoop/testsuite/src/org/openspcoop2/protocol/spcoop/testsuite/units/validazione>`_
 
 Evidenze disponibili in:
 

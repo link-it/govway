@@ -7,7 +7,7 @@ In questa fase vengono identificate possibili vulnerabilità all'interno del cod
 
 Il tool viene utilizzato fin dalle fasi di sviluppo dai programmatori tramite il `plugin per Eclipse <https://spotbugs.readthedocs.io/en/latest/eclipse.html>`_ come descritto nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_spotbugs_eclipse`.
 
-Ad ogni commit sul `master dei sorgenti del progetto <https://github.com/link-it/govway/>`_ viene effettuata automaticamente una verifica dei sorgenti nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway4/job/GovWay/>`_. Maggiori dettagli vengono forniti nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_spotbugs_ci`.
+Ad ogni commit sul `branch 3.4.x dei sorgenti del progetto <https://github.com/link-it/govway/tree/3.4.x/>`_ viene effettuata automaticamente una verifica dei sorgenti nell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway4/job/GovWay/>`_. Maggiori dettagli vengono forniti nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_spotbugs_ci`.
 
 Una verifica manuale dei `sorgenti del progetto GovWay <https://github.com/link-it/govway/>`_ è attuabile seguento le indicazioni presenti nella sezione :ref:`releaseProcessGovWay_staticCodeAnalysis_spotbugs_maven`.
 

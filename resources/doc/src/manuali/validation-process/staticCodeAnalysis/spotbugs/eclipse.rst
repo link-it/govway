@@ -27,7 +27,7 @@ Impostare i seguenti criteri di analisi statica accedendo alla sezione "Window -
 
   SpotBugs Eclipse Plugin: configurazione
 
-Deve inoltre essere caricato il filtro che esclude alcuni `falsi positivi <https://github.com/link-it/govway/blob/master/tools/spotbugs/filters/falsePositive.xml>`_ come mostrato nella figura :numref:`SpotBugs_eclipse_config_falsePositive`.
+Deve inoltre essere caricato il filtro che esclude alcuni `falsi positivi <https://github.com/link-it/govway/blob/3.4.x/tools/spotbugs/filters/falsePositive.xml>`_ come mostrato nella figura :numref:`SpotBugs_eclipse_config_falsePositive`.
 
 .. figure:: ../../_figure_console/SpotBugs_eclipse_config_falsePositive.png
   :scale: 80%

@@ -29,7 +29,7 @@ Per evitare la verifica, le librerie utilizzate solamente dalle testsuite e non 
 **Falsi Positivi**
 
 Nell'utilizzo del plugin vengono aggiunte le configurazioni che permettono di registrare dei falsi positivi rispetto al progetto, individuati nella :ref:`vulnerabilityManagement`.
-Di seguito il frammento del file `mvn/dependencies/pom.xml <https://github.com/link-it/govway/blob/master/mvn/dependencies/pom.xml>`_ che evidenza come venga utilizzato il plugin owasp configurato con i suppressionFiles:
+Di seguito il frammento del file `mvn/dependencies/pom.xml <https://github.com/link-it/govway/blob/3.4.x/mvn/dependencies/pom.xml>`_ che evidenza come venga utilizzato il plugin owasp configurato con i suppressionFiles:
 
 ::
 

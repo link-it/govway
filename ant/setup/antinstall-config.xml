@@ -150,7 +150,8 @@
 		<option value="wildfly27" text="WildFly 27-28"/>                
 
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
-            	<option value="tomcat10" text="Apache Tomcat 10-11"/>
+            	<!--<option value="tomcat10" text="Apache Tomcat 10-11"/>-->
+            	<option value="tomcat10" text="Apache Tomcat 11"/>
 
         </large-select>
         
@@ -191,7 +192,8 @@
 		<option value="wildfly27" text="WildFly 27-28"/>
 
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
-		<option value="tomcat10" text="Apache Tomcat 10-11"/> 
+		<!--<option value="tomcat10" text="Apache Tomcat 10-11"/> -->
+		<option value="tomcat10" text="Apache Tomcat 11"/>
 
         </large-select>
 
