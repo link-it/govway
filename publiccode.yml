@@ -13,7 +13,7 @@ dependsOn:
       optional: false
       version: ''
       versionMax: ''
-      versionMin: '11'
+      versionMin: '21'
 description:
   it:
     apiDocumentation: 'https://govway.org/documentazione/api/index.html'
@@ -149,9 +149,9 @@ maintenance:
 name: GovWay
 platforms:
   - web
-releaseDate: '2025-07-11'
+releaseDate: '2025-07-16'
 softwareType: standalone/web
-softwareVersion: 3.3.17
+softwareVersion: 3.4.0
 url: 'https://github.com/link-it/govway'
 usedBy:
   - MISE - Ministero dello Sviluppo Economico
