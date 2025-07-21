@@ -1,3 +1,11 @@
+2025-07-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug 1635
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte per la versione 3.3.x:
+	- CVE-2025-48795: aggiornata libreria 'org.apache.cxf:*' alla versione 3.6.7
+	- CVE-2025-31672: aggiornata libreria 'org.apache.poi:poi' alla versione 5.4.1
+
 2025-07-16  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.4.0
@@ -7,8 +15,8 @@
 	* [GovWayCore]
 	Risolto Bug
 	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
-	- CVE-2025-53864: aggiornate librerie 'com.nimbusds:nimbus-jose-jwt' alla versione 10.3.1
-	- CVE-2025-48924: aggiornate librerie 'org.apache.commons:commons-lang3' alla versione 3.18.0
+	- CVE-2025-53864: aggiornate libreria 'com.nimbusds:nimbus-jose-jwt' alla versione 10.3.1
+	- CVE-2025-48924: aggiornate libreria 'org.apache.commons:commons-lang3' alla versione 3.18.0
 
 2025-07-13  Andrea Poli <apoli@link.it>
 
