@@ -22,7 +22,7 @@
 		<jasperreports.version>6.20.0</jasperreports.version>
 		<jcommon.version>1.0.24</jcommon.version>
 		<jfreechart.version>1.5.3</jfreechart.version>
-		<poi.version>5.2.3</poi.version>
+		<poi.version>5.4.1</poi.version>
 		<SparseBitSet.version>1.2</SparseBitSet.version>
 		<net.tascalate.javaflow.version>2.7.3</net.tascalate.javaflow.version>
 

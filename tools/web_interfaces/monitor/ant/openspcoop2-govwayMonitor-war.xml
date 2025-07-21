@@ -262,7 +262,7 @@
 				<include name="jcommon-1.0.24.jar"/>
 				<include name="jasperreports-6.20.0.jar"/>
 				<include name="jasperreports-metadata-6.20.0.jar"/>
-				<include name="poi-5.2.3.jar"/>
+				<include name="poi-5.4.1.jar"/>
 				<include name="SparseBitSet-1.2.jar"/>
 				<include name="net.tascalate.javaflow.api-2.7.3.jar"/>
 				<include name="jfreechart-1.5.3.jar"/>
