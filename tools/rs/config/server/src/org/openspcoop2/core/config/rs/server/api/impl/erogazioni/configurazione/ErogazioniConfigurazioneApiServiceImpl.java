@@ -133,9 +133,11 @@ import org.openspcoop2.core.controllo_traffico.beans.InfoPolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.core.controllo_traffico.utils.ControlloTrafficoDriverUtils;
 import org.openspcoop2.core.controllo_traffico.utils.PolicyUtilities;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
@@ -145,12 +147,12 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.constants.ScopeContesto;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneApiKey;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
-import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
@@ -211,13 +213,11 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			boolean modiSicurezzaMessaggio = false;
 			if(isProfiloModi) {
 				final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio , nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
-				ProtocolProperties protocolProperties = ErogazioniApiHelper.getProtocolProperties(asps, env);
-				if(protocolProperties!=null && protocolProperties.sizeProperties()>0) {
-					modiSicurezzaMessaggio = true;
-				}
-			}
-			
-			if(isProfiloModi) {
+				final IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				final AccordoServizioParteComune aspc = Helper.getAccordoFull(idAccordo.getNome(),
+						idAccordo.getVersione(), idAccordo.getSoggettoReferente(), env.apcCore);
+				modiSicurezzaMessaggio = env.isSicurezzaMessaggioRiferimentoX509Required(aspc, aspc.getPortType().toString());
+				
 				boolean enabled = pa.getServiziApplicativiAutorizzati()!=null && pa.sizeServizioApplicativoList()>0; // retrocompatibilita
 				if(!enabled) {
 					enabled = pa.getAutorizzazioneToken()!=null && StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi());
@@ -498,16 +498,15 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			boolean tokenAbilitato = pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null;
 			
+			
 			boolean modiSicurezzaMessaggio = false;
 			if(isProfiloModi) {
 				final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getServizioIfErogazione(tipoServizio , nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
-				ProtocolProperties protocolProperties = ErogazioniApiHelper.getProtocolProperties(asps, env);
-				if(protocolProperties!=null && protocolProperties.sizeProperties()>0) {
-					modiSicurezzaMessaggio = true;
-				}
-			}
-			
-			if(isProfiloModi) {
+				final IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
+				final AccordoServizioParteComune aspc = Helper.getAccordoFull(idAccordo.getNome(),
+						idAccordo.getVersione(), idAccordo.getSoggettoReferente(), env.apcCore);
+				modiSicurezzaMessaggio = env.isSicurezzaMessaggioRiferimentoX509Required(aspc, aspc.getPortType().toString());
+				
 				boolean enabled = pa.getServiziApplicativiAutorizzati()!=null && pa.sizeServizioApplicativoList()>0; // retrocompatibilita
 				if(!enabled) {
 					enabled = pa.getAutorizzazioneToken()!=null && StatoFunzionalita.ABILITATO.equals(pa.getAutorizzazioneToken().getAutorizzazioneApplicativi());

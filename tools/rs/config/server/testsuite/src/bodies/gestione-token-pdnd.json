@@ -1,0 +1,10 @@
+{
+  "ridefinito" : true,
+  "abilitato" : true,
+  "policy" : "PDND",
+  "token_opzionale" : false,
+  "validazione_jwt" : "abilitato",
+  "introspection" : "disabilitato",
+  "user_info" : "disabilitato",
+  "token_forward" : false
+}

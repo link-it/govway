@@ -1,0 +1,12 @@
+{
+  "credenziali" : {
+    "token_policy" : "PDND",
+    "identificativo" : "10800af1-f3d8-4a5d-8b97-93a77126770d",
+    "modalita_accesso" : "token"
+  },
+  "nome" : "pdndclient",
+  "descrizione" : "",
+  "modi" : {
+    "dominio" : "esterno"
+  }
+}

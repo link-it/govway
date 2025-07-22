@@ -182,6 +182,7 @@ public class ModISecurityUtils {
 	}
 	
 	// NOTA: riferito dalla classe org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeServizioApplicativoAutorizzatoUtilities tramite reflection
+	// NOTA: riferito dalla classe org.openspcoop2.core.config.rs.server.api.impl.erogazioni.configurazione.ErogazioniConfEnv tramite reflection
 	public static boolean isSicurezzaMessaggioRiferimentoX509Required(AccordoServizioParteComune api, String portType) {
 		
 		// ne basta uno presente
