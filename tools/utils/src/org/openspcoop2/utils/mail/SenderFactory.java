@@ -35,8 +35,9 @@ public class SenderFactory  {
 		switch (type) {
 		case COMMONS_NET:
 			return new CommonsNetSender(log);
+		case JAKARTA_MAIL:
+            return new JakartaMailSender(log);
 		}
 		return null;
 	}
-
 }
