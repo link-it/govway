@@ -168,7 +168,6 @@ Examples:
 |applicativo_interno_token_keystore_file.json|modi.token.identificativo|api_modi_rest.json|erogazione_modi_rest.json|gestione-token-petstore-disabilitato.json|
 
 
-
 @ModIAutorizzazioneApplicativiTokenEsterniPuntuale
 Scenario Outline: Controllo accessi autorizzazione applicativi token esterni puntuale per le erogazioni (profilo ModI) [<token>]
  
@@ -335,7 +334,7 @@ Examples:
 |applicativo_https.json|credenziali.certificato.subject|api_modi_rest.json|erogazione_modi_rest.json|gestione-token-petstore-disabilitato.json|
 |applicativo_esterno_https_token.json|credenziali.token.identificativo|api_modi_rest.json|erogazione_modi_rest.json|gestione-token-petstore.json|
 |applicativo_esterno_https_token.json|credenziali.token.identificativo|api_modi_rest_no_sicurezza.json|erogazione_petstore.json|gestione-token-petstore.json|
-
+|applicativo_esterno_pdnd.json|credenziali.identificativo|api_modi_pdnd.json|erogazione_modi_pdnd.json|gestione-token-pdnd.json|
 
 
 

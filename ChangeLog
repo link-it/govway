@@ -1,3 +1,16 @@
+2025-07-22  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [ApiRsConfigurazione]
+	Risolto Bug #1633
+	La registrazione di un servizio applicativo nel controllo accessi di un’erogazione, 
+	tramite l’endpoint '/erogazioni/{nome_erogazione}/{versione_erogazione}/configurazioni/controllo-accessi/autorizzazione/token/applicativi'
+	risultava troppo restrittiva rispetto alla console di gestione 'govwayConsole'.
+	In particolare, con la seguente configurazione:
+	- API di tipo ModI con generazione token di tipo PDND
+	- Servizio applicativo client esterno di tipo ModI con sicurezza messaggio Authorization PDND
+	la registrazione falliva via API, mentre tramite console avveniva correttamente.
+	È stata quindi allineata la logica di validazione dell’API di configurazione a quella della console di amministrazione, consentendo la corretta registrazione dei servizi applicativi esterni di tipo ModI con sicurezza PDND.
+
 2025-07-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

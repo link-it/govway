@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.core.config.rs.server.api.impl.erogazioni.configurazione;
 
+import java.lang.reflect.Method;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,11 +28,13 @@ import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneHelper;
 
@@ -67,5 +71,20 @@ public class ErogazioniConfEnv extends ErogazioniEnv {
 				: BaseHelper.supplyOrNotFound( () -> ErogazioniApiHelper.getIDGruppoPA(gruppo, this.idAsps, this.apsCore), "Gruppo per l'erogazione scelta");
 
 	}
+	
+	public boolean isSicurezzaMessaggioRiferimentoX509Required(AccordoServizioParteComune aspc, String portType) throws DriverControlStationException {
+		try {
+			Class<?> modiPropertiesClass = Class.forName("org.openspcoop2.protocol.utils.ModISecurityUtils");
+			Method mGetMethod = modiPropertiesClass.getMethod("isSicurezzaMessaggioRiferimentoX509Required", AccordoServizioParteComune.class, String.class);
+			Object oValue = mGetMethod.invoke(null, aspc, portType);
+			if(oValue instanceof Boolean) {
+				return ((Boolean)oValue).booleanValue();
+			}
+			throw new DriverControlStationException("Type '"+oValue.getClass().getName()+"' not expected");
+		}catch(Exception e) {
+			throw new DriverControlStationException(e.getMessage(),e);
+		}
+	}
+	
 
 }
