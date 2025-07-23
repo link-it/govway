@@ -52,5 +52,6 @@ public class MimeTypeConstants {
 	public static final String MEDIA_TYPE_XML_PROBLEM_DETAILS_RFC_7807 = "application/problem+xml";
 	public static final String MEDIA_TYPE_OCSP_REQUEST = "application/ocsp-request";
 	public static final String MEDIA_TYPE_OCSP_RESPONSE = "application/ocsp-response";
+	public static final String MEDIA_TYPE_EVENT_STREAM = "text/event-stream";
 }
 

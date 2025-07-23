@@ -55,6 +55,8 @@ public class TestCopyCharStream {
 		size = 1024;
 		test(size);
 		
+		System.out.println("\n\n\nTESTSUITE COMPLETATA");
+		
 	}
 	
 	public static void test(int size) throws Exception {
@@ -90,17 +92,21 @@ public class TestCopyCharStream {
 		
 				System.out.println("\n");
 								
-				for (CopyStreamMethod CopyStreamMethod : methods) {
+				for (CopyStreamMethod copyStreamMethod : methods) {
 					try (StringReader bin = new StringReader(sb.toString())){
-						testBuffer("Buffer ("+tipoTest+")", CopyStreamMethod, bin, size, wrapping);
+						testBuffer("Buffer ("+tipoTest+")", copyStreamMethod, bin, 
+								CopyStreamMethod.SERVER_SENT_EVENTS.equals(copyStreamMethod) ? (size+1) : size,  // viene aggiunto uno \n finale
+								wrapping);
 					}
 				}
 				
 				System.out.println("\n");
 				
-				for (CopyStreamMethod CopyStreamMethod : methods) {
+				for (CopyStreamMethod copyStreamMethod : methods) {
 					try (FileReader fin = new FileReader(fSRC)){
-						testBuffer("File ("+tipoTest+")", CopyStreamMethod, fin, size, wrapping);
+						testBuffer("File ("+tipoTest+")", copyStreamMethod, fin, 
+								CopyStreamMethod.SERVER_SENT_EVENTS.equals(copyStreamMethod) ? (size+1) : size,  // viene aggiunto uno \n finale
+								wrapping);
 					}
 				}
 			}
@@ -108,11 +114,13 @@ public class TestCopyCharStream {
 			
 			System.out.println("\n");
 			
-			for (CopyStreamMethod CopyStreamMethod : methods) {
+			for (CopyStreamMethod copyStreamMethod : methods) {
 				File fout = File.createTempFile("testCopyStringOut", ".bin");
 				try {
 					try (StringReader bin = new StringReader(sb.toString())){
-						testFile("Buffer", CopyStreamMethod, bin, fout, size);
+						testFile("Buffer", copyStreamMethod, bin, fout, 
+								CopyStreamMethod.SERVER_SENT_EVENTS.equals(copyStreamMethod) ? (size+1) : size  // viene aggiunto uno \n finale
+								);
 					}
 				}finally {
 					fout.delete();
@@ -131,11 +139,13 @@ public class TestCopyCharStream {
 			
 			System.out.println("\n");
 			
-			for (CopyStreamMethod CopyStreamMethod : methods) {
+			for (CopyStreamMethod copyStreamMethod : methods) {
 				fout = File.createTempFile("testCopyStringOut", ".bin");
 				try {
 					try (FileReader fin = new FileReader(fSRC)){
-						testFile("File", CopyStreamMethod, fin, fout, size);
+						testFile("File", copyStreamMethod, fin, fout, 
+								CopyStreamMethod.SERVER_SENT_EVENTS.equals(copyStreamMethod) ? (size+1) : size  // viene aggiunto uno \n finale
+								);
 					}
 				}finally {
 					fout.delete();

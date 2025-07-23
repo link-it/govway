@@ -29,6 +29,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.utils.threads.MonitoredVirtualThreadExecutor;
 
 /**
  * ConnectorApplicativeThreadPool
@@ -53,7 +54,7 @@ public class ConnectorApplicativeThreadPool {
 	 * Il numero di worker thread è uguale al numero di core della CPU disponibile.
 	 * Il pool utilizza un comportamento predefinito per la gestione degli I/O asincroni.
 	 * 
-	 * Ulteriori spiegazioni in org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCOREConnectionManager
+	 * Ulteriori spiegazioni in org.openspcoop2.pdd.core.connettori.httpcore5.nio.ConnettoreHTTPCOREConnectionManager e nella documentazione BIO/NIO
 	 */
 	
 	/**
@@ -121,10 +122,16 @@ public class ConnectorApplicativeThreadPool {
 			inResponseThreadPoolId = poolConfig.getInResponseThreadPoolId();
 			outResponseThreadPoolId = poolConfig.getOutResponseThreadPoolId();
 			asyncThreadPool = new HashMap<>();
-			for (Map.Entry<String,Integer> entry : poolConfig.getPoolSize().entrySet()) {
+			for (Map.Entry<String,Boolean> entry : poolConfig.getPoolVirtualThreadType().entrySet()) {
 				String poolName = entry.getKey();
-				int size = entry.getValue();
-				asyncThreadPool.put(poolName, Executors.newFixedThreadPool(size, new ConnectorApplicativeThreadFactory(poolName+"-worker")));
+				boolean virtualThreads = entry.getValue();
+				if(virtualThreads) {
+					asyncThreadPool.put(poolName, new MonitoredVirtualThreadExecutor(poolName + "-worker-")); // non limita la concorrenza, perché i virtual threads sono leggeri (puoi averne migliaia senza problemi)
+				}
+				else {
+					int size = poolConfig.getPoolSize().get(poolName);
+					asyncThreadPool.put(poolName, Executors.newFixedThreadPool(size, new ConnectorApplicativeThreadFactory(poolName+"-worker"))); // limita la concorrenza a size thread fisici
+				}
 			}
 		}
 	}
@@ -189,18 +196,30 @@ public class ConnectorApplicativeThreadPool {
 	public static String getAsyncPoolThreadsImage() {
 		StringBuilder sb = new StringBuilder();
 		for (Map.Entry<String,ExecutorService> entry : asyncThreadPool.entrySet()) {
-			if(entry.getKey()!=null && entry.getValue() instanceof ThreadPoolExecutor tpe) {
-				if(sb.length()>0) {
-					sb.append("\n\n");
-				}
-				sb.append("[").append(entry.getKey()).append("] ").
-					append(getThreadsImage(tpe));
+			if(entry.getKey()!=null) {
+				fillAsyncPoolThreadsImage(entry, sb);
 			}
 		}
 		if(sb.length()>0) {
 			return sb.toString();
 		}
 		return null;
+	}
+	private static void fillAsyncPoolThreadsImage(Map.Entry<String,ExecutorService> entry, StringBuilder sb) {
+		if(entry.getValue() instanceof ThreadPoolExecutor tpe) {
+			if(sb.length()>0) {
+				sb.append("\n\n");
+			}
+			sb.append("[").append(entry.getKey()).append("] ").
+				append(getThreadsImage(tpe)).append(", virtualThreads:false");
+		}
+		else if(entry.getValue() instanceof MonitoredVirtualThreadExecutor tpe) {
+			if(sb.length()>0) {
+				sb.append("\n\n");
+			}
+			sb.append("[").append(entry.getKey()).append("] ").
+				append(tpe.getStatus()).append(", virtualThreads:true");
+		}
 	}
 	public static boolean isAsyncPoolThreadsEnabled() {
 		return asyncThreadPool!=null;

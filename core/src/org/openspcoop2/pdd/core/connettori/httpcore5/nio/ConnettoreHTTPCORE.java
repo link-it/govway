@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.ConnectionKeepAliveStrategy;
@@ -108,6 +109,8 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 	protected boolean connectionTimeoutConfigurazioneGlobale = true;
 	protected int readConnectionTimeout = -1;
 	protected boolean readConnectionTimeoutConfigurazioneGlobale = true;
+	
+	private Future<ConnettoreHTTPCOREResponse> futureResponse;
 	
 	/* Costruttori */
 	public ConnettoreHTTPCORE(){
@@ -607,7 +610,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 				responseConsumer = new ConnettoreHTTPCOREExtendAbstractBinResponseConsumer();
 			}
 			this.removeThreadLocalContext("ConnettoreHTTPRequest", BooleanNullable.TRUE());
-			httpClient.execute(requestProducer, responseConsumer, HttpClientContext.create(), responseCallback);
+			this.futureResponse = httpClient.execute(requestProducer, responseConsumer, HttpClientContext.create(), responseCallback);
 						
 			if(this.debug) {
 				this.logger.debug("NIO - Terminata gestione richiesta");
@@ -723,6 +726,22 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			
     	}catch(Exception e){
     		throw new ConnettoreException("Chiusura connessione non riuscita: "+e.getMessage(),e);
+    	}finally {
+    		
+    		try {
+    			if(this.futureResponse!=null && this.tipoRisposta!=null && HttpConstants.CONTENT_TYPE_EVENT_STREAM.equals(ContentTypeUtilities.readBaseTypeFromContentType(this.tipoRisposta))){
+    	    		// Con SSE (Server-Sent Events) la risposta NON finisce mai, perché il server tiene la connessione aperta.
+    	    		//l responseConsumer NON viene mai chiuso automaticamente, finché:
+    	    		// Il server non chiude la connessione,
+    	    		// Oppure tu chiudi manualmente l’HttpClient o annulli la richiesta.
+    	    		// In questo caso, streamEnd() non viene mai chiamato → close() non viene invocato.
+    	    		this.futureResponse.cancel(true); // forza la chiusura della connessione
+    	    	}
+    		}catch(Exception e){
+    			// ignore
+    			this.logger.error("Chiusura futureResponse fallita: "+e.getMessage(),e);
+    		}
+    		
     	}
     }
     

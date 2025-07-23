@@ -20,9 +20,11 @@
 
 package org.openspcoop2.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.ByteBuffer;
@@ -49,7 +51,7 @@ import com.google.common.io.CharStreams;
  */
 public class CopyCharStream {
 
-
+	private CopyCharStream() {}
 	
 	/** Copy Sring */
 	
@@ -87,13 +89,16 @@ public class CopyCharStream {
 		case COMMONS_IO:
 			copyCommonsIO(reader,writer);
 			break;
+		case SERVER_SENT_EVENTS:
+			copyServerSentEvents(reader,writer);
+			break;
 		case AUTO:
-//			if(reader instanceof java.io.FileReader || writer instanceof java.io.FileWriter) {
-//				copyChannels(reader,writer);	
-//			}
-//			else {
-//				transferTo(reader,writer);
-//			}
+			/**if(reader instanceof java.io.FileReader || writer instanceof java.io.FileWriter) {
+				copyChannels(reader,writer);	
+			}
+			else {
+				transferTo(reader,writer);
+			}*/
 			// Nel caso di char e' sempre piu' efficiente il transferTo
 			transferTo(reader,writer);
 			break;
@@ -108,6 +113,32 @@ public class CopyCharStream {
 				writer.write(buffer, 0, letti);
 			}
 			writer.flush();
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public static void copyServerSentEvents(Reader r,Writer w) throws UtilsException{
+		/**
+		 * Quando usi SSE, il server mantiene la connessione aperta per inviare eventi in streaming. Non viene mai chiuso in modo normale, a meno che:
+			- Il client lo disconnetta.
+			- Il server decida di interrompere la connessione.	
+		 */
+		try (	BufferedReader reader = new BufferedReader(r);
+				PrintWriter writer = new PrintWriter(w);     
+	        ) {
+			String line;
+      	     while ((line = reader.readLine()) != null) {
+      	    	 // Inoltra la linea così com’è
+      	    	 writer.println(line);
+      	    	 writer.flush(); // importantissimo per non bufferizzare troppo
+
+      	    	 // SSE invia eventi separati da una linea vuota, inoltriamola
+      	    	 if (line.isEmpty()) {
+      	    		 writer.println(); 
+      	    		 writer.flush();
+      	    	 }
+      	     }
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}

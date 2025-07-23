@@ -244,7 +244,7 @@ public class DBVerifier {
 		
 		if (log().isInfoEnabled())
 			log().info("pattern non trovati: [{}]", String.join(", ", patternSet.stream().map(Pattern::toString).toList()));
-		assertTrue("Alcuni messaggi diagnositici non sono stati trovati", patternSet.isEmpty());
+		assertTrue("Alcuni messaggi diagnositici non sono stati trovati: "+(String.join(", ", patternSet.stream().map(Pattern::toString).toList())), patternSet.isEmpty());
 	}
 	
 	private static void verifyConnettoreResponse(String idTransazione, 

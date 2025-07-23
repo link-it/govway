@@ -30,6 +30,7 @@ import java.io.SequenceInputStream;
 import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.openspcoop2.message.constants.Costanti;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
 import org.openspcoop2.message.soap.reader.OpenSPCoop2MessageSoapStreamReader;
@@ -38,6 +39,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.DumpByteArrayOutputStream;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * AbstractBaseOpenSPCoop2RestMessage
@@ -52,6 +54,8 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 	protected String contentType;
 	protected String contentTypeCharsetName = Charset.UTF_8.getValue();
 
+	protected boolean supportSSE = true; // Server-Sent Events
+	
 	protected boolean supportReadOnly = true;
 
 	protected boolean contentUpdatable = false;
@@ -83,6 +87,14 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 
 	public static void setSoapReaderBufferThresholdKb(int bufferThresholdKb) {
 		AbstractBaseOpenSPCoop2MessageDynamicContent.soapReaderBufferThresholdKb = bufferThresholdKb;
+	}
+	
+	public boolean isSupportSSE() {
+		return this.supportSSE;
+	}
+
+	public void setSupportSSE(boolean supportSSE) {
+		this.supportSSE = supportSSE;
 	}
 
 	/* Costruttore */
@@ -437,14 +449,12 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 			throws MessageException {
 		try {
 			if (this.hasContent) {
-
 				if (!consume && this.content == null) {
 					if (!readOnly) {
 						this.contentUpdatable = true; // riverso soap header eventuale nel content che verrà costruito
 					}
 					this.initializeContent(readOnly, idTransazione); // per poi entrare nel ramo sotto serializeContent
 				}
-
 				CountingOutputStream cos = new CountingOutputStream(os);
 				if (this.contentBuffer != null && !this.contentUpdatable) {
 					if (this.soapStreamReader != null && this.soapStreamReader.isSoapHeaderModified()
@@ -474,7 +484,13 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 						if (debug != null) {
 							debug.append(Costanti.WRITE_MODE_SERIALIZE_STREAM);
 						}
-						Utilities.copy(this._getInputStream(), cos);
+						if(this.supportSSE && MessageRole.RESPONSE.equals(this.messageRole) && 
+								this.contentType!=null && HttpConstants.CONTENT_TYPE_EVENT_STREAM.equals(ContentTypeUtilities.readBaseTypeFromContentType(this.contentType))) {
+							Utilities.copyServerSentEvents(this._getInputStream(), cos);
+						}
+						else {
+							Utilities.copy(this._getInputStream(), cos);
+						}
 						this._getInputStream().close();
 					}
 				}

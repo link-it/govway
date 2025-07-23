@@ -20,11 +20,14 @@
 
 package org.openspcoop2.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -45,6 +48,8 @@ import com.google.common.io.ByteStreams;
  * @version $Rev$, $Date$
  */
 public class CopyStream {
+	
+	private CopyStream() {}
 	
 	/** Timeout Utilities */
 	public static InputStream buildTimeoutInputStream(InputStream isParam, int timeout) throws UtilsException {
@@ -125,6 +130,9 @@ public class CopyStream {
 		case COMMONS_IO:
 			copyCommonsIO(is,os);
 			break;
+		case SERVER_SENT_EVENTS:
+			copyServerSentEvents(is,os);
+			break;
 		case AUTO:
 			boolean timeoutInputStream = false;
 			InputStream checkIs = is;
@@ -134,21 +142,21 @@ public class CopyStream {
 				timeoutInputStream = true;
 			}
 			if(checkOs instanceof FileOutputStream) {
-				//System.out.println("CHANNEL");
+				/**System.out.println("CHANNEL");*/
 				copyChannels(is,os);	
 			}
 			else if(checkIs instanceof FileInputStream) {
 				if(timeoutInputStream) {
-					//System.out.println("TRANSFER");
+					/**System.out.println("TRANSFER");*/
 					transferTo(is,os);
 				}
 				else {
-					//System.out.println("CHANNEL");
+					/**System.out.println("CHANNEL");*/
 					copyChannels(is,os);
 				}
 			}
 			else {
-				//System.out.println("TRANSFER");
+				/**System.out.println("TRANSFER");*/
 				transferTo(is,os);
 			}
 			break;
@@ -166,6 +174,33 @@ public class CopyStream {
 				os.write(buffer, 0, letti);
 			}
 			os.flush();
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	public static void copyServerSentEvents(InputStream is,OutputStream os) throws UtilsException{
+		/**
+		 * Quando usi SSE, il server mantiene la connessione aperta per inviare eventi in streaming. Non viene mai chiuso in modo normale, a meno che:
+			- Il client lo disconnetta.
+			- Il server decida di interrompere la connessione.	
+		 */
+		try (InputStreamReader isr = new InputStreamReader(is);
+				BufferedReader reader = new BufferedReader(isr);
+				PrintWriter writer = new PrintWriter(os);     
+	        ) {
+			String line;
+      	     while ((line = reader.readLine()) != null) {
+      	    	 // Inoltra la linea così com’è
+      	    	 writer.println(line);
+      	    	 writer.flush(); // importantissimo per non bufferizzare troppo
+
+      	    	 // SSE invia eventi separati da una linea vuota, inoltriamola
+      	    	 if (line.isEmpty()) {
+      	    		 writer.println(); 
+      	    		 writer.flush();
+      	    	 }
+      	     }
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}

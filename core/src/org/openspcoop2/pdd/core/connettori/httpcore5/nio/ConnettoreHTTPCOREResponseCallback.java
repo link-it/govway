@@ -351,6 +351,8 @@ public class ConnettoreHTTPCOREResponseCallback implements FutureCallback<Connet
 			if(this.connettoreDebug)
 				this.connettoreLogger.info("Gestione invio/risposta http effettuata con successo",false);
 	
+			this.connettore.configureSSE();
+			
 			this.connettore.setAsyncInvocationSuccess(true);
 
 		}  catch(Exception e){ 

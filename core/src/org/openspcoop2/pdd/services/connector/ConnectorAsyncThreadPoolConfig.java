@@ -52,6 +52,9 @@ public class ConnectorAsyncThreadPoolConfig {
 	
 	// pool
 	private static final String PROPERTY_EXECUTOR_PREFIX = "executor.";
+	private static final String PROPERTY_EXECUTOR_TYPE_SUFFIX = ".type";
+	private static final String PROPERTY_EXECUTOR_TYPE_VIRTUAL = "virtual";
+	private static final String PROPERTY_EXECUTOR_TYPE_FIXED = "fixed";
 	private static final String PROPERTY_EXECUTOR_SIZE_SUFFIX = ".size";
 	
 	// erogazioni
@@ -75,6 +78,10 @@ public class ConnectorAsyncThreadPoolConfig {
 	}
 	
 	// pool
+	private Map<String, Boolean> poolVirtualThreadType = new HashMap<>();
+	public Map<String, Boolean> getPoolVirtualThreadType() {
+		return this.poolVirtualThreadType;
+	}
 	private Map<String, Integer> poolSize = new HashMap<>();
 	public Map<String, Integer> getPoolSize() {
 		return this.poolSize;
@@ -93,17 +100,23 @@ public class ConnectorAsyncThreadPoolConfig {
 		List<String> poolNames = new ArrayList<>();
 		fillPoolNames(pr, poolNames);
 		if(poolNames.isEmpty()) {
-			throw new UtilsException("Property "+PROPERTY_PREFIX+"."+PROPERTY_EXECUTOR_PREFIX+"<id>"+PROPERTY_EXECUTOR_SIZE_SUFFIX+" not found");
+			throw new UtilsException("Property "+PROPERTY_PREFIX+"."+PROPERTY_EXECUTOR_PREFIX+"<id>"+PROPERTY_EXECUTOR_TYPE_SUFFIX+" not found");
 		}
 		else {
 			for (String pName : poolNames) {
-				Integer size = getSizeProperty(pr, PROPERTY_EXECUTOR_PREFIX+pName+PROPERTY_EXECUTOR_SIZE_SUFFIX, true);
-				if(size!=null) {
-					this.poolSize.put(pName, size);
+				
+				boolean virtualThread = isVirtualTypeProperty(pr, PROPERTY_EXECUTOR_PREFIX+pName+PROPERTY_EXECUTOR_TYPE_SUFFIX, true);
+				this.poolVirtualThreadType.put(pName, virtualThread);
+				
+				if(!virtualThread) {
+					Integer size = getSizeProperty(pr, PROPERTY_EXECUTOR_PREFIX+pName+PROPERTY_EXECUTOR_SIZE_SUFFIX, true);
+					if(size!=null) {
+						this.poolSize.put(pName, size);
+					}
 				}
 			}
 		}
-		if(this.poolSize.isEmpty()) {
+		if(this.poolVirtualThreadType.isEmpty()) {
 			throw new UtilsException("Pool is empty?");
 		}
 	}
@@ -114,9 +127,22 @@ public class ConnectorAsyncThreadPoolConfig {
 			return v.trim();
 		}
 		else if(required) {
-			throw new UtilsException("Property '"+PROPERTY_PREFIX+"."+id+"' not found");
+			throw new UtilsException("Property '"+PROPERTY_PREFIX+id+"' not found");
 		}
 		return null;
+	}
+	private Boolean isVirtualTypeProperty(PropertiesReader pr, String id, boolean required) throws UtilsException {
+		String v = getProperty(pr, id, required);
+		if(v!=null) {
+			if(PROPERTY_EXECUTOR_TYPE_VIRTUAL.equals(v)) {
+				return true;
+			}
+			else if(PROPERTY_EXECUTOR_TYPE_FIXED.equals(v)) {
+				return false;
+			}
+			throw new UtilsException("Property '"+PROPERTY_PREFIX+id+"' uncorrect value ("+v+"): use '"+PROPERTY_EXECUTOR_TYPE_VIRTUAL+"' or '"+PROPERTY_EXECUTOR_TYPE_FIXED+"'");
+		}
+		return true; // default
 	}
 	private Integer getSizeProperty(PropertiesReader pr, String id, boolean required) throws UtilsException {
 		String v = getProperty(pr, id, required);
@@ -127,7 +153,7 @@ public class ConnectorAsyncThreadPoolConfig {
 			try {
 				return Integer.parseInt(v);
 			}catch(Exception e) {
-				throw new UtilsException("Property '"+PROPERTY_PREFIX+"."+id+"' uncorrect value ("+v+"): "+e.getMessage(),e);
+				throw new UtilsException("Property '"+PROPERTY_PREFIX+id+"' uncorrect value ("+v+"): "+e.getMessage(),e);
 			}
 		}
 		return null;

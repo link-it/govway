@@ -617,6 +617,20 @@ public class CostantiProprieta {
 		return readBooleanValueWithDefault(proprieta, CONNETTORE_HEADER_VALIDATION_ENABLED, defaultValue, CONNETTORE_VALUE_ENABLED, CONNETTORE_VALUE_DISABLED);
 	}
 
+	public static final String CONNETTORE_SERVER_SENT_EVENTS_ENABLED = "connettori.serverSentEvents.enabled";
+	public static boolean isConnettoriSupportServerSentEventsEnabled(List<Proprieta> proprieta, boolean defaultValue) {
+		String isEnabled = readValue(proprieta, CONNETTORE_SERVER_SENT_EVENTS_ENABLED);
+		if(isEnabled!=null && !"".equals(isEnabled)) {
+			if(CONNETTORE_VALUE_ENABLED.equals(isEnabled.trim())) {
+				return true;
+			}
+			else if(CONNETTORE_VALUE_DISABLED.equals(isEnabled.trim())) {
+				return false;
+			}
+		}
+		return defaultValue;
+	}
+	
 	public static final String CONNETTORE_POOL_CONNECTION_MAX_PER_ROUTE = "connettori.connection.pool.maxPerRoute";
 	public static final String CONNETTORE_POOL_CONNECTION_MAX_TOTAL = "connettori.connection.pool.maxTotal";
 	public static final String CONNETTORE_POOL_CONNECTION_VALIDATE_AFTER_INACTIVITY = "connettori.connection.pool.validateAfterInactivity";

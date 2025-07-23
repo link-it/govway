@@ -30,6 +30,6 @@ package org.openspcoop2.utils;
  */
 public enum CopyStreamMethod {
 
-	JAVA, JAVA_TRANSFER_TO, JAVA_NIO, GUAVA, COMMONS_IO, AUTO
+	JAVA, JAVA_TRANSFER_TO, JAVA_NIO, GUAVA, COMMONS_IO, AUTO, SERVER_SENT_EVENTS
 	
 }

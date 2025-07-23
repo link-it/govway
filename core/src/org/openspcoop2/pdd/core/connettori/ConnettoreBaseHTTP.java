@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.message.AbstractBaseOpenSPCoop2MessageDynamicContent;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
@@ -146,6 +147,16 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	protected String forwardProxyHeaderName;
 	protected String forwardProxyHeaderValue;
 	
+	/** Server-Sent Events */
+	protected boolean supportSSE = true;
+	public void configureSSE() {
+		if(this.responseMsg instanceof AbstractBaseOpenSPCoop2MessageDynamicContent<?> mdc) {
+			mdc.setSupportSSE(this.supportSSE);
+			if(this.msgDiagnostico!=null) {
+				this.msgDiagnostico.logPersonalizzato("consegnaRispostaSSE");
+			}
+		}
+	}
 	
     /* Costruttori */
     protected ConnettoreBaseHTTP(){
@@ -175,17 +186,20 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				this.charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueConsegnaContenutiApplicativi();
 				this.encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueConsegnaContenutiApplicativi();
 				this.validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueConsegnaContenutiApplicativi();
+				this.supportSSE = this.openspcoopProperties.isEnabledSupportServerSentEventsConsegnaContenutiApplicativi();
 			}else{
 				this.encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValueInoltroBuste();
 				this.charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValueInoltroBuste();
 				this.encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValueInoltroBuste();
 				this.validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValueInoltroBuste();
+				this.supportSSE = this.openspcoopProperties.isEnabledSupportServerSentEventsInoltroBuste();
 			}
 			
 			this.encodingRFC2047 = CostantiProprieta.isConnettoriHeaderValueEncodingRFC2047RequestEnabled(this.proprietaPorta, this.encodingRFC2047);
 			this.charsetRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047RequestCharset(this.proprietaPorta, this.charsetRFC2047);
 			this.encodingAlgorithmRFC2047 = CostantiProprieta.getConnettoriHeaderValueEncodingRFC2047RequestType(this.proprietaPorta, this.encodingAlgorithmRFC2047);
 			this.validazioneHeaderRFC2047 = CostantiProprieta.isConnettoriHeaderValidationRequestEnabled(this.proprietaPorta, this.validazioneHeaderRFC2047);
+			this.supportSSE = CostantiProprieta.isConnettoriSupportServerSentEventsEnabled(this.proprietaPorta, this.supportSSE);
 		}
 		
 		if(!this.forceDisableProxyPassReverse) {

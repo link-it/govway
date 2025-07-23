@@ -109,7 +109,8 @@ public class TestCopyStream {
 			for (CopyStreamMethod copyStreamMethod : methods) {
 				
 				try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
-					testBuffer("Buffer", copyStreamMethod, bin, size, 
+					testBuffer("Buffer", copyStreamMethod, bin, 
+							CopyStreamMethod.SERVER_SENT_EVENTS.equals(copyStreamMethod) ? (size+1) : size,  // viene aggiunto uno \n finale
 							timeoutMs, expectedTimeout,
 							limitBytes, expectedLimitExceeded);
 				}
@@ -127,7 +128,8 @@ public class TestCopyStream {
 			
 			for (CopyStreamMethod copyStreamMethod : methods) {
 				try (FileInputStream fin = new FileInputStream(fSRC)){
-					testBuffer("File", copyStreamMethod, fin, size, 
+					testBuffer("File", copyStreamMethod, fin, 
+							CopyStreamMethod.SERVER_SENT_EVENTS.equals(copyStreamMethod) ? (size+1) : size,  // viene aggiunto uno \n finale
 							timeoutMs, expectedTimeout,
 							limitBytes, expectedLimitExceeded);
 				}
@@ -140,7 +142,8 @@ public class TestCopyStream {
 				File fout = File.createTempFile("testCopyStreamOut", ".bin");
 				try {
 					try (ByteArrayInputStream bin = new ByteArrayInputStream(buffer)){
-						testFile("Buffer", copyStreamMethod, bin, fout, size, 
+						testFile("Buffer", copyStreamMethod, bin, fout, 
+								CopyStreamMethod.SERVER_SENT_EVENTS.equals(copyStreamMethod) ? (size+1) : size,  // viene aggiunto uno \n finale
 								timeoutMs, expectedTimeout,
 								limitBytes, expectedLimitExceeded);
 					}
@@ -167,7 +170,8 @@ public class TestCopyStream {
 				fout = File.createTempFile("testCopyStreamOut", ".bin");
 				try {
 					try (FileInputStream fin = new FileInputStream(fSRC)){
-						testFile("File", copyStreamMethod, fin, fout, size, 
+						testFile("File", copyStreamMethod, fin, fout, 
+								CopyStreamMethod.SERVER_SENT_EVENTS.equals(copyStreamMethod) ? (size+1) : size,  // viene aggiunto uno \n finale
 								timeoutMs, expectedTimeout,
 								limitBytes, expectedLimitExceeded);
 					}

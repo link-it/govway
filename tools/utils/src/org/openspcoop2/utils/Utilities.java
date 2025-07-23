@@ -412,6 +412,13 @@ public class Utilities {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
+	public static void copyServerSentEvents(InputStream is,OutputStream os) throws UtilsException{
+		try{
+			CopyStream.copy(CopyStreamMethod.SERVER_SENT_EVENTS, is, os);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
 	
 	
 

@@ -37,6 +37,7 @@
 				<var name="skipJavaIncompatiblePackageCrypt" value=""/>
 				<var name="skipJavaIncompatiblePackageService" value=""/>
 				<var name="skipJavaIncompatiblePackageOpenapi" value=""/>
+				<var name="skipJavaIncompatibleClassVirtualThreads" value=""/>
 				<if>
 					<not>
 						<equals arg1="${javaSourceVersion}" arg2="$${javaSourceVersion}"/>
@@ -48,6 +49,7 @@
 						<var name="skipJavaIncompatiblePackageCrypt" value="**/*.java"/>
 						<var name="skipJavaIncompatiblePackageService" value="**/*.java"/>
 						<var name="skipJavaIncompatiblePackageOpenapi" value="**/*.java"/>
+						<var name="skipJavaIncompatibleClassVirtualThreads" value="**/MonitoredVirtualThreadExecutor.java"/>
 					</then>
 				</if>
 				
@@ -820,12 +822,12 @@
 
 				<!-- org.openspcoop.2.utils.threads -->
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.utils.threads" />
-
 				<antcall target="compile_src_openspcoop2">
 					<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
 					<param name="compile_src_openspcoop2.SRC_DIR" value="${src_utils}/org/openspcoop2/utils/threads"/>
 					<param name="compile_src_openspcoop2.GIT_ID_NAME" value="utils-threads"/>
 					<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+					<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="${skipJavaIncompatibleClassVirtualThreads}"/>
 					<param name="compile_src_openspcoop2.SRC_INCLUDES" value=""/>
 					<param name="compile_src_openspcoop2.SRC_PREFIX" value="org/openspcoop2/utils/threads"/>
 					<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.utils.threads"/>

@@ -965,6 +965,9 @@ public class OpenSPCoop2Properties {
 			this.isEnabledValidazioneRFC2047HeaderNameValueInoltroBuste();
 			this.isEnabledValidazioneRFC2047HeaderNameValueConsegnaContenutiApplicativi();
 			
+			this.isEnabledSupportServerSentEventsInoltroBuste();
+			this.isEnabledSupportServerSentEventsConsegnaContenutiApplicativi();
+			
 			this.getGestioneCORS_returnCode_ricezioneContenutiApplicativi();
 			this.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi();
 			this.getGestioneCORS_returnCode_ricezioneBuste();
@@ -16962,6 +16965,52 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isEnabledValidazioneRFC2047HeaderNameValueConsegnaContenutiApplicativi;
+	}
+
+	private Boolean isEnabledSupportServerSentEventsInoltroBuste = null;
+	public boolean isEnabledSupportServerSentEventsInoltroBuste() {	
+		if(this.isEnabledSupportServerSentEventsInoltroBuste==null){
+			String pName = "org.openspcoop2.pdd.connettori.inoltroBuste.serverSentEvents.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isEnabledSupportServerSentEventsInoltroBuste = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isEnabledSupportServerSentEventsInoltroBuste = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.isEnabledSupportServerSentEventsInoltroBuste = true;
+			}  
+		}
+
+		return this.isEnabledSupportServerSentEventsInoltroBuste;
+	}
+	
+	private Boolean isEnabledSupportServerSentEventsConsegnaContenutiApplicativi = null;
+	public boolean isEnabledSupportServerSentEventsConsegnaContenutiApplicativi() {	
+		if(this.isEnabledSupportServerSentEventsConsegnaContenutiApplicativi==null){
+			String pName = "org.openspcoop2.pdd.connettori.consegnaContenutiApplicativi.serverSentEvents.enabled";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.isEnabledSupportServerSentEventsConsegnaContenutiApplicativi = Boolean.parseBoolean(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					this.isEnabledSupportServerSentEventsConsegnaContenutiApplicativi = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default=true, errore:"+e.getMessage(),e);
+				this.isEnabledSupportServerSentEventsConsegnaContenutiApplicativi = true;
+			}  
+		}
+
+		return this.isEnabledSupportServerSentEventsConsegnaContenutiApplicativi;
 	}
 	
 	private Integer getGestioneCORS_returnCode_ricezioneContenutiApplicativi = null;
