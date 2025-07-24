@@ -36,8 +36,14 @@ public abstract class Sender {
 	private int readTimeout = 120 * 1000;  // default 2 minuti
 	private int connectionTimeout = 10 * 1000; // deafault 10 secondi
 	
-	public Sender(Logger log){
+	protected Sender(Logger log){
 		this.log = log;
+	}
+	
+	public void logDebug(String msg) {
+		if(this.log!=null) {
+			this.log.debug(msg);
+		}
 	}
 	
 	public abstract void send(Mail mail, boolean debug) throws UtilsException;

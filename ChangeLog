@@ -1,3 +1,9 @@
+2025-07-24  Giuliano Pintori <pintori@link.it>
+
+	* [Utils]
+	Aggiunta funzionalità #1637
+	È stato introdotto il supporto per l’invio di email tramite la libreria 'Jakarta Mail'.
+
 2025-07-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

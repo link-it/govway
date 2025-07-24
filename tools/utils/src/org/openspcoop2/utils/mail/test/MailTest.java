@@ -71,6 +71,10 @@ public class MailTest {
 		Sender senderCommonsNet = SenderFactory.newSender(SenderType.COMMONS_NET, LoggerWrapperFactory.getLogger(MailTest.class));
 		senderCommonsNet.setConnectionTimeout(100);
 		senderCommonsNet.setReadTimeout(5 * 1000);
+		// Sender [Jakarta-Mail]
+		Sender senderJakartaMail = SenderFactory.newSender(SenderType.JAKARTA_MAIL, LoggerWrapperFactory.getLogger(MailTest.class));
+		senderJakartaMail.setConnectionTimeout(100);
+		senderJakartaMail.setReadTimeout(5 * 1000);
 
 		
 		
@@ -101,10 +105,10 @@ public class MailTest {
 //		senderCommonsNet.send(mail, true); 
 //		System.out.println("Invio mail ["+SenderType.COMMONS_NET+"] effettuato");
 		
-		// Invio con commons mail
-//		System.out.println("Invio mail ["+SenderType.COMMONS_MAIL+"] in corso ...");
-//		senderCommonsMail.send(mail, true); 
-//		System.out.println("Invio mail ["+SenderType.COMMONS_MAIL+"] effettuato");
+		// Invio con jakarta mail
+//		System.out.println("Invio mail ["+SenderType.JAKARTA_MAIL+"] in corso ...");
+//		senderJakartaMail.send(mail, true); 
+//		System.out.println("Invio mail ["+SenderType.JAKARTA_MAIL+"] effettuato");
 		
 		
 		
@@ -125,6 +129,10 @@ public class MailTest {
 //		System.out.println("Invio mail con attachments ["+SenderType.COMMONS_NET+"] in corso ...");
 //		senderCommonsNet.send(mail, true); 
 //		System.out.println("Invio mail con attachments ["+SenderType.COMMONS_NET+"] effettuato");
+		
+		System.out.println("Invio mail con attachments ["+SenderType.JAKARTA_MAIL+"] in corso ...");
+		senderJakartaMail.send(mail, true); 
+		System.out.println("Invio mail con attachments ["+SenderType.JAKARTA_MAIL+"] effettuato");
 		
 		
 	}

@@ -30,13 +30,17 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class SenderFactory  {
+	
+	private SenderFactory() {}
 
 	public static Sender newSender(SenderType type, Logger log){
 		switch (type) {
 		case COMMONS_NET:
 			return new CommonsNetSender(log);
+		case JAKARTA_MAIL:
+            return new JakartaMailSender(log);
+        default:
+        	return null;
 		}
-		return null;
 	}
-
 }

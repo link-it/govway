@@ -34,7 +34,7 @@ public class MailBody {
 
 	private String contentType = null;
 	private String message;
-	private List<MailAttach> attachments = new ArrayList<MailAttach>();
+	private List<MailAttach> attachments = new ArrayList<>();
 	
 	public String getContentType() {
 		return this.contentType;

@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.mail;
 
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * MailAttach
@@ -33,7 +34,7 @@ public class MailTextAttach extends MailAttach {
 	String content;
 	
 	public MailTextAttach(String name, String content){
-		super(name, "text/plain");
+		super(name, HttpConstants.CONTENT_TYPE_PLAIN);
 		this.content = content;
 	}
 	

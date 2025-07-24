@@ -21,6 +21,8 @@
 package org.openspcoop2.utils.mail;
 
 import org.openspcoop2.utils.mime.MimeTypes;
+import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.slf4j.Logger;
 
 /**
  * MailAttach
@@ -34,7 +36,7 @@ public abstract class MailAttach {
 	private String name;
 	private String contentType;
 	
-	public MailAttach(String name, String contentType){
+	protected MailAttach(String name, String contentType){
 		this.name = name;
 		this.contentType = contentType;
 	}
@@ -45,28 +47,26 @@ public abstract class MailAttach {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getContentType() {
+	public String getContentType(Logger log) {
 		if(this.contentType!=null)
 			return this.contentType;
 		else{
 			MimeTypes mimeTypes = null;
 			try{
 				mimeTypes = MimeTypes.getInstance();
-				if(this.name!=null){
-					if(this.name.contains(".")){
-						String ext = this.name.substring(this.name.lastIndexOf('.')+1, this.name.length());
-						return mimeTypes.getMimeType(ext);
-					}
+				if(this.name!=null &&
+					this.name.contains(".")){
+					String ext = this.name.substring(this.name.lastIndexOf('.')+1, this.name.length());
+					return mimeTypes.getMimeType(ext);
 				}
 			}catch(Exception e){
-				e.printStackTrace(System.err);
-				
+				log.error(e.getMessage(),e);
 			}
 			// default
 			if(mimeTypes!=null)
 				return mimeTypes.getMimeType("bin");
 			else
-				return "application/octet-stream";
+				return HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM;
 		}
 	}
 	public void setContentType(String contentType) {
