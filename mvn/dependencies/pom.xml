@@ -57,6 +57,38 @@
 		<module>testsuite</module>
 	</modules>
 
+	<profiles>
+
+		<!-- Caso true -> fail su qualsiasi vulnerabilità -->
+		<profile>
+			<id>owasp-fail-all</id>
+			<activation>
+				<property>
+					<name>owasp.plugin.failBuildOnAnyVulnerability</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<owasp.plugin.failBuildOnCVSS>0</owasp.plugin.failBuildOnCVSS>
+			</properties>
+		</profile>
+
+		<!-- Caso false -> non fallire mai -->
+		<profile>
+			<id>owasp-ignore</id>
+			<activation>
+				<property>
+					<name>owasp.plugin.failBuildOnAnyVulnerability</name>
+					<value>false</value>
+				</property>
+			</activation>
+			<properties>
+				<owasp.plugin.failBuildOnCVSS>11</owasp.plugin.failBuildOnCVSS>
+			</properties>
+		</profile>
+		
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -89,8 +121,13 @@
 						<phase>${owasp}</phase>
 						<configuration>
 							<autoUpdate>${owasp.plugin.autoUpdate}</autoUpdate> <!-- Impostare a false quando ci sono problemi su repository NIST -->
-							<failBuildOnAnyVulnerability>${owasp.plugin.failBuildOnAnyVulnerability}</failBuildOnAnyVulnerability>
-							<!-- <failBuildOnCVSS>8</failBuildOnCVSS> -->
+							<!-- <failBuildOnAnyVulnerability>${owasp.plugin.failBuildOnAnyVulnerability}</failBuildOnAnyVulnerability> 
+							      failBuildOnAnyVulnerability è deprecato, deve essere usato failBuildOnCVSS valorizzato come segue
+							      - 0 equivale a failBuildOnAnyVulnerability=true, poichè fallirà per qualsiasi vulnerabilità
+							      - 11 equivale a failBuildOnAnyVulnerability=false, poichè significa non fallire mai visto che il massimo CVSS è 10. 
+							        In alternativa si può anche non definire l'elemento 'failBuildOnCVSS'
+							-->
+							<failBuildOnCVSS>${owasp.plugin.failBuildOnCVSS}</failBuildOnCVSS>
 							<outputDirectory>${owasp.output.dir}</outputDirectory>
 							<format>ALL</format>
 							<suppressionFiles>
@@ -98,6 +135,16 @@
 								<suppressionFile>${owasp.falsePositives.dir}/xercesImpl.xml</suppressionFile>
 								<suppressionFile>${owasp.falsePositives.dir}/CVE-2025-48976.xml</suppressionFile>
 							</suppressionFiles>
+							<!--
+								Per eliminare il warning
+								[WARNING] No lock file exists - this will result in false negatives; please run `npm install \-\-package-lock`
+								[WARNING] Analyzing `/tmp/dctempf0629e0d-f705-4679-abf5-ebc3ee3408e7/check13553886643871381811tmp/238/META-INF/resources/webjars/jquery-ui/1.14.1/package.json` - 			however, the node_modules directory does not exist. Please run `npm install` prior to running dependency-check
+								Il tool sta trattando i package.json nei WebJars come se fossero un progetto Node.js.
+								In un JAR non ci saranno mai node_modules, quindi questi warning sono normali e non indicano un problema reale.
+								Il jar 'jquery-ui-1.14.1.jar', essendo un archivio jar, è già sotto controllo su NVD.
+							-->
+							<nodeAnalyzerEnabled>false</nodeAnalyzerEnabled>
+							<!-- per gestire ritardi dovuti al NVD server -->
 							<nvdApiDelay>120000</nvdApiDelay><!-- 2 minuti -->
 							<nvdMaxRetryCount>3</nvdMaxRetryCount> <!-- 3 max tentativi visto il timeout alto -->
 						</configuration>
