@@ -75,6 +75,35 @@
 				<module>soapbox</module>
 			</modules>
 		</profile>
+
+		<!-- Caso true -> fail su qualsiasi vulnerabilità -->
+		<profile>
+			<id>owasp-fail-all</id>
+			<activation>
+				<property>
+					<name>owasp.plugin.failBuildOnAnyVulnerability</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<properties>
+				<owasp.plugin.failBuildOnCVSS>0</owasp.plugin.failBuildOnCVSS>
+			</properties>
+		</profile>
+
+		<!-- Caso false -> non fallire mai -->
+		<profile>
+			<id>owasp-ignore</id>
+			<activation>
+				<property>
+					<name>owasp.plugin.failBuildOnAnyVulnerability</name>
+					<value>false</value>
+				</property>
+			</activation>
+			<properties>
+				<owasp.plugin.failBuildOnCVSS>11</owasp.plugin.failBuildOnCVSS>
+			</properties>
+		</profile>
+		
 	</profiles>
 
 	<build>
@@ -109,8 +138,13 @@
 						<phase>${owasp}</phase>
 						<configuration>
 							<autoUpdate>${owasp.plugin.autoUpdate}</autoUpdate> <!-- Impostare a false quando ci sono problemi su repository NIST -->
-							<failBuildOnAnyVulnerability>${owasp.plugin.failBuildOnAnyVulnerability}</failBuildOnAnyVulnerability>
-							<!-- <failBuildOnCVSS>8</failBuildOnCVSS> -->
+							<!-- <failBuildOnAnyVulnerability>${owasp.plugin.failBuildOnAnyVulnerability}</failBuildOnAnyVulnerability> 
+							      failBuildOnAnyVulnerability è deprecato, deve essere usato failBuildOnCVSS valorizzato come segue
+							      - 0 equivale a failBuildOnAnyVulnerability=true, poichè fallirà per qualsiasi vulnerabilità
+							      - 11 equivale a failBuildOnAnyVulnerability=false, poichè significa non fallire mai visto che il massimo CVSS è 10. 
+							        In alternativa si può anche non definire l'elemento 'failBuildOnCVSS'
+							-->
+							<failBuildOnCVSS>${owasp.plugin.failBuildOnCVSS}</failBuildOnCVSS>
 							<outputDirectory>${owasp.output.dir}</outputDirectory>
 							<format>ALL</format>
 							<suppressionFiles>
