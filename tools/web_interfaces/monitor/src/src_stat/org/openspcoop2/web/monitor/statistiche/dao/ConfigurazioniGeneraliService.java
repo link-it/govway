@@ -1343,11 +1343,11 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		String urlInvocazione = urlInvocazioneAPI.getUrl();
 		dettaglioPA.setUrlInvocazione(urlInvocazione);
 
-		if("trasparente".equals(protocolFactory.getProtocol()))	{
+		if(org.openspcoop2.protocol.engine.constants.Costanti.TRASPARENTE_PROTOCOL_NAME.equals(protocolFactory.getProtocol()))	{
 			dettaglioPA.setTrasparente(true);
 			dettaglioPA.setPropertyIntegrazione(ConfigurazioniUtils.getPropertiesIntegrazionePA(dettaglioPA));
 		}	
-
+	
 		dettaglioPA.setPropertyGenerali(ConfigurazioniUtils.getPropertiesGeneraliPA(dettaglioPA));
 		boolean supportatoAutenticazione = protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneSoggetti();
 		dettaglioPA.setSupportatoAutenticazione(supportatoAutenticazione);
@@ -1357,7 +1357,15 @@ public class ConfigurazioniGeneraliService implements IConfigurazioniGeneraliSer
 		dettaglioPA.setListaSA(ConfigurazioniUtils.getPropertiesServiziApplicativiPA(dettaglioPA, this.driverConfigDB, idPA));
 
 		if(CostantiLabel.MODIPA_PROTOCOL_NAME.equals(protocolFactory.getProtocol())) {
+			
+			dettaglioPA.setModi(true);
+			
 			dettaglioPA.setConfigurazioneProfilo(this.readConfigurazioneProfiloErogazione(idServizio, urlInvocazione));
+
+			if(dettaglioPA.getConfigurazioneProfilo()!=null && dettaglioPA.getConfigurazioneProfilo().length()>1) {
+				// se esistono proprieta'
+				dettaglioPA.setModiSicurezzaMessaggio(true);
+			}
 		}
 		
 		boolean datiPortaPrincipale = false;

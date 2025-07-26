@@ -575,10 +575,13 @@ public class ModIUtils {
 			}
 			if(idProfiloSicurezzaMessaggioAlgItem!=null) {
 				String algoLabel = getStringValue(protocolPropertyList, idProfiloSicurezzaMessaggioAlgItem);
-				if(algoLabel.contains("#") && !algoLabel.endsWith("#")) {
+				if(algoLabel!=null &&
+					algoLabel.contains("#") && !algoLabel.endsWith("#")) {
 					algoLabel = algoLabel.substring(algoLabel.indexOf("#")+1, algoLabel.length()).toUpperCase();
 				}
-				map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_SIGNATURE_ALGORITHM, algoLabel);
+				if(algoLabel!=null) {
+					map.put(prefixKey+API_IMPL_SICUREZZA_MESSAGGIO_SIGNATURE_ALGORITHM, algoLabel);
+				}
 			}
 			
 			// Algoritmo C14N
