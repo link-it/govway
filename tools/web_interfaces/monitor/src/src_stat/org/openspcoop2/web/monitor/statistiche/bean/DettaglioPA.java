@@ -67,11 +67,13 @@ public class DettaglioPA implements Serializable{
 	private boolean trasparente= false;
 	private List<Property> propertyIntegrazione = null;
 	private String configurazioneProfilo = null;
+	private boolean modi= false;
+	private boolean modiSicurezzaMessaggio= false;
 	
 	public DettaglioPA(){
 		this.ruoli = new ArrayList<>();
 		this.fruitori = new ArrayList<>();
-		this.listaSA = new ArrayList<DettaglioSA>();
+		this.listaSA = new ArrayList<>();
 		this.azioni = new ArrayList<>();
 	}
 
@@ -285,5 +287,21 @@ public class DettaglioPA implements Serializable{
 		}
 		
 		
+	}
+	
+	public boolean isModi() {
+		return this.modi;
+	}
+
+	public void setModi(boolean modi) {
+		this.modi = modi;
+	}
+
+	public boolean isModiSicurezzaMessaggio() {
+		return this.modiSicurezzaMessaggio;
+	}
+
+	public void setModiSicurezzaMessaggio(boolean modiSicurezzaMessaggio) {
+		this.modiSicurezzaMessaggio = modiSicurezzaMessaggio;
 	}
 }

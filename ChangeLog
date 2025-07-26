@@ -1,3 +1,11 @@
+2025-07-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug 1640
+	Nei report CSV/XLS generati tramite la funzionalità 'Reportistica - Configurazione API', 
+	per le erogazioni con profilo di interoperabilità ModI tramite PDND, 
+	la colonna 'Autorizzazione Token (Applicativi Autorizzati)' non risultava valorizzata.
+
 2025-07-24  Giuliano Pintori <pintori@link.it>
 
 	* [Utils]

@@ -409,7 +409,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 						if(values!=null && !values.isEmpty()) {
 			        		for (String value : values) {
 			        			if(!RFC2047Utilities.isAllCharactersInCharset(value, this.charsetRFC2047)){
-									String encoded = RFC2047Utilities.encode(new String(value), this.charsetRFC2047, this.encodingAlgorithmRFC2047);
+									String encoded = RFC2047Utilities.encode(value+"", this.charsetRFC2047, this.encodingAlgorithmRFC2047);
 									/**System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");*/
 									if(this.debug)
 										this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+this.charsetRFC2047+" encoding-algorithm:"+this.encodingAlgorithmRFC2047+")",false);
@@ -739,7 +739,9 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
     	    	}
     		}catch(Exception e){
     			// ignore
-    			this.logger.error("Chiusura futureResponse fallita: "+e.getMessage(),e);
+    			if(this.logger!=null) {
+    				this.logger.error("Chiusura futureResponse fallita: "+e.getMessage(),e);
+    			}
     		}
     		
     	}

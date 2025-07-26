@@ -697,7 +697,7 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(NamingUtils.getLabelProtocollo(protocollo));
 		else 
 			oneLine.add("");
-		
+				
 		// TIPO ASPC
 		if(dettaglioPA.getIdAccordoServizioParteComune() != null) {
 			IdAccordoServizioParteComune aspc = dettaglioPA.getIdAccordoServizioParteComune();
@@ -1052,15 +1052,27 @@ public class ConfigurazioniCsvExporter {
 		// Autorizzazione Token (Applicativi Autorizzati)
 		// Applicativi Autorizzati (Authz Token)
 		PortaApplicativaAutorizzazioneToken autorizzazioneToken = paOp2.getAutorizzazioneToken();
-		if(autorizzazioneToken!=null && StatoFunzionalita.ABILITATO.equals(autorizzazioneToken.getAutorizzazioneApplicativi())){
+		if( (autorizzazioneToken!=null && StatoFunzionalita.ABILITATO.equals(autorizzazioneToken.getAutorizzazioneApplicativi())) || dettaglioPA.isModiSicurezzaMessaggio()){
 			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
 			StringBuilder sb = new StringBuilder();
-			if(autorizzazioneToken.getServiziApplicativi()!=null && autorizzazioneToken.getServiziApplicativi().sizeServizioApplicativoList()>0) {
-				for (PortaApplicativaAutorizzazioneServizioApplicativo sa : autorizzazioneToken.getServiziApplicativi().getServizioApplicativoList()) {
-					if(sb.length()>0) { 
-						sb.append("\n");
+			if(dettaglioPA.isModiSicurezzaMessaggio()) {
+				if(paOp2.getServiziApplicativiAutorizzati()!=null && paOp2.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
+					for (PortaApplicativaAutorizzazioneServizioApplicativo sa : paOp2.getServiziApplicativiAutorizzati().getServizioApplicativoList()) {
+						if(sb.length()>0) {
+							sb.append("\n");
+						}
+						sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
 					}
-					sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
+				}
+			}
+			else {
+				if(autorizzazioneToken.getServiziApplicativi()!=null && autorizzazioneToken.getServiziApplicativi().sizeServizioApplicativoList()>0) {
+					for (PortaApplicativaAutorizzazioneServizioApplicativo sa : autorizzazioneToken.getServiziApplicativi().getServizioApplicativoList()) {
+						if(sb.length()>0) {
+							sb.append("\n");
+						}
+						sb.append(sa.getNome() + " soggetto:"+sa.getTipoSoggettoProprietario()+"/"+sa.getNomeSoggettoProprietario()+"");
+					}
 				}
 			}
 			oneLine.add(sb.toString());
