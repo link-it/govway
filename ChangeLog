@@ -1,3 +1,10 @@
+2025-07-28  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug 1641
+	Risolta anomalia che non consentiva di aggiornare una Token Policy inserendo un valore dinamico contenente caratteri '{' o '}' (es. nel campo purposeId). 
+	L'applicazione restituiva un errore che segnalava la mancata valorizzazione obbligatoria del campo, come se il valore non fosse stato inserito.
+
 2025-07-25  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
