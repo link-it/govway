@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.handlers.suap;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.message.ForcedResponseMessage;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -91,7 +92,12 @@ public class SUAPResponseGenerator implements OutResponseHandler {
 					modifyErrorMessage(400, ERROR_400_001_CODE, ERROR_400_001_MESSAGE, context.getMessaggio());
 				}
 				else if(isErroreTokenNonPresente(context)) {
-					modifyErrorMessage(401, ERROR_401_001_CODE, ERROR_401_001_MESSAGE, context.getMessaggio());
+					if(isAuthorizationWithoutBearer(context)) {
+						modifyErrorMessage(401, ERROR_401_002_CODE, ERROR_401_002_MESSAGE, context.getMessaggio());
+					}
+					else {
+						modifyErrorMessage(401, ERROR_401_001_CODE, ERROR_401_001_MESSAGE, context.getMessaggio());
+					}
 				}
 				else if(isErroreToken(context)) {
 					modifyErrorMessage(401, ERROR_401_002_CODE, ERROR_401_002_MESSAGE, context.getMessaggio());
@@ -337,6 +343,25 @@ public class SUAPResponseGenerator implements OutResponseHandler {
 			}
 		}catch(Exception e) {
 			context.getLogCore().error("isInternalRisposta5xxDifferenteJson failed: "+e.getMessage(),e);
+			// ignore
+		}
+		return false;
+	}
+	
+	private static boolean isAuthorizationWithoutBearer(OutResponseContext context) {
+		try {
+			if(context.getPddContext()!=null && context.getPddContext().containsKey(Costanti.REQUEST_INFO)) {
+				org.openspcoop2.protocol.sdk.state.RequestInfo requestInfo = (org.openspcoop2.protocol.sdk.state.RequestInfo) context.getPddContext().getObject(Costanti.REQUEST_INFO);
+				if(requestInfo!=null && requestInfo.getProtocolContext()!=null){
+					String v = requestInfo.getProtocolContext().getHeaderFirstValue(HttpConstants.AUTHORIZATION);
+					if(v!=null && StringUtils.isNotEmpty(v)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}catch(Exception e) {
+			context.getLogCore().error("isAuthorizationWithoutBearer failed: "+e.getMessage(),e);
 			// ignore
 		}
 		return false;
