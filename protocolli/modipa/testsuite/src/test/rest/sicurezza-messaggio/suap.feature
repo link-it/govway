@@ -55,6 +55,20 @@ And match header Content-Type == 'application/json'
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'   
 
+@ERROR_401_002_noBearerPrefix
+Scenario: ERROR_401_002 - Invalid PDND token: token di autorizzazione della PDND senza prefisso bearer.
+Given url govway_base_path + "/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1"
+And path 'notify'
+And request read('request-suap.json')
+And header Authorization = 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.jYW04zLDHfR1v7xdrW3lCGZrMIsVe0vWCfVkN2DRns2c3MN-mcp_-RE6TN9umSBYoNV-mnb31wFf8iun3fB6aDS6m_OXAiURVEKrPFNGlR38JSHUtsFzqTOj-wFrJZN4RwvZnNGSMvK3wzzUriZqmiNLsG8lktlEn6KA4kYVaM61_NpmPHWAjGExWv7cjHYupcjMSmR8uMTwN5UuAwgW6FRstCJEfoxwb0WKiyoaSlDuIiHZJ0cyGhhEmmAPiCwtPAwGeaL1yZMcp0p82cpTQ5Qb-7CtRov3N4DcOHgWYk6LomPR5j5cCkePAz87duqyzSMpCB0mCOuE3CU2VMtGeQ'
+And header GovWay-TestSuite-Test-ID = 'suap-ERROR_401_002_noBearerPrefix'
+When method post
+Then status 401
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_401_002.json')
+And match header Content-Type == 'application/json'
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent'  
+
 @ERROR_401_002_audience
 Scenario: ERROR_401_002 - Invalid PDND token: token di autorizzazione della PDND non valido. (caso audience non valido)
 Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/ModiTestSUAP/v1"
