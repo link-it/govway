@@ -63,6 +63,9 @@
 						rendered="#{dettagliBean.attributeInfo}" />
 			</a4j:outputPanel>
 	
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenId" value="ID" rendered="#{not empty dettagliBean.dettaglio.tokenId}"/>
+			<h:outputText id="outTokenId" value="#{dettagliBean.dettaglio.tokenId}" rendered="#{not empty dettagliBean.dettaglio.tokenId}"/>		
+	
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenIssuer" value="Issuer" rendered="#{not empty dettagliBean.dettaglio.tokenIssuer}"/>
 			<h:outputText id="outTokenIssuer" value="#{dettagliBean.dettaglio.tokenIssuerLabel}" rendered="#{not empty dettagliBean.dettaglio.tokenIssuer}"/>
 						

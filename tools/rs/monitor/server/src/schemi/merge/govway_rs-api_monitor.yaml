@@ -281,6 +281,44 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
+  /monitoraggio/transazioni/id-token:
+    get:
+      tags:
+      - "Monitoraggio"
+      summary: "Ricerca semplificata delle transazioni in base all'identificativo\
+        \ del token"
+      description: "Permette di recuperare i dettagli delle transazioni, gestite su\
+        \ GovWay, ricercandole in base all'identificativo del token"
+      operationId: "findAllTransazioniByIdToken"
+      parameters:
+      - $ref: "#/components/parameters/offset"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/sort"
+      - $ref: "#/components/parameters/id_token"
+      responses:
+        "200":
+          description: "dettaglio transazione restituito correttamente"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaTransazioni"
+        "400":
+          $ref: "#/components/responses/400BadRequest"
+        "401":
+          $ref: "#/components/responses/401Unauthorized"
+        "403":
+          $ref: "#/components/responses/403Forbidden"
+        "404":
+          $ref: "#/components/responses/404NotFound"
+        "429":
+          $ref: "#/components/responses/429TooManyRequests"
+        "503":
+          $ref: "#/components/responses/503ServiceUnavailable"
+        default:
+          $ref: "#/components/responses/default"
+    parameters:
+    - $ref: "#/components/parameters/profilo"
+    - $ref: "#/components/parameters/soggetto"
   /monitoraggio/transazioni/purpose-id:
     get:
       tags:
@@ -2979,6 +3017,8 @@ components:
     TransazioneExtInformazioniToken:
       type: "object"
       properties:
+        token_id:
+          type: "string"
         client_id:
           type: "string"
           example: "407408718192.apps.googleusercontent.com"
@@ -3617,13 +3657,6 @@ components:
       required: true
       schema:
         type: "string"
-    purpose_id:
-      name: "purpose_id"
-      in: "query"
-      description: "l'identificativo di finalita del token usato (purposeId)"
-      required: true
-      schema:
-        type: "string"
     id_messaggio:
       name: "id"
       in: "query"
@@ -3647,6 +3680,20 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/TipoIdApplicativoEnum"
+    id_token:
+      name: "id"
+      in: "query"
+      description: "L'identificativo del token"
+      required: true
+      schema:
+        type: "string"
+    purpose_id:
+      name: "purpose_id"
+      in: "query"
+      description: "l'identificativo di finalita del token usato (purposeId)"
+      required: true
+      schema:
+        type: "string"
     uri_api_implementata:
       name: "uri_api_implementata"
       in: "query"

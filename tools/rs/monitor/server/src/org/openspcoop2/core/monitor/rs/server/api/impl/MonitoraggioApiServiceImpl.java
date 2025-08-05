@@ -386,6 +386,41 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 	}
 	
     /**
+     * Ricerca semplificata delle transazioni in base all&#x27;identificativo del token
+     *
+     * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base all&#x27;identificativo del token
+     *
+     */
+	@Override
+    public ListaTransazioni findAllTransazioniByIdToken(String id, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort) {
+		IContext context = this.getContext();
+		try {
+			context.getLogger().info("Invocazione in corso ...");     
+
+			AuthorizationManager.authorize(context, getAuthorizationConfig());
+			context.getLogger().debug("Autorizzazione completata con successo");     
+                        
+			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+			TransazioniSearchForm search = searchFormUtilities.getIdTokenSearchForm(context, profilo, soggetto);
+			
+			MonitoraggioEnv env = new MonitoraggioEnv(context, ProfiloEnum.MODIPA, soggetto, this.log);
+			search.setIdToken(id);
+
+			ListaTransazioni ret = TransazioniHelper.searchTransazioni(search, offset, limit, sort, env);
+			context.getLogger().info("Invocazione completata con successo");
+			return ret;
+		}
+		catch(javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			throw e;
+		}
+		catch(Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+			throw FaultCode.ERRORE_INTERNO.toException(e);
+		}
+    }
+	
+    /**
      * Ricerca semplificata delle transazioni in base all'identificativo finalita
      *
      * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base all'identificativo della finalita

@@ -699,10 +699,6 @@
 					<h:inputText id="ricercaLiberaTokenEmail" value="#{sf_bean.ricercaLiberaTokenEmail}"  styleClass="inputLinkLong"/>
 				</link:prop>
 				
-				<link:prop label="#{msg['transazioni.search.sezioneFiltroRicercaLibera.tokenInfo.purposeId.label']}" rendered="">
-					<h:inputText id="ricercaLiberaTokenPurposeId" value="#{sf_bean.purposeId}"  styleClass="inputLinkLong"/>
-				</link:prop>
-				
 				<a4j:outputPanel id="ctr-ricerca-personal-pdnd" rendered="#{sf_bean.showPDNDFilters}">
 					<div class="subtitle" >
 						<h:outputText id="idDatiPDNDRicercaLibera" value="#{msg['transazioni.search.sezioneFiltroRicercaLibera.pdnd.label']}" styleClass="subtitle"/>

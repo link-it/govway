@@ -153,13 +153,24 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 				
 				try {
 					HttpResponse res = HttpUtilities.httpInvoke(req);
+					
+					if(res==null) {
+						throw new UtilsException("HttpResponse is null");
+					}
+					if(res.getResultHTTPOperation()<200 || res.getResultHTTPOperation()>204 ) {
+						throw new UtilsException("HttpResponse return code '"+res.getResultHTTPOperation()+"'");
+					}
+					if(res.getContent()==null || res.getContent().length<=0) {
+						throw new UtilsException("HttpResponse is empty");
+					}
+					
 					JsonNode node = jsonUtils.getAsNode(res.getContent());
 					JsonNode result = node.get("results");
 					
 					for ( int i = 0; i < result.size(); i++)
 						list.add(result.get(i));
 					
-				} catch (UtilsException e) {
+				} catch (Exception e) {
 					return null;
 				}
 			}

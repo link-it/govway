@@ -43,6 +43,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DominioSoggetto }
+     */
+    public DominioSoggetto createDominioSoggetto() {
+        return new DominioSoggetto();
+    }
+    
+    /**
      * Create an instance of {@link Servizio }
      */
     public Servizio createServizio() {
@@ -64,20 +71,6 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link DominioSoggetto }
-     */
-    public DominioSoggetto createDominioSoggetto() {
-        return new DominioSoggetto();
-    }
-    
-    /**
-     * Create an instance of {@link ProfiloCollaborazione }
-     */
-    public ProfiloCollaborazione createProfiloCollaborazione() {
-        return new ProfiloCollaborazione();
-    }
-    
-    /**
      * Create an instance of {@link SoggettoIdentificativo }
      */
     public SoggettoIdentificativo createSoggettoIdentificativo() {
@@ -96,6 +89,13 @@ public class ObjectFactory {
      */
     public Dominio createDominio() {
         return new Dominio();
+    }
+    
+    /**
+     * Create an instance of {@link ProfiloCollaborazione }
+     */
+    public ProfiloCollaborazione createProfiloCollaborazione() {
+        return new ProfiloCollaborazione();
     }
     
 

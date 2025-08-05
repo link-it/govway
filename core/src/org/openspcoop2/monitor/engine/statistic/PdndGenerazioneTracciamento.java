@@ -161,7 +161,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		
 		for (Map<String, Object> row : data) {
 			String purposeId = row.get(Transazione.model().TOKEN_PURPOSE_ID.getFieldName()).toString();
-			String tokenId = row.get(Transazione.model().ID_MESSAGGIO_RICHIESTA.getFieldName()).toString();
+			String tokenId = row.get(Transazione.model().TOKEN_ID.getFieldName()).toString();
 			String statusId =  row.get(Transazione.model().EVENTI_GESTIONE.getFieldName()).toString();
 			Integer status = convertEvent(statusId);
 			String requestsCount = row.get(REQUESTS_COUNT_ID).toString();
@@ -218,7 +218,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		IExpression expr = this.transazioniSM.getTransazioneService().newExpression();
 		expr.addGroupBy(Transazione.model().PDD_CODICE)
 			.addGroupBy(Transazione.model().TOKEN_PURPOSE_ID)
-			.addGroupBy(Transazione.model().ID_MESSAGGIO_RICHIESTA)
+			.addGroupBy(Transazione.model().TOKEN_ID)
 			.addGroupBy(Transazione.model().EVENTI_GESTIONE)
 			.and()
 			.between(Transazione.model().DATA_INGRESSO_RICHIESTA, start, end)

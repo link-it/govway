@@ -99,6 +99,8 @@ La sezione **Informazioni Mittente** (:numref:`mon_DettaglioTransazioneMittente_
 
 - la sezione *Token Info* è presente solamente se nella richiesta è presente un token (:numref:`mon_DettaglioTransazioneMittenteToken_fig`) e riporta:
 
+    -  ID: identificativo del token
+
     -  Issuer: rappresenta il dominio che ha emesso il token
 
     -  ClientId: indica l'identificativo del client che ha richiesto ed ottenuto il token
@@ -108,6 +110,8 @@ La sezione **Informazioni Mittente** (:numref:`mon_DettaglioTransazioneMittente_
     -  eMail: indirizzo eMail dell'utente 
 
     -  PDND Organization: forniscono le eventuali informazioni sull'organizzazione del client recuperate tramite le API PDND (:numref:`mon_DettaglioTransazioneMittenteTokenPDND_fig`) 
+
+    -  ID Finalità: rappresenta l'identificativo di finalità utilizzato all'interno del voucher PDND 
 
     -  Token Info: riporta il dettaglio delle informazioni estratte dal token ottenuto in fase di autenticazione della richiesta del mittente (:numref:`mon_DettaglioTransazioneMittenteTokenDetails_fig`) 
 

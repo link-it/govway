@@ -78,6 +78,7 @@ import org.openspcoop2.pdd.core.token.InformazioniNegoziazioneToken;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
+import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.DiagnosticInputStream;
@@ -125,6 +126,8 @@ public class TransazioneUtilities {
 	private boolean transazioniRegistrazioneAttributiInformazioniNormalizzate;
 	private boolean transazioniRegistrazioneTempiElaborazione;
 	private boolean transazioniRegistrazioneRetrieveTokenSaveAsTokenInfo;
+	private boolean transazioniPolicyValidazioneSavePurposeIdAlways;
+	private boolean transazioniPolicyNegoziazioneSavePurposeIdAlways;
 	
 	public TransazioneUtilities(Logger log, OpenSPCoop2Properties openspcoopProperties,
 			boolean transazioniRegistrazioneTracceHeaderRawEnabled,
@@ -142,6 +145,9 @@ public class TransazioneUtilities {
 				openspcoopProperties.isGestioneAttributeAuthorityTransazioniRegistrazioneAttributiInformazioniNormalizzate(); // per adesso la configurazione avviene via govway.properties
 		this.transazioniRegistrazioneRetrieveTokenSaveAsTokenInfo = configTransazioni!=null && StatoFunzionalita.ABILITATO.equals(configTransazioni.getToken()) &&
 				openspcoopProperties.isGestioneRetrieveTokenSaveAsTokenInfo(); // per adesso la configurazione avviene via govway.properties
+		
+		this.transazioniPolicyValidazioneSavePurposeIdAlways = openspcoopProperties.isTransazioniPolicyValidazioneSavePurposeIdAlways();
+		this.transazioniPolicyNegoziazioneSavePurposeIdAlways = openspcoopProperties.isTransazioniPolicyNegoziazioneSavePurposeIdAlways();
 	}
 	
 	public static boolean isConsegnaMultipla(Context context) {
@@ -1136,24 +1142,40 @@ public class TransazioneUtilities {
 								
 			}
 			
-			// token purpose id
+			// token purpose id e token id
 			if (TipoPdD.DELEGATA.equals(info.getTipoPorta()) 
 					&& transaction.getInformazioniNegoziazioneToken() != null
 					&& transaction.getInformazioniNegoziazioneToken().getAccessToken() != null 
-					&& transaction.getInformazioniNegoziazioneToken().isValid()) {
-				transactionDTO.setTokenPurposeId(extractClaimFromJWTAccessToken(transaction.getInformazioniNegoziazioneToken().getAccessToken(), org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID));
+					&& transaction.getInformazioniNegoziazioneToken().isValid()
+				){
+				if(this.transazioniPolicyNegoziazioneSavePurposeIdAlways || CostantiPdD.isTokenNegoziazionePdnd(info.getContext())) {
+					transactionDTO.setTokenPurposeId(extractClaimFromJWTAccessToken(transaction.getInformazioniNegoziazioneToken().getAccessToken(), org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID));
+				}
+				transactionDTO.setTokenId(extractClaimFromJWTAccessToken(transaction.getInformazioniNegoziazioneToken().getAccessToken(), Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID));
 			}
 			if (TipoPdD.APPLICATIVA.equals(info.getTipoPorta()) 
-					&& transaction.getInformazioniToken() != null 
-					&& transaction.getInformazioniToken().getClaims() != null 
-					&& transaction.getInformazioniToken().getClaims().containsKey(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID)) {
-				transactionDTO.setTokenPurposeId(transaction.getInformazioniToken().getClaims().get(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID).toString());
+					&& transaction.getInformazioniToken() != null) { 
+				if( transaction.getInformazioniToken().getClaims() != null && 
+						transaction.getInformazioniToken().getClaims().containsKey(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID) &&
+						(this.transazioniPolicyValidazioneSavePurposeIdAlways || CostantiPdD.isTokenValidazionePdnd(info.getContext())) 
+						) {
+					transactionDTO.setTokenPurposeId(transaction.getInformazioniToken().getClaims().get(org.openspcoop2.pdd.core.token.Costanti.PDND_PURPOSE_ID).toString());
+				}
+				if(transaction.getInformazioniToken().getJti()!=null) {
+					transactionDTO.setTokenId(transaction.getInformazioniToken().getJti());
+				}
 			}
 			if(transactionDTO.getTokenPurposeId()!=null && transactionDTO.getTokenPurposeId().length()>50) {
 				// colonna DB 50
 				String msg = "Errore durante il salvataggio del purposeId '"+transactionDTO.getTokenPurposeId()+"': attesa una dimensione<=50, riscontrata:"+transactionDTO.getTokenPurposeId().length()+"";
 				this.logger.error(msg);
 				transactionDTO.setTokenPurposeId(transactionDTO.getTokenPurposeId().substring(0, 45)+"...");
+			}
+			if(transactionDTO.getTokenId()!=null && transactionDTO.getTokenId().length()>50) {
+				// colonna DB 50
+				String msg = "Errore durante il salvataggio del tokenId '"+transactionDTO.getTokenId()+"': attesa una dimensione<=50, riscontrata:"+transactionDTO.getTokenId().length()+"";
+				this.logger.error(msg);
+				transactionDTO.setTokenId(transactionDTO.getTokenId().substring(0, 45)+"...");
 			}
 			
 			if(transactionDTO.getTokenInfo()==null && this.transazioniRegistrazioneAttributiInformazioniNormalizzate &&

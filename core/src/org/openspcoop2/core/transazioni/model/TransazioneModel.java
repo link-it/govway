@@ -130,6 +130,7 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.TOKEN_MAIL = new Field("token-mail",java.lang.String.class,"transazione",Transazione.class);
 		this.TOKEN_INFO = new Field("token-info",java.lang.String.class,"transazione",Transazione.class);
 		this.TOKEN_PURPOSE_ID = new Field("token-purpose-id",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_ID = new Field("token-id",java.lang.String.class,"transazione",Transazione.class);
 		this.TEMPI_ELABORAZIONE = new Field("tempi-elaborazione",java.lang.String.class,"transazione",Transazione.class);
 		this.DUPLICATI_RICHIESTA = new Field("duplicati-richiesta",int.class,"transazione",Transazione.class);
 		this.DUPLICATI_RISPOSTA = new Field("duplicati-risposta",int.class,"transazione",Transazione.class);
@@ -241,6 +242,7 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.TOKEN_MAIL = new ComplexField(father,"token-mail",java.lang.String.class,"transazione",Transazione.class);
 		this.TOKEN_INFO = new ComplexField(father,"token-info",java.lang.String.class,"transazione",Transazione.class);
 		this.TOKEN_PURPOSE_ID = new ComplexField(father,"token-purpose-id",java.lang.String.class,"transazione",Transazione.class);
+		this.TOKEN_ID = new ComplexField(father,"token-id",java.lang.String.class,"transazione",Transazione.class);
 		this.TEMPI_ELABORAZIONE = new ComplexField(father,"tempi-elaborazione",java.lang.String.class,"transazione",Transazione.class);
 		this.DUPLICATI_RICHIESTA = new ComplexField(father,"duplicati-richiesta",int.class,"transazione",Transazione.class);
 		this.DUPLICATI_RISPOSTA = new ComplexField(father,"duplicati-risposta",int.class,"transazione",Transazione.class);
@@ -439,6 +441,8 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	public IField TOKEN_INFO = null;
 	 
 	public IField TOKEN_PURPOSE_ID = null;
+	 
+	public IField TOKEN_ID = null;
 	 
 	public IField TEMPI_ELABORAZIONE = null;
 	 

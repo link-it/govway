@@ -100,6 +100,10 @@ public class TransazioniCostanti {
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoTransazione.icona"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoTransazione.breadcrumb"; 
 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoToken.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoToken.icona"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoToken.breadcrumb";
+	
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.label"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.icona"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.breadcrumb"; 

@@ -1,3 +1,19 @@
+2025-08-05  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Risolto Bug #1643
+	In presenza di un pattern di tipo INTEGRITY, la configurazione predefinita di GovWay prevede l'utilizzo dell’identificativo del token di integrità come identificativo del messaggio.
+	Tuttavia, poiché il report di tracciamento PDND si basava sull’identificativo del messaggio, 
+	tale configurazione comportava l’inserimento nel report di un identificativo non corrispondente al JTI del voucher, ovvero un valore non generato dalla PDND stessa.
+	L’anomalia è stata risolta introducendo il tracciamento esplicito dell’identificativo del token, che viene ora correttamente utilizzato nella generazione del file CSV per il tracciamento PDND.
+
+2025-08-05  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA, GovWayMonitor, ApiRsMonitoraggio]
+	Aggiunta funzionalità #1643
+	È adesso possibile effettuare ricerche nello storico delle transazioni tramite l'identificativo del token Authorization (jti).
+	Nel dettaglio di una transazione, nella sezione 'Informazioni Mittente', viene adesso visualizzato anche l'identificativo del token.
+
 2025-08-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

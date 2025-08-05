@@ -49,6 +49,7 @@ import org.openspcoop2.message.utils.WWWAuthenticateGenerator;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
@@ -69,6 +70,7 @@ import org.openspcoop2.pdd.services.connector.FormUrlEncodedHttpServletRequest;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.RestMessageSecurityToken;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
@@ -1448,6 +1450,11 @@ public class GestoreToken {
 		GestoreTokenValidazioneUtilities.validazioneInformazioniTokenEnrichPDNDClientInfo(esitoGestioneToken, datiInvocazione.getPolicyGestioneToken(), 
 				pddContext, protocolFactory, datiInvocazione, securityToken);
 		
+		if(datiInvocazione.getPolicyGestioneToken()!=null && datiInvocazione.getPolicyGestioneToken().getName()!=null &&
+				GestoreTokenValidazioneUtilities.isPdndTokenPolicy(log, datiInvocazione.getPolicyGestioneToken().getName())) {
+			pddContext.put(CostantiPdD.TOKEN_VALIDAZIONE_PDND, CostantiPdD.TOKEN_ESITO_TRUE);
+		}
+			
 		return esitoGestioneToken;
 	}
 	
@@ -1904,7 +1911,7 @@ public class GestoreToken {
 		EsitoNegoziazioneToken esitoNegoziazioneToken = null;
 		boolean riavviaNegoziazione = rinegozia;
 		riavviaNegoziazione = false;
-		
+
 		IState state = null;
 		boolean delegata = TipoPdD.DELEGATA.equals(tipoPdD);
 		IDSoggetto idDominio = null;
@@ -2110,6 +2117,19 @@ public class GestoreToken {
 			}
 		}catch(Exception t) {
 			// ignore
+		}
+		
+		SecurityToken securityToken = null;
+		if(
+				esitoNegoziazioneToken!=null && 	esitoNegoziazioneToken.getToken()!=null) {
+			securityToken = SecurityTokenUtilities.newSecurityToken(pddContext);
+			RestMessageSecurityToken accessToken = new RestMessageSecurityToken();
+			accessToken.setToken(esitoNegoziazioneToken.getToken());
+			securityToken.setAccessToken(accessToken);
+		}
+		
+		if(pddContext!=null && policyNegoziazioneToken!=null && policyNegoziazioneToken.isPDND()) {
+			pddContext.put(CostantiPdD.TOKEN_NEGOZIAZIONE_PDND, CostantiPdD.TOKEN_ESITO_TRUE);
 		}
 		
 		return esitoNegoziazioneToken;

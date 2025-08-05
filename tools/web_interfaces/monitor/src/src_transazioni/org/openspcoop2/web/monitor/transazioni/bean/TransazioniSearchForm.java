@@ -424,6 +424,8 @@ Context, Cloneable {
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_BREADCRUMB_KEY);
 			case ID_MESSAGGIO:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_BREADCUMP_KEY);
+			case ID_TOKEN:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_BREADCUMP_KEY);	
 			case PURPOSE_ID:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_BREADCUMP_KEY);				
 			case ID_TRANSAZIONE:
@@ -527,7 +529,7 @@ Context, Cloneable {
 	@Override
 	protected boolean isTipologiaRicercaEntrambiEnabled() {
 		if(this.isLive()) {
-			//return super.isTipologiaRicercaEntrambiEnabled();
+			/**return super.isTipologiaRicercaEntrambiEnabled();*/
 			return true; // sul live si fa vedere anche la possibilità di avere erogazioni/fruizioni
 		}
 		else {
@@ -539,7 +541,6 @@ Context, Cloneable {
 				case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
 				case MITTENTE_INDIRIZZO_IP:
 				case ID_APPLICATIVO_AVANZATA:
-				case PURPOSE_ID:
 					return true; // non c'e' motivo per non farli vedere
 				
 				case MITTENTE_TOKEN_INFO: // nelle erogazioni vi è anche il soggetto mittente
@@ -550,6 +551,8 @@ Context, Cloneable {
 				case ID_APPLICATIVO_BASE:
 				case ID_MESSAGGIO:
 				case ID_TRANSAZIONE:
+				case ID_TOKEN:
+				case PURPOSE_ID:
 					return super.isTipologiaRicercaEntrambiEnabled(); // non viene visualizzata l'informazione
 				}
 			}
@@ -975,6 +978,12 @@ Context, Cloneable {
 					case ID_TRANSAZIONE:
 						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdTransazione())){
 							MessageUtils.addErrorMsg("Indicare un identificativo transazione");
+							return null;
+						}
+						break;
+					case ID_TOKEN:
+						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdToken())){
+							MessageUtils.addErrorMsg("Indicare un identificativo token");
 							return null;
 						}
 						break;

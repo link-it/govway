@@ -26,6 +26,11 @@ Configurare l'ambiente di esecuzione dei test:
 
 	- Nel file /etc/govway/govway_local.properties abilitare la proprietà 'org.openspcoop2.pdd.cluster_id'
 
+	- Nel file /etc/govway/govway_local.properties aggiungere:
+
+		org.openspcoop2.pdd.transazioni.policy.validazione.savePurposeId.always=true
+		org.openspcoop2.pdd.transazioni.policy.negoziazione.savePurposeId.always=true
+
 	- Se l'installer è stato fatto girare facendo produrre il batch delle statistiche allora è necessario per la testsuite forzare l'abilitazione dei timer statistici in GovWay con le seguenti proprieta nel file govway_local.properties:
 		org.openspcoop2.pdd.statistiche.generazione.enabled=true
 		org.openspcoop2.pdd.statistiche.generazione.baseOraria.enabled=true

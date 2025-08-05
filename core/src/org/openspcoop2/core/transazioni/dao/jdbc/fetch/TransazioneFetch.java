@@ -232,6 +232,8 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "token_info", Transazione.model().TOKEN_INFO.getFieldType()));
 				setParameter(object, "setTokenPurposeId", Transazione.model().TOKEN_PURPOSE_ID.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "token_purpose_id", Transazione.model().TOKEN_PURPOSE_ID.getFieldType()));
+				setParameter(object, "setTokenId", Transazione.model().TOKEN_ID.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "token_id", Transazione.model().TOKEN_ID.getFieldType()));
 				setParameter(object, "setTempiElaborazione", Transazione.model().TEMPI_ELABORAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "tempi_elaborazione", Transazione.model().TEMPI_ELABORAZIONE.getFieldType()));
 				setParameter(object, "setDuplicatiRichiesta", Transazione.model().DUPLICATI_RICHIESTA.getFieldType(),
@@ -464,6 +466,8 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"token-info"));
 				setParameter(object, "setTokenPurposeId", Transazione.model().TOKEN_PURPOSE_ID.getFieldType(),
 					this.getObjectFromMap(map,"token-purpose-id"));
+				setParameter(object, "setTokenId", Transazione.model().TOKEN_ID.getFieldType(),
+					this.getObjectFromMap(map,"token-id"));
 				setParameter(object, "setTempiElaborazione", Transazione.model().TEMPI_ELABORAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"tempi-elaborazione"));
 				setParameter(object, "setDuplicatiRichiesta", Transazione.model().DUPLICATI_RICHIESTA.getFieldType(),

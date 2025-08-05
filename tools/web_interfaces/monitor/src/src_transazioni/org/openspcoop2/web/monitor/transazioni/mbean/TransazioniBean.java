@@ -986,6 +986,11 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_ICON_KEY));
 			listaGruppoId.add(storicoIdMessaggio);
 			
+			Storico storicoIdToken = new Storico(ModalitaRicercaTransazioni.ID_TOKEN.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_LABEL_KEY), 
+					ModalitaRicercaTransazioni.ID_TOKEN,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_ICON_KEY));
+			listaGruppoId.add(storicoIdToken);
 			
 			// non deve essere selezionato nessun profilo oppure solo il modI
 			String loggedUtenteModalita = Utility.getLoggedUtenteModalita();

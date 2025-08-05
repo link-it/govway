@@ -2445,6 +2445,9 @@ public class OpenSPCoop2Properties {
 				this.isTransazioniTracciamentoDBOutResponseThrowRequestException();
 				this.isTransazioniTracciamentoDBPostOutResponseThrowRequestException();
 				this.isTransazioniTracciamentoDBPostOutResponseThrowResponseException();
+				
+				this.isTransazioniPolicyValidazioneSavePurposeIdAlways();
+				this.isTransazioniPolicyNegoziazioneSavePurposeIdAlways();
 
 				this.isTransazioniFileTraceEnabled();
 				if(this.isTransazioniFileTraceDumpBinarioPDEnabled()) {
@@ -28819,6 +28822,53 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.isTransazioniTracciamentoDBPostOutResponseThrowResponseException;
+	}
+	
+	
+	// Gestione PurposeId
+	
+	private Boolean isTransazioniPolicyValidazioneSavePurposeIdAlways = null;
+	public boolean isTransazioniPolicyValidazioneSavePurposeIdAlways() {	
+		if(this.isTransazioniPolicyValidazioneSavePurposeIdAlways==null){
+			String pName = "org.openspcoop2.pdd.transazioni.policy.validazione.savePurposeId.always";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isTransazioniPolicyValidazioneSavePurposeIdAlways = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName,e,false));
+				this.isTransazioniPolicyValidazioneSavePurposeIdAlways = false;
+			}    
+		}
+
+		return this.isTransazioniPolicyValidazioneSavePurposeIdAlways;
+	}
+	
+	private Boolean isTransazioniPolicyNegoziazioneSavePurposeIdAlways = null;
+	public boolean isTransazioniPolicyNegoziazioneSavePurposeIdAlways() {	
+		if(this.isTransazioniPolicyNegoziazioneSavePurposeIdAlways==null){
+			String pName = "org.openspcoop2.pdd.transazioni.policy.negoziazione.savePurposeId.always";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
+					name="false";
+				}
+				name = name.trim();
+				this.isTransazioniPolicyNegoziazioneSavePurposeIdAlways = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName,e,false));
+				this.isTransazioniPolicyNegoziazioneSavePurposeIdAlways = false;
+			}    
+		}
+
+		return this.isTransazioniPolicyNegoziazioneSavePurposeIdAlways;
 	}
 	
 	
