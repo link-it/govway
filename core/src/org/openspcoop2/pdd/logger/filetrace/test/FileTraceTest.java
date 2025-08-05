@@ -38,7 +38,7 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
 import org.openspcoop2.core.constants.Costanti;

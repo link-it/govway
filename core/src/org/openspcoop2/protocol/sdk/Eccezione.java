@@ -22,7 +22,7 @@
 
 package org.openspcoop2.protocol.sdk;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.openspcoop2.core.tracciamento.CodiceEccezione;
 import org.openspcoop2.core.tracciamento.constants.TipoCodificaEccezione;
 import org.openspcoop2.core.tracciamento.constants.TipoRilevanzaEccezione;

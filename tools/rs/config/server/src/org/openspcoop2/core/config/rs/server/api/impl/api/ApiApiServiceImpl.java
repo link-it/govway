@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.rs.server.api.ApiApi;
@@ -206,7 +206,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					canaleStato, canale, gestioneCanaliEnabled
 					)) {
 
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			ApiApiHelper.validateProperties(env, protocolProperties, idAccordoFromAccordo, ConsoleOperationType.ADD);
@@ -306,7 +306,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			if (!archiviHelper.accordiAllegatiCheckData(TipoOperazione.ADD, filewrap, documento,
 					ProprietariDocumento.accordoServizio, env.protocolFactory)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			env.apcCore.performUpdateOperation(env.userLogin, false, as);
@@ -399,7 +399,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					null, // opTypeOp,
 					"" // nsWSDLOp
 			)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			IDPortType idPT = new IDPortType();
@@ -491,7 +491,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newRes.getConsegnaInOrdine()), // consordaz,
 					"" // scadenzaaz
 			)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			IDResource idResource = new IDResource();
@@ -564,7 +564,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newPT.getIdRiferimentoRichiesta()),
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newPT.getConsegnaInOrdine()),
 					newPT.getScadenza())) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			as.addPortType(newPT);
 
@@ -610,7 +610,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComune(as, env.userLogin, env.apcCore,
 						env.apcHelper, inUsoMessage, "\n");
 				if (inUsoMessage.length() > 0)
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 			}
 
 			if (env.delete_404 && as == null)
@@ -709,7 +709,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 						env.apcHelper, inUsoMessage, "\n", pt, Arrays.asList(nomeAzione));
 
 				if (inUsoMessage.length() > 0)
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 
 			}
 
@@ -756,7 +756,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 						env.apcHelper, inUsoMessage, "\n", Arrays.asList(nomeRisorsa));
 
 				if (inUsoMessage.length() > 0)
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 
 			} else if (env.delete_404) {
 				throw FaultCode.NOT_FOUND.toException("Risorsa " + nomeRisorsa + " non associata alla API ");
@@ -800,7 +800,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 						env.apcHelper, inUsoMessage, "\n", Arrays.asList(nomeServizio));
 
 				if (inUsoMessage.length() > 0) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 				}
 
 			} else if (env.delete_404) {
@@ -1814,7 +1814,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			if (!archiviHelper.accordiAllegatiCheckData(TipoOperazione.CHANGE, filewrap, newDoc,
 					ProprietariDocumento.accordoServizio, env.protocolFactory)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			AccordiServizioParteComuneUtilities.updateAccordoServizioParteComuneAllegati(as, oldDoc, newDoc);
@@ -1908,7 +1908,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					null, // opTypeOp,
 					"" // nsWSDLOp
 			)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			IDPortType idPT = new IDPortType();
@@ -2044,7 +2044,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					bfTags.toString(),
 					canaleStato, canale, gestioneCanaliEnabled)) {
 
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			// Il profilo di collaborazione di base è Sincrono.
@@ -2169,7 +2169,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					bfTags.toString(),
 					canaleStato, canale, gestioneCanaliEnabled)) {
 
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			// Il profilo di collaborazione di base è Sincrono.
@@ -2283,7 +2283,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					bfTags.toString(),
 					canaleStato, canale, gestioneCanaliEnabled)) {
 
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			as.setOldIDAccordoForUpdate(oldIdAccordo);
@@ -2338,7 +2338,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			final boolean validazioneDocumenti = serverProperties.isValidazioneDocumenti();
 
 			if (!env.apcHelper.accordiWSDLCheckData(env.pd, tipoWsdl, wsdl, as, validazioneDocumenti, env.tipo_protocollo)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			final boolean facilityUnicoWSDL_interfacciaStandard = as.getServiceBinding() == ServiceBinding.SOAP;
@@ -2478,7 +2478,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newRes.getIdRiferimentoRichiesta()),
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newRes.getConsegnaInOrdine()), // consordaz,
 					newRes.getScadenza() != null ? newRes.getScadenza() : "")) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			IDResource idResource = new IDResource();
@@ -2543,7 +2543,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newPt.getIdRiferimentoRichiesta()),
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newPt.getConsegnaInOrdine()),
 					newPt.getScadenza() != null ? newPt.getScadenza() : "")) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			as.addPortType(newPt);
@@ -2673,7 +2673,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					bfTags.toString(),
 					canaleStato, canale, gestioneCanaliEnabled)) {
 
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			// Il profilo di collaborazione di base è Sincrono.

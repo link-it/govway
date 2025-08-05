@@ -30,8 +30,8 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.govway.struts.upload.FormFile;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.commons.Filtri;
@@ -3903,7 +3903,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(descrizione!=null && descrizione.length()>length) {
 							descrizione = descrizione.substring(0, (length-4)) + " ...";
 						}
-						de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+						de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml4(descrizione) : null);
 						de.setToolTip(paAssociata.getDescrizione());
 						de.setCopyToClipboard(paAssociata.getDescrizione());
 						
@@ -5740,7 +5740,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(descrizione!=null && descrizione.length()>length) {
 							descrizione = descrizione.substring(0, (length-4)) + " ...";
 						}
-						de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+						de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml4(descrizione) : null);
 						de.setToolTip(pdAssociata.getDescrizione());
 						de.setCopyToClipboard(pdAssociata.getDescrizione());	
 						
@@ -7059,7 +7059,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setType(DataElementType.TEXT_AREA);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
 			de.setSize(getSize());
-			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : "");
+			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml4(descrizione) : "");
 			if( !modificaAbilitata && StringUtils.isBlank(descrizione))
 				de.setValue("");
 			
@@ -7073,7 +7073,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setType(DataElementType.HIDDEN);
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE);
 			de.setSize(getSize());
-			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : "");
+			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml4(descrizione) : "");
 			if( !modificaAbilitata && (descrizione==null || "".equals(descrizione)) )
 				de.setValue(" ");
 			dati.add(de);
@@ -7095,7 +7095,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 			de.setName(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_DESCRIZIONE_MODIFICA);
 			de.setSize(getSize());
-			de.setValue(descrizioneModificata!=null ? StringEscapeUtils.escapeHtml(descrizioneModificata) : "");
+			de.setValue(descrizioneModificata!=null ? StringEscapeUtils.escapeHtml4(descrizioneModificata) : "");
 			if( !modificaAbilitata && StringUtils.isBlank(descrizioneModificata))
 				de.setValue("");
 			

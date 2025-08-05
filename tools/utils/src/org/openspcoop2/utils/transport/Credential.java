@@ -22,7 +22,7 @@ package org.openspcoop2.utils.transport;
 import java.io.Serializable;
 import java.security.Principal;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.Certificate;
 

@@ -32,7 +32,7 @@ public class NullConstantField extends ConstantField {
 	
 	
 	public NullConstantField(String fieldName) throws ExpressionException{
-		super(fieldName,org.apache.commons.lang.ObjectUtils.NULL, String.class); // lo gestisco come string	
+		super(fieldName,org.apache.commons.lang3.ObjectUtils.NULL, String.class); // lo gestisco come string	
 	}
 	
 

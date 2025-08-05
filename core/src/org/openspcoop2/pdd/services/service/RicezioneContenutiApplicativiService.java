@@ -31,7 +31,7 @@ import java.util.Map;
 import jakarta.xml.soap.SOAPBody;
 
 import org.apache.commons.io.output.NullOutputStream;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaDelegata;

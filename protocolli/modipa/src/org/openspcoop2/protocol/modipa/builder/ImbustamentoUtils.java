@@ -20,7 +20,7 @@
 
 package org.openspcoop2.protocol.modipa.builder;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.Property;

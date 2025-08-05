@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
@@ -125,7 +125,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			long idFruizione = env.apsCore.getIdFruizioneAccordoServizioParteSpecifica(env.idSoggetto.toIDSoggetto(), idAsps);
 			List<MappingFruizionePortaDelegata> listaMappingFruizione = env.apsCore.serviziFruitoriMappingList(idFruizione, env.idSoggetto.toIDSoggetto(), idAsps, null);
 			if (!env.paHelper.porteDelAzioneCheckData(TipoOperazione.ADD,azioniOccupate,listaMappingFruizione)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			// aggiungo azione nel db
@@ -228,7 +228,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					null,
 					env.isSupportatoAutenticazioneSoggetti,
 					mappingInfo)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteDelegate(
@@ -402,7 +402,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					);
 				
 				if (inUsoMessage.length() > 0)
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 			} else if ( env.delete_404 ) {
 				throw FaultCode.NOT_FOUND.toException("Gruppo " + nomeGruppo + " non associato alla fruizione");
 			}
@@ -450,7 +450,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 				PorteDelegateUtilities.deletePortaDelegataAzioni(pd, asps, env.pdCore, env.pdHelper, inUsoMessage, new ArrayList<>(Arrays.asList(nomeAzione)), env.userLogin);
 				
 				if (inUsoMessage.length() > 0)
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 			} else if ( env.delete_404 ) {
 				throw FaultCode.NOT_FOUND.toException("Azione " + nomeAzione + " non associata al gruppo " + nomeGruppo );
 			}
@@ -705,7 +705,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			}
 			
 			if (! env.paHelper.configurazioneCambiaNomeCheck(TipoOperazione.OTHER, body.getNome(), mappingUtilizzati,true)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			final MappingFruizionePortaDelegata mapping= AccordiServizioParteSpecificaUtilities.getMappingPDFilterByDescription(

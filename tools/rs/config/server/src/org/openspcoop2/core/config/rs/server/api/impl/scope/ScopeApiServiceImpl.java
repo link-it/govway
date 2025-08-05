@@ -22,7 +22,7 @@ package org.openspcoop2.core.config.rs.server.api.impl.scope;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.rs.server.api.ScopeApi;
@@ -88,7 +88,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			}
 			
 			if (!env.scopeHelper.scopeCheckData(TipoOperazione.ADD, null)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			env.scopeCore.performCreateOperation(env.userLogin, false, regScope);
@@ -133,7 +133,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 				ScopeUtilities.deleteScope(scope, sEnv.userLogin, sEnv.scopeCore, sEnv.scopeHelper, inUsoMessage, "\n");
 				
 				if (inUsoMessage.length() > 0) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 				}
 			}
 			
@@ -275,7 +275,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 				throw FaultCode.NOT_FOUND.toException("Nessuno scope corrisponde al nome " + nome);
 			
 			if (!env.scopeHelper.scopeCheckData(TipoOperazione.CHANGE, scopeOLD)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			scopeNEW.setOldIDScopeForUpdate(new IDScope(nome));

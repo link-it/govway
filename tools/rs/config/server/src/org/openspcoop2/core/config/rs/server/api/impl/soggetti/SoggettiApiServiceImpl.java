@@ -21,8 +21,8 @@ package org.openspcoop2.core.config.rs.server.api.impl.soggetti;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.rs.server.api.SoggettiApi;
@@ -162,7 +162,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 					null, false, soggettoRegistro.getDescrizione(), soggettoRegistro.getPortaDominio());
 			
 			if (!isOk)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 	
 			// Dal debug isRouter è sempre false.
 			org.openspcoop2.core.config.Soggetto soggettoConfig = SoggettiApiHelper.soggettoRegistroToConfig(soggettoRegistro,new org.openspcoop2.core.config.Soggetto(),false);
@@ -231,7 +231,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 						"\n"
 					);
 				if (inUsoMessage.length() > 0)
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.escapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.escapeHtml4(inUsoMessage.toString()));
 			}
 			else if (env.delete_404) {
 				throw FaultCode.NOT_FOUND.toException("Nessun soggetto corrisponde al nome e il profilo indicati");
@@ -442,7 +442,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				);
 			
 			if (!isOk)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			
 			newSoggetto.setOldIDSoggettoForUpdate(new IDSoggetto(oldSoggetto.getTipo(), oldSoggetto.getNome()));
 			env.soggettiCore.performUpdateOperation(env.userLogin, false, newSoggetto);
@@ -569,7 +569,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				);
 			
 			if (!isOk)
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			
 			org.openspcoop2.core.config.Soggetto soggettoConfig = SoggettiApiHelper.soggettoRegistroToConfig(newSoggetto,oldSoggettoCtrlStat.getSoggettoConf(),false);
 			newSoggetto.setOldIDSoggettoForUpdate(new IDSoggetto(oldSoggetto.getTipo(), oldSoggetto.getNome()));

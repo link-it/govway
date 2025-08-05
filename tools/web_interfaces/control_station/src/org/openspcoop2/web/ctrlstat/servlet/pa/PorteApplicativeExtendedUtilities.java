@@ -23,7 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.web.ctrlstat.core.UrlParameters;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;

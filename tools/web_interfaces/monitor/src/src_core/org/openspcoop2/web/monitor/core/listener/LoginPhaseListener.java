@@ -34,7 +34,7 @@ import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
 
@@ -79,7 +79,7 @@ public class LoginPhaseListener implements PhaseListener {
 	        
 	        String msg = null;
 	      //Controllo se sto andando alla pagina di errore e se c'e' un errore da visualizzare
-	        if(allowedPage && vr!=null && StringUtils.contains(vr.getViewId(), "error")){
+	        if(allowedPage && vr!=null && Strings.CS.contains(vr.getViewId(), "error")){
 	        	msg = (String) ec.getSessionMap().get(LoginPhaseListener.PRINCIPAL_ERROR_MSG);
 	        	if(msg != null){
 	        		// 
@@ -115,7 +115,7 @@ public class LoginPhaseListener implements PhaseListener {
 		for (int i = 0; i < LoginPhaseListener.allowedPages.length; i++) {
 			String page = LoginPhaseListener.allowedPages[i];
 			//controllo se la pagina richiesta e' tra quelle permesse
-			if(StringUtils.contains(viewId, page))
+			if(Strings.CS.contains(viewId, page))
 				return true;
 		}
 		return false;

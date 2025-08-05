@@ -21,7 +21,7 @@ package org.openspcoop2.testsuite.zap;
 
 import java.io.File;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.zaproxy.clientapi.core.ClientApi;

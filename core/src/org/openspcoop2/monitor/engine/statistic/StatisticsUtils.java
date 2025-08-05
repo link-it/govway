@@ -65,7 +65,7 @@ public class StatisticsUtils {
 	public static Long readLongValue(Map<String, Object> row, String alias){
 		Object object = row.get(alias);
 		if(object!=null){
-			if(object instanceof org.apache.commons.lang.ObjectUtils.Null){
+			if(object instanceof org.apache.commons.lang3.ObjectUtils.Null){
 				return null;
 			}
 			else{
@@ -496,7 +496,7 @@ public class StatisticsUtils {
 //			saObject = row.get(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldName());
 //		}
 		if(saObject!=null){
-			if(saObject instanceof org.apache.commons.lang.ObjectUtils.Null){
+			if(saObject instanceof org.apache.commons.lang3.ObjectUtils.Null){
 				sa = null;
 			}
 			else{
@@ -534,7 +534,7 @@ public class StatisticsUtils {
 //		stat.setServizio((String)row.get(Transazione.model().NOME_SERVIZIO.getFieldName()));
 //		Object azObject = row.get(Transazione.model().AZIONE.getFieldName());
 //		String az = null;
-//		if(azObject!=null && !(azObject instanceof org.apache.commons.lang.ObjectUtils.Null)){ 
+//		if(azObject!=null && !(azObject instanceof org.apache.commons.lang3.ObjectUtils.Null)){ 
 //			az = (String) azObject;
 //		}
 //		stat.setAzione(az != null ? az : " ");
@@ -569,7 +569,7 @@ public class StatisticsUtils {
 		}
 		Object tmpObject = row.get(nomeKeyMappa);
 		String tmp = null;
-		if(tmpObject!=null && !(tmpObject instanceof org.apache.commons.lang.ObjectUtils.Null)){ 
+		if(tmpObject!=null && !(tmpObject instanceof org.apache.commons.lang3.ObjectUtils.Null)){ 
 			tmp = (String) tmpObject;
 		}
 		if(tmp!=null && !"".equals(tmp)){
@@ -589,7 +589,7 @@ public class StatisticsUtils {
 		}
 		Object tmpObject = row.get(nomeKeyMappa);
 		Integer tmp = null;
-		if(tmpObject!=null && !(tmpObject instanceof org.apache.commons.lang.ObjectUtils.Null)){ 
+		if(tmpObject!=null && !(tmpObject instanceof org.apache.commons.lang3.ObjectUtils.Null)){ 
 			tmp = (Integer) tmpObject;
 		}
 		if(tmp!=null && tmp.intValue()>0){

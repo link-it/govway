@@ -32,7 +32,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -254,7 +255,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 				}
 
 				// controlla che la nuova password non coincida con la vecchia
-				if (StringUtils.equals(this.vecchiaPassword, this.user.getPassword())) {
+				if (Strings.CS.equals(this.vecchiaPassword, this.user.getPassword())) {
 					// errore
 					MessageUtils.addErrorMsg("La nuova password non pu\u00F2 essere uguale alla vecchia");
 					return null;
@@ -262,7 +263,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			}
 
 			// controlla pwd
-			if (!StringUtils.equals(this.confermaPassword, this.user.getPassword())) {
+			if (!Strings.CS.equals(this.confermaPassword, this.user.getPassword())) {
 				// errore
 				MessageUtils.addErrorMsg("Le password inserite nei campi Nuova e Conferma Nuova non corrispondono");
 				return null;
@@ -379,14 +380,14 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			}
 			
 			// controlla che la nuova password non coincida con la vecchia
-			if (StringUtils.equals(this.vecchiaPassword, this.nuovaPassword)) {
+			if (Strings.CS.equals(this.vecchiaPassword, this.nuovaPassword)) {
 				// errore
 				MessageUtils.addErrorMsg("La nuova password deve essere differente dalla vecchia");
 				return null;
 			}
 
 			// controlla pwd
-			if (!StringUtils.equals(this.confermaPassword, this.nuovaPassword)) {
+			if (!Strings.CS.equals(this.confermaPassword, this.nuovaPassword)) {
 				// errore
 				MessageUtils.addErrorMsg("Le password inserite nei campi Nuova e Conferma Nuova non corrispondono");
 				return null;

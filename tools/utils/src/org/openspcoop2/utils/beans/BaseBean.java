@@ -29,8 +29,8 @@ import java.util.List;
 
 import jakarta.xml.bind.annotation.XmlTransient;
 
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
 import org.openspcoop2.utils.date.DateUtils;
@@ -433,7 +433,7 @@ public abstract class BaseBean implements Serializable {
 	public String toString(ToStringStyle style,boolean outputTransients,boolean outputStatics){
 		return this.toString(style, outputTransients, outputStatics, null);
 	}
-	public String toString(ToStringStyle style,boolean outputTransients,boolean outputStatics,Class<?>reflectUpToClass){
+	public String toString(ToStringStyle style,boolean outputTransients,boolean outputStatics,Class<? super BaseBean>reflectUpToClass){
 		StringBuilder buffer = new StringBuilder();
 		this.toString(style, buffer, outputTransients, outputStatics, reflectUpToClass);
 		return buffer.toString();
@@ -441,7 +441,7 @@ public abstract class BaseBean implements Serializable {
 	public void toString(ToStringStyle style,StringBuilder buffer,boolean outputTransients,boolean outputStatics){
 		this.toString(style, buffer, outputTransients, outputStatics, null);
 	}
-	public void toString(ToStringStyle style,StringBuilder buffer,boolean outputTransients,boolean outputStatics,Class<?>reflectUpToClass){
+	public void toString(ToStringStyle style,StringBuilder buffer,boolean outputTransients,boolean outputStatics,Class<? super BaseBean>reflectUpToClass){
 		StringBuffer bf = new StringBuffer();
 		ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, style, bf, reflectUpToClass, outputTransients, outputStatics);
 		builder.toString();

@@ -30,7 +30,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.web.monitor.core.utils.SessionUtils;
 import org.slf4j.Logger;
@@ -100,7 +100,7 @@ public class SessionTimeoutFilter implements Filter {
 		String requestPath = httpServletRequest.getRequestURI();
 
 		boolean controlRequired = false;
-		if(StringUtils.contains(requestPath, this.timeoutPage) || StringUtils.contains(requestPath, this.loginPage)){
+		if(Strings.CS.contains(requestPath, this.timeoutPage) || Strings.CS.contains(requestPath, this.loginPage)){
 			controlRequired = false;
 		}else{
 			controlRequired = true;
@@ -113,10 +113,10 @@ public class SessionTimeoutFilter implements Filter {
 		String ctx = req.getContextPath();
 		String reqUri = req.getRequestURI();
 		
-		String reqPage = StringUtils.remove(reqUri, ctx);
+		String reqPage = Strings.CS.remove(reqUri, ctx);
 		
 		String res = "";
-		if("".equals(reqPage) || "/".equals(reqPage) || StringUtils.contains(reqPage, this.loginPage))
+		if("".equals(reqPage) || "/".equals(reqPage) || Strings.CS.contains(reqPage, this.loginPage))
 			res = this.loginPage;
 		else
 			res = this.timeoutPage;

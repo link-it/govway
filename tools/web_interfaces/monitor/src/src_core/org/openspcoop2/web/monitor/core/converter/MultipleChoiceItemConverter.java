@@ -27,7 +27,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.richfaces.component.html.HtmlListShuttle;
 
 //import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -66,7 +67,7 @@ public class MultipleChoiceItemConverter implements Converter {
 					if(selectItem.getLabel() != null) {
 						String trimmedValue = value.replace("  " , " ");
 						String selectItemTrimmedValue = selectItem.getLabel().replace("  ", " ");
-						if(StringUtils.equals(selectItemTrimmedValue,trimmedValue)){
+						if(Strings.CS.equals(selectItemTrimmedValue,trimmedValue)){
 //							log.debug("SOURCE ValueTrimmed["+trimmedValue+"] SelectItemTrimmed["+(selectItemTrimmedValue)+"] Presente");
 							return selectItem;
 						}
@@ -83,7 +84,7 @@ public class MultipleChoiceItemConverter implements Converter {
 					if(selectItem.getLabel() != null) {
 						String trimmedValue = value.replace("  " , " ");
 						String selectItemTrimmedValue = selectItem.getLabel().replace("  ", " ");
-						if(StringUtils.equals(selectItemTrimmedValue,trimmedValue)){
+						if(Strings.CS.equals(selectItemTrimmedValue,trimmedValue)){
 //							log.debug("TARGET ValueTrimmed["+trimmedValue+"] SelectItemTrimmed["+(selectItemTrimmedValue)+"] Presente");
 //							System.out.println("SELECTITEMCONVERTER Value da controllare ["+(value)+"] Presente in lista target");
 							return selectItem;
@@ -117,7 +118,7 @@ public class MultipleChoiceItemConverter implements Converter {
 					(org.openspcoop2.web.monitor.core.bean.SelectItem)selectItem.getValue();
 			String trimmedValue = value.replace("  " , " ");
 			String selectItemTrimmedValue = comboBoxItem.getLabel().replace("  ", " ");
-			if(StringUtils.equals(selectItemTrimmedValue,trimmedValue)){
+			if(Strings.CS.equals(selectItemTrimmedValue,trimmedValue)){
 //				log.debug("Lista Appoggio ValueTrimmed["+trimmedValue+"] SelectItemTrimmed["+(selectItemTrimmedValue)+"] Presente");
 //			if(comboBoxItem.getLabel() != null && comboBoxItem.getLabel().equalsIgnoreCase(value)) {
 				return comboBoxItem;

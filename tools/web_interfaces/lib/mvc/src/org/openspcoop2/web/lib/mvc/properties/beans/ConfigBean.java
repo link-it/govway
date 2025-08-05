@@ -28,7 +28,7 @@ import java.util.Properties;
 
 import org.openspcoop2.core.mvc.properties.utils.Costanti;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.mvc.properties.Config;
 import org.openspcoop2.core.mvc.properties.Property;
 import org.openspcoop2.core.mvc.properties.provider.ExternalResources;

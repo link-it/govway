@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.monitor.sdk.transaction.FaseTracciamento;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;

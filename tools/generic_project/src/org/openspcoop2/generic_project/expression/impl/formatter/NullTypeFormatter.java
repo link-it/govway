@@ -30,11 +30,11 @@ import org.openspcoop2.utils.TipiDatabase;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class NullTypeFormatter implements ITypeFormatter<org.apache.commons.lang.ObjectUtils.Null> {
+public class NullTypeFormatter implements ITypeFormatter<org.apache.commons.lang3.ObjectUtils.Null> {
 
 	
 	@Override
-	public String toString(org.apache.commons.lang.ObjectUtils.Null o) throws ExpressionException {
+	public String toString(org.apache.commons.lang3.ObjectUtils.Null o) throws ExpressionException {
 		if(o == null){
 			throw new ExpressionException("Object parameter is null");
 		}
@@ -42,12 +42,12 @@ public class NullTypeFormatter implements ITypeFormatter<org.apache.commons.lang
 	}
 	
 	@Override
-	public String toSQLString(org.apache.commons.lang.ObjectUtils.Null o) throws ExpressionException {
+	public String toSQLString(org.apache.commons.lang3.ObjectUtils.Null o) throws ExpressionException {
 		return this.toSQLString(o, TipiDatabase.DEFAULT);
 	}
 	
 	@Override
-	public String toSQLString(org.apache.commons.lang.ObjectUtils.Null o,TipiDatabase databaseType) throws ExpressionException {
+	public String toSQLString(org.apache.commons.lang3.ObjectUtils.Null o,TipiDatabase databaseType) throws ExpressionException {
 		switch (databaseType) {
 		case POSTGRESQL:
 			return "null::text";
@@ -62,13 +62,13 @@ public class NullTypeFormatter implements ITypeFormatter<org.apache.commons.lang
 	}
 
 	@Override
-	public org.apache.commons.lang.ObjectUtils.Null toObject(String o, Class<?> c) throws ExpressionException {
+	public org.apache.commons.lang3.ObjectUtils.Null toObject(String o, Class<?> c) throws ExpressionException {
 		if(o == null){
-			return org.apache.commons.lang.ObjectUtils.NULL;
+			return org.apache.commons.lang3.ObjectUtils.NULL;
 		}
 		try{
 			if(o.equals("null")){
-				return org.apache.commons.lang.ObjectUtils.NULL;
+				return org.apache.commons.lang3.ObjectUtils.NULL;
 			}
 			else{
 				throw new Exception("Object is not null, value: ["+o+"]");
@@ -79,8 +79,8 @@ public class NullTypeFormatter implements ITypeFormatter<org.apache.commons.lang
 	}
 
 	@Override
-	public Class<org.apache.commons.lang.ObjectUtils.Null> getTypeSupported() {
-		return org.apache.commons.lang.ObjectUtils.Null.class;
+	public Class<org.apache.commons.lang3.ObjectUtils.Null> getTypeSupported() {
+		return org.apache.commons.lang3.ObjectUtils.Null.class;
 	}
 
 }

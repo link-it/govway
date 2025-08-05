@@ -39,7 +39,7 @@
 			<fileset dir="${openspcoop2.lib}" includes="log/*"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-csv-1.14.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-collections-*.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="commons/commons-lang-2.6.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="commons/commons-lang3-3.18.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-codec-1.18.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-io-2.19.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="jaxb/*"/>

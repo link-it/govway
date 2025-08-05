@@ -27,7 +27,7 @@ import java.util.Map;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
 import org.openspcoop2.core.allarmi.IdAllarme;

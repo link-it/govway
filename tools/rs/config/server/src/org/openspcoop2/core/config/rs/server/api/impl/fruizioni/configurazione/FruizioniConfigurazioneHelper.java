@@ -24,7 +24,7 @@ package org.openspcoop2.core.config.rs.server.api.impl.fruizioni.configurazione;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -109,7 +109,7 @@ public class FruizioniConfigurazioneHelper {
 		
 		if (! env.confHelper.attivazionePolicyCheckData(new StringBuilder(), tipoOperazione, configurazioneControlloTraffico, 
 				policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, modalita) ) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 		}
 	}
 

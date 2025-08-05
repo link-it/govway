@@ -23,7 +23,7 @@ package org.openspcoop2.core.constants;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.TipiDatabase;
@@ -235,10 +235,10 @@ public class Costanti {
 	public static final String LABEL_PARAMETRO_PROTOCOLLI_DI = "Profili di Interoperabilità";
 	public static final String LABEL_PARAMETRO_PROTOCOLLO = "Profilo Interoperabilità";
 	public static final String LABEL_PARAMETRO_PROTOCOLLI = "Profili Interoperabilità";
-	public static final String LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE = StringEscapeUtils.escapeHtml(LABEL_PARAMETRO_PROTOCOLLO_DI);
-	public static final String LABEL_PARAMETRO_PROTOCOLLI_DI_HTML_ESCAPE = StringEscapeUtils.escapeHtml(LABEL_PARAMETRO_PROTOCOLLI_DI);
-	public static final String LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE = StringEscapeUtils.escapeHtml(LABEL_PARAMETRO_PROTOCOLLO);
-	public static final String LABEL_PARAMETRO_PROTOCOLLI_HTML_ESCAPE = StringEscapeUtils.escapeHtml(LABEL_PARAMETRO_PROTOCOLLI);
+	public static final String LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE = StringEscapeUtils.escapeHtml4(LABEL_PARAMETRO_PROTOCOLLO_DI);
+	public static final String LABEL_PARAMETRO_PROTOCOLLI_DI_HTML_ESCAPE = StringEscapeUtils.escapeHtml4(LABEL_PARAMETRO_PROTOCOLLI_DI);
+	public static final String LABEL_PARAMETRO_PROTOCOLLO_HTML_ESCAPE = StringEscapeUtils.escapeHtml4(LABEL_PARAMETRO_PROTOCOLLO);
+	public static final String LABEL_PARAMETRO_PROTOCOLLI_HTML_ESCAPE = StringEscapeUtils.escapeHtml4(LABEL_PARAMETRO_PROTOCOLLI);
 	
 	public static final String LABEL_PARAMETRO_PROTOCOLLO_COMPACT = "Profilo";
 	public static final String LABEL_PARAMETRO_PROTOCOLLI_COMPACT = "Profili";

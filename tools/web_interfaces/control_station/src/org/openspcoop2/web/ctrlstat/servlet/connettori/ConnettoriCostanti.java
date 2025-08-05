@@ -22,7 +22,7 @@ package org.openspcoop2.web.ctrlstat.servlet.connettori;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.ConnettoriHttpImpl;
 import org.openspcoop2.core.constants.Costanti;
@@ -459,7 +459,7 @@ public class ConnettoriCostanti {
 	public static final String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER = "&Egrave; possibile caricare un certificato in uno dei seguenti formati:";
 	public static final List<String> LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER_VALUES = new ArrayList<>();
 	static {
-		LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER_VALUES.add("<b>PEM</b>: "+StringEscapeUtils.escapeHtml("file ASCII con codifica Base64 che contiene \"-----BEGIN CERTIFICATE-----\" all'inizio e \"-----END CERTIFICATE-----\" alla fine"));
+		LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER_VALUES.add("<b>PEM</b>: "+StringEscapeUtils.escapeHtml4("file ASCII con codifica Base64 che contiene \"-----BEGIN CERTIFICATE-----\" all'inizio e \"-----END CERTIFICATE-----\" alla fine"));
 		LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO_INFO_CER_VALUES.add("<b>DER</b>: versione binaria del formato PEM");
 	}
 	public static final String LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO = "Certificato";

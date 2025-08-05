@@ -22,7 +22,7 @@ package org.openspcoop2.utils.transport.http;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;

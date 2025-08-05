@@ -28,8 +28,8 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -3668,7 +3668,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				de.setValue(StringEscapeUtils.escapeHtml(usernameGetMsg));
+				de.setValue(StringEscapeUtils.escapeHtml4(usernameGetMsg));
 				if(integrationManagerEnabled) {
 					de.setType(DataElementType.TEXT_EDIT);
 				}
@@ -3739,7 +3739,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 						de.setValue(null); // non faccio vedere una password cifrata
 					}
 					else{
-						de.setValue(StringEscapeUtils.escapeHtml(passwordGetMsg));
+						de.setValue(StringEscapeUtils.escapeHtml4(passwordGetMsg));
 					}
 					if(integrationManagerEnabled) {
 						//de.setType(DataElementType.TEXT_EDIT);
@@ -3775,7 +3775,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de = new DataElement();
 					de.setType(DataElementType.HIDDEN);
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-					de.setValue(StringEscapeUtils.escapeHtml(passwordGetMsg));
+					de.setValue(StringEscapeUtils.escapeHtml4(passwordGetMsg));
 					dati.add(de);
 					
 				}
@@ -3994,7 +3994,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				de.setValue(StringEscapeUtils.escapeHtml(usernameGetMsg));
+				de.setValue(StringEscapeUtils.escapeHtml4(usernameGetMsg));
 //				if(!this.isModalitaStandard()) {
 //					de.setType(DataElementType.TEXT_EDIT);
 //				}
@@ -4008,7 +4008,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 	
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-				de.setValue(StringEscapeUtils.escapeHtml(passwordGetMsg));
+				de.setValue(StringEscapeUtils.escapeHtml4(passwordGetMsg));
 //				if(!this.isModalitaStandard()) {
 //					de.setType(DataElementType.TEXT_EDIT);
 //				}
@@ -4558,19 +4558,19 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_CREDENZIALI_CHANGE, 
 							parametersServletCredenzialeChange.toArray(new Parameter[parametersServletCredenzialeChange.size()]));
 					de.setSize(ConnettoriCostanti.NUMERO_CARATTERI_SUBJECT_DA_VISUALIZZARE_IN_LISTA_CERTIFICATI);
-					de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject));
-					de.setToolTip(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject)); 
+					de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoSubject));
+					de.setToolTip(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoSubject)); 
 					de.setIdToRemove(i+"");
 					e.add(de);
 					
 					// Issuer 
 					de = new DataElement();
-					String issuerValue = StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer);
+					String issuerValue = StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoIssuer);
 					if(issuerValue.length() > ConnettoriCostanti.NUMERO_CARATTERI_SUBJECT_DA_VISUALIZZARE_IN_LISTA_CERTIFICATI) {
 						issuerValue = issuerValue.substring(0,(ConnettoriCostanti.NUMERO_CARATTERI_SUBJECT_DA_VISUALIZZARE_IN_LISTA_CERTIFICATI-3)) + "...";
 					}
 					de.setValue(issuerValue);
-					de.setToolTip(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer)); 
+					de.setToolTip(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoIssuer)); 
 					e.add(de);
 					
 					// verifica tutti i campi

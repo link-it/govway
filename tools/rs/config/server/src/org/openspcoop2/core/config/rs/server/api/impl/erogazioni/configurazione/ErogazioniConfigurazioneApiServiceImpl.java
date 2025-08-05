@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.commons.CoreException;
@@ -233,7 +233,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			}
 			
 			IdSoggetto idSoggettoProprietarioSA = (IdSoggetto) env.idSoggetto.clone();
-			if(org.apache.commons.lang.StringUtils.isNotEmpty(body.getSoggetto())) {
+			if(org.apache.commons.lang3.StringUtils.isNotEmpty(body.getSoggetto())) {
 				idSoggettoProprietarioSA.setNome(body.getSoggetto());
 				try {
 					idSoggettoProprietarioSA.setId(env.soggettiCore.getIdSoggetto(body.getSoggetto(),env.tipo_soggetto));
@@ -344,7 +344,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO, idSoggettoProprietarioSA.getId().toString());
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO, sa.getId().toString());
 			if (!env.paHelper.porteAppServizioApplicativoAutorizzatiCheckData(TipoOperazione.ADD)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 			}
 			
 			PortaApplicativaAutorizzazioneServizioApplicativo paSaAutorizzato = new PortaApplicativaAutorizzazioneServizioApplicativo();
@@ -447,7 +447,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, pa.getId().toString());
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO, daAutenticare.getId().toString());
 			if (!env.paHelper.porteAppSoggettoCheckData(TipoOperazione.ADD)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 			}
 			
 		
@@ -527,7 +527,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			String tokenPolicy = (pa.getGestioneToken()!=null) ? pa.getGestioneToken().getPolicy() : null;
 			
 			IdSoggetto idSoggettoProprietarioSA = (IdSoggetto) env.idSoggetto.clone();
-			if(org.apache.commons.lang.StringUtils.isNotEmpty(body.getSoggetto())) {
+			if(org.apache.commons.lang3.StringUtils.isNotEmpty(body.getSoggetto())) {
 				idSoggettoProprietarioSA.setNome(body.getSoggetto());
 				try {
 					idSoggettoProprietarioSA.setId(env.soggettiCore.getIdSoggetto(body.getSoggetto(),env.tipo_soggetto));
@@ -552,6 +552,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				if(!tokenAbilitato && !modiSicurezzaMessaggio) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile registrare alcun applicativo: non è stata riscontrato alcun criterio di sicurezza (messaggio o token)");
 				}
+				
 				
 				bothSslAndToken = tokenAbilitato && modiSicurezzaMessaggio;
 				
@@ -647,7 +648,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO, idSoggettoProprietarioSA.getId().toString());
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO, sa.getId().toString());
 			if (!env.paHelper.porteAppServizioApplicativoAutorizzatiCheckData(TipoOperazione.ADD)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 			}
 			
 			PortaApplicativaAutorizzazioneServizioApplicativo paSaAutorizzato = new PortaApplicativaAutorizzazioneServizioApplicativo();
@@ -742,7 +743,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			}
 			
 			if (!env.paHelper.ruoloCheckData(TipoOperazione.ADD, body.getRuolo(), ruoliPresenti)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 			}
 
 			Ruolo ruolo = new Ruolo();
@@ -833,7 +834,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			}
 			
 			if (!env.paHelper.ruoloCheckData(TipoOperazione.ADD, body.getRuolo(), ruoliPresenti)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 			}
 
 			Ruolo ruolo = new Ruolo();
@@ -964,7 +965,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			}
 			
 			if (!env.paHelper.scopeCheckData(TipoOperazione.ADD, body.getScope(), scopePresenti )) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 				
 			}
 
@@ -1044,7 +1045,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.ADD, infoPolicy);
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(errorAttivazione));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(errorAttivazione));
 			}
 			
 			policy.getFiltro().setEnabled(true);
@@ -1066,7 +1067,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,
 					modalita
 				)) {
-				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml4(existsMessage.toString()));
 			}
 			
 			ErogazioniApiHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pa, policy, infoPolicy, env, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()), modalita);
@@ -1123,12 +1124,12 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 						
 			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRichiesta(env.paCore, idPorta, body.getElemento(), 0, existsMessage)) {
-				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml4(existsMessage.toString()));
 			}
 			
 			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD, env.requestWrapper, env.paHelper, false, body, idPorta, null,
 					serviceBinding) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 									
 			CorrelazioneApplicativa ca = pa.getCorrelazioneApplicativa();
@@ -1188,12 +1189,12 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRisposta(env.paCore, idPorta, body.getElemento(), 0, existsMessage)) {
-				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml4(existsMessage.toString()));
 			}
 			
 			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.ADD, env.requestWrapper, env.pdHelper, false, body, idPorta, null,
 					serviceBinding)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
                        			
 			if ( pa.getCorrelazioneApplicativaRisposta() == null)
@@ -1240,7 +1241,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				pa.setServiziApplicativiAutorizzati(new PortaApplicativaAutorizzazioneServiziApplicativi());
 			
 			IdSoggetto idSoggettoProprietarioSA = (IdSoggetto) env.idSoggetto.clone();
-			if(org.apache.commons.lang.StringUtils.isNotEmpty(soggettoApplicativo)) {
+			if(org.apache.commons.lang3.StringUtils.isNotEmpty(soggettoApplicativo)) {
 				idSoggettoProprietarioSA.setNome(soggettoApplicativo);
 			}
 			
@@ -1346,7 +1347,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			}
 			
 			IdSoggetto idSoggettoProprietarioSA = (IdSoggetto) env.idSoggetto.clone();
-			if(org.apache.commons.lang.StringUtils.isNotEmpty(soggettoApplicativo)) {
+			if(org.apache.commons.lang3.StringUtils.isNotEmpty(soggettoApplicativo)) {
 				idSoggettoProprietarioSA.setNome(soggettoApplicativo);
 			}
 			
@@ -1591,7 +1592,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					);
 				
 				if ( inUsoMessage.length() > 0 ) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 				}
 				
 			}
@@ -3092,7 +3093,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 		
 			if (!env.paHelper.checkDataConfigurazioneResponseCachingPorta(TipoOperazione.OTHER, true, body.getStato().toString())) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			ResponseCachingConfigurazione newConfigurazione = ErogazioniApiHelper.buildResponseCachingConfigurazione(body, env.paHelper);
@@ -3189,7 +3190,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			ErogazioniApiHelper.fillPortaApplicativa(env, body, newPa);
 			
 			if (! ErogazioniApiHelper.controlloAccessiCheckPA(env, oldPa, newPa)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 			}
 		
 			env.paCore.performUpdateOperation(env.userLogin, false, newPa);
@@ -3231,7 +3232,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			ErogazioniApiHelper.fillPortaApplicativa(body, newPa);
 			
 			if (!ErogazioniApiHelper.controlloAccessiCheckPA(env, pa, newPa)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 			}
 			
 			env.paCore.performUpdateOperation(env.userLogin, false, newPa);
@@ -3530,7 +3531,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			ErogazioniApiHelper.override(infoPolicy.getTipoRisorsa(), body, env.protocolFactory.getProtocol(), env.idSoggetto.toIDSoggetto(), env.requestWrapper);	
 			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.CHANGE, infoPolicy);
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(errorAttivazione));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(errorAttivazione));
 			}
 			
 			String modalita = ErogazioniApiHelper.getDataElementModalita(infoPolicy.isBuiltIn());
@@ -3749,7 +3750,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, false, body, idPorta, oldElem.getId(),
 					serviceBinding)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			correlazioni.add(convert(body));
@@ -3816,7 +3817,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, false, body, idPorta, oldElem.getId(),
 					serviceBinding)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			correlazioni.add(convert(body));
@@ -3864,7 +3865,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			env.requestWrapper.overrideParameter(CostantiControlStation.PARAMETRO_PORTE_XSD, stato);
 			if (!env.paHelper.validazioneContenutiCheck(TipoOperazione.OTHER, false)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 			}
 			
 			final ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();

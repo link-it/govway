@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -98,13 +98,13 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 			
 			String elemxml = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ELEMENTO_XML);
 			if(elemxml!=null)
-				elemxml = StringEscapeUtils.escapeHtml(elemxml);
+				elemxml = StringEscapeUtils.escapeHtml4(elemxml);
 			
 			String mode = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE);
 			
 			String pattern = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_PATTERN);
 			if(pattern!=null)
-				pattern = StringEscapeUtils.escapeHtml(pattern);
+				pattern = StringEscapeUtils.escapeHtml4(pattern);
 			
 			String idcorrString = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_CORRELAZIONE);
 			int idcorr = Integer.parseInt(idcorrString);
@@ -179,14 +179,14 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				if (elemxml == null) {
-					elemxml = StringEscapeUtils.escapeHtml(cae.getNome());
+					elemxml = StringEscapeUtils.escapeHtml4(cae.getNome());
 				}
 				if (mode == null &&
 					cae.getIdentificazione()!=null) {
 					mode = cae.getIdentificazione().toString();
 				}
 				if (pattern == null) {
-					pattern = StringEscapeUtils.escapeHtml(cae.getPattern());
+					pattern = StringEscapeUtils.escapeHtml4(cae.getPattern());
 				}
 				if (gif == null &&
 					cae.getIdentificazioneFallita()!=null) {
@@ -264,7 +264,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 				caeNew.setNome(null);
 			}
 			else {
-				caeNew.setNome(StringEscapeUtils.unescapeHtml(elemxml));
+				caeNew.setNome(StringEscapeUtils.unescapeHtml4(elemxml));
 			}
 			caeNew.setIdentificazione(CorrelazioneApplicativaRichiestaIdentificazione.toEnumConstant(mode));
 			if (mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED) || 
@@ -273,7 +273,7 @@ public final class PorteDelegateCorrelazioneApplicativaRequestChange extends Act
 					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_TEMPLATE) ||
 					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) ||
 					mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)) {
-				caeNew.setPattern(StringEscapeUtils.unescapeHtml(pattern));
+				caeNew.setPattern(StringEscapeUtils.unescapeHtml4(pattern));
 			}
 			if(!PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_DISABILITATO.equals(mode)){
 				caeNew.setIdentificazioneFallita(CorrelazioneApplicativaGestioneIdentificazioneFallita.toEnumConstant(gif));

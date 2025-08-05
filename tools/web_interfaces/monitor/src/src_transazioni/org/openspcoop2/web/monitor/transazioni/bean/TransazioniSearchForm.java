@@ -36,7 +36,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
@@ -1014,25 +1014,25 @@ Context, Cloneable {
 				if(ricerca!=null){
 					switch (ricerca) {
 					case ID_APPLICATIVO_AVANZATA:
-						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdCorrelazioneApplicativa())){
+						if(org.apache.commons.lang3.StringUtils.isEmpty(this.getIdCorrelazioneApplicativa())){
 							MessageUtils.addErrorMsg("Indicare un identificativo applicativo");
 							return null;
 						}
 						break;
 					case ID_APPLICATIVO_BASE:
-						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdCorrelazioneApplicativa())){
+						if(org.apache.commons.lang3.StringUtils.isEmpty(this.getIdCorrelazioneApplicativa())){
 							MessageUtils.addErrorMsg("Indicare un identificativo applicativo");
 							return null;
 						}
 						break;	
 					case ID_MESSAGGIO:
-						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdEgov())){
+						if(org.apache.commons.lang3.StringUtils.isEmpty(this.getIdEgov())){
 							MessageUtils.addErrorMsg("Indicare un identificativo messaggio");
 							return null;
 						}
 						break;
 					case ID_TRANSAZIONE:
-						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdTransazione())){
+						if(org.apache.commons.lang3.StringUtils.isEmpty(this.getIdTransazione())){
 							MessageUtils.addErrorMsg("Indicare un identificativo transazione");
 							return null;
 						}
@@ -1046,7 +1046,7 @@ Context, Cloneable {
 						}
 						break;
 					case PURPOSE_ID:
-						if(org.apache.commons.lang.StringUtils.isEmpty(this.getPurposeId())){
+						if(org.apache.commons.lang3.StringUtils.isEmpty(this.getPurposeId())){
 							MessageUtils.addErrorMsg("Indicare la finalita della transazione");
 							return null;
 						}
@@ -1086,8 +1086,8 @@ Context, Cloneable {
 			}
 				
 			
-			if(org.apache.commons.lang.StringUtils.isNotEmpty(this.nomeRisorsa)){
-				if(org.apache.commons.lang.StringUtils.isEmpty(this.valoreRisorsa)){
+			if(org.apache.commons.lang3.StringUtils.isNotEmpty(this.nomeRisorsa)){
+				if(org.apache.commons.lang3.StringUtils.isEmpty(this.valoreRisorsa)){
 					MessageUtils.addErrorMsg("Indicare un valore per la risorsa '"+this.nomeRisorsa+"'");
 					return null;
 				}

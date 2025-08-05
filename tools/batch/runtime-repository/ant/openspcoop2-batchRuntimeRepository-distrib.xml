@@ -33,7 +33,7 @@
 		<copy todir="${distrib_batchRuntimeRepository}/lib" flatten="true">
 			<fileset dir="${openspcoop2.lib}" includes="log/*"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-collections-*.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="commons/commons-lang-2.6.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="commons/commons-lang3-3.18.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-io-2.19.0.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="jaxb/*"/>
 			<fileset dir="${openspcoop2.lib}" includes="saaj/jakarta.xml.soap-api-3.0.2.jar"/>

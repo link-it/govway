@@ -23,7 +23,7 @@ package org.openspcoop2.pdd.core.autorizzazione;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.utils.ConfigUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;

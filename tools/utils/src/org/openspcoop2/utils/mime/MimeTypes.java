@@ -69,7 +69,7 @@ public class MimeTypes {
 						String [] tmp = line.split(" "); 
 						if(tmp.length<2){
 							/** System.out.println("TYPE["+tmp[0]+"] without exts"); */
-							mapMimeToExt.put(tmp[0].trim(), org.apache.commons.lang.ObjectUtils.NULL);
+							mapMimeToExt.put(tmp[0].trim(), org.apache.commons.lang3.ObjectUtils.NULL);
 						}else{
 							StringBuilder bf = new StringBuilder();
 							for (int i = 1; i < tmp.length; i++) {
@@ -113,7 +113,7 @@ public class MimeTypes {
 		if(o==null){
 			return null;
 		}
-		if(o instanceof org.apache.commons.lang.ObjectUtils.Null){
+		if(o instanceof org.apache.commons.lang3.ObjectUtils.Null){
 			return null;
 		}
 		return (String) o;

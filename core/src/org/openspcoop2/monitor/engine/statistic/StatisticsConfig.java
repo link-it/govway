@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.monitor.engine.config.MonitorProperties;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 

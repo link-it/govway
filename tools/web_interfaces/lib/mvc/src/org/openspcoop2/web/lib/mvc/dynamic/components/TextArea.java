@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.lib.mvc.dynamic.components;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.monitor.engine.dynamic.IDynamicLoader;
 import org.openspcoop2.monitor.sdk.exceptions.ParameterException;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;

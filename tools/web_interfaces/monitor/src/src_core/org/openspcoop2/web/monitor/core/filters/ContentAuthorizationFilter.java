@@ -36,7 +36,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
@@ -163,7 +163,7 @@ public class ContentAuthorizationFilter implements Filter {
 			} else {
 				// richiesta una risorsa non protetta
 				// controllo se ho richiesto la index
-				if(StringUtils.contains(request.getRequestURI(), "public/login.jsf") || StringUtils.contains(request.getRequestURI(), "public/timeoutPage.jsf")){
+				if(Strings.CS.contains(request.getRequestURI(), "public/login.jsf") || Strings.CS.contains(request.getRequestURI(), "public/timeoutPage.jsf")){
 					LoginBean lb =  Utility.getLoginBeanFromSession(session);
 					log.debug("Richiesto Accesso per La risorsa ["+urlRichiesta+"]");
 					if (lb != null) {
@@ -179,7 +179,7 @@ public class ContentAuthorizationFilter implements Filter {
 				}
 				
 				// Controllo risorse jQuery
-				if(StringUtils.contains(request.getRequestURI(), Costanti.WEBJARS_DIR) ) {
+				if(Strings.CS.contains(request.getRequestURI(), Costanti.WEBJARS_DIR) ) {
 					if(!isValidJQueryResource(request)) {
 						effettuaRedirect = true; // effettua redirect verso welcome.jsf
 						utenteLoggato = true; // flag che uso per impostare un messaggio di errore = false per non visualizzare il messaggio di accesso errato. 

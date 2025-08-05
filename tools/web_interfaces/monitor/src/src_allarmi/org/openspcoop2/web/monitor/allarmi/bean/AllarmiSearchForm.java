@@ -28,7 +28,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.web.monitor.allarmi.constants.AllarmiCostanti;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;

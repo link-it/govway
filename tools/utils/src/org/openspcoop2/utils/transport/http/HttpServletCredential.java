@@ -26,7 +26,7 @@ import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;

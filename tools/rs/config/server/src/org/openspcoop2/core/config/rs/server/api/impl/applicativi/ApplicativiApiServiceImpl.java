@@ -21,8 +21,8 @@ package org.openspcoop2.core.config.rs.server.api.impl.applicativi;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Credenziali;
@@ -174,7 +174,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					listExtendedConnettore, null,
 					new StringBuilder()
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 				
 			ApplicativiApiHelper.validateProperties(env, protocolProperties, sa, ConsoleOperationType.ADD);
@@ -241,7 +241,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 				ServiziApplicativiUtilities.deleteServizioApplicativo(sa, context.getAuthentication().getName(), env.saCore, env.saHelper, inUsoMessage, "\n");
 				
 				if (inUsoMessage.length() > 0) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 				}
 				
 			} else if (env.delete_404) {
@@ -502,7 +502,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					listExtendedConnettore, newSa,
 					new StringBuilder()
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			ApplicativiApiHelper.validateProperties(env, protocolProperties, newSa, ConsoleOperationType.CHANGE);
@@ -588,7 +588,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 					listExtendedConnettore, oldSa,
 					new StringBuilder()
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			// eseguo l'aggiornamento

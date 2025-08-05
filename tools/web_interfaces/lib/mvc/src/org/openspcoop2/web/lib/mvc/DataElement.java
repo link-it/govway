@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.UtilsRuntimeException;
 
 
@@ -544,7 +544,7 @@ public class DataElement implements Serializable {
 	}
 	
 	public static String getEscapedValue(String value){
-		String escaped = StringEscapeUtils.escapeHtml(StringEscapeUtils.unescapeHtml(DataElement.checkNull(value)));
+		String escaped = StringEscapeUtils.escapeHtml4(StringEscapeUtils.unescapeHtml4(DataElement.checkNull(value)));
 		
 		// ripristino evenutali caratteri html
 		for (String key : DataElement.escapeMap.keySet()) {

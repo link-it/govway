@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.core.byok.DriverBYOK;

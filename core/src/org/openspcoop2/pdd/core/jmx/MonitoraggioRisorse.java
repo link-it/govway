@@ -41,7 +41,7 @@ import javax.management.MBeanParameterInfo;
 import javax.management.NotificationBroadcasterSupport;
 import javax.management.ReflectionException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.config.DBConsegneMessageBoxManager;
 import org.openspcoop2.pdd.config.DBConsegnePreseInCaricoManager;

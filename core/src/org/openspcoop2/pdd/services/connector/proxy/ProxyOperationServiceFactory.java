@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.pdd.services.connector.proxy;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;

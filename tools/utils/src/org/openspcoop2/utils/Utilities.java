@@ -59,9 +59,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 
 
@@ -1096,7 +1097,7 @@ public class Utilities {
 				index++;
 			}
 
-			tmp = StringUtils.replace(tmp, replaceString.toString(), "");
+			tmp = Strings.CS.replace(tmp, replaceString.toString(), "");
 
 			indexOfValueWrong = tmp.indexOf(keyword);
 		}

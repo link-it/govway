@@ -32,7 +32,7 @@ import jakarta.xml.soap.SOAPBody;
 import jakarta.xml.soap.SOAPEnvelope;
 import jakarta.xml.soap.SOAPFault;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;

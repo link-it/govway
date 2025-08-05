@@ -31,7 +31,7 @@ import jakarta.xml.soap.SOAPElement;
 import jakarta.xml.soap.SOAPFactory;
 import jakarta.xml.soap.SOAPFault;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.eccezione.details.DettaglioEccezione;
 import org.openspcoop2.core.eccezione.errore_applicativo.CodiceEccezione;

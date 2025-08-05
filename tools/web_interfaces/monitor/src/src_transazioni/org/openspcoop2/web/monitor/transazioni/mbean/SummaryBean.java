@@ -38,8 +38,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.search.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.commons.search.Soggetto;
@@ -855,7 +855,7 @@ public class SummaryBean implements Serializable{
 		}
 		String res = MessageFormat.format(CostantiGrafici.DAL_AL_PATTERN, sdf.format(this.getMinDate()), sdf.format(this.getMaxDate())); 
 
-		return StringEscapeUtils.escapeXml(res);
+		return StringEscapeUtils.escapeXml10(res);
 	}
 
 	private Date getMinDate() {
@@ -869,7 +869,7 @@ public class SummaryBean implements Serializable{
 
 	
 	private String getCaption() {
-		return StringEscapeUtils.escapeXml(CostantiGrafici.DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO); 
+		return StringEscapeUtils.escapeXml10(CostantiGrafici.DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO); 
 	}
 
 

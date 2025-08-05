@@ -30,7 +30,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -630,7 +630,7 @@ public final class Importer extends Action {
 
 				if(pd.getMessage()!=null &&
 					importInformationMissingException==null){
-					pd.setMessage(ArchiviCostanti.LABEL_IMPORT_ERROR_HEADER+StringEscapeUtils.escapeHtml(pd.getMessage()));
+					pd.setMessage(ArchiviCostanti.LABEL_IMPORT_ERROR_HEADER+StringEscapeUtils.escapeHtml4(pd.getMessage()));
 				}
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);

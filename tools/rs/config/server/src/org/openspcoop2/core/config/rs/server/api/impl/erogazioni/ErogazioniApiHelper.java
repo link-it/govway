@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 
 import jakarta.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.Filtri;
@@ -842,7 +842,7 @@ public class ErogazioniApiHelper {
     			null, // rogazioneServizioApplicativoServer,
     			canaleStato, canale, gestioneCanaliEnabled
         	)) {
-        	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
+        	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml4( env.pd.getMessage()) );
         }
 		
 		
@@ -1473,7 +1473,7 @@ public class ErogazioniApiHelper {
 				generaPortaApplicativa,
 				inUsoMessage
 			) ) {
-			throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml( inUsoMessage.toString() ));
+			throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml4( inUsoMessage.toString() ));
 		}
 
 		/**final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString( authz.getTipo(),
@@ -1643,7 +1643,7 @@ public class ErogazioniApiHelper {
     			null, // rogazioneServizioApplicativoServer
     			canaleStato, canale, gestioneCanaliEnabled
         	)) {
-        	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
+        	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml4( env.pd.getMessage()) );
         }
         
         
@@ -2278,7 +2278,7 @@ public class ErogazioniApiHelper {
 		}
 		
 		if (!env.apsHelper.serviziAllegatiCheckData(TipoOperazione.ADD,filewrap,documento,env.protocolFactory)) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 		}
 		
 		switch (body.getAllegato().getRuolo()) {
@@ -2336,7 +2336,7 @@ public class ErogazioniApiHelper {
 		newDoc.setId(oldDoc.getId());
 		newDoc.setOraRegistrazione(new Date());
 		
-		if (! org.apache.commons.lang.StringUtils.equals(newDoc.getRuolo(), oldDoc.getRuolo())) {
+		if (! org.apache.commons.lang3.Strings.CS.equals(newDoc.getRuolo(), oldDoc.getRuolo())) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non puoi modificare il ruolo di un allegato");
 		}
 
@@ -2344,7 +2344,7 @@ public class ErogazioniApiHelper {
 		env.requestWrapper.overrideParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO, newDoc.getRuolo());
 		
 		if (!env.apsHelper.serviziAllegatiCheckData(TipoOperazione.CHANGE,filewrap,newDoc,env.protocolFactory)) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 		}
 		
 		AccordiServizioParteSpecificaUtilities.sostituisciDocumentoAsps(asps, oldDoc, newDoc);
@@ -3625,7 +3625,7 @@ public class ErogazioniApiHelper {
 					dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
 					dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			ret = env.paHelper.getConfigurazioneDump(TipoOperazione.OTHER,
@@ -3657,7 +3657,7 @@ public class ErogazioniApiHelper {
 					dumpRispostaIngressoHeader, dumpRispostaIngressoPayload, dumpRispostaIngressoPayloadParsing, dumpRispostaIngressoBody, dumpRispostaIngressoAttachments,
 					dumpRispostaUscitaHeader, dumpRispostaUscitaPayload, dumpRispostaUscitaPayloadParsing, dumpRispostaUscitaBody, dumpRispostaUscitaAttachments
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			ret = env.pdHelper.getConfigurazioneDump(TipoOperazione.OTHER,
@@ -3919,7 +3919,7 @@ public class ErogazioniApiHelper {
 		}
 	
 		if ( !env.paHelper.checkDataConfigurazioneCorsPorta(TipoOperazione.OTHER, true, statoCorsPorta) ) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 		}
 		
 	
@@ -5661,7 +5661,7 @@ public class ErogazioniApiHelper {
 		for ( String azione : toAdd ) {
 			
 			if( occupate.contains(azione) ) {
-				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE));			
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml4(CostantiControlStation.MESSAGGIO_ERRORE_AZIONE_PORTA_GIA_PRESENTE));			
 			}
 			
 			if( !presenti.contains(azione) ) {
@@ -6400,7 +6400,7 @@ public class ErogazioniApiHelper {
 		org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazioneControlloTraffico = env.confCore.getConfigurazioneControlloTraffico();
 		if (! env.confHelper.attivazionePolicyCheckData(new StringBuilder(), tipoOperazione, configurazioneControlloTraffico, 
 				policy,infoPolicy, ruoloPorta, nomePorta, serviceBinding, modalita) ) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 		}
 		
 	

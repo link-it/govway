@@ -34,7 +34,7 @@ import jakarta.xml.soap.AttachmentPart;
 import jakarta.xml.soap.SOAPElement;
 import javax.xml.transform.dom.DOMSource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;

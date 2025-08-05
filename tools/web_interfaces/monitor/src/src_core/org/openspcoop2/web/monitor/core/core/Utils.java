@@ -34,7 +34,7 @@ import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.openspcoop2.pdd.logger.info.FormatUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.slf4j.Logger;
@@ -167,13 +167,13 @@ public class Utils {
 		String contextPath = httpServletRequest.getContextPath(); // '/govwayMonitor'
 
 		// caso limite, govwayMonitor/
-		if(StringUtils.equals(requestPath, (contextPath + "/")))
+		if(Strings.CS.equals(requestPath, (contextPath + "/")))
 			return false;
 
 		boolean controlRequired = true;
 		if(excludedPaths.size() > 0){
 			for (String page : excludedPaths) {
-				if(StringUtils.contains(requestPath, (contextPath + page))){
+				if(Strings.CS.contains(requestPath, (contextPath + page))){
 					controlRequired = false;
 					break;
 				}

@@ -20,7 +20,7 @@
 
 package org.openspcoop2.utils.crypt;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.slf4j.Logger;

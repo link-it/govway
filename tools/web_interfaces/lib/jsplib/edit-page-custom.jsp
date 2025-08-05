@@ -19,7 +19,7 @@
 
 
 
-<%@ page session="true" import="java.util.List, java.util.ArrayList, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, java.util.ArrayList, org.apache.commons.text.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";

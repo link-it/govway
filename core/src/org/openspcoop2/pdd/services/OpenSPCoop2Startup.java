@@ -50,7 +50,7 @@ import jakarta.xml.soap.SOAPHeader;
 import jakarta.xml.soap.SOAPHeaderElement;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rs.security.jose.common.KeyManagementUtils;
 import org.apache.wss4j.dom.handler.WSHandler;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;

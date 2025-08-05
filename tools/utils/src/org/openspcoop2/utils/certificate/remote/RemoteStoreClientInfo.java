@@ -22,7 +22,7 @@ package org.openspcoop2.utils.certificate.remote;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * RemoteStoreClientInfo

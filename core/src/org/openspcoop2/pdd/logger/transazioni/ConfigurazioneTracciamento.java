@@ -23,7 +23,7 @@ package org.openspcoop2.pdd.logger.transazioni;
 import java.io.File;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.ConfigurazioneTracciamentoPorta;
 import org.openspcoop2.core.config.PortaApplicativa;

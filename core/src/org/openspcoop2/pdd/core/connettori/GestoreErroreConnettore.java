@@ -34,7 +34,7 @@ import javax.xml.namespace.QName;
 import jakarta.xml.soap.SOAPBody;
 import jakarta.xml.soap.SOAPFault;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;

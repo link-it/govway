@@ -19,8 +19,8 @@
  */
 package org.openspcoop2.web.lib.mvc.byok;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.pdd.core.byok.DriverBYOKUtilities;
 import org.openspcoop2.utils.UtilsException;
@@ -134,7 +134,7 @@ public class LockUtilities {
 		} else {
 			processByByokDisabledDataElement(de, value, escapeHtml, hidden, readOnly);
 		}
-		de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(value) : value);
+		de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml4(value) : value);
 	}
 	private void processByByokDisabledDataElement(DataElement de, String value, boolean escapeHtml, boolean hidden, boolean readOnly) {
 		if(this.visualizzaCampiPasswordComeLock) {
@@ -165,7 +165,7 @@ public class LockUtilities {
 			if(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) {
 				de.setType(DataElementType.HIDDEN);
 			}
-			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
+			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue);
 		}
 		else {
 			lockEngineWithBIOK(de, wrapValue, value, escapeHtml, readOnly );
@@ -196,17 +196,17 @@ public class LockUtilities {
 		if(sb.length()>0) {
 			de.setNote(sb.toString());
 		}
-		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, this.visualizzaInformazioniCifrate, true, this.warningMessage, this.servletNameSecretDecoder);
+		de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue, readOnly, this.visualizzaInformazioniCifrate, true, this.warningMessage, this.servletNameSecretDecoder);
 	}
 	private void lockEngineWithoutBIOK(DataElement de, String wrapValue, boolean escapeHtml, boolean hidden, boolean readOnly) {
 		if(hidden) {
 			if(de.getType()==null || StringUtils.isEmpty(de.getType()) || !DataElementType.HIDDEN.toString().equals(de.getType())) {
 				de.setType(DataElementType.HIDDEN);
 			}
-			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue);
+			de.setValue(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue);
 		}
 		else {
-			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml(wrapValue) : wrapValue, readOnly, false, false, null, null);
+			de.setLock(escapeHtml ? StringEscapeUtils.escapeHtml4(wrapValue) : wrapValue, readOnly, false, false, null, null);
 		}
 	}
 	private void appendErrorMessageSecurityPolicyDifferente(StringBuilder sb, String wrapValue) {

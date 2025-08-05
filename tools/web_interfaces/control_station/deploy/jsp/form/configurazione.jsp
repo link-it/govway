@@ -18,7 +18,7 @@
 --%>
 <%@page import="java.text.MessageFormat"%>
 <%@page import="org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation"%>
-<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti"%>
 <%@ page session="true" import="java.util.*, org.openspcoop2.web.lib.mvc.*" %>
 <link rel="stylesheet" href="css/ui.tabs.css" type="text/css">

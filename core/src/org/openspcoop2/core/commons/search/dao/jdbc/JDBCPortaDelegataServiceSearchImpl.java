@@ -232,7 +232,7 @@ public class JDBCPortaDelegataServiceSearchImpl implements IJDBCServiceSearchWit
 		}
 		else if(map.containsKey(name)){
 			Object o = map.get(name);
-			if(o instanceof org.apache.commons.lang.ObjectUtils.Null){
+			if(o instanceof org.apache.commons.lang3.ObjectUtils.Null){
 				return null;
 			}
 			else{

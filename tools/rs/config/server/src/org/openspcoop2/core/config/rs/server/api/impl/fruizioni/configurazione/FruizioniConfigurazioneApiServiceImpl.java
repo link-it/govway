@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.commons.CoreException;
@@ -238,7 +238,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			env.requestWrapper.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO, sa.getNome());
 			
 			if (!env.pdHelper.porteDelegateServizioApplicativoCheckData(TipoOperazione.ADD)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			
@@ -333,7 +333,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			env.requestWrapper.overrideParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SERVIZIO_APPLICATIVO, sa.getNome());
 			
 			if (!env.pdHelper.porteDelegateServizioApplicativoCheckData(TipoOperazione.ADD)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			
@@ -417,7 +417,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			}
 			
 			if (!env.paHelper.ruoloCheckData(TipoOperazione.ADD, body.getRuolo(), ruoliPresenti)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			} 
 			// ================================ CHECK RUOLI
 			
@@ -502,7 +502,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			}
 			
 			if (!env.paHelper.ruoloCheckData(TipoOperazione.ADD, body.getRuolo(), ruoliPresenti)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			} 
 			// ================================ CHECK RUOLI
 			
@@ -632,7 +632,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			}
 			
 			if (!env.paHelper.scopeCheckData(TipoOperazione.ADD, body.getScope(), scopePresenti )) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 				
 			}
 			// ================= CHECK SCOPE
@@ -714,7 +714,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			// Dati Attivazione
 			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.ADD, infoPolicy);
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(errorAttivazione));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(errorAttivazione));
 			}
 			
 			policy.getFiltro().setEnabled(true);
@@ -739,7 +739,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 					org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE,
 					modalita
 				)) {
-				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml4(existsMessage.toString()));
 			}
 			// Qui viene sollevata eccezione se il check non viene superato
 			FruizioniConfigurazioneHelper.attivazionePolicyCheckData(TipoOperazione.ADD, pd, policy,infoPolicy, env, env.apcCore.toMessageServiceBinding(apc.getServiceBinding()), modalita);
@@ -797,13 +797,13 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRichiesta(env.pdCore, idPorta, body.getElemento(), 0, existsMessage)) {
-				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml4(existsMessage.toString()));
 			}
 
 			
 			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.ADD, env.requestWrapper, env.paHelper, true, body, idPorta, null,
 					serviceBinding) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 									
 			CorrelazioneApplicativa ca = pd.getCorrelazioneApplicativa();
@@ -863,12 +863,12 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRisposta(env.pdCore, idPorta, body.getElemento(), 0, existsMessage)) {
-				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
+				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml4(existsMessage.toString()));
 			}
 			
 			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.ADD, env.requestWrapper, env.pdHelper, true, body, idPorta, null,
 					serviceBinding)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
                        			
 			if ( pd.getCorrelazioneApplicativaRisposta() == null)
@@ -1185,7 +1185,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 					);
 				
 				if ( inUsoMessage.length() > 0 ) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 				}
 				
 			}
@@ -2617,7 +2617,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			
 			if (!env.paHelper.checkDataConfigurazioneResponseCachingPorta(TipoOperazione.OTHER, true, body.getStato().toString())) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			ResponseCachingConfigurazione newConfigurazione = ErogazioniApiHelper.buildResponseCachingConfigurazione(body, env.paHelper);
@@ -2719,7 +2719,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			ErogazioniApiHelper.fillPortaDelegata(env, body, newPd);
 			
 			if (! ErogazioniApiHelper.controlloAccessiCheckPD(env, oldPd, newPd)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 			}
 		
 			
@@ -2763,7 +2763,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			ErogazioniApiHelper.fillPortaDelegata(body, newPd);
 			
 			if (!ErogazioniApiHelper.controlloAccessiCheckPD(env, pd, newPd)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(  env.pd.getMessage() ));
 			}
 			
 			env.pdCore.performUpdateOperation(env.userLogin, false, newPd);
@@ -3060,7 +3060,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 
 			String errorAttivazione = env.confHelper.readDatiAttivazionePolicyFromHttpParameters(policy, false, TipoOperazione.CHANGE, infoPolicy);
 			if ( !StringUtils.isEmpty(errorAttivazione) ) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(errorAttivazione));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(errorAttivazione));
 			}
 			
 			String modalita = ErogazioniApiHelper.getDataElementModalita(infoPolicy.isBuiltIn());
@@ -3281,7 +3281,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			if ( !correlazioneApplicativaRichiestaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, true, body, idPorta, oldElem.getId(),
 					serviceBinding)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			correlazioni.add(convert(body));
@@ -3351,7 +3351,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			
 			if ( !correlazioneApplicativaRispostaCheckData(TipoOperazione.CHANGE, env.requestWrapper, env.pdHelper, true, body, idPorta, oldElem.getId(),
 					serviceBinding)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			correlazioni.add(convert(body));
@@ -3400,7 +3400,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			env.requestWrapper.overrideParameter(CostantiControlStation.PARAMETRO_PORTE_XSD, stato);
 			
 			if (!env.pdHelper.validazioneContenutiCheck(TipoOperazione.OTHER, true)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			final ValidazioneContenutiApplicativi vx = new ValidazioneContenutiApplicativi();

@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.keystore.cache.GestoreKeystoreCache;

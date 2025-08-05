@@ -33,7 +33,7 @@ import jakarta.xml.soap.AttachmentPart;
 import jakarta.xml.soap.SOAPEnvelope;
 import jakarta.xml.soap.SOAPHeaderElement;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wss4j.dom.WSDataRef;
 import org.apache.wss4j.dom.message.token.Timestamp;
 import org.openspcoop2.core.config.PortaApplicativa;

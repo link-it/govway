@@ -26,7 +26,7 @@ import java.util.Enumeration;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -257,7 +257,7 @@ public class ConnectorUtils {
 			versione = op2Properties.getPddDetailsForServices();
 		}
 		if(htmlMessage){
-			versione = StringEscapeUtils.escapeHtml(versione);
+			versione = StringEscapeUtils.escapeHtml4(versione);
 			if(response!=null)
 				response.setContentType(HttpConstants.CONTENT_TYPE_HTML);
 		}
@@ -302,7 +302,7 @@ public class ConnectorUtils {
 				url = url.substring(0, url.length()-"=".length());
 			}
 			if(htmlMessage){
-				url = StringEscapeUtils.escapeHtml( url );
+				url = StringEscapeUtils.escapeHtml4( url );
 			}
 			risposta.append("<p>" +url+"</p>\n");
 			function = protocolContext.getFunction();
@@ -315,7 +315,7 @@ public class ConnectorUtils {
 			}
 			String context = req.getContextPath();
 			if(htmlMessage){
-				context = StringEscapeUtils.escapeHtml( context );
+				context = StringEscapeUtils.escapeHtml4( context );
 			}
 			risposta.append("<p>" +context+"</p>\n");
 		}
@@ -323,7 +323,7 @@ public class ConnectorUtils {
 		// errore
 		String errore = msgErrore;
 		if(htmlMessage){
-			errore = StringEscapeUtils.escapeHtml(errore);
+			errore = StringEscapeUtils.escapeHtml4(errore);
 		}
 		risposta.append("<p>"+errore+"</p>\n");	
 		
@@ -369,7 +369,7 @@ public class ConnectorUtils {
 			if(htmlMessage){
 				// use as
 				String useAs = "Use as http[s]://<server>"+ req.getContextPath()+"/<protocol-context>/<service>[/...]";
-				useAs = StringEscapeUtils.escapeHtml(useAs);
+				useAs = StringEscapeUtils.escapeHtml4(useAs);
 				risposta.append("<i>"+useAs+"</i><br/>\n");
 			}
 				
@@ -402,7 +402,7 @@ public class ConnectorUtils {
 					}
 					String enabledProtocols = "Enabled protocol-contexts: "+bfProtocols.toString();
 					if(htmlMessage){
-						enabledProtocols = StringEscapeUtils.escapeHtml(enabledProtocols);
+						enabledProtocols = StringEscapeUtils.escapeHtml4(enabledProtocols);
 					}
 					risposta.append("<i>"+enabledProtocols+"</i><br/>\n");
 				}

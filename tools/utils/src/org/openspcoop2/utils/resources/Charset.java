@@ -21,9 +21,9 @@
 package org.openspcoop2.utils.resources;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.apache.commons.lang.CharEncoding;
 
 /**
 * CharsetEncoding
@@ -34,12 +34,12 @@ import org.apache.commons.lang.CharEncoding;
 */
 public enum Charset implements Serializable , Cloneable {
 
-	ISO_8859_1 (CharEncoding.ISO_8859_1),
-	UTF_8 (CharEncoding.UTF_8),
-	UTF_16 (CharEncoding.UTF_16),
-	UTF_16BE (CharEncoding.UTF_16BE),
-	UTF_16LE (CharEncoding.UTF_16LE),
-	US_ASCII (CharEncoding.US_ASCII);
+	ISO_8859_1 (StandardCharsets.ISO_8859_1.name()),
+	UTF_8 (StandardCharsets.UTF_8.name()),
+	UTF_16 (StandardCharsets.UTF_16.name()),
+	UTF_16BE (StandardCharsets.UTF_16BE.name()),
+	UTF_16LE (StandardCharsets.UTF_16LE.name()),
+	US_ASCII (StandardCharsets.US_ASCII.name());
 	
 	
 	/** Value */

@@ -29,13 +29,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.io.output.WriterOutputStream;
-import org.apache.commons.lang.CharEncoding;
 
 import com.google.common.io.CharStreams;
 
@@ -142,11 +142,11 @@ public class CopyCharStream {
 			try(
 					ReaderInputStream src = ReaderInputStream.builder()
 							   .setReader(reader)
-							   .setCharset(CharEncoding.UTF_8)
+							   .setCharset(StandardCharsets.UTF_8)
 							   .get(); 
 					WriterOutputStream dest = WriterOutputStream.builder()
 								.setWriter(writer)
-								.setCharset(CharEncoding.UTF_8)
+								.setCharset(StandardCharsets.UTF_8)
 								.get();
 				){
 			final ReadableByteChannel inputChannel = Channels.newChannel(src);
@@ -182,7 +182,7 @@ public class CopyCharStream {
 			try(
 					WriterOutputStream dest = WriterOutputStream.builder()
 							.setWriter(writer)
-							.setCharset(CharEncoding.UTF_8)
+							.setCharset(StandardCharsets.UTF_8)
 							.get(); 
 				){
 				Files.copy(from.toPath(), dest);
@@ -210,7 +210,7 @@ public class CopyCharStream {
 			try(
 					ReaderInputStream from = ReaderInputStream.builder()
 					   .setReader(reader)
-					   .setCharset(CharEncoding.UTF_8)
+					   .setCharset(StandardCharsets.UTF_8)
 					   .get(); 
 				){
 				Files.copy(from, to.toPath());
@@ -224,7 +224,7 @@ public class CopyCharStream {
 			try(
 					ReaderInputStream from = ReaderInputStream.builder()
 					   .setReader(reader)
-					   .setCharset(CharEncoding.UTF_8)
+					   .setCharset(StandardCharsets.UTF_8)
 					   .get(); 
 				){
 				Files.copy(from, to.toPath(), options);

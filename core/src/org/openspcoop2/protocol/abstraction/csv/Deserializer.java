@@ -22,13 +22,13 @@ package org.openspcoop2.protocol.abstraction.csv;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.CharEncoding;
 import org.openspcoop2.protocol.abstraction.Erogazione;
 import org.openspcoop2.protocol.abstraction.Fruizione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -81,7 +81,7 @@ public class Deserializer {
 	// *********** EROGAZIONE ******************
 
 	public List<Erogazione> toErogazione(byte[] erogazioneTemplateParam, byte[] formatParam, byte[] mappingParam, byte[] csv) throws ProtocolException{
-		return this.toErogazione(erogazioneTemplateParam, formatParam, mappingParam, csv, CharEncoding.UTF_8);
+		return this.toErogazione(erogazioneTemplateParam, formatParam, mappingParam, csv, StandardCharsets.UTF_8.name());
 	}
 	public List<Erogazione> toErogazione(byte[] erogazioneTemplateParam, byte[] formatParam, byte[] mappingParam, byte[] csv, String charset) throws ProtocolException{
 		Properties format = null;
@@ -103,7 +103,7 @@ public class Deserializer {
 		return toErogazione(erogazioneTemplateParam, format, mapping, csv, charset);
 	}
 	public List<Erogazione> toErogazione(byte[] erogazioneTemplateParam, Properties formatParam, Properties mappingParam, byte[] csvParam) throws ProtocolException{
-		return this.toErogazione(erogazioneTemplateParam, formatParam, mappingParam, csvParam, CharEncoding.UTF_8);
+		return this.toErogazione(erogazioneTemplateParam, formatParam, mappingParam, csvParam, StandardCharsets.UTF_8.name());
 	}
 	public List<Erogazione> toErogazione(byte[] erogazioneTemplateParam, Properties formatParam, Properties mappingParam, byte[] csvParam, String charset) throws ProtocolException{
 		String csv = null;
@@ -111,7 +111,7 @@ public class Deserializer {
 			throw new ProtocolException("CSV non disponibile");
 		}
 		if(charset==null){
-			charset = CharEncoding.UTF_8;
+			charset = StandardCharsets.UTF_8.name();
 		}
 		try{
 			csv = new String(csvParam, charset);
@@ -237,7 +237,7 @@ public class Deserializer {
 	// *********** FRUIZIONE ******************
 
 	public List<Fruizione> toFruizione(byte[] fruizioneTemplateParam, byte[] formatParam, byte[] mappingParam, byte[] csv) throws ProtocolException{
-		return this.toFruizione(fruizioneTemplateParam, formatParam, mappingParam, csv, CharEncoding.UTF_8);
+		return this.toFruizione(fruizioneTemplateParam, formatParam, mappingParam, csv, StandardCharsets.UTF_8.name());
 	}
 	public List<Fruizione> toFruizione(byte[] fruizioneTemplateParam, byte[] formatParam, byte[] mappingParam, byte[] csv, String charset) throws ProtocolException{
 		Properties format = null;
@@ -259,7 +259,7 @@ public class Deserializer {
 		return toFruizione(fruizioneTemplateParam, format, mapping, csv, charset);
 	}
 	public List<Fruizione> toFruizione(byte[] fruizioneTemplateParam, Properties formatParam, Properties mappingParam, byte[] csvParam) throws ProtocolException{
-		return this.toFruizione(fruizioneTemplateParam, formatParam, mappingParam, csvParam, CharEncoding.UTF_8);
+		return this.toFruizione(fruizioneTemplateParam, formatParam, mappingParam, csvParam, StandardCharsets.UTF_8.name());
 	}
 	public List<Fruizione> toFruizione(byte[] fruizioneTemplateParam, Properties formatParam, Properties mappingParam, byte[] csvParam, String charset) throws ProtocolException{
 		String csv = null;
@@ -267,7 +267,7 @@ public class Deserializer {
 			throw new ProtocolException("CSV non disponibile");
 		}
 		if(charset==null){
-			charset = CharEncoding.UTF_8;
+			charset = StandardCharsets.UTF_8.name();
 		}
 		try{
 			csv = new String(csvParam, charset);

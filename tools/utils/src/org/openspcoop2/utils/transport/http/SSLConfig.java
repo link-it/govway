@@ -26,7 +26,7 @@ import java.security.KeyStore;
 import java.security.cert.CertStore;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.slf4j.Logger;
 

@@ -30,7 +30,7 @@ import java.util.List;
 
 import javax.crypto.SecretKey;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.StatoCheck;
 import org.openspcoop2.utils.LoggerBuffer;

@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
@@ -164,7 +164,7 @@ public class ContentAuthorizationManager implements IContentAuthorizationManager
 		boolean found = false;
 		if(listUrl.size() > 0)
 			for (String page : listUrl) {
-				if(StringUtils.contains(requestUrl, page)){
+				if(Strings.CS.contains(requestUrl, page)){
 					found = true;
 					break;
 				}

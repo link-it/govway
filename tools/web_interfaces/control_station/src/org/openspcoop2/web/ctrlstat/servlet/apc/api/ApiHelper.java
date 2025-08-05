@@ -26,8 +26,8 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
@@ -876,7 +876,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			else {
 				descrizione =  as.getDescrizione() ;
 			}
-			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml4(descrizione) : null);
 			de.setToolTip(as.getDescrizione());
 			de.setCopyToClipboard(as.getDescrizione());
 			listParametersApi.get(0).setValue(ApiCostanti.VALORE_PARAMETRO_APC_API_DESCRIZIONE);
