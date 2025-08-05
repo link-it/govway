@@ -8,6 +8,7 @@ Questo gruppo comprende le modalità di ricerca basate sull'identificativo della
 - ID Transazione
 - ID Applicativo
 - ID Messaggio
+- ID Token
 - ID Finalità
 
 La modalità **ID Transazione** consente di effettuare ricerche tramite l'identificativo della transazione (:numref:`mon_idTransazione_fig`).
@@ -57,6 +58,16 @@ La modalità **ID Applicativo** consente di effettuare ricerche di transazioni c
 
       Filtro di ricerca avanzata delle transazioni per ID Applicativo
 
+La modalità **ID Token** consente di effettuare ricerche di transazioni specificando un determinato identificativo di token utilizzato all'interno dell'authorization bearer nel campo `jti`. La maschera di ricerca si compone dei seguenti campi (:numref:`mon_idToken_fig`):
+
+   -  **ID**: identificativo da cercare.
+
+.. figure:: ../../_figure_monitoraggio/FiltroIdentificativoToken.png
+    :scale: 80%
+    :align: center
+    :name: mon_idToken_fig
+
+    Filtro di ricerca delle transazioni per ID Token
 
 La modalità **ID Finalità** consente di effettuare ricerche di transazioni specificando un determinato identificativo di finalità utilizzato all'interno del voucher PDND nel campo `purposeId`. La maschera di ricerca si compone dei seguenti campi (:numref:`mon_idFinalita_fig`):
 
@@ -67,4 +78,4 @@ La modalità **ID Finalità** consente di effettuare ricerche di transazioni spe
     :align: center
     :name: mon_idFinalita_fig
 
-    Filtro di ricerca delle transazioni per ID Messaggio
+    Filtro di ricerca delle transazioni per ID Finalità

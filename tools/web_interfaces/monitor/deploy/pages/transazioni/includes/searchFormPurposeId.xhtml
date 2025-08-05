@@ -13,10 +13,10 @@
 			
 			<h:inputHidden value="#{sf_mbean.tipoStorico}" rendered="#{sf_bean.periodo != 'Live'}"/>
 
-			<a4j:outputPanel id="filtriAvanzatiIdTransazioneCtr" layout="block" rendered="#{sf_bean.modalitaRicercaStorico == 'purposeId'}">
+			<a4j:outputPanel id="filtriAvanzatiPurposeIdCtr" layout="block" rendered="#{sf_bean.modalitaRicercaStorico == 'purposeId'}">
 			
 				<div class="subtitle">
-					<h:outputText id="idDatiIdTransazione" value="#{msg['transazioni.search.sezioneFiltroIdentificativoPurpose.label']}" styleClass="subtitle"/>
+					<h:outputText id="idDatiPurposeId" value="#{msg['transazioni.search.sezioneFiltroIdentificativoPurpose.label']}" styleClass="subtitle"/>
 				</div>
 			
 				<link:prop label="#{msg['transazioni.search.sezioneFiltroIdentificativoPurpose.id.label']}" rendered="#{sf_bean.periodo != 'Live'}" required="true">

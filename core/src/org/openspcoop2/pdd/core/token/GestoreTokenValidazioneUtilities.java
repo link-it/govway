@@ -1635,7 +1635,7 @@ public class GestoreTokenValidazioneUtilities {
 			}
 		}
 	}
-	private static boolean isPdndTokenPolicy(Logger log, String tokenPolicy) {
+	protected static boolean isPdndTokenPolicy(Logger log, String tokenPolicy) {
 		if(policyGestioneTokenPDND==null) {
 			initPolicyGestioneTokenPDND(log) ;
 		}

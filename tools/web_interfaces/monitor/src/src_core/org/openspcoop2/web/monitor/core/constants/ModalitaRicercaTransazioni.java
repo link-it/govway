@@ -44,6 +44,7 @@ public enum ModalitaRicercaTransazioni {
 	ID_APPLICATIVO_BASE ("idApplicativoBase"), 
 	ID_MESSAGGIO ("idMessaggio"),
 	ID_TRANSAZIONE ("idTransazione"),
+	ID_TOKEN ("idToken"),
 	LIVE ("Live"),
 	PURPOSE_ID ("purposeId");
 	
@@ -88,6 +89,7 @@ public enum ModalitaRicercaTransazioni {
 					RICERCA_LIBERA,
 					LIVE,
 					ESAMINA_ARCHIVIO_ZIP,
+					ID_TOKEN,
 					PURPOSE_ID:
 					return 1;
 				case ID_APPLICATIVO_AVANZATA,

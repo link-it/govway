@@ -214,6 +214,14 @@ public class SearchFormUtilities {
 		return searchForm;
 	}
 	
+	public TransazioniSearchForm getIdTokenSearchForm(IContext context, ProfiloEnum profilo, String soggetto) throws Exception {
+		TransazioniSearchForm searchForm = new TransazioniSearchForm();
+		initBaseInfo(searchForm, context, profilo, soggetto, null);
+		searchForm.setModalitaRicercaStorico(ModalitaRicercaTransazioni.ID_TOKEN.getValue());
+		
+		return searchForm;
+	}
+	
 	public TransazioniSearchForm getPurposeIdSearchForm(IContext context, String soggetto) throws Exception {
 		TransazioniSearchForm searchForm = new TransazioniSearchForm();
 		initBaseInfo(searchForm, context, ProfiloEnum.MODIPA, soggetto, null);

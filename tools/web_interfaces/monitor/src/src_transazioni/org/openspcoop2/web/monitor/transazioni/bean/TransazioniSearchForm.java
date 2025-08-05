@@ -451,6 +451,8 @@ Context, Cloneable {
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LVL2_RICERCA_AVANZATA_BREADCRUMB_KEY);
 			case ID_MESSAGGIO:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_BREADCUMP_KEY);
+			case ID_TOKEN:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_BREADCUMP_KEY);	
 			case PURPOSE_ID:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_BREADCUMP_KEY);				
 			case ID_TRANSAZIONE:
@@ -466,8 +468,8 @@ Context, Cloneable {
 		if(this.getModalitaRicercaStorico() != null) {
 			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
 			switch (t) { 
-			case ID_APPLICATIVO_BASE:
-			case ID_APPLICATIVO_AVANZATA:
+			case ID_APPLICATIVO_BASE,
+				ID_APPLICATIVO_AVANZATA:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_BREADCUMP_KEY);
 			default:
 				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_BREADCUMP_KEY);
@@ -481,21 +483,23 @@ Context, Cloneable {
 		if(this.getModalitaRicercaStorico() != null) {
 			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
 			switch (t) { 
-			case ANDAMENTO_TEMPORALE:
-			case RICERCA_LIBERA:
-			case MITTENTE_TOKEN_INFO:
-			case MITTENTE_SOGGETTO:
-			case MITTENTE_APPLICATIVO:
-			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
-			case MITTENTE_INDIRIZZO_IP:
-			case ID_APPLICATIVO_AVANZATA:
+			case ANDAMENTO_TEMPORALE,
+				RICERCA_LIBERA,
+				MITTENTE_TOKEN_INFO,
+				MITTENTE_SOGGETTO,
+				MITTENTE_APPLICATIVO,
+				MITTENTE_IDENTIFICATIVO_AUTENTICATO,
+				MITTENTE_INDIRIZZO_IP,
+				ID_APPLICATIVO_AVANZATA:
 				return true;
 				
-			case ID_APPLICATIVO_BASE:
-			case ID_MESSAGGIO:
-			case ID_TRANSAZIONE:
-			case ESAMINA_ARCHIVIO_ZIP:
-			default:
+			case ID_APPLICATIVO_BASE,
+				ID_MESSAGGIO,
+				ID_TRANSAZIONE,
+				ID_TOKEN,
+				PURPOSE_ID,
+				ESAMINA_ARCHIVIO_ZIP,
+				LIVE:
 				return false;
 			}
 		}
@@ -531,23 +535,25 @@ Context, Cloneable {
 		if(this.getModalitaRicercaStorico() != null) {
 			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
 			switch (t) { 
-			case ANDAMENTO_TEMPORALE:
-			case RICERCA_LIBERA:
-			case ESAMINA_ARCHIVIO_ZIP:
+			case ANDAMENTO_TEMPORALE,
+				RICERCA_LIBERA,
+				ESAMINA_ARCHIVIO_ZIP:
 				return false;
 				
-			case MITTENTE_TOKEN_INFO:
-			case MITTENTE_SOGGETTO:
-			case MITTENTE_APPLICATIVO:
-			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
-			case MITTENTE_INDIRIZZO_IP:
+			case MITTENTE_TOKEN_INFO,
+				MITTENTE_SOGGETTO,
+				MITTENTE_APPLICATIVO,
+				MITTENTE_IDENTIFICATIVO_AUTENTICATO,
+				MITTENTE_INDIRIZZO_IP:
 				return true;
 				
-			case ID_APPLICATIVO_AVANZATA:
-			case ID_APPLICATIVO_BASE:
-			case ID_MESSAGGIO:
-			case ID_TRANSAZIONE:
-			default:
+			case ID_APPLICATIVO_AVANZATA,
+				ID_APPLICATIVO_BASE,
+				ID_MESSAGGIO,
+				ID_TRANSAZIONE,
+				ID_TOKEN,
+				PURPOSE_ID,
+				LIVE:
 				return false;
 			}
 		}
@@ -557,7 +563,7 @@ Context, Cloneable {
 	@Override
 	protected boolean isTipologiaRicercaEntrambiEnabled() {
 		if(this.isLive()) {
-			//return super.isTipologiaRicercaEntrambiEnabled();
+			/**return super.isTipologiaRicercaEntrambiEnabled();*/
 			return true; // sul live si fa vedere anche la possibilità di avere erogazioni/fruizioni
 		}
 		else {
@@ -569,8 +575,7 @@ Context, Cloneable {
 					MITTENTE_IDENTIFICATIVO_AUTENTICATO,
 					MITTENTE_INDIRIZZO_IP,
 					ID_APPLICATIVO_AVANZATA,
-					LIVE,
-					PURPOSE_ID:
+					LIVE:
 					return true; // non c'e' motivo per non farli vedere
 				
 				case MITTENTE_TOKEN_INFO, // nelle erogazioni vi è anche il soggetto mittente
@@ -580,7 +585,9 @@ Context, Cloneable {
 
 				case ID_APPLICATIVO_BASE,
 					ID_MESSAGGIO,
-					ID_TRANSAZIONE:
+					ID_TRANSAZIONE,
+					ID_TOKEN,
+					PURPOSE_ID:
 					return super.isTipologiaRicercaEntrambiEnabled(); // non viene visualizzata l'informazione
 				
 				case ESAMINA_ARCHIVIO_ZIP: 
@@ -1042,6 +1049,12 @@ Context, Cloneable {
 							this.archivioZipManager.leggiArchivio(this.archivioZip);
 						}catch (ArchivioZipException e) {
 							MessageUtils.addErrorMsg(e.getMessage());
+							return null;
+						}
+						break;
+					case ID_TOKEN:
+						if(org.apache.commons.lang.StringUtils.isEmpty(this.getIdToken())){
+							MessageUtils.addErrorMsg("Indicare un identificativo token");
 							return null;
 						}
 						break;

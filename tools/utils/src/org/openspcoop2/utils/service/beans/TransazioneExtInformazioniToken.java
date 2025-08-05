@@ -30,11 +30,15 @@ import jakarta.validation.Valid;
 
 @XmlAccessorType(XmlAccessType.FIELD)
  @XmlType(name = "TransazioneExtInformazioniToken", propOrder =
-    { "clientId", "issuer", "subject", "username", "mail", "purposeId"
+    { "tokenId", "clientId", "issuer", "subject", "username", "mail", "purposeId"
 })
 
 @XmlRootElement(name="TransazioneExtInformazioniToken")
 public class TransazioneExtInformazioniToken  {
+  @XmlElement(name="token_id")
+  
+  @Schema(description = "")
+  private String tokenId = null;
   @XmlElement(name="client_id")
   
   @Schema(example = "407408718192.apps.googleusercontent.com", description = "")
@@ -59,6 +63,25 @@ public class TransazioneExtInformazioniToken  {
   
   @Schema(description = "")
   private String purposeId = null;
+ /**
+   * Get tokenId
+   * @return tokenId
+  **/
+  @JsonProperty("token_id")
+  @Valid
+  public String getTokenId() {
+    return this.tokenId;
+  }
+
+  public void setTokenId(String tokenId) {
+    this.tokenId = tokenId;
+  }
+
+  public TransazioneExtInformazioniToken tokenId(String tokenId) {
+    this.tokenId = tokenId;
+    return this;
+  }
+
  /**
    * Get clientId
    * @return clientId
@@ -179,6 +202,7 @@ public class TransazioneExtInformazioniToken  {
     StringBuilder sb = new StringBuilder();
     sb.append("class TransazioneExtInformazioniToken {\n");
     
+    sb.append("    tokenId: ").append(TransazioneExtInformazioniToken.toIndentedString(this.tokenId)).append("\n");
     sb.append("    clientId: ").append(TransazioneExtInformazioniToken.toIndentedString(this.clientId)).append("\n");
     sb.append("    issuer: ").append(TransazioneExtInformazioniToken.toIndentedString(this.issuer)).append("\n");
     sb.append("    subject: ").append(TransazioneExtInformazioniToken.toIndentedString(this.subject)).append("\n");

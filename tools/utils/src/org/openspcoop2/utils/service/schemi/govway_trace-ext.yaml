@@ -275,6 +275,8 @@ components:
     TransazioneExtInformazioniToken:
       type: object
       properties:
+        token_id:
+           type: string
         client_id:
           type: string
           example: 407408718192.apps.googleusercontent.com

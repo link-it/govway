@@ -726,7 +726,11 @@ public class Converter {
 					}
 				}
 				if (transazioneDB.getTokenPurposeId() != null) {
-					informazioniToken.purposeId(transazioneDB.getTokenPurposeId());
+					informazioniToken.setPurposeId(transazioneDB.getTokenPurposeId());
+					add=true;
+				}
+				if (transazioneDB.getTokenId() != null) {
+					informazioniToken.setTokenId(transazioneDB.getTokenId());
 					add=true;
 				}
 				if(add) {

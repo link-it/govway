@@ -350,6 +350,20 @@ public class PddMonitorProperties {
 		return this.getIndexList("transazioni.forceIndex.riferimentoIdRichiesta.count", externalRepository);
 	}
 	
+	public List<String> getTransazioniForceIndexRiferimentoIdTokenFindAll(Properties externalRepository) throws UtilsException{
+		return this.getIndexList("transazioni.forceIndex.idToken.findAll", externalRepository);
+	}
+	public List<String> getTransazioniForceIndexRiferimentoIdTokenCount(Properties externalRepository) throws UtilsException{
+		return this.getIndexList("transazioni.forceIndex.idToken.count", externalRepository);
+	}
+	
+	public List<String> getTransazioniForceIndexRiferimentoIdPurposeFindAll(Properties externalRepository) throws UtilsException{
+		return this.getIndexList("transazioni.forceIndex.idPurpose.findAll", externalRepository);
+	}
+	public List<String> getTransazioniForceIndexRiferimentoIdPurposeCount(Properties externalRepository) throws UtilsException{
+		return this.getIndexList("transazioni.forceIndex.idPurpose.count", externalRepository);
+	}
+	
 	public List<String> getTransazioniForceIndexIdTransazioneFindAll(Properties externalRepository) throws UtilsException{
 		return this.getIndexList("transazioni.forceIndex.idTransazione.findAll", externalRepository);
 	}

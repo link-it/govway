@@ -370,7 +370,7 @@
 						<linkit:sql-table-index-field name="data-ingresso-richiesta" ignoreTypeCompatibility="true"/>
                                                 <linkit:sql-table-index-field name="pdd-codice"/>
                                                 <linkit:sql-table-index-field name="token-purpose-id"/>
-                                                <linkit:sql-table-index-field name="id-messaggio-richiesta"/>
+                                                <linkit:sql-table-index-field name="token-id"/>
                                                 <linkit:sql-table-index-field name="eventi-gestione"/>
                                                 <linkit:sql-table-index-field name="pdd-ruolo"/>
 					</linkit:sql-table-index>
@@ -412,6 +412,10 @@
                                         <!-- Indici per ottimizzare la ricerca per purpose id -->
                                         <linkit:sql-table-index name="INDEX_TR_PURPOSE_ID">
                                                 <linkit:sql-table-index-field name="token-purpose-id"/>
+                                        </linkit:sql-table-index>
+                                        <!-- Indici per ottimizzare la ricerca per token id -->
+                                        <linkit:sql-table-index name="INDEX_TR_TOKEN_ID">
+                                                <linkit:sql-table-index-field name="token-id"/>
                                         </linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
@@ -1503,6 +1507,17 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
                                                                 xmlns:linkit="http://www.link.it/project_generator">
                                                                 <linkit:sql-column-mapping name="token_purpose_id" varchar="50" />
                                                                 <linkit:sql-ddl-column-comment><![CDATA[Id di finalita della richiesta]]></linkit:sql-ddl-column-comment>
+                                                        </linkit:generator>
+                                                </xsd:appinfo>
+                                        </xsd:annotation>
+                                </xsd:element>
+                                <xsd:element name="token-id" type="xsd:string" minOccurs="0">
+                                        <xsd:annotation>
+                                                <xsd:appinfo>
+                                                        <linkit:generator
+                                                                xmlns:linkit="http://www.link.it/project_generator">
+                                                                <linkit:sql-column-mapping name="token_id" varchar="50" />
+                                                                <linkit:sql-ddl-column-comment><![CDATA[Id del token di autorizzazione]]></linkit:sql-ddl-column-comment>
                                                         </linkit:generator>
                                                 </xsd:appinfo>
                                         </xsd:annotation>

@@ -310,6 +310,48 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
+  /monitoraggio/transazioni/id-token:
+    parameters:
+      - $ref: 'govway_core.yaml#/components/parameters/profilo'    
+      - $ref: 'govway_core.yaml#/components/parameters/soggetto'
+    get:
+      tags:
+        - Monitoraggio
+      summary: >-
+        Ricerca semplificata delle transazioni in base all'identificativo
+        del token
+      operationId: findAllTransazioniByIdToken
+      description: >-
+        Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
+        ricercandole in base all'identificativo del token
+      parameters:
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+        - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/sort'
+        - $ref: '#/components/parameters/id_token'
+
+      responses:
+        "200":
+          description: dettaglio transazione restituito correttamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListaTransazioni'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+          
   /monitoraggio/transazioni/purpose-id:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
@@ -349,7 +391,7 @@ paths:
         "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
-          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'          
           
   /monitoraggio/transazioni/{id}:
     get:
@@ -1802,15 +1844,6 @@ components:
       required: true
       schema:
         type: string
-        
-            
-    purpose_id:
-      in: query
-      name: purpose_id
-      description: l'identificativo di finalita del token usato (purposeId)
-      required: true
-      schema:
-        type: string
 
     id_messaggio:
       in: query
@@ -1836,6 +1869,21 @@ components:
       schema:
         $ref: "#/components/schemas/TipoIdApplicativoEnum"
 
+    id_token:
+      in: query
+      name: id
+      required: true
+      description: L'identificativo del token
+      schema:
+        type: string 
+
+    purpose_id:
+      in: query
+      name: purpose_id
+      description: l'identificativo di finalita del token usato (purposeId)
+      required: true
+      schema:
+        type: string
 
     # Criteri di ricerca opzionali nella query  
 

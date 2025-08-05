@@ -230,6 +230,26 @@ public class CostantiPdD {
     /** Costante che indica il valore dell'header X che indica il dettaglio della versione della PdD*/
     public static final String URL_BASED_PDD_DETAILS = "version_info";
     
+    /** Costante che indica una gestione PDND */
+    public static final MapKey<String> TOKEN_VALIDAZIONE_PDND = Map.newMapKey("TOKEN_VALIDAZIONE_PDND");
+    public static final MapKey<String> TOKEN_NEGOZIAZIONE_PDND = Map.newMapKey("TOKEN_NEGOZIAZIONE_PDND");
+    public static final String TOKEN_ESITO_TRUE = "true";
+    public static boolean isTokenValidazionePdnd(Context context) {
+    	return isTokenPdnd(context, TOKEN_VALIDAZIONE_PDND) ;
+    }
+    public static boolean isTokenNegoziazionePdnd(Context context) {
+    	return isTokenPdnd(context, TOKEN_NEGOZIAZIONE_PDND) ;
+    }
+    public static boolean isTokenPdnd(Context context, MapKey<String> key) {
+    	if(context!=null && context.containsKey(key)) {
+    		Object o = context.get(key);
+    		if(o instanceof String) {
+    			return "true".equals(o);
+    		}
+    	}
+    	return false;
+    }
+    
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica la versione della PdD*/
     public static final String HEADER_INTEGRAZIONE_SOAP_PDD_VERSION = "version";
     /** Costante che indica il valore dell'attributo dell'header di integrazione SOAP proprietario di OpenSPCoop che indica il dettaglio della versione della PdD*/

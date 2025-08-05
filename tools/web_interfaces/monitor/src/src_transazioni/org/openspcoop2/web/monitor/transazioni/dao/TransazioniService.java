@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -114,6 +115,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.PDNDTokenInfo;
 import org.openspcoop2.protocol.sdk.PDNDTokenInfoDetails;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
@@ -129,6 +131,7 @@ import org.openspcoop2.web.monitor.core.dao.CredenzialiMittenteUtils;
 import org.openspcoop2.web.monitor.core.dao.MBeanUtilsService;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.dynamic.DynamicComponentUtils;
+import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
@@ -216,6 +219,10 @@ public class TransazioniService implements ITransazioniService {
 	private List<Index> forceIndexIdCollaborazioneCount;
 	private List<Index> forceIndexRiferimentoIdRichiestaFindAll;
 	private List<Index> forceIndexRiferimentoIdRichiestaCount;
+	private List<Index> forceIndexRiferimentoIdTokenFindAll;
+	private List<Index> forceIndexRiferimentoIdTokenCount;
+	private List<Index> forceIndexRiferimentoIdPurposeFindAll;
+	private List<Index> forceIndexRiferimentoIdPurposeCount;
 	private List<Index> forceIndexIdTransazioneFindAll;
 	private List<Index> forceIndexIdTransazioneCount;
 	private List<Index> forceIndexGetByIdTransazione;
@@ -239,6 +246,10 @@ public class TransazioniService implements ITransazioniService {
 		this.forceIndexIdCollaborazioneCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdCollaborazioneCount(repositoryExternal));
 		this.forceIndexRiferimentoIdRichiestaFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexRiferimentoIdRichiestaFindAll(repositoryExternal));
 		this.forceIndexRiferimentoIdRichiestaCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexRiferimentoIdRichiestaCount(repositoryExternal));
+		this.forceIndexRiferimentoIdTokenFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexRiferimentoIdTokenFindAll(repositoryExternal));
+		this.forceIndexRiferimentoIdTokenCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexRiferimentoIdTokenCount(repositoryExternal));
+		this.forceIndexRiferimentoIdPurposeFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexRiferimentoIdPurposeFindAll(repositoryExternal));
+		this.forceIndexRiferimentoIdPurposeCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexRiferimentoIdPurposeCount(repositoryExternal));
 		this.forceIndexIdTransazioneFindAll = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdTransazioneFindAll(repositoryExternal));
 		this.forceIndexIdTransazioneCount = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexIdTransazioneCount(repositoryExternal));
 		this.forceIndexGetByIdTransazione = convertForceIndexList(govwayMonitorProperties.getTransazioniForceIndexGetByIdTransazione(repositoryExternal));
@@ -263,8 +274,7 @@ public class TransazioniService implements ITransazioniService {
 			MITTENTE_SOGGETTO,
 			MITTENTE_APPLICATIVO,
 			MITTENTE_IDENTIFICATIVO_AUTENTICATO,
-			MITTENTE_INDIRIZZO_IP,
-			PURPOSE_ID:
+			MITTENTE_INDIRIZZO_IP:
 			return this.forceIndexAndamentoTemporaleFindAll;
 		case LIVE:
 			return this.forceIndexLiveFindAll;
@@ -296,6 +306,10 @@ public class TransazioniService implements ITransazioniService {
 				return this.forceIndexRiferimentoIdRichiestaFindAll;
 			}
 			break;
+		case ID_TOKEN:
+			return this.forceIndexRiferimentoIdTokenFindAll;
+		case PURPOSE_ID:
+			return this.forceIndexRiferimentoIdPurposeFindAll;
 		case ID_TRANSAZIONE:
 			return this.forceIndexIdTransazioneFindAll;
 		case ESAMINA_ARCHIVIO_ZIP:
@@ -313,8 +327,7 @@ public class TransazioniService implements ITransazioniService {
 			MITTENTE_SOGGETTO,
 			MITTENTE_APPLICATIVO,
 			MITTENTE_IDENTIFICATIVO_AUTENTICATO,
-			MITTENTE_INDIRIZZO_IP,
-			PURPOSE_ID:
+			MITTENTE_INDIRIZZO_IP:
 			return this.forceIndexAndamentoTemporaleCount;
 		case LIVE:
 			return this.forceIndexLiveCount;
@@ -346,6 +359,10 @@ public class TransazioniService implements ITransazioniService {
 				return this.forceIndexRiferimentoIdRichiestaCount;
 			}
 			break;
+		case ID_TOKEN:
+			return this.forceIndexRiferimentoIdTokenCount;
+		case PURPOSE_ID:
+			return this.forceIndexRiferimentoIdPurposeCount;
 		case ID_TRANSAZIONE:
 			return this.forceIndexIdTransazioneCount;
 		case ESAMINA_ARCHIVIO_ZIP:
@@ -3180,7 +3197,7 @@ public class TransazioniService implements ITransazioniService {
 		return new ArrayList<ConfigurazioneTransazioneRisorsaContenuto>();
 	}
 
-	private void parseExpressionFilter(IExpression filter, boolean isCount,	boolean isLiveSearch) throws Exception {
+	private void parseExpressionFilter(IExpression filter, boolean isCount,	boolean isLiveSearch) throws ExpressionNotImplementedException, ExpressionException, CoreException, UserInvalidException, UtilsException, ProtocolException, ServiceException, NotImplementedException, NotFoundException {
 
 		ModalitaRicercaTransazioni ricerca = null;
 		if(!isLiveSearch){
@@ -3210,11 +3227,11 @@ public class TransazioniService implements ITransazioniService {
 					break;
 				}
 				// Inefficiente altrimenti fare la OR
-//				IExpression idegov = this.transazioniSearchDAO.newExpression();
-//				idegov.or();
-//				idegov.equals(Transazione.model().ID_MESSAGGIO_RICHIESTA,	value);
-//				idegov.equals(Transazione.model().ID_MESSAGGIO_RISPOSTA,	value);
-//				filter.and(idegov);
+				/**IExpression idegov = this.transazioniSearchDAO.newExpression();
+				idegov.or();
+				idegov.equals(Transazione.model().ID_MESSAGGIO_RICHIESTA,	value);
+				idegov.equals(Transazione.model().ID_MESSAGGIO_RISPOSTA,	value);
+				filter.and(idegov);*/
 				
 				
 				// permessi utente operatore
@@ -3230,7 +3247,29 @@ public class TransazioniService implements ITransazioniService {
 				return;
 			}
 			else{
-				throw new Exception("ID Messaggio non fornito");
+				throw new UtilsException("ID Messaggio non fornito");
+			}
+		}
+		
+		// ricerca is null in modalità live
+		if(ricerca!=null && ModalitaRicercaTransazioni.ID_TOKEN.equals(ricerca) ){
+			if (StringUtils.isNotEmpty(this.searchForm.getIdToken())) {
+				
+				String value = this.searchForm.getIdToken().trim();
+				filter.equals(Transazione.model().TOKEN_ID, value);					
+				
+				// permessi utente operatore
+				if(this.searchForm.getPermessiUtenteOperatore()!=null){
+					IExpression permessi = this.searchForm.getPermessiUtenteOperatore().toExpression(this.transazioniSearchDAO, Transazione.model().PDD_CODICE, 
+							Transazione.model().TIPO_SOGGETTO_EROGATORE, Transazione.model().NOME_SOGGETTO_EROGATORE, 
+							Transazione.model().TIPO_SERVIZIO, Transazione.model().NOME_SERVIZIO, Transazione.model().VERSIONE_SERVIZIO);
+					filter.and(permessi);
+					filter.and();
+				}
+				return;
+			}
+			else{
+				throw new UtilsException("Identificativo non fornito");
 			}
 		}
 		
@@ -3252,7 +3291,7 @@ public class TransazioniService implements ITransazioniService {
 				return;
 			}
 			else{
-				throw new Exception("Finalita non fornita");
+				throw new UtilsException("Finalita non fornita");
 			}
 		}
 		
@@ -3274,7 +3313,7 @@ public class TransazioniService implements ITransazioniService {
 				return;
 			}
 			else{
-				throw new Exception("ID Transazione non fornito");
+				throw new UtilsException("ID Transazione non fornito");
 			}
 		}
 		
@@ -3294,14 +3333,14 @@ public class TransazioniService implements ITransazioniService {
 					filter.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA, value);
 					break;
 				default:
-					throw new Exception("Tipo di ricerca non fornito");
+					throw new UtilsException("Tipo di ricerca non fornito");
 				}
 				// Inefficiente altrimenti fare la OR
-//				IExpression idCorrelazioneApplicativa = this.transazioniSearchDAO.newExpression();
-//				idCorrelazioneApplicativa.or();
-//				idCorrelazioneApplicativa.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA,	value);
-//				idCorrelazioneApplicativa.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA,	value);
-//				filter.and(idCorrelazioneApplicativa);
+				/**IExpression idCorrelazioneApplicativa = this.transazioniSearchDAO.newExpression();
+				idCorrelazioneApplicativa.or();
+				idCorrelazioneApplicativa.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA,	value);
+				idCorrelazioneApplicativa.equals(Transazione.model().ID_CORRELAZIONE_APPLICATIVA_RISPOSTA,	value);
+				filter.and(idCorrelazioneApplicativa);*/
 				
 				
 				// permessi utente operatore
@@ -3317,7 +3356,7 @@ public class TransazioniService implements ITransazioniService {
 				return;
 			}
 			else{
-				throw new Exception("ID Applicativo non fornito");
+				throw new UtilsException("ID Applicativo non fornito");
 			}
 		}
 		
@@ -3578,7 +3617,7 @@ public class TransazioniService implements ITransazioniService {
 					filter.or(idcorr, idcorrRisp);
 				}
 				else{
-					throw new Exception("ID Applicativo non fornito");
+					throw new UtilsException("ID Applicativo non fornito");
 				}
 			}
 			else {
@@ -3605,7 +3644,7 @@ public class TransazioniService implements ITransazioniService {
 			if (StringUtils.isNotBlank(this.searchForm.getNomeRisorsa()) ) {
 				
 				if(StringUtils.isBlank(this.searchForm.getValoreRisorsa())) {
-					throw new Exception("Valore della Risorsa '"+this.searchForm.getNomeRisorsa()+"' non fornito");
+					throw new UtilsException("Valore della Risorsa '"+this.searchForm.getNomeRisorsa()+"' non fornito");
 				}
 				
 				// sb.append(" AND dm.idTransazione=t.id AND dc.nome=:nome_risorsa AND dc.valore=:valore_risorsa ");

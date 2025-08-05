@@ -119,6 +119,10 @@ public class TransazioniCostanti {
 	public static final String TRANSAZIONI_SEARCH_ESAMINA_ARCHIVIO_ZIP_MESSAGGIO_ERRORE_FILE_ELEMENTO_TRANSAZIONE_MANIFEST_NON_VALIDO_KEY = "transazioni.search.esaminaArchivioZip.messaggioErrore.elementoTransazioneManifestNonValido";
 	public static final String TRANSAZIONI_SEARCH_ESAMINA_ARCHIVIO_ZIP_MESSAGGIO_ERRORE_FILE_ELEMENTO_TRANSAZIONE_MANIFEST_CONSEGNA_NON_VALIDO_KEY = "transazioni.search.esaminaArchivioZip.messaggioErrore.elementoTransazioneManifestConsegnaNonValido";
 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoToken.label"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoToken.icona"; 
+	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TOKEN_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaIdentificativoToken.breadcrumb";
+	
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_LABEL_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.label"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_ICON_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.icona"; 
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_PURPOSE_ID_BREADCUMP_KEY = "transazioni.search.tipoRicerca.id.ricercaPurposeId.breadcrumb"; 
