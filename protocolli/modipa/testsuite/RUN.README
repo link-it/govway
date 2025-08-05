@@ -243,6 +243,9 @@ Prerequisiti:
 	org.openspcoop2.pdd.retrieveToken.modipa.DemoSoggettoErogatore.pdnd.payload.nbf=true
 	org.openspcoop2.pdd.retrieveToken.modipa.DemoSoggettoErogatore2.pdnd.payload.nbf=true
 
+	org.openspcoop2.pdd.transazioni.policy.validazione.savePurposeId.always=true
+	org.openspcoop2.pdd.transazioni.policy.negoziazione.savePurposeId.always=true
+
 + Nel file /etc/govway/console_local.properties abilitare le seguenti proprietà (per retrocompatibilità nei test):
 
 	policyGestioneToken.pdnd=PDND,SimulazionePDND-KidInToken
