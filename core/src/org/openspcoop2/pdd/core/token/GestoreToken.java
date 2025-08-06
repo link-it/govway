@@ -1451,7 +1451,7 @@ public class GestoreToken {
 				pddContext, protocolFactory, datiInvocazione, securityToken);
 		
 		if(datiInvocazione.getPolicyGestioneToken()!=null && datiInvocazione.getPolicyGestioneToken().getName()!=null &&
-				GestoreTokenValidazioneUtilities.isPdndTokenPolicy(log, datiInvocazione.getPolicyGestioneToken().getName())) {
+				GestoreTokenValidazioneUtilities.isPdndTokenPolicy(log, datiInvocazione.getPolicyGestioneToken().getName()) && pddContext!=null) {
 			pddContext.put(CostantiPdD.TOKEN_VALIDAZIONE_PDND, CostantiPdD.TOKEN_ESITO_TRUE);
 		}
 			
@@ -1935,6 +1935,10 @@ public class GestoreToken {
 			}
 		}
 		
+		if(policyNegoziazioneToken==null) {
+			throw new CoreException("PolicyNegoziazioneToken is null");
+		}
+		
 		String idTransazione = (pddContext!=null && pddContext.containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) ? PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext) : null;
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		if(datiRichiesta==null && op2Properties.isGestioneRetrieveTokenSaveAsTokenInfoSaveSourceRequest()) {
@@ -2128,7 +2132,7 @@ public class GestoreToken {
 			securityToken.setAccessToken(accessToken);
 		}
 		
-		if(pddContext!=null && policyNegoziazioneToken!=null && policyNegoziazioneToken.isPDND()) {
+		if(pddContext!=null && policyNegoziazioneToken.isPDND()) {
 			pddContext.put(CostantiPdD.TOKEN_NEGOZIAZIONE_PDND, CostantiPdD.TOKEN_ESITO_TRUE);
 		}
 		

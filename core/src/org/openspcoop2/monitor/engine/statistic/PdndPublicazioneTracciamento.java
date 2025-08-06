@@ -84,6 +84,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	private static final String TRACING_ID_FIELD = "tracingId";
 	
 	
+	
 	// Errore nella connessione con la pdnd, in tal caso necessario retry
 	private static final String CONNECTION_ERROR = "CONNECTION_ERROR";
 	
@@ -138,31 +139,59 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		return this.config.getPdndTracciamentoRequestConfig().getBaseRequest(this.internalPddCodeName.get(pddCode));
 	}
 	
-	private Iterator<JsonNode> iteratorHttpList(HttpRequest req) {
+	
+	private class Result<R, T extends Throwable> {
+		private final R res;
+		private final T error;
+		
+		public Result(R result) {
+			this.res = result;
+			this.error = null;
+		}
+		
+		public Result(T error) {
+			this.res = null;
+			this.error = error;
+		}
+		
+		public R get() throws T {
+			if (this.res == null)
+				throw this.error;
+			return this.res;
+		}
+	}
+	
+	
+	private HttpResponse httpInvokeWithException(HttpRequest req) throws UtilsException {
+		HttpResponse res = HttpUtilities.httpInvoke(req);
+		
+		if(res==null) {
+			throw new UtilsException("HttpResponse is null");
+		}
+		if(res.getResultHTTPOperation()<200 || res.getResultHTTPOperation()>204 ) {
+			throw new UtilsException("HttpResponse return code '"+res.getResultHTTPOperation()+"'");
+		}
+		if(res.getContent()==null || res.getContent().length<=0) {
+			throw new UtilsException("HttpResponse is empty");
+		}
+		return res;
+	}
+	
+	private Iterator<Result<JsonNode, UtilsException>> iteratorHttpList(HttpRequest req) {
 		final int limit = 50;
 		
 		AtomicInteger offset = new AtomicInteger(-limit);
 		Queue<JsonNode> list = new LinkedList<>();
 		JSONUtils jsonUtils = JSONUtils.getInstance();
 		
-		return Stream.generate((Supplier<JsonNode>) () -> {
+		return Stream.generate((Supplier<Result<JsonNode, UtilsException>>) () -> {
 			if (list.isEmpty()) {
 				offset.addAndGet(limit);
 				req.addParam("limit", Integer.toString(limit));
 				req.addParam("offset", Integer.toString(offset.get()));
 				
 				try {
-					HttpResponse res = HttpUtilities.httpInvoke(req);
-					
-					if(res==null) {
-						throw new UtilsException("HttpResponse is null");
-					}
-					if(res.getResultHTTPOperation()<200 || res.getResultHTTPOperation()>204 ) {
-						throw new UtilsException("HttpResponse return code '"+res.getResultHTTPOperation()+"'");
-					}
-					if(res.getContent()==null || res.getContent().length<=0) {
-						throw new UtilsException("HttpResponse is empty");
-					}
+					HttpResponse res = httpInvokeWithException(req);
 					
 					JsonNode node = jsonUtils.getAsNode(res.getContent());
 					JsonNode result = node.get("results");
@@ -171,11 +200,14 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 						list.add(result.get(i));
 					
 				} catch (Exception e) {
-					return null;
+					this.logger.error("Impossibile ottenere risultati dalla PDND: "+e.getMessage(), e);
+					list.add(null);
+					return new Result<>(new UtilsException(e));
 				}
 			}
-			return list.isEmpty() ? null : list.remove();
+			return list.isEmpty() || list.peek() == null ? null : new Result<>(list.remove());
 		}).takeWhile(Objects::nonNull).sequential().iterator();
+		
 	}
 	
 	private String getUploadPath(StatistichePdndTracing stat) {
@@ -472,7 +504,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		req.setMethod(HttpRequestMethod.GET);
 		req.setUrl(req.getBaseUrl() + "/tracings");
 		
-		Iterator<JsonNode> itr = iteratorHttpList(req);
+		Iterator<Result<JsonNode, UtilsException>> itr = iteratorHttpList(req);
 		
 		if (this.updateTracingIdStats.isEmpty()) {
 			this.logger.info("Non ci sono tracciati senza un tracingId valido per il soggetto {}", nomeSoggetto);
@@ -483,11 +515,11 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		}
 		
 		while (!this.updateTracingIdStats.isEmpty() && itr.hasNext()) {
-			JsonNode node = itr.next();
-			String tracingId = node.get(TRACING_ID_FIELD).asText();
-			String tracingDate = node.get("date").asText();
-			
 			try {
+				JsonNode node = itr.next().get();
+				String tracingId = node.get(TRACING_ID_FIELD).asText();
+				String tracingDate = node.get("date").asText();
+				
 				final SimpleDateFormat pdndDateFormat = new SimpleDateFormat(PDND_DATE_FORMAT);
 				Date date = pdndDateFormat.parse(tracingDate);
 				
@@ -510,8 +542,8 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 					
 					this.logPublishResults(stat, nomeSoggetto);
 				}
-			} catch (ParseException e) {
-				throw new StatisticsEngineException(e, "Errore nel parsing della data ritornata dalla PDND, " + tracingDate + " data non riconosciuta");
+			} catch (ParseException | UtilsException e) {
+				throw new StatisticsEngineException(e, "Errore nella lettura dei tracciati ricevuti dalla PDND");
 			}
 		}
 		
@@ -532,7 +564,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		req.setMethod(HttpRequestMethod.GET);
 		req.setUrl(req.getBaseUrl() + "/tracings/" + stat.getTracingId() + "/errors");
 		
-		Iterator<JsonNode> itr = iteratorHttpList(req);
+		Iterator<Result<JsonNode, UtilsException>> itr = iteratorHttpList(req);
 		
 		// se non ci sono errori tutto funziona correttamente
 		if (!itr.hasNext()) {
@@ -544,14 +576,15 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			// se ci sono errori li 
 			ArrayNode arr = JSONUtils.getInstance().newArrayNode();
 			while(itr.hasNext()) {
-				JsonNode node = itr.next();
+				JsonNode node = itr.next().get();
 				arr.add(node);
 			}
 			
 			stat.setStatoPdnd(PossibiliStatiPdnd.ERROR);
 			stat.setErrorDetails(getErrorDetails(PDND_PARSING_ERROR, arr));
 		} catch (UtilsException e) {
-			stat.setStatoPdnd(PossibiliStatiPdnd.ERROR);
+			stat.setStato(PossibiliStatiRichieste.FAILED);
+			stat.setStatoPdnd(PossibiliStatiPdnd.PENDING);
 			stat.setErrorDetails(getErrorDetails(PDND_PARSING_ERROR, "Errore nel parsing della risposta dalla pdnd: " + e.getMessage()));
 		}
 	}
@@ -679,20 +712,20 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		req.addParam("states", status);
 		req.setUrl(req.getBaseUrl() + "/tracings");
 		
-		Iterator<JsonNode> itr = iteratorHttpList(req);
+		Iterator<Result<JsonNode, UtilsException>> itr = iteratorHttpList(req);
 		Map<String, Date> ids = new HashMap<>();
 		
 		while(itr.hasNext()) {
-			JsonNode node = itr.next();
-			String tracingId = node.get(TRACING_ID_FIELD).asText();
-			String tracingDate = node.get("date").asText();
-			
 			try {
+				JsonNode node = itr.next().get();
+				String tracingId = node.get(TRACING_ID_FIELD).asText();
+				String tracingDate = node.get("date").asText();
+				
 				final SimpleDateFormat pdndDateFormat = new SimpleDateFormat(PDND_DATE_FORMAT);
 				Date date = pdndDateFormat.parse(tracingDate);
 				ids.put(tracingId, date);
-			} catch (ParseException e) {
-				throw new StatisticsEngineException(e, "Errore nel parsing della data ritornata dalla PDND, " + tracingDate + " data non riconosciuta");
+			} catch (ParseException | UtilsException e) {
+				throw new StatisticsEngineException(e, "Errore nella lettura dei tracciati ricevuti dalla PDND");
 			}
 		}
 		return ids;
