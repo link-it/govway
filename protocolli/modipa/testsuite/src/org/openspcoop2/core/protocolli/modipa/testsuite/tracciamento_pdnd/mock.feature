@@ -73,7 +73,7 @@ Scenario: pathMatches('/tracings/{id}/errors') && methodIs('GET')
     		push(pdnd_error, { "purposeId": "string", "errorCode": "string", "message": "string", "rowNumber": 0 })
     		error_data = array(slice(pdnd_error, paramValue('offset'), 1 * paramValue('offset') + 1 * paramValue('limit')))
     		res = ({ results: error_data, totalCount: pdnd_error.size })
-    		status = 500
+    		status = 200
     	} else {
     		res = ({ results: [], totalCount: 0 })
     		status = 200
@@ -100,7 +100,7 @@ Scenario: pathMatches('/tracings/{id}/recover') && methodIs('POST')
    			res = response_error('disabled') 
    			karate.fail("Fallimento controllato")
    		} else if (entry == null) {
-   			status = 500
+   			status = 404
    			res = response_error('not present') 
    		} else {
    			entry.state = 'PENDING'
@@ -128,8 +128,8 @@ Scenario: pathMatches('/tracings/{id}/replace') && methodIs('POST')
    			res = response_error('disabled') 
    			karate.fail("Fallimento controllato")
    		} else if (entry == null) {
-   			status = 500
-   			res = response_error('Boh') 
+   			status = 404
+   			res = response_error('not present') 
    		} else {
    			entry.state = 'PENDING'
    			entry.content = trace
