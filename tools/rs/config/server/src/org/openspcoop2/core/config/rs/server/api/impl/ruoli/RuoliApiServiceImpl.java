@@ -22,7 +22,7 @@ package org.openspcoop2.core.config.rs.server.api.impl.ruoli;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
@@ -97,7 +97,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			}
 			
 			if (!env.ruoliHelper.ruoloCheckData(TipoOperazione.ADD, null)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			env.ruoliCore.performCreateOperation(env.userLogin, false, regRuolo);			
@@ -142,7 +142,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 				RuoliUtilities.deleteRuolo(regRuolo, userLogin, rEnv.ruoliCore, rEnv.ruoliHelper, inUsoMessage, System.lineSeparator());
 				
 				if (inUsoMessage.length() > 0) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 				}
 			}
 			
@@ -297,7 +297,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			ruoloNEW.setOldIDRuoloForUpdate(new IDRuolo(oldRuolo.getNome()));	// Qui nella versione della controlstation parte dal nuovo nome assumendo che siano identici.
 			
 			if (!rEnv.ruoliHelper.ruoloCheckData(TipoOperazione.CHANGE, oldRuolo)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(rEnv.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(rEnv.pd.getMessage()));
 			}
 
 			List<Object> listOggettiDaAggiornare = new ArrayList<>();

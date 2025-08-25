@@ -24,9 +24,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.lang.CharEncoding;
 import org.openspcoop2.utils.UtilsException;
 
 /**
@@ -43,7 +43,7 @@ public class Printer {
 	private CSVPrinter csvPrinter;
 	
 	public Printer(Format format, File file) throws UtilsException {
-		this(format, file, CharEncoding.UTF_8);
+		this(format, file, StandardCharsets.UTF_8.name());
 	}
 	public Printer(Format format, File file, String charset) throws UtilsException {
 		try{
@@ -56,7 +56,7 @@ public class Printer {
 	}
 	
 	public Printer(Format format, OutputStream out) throws UtilsException {
-		this(format,out,CharEncoding.UTF_8);
+		this(format,out,StandardCharsets.UTF_8.name());
 	}
 	public Printer(Format format, OutputStream out, String charset) throws UtilsException {
 		try{

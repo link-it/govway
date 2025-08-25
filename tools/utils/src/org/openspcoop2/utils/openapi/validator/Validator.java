@@ -1923,11 +1923,11 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 //					}
 //					StringBuilder sbNewList = new StringBuilder();
 //					for (String hdrCheck : acceptHeaders) {
-//						if(hdrCheck!=null && org.apache.commons.lang.StringUtils.isNotEmpty(hdrCheck.trim())) {
+//						if(hdrCheck!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(hdrCheck.trim())) {
 //							if(hdrCheck.contains(";")) {
 //								String [] tmp = hdrCheck.split(";");
 //								String media = tmp[0];
-//								if(media!=null && org.apache.commons.lang.StringUtils.isNotEmpty(media.trim())) {
+//								if(media!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(media.trim())) {
 //									if(sbNewList.length()>0) {
 //										sbNewList.append(", ");
 //									}

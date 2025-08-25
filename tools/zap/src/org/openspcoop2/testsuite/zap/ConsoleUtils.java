@@ -381,7 +381,7 @@ public class ConsoleUtils {
 				// genreale per qualsiasi report
 				String envJenkins = System.getProperty("zaproxy.report.includedRisks.serif");
 				/**System.out.println("JENKINS CONFIG  ["+envJenkins+"]]");*/
-				if (envJenkins!=null && org.apache.commons.lang.StringUtils.isNotEmpty(envJenkins) && !"${zaproxy.report.includedRisks.serif}".equals(envJenkins.trim())) {
+				if (envJenkins!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(envJenkins) && !"${zaproxy.report.includedRisks.serif}".equals(envJenkins.trim())) {
 					includeRisk = envJenkins;
 					LoggerManager.info("Generate '"+type+"' report with includedRisks customized by 'zaproxy.report.includedRisks.serif':  "+includeRisk);
 				}
@@ -389,7 +389,7 @@ public class ConsoleUtils {
 					// specifico per le console
 					envJenkins = System.getProperty("zaproxy.report.includedRisks.console.serif");
 					/**System.out.println("JENKINS CONFIG  ["+envJenkins+"]]");*/
-					if (envJenkins!=null && org.apache.commons.lang.StringUtils.isNotEmpty(envJenkins) && !"${zaproxy.report.includedRisks.console.serif}".equals(envJenkins.trim())) {
+					if (envJenkins!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(envJenkins) && !"${zaproxy.report.includedRisks.console.serif}".equals(envJenkins.trim())) {
 						includeRisk = envJenkins;
 						LoggerManager.info("Generate '"+type+"' report with includedRisks customized by 'zaproxy.report.includedRisks.console.serif':  "+includeRisk);
 					}
@@ -397,7 +397,7 @@ public class ConsoleUtils {
 						// specifico per le api
 						envJenkins = System.getProperty("zaproxy.report.includedRisks.api.serif");
 						/**System.out.println("JENKINS CONFIG  ["+envJenkins+"]]");*/
-						if (envJenkins!=null && org.apache.commons.lang.StringUtils.isNotEmpty(envJenkins) && !"${zaproxy.report.includedRisks.api.serif}".equals(envJenkins.trim())) {
+						if (envJenkins!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(envJenkins) && !"${zaproxy.report.includedRisks.api.serif}".equals(envJenkins.trim())) {
 							includeRisk = envJenkins;
 							LoggerManager.info("Generate '"+type+"' report with includedRisks customized by 'zaproxy.report.includedRisks.api.serif':  "+includeRisk);
 						}

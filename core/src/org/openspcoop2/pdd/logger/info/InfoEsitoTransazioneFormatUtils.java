@@ -23,7 +23,7 @@ package org.openspcoop2.pdd.logger.info;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.logger.LogLevels;

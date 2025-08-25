@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 import java.net.HttpCookie;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.slf4j.Logger;

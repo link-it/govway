@@ -34,8 +34,8 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.Connettore;
@@ -1162,7 +1162,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		
 		de = new DataElement();
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME);
-		de.setValue(StringEscapeUtils.escapeHtml(proxyUsername));
+		de.setValue(StringEscapeUtils.escapeHtml4(proxyUsername));
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 		de.setSize(this.getSize());
@@ -1203,7 +1203,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		dati.add(de);
 		
 		de = new DataElement();
-		de.setValue(StringEscapeUtils.escapeHtml(proxyUsername));
+		de.setValue(StringEscapeUtils.escapeHtml4(proxyUsername));
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 		dati.add(de);
@@ -1724,7 +1724,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC.equals(tipoauth)) {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-				de.setValue(StringEscapeUtils.escapeHtml(utente));
+				de.setValue(StringEscapeUtils.escapeHtml4(utente));
 				de.setType(DataElementType.TEXT_EDIT);
 				if(connettore){
 					de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
@@ -1740,7 +1740,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-				de.setValue(StringEscapeUtils.escapeHtml(password));
+				de.setValue(StringEscapeUtils.escapeHtml4(password));
 				de.setType(DataElementType.TEXT_EDIT);
 				if(connettore){
 					de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
@@ -1962,7 +1962,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-					de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLFileCertificatoPassword));
+					de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLFileCertificatoPassword));
 					if(visualizzaFieldCert && (tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.JKS) || tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.PKCS12))) { 
 						// 1a. Password per gli archivi JKS o PKCS12.
 						de.setType(DataElementType.TEXT_EDIT);
@@ -2152,7 +2152,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
-					de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject));
+					de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoSubject));
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -2165,7 +2165,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
-					de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer));
+					de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoIssuer));
 					if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoIssuer)) {
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -2299,7 +2299,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					// 1b. TextArea Subject
 					de = new DataElement();
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
-					de.setValue(StringEscapeUtils.escapeHtml(subject));
+					de.setValue(StringEscapeUtils.escapeHtml4(subject));
 					de.setType(DataElementType.TEXT_AREA);
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -2313,7 +2313,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 					if(!ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLConfigurazioneManualeSelfSigned)) {
 						de.setType(DataElementType.TEXT_AREA);
-						de.setValue(StringEscapeUtils.escapeHtml(issuer));
+						de.setValue(StringEscapeUtils.escapeHtml4(issuer));
 						de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 						de.setSize(this.getSize());
 					} else {
@@ -2395,7 +2395,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				if(change) {
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 				}
-				de.setValue(StringEscapeUtils.escapeHtml(appId));
+				de.setValue(StringEscapeUtils.escapeHtml4(appId));
 				if(multipleApiKeysEnabled) {
 					if(appIdModificabile) {
 						de.setType(DataElementType.TEXT_EDIT);
@@ -2467,7 +2467,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de = new DataElement();
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID_EMPTY_LABEL);
-					de.setValue(StringEscapeUtils.escapeHtml(appId));
+					de.setValue(StringEscapeUtils.escapeHtml4(appId));
 					if(multipleApiKeysEnabled) {
 						if(appIdModificabile) {
 							de.setType(DataElementType.TEXT_EDIT);
@@ -2486,7 +2486,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
-				de.setValue(StringEscapeUtils.escapeHtml(apiKey));
+				de.setValue(StringEscapeUtils.escapeHtml4(apiKey));
 				de.setType(DataElementType.HIDDEN);
 				dati.add(de);
 				
@@ -2495,7 +2495,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			if (ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL.equals(tipoauth)  && !connettore) {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
-				de.setValue(StringEscapeUtils.escapeHtml(principal));
+				de.setValue(StringEscapeUtils.escapeHtml4(principal));
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL);
 				de.setSize(this.getSize());
@@ -2608,7 +2608,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
-				de.setValue(StringEscapeUtils.escapeHtml(tokenClientIdSA));
+				de.setValue(StringEscapeUtils.escapeHtml4(tokenClientIdSA));
 				de.setType(DataElementType.TEXT_EDIT);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_TOKEN_CLIENT_ID);
 				de.setSize(this.getSize());
@@ -3994,7 +3994,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(StringEscapeUtils.escapeHtml(user));
+				de.setValue(StringEscapeUtils.escapeHtml4(user));
 				dati.add(de);
 
 				de = new DataElement();
@@ -6191,7 +6191,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLFileCertificatoPassword));
+				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLFileCertificatoPassword));
 				if(visualizzaFieldCert && (tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.JKS) || tipoCredenzialiSSLTipoArchivio.equals(ArchiveType.PKCS12))) { 
 					// 1a. Password per gli archivi JKS o PKCS12.
 					de.setType(DataElementType.TEXT_EDIT);
@@ -6351,7 +6351,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
-				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject));
+				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoSubject));
 				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoSubject)) {
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -6364,7 +6364,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
-				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer));
+				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoIssuer));
 				if(StringUtils.isNotEmpty(tipoCredenzialiSSLAliasCertificatoIssuer)) {
 					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -6507,7 +6507,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// 1b. TextArea Subject
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
-				de.setValue(StringEscapeUtils.escapeHtml(subject));
+				de.setValue(StringEscapeUtils.escapeHtml4(subject));
 				de.setType(DataElementType.TEXT_AREA);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 				de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -6521,7 +6521,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 				if(!ServletUtils.isCheckBoxEnabled(tipoCredenzialiSSLConfigurazioneManualeSelfSigned)) {
 					de.setType(DataElementType.TEXT_AREA);
-					de.setValue(StringEscapeUtils.escapeHtml(issuer));
+					de.setValue(StringEscapeUtils.escapeHtml4(issuer));
 					de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
 					de.setSize(this.getSize());
 				} else {
@@ -6585,7 +6585,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD);
-				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLFileCertificatoPassword));
+				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLFileCertificatoPassword));
 				de.setType(DataElementType.HIDDEN);
 				dati.add(de);
 				
@@ -6627,7 +6627,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_SUBJECT);
-				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject));
+				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoSubject));
 				de.setType(DataElementType.HIDDEN);
 				de.setSize(this.getSize());
 				dati.add(de);
@@ -6635,7 +6635,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO_ISSUER);
-				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer));
+				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoIssuer));
 				de.setType(DataElementType.HIDDEN);
 				de.setSize(this.getSize());
 				dati.add(de);
@@ -6712,7 +6712,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				// 1b. TextArea Subject
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
-				de.setValue(StringEscapeUtils.escapeHtml(subject));
+				de.setValue(StringEscapeUtils.escapeHtml4(subject));
 				de.setType(DataElementType.HIDDEN);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT);
 				de.setRows(CostantiControlStation.LABEL_PARAMETRO_TEXT_AREA_SIZE);
@@ -6724,7 +6724,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
 				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER);
-				de.setValue(StringEscapeUtils.escapeHtml(issuer));
+				de.setValue(StringEscapeUtils.escapeHtml4(issuer));
 				de.setType(DataElementType.HIDDEN);
 				dati.add(de);
 			}

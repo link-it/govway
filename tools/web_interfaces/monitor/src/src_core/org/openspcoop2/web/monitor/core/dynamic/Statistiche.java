@@ -25,7 +25,7 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.openspcoop2.monitor.engine.config.statistiche.ConfigurazioneStatistica;
 

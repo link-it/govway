@@ -31,7 +31,7 @@
 		<commons.io.version>2.19.0</commons.io.version>
 		<commons.jcs3-core.version>3.2.1</commons.jcs3-core.version>
 		<commons.jcs3-core.gov4j.version>3.2.1-gov4j-1</commons.jcs3-core.gov4j.version>
-		<commons.lang.version>2.6</commons.lang.version>
+		<commons.text.version>1.14.0</commons.text.version>
 		<commons.lang3.version>3.18.0</commons.lang3.version>
 		<commons.logging.version>1.3.5</commons.logging.version>
 		<commons.math3.version>3.6.1</commons.math3.version>
@@ -209,17 +209,17 @@
 			</exclusions>
 		</dependency>			
 
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>${commons.lang.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+                <dependency>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-text</artifactId>
+                        <version>${commons.text.version}</version>
+                        <exclusions>
+                                <exclusion>
+                                        <groupId>*</groupId>
+                                        <artifactId>*</artifactId>
+                                </exclusion>
+                        </exclusions>
+                </dependency>
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>

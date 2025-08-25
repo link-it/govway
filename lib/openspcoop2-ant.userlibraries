@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <eclipse-userlibraries version="2">
-    <library name="openspcoop2_3.4_lib_ant" systemlibrary="false">
+    <library name="openspcoop2_3.4.1_lib_ant" systemlibrary="false">
         <archive path="/op2_3.4.dev/lib/antinstaller/ant-1.10.11.jar"/>
         <archive path="/op2_3.4.dev/lib/git/org.eclipse.jgit-7.2.1.202505142326-r.jar"/>
     </library>

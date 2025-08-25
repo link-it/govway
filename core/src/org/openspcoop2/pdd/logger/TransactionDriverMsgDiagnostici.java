@@ -31,7 +31,7 @@ import java.util.Properties;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
@@ -978,7 +978,7 @@ public class TransactionDriverMsgDiagnostici implements IDiagnosticDriver {
 	private String readValue(Map<String,Object> dbValue, IField field, String idTransazione) throws DriverMsgDiagnosticiException{
 		Object objectDBValue = dbValue.get(field.getFieldName());
 		String dbValueAsString = null;
-		if((objectDBValue instanceof org.apache.commons.lang.ObjectUtils.Null)){
+		if((objectDBValue instanceof org.apache.commons.lang3.ObjectUtils.Null)){
 			objectDBValue = null;
 		}
 		if(objectDBValue!=null){

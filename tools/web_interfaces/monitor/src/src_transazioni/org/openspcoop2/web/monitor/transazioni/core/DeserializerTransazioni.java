@@ -38,8 +38,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.core.diagnostica.utils.XMLUtils;
 import org.openspcoop2.core.diagnostica.utils.XMLUtilsException;
 import org.openspcoop2.core.id.IDServizioApplicativo;

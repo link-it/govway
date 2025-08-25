@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.Connettore;
@@ -313,7 +313,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 						inUsoMessage, "\n");
 
 				if (inUsoMessage.length() > 0) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 				}
 			} else if (env.delete_404) {
 				throw FaultCode.NOT_FOUND.toException("Erogazione non presente");
@@ -1166,7 +1166,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 					oldConnT = TipiConnettore.CUSTOM.toString();
 				}
 				if (!ConnettoreAPIHelper.connettoreCheckData(body.getConnettore(), env, true)) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 				}
 
 				ConnettoreAPIHelper.fillConnettoreConfigurazione(sa, env, body.getConnettore(), oldConnT);
@@ -1205,7 +1205,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				ServiziApplicativiUtilities.checkStatoConnettore(env.saCore, sa, is.getConnettore(), inUsoMessage, System.lineSeparator());
 
 				if (inUsoMessage.length() > 0)
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 
 				env.saCore.performUpdateOperation(env.userLogin, false, sa);
 			}
@@ -1597,7 +1597,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			org.openspcoop2.message.constants.ServiceBinding serviceBinding = org.openspcoop2.message.constants.ServiceBinding.valueOf(apc.getServiceBinding().name());
 			if (!env.paHelper.porteAppCheckData(TipoOperazione.CHANGE, oldNomePA, env.isSupportatoAutenticazioneSoggetti, false,
 					serviceBinding)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 
 			pa.setOldIDPortaApplicativaForUpdate(idPorta);

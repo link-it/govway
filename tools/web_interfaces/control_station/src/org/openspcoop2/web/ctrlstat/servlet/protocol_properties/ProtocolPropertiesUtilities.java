@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -461,11 +461,11 @@ public class ProtocolPropertiesUtilities {
 	private static void addDataElementInfo(AbstractConsoleItem<?> item, DataElement de) {
 		if(item.getInfo()!=null) {
 			DataElementInfo dInfo = new DataElementInfo(item.getInfo().getHeaderFinestraModale());
-			dInfo.setHeaderBody(StringEscapeUtils.escapeHtml(item.getInfo().getHeaderBody()));
+			dInfo.setHeaderBody(StringEscapeUtils.escapeHtml4(item.getInfo().getHeaderBody()));
 			if(item.getInfo().getListBody()!=null && !item.getInfo().getListBody().isEmpty()) {
 				List<String> escapedValues = new ArrayList<>();
 				for (String v : item.getInfo().getListBody()) {
-					escapedValues.add(StringEscapeUtils.escapeHtml(v));
+					escapedValues.add(StringEscapeUtils.escapeHtml4(v));
 				}
 				dInfo.setListBody(escapedValues);
 			}

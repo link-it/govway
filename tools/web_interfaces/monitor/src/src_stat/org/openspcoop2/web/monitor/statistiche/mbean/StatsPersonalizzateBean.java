@@ -30,7 +30,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
@@ -281,7 +281,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 				res += CostantiGrafici.GIORNALIERA_LABEL + CostantiGrafici.WHITE_SPACE;
 		}*/
 
-		return StringEscapeUtils.escapeXml(res);
+		return StringEscapeUtils.escapeXml10(res);
 	}
 
 	public String getSubCaption() {
@@ -310,7 +310,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 		}
 		
 		
-		return StringEscapeUtils.escapeXml(caption.toString());
+		return StringEscapeUtils.escapeXml10(caption.toString());
 	}
 
 	public void newSearch(ActionEvent ae) {

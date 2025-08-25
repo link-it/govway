@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.monitor.transazioni.mbean;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
@@ -69,7 +69,7 @@ public class MsgDiagnosticoBean extends MsgDiagnostico {
 	public String getMessaggioAsString(){
 		String tmp = this.getMessaggio();
 		// devo fare l'escape html prima di convertire
-		tmp = StringEscapeUtils.escapeHtml(tmp);
+		tmp = StringEscapeUtils.escapeHtml4(tmp);
 		if(tmp!=null){
 			while(tmp.contains("\n")){
 				tmp = tmp.replace("\n", "<br/>");

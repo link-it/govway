@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.security.Security;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerBuffer;
 import org.openspcoop2.utils.LoggerWrapperFactory;

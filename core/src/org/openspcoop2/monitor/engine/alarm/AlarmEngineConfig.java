@@ -22,7 +22,7 @@ package org.openspcoop2.monitor.engine.alarm;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 import org.openspcoop2.utils.mail.SenderType;
 import org.openspcoop2.utils.transport.http.HttpUtilities;

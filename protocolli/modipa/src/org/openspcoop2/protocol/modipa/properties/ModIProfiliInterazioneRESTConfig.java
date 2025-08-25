@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.modipa.properties;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.ResourceResponse;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;

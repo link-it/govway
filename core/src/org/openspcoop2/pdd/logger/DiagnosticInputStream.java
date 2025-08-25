@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;

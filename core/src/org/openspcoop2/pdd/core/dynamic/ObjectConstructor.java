@@ -22,7 +22,7 @@ package org.openspcoop2.pdd.core.dynamic;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.lang.reflect.ConstructorUtils;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.openspcoop2.utils.Utilities;
 
 /**

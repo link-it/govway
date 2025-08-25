@@ -52,8 +52,8 @@ import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
 import org.openspcoop2.core.allarmi.constants.StatoAllarme;
@@ -19009,7 +19009,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
 					de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_CONTENT_TYPE);
 					de.setType(DataElementType.TEXT_EDIT);
-					de.setValue(StringEscapeUtils.escapeHtml(trasformazioneContenutoRispostaContentType));
+					de.setValue(StringEscapeUtils.escapeHtml4(trasformazioneContenutoRispostaContentType));
 					if(trasformazioneRichiestaRestAbilitato) { // devo restituire un soap e il ct e' deciso dall'engine 
 						de.setType(DataElementType.HIDDEN);
 						de.setValue("");
@@ -20441,7 +20441,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
 				de.setType(DataElementType.TEXT_EDIT);
-				de.setValue(StringEscapeUtils.escapeHtml(trasformazioneRichiestaContentType));
+				de.setValue(StringEscapeUtils.escapeHtml4(trasformazioneRichiestaContentType));
 			
 				switch (serviceBindingMessage) {
 				case REST:
@@ -22139,14 +22139,14 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(utente!=null) {
 				utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				utente.setType(DataElementType.TEXT_EDIT);
-				utente.setValue(StringEscapeUtils.escapeHtml(secret_user));
+				utente.setValue(StringEscapeUtils.escapeHtml4(secret_user));
 				utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME));
 			}
 			
 			if(password!=null) {
 				password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				password.setType(DataElementType.TEXT_EDIT);
-				password.setValue(StringEscapeUtils.escapeHtml(secret_password));
+				password.setValue(StringEscapeUtils.escapeHtml4(secret_password));
 				password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD));
 			}
 			
@@ -22157,7 +22157,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(utente!=null) {
 					utente.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID);
 					utente.setType(DataElementType.TEXT_EDIT);
-					utente.setValue(StringEscapeUtils.escapeHtml(secret_user));
+					utente.setValue(StringEscapeUtils.escapeHtml4(secret_user));
 					utente.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_APP_ID));
 				}
 			} else {
@@ -22167,7 +22167,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(password!=null) {
 				password.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY);
 				password.setType(DataElementType.TEXT_AREA);
-				password.setValue(StringEscapeUtils.escapeHtml(secret_password));
+				password.setValue(StringEscapeUtils.escapeHtml4(secret_password));
 				password.setTooltipCopyAction(MessageFormat.format(Costanti.TOOLTIP_ICONA_COPIA, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_API_KEY));
 				password.setCols(44);
 			}
@@ -22182,10 +22182,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		String singolare = unaCredenziale ? "a" : "e";
 		String verbo = unaCredenziale ? "viene" : "vengono";
 		String oggetto = unaCredenziale ? "la chiave" : "le credenziali";
-		String intestazione = StringEscapeUtils.escapeHtml("Di seguito "+verbo+" riportat"+singolare+" "+oggetto+" associat"+singolare+" "+tipoOggetto+".")
+		String intestazione = StringEscapeUtils.escapeHtml4("Di seguito "+verbo+" riportat"+singolare+" "+oggetto+" associat"+singolare+" "+tipoOggetto+".")
 				+org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE+
-				StringEscapeUtils.escapeHtml("L'informazione viene visualizzata in questo avviso e successivamente non sarà più consultabile.");
-		String attenzione = StringEscapeUtils.escapeHtml("Si prega di copiarl"+singolare+" e custodirl"+singolare+" attentamente.");
+				StringEscapeUtils.escapeHtml4("L'informazione viene visualizzata in questo avviso e successivamente non sarà più consultabile.");
+		String attenzione = StringEscapeUtils.escapeHtml4("Si prega di copiarl"+singolare+" e custodirl"+singolare+" attentamente.");
 		
 		Dialog dialog = new Dialog();
 		
@@ -23883,7 +23883,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setType(DataElementType.TEXT);
 				de.setLabel(ConnettoriCostanti.LABEL_VERIFICA_CONNETTORE_DETAILS_HTTP_PASSWORD);
 				String pw = connettore.getProperties().get(CostantiConnettori.CONNETTORE_PASSWORD);
-				de.setValue(pw!=null ? StringEscapeUtils.escapeHtml(pw) : pw);
+				de.setValue(pw!=null ? StringEscapeUtils.escapeHtml4(pw) : pw);
 				dati.add(de);
 				
 			}*/
@@ -23922,7 +23922,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de = new DataElement();
 			de.setType(DataElementType.TEXT);
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_VALUE);
-			de.setValue(StringEscapeUtils.escapeHtml(apiKeyHeader+": ******"));
+			de.setValue(StringEscapeUtils.escapeHtml4(apiKeyHeader+": ******"));
 			/**de.setValue(connettore.getProperties().get(CostantiConnettori.CONNETTORE_APIKEY));Informazione sensibile*/
 			dati.add(de);
 			
@@ -23936,7 +23936,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de = new DataElement();
 				de.setType(DataElementType.TEXT);
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_API_KEY_APP_ID_VALUE);
-				de.setValue(StringEscapeUtils.escapeHtml(appIdHeader+": "+connettore.getProperties().get(CostantiConnettori.CONNETTORE_APIKEY_APPID)));
+				de.setValue(StringEscapeUtils.escapeHtml4(appIdHeader+": "+connettore.getProperties().get(CostantiConnettori.CONNETTORE_APIKEY_APPID)));
 				dati.add(de);
 				
 			}

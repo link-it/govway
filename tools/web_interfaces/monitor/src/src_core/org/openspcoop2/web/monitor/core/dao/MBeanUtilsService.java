@@ -22,7 +22,7 @@ package org.openspcoop2.web.monitor.core.dao;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.search.AccordoServizioParteComune;
 import org.openspcoop2.core.commons.search.Resource;
 import org.openspcoop2.core.commons.search.dao.IAccordoServizioParteComuneServiceSearch;

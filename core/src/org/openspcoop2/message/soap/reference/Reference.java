@@ -20,7 +20,7 @@
 
 package org.openspcoop2.message.soap.reference;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * Classe che rappresenta un elemento 

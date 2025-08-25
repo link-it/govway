@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -98,13 +98,13 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseChange extends
 			
 			String elemxml = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ELEMENTO_XML);
 			if(elemxml!=null)
-				elemxml = StringEscapeUtils.escapeHtml(elemxml);
+				elemxml = StringEscapeUtils.escapeHtml4(elemxml);
 			
 			String mode = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE);
 			
 			String pattern = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PATTERN);
 			if(pattern!=null)
-				pattern = StringEscapeUtils.escapeHtml(pattern);
+				pattern = StringEscapeUtils.escapeHtml4(pattern);
 			
 			String idcorrString = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_CORRELAZIONE_APPLICATIVA);
 			int idcorr = Integer.parseInt(idcorrString);
@@ -169,14 +169,14 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseChange extends
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				if (elemxml == null) {
-					elemxml = StringEscapeUtils.escapeHtml(cae.getNome());
+					elemxml = StringEscapeUtils.escapeHtml4(cae.getNome());
 				}
 				if (mode == null &&
 					cae.getIdentificazione()!=null) {
 					mode = cae.getIdentificazione().toString();
 				}
 				if (pattern == null) {
-					pattern = StringEscapeUtils.escapeHtml(cae.getPattern());
+					pattern = StringEscapeUtils.escapeHtml4(cae.getPattern());
 				}
 				if (gif == null &&
 					cae.getIdentificazioneFallita()!=null) {
@@ -247,7 +247,7 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseChange extends
 				caeNew.setNome(null);
 			}
 			else {
-				caeNew.setNome(StringEscapeUtils.unescapeHtml(elemxml));
+				caeNew.setNome(StringEscapeUtils.unescapeHtml4(elemxml));
 			}
 			caeNew.setIdentificazione(CorrelazioneApplicativaRispostaIdentificazione.toEnumConstant(mode));
 			if (mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED) ||
@@ -256,7 +256,7 @@ public final class PorteApplicativeCorrelazioneApplicativaResponseChange extends
 					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_TEMPLATE) ||
 					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_FREEMARKER_TEMPLATE) ||
 					mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_VELOCITY_TEMPLATE)) {
-				caeNew.setPattern(StringEscapeUtils.unescapeHtml(pattern));
+				caeNew.setPattern(StringEscapeUtils.unescapeHtml4(pattern));
 			}
 			if(!PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO.equals(mode)){
 				caeNew.setIdentificazioneFallita(CorrelazioneApplicativaGestioneIdentificazioneFallita.toEnumConstant(gif));

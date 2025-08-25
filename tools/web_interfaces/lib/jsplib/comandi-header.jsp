@@ -23,7 +23,7 @@
 <%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
 <%@page import="java.util.List"%>
 <%@page import="org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI"%>
-<%@ page session="true" import="java.util.List, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, org.apache.commons.text.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 String iddati = "";

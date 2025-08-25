@@ -33,7 +33,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.codec.binary.Base64InputStream;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.cxf.attachment.AttachmentImpl;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.message.Attachment;
@@ -110,7 +110,7 @@ public class WSSUtilities {
         		listAttachments = new ArrayList<Attachment>();
         		for (int i = 0; i < listApDaTrattare.size(); i++) {
         			AttachmentPart ap = listApDaTrattare.get(i);
-        			//System.out.println("AP ["+ap.getContentId()+"] ["+StringEscapeUtils.escapeXml(ap.getContentId())+"] ["+ap.getContentType()+"] add");
+        			//System.out.println("AP ["+ap.getContentId()+"] ["+StringEscapeUtils.escapeXml10(ap.getContentId())+"] ["+ap.getContentType()+"] add");
 					listAttachments.add(convertToCxfAttachment(ap, msgCtx));
 				}
         	}
@@ -185,7 +185,7 @@ public class WSSUtilities {
 			id = id.replaceAll("(^<)|(>$)", "");
 		}
 
-		AttachmentImpl at = new AttachmentImpl(StringEscapeUtils.escapeXml(id));
+		AttachmentImpl at = new AttachmentImpl(StringEscapeUtils.escapeXml10(id));
 		boolean encryptAttachmentsHeader = msgCtx.containsKey(SecurityConstants.ENCRYPT_ATTACHMENT_HEADERS) ?
 				msgCtx.get(SecurityConstants.ENCRYPT_ATTACHMENT_HEADERS).equals(SecurityConstants.ENCRYPT_ATTACHMENT_HEADERS_TRUE) :
 					SecurityConstants.ENCRYPT_ATTACHMENT_HEADERS_DEFAULT;

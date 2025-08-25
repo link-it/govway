@@ -21,7 +21,7 @@ package org.openspcoop2.protocol.modipa.properties;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mvc.properties.provider.InputValidationUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;

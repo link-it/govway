@@ -676,7 +676,7 @@ public class GenericJDBCUtilities {
 						if(object!=null)
 							resultList.put(key, object);
 						else
-							resultList.put(key, org.apache.commons.lang.ObjectUtils.NULL);	
+							resultList.put(key, org.apache.commons.lang3.ObjectUtils.NULL);	
 					}
 				}
 				result.add(resultList);
@@ -1130,7 +1130,7 @@ public class GenericJDBCUtilities {
 					if(object!=null)
 						resultList.put(alias, object);
 					else
-						resultList.put(alias, org.apache.commons.lang.ObjectUtils.NULL);
+						resultList.put(alias, org.apache.commons.lang3.ObjectUtils.NULL);
 					j++;
 				}
 				result.add(resultList);

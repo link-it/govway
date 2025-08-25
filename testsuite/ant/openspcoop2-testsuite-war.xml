@@ -147,8 +147,8 @@
 			</lib>
 			<lib dir="${required_lib}/commons">
 				<include name="commons-codec-1.18.0.jar"/>
+				<include name="commons-lang3-3.18.0.jar"/>
 				<include name="commons-io-2.19.0.jar"/>
-				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>

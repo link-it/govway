@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -34,8 +35,7 @@ import java.util.Properties;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.input.BOMInputStream;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.lang3.ArrayUtils;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
@@ -218,13 +218,13 @@ public class Parser {
 	}
 	
 	public ParserResult parseCsvFile(Format format, byte[] csv) throws UtilsException{
-		return this.parseCsvFile(format, csv, CharEncoding.UTF_8,false);
+		return this.parseCsvFile(format, csv, StandardCharsets.UTF_8.name(),false);
 	}
 	public ParserResult parseCsvFile(Format format, byte[] csv, String charset) throws UtilsException{
 		return this.parseCsvFile(format, csv, charset,false);
 	}
 	public ParserResult parseCsvFile(Format format, byte[] csv,boolean enableBomInputStream) throws UtilsException{
-		return this.parseCsvFile(format, csv, CharEncoding.UTF_8,enableBomInputStream);
+		return this.parseCsvFile(format, csv, StandardCharsets.UTF_8.name(),enableBomInputStream);
 	}
 	public ParserResult parseCsvFile(Format format, byte[] csv, String charset,boolean enableBomInputStream) throws UtilsException{
 		ByteArrayInputStream bin = null;
@@ -243,13 +243,13 @@ public class Parser {
 	}
 	
 	public ParserResult parseCsvFile(Format format, File file) throws UtilsException{
-		return this.parseCsvFile(format, file, CharEncoding.UTF_8, false);
+		return this.parseCsvFile(format, file, StandardCharsets.UTF_8.name(), false);
 	}
 	public ParserResult parseCsvFile(Format format, File file, String charset) throws UtilsException{
 		return this.parseCsvFile(format, file, charset, false);
 	}
 	public ParserResult parseCsvFile(Format format, File file, boolean enableBomInputStream) throws UtilsException{
-		return this.parseCsvFile(format, file, CharEncoding.UTF_8, enableBomInputStream);
+		return this.parseCsvFile(format, file, StandardCharsets.UTF_8.name(), enableBomInputStream);
 	}
 	public ParserResult parseCsvFile(Format format, File file, String charset,boolean enableBomInputStream) throws UtilsException{
 		FileInputStream fin = null;
@@ -271,13 +271,13 @@ public class Parser {
 	}
 	
 	public ParserResult parseCsvFile(Format format, InputStream is) throws UtilsException{
-		return parseCsvFile(format, is, CharEncoding.UTF_8, false);
+		return parseCsvFile(format, is, StandardCharsets.UTF_8.name(), false);
 	}
 	public ParserResult parseCsvFile(Format format, InputStream is, String charset) throws UtilsException{
 		return parseCsvFile(format, is, charset, false);
 	}
 	public ParserResult parseCsvFile(Format format, InputStream is, boolean enableBomInputStream) throws UtilsException{
-		return parseCsvFile(format, is, CharEncoding.UTF_8, enableBomInputStream);
+		return parseCsvFile(format, is, StandardCharsets.UTF_8.name(), enableBomInputStream);
 	}
 	public ParserResult parseCsvFile(Format format, InputStream is, String charset,boolean enableBomInputStream) throws UtilsException{
 		Reader reader = null;

@@ -19,7 +19,7 @@
 
 
 
-<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="org.apache.commons.lang3.StringUtils"%>
 <%@ page session="true" import="java.util.List, org.openspcoop2.web.lib.mvc.*" %>
 <%
 String iddati = "";

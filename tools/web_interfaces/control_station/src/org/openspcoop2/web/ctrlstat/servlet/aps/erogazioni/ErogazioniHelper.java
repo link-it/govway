@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.govway.struts.action.ActionForward;
 import org.govway.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.CoreException;
@@ -2098,7 +2098,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			if(descrizione!=null && descrizione.length()>length) {
 				descrizione = descrizione.substring(0, (length-4)) + " ...";
 			}
-			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+			de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml4(descrizione) : null);
 			de.setToolTip(gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione());
 			de.setCopyToClipboard(gestioneFruitori ? fruitore.getDescrizione() : asps.getDescrizione());
 			

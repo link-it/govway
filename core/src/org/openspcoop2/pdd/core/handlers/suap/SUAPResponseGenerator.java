@@ -22,7 +22,7 @@ package org.openspcoop2.pdd.core.handlers.suap;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.message.ForcedResponseMessage;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -272,12 +272,11 @@ public class SUAPResponseGenerator implements OutResponseHandler {
 	static boolean isErroreBoolean(MapKey<String> key, OutResponseContext context) {
 		if(context.getPddContext()!=null && context.getPddContext().containsKey(key)) {
 			Object o = context.getPddContext().get(key);
-			if(o instanceof String) {
-				String s = (String) o;
+			if(o instanceof String s) {
 				return "true".equals(s);
 			}
-			else if(o instanceof Boolean) {
-				return (Boolean) o;
+			else if(o instanceof Boolean b) {
+				return b;
 			}
 		}
 		return false;
@@ -290,8 +289,7 @@ public class SUAPResponseGenerator implements OutResponseHandler {
 	static boolean isErroreString(MapKey<String> key, String value, OutResponseContext context) {
 		if(context.getPddContext()!=null && context.getPddContext().containsKey(key)) {
 			Object o = context.getPddContext().get(key);
-			if(o instanceof String) {
-				String s = (String) o;
+			if(o instanceof String s) {
 				return value.equals(s);
 			}
 		}

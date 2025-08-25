@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.web.monitor.transazioni.utils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.logger.info.InfoEsitoTransazioneFormatUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;

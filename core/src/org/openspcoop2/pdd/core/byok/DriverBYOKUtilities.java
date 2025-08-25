@@ -22,7 +22,7 @@ package org.openspcoop2.pdd.core.byok;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.byok.BYOKUtilities;
 import org.openspcoop2.core.byok.BYOKWrappedValue;
 import org.openspcoop2.pdd.config.ConfigurazioneNodiRuntime;

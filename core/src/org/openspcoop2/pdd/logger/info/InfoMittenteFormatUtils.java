@@ -23,7 +23,7 @@ package org.openspcoop2.pdd.logger.info;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.autenticazione.ApiKeyUtilities;

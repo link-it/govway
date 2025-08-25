@@ -27,7 +27,8 @@ import java.util.Properties;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeHistory;
 import org.openspcoop2.core.allarmi.AllarmeParametro;
@@ -205,14 +206,14 @@ public class AllarmiService implements IAllarmiService {
 		StatoAllarme statoParam = null;
 		Boolean acknowledgedParam = null;				
 		if (StringUtils.isNotEmpty(search.getStatoSelezionato())
-				&& !StringUtils.equals(
+				&& !Strings.CS.equals(
 						search.getStatoSelezionato(), "Qualsiasi")) {
-			if (StringUtils.equals(search.getStatoSelezionato(),
+			if (Strings.CS.equals(search.getStatoSelezionato(),
 					"Disabilitato")) {
 				enabledParam=false;
 			} else {
 				enabledParam=true;
-				if (StringUtils.equals(search.getStatoSelezionato(),
+				if (Strings.CS.equals(search.getStatoSelezionato(),
 						"Non Disabilitato")) {
 					// nop
 				} else {		
@@ -912,20 +913,20 @@ public class AllarmiService implements IAllarmiService {
 
 			// se e' stato selezionato uno stato != all allora imposto il filtro
 			if (StringUtils.isNotEmpty(formRicerca.getStatoSelezionato())
-					&& !StringUtils.equals(
+					&& !Strings.CS.equals(
 							formRicerca.getStatoSelezionato(), "Qualsiasi")) {
 				if (addAnd) {
 					expr.and();
 				}
 
-				if (StringUtils.equals(formRicerca.getStatoSelezionato(),
+				if (Strings.CS.equals(formRicerca.getStatoSelezionato(),
 						"Disabilitato")) {
 					expr.equals(Allarme.model().ENABLED, 0);
 				} else {
 					
 					expr.equals(Allarme.model().ENABLED, 1).and();
 
-					if (StringUtils.equals(formRicerca.getStatoSelezionato(),
+					if (Strings.CS.equals(formRicerca.getStatoSelezionato(),
 							"Non Disabilitato")) {
 						expr.in(Allarme.model().STATO, 0,1,2);
 					} else {

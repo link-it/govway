@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
@@ -119,7 +119,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 		
 			List<MappingErogazionePortaApplicativa> listaMappingErogazione = env.apsCore.mappingServiziPorteAppList(idAsps,asps.getId(), null);
 			if (!env.paHelper.porteAppAzioneCheckData(TipoOperazione.ADD,azioniOccupate,listaMappingErogazione)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			// aggiungo azione nel db
@@ -224,7 +224,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					env.isSupportatoAutenticazioneSoggetti,
 					mappingInfo
 				)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			
@@ -395,7 +395,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 				AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecificaPorteApplicative(idPortaApplicativa, idAsps, env.userLogin, env.apsCore, env.apsHelper, inUsoMessage);
 				
 				if (inUsoMessage.length() > 0) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 				}
 			}
 			context.getLogger().info("Invocazione completata con successo");
@@ -440,7 +440,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 						new ArrayList<>(Arrays.asList(nomeAzione)), env.userLogin);
 				
 				if (inUsoMessage.length() > 0)
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(inUsoMessage.toString()));
 				
 			} else if ( env.delete_404 ) {
 				throw FaultCode.NOT_FOUND.toException("Azione " + nomeAzione + " non presente nel gruppo " + nomeGruppo);
@@ -691,7 +691,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			}
 			
 			if (! env.paHelper.configurazioneCambiaNomeCheck(TipoOperazione.OTHER, body.getNome(), mappingUtilizzati,false)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml4(env.pd.getMessage()));
 			}
 			
 			final MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = AccordiServizioParteSpecificaUtilities.getMappingPAFilterByDescription(

@@ -1,3 +1,10 @@
+2025-07-14  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [GovWayCore]
+	Risolto Bug 1632
+	Risolta la seguente vulnerabilità relative ai jar di terza parte:
+	- CVE-2025-48924: sostituita la dipendenza 'commons-lang:commons-lang' con 'org.apache.commons:commons-lang3'
+
 2025-08-05  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

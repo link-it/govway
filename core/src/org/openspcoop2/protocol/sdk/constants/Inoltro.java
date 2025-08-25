@@ -20,7 +20,7 @@
 
 package org.openspcoop2.protocol.sdk.constants;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * Enumerazioni per la modalità di Inoltro

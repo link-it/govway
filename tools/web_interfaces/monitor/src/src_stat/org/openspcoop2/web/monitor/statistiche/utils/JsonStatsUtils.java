@@ -34,8 +34,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.statistiche.constants.Colors;
 import org.openspcoop2.core.statistiche.constants.TipoBanda;
 import org.openspcoop2.core.statistiche.constants.TipoLatenza;
@@ -1726,7 +1726,7 @@ public class JsonStatsUtils {
 	}
 	
 	public static String escapeJsonLabel(String label) {
-		String escaped = StringEscapeUtils.escapeXml(label);
+		String escaped = StringEscapeUtils.escapeXml10(label);
 		
 		escaped = escaped.replace("\\", "\\\\");
 		

@@ -31,8 +31,8 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.transazioni.DumpContenuto;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
@@ -1478,7 +1478,7 @@ public class UtilityTransazioni {
 	}
 
 	public static String escapeXmlValue(String value) {
-		return StringEscapeUtils.escapeXml(value);
+		return StringEscapeUtils.escapeXml10(value);
 	}
 	
 	public static void writeSearchFilterXml(TransazioniSearchForm searchForm,

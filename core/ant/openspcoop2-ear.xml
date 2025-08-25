@@ -27,7 +27,8 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-csv-1.14.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-io-2.19.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs3-core-3.2.1-gov4j-1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang-2.6.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-text-1.14.0.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-lang3-3.18.0.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-net-3.11.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-4.1.2-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-4.1.2.jar"/>
@@ -690,11 +691,11 @@
 				<include name="commons-csv-1.14.0.jar"/>
 				<include name="commons-io-2.19.0.jar"/>
 				<include name="commons-jcs3-core-3.2.1-gov4j-1.jar"/>
-				<include name="commons-lang-2.6.jar"/>
 				<include name="commons-net-3.11.1.jar"/>
 				<include name="commons-validator-1.9.0.jar"/>
 				<include name="commons-beanutils-1.11.0.jar"/>
 				<include name="${commons_logging_jar}"/>
+				<include name="commons-text-1.14.0.jar"/>
 				<include name="commons-lang3-3.18.0.jar"/>
 				<include name="commons-compress-1.27.1.jar"/>
 				<include name="commons-fileupload2-*.jar"/>

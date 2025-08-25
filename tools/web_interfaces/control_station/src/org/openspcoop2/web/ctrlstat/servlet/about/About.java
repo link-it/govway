@@ -22,8 +22,8 @@ package org.openspcoop2.web.ctrlstat.servlet.about;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.govway.struts.action.Action;
 import org.govway.struts.action.ActionForm;
 import org.govway.struts.action.ActionForward;
@@ -97,7 +97,7 @@ public class About extends Action{
 					try {
 						aHelper.getCore().updateInfoVersion(request, session, new String(infoP.getValue()));
 						aggiornamentoEffettuato = "Aggiornamento completato con successo";
-						gd.setTitle(StringEscapeUtils.escapeHtml(aHelper.getCore().getConsoleNomeEsteso(request, session)));
+						gd.setTitle(StringEscapeUtils.escapeHtml4(aHelper.getCore().getConsoleNomeEsteso(request, session)));
 					}catch(Exception e) {
 						aggiornamentoNonRiuscito = "Aggiornamento fallito: "+e.getMessage();
 					}

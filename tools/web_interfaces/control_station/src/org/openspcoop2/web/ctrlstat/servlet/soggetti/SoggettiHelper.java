@@ -28,8 +28,8 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -817,13 +817,13 @@ public class SoggettiHelper extends ConnettoriHelper {
 			if(pdUrlPrefixRewriter!=null && !"".equals(pdUrlPrefixRewriter) &&
 				!RegularExpressionEngine.isMatch(pdUrlPrefixRewriter, "[A-Za-z]+:\\/\\/(.*)")){
 				this.pd.setMessage("Il campo UrlPrefix rewriter del profilo client contiene un valore errato. Il valore atteso deve seguire la sintassi: "+
-						StringEscapeUtils.escapeHtml("protocol://hostname[:port][/*]"));
+						StringEscapeUtils.escapeHtml4("protocol://hostname[:port][/*]"));
 				return false;
 			}
 			if(paUrlPrefixRewriter!=null && !"".equals(paUrlPrefixRewriter) &&
 				!RegularExpressionEngine.isMatch(paUrlPrefixRewriter, "[A-Za-z]+:\\/\\/(.*)")){
 				this.pd.setMessage("Il campo UrlPrefix rewriter del profilo server contiene un valore errato. Il valore atteso deve seguire la sintassi: "+
-						StringEscapeUtils.escapeHtml("protocol://hostname[:port][/*]"));
+						StringEscapeUtils.escapeHtml4("protocol://hostname[:port][/*]"));
 				return false;
 			}
 
@@ -2201,19 +2201,19 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setUrl(SoggettiCostanti.SERVLET_NAME_SOGGETTI_CREDENZIALI_CHANGE, 
 						parametersServletCredenzialeChange.toArray(new Parameter[parametersServletCredenzialeChange.size()]));
 				de.setSize(ConnettoriCostanti.NUMERO_CARATTERI_SUBJECT_DA_VISUALIZZARE_IN_LISTA_CERTIFICATI);
-				de.setValue(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject));
-				de.setToolTip(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoSubject)); 
+				de.setValue(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoSubject));
+				de.setToolTip(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoSubject)); 
 				de.setIdToRemove(i+"");
 				e.add(de);
 				
 				// Issuer 
 				de = new DataElement();
-				String issuerValue = StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer);
+				String issuerValue = StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoIssuer);
 				if(issuerValue.length() > ConnettoriCostanti.NUMERO_CARATTERI_SUBJECT_DA_VISUALIZZARE_IN_LISTA_CERTIFICATI) {
 					issuerValue = issuerValue.substring(0,(ConnettoriCostanti.NUMERO_CARATTERI_SUBJECT_DA_VISUALIZZARE_IN_LISTA_CERTIFICATI-3)) + "...";
 				}
 				de.setValue(issuerValue);
-				de.setToolTip(StringEscapeUtils.escapeHtml(tipoCredenzialiSSLAliasCertificatoIssuer)); 
+				de.setToolTip(StringEscapeUtils.escapeHtml4(tipoCredenzialiSSLAliasCertificatoIssuer)); 
 				e.add(de);
 				
 				// verifica tutti i campi

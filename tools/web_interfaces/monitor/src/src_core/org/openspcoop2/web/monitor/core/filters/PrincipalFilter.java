@@ -38,7 +38,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.openspcoop2.utils.transport.http.credential.IPrincipalReader;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderException;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderFactory;
@@ -366,7 +367,7 @@ public class PrincipalFilter implements Filter {
 		controlRequired = true;
 		if(this.excludedPages.size() > 0)
 			for (String page : this.excludedPages) {
-				if(StringUtils.contains(requestPath, page)){
+				if(Strings.CS.contains(requestPath, page)){
 					controlRequired = false;
 					break;
 				}
@@ -387,10 +388,10 @@ public class PrincipalFilter implements Filter {
 		String ctx = req.getContextPath();
 		String reqUri = req.getRequestURI();
 
-		String reqPage = StringUtils.remove(reqUri, ctx);
+		String reqPage = Strings.CS.remove(reqUri, ctx);
 
 		String res = "";
-		if("".equals(reqPage) || "/".equals(reqPage) || StringUtils.contains(reqPage, this.loginPage))
+		if("".equals(reqPage) || "/".equals(reqPage) || Strings.CS.contains(reqPage, this.loginPage))
 			res = this.loginPage;
 		else
 			res = this.timeoutPage;

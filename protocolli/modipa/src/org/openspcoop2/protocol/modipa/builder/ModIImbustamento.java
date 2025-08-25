@@ -27,7 +27,7 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.xml.soap.SOAPEnvelope;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;

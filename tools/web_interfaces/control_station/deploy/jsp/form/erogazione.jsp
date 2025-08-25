@@ -24,7 +24,7 @@
 <%@page import="org.openspcoop2.web.lib.mvc.Dialog.BodyElement"%>
 <%@page import="java.util.List"%>
 <%@page import="org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti"%>
-<%@ page session="true" import="java.util.List, java.util.ArrayList, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
+<%@ page session="true" import="java.util.List, java.util.ArrayList, org.apache.commons.text.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
 
 <%
 	String iddati = "";

@@ -135,7 +135,7 @@ public class StatistichePdndTracingSearchForm extends BaseSearchForm implements 
 			if(ricerca!=null){
 				switch (ricerca) {
 				case TRACING_ID:
-					if(org.apache.commons.lang.StringUtils.isEmpty(this.getTracingId())){
+					if(org.apache.commons.lang3.StringUtils.isEmpty(this.getTracingId())){
 						MessageUtils.addErrorMsg(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_PDND_TRACING_MISSING_PARAMETERS_TRACING_ID_LABEL_KEY));
 						return null;
 					}

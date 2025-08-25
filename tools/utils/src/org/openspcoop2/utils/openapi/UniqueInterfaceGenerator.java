@@ -444,7 +444,7 @@ public class UniqueInterfaceGenerator {
 			else {
 				debug(debug,log,"Description type unknown ["+oDescr.getClass().getName()+"]");
 			}
-			if(descr!=null && org.apache.commons.lang.StringUtils.isNotEmpty(descr)) {
+			if(descr!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(descr)) {
 				schemaRebuild = schemaRebuild.replace("info:", "info:\n  x-summary: \""+descr+"\"");
 			}
 		}

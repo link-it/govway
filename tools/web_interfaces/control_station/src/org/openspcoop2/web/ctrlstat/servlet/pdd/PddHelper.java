@@ -26,7 +26,7 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -173,7 +173,7 @@ public class PddHelper extends ConsoleHelper {
 		de = new DataElement();
 		de.setLabel(PddCostanti.LABEL_PDD_SUBJECT);
 		de.setType(DataElementType.TEXT_EDIT);
-		de.setValue(StringEscapeUtils.escapeHtml(subject));
+		de.setValue(StringEscapeUtils.escapeHtml4(subject));
 		if (clientAuth != null && clientAuth.equals(CostantiRegistroServizi.ABILITATO.getValue())) {
 			de.setRequired(true);
 		}

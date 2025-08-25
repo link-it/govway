@@ -33,8 +33,8 @@ import java.util.Set;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
@@ -8913,7 +8913,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					if(descrizione!=null && descrizione.length()>length) {
 						descrizione = descrizione.substring(0, (length-4)) + " ...";
 					}
-					de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml(descrizione) : null);
+					de.setValue(descrizione!=null ? StringEscapeUtils.escapeHtml4(descrizione) : null);
 					de.setToolTip(descrizioneOrig);
 					de.setCopyToClipboard(descrizioneOrig);
 										

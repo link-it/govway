@@ -20,7 +20,7 @@
 
 package org.openspcoop2.pdd.core.connettori.httpcore5.nio;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.HttpRoute;
 import org.apache.hc.client5.http.impl.nio.PoolingAsyncClientConnectionManager;
 import org.apache.hc.core5.pool.PoolStats;

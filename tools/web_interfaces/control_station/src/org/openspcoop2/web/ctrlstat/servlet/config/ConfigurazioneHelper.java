@@ -36,8 +36,8 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.allarmi.Allarme;
 import org.openspcoop2.core.allarmi.AllarmeFiltro;
 import org.openspcoop2.core.allarmi.constants.RuoloPorta;
@@ -4934,7 +4934,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			versionePdD = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		if(versionePdD!=null){
-			versionePdD = StringEscapeUtils.escapeHtml(versionePdD);
+			versionePdD = StringEscapeUtils.escapeHtml4(versionePdD);
 		}
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_PDD);
@@ -4959,7 +4959,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			versioneBaseDati = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		if(versioneBaseDati!=null){
-			versioneBaseDati = StringEscapeUtils.escapeHtml(versioneBaseDati);
+			versioneBaseDati = StringEscapeUtils.escapeHtml4(versioneBaseDati);
 		}
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_BASE_DATI);
@@ -4986,7 +4986,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			confDir = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		if(confDir!=null){
-			confDir = StringEscapeUtils.escapeHtml(confDir);
+			confDir = StringEscapeUtils.escapeHtml4(confDir);
 		}
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_DIRECTORY_CONFIGURAZIONE);
@@ -5013,7 +5013,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			vendorJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		if(vendorJava!=null){
-			vendorJava = StringEscapeUtils.escapeHtml(vendorJava);
+			vendorJava = StringEscapeUtils.escapeHtml4(vendorJava);
 		}
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VENDOR_JAVA);
@@ -5038,7 +5038,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			versioneJava = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		if(versioneJava!=null){
-			versioneJava = StringEscapeUtils.escapeHtml(versioneJava);
+			versioneJava = StringEscapeUtils.escapeHtml4(versioneJava);
 		}
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_VERSIONE_JAVA);
@@ -5065,7 +5065,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		/**if(messageFactory!=null){
-			messageFactory = StringEscapeUtils.escapeHtml(messageFactory);
+			messageFactory = StringEscapeUtils.escapeHtml4(messageFactory);
 		}*/
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
@@ -5733,7 +5733,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = newDataElementStyleRuntime();
 					de.setLabel(label);
 					if(value!=null){
-						value = StringEscapeUtils.escapeHtml(value);
+						value = StringEscapeUtils.escapeHtml4(value);
 					}
 					de.setValue(value);
 					de.setType(DataElementType.TEXT);
@@ -5886,7 +5886,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 							de = newDataElementStyleRuntime();
 							de.setLabel(label);
 							if(value!=null){
-								value = StringEscapeUtils.escapeHtml(value);
+								value = StringEscapeUtils.escapeHtml4(value);
 							}
 							de.setValue(value);
 							de.setType(DataElementType.TEXT);
@@ -5941,7 +5941,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = newDataElementStyleRuntime();
 					de.setLabel(label);
 					if(value!=null){
-						value = StringEscapeUtils.escapeHtml(value);
+						value = StringEscapeUtils.escapeHtml4(value);
 					}
 					de.setValue(value);
 					de.setType(DataElementType.TEXT);
@@ -5993,7 +5993,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de = newDataElementStyleRuntime();
 						de.setLabel(label);
 						if(value!=null){
-							value = StringEscapeUtils.escapeHtml(value);
+							value = StringEscapeUtils.escapeHtml4(value);
 						}
 						de.setValue(value);
 						de.setType(DataElementType.TEXT);
@@ -6056,7 +6056,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					de.setLabel(label);
 					if(value!=null){
-						value = StringEscapeUtils.escapeHtml(value);
+						value = StringEscapeUtils.escapeHtml4(value);
 					}
 					de.setValue(value);
 					de.setType(DataElementType.TEXT);
@@ -6118,7 +6118,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					de.setLabel(label);
 					if(value!=null){
-						value = StringEscapeUtils.escapeHtml(value);
+						value = StringEscapeUtils.escapeHtml4(value);
 					}
 					de.setValue(value);
 					de.setType(DataElementType.TEXT);
@@ -6178,7 +6178,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					de.setLabel(label);
 					if(value!=null){
-						value = StringEscapeUtils.escapeHtml(value);
+						value = StringEscapeUtils.escapeHtml4(value);
 					}
 					de.setValue(value);
 					de.setType(DataElementType.TEXT);
@@ -6246,7 +6246,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					de.setLabel(label);
 					if(value!=null){
-						value = StringEscapeUtils.escapeHtml(value);
+						value = StringEscapeUtils.escapeHtml4(value);
 					}
 					de.setValue(value);
 					de.setType(DataElementType.TEXT);
@@ -6314,7 +6314,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de.setLabel(protocollo);
 				String value = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_PROTOCOLLO_CONTESTO+map.get(protocollo);
 				if(value!=null){
-					value = StringEscapeUtils.escapeHtml(value);
+					value = StringEscapeUtils.escapeHtml4(value);
 				}
 				de.setValue(value);
 				de.setType(DataElementType.TEXT);
@@ -6483,7 +6483,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 										de = newDataElementStyleRuntime();
 										de.setLabel(labelCorretta);
 										if(value!=null){
-											value = StringEscapeUtils.escapeHtml(value);
+											value = StringEscapeUtils.escapeHtml4(value);
 										}
 										de.setValue(value);
 										de.setType(DataElementType.TEXT);
@@ -6509,7 +6509,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 									de = newDataElementStyleRuntime();
 									de.setLabel(labelCorretta);
 									if(value!=null){
-										value = StringEscapeUtils.escapeHtml(value);
+										value = StringEscapeUtils.escapeHtml4(value);
 									}
 									de.setValue(value);
 									de.setType(DataElementType.TEXT);
@@ -6586,7 +6586,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
 			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml(stato);
+				stato = StringEscapeUtils.escapeHtml4(stato);
 			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
@@ -6615,7 +6615,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = newDataElementStyleRuntime();
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
 					if(statoConnessioniAltroDB!=null){
-						statoConnessioniAltroDB = StringEscapeUtils.escapeHtml(statoConnessioniAltroDB);
+						statoConnessioniAltroDB = StringEscapeUtils.escapeHtml4(statoConnessioniAltroDB);
 					}
 					de.setValue(statoConnessioniAltroDB);
 					de.setLabelAffiancata(false);
@@ -6652,7 +6652,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
 			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml(stato);
+				stato = StringEscapeUtils.escapeHtml4(stato);
 			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
@@ -6698,7 +6698,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
 			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml(stato);
+				stato = StringEscapeUtils.escapeHtml4(stato);
 			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
@@ -6732,7 +6732,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_STATO);
 			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml(stato);
+				stato = StringEscapeUtils.escapeHtml4(stato);
 			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
@@ -6785,7 +6785,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
 			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml(stato);
+				stato = StringEscapeUtils.escapeHtml4(stato);
 			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
@@ -6821,7 +6821,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
 			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml(stato);
+				stato = StringEscapeUtils.escapeHtml4(stato);
 			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
@@ -6873,7 +6873,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_BIO_CONNECTION_MANAGER_STATUS);
 		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml(stato);
+			stato = StringEscapeUtils.escapeHtml4(stato);
 		}
 		de.setValue(stato);
 		de.setLabelAffiancata(false);
@@ -6916,7 +6916,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_STATUS);
 		if(stato!=null){
-			stato = StringEscapeUtils.escapeHtml(stato);
+			stato = StringEscapeUtils.escapeHtml4(stato);
 		}
 		de.setValue(stato);
 		de.setLabelAffiancata(false);
@@ -6946,7 +6946,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_POOL);
 			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml(stato);
+				stato = StringEscapeUtils.escapeHtml4(stato);
 			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
@@ -6974,7 +6974,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_NIO_CONNECTION_MANAGER_THREADS_IOREACTOR);
 			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml(stato);
+				stato = StringEscapeUtils.escapeHtml4(stato);
 			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
@@ -7033,7 +7033,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_THREAD_POOL_STATO);
 				if(stato!=null){
-					stato = StringEscapeUtils.escapeHtml(stato);
+					stato = StringEscapeUtils.escapeHtml4(stato);
 				}
 				de.setValue(stato);
 				de.setLabelAffiancata(false);
@@ -7062,7 +7062,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONFIG);
 				if(configurazioneCoda!=null){
-					configurazioneCoda = StringEscapeUtils.escapeHtml(configurazioneCoda);
+					configurazioneCoda = StringEscapeUtils.escapeHtml4(configurazioneCoda);
 				}
 				de.setValue(configurazioneCoda);
 				de.setLabelAffiancata(false);
@@ -7091,7 +7091,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				de = newDataElementStyleRuntime();
 				de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_POOL_CONNNETTORI_PRIORITARI);
 				if(connettoriPrioritari!=null){
-					connettoriPrioritari = StringEscapeUtils.escapeHtml(connettoriPrioritari);
+					connettoriPrioritari = StringEscapeUtils.escapeHtml4(connettoriPrioritari);
 				}
 				de.setValue(connettoriPrioritari);
 				de.setLabelAffiancata(false);
@@ -7331,7 +7331,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				stato = "Nessun allarme attivo";
 			}
 			if(stato!=null){
-				stato = StringEscapeUtils.escapeHtml(stato);
+				stato = StringEscapeUtils.escapeHtml4(stato);
 			}
 			de.setValue(stato);
 			de.setLabelAffiancata(false);
@@ -10801,7 +10801,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_DESCRIZIONE);
-		de.setValue(StringEscapeUtils.escapeHtml(policy.getDescrizione()));
+		de.setValue(StringEscapeUtils.escapeHtml4(policy.getDescrizione()));
 		if(editMode) {
 			de.setType(DataElementType.TEXT_AREA);
 			de.setLabelAffiancata(true);
@@ -12724,7 +12724,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				// Per Chiave - Valore
 				String perChiaveValore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
 				if(perChiaveValore!=null && !"".equals(perChiaveValore) ){
-					policy.getFiltro().setInformazioneApplicativaValore(StringEscapeUtils.unescapeHtml(perChiaveValore)); // il valore viene "escaped" perchè può conteenere ""
+					policy.getFiltro().setInformazioneApplicativaValore(StringEscapeUtils.unescapeHtml4(perChiaveValore)); // il valore viene "escaped" perchè può conteenere ""
 				}
 				else{
 					if(!first){
@@ -15840,7 +15840,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de = new DataElement();
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
-					de.setValue(StringEscapeUtils.escapeHtml(policy.getFiltro().getInformazioneApplicativaValore())); // il valore può contenere ""
+					de.setValue(StringEscapeUtils.escapeHtml4(policy.getFiltro().getInformazioneApplicativaValore())); // il valore può contenere ""
 					if(protocolloAssociatoFiltroNonSelezionatoUtente) {
 						de.setType(DataElementType.HIDDEN);
 						dati.add(de);
@@ -15848,7 +15848,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						de = new DataElement();
 						de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE+"___LABEL");
 						de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE);
-						de.setValue(StringEscapeUtils.escapeHtml(policy.getFiltro().getInformazioneApplicativaValore())); // il valore può contenere ""
+						de.setValue(StringEscapeUtils.escapeHtml4(policy.getFiltro().getInformazioneApplicativaValore())); // il valore può contenere ""
 						de.setType(DataElementType.TEXT);
 					}
 					else {
@@ -20620,7 +20620,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 //				// Per Chiave - Valore
 //				String perChiaveValore = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALLARMI_FILTRO_PER_CHIAVE_VALORE);
 //				if(perChiaveValore!=null && !"".equals(perChiaveValore) ){
-//					policy.getFiltro().setInformazioneApplicativaValore(StringEscapeUtils.unescapeHtml(perChiaveValore)); // il valore viene "escaped" perchè può conteenere ""
+//					policy.getFiltro().setInformazioneApplicativaValore(StringEscapeUtils.unescapeHtml4(perChiaveValore)); // il valore viene "escaped" perchè può conteenere ""
 //				}
 //				else{
 //					if(!first){

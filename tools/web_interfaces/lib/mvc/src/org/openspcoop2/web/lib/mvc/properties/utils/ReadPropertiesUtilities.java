@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB_genericPropertiesDriver;
 import org.openspcoop2.core.mvc.properties.Collection;
