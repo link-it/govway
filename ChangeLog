@@ -7,6 +7,7 @@
 	- CVE-2025-4949: aggiornata libreria 'org.eclipse.jgit:org.eclipse.jgit' alla versione 7.3.0.202506031305-r
 	- CVE-2025-48913: aggiornata libreria 'org.apache.cxf:*' alla versione 3.6.8 (3.3.x) e alla versione 4.1.3 (3.4.x)
 	- CVE-2025-41242: aggiornata libreria 'org.springframework:*' alla versione 6.2.10 (3.4.x)
+	- CVE-2025-7962: aggiornata libreria 'org.eclipse.angus:angus-mail' alla versione 2.0.4
 
 2025-08-25  Tommaso Burlon <tommaso.burlon@link.it>
 
