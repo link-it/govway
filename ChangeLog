@@ -1,3 +1,10 @@
+2025-08-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1644
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2025-8916: aggiornata libreria 'org.bouncycastle:*' alla versione 1.81
+
 2025-08-05  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
@@ -17,7 +24,7 @@
 2025-08-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
-	Risolto Bug 1628
+	Risolto Bug #1628
 	Corretto un comportamento anomalo nel plugin di formattazione errori per il canale SUAP, in cui l’header HTTP Authorization veniva valorizzato con il solo JWT, senza il prefisso Bearer.
 	In tali casi, GovWay restituiva erroneamente la risposta "PDND token not found", mentre la testsuite SUAP si attendeva il messaggio "Invalid PDND token".
 	L'errore è stato allineato alla risposta prevista, in conformità alle specifiche SUAP.
@@ -25,7 +32,7 @@
 2025-07-25  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
-	Risolto Bug 1640
+	Risolto Bug #1640
 	Nei report CSV/XLS generati tramite la funzionalità 'Reportistica - Configurazione API', 
 	per le erogazioni con profilo di interoperabilità ModI tramite PDND, 
 	la colonna 'Autorizzazione Token (Applicativi Autorizzati)' non risultava valorizzata.
@@ -46,7 +53,7 @@
 2025-07-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
-	Risolto Bug 1635
+	Risolto Bug #1635
 	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte per la versione 3.3.x:
 	- CVE-2025-48795: aggiornata libreria 'org.apache.cxf:*' alla versione 3.6.7
 	- CVE-2025-31672: aggiornata libreria 'org.apache.poi:poi' alla versione 5.4.1

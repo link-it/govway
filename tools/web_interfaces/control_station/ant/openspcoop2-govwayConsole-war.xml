@@ -456,9 +456,9 @@
 				<include name="${neethi_jar}" />
 				<include name="${govwayConsoleRemota_security_neethi}"/>
 				<include name="herasaf-xacml-core-2.0.4.jar"/>
-				<include name="bcpkix-jdk18on-1.78.1.jar"/>
-				<include name="bcprov-jdk18on-1.78.1.jar"/>
-				<include name="bcutil-jdk18on-1.78.1.jar"/>
+				<include name="bcpkix-jdk18on-1.81.jar"/>
+				<include name="bcprov-jdk18on-1.81.jar"/>
+				<include name="bcutil-jdk18on-1.81.jar"/>
 				<include name="jasypt-1.9.3.jar"/>
 				<include name="nimbus-jose-jwt-10.3.1.jar"/>
 			</lib>
