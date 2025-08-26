@@ -164,8 +164,8 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/spring">
-				<include name="spring-web-6.2.8.jar"/>
-				<include name="spring-core-6.2.8.jar"/>
+				<include name="spring-web-6.2.10.jar"/>
+				<include name="spring-core-6.2.10.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jaxb">
 				<include name="${jaxb_jar}" />

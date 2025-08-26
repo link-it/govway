@@ -211,17 +211,17 @@
 	<archive path="/op2_3.4.dev/lib/shared/hazelcast-5.3.8.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/hibernate-core-6.6.18.Final.jar"/>
 	<!-- spring -->
-        <archive path="/op2_3.4.dev/lib/spring/spring-web-6.2.8.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-tx-6.2.8.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-expression-6.2.8.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-core-6.2.8.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-context-6.2.8.jar"/>
-	<archive path="/op2_3.4.dev/lib/spring/spring-context-support-6.2.8.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-beans-6.2.8.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-aop-6.2.8.jar"/>
-	<archive path="/op2_3.4.dev/lib/spring/spring-aspects-6.2.8.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-orm-6.2.8.jar"/>
-        <archive path="/op2_3.4.dev/lib/spring/spring-jdbc-6.2.8.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-web-6.2.10.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-tx-6.2.10.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-expression-6.2.10.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-core-6.2.10.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-context-6.2.10.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring/spring-context-support-6.2.10.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-beans-6.2.10.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-aop-6.2.10.jar"/>
+	<archive path="/op2_3.4.dev/lib/spring/spring-aspects-6.2.10.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-orm-6.2.10.jar"/>
+        <archive path="/op2_3.4.dev/lib/spring/spring-jdbc-6.2.10.jar"/>
        	<!-- spring-ldap -->
         <archive path="/op2_3.4.dev/lib/spring-ldap/spring-ldap-core-3.3.1.jar"/>
         <archive path="/op2_3.4.dev/lib/spring-ldap/spring-ldap-ldif-core-3.3.1.jar"/>
