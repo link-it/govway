@@ -4,6 +4,7 @@
 	Risolto Bug #1644
 	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
 	- CVE-2025-8916: aggiornata libreria 'org.bouncycastle:*' alla versione 1.81
+	- CVE-2025-48913: aggiornata libreria 'org.apache.cxf:*' alla versione 3.6.8
 
 2025-08-05  Andrea Poli <apoli@link.it>
 
