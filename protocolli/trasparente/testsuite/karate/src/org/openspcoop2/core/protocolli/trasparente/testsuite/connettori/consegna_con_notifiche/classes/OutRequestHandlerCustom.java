@@ -20,7 +20,7 @@
 
 package org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.consegna_con_notifiche.classes;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 
