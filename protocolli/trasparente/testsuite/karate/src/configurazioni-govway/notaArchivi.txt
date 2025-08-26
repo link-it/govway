@@ -1,0 +1,3 @@
+In trasparenteTestBundle.zip è presente l'archivio jar dist/govway_testsuite_plugins.jar (ottenuto da ant clean plugin).
+
+Il contenuto del file presente è stato creato con il comando:  base64 -w0 dist/govway_testsuite_plugins.jar ed inserito in openspcoop/plugins/archivi/govwayXtestsuite_3912.xml 
