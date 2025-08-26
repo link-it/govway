@@ -4,6 +4,7 @@
 	Risolto Bug #1644
 	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
 	- CVE-2025-8916: aggiornata libreria 'org.bouncycastle:*' alla versione 1.81
+	- CVE-2025-4949: aggiornata libreria 'org.eclipse.jgit:org.eclipse.jgit' alla versione 7.3.0.202506031305-r
 
 2025-08-25  Tommaso Burlon <tommaso.burlon@link.it>
 
