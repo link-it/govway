@@ -57,6 +57,8 @@ public class ArchivePluginClasse implements IArchiveObject {
 	
 	private String tipoPlugin;
 	private String tipo;
+	private String className;
+	private String label;
 	private Plugin plugin;
 	
 	private ArchiveIdCorrelazione idCorrelazione; // permette di correlare più oggetti tra di loro 
@@ -72,8 +74,16 @@ public class ArchivePluginClasse implements IArchiveObject {
 		if(plugin.getTipo()==null){
 			throw new ProtocolException("Plugin.tipo non definito");
 		}
+		if(plugin.getClassName()==null){
+			throw new ProtocolException("Plugin.className non definito");
+		}
+		if(plugin.getLabel()==null){
+			throw new ProtocolException("Plugin.label non definito");
+		}
 		this.tipoPlugin = plugin.getTipoPlugin();
 		this.tipo = plugin.getTipo();
+		this.className = plugin.getClassName();
+		this.label = plugin.getLabel();
 		this.plugin = plugin;
 		
 		this.idCorrelazione = idCorrelazione;
@@ -85,6 +95,12 @@ public class ArchivePluginClasse implements IArchiveObject {
 	}
 	public String getTipo() {
 		return this.tipo;
+	}
+	public String getClassName() {
+		return this.className;
+	}
+	public String getLabel() {
+		return this.label;
 	}
 	public Plugin getPlugin() {
 		return this.plugin;
