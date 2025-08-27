@@ -4255,6 +4255,8 @@ public class ImporterArchiveUtils {
 		
 		String tipoPlugin = archivePluginClasse.getTipoPlugin();
 		String tipo = archivePluginClasse.getTipo();
+		String className = archivePluginClasse.getClassName();
+		String label = archivePluginClasse.getLabel();
 		try{
 			
 			// --- check abilitazione ---
@@ -4264,9 +4266,19 @@ public class ImporterArchiveUtils {
 			}
 			
 			// --- check esistenza ---
-			if(this.updateAbilitato==false){
+			if(!this.updateAbilitato){
 				if(this.importerEngine.existsPluginClasse(tipoPlugin, tipo)){
 					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
+					return;
+				}
+				if(this.importerEngine.existsPluginClasseByClassName(tipoPlugin, className)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
+					detail.setStateDetail(" plugin '"+tipoPlugin+"' definito con la stessa classe '"+className+"'");
+					return;
+				}
+				if(this.importerEngine.existsPluginClasseByLabel(tipoPlugin, label)){
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
+					detail.setStateDetail(" plugin '"+tipoPlugin+"' definito con la stessa label '"+label+"'");
 					return;
 				}
 			}

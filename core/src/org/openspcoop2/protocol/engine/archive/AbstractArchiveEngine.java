@@ -93,6 +93,9 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.generic_project.beans.IField;
+import org.openspcoop2.generic_project.beans.NonNegativeNumber;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
@@ -2189,23 +2192,32 @@ public abstract class AbstractArchiveEngine {
 		}catch(Exception e) {
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}
-//		try {
-//			IExpression expr = this.serviceManagerPlugins.getPluginServiceSearch().newExpression();
-//			expr.equals(org.openspcoop2.core.plugins.Plugin.model().TIPO_PLUGIN, idPlugin.getTipoPlugin());
-//			expr.equals(org.openspcoop2.core.plugins.Plugin.model().TIPO, idPlugin.getTipo());
-//			NonNegativeNumber nn = this.serviceManagerPlugins.getPluginServiceSearch().count(expr);
-//			if(nn!=null) {
-//				if(nn.longValue()>1) {
-//					throw new MultipleResultException("Trovate "+nn.longValue()+" occorrenze");
-//				}
-//				else if(nn.longValue()==1) {
-//					return true;
-//				}
-//			}
-//			return false;
-//		}catch(Exception e) {
-//			throw new DriverConfigurazioneException(e.getMessage(),e);
-//		}
+	}
+	public boolean existsPluginClasseByClassName(String tipoPlugin,String className) throws DriverConfigurazioneException {
+		return existsPluginClasseByEngine(tipoPlugin,org.openspcoop2.core.plugins.Plugin.model().CLASS_NAME, className);
+	}
+	public boolean existsPluginClasseByLabel(String tipoPlugin,String label) throws DriverConfigurazioneException {
+		return existsPluginClasseByEngine(tipoPlugin,org.openspcoop2.core.plugins.Plugin.model().LABEL, label);
+	}
+	private boolean existsPluginClasseByEngine(String tipoPlugin,IField ifield, String value) throws DriverConfigurazioneException {
+		try {
+			IExpression expr = this.serviceManagerPlugins.getPluginServiceSearch().newExpression();
+			expr.equals(org.openspcoop2.core.plugins.Plugin.model().TIPO_PLUGIN, tipoPlugin);
+			expr.equals(ifield, value);
+			expr.and();
+			NonNegativeNumber nn = this.serviceManagerPlugins.getPluginServiceSearch().count(expr);
+			if(nn!=null) {
+				if(nn.longValue()>1) {
+					throw new MultipleResultException("Trovate "+nn.longValue()+" occorrenze");
+				}
+				else if(nn.longValue()==1) {
+					return true;
+				}
+			}
+			return false;
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
 	}
 	
 	
