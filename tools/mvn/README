@@ -15,3 +15,13 @@ Installazione dei jar in modalita' RELEASE:
 
 sh openspcoop2_jars_installer.sh hostnameMvnDeployLink false
 
+
+Repository di dispiegamento.
+
+Lo script dispone di 3 variabili:
+- DEPLOY_MAVEN: abilita il deploy su repo interno
+- BUILD_PUBLIC_MAVEN: prepara l'artefatto da dispiegare su repository maven central
+- DEPLOY_PUBLIC_MAVEN: abilita il deploy su epository maven central
+
+Per la versione SNAPSHOT utilizzare sempre il repo interno.
+
