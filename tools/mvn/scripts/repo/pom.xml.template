@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.gov4j.govway</groupId>
+	<artifactId>ARTIFACT-ID</artifactId>
+	<version>VERSIONE-LIBRERIA</version>
+	<packaging>jar</packaging>
+
+	<name>ARTIFACT-ID-VERSIONE-LIBRERIA.jar</name>
+	<description>Utility</description>
+	<url>https://gov4j.org/maven/openspcoop2/utils/ARTIFACT-ID/VERSIONE-LIBRERIA</url>
+
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE, Version 3</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Andrea Poli</name>
+			<email>andrea.poli@link.it</email>
+			<organization>Link.it s.r.l.</organization>
+			<organizationUrl>https://www.link.it</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:https://github.com/link-it/govway.git</connection>
+		<developerConnection>scm:git:git@github.com:link-it/govway.git</developerConnection>
+		<url>https://github.com/link-it/govway</url>
+	</scm>
+  
+	<build>
+		<plugins>
+
+			<!-- Ignora eventuali risorse -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+						<configuration>
+							<skip>true</skip>
+							<encoding>UTF-8</encoding>
+						</configuration>
+					</execution>
+					<execution>
+						<id>default-test-resources</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>testResources</goal>
+						</goals>
+						<configuration>
+							<skip>true</skip>
+							<encoding>UTF-8</encoding>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Crea archivio jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.4.2</version>
+				<!--
+				<configuration>
+					<archive>
+						<manifestFile>${project.basedir}/classes/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+					<classesDirectory>${project.basedir}/classes</classesDirectory>
+				</configuration>
+				-->
+				<executions>
+					<!-- Configurazione per il JAR principale -->
+					<execution>
+						<id>default-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<manifestFile>${project.basedir}/classes/META-INF/MANIFEST.MF</manifestFile>
+							</archive>
+							<classesDirectory>${project.basedir}/classes</classesDirectory>
+						</configuration>
+					</execution>
+
+					<!-- Configurazione per il JAR del codice sorgente -->
+					<execution>
+						<id>source-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>sources</classifier>
+							<classesDirectory>${project.basedir}/src</classesDirectory>
+						</configuration>
+					</execution>
+
+					<!-- Configurazione per il JAR di Javadoc -->
+					<execution>
+						<id>javadoc-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>javadoc</classifier>
+							<classesDirectory>${project.basedir}/javadoc</classesDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Predispone pom per pubblicazione -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>1.6.0</version>
+				<executions>
+					<execution>
+						<id>flatten</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<flattenMode>oss</flattenMode>
+                			<pomElements>
+						<properties>keep</properties>
+                    				<distributionManagement>remove</distributionManagement>
+					</pomElements>
+				</configuration>
+			</plugin>
+
+			<!-- Firma GPG -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>3.2.7</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Deploy -->
+			<plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<version>0.6.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>central</publishingServerId>
+					<checksums>all</checksums>
+					<autoPublish>false</autoPublish>
+					<!-- <waitUntil>published</waitUntil> -->
+					<waitUntil>validated</waitUntil>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+  
+</project>
