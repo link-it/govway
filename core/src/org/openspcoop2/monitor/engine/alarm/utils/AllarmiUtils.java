@@ -144,6 +144,7 @@ public class AllarmiUtils {
 		request.setContentType(contentType);
 		request.setUsername(allarmiConfig.getActiveAlarm_serviceUrl_manager_username());
 		request.setPassword(allarmiConfig.getActiveAlarm_serviceUrl_manager_password());
+		request.setHttpLibrary(allarmiConfig.getHttpLibrary());
 		
 		request.setConnectTimeout(allarmiConfig.getActiveAlarm_serviceUrl_connectionTimeout());
 		request.setReadTimeout(allarmiConfig.getActiveAlarm_serviceUrl_readConnectionTimeout());

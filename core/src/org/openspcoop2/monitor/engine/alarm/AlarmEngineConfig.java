@@ -25,6 +25,7 @@ import java.io.Serializable;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 import org.openspcoop2.utils.mail.SenderType;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
@@ -56,6 +57,8 @@ public class AlarmEngineConfig implements Serializable {
 	private String activeAlarm_serviceUrl_https_truststorePath = null;
 	private String activeAlarm_serviceUrl_https_truststoreType = null;
 	private String activeAlarm_serviceUrl_https_truststorePassword = null;
+	
+	private HttpLibrary httpLibrary = HttpLibrary.HTTPCORE;
 	
 	private boolean historyEnabled = true;
 	
@@ -93,6 +96,15 @@ public class AlarmEngineConfig implements Serializable {
 	private boolean optionsFilterApi;
 	private boolean optionsFilterApiOrganization;
 	
+	
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
+	}
+
+	public void setHttpLibrary(HttpLibrary httpLibrary) {
+		this.httpLibrary = httpLibrary;
+	}
+
 	public boolean isHistoryEnabled() {
 		return this.historyEnabled;
 	}
@@ -476,6 +488,11 @@ public class AlarmEngineConfig implements Serializable {
 				config.setActiveAlarm_serviceUrl_https_truststorePassword(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH_TRUSTSTORE_PASSWORD, true, true));
 			}
 		
+		}
+		
+		String httpLib = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_HTTP_LIBRARY, false, true);
+		if (httpLib != null) {
+			config.setHttpLibrary(HttpLibrary.fromName(httpLib));
 		}
 		
 		String alarmHistoryEnabled = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_HISTORY_ENABLED, false, true);

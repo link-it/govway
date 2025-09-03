@@ -31,7 +31,7 @@ package org.openspcoop2.utils.transport.http;
 public enum HttpLibrary {
 	
 	HTTPCORE("core"),
-	URLCONNECTION("http");
+	URLCONNECTION("urlconn");
 	
 	private final String name;
 	private HttpLibrary(String name) {

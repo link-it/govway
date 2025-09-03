@@ -133,6 +133,8 @@ public class ExternalResourceUtils {
 			req.setUsername(externalConfig.getBasicUsername());
 			req.setPassword(externalConfig.getBasicPassword());
 			
+			req.setHttpLibrary(externalConfig.getHttpLibrary());
+			
 			res = HttpUtilities.httpInvoke(req);
 
 		}catch(Exception t) {

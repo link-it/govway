@@ -106,6 +106,8 @@ public class OCSPResourceReader implements IOCSPResourceReader {
 			externalConfig.setConnectTimeout(this.config.getConnectTimeout());
 			externalConfig.setReadTimeout(this.config.getReadTimeout());
 			
+			externalConfig.setHttpLibrary(this.config.getHttpLibrary());
+			
 			byte [] r = ExternalResourceUtils.readResource(resource, externalConfig);
 			if(r!=null) {
 				holderResource.put(resource, r);

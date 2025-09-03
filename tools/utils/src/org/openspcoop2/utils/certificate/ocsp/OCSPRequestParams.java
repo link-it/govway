@@ -33,6 +33,7 @@ import org.openspcoop2.utils.certificate.AuthorityInformationAccess;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 
 /**
  * OCSPRequestParams
@@ -54,6 +55,7 @@ public class OCSPRequestParams {
 	private OCSPConfig config;
 	private boolean isSelfSigned;
 	private boolean isCA;
+	private HttpLibrary httpLibrary = HttpLibrary.HTTPCORE;
 	
 	// serve per validare la catena 
 	private KeyStore configTrustStore; 
@@ -139,6 +141,12 @@ public class OCSPRequestParams {
 		this.reader = reader;
 	}
 	
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
+	}
+	public void setHttpLibrary(HttpLibrary httpLibrary) {
+		this.httpLibrary = httpLibrary;
+	}
 	public static OCSPRequestParams build(LoggerBuffer log, X509Certificate certificate, KeyStore trustStore, OCSPConfig config, IOCSPResourceReader reader) throws UtilsException {
 		CertificateInfo cer = new CertificateInfo(certificate, "ocspVerifica");
 		return build(log, cer, trustStore, config, reader);
@@ -311,6 +319,9 @@ public class OCSPRequestParams {
 			
 			// https keystore
 			params.httpsKeyStore = reader.getHttpsKeyStore();
+			
+			// http library
+			params.httpLibrary = config.getHttpLibrary();
 		}
 		
 		return params;

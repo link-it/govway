@@ -37,14 +37,14 @@ public class Soap2RestTest extends ConfigLoader {
 
 	@Test
 	public void ok_soap11_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/varDatori.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/varDatori.xml"),
 				"TrasformazioneSoap2Rest","", "Vardatori", "ok_vardatori.json", HttpConstants.CONTENT_TYPE_JSON, 200,
 				null);
 		Utilities.verificaXmlOk(Utilities.tipo_ok, Utilities.descr_ok, response);
 	}
 	@Test
 	public void ok_soap12_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/varDatori_soap12.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/varDatori_soap12.xml"),
 				"TrasformazioneSoap2Rest","", "Vardatori", "ok_vardatori.json", HttpConstants.CONTENT_TYPE_JSON, 200,
 				null);
 		Utilities.verificaXmlOk(Utilities.tipo_ok, Utilities.descr_ok, response);
@@ -53,14 +53,14 @@ public class Soap2RestTest extends ConfigLoader {
 	
 	@Test
 	public void ko_soap11_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/varDatori.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/varDatori.xml"),
 				"TrasformazioneSoap2Rest","", "Vardatori", "ko_vardatori.json", HttpConstants.CONTENT_TYPE_JSON, 200,
 				null);
 		Utilities.verificaXmlOk(Utilities.tipo_ko, Utilities.descr_ko_xml, response);
 	}
 	@Test
 	public void ko_soap12_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/varDatori_soap12.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/varDatori_soap12.xml"),
 				"TrasformazioneSoap2Rest","", "Vardatori", "ko_vardatori.json", HttpConstants.CONTENT_TYPE_JSON, 200,
 				null);
 		Utilities.verificaXmlOk(Utilities.tipo_ko, Utilities.descr_ko_xml, response);
@@ -70,14 +70,14 @@ public class Soap2RestTest extends ConfigLoader {
 	
 	@Test
 	public void emailError_soap11_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/varDatori.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/varDatori.xml"),
 				"TrasformazioneSoap2Rest","", "Vardatori", "email_error_vardatori.json", HttpConstants.CONTENT_TYPE_JSON, 200,
 				null);
 		Utilities.verificaXmlOk(Utilities.tipo_ko, Utilities.descr_emailError_xml, response);
 	}
 	@Test
 	public void emailError_soap12_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/varDatori_soap12.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/varDatori_soap12.xml"),
 				"TrasformazioneSoap2Rest","", "Vardatori", "email_error_vardatori.json", HttpConstants.CONTENT_TYPE_JSON, 200,
 				null);
 		Utilities.verificaXmlOk(Utilities.tipo_ko, Utilities.descr_emailError_xml, response);
@@ -87,14 +87,14 @@ public class Soap2RestTest extends ConfigLoader {
 	
 	@Test
 	public void serverError_soap11_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/varDatori.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/varDatori.xml"),
 				"TrasformazioneSoap2Rest","", "Vardatori", "server_error.json", HttpConstants.CONTENT_TYPE_JSON, 500,
 				"Ricevuto un SOAPFault in seguito all'invio della busta di cooperazione: %<faultcode>soapenv:"+Utilities.fault_code_server+"</faultcode>%<faultstring>"+Utilities.fault_string_server+"</faultstring>%");
 		Utilities.verificaFault(true, Utilities.fault_code_server_soap, Utilities.fault_string_server, response);
 	}
 	@Test
 	public void serverError_soap12_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/varDatori_soap12.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/varDatori_soap12.xml"),
 				"TrasformazioneSoap2Rest","", "Vardatori", "server_error.json", HttpConstants.CONTENT_TYPE_JSON, 500,
 				"Ricevuto un SOAPFault in seguito all'invio della busta di cooperazione: %<env:Value xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">soapenv:"+Utilities.fault_code_server+"</env:Value>%<env:Text xml:lang=\"en-US\">"+Utilities.fault_string_server+"</env:Text>%");
 		Utilities.verificaFault(false, Utilities.fault_code_server_soap, Utilities.fault_string_server, response);
@@ -104,14 +104,14 @@ public class Soap2RestTest extends ConfigLoader {
 	
 	@Test
 	public void clientError_soap11_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/varDatori.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/varDatori.xml"),
 				"TrasformazioneSoap2Rest","", "Vardatori", "client_error.json", HttpConstants.CONTENT_TYPE_JSON, 500,
 				"Ricevuto un SOAPFault in seguito all'invio della busta di cooperazione: %<faultcode>soapenv:"+Utilities.fault_code_client+"</faultcode>%<faultstring>"+Utilities.fault_string_client+"</faultstring>%");
 		Utilities.verificaFault(true, Utilities.fault_code_client_soap, Utilities.fault_string_client, response);
 	}
 	@Test
 	public void clientError_soap12_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/varDatori_soap12.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/varDatori_soap12.xml"),
 				"TrasformazioneSoap2Rest","", "Vardatori", "client_error.json", HttpConstants.CONTENT_TYPE_JSON, 500,
 				"Ricevuto un SOAPFault in seguito all'invio della busta di cooperazione: %<env:Value xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">soapenv:"+Utilities.fault_code_client+"</env:Value>%<env:Text xml:lang=\"en-US\">"+Utilities.fault_string_client+"</env:Text>%");
 		Utilities.verificaFault(false, Utilities.fault_code_client_soap, Utilities.fault_string_client, response);
@@ -129,7 +129,7 @@ public class Soap2RestTest extends ConfigLoader {
 	}
 	@Test
 	public void ok_soap12_unilav() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/uniLav_soap12.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/uniLav_soap12.xml"),
 				"TrasformazioneSoap2Rest","", "Unilav", "ok_unilav.json", HttpConstants.CONTENT_TYPE_JSON, 200,
 				null);
 		Utilities.verificaXmlOk(Utilities.tipo_ok, Utilities.descr_ok, response);
@@ -139,14 +139,14 @@ public class Soap2RestTest extends ConfigLoader {
 	
 	@Test
 	public void ok_soap11_uniurg() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/uniUrg.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_1, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/uniUrg.xml"),
 				"TrasformazioneSoap2Rest","", "Uniurg", "ok_uniurg.json", HttpConstants.CONTENT_TYPE_JSON, 200,
 				null);
 		Utilities.verificaXmlOk(Utilities.tipo_ok, Utilities.descr_ok, response);
 	}
 	@Test
 	public void ok_soap12_uniurg() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteSoap/uniUrg_soap12.xml"),
+		HttpResponse response = Utilities._test(TipoServizio.FRUIZIONE,HttpConstants.CONTENT_TYPE_SOAP_1_2, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteSoap/uniUrg_soap12.xml"),
 				"TrasformazioneSoap2Rest","", "Uniurg", "ok_uniurg.json", HttpConstants.CONTENT_TYPE_JSON, 200,
 				null);
 		Utilities.verificaXmlOk(Utilities.tipo_ok, Utilities.descr_ok, response);

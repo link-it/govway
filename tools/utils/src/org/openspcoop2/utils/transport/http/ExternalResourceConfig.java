@@ -74,6 +74,8 @@ public class ExternalResourceConfig {
 	protected Map<String, Map<String, String>> multiTenantHeaders;
 	protected Map<String, Map<String, String>> multiTenantQueryParameters;
 	
+	protected HttpLibrary httpLibrary = HttpLibrary.HTTPCORE;
+	
 	// !! NOTA !!: se si aggiunge un field, bisogna gestirlo nel metodo in org.openspcoop2.utils.certificate.remote.RemoteStoreConfig.newInstanceMultitenant()
 	
 	public int getReadTimeout() {
@@ -259,5 +261,13 @@ public class ExternalResourceConfig {
 
 	public void setMultiTenantQueryParameters(Map<String, Map<String, String>> multiTenantQueryParameters) {
 		this.multiTenantQueryParameters = multiTenantQueryParameters;
+	}
+
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
+	}
+
+	public void setHttpLibrary(HttpLibrary httpLibrary) {
+		this.httpLibrary = httpLibrary;
 	}
 }

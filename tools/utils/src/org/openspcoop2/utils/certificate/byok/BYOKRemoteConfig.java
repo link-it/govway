@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.slf4j.Logger;
 
 /**
@@ -81,6 +82,8 @@ public class BYOKRemoteConfig implements Serializable {
 	private boolean httpResponseJsonPathBase64Encoded;
 	private boolean httpResponseJsonPathHexEncoded;
 	
+	private HttpLibrary httpLibrary = HttpLibrary.HTTPCORE;
+	
 	protected BYOKRemoteConfig(String id, Properties p, Logger log, String byokPropertyPrefix) throws UtilsException {
 				
 		if(p==null || p.isEmpty()) {
@@ -125,6 +128,12 @@ public class BYOKRemoteConfig implements Serializable {
 		this.httpResponseJsonPath = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH, false, byokPropertyPrefix);
 		this.httpResponseJsonPathBase64Encoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH_BASE64_ENCODED, false, false, byokPropertyPrefix);
 		this.httpResponseJsonPathHexEncoded = BYOKConfig.getBooleanProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH_HEX_ENCODED, false, false, byokPropertyPrefix);
+	
+		String httpLibrayProp = BYOKConfig.getProperty(id, p, BYOKCostanti.PROPERTY_SUFFIX_HTTP_LIBRARY, false, byokPropertyPrefix);
+		if (httpLibrayProp != null) {
+			this.httpLibrary = HttpLibrary.fromName(httpLibrayProp);
+		}
+	
 	}
 
 	private void initHttpHeader(Properties p) {
@@ -236,5 +245,9 @@ public class BYOKRemoteConfig implements Serializable {
 	}
 	public boolean isHttpResponseJsonPathHexEncoded() {
 		return this.httpResponseJsonPathHexEncoded;
+	}
+
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
 	}
 }

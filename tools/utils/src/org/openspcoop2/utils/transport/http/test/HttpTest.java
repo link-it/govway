@@ -45,7 +45,6 @@ import org.openspcoop2.utils.transport.http.HttpRequest;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-import org.testng.Assert;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -103,9 +102,6 @@ public class HttpTest {
 			test.testReadTimeout(HttpLibrary.HTTPCORE);
 			test.testReadTimeout(HttpLibrary.URLCONNECTION);
 			
-			//test.testConnectionTimeout(HttpLibrary.HTTPCORE);
-			//test.testConnectionTimeout(HttpLibrary.URLCONNECTION);
-			
 			test.testRedirect(HttpLibrary.URLCONNECTION, HttpServletResponse.SC_TEMPORARY_REDIRECT);
 			test.testRedirect(HttpLibrary.HTTPCORE, HttpServletResponse.SC_TEMPORARY_REDIRECT);
 			
@@ -127,14 +123,14 @@ public class HttpTest {
 		// ignore
 	}
 	
-	public String createServerUrl(String path) {
+	private String createServerEndpoint(String path) {
 		return String.format("http://localhost:%d%s", server.getPort(), path);
 	}
 	
-	public HttpRequest createBaseRequest(HttpLibrary library) {
+	protected HttpRequest createBaseRequest(HttpLibrary library) {
 		HttpRequest req = new HttpRequest();
 		req.setHttpLibrary(library);
-		req.setUrl(createServerUrl("/print"));
+		req.setUrl(createServerEndpoint("/print"));
 		req.addHeader("User-Agent", "Java");
 		req.addHeader("Accept-Encoding", "gzip, x-gzip, deflate");
 		req.addHeader("Accept", "*/*");
@@ -149,25 +145,28 @@ public class HttpTest {
 	/**
 	 * Test di contorllo che l'utility comunque sia capace di leggere i file 
 	 * del file system locale indipendentemente dalla libreria
-	 * @param library
+	 * @param library libraria utilizzata
 	 * @throws IOException
 	 * @throws UtilsException
 	 */
-	private void testFile(HttpLibrary library) throws IOException, UtilsException {
+	public void testFile(HttpLibrary library) throws IOException, UtilsException {
 		HttpRequest req = createBaseRequest(library);
+		
+		// creo un file temporaneo
 		Path path = Files.createTempFile("test_http_utils", "_temp_file", PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-rw-rw-")));
 		File file = path.toFile();
 		String testContent = "contenuto di prova";
-		
 		try (OutputStream os = new FileOutputStream(file)) {
 			os.write(testContent.getBytes());
 		}
 		
+		// leggo il file tramite la lib
 		req.setUrl(path.toUri().toString());
-		
 		HttpResponse res = HttpUtilities.httpInvoke(req);
 		
-		Assert.assertEquals(testContent, new String(res.getContent()));
+		// controllo il contenuto del file letto
+		if(!testContent.equals(new String(res.getContent())))
+			throw new UtilsException("not expected response");
 	}
 	
 	/**
@@ -192,7 +191,7 @@ public class HttpTest {
 			for (Object[] conf : configs) {
 				HttpRequest req = createBaseRequest(lib);
 				req.setMethod((HttpRequestMethod) conf[0]);
-				req.setUrl(createServerUrl("/methods/" + req.getMethod().toString()));
+				req.setUrl(createServerEndpoint("/methods/" + req.getMethod().toString()));
 				if (conf[1] != null)
 					req.setContent(((String)conf[1]).getBytes());
 				
@@ -231,7 +230,7 @@ public class HttpTest {
 			for (Map<String, String> header : headers) {
 				HttpRequest req = createBaseRequest(lib);
 				req.setMethod(HttpRequestMethod.POST);
-				req.setUrl(createServerUrl("/headers"));
+				req.setUrl(createServerEndpoint("/headers"));
 				req.setContent("".getBytes());
 				req.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 				
@@ -250,7 +249,7 @@ public class HttpTest {
 			//controllo del transfer encoding chunked
 			HttpRequest req = createBaseRequest(lib);
 			req.setMethod(HttpRequestMethod.POST);
-			req.setUrl(createServerUrl("/headers"));
+			req.setUrl(createServerEndpoint("/headers"));
 			req.setContent("in".getBytes());
 			req.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
 			req.setForceTransferEncodingChunked(true);
@@ -286,7 +285,7 @@ public class HttpTest {
 			for (Map<String, String> param : params) {
 				HttpRequest req = createBaseRequest(lib);
 				req.setMethod(HttpRequestMethod.GET);
-				req.setUrl(createServerUrl("/params"));
+				req.setUrl(createServerEndpoint("/params"));
 				for (Map.Entry<String, String> entry : param.entrySet())
 					req.addParam(entry.getKey(), entry.getValue());
 				
@@ -304,36 +303,6 @@ public class HttpTest {
 		return data;
 	}
 	
-	
-	/*public void testConnectionTimeout(HttpLibrary lib) throws UtilsException {
-		HttpRequest req = createBaseRequest(lib);
-		req.setUrl("http://127.0.0.1:" + (server.getPort()+1) + "/readTimeout");
-		req.addHeader("sleep", "100");
-		req.setReadTimeout(1000);
-		
-		HttpResponse res = new HttpResponse();
-		res.setContent("out".getBytes());
-		res.setResultHTTPOperation(200);
-		
-		check(req, res);
-		
-		
-		req = createBaseRequest(lib);
-		req.setUrl("http://localhost:" + server.getPort() + "/readTimeout");
-		req.addHeader("sleep", "1000");
-		req.setReadTimeout(1000);
-		
-		res = new HttpResponse();
-		res.setContent("out".getBytes());
-		res.setResultHTTPOperation(200);
-		
-		try {
-			check(req, res);
-		} catch (UtilsException e) {
-			Assert.assertTrue(e.getCause() instanceof SocketTimeoutException, "Aspettavo un eccezione di tipo: " + SocketTimeoutException.class.getCanonicalName() + ", ottenuta eccezione di tipo: " + e.getClass().getCanonicalName());
-		}		
-	}*/
-	
 	/**
 	 * Test per controllare che il read timeout venga impostato e utilizzato
 	 * correttamente
@@ -344,7 +313,7 @@ public class HttpTest {
 		
 		// primo test il server si addormenta per un periodo inferiore rispetto al timeout
 		HttpRequest req = createBaseRequest(lib);
-		req.setUrl(createServerUrl("/readTimeout"));
+		req.setUrl(createServerEndpoint("/readTimeout"));
 		req.addHeader("sleep", "100");
 		req.setReadTimeout(1000);
 		
@@ -357,7 +326,7 @@ public class HttpTest {
 		
 		// secondo test il server si addormenta per un periodo uguale al timeout
 		req = createBaseRequest(lib);
-		req.setUrl(createServerUrl("/readTimeout"));
+		req.setUrl(createServerEndpoint("/readTimeout"));
 		req.addHeader("sleep", "1000");
 		req.setReadTimeout(1000);
 		
@@ -369,7 +338,8 @@ public class HttpTest {
 		try {
 			check(req, res);
 		} catch (UtilsException e) {
-			Assert.assertTrue(e.getCause() instanceof SocketTimeoutException, "Aspettavo un eccezione di tipo: " + SocketTimeoutException.class.getCanonicalName() + ", ottenuta eccezione di tipo: " + e.getClass().getCanonicalName());
+			if(!(e.getCause() instanceof SocketTimeoutException))
+				throw new UtilsException("Aspettavo un eccezione di tipo: " + SocketTimeoutException.class.getCanonicalName() + ", ottenuta eccezione di tipo: " + e.getClass().getCanonicalName());
 		}
 	}
 	
@@ -382,7 +352,7 @@ public class HttpTest {
 	 * @throws URISyntaxException
 	 */
 	public void testRedirect(HttpLibrary lib, Integer redirectType) throws UtilsException, URISyntaxException {
-		final String REDIRECT_FORMAT = createServerUrl("/redirect?maxHop=%d&redirectType=%d");
+		final String REDIRECT_FORMAT = createServerEndpoint("/redirect?maxHop=%d&redirectType=%d");
 		Integer maxHop = 10;
 		
 		// controllo che se disabilitato (o di default) non vengano seguiti i redirect
@@ -428,10 +398,10 @@ public class HttpTest {
 				String message = e.getCause().getMessage();
 				if (!message.matches("Maximum redirects \\(\\d+\\) exceeded")
 						&& !message.matches("Server redirected too many times \\(\\d+\\)")) {
-					Assert.fail("Eccezione non attesa nell'esecuzione della richiesta: " + message, e);
+					throw new UtilsException("Eccezione non attesa nell'esecuzione della richiesta: " + message, e);
 				}
 			} else {
-				Assert.fail("Eccezione non attesa nell'esecuzione della richiesta: " + e.getCause(), e);
+				throw new UtilsException("Eccezione non attesa nell'esecuzione della richiesta: " + e.getCause(), e);
 			}
 			
 		}
@@ -491,8 +461,8 @@ public class HttpTest {
 		long actualTime = (t1 - t0);
 		long expectTime = (throttlingSize * throttlingMs);
 		
-		Assert.assertTrue(actualTime > 1.0 * expectTime);
-		Assert.assertTrue(actualTime < 1.5 * expectTime);
+		if(actualTime <= 1.0 * expectTime || actualTime >= 1.5 * expectTime)
+			throw new UtilsException();
 	}
 	
 	private void checkUri(String expected, String actual) throws UtilsException {
@@ -500,7 +470,8 @@ public class HttpTest {
 			URIBuilder expectedUri = new URIBuilder(expected);
 			URIBuilder actualUri = new URIBuilder(actual);
 			
-			Assert.assertEquals(expectedUri.build(), actualUri.build());
+			if(!expectedUri.build().equals(actualUri.build()))
+				throw new UtilsException();
 		} catch (URISyntaxException e) {
 			throw new UtilsException(e);
 		}
@@ -512,7 +483,7 @@ public class HttpTest {
 	 * @param expectedResponse
 	 * @throws UtilsException
 	 */
-	private void check(HttpRequest req, HttpResponse expectedResponse) throws UtilsException {
+	public void check(HttpRequest req, HttpResponse expectedResponse) throws UtilsException {
 		
 		HttpResponse actualResponse = HttpUtilities.httpInvoke(req);
 		
@@ -531,29 +502,25 @@ public class HttpTest {
 				expectedResponse.addHeader(ignoreHeader, actualResponse.getHeaderFirstValue(ignoreHeader));
 
 		}
-
-		System.out.println("content: " + new String(actualResponse.getContent()));
-		System.out.println("code: " + actualResponse.getResultHTTPOperation());
-		System.out.println("headers: ");
-		actualResponse.getHeadersValues().entrySet().stream().forEach(e ->
-				System.out.println("\t" + e.getKey() + ": " + String.join(",", e.getValue())));
 		
 		
 		// controllo il codice di risposta
-		Assert.assertEquals(actualResponse.getResultHTTPOperation(), expectedResponse.getResultHTTPOperation());
-		
+		if(actualResponse.getResultHTTPOperation() != expectedResponse.getResultHTTPOperation())
+			throw new UtilsException();
+			
 		// controllo gli headers
 		Map<String, List<String>> expectedHeaders = expectedResponse.getHeadersValues();
 		Map<String, List<String>> actualHeaders = actualResponse.getHeadersValues();
 		
 		if (expectedHeaders.size() != actualHeaders.size())
-			Assert.fail("numero header attesi: " + expectedHeaders.size() + ", diverso dal numero di header ottenuti: " + actualHeaders.size());
+			throw new UtilsException("numero header attesi: " + expectedHeaders.size() + ", diverso dal numero di header ottenuti: " + actualHeaders.size());
 		for (Map.Entry<String, List<String>> header : expectedHeaders.entrySet()) {
 			// controllo che l'url sia equivalente
 			if (header.getKey().equals(HttpConstants.REDIRECT_LOCATION)) {
 				checkUri(header.getValue().getFirst(), actualHeaders.get(header.getKey()).getFirst());
 			} else {
-				Assert.assertEquals(actualHeaders.get(header.getKey()), header.getValue(), "header: " + header.getKey() + " atteso diverso da quello ottenuto");
+				if(!actualHeaders.get(header.getKey()).equals(header.getValue()))
+					throw new UtilsException("header: " + header.getKey() + " atteso diverso da quello ottenuto");
 			}
 		}
 		
@@ -563,7 +530,7 @@ public class HttpTest {
 		byte[] actualContent = actualResponse.getContent();
 		byte[] expectedContent = expectedResponse.getContent();
 		if (!Arrays.areEqual(actualContent, expectedContent)) {
-			Assert.fail("Il contenuto della risposta: \"" + new String(actualContent) + "\" risulta diverso da quello atteso: \"" + new String(expectedContent) + "\"");
+			throw new UtilsException("Il contenuto della risposta: \"" + new String(actualContent) + "\" risulta diverso da quello atteso: \"" + new String(expectedContent) + "\"");
 		}
 	}
 }

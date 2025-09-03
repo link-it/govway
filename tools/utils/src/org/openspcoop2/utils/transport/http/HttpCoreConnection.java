@@ -236,6 +236,11 @@ class HttpCoreConnection implements HttpLibraryConnection {
 	        String returnCode = httpResp.getVersion() + " " + httpResp.getCode() + " " + httpResp.getReasonPhrase();
 	        response.addHeader("ReturnCode", List.of(returnCode));
 	        
+	        // certificati server
+	        if(ocspTrustManager!=null) {
+	     		response.setServerCertificate(ocspTrustManager.getPeerCertificates());
+	     	}
+	     			
 	        return response;
 	    } catch (IOException e) {
 	    	throw e;

@@ -417,6 +417,7 @@ public class OCSPValidator {
 			req.setMethod(HttpRequestMethod.POST);
 			req.setContentType(HttpConstants.CONTENT_TYPE_OCSP_REQUEST);
 			req.setContent(ocspRequest.request.getEncoded());
+			req.setHttpLibrary(params.getHttpLibrary());
 			
 			responderURI = responderURI.trim();
 			if(params.getConfig().getForwardProxyUrl()!=null && StringUtils.isNotEmpty(params.getConfig().getForwardProxyUrl())) {

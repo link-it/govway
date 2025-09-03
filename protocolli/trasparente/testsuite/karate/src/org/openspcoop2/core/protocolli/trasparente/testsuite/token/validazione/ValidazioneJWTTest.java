@@ -2579,18 +2579,18 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		String password = "openspcoop";
 		if(encrypt) {
 			// per validare
-			props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+			props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 			props.put("rs.security.keystore.password",password);
 			props.put("rs.security.keystore.alias","soggetto1"); // per cifrare si usa la chiave pubblica
 		}
 		else if(signWithSoggetto1) {
-			props.put("rs.security.keystore.file", "/etc/govway/keys/soggetto1.jks");
+			props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/soggetto1.jks");
 			props.put("rs.security.keystore.alias","soggetto1");
 			props.put("rs.security.keystore.password","openspcoopjks");
 			props.put("rs.security.key.password",password);
 		}
 		else {
-			props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+			props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 			props.put("rs.security.keystore.alias","erogatore");
 			props.put("rs.security.keystore.password",password);
 			props.put("rs.security.key.password",password);
@@ -2658,7 +2658,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		Properties props = new Properties();
 		props.put("rs.security.keystore.type","JKS");
 		String password = "openspcoop";
-		props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+		props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 		props.put("rs.security.keystore.alias","erogatore");
 		props.put("rs.security.keystore.password",password);
 		props.put("rs.security.key.password",password);
@@ -2718,7 +2718,7 @@ public class ValidazioneJWTTest extends ConfigLoader {
 		Properties props = new Properties();
 		props.put("rs.security.keystore.type","PKCS12");
 		String password = "123456";
-		props.put("rs.security.keystore.file", "/etc/govway/keys/xca/"+kid+".p12");
+		props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/xca/"+kid+".p12");
 		props.put("rs.security.keystore.alias",kid);
 		props.put("rs.security.keystore.password",password);
 		props.put("rs.security.key.password",password);

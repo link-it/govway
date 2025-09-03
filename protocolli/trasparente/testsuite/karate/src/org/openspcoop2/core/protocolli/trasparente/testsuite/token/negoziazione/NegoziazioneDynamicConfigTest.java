@@ -409,7 +409,7 @@ public class NegoziazioneDynamicConfigTest extends ConfigLoader {
 		Properties props = new Properties();
 		props.put("rs.security.keystore.type","JKS");
 		String password = "openspcoop";
-		props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+		props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 		props.put("rs.security.keystore.alias","erogatore");
 		props.put("rs.security.keystore.password",password);
 		props.put("rs.security.key.password",password);

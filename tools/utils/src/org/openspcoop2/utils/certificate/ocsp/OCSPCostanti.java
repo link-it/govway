@@ -108,4 +108,6 @@ public class OCSPCostanti {
 	public static final String PROPERTY_SUFFIX_CRL_ALTERNATIVE_TRUST_STORE_PASSWORD = "crl.alternativeTrustStore.password";
 	public static final String PROPERTY_SUFFIX_CRL_ALTERNATIVE_TRUST_STORE_TYPE = "crl.alternativeTrustStore.type";
 	
+	public static final String PROPERTY_SUFFIX_HTTP_LIBRARY = "httpLibrary";
+	
 }

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.protocol.modipa.utils;
+package org.openspcoop2.utils.transport.http;
 
 import java.io.IOException;
 import java.io.PrintWriter;

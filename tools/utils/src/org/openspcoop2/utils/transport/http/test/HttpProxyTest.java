@@ -108,10 +108,6 @@ public class HttpProxyTest implements Closeable {
 		
 		this.backend = backend;
 		this.server.start();
-		
-		System.out.println("Proxy server active port: " + getPort());
-		System.out.println("Proxy auth username: " + getUsername());
-		System.out.println("Proxy auth password: " + getPassword());
 	}
 	
 	@Override

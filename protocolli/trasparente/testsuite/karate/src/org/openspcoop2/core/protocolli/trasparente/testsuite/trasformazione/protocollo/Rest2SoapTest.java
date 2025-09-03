@@ -38,7 +38,7 @@ public class Rest2SoapTest extends ConfigLoader {
 	
 	@Test
 	public void ok_unilav() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteJson/unilav.json"),
+		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteJson/unilav.json"),
 				"TrasformazioneRest2SoapUnilav","apincn/unilav/json-comunicazione-obbligatoria", "Unilav", "ok_unilav.xml", HttpConstants.CONTENT_TYPE_SOAP_1_1, 200,
 				null);
 		Utilities.verificaJsonOk(Utilities.tipo_ok, Utilities.descr_notifica_ok, response);
@@ -46,7 +46,7 @@ public class Rest2SoapTest extends ConfigLoader {
 	
 	@Test
 	public void ko_unilav() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteJson/unilav.json"),
+		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteJson/unilav.json"),
 				"TrasformazioneRest2SoapUnilav","apincn/unilav/json-comunicazione-obbligatoria", "Unilav", "ko_unilav.xml", HttpConstants.CONTENT_TYPE_SOAP_1_1, 200,
 				null);
 		Utilities.verificaJsonOk(Utilities.tipo_ko, Utilities.descr_notifica_ko, response);
@@ -54,7 +54,7 @@ public class Rest2SoapTest extends ConfigLoader {
 	
 	@Test
 	public void anomalia_unilav() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteJson/unilav.json"),
+		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteJson/unilav.json"),
 				"TrasformazioneRest2SoapUnilav","apincn/unilav/json-comunicazione-obbligatoria", "Unilav", "anomalia_unilav.xml", HttpConstants.CONTENT_TYPE_SOAP_1_1, 200,
 				null);
 		Utilities.verificaJsonOk(Utilities.tipo_ko, Utilities.descr_notifica_ko_json, response);
@@ -62,7 +62,7 @@ public class Rest2SoapTest extends ConfigLoader {
 	
 	@Test
 	public void fault_server_unilav() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteJson/unilav.json"),
+		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteJson/unilav.json"),
 				"TrasformazioneRest2SoapUnilav","apincn/unilav/json-comunicazione-obbligatoria", "Unilav", "fault_server.xml", HttpConstants.CONTENT_TYPE_SOAP_1_1, 500,
 				"Risposta consegnata al mittente con codice di trasporto: 500");
 		Utilities.verificaJsonFault(Utilities.fault_code_server_soap, Utilities.fault_string_server, response);
@@ -70,7 +70,7 @@ public class Rest2SoapTest extends ConfigLoader {
 	
 	@Test
 	public void fault_client_unilav() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteJson/unilav.json"),
+		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteJson/unilav.json"),
 				"TrasformazioneRest2SoapUnilav","apincn/unilav/json-comunicazione-obbligatoria", "Unilav", "fault_client.xml", HttpConstants.CONTENT_TYPE_SOAP_1_1, 500,
 				"Risposta consegnata al mittente con codice di trasporto: 500");
 		Utilities.verificaJsonFault(Utilities.fault_code_client_soap, Utilities.fault_string_client, response);
@@ -79,7 +79,7 @@ public class Rest2SoapTest extends ConfigLoader {
 	
 	@Test
 	public void ok_uniurg() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteJson/uniurg.json"),
+		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteJson/uniurg.json"),
 				"TrasformazioneRest2SoapUniurg","apincn/uniurg/json-comunicazione-obbligatoria", "Uniurg", "ok_uniurg.xml", HttpConstants.CONTENT_TYPE_SOAP_1_1, 200,
 				null);
 		Utilities.verificaJsonOk(Utilities.tipo_ok, Utilities.descr_notifica_ok, response);
@@ -87,7 +87,7 @@ public class Rest2SoapTest extends ConfigLoader {
 	
 	@Test
 	public void ok_unisomm() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteJson/unisomm.json"),
+		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteJson/unisomm.json"),
 				"TrasformazioneRest2SoapUnisomm","apincn/unisomm/json-comunicazione-obbligatoria", "Unisomm", "ok_unisomm.xml", HttpConstants.CONTENT_TYPE_SOAP_1_1, 200,
 				null);
 		Utilities.verificaJsonOk(Utilities.tipo_ok, Utilities.descr_notifica_ok, response);
@@ -96,7 +96,7 @@ public class Rest2SoapTest extends ConfigLoader {
 	
 	@Test
 	public void ok_vardatori() throws Exception {
-		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile("/etc/govway/test_trasformazioni/richiesteJson/vardatori.json"),
+		HttpResponse response = Utilities._test(TipoServizio.EROGAZIONE,HttpConstants.CONTENT_TYPE_JSON, FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfg() + "/test_trasformazioni/richiesteJson/vardatori.json"),
 				"TrasformazioneRest2SoapVardatori","apincn/vardatori/json-comunicazione-obbligatoria", "Vardatori", "ok_vardatori.xml", HttpConstants.CONTENT_TYPE_SOAP_1_1, 200,
 				null);
 		Utilities.verificaJsonOk(Utilities.tipo_ok, Utilities.descr_notifica_ok, response);

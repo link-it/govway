@@ -22,6 +22,7 @@ package org.openspcoop2.utils.transport.http.test;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -57,6 +58,7 @@ public class HttpsTest extends HttpTest {
 	
 	private static final String KEYSTORE_NAME = "keystore.p12";
 	private static final String TRUSTSTORE_ERROR_NAME = "truststoreError.p12";
+	private static final String TRUSTSTORE_NAME = "truststore.p12";
 	
 	private static String getPassword() {
 		return KEYSTORE_PASSWORD;
@@ -72,15 +74,20 @@ public class HttpsTest extends HttpTest {
 		
 		
 		return SSLContextBuilder.create()
+				.loadTrustMaterial(getFilePath(TRUSTSTORE_NAME), KEYSTORE_PASSWORD.toCharArray())
 				.loadKeyMaterial(keyStore, KEYSTORE_PASSWORD.toCharArray())
 				.build();
 	}
 	
+	private static Path getFilePath(String fileName) throws IOException {
+		Resource file = new ClassPathResource(fileName, HttpsTest.class);
+		return file.getFile().toPath().toAbsolutePath();
+	}
+
 	private static KeyStore getTrustStore(String fileName) throws NoSuchAlgorithmException, KeyStoreException, IOException, CertificateException {		
 		KeyStore trustStore = KeyStore.getInstance(PKCS12);
 		
-		Resource keystore = new ClassPathResource(fileName, HttpsTest.class);
-		try (FileInputStream trustStoreStream = new FileInputStream(keystore.getFile())) {
+		try (FileInputStream trustStoreStream = new FileInputStream(getFilePath(fileName).toFile())) {
 			trustStore.load(trustStoreStream, getPassword().toCharArray());
 		}
 		
@@ -113,6 +120,22 @@ public class HttpsTest extends HttpTest {
 		try {
 			startServers();
 
+			test.testAuth(HttpLibrary.HTTPCORE, false);
+			test.testAuth(HttpLibrary.HTTPCORE, true);
+			test.testAuth(HttpLibrary.URLCONNECTION, false);
+			test.testAuth(HttpLibrary.URLCONNECTION, true);
+			
+			test.testTrust(HttpLibrary.HTTPCORE, false);
+			test.testTrust(HttpLibrary.HTTPCORE, true);
+			test.testTrust(HttpLibrary.URLCONNECTION, false);
+			test.testTrust(HttpLibrary.URLCONNECTION, true);
+			
+			test.testTrustAll(HttpLibrary.HTTPCORE, false);
+			test.testTrustAll(HttpLibrary.HTTPCORE, true);
+			test.testTrustAll(HttpLibrary.URLCONNECTION, false);
+			test.testTrustAll(HttpLibrary.URLCONNECTION, true);
+			
+			test.testHttps(HttpLibrary.HTTPCORE);
 			test.testHttps(HttpLibrary.HTTPCORE);
 		} catch (Exception e) {
 			throw new UtilsException(e);
@@ -137,40 +160,85 @@ public class HttpsTest extends HttpTest {
 		return req;
 	}
 	
-	public void testHttps(HttpLibrary library) throws UtilsException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+	
+	public void testTrust(HttpLibrary library, boolean usePath) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, UtilsException {
 		HttpRequest req = createBaseRequest(library);
 		req.setConnectTimeout(1000);
 		req.setReadTimeout(1000);
-		//req.setTrustAllCerts(true);
-		req.setTrustStore(getTrustStore(TRUSTSTORE_ERROR_NAME));
+		if (usePath)
+			req.setTrustStorePath(getFilePath(TRUSTSTORE_NAME).toString());
+		else
+			req.setTrustStore(getTrustStore(TRUSTSTORE_NAME));
 		req.setTrustStorePassword(KEYSTORE_PASSWORD);
 		req.setTrustStoreType(PKCS12);
 		req.setHostnameVerifier(true);
 		
 		HttpResponse res = HttpUtilities.httpInvoke(req);
 		
-		System.out.println(res.getResultHTTPOperation());
+		if(200 != res.getResultHTTPOperation())
+			throw new UtilsException("http code not ok");
+	}
+	
+	public void testTrustAll(HttpLibrary library, boolean usePath) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, UtilsException {
+		HttpRequest req = createBaseRequest(library);
+		req.setConnectTimeout(1000);
+		req.setReadTimeout(1000);
+		req.setTrustAllCerts(true);
+		if (usePath)
+			req.setTrustStorePath(getFilePath(TRUSTSTORE_ERROR_NAME).toString());
+		else
+			req.setTrustStore(getTrustStore(TRUSTSTORE_ERROR_NAME));
+		req.setTrustStorePassword(KEYSTORE_PASSWORD);
+		req.setTrustStoreType(PKCS12);
+		req.setHostnameVerifier(true);
 		
-		/*req.setCrlPath(null);
-		req.setCrlStore(null);
+		HttpResponse res = HttpUtilities.httpInvoke(req);
 		
+		if(200 != res.getResultHTTPOperation())
+			throw new UtilsException("http code not ok");
+	}
+	
+	public void testAuth(HttpLibrary library, boolean usePath) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException, UtilsException {
+		HttpRequest req = createBaseRequest(library);
+		req.setConnectTimeout(1000);
+		req.setReadTimeout(1000);
+		req.setTrustStorePath(getFilePath(TRUSTSTORE_NAME).toString());
+		req.setTrustStorePassword(KEYSTORE_PASSWORD);
+		req.setTrustStoreType(PKCS12);
 		req.setHostnameVerifier(false);
 		
-		req.setKeyAlias(null);
-		req.setKeyStore(null);
-		req.setKeyStorePassword(null);
-		req.setKeyStorePassword(null);
-		req.setKeyStorePath(null);
-		req.setKeyStoreType(null);
+		if (usePath)
+			req.setKeyStorePath(getFilePath(KEYSTORE_NAME).toString());
+		else
+			req.setKeyStore(getTrustStore(KEYSTORE_NAME));
+		req.setKeyAlias("my-key");
+		req.setKeyStoreType(PKCS12);
+		req.setKeyPassword(KEYSTORE_PASSWORD);
+		req.setKeyStorePassword(KEYSTORE_PASSWORD);
 		
-		req.setOcspPolicy(null);
-		req.setOcspValidator(null);
+		HttpResponse res = HttpUtilities.httpInvoke(req);
 		
-		req.setTrustAllCerts(true);
-		req.setTrustStore(null);
-		req.setTrustStorePassword(null);
-		req.setTrustStorePath(null);
-		req.setTrustStoreType(null);*/
+		if(200 != res.getResultHTTPOperation())
+			throw new UtilsException("http code not equals 200");
 		
+		if(!"true".equals(res.getHeaderFirstValue("verified")))
+			throw new UtilsException("http code not 200");
+	}
+	
+	
+	public void testHttps(HttpLibrary library) throws UtilsException, NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+		HttpRequest req = createBaseRequest(library);
+		req.setConnectTimeout(1000);
+		req.setReadTimeout(1000);
+		req.setTrustStore(getTrustStore(TRUSTSTORE_NAME));
+		req.setTrustStorePassword(KEYSTORE_PASSWORD);
+		req.setTrustStoreType(PKCS12);
+		req.setHostnameVerifier(true);
+		
+		
+		HttpResponse res = HttpUtilities.httpInvoke(req);
+		
+		if(res.getResultHTTPOperation() != 200)
+			throw new UtilsException("http code not 200");
 	}
 }

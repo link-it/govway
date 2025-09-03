@@ -40,7 +40,7 @@ public class HttpRequestConfig {
 	private String prefix;
 	
 	private static final String PROP_URL = "baseUrl";
-	private static final String PROP_LIBRARY = "library";
+	private static final String PROP_LIBRARY = "httpLibrary";
 	private static final String PROP_READ_TIMEOUT = "readTimeout";
 	private static final String PROP_CONNECTION_TIMEOUT = "connectTimeout";
 	private static final String PROP_HTTP_USERNAME = "http.username";

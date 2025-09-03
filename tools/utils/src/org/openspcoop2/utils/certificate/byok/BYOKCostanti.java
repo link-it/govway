@@ -102,6 +102,8 @@ public class BYOKCostanti {
 	public static final String PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH_BASE64_ENCODED = "http.response.jsonPath.base64Encoded";
 	public static final String PROPERTY_SUFFIX_HTTP_RESPONSE_JSON_PATH_HEX_ENCODED = "http.response.jsonPath.hexEncoded";
 	
+	public static final String PROPERTY_SUFFIX_HTTP_LIBRARY = "http.httpLibrary";
+
 	
 	
 	public static final String PROPERTY_LOCAL_ENCRYPTION_ENGINE_JAVA = "java";

@@ -544,22 +544,22 @@ public class ForwardInformazioniTest extends ConfigLoader {
 				props.put("rs.security.keystore.type","JKS");
 			}
 			String password = "openspcoop";
-			String file = "/etc/govway/keys/erogatore.jks";
+			String file = ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks";
 			String alias = "erogatore";
 			if(ForwardInformazioniKeystoreSenzaPasswordTest.HEADER_JWS.equals(hdrAtteso) ||
 					ForwardInformazioniKeystoreSenzaPasswordTest.HEADER_JWE.equals(hdrAtteso)) {
-				file = "/etc/govway/keys/soggetto1.jks";
+				file = ConfigLoader.getGovwayCfgKeys() + "/soggetto1.jks";
 				alias = "soggetto1";
 				password = "openspcoopjks";
 			}
 			else if(SecurityConstants.KEYSTORE_TYPE_JWK_VALUE.equals(keystoreType)) {
-				file = "/etc/govway/keys/testJWKpublic.jwk";
+				file = ConfigLoader.getGovwayCfgKeys() + "/testJWKpublic.jwk";
 				alias = "c98fda52-9a37-41c0-8696-65e5022e9e44";
 			}
 			else if(SecurityConstants.KEYSTORE_TYPE_PUBLIC_KEY_VALUE.equals(keystoreType)) {
 				f = File.createTempFile("test", ".jwk");
 				alias = "testsuite-govway";
-				String jwks = JWKPublicKeyConverter.convert(KeyUtils.getInstance().getPublicKey(FileSystemUtilities.readBytesFromFile("/etc/govway/keys/keyPair-test.rsa.publicKey.pem")), alias, true, false);
+				String jwks = JWKPublicKeyConverter.convert(KeyUtils.getInstance().getPublicKey(FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfgKeys() + "/keyPair-test.rsa.publicKey.pem")), alias, true, false);
 				FileSystemUtilities.writeFile(f, jwks.getBytes());
 				file = f.getAbsolutePath();
 			}
@@ -743,7 +743,7 @@ public class ForwardInformazioniTest extends ConfigLoader {
 		Properties props = new Properties();
 		props.put("rs.security.keystore.type","JKS");
 		String password = "openspcoop";
-		props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+		props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 		props.put("rs.security.keystore.alias","erogatore");
 		props.put("rs.security.keystore.password",password);
 		props.put("rs.security.key.password",password);

@@ -24,13 +24,14 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
 
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
@@ -46,6 +47,7 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apache.hc.core5.util.TimeValue;
@@ -69,6 +71,7 @@ public class HttpServerTest implements Closeable {
 	private final HttpServer server;
 	private final String username;
 	private final String password;
+	private final boolean httpsEnabled;
 	
 	public HttpServerTest() throws IOException {
 		this(null);
@@ -106,15 +109,13 @@ public class HttpServerTest implements Closeable {
 				.register(LOCALHOST, "/print", this::printRequest);
 		
 		if (ctx != null) {
-			serverBuilder.setSslContext(ctx);
+			serverBuilder.setSslContext(ctx)
+				.setSslSetupHandler(params -> params.setWantClientAuth(true));
 		}
+		this.httpsEnabled = (ctx != null);
 		
 		this.server = serverBuilder.create();
 		this.server.start();
-		
-		System.out.println("Mock server active port: " + getPort());
-		System.out.println("Mock auth username: " + getUsername());
-		System.out.println("Mock auth password: " + getPassword());
 	}
 	
 	@Override
@@ -300,13 +301,17 @@ public class HttpServerTest implements Closeable {
 			throws IOException {
 		
 		
-		System.out.println("------- REQUEST ---------");
-		System.out.println("URI: " + req.getRequestUri());
-		Arrays.stream(req.getHeaders())
-			.forEach(hdr ->
-				System.out.println("\t" + hdr.getName() + ": " + hdr.getValue()));
-		
-		System.out.println(req.getVersion());
+		if (this.httpsEnabled) {
+			HttpCoreContext core = HttpCoreContext.cast(ctx);
+			SSLSession ssl = core.getSSLSession(); // dettagli TLS della connessione
+			
+			try {
+				ssl.getPeerPrincipal();
+				res.addHeader("verified", true);
+			} catch (SSLPeerUnverifiedException e) {
+				res.addHeader("verified", false);
+			}
+		}
 		
 		StringEntity out = new StringEntity("blah");
 		

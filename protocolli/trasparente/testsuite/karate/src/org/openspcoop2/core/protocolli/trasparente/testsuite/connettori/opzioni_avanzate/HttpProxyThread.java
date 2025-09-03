@@ -23,7 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateUtils;
@@ -61,7 +62,7 @@ public class HttpProxyThread extends AbstractBaseThread {
 		sb.append(" -w /tmp/mitmdump-log.mitm");
 		sb.append(" --set ssl_insecure=true");
 		
-		String keystore = "/etc/govway/keys/erogatore.jks";
+		String keystore = ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks";
 		org.openspcoop2.utils.certificate.KeyStore k = new org.openspcoop2.utils.certificate.KeyStore(keystore, "openspcoop");
 		String pemPublic = CertificateUtils.toPEM((java.security.cert.X509Certificate)k.getCertificate("erogatore"));
 		String pemPrivate = CertificateUtils.toPEM(k.getPrivateKey("erogatore", "openspcoop"));

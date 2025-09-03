@@ -23,6 +23,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite.token.attribute_au
 import java.io.File;
 import java.util.Properties;
 
+import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWSOptions;
@@ -39,7 +40,7 @@ public class JWTUtilities {
 
 	public static String builtJWT_OIDC(String sub,String iss,String username, String clientId,String audience) throws Exception {
 		
-		File fKeystore = new File("/etc/govway/keys/jose_keystore_example.jks"); 
+		File fKeystore = new File(ConfigLoader.getGovwayCfgKeys() + "/jose_keystore_example.jks"); 
 		
 		Properties signatureProps = new Properties();
 		signatureProps.put("rs.security.keystore.file", fKeystore.getPath());

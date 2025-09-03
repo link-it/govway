@@ -43,7 +43,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/soggetto2.jks");
 		request.setKeyStoreType("JKS");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyAlias("soggetto2");
@@ -90,7 +90,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/soggetto1.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/soggetto1.jks");
 		request.setKeyStoreType("JKS");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyAlias("soggetto1");
@@ -118,7 +118,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/soggetto2.jks");
 		request.setKeyStoreType("JKS");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyAlias("soggetto2");
@@ -146,7 +146,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/soggetto2.jks");
 		request.setKeyStoreType("JKS");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyAlias("soggetto2");
@@ -173,7 +173,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/soggetto2.jks");
 		request.setKeyStoreType("JKS");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyAlias("soggetto2");
@@ -204,7 +204,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/soggetto2.jks");
 		request.setKeyStoreType("JKS");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyAlias("soggetto2");
@@ -249,7 +249,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/soggetto1.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/soggetto1.jks");
 		request.setKeyStoreType("JKS");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyAlias("soggetto1");
@@ -276,7 +276,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/soggetto2.jks");
 		request.setKeyStoreType("JKS");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyAlias("soggetto2");
@@ -304,7 +304,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/soggetto2.jks");
 		request.setKeyStoreType("JKS");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyAlias("soggetto2");
@@ -331,7 +331,7 @@ public class AutenticazioneCanaleSslHeaderObbligatorioSslTest extends ConfigLoad
 		
 		HttpRequest request = new HttpRequest();
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/soggetto2.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/soggetto2.jks");
 		request.setKeyStoreType("JKS");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyAlias("soggetto2");
