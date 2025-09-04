@@ -222,7 +222,10 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 			.addGroupBy(Transazione.model().EVENTI_GESTIONE)
 			.and()
 			.between(Transazione.model().DATA_INGRESSO_RICHIESTA, start, end)
+			.isNotNull(Transazione.model().PDD_CODICE)
 			.isNotNull(Transazione.model().TOKEN_PURPOSE_ID)
+			.isNotNull(Transazione.model().TOKEN_ID)
+			.isNotNull(Transazione.model().EVENTI_GESTIONE)
 			.equals(Transazione.model().PROTOCOLLO, CostantiLabel.MODIPA_PROTOCOL_NAME);
 		
 		if (!this.config.isPdndTracciamentoFruizioniEnabled())
@@ -289,12 +292,19 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		IPaginatedExpression expr = this.statisticheSM.getStatistichePdndTracingService().newPaginatedExpression();
 		expr.isNull(StatistichePdndTracing.model().CSV);
 		
+		this.logger.info("Cerco tracciati vuoti ...");
 		
 		List<StatistichePdndTracing> stats = null;
 		try {
 			stats = this.statisticheSM.getStatistichePdndTracingService().findAll(expr);
-		} catch (ServiceException e) {
-			return;
+		} catch (Exception e) {
+			if (e.getCause() instanceof NotFoundException || e instanceof NotFoundException) {
+				this.logger.info("Non sono stati trovati tracciati vuoti");
+				return;
+			}
+			else {
+				throw new ServiceException("Non sono stati trovati tracciati vuoti per via di un'anomalia: "+e.getMessage(),e);
+			}
 		}
 		
 		this.logger.info("Sono stati trovati {} tracciati vuoti, procedo a valorizzarli", stats.size());
@@ -305,20 +315,19 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 			Date startTracing = stat.getDataTracciamento();
 			Date endTracing = truncDate(incrementDate(startTracing));
 			
+			this.logger.info("Tracciato [{}] del soggetto: {} vuoto, valorizzazione in corso ...", 
+					dataTracciamento, 
+					nomeSoggetto);
+			
 			List<Map<String, Object>> data;
 			try {
 				data = aggregateTransactions(startTracing, endTracing, stat.getPddCodice());
 				stat.setCsv(generateCsv(startTracing, data));
 				this.statisticheSM.getStatistichePdndTracingService().update(stat);
-				this.logger.info("Tracciato [{}] del soggetto: {} prima vuoto, valorizzato correttamente", 
+				this.logger.info("Tracciato [{}] del soggetto: {} valorizzato correttamente", 
 						dataTracciamento, 
 						nomeSoggetto);
-			} catch (ExpressionNotImplementedException 
-					| ExpressionException
-					| ServiceException 
-					| NotImplementedException
-					| NotFoundException
-					| UtilsException e) {
+			} catch (Exception e) {
 				this.logger.error("Errore nell'update della statistica con csv null, tracingDate: {}, codice pdd: {}", 
 						dataTracciamentoFormat(startTracing), 
 						stat.getPddCodice(), e);
@@ -349,9 +358,7 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 							(o1, o2) -> { o1.addAll(o2); return o1; }
 					));
 		
-		} catch (ExpressionException 
-				| ExpressionNotImplementedException 
-				| ServiceException e) {
+		} catch (Exception e) {
 			// nessun record trovato allora la mappa risulta vuota altrimenti rilancio l'eccezione, errore fatale
 			if (e.getCause() instanceof NotFoundException || e instanceof NotFoundException)
 				ignorePddCodes = Map.of();
@@ -391,6 +398,9 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		Date currDate = truncDate(new Date());
 		Date lastDate = getLastTracingDate(currDate);
 
+		if (this.logger.isInfoEnabled())
+			this.logger.info("Verifico esistenza csv già generati per la data {}", 
+					dataTracciamentoFormat(lastDate));
 		
 		// mappa che contiene per ogni data quali record per uno specifico codice pdd sono presenti per non aggiungerli
 		Map<Date, Set<String>> ignorePddCodes = getAlreadyExistsPddRecords(lastDate);
@@ -419,20 +429,29 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 			}
 		}
 		
+		scanDatesUpdateDataUltimaGenerazione(lastNoErrorDate, currDate);
+	}
+	private void scanDatesUpdateDataUltimaGenerazione(Date lastNoErrorDate,Date currDate) throws NotImplementedException, ServiceException {
 		if (lastNoErrorDate == null) {
 			if (this.logger.isInfoEnabled())
-				this.logger.info("Data ultima generazione aggiornata alla data corrente: {}", dataTracciamentoFormat(currDate));
+				this.logger.info("Aggiornamento data ultima generazione alla data corrente: {}", dataTracciamentoFormat(currDate));
 			lastNoErrorDate = currDate;
 		} else if (this.logger.isInfoEnabled()){
 			this.logger.info("A causa di errori per la generazione di data: {}, la data di ultima generazione sarà impostata a tale data", dataTracciamentoFormat(lastNoErrorDate));
 		}
 		
 		try {
+			if (this.logger.isInfoEnabled())
+				this.logger.info("Aggiorno data ultima generazione statistiche {} ...", 
+						dataTracciamentoFormat(lastNoErrorDate));
 			StatisticsInfoUtils.updateDataUltimaGenerazioneStatistiche(
 					this.statisticheSM.getStatisticaInfoServiceSearch(), 
 					this.statisticheSM.getStatisticaInfoService(), 
 					TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO,
 					this.config.getLogSql(), lastNoErrorDate);
+			if (this.logger.isInfoEnabled())
+				this.logger.info("Aggiorno daa ultima generazione statistiche {} completato", 
+						dataTracciamentoFormat(lastNoErrorDate));
 		} catch (Exception e) {
 			this.logger.error("Errore nell'aggiornamento della data ultima statistica {}", TipoIntervalloStatistico.PDND_GENERAZIONE_TRACCIAMENTO, e);
 		}

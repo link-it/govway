@@ -109,7 +109,7 @@ then
 	echo "Deploy del JAR $UTILS_JAR completato."
 fi
 
-if [ "${BUILD_PUBLIC_MAVEN}" == "true" -a "${BUILD_DEPLOY_FULL_UTILS_PUBLIC_MAVEN}" == "true" ]
+if [ "${BUILD_PUBLIC_MAVEN}" == "true" -a "${BUILD_DEPLOY_FULL_UTILS_PUBLIC_MAVEN}" == "true" -a ! "$IS_SNAPSHOT" == "true" ]
 then
 	echo "Preparazione struttura del JAR $UTILS_JAR per mvn central in corso..."
 	MAVEN_CENTRAL_REPO=../mvn/mvn_central_${MVN_VERSION}/${UTILS_JAR}-${MVN_VERSION}
@@ -125,7 +125,7 @@ then
 	echo "Preparazione struttura del JAR $UTILS_JAR per mvn central completato."
 fi
 
-if [ "${DEPLOY_PUBLIC_MAVEN}" == "true" -a "${BUILD_DEPLOY_FULL_UTILS_PUBLIC_MAVEN}" == "true" ]
+if [ "${DEPLOY_PUBLIC_MAVEN}" == "true" -a "${BUILD_DEPLOY_FULL_UTILS_PUBLIC_MAVEN}" == "true" -a ! "$IS_SNAPSHOT" == "true" ]
 then
 	echo "Deploy del JAR $UTILS_JAR su mvn central in corso..."
 	pushd ${MAVEN_CENTRAL_REPO} > /dev/null
@@ -158,7 +158,7 @@ do
 		echo "Deploy del JAR $UTILS_JAR (${packageName}) completato."	
 	fi
 	
-	if [ "${BUILD_PUBLIC_MAVEN}" == "true" ]
+	if [ "${BUILD_PUBLIC_MAVEN}" == "true" -a ! "$IS_SNAPSHOT" == "true" ]
 	then
 		echo "Preparazione struttura del JAR $UTILS_JAR (${packageName}) per mvn central in corso..."
 		MAVEN_CENTRAL_REPO=../mvn/mvn_central_${MVN_VERSION}/${UTILS_JAR}-${packageName}-${MVN_VERSION}
@@ -180,7 +180,7 @@ do
 		echo "Preparazione struttura del JAR $UTILS_JAR (${packageName}) per mvn central completato."
 	fi
 	
-	if [ "${DEPLOY_PUBLIC_MAVEN}" == "true" ]
+	if [ "${DEPLOY_PUBLIC_MAVEN}" == "true" -a ! "$IS_SNAPSHOT" == "true" ]
 	then
 		echo "Deploy del JAR $UTILS_JAR (${packageName}) su mvn central in corso..."
 		pushd ${MAVEN_CENTRAL_REPO} > /dev/null
@@ -198,7 +198,7 @@ then
 
 	echo "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">
-        <artifactId>$UTILS_JAR-core</artifactId><groupId>org.openspcoop2.utils</groupId><version>$MVN_VERSION</version><modelVersion>4.0.0</modelVersion>
+        <artifactId>$UTILS_JAR-base</artifactId><groupId>org.openspcoop2.utils</groupId><version>$MVN_VERSION</version><modelVersion>4.0.0</modelVersion>
         <name>Openspcoop2 Utils - Base</name></project>" > "dist/utils/${UTILS_JAR}-base_${MVN_VERSION}.pom"
 
 	mvn deploy:deploy-file -DrepositoryId=link-repository -DpomFile=dist/utils/$UTILS_JAR"-base_"$MVN_VERSION.pom -Dfile=dist/utils/$UTILS_JAR"_"$OPENSPCOOP_BUILD_VERSION.jar -Durl=$URL_REPOSITORY
@@ -208,7 +208,7 @@ then
 	echo "Deploy del JAR $UTILS_JAR (base) completato."
 fi
 
-if [ "${BUILD_PUBLIC_MAVEN}" == "true" ]
+if [ "${BUILD_PUBLIC_MAVEN}" == "true" -a ! "$IS_SNAPSHOT" == "true" ]
 then
 	echo "Preparazione struttura del JAR $UTILS_JAR (base) per mvn central in corso..."
 	MAVEN_CENTRAL_REPO=../mvn/mvn_central_${MVN_VERSION}/${UTILS_JAR}-base-${MVN_VERSION}
@@ -228,7 +228,7 @@ then
 	echo "Preparazione struttura del JAR $UTILS_JAR (base per mvn central completato."
 fi
 
-if [ "${DEPLOY_PUBLIC_MAVEN}" == "true" ]
+if [ "${DEPLOY_PUBLIC_MAVEN}" == "true" -a ! "$IS_SNAPSHOT" == "true" ]
 then
 	echo "Deploy del JAR $UTILS_JAR (base) su mvn central in corso..."
 	pushd ${MAVEN_CENTRAL_REPO} > /dev/null
@@ -260,7 +260,7 @@ then
 	echo "Deploy del JAR $GENERIC_PROJECT_JAR completato."
 fi
 
-if [ "${BUILD_PUBLIC_MAVEN}" == "true" ]
+if [ "${BUILD_PUBLIC_MAVEN}" == "true" -a ! "$IS_SNAPSHOT" == "true" ]
 then
 	echo "Preparazione struttura del JAR $GENERIC_PROJECT_JAR per mvn central in corso..."
 	MAVEN_CENTRAL_REPO=../mvn/mvn_central_${MVN_VERSION}/${GENERIC_PROJECT_JAR}-${MVN_VERSION}
@@ -276,7 +276,7 @@ then
 	echo "Preparazione struttura del JAR $GENERIC_PROJECT_JAR per mvn central completato."
 fi
 
-if [ "${DEPLOY_PUBLIC_MAVEN}" == "true" ]
+if [ "${DEPLOY_PUBLIC_MAVEN}" == "true" -a ! "$IS_SNAPSHOT" == "true" ]
 then
 	echo "Deploy del JAR $GENERIC_PROJECT_JAR su mvn central in corso..."
 	pushd ${MAVEN_CENTRAL_REPO} > /dev/null
