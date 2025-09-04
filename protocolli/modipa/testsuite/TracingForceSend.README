@@ -1,0 +1,11 @@
+-- RESET DI UN TRACCIATO, PER RICALCOALRE IL CSV E INVIARLO NUOVAMENTE ESEGUIRE PRIMA IL BATCH DI GENERAZIONE E POI DI PUBBLICAZIONE
+-- method = 'RECOVER' se la pdnd aveva trovato errori durante la validazione del tracciato
+-- method = 'REPLACE' se la pdnd aveva validato correttamente il tracciato
+-- method = 'SUBMIT' se la pdnd non era riuscita ad avviare il processo di validazione del tracciato
+UPDATE statistiche_pdnd_tracing SET csv = NULL, stato_pdnd = 'WAITING', force_publish = 't', method = 'RECOVER' WHERE id = <id>;
+
+-- RESET DI UN TRACCIATO SENZA RICALCOLARE IL CSV, PER INVIARLO ESEGRUIRE IL PATCH DI PUBBLICAZIONE
+-- method = 'RECOVER' se la pdnd aveva trovato errori durante la validazione del tracciato
+-- method = 'REPLACE' se la pdnd aveva validato correttamente il tracciato
+-- method = 'SUBMIT' se la pdnd non era riuscita ad avviare il processo di validazione del tracciato
+UPDATE statistiche_pdnd_tracing SET stato_pdnd = 'WAITING', force_publish = 't', method = 'RECOVER' WHERE id = <id>;

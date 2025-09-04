@@ -471,8 +471,8 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		
 		try {
 			stats = this.pdndStatisticheSM.findAll(expr);
-		} catch (ServiceException e) {
-			if (e.getCause() instanceof NotFoundException) {
+		} catch (Exception e) {
+			if (e.getCause() instanceof NotFoundException || e instanceof NotFoundException) {
 				this.logger.debug("Nessun record da pubblicare per il soggetto: {} trovato", nomeSoggetto);
 				return;
 			}
@@ -695,12 +695,14 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 				expr.equals(StatistichePdndTracing.model().HISTORY, 0);
 				
 				this.pdndStatisticheSM.find(expr);
-			} catch (ServiceException e) {
-				if (e.getCause() instanceof NotFoundException)
+			} catch (Exception e) {
+				if (e.getCause() instanceof NotFoundException || e instanceof NotFoundException) {
 					this.pdndStatisticheSM.create(stat);
-			} catch (NotFoundException e) {
-				this.pdndStatisticheSM.create(stat);
-			}
+				}
+				else {
+					// ignore
+				}
+			} 
 		}
 	}
 	
@@ -799,7 +801,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 				
 				if (delayIndex == 1) {
 					this.logger.info("Aspetto {}s prima di aggiornare i record in PENDING, numero massimo di tentativi da effettuare: {}", delay, delays.size());
-				} else if (delayIndex < delays.size()) {
+				} else if (delayIndex <= delays.size()) {
 					this.logger.info("La PDND non ha ancora valutato tutti i tracciati con lo stato PENDING, tentativo: {}, aspetto {}s e riprovo", delayIndex, delay);
 				}
 				
