@@ -23,7 +23,6 @@ And match header Content-Type == 'application/json'
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent'  
     
-    
 @ERROR_401_001
 Scenario: ERROR_401_001 - PDND token not found: token di autorizzazione della PDND non presente nella richiesta.
 Given url govway_base_path + "/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1"
@@ -158,6 +157,24 @@ And request read('request-suap.json')
 When method post
 Then status 404
 And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_404_001.json')
+And match header Content-Type == 'application/json'
+And match header Authorization == '#notpresent'
+And match header Agid-JWT-Signature == '#notpresent' 
+
+@ERROR_428_001
+Scenario: ERROR_428_001 - hash not found: l'header http 'If-Match', richiesto obbligatoriamente nell’IDL OpenAPI, non presente.
+Given url govway_base_path + "/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/ModiTestSUAP/v1"
+And path 'instance'
+And header Authorization = call basic ({ username: 'ApplicativoBlockingIDA01', password: 'ApplicativoBlockingIDA01' })
+And header GovWay-TestSuite-Test-ID = 'suap-ERROR_428_001'
+And header simulazionepdnd-username = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-password = 'ApplicativoBlockingIDA01'
+And header simulazionepdnd-purposeId = 'purposeId-ApplicativoBlockingIDA01'
+And header simulazionepdnd-audience = 'testsuite'
+And header simulazioneintegrity-audience = 'testsuite'
+When method get
+Then status 428
+And match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_428_001.json')
 And match header Content-Type == 'application/json'
 And match header Authorization == '#notpresent'
 And match header Agid-JWT-Signature == '#notpresent' 

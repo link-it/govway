@@ -12745,6 +12745,14 @@ Scenario: isTest('suap-ERROR_401_004_audience')
     * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_401_004.json')
     * match header GovWay-Transaction-ErrorType == '#notpresent'
 
+Scenario: isTest('suap-ERROR_428_001')
+
+    * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1')
+
+    * match responseStatus == 428
+    * match response == read('classpath:test/rest/sicurezza-messaggio/error-bodies/suap_ERROR_428_001.json')
+    * match header GovWay-Transaction-ErrorType == '#notpresent'
+
 Scenario: isTest('suap-ERROR_500_007')
 
     * karate.proceed (govway_base_path + '/rest/in/DemoSoggettoErogatore/ModiTestSUAP/v1')
