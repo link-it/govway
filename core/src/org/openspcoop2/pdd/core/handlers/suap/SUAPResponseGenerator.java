@@ -38,10 +38,13 @@ import org.openspcoop2.pdd.core.handlers.OutResponseHandler;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
+import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
+import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.utils.Map;
 import org.openspcoop2.utils.MapKey;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -74,6 +77,10 @@ public class SUAPResponseGenerator implements OutResponseHandler {
 	private static final String ERROR_404_001_CODE = "ERROR_404_001";
 	private static final String ERROR_404_001_MESSAGE = "resource not found";
 	
+	private static final String ERROR_428_001_CODE = "ERROR_428_001";
+	private static final String ERROR_428_001_MESSAGE = "hash not found";
+	private static final String ERROR_428_001_MESSAGE_PATTERN_MATCH = ".*Parameter 'If-Match' is required.*";
+	
 	private static final String ERROR_500_007 = "ERROR_500_007";
 	private static final String ERROR_500_007_MESSAGE = "response processing error";
 	
@@ -84,8 +91,25 @@ public class SUAPResponseGenerator implements OutResponseHandler {
 				&& MessageRole.FAULT.equals(context.getMessaggio().getMessageRole())) {
 			try {
 				
-				if(isErroreValidazioneRichiesta(context) || 
-						isRequestReadTimeout(context) ||
+				String idTransazione = null;
+				if(context.getPddContext()!=null){
+					PdDContext pddContext = context.getPddContext();
+					if (pddContext.getObject(Costanti.ID_TRANSAZIONE)==null)
+						throw new HandlerException("Identificativo della transazione assente");
+					idTransazione = (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);
+					if (idTransazione==null)
+						throw new HandlerException("Identificativo della transazione assente");
+				}
+				
+				if(isErroreValidazioneRichiesta(context)) {
+					if(isErroreValidazioneRichiestaHashNotFound(idTransazione)) {
+						modifyErrorMessage(428, ERROR_428_001_CODE, ERROR_428_001_MESSAGE, context.getMessaggio());
+					}
+					else {
+						modifyErrorMessage(400, ERROR_400_001_CODE, ERROR_400_001_MESSAGE, context.getMessaggio());
+					}
+				}
+				else if(isRequestReadTimeout(context) ||
 						isContenutiRichiestaNonRiconosciuto(context) ||
 						isErroreCorrelazioneApplicativaRisposta(context) ||
 						isErroreTrasformazioneRichiesta(context)) {
@@ -114,14 +138,7 @@ public class SUAPResponseGenerator implements OutResponseHandler {
 						isRispostaDuplicata(context)) {
 					modifyErrorMessage(500, ERROR_500_007, ERROR_500_007_MESSAGE, context.getMessaggio());
 				}
-				else if(context.getPddContext()!=null){
-					PdDContext pddContext = context.getPddContext();
-					if (pddContext.getObject(Costanti.ID_TRANSAZIONE)==null)
-						throw new HandlerException("Identificativo della transazione assente");
-					String idTransazione = (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);
-					if (idTransazione==null)
-						throw new HandlerException("Identificativo della transazione assente");
-					
+				else if(context.getPddContext()!=null){		
 					Transaction transaction = getTransaction(idTransazione);
 					boolean casoAgitJWTSignatureNonPresente = false;
 					boolean casoAgitJWTSignatureNonValido = false;
@@ -194,6 +211,33 @@ public class SUAPResponseGenerator implements OutResponseHandler {
 			// ignore
 		}
 		return transaction;
+	}
+	
+	static boolean isErroreValidazioneRichiestaHashNotFound(String idTransazione) {
+		Transaction transaction = getTransaction(idTransazione);
+		if(transaction!=null && transaction.getMsgDiagnostici()!=null && !transaction.getMsgDiagnostici().isEmpty()) {
+			for (MsgDiagnostico msg : transaction.getMsgDiagnostici()) {
+				if(isMessaggioErroreValidazioneRichiestaHashNotFound(msg)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	static boolean isMessaggioErroreValidazioneRichiestaHashNotFound(MsgDiagnostico msg) {
+		if(msg.getSeverita()<=LogLevels.SEVERITA_ERROR_INTEGRATION && 
+				msg.getMessaggio()!=null) {
+			boolean match = false;
+			try {
+				match = RegularExpressionEngine.isFind(msg.getMessaggio(), ERROR_428_001_MESSAGE_PATTERN_MATCH);
+			}catch(Exception e) {
+				// ignore
+			}
+			if(match) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	static boolean isErroreValidazioneRichiesta(OutResponseContext context) {

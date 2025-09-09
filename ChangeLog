@@ -1,3 +1,12 @@
+2025-09-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug 1648
+	Corretto un comportamento anomalo nel plugin di formattazione errori per il canale SUAP, per il caso di errore ERROR_428_001.
+	La richiesta generata dalla suite di test BB verso la risorsa /instance/{cui_uuid}/document/{resource_id} non presenta volutamente l'header 'If-Match' definito come obbligatorio nell'interfaccia OpenAPI.
+	In tali casi, GovWay restituiva erroneamente la risposta "ERROR_400_001 / incorrect request input", mentre la testsuite SUAP si attendeva il messaggio "ERROR_428_001 / hash not found".
+	L'errore è stato allineato alla risposta prevista, in conformità alle specifiche SUAP.
+
 2025-08-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
