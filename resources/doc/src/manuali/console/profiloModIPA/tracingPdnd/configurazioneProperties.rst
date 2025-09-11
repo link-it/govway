@@ -32,6 +32,13 @@ Per abilitare o disabilitare la raccolta delle transazioni che riguardano le ero
 ``statistiche.pdnd.tracciamento.erogazioni.enabled=true``
 ``statistiche.pdnd.tracciamento.fruizioni.enabled=true``
 
+**Generazione dei record giornalieri**
+
+È possibile impostare un ritardo, espresso in minuti, per la generazione delle tracce relative al giorno precedente.
+In questo modo l’elaborazione non parte subito dopo la mezzanotte, ma viene posticipata di un intervallo configurabile, così da garantire che tutti i dati siano disponibili prima della generazione del report. Per default viene impostato un intervallo di 180 minuti.
+
+``statistiche.pdnd.tracciamento.generazione.delayMinutes=180``
+
 **Comunicazione con la PDND**
 
 .. note::

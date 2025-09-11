@@ -163,30 +163,62 @@ public class RemoteStoresHelper extends ConsoleHelper{
 		e.add(de);
 		
 		// client id
-		de = new DataElement();
+		e.add(creaEntryClientId(entry));
+		
+		// dettagli organizzazione
+		e.add(creaEntryOrganization(entry));
+		
+		return e;
+	}
+	private DataElement creaEntryClientId(RemoteStoreKeyEntry entry) {
+		DataElement de = new DataElement();
 		if(entry.getClientId() != null) {
 			de.setValue(entry.getClientId());
+			StringBuilder sbTooltip = new StringBuilder();
+			if(entry.getClientName()!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(entry.getClientName())) {
+				sbTooltip.append(entry.getClientName());
+			}
+			if(entry.getClientDescription()!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(entry.getClientDescription())) {
+				if(sbTooltip.length()>0) {
+					sbTooltip.append(" (");
+				}
+				sbTooltip.append(entry.getClientDescription());
+				if(sbTooltip.length()>0) {
+					sbTooltip.append(")");
+				}
+			}
+			de.setToolTip(sbTooltip.toString());
 			de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 		}else {
 			de.setValue(RemoteStoresCostanti.VALUE_PARAMETRO_NON_PRESENTE);
 		}
-		e.add(de);
-		
-		// dettagli organizzazione
-		de = new DataElement();
+		return de;
+	}
+	private DataElement creaEntryOrganization(RemoteStoreKeyEntry entry) {
+		DataElement de = new DataElement();
 		if(entry.getOrganizationName() != null) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(entry.getOrganizationName()).append(" (").append(entry.getOrganizationExternalOrigin()).append(" ").append(entry.getOrganizationExternalId()).append(")");
 			de.setValue(sb.toString());
-			de.setToolTip(entry.getOrganizationCategory());
+			StringBuilder sbTooltip = new StringBuilder();
+			if(entry.getOrganizationCategory()!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(entry.getOrganizationCategory())) {
+				sbTooltip.append(entry.getOrganizationCategory());
+			}
+			if(entry.getOrganizationSubunit()!=null && org.apache.commons.lang3.StringUtils.isNotEmpty(entry.getOrganizationSubunit())) {
+				if(sbTooltip.length()>0) {
+					sbTooltip.append(" (");
+				}
+				sbTooltip.append(entry.getOrganizationSubunit());
+				if(sbTooltip.length()>0) {
+					sbTooltip.append(")");
+				}
+			}
+			de.setToolTip(sbTooltip.toString());
 			de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 		}else {
 			de.setValue(RemoteStoresCostanti.VALUE_PARAMETRO_NON_PRESENTE);
 		}
-		e.add(de);
-		
-		
-		return e;
+		return de;
 	}
 	
 	private boolean isKidNotStartsWithClientId(String kid) {

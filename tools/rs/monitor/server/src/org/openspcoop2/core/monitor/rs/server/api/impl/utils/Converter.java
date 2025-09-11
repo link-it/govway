@@ -42,6 +42,7 @@ import org.openspcoop2.core.monitor.rs.server.model.ItemTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.ItemTransazione;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTracingPDND;
 import org.openspcoop2.core.monitor.rs.server.model.MethodTracingPDND;
+import org.openspcoop2.core.monitor.rs.server.model.PDNDClientInfo;
 import org.openspcoop2.core.monitor.rs.server.model.PDNDOrganizationExternalId;
 import org.openspcoop2.core.monitor.rs.server.model.PDNDOrganizationInfo;
 import org.openspcoop2.core.monitor.rs.server.model.PDNDOrganizationInfoItemTransazione;
@@ -242,12 +243,21 @@ public class Converter {
 		
 		String pdndOrganizationName = transazioneDB.getPdndOrganizationName();
 		String pdndOrganizationCategory = transazioneDB.getPdndOrganizationCategory();
+		String pdndOrganizationSubUnit = transazioneDB.getPdndOrganizationSubUnit();
 		String pdndExternalId = transazioneDB.getPdndOrganizationExternalId();
 		String pdndConsumerId = transazioneDB.getPdndOrganizationConsumerId();
-		if(StringUtils.isNotEmpty(pdndOrganizationName) || StringUtils.isNotEmpty(pdndOrganizationCategory) || StringUtils.isNotEmpty(pdndExternalId)) {
+		if(StringUtils.isNotEmpty(pdndOrganizationName) || 
+				StringUtils.isNotEmpty(pdndOrganizationCategory) ||
+				StringUtils.isNotEmpty(pdndOrganizationSubUnit) ||
+				StringUtils.isNotEmpty(pdndExternalId)) {
 			PDNDOrganizationInfo pdndOrganizationInfo = new PDNDOrganizationInfo();
 			pdndOrganizationInfo.setNome(pdndOrganizationName);
-			pdndOrganizationInfo.setCategoria(pdndOrganizationCategory);
+			if(StringUtils.isNotEmpty(pdndOrganizationCategory)) {
+				pdndOrganizationInfo.setCategoria(pdndOrganizationCategory);
+			}
+			if(StringUtils.isNotEmpty(pdndOrganizationSubUnit)) {
+				pdndOrganizationInfo.setSubUnit(pdndOrganizationSubUnit);
+			}
 			if(StringUtils.isNotEmpty(pdndExternalId) && pdndExternalId.contains(" ")) {
 				try {
 					int indexOf = pdndExternalId.indexOf(" ");
@@ -266,6 +276,21 @@ public class Converter {
 			detail.setPdndOrganization(pdndOrganizationInfo);
 		}
 		
+		String pdndClientnName = transazioneDB.getPdndClientName();
+		String pdndClientDescription = transazioneDB.getPdndClientDescription();
+		if(StringUtils.isNotEmpty(pdndClientnName) || 
+				StringUtils.isNotEmpty(pdndClientDescription)) {
+			PDNDClientInfo pdndClientInfo = new PDNDClientInfo();
+			pdndClientInfo.setNome(pdndClientnName);
+			if(StringUtils.isNotEmpty(pdndClientDescription)) {
+				pdndClientInfo.setDescrizione(pdndClientDescription);
+			}
+			if(StringUtils.isNotEmpty(transazioneDB.getTokenClientIdLabel())) {
+				pdndClientInfo.setClientId(transazioneDB.getTokenClientIdLabel());
+			}
+			detail.setPdndClient(pdndClientInfo);
+		}
+		
 		String richiedente = transazioneDB.getLabelRichiedenteConFruitore();
 		if(StringUtils.isNotEmpty(richiedente)) {
 			detail.setRichiedente(richiedente);
@@ -280,6 +305,7 @@ public class Converter {
 		metodiEsclusi.add(new BlackListElement("setLatenzaServizio", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaTotale", Long.class));
 		metodiEsclusi.add(new BlackListElement("setPdndOrganization", PDNDOrganizationInfo.class));
+		metodiEsclusi.add(new BlackListElement("setPdndClient", PDNDClientInfo.class));
 		metodiEsclusi.add(new BlackListElement("setRichiedente", String.class));
 		metodiEsclusi.add(new BlackListElement("setDettaglioErrore", String.class));
 		org.openspcoop2.utils.beans.BeanUtils.copy(log, detail, transazioneExt, metodiEsclusi, true);

@@ -37,7 +37,10 @@ import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.basic.BasicStaticInstanceConfig;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
+import org.openspcoop2.protocol.sdk.ModIPDNDClientConfig;
+import org.openspcoop2.protocol.sdk.ModIPDNDOrganizationConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -46,6 +49,7 @@ import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyType;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.digest.DigestEncoding;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -229,7 +233,15 @@ public class ModIProperties {
 				getSicurezzaMessaggioSslTrustStoreOcspPolicy();
 			}
 			
-			getRemoteStoreConfig();
+			List<RemoteStoreConfig> rsc = getRemoteStoreConfig();
+			if(rsc!=null && !rsc.isEmpty()) {
+				for (RemoteStoreConfig remoteStoreConfigCheck : rsc) {
+					readAPIPDNDVersionKeys(remoteStoreConfigCheck.getStoreName());
+					readAPIPDNDVersionEvents(remoteStoreConfigCheck.getStoreName());
+					readAPIPDNDVersionClients(remoteStoreConfigCheck.getStoreName());
+					readAPIPDNDVersionOrganizations(remoteStoreConfigCheck.getStoreName());
+				}
+			}
 			
 			getValidazioneTokenOAuthClaimsRequired();
 			getValidazioneTokenPDNDClaimsRequired();
@@ -239,6 +251,39 @@ public class ModIProperties {
 			this.isPdndEServiceIdCheckUnique();
 			this.isValidazioneTokenPDNDDescriptorIdCheck();
 			this.isPdndDescriptorIdCheckUnique();
+			
+			this.getApiPDNDBaseUrlVersionPattern();
+			
+			// version
+			int [] apiPdndVersion = new int[] {1 , 2};
+			for (int v : apiPdndVersion) {
+				getApiPDNDClientsVersionPatttern(v);
+				getApiPDNDOrganizationsVersionPatttern(v);
+				// keys
+				getApiPDNDClientKeysPath(v);
+				getApiPDNDClientKeysJsonPath(v);
+				getApiPDNDServerKeysPath(v);
+				getApiPDNDServerKeysJsonPath(v);
+				isApiPDNDServerKeysFaultClientCheck(v);
+				// events
+				getApiPDNDEventKeysPath(v);
+				getApiPDNDEventKeysParameterLastEventId(v);
+				getApiPDNDEventKeysParameterLimit(v);
+				// clients
+				getApiPDNDClientsPath(v);
+				getApiPDNDClientsIdJsonPath(v);
+				getApiPDNDClientsOrganizationJsonPath(v);
+				getApiPDNDClientsNameJsonPath(v);
+				getApiPDNDClientsDescriptionJsonPath(v);
+				// organizations
+				getApiPDNDOrganizationsPath(v);
+				getApiPDNDOrganizationsIdJsonPath(v);
+				getApiPDNDOrganizationsNameJsonPath(v);
+				getApiPDNDOrganizationsExternalOriginJsonPath(v);
+				getApiPDNDOrganizationsExternalIdJsonPath(v);
+				getApiPDNDOrganizationsCategoryJsonPath(v);
+				getApiPDNDOrganizationsSubunitJsonPath(v);
+			}
 			
 			/* **** KEY STORE **** */
 			
@@ -791,6 +836,44 @@ public class ModIProperties {
 	
 	/* **** REMOTE TRUST STORE **** */
 	
+	private static final String REMOTE_STORE_PREFIX_PROPERTY = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.";
+	
+	private Map<String, Integer> apiPDNDVersion = new HashMap<>();
+	public int readAPIPDNDVersionKeys(String remoteStore) throws ProtocolException, UtilsException {
+		return readAPIPDNDVersionEngine( remoteStore, "api.keys.version");
+	}
+	public int readAPIPDNDVersionEvents(String remoteStore) throws ProtocolException, UtilsException {
+		return readAPIPDNDVersionEngine(remoteStore, "api.events.version");
+	}
+	public int readAPIPDNDVersionClients(String remoteStore) throws ProtocolException, UtilsException {
+		return readAPIPDNDVersionEngine(remoteStore, "api.clients.version");
+	}
+	public int readAPIPDNDVersionOrganizations(String remoteStore) throws ProtocolException, UtilsException {
+		return readAPIPDNDVersionEngine(remoteStore, "api.organizations.version");
+	}
+	private int readAPIPDNDVersionEngine(String remoteStore, String pName) throws ProtocolException, UtilsException {
+		String key = remoteStore+"_"+pName;
+		if(!this.apiPDNDVersion.containsKey(key)) {
+			String p = REMOTE_STORE_PREFIX_PROPERTY+remoteStore+"."+pName;
+			String pValue = this.reader.getValueConvertEnvProperties(p);
+			if(pValue!=null) {
+				try {
+					int i = Integer.parseInt(pValue);
+					if(i>0) {
+						this.apiPDNDVersion.put(key, i);
+					}
+				}catch(Exception e) {
+					throw new ProtocolException("Property '"+p+"' non valida: "+e.getMessage(),e);
+				}
+			}
+			if(!this.apiPDNDVersion.containsKey(key)) {
+				this.apiPDNDVersion.put(key, -1);
+			}
+		}
+		return this.apiPDNDVersion.get(key);
+	}
+	
+	
 	private List<RemoteStoreConfig> remoteStoreConfig = null;
 	private Map<String,RemoteKeyType> remoteStoreKeyTypeMap = null;
 	private Map<String,RemoteKeyType> getRemoteStoreKeyTypeMap() throws ProtocolException{
@@ -833,45 +916,210 @@ public class ModIProperties {
 				
 				String debugPrefix = "Configurazione per remoteStore '"+rsc+"'";
 				
-				String propertyPrefix = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore."+rsc+".";
+				String propertyPrefix = REMOTE_STORE_PREFIX_PROPERTY+rsc+".";
 				Properties p = this.reader.readPropertiesConvertEnvProperties(propertyPrefix);
 				if(p==null || p.isEmpty()) {
 					throw new ProtocolException(debugPrefix+SUFFIX_NON_TROVATA);
 				}
 				RemoteStoreConfig config = RemoteStoreConfigPropertiesUtils.read(p, null);
-				forceBaseUrlPDNDEndsWithKeys(rsc, config);
+				setUrlPDND(rsc, config);
 				this.remoteStoreConfig.add(config);
 				
 				readKeyType(p, debugPrefix, config);
 			}
 		}
 	}
-	private void forceBaseUrlPDNDEndsWithKeys(String rsc, RemoteStoreConfig config) {
+	
+	// rimuove l'eventuale suffisso /keys
+	private static final String URL_CHAR_DELIMITER = "/"; 
+	public String buildBaseUrlPDND(String baseUrl) throws ProtocolException {
+		
+		int apiVersion = extractVersionFromBaseUrl(baseUrl);
+		
+		// elimino path keys dalla url
+		String pathKeys = getApiPDNDClientKeysPath(apiVersion);
+		if(!pathKeys.startsWith(URL_CHAR_DELIMITER)) {
+			pathKeys = URL_CHAR_DELIMITER + pathKeys;
+		}
+		if(baseUrl.endsWith(pathKeys)) {
+			baseUrl = baseUrl.substring(0,baseUrl.length()-pathKeys.length());
+		}
+		else {
+			if(pathKeys.endsWith(URL_CHAR_DELIMITER)) {
+				// provo senza
+				pathKeys = pathKeys.substring(0, (pathKeys.length()-1));
+			}
+			else {
+				// provo con
+				pathKeys = pathKeys + URL_CHAR_DELIMITER;
+			}
+			if(baseUrl.endsWith(pathKeys)) {
+				baseUrl = baseUrl.substring(0,baseUrl.length()-pathKeys.length());
+			}
+		}
+			
+		return baseUrl;
+	}
+	
+	public int extractVersionFromBaseUrl(String baseUrl) {
+		String pattern = null;
+		try {
+			pattern = this.getApiPDNDBaseUrlVersionPattern();
+			String s = RegularExpressionEngine.getStringMatchPattern(baseUrl, pattern);
+			int i = Integer.parseInt(s);
+			if(i>0) {
+				return i;
+			}
+		}catch(Exception e) {
+			this.log.error("extractVersionFromBaseUrl("+baseUrl+") with pattern '"+pattern+"' failed: "+e.getMessage(),e);
+		}
+		return 1; // default
+	}
+
+	private void setUrlPDND(String rsc, RemoteStoreConfig config) throws ProtocolException, UtilsException {
+		
+		// Base Url Orig
+		String baseUrlOrig = config.getBaseUrl();
+		Map<String, String> baseUrlMultitenantOrig = new HashMap<>();
+		if(config.getMultiTenantBaseUrl()!=null && !config.getMultiTenantBaseUrl().isEmpty()) {
+			baseUrlMultitenantOrig.putAll(config.getMultiTenantBaseUrl());
+		}
+		int versionInBaseUrl = extractVersionFromBaseUrl(baseUrlOrig); 
+		
+		// keys
+		// imposta la baseurl direttamente in config e anche il baseUrlFaultCheck per i server keys
+		// dopo questa chiamata config.getBaseUrl() e config.getMultiTenantBaseUrl() sarà aggiornata
+		// es. una versione differente solo per le keys
+		forceBaseUrlPDNDEndsWithKeys(rsc, config, baseUrlOrig, versionInBaseUrl);
+		
+		// BaseUrl senza suffisso keys
+		String baseUrlWithoutKeys = this.buildBaseUrlPDND(baseUrlOrig);
+		Map<String, String> baseUrlMultitenantWithoutKeys = new HashMap<>();
+		if(!baseUrlMultitenantOrig.isEmpty()) {
+			for (Map.Entry<String,String> entry : baseUrlMultitenantOrig.entrySet()) {
+				baseUrlMultitenantWithoutKeys.put(entry.getKey(), this.buildBaseUrlPDND(entry.getValue()));
+			}
+		}
+		
+		// events
+		buildUrlCheckEventi(rsc, config, versionInBaseUrl, baseUrlWithoutKeys, baseUrlMultitenantWithoutKeys);
+		
+		// clients
+		buildUrlCheckClients(rsc, config, versionInBaseUrl, baseUrlWithoutKeys, baseUrlMultitenantWithoutKeys);
+		
+		// organization
+		buildUrlCheckOrganizations(rsc, config, versionInBaseUrl, baseUrlWithoutKeys, baseUrlMultitenantWithoutKeys);
+		
+		/**System.out.println("==============================");
+		System.out.println("RC ["+config.getStoreName()+"]");
+		System.out.println("RC ["+config.getBaseUrl()+"]");
+		System.out.println("RC ["+config.getMultiTenantBaseUrl()+"]");
+		System.out.println("RC ["+config.getMetadati()+"]");
+		System.out.println("RC ["+config.getMultiTenantMetadati()+"]");*/
+	}
+	
+	private void forceBaseUrlPDNDEndsWithKeys(String rsc, RemoteStoreConfig config, String baseUrl, int versionInBaseUrl) throws ProtocolException, UtilsException {
+		
 		if(isForceBaseUrlPDNDEndsWithKeys(rsc)) {
-			String baseUrl = config.getBaseUrl();
-			config.setBaseUrl(normalizeBaseUrlApiPDNDKeys(baseUrl));
+			config.setBaseUrl(normalizeBaseUrlApiPDNDKeys(baseUrl, versionInBaseUrl));
 			
 			if(config.getMultiTenantBaseUrl()!=null && !config.getMultiTenantBaseUrl().isEmpty()) {
-				Map<String, String> multiTenantBaseUrlNormalized = new HashMap<>();
+				Map<String, String> multiTenantBaseUrlNormalized = config.getMultiTenantBaseUrl();
+				if(multiTenantBaseUrlNormalized==null) {
+					multiTenantBaseUrlNormalized = new HashMap<>();
+				}
 				for (Map.Entry<String,String> entry : config.getMultiTenantBaseUrl().entrySet()) {
 					String baseUrlTenant = entry.getValue();
-					multiTenantBaseUrlNormalized.put(entry.getKey(), normalizeBaseUrlApiPDNDKeys(baseUrlTenant));
+					multiTenantBaseUrlNormalized.put(entry.getKey(), normalizeBaseUrlApiPDNDKeys(baseUrlTenant, versionInBaseUrl));
 				}
 				config.setMultiTenantBaseUrl(multiTenantBaseUrlNormalized);
 			}
 		}
+		
+		int apiPdndVersionOverride = this.readAPIPDNDVersionKeys(rsc); // consente di sovrascrivere il default
+		upgradeBaseUrlApiPDNDKeys(config, versionInBaseUrl, apiPdndVersionOverride);
+				
 	}
-	private String normalizeBaseUrlApiPDNDKeys(String baseUrl) {
-		if(!baseUrl.endsWith("/keys")) {
+	private String normalizeBaseUrlApiPDNDKeys(String baseUrl, int versionInBaseUrl) throws ProtocolException {
+		
+		String suffix = null;
+		try{
+			suffix = this.getApiPDNDClientKeysPath(versionInBaseUrl);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		String pathWithoutSlash = null;
+		if(!suffix.startsWith("/")){
+			pathWithoutSlash = suffix;
+			suffix = "/" + suffix;
+		}
+		else {
+			pathWithoutSlash = suffix.substring(1);
+		}
+		
+		if(!baseUrl.endsWith(suffix)) {
 			if(!baseUrl.endsWith("/")) {
 				baseUrl+="/";
 			}
-			baseUrl+="keys";
+			baseUrl+=pathWithoutSlash;
 		}
 		return baseUrl;
 	}
+	private void upgradeBaseUrlApiPDNDKeys(RemoteStoreConfig config, int versionInBaseUrl, int apiPdndVersionOverride) throws ProtocolException {
+		
+		int apiVersion = (apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) ? apiPdndVersionOverride : versionInBaseUrl;
+		boolean faultCheck = isApiPDNDServerKeysFaultClientCheck(apiVersion);
+		
+		if(apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) {
+			config.setBaseUrl(upgradeBaseUrlApiPDNDKeys(config.getBaseUrl(), versionInBaseUrl, apiPdndVersionOverride));
+		}
+		if(faultCheck) {
+			config.setBaseUrlFaultCheck(upgradeBaseUrlApiPDNDKeysFaultCheck(config.getBaseUrl(), apiVersion));
+		}
+		config.setResponseJsonPath(getApiPDNDClientKeysJsonPath(apiVersion));
+		config.setResponseJsonPathFaultCheck(getApiPDNDServerKeysJsonPath(apiVersion));
+		
+		upgradeBaseUrlApiPDNDKeysMultitenant(config, versionInBaseUrl, apiPdndVersionOverride, faultCheck, apiVersion);
+	}
+	private void upgradeBaseUrlApiPDNDKeysMultitenant(RemoteStoreConfig config, int versionInBaseUrl, int apiPdndVersionOverride, boolean faultCheck, int apiVersion) throws ProtocolException {
+		if(config.getMultiTenantBaseUrl()!=null && !config.getMultiTenantBaseUrl().isEmpty()) {
+			Map<String, String> multiTenantBaseUrlUpgraded = config.getMultiTenantBaseUrl();
+			if(multiTenantBaseUrlUpgraded==null) {
+				multiTenantBaseUrlUpgraded = new HashMap<>();
+			}
+			Map<String, String> multiTenantBaseUrlFaultCheckUpgraded = new HashMap<>();
+			for (Map.Entry<String,String> entry : config.getMultiTenantBaseUrl().entrySet()) {
+				String baseUrlTenant = entry.getValue();
+				if(apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) {
+					multiTenantBaseUrlUpgraded.put(entry.getKey(), upgradeBaseUrlApiPDNDKeys(baseUrlTenant, versionInBaseUrl, apiPdndVersionOverride));
+				}
+				if(faultCheck) {
+					multiTenantBaseUrlFaultCheckUpgraded.put(entry.getKey(), upgradeBaseUrlApiPDNDKeysFaultCheck(config.getBaseUrl(), apiVersion));
+				}
+			}
+			config.setMultiTenantBaseUrl(multiTenantBaseUrlUpgraded);
+			config.setMultiTenantBaseUrlFaultCheck(multiTenantBaseUrlFaultCheckUpgraded);
+		}
+	}
+	private String upgradeBaseUrlApiPDNDKeys(String orig, int versionInBaseUrl, int apiPdndVersionOverride) throws ProtocolException {
+		String suffixInBaseUrl = buildSuffixClientKeysPathByVersionl(versionInBaseUrl);
+		String newSuffixInBaseUrl = buildSuffixClientKeysPathByVersionl(apiPdndVersionOverride);
+		return orig.replace(suffixInBaseUrl, newSuffixInBaseUrl);
+	}
+	private String buildSuffixClientKeysPathByVersionl(int version) throws ProtocolException {
+		String suffixUrl = null;
+		try{
+			suffixUrl = this.getApiPDNDClientKeysPath(version);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		if(!suffixUrl.startsWith("/")){
+			suffixUrl = "/" + suffixUrl;
+		}
+		return "/v" +version+suffixUrl;
+	}
 	private boolean isForceBaseUrlPDNDEndsWithKeys(String rsc) {
-		String propertyPrefix = "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore."+rsc+"."+
+		String propertyPrefix = REMOTE_STORE_PREFIX_PROPERTY+rsc+"."+
 				RemoteStoreConfigPropertiesUtils.PROPERTY_STORE_URL+".forceEndsWithKeys";
 		try{  
 			boolean force = true;
@@ -886,6 +1134,186 @@ public class ModIProperties {
 			return true;
 		}
 	}
+	private String upgradeBaseUrlApiPDNDKeysFaultCheck(String original, int version) throws ProtocolException {
+		String suffixClientUrl = null;
+		try{
+			suffixClientUrl = this.getApiPDNDClientKeysPath(version);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		if(!suffixClientUrl.startsWith("/")){
+			suffixClientUrl = "/" + suffixClientUrl;
+		}
+		
+		String suffixServerUrl = null;
+		try{
+			suffixServerUrl = this.getApiPDNDServerKeysPath(version);
+		}catch(Exception e) {
+			throw new ProtocolException(e.getMessage(),e);
+		}
+		if(!suffixServerUrl.startsWith("/")){
+			suffixServerUrl = "/" + suffixServerUrl;
+		}
+		
+		if (original.endsWith(suffixClientUrl)) {
+            return original.substring(0, original.length() - suffixClientUrl.length()) + suffixServerUrl;
+        }
+        return original; // se non termina con suffixClientUrl, ritorna invariata
+	}
+
+	private String concatenateUrl(String baseUrlWithoutKeys, String path) {
+		if(baseUrlWithoutKeys.endsWith(URL_CHAR_DELIMITER)) {
+			if(path.startsWith(URL_CHAR_DELIMITER)) {
+				return baseUrlWithoutKeys + path.substring(1);
+			}
+			else {
+				return baseUrlWithoutKeys + path;
+			}
+		}
+		else {
+			if(path.startsWith(URL_CHAR_DELIMITER)) {
+				return baseUrlWithoutKeys + path;
+			}
+			else {
+				return baseUrlWithoutKeys + URL_CHAR_DELIMITER + path;
+			}
+		}
+	}
+	private void buildUrlCheckEventi(String rsc,RemoteStoreConfig remoteStore, int versionInBaseUrl, String baseUrlWithoutKeys, Map<String, String> baseUrlMultitenantWithoutKeys) throws ProtocolException, UtilsException {
+
+		int apiPdndVersionOverride = this.readAPIPDNDVersionEvents(rsc); // consente di sovrascrivere il default
+		int apiVersion = (apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) ? apiPdndVersionOverride : versionInBaseUrl;
+			
+		String pathEventKeys = this.getApiPDNDEventKeysPath(apiVersion);
+		if(!pathEventKeys.startsWith(URL_CHAR_DELIMITER)) {
+			pathEventKeys = URL_CHAR_DELIMITER + pathEventKeys;
+		}
+		String urlEventi = concatenateUrl(baseUrlWithoutKeys, pathEventKeys);
+		if(apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) {
+			urlEventi = upgradeBaseUrlApiPDND(urlEventi, versionInBaseUrl, apiPdndVersionOverride, pathEventKeys);
+		}
+		remoteStore.getMetadati().put(ModIUtils.API_PDND_EVENTS_KEYS_PATH, urlEventi);
+		remoteStore.getMetadati().put(ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID, this.getApiPDNDEventKeysParameterLastEventId(apiVersion));
+		remoteStore.getMetadati().put(ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LIMIT, this.getApiPDNDEventKeysParameterLimit(apiVersion));
+		
+		buildUrlCheckEventiMultitenant(remoteStore,  versionInBaseUrl, baseUrlMultitenantWithoutKeys, 
+				apiPdndVersionOverride, apiVersion, pathEventKeys);
+	}
+	private void buildUrlCheckEventiMultitenant(RemoteStoreConfig remoteStore,  int versionInBaseUrl, Map<String, String> baseUrlMultitenantWithoutKeys, 
+			int apiPdndVersionOverride, int apiVersion, String pathEventKeys) throws ProtocolException {
+		if(baseUrlMultitenantWithoutKeys!=null && !baseUrlMultitenantWithoutKeys.isEmpty()) {
+			Map<String, Map<String, String>> multiTenantUpgraded = remoteStore.getMultiTenantMetadati(); 
+			if(multiTenantUpgraded==null) {
+				multiTenantUpgraded = new HashMap<>();
+			}
+			for (Map.Entry<String,String> entry : baseUrlMultitenantWithoutKeys.entrySet()) {
+				String baseUrlTenant = entry.getValue();
+				String urlEventiTenant = concatenateUrl(baseUrlTenant, pathEventKeys);
+				Map<String, String> multiTenantValues =  multiTenantUpgraded.get(entry.getKey());
+				if(multiTenantValues==null) {
+					multiTenantValues = new HashMap<>();
+				}
+				if(apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) {
+					urlEventiTenant = upgradeBaseUrlApiPDND(urlEventiTenant, versionInBaseUrl, apiPdndVersionOverride, pathEventKeys);
+				}
+				multiTenantValues.put(ModIUtils.API_PDND_EVENTS_KEYS_PATH, urlEventiTenant);
+				multiTenantValues.put(ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID, this.getApiPDNDEventKeysParameterLastEventId(apiVersion));
+				multiTenantValues.put(ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LIMIT, this.getApiPDNDEventKeysParameterLimit(apiVersion));
+				multiTenantUpgraded.put(entry.getKey(), multiTenantValues);
+			}
+			remoteStore.setMultiTenantMetadati(multiTenantUpgraded);
+		}
+	}
+	private void buildUrlCheckClients(String rsc,RemoteStoreConfig remoteStore, int versionInBaseUrl, String baseUrlWithoutKeys, Map<String, String> baseUrlMultitenantWithoutKeys) throws ProtocolException, UtilsException {
+
+		int apiPdndVersionOverride = this.readAPIPDNDVersionClients(rsc); // consente di sovrascrivere il default
+		int apiVersion = (apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) ? apiPdndVersionOverride : versionInBaseUrl;
+			
+		String pathClients = this.getApiPDNDClientsPath(apiVersion);
+		if(!pathClients.startsWith(URL_CHAR_DELIMITER)) {
+			pathClients = URL_CHAR_DELIMITER + pathClients;
+		}
+		String urlClients = concatenateUrl(baseUrlWithoutKeys, pathClients);
+		if(apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) {
+			urlClients = upgradeBaseUrlApiPDND(urlClients, versionInBaseUrl, apiPdndVersionOverride, pathClients);
+		}
+		remoteStore.getMetadati().put(ModIUtils.API_PDND_CLIENTS_PATH, urlClients);
+		remoteStore.getMetadati().put(ModIUtils.API_PDND_CLIENTS_ORGANIZATION_JSON_PATH, this.getApiPDNDClientsOrganizationJsonPath(apiVersion));
+		
+		buildUrlCheckClientsMultitenant(remoteStore,  versionInBaseUrl, baseUrlMultitenantWithoutKeys, 
+				apiPdndVersionOverride, apiVersion, pathClients);
+	}
+	private void buildUrlCheckClientsMultitenant(RemoteStoreConfig remoteStore,  int versionInBaseUrl, Map<String, String> baseUrlMultitenantWithoutKeys, 
+			int apiPdndVersionOverride, int apiVersion, String pathClients) throws ProtocolException {
+		if(baseUrlMultitenantWithoutKeys!=null && !baseUrlMultitenantWithoutKeys.isEmpty()) {
+			Map<String, Map<String, String>> multiTenantUpgraded = remoteStore.getMultiTenantMetadati(); 
+			if(multiTenantUpgraded==null) {
+				multiTenantUpgraded = new HashMap<>();
+			}
+			for (Map.Entry<String,String> entry : baseUrlMultitenantWithoutKeys.entrySet()) {
+				String baseUrlTenant = entry.getValue();
+				String urlClientTenant =  concatenateUrl(baseUrlTenant, pathClients);
+				Map<String, String> multiTenantValues =  multiTenantUpgraded.get(entry.getKey());
+				if(multiTenantValues==null) {
+					multiTenantValues = new HashMap<>();
+				}
+				if(apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) {
+					urlClientTenant = upgradeBaseUrlApiPDND(urlClientTenant, versionInBaseUrl, apiPdndVersionOverride, pathClients);
+				}
+				multiTenantValues.put(ModIUtils.API_PDND_CLIENTS_PATH, urlClientTenant);
+				multiTenantValues.put(ModIUtils.API_PDND_CLIENTS_ORGANIZATION_JSON_PATH, this.getApiPDNDClientsOrganizationJsonPath(apiVersion));
+				multiTenantUpgraded.put(entry.getKey(), multiTenantValues);
+			}
+			remoteStore.setMultiTenantMetadati(multiTenantUpgraded);
+		}
+	}
+	private void buildUrlCheckOrganizations(String rsc,RemoteStoreConfig remoteStore, int versionInBaseUrl, String baseUrlWithoutKeys, Map<String, String> baseUrlMultitenantWithoutKeys) throws ProtocolException, UtilsException {
+
+		int apiPdndVersionOverride = this.readAPIPDNDVersionOrganizations(rsc); // consente di sovrascrivere il default
+		int apiVersion = (apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) ? apiPdndVersionOverride : versionInBaseUrl;
+			
+		String pathOrganizations = this.getApiPDNDOrganizationsPath(apiVersion);
+		if(!pathOrganizations.startsWith(URL_CHAR_DELIMITER)) {
+			pathOrganizations = URL_CHAR_DELIMITER + pathOrganizations;
+		}
+		String urlOrganizations =  concatenateUrl(baseUrlWithoutKeys, pathOrganizations);
+		if(apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) {
+			urlOrganizations = upgradeBaseUrlApiPDND(urlOrganizations, versionInBaseUrl, apiPdndVersionOverride, pathOrganizations);
+		}
+		remoteStore.getMetadati().put(ModIUtils.API_PDND_ORGANIZATIONS_PATH, urlOrganizations);
+		
+		buildUrlCheckOrganizationsMultitenant(remoteStore, versionInBaseUrl, baseUrlMultitenantWithoutKeys, 
+				apiPdndVersionOverride, pathOrganizations);
+	}
+	private void buildUrlCheckOrganizationsMultitenant(RemoteStoreConfig remoteStore,  int versionInBaseUrl, Map<String, String> baseUrlMultitenantWithoutKeys, 
+			int apiPdndVersionOverride, String pathOrganizations)  {
+		if(baseUrlMultitenantWithoutKeys!=null && !baseUrlMultitenantWithoutKeys.isEmpty()) {
+			Map<String, Map<String, String>> multiTenantUpgraded = remoteStore.getMultiTenantMetadati(); 
+			if(multiTenantUpgraded==null) {
+				multiTenantUpgraded = new HashMap<>();
+			}
+			for (Map.Entry<String,String> entry : baseUrlMultitenantWithoutKeys.entrySet()) {
+				String baseUrlTenant = entry.getValue();
+				String urlOrganizationsTenant =  concatenateUrl(baseUrlTenant, pathOrganizations);
+				Map<String, String> multiTenantValues =  multiTenantUpgraded.get(entry.getKey());
+				if(multiTenantValues==null) {
+					multiTenantValues = new HashMap<>();
+				}
+				if(apiPdndVersionOverride>0 && apiPdndVersionOverride!=versionInBaseUrl) {
+					urlOrganizationsTenant = upgradeBaseUrlApiPDND(urlOrganizationsTenant, versionInBaseUrl, apiPdndVersionOverride, pathOrganizations);
+				}
+				multiTenantValues.put(ModIUtils.API_PDND_ORGANIZATIONS_PATH, urlOrganizationsTenant);
+				multiTenantUpgraded.put(entry.getKey(), multiTenantValues);
+			}
+			remoteStore.setMultiTenantMetadati(multiTenantUpgraded);
+		}
+	}
+	private String upgradeBaseUrlApiPDND(String orig, int versionInBaseUrl, int apiPdndVersionOverride, String path) {
+		String suffixOrig = "/v"+versionInBaseUrl+path;
+		String suffixNew = "/v"+apiPdndVersionOverride+path;
+		return orig.replace(suffixOrig, suffixNew);
+	}
+	
 	
 	private void readKeyType(Properties p, String debugPrefix, RemoteStoreConfig config) throws ProtocolException {
 		String keyType = p.getProperty("keyType");
@@ -1217,6 +1645,603 @@ public class ModIProperties {
 		return this.isPdndDescriptorIdCheckUnique;
 	}
 	
+	
+	// API PDND
+	
+	private static final String PREFIX_API_PDND = "org.openspcoop2.protocol.modipa.pdnd.api";
+	
+	private String getApiPDNDBaseUrlVersionPattern = null;
+	public String getApiPDNDBaseUrlVersionPattern() throws ProtocolException {
+		if(this.getApiPDNDBaseUrlVersionPattern == null){
+			String pName = PREFIX_API_PDND+".baseUrl.version.pattern";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException("Non configurata");
+				}
+				name = name.trim();
+				this.getApiPDNDBaseUrlVersionPattern = name;
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDBaseUrlVersionPattern;
+	}
+		
+	
+	private static final String PREFIX_API_PDND_V = PREFIX_API_PDND+".v";
+	
+	// keys
+	
+	private Map<String,String> getApiPDNDClientKeysPath = new HashMap<>();
+	public String getApiPDNDClientKeysPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDClientKeysPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".keys.client.path";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDClientKeysPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDClientKeysPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDClientKeysJsonPath = new HashMap<>();
+	public String getApiPDNDClientKeysJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDClientKeysJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".keys.client.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					name="";
+				}
+				name = name.trim();
+				this.getApiPDNDClientKeysJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		String s = this.getApiPDNDClientKeysJsonPath.get(key);
+		return s!=null && "".equals(s) ? null : s;
+	}
+	
+	private Map<String,String> getApiPDNDServerKeysPath = new HashMap<>();
+	public String getApiPDNDServerKeysPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDServerKeysPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".keys.server.path";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDServerKeysPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDServerKeysPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDServerKeysJsonPath = new HashMap<>();
+	public String getApiPDNDServerKeysJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDServerKeysJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".keys.server.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					name="";
+				}
+				name = name.trim();
+				this.getApiPDNDServerKeysJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		String s = this.getApiPDNDServerKeysJsonPath.get(key);
+		return s!=null && "".equals(s) ? null : s;
+	}
+	
+	private Map<String,Boolean> isApiPDNDServerKeysFaultClientCheck = new HashMap<>();
+	public boolean isApiPDNDServerKeysFaultClientCheck(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.isApiPDNDServerKeysFaultClientCheck.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".keys.server.faultClientCheck";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					name="false";
+				}
+				name = name.trim();
+				this.isApiPDNDServerKeysFaultClientCheck.put(key, "true".equalsIgnoreCase(name));
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		Boolean s = this.isApiPDNDServerKeysFaultClientCheck.get(key);
+		return s!=null && s.booleanValue();
+	}
+	
+	// events
+	
+	private Map<String,String> getApiPDNDEventKeysPath = new HashMap<>();
+	public String getApiPDNDEventKeysPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDEventKeysPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".events.keys.path";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDEventKeysPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDEventKeysPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDEventKeysParameterLastEventId = new HashMap<>();
+	public String getApiPDNDEventKeysParameterLastEventId(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDEventKeysParameterLastEventId.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".events.keys.parameter.lastEventId";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDEventKeysParameterLastEventId.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDEventKeysParameterLastEventId.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDEventKeysParameterLimit = new HashMap<>();
+	public String getApiPDNDEventKeysParameterLimit(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDEventKeysParameterLimit.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".events.keys.parameter.limit";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDEventKeysParameterLimit.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDEventKeysParameterLimit.get(key);
+	}
+	
+	// clients
+	
+	private Map<String,String> getApiPDNDClientsVersionPatttern = new HashMap<>();
+	public String getApiPDNDClientsVersionPatttern(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDClientsVersionPatttern.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".clients.versionIdentifier.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDClientsVersionPatttern.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDClientsVersionPatttern.get(key);
+	}
+		
+	private Map<String,String> getApiPDNDClientsPath = new HashMap<>();
+	public String getApiPDNDClientsPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDClientsPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".clients.path";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDClientsPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDClientsPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDClientsIdJsonPath = new HashMap<>();
+	public String getApiPDNDClientsIdJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDClientsIdJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".clients.id.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDClientsIdJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDClientsIdJsonPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDClientsOrganizationJsonPath = new HashMap<>();
+	public String getApiPDNDClientsOrganizationJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDClientsOrganizationJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".clients.organization.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDClientsOrganizationJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDClientsOrganizationJsonPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDClientsNameJsonPath = new HashMap<>();
+	public String getApiPDNDClientsNameJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDClientsNameJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".clients.name.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					name = ""; // nella v1 non esiste
+				}
+				name = name.trim();
+				this.getApiPDNDClientsNameJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDClientsNameJsonPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDClientsDescriptionJsonPath = new HashMap<>();
+	public String getApiPDNDClientsDescriptionJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDClientsDescriptionJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".clients.description.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					name = ""; // nella v1 non esiste
+				}
+				name = name.trim();
+				this.getApiPDNDClientsDescriptionJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDClientsDescriptionJsonPath.get(key);
+	}
+	
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	public ModIPDNDClientConfig getAPIPDNDClientConfig() throws ProtocolException {
+		ModIPDNDClientConfig instance = new ModIPDNDClientConfig(this.log);
+		fillAPIPDNDClientConfig(instance);
+		return instance;
+	}
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	public ModIPDNDClientConfig getAPIPDNDClientConfig(Logger log) throws ProtocolException {
+		ModIPDNDClientConfig instance = new ModIPDNDClientConfig(log);
+		fillAPIPDNDClientConfig(instance);
+		return instance;
+	}
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	public ModIPDNDClientConfig getAPIPDNDClientConfig(String details) throws ProtocolException  {
+		ModIPDNDClientConfig instance = new ModIPDNDClientConfig(details, this.log);
+		fillAPIPDNDClientConfig(instance);
+		return instance;
+	}
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	public ModIPDNDClientConfig getAPIPDNDClientConfig(String details, Logger log) throws ProtocolException  {
+		ModIPDNDClientConfig instance = new ModIPDNDClientConfig(details, log);
+		fillAPIPDNDClientConfig(instance);
+		return instance;
+	}
+	private ModIPDNDClientConfig fillAPIPDNDClientConfig(ModIPDNDClientConfig c) throws ProtocolException  {
+		
+		c.setVersion1JsonPathMatch(this.getApiPDNDClientsVersionPatttern(1));
+		c.setVersion2JsonPathMatch(this.getApiPDNDClientsVersionPatttern(2));
+		
+		c.setIdJsonPath(this.getApiPDNDClientsIdJsonPath);
+		c.setOrganizationJsonPath(this.getApiPDNDClientsOrganizationJsonPath);
+		c.setNameJsonPath(this.getApiPDNDClientsNameJsonPath);
+		c.setDescriptionJsonPath(this.getApiPDNDClientsDescriptionJsonPath);
+		return c;
+	}
+	
+	// organizations
+	
+	private Map<String,String> getApiPDNDOrganizationsVersionPatttern = new HashMap<>();
+	public String getApiPDNDOrganizationsVersionPatttern(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDOrganizationsVersionPatttern.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".organizations.versionIdentifier.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDOrganizationsVersionPatttern.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDOrganizationsVersionPatttern.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDOrganizationsPath = new HashMap<>();
+	public String getApiPDNDOrganizationsPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDOrganizationsPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".organizations.path";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDOrganizationsPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDOrganizationsPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDOrganizationsIdJsonPath = new HashMap<>();
+	public String getApiPDNDOrganizationsIdJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDOrganizationsIdJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".organizations.id.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDOrganizationsIdJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDOrganizationsIdJsonPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDOrganizationsNameJsonPath = new HashMap<>();
+	public String getApiPDNDOrganizationsNameJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDOrganizationsNameJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".organizations.name.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDOrganizationsNameJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDOrganizationsNameJsonPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDOrganizationsExternalOriginJsonPath = new HashMap<>();
+	public String getApiPDNDOrganizationsExternalOriginJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDOrganizationsExternalOriginJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".organizations.external.origin.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDOrganizationsExternalOriginJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDOrganizationsExternalOriginJsonPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDOrganizationsExternalIdJsonPath = new HashMap<>();
+	public String getApiPDNDOrganizationsExternalIdJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDOrganizationsExternalIdJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".organizations.external.id.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDOrganizationsExternalIdJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDOrganizationsExternalIdJsonPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDOrganizationsCategoryJsonPath = new HashMap<>();
+	public String getApiPDNDOrganizationsCategoryJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDOrganizationsCategoryJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".organizations.category.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new ProtocolException(PREFIX_PROPRIETA+pName+"'"+SUFFIX_NON_TROVATA);
+				}
+				name = name.trim();
+				this.getApiPDNDOrganizationsCategoryJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDOrganizationsCategoryJsonPath.get(key);
+	}
+	
+	private Map<String,String> getApiPDNDOrganizationsSubunitJsonPath = new HashMap<>();
+	public String getApiPDNDOrganizationsSubunitJsonPath(int version) throws ProtocolException {
+		String key = version+"";
+		if(!this.getApiPDNDOrganizationsSubunitJsonPath.containsKey(key)){
+			String pName = PREFIX_API_PDND_V+version+".organizations.subUnit.jsonPath";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					name = ""; // nella v1 non esiste
+				}
+				name = name.trim();
+				this.getApiPDNDOrganizationsSubunitJsonPath.put(key, name);
+			} catch(java.lang.Exception e) {
+				this.logDebug(getMessaggioErroreProprietaNonImpostata(pName, e));
+				throw new ProtocolException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getApiPDNDOrganizationsSubunitJsonPath.get(key);
+	}
+	
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	public ModIPDNDOrganizationConfig getAPIPDNDOrganizationConfig() throws ProtocolException {
+		ModIPDNDOrganizationConfig instance = new ModIPDNDOrganizationConfig(this.log);
+		fillAPIPDNDOrganizationConfig(instance);
+		return instance;
+	}
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	public ModIPDNDOrganizationConfig getAPIPDNDOrganizationConfig(Logger log) throws ProtocolException {
+		ModIPDNDOrganizationConfig instance = new ModIPDNDOrganizationConfig(log);
+		fillAPIPDNDOrganizationConfig(instance);
+		return instance;
+	}
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	public ModIPDNDOrganizationConfig getAPIPDNDOrganizationConfig(String details) throws ProtocolException  {
+		ModIPDNDOrganizationConfig instance = new ModIPDNDOrganizationConfig(details, this.log);
+		fillAPIPDNDOrganizationConfig(instance);
+		return instance;
+	}
+	// riferito in org.openspcoop2.protocol.utils.ModIUtils
+	public ModIPDNDOrganizationConfig getAPIPDNDOrganizationConfig(String details, Logger log) throws ProtocolException  {
+		ModIPDNDOrganizationConfig instance = new ModIPDNDOrganizationConfig(details, log);
+		fillAPIPDNDOrganizationConfig(instance);
+		return instance;
+	}
+	private ModIPDNDOrganizationConfig fillAPIPDNDOrganizationConfig(ModIPDNDOrganizationConfig c) throws ProtocolException  {
+		
+		c.setVersion1JsonPathMatch(this.getApiPDNDOrganizationsVersionPatttern(1));
+		c.setVersion2JsonPathMatch(this.getApiPDNDOrganizationsVersionPatttern(2));
+		
+		c.setIdJsonPath(this.getApiPDNDOrganizationsIdJsonPath);
+		c.setNameJsonPath(this.getApiPDNDOrganizationsNameJsonPath);
+		c.setExternalOriginJsonPath(this.getApiPDNDOrganizationsExternalOriginJsonPath);
+		c.setExternalIdJsonPath(this.getApiPDNDOrganizationsExternalIdJsonPath);
+		c.setCategoryJsonPath(this.getApiPDNDOrganizationsCategoryJsonPath);
+		c.setSubUnitJsonPath(this.getApiPDNDOrganizationsSubunitJsonPath);
+		return c;
+	}
 	
 	
 	/* **** KEY STORE **** */

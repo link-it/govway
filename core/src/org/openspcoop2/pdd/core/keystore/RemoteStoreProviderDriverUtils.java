@@ -35,9 +35,11 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.constants.CostantiDB;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.PDNDConfigUtilities;
 import org.openspcoop2.pdd.config.PDNDResolver;
+import org.openspcoop2.protocol.sdk.ModIPDNDClientConfig;
+import org.openspcoop2.protocol.sdk.ModIPDNDOrganizationConfig;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreClientInfo;
@@ -51,7 +53,6 @@ import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyObject;
 import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.LikeConfig;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
@@ -620,14 +621,14 @@ public class RemoteStoreProviderDriverUtils {
 	
 	
 	public static RemoteStoreClientDetails getRemoteStoreClientDetails(DriverConfigurazioneDB driverConfigurazioneDB, long idStore, String kid, Logger log,
-			boolean createEntryIfNotExists) throws KeystoreException,KeystoreNotFoundException {
+			boolean createEntryIfNotExists, RemoteStoreConfig remoteConfig) throws KeystoreException,KeystoreNotFoundException {
 		
 		Connection con = null;
 		try {
 			con = driverConfigurazioneDB.getConnection("getRemoteStoreClientDetails");
 			
 			return getRemoteStoreClientDetails(con, driverConfigurazioneDB.getTipoDB(), idStore, kid, log,
-					createEntryIfNotExists);
+					createEntryIfNotExists, remoteConfig);
 		}
 		catch(KeystoreNotFoundException e) {
 			throw e;
@@ -641,7 +642,7 @@ public class RemoteStoreProviderDriverUtils {
 		
 	}
 	public static RemoteStoreClientDetails getRemoteStoreClientDetails(Connection con, String tipoDatabase, long idStore, String kid, Logger log, 
-			boolean createEntryIfNotExists) throws KeystoreException,KeystoreNotFoundException {
+			boolean createEntryIfNotExists, RemoteStoreConfig remoteConfig) throws KeystoreException,KeystoreNotFoundException {
 		
 		PreparedStatement selectStmt = null;
 		ResultSet selectRS = null;
@@ -667,7 +668,7 @@ public class RemoteStoreProviderDriverUtils {
 				rsk.getClientInfo().setClientId(selectRS.getString(COLUMN_CLIENT_ID));
 				rsk.getClientInfo().setClientDetails(selectRS.getString(COLUMN_CLIENT_DETAILS));
 				if(rsk.getClientInfo().getClientId()!=null && rsk.getClientInfo().getClientDetails()!=null) {
-					String jsonPath = OpenSPCoop2Properties.getInstance().getGestoreChiaviPDNDclientsOrganizationJsonPath();
+					String jsonPath = ModIUtils.extractInfoFromMetadati(remoteConfig.getMetadati(), ModIUtils.API_PDND_CLIENTS_ORGANIZATION_JSON_PATH, "Clients organization json path");
 					boolean readErrorAbortTransaction = false;
 					String organizationId = PDNDConfigUtilities.readOrganizationId(jsonPath, readErrorAbortTransaction, rsk.getClientInfo().getClientDetails(), log);
 					rsk.getClientInfo().setOrganizationId(organizationId);
@@ -821,11 +822,11 @@ public class RemoteStoreProviderDriverUtils {
 	
 	
 	
-	public static List<RemoteStoreKeyEntry> getRemoteStoreKeyEntries(Logger log, DriverConfigurazioneDB driverConfigurazioneDB, ISearch ricerca, long idRemoteStore) throws KeystoreException {
+	public static List<RemoteStoreKeyEntry> getRemoteStoreKeyEntries(DriverConfigurazioneDB driverConfigurazioneDB, ISearch ricerca, long idRemoteStore) throws KeystoreException {
 		Connection con = null;
 		try {
 			con = driverConfigurazioneDB.getConnection("getRemoteStoreKeyEntries");
-			return getRemoteStoreKeyEntries(log, con, driverConfigurazioneDB.getTipoDB(), ricerca, idRemoteStore);
+			return getRemoteStoreKeyEntries(con, driverConfigurazioneDB.getTipoDB(), ricerca, idRemoteStore);
 		}
 		catch(Exception e) {
 			throw new KeystoreException(e.getMessage(),e);
@@ -834,7 +835,7 @@ public class RemoteStoreProviderDriverUtils {
 			driverConfigurazioneDB.releaseConnection(con);
 		}
 	}
-	public static List<RemoteStoreKeyEntry> getRemoteStoreKeyEntries(Logger log, Connection con, String tipoDatabase, ISearch ricerca, long idRemoteStore) throws KeystoreException {
+	public static List<RemoteStoreKeyEntry> getRemoteStoreKeyEntries(Connection con, String tipoDatabase, ISearch ricerca, long idRemoteStore) throws KeystoreException {
 		
 		int idLista = Liste.REMOTE_STORE_KEY;
 		int offset;
@@ -901,7 +902,7 @@ public class RemoteStoreProviderDriverUtils {
 			selectStmt.setLong(1, idRemoteStore);
 			selectRS = selectStmt.executeQuery();
 			while(selectRS.next()) {
-				list.add(readKeyEntry(log, selectRS, jdbcAdapter));
+				list.add(readKeyEntry(selectRS, jdbcAdapter));
 			}
 		}
 		catch(Exception e) {
@@ -953,7 +954,7 @@ public class RemoteStoreProviderDriverUtils {
 		return sqlQueryObject;
 	}
 	
-	private static RemoteStoreKeyEntry readKeyEntry(Logger log, ResultSet selectRS, IJDBCAdapter jdbcAdapter) throws SQLException, UtilsException {
+	private static RemoteStoreKeyEntry readKeyEntry(ResultSet selectRS, IJDBCAdapter jdbcAdapter) throws SQLException, UtilsException {
 		long id = selectRS.getLong(COLUMN_ID);
 		long idStore = selectRS.getLong(COLUMN_ID_REMOTE_STORE);
 		Date dataRegistrazione = selectRS.getTimestamp(COLUMN_DATA_REGISTRAZIONE);
@@ -980,32 +981,50 @@ public class RemoteStoreProviderDriverUtils {
 		rs.setOrganizationDetails(organizationDetails);
 		rs.setClientDataAggiornamento(clientDataAggiornamento);
 		
-		enrichOrganizationInfo(log, organizationDetails, rs);
+		enrichClientInfo(clientDetails, rs);
+		enrichOrganizationInfo(organizationDetails, rs);
 		return rs;
 	}
 	
-	private static void enrichOrganizationInfo(Logger log, String organizationDetails, RemoteStoreKeyEntry rs) {
+
+	private static void enrichClientInfo(String clientDetails, RemoteStoreKeyEntry rs) {
+		if(clientDetails!=null) {
+			ModIPDNDClientConfig config = null;
+			try {
+				config = ModIUtils.getAPIPDNDClientConfig(clientDetails);
+			}catch(Exception e) {
+				// ignore
+			}
+			if(config==null) {
+				return;
+			}
+			
+			rs.setClientIdPdnd(config.getId());
+			rs.setClientConsumerId(config.getOrganization());
+			rs.setClientName(config.getName());
+			rs.setClientDescription(config.getDescription());
+			
+		}
+	}
+	private static void enrichOrganizationInfo(String organizationDetails, RemoteStoreKeyEntry rs) {
 		if(organizationDetails!=null) {
+			ModIPDNDOrganizationConfig config = null;
 			try {
-				rs.setOrganizationName(JsonPathExpressionEngine.extractAndConvertResultAsString(organizationDetails, "$.name", log));
+				config = ModIUtils.getAPIPDNDOrganizationConfig(organizationDetails);
 			}catch(Exception e) {
 				// ignore
 			}
-			try {
-				rs.setOrganizationExternalOrigin(JsonPathExpressionEngine.extractAndConvertResultAsString(organizationDetails, "$.externalId.origin", log));
-			}catch(Exception e) {
-				// ignore
+			if(config==null) {
+				return;
 			}
-			try {
-				rs.setOrganizationExternalId(JsonPathExpressionEngine.extractAndConvertResultAsString(organizationDetails, "$.externalId.id", log));
-			}catch(Exception e) {
-				// ignore
-			}
-			try {
-				rs.setOrganizationCategory(JsonPathExpressionEngine.extractAndConvertResultAsString(organizationDetails, "$.category", log));
-			}catch(Exception e) {
-				// ignore
-			}
+			
+			rs.setOrganizationIdPdnd(config.getId());
+			rs.setOrganizationName(config.getName());
+			rs.setOrganizationExternalOrigin(config.getExternalOrigin());
+			rs.setOrganizationExternalId(config.getExternalId());
+			rs.setOrganizationCategory(config.getCategory());
+			rs.setOrganizationSubunit(config.getSubUnit());
+			
 		}
 	}
 	
@@ -1051,7 +1070,7 @@ public class RemoteStoreProviderDriverUtils {
 		Connection con = null;
 		try {
 			con = driverConfigurazioneDB.getConnection("getRemoteStoreKeyEntry");
-			return getRemoteStoreKeyEntry(log, con, driverConfigurazioneDB.getTipoDB(), idRemoteStoreKey);
+			return getRemoteStoreKeyEntry(con, driverConfigurazioneDB.getTipoDB(), idRemoteStoreKey);
 		}
 		catch(Exception e) {
 			throw new KeystoreException(e.getMessage(),e);
@@ -1061,7 +1080,7 @@ public class RemoteStoreProviderDriverUtils {
 		}
 	}
 	
-	public static RemoteStoreKeyEntry getRemoteStoreKeyEntry(Logger log, Connection con, String tipoDatabase, long idRemoteStoreKey) throws KeystoreException,KeystoreNotFoundException {
+	public static RemoteStoreKeyEntry getRemoteStoreKeyEntry(Connection con, String tipoDatabase, long idRemoteStoreKey) throws KeystoreException,KeystoreNotFoundException {
 		
 		PreparedStatement selectStmt = null;
 		ResultSet selectRS = null;
@@ -1077,7 +1096,7 @@ public class RemoteStoreProviderDriverUtils {
 			selectStmt.setLong(1, idRemoteStoreKey);
 			selectRS = selectStmt.executeQuery();
 			if(selectRS.next()) {
-				return readKeyEntry(log, selectRS, jdbcAdapter);
+				return readKeyEntry(selectRS, jdbcAdapter);
 			}
 			throw new KeystoreNotFoundException("Key with id '"+idRemoteStoreKey+"'"+SUFFIX_NOT_FOUND);
 		}

@@ -76,77 +76,30 @@ public class PDNDConfigUtilities {
 		return l;
 	}
 	
-	private static final String URL_CHAR_DELIMITER = "/"; 
-	private static String buildBaseUrlPDND(RemoteStoreConfig remoteStore, OpenSPCoop2Properties propertiesReader) throws CoreException {
-		
-		String baseUrl = remoteStore.getBaseUrl();
-		
-		// elimino path keys dalla url
-		String pathKeys = propertiesReader.getGestoreChiaviPDNDkeysPath();	
-		if(!pathKeys.startsWith(URL_CHAR_DELIMITER)) {
-			pathKeys = URL_CHAR_DELIMITER + pathKeys;
-		}
-		if(baseUrl.endsWith(pathKeys)) {
-			baseUrl = baseUrl.substring(0,baseUrl.length()-pathKeys.length());
-		}
-		else {
-			if(pathKeys.endsWith(URL_CHAR_DELIMITER)) {
-				// provo senza
-				pathKeys = pathKeys.substring(0, (pathKeys.length()-1));
-			}
-			else {
-				// provo con
-				pathKeys = pathKeys + URL_CHAR_DELIMITER;
-			}
-			if(baseUrl.endsWith(pathKeys)) {
-				baseUrl = baseUrl.substring(0,baseUrl.length()-pathKeys.length());
-			}
-		}
-			
-		return baseUrl;
+	public static String buildUrlCheckEventi(RemoteStoreConfig remoteStore) throws ProtocolException {
+		return ModIUtils.extractInfoFromMetadati(remoteStore.getMetadati(), ModIUtils.API_PDND_EVENTS_KEYS_PATH, "Events keys path");		
 	}
 	
-	public static String buildUrlCheckEventi(RemoteStoreConfig remoteStore, OpenSPCoop2Properties propertiesReader) throws CoreException {
-		
-		String urlCheckEventi = buildBaseUrlPDND(remoteStore, propertiesReader);
-		
-		// aggiungo event keys
-		
-		String pathEventKeys = propertiesReader.getGestoreChiaviPDNDeventsKeysPath();
-		if(!pathEventKeys.startsWith(URL_CHAR_DELIMITER)) {
-			pathEventKeys = URL_CHAR_DELIMITER + pathEventKeys;
-		}
-		return urlCheckEventi + pathEventKeys;
-		
+	private static String buildUrlClientId(RemoteStoreConfig remoteStore, String clientId) throws ProtocolException {
+		String urlClients = ModIUtils.extractInfoFromMetadati(remoteStore.getMetadati(), ModIUtils.API_PDND_CLIENTS_PATH, "Clients path");
+		return buildUrlByResourceId(urlClients, clientId);
 	}
-	
-	private static String buildUrlClientId(RemoteStoreConfig remoteStore, OpenSPCoop2Properties propertiesReader, String clientId) throws CoreException {
-		String path = propertiesReader.getGestoreChiaviPDNDclientsPath();
-		return buildUrlByResourceId(remoteStore, propertiesReader, clientId, path);
+	private static String buildUrlOrganizationId(RemoteStoreConfig remoteStore, String organizationId) throws ProtocolException {
+		String urlOrganizations = ModIUtils.extractInfoFromMetadati(remoteStore.getMetadati(), ModIUtils.API_PDND_ORGANIZATIONS_PATH, "Organizations path");
+		return buildUrlByResourceId(urlOrganizations, organizationId);
 	}
-	private static String buildUrlOrganizationId(RemoteStoreConfig remoteStore, OpenSPCoop2Properties propertiesReader, String organizationId) throws CoreException {
-		String path = propertiesReader.getGestoreChiaviPDNDorganizationsPath();
-		return buildUrlByResourceId(remoteStore, propertiesReader, organizationId, path);
-	}
-	private static String buildUrlByResourceId(RemoteStoreConfig remoteStore, OpenSPCoop2Properties propertiesReader, String valueId, String path) throws CoreException {
+	private static String buildUrlByResourceId(String url, String valueId) throws ProtocolException {
 		
-		String baseUrl = buildBaseUrlPDND(remoteStore, propertiesReader);
-		
-		// aggiungo event keys
-		
-		if(!path.startsWith(URL_CHAR_DELIMITER)) {
-			path = URL_CHAR_DELIMITER + path;
-		}
-		int indexOf = path.indexOf("{");
+		int indexOf = url.indexOf("{");
 		if(indexOf>0) {
-			path = path.substring(0, indexOf);
+			url = url.substring(0, indexOf);
 			try {
-				path = path + TransportUtils.urlEncodePath(valueId, Charset.UTF_8.getValue());
+				url = url + TransportUtils.urlEncodePath(valueId, Charset.UTF_8.getValue());
 			}catch(Exception e) {
-				throw new CoreException(e.getMessage(),e);
+				throw new ProtocolException(e.getMessage(),e);
 			}
 		}
-		return baseUrl + path;
+		return url;
 		
 	}
 	
@@ -156,7 +109,7 @@ public class PDNDConfigUtilities {
 		String responseJson = null;
 		try {
 		
-			String url = buildUrlClientId(remoteStore, propertiesReader, clientId);
+			String url = buildUrlClientId(remoteStore, clientId);
 			
 			byte[] response = ExternalResourceUtils.readResource(url, remoteStore);
 			responseJson = new String(response);
@@ -176,8 +129,8 @@ public class PDNDConfigUtilities {
 		return responseJson;
 	}
 	
-	public static String readOrganizationId(OpenSPCoop2Properties propertiesReader, org.openspcoop2.utils.Map<Object> context, String clientDetails, Logger log) throws CoreException {
-		String jsonPath = propertiesReader.getGestoreChiaviPDNDclientsOrganizationJsonPath();
+	public static String readOrganizationId(RemoteStoreConfig remoteConfig, OpenSPCoop2Properties propertiesReader, org.openspcoop2.utils.Map<Object> context, String clientDetails, Logger log) throws CoreException, ProtocolException {
+		String jsonPath = ModIUtils.extractInfoFromMetadati(remoteConfig.getMetadati(), ModIUtils.API_PDND_CLIENTS_ORGANIZATION_JSON_PATH, "Clients organization json path");
 		boolean readErrorAbortTransaction = abortTransaction(true, propertiesReader, context, log);
 		return readOrganizationId(jsonPath, readErrorAbortTransaction, clientDetails, log);
 	}
@@ -203,7 +156,7 @@ public class PDNDConfigUtilities {
 		String responseJson = null;
 		try {
 		
-			String url = buildUrlOrganizationId(remoteStore, propertiesReader, organizationId);
+			String url = buildUrlOrganizationId(remoteStore, organizationId);
 			
 			byte[] response = ExternalResourceUtils.readResource(url, remoteStore);
 			responseJson = new String(response);

@@ -55,9 +55,18 @@
 		   "properties": {
 		       "name": {"type": "string"},
 		       "category": {"type": "string"},
+		       "subUnit": {"type": "string"},
 		       "external": {"type": "string"},
 		       "externalOrigin": {"type": "string"},
 		       "externalId": {"type": "string"}
+		   },
+		   "additionalProperties": false
+		},
+               "client": {
+		   "type": "object",
+		   "properties": {
+		       "name": {"type": "string"},
+		       "description": {"type": "string"}
 		   },
 		   "additionalProperties": false
 		}

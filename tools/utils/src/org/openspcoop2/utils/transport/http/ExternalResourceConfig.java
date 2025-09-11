@@ -22,6 +22,7 @@ package org.openspcoop2.utils.transport.http;
 import java.security.KeyStore;
 import java.security.cert.CertStore;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,10 +70,13 @@ public class ExternalResourceConfig {
 	
 	// multi-tenant
 	protected Map<String, String> multiTenantBaseUrl;
+	protected Map<String, String> multiTenantBaseUrlFaultCheck; // impostata tramite logica applicativa
 	protected Map<String, String> multiTenantBasicUsername;
 	protected Map<String, String> multiTenantBasicPassword;
 	protected Map<String, Map<String, String>> multiTenantHeaders;
 	protected Map<String, Map<String, String>> multiTenantQueryParameters;
+	// informazioni custom aggiuntive
+	protected Map<String, Map<String, String>> multiTenantMetadati = new HashMap<>(); // impostata tramite logica applicativa
 	
 	// !! NOTA !!: se si aggiunge un field, bisogna gestirlo nel metodo in org.openspcoop2.utils.certificate.remote.RemoteStoreConfig.newInstanceMultitenant()
 	
@@ -229,6 +233,14 @@ public class ExternalResourceConfig {
 		this.multiTenantBaseUrl = multiTenantBaseUrl;
 	}
 	
+	public Map<String, String> getMultiTenantBaseUrlFaultCheck() {
+		return this.multiTenantBaseUrlFaultCheck;
+	}
+
+	public void setMultiTenantBaseUrlFaultCheck(Map<String, String> multiTenantBaseUrlFaultCheck) {
+		this.multiTenantBaseUrlFaultCheck = multiTenantBaseUrlFaultCheck;
+	}
+	
 	public Map<String, String> getMultiTenantBasicUsername() {
 		return this.multiTenantBasicUsername;
 	}
@@ -259,5 +271,13 @@ public class ExternalResourceConfig {
 
 	public void setMultiTenantQueryParameters(Map<String, Map<String, String>> multiTenantQueryParameters) {
 		this.multiTenantQueryParameters = multiTenantQueryParameters;
+	}
+	
+	public Map<String, Map<String, String>> getMultiTenantMetadati() {
+		return this.multiTenantMetadati;
+	}
+
+	public void setMultiTenantMetadati(Map<String, Map<String, String>> multiTenantMetadati) {
+		this.multiTenantMetadati = multiTenantMetadati;
 	}
 }

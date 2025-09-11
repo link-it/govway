@@ -54,6 +54,8 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.csv.Format;
 import org.openspcoop2.utils.csv.Printer;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.slf4j.Logger;
@@ -189,12 +191,13 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 		Date endTraceDate = truncDate(incrementDate(tracingDate));
 		
 		StatistichePdndTracing entry = new StatistichePdndTracing();
-		entry.setDataRegistrazione(new Date());
+		Date now = DateManager.getDate();
+		entry.setDataRegistrazione(now);
 		entry.setDataTracciamento(tracingDate);
 		entry.setCsv(csv);
 		entry.setPddCodice(pddCode);
 		entry.setHistory(0);
-		entry.setMethod(endTraceDate.before(truncDate(new Date())) ? PdndMethods.RECOVER : PdndMethods.SUBMIT);
+		entry.setMethod(endTraceDate.before(truncDate(now)) ? PdndMethods.RECOVER : PdndMethods.SUBMIT);
 		entry.setStatoPdnd(PossibiliStatiPdnd.WAITING);
 
 		
@@ -395,7 +398,17 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 	public void scanDates() throws NotImplementedException, ServiceException {
 		Date nextDate = null;
 		Date lastNoErrorDate = null;
-		Date currDate = truncDate(new Date());
+		
+		int delayMinutes = this.config.getPdndTracciamentoGenerazioneDelayMinutes();
+		Date now = DateManager.getDate();
+		if(delayMinutes>0) {
+			now = new Date(now.getTime()-(delayMinutes*60*1000));
+			if (this.logger.isInfoEnabled())
+				this.logger.info("Attivo offset delay '{}', nuova 'now date' {}", 
+						delayMinutes, DateUtils.getSimpleDateFormatMs().format(now));
+		}
+		
+		Date currDate = truncDate(now);
 		Date lastDate = getLastTracingDate(currDate);
 
 		if (this.logger.isInfoEnabled())
@@ -487,4 +500,5 @@ public class PdndGenerazioneTracciamento implements IStatisticsEngine {
 	private String dataTracciamentoFormat(Date date) {
 		return new SimpleDateFormat(PDND_DATE_FORMAT).format(date);
 	}
+
 }

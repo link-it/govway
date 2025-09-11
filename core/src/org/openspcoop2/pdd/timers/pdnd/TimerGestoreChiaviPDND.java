@@ -62,6 +62,7 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 	private MsgDiagnostico msgDiag = null;
 
 	/** OpenSPCoop2Properties */
+	@SuppressWarnings("unused")
 	private OpenSPCoop2Properties op2Properties = null;
 	
 	private List<PDNDConfig> remoteStores;
@@ -127,7 +128,7 @@ public class TimerGestoreChiaviPDND extends BaseThread{
 			for (PDNDConfig pdndConfig : this.remoteStores) {
 				String remoteStoreName = pdndConfig.getRemoteStoreConfig().getStoreName();
 				try {
-					String urlCheckEventi = PDNDConfigUtilities.buildUrlCheckEventi(pdndConfig.getRemoteStoreConfig(), this.op2Properties);
+					String urlCheckEventi = PDNDConfigUtilities.buildUrlCheckEventi(pdndConfig.getRemoteStoreConfig());
 					if(this.mapUrlCheckEventi==null) {
 						this.mapUrlCheckEventi = new HashMap<>();
 					}

@@ -338,7 +338,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 		
 		RemoteStoreClientDetails clientDetails = null;
 		try {
-			clientDetails = RemoteStoreProviderDriverUtils.getRemoteStoreClientDetails(this.driverConfigurazioneDB, this.remoteStoreId, keyId, this.log, createEntryIfNotExists);
+			clientDetails = RemoteStoreProviderDriverUtils.getRemoteStoreClientDetails(this.driverConfigurazioneDB, this.remoteStoreId, keyId, this.log, createEntryIfNotExists, remoteConfig);
 			if(clientDetails==null) {
 				throw new KeystoreNotFoundException("Client details not found");
 			}
@@ -369,7 +369,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 			String organizationId = null;
 			String organizationJson = null;
 			if(clientJson!=null) {
-				organizationId = PDNDConfigUtilities.readOrganizationId(propertiesReader, context, clientJson, this.log);
+				organizationId = PDNDConfigUtilities.readOrganizationId(remoteConfigUse, propertiesReader, context, clientJson, this.log);
 				if(organizationId!=null) {
 					organizationJson = PDNDConfigUtilities.readOrganizationDetails(remoteConfigUse, propertiesReader, context, organizationId, this.log);
 				}

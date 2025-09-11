@@ -46,10 +46,17 @@ public class RemoteStoreKeyEntry implements Serializable {
 	private String organizationDetails;
 	private Date clientDataAggiornamento;
 	
+	private String clientIdPdnd;
+	private String clientName;
+	private String clientConsumerId;
+	private String clientDescription;
+	
+	private String organizationIdPdnd;
 	private String organizationName;
 	private String organizationExternalOrigin;
 	private String organizationExternalId;
 	private String organizationCategory;
+	private String organizationSubunit;
 	
 	public long getId() {
 		return this.id;
@@ -135,5 +142,45 @@ public class RemoteStoreKeyEntry implements Serializable {
 	}
 	public void setOrganizationCategory(String organizationCategory) {
 		this.organizationCategory = organizationCategory;
+	}
+	
+
+	public String getClientName() {
+		return this.clientName;
+	}
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
+	}
+	public String getClientConsumerId() {
+		return this.clientConsumerId;
+	}
+	public void setClientConsumerId(String clientConsumerId) {
+		this.clientConsumerId = clientConsumerId;
+	}
+	public String getClientDescription() {
+		return this.clientDescription;
+	}
+	public void setClientDescription(String clientDescription) {
+		this.clientDescription = clientDescription;
+	}
+
+	public String getOrganizationSubunit() {
+		return this.organizationSubunit;
+	}
+	public void setOrganizationSubunit(String organizationSubunit) {
+		this.organizationSubunit = organizationSubunit;
+	}
+	
+	public String getClientIdPdnd() {
+		return this.clientIdPdnd;
+	}
+	public void setClientIdPdnd(String clientIdPdnd) {
+		this.clientIdPdnd = clientIdPdnd;
+	}
+	public String getOrganizationIdPdnd() {
+		return this.organizationIdPdnd;
+	}
+	public void setOrganizationIdPdnd(String organizationIdPdnd) {
+		this.organizationIdPdnd = organizationIdPdnd;
 	}
 }

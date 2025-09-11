@@ -299,14 +299,18 @@ public class FileTraceTest {
 	
 	private static final String PDND_CLIENT_ID = "12345678-cccc-4a60-aaaa-12345678f8dd";
 	private static final String PDND_CLIENT_CONSUMER_ID = "12345678-254d-bbbb-aaaa-82e210e12345";
-	private static final String PDND_JSON_CLIENT = "{\"consumerId\":\""+PDND_CLIENT_CONSUMER_ID+"\",\"id\":\""+PDND_CLIENT_ID+"\"}";
+	private static final String PDND_CLIENT_NAME = "client-test-filetrace";
+	private static final String PDND_CLIENT_DESCRIPTION = "client di esempio per test";
+	private static final String PDND_JSON_CLIENT = "{\"consumerId\":\""+PDND_CLIENT_CONSUMER_ID+"\",\"id\":\""+PDND_CLIENT_ID+"\",\"name\": \""+PDND_CLIENT_NAME+"\",\"description\": \""+PDND_CLIENT_DESCRIPTION+"\"}";
 			
-	private static final String PDND_ORGANIZATION_CATEGORY = "Comuni e loro Consorzi e Associazioni";
+	/**private static final String PDND_ORGANIZATION_CATEGORY_V1 = "Comuni e loro Consorzi e Associazioni";*/
+	private static final String PDND_ORGANIZATION_CATEGORY_V2 = "PA";
+	private static final String PDND_ORGANIZATION_SUBUNIT = "AOO";
 	private static final String PDND_ORGANIZATION_NAME = "Comune di Test";
 	private static final String PDND_ORGANIZATION_ID = "12345678-254d-bbbb-aaaa-82e210e12345";
 	private static final String PDND_ORGANIZATIONEXTERNAL_ID = "c001";
 	private static final String PDND_ORGANIZATION_EXTERNAL_ORIGIN = "IPA";
-	private static final String PDND_JSON_ORGANIZATION = "{\"category\":\""+PDND_ORGANIZATION_CATEGORY+"\",\"externalId\":{\"id\":\""+PDND_ORGANIZATIONEXTERNAL_ID+"\",\"origin\":\""+PDND_ORGANIZATION_EXTERNAL_ORIGIN+"\"},\"id\":\""+PDND_ORGANIZATION_ID+"\",\"name\":\""+PDND_ORGANIZATION_NAME+"\"}";
+	private static final String PDND_JSON_ORGANIZATION = "{\"kind\":\""+PDND_ORGANIZATION_CATEGORY_V2+"\",\"subUnitType\":\""+PDND_ORGANIZATION_SUBUNIT+"\",\"externalId\":{\"value\":\""+PDND_ORGANIZATIONEXTERNAL_ID+"\",\"origin\":\""+PDND_ORGANIZATION_EXTERNAL_ORIGIN+"\"},\"id\":\""+PDND_ORGANIZATION_ID+"\",\"name\":\""+PDND_ORGANIZATION_NAME+"\"}";
 	
 	private static final String SERVIZIO_APPLICATIVO_FRUITORE = "AppXde23";
 	
@@ -798,10 +802,10 @@ public class FileTraceTest {
 	private static final String MODI_AUTHORIZATION = TOKEN_INFO+"|"+CERT_CLIENT_INFO;
 	private static final String MODI_INTEGRITY = TOKEN_INFO+"|"+CERT_CLIENT_INFO;
 	private static final String MODI_AUDIT = TOKEN_INFO+"|"+CERT_CLIENT_INFO;
-	private static final String PDND_CLIENT = "\""+PDND_JSON_CLIENT.replace("\"", "\\\"")+"\"|\""+PDND_CLIENT_ID+"\"|\""+PDND_CLIENT_CONSUMER_ID+"\"";
-	private static final String PDND_CLIENT_EMPTY = "\"\"|\"\"|\"\"";
-	private static final String PDND_ORGANIZATION = "\""+PDND_JSON_ORGANIZATION.replace("\"", "\\\"")+"\"|\""+PDND_ORGANIZATION_NAME+"\"|\""+PDND_ORGANIZATION_ID+"\"|\""+PDND_ORGANIZATION_CATEGORY+"\"|\""+PDND_ORGANIZATION_EXTERNAL_ORIGIN+"\"|\""+PDND_ORGANIZATIONEXTERNAL_ID+"\"";
-	private static final String PDND_ORGANIZATION_EMPTY = "\"\"|\"\"|\"\"|\"\"|\"\"|\"\"";
+	private static final String PDND_CLIENT = "\""+PDND_JSON_CLIENT.replace("\"", "\\\"")+"\"|\""+PDND_CLIENT_ID+"\"|\""+PDND_CLIENT_CONSUMER_ID+"\"|\""+PDND_CLIENT_NAME+"\"|\""+PDND_CLIENT_DESCRIPTION+"\"";
+	private static final String PDND_CLIENT_EMPTY = "\"\"|\"\"|\"\"|\"\"|\"\"";
+	private static final String PDND_ORGANIZATION = "\""+PDND_JSON_ORGANIZATION.replace("\"", "\\\"")+"\"|\""+PDND_ORGANIZATION_NAME+"\"|\""+PDND_ORGANIZATION_ID+"\"|\""+PDND_ORGANIZATION_CATEGORY_V2+"\"|\""+PDND_ORGANIZATION_SUBUNIT+"\"|\""+PDND_ORGANIZATION_EXTERNAL_ORIGIN+"\"|\""+PDND_ORGANIZATIONEXTERNAL_ID+"\"";
+	private static final String PDND_ORGANIZATION_EMPTY = "\"\"|\"\"|\"\"|\"\"|\"\"|\"\"|\"\"";
 		
 	private static final String DATE = "\"2020-06-25 13:09:05:825\"|\"2020-06-25 13:09:05:875\"|\"2020-06-25 13:09:05:925\"|\"2020-06-25 13:09:06:025\"|\"2020-06-25 13:09:07:025\"|\"2020-06-25 13:09:07:125\"|\"2020-06-25 13:09:07:225\"|\"2020-06-25 13:09:07:490\"";
 	private static final String LOG_REQUEST_PA_PUT = "\"in\"|\"rest\"|\"erogazione\"|\"esempioCostanteRichiestaErogazione\"|\"UUIDXX\"|\"XX-deXXXRR-deXXXRest\"|\"p1\"|\"p2\"|\""+ENV_VALUE_1+"\"|\""+ENV_VALUE_2+"\"|\"2020-06-25 13:09:05:825\"|\"+0200\"|\"127.0.0.1\"|\"10.113.13.122\"|\"10.113.13.122\"|\"HTTP/1.1\"|\"PUT\"|\"C=IT, O=Prova\"|\"C=IT, O=Prova\"|\"issuerGoogle\"|\"subjectAD5432h43242\"|\"3456ClientId\"|\"\"|\"info@link.it\"|\"issTest\"|\"1650033003\"|\"\"|\"\"|\"AppXde23\"|\"EnteFruitore\"|\""+PDND_ORGANIZATION_NAME+"\"|\"https://prova:8443/govway/in/EnteEsempio/AAASOAPS1/v1/a1?dklejde=ded&adds=deded\"|\"text/xml; charset=\\\"UTF8\\\"\"|\"51\"|\"HEADERS\"|\"Content-XXX=ADEDE\"|\"TipoMessaggio=RICHIESTA_INGRESSO_DUMP_BINARIO\"|\"Content-Type=text/xml; charset=\\\"UTF8\\\"; tipo=inRequest\"|\"v1\"|\"v2a,v2b\"|"+RETRIEVED_TOKEN_INFO+"|"+TLS_CLIENT_INFO+"|"+ACCESS_TOKEN_JWT+"|"+MODI_AUTHORIZATION+"|"+MODI_INTEGRITY+"|"+MODI_AUDIT+"|"+PDND_CLIENT+"|"+PDND_ORGANIZATION+"|"+DATE;

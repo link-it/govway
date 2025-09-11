@@ -145,7 +145,11 @@ public class TransazioneBean extends Transazione{
 		metodiEsclusi.add(new BlackListElement("setPdndOrganizationName", String.class));
 		metodiEsclusi.add(new BlackListElement("setPdndOrganizationExternalId", String.class));
 		metodiEsclusi.add(new BlackListElement("setPdndOrganizationCategory", String.class));
+		metodiEsclusi.add(new BlackListElement("setPdndOrganizationSubUnit", String.class));
 		metodiEsclusi.add(new BlackListElement("setPdndOrganizationConsumerId", String.class));
+		metodiEsclusi.add(new BlackListElement("setPdndClient", String.class));
+		metodiEsclusi.add(new BlackListElement("setPdndClientName", String.class));
+		metodiEsclusi.add(new BlackListElement("setPdndClientDescription", String.class));
 		metodiEsclusi.add(new BlackListElement("setEventiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setGruppiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setOperazioneLabel", String.class));
@@ -735,6 +739,38 @@ public class TransazioneBean extends Transazione{
 		return this.pdndOrganizationCategory;
 	}
 	
+	private String pdndOrganizationSubUnit;
+	public void setPdndOrganizationSubUnit(String pdndOrganizationSubUnit) {
+		this.pdndOrganizationSubUnit = pdndOrganizationSubUnit;
+	}
+	public String getPdndOrganizationSubUnit() {
+		if(this.pdndOrganizationSubUnit!=null) {
+			
+			boolean esaminaTokenInfo = org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocollo()) &&
+					(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE.equals(this.pdndOrganizationSubUnit) || StringUtils.isEmpty(this.pdndOrganizationSubUnit));
+			
+			if(esaminaTokenInfo &&
+				this.tokenInfo!=null && StringUtils.isNotEmpty(this.tokenInfo)) {
+				try {
+					Logger log = LoggerManager.getPddMonitorCoreLogger();
+					this.pdndOrganizationSubUnit = PDNDTokenInfo.readOrganizationSubUnitFromTokenInfo(log, this.tokenInfo);
+				}catch(Exception e) {
+					// ignore
+				}
+			}
+			
+			if(StringUtils.isEmpty(this.pdndOrganizationSubUnit)) {
+				return null;
+			}
+			return this.pdndOrganizationSubUnit;
+			
+		}
+		else {
+			this.pdndOrganizationSubUnit = "";
+		}
+		return this.pdndOrganizationSubUnit;
+	}
+	
 	private String pdndOrganizationConsumerId;
 	public void setPdndOrganizationConsumerId(String pdndOrganizationConsumerId) {
 		this.pdndOrganizationConsumerId = pdndOrganizationConsumerId;
@@ -774,7 +810,7 @@ public class TransazioneBean extends Transazione{
 		}
 	}
 	
-	public void setPdndOrganization(String pdndOrganizationCategory) {
+	public void setPdndOrganization(String pdndOrganization) {
 		// nop
 	}
 	public String getPdndOrganization() {
@@ -785,6 +821,17 @@ public class TransazioneBean extends Transazione{
 			sb.append(name);
 		}
 		
+		addPdndOrganizationCategory(sb);
+		
+		addPdndOrganizationSubUnit(sb);
+		
+		addPdndOrganizationExternalId(sb);
+		
+		addPdndOrganizationConsumerId(sb);
+		
+		return sb.length()>0 ? sb.toString() : null;
+	}
+	private void addPdndOrganizationCategory(StringBuilder sb) {
 		String cat = getPdndOrganizationCategory();
 		if(cat!=null && StringUtils.isNotEmpty(cat)) {
 			if(sb.length()>0){
@@ -793,7 +840,18 @@ public class TransazioneBean extends Transazione{
 			sb.append("category: ");
 			sb.append(cat);
 		}
-		
+	}
+	private void addPdndOrganizationSubUnit(StringBuilder sb) {
+		String subUnit = getPdndOrganizationSubUnit();
+		if(subUnit!=null && StringUtils.isNotEmpty(subUnit)) {
+			if(sb.length()>0){
+				sb.append("<BR/>");
+			}
+			sb.append("subUnit: ");
+			sb.append(subUnit);
+		}
+	}
+	private void addPdndOrganizationExternalId(StringBuilder sb) {
 		String extId = getPdndOrganizationExternalId();
 		if(extId!=null && StringUtils.isNotEmpty(extId)) {
 			if(sb.length()>0){
@@ -802,7 +860,8 @@ public class TransazioneBean extends Transazione{
 			sb.append("externalId: ");
 			sb.append(extId);
 		}
-		
+	}
+	private void addPdndOrganizationConsumerId(StringBuilder sb) {
 		String consumerId = getPdndOrganizationConsumerId();
 		if(consumerId!=null && StringUtils.isNotEmpty(consumerId)) {
 			if(sb.length()>0){
@@ -811,8 +870,101 @@ public class TransazioneBean extends Transazione{
 			sb.append("consumerId: ");
 			sb.append(consumerId);
 		}
+	}
+	
+	
+	
+	private String pdndClientName;
+	public void setPdndClientName(String pdndClientName) {
+		this.pdndClientName = pdndClientName;
+	}
+	public String getPdndClientName() {
+		if(this.pdndClientName!=null) {
+			
+			boolean esaminaTokenInfo = org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocollo()) &&
+					(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE.equals(this.pdndClientName) || StringUtils.isEmpty(this.pdndClientName));
+			
+			if(esaminaTokenInfo &&
+				this.tokenInfo!=null && StringUtils.isNotEmpty(this.tokenInfo)) {
+				try {
+					Logger log = LoggerManager.getPddMonitorCoreLogger();
+					this.pdndClientName = PDNDTokenInfo.readClientNameFromTokenInfo(log, this.tokenInfo);
+				}catch(Exception e) {
+					// ignore
+				}
+			}
+			
+			if(StringUtils.isEmpty(this.pdndClientName)) {
+				return null;
+			}
+			return this.pdndClientName;
+			
+		}
+		else {
+			this.pdndClientName = "";
+		}
+		return this.pdndClientName;
+	}
+	
+	
+	private String pdndClientDescription;
+	public void setPdndClientDescription(String pdndClientDescription) {
+		this.pdndClientDescription = pdndClientDescription;
+	}
+	public String getPdndClientDescription() {
+		if(this.pdndClientDescription!=null) {
+			
+			boolean esaminaTokenInfo = org.openspcoop2.protocol.engine.constants.Costanti.MODIPA_PROTOCOL_NAME.equals(this.getProtocollo()) &&
+					(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE.equals(this.pdndClientDescription) || StringUtils.isEmpty(this.pdndClientDescription));
+			
+			if(esaminaTokenInfo &&
+				this.tokenInfo!=null && StringUtils.isNotEmpty(this.tokenInfo)) {
+				try {
+					Logger log = LoggerManager.getPddMonitorCoreLogger();
+					this.pdndClientDescription = PDNDTokenInfo.readClientDescriptionFromTokenInfo(log, this.tokenInfo);
+				}catch(Exception e) {
+					// ignore
+				}
+			}
+			
+			if(StringUtils.isEmpty(this.pdndClientDescription)) {
+				return null;
+			}
+			return this.pdndClientDescription;
+			
+		}
+		else {
+			this.pdndClientDescription = "";
+		}
+		return this.pdndClientDescription;
+	}
+	
+	
+	public void setPdndClient(String pdndClient) {
+		// nop
+	}
+	public String getPdndClient() {
+		StringBuilder sb = new StringBuilder();
 		
+		String name = getPdndClientName();
+		if(name!=null && StringUtils.isNotEmpty(name)) {
+			sb.append(name);
+		}
+		
+		addPdndClientDescription(sb);
+				
 		return sb.length()>0 ? sb.toString() : null;
+	}
+	
+	private void addPdndClientDescription(StringBuilder sb) {
+		String description = getPdndClientDescription();
+		if(description!=null && StringUtils.isNotEmpty(description)) {
+			if(sb.length()>0){
+				sb.append("<BR/>");
+			}
+			/**sb.append("descrizione: ");*/
+			sb.append(description);
+		}
 	}
 	
 	@Override

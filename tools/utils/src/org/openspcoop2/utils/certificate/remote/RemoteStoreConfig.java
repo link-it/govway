@@ -20,6 +20,8 @@
 package org.openspcoop2.utils.certificate.remote;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeyUtils;
@@ -40,6 +42,7 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 	private String tokenPolicy; 
 	
 	private String baseUrl;
+	private String baseUrlFaultCheck; // url alternativa
 	
 	private boolean multitenant;
 	private String baseUrlMultitenantDefaultString;
@@ -49,6 +52,13 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 	private RemoteKeyIdMode idMode;
 	private String parameterName; // in caso di query o parameter
 	private String keyAlgorithm = KeyUtils.ALGO_RSA;
+	
+	// per interpretare la risposta
+	private String responseJsonPath;
+	private String responseJsonPathFaultCheck; 
+	
+	// informazioni custom aggiuntive
+	private Map<String, String> metadati = new HashMap<>();
 	
 	public RemoteStoreConfig(String storeName) {
 		super();
@@ -77,6 +87,12 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 		else {
 			cloned.baseUrl = RemoteStoreConfigMultiTenantUtils.getMultitenant(this.multiTenantBaseUrl, tenant, cloned.baseUrl);
 		}
+		
+		cloned.baseUrlFaultCheck = this.baseUrlFaultCheck!=null ? (this.baseUrlFaultCheck+"") : null;
+		cloned.baseUrlFaultCheck = RemoteStoreConfigMultiTenantUtils.getMultitenant(this.multiTenantBaseUrlFaultCheck, tenant, cloned.baseUrlFaultCheck);
+		
+		cloned.metadati = RemoteStoreConfigMultiTenantUtils.newMapInstance(this.metadati);
+		cloned.metadati = RemoteStoreConfigMultiTenantUtils.getMultitenant(this.multiTenantMetadati, tenant, cloned.metadati);
 		
 		cloned.idMode = this.idMode;
 		cloned.parameterName = this.parameterName!=null ? (this.parameterName+"") : null;
@@ -223,5 +239,37 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 
 	public void setBaseUrlMultitenantTenantString(String baseUrlMultitenantTenantString) {
 		this.baseUrlMultitenantTenantString = baseUrlMultitenantTenantString;
+	}
+	
+	public String getBaseUrlFaultCheck() {
+		return this.baseUrlFaultCheck;
+	}
+
+	public void setBaseUrlFaultCheck(String baseUrlFaultCheck) {
+		this.baseUrlFaultCheck = baseUrlFaultCheck;
+	}
+	
+	public String getResponseJsonPath() {
+		return this.responseJsonPath;
+	}
+
+	public void setResponseJsonPath(String responseJsonPath) {
+		this.responseJsonPath = responseJsonPath;
+	}
+
+	public String getResponseJsonPathFaultCheck() {
+		return this.responseJsonPathFaultCheck;
+	}
+
+	public void setResponseJsonPathFaultCheck(String responseJsonPathFaultCheck) {
+		this.responseJsonPathFaultCheck = responseJsonPathFaultCheck;
+	}
+	
+	public Map<String, String> getMetadati() {
+		return this.metadati;
+	}
+
+	public void setMetadati(Map<String, String> metadati) {
+		this.metadati = metadati;
 	}
 }

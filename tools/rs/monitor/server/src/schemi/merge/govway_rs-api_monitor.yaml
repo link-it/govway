@@ -1718,6 +1718,8 @@ components:
             example: 20
           pdnd_organization:
             $ref: "#/components/schemas/PDNDOrganizationInfo"
+          pdnd_client:
+            $ref: "#/components/schemas/PDNDClientInfo"
           richiedente:
             type: "string"
           dettaglio_errore:
@@ -1734,6 +1736,8 @@ components:
           type: "string"
         categoria:
           type: "string"
+        sub_unit:
+          type: "string"
         external_id:
           $ref: "#/components/schemas/PDNDOrganizationExternalId"
         consumer_id:
@@ -1744,6 +1748,15 @@ components:
         codice:
           type: "string"
         origine:
+          type: "string"
+    PDNDClientInfo:
+      type: "object"
+      properties:
+        nome:
+          type: "string"
+        descrizione:
+          type: "string"
+        client_id:
           type: "string"
     ListaEventi:
       type: "object"

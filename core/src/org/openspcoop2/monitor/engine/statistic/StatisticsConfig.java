@@ -90,6 +90,7 @@ public class StatisticsConfig {
 	private List<Integer> pdndTracciamentoPendingCheck = null;
 	private boolean pdndTracciamentoErogazioniEnabled = true;
 	private boolean pdndTracciamentoFruizioniEnabled = true;
+	private int pdndTracciamentoGenerazioneDelayMinutes = 0;
 	
 	private static final String FALSE = "false";
 	
@@ -159,6 +160,7 @@ public class StatisticsConfig {
 			    this.pdndTracciamentoSoggettiDisabled = parsePdndTracingSoggettiDisabled(props);
 			    this.pdndTracciamentoErogazioniEnabled = parsePdndTracingErogazioniEnabled(props);
 			    this.pdndTracciamentoFruizioniEnabled = parsePdndTracingFruizioniEnabled(props);
+			    this.pdndTracciamentoGenerazioneDelayMinutes = parsePdndTracingGenerazioneDelayMinutes(props);
 			    this.pdndTracciamentoPendingCheck = parsePdndTracciamentoPendingCheck(props);
 			    this.pdndTracciamentoMaxAttempt = parsePdndTracciamentoMaxAttempts(props);
 			    
@@ -217,6 +219,12 @@ public class StatisticsConfig {
 	private static boolean parsePdndTracingFruizioniEnabled(MonitorProperties props) throws UtilsException {
 		String propId = CostantiConfigurazione.PDND_PUBBLICAZIONE_TRACCIAMENTO_FRUIZIONI_ENABLED;
 		return "true".equals(props.getProperty(propId, "true", true));
+	}
+	
+	private static int parsePdndTracingGenerazioneDelayMinutes(MonitorProperties props) throws UtilsException {
+		String propId = CostantiConfigurazione.PDND_GENERAZIONE_TRACCIAMENTO_DELAY_MINUTES;
+		String provValue = props.getProperty(propId, "0", true);
+		return Integer.valueOf(provValue);
 	}
 	
 	private static HttpRequestConfig parsePdndTracingRequestConfig(MonitorProperties props) {
@@ -469,5 +477,13 @@ public class StatisticsConfig {
 
 	public void setPdndTracciamentoFruizioniEnabled(boolean pdndTracingFruizioniEnabled) {
 		this.pdndTracciamentoFruizioniEnabled = pdndTracingFruizioniEnabled;
+	}
+	
+	public int getPdndTracciamentoGenerazioneDelayMinutes() {
+		return this.pdndTracciamentoGenerazioneDelayMinutes;
+	}
+
+	public void setPdndTracciamentoGenerazioneDelayMinutes(int pdndTracciamentoGenerazioneDelayMinutes) {
+		this.pdndTracciamentoGenerazioneDelayMinutes = pdndTracciamentoGenerazioneDelayMinutes;
 	}
 }

@@ -20,7 +20,6 @@
 
 package org.openspcoop2.protocol.utils;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,10 +39,12 @@ import org.openspcoop2.core.registry.Proprieta;
 import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.ServiceBinding;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.utils.RegistroServiziUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.ModIPDNDClientConfig;
+import org.openspcoop2.protocol.sdk.ModIPDNDOrganizationConfig;
+import org.openspcoop2.protocol.sdk.ModIPropertiesUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.MapKey;
 import org.openspcoop2.utils.certificate.KeystoreParams;
@@ -125,10 +126,28 @@ public class ModIUtils {
 	public static final String API_IMPL_INFO_DESCRIPTOR_ID = "info-descriptor-id";
 	public static final String API_IMPL_INFO_SIGNAL_HUB = "info-signal-hub";
 	
-		
-	
 	// COSTANTI SERVIZIO
 	public static final String HSM = "hsm";
+	
+	// COSTANTI API PDND
+	public static final String API_PDND_EVENTS_KEYS_PATH = "api-pdnd-eventsKeys-path";
+	public static final String API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID = "api-pdnd-eventsKeys-parameterLastEventId";
+	public static final String API_PDND_EVENTS_KEYS_PARAMETER_LIMIT = "api-pdnd-eventsKeys-parameterLimit";
+	public static final String API_PDND_CLIENTS_PATH = "api-pdnd-clients-path";
+	public static final String API_PDND_CLIENTS_ORGANIZATION_JSON_PATH = "api-pdnd-clients-organizationJsonPath";
+	public static final String API_PDND_ORGANIZATIONS_PATH = "api-pdnd-organizations-path";
+	public static String extractInfoFromMetadati(Map<String, String> metadati, String key, String description) throws ProtocolException{
+		if(metadati==null || metadati.isEmpty() || !metadati.containsKey(key)) {
+			throw new ProtocolException(description+" not found"); 
+		}
+		String v = metadati.get(key);
+		if(v==null || StringUtils.isEmpty(v.trim())) {
+			throw new ProtocolException(description+" undefined"); 
+		}
+		return v;
+	}
+	
+	
 	
 	public static Map<String, String> configToMap(AccordoServizioParteComune aspc, AccordoServizioParteSpecifica asps,
 			String urlInvocazione, 
@@ -1155,68 +1174,59 @@ public class ModIUtils {
 	}
 	
 	// NOTA: tutti i metodi seguenti devono essere riportati in org.openspcoop2.protocol.engine.utils.ModITestUtils
-	public static final String CLASS_MODIPA_PROPERTIES = "org.openspcoop2.protocol.modipa.config.ModIProperties";
-	private static final String CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD = "getInstance";
+	public static final String CLASS_MODIPA_PROPERTIES = ModIPropertiesUtils.CLASS_MODIPA_PROPERTIES;
 	
 	public static Object getModiProperties() throws ProtocolException {
-		try {
-			Class<?> modiPropertiesClass = Class.forName(CLASS_MODIPA_PROPERTIES);
-			Method mGetInstance = modiPropertiesClass.getMethod(CLASS_MODIPA_PROPERTIES_GET_INSTANCE_METHOD);
-			return mGetInstance.invoke(null);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.getModiProperties();
 	}
 	
 	public static String getHeaderModI() throws ProtocolException {
-		try {
-			Object instance = getModiProperties();
-			Method mGetRestSecurityTokenHeaderModI = instance.getClass().getMethod("getRestSecurityTokenHeaderModI");
-			return (String) mGetRestSecurityTokenHeaderModI.invoke(instance);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.getHeaderModI();
 	}
 	
 	public static boolean isTokenOAuthUseJtiIntegrityAsMessageId() throws ProtocolException {
-		try {
-			Object instance = getModiProperties();
-			Method mGetIsTokenOAuthUseJtiIntegrityAsMessageId = instance.getClass().getMethod("isTokenOAuthUseJtiIntegrityAsMessageId");
-			return (Boolean) mGetIsTokenOAuthUseJtiIntegrityAsMessageId.invoke(instance);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.isTokenOAuthUseJtiIntegrityAsMessageId();
 	}
 	
+	
+	public static ModIPDNDClientConfig getAPIPDNDClientConfig() throws ProtocolException {
+		return ModIPropertiesUtils.getAPIPDNDClientConfig();
+	}
+	public static ModIPDNDClientConfig getAPIPDNDClientConfig(Logger log) throws ProtocolException {
+		return ModIPropertiesUtils.getAPIPDNDClientConfig(log);
+	}
+	public static ModIPDNDClientConfig getAPIPDNDClientConfig(String details) throws ProtocolException {
+		return ModIPropertiesUtils.getAPIPDNDClientConfig(details);
+	}
+	public static ModIPDNDClientConfig getAPIPDNDClientConfig(String details, Logger log) throws ProtocolException {
+		return ModIPropertiesUtils.getAPIPDNDClientConfig(details, log);
+	}
+	
+	public static ModIPDNDOrganizationConfig getAPIPDNDOrganizationConfig() throws ProtocolException {
+		return ModIPropertiesUtils.getAPIPDNDOrganizationConfig();
+	}
+	public static ModIPDNDOrganizationConfig getAPIPDNDOrganizationConfig(Logger log) throws ProtocolException {
+		return ModIPropertiesUtils.getAPIPDNDOrganizationConfig(log);
+	}
+	public static ModIPDNDOrganizationConfig getAPIPDNDOrganizationConfig(String details) throws ProtocolException {
+		return ModIPropertiesUtils.getAPIPDNDOrganizationConfig(details);
+	}
+	public static ModIPDNDOrganizationConfig getAPIPDNDOrganizationConfig(String details, Logger log) throws ProtocolException {
+		return ModIPropertiesUtils.getAPIPDNDOrganizationConfig(details, log);
+	}
+
+	
+	
 	public static IDAccordo buildSignalHubPushIdAPI(IDSoggetto idSoggettoDefault) throws ProtocolException {
-		try {
-			Object instance = getModiProperties();
-			Method mGetSignalHubApiName = instance.getClass().getMethod("getSignalHubApiName");
-			Method mGetSignalHubApiVersion = instance.getClass().getMethod("getSignalHubApiVersion");
-			return IDAccordoFactory.getInstance().getIDAccordoFromValues((String) mGetSignalHubApiName.invoke(instance), idSoggettoDefault, (Integer) mGetSignalHubApiVersion.invoke(instance));
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.buildSignalHubPushIdAPI(idSoggettoDefault);
 	}
 	
 	public static boolean isSignalHubEnabled() throws ProtocolException {
-		try {
-			Object instance = getModiProperties();
-			Method mIsSignalHubEnabled = instance.getClass().getMethod("isSignalHubEnabled");
-			return (Boolean) mIsSignalHubEnabled.invoke(instance);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.isSignalHubEnabled();
 	}
 	
 	public static boolean isTracingPDNDEnabled() throws ProtocolException {
-		try {
-			Object instance = getModiProperties();
-			Method mIsTracingPDNDEnabled = instance.getClass().getMethod("isTracingPDNDEnabled");
-			return (Boolean) mIsTracingPDNDEnabled.invoke(instance);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.isTracingPDNDEnabled();
 	}
 	public static boolean isTracingPDNDEnabledSafe() {
 		try {
@@ -1225,56 +1235,25 @@ public class ModIUtils {
 			return false;
 		}
 	}
-	
-	@SuppressWarnings("unchecked")
+		
 	public static List<RemoteStoreConfig> getRemoteStoreConfig() throws ProtocolException {
-		try {
-			Object instance = getModiProperties();
-			Method mGetRemoteStoreConfig = instance.getClass().getMethod("getRemoteStoreConfig");
-			return (List<RemoteStoreConfig>) mGetRemoteStoreConfig.invoke(instance);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.getRemoteStoreConfig();
 	}
 	
 	public static RemoteKeyType getRemoteKeyType(String name) throws ProtocolException {
-		try {
-			Object instance = getModiProperties();
-			Method mGetRemoteKey = instance.getClass().getMethod("getRemoteKeyType",String.class);
-			return (RemoteKeyType) mGetRemoteKey.invoke(instance,name);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.getRemoteKeyType(name);
 	}
 	
 	public static KeystoreParams getSicurezzaMessaggioCertificatiTrustStore() throws ProtocolException {
-		try {
-			Object instance = getModiProperties();
-			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiTrustStore");
-			return (KeystoreParams) mGet.invoke(instance);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.getSicurezzaMessaggioCertificatiTrustStore();
 	}
 	
 	public static KeystoreParams getSicurezzaMessaggioSslTrustStore() throws ProtocolException {
-		try {
-			Object instance = getModiProperties();
-			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioSslTrustStore");
-			return (KeystoreParams) mGet.invoke(instance);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.getSicurezzaMessaggioSslTrustStore();
 	}
 	
 	public static KeystoreParams getSicurezzaMessaggioCertificatiKeyStore() throws ProtocolException {
-		try {
-			Object instance = getModiProperties();
-			Method mGet = instance.getClass().getMethod("getSicurezzaMessaggioCertificatiKeyStore");
-			return (KeystoreParams) mGet.invoke(instance);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
+		return ModIPropertiesUtils.getSicurezzaMessaggioCertificatiKeyStore();
 	}
 	
 	public static KeystoreParams getApplicativoKeystoreParams(List<org.openspcoop2.core.config.ProtocolProperty> protocolPropertyList) {

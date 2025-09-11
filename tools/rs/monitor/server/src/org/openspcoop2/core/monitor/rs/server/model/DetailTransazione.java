@@ -42,6 +42,9 @@ public class DetailTransazione extends TransazioneExt {
   private PDNDOrganizationInfo pdndOrganization = null;
   
   @Schema(description = "")
+  private PDNDClientInfo pdndClient = null;
+  
+  @Schema(description = "")
   private String richiedente = null;
   
   @Schema(description = "")
@@ -124,6 +127,25 @@ public class DetailTransazione extends TransazioneExt {
   }
 
  /**
+   * Get pdndClient
+   * @return pdndClient
+  **/
+  @JsonProperty("pdnd_client")
+  @Valid
+  public PDNDClientInfo getPdndClient() {
+    return this.pdndClient;
+  }
+
+  public void setPdndClient(PDNDClientInfo pdndClient) {
+    this.pdndClient = pdndClient;
+  }
+
+  public DetailTransazione pdndClient(PDNDClientInfo pdndClient) {
+    this.pdndClient = pdndClient;
+    return this;
+  }
+
+ /**
    * Get richiedente
    * @return richiedente
   **/
@@ -171,6 +193,7 @@ public class DetailTransazione extends TransazioneExt {
     sb.append("    latenzaServizio: ").append(DetailTransazione.toIndentedString(this.latenzaServizio)).append("\n");
     sb.append("    latenzaTotale: ").append(DetailTransazione.toIndentedString(this.latenzaTotale)).append("\n");
     sb.append("    pdndOrganization: ").append(DetailTransazione.toIndentedString(this.pdndOrganization)).append("\n");
+    sb.append("    pdndClient: ").append(DetailTransazione.toIndentedString(this.pdndClient)).append("\n");
     sb.append("    richiedente: ").append(DetailTransazione.toIndentedString(this.richiedente)).append("\n");
     sb.append("    dettaglioErrore: ").append(DetailTransazione.toIndentedString(this.dettaglioErrore)).append("\n");
     sb.append("}");

@@ -490,7 +490,9 @@ Di seguito le indicazioni su come accedere alle informazioni riguardanti il clie
 
 - pdndOrganizationId: identificativo PDND (uuid) dell'organizzazione a cui appartiene il client; 
 
-- pdndOrganizationCategory: categoria in cui è stata classificata dalla PDND l'organizzazione a cui appartiene il client; 
+- pdndOrganizationCategory: categoria in cui è stata classificata dalla PDND l'organizzazione a cui appartiene il client (si tratta del valore del claim 'category' o del claim 'kind' rispettivamente per la v1 o la v2 delle api interop); 
+
+- pdndOrganizationSubUnit: (disponibile solo con api interop v2) unità organizzativa dell'organizzazione a cui appartiene il client; 
 
 - pdndOrganizationExternalId e pdndOrganizationExternalOrigin: rispettivamente identificativo dell'organizzazione e tipo di repository esterno a cui l'identificativo appartiene; 
 
@@ -499,6 +501,10 @@ Di seguito le indicazioni su come accedere alle informazioni riguardanti il clie
 - pdndClientId: identificativo PDND (uuid) del client; 
 
 - pdndClientConsumerId: identificativo PDND (uuid) dell'organizzazione a cui appartiene il client; 
+
+- pdndClientName: (disponibile solo con api interop v2) nome associato al client sulla PNDD; 
+
+- pdndClientDescription: (disponibile solo con api interop v2) descrizione associata al client sulla PNDD; 
 
 - pdndClientJson: consente di ottenere la risposta json ottenuta dalla PDND invocando l'operazione 'GET /clients/{clientId}'; 
 

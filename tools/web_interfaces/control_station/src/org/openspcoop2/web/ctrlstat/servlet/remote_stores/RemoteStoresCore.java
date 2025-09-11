@@ -59,7 +59,7 @@ public class RemoteStoresCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverConfigurazioneDB(con, null, this.tipoDB);
-			return RemoteStoreProviderDriverUtils.getRemoteStoreKeyEntries(log, driver, ricerca, idRemoteStore);
+			return RemoteStoreProviderDriverUtils.getRemoteStoreKeyEntries(driver, ricerca, idRemoteStore);
 		} catch (DriverConfigurazioneException | KeystoreException e) {
 			ControlStationCore.logError(getPrefixError(nomeMetodo,  e), e);
 			throw new DriverControlStationException(getPrefixError(nomeMetodo,  e),e);

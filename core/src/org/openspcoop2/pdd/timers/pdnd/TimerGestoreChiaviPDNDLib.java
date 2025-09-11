@@ -46,6 +46,7 @@ import org.openspcoop2.pdd.timers.TimerLockNotAvailableException;
 import org.openspcoop2.pdd.timers.TimerMonitoraggioRisorseThread;
 import org.openspcoop2.pdd.timers.TimerState;
 import org.openspcoop2.pdd.timers.TipoLock;
+import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -152,8 +153,8 @@ public class TimerGestoreChiaviPDNDLib {
 		this.timeoutSeconds = timeoutSeconds;
 		
 		try {
-			this.parameterLastEventId = this.op2Properties.getGestoreChiaviPDNDeventsKeysParameterLastEventId();
-			this.parameterLimit = this.op2Properties.getGestoreChiaviPDNDeventsKeysParameterLimit();
+			this.parameterLastEventId = ModIUtils.extractInfoFromMetadati(this.remoteStore.getMetadati(), ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LASTEVENTID, "Events keys last eventid parameter");
+			this.parameterLimit = ModIUtils.extractInfoFromMetadati(this.remoteStore.getMetadati(), ModIUtils.API_PDND_EVENTS_KEYS_PARAMETER_LIMIT, "Events keys limit parameter");
 			this.limit = this.op2Properties.getGestoreChiaviPDNDeventsKeysLimit();
 		}catch(Exception e) {
 			throw new TimerException(e.getMessage(),e);
