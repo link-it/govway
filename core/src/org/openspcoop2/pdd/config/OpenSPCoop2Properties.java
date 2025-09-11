@@ -2692,6 +2692,7 @@ public class OpenSPCoop2Properties {
 				this.getStatistichePdndTracciamentoMaxAttempts();
 				this.getStatistichePdndTracciamentoPendingCheck();
 				this.getStatistichePdndTracciamentoPubblicazioneTimerIntervalSeconds();
+				this.getStatistichePdndTracciamentoGenerazioneDelayMinutes();
 				this.getStatistichePdndTracciamentoSoggettiEnabled();
 				
 			}
@@ -2704,10 +2705,7 @@ public class OpenSPCoop2Properties {
 				getGestoreChiaviPDNDRemoteStoreName();
 				isGestoreChiaviPDNDEventiCheckAllStores();
 				getGestoreChiaviPDNDkeysMaxLifeMinutes();
-				getGestoreChiaviPDNDkeysPath();
-				getGestoreChiaviPDNDeventsKeysPath();
-				getGestoreChiaviPDNDeventsKeysParameterLastEventId();
-				getGestoreChiaviPDNDeventsKeysParameterLimit();
+				// other
 				getGestoreChiaviPDNDeventsKeysLimit();
 				getGestoreChiaviPDNDeventsKeysTimerIntervalloSecondi();
 				getGestoreChiaviPDNDcacheKeysTimerIntervalloSecondi();
@@ -2715,9 +2713,6 @@ public class OpenSPCoop2Properties {
 				getGestoreChiaviPDNDTimerLockIdleTime();
 				getGestoreChiaviPDNDTimerLockAttesaAttiva();
 				getGestoreChiaviPDNDTimerLockCheckInterval();
-				getGestoreChiaviPDNDclientsPath();
-				getGestoreChiaviPDNDclientsOrganizationJsonPath();
-				getGestoreChiaviPDNDorganizationsPath();
 				
 				isGestoreChiaviPDNDclientInfoEnabled();
 				getGestoreChiaviPDNDclientInfoMaxLifeMinutes();
@@ -33730,6 +33725,29 @@ public class OpenSPCoop2Properties {
 		return this.getStatistichePdndTracciamentoPendingCheck;
 	}
 	
+	private Integer getStatistichePdndTracciamentoGenerazioneDelayMinutes = null;
+	public int getStatistichePdndTracciamentoGenerazioneDelayMinutes() throws CoreException {	
+		if(this.getStatistichePdndTracciamentoGenerazioneDelayMinutes==null){
+			String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.generazione.delayMinutes";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(key);
+				if(name==null){
+					name="0";
+				}
+				else {
+					name = name.trim();
+				}
+				this.getStatistichePdndTracciamentoGenerazioneDelayMinutes = Integer.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '" + key +"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getStatistichePdndTracciamentoGenerazioneDelayMinutes;
+	}
+	
 	private Boolean isStatistichePdndTracciamentoErogazioniEnabled = null;
 	public boolean isStatistichePdndTracciamentoErogazioniEnabled() {	
 		String key = "org.openspcoop2.pdd.statistiche.pdnd.tracciamento.erogazioni.enabled";
@@ -33974,90 +33992,7 @@ public class OpenSPCoop2Properties {
 
 		return this.getGestoreChiaviPDNDkeysMaxLifeMinutes;
 	}
-		
-	private String getGestoreChiaviPDNDkeysPath = null;
-	public String getGestoreChiaviPDNDkeysPath() throws CoreException {	
-		if(this.getGestoreChiaviPDNDkeysPath==null){
-			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.keys.path";
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name==null){
-					throw new CoreException("Proprieta' non impostata");
-				}
-				name = name.trim();
-				this.getGestoreChiaviPDNDkeysPath = name;
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new CoreException(e.getMessage(),e);
-			}    
-		}
-
-		return this.getGestoreChiaviPDNDkeysPath;
-	}
 	
-	private String getGestoreChiaviPDNDeventsKeysPath = null;
-	public String getGestoreChiaviPDNDeventsKeysPath() throws CoreException {	
-		if(this.getGestoreChiaviPDNDeventsKeysPath==null){
-			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.path";
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name==null){
-					throw new CoreException("Proprieta' non impostata");
-				}
-				name = name.trim();
-				this.getGestoreChiaviPDNDeventsKeysPath = name;
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new CoreException(e.getMessage(),e);
-			}    
-		}
-
-		return this.getGestoreChiaviPDNDeventsKeysPath;
-	}
-	
-	private String getGestoreChiaviPDNDeventsKeysParameterLastEventId = null;
-	public String getGestoreChiaviPDNDeventsKeysParameterLastEventId() throws CoreException {	
-		if(this.getGestoreChiaviPDNDeventsKeysParameterLastEventId==null){
-			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.parameter.lastEventId";
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name==null){
-					throw new CoreException("Proprieta' non impostata");
-				}
-				name = name.trim();
-				this.getGestoreChiaviPDNDeventsKeysParameterLastEventId = name;
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new CoreException(e.getMessage(),e);
-			}    
-		}
-
-		return this.getGestoreChiaviPDNDeventsKeysParameterLastEventId;
-	}
-	
-	private String getGestoreChiaviPDNDeventsKeysParameterLimit = null;
-	public String getGestoreChiaviPDNDeventsKeysParameterLimit() throws CoreException {	
-		if(this.getGestoreChiaviPDNDeventsKeysParameterLimit==null){
-			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.events.keys.parameter.limit";
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name==null){
-					throw new CoreException("Proprieta' non impostata");
-				}
-				name = name.trim();
-				this.getGestoreChiaviPDNDeventsKeysParameterLimit = name;
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new CoreException(e.getMessage(),e);
-			}    
-		}
-
-		return this.getGestoreChiaviPDNDeventsKeysParameterLimit;
-	}
 
 	private Integer getGestoreChiaviPDNDeventsKeysLimit = null;
 	public int getGestoreChiaviPDNDeventsKeysLimit() {	
@@ -34250,68 +34185,6 @@ public class OpenSPCoop2Properties {
 		return this.getGestoreChiaviPDNDTimerLockCheckInterval;
 	}
 	
-	private String getGestoreChiaviPDNDclientsPath = null;
-	public String getGestoreChiaviPDNDclientsPath() throws CoreException {	
-		if(this.getGestoreChiaviPDNDclientsPath==null){
-			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.clients.path";
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name==null){
-					throw new CoreException("Proprieta' non impostata");
-				}
-				name = name.trim();
-				this.getGestoreChiaviPDNDclientsPath = name;
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new CoreException(e.getMessage(),e);
-			}    
-		}
-
-		return this.getGestoreChiaviPDNDclientsPath;
-	}
-		
-	private String getGestoreChiaviPDNDclientsOrganizationJsonPath = null;
-	public String getGestoreChiaviPDNDclientsOrganizationJsonPath() throws CoreException {	
-		if(this.getGestoreChiaviPDNDclientsOrganizationJsonPath==null){
-			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.clients.organizationJsonPath";
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name==null){
-					throw new CoreException("Proprieta' non impostata");
-				}
-				name = name.trim();
-				this.getGestoreChiaviPDNDclientsOrganizationJsonPath = name;
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new CoreException(e.getMessage(),e);
-			}    
-		}
-
-		return this.getGestoreChiaviPDNDclientsOrganizationJsonPath;
-	}
-	
-	private String getGestoreChiaviPDNDorganizationsPath = null;
-	public String getGestoreChiaviPDNDorganizationsPath() throws CoreException {	
-		if(this.getGestoreChiaviPDNDorganizationsPath==null){
-			String pName = "org.openspcoop2.pdd.gestoreChiaviPDND.organizations.path";
-			try{ 
-				String name = null;
-				name = this.reader.getValueConvertEnvProperties(pName);
-				if(name==null){
-					throw new CoreException("Proprieta' non impostata");
-				}
-				name = name.trim();
-				this.getGestoreChiaviPDNDorganizationsPath = name;
-			} catch(java.lang.Exception e) {
-				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
-				throw new CoreException(e.getMessage(),e);
-			}    
-		}
-
-		return this.getGestoreChiaviPDNDorganizationsPath;
-	}
 	
 	
 	

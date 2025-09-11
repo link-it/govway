@@ -1408,6 +1408,10 @@ public class TransazioniService implements ITransazioniService {
 		}
 	}
 	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfo(TransazioneBean transazioneBean, Long tokenClientID) throws ServiceException, NotImplementedException, ExpressionNotImplementedException {
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoOrganization(transazioneBean, tokenClientID);
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoClient(transazioneBean, tokenClientID);
+	}
+	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoOrganization(TransazioneBean transazioneBean, Long tokenClientID) throws ServiceException, NotImplementedException, ExpressionNotImplementedException {
 		try {
 			MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
 			CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteByReferenceFromCache(TipoCredenzialeMittente.PDND_ORGANIZATION_JSON,tokenClientID);
@@ -1421,6 +1425,8 @@ public class TransazioniService implements ITransazioniService {
 				pdndTokenOrganizationInfo.setOrganization(idDetails);
 				
 				normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationCategory(transazioneBean, pdndTokenOrganizationInfo);
+				
+				normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationSubUnit(transazioneBean, pdndTokenOrganizationInfo);
 
 				normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationExternalId(transazioneBean, pdndTokenOrganizationInfo);
 				
@@ -1430,6 +1436,7 @@ public class TransazioniService implements ITransazioniService {
 		} catch(NumberFormatException | ExpressionException e) {
 			// informazione non valida
 			transazioneBean.setPdndOrganizationCategory(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+			transazioneBean.setPdndOrganizationSubUnit(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
 			transazioneBean.setPdndOrganizationExternalId(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
 			transazioneBean.setPdndOrganizationConsumerId(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
 		} catch(NotFoundException e) {
@@ -1438,8 +1445,38 @@ public class TransazioniService implements ITransazioniService {
 			/** transazioneBean.setPdndOrganizationCategory(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); 
 			transazioneBean.setPdndOrganizationExternalId(Costanti.LABEL_INFORMAZIONE_NON_PIU_PRESENTE); **/
 			transazioneBean.setPdndOrganizationCategory(null); 
+			transazioneBean.setPdndOrganizationSubUnit(null); 
 			transazioneBean.setPdndOrganizationExternalId(null);
 			transazioneBean.setPdndOrganizationConsumerId(null);
+		}
+	}
+	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoClient(TransazioneBean transazioneBean, Long tokenClientID) throws ServiceException, NotImplementedException, ExpressionNotImplementedException {
+		try {
+			MBeanUtilsService mBeanUtilsService = new MBeanUtilsService(this.credenzialiMittenteDAO, this.log);
+			CredenzialeMittente credenzialeMittente = mBeanUtilsService.getCredenzialeMittenteByReferenceFromCache(TipoCredenzialeMittente.PDND_CLIENT_JSON,tokenClientID);
+			if(credenzialeMittente!=null) {
+				
+				String credenziale = credenzialeMittente.getCredenziale();
+				
+				PDNDTokenInfo pdndTokenClientInfo=new PDNDTokenInfo();
+				PDNDTokenInfoDetails idDetails = new PDNDTokenInfoDetails();
+				idDetails.setDetails(credenziale);
+				pdndTokenClientInfo.setClient(idDetails);
+				
+				normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetClientName(transazioneBean, pdndTokenClientInfo);
+				
+				normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetClientDescription(transazioneBean, pdndTokenClientInfo);
+				
+			}
+		} catch(NumberFormatException | ExpressionException e) {
+			// informazione non valida
+			transazioneBean.setPdndClientName(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+			transazioneBean.setPdndClientDescription(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+		} catch(NotFoundException e) {
+			// informazione non piu disponibile
+			// oppure può davvero non essere stata acquisita l'informazione per la raccolta da PDND è disabilitata.
+			transazioneBean.setPdndClientName(null); 
+			transazioneBean.setPdndClientDescription(null); 
 		}
 	}
 	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationCategory(TransazioneBean transazioneBean, PDNDTokenInfo pdndTokenOrganizationInfo) {
@@ -1448,6 +1485,14 @@ public class TransazioniService implements ITransazioniService {
 		} catch(Exception e) {
 			// informazione non valida
 			transazioneBean.setPdndOrganizationCategory(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+		}
+	}
+	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationSubUnit(TransazioneBean transazioneBean, PDNDTokenInfo pdndTokenOrganizationInfo) {
+		try {
+			transazioneBean.setPdndOrganizationSubUnit(pdndTokenOrganizationInfo.getOrganizationSubUnit(this.log));
+		} catch(Exception e) {
+			// informazione non valida
+			transazioneBean.setPdndOrganizationSubUnit(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
 		}
 	}
 	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetOrganizationExternalId(TransazioneBean transazioneBean, PDNDTokenInfo pdndTokenOrganizationInfo) {
@@ -1480,6 +1525,24 @@ public class TransazioniService implements ITransazioniService {
 			// informazione non valida
 			transazioneBean.setPdndOrganizationConsumerId(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
 		}		
+	}
+	
+	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetClientName(TransazioneBean transazioneBean, PDNDTokenInfo pdndTokenClientInfo) {
+		try {
+			transazioneBean.setPdndClientName(pdndTokenClientInfo.getClientName(this.log));
+		} catch(Exception e) {
+			// informazione non valida
+			transazioneBean.setPdndClientName(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+		}
+	}
+	
+	private void normalizeInfoTransazioniFromCredenzialiMittenteTokenPdndInfoSetClientDescription(TransazioneBean transazioneBean, PDNDTokenInfo pdndTokenClientInfo) {
+		try {
+			transazioneBean.setPdndClientDescription(pdndTokenClientInfo.getClientDescription(this.log));
+		} catch(Exception e) {
+			// informazione non valida
+			transazioneBean.setPdndClientDescription(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
+		}
 	}
 		
 	

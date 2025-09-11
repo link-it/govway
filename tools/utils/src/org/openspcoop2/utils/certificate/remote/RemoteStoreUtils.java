@@ -21,17 +21,22 @@ package org.openspcoop2.utils.certificate.remote;
 
 import java.io.ByteArrayOutputStream;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.JWK;
 import org.openspcoop2.utils.certificate.KeyUtils;
+import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.ExternalResourceUtils;
+import org.openspcoop2.utils.transport.http.HttpResponse;
 
 /**
  * RemoteStoreUtils
@@ -67,32 +72,11 @@ public class RemoteStoreUtils {
 
 			checkParams(keyId, remoteConfig, keyType);
 			
-			String url = remoteConfig.getBaseUrl();
+			StringBuilder jsonPathResponseHolder = new StringBuilder();
+			byte [] resource = invoke(remoteConfig, keyId, jsonPathResponseHolder);
 			
-			switch (remoteConfig.getIdMode()) {
-			case URL_SUFFIX:
-				if(!remoteConfig.getBaseUrl().endsWith("/")) {
-					url = url + "/";
-				}
-				url = url + TransportUtils.urlEncodePath(keyId, Charset.UTF_8.getValue());
-				break;
-			case URL_PARAMETER:
-				remoteConfig.setQueryParameters(new HashMap<>());
-				remoteConfig.getQueryParameters().put(remoteConfig.getParameterName(), 
-						TransportUtils.urlEncodeParam(keyId, Charset.UTF_8.getValue()));
-				break;
-			case HEADER:
-				remoteConfig.setHeaders(new HashMap<>());
-				remoteConfig.getHeaders().put(remoteConfig.getParameterName(), keyId);
-				break;
-			default:
-				break;
-			}
-			
-			byte [] resource = ExternalResourceUtils.readResource(url, remoteConfig);
-			
-			if(resource==null || resource.length<=0) {
-				throw new UtilsException("Retrieved empty key?");
+			if(jsonPathResponseHolder.length()>0) {
+				resource = extractResourceByJsonPath(resource, jsonPathResponseHolder.toString());
 			}
 			
 			if(bout!=null) {
@@ -115,6 +99,91 @@ public class RemoteStoreUtils {
 			
 		}catch(Exception t) {
 			throw new UtilsException("Retrieve remote key '"+keyId+"' failed: "+t.getMessage(),t);
+		}
+	}
+	
+	private static byte[] invoke(RemoteStoreConfig remoteConfig, String keyId, StringBuilder jsonPathResponseHolder) throws UtilsException {
+		String jsonPathResponse = null;
+		byte [] resource = null;
+		boolean invokeFaultUrl = false;
+		try {
+			List<Integer> returnCodeHolder = new ArrayList<>();
+			resource = invoke(remoteConfig, remoteConfig.getBaseUrl(), keyId, returnCodeHolder);
+			jsonPathResponse = remoteConfig.getResponseJsonPath();
+			// se presente un faultCheck 
+			if(remoteConfig.getBaseUrlFaultCheck()!=null && !returnCodeHolder.isEmpty() && returnCodeHolder.get(0)!=null &&
+					(returnCodeHolder.get(0).intValue()<200 || returnCodeHolder.get(0).intValue()>299)
+				) {
+				invokeFaultUrl = true;
+			}
+		}catch(Exception e) {
+			if(remoteConfig.getBaseUrlFaultCheck()!=null) {
+				invokeFaultUrl = true;
+			}
+			else {
+				throw e;
+			}
+		}
+		
+		if(invokeFaultUrl) {
+			try {
+				resource = invoke(remoteConfig, remoteConfig.getBaseUrlFaultCheck(), keyId, null);
+				jsonPathResponse = remoteConfig.getResponseJsonPathFaultCheck();
+			}catch(Exception eFaultCheck) {
+				// rilancio eccezione del fault url volutamente
+				throw new UtilsException(eFaultCheck.getMessage(),eFaultCheck);
+			}
+		}
+		
+		if(jsonPathResponse!=null) {
+			jsonPathResponseHolder.append(jsonPathResponse);
+		}
+		return resource;
+	}
+	private static byte[] invoke(RemoteStoreConfig remoteConfig, String url, String keyId, List<Integer> returnCodeHolder) throws UtilsException {
+		switch (remoteConfig.getIdMode()) {
+		case URL_SUFFIX:
+			if(!remoteConfig.getBaseUrl().endsWith("/")) {
+				url = url + "/";
+			}
+			url = url + TransportUtils.urlEncodePath(keyId, Charset.UTF_8.getValue());
+			break;
+		case URL_PARAMETER:
+			remoteConfig.setQueryParameters(new HashMap<>());
+			remoteConfig.getQueryParameters().put(remoteConfig.getParameterName(), 
+					TransportUtils.urlEncodeParam(keyId, Charset.UTF_8.getValue()));
+			break;
+		case HEADER:
+			remoteConfig.setHeaders(new HashMap<>());
+			remoteConfig.getHeaders().put(remoteConfig.getParameterName(), keyId);
+			break;
+		default:
+			break;
+		}
+		
+		HttpResponse response = ExternalResourceUtils.readResourceReturnHttpResponse(url, remoteConfig);
+		if(response==null) {
+			throw new UtilsException("Empty response?");
+		}
+		byte [] resource = response.getContent();
+		
+		if(resource==null || resource.length<=0) {
+			throw new UtilsException("Retrieved empty key?");
+		}
+		
+		if(returnCodeHolder!=null) {
+			returnCodeHolder.add(response.getResultHTTPOperation());
+		}
+		
+		return resource;
+	}
+	
+	private static byte[] extractResourceByJsonPath(byte [] resource, String jsonPath) throws UtilsException {
+		String s = new String(resource);
+		try {
+			return JsonPathExpressionEngine.extractAndConvertResultAsString(s, jsonPath, LoggerWrapperFactory.getLogger(RemoteStoreUtils.class)).getBytes();
+		}catch(Exception e) {
+			throw new UtilsException("Estrazione tramite pattern '"+jsonPath+"' dalla risorsa '"+s+"' non riuscita: "+e.getMessage(),e);
 		}
 	}
 	

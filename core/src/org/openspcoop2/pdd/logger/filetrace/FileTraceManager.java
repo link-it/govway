@@ -153,7 +153,7 @@ public class FileTraceManager {
 		
 	}
 		
-	public void cleanResourcesForOnlyFileTrace(Transaction transaction) throws ProtocolException {
+	public void cleanResourcesForOnlyFileTrace(Transaction transaction) {
 			
 		List<TipoMessaggio> tipiDaEliminareHeaders = transaction.getMessaggiHeadersOnlyLogFileTrace();
 		List<TipoMessaggio> tipiDaEliminareBody = transaction.getMessaggiBodyOnlyLogFileTrace();

@@ -1,7 +1,15 @@
+2025-09-11  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità #1647
+	Aggiunto supporto all'integrazione delle api di interoperabilità v2 per:
+	- recupero delle chiavi: utilizzo delle risorse 'GET /keys/{kid}' per le chiavi client e 'GET /producerKeys/{kid}/' per le chiavi server;
+	- recupero delle informazioni del client e dell'organizzazione: utilizzo delle risorse 'GET /clients/{clientId}' e 'GET /tenants/{tenantId}'
+
 2025-09-09  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
-	Risolto Bug 1648
+	Risolto Bug #1648
 	Corretto un comportamento anomalo nel plugin di formattazione errori per il canale SUAP, per il caso di errore ERROR_428_001.
 	La richiesta generata dalla suite di test BB verso la risorsa /instance/{cui_uuid}/document/{resource_id} non presenta volutamente l'header 'If-Match' definito come obbligatorio nell'interfaccia OpenAPI.
 	In tali casi, GovWay restituiva erroneamente la risposta "ERROR_400_001 / incorrect request input", mentre la testsuite SUAP si attendeva il messaggio "ERROR_428_001 / hash not found".

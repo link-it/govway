@@ -92,6 +92,9 @@
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenPDNDOrganizationName" value="PDND Organization" rendered="#{not empty dettagliBean.dettaglio.pdndOrganization}"/>
 			<h:outputText id="outTokenPDNDOrganizationName" value="#{dettagliBean.dettaglio.pdndOrganization}" escape="false" rendered="#{not empty dettagliBean.dettaglio.pdndOrganization}"/>
 						
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTokenPDNDClientName" value="PDND Client" rendered="#{not empty dettagliBean.dettaglio.pdndClient}"/>
+			<h:outputText id="outTokenPDNDClientnName" value="#{dettagliBean.dettaglio.pdndClient}" escape="false" rendered="#{not empty dettagliBean.dettaglio.pdndClient}"/>
+						
 			<h:outputLabel id="outLabelTokenInfo" styleClass="outputFieldLabel" value="#{msg['commons.tokenInfo.label']}" 
 				rendered="#{not empty dettagliBean.dettaglio.tokenInfo and not dettagliBean.attributeInfo}"/>
 			<h:outputLabel id="outLabelAttributi" styleClass="outputFieldLabel" value="#{msg['commons.attributi.label']}" 

@@ -49,7 +49,9 @@ public class RemoteStoreConfigMultiTenantUtils {
 			Map<String, String> cloned){
 		if(thisParam!=null && !thisParam.isEmpty()) {
 			Map<String, String> thisMap = thisParam.get(tenant);
-			return getMultitenant(thisMap, cloned);
+			if(thisMap!=null) {
+				return getMultitenant(thisMap, cloned);
+			}
 		}
 		return cloned;
 	}

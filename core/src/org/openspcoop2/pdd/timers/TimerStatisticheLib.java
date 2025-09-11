@@ -318,6 +318,7 @@ public class TimerStatisticheLib {
 				this.statisticsConfig.setPdndTracciamentoGenerazione(false);
 				this.statisticsConfig.setPdndTracciamentoPubblicazione(false);
 			}
+			this.statisticsConfig.setPdndTracciamentoGenerazioneDelayMinutes(this.op2Properties.getStatistichePdndTracciamentoGenerazioneDelayMinutes());
 			this.statisticsConfig.setPdndTracciamentoErogazioniEnabled(this.op2Properties.isStatistichePdndTracciamentoErogazioniEnabled());
 			this.statisticsConfig.setPdndTracciamentoFruizioniEnabled(this.op2Properties.isStatistichePdndTracciamentoFruizioniEnabled());
 			this.statisticsConfig.setPdndTracciamentoRequestConfig(this.op2Properties.getStatistichePdndTracciamentoHttpRequestConfig());

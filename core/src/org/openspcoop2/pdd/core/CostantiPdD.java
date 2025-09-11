@@ -276,9 +276,12 @@ public class CostantiPdD {
     // claim PDND
     public static final String HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_NAME = "pdndOrganizationName";
     public static final String HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_CATEGORY = "pdndOrganizationCategory";
+    public static final String HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_SUBUNIT = "pdndOrganizationSubUnit";
     public static final String HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_EXTERNAL = "pdndOrganizationExternal";
     public static final String HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_EXTERNAL_ORIGIN = "pdndOrganizationExternalOrigin";
     public static final String HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_EXTERNAL_ID = "pdndOrganizationExternalId";
+    public static final String HEADER_INTEGRAZIONE_TOKEN_PDND_CLIENT_NAME = "pdndClientName";
+    public static final String HEADER_INTEGRAZIONE_TOKEN_PDND_CLIENT_DESCRIPTION = "pdndClientDescription";
     
     // ulteriori claim usati per adesso solo nella configurazione della cache key
     // Payload

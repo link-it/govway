@@ -27,6 +27,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
+import org.openspcoop2.protocol.sdk.ModIPDNDClientConfig;
+import org.openspcoop2.protocol.sdk.ModIPDNDOrganizationConfig;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.ModIUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -63,6 +65,9 @@ public class ModITestUtils {
 		
 		isTokenOAuthUseJtiIntegrityAsMessageId(log);
 		
+		getAPIPDNDClientConfig(log);
+		getAPIPDNDOrganizationConfig(log);
+
 		buildSignalHubPushIdAPI(log);
 		isSignalHubEnabled(log);
 		isTracingPDNDEnabled(log);
@@ -100,6 +105,62 @@ public class ModITestUtils {
 		log.info("test isTokenOAuthUseJtiIntegrityAsMessageId ...");
 		ModIUtils.isTokenOAuthUseJtiIntegrityAsMessageId();
 		log.info("test isTokenOAuthUseJtiIntegrityAsMessageId ok");
+	}
+	
+	private static void getAPIPDNDClientConfig(Logger log) throws ProtocolException {
+		log.info("test getAPIPDNDClientConfig ...");
+		ModIPDNDClientConfig c = ModIUtils.getAPIPDNDClientConfig();
+		if(c==null) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDClientConfig is null");
+		}
+		c = ModIUtils.getAPIPDNDClientConfig(log);
+		if(c==null) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDClientConfig(log) is null");
+		}
+		String details = "{\"id\":\"1\"}";
+		c = ModIUtils.getAPIPDNDClientConfig(details);
+		if(c==null) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDClientConfig is null");
+		}
+		if(!details.equals(c.getDetails())) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDClientConfig.details different");
+		}
+		c = ModIUtils.getAPIPDNDClientConfig(details, log);
+		if(c==null) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDClientConfig(log) is null");
+		}
+		if(!details.equals(c.getDetails())) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDClientConfig(log).details different");
+		}
+		log.info("test getAPIPDNDClientConfig ok");
+	}
+	
+	private static void getAPIPDNDOrganizationConfig(Logger log) throws ProtocolException {
+		log.info("test getAPIPDNDOrganizationConfig ...");
+		ModIPDNDOrganizationConfig c = ModIUtils.getAPIPDNDOrganizationConfig();
+		if(c==null) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDOrganizationConfig is null");
+		}
+		c = ModIUtils.getAPIPDNDOrganizationConfig(log);
+		if(c==null) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDOrganizationConfig(log) is null");
+		}
+		String details = "{\"id\":\"1\"}";
+		c = ModIUtils.getAPIPDNDOrganizationConfig(details);
+		if(c==null) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDOrganizationConfig is null");
+		}
+		if(!details.equals(c.getDetails())) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDOrganizationConfig.details different");
+		}
+		c = ModIUtils.getAPIPDNDOrganizationConfig(details, log);
+		if(c==null) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDOrganizationConfig(log) is null");
+		}
+		if(!details.equals(c.getDetails())) {
+			throw new ProtocolException("ModiIProperties.getAPIPDNDOrganizationConfig(log).details different");
+		}
+		log.info("test getAPIPDNDOrganizationConfig ok");
 	}
 	
 	private static void buildSignalHubPushIdAPI(Logger log) throws ProtocolException {

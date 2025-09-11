@@ -109,7 +109,9 @@ La sezione **Informazioni Mittente** (:numref:`mon_DettaglioTransazioneMittente_
 
     -  eMail: indirizzo eMail dell'utente 
 
-    -  PDND Organization: forniscono le eventuali informazioni sull'organizzazione del client recuperate tramite le API PDND (:numref:`mon_DettaglioTransazioneMittenteTokenPDND_fig`) 
+    -  PDND Organization: voce che raccoglie informazioni sull'organizzazione del client recuperate tramite le API PDND (:numref:`mon_DettaglioTransazioneMittenteTokenPDND_fig`) 
+    
+    -  PDND Client: voce che raccoglie informazioni sul client recuperate tramite le API PDND
 
     -  ID Finalità: rappresenta l'identificativo di finalità utilizzato all'interno del voucher PDND 
 

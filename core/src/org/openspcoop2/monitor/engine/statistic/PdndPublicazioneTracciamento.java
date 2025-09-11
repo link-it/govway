@@ -56,6 +56,7 @@ import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.mime.MimeMultipart;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
@@ -379,7 +380,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		stat.setStato(null);
 		
 		// nel caso faccia una submit in ritardo dovro aggiornare il tracingId e fare una recover (in quanto sara diventato un MISSING)
-		if ((stat.getMethod().equals(PdndMethods.SUBMIT) && Duration.between(stat.getDataTracciamento().toInstant(), new Date().toInstant()).compareTo(Duration.ofDays(2)) >= 0) 
+		if ((stat.getMethod().equals(PdndMethods.SUBMIT) && Duration.between(stat.getDataTracciamento().toInstant(), DateManager.getDate().toInstant()).compareTo(Duration.ofDays(2)) >= 0) 
 				|| (!stat.getMethod().equals(PdndMethods.SUBMIT) && stat.getTracingId() == null)) {
 			if (stat.getMethod().equals(PdndMethods.SUBMIT))
 				stat.setMethod(PdndMethods.RECOVER);
@@ -396,7 +397,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		
 			// aggiorno i tentativi
 			stat.setTentativiPubblicazione(stat.getTentativiPubblicazione() + 1);
-			stat.setDataPubblicazione(new Date());
+			stat.setDataPubblicazione(DateManager.getDate());
 			
 			// provo ad inviare il tracciato alla PDND
 			HttpRequest req = getBaseRequest(pddCode);
@@ -679,7 +680,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			StatistichePdndTracing stat = new StatistichePdndTracing();
 			stat.setTracingId(id.getKey());
 			stat.setDataTracciamento(id.getValue());
-			stat.setDataRegistrazione(new Date());
+			stat.setDataRegistrazione(DateManager.getDate());
 			stat.setCsv(null);
 			stat.setMethod(PdndMethods.RECOVER);
 			stat.setHistory(0);
@@ -831,7 +832,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	public void generate() throws StatisticsEngineException {
 		this.logger.info("********************* INIZIO PUBBLICAZIONE TRACCIATO PDND *********************");
 		
-		Date currDate = new Date();
+		Date currDate = DateManager.getDate();
 		try {
 			StatisticsInfoUtils.updateDataUltimaGenerazioneStatistiche(
 					this.statisticheSM.getStatisticaInfoServiceSearch(), 

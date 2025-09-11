@@ -2182,7 +2182,7 @@ components:
             mittente:
               $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExtInformazioniMittenteBase'
             pdnd_organization:
-              $ref: '#/components/schemas/PDNDOrganizationInfoItemTransazione'
+              $ref: '#/components/schemas/PDNDOrganizationInfoItemTransazione'        
             richiedente:
               type: string
 
@@ -2207,6 +2207,8 @@ components:
               example: 20
             pdnd_organization:
               $ref: '#/components/schemas/PDNDOrganizationInfo'
+            pdnd_client:
+              $ref: '#/components/schemas/PDNDClientInfo'      
             richiedente:
               type: string
             dettaglio_errore:
@@ -2225,6 +2227,8 @@ components:
           type: string
         categoria:
           type: string
+        sub_unit:
+          type: string          
         external_id:
           $ref: '#/components/schemas/PDNDOrganizationExternalId'
         consumer_id:
@@ -2236,6 +2240,16 @@ components:
           type: string
         origine:
           type: string
+
+    PDNDClientInfo:
+      type: object
+      properties:
+        nome:
+          type: string
+        descrizione:
+          type: string
+        client_id:
+          type: string 
 
     # Eventi
 

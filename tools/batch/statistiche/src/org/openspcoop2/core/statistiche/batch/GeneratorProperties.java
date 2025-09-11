@@ -94,6 +94,7 @@ public class GeneratorProperties {
 	private boolean pdndTracingErogazioniEnabled = true;
 	private boolean pdndTracingFruizioniEnabled = true;
 	private List<Integer> pdndTracingPendingCheck = null;
+	private int pdndTracingGenerazioneDelayMinutes = 0; 
 	
 	private PropertiesReader props;
 	
@@ -174,6 +175,12 @@ public class GeneratorProperties {
 		this.pdndTracingPendingCheck = (value == null || StringUtils.isEmpty(value.trim())) ? List.of(0) : Arrays.stream(value.split(","))
 				.map(Integer::valueOf)
 				.collect(Collectors.toList());
+		
+		value = getProperty("statistiche.pdnd.tracciamento.generazione.delayMinutes", false);
+		if(value!=null && StringUtils.isNotEmpty(value.trim())) {
+			this.pdndTracingGenerazioneDelayMinutes = Integer.parseInt(value);
+		}
+
 	}
 	
 	private String getProperty(String name,boolean required) throws UtilsException{
@@ -364,5 +371,11 @@ public class GeneratorProperties {
 	public void setPdndTracingPendingCheck( List<Integer> pdndTracingPendingCheck) {
 		this.pdndTracingPendingCheck = pdndTracingPendingCheck;
 	}
-	
+
+	public int getPdndTracingGenerazioneDelayMinutes() {
+		return this.pdndTracingGenerazioneDelayMinutes;
+	}
+	public void setPdndTracingGenerazioneDelayMinutes(int pdndTracingGenerazioneDelayMinutes) {
+		this.pdndTracingGenerazioneDelayMinutes = pdndTracingGenerazioneDelayMinutes;
+	}
 }

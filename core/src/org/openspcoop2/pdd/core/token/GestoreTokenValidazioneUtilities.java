@@ -1274,13 +1274,16 @@ public class GestoreTokenValidazioneUtilities {
 					
 					ObjectNode pdndNode = null;
 					ObjectNode organizationNode = null;
+					ObjectNode clientNode = null;
 					if(!op2headers) {
 						pdndNode = jsonUtils.newObjectNode();
 						organizationNode = jsonUtils.newObjectNode();
-						pdndNode.set("organization", organizationNode);
+						clientNode = jsonUtils.newObjectNode();
 					}
+										
+					// organization
 					
-					boolean add = false;
+					boolean addOrganization = false;
 					
 					String organizationName = PDNDTokenInfo.readOrganizationNameFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
 					if(organizationName!=null && StringUtils.isNotEmpty(organizationName) &&
@@ -1290,7 +1293,7 @@ public class GestoreTokenValidazioneUtilities {
 						}
 						else {
 							organizationNode.put("name", organizationName);
-							add = true;
+							addOrganization = true;
 						}
 					}
 					
@@ -1302,10 +1305,22 @@ public class GestoreTokenValidazioneUtilities {
 						}
 						else {
 							organizationNode.put("category", organizationCategory);
-							add = true;
+							addOrganization = true;
 						}
 					}
 					
+					String organizationSubUnit = PDNDTokenInfo.readOrganizationSubUnitFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
+					if(organizationSubUnit!=null && StringUtils.isNotEmpty(organizationSubUnit) &&
+							set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_SUBUNIT).booleanValue()) {
+						if(op2headers) {
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_ORGANIZATION_SUBUNIT), organizationSubUnit);
+						}
+						else {
+							organizationNode.put("subUnit", organizationSubUnit);
+							addOrganization = true;
+						}
+					}
+										
 					String organizationExternalOrigin = PDNDTokenInfo.readOrganizationExternalOriginFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
 					String organizationExternalId = PDNDTokenInfo.readOrganizationExternalIdFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
 					StringBuilder sbOrganizationExternal = new StringBuilder();
@@ -1318,7 +1333,7 @@ public class GestoreTokenValidazioneUtilities {
 							}
 							else {
 								organizationNode.put("externalOrigin", organizationExternalOrigin);
-								add = true;
+								addOrganization = true;
 							}
 						}
 					}
@@ -1333,7 +1348,7 @@ public class GestoreTokenValidazioneUtilities {
 							}
 							else {
 								organizationNode.put("externalId", organizationExternalId);
-								add = true;
+								addOrganization = true;
 							}
 						}
 					}
@@ -1346,11 +1361,49 @@ public class GestoreTokenValidazioneUtilities {
 						}
 						else {
 							organizationNode.put("external", organizationExternal);
-							add = true;
+							addOrganization = true;
 						}
 					}
 					
-					if(!op2headers && add) {
+					// client
+					
+					boolean addClient = false;
+					
+					String clientName = PDNDTokenInfo.readClientNameFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
+					if(clientName!=null && StringUtils.isNotEmpty(clientName) &&
+							set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_CLIENT_NAME).booleanValue()) {
+						if(op2headers) {
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_CLIENT_NAME), clientName);
+						}
+						else {
+							clientNode.put("name", clientName);
+							addClient = true;
+						}
+					}
+					
+					String clientDescription = PDNDTokenInfo.readClientDescriptionFromPDNDMap(informazioniTokenNormalizzate.getPdnd());
+					if(clientDescription!=null && StringUtils.isNotEmpty(clientDescription) &&
+							set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_CLIENT_DESCRIPTION).booleanValue()) {
+						if(op2headers) {
+							TransportUtils.setHeader(tokenForward.getTrasporto(),headerNames.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_PDND_CLIENT_DESCRIPTION), clientDescription);
+						}
+						else {
+							clientNode.put("description", clientDescription);
+							addClient = true;
+						}
+					}
+					
+					// finalize
+					
+					if(!op2headers &&
+						(addOrganization || addClient) 
+						){
+						if(addOrganization) {
+							pdndNode.set("organization", organizationNode);
+						}
+						if(addClient) {
+							pdndNode.set("client", clientNode);
+						}
 						jsonNode.set("pdnd", pdndNode);
 					}
 				}

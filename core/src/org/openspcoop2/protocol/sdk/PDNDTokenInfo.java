@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.slf4j.Logger;
 
 /**     
@@ -129,18 +128,72 @@ public class PDNDTokenInfo implements Serializable {
 		return null;
 	}
 	
-	private static String getPatternOrganizationJsonExtract(String path, boolean tokenInfo) {
-		String pattern = tokenInfo ? "$.."+TOKEN_INFO_PREFIX_PDND+PDNDTokenInfo.ORGANIZATION_INFO+"." : "$.";
-		return pattern + path;
+	private static Map<?, ?> getMapOrganization(Map<String, ?> mapPdnd) {
+		return getMap(mapPdnd, ORGANIZATION_INFO);
 	}
-	private static String getPatternClientJsonExtract(String path, boolean tokenInfo) {
-		String pattern = tokenInfo ? "$.."+TOKEN_INFO_PREFIX_PDND+PDNDTokenInfo.CLIENT_INFO+"." : "$.";
-		return pattern + path;
+	private static Map<?, ?> getMapClient(Map<String, ?> mapPdnd) {
+		return getMap(mapPdnd, CLIENT_INFO);
 	}
+	private static Map<?, ?> getMap(Map<String, ?> mapPdnd, String tipoInfo) {
+		if(mapPdnd!=null && !mapPdnd.isEmpty()) {
+			Object oTipoInfo = mapPdnd.get(tipoInfo);
+			if(oTipoInfo instanceof Map<?, ?>) {
+				return (Map<?, ?>) oTipoInfo;
+			}
+		}
+		return new HashMap<>();
+	}
+	
+	private static String getMapOrganizationAsJson(Map<String, ?> mapPdnd) {
+		return getMapAsJson(mapPdnd, ORGANIZATION_INFO);
+	}
+	private static String getMapClientAsJson(Map<String, ?> mapPdnd) {
+		return getMapAsJson(mapPdnd, CLIENT_INFO);
+	}
+	private static String getMapAsJson(Map<String, ?> mapPdnd, String tipoInfo) {
+		Map<?, ?> mInternal = getMap(mapPdnd, tipoInfo);
+		StringBuilder sb = new StringBuilder();
+		if(mInternal!=null && !mInternal.isEmpty()) {
+			fillMapAsJson(mInternal, sb);
+		}
+		return "{" + sb.toString() + "}";
+	}
+	private static void fillMapAsJson(Map<?, ?> mInternal, StringBuilder sb) {
+		for (Map.Entry<?,?> entry : mInternal.entrySet()) {
+			Object o = entry.getValue();
+			if(o instanceof String) {
+				if(sb.length()>0) {
+					sb.append(",");	
+				}
+				sb.append("\"").append(entry.getKey()).append("\": \"").append(o).append("\"");
+			}
+		}
+	}
+	private static String getFieldNameFromPattern(String pattern) {
+		if(pattern.startsWith("$..")) {
+			return pattern.replace("$..", "");
+		}
+		else if(pattern.startsWith("$.")) {
+			return pattern.replace("$.", "");
+		}
+		return pattern;
+	}
+	
+	private static String getTokenInfoPatternOrganizationJsonPathPrefix() {
+		return "$.."+TOKEN_INFO_PREFIX_PDND+PDNDTokenInfo.ORGANIZATION_INFO+".";
+	}
+	private static String getTokenInfoPatternClientJsonPathPrefix() {
+		return "$.."+TOKEN_INFO_PREFIX_PDND+PDNDTokenInfo.CLIENT_INFO+".";
+	}
+
 	private static Logger getLogger() {
 		return LoggerWrapperFactory.getLogger(PDNDTokenInfo.class);
 	}
 	
+	
+	// **** Clients ****
+		
+	// id
 	
 	public String getClientId(Logger log) throws ProtocolException {
 		return readClientIdFromPDNDMapTokenInfo(log, this.pdnd);
@@ -151,9 +204,6 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readClientIdFromPDNDMapTokenInfo(Logger log, Map<String, PDNDTokenInfoDetails> mapPdnd) throws ProtocolException {
 		return readClientId(log, getClientJsonDetailFromPDNDMapTokenInfo(mapPdnd), false);
 	}
-	public static String readClientIdFromPDNDMap(Map<String, ?> mapPdnd) {
-		return getClientInfoFromPDNDMap(mapPdnd, "id");
-	}
 	public static String readClientIdFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readClientId(log, tokenInfo, true);
 	}
@@ -161,13 +211,30 @@ public class PDNDTokenInfo implements Serializable {
 		return readClientId(log, json, false);
 	}
 	private static String readClientId(Logger log, String json, boolean tokenInfo) throws ProtocolException {
-		String pattern =  getPatternClientJsonExtract("id", tokenInfo);
-		try {
-			return JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, log);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
+		ModIPDNDClientConfig config = ModIPropertiesUtils.getAPIPDNDClientConfig(json, log);
+		if(tokenInfo) {
+			ModIPDNDClientConfig cloned = config.cloneNewInstance();
+			cloned.setOverridePrefixJsonPath(getTokenInfoPatternClientJsonPathPrefix());
+			return cloned.getId();
+		}
+		else {
+			return config.getId();
 		}
 	}
+	
+	public static String readClientIdFromPDNDMap(Map<String, ?> mapPdnd) {
+		try {
+			ModIPDNDClientConfig config = ModIPropertiesUtils.getAPIPDNDClientConfig(getMapClientAsJson(mapPdnd));
+			return (String) getMapClient(mapPdnd).get(getFieldNameFromPattern(config.getPatternId()));
+		}	
+		catch(Exception e) {
+			// ignore
+		}
+		return null;
+	}
+	
+	
+	// consumerId
 	
 	public String getClientConsumerId(Logger log) throws ProtocolException {
 		return readClientConsumerIdFromPDNDMapTokenInfo(log, this.pdnd);
@@ -178,9 +245,6 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readClientConsumerIdFromPDNDMapTokenInfo(Logger log, Map<String, PDNDTokenInfoDetails> mapPdnd) throws ProtocolException {
 		return readClientConsumerId(log, getClientJsonDetailFromPDNDMapTokenInfo(mapPdnd), false);
 	}
-	public static String readClientConsumerIdFromPDNDMap(Map<String, ?> mapPdnd) {
-		return getClientInfoFromPDNDMap(mapPdnd, "consumerId");
-	}
 	public static String readClientConsumerIdFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readClientConsumerId(log, tokenInfo, true);
 	}
@@ -188,14 +252,120 @@ public class PDNDTokenInfo implements Serializable {
 		return readClientConsumerId(log, json, false);
 	}
 	private static String readClientConsumerId(Logger log, String json, boolean tokenInfo) throws ProtocolException {
-		String pattern =  getPatternClientJsonExtract("consumerId", tokenInfo);
-		try {
-			return JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, log);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
+		ModIPDNDClientConfig config = ModIPropertiesUtils.getAPIPDNDClientConfig(json, log);
+		if(tokenInfo) {
+			ModIPDNDClientConfig cloned = config.cloneNewInstance();
+			cloned.setOverridePrefixJsonPath(getTokenInfoPatternClientJsonPathPrefix());
+			return cloned.getOrganization();
+		}
+		else {
+			return config.getOrganization();
 		}
 	}
-
+	
+	public static String readClientConsumerIdFromPDNDMap(Map<String, ?> mapPdnd) {
+		try {
+			ModIPDNDClientConfig config = ModIPropertiesUtils.getAPIPDNDClientConfig(getMapClientAsJson(mapPdnd));
+			return (String) getMapClient(mapPdnd).get(getFieldNameFromPattern(config.getPatternOrganization()));
+		}	
+		catch(Exception e) {
+			// ignore
+		}
+		return null;
+	}
+	
+	
+	
+	// name
+	
+	public String getClientName(Logger log) throws ProtocolException {
+		return readClientNameFromPDNDMapTokenInfo(log, this.pdnd);
+	}
+	public String getClientName() throws ProtocolException {
+		return readClientNameFromPDNDMapTokenInfo(getLogger(), this.pdnd);
+	}
+	public static String readClientNameFromPDNDMapTokenInfo(Logger log, Map<String, PDNDTokenInfoDetails> mapPdnd) throws ProtocolException {
+		return readClientName(log, getClientJsonDetailFromPDNDMapTokenInfo(mapPdnd), false);
+	}
+	public static String readClientNameFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
+		return readClientName(log, tokenInfo, true);
+	}
+	public static String readClientNameFromJson(Logger log, String json) throws ProtocolException {
+		return readClientName(log, json, false);
+	}
+	private static String readClientName(Logger log, String json, boolean tokenInfo) throws ProtocolException {
+		ModIPDNDClientConfig config = ModIPropertiesUtils.getAPIPDNDClientConfig(json, log);
+		if(tokenInfo) {
+			ModIPDNDClientConfig cloned = config.cloneNewInstance();
+			cloned.setOverridePrefixJsonPath(getTokenInfoPatternClientJsonPathPrefix());
+			return cloned.getName();
+		}
+		else {
+			return config.getName();
+		}
+	}
+	
+	public static String readClientNameFromPDNDMap(Map<String, ?> mapPdnd) {
+		try {
+			ModIPDNDClientConfig config = ModIPropertiesUtils.getAPIPDNDClientConfig(getMapClientAsJson(mapPdnd));
+			return (String) getMapClient(mapPdnd).get(getFieldNameFromPattern(config.getPatternName()));
+		}	
+		catch(Exception e) {
+			// ignore
+		}
+		return null;
+	}
+	
+	
+	
+	// description
+	
+	public String getClientDescription(Logger log) throws ProtocolException {
+		return readClientDescriptionFromPDNDMapTokenInfo(log, this.pdnd);
+	}
+	public String getClientDescription() throws ProtocolException {
+		return readClientDescriptionFromPDNDMapTokenInfo(getLogger(), this.pdnd);
+	}
+	public static String readClientDescriptionFromPDNDMapTokenInfo(Logger log, Map<String, PDNDTokenInfoDetails> mapPdnd) throws ProtocolException {
+		return readClientDescription(log, getClientJsonDetailFromPDNDMapTokenInfo(mapPdnd), false);
+	}
+	public static String readClientDescriptionFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
+		return readClientDescription(log, tokenInfo, true);
+	}
+	public static String readClientDescriptionFromJson(Logger log, String json) throws ProtocolException {
+		return readClientDescription(log, json, false);
+	}
+	private static String readClientDescription(Logger log, String json, boolean tokenInfo) throws ProtocolException {
+		ModIPDNDClientConfig config = ModIPropertiesUtils.getAPIPDNDClientConfig(json, log);
+		if(tokenInfo) {
+			ModIPDNDClientConfig cloned = config.cloneNewInstance();
+			cloned.setOverridePrefixJsonPath(getTokenInfoPatternClientJsonPathPrefix());
+			return cloned.getDescription();
+		}
+		else {
+			return config.getDescription();
+		}
+	}
+	
+	public static String readClientDescriptionFromPDNDMap(Map<String, ?> mapPdnd) {
+		try {
+			ModIPDNDClientConfig config = ModIPropertiesUtils.getAPIPDNDClientConfig(getMapClientAsJson(mapPdnd));
+			return (String) getMapClient(mapPdnd).get(getFieldNameFromPattern(config.getPatternDescription()));
+		}	
+		catch(Exception e) {
+			// ignore
+		}
+		return null;
+	}
+	
+	
+	
+	
+	
+	// **** Organization ****
+	
+	// Id
+	
 	public String getOrganizationId(Logger log) throws ProtocolException {
 		return readOrganizationIdFromPDNDMapTokenInfo(log, this.pdnd);
 	}
@@ -205,9 +375,6 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readOrganizationIdFromPDNDMapTokenInfo(Logger log, Map<String, PDNDTokenInfoDetails> mapPdnd) throws ProtocolException {
 		return readOrganizationId(log, getOrganizationJsonDetailFromPDNDMapTokenInfo(mapPdnd), false);
 	}
-	public static String readOrganizationIdFromPDNDMap(Map<String, ?> mapPdnd) {
-		return getOrganizationInfoFromPDNDMap(mapPdnd, "id");
-	}
 	public static String readOrganizationIdFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readOrganizationId(log, tokenInfo, true);
 	}
@@ -215,13 +382,30 @@ public class PDNDTokenInfo implements Serializable {
 		return readOrganizationId(log, json, false);
 	}
 	private static String readOrganizationId(Logger log, String json, boolean tokenInfo) throws ProtocolException {
-		String pattern =  getPatternOrganizationJsonExtract("id", tokenInfo);
-		try {
-			return JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, log);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
+		ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(json, log);
+		if(tokenInfo) {
+			ModIPDNDOrganizationConfig cloned = config.cloneNewInstance();
+			cloned.setOverridePrefixJsonPath(getTokenInfoPatternOrganizationJsonPathPrefix());
+			return cloned.getId();
+		}
+		else {
+			return config.getId();
 		}
 	}
+
+	public static String readOrganizationIdFromPDNDMap(Map<String, ?> mapPdnd) {
+		try {
+			ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(getMapOrganizationAsJson(mapPdnd));
+			return (String) getMapOrganization(mapPdnd).get(getFieldNameFromPattern(config.getPatternId()));
+		}	
+		catch(Exception e) {
+			// ignore
+		}
+		return null;
+	}
+	
+	
+	// name
 	
 	public String getOrganizationName(Logger log) throws ProtocolException {
 		return readOrganizationNameFromPDNDMapTokenInfo(log, this.pdnd);
@@ -232,9 +416,6 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readOrganizationNameFromPDNDMapTokenInfo(Logger log, Map<String, PDNDTokenInfoDetails> mapPdnd) throws ProtocolException {
 		return readOrganizationName(log, getOrganizationJsonDetailFromPDNDMapTokenInfo(mapPdnd), false);
 	}
-	public static String readOrganizationNameFromPDNDMap(Map<String, ?> mapPdnd) {
-		return getOrganizationInfoFromPDNDMap(mapPdnd, "name");
-	}
 	public static String readOrganizationNameFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readOrganizationName(log, tokenInfo, true);
 	}
@@ -242,13 +423,30 @@ public class PDNDTokenInfo implements Serializable {
 		return readOrganizationName(log, json, false);
 	}
 	private static String readOrganizationName(Logger log, String json, boolean tokenInfo) throws ProtocolException {
-		String pattern =  getPatternOrganizationJsonExtract("name", tokenInfo);
-		try {
-			return JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, log);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
+		ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(json, log);
+		if(tokenInfo) {
+			ModIPDNDOrganizationConfig cloned = config.cloneNewInstance();
+			cloned.setOverridePrefixJsonPath(getTokenInfoPatternOrganizationJsonPathPrefix());
+			return cloned.getName();
+		}
+		else {
+			return config.getName();
 		}
 	}
+	
+	public static String readOrganizationNameFromPDNDMap(Map<String, ?> mapPdnd) {
+		try {
+			ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(getMapOrganizationAsJson(mapPdnd));
+			return (String) getMapOrganization(mapPdnd).get(getFieldNameFromPattern(config.getPatternName()));
+		}	
+		catch(Exception e) {
+			// ignore
+		}
+		return null;
+	}
+	
+	
+	// category
 	
 	public String getOrganizationCategory(Logger log) throws ProtocolException {
 		return readOrganizationCategoryFromPDNDMapTokenInfo(log, this.pdnd);
@@ -259,9 +457,6 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readOrganizationCategoryFromPDNDMapTokenInfo(Logger log, Map<String, PDNDTokenInfoDetails> mapPdnd) throws ProtocolException {
 		return readOrganizationCategory(log, getOrganizationJsonDetailFromPDNDMapTokenInfo(mapPdnd), false);
 	}
-	public static String readOrganizationCategoryFromPDNDMap(Map<String, ?> mapPdnd) {
-		return getOrganizationInfoFromPDNDMap(mapPdnd, "category");
-	}
 	public static String readOrganizationCategoryFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readOrganizationCategory(log, tokenInfo, true);
 	}
@@ -269,13 +464,72 @@ public class PDNDTokenInfo implements Serializable {
 		return readOrganizationCategory(log, json, false);
 	}
 	private static String readOrganizationCategory(Logger log, String json, boolean tokenInfo) throws ProtocolException {
-		String pattern =  getPatternOrganizationJsonExtract("category", tokenInfo);
-		try {
-			return JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, log);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
+		ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(json, log);
+		if(tokenInfo) {
+			ModIPDNDOrganizationConfig cloned = config.cloneNewInstance();
+			cloned.setOverridePrefixJsonPath(getTokenInfoPatternOrganizationJsonPathPrefix());
+			return cloned.getCategory();
+		}
+		else {
+			return config.getCategory();
 		}
 	}
+	
+	public static String readOrganizationCategoryFromPDNDMap(Map<String, ?> mapPdnd) {
+		try {
+			ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(getMapOrganizationAsJson(mapPdnd));
+			return (String) getMapOrganization(mapPdnd).get(getFieldNameFromPattern(config.getPatternCategory()));
+		}	
+		catch(Exception e) {
+			// ignore
+		}
+		return null;
+	}
+	
+	
+	// subunit
+	
+	public String getOrganizationSubUnit(Logger log) throws ProtocolException {
+		return readOrganizationSubUnitFromPDNDMapTokenInfo(log, this.pdnd);
+	}
+	public String getOrganizationSubUnit() throws ProtocolException {
+		return readOrganizationSubUnitFromPDNDMapTokenInfo(getLogger(), this.pdnd);
+	}
+	public static String readOrganizationSubUnitFromPDNDMapTokenInfo(Logger log, Map<String, PDNDTokenInfoDetails> mapPdnd) throws ProtocolException {
+		return readOrganizationSubUnit(log, getOrganizationJsonDetailFromPDNDMapTokenInfo(mapPdnd), false);
+	}
+	public static String readOrganizationSubUnitFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
+		return readOrganizationSubUnit(log, tokenInfo, true);
+	}
+	public static String readOrganizationSubUnitFromJson(Logger log, String json) throws ProtocolException {
+		return readOrganizationSubUnit(log, json, false);
+	}
+	private static String readOrganizationSubUnit(Logger log, String json, boolean tokenInfo) throws ProtocolException {
+		ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(json, log);
+		if(tokenInfo) {
+			ModIPDNDOrganizationConfig cloned = config.cloneNewInstance();
+			cloned.setOverridePrefixJsonPath(getTokenInfoPatternOrganizationJsonPathPrefix());
+			return cloned.getSubUnit();
+		}
+		else {
+			return config.getSubUnit();
+		}
+	}
+	
+	public static String readOrganizationSubUnitFromPDNDMap(Map<String, ?> mapPdnd) {
+		try {
+			ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(getMapOrganizationAsJson(mapPdnd));
+			return (String) getMapOrganization(mapPdnd).get(getFieldNameFromPattern(config.getPatternSubUnit()));
+		}	
+		catch(Exception e) {
+			// ignore
+		}
+		return null;
+	}
+	
+	
+	
+	// external origin
 	
 	public String getOrganizationExternalOrigin(Logger log) throws ProtocolException {
 		return readOrganizationExternalOriginFromPDNDMapTokenInfo(log, this.pdnd);
@@ -286,9 +540,6 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readOrganizationExternalOriginFromPDNDMapTokenInfo(Logger log, Map<String, PDNDTokenInfoDetails> mapPdnd) throws ProtocolException {
 		return readOrganizationExternalOrigin(log, getOrganizationJsonDetailFromPDNDMapTokenInfo(mapPdnd), false);
 	}
-	public static String readOrganizationExternalOriginFromPDNDMap(Map<String, ?> mapPdnd) {
-		return getOrganizationInfoFromPDNDMap(mapPdnd, "externalId.origin");
-	}
 	public static String readOrganizationExternalOriginFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readOrganizationExternalOrigin(log, tokenInfo, true);
 	}
@@ -296,13 +547,31 @@ public class PDNDTokenInfo implements Serializable {
 		return readOrganizationExternalOrigin(log, json, false);
 	}
 	private static String readOrganizationExternalOrigin(Logger log, String json, boolean tokenInfo) throws ProtocolException {
-		String pattern =  getPatternOrganizationJsonExtract(tokenInfo ? "['externalId.origin']" : "externalId.origin", tokenInfo);
-		try {
-			return JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, log);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
+		ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(json, log);
+		if(tokenInfo) {
+			ModIPDNDOrganizationConfig cloned = config.cloneNewInstance();
+			cloned.setOverridePrefixJsonPath(getTokenInfoPatternOrganizationJsonPathPrefix());
+			cloned.setOvveridePatternAsConstant(true);
+			return cloned.getExternalOrigin();
+		}
+		else {
+			return config.getExternalOrigin();
 		}
 	}
+	
+	public static String readOrganizationExternalOriginFromPDNDMap(Map<String, ?> mapPdnd) {
+		try {
+			ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(getMapOrganizationAsJson(mapPdnd));
+			return (String) getMapOrganization(mapPdnd).get(getFieldNameFromPattern(config.getPatternExternalOrigin()));
+		}	
+		catch(Exception e) {
+			// ignore
+		}
+		return null;
+	}
+	
+	
+	// External Id
 	
 	public String getOrganizationExternalId(Logger log) throws ProtocolException {
 		return readOrganizationExternalIdFromPDNDMapTokenInfo(log, this.pdnd);
@@ -313,9 +582,6 @@ public class PDNDTokenInfo implements Serializable {
 	public static String readOrganizationExternalIdFromPDNDMapTokenInfo(Logger log, Map<String, PDNDTokenInfoDetails> mapPdnd) throws ProtocolException {
 		return readOrganizationExternalId(log, getOrganizationJsonDetailFromPDNDMapTokenInfo(mapPdnd), false);
 	}
-	public static String readOrganizationExternalIdFromPDNDMap(Map<String, ?> mapPdnd) {
-		return getOrganizationInfoFromPDNDMap(mapPdnd, "externalId.id");
-	}
 	public static String readOrganizationExternalIdFromTokenInfo(Logger log, String tokenInfo) throws ProtocolException {
 		return readOrganizationExternalId(log, tokenInfo, true);
 	}
@@ -323,11 +589,26 @@ public class PDNDTokenInfo implements Serializable {
 		return readOrganizationExternalId(log, json, false);
 	}
 	private static String readOrganizationExternalId(Logger log, String json, boolean tokenInfo) throws ProtocolException {
-		String pattern =  getPatternOrganizationJsonExtract(tokenInfo ? "['externalId.id']" : "externalId.id", tokenInfo);
-		try {
-			return JsonPathExpressionEngine.extractAndConvertResultAsString(json, pattern, log);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
+		ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(json, log);
+		if(tokenInfo) {
+			ModIPDNDOrganizationConfig cloned = config.cloneNewInstance();
+			cloned.setOverridePrefixJsonPath(getTokenInfoPatternOrganizationJsonPathPrefix());
+			cloned.setOvveridePatternAsConstant(true);
+			return cloned.getExternalId();
 		}
+		else {
+			return config.getExternalId();
+		}
+	}
+	
+	public static String readOrganizationExternalIdFromPDNDMap(Map<String, ?> mapPdnd) {
+		try {
+			ModIPDNDOrganizationConfig config = ModIPropertiesUtils.getAPIPDNDOrganizationConfig(getMapOrganizationAsJson(mapPdnd));
+			return (String) getMapOrganization(mapPdnd).get(getFieldNameFromPattern(config.getPatternExternalId()));
+		}	
+		catch(Exception e) {
+			// ignore
+		}
+		return null;
 	}
 }

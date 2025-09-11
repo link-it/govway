@@ -32,6 +32,9 @@ public class PDNDOrganizationInfo  {
   private String categoria = null;
   
   @Schema(description = "")
+  private String subUnit = null;
+  
+  @Schema(description = "")
   private PDNDOrganizationExternalId externalId = null;
   
   @Schema(description = "")
@@ -71,6 +74,25 @@ public class PDNDOrganizationInfo  {
 
   public PDNDOrganizationInfo categoria(String categoria) {
     this.categoria = categoria;
+    return this;
+  }
+
+ /**
+   * Get subUnit
+   * @return subUnit
+  **/
+  @JsonProperty("sub_unit")
+  @Valid
+  public String getSubUnit() {
+    return this.subUnit;
+  }
+
+  public void setSubUnit(String subUnit) {
+    this.subUnit = subUnit;
+  }
+
+  public PDNDOrganizationInfo subUnit(String subUnit) {
+    this.subUnit = subUnit;
     return this;
   }
 
@@ -120,6 +142,7 @@ public class PDNDOrganizationInfo  {
     
     sb.append("    nome: ").append(PDNDOrganizationInfo.toIndentedString(this.nome)).append("\n");
     sb.append("    categoria: ").append(PDNDOrganizationInfo.toIndentedString(this.categoria)).append("\n");
+    sb.append("    subUnit: ").append(PDNDOrganizationInfo.toIndentedString(this.subUnit)).append("\n");
     sb.append("    externalId: ").append(PDNDOrganizationInfo.toIndentedString(this.externalId)).append("\n");
     sb.append("    consumerId: ").append(PDNDOrganizationInfo.toIndentedString(this.consumerId)).append("\n");
     sb.append("}");

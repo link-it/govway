@@ -7,13 +7,31 @@ API PDND
 
 La PDND mette a disposizione delle `API <https://docs.pagopa.it/interoperabilita-1/manuale-operativo/api-esposte-da-pdnd-interoperabilita>`_ che consentono tra le varie funzionalità:
 
-- *GET /keys/{kid}*: di ottenere la chiave pubblica rispetto al kid indicato nel parametro della url; questa risorsa viene utilizzata da GovWay per poter validare i token con pattern 'INTEGRITY_REST_02' e/o pattern di audit 'AUDIT_REST_01' o 'AUDIT_REST_02' in cui il trust avviene tramite PDND, in cui l'identificativo kid è presente all'interno del token.
+- *Recupero delle chiavi*: è possibile ottenere la chiave pubblica rispetto al kid indicato come parametro della url; questa risorsa viene utilizzata da GovWay per poter validare i token con pattern 'INTEGRITY_REST_02' e/o pattern di audit 'AUDIT_REST_01' o 'AUDIT_REST_02' in cui il trust avviene tramite PDND, in cui l'identificativo kid è presente all'interno del token.
 
-- *GET /events/keys*: consente di ottenere informazioni relative alle modifiche delle chiavi crittografiche registrate sulla PDND; la risorsa viene utilizzata da GovWay per mantenere aggiornata la cache locale delle chiavi scaricate dalla PDND.
+- *Consultazione degli eventi*: le API consentono di acquisire informazioni relative alle modifiche delle chiavi crittografiche registrate sulla PDND; la risorsa viene utilizzata da GovWay per mantenere aggiornata la cache locale delle chiavi scaricate dalla PDND.
 
-- *GET /clients/{clientId}*: consente di ottenere le informazioni associate al clientId indicato nel parametro della url; la risorsa viene utilizzata da GovWay per arricchire le informazioni tracciate sul mittente.
+- *Recupero delle informazioni del client*: è possibile ottenere informazioni di dettaglioi su un client tramite un’operazione che richiede il relativo clientId come parametro; la risorsa viene impiegata da GovWay per arricchire i dati tracciati sul mittente.
 
-- *GET /organizations/{organizationId}*: consente di ottenere le informazioni associate all'organizzazione indicata nel parametro della url; la risorsa viene utilizzata da GovWay per arricchire le informazioni tracciate sul mittente.
+- *Recupero delle informazioni dell'organizzazione*: è possibile accedere ai dettagli di un’organizzazione tramite un’operazione che richiede il relativo identificativo come parametro; anche questa risorsa viene utilizzata da GovWay per arricchire le informazioni tracciate sul mittente.
+
+Ci sono due versioni di API messe a disposizione sulla PDND:
+
+- v1:le operazioni sopra descritte corrispondono alle seguenti chiamate: 
+
+   - *GET /keys/{kid}*
+   - *GET /events/keys*
+   - *GET /clients/{clientId}*
+   - *GET /organizations/{organizationId}*.
+   
+- v2: per questa versione (`con documentazione ufficiale on-line <https://developer.pagopa.it/pdnd-interoperabilita/api/pdnd-core-v2#/>`_) le operazioni corrispondono a:
+
+   - *GET /keys/{kid}* per le chiavi client
+   - *GET /producerKeys/{kid}/* per le chiavi server
+   - *GET /clients/{clientId}* 
+   - *GET /tenants/{tenantId}* per i dettagli sull'organizzazione. 
+   
+  Attualmente non è ancora disponibile una risorsa per la consultazione degli eventi per la v2. Tale funzionalità verrà introdotta a fine ottobre, come indicato nell'`issue PDND 1397 <https://github.com/pagopa/pdnd-interop-frontend/issues/1397>`_.
 
 L'endpoint di esposizione delle API e la specifica OpenAPI, come indicato nella sezione `API PDND - Dove si trovano? <https://docs.pagopa.it/interoperabilita-1/manuale-operativo/api-esposte-da-pdnd-interoperabilita#dove-si-trovano>`_,  sono reperibili all'interno della sezione "Fruizione > I tuoi client api interop" e variano in funzione dell'ambiente in cui ci si trova.
 
@@ -28,7 +46,7 @@ Per poter fruire delle API delle PDND deve essere registrato sulla PDND un `clie
 
 **Configurazione di GovWay**
 
-Per consentire a GovWay di utilizzare le risorse precedentemente descritte, viene fornita built-in la fruizione con profilo di interoperabilità 'ModI' e nome 'api-pdnd' (figura :numref:`fruizioneAPIPDNDpassiPreliminari`) da finalizzare negli aspetti descritti di seguito.
+Per consentire a GovWay di utilizzare le risorse precedentemente descritte, vengono fornite built-in due fruizioni con profilo di interoperabilità 'ModI' e nome 'api-pdnd' (figura :numref:`fruizioneAPIPDNDpassiPreliminari`) per le due versioni precedentemente descritte. Le fruizioni devono essere finalizzate negli aspetti descritti di seguito.
 
 .. figure:: ../../../_figure_console/fruizioneAPI_PDND.png
     :scale: 70%
@@ -38,8 +56,10 @@ Per consentire a GovWay di utilizzare le risorse precedentemente descritte, vien
 
 - *Endpoint di esposizione delle API della PDND*: nella sezione 'connettore' deve essere indicata la corretta url di esposizione delle API PDND (figura :numref:`fruizioneAPIPDNDpassiPreliminariConnettore`):
 
-	- ambiente di collaudo: https://api.uat.interop.pagopa.it/1.0
-	- ambiente di produzione: https://api.interop.pagopa.it/1.0
+	- api-v1 ambiente di collaudo: https://api.uat.interop.pagopa.it/1.0
+	- api-v1 ambiente di produzione: https://api.interop.pagopa.it/1.0
+	- api-v2 ambiente di collaudo: https://api.uat.interop.pagopa.it/v2
+	- api-v2 ambiente di produzione: https://api.interop.pagopa.it/v2
 
 	.. note::
 	
@@ -99,7 +119,12 @@ Per consentire a GovWay di utilizzare le risorse precedentemente descritte, vien
 
 - *Fruizione dell'API PDND da parte di GovWay*: la modalità di invocazione della fruizione viene definita tramite le proprietà presenti nel file "/etc/govway/modipa_local.properties" tutte con prefisso 'org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.pdnd.':
 
-	- *baseUrl* (obbligatorio): definisce la url invocata per ottenere la chiave pubblica rispetto ad un identificativo kid;
+	- *baseUrl* (obbligatorio): definisce la base url dell'API di interoperabilità PDND; indicare nella url la versione dell'API PDND che si desidera utilizzare. 
+	
+	  .. note::
+	
+	  	  Attualmente non è ancora disponibile una risorsa per la consultazione degli eventi per la v2. Tale funzionalità verrà introdotta a fine ottobre, come indicato nell'`issue PDND 1397 <https://github.com/pagopa/pdnd-interop-frontend/issues/1397>`_. Per continuare ad utilizzare la v1 dell'api per la raccolta degli eventi è necessario configurata correttamente entrambe le fruizioni built-in ed aggiungere nel file "/etc/govway/modipa_local.properties" la proprietà "org.openspcoop2.protocol.modipa.sicurezzaMessaggio.certificati.remoteStore.pdnd.api.events.version=1".
+	
 	- *connectTimeout* e *readTimeout* (obbligatorio): consentono di impostare rispettivamente i limiti temporali per l'instaurazione di una connessione e la ricezione di una risposta dalla PDND;
 	- *http.username* e *http.password* (opzionale): se definite GovWay invocherà la fruizione utilizzando le credenziali http basic indicate; la keyword speciale '#none#' è utilizzabile per ridefinire la configurazione allo scopo di disabilitare l'invio delle credenziali.
 	- *http.header.<nome>* (opzionale): consente di inviare http header personalizzati;

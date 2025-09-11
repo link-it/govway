@@ -2054,6 +2054,22 @@ public class Info {
 		return correctValue(v, defaultValue);
 	}
 	
+	public java.lang.String getPdndOrganizationSubUnit() {
+		return getPdndOrganizationSubUnit(null);
+	}
+	public java.lang.String getPdndOrganizationSubUnit(String defaultValue) {
+		PDNDTokenInfo info = this.getPDNDTokenOrganizationInfo();
+		String v = null;
+		try {
+			if(info!=null) {
+				v = info.getOrganizationSubUnit(this.log);
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return correctValue(v, defaultValue);
+	}
+	
 	public java.lang.String getPdndOrganizationExternalOrigin() {
 		return getPdndOrganizationExternalOrigin(null);
 	}
@@ -2131,6 +2147,38 @@ public class Info {
 		try {
 			if(info!=null) {
 				v = info.getClientConsumerId(this.log);
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getPdndClientName() {
+		return getPdndClientName(null);
+	}
+	public java.lang.String getPdndClientName(String defaultValue) {
+		PDNDTokenInfo info = this.getPDNDTokenClientInfo();
+		String v = null;
+		try {
+			if(info!=null) {
+				v = info.getClientName(this.log);
+			}
+		}catch(Exception e) {
+			// ignore
+		}
+		return correctValue(v, defaultValue);
+	}
+	
+	public java.lang.String getPdndClientDescription() {
+		return getPdndClientDescription(null);
+	}
+	public java.lang.String getPdndClientDescription(String defaultValue) {
+		PDNDTokenInfo info = this.getPDNDTokenClientInfo();
+		String v = null;
+		try {
+			if(info!=null) {
+				v = info.getClientDescription(this.log);
 			}
 		}catch(Exception e) {
 			// ignore
