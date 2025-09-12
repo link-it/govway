@@ -1,3 +1,10 @@
+2025-09-12  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1644
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2025-55163, CVE-2025-58057 e CVE-2025-58056: aggiornata libreria 'io.netty:*' alla versione 4.1.127.Final
+
 2025-09-11  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]

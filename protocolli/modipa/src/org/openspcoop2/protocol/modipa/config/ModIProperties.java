@@ -921,11 +921,18 @@ public class ModIProperties {
 				if(p==null || p.isEmpty()) {
 					throw new ProtocolException(debugPrefix+SUFFIX_NON_TROVATA);
 				}
-				RemoteStoreConfig config = RemoteStoreConfigPropertiesUtils.read(p, null);
-				setUrlPDND(rsc, config);
-				this.remoteStoreConfig.add(config);
-				
-				readKeyType(p, debugPrefix, config);
+				try {
+					
+					RemoteStoreConfig config = RemoteStoreConfigPropertiesUtils.read(p, null);
+					
+					setUrlPDND(rsc, config);
+					this.remoteStoreConfig.add(config);
+					
+					readKeyType(p, debugPrefix, config);
+					
+				}catch(Exception e) {
+					throw new ProtocolException("["+propertyPrefix+"] "+e.getMessage(),e);
+				}
 			}
 		}
 	}
