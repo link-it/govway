@@ -178,9 +178,17 @@ public final class CostantiDB {
     public static final String SERVIZI_APPLICATIVI_PROPS_COLUMN_ENC_VALUE = "enc_value";
     public static final String SERVIZI_APPLICATIVI_PROPS_ID_SERVIZIO_APPLICATIVO_REF = "id_servizio_applicativo";
     public static final String PORTE_APPLICATIVE = "porte_applicative";
+    public static final String PORTE_APPLICATIVE_COLUMN_ID = "id";
+    public static final String PORTE_APPLICATIVE_COLUMN_NOME_PORTA = "nome_porta";
+    public static final String PORTE_APPLICATIVE_COLUMN_NOME_SERVIZIO = "servizio";
     public static final String PORTE_APPLICATIVE_SA = "porte_applicative_sa";
     public static final String PORTE_APPLICATIVE_SA_PROPS = "pa_sa_properties";
+    
     public static final String PORTE_APPLICATIVE_BEHAVIOUR_PROPS = "pa_behaviour_props";
+    public static final String PORTE_APPLICATIVE_BEHAVIOUR_PROPS_COLUMN_VALUE = "valore";
+    public static final String PORTE_APPLICATIVE_BEHAVIOUR_PROPS_COLUMN_NAME = "nome";
+    public static final String PORTE_APPLICATIVE_BEHAVIOUR_PROPS_COLUMN_PORT_ID = "id_porta";
+    
     public static final String PORTE_APPLICATIVE_AUTENTICAZIONE_PROP = "pa_auth_properties";
     public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP = "pa_authz_properties";
     public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP = "pa_authzc_properties";
@@ -200,6 +208,8 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_CACHE_REGOLE = "pa_cache_regole";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI = "pa_transform";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_COLUMN_ID = "id";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_COLUMN_ID_PORTA = "id_porta";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_COLUMN_REQ_CONVERSIONE_TEMPLATE = "req_conversione_template";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_SEQUENCE = "seq_pa_transform";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_TABLE_FOR_ID = "pa_transform_init_seq";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_SOGGETTI = "pa_transform_soggetti";
@@ -208,6 +218,8 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_URL = "pa_transform_url";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE = "pa_transform_risp";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_COLUMN_ID = "id";
+    public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_COLUMN_TRANSFORM_ID = "id_trasformazione";
+    public static final String  PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_COLUMN_CONVERSIONE_TEMPLATE = "conversione_template";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_SEQUENCE = "seq_pa_transform_risp";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID = "pa_transform_risp_init_seq";
     public static final String PORTE_APPLICATIVE_TRASFORMAZIONI_RISPOSTE_HEADER = "pa_transform_risp_hdr";
@@ -216,6 +228,9 @@ public final class CostantiDB {
     public static final String PORTE_APPLICATIVE_TOKEN_SA = "pa_token_sa";
     public static final String PORTE_APPLICATIVE_TOKEN_RUOLI = "pa_token_ruoli";
     public static final String PORTE_DELEGATE = "porte_delegate";
+    public static final String PORTE_DELEGATE_COLUMN_ID = "id";
+    public static final String PORTE_DELEGATE_COLUMN_NOME_PORTA = "nome_porta";
+    public static final String PORTE_DELEGATE_COLUMN_NOME_SERVIZIO = "nome_servizio";
     public static final String PORTE_DELEGATE_SA = "porte_delegate_sa";
     public static final String PORTE_DELEGATE_AUTENTICAZIONE_PROP = "pd_auth_properties";
     public static final String PORTE_DELEGATE_AUTORIZZAZIONE_PROP = "pd_authz_properties";
@@ -234,6 +249,8 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_CACHE_REGOLE = "pd_cache_regole";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI = "pd_transform";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_COLUMN_ID = "id";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_COLUMN_ID_PORTA = "id_porta";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_COLUMN_REQ_CONVERSIONE_TEMPLATE = "req_conversione_template";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_SEQUENCE = "seq_pd_transform";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_TABLE_FOR_ID = "pd_transform_init_seq";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_SA = "pd_transform_sa";
@@ -241,6 +258,8 @@ public final class CostantiDB {
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_URL = "pd_transform_url";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE = "pd_transform_risp";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_COLUMN_ID = "id";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_COLUMN_TRANSFORM_ID = "id_trasformazione";
+    public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_COLUMN_CONVERSIONE_TEMPLATE = "conversione_template";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_SEQUENCE = "seq_pd_transform_risp";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_TABLE_FOR_ID = "pd_transform_risp_init_seq";
     public static final String PORTE_DELEGATE_TRASFORMAZIONI_RISPOSTE_HEADER = "pd_transform_risp_hdr";
@@ -309,6 +328,8 @@ public final class CostantiDB {
     
     public static final String CONFIG_GENERIC_PROPERTIES = "generic_properties";
     public static final String CONFIG_GENERIC_PROPERTIES_COLUMN_ID = "id";
+    public static final String CONFIG_GENERIC_PROPERTIES_COLUMN_NAME = "nome";
+    public static final String CONFIG_GENERIC_PROPERTIES_COLUMN_TYPE = "tipo";
     public static final String CONFIG_GENERIC_PROPERTIES_SEQUENCE = "seq_generic_properties";
     public static final String CONFIG_GENERIC_PROPERTIES_TABLE_FOR_ID = "generic_properties_init_seq";
     public static final String CONFIG_GENERIC_PROPERTY = "generic_property";

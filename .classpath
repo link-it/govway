@@ -70,6 +70,7 @@
 	<classpathentry kind="src" path="example/pdd/client/JMXClient/src"/>
 	<classpathentry excluding="*/jboss*.xml*" kind="src" path="example/pdd/server/testService/src"/>
 	<classpathentry kind="src" path="distrib/check"/>
+	<classpathentry kind="src" path="tools/command_line_interfaces/template_scan/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
