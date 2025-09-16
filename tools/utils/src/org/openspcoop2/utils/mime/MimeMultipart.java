@@ -162,7 +162,33 @@ public class MimeMultipart {
 	
 	public String getContentType() throws UtilsException{
 		try{
-			return this.mimeMultipartObject.getContentType();
+			String contentType = this.mimeMultipartObject.getContentType();
+			/** BUG #1649
+			 * 
+In RFC 9110 la validità di discende a catena da queste norme:
+- 8.3.1 Media Type:  Content-Type = media-type e il media-type “può essere seguito da parametri separati da ; (definiti in 5.6.6)”.
+- 5.6.6 Parameters: la grammatica dei parametri è parameters = *( OWS ";" OWS [ parameter ] ) dunque è ammesso OWS (spazi/tab opzionali) intorno al ;. Inoltre specifica che non è ammesso whitespace intorno a = ma non è il nostro caso. 
+- 5.6.3 Whitespace: definisce OWS = *( SP / HTAB ), cioè “zero o più” spazi o tab.
+
+Il tab ci risulta deprecato solo se usato come Line Folding (RFC 9112 5.2) per spezzare linee con spazio/tab all'inizio ma non rientra in questo caso.
+
+È vero che nella sezione 5.6.3 Whitespace si indica anche che "For protocol elements where optional whitespace is preferred to improve readability, a sender SHOULD generate the optional whitespace as a single SP", ma è un consiglio non un obbligo.
+
+Tanto premesso alcune implementazioni oggi accettano solo lo spazio e rifiutano HTAB (es., segnalazione su nginx). Anche se è uno bug rispetto allo standard, succede; usare solo SP massimizza la compatibilità.
+			 */
+			while(contentType.contains("\r")) {
+				contentType = contentType.replace("\r", "");
+			}
+			while(contentType.contains("\n")) {
+				contentType = contentType.replace("\n", "");
+			}
+			while(contentType.contains("\t")) {
+				contentType = contentType.replace("\t", " ");
+			}
+			while(contentType.contains("  ")) {
+				contentType = contentType.replace("  ", " ");
+			}
+			return contentType;
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}

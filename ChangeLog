@@ -1,7 +1,18 @@
+2025-09-15  Andrea Poli <apoli@link.it>
+
+	* [Utils, ProtocolloModIPA]
+	Risolto Bug #1649
+	(https://github.com/link-it/govway/issues/233)
+	Normalizzato l’header `Content-Type` nelle richieste `multipart/form-data` (sostituzione di eventuali HTAB con SP negli OWS attorno a `;` e tra tipo e `boundary`).
+	In alcuni ambienti, dove l’application server non normalizzava gli header HTTP, la pubblicazione dei record falliva con:
+	  [{"code":"BAD_REQUEST_ERROR","detail":"Validation error: Required at \"file\""},
+	   {"code":"BAD_REQUEST_ERROR","detail":"Validation error: Required at \"date\""}]
+	L'errore avveniva a causa della presenza di tab nel `Content-Type`, non accettati dal server PDND di Tracing.
+
 2025-09-12  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
-	Risolto Bug #1644
+	Risolto Bug
 	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
 	- CVE-2025-55163, CVE-2025-58057 e CVE-2025-58056: aggiornata libreria 'io.netty:*' alla versione 4.1.127.Final
 
