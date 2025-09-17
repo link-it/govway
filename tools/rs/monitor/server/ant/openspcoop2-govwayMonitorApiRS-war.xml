@@ -188,7 +188,7 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/console">
 				<include name="govway-monitor-ui-*.jar"/>
-				<include name="jsoup-1.20.1.jar"/>
+				<include name="jsoup-1.21.2.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
 				<include name="slf4j-api-2.0.17-gov4j-1.jar"/>

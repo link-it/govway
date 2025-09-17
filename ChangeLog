@@ -1,3 +1,11 @@
+2025-09-17   Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1650
+	(https://github.com/link-it/govway/issues/244)
+	Nel controllo degli accessi, le configurazioni di autorizzazione per token claims o contenuti con più controlli su più righe venivano salvate su una sola riga. 
+	Il comportamento anomalo è stato corretto.
+	
 2025-09-15  Andrea Poli <apoli@link.it>
 
 	* [Utils, ProtocolloModIPA]

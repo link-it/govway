@@ -31,7 +31,7 @@
 	<archive path="/op2_3.4.dev/lib/console/govway-monitor-ui-components-20250825.jar"/>
 	<archive path="/op2_3.4.dev/lib/console/jquery-3.7.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/console/jquery-ui-1.14.1.jar"/>
-	<archive path="/op2_3.4.dev/lib/console/jsoup-1.20.1.jar"/>
+	<archive path="/op2_3.4.dev/lib/console/jsoup-1.21.2.jar"/>
 	<!-- cxf -->
         <archive path="/op2_3.4.dev/lib/cxf/cxf-core-4.1.3-gov4j-1.jar"/>
 	<archive path="/op2_3.4.dev/lib/cxf/cxf-rt-bindings-soap-4.1.3.jar"/>

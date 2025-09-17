@@ -22,7 +22,7 @@
 
 		<jquery.version>3.7.1</jquery.version>
 		<jquery-ui.version>1.14.1</jquery-ui.version>
-		<jsoup.version>1.20.1</jsoup.version>
+		<jsoup.version>1.21.2</jsoup.version>
 
 	</properties>
 
