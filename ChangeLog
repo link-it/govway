@@ -1,5 +1,13 @@
 2025-09-18  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug #1644
+	Sono state risolte le seguenti vulnerabilità relative ai jar di terza parte:
+	- CVE-2025-41249: aggiornata libreria 'org.springframework:*' alla versione 6.2.11
+	- CVE-2025-41248: aggiornata libreria 'org.springframework.security:* alla versione 6.5.5
+
+2025-09-18  Andrea Poli <apoli@link.it>
+
 	* [ProtocolloModIPA]
 	Aggiunta funzionalità #1651
 	Nella funzionalità di 'Tracing PDND' è stata aggiunta la possibilità di accorpare in un unico record, prima della pubblicazione, 
