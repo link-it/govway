@@ -1,3 +1,10 @@
+2025-09-18  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloModIPA]
+	Aggiunta funzionalità #1651
+	Nella funzionalità di 'Tracing PDND' è stata aggiunta la possibilità di accorpare in un unico record, prima della pubblicazione, 
+	le informazioni statistiche di più soggetti operativi al fine di supportare scenari in cui più soggetti non corrispondano ciascuno a un ente diverso registrato sulla PDND. 
+
 2025-09-15  Andrea Poli <apoli@link.it>
 
 	* [Utils, ProtocolloModIPA]

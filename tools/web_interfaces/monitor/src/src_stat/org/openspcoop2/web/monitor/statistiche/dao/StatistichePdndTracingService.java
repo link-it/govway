@@ -32,6 +32,8 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryException;
 import org.openspcoop2.core.commons.search.Soggetto;
+import org.openspcoop2.core.commons.search.dao.ISoggettoServiceSearch;
+import org.openspcoop2.core.commons.search.dao.jdbc.JDBCSoggettoServiceSearch;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.statistiche.StatistichePdndTracing;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
@@ -51,6 +53,9 @@ import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.monitor.engine.statistic.PdndTracciamentoInfo;
+import org.openspcoop2.monitor.engine.statistic.PdndTracciamentoSoggetto;
+import org.openspcoop2.monitor.engine.statistic.PdndTracciamentoUtils;
 import org.openspcoop2.monitor.engine.statistic.StatisticsInfoUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -90,8 +95,12 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 	private StatistichePdndTracingSearchForm search;
 
 	private org.openspcoop2.core.statistiche.dao.IServiceManager statisticheServiceManager;
-
+	
 	private IStatistichePdndTracingServiceSearch statistichePdndTracingServiceSearchDAO;
+	
+	private org.openspcoop2.core.commons.search.dao.IServiceManager utilsServiceManager;
+	
+	private ISoggettoServiceSearch soggettiServiceSearchDAO;
 
 	private PddMonitorProperties govwayMonitorProperties;
 
@@ -106,6 +115,11 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 
 			this.statistichePdndTracingServiceSearchDAO = this.statisticheServiceManager.getStatistichePdndTracingServiceSearch();
 
+			this.utilsServiceManager = (org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory
+					.getInstance(StatistichePdndTracingService.log).getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), StatistichePdndTracingService.log);
+			
+			this.soggettiServiceSearchDAO = this.utilsServiceManager.getSoggettoServiceSearch();
+			
 			this.govwayMonitorProperties = PddMonitorProperties.getInstance(StatistichePdndTracingService.log);
 
 			this.timeoutRicerche = this.govwayMonitorProperties.getIntervalloTimeoutRicercaStatistiche();
@@ -293,21 +307,30 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 					}
 					StatistichePdndTracingService.logError(e.getMessage(), e);
 				} catch (TimeoutException e) {
+					List<StatistichePdndTracingBean> lNull = null;
 					this.timeoutEvent = true;
 					StatistichePdndTracingService.logError(e.getMessage(), e);
-					return null;
+					return lNull;
 				}
 			}
 
-			if(findAll != null && findAll.size() > 0){
+			if(findAll != null && !findAll.isEmpty()){
 				List<StatistichePdndTracingBean> toRet = new ArrayList<>();
 
 				for (StatistichePdndTracing statistichePdndTracing : findAll) {
 					StatistichePdndTracingBean bean = new StatistichePdndTracingBean(statistichePdndTracing);
+					
+					String nomeSoggettoPrincipale = null;
 					List<Soggetto> list = this.dynamicService.findElencoSoggetti(CostantiLabel.MODIPA_PROTOCOL_NAME ,statistichePdndTracing.getPddCodice());
 					if (list != null && !list.isEmpty()) {
 						Soggetto soggetto = list.get(0);
-						bean.setSoggettoReadable(NamingUtils.getLabelSoggetto(CostantiLabel.MODIPA_PROTOCOL_NAME, soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()));
+						nomeSoggettoPrincipale = soggetto.getNomeSoggetto();
+						bean.setSoggettoReadable(NamingUtils.getLabelSoggetto(CostantiLabel.MODIPA_PROTOCOL_NAME, soggetto.getTipoSoggetto(), nomeSoggettoPrincipale));
+					}
+					
+					if(this.search!=null && this.search.getSoggettoLocale()!=null && !this.search.getSoggettoLocale().equals(nomeSoggettoPrincipale)) {
+						// ricerca su soggetto differente da quello principale
+						bean.setSoggettoReadable(bean.getSoggettoReadable()+" (aggregatore per "+ this.search.getSoggettoLocale()+")");
 					}
 					
 					toRet.add(bean);
@@ -322,6 +345,7 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 
 		return new ArrayList<>();
 	}
+	
 
 	private IExpression createQuery(boolean isCount, IServiceSearchWithoutId<?> dao, StatistichePdndTracingModel model) throws ServiceException {
 		IExpression expr = null;
@@ -345,8 +369,13 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 				// Soggetto
 				if(Utility.isFiltroDominioAbilitato() && this.search.getSoggettoLocale()!=null && !StringUtils.isEmpty(this.search.getSoggettoLocale()) && 
 						!StatisticheCostanti.NON_SELEZIONATO.equals(this.search.getSoggettoLocale())){
+					
 					String tipoSoggettoLocale = this.search.getTipoSoggettoLocale();
 					String nomeSoggettoLocale = this.search.getSoggettoLocale();
+					
+					// gestione dati aggregati
+					nomeSoggettoLocale = traduciSoggettoAggregato(nomeSoggettoLocale) ;
+					
 					String idPorta = Utility.getIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale);
 					expr.and().equals(model.PDD_CODICE, idPorta);
 				}
@@ -407,6 +436,20 @@ public class StatistichePdndTracingService implements IStatistichePdndTracingSer
 
 		return expr;
 	}
+	private String traduciSoggettoAggregato(String nomeSoggettoLocale) {
+		try {
+			PdndTracciamentoInfo info = PdndTracciamentoUtils.getInfoTracciamento((JDBCSoggettoServiceSearch) this.soggettiServiceSearchDAO, StatistichePdndTracingService.log);
+			// cerco aggregato
+			PdndTracciamentoSoggetto s = info.getInfoByNomeSoggetto(nomeSoggettoLocale, false, true);
+			if(s!=null) {
+				// sovrascrivo il soggetto
+				return s.getIdSoggetto().getNome();
+			}
+		}catch(Exception e) {
+			StatistichePdndTracingService.log.error("Raccolta info soggetti per tracing fallita: "+e.getMessage(),e);
+		}
+		return nomeSoggettoLocale;
+	} 
 
 	@Override
 	public boolean isTimeoutEvent() {

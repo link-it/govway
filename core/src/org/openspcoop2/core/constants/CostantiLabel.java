@@ -402,6 +402,17 @@ public final class CostantiLabel {
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_LABEL = "Applicativo";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_LABEL = "Ruolo";
 
+    public static final String MODIPA_SOGGETTI_PDND_TRACING_TITLE = "Tracciamento PDND";
+    
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_LABEL = "Stato";
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_ENABLE_LABEL = "Abilitato";
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_DISABLE_LABEL = "Disabilitato";
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_LABEL = "Default";
+	
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_LABEL = "Aggregato a";
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_NOTE = "Le statistiche verranno aggregate al report del soggetto indicato";
+	
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_NOTE_LABEL = "Aggregatore per";
     
 	public static final String MODIPA_STORE_PATH_LABEL = "Path";
 	public static final String MODIPA_STORE_TYPE_LABEL = "Tipo";
