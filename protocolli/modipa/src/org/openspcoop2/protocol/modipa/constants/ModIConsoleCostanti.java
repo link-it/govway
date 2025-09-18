@@ -186,16 +186,28 @@ public class ModIConsoleCostanti {
 	public static final String MODIPA_SOGGETTI_ID_ENTE_LABEL = CostantiLabel.LABEL_CREDENZIALI_AUTENTICAZIONE_ID_ENTE;
 	public static final int MODIPA_SOGGETTI_ID_ENTE_ROWS = 1;
 	
-	public static final String MODIPA_SOGGETTI_PDND_TRACING_LABEL = "Tracciamento PDND";
-	public static final String MODIPA_SOGGETTI_PDND_TRACING_ENABLE_LABEL = "Abilitato";
-	public static final String MODIPA_SOGGETTI_PDND_TRACING_DISABLE_LABEL = "Disabilitato";
-	public static final String MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_LABEL = "Default";
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_TITLE_ID = "modipaSoggettiTracciamentoPdndSubtitleId";
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_TITLE = CostantiLabel.MODIPA_SOGGETTI_PDND_TRACING_TITLE;
+	
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_LABEL = CostantiLabel.MODIPA_SOGGETTI_PDND_TRACING_LABEL;
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_ENABLE_LABEL = CostantiLabel.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_LABEL;
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_DISABLE_LABEL = CostantiLabel.MODIPA_SOGGETTI_PDND_TRACING_DISABLE_LABEL;
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_LABEL = CostantiLabel.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_LABEL;
+
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_ID = ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_ID;
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_LABEL = CostantiLabel.MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_LABEL;
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_NOTE = CostantiLabel.MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_NOTE;
 
 	public static final String MODIPA_SOGGETTI_PDND_TRACING_ENABLE_ID = ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_ID;
 	public static final String MODIPA_SOGGETTI_PDND_TRACING_DISABLE_ID = ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_DISABLE_ID;
 	public static final String MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID = ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_DEFAULT_ID;
 	
 	public static final String MODIPA_SOGGETTI_PDND_TRACING_ID = ModICostanti.MODIPA_SOGGETTI_PDND_TRACING_ID;
+	
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_NOTE_ID =  "modipaSoggettoPdndTracingAggregatoNote";
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_NOTE_LABEL =  CostantiLabel.MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_NOTE_LABEL;
+	
+	public static final String MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_ERROR= "Impossibile modificare lo stato del tracciamento: il soggetto è indicato come aggregatore di report da altri soggetti";
 	
 	
 	

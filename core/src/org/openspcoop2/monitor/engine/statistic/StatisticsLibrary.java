@@ -103,6 +103,9 @@ public class StatisticsLibrary {
 				engine.init( this.config,
 						this.statisticheSM, this.transazioniSM, 
 						this.pluginsStatisticheSM, this.pluginsBaseSM, this.utilsSM, this.pluginsTransazioniSM );
+				if(this.config.isDebug()){
+					this.config.getLogCore().debug("Esecuzione thread {} inizializzazione terminata", name);
+				}
 				engine.generate();
 				if(this.config.isDebug()){
 					this.config.getLogCore().debug("Esecuzione thread {} terminata", name);
@@ -115,7 +118,7 @@ public class StatisticsLibrary {
 			
 		}catch(Exception e){
 			String msg = ERRORE+e.getMessage();
-			this.config.getLogCore().error(msg,e);
+			this.config.getLogCore().error("Esecuzione thread {} fallita: {}" , name, msg,e);
 		} 
 	}
 

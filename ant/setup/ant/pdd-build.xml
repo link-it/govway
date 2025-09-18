@@ -376,7 +376,7 @@
 			</and>
 			<then>
 				<var name="preloading-token-policy-pdnd" value=",/TokenPolicyPDND.zip" />
-				<var name="preloading-api-pdnd" value=",/apiPDND.zip,/signalHubPDND.zip,tracingPDND.zip" />
+				<var name="preloading-api-pdnd" value=",/apiPDND.zip,/apiPDNDv2.zip,/signalHubPDND.zip,tracingPDND.zip" />
 			</then>
 		</if>
 		<if>

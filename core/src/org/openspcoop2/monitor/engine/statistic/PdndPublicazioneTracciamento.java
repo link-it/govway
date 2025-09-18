@@ -59,7 +59,6 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.mime.MimeMultipart;
-import org.openspcoop2.utils.sql.SQLQueryObjectException;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequest;
@@ -100,7 +99,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	private org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM;
 	private Logger logger;
 	private StatisticsConfig config;
-	private Map<String, String> internalPddCodeName;
+	private PdndTracciamentoInfo internalPddCodes;
 	private Map<Date, StatistichePdndTracing> updateTracingIdStats;
 	
 	PdndPublicazioneTracciamento(){
@@ -123,21 +122,16 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		try {
 			this.statisticheSM = statisticheSM;
 			this.pdndStatisticheSM = statisticheSM.getStatistichePdndTracingService();
-			this.internalPddCodeName = PdndTracciamentoUtils.getEnabledPddCodes(utilsSM, this.config);
-			
-			this.logger.debug("Soggetti abilitati al tracing PDND: {}", this.internalPddCodeName.values());
-		} catch ( ExpressionException 
-				| ServiceException 
-				| NotImplementedException 
-				| NotFoundException 
-				| SQLQueryObjectException 
-				| StatisticsEngineException e) {
+			this.internalPddCodes = PdndTracciamentoUtils.getEnabledPddCodes(utilsSM, this.config);
+			PdndTracciamentoUtils.logDebugSoggettiAbilitati(this.internalPddCodes, this.logger);
+		} catch (Throwable e) { // lasciare Throwable
 			this.logger.error("Impossibile inizializzare la classe PdndGenerazioneTracciamento", e);
 		}
 	}
 	
 	private HttpRequest getBaseRequest(String pddCode) {
-		return this.config.getPdndTracciamentoRequestConfig().getBaseRequest(this.internalPddCodeName.get(pddCode));
+		PdndTracciamentoSoggetto s = this.internalPddCodes.getInfoByIdentificativoPorta(pddCode, true, false);
+		return this.config.getPdndTracciamentoRequestConfig().getBaseRequest(s.getIdSoggetto().getNome());
 	}
 	
 	
@@ -750,14 +744,14 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		try {
 			res = HttpUtilities.httpInvoke(req);
 		} catch (UtilsException e) {
-			this.logger.error("Errore nella comunicazione con la risorsa /status della PDND tracciamento", e);
+			this.logger.error("Errore nella comunicazione con la risorsa /status della PDND tracciamento (url invocata: "+req.getUrl()+")", e);
 			return false;
 		}
 		
 		int code = res.getResultHTTPOperation();
 		
 		if (code != HttpServletResponse.SC_OK) {
-			this.logger.error("Errore nella comunicazione con la risorsa /status della PDND tracciamento, return code: {}", code);
+			this.logger.error("Errore nella comunicazione con la risorsa /status della PDND tracciamento (url invocata: {}), return code: {}", req.getUrl(), code);
 			return false;
 		}
 		
@@ -765,10 +759,17 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	}
 	
 	
-	public void generate(String nomeSoggetto, String pddCode) throws StatisticsEngineException {
+	public void generate(PdndTracciamentoSoggetto soggetto) throws StatisticsEngineException {
+		
+		String nomeSoggetto = soggetto.getIdSoggetto().getNome();
+		String pddCode = soggetto.getIdSoggetto().getCodicePorta();
+		
+		List<String> soggettiAggregati =  PdndTracciamentoUtils.getNomiSoggettiAggregati(soggetto); 
 		
 		// controllo che la pdnd sia funzionante
+		this.logger.info("------- FASE 0 [soggetto: {} aggregati: {}] verifica disponibilità pdnd -------", nomeSoggetto, soggettiAggregati);
 		if (!checkPdnd(pddCode)) {
+			this.logger.info("PDND non disponibile; termino gestione");
 			return;
 		}
 		
@@ -777,19 +778,19 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		try {
 			
 			// pubblico i record che sono nello stato WAITING e con un csv valorizzato
-			this.logger.info("------- FASE 1 [soggetto: {}] pubblicazione record -------", nomeSoggetto);
+			this.logger.info("------- FASE 1 [soggetto: {} aggregati: {}] pubblicazione record -------", nomeSoggetto, soggettiAggregati);
 			publishRecords(nomeSoggetto, pddCode);
 			
 			// alcuni record potrebbero essere stati rifiutati e devono avere il tracingId valorizzato
-			this.logger.info("------- FASE 2 [soggetto: {}] patch dei record senza tracingId -------", nomeSoggetto);
+			this.logger.info("------- FASE 2 [soggetto: {} aggregati: {}] patch dei record senza tracingId -------", nomeSoggetto, soggettiAggregati);
 			fixPublishRecords(nomeSoggetto, pddCode);
 			
 			// aggiorno i record che la pdnd mi sta informando mancanti
-			this.logger.info("------- FASE 3 [soggetto: {}] creazione dei record MISSING -------", nomeSoggetto);
+			this.logger.info("------- FASE 3 [soggetto: {} aggregati: {}] creazione dei record MISSING -------", nomeSoggetto, soggettiAggregati);
 			updateMissing(nomeSoggetto, pddCode);
 			
 			// controllo lo stato delle varie richieste pending
-			this.logger.info("------- FASE 4 [soggetto: {}] controllo dei record PENDING -------", nomeSoggetto);
+			this.logger.info("------- FASE 4 [soggetto: {} aggregati: {}] controllo dei record PENDING -------", nomeSoggetto, soggettiAggregati);
 			
 			Integer delayIndex = 0;
 			List<Integer> delays = this.config.getPdndTracciamentoPendingCheck();
@@ -843,10 +844,11 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 			this.logger.error("Errore nell'aggiornamento della data ultima statistica {}", TipoIntervalloStatistico.PDND_PUBBLICAZIONE_TRACCIAMENTO, e);
 		}
 		
-		for (Map.Entry<String, String> soggetto : this.internalPddCodeName.entrySet())
-			this.generate(soggetto.getValue(), soggetto.getKey());
-		
-		
+		for (PdndTracciamentoSoggetto soggetto : this.internalPddCodes.getSoggetti()) {
+			this.logger.info("*--------- Gestione soggetto '{}' --------", soggetto.getIdSoggetto());
+			this.generate(soggetto);
+			this.logger.info("*--------- Fine gestione soggetto {}  --------", soggetto.getIdSoggetto());
+		}
 		
 		this.logger.info("********************* FINE PUBBLICAZIONE TRACCIATO PDND *********************");
 	}

@@ -32,6 +32,7 @@ import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.constants.RuoloTipoMatch;
 import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.constants.ProprietariProtocolProperty;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
@@ -116,6 +118,7 @@ public class DBOggettiInUsoUtils_soggetti {
 			List<String> trasformazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PA);
 			List<String> trasformazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PA);
 			List<String> configurazioniProxyPass_list = whereIsInUso.get(ErrorsHandlerCostant.CONFIGURAZIONE_REGOLE_PROXY_PASS);
+			List<String> tracciamentoPdndList = whereIsInUso.get(ErrorsHandlerCostant.IS_RIFERITA_MODI_TRACCIAMENTO);
 
 			if (servizi_fruitori_list == null) {
 				servizi_fruitori_list = new ArrayList<>();
@@ -212,6 +215,10 @@ public class DBOggettiInUsoUtils_soggetti {
 			if (configurazioniProxyPass_list == null) {
 				configurazioniProxyPass_list = new ArrayList<>();
 				whereIsInUso.put(ErrorsHandlerCostant.CONFIGURAZIONE_REGOLE_PROXY_PASS, configurazioniProxyPass_list);
+			}
+			if (tracciamentoPdndList == null) {
+				tracciamentoPdndList = new ArrayList<>();
+				whereIsInUso.put(ErrorsHandlerCostant.IS_RIFERITA_MODI_TRACCIAMENTO, tracciamentoPdndList);
 			}
 
 
@@ -751,6 +758,36 @@ public class DBOggettiInUsoUtils_soggetti {
 			stmt.close();
 			
 			
+			
+			if(idSoggettoRegistro!=null && Costanti.MODIPA_PROTOCOL_NAME.equals(idSoggettoRegistro.getTipo())) {
+				
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+				sqlQueryObject.addFromTable(CostantiDB.PROTOCOL_PROPERTIES);
+				sqlQueryObject.addSelectAliasField(CostantiDB.SOGGETTI,"nome_soggetto","nomeSoggetto");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI + ".id = " + CostantiDB.PROTOCOL_PROPERTIES + ".id_proprietario");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES + ".tipo_proprietario=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES + ".name=?");
+				sqlQueryObject.addWhereCondition(CostantiDB.PROTOCOL_PROPERTIES + ".value_string=?");
+				queryString = sqlQueryObject.createSQLQuery();
+				stmt = con.prepareStatement(queryString);
+				int index = 1;
+				stmt.setString(index++, ProprietariProtocolProperty.SOGGETTO.name());
+				stmt.setString(index++, CostantiDB.MODIPA_SOGGETTI_PDND_TRACING_AGGREGATO_ID);
+				stmt.setString(index++, idSoggettoRegistro.getNome());
+				risultato = stmt.executeQuery();
+				while (risultato.next()){
+					String nome = risultato.getString("nomeSoggetto");
+					tracciamentoPdndList.add(nome);
+					isInUso = true;
+				}
+				risultato.close();
+				stmt.close();		
+				
+			}
+			
+			
 			return isInUso;
 
 		} catch (Exception se) {
@@ -1050,6 +1087,11 @@ public class DBOggettiInUsoUtils_soggetti {
 			case CONFIGURAZIONE_REGOLE_PROXY_PASS:
 				if ( messages!=null && messages.size() > 0) {
 					msg += "utilizzato nelle Regole di Proxy Pass: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
+				}
+				break;
+			case IS_RIFERITA_MODI_TRACCIAMENTO:
+				if ( messages!=null && messages.size() > 0) {
+					msg += "riferito come aggregatore del tracciamento PDND per i soggetti: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator;
 				}
 				break;
 			default:

@@ -859,6 +859,12 @@
 						<delete file="${tmp_archivi}/govway.ear/properties/apiPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.ear/properties/apiPDND.zip" basedir="${tmp_archivi}/apiPDNDZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDZIP"/>
+						<!-- API-PDNDv2-->
+						<unzip src="${tmp_archivi}/govway.ear/properties/apiPDNDv2.zip" dest="${tmp_archivi}/apiPDNDv2ZIP"/>
+						<replace dir="${tmp_archivi}/apiPDNDv2ZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<delete file="${tmp_archivi}/govway.ear/properties/apiPDNDv2.zip" />
+						<zip destfile="${tmp_archivi}/govway.ear/properties/apiPDNDv2.zip" basedir="${tmp_archivi}/apiPDNDv2ZIP"/>
+						<delete dir="${tmp_archivi}/apiPDNDv2ZIP"/>
 						<!-- Signal Hub -->
 						<unzip src="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" dest="${tmp_archivi}/signalHubPDNDZIP"/>
 						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
@@ -986,6 +992,12 @@
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" basedir="${tmp_archivi}/apiPDNDZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDZIP"/>
+						<!-- API-PDNDv2-->
+						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv2.zip" dest="${tmp_archivi}/apiPDNDv2ZIP"/>
+						<replace dir="${tmp_archivi}/apiPDNDv2ZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv2.zip" />
+						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv2.zip" basedir="${tmp_archivi}/apiPDNDv2ZIP"/>
+						<delete dir="${tmp_archivi}/apiPDNDv2ZIP"/>
 						<!-- Signal Hub -->
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" dest="${tmp_archivi}/signalHubPDNDZIP"/>
 						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>

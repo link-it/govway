@@ -16,6 +16,10 @@ Per impostazione predefinita, non viene generato alcun report CSV. La generazion
 
   Tracing PDND: abilitazione sul soggetto
 
+.. note::
+	
+	Abilitando :ref:`console_multitenant`, l’interfaccia visualizza, subito dopo lo stato di abilitazione, un campo aggiuntivo per la selezione dell’aggregazione. Maggiori dettagli a riguardo vengono forniti nella sezione :ref:`modipa_tracingPdnd_aggregazione`.
+
 È possibile modificare il comportamento di default e/o abilitare la generazione dei report relativi anche alle fruizioni di servizio agendo sulle proprietà descritte nella sezione :ref:`modipa_tracingpdnd_properties`.
 
 La fase di generazione e/o pubblicazione può avvenire in due modalità a seconda della modalità scelta in fase di installazione comne descritto nella Guida di installazione nella sezione :ref:`deploy_batch`:
@@ -50,3 +54,4 @@ Questa operazione può anche essere effettuata direttamente nel file di configur
   :maxdepth: 2
 
   fruizioneBuiltIn
+  aggregazione

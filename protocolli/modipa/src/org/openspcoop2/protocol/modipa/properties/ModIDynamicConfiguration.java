@@ -75,7 +75,7 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 			IConsoleHelper consoleHelper, IRegistryReader registryReader,
 			IConfigIntegrationReader configIntegrationReader, IDSoggetto id) throws ProtocolException {
 		
-		ConsoleConfiguration configuration = ModIDynamicConfigurationSoggettiUtilities.getDynamicConfigSoggetto(consoleOperationType, consoleHelper, registryReader, id);
+		ConsoleConfiguration configuration = ModIDynamicConfigurationSoggettiUtilities.getDynamicConfigSoggetto(consoleOperationType, consoleHelper, registryReader, configIntegrationReader, id);
 		if(configuration!=null) {
 			return configuration;
 		}
@@ -85,14 +85,17 @@ public class ModIDynamicConfiguration extends BasicDynamicConfiguration implemen
 
 	}
 
-	/**@Override
+	@Override
 	public void updateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration,
 			ConsoleOperationType consoleOperationType, IConsoleHelper consoleHelper, ProtocolProperties properties,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, IDSoggetto id)
 			throws ProtocolException {
-		super.updateDynamicConfigSoggetto(consoleConfiguration, consoleOperationType, consoleHelper, properties, registryReader,
-				configIntegrationReader, id);
-	}*/
+		
+		ModIDynamicConfigurationSoggettiUtilities.updateDynamicConfigSoggetto(consoleConfiguration,
+				consoleOperationType, consoleHelper, 
+				properties,
+				configIntegrationReader, registryReader, id);
+	}
 
 	@Override
 	public void validateDynamicConfigSoggetto(ConsoleConfiguration consoleConfiguration,
