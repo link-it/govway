@@ -1,3 +1,13 @@
+2025-09-22   Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug #1652
+	(https://github.com/link-it/govway/issues/249)
+	(https://github.com/link-it/govway/issues/250)
+	Nella migrazione alla versione 3.4.0 è stato risolto un problema che impediva:
+	- l’autenticazione alle console per le utenze con password contenenti i caratteri & # % ^ < >;
+	- la registrazione di nuovi utenti con password che includessero uno di questi caratteri.
+
 2025-09-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
