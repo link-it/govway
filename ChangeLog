@@ -1,3 +1,9 @@
+2025-09-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1646
+	Realizzate GovLet che facilitano la configurazione delle erogazioni previste dalla certificazione SUAP.
+
 2025-09-18  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloModIPA]
