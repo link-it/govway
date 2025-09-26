@@ -129,6 +129,8 @@ public class DataElement implements Serializable {
 	
 	private STATO_APERTURA_SEZIONI statoSottosezione = STATO_APERTURA_SEZIONI.CHIUSO;
 	
+	private boolean modalitaAccordion = false;
+	
 	private String valoreDefault = null;
 	
 	private Dialog dialog = null;
@@ -150,7 +152,6 @@ public class DataElement implements Serializable {
 	}
 
 	public DataElement() {
-		//int id = -1;
 		this.label = "";
 		this.value = "";
 		this.type = "text";
@@ -177,6 +178,7 @@ public class DataElement implements Serializable {
 		this.contextMenu = false;
 		this.copyToClipboard = null;
 		this.refresh = false;
+		this.modalitaAccordion = false;
 	}
 
 	public void setId(int i) {
@@ -203,7 +205,6 @@ public class DataElement implements Serializable {
 		
 		bf.append(DataElement.getEscapedValue(DataElement.checkNull(this.label)));
 		if(elementsRequiredEnabled && this.required){
-			//	bf.append(" (*)");
 			bf.append(" <em>*</em>");
 		}
 		if(this.bold){
@@ -224,12 +225,14 @@ public class DataElement implements Serializable {
 		
 		for (int i = 0; i < this.values.length; i++) {
 			String val = this.values[i];
-			String label = this.labels[i];
+			String cLabel = this.labels[i];
 			
 			if(sb.length() >0)
 				sb.append(", ");
 			
-			sb.append(label).append(": ").append(val != null && !val.equals("") ? val : (mode.equals("view-noeditbutton") ? "&nbsp;" : "not defined"));
+			String notDefValue = mode.equals("view-noeditbutton") ? "&nbsp;" : "not defined";
+			String valore = val != null && !val.equals("") ? val : notDefValue;
+			sb.append(cLabel).append(": ").append(valore);
 		}
 		
 		return sb.toString();
@@ -240,13 +243,6 @@ public class DataElement implements Serializable {
 	}
 	private void setType(String s) {
 		this.type = s;
-		/*if("hidden".equals(this.type)){
-			this.required = false;
-			this.bold = false;
-		}
-		if("text".equals(this.type)){
-			this.required = false;
-		}*/
 		if(DataElementType.TEXT_AREA.toString().equals(s) || DataElementType.TEXT_AREA_NO_EDIT.toString().equals(s)){
 			this.setLabelAffiancata(false);
 		}
@@ -273,6 +269,10 @@ public class DataElement implements Serializable {
 		// classe css default per gli elementi LINK
 		if(DataElementType.LINK.toString().equals(s)) {
 			this.styleClass = null;
+		}
+		// classe css default per gli elementi BUTTON
+		if(DataElementType.BUTTON.toString().equals(s)) {
+			this.styleClass = Costanti.INPUT_BUTTON_DEFAULT_CSS_CLASS;
 		}
 		// Carico la configurazione di default per il tipo password
 		if(DataElementType.LOCK.toString().equals(s)) {
@@ -1136,5 +1136,17 @@ public class DataElement implements Serializable {
 	
 	public boolean isRefresh() {
 		return this.refresh;
+	}
+	
+	public void abilitaModalitaAccordion() {
+		this.setModalitaAccordion(true);
+	}
+	
+	public void setModalitaAccordion(boolean modalitaAccordion) {
+		this.modalitaAccordion = modalitaAccordion;
+	}
+
+	public boolean isModalitaAccordion() {
+		return this.modalitaAccordion;
 	}
 }

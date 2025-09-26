@@ -30,13 +30,12 @@ import javax.servlet.http.HttpServletRequest;
  *
  */
 public class SessionUtils {
+	
+	private SessionUtils() {
+		// static only
+	}
 
 	public static boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
-		boolean sessionInValid = 
-				//(httpServletRequest.getRequestedSessionId() != null)
-				(httpServletRequest.getSession(false)!=null)
-				&& !httpServletRequest.isRequestedSessionIdValid();
-		return sessionInValid;
+		return (httpServletRequest.getSession(false)!=null) && !httpServletRequest.isRequestedSessionIdValid();
 	}
-	
 }

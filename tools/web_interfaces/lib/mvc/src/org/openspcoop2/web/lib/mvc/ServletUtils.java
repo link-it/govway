@@ -41,6 +41,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.utils.BooleanNullable;
+import org.openspcoop2.utils.oauth2.OAuth2Costanti;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
@@ -346,27 +347,6 @@ public class ServletUtils {
 	}
 
 	public static void setGeneralAndPageDataIntoSession(HttpServletRequest request, HttpSession session,GeneralData gd,PageData pd){
-		setGeneralAndPageDataIntoSession(request, session, gd, pd, false);
-	}
-	public static void setGeneralAndPageDataIntoSession(HttpServletRequest request, HttpSession session,GeneralData gd,PageData pd,boolean readOnlyDisabled){
-
-		//		if(readOnlyDisabled==false){
-		//			/*
-		//			CON UN UNICO INTERVENTO SI OTTIENE IL READ ONLY
-		//			
-		//			IN PRATICA RECUPERO L'UTENZA DALLA SESSIONE
-		//			SE POSSIEDE IL PERMESSO READ-ONLY ('R' indica che tutte le maschere visualizzate tramite gli altri permessi sono in read-only mode)
-		//			DEVE POI ESSERE GESTITA NEL FILTRO DI AUTORIZZAZIONE IL CONTROLLO CHE UN UNTENTE IN READ ONLY NON RICHIEDA UNA ELIMINAZIONE, UNA ADD O UNA MODIFICA
-		//			*/ 
-		//			pd.disableEditMode();
-		//			pd.setAddButton(false);
-		//			pd.setRemoveButton(false);
-		//			pd.setSelect(false);
-		//			pd.setAreaBottoni(null);
-		//			pd.setBottoni(null);
-		//			pd.setInserisciBottoni(false);
-		//		}
-		//		
 		setObjectIntoSession(request, session, gd, Costanti.SESSION_ATTRIBUTE_GENERAL_DATA);
 		setObjectIntoSession(request, session, pd, Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
 	}
@@ -395,8 +375,7 @@ public class ServletUtils {
 	}
 
 	public static String getSearchFromSession(ISearch ricerca, int idLista){
-		String search = (Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
-		return search;
+		return (Costanti.SESSION_ATTRIBUTE_VALUE_RICERCA_UNDEFINED.equals(ricerca.getSearchString(idLista)) ? "" : ricerca.getSearchString(idLista));
 	}
 
 	private static String getKeyRisultatiRicerca(int idLista) {
@@ -418,8 +397,7 @@ public class ServletUtils {
 	}
 	
 	public static String getUserLoginFromSession(HttpSession session){
-		String userLogin = (String) session.getAttribute(Costanti.SESSION_ATTRIBUTE_LOGIN);
-		return userLogin;
+		return (String) session.getAttribute(Costanti.SESSION_ATTRIBUTE_LOGIN);
 	}
 	public static void setUserLoginIntoSession(HttpSession session,String userLogin){
 		session.setAttribute(Costanti.SESSION_ATTRIBUTE_LOGIN, userLogin);
@@ -439,8 +417,7 @@ public class ServletUtils {
 	}
 
 	public static Boolean getContaListeFromSession(HttpSession session){
-		Boolean contaListe = (Boolean) session.getAttribute(Costanti.SESSION_ATTRIBUTE_CONTA_LISTE);
-		return contaListe;
+		return (Boolean) session.getAttribute(Costanti.SESSION_ATTRIBUTE_CONTA_LISTE);
 	}
 	public static void setContaListeIntoSession(HttpSession session,Boolean contaListe){
 		session.setAttribute(Costanti.SESSION_ATTRIBUTE_CONTA_LISTE, contaListe);
@@ -459,7 +436,6 @@ public class ServletUtils {
 	}
 	public static BooleanNullable getBooleanAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request, Boolean defaultValue) {
 		Boolean obj = getObjectFromSession(request, session, Boolean.class, attributeName);
-//		Object obj = session.getAttribute(attributeName);
 
 		if(obj == null) {
 			if(defaultValue==null) {
@@ -485,7 +461,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<>(); 
 			}
 			
 			Map<String, Object> mapTabId = null;
@@ -524,7 +500,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<>(); 
 			}
 			
 			Map<String, Object> mapTabId = null;
@@ -541,14 +517,6 @@ public class ServletUtils {
 			if(mapTabId.containsKey(objectName))
 				return objectClass.cast(mapTabId.get(objectName));
 			
-			// leggi dall request
-//			if(request != null) {
-//				String parameterValue = request.getParameter(objectName);
-//				
-//				if(parameterValue != null) {
-//					return objectClass.cast(parameterValue);
-//				}
-//			}
 		}
 		
 		// comportamento normale
@@ -572,7 +540,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<>(); 
 			}
 			
 			Map<String, Object> mapTabId = null;
@@ -589,20 +557,10 @@ public class ServletUtils {
 			if(mapTabId.containsKey(objectName))
 				return mapTabId.get(objectName);
 			
-			// leggi dall request
-//			if(request != null) {
-//				String parameterValue = request.getParameter(objectName);
-//				
-//				if(parameterValue != null) {
-//					return objectClass.cast(parameterValue);
-//				}
-//			}
 		}
 		
 		// comportamento normale
-		Object obj = session.getAttribute(objectName);
-
-		return obj;
+		return session.getAttribute(objectName);
 	}
 	
 	public static String getStringAttributeFromSession(String attributeName, HttpSession session, HttpServletRequest request) {
@@ -618,14 +576,14 @@ public class ServletUtils {
 		Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 		
 		if(sessionMap == null) {
-			sessionMap = new ConcurrentHashMap<String, Map<String,Object>>();
+			sessionMap = new ConcurrentHashMap<>();
 		}
 		
 		Map<String, Object> mapDest = null;
 		if(StringUtils.isNotBlank(idSessioneTabSrc) && sessionMap.containsKey(idSessioneTabSrc)) { // identificativo del tab sorgente definito
 			// cerco una sessione da cui copiare altrimenti creo una sessione vuota 
 			Map<String, Object> mapSrc = sessionMap.get(idSessioneTabSrc);
-			mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
+			mapDest = SerializationUtils.clone(((HashMap<String, Object>)mapSrc));
 		} else { // se non ricevo un id tab provo a cercare l'ultima sessione creata altrimenti creo una sessione vuota
 			Date date = new Date(0l); // imposto una data molto vecchia
 			String idSessionTab = null;
@@ -669,7 +627,7 @@ public class ServletUtils {
 					// attributo che indica l'id del tab con la sessione su cui fare refresh
 					mapDest.put(Costanti.SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID, idSessioneTabDest); 
 				} else {
-					mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc)); // mappa clonata dalla piu' vecchia sessione creata
+					mapDest = SerializationUtils.clone(((HashMap<String, Object>)mapSrc)); // mappa clonata dalla piu' vecchia sessione creata
 				}
 			} else {
 				mapDest = new HashMap<>(); // nuova mappa dopo login.
@@ -700,7 +658,7 @@ public class ServletUtils {
 			Map<String,Map<String, Object>> sessionMap = (Map<String,Map<String, Object>>) session.getAttribute(Costanti.SESSION_ATTRIBUTE_TAB_KEYS_MAP);
 			
 			if(sessionMap == null) {
-				sessionMap = new ConcurrentHashMap<String, Map<String,Object>>(); 
+				sessionMap = new ConcurrentHashMap<>(); 
 			}
 			
 			List<String> keys = new ArrayList<>();
@@ -866,15 +824,13 @@ public class ServletUtils {
 	}
 	
 	public static void generaESalvaTokenCSRF(HttpServletRequest request, HttpSession session) {
-//		String tabId = (String) request.getAttribute(Costanti.PARAMETER_TAB_KEY);
 		String uuId = UUID.randomUUID().toString().replace("-", ""); 
 		String nuovoToken = generaTokenCSRF(uuId);
 		setObjectIntoSession(request, session, nuovoToken, Costanti.SESSION_ATTRIBUTE_CSRF_TOKEN);
 	}
 
 	public static String generaTokenCSRF(String sessionTabID) {
-		String nuovoToken = sessionTabID + "_" + System.currentTimeMillis();
-		return nuovoToken;
+		return sessionTabID + "_" + System.currentTimeMillis();
 	}
 	
 	public static String leggiTokenCSRF(HttpServletRequest request, HttpSession session) {
@@ -938,5 +894,37 @@ public class ServletUtils {
 	
 	public static void setErrorStatusCodeInRequestAttribute(HttpServletRequest request, HttpStatus httpStatus){
 		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_SET_ERROR_CODE, httpStatus);
+	}
+	
+	public static String buildInternalRedirectUrl(HttpServletRequest request, String destination) {
+	    String scheme = request.getScheme();               // http o https
+	    String serverName = request.getServerName();       // es: www.example.com
+	    int serverPort = request.getServerPort();          // es: 8080
+	    String contextPath = request.getContextPath();     // es: /app
+
+	    StringBuilder url = new StringBuilder();
+	    url.append(scheme).append("://").append(serverName);
+
+	    boolean isStandardPort = 
+	        ("http".equals(scheme) && serverPort == 80) || 
+	        ("https".equals(scheme) && serverPort == 443);
+
+	    if (!isStandardPort) {
+	        url.append(":").append(serverPort);
+	    }
+	    
+		if (destination.startsWith("/")) {
+			// destination is an absolute path
+			url.append(contextPath).append(destination);
+		} else {
+			// destination is a relative path
+			url.append(contextPath).append("/").append(destination);
+		}
+
+	    return url.toString();
+	}
+	
+	public static boolean isUtenteLoggatoConOAuth2(HttpSession session) {
+		return session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN) != null; 
 	}
 }

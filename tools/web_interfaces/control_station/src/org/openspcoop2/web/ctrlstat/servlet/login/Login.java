@@ -78,7 +78,7 @@ public final class Login extends Action {
 				
 				pd.setMessage(LoginCostanti.MESSAGGIO_INFO_CONTROLLO_CONSISTENZA_DATI_IN_CORSO, Costanti.MESSAGE_TYPE_INFO);
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 
@@ -87,7 +87,7 @@ public final class Login extends Action {
 			// Se login = null, devo visualizzare la pagina per l'inserimento dati
 			if (login == null) {
 	
-				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 					
@@ -97,7 +97,7 @@ public final class Login extends Action {
 			boolean isOk = loginHelper.loginCheckData(LoginTipologia.WITH_PASSWORD);
 			if (!isOk) {
 	
-				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());
 
@@ -135,7 +135,7 @@ public final class Login extends Action {
 			// in sessione la login dell'utente
 			gd = generalHelper.initGeneralData(request);
 	
-			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGIN, ForwardParams.LOGIN());

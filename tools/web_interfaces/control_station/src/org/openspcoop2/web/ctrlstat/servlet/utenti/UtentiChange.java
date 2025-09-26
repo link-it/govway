@@ -95,7 +95,6 @@ public final class UtentiChange extends Action {
 			
 			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PW);
-			String confpwsu = null; 
 			String tipoGui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 
 			String isServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
@@ -313,7 +312,7 @@ public final class UtentiChange extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
-						nomesu,pwsu,confpwsu,interfaceType,
+						nomesu,pwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza, 
 						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
@@ -353,7 +352,7 @@ public final class UtentiChange extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.CHANGE, singlePdD,
-						nomesu,pwsu,confpwsu,interfaceType,
+						nomesu,pwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						changepwd,modalitaScelte, isSoggettiAll, isServiziAll, user, scadenza, dataUltimoAggiornamentoPassword, oldScadenza, 
 						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
@@ -498,7 +497,7 @@ public final class UtentiChange extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				utentiHelper.addChangeUtenteInfoToDati(dati, nomesu, changepwd, pwsu, confpwsu, interfaceType, 
+				utentiHelper.addChangeUtenteInfoToDati(dati, nomesu, changepwd, pwsu, interfaceType, 
 						isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing,isAccordiCooperazione,paginaSuServizi, 
 						uws, paginaSuAccordi, uwp,modalitaScelte, tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
 						homePageMonitoraggio, intervalloTemporaleHomePageConsoleMonitoraggio);

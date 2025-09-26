@@ -65,12 +65,12 @@ public class LoginPhaseListener implements PhaseListener {
 			ExternalContext ec = fc.getExternalContext();
 			LoginBean lb = (LoginBean)ec.getSessionMap().get(AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 	        //controllo se sono nella pagina di login
-			boolean isLogged = lb == null ? false : lb.isLoggedIn();
+			boolean isLogged = lb != null && lb.isLoggedIn();
 			
 			UIViewRoot vr = fc.getViewRoot();
 			//se il viewroot e' == null allora vuol dire ke ho perso tutte le informazioni sulla
 			//sullo stato jsf quindi devo riautenticarmi
-	        boolean allowedPage = vr!=null ? isAllowedPage(vr.getViewId()) : false;
+	        boolean allowedPage = vr!=null && isAllowedPage(vr.getViewId());
 	        
 	        // controllo se sto cambiando la password perche' e' scaduta
  			if(!isLogged && (lb != null && lb.getUserToUpdate() != null)) {
@@ -123,7 +123,7 @@ public class LoginPhaseListener implements PhaseListener {
 	
 	@Override
 	public void beforePhase(PhaseEvent event) {
-		
+		//do nothing
 	}
 
 	@Override

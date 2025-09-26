@@ -82,6 +82,8 @@ function CheckDati() {
     return false;
   } else { document.form.submit(); }
 };
+
+function inizializzaSelectSezione(idDiv){}
 </script>
 <link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">

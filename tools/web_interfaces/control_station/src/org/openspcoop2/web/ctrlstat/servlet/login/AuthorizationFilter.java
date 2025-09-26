@@ -30,6 +30,7 @@ import java.util.Properties;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -39,6 +40,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.utils.oauth2.OAuth2Costanti;
 import org.openspcoop2.utils.transport.http.credential.IPrincipalReader;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderException;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderFactory;
@@ -47,6 +49,7 @@ import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -81,7 +84,6 @@ public final class AuthorizationFilter implements Filter {
 	private static Logger log = ControlStationLogger.getPddConsoleCoreLogger();
 	
 	private boolean loginApplication = true;
-	private String loginTipo = null;
 	private IPrincipalReader principalReader = null;
 	private String loginUtenteNonAutorizzatoRedirectUrl = null;
 	private String loginUtenteNonValidoRedirectUrl = null;
@@ -94,27 +96,22 @@ public final class AuthorizationFilter implements Filter {
 		this.filterConfig = filterConfig;
 		try {
 			this.core = new ControlStationCore();
-		} catch (Exception e) {
-			System.err.println("Errore durante il caricamento iniziale: " + e.toString());
-			e.printStackTrace(System.err);
+		} catch (DriverControlStationException e) {
+			logError(log, "Errore durante il caricamento iniziale: " + e.getMessage(), e);
 		}
 		
 		// configurazione del filtro dalle properties
+		this.loginApplication = this.core.isLoginApplication();
+		boolean loginOAuth2Enabled = this.core.isLoginOAuth2Enabled();
 		
 		try{
-			this.loginApplication = this.core.isLoginApplication();
-		}catch(Exception e){
-			this.loginApplication = true;
-		}
-		
-		try{
-			if(!this.loginApplication){
-				this.loginTipo = this.core.getLoginTipo();
+			if(!this.loginApplication || loginOAuth2Enabled){
+				String loginTipo = this.core.getLoginTipo();
 
-				if(StringUtils.isEmpty(this.loginTipo))
-					this.loginTipo = PrincipalReaderType.PRINCIPAL.getValue();
+				if(StringUtils.isEmpty(loginTipo))
+					loginTipo = PrincipalReaderType.PRINCIPAL.getValue();
 				
-				this.principalReader = PrincipalReaderFactory.getReader(log, this.loginTipo);
+				this.principalReader = PrincipalReaderFactory.getReader(log, loginTipo);
 				Properties prop = this.core.getLoginProperties();
 				this.principalReader.init(prop); 
 				
@@ -124,16 +121,12 @@ public final class AuthorizationFilter implements Filter {
 				this.loginSessioneScadutaRedirectUrl = this.core.getLoginSessioneScadutaRedirectUrl();
 			}
 		}catch(PrincipalReaderException e){
-			log.error("Impossibile caricare il principal reader: "+e.getMessage());
-			System.err.println("Errore durante il caricamento iniziale: " + e.toString());
-			e.printStackTrace(System.err);
+			logError(log, "Impossibile caricare il principal reader: "+e.getMessage(), e);
 		} catch (Exception e) {
-			log.error("Impossibile leggere la configurazione della console: "+e.getMessage());
-			System.err.println("Errore durante il caricamento iniziale: " + e.toString());
-			e.printStackTrace(System.err);
+			logError(log, "Impossibile leggere la configurazione della console: "+e.getMessage(), e);
 		}
 
-		log.debug("Usa il principal per il controllo autorizzazione utente ["+!this.loginApplication+"]"); 
+		log.debug("Usa il principal per il controllo autorizzazione utente [{}]", (!this.loginApplication)); 
 
 	}
 
@@ -155,7 +148,7 @@ public final class AuthorizationFilter implements Filter {
 			
 			// Non faccio il filtro sulla pagina di login e sulle immagini
 			String urlRichiesta = request.getRequestURI();
-			log.info("Richiesta Risorsa ["+urlRichiesta+"]"); 
+			log.info("Richiesta Risorsa [{}]", urlRichiesta); 
 			
 			// Autenticazione gestita dall'applicazione 
 			if(this.loginApplication){
@@ -179,10 +172,43 @@ public final class AuthorizationFilter implements Filter {
 					if (userLogin == null) {
 						
 						if((contextPath+"/").equals(urlRichiesta)){
-							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP,null, this.filterConfig, HttpStatus.OK);
+							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP,null, this.filterConfig.getServletContext(), HttpStatus.OK);
 						}
 						else{
-							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig, HttpStatus.UNAUTHORIZED);
+							Object userInfoObj = session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_USER_INFO);
+							
+							if(userInfoObj == null) { // login classico
+								AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig.getServletContext(), HttpStatus.UNAUTHORIZED);
+							}else {
+								// login oauth2
+								String username = null;
+								try {
+									username = this.principalReader.getPrincipal(request);
+								} catch (PrincipalReaderException e) {
+									logError(log, "Errore durante la lettura del principal: " + e.getMessage(),e);
+								}
+								
+								log.debug("Username trovato: [{}]", username);
+								
+								String redirPageUrl = null;
+								if(username != null) { // redirect verso la servlet di login 
+									redirPageUrl = request.getContextPath() + "/oauth2/user";
+								} else{ // redirect verso la pagina di errore
+									request.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ERROR_CODE, HttpServletResponse.SC_UNAUTHORIZED);
+									request.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ERROR_DETAIL,"Accesso OAuth2 negato");
+									
+									// ERRORE
+									ServletUtils.removeUserLoginFromSession(session);
+									
+									// Messaggio di errore
+									ServletUtils.setObjectIntoSession(request, session, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_PRINCIPAL_ASSENTE, Costanti.PRINCIPAL_ERROR_MSG);
+									
+									redirPageUrl = StringUtils.isNotEmpty(this.loginUtenteNonAutorizzatoRedirectUrl) ? this.loginUtenteNonAutorizzatoRedirectUrl 
+											: request.getContextPath() + "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE;
+								}
+								
+								response.sendRedirect(redirPageUrl);
+							}
 						}
 						
 						// return so that we do not chain to other filters
@@ -217,7 +243,7 @@ public final class AuthorizationFilter implements Filter {
 									StringBuilder bfError = new StringBuilder();
 									if(GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta, loginHelper, bfError)==false){
 										ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: "+bfError.toString());
-										setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig, HttpStatus.FORBIDDEN);
+										AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig.getServletContext(), HttpStatus.FORBIDDEN);
 										// return so that we do not chain to other filters
 										return;
 									}
@@ -268,7 +294,7 @@ public final class AuthorizationFilter implements Filter {
 							} catch (Exception e) {
 								ControlStationCore.logError("Errore durante il processo di autorizzazione della servlet ["+urlRichiesta
 										+"] per l'utente ["+userLogin+"] : " + e.getMessage(),e);
-								setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.SERVICE_UNAVAILABLE);
+								AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig.getServletContext(), HttpStatus.SERVICE_UNAVAILABLE);
 								// return so that we do not chain to other filters
 								return;
 							}
@@ -277,7 +303,7 @@ public final class AuthorizationFilter implements Filter {
 						if(isRedirectToLoginAndSessioneScaduta(urlRichiesta)) {
 						
 	
-							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig, HttpStatus.UNAUTHORIZED);
+							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig.getServletContext(), HttpStatus.UNAUTHORIZED);
 							// return so that we do not chain to other filters
 							return;
 						}
@@ -285,7 +311,7 @@ public final class AuthorizationFilter implements Filter {
 						// Controllo CSFR
 						String msgErroreCSFR = verificaCSRF(generalHelper, session, request, loginHelper);
 						if(msgErroreCSFR != null) {
-							AuthorizationFilter.setErrorCSRFMsg(generalHelper, session, request, response, msgErroreCSFR, this.filterConfig);
+							AuthorizationFilter.setErrorCSRFMsg(generalHelper, session, request, response, msgErroreCSFR, this.filterConfig.getServletContext());
 							// return so that we do not chain to other filters
 							return;
 						}
@@ -334,7 +360,7 @@ public final class AuthorizationFilter implements Filter {
 							ControlStationCore.clearAuditManager();
 							
 							if(GestoreConsistenzaDati.gestoreConsistenzaDatiInEsecuzione){
-								AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE, LoginCostanti.MESSAGGIO_INFO_CONTROLLO_CONSISTENZA_DATI_IN_CORSO, MessageType.INFO, this.filterConfig, null);
+								AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE, LoginCostanti.MESSAGGIO_INFO_CONTROLLO_CONSISTENZA_DATI_IN_CORSO, MessageType.INFO, this.filterConfig.getServletContext(), null);
 								// return so that we do not chain to other filters
 								return;
 							}
@@ -358,7 +384,7 @@ public final class AuthorizationFilter implements Filter {
 									log.debug("Utente autorizzato, effettuo il redirect verso l'applicazione...");
 									
 									// redirect dopo il login
-									this.setLoginWelcomeMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, loginCore);
+									AuthorizationFilter.setLoginWelcomeMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, loginCore, this.filterConfig.getServletContext());
 									return;
 								} else {
 									// utenza non valida
@@ -415,7 +441,7 @@ public final class AuthorizationFilter implements Filter {
 					
 						log.debug("Utente Loggato controllo validita' sessione..."); 
 						// controllo se la sessione e' valida
-						boolean isSessionInvalid = isSessionInvalid(request);
+						boolean isSessionInvalid = AuthorizationFilter.isSessionInvalid(request);
 
 						// Se non sono loggato mi autentico e poi faccio redirect verso la pagina di welcome
 						if(isSessionInvalid){
@@ -461,7 +487,7 @@ public final class AuthorizationFilter implements Filter {
 									StringBuilder bfError = new StringBuilder();
 									if(GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta, loginHelper, bfError)==false){
 										ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: "+bfError.toString());
-										setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig, HttpStatus.FORBIDDEN);
+										AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, this.filterConfig.getServletContext(), HttpStatus.FORBIDDEN);
 										// return so that we do not chain to other filters
 										return;
 									}
@@ -509,7 +535,7 @@ public final class AuthorizationFilter implements Filter {
 							} catch (Exception e) {
 								ControlStationCore.logError("Errore durante il processo di autorizzazione della servlet ["+urlRichiesta
 										+"] per l'utente ["+userLogin+"] : " + e.getMessage(),e);
-								setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.SERVICE_UNAVAILABLE);
+								AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig.getServletContext(), HttpStatus.SERVICE_UNAVAILABLE);
 								// return so that we do not chain to other filters
 								return;
 							}
@@ -518,7 +544,7 @@ public final class AuthorizationFilter implements Filter {
 						if(isRedirectToLoginAndSessioneScaduta(urlRichiesta)) {
 						
 	
-							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig, HttpStatus.UNAUTHORIZED);
+							AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.LOGIN_JSP, LoginCostanti.LABEL_LOGIN_SESSIONE_SCADUTA,MessageType.ERROR_SINTETICO, this.filterConfig.getServletContext(), HttpStatus.UNAUTHORIZED);
 							// return so that we do not chain to other filters
 							return;
 						}
@@ -526,7 +552,7 @@ public final class AuthorizationFilter implements Filter {
 						// Controllo CSFR
 						String msgErroreCSFR = verificaCSRF(generalHelper, session, request, loginHelper);
 						if(msgErroreCSFR != null) {
-							AuthorizationFilter.setErrorCSRFMsg(generalHelper, session, request, response, msgErroreCSFR, this.filterConfig);
+							AuthorizationFilter.setErrorCSRFMsg(generalHelper, session, request, response, msgErroreCSFR, this.filterConfig.getServletContext());
 							// return so that we do not chain to other filters
 							return;
 						}
@@ -566,7 +592,7 @@ public final class AuthorizationFilter implements Filter {
 								throw new ServletException(e);
 							}
 						}
-						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
+						ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 					}
 				}
 			}
@@ -584,7 +610,7 @@ public final class AuthorizationFilter implements Filter {
 						ControlStationCore.logError("Errore rilevato durante l'authorizationFilter (reInit General Helper)",e);
 					}
 				}
-				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.SERVICE_UNAVAILABLE);
+				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig.getServletContext(), HttpStatus.SERVICE_UNAVAILABLE);
 				// return so that we do not chain to other filters
 				return;
 			}catch(Exception eClose){
@@ -594,12 +620,8 @@ public final class AuthorizationFilter implements Filter {
 
 	}
 	
-	private boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
-		boolean sessionInValid = 
-				//(httpServletRequest.getRequestedSessionId() != null)
-				(httpServletRequest.getSession(false)!=null)
-				&& !httpServletRequest.isRequestedSessionIdValid();
-		return sessionInValid;
+	public static boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
+		return (httpServletRequest.getSession(false)!=null) && !httpServletRequest.isRequestedSessionIdValid();
 	}
 	
 	private boolean isRisorsaProtetta(HttpServletRequest request){
@@ -619,6 +641,9 @@ public final class AuthorizationFilter implements Filter {
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.JS_DIR) == -1)
 				&& (urlRichiesta.indexOf("/"+AboutCostanti.SERVLET_NAME_ABOUT) == -1) 
 				&& (urlRichiesta.indexOf("/"+CostantiControlStation.PUBLIC_DIR) == -1) // risorse public
+				&& (urlRichiesta.indexOf(LoginCostanti.SERVLET_NAME_LOGIN_OAUTH2_CALLBACK) == -1) // servlet callback oauth2
+				&& (urlRichiesta.indexOf(LoginCostanti.SERVLET_NAME_LOGIN_OAUTH2_USER) == -1) // servlet user oauth2
+				&& (urlRichiesta.indexOf(LoginCostanti.SERVLET_NAME_LOGIN_OAUTH2_LOGIN_START) == -1) // servlet avvio oauth2
 				) {
 			return true;
 		}
@@ -632,8 +657,8 @@ public final class AuthorizationFilter implements Filter {
 	}
 	
 	
-	public void setLoginWelcomeMsg(GeneralHelper gh, HttpSession session,
-			HttpServletRequest request,HttpServletResponse response,String servletDispatcher, LoginCore loginCore) throws IOException,ServletException {
+	public static void setLoginWelcomeMsg(GeneralHelper gh, HttpSession session,
+			HttpServletRequest request,HttpServletResponse response,String servletDispatcher, LoginCore loginCore, ServletContext servletContext) throws IOException,ServletException {
 		
 		// Inizializzo PageData
 		PageData pd = gh.initPageData();
@@ -670,22 +695,22 @@ public final class AuthorizationFilter implements Filter {
 		
 		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
-		this.filterConfig.getServletContext().getRequestDispatcher(servletDispatcher).forward(request, response);
+		servletContext.getRequestDispatcher(servletDispatcher).forward(request, response);
 	}
 	
 	
 	public static void setErrorMsg(GeneralHelper gh, HttpSession session,
-			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, FilterConfig filterConfig, HttpStatus httpStatus) throws IOException,ServletException {
-		AuthorizationFilter.setErrorMsg(gh, session, request, response, servletDispatcher, msgErrore, null, MessageType.ERROR, filterConfig, httpStatus); 
+			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, ServletContext servletContext, HttpStatus httpStatus) throws IOException,ServletException {
+		AuthorizationFilter.setErrorMsg(gh, session, request, response, servletDispatcher, msgErrore, null, MessageType.ERROR, servletContext, httpStatus); 
 	}
 	
 	public static void setErrorMsg(GeneralHelper gh, HttpSession session,
-			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, MessageType messageType, FilterConfig filterConfig, HttpStatus httpStatus) throws IOException,ServletException {
-		AuthorizationFilter.setErrorMsg(gh, session, request, response, servletDispatcher, msgErrore, null, messageType, filterConfig, httpStatus); 
+			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, MessageType messageType, ServletContext servletContext, HttpStatus httpStatus) throws IOException,ServletException {
+		AuthorizationFilter.setErrorMsg(gh, session, request, response, servletDispatcher, msgErrore, null, messageType, servletContext, httpStatus); 
 	}
 	
 	public static void setErrorMsg(GeneralHelper gh,HttpSession session,
-			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, String msgErroreTitle, MessageType messageType, FilterConfig filterConfig, HttpStatus httpStatus) throws IOException,ServletException {
+			HttpServletRequest request,HttpServletResponse response,String servletDispatcher,String msgErrore, String msgErroreTitle, MessageType messageType, ServletContext servletContext, HttpStatus httpStatus) throws IOException,ServletException {
 		
 		// Inizializzo PageData
 		PageData pd = gh.initPageData();
@@ -712,32 +737,26 @@ public final class AuthorizationFilter implements Filter {
 			httpStatus = HttpStatus.SERVICE_UNAVAILABLE;
 		
 		ServletUtils.setErrorStatusCodeInRequestAttribute(request, httpStatus);
-		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
+		ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 
-		filterConfig.getServletContext().getRequestDispatcher(servletDispatcher).forward(request, response);
+		servletContext.getRequestDispatcher(servletDispatcher).forward(request, response);
 	}
 	
-	private String getRedirectToMessageServlet() {
+	
+	public static String getRedirectToMessageServlet() {
 		return new Parameter("", LoginCostanti.SERVLET_NAME_MESSAGE_PAGE,
 				new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_CONSOLE_RIPRISTINATA),
 				new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
 				).getValue();
 	}
 	
-	private String getRedirectToMessageServletRefreshSessione(String contextPath, HttpStatus httpStatus) {
+	public static String getRedirectToMessageServletRefreshSessione(String contextPath, HttpStatus httpStatus) {
 		return new Parameter("", contextPath + "/" + LoginCostanti.SERVLET_NAME_MESSAGE_PAGE,
 				new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_REFRESH_SESSIONE_CONSOLE_RIPRISTINATA),
 				new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString()),
 				new Parameter(Costanti.PARAMETER_MESSAGE_ERROR_CODE, ""+httpStatus.value())
 				).getValue();
 	}
-	
-//	public static void setErrorRefreshSessionMsg(GeneralHelper gh, HttpSession session, HttpServletRequest request,HttpServletResponse response,String msgErrore, FilterConfig filterConfig) throws IOException,ServletException {
-//		String servletDispatcher = LoginCostanti.INFO_JSP;
-//		MessageType messageType = MessageType.INFO_SINTETICO;
-//		String msgErroreTitle = null;
-//		AuthorizationFilter.setErrorMsg(gh, session, request, response, servletDispatcher , msgErrore, msgErroreTitle, messageType, filterConfig); 
-//	}
 		
 	private String verificaCSRF(GeneralHelper gh, HttpSession session, HttpServletRequest request, LoginHelper loginHelper) throws Exception {
 		
@@ -761,11 +780,11 @@ public final class AuthorizationFilter implements Filter {
 		return msg;
 	}
 	
-	public static void setErrorCSRFMsg(GeneralHelper gh, HttpSession session, HttpServletRequest request,HttpServletResponse response,String msgErrore, FilterConfig filterConfig) throws IOException,ServletException {
+	public static void setErrorCSRFMsg(GeneralHelper gh, HttpSession session, HttpServletRequest request,HttpServletResponse response,String msgErrore, ServletContext servletContext) throws IOException,ServletException {
 		String servletDispatcher = LoginCostanti.INFO_JSP;
 		MessageType messageType = MessageType.ERROR;
 		String msgErroreTitle = null;
-		AuthorizationFilter.setErrorMsg(gh, session, request, response, servletDispatcher , msgErrore, msgErroreTitle, messageType, filterConfig, HttpStatus.FORBIDDEN); 
+		AuthorizationFilter.setErrorMsg(gh, session, request, response, servletDispatcher , msgErrore, msgErroreTitle, messageType, servletContext, HttpStatus.FORBIDDEN); 
 	}
 	
 	private boolean isRichiestaScrittura(HttpServletRequest request, LoginHelper loginHelper) throws Exception{
@@ -807,5 +826,9 @@ public final class AuthorizationFilter implements Filter {
 		boolean shouldProcessRequest = servletsToExclude.stream().noneMatch(servlet -> urlRichiesta.indexOf("/"+ servlet) == -1);
 
 		return urlRichiesta.indexOf(".do") == -1 && urlRichiesta.indexOf(".js") == -1 && shouldProcessRequest;
+	}
+	
+	public static void logError(Logger log, String message, Throwable t) {
+		log.error(message, t);
 	}
 }

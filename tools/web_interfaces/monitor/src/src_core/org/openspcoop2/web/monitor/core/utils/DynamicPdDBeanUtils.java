@@ -60,6 +60,7 @@ import org.openspcoop2.generic_project.dao.jdbc.utils.GenericJDBCUtilities;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
@@ -113,7 +114,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 
 	private transient Font defaultFont = null;
 
-	public static DynamicPdDBeanUtils getInstance(Logger log) throws Exception{
+	public static DynamicPdDBeanUtils getInstance(Logger log) {
 		if(DynamicPdDBeanUtils.instance == null) {
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 			synchronized (DynamicPdDBeanUtils.class) {
@@ -124,19 +125,19 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return DynamicPdDBeanUtils.instance;
 	}
 
-	public static synchronized void init(Logger log) throws Exception{
+	public static synchronized void init(Logger log) {
 		if(DynamicPdDBeanUtils.instance == null)
 			DynamicPdDBeanUtils.instance = new DynamicPdDBeanUtils(log);
 	}
 
-	public DynamicPdDBeanUtils(Logger log) throws Exception{
+	public DynamicPdDBeanUtils(Logger log) {
 		this(null, null, 
 				null, null,
 				log);
 	}
 	public DynamicPdDBeanUtils(org.openspcoop2.core.commons.search.dao.IServiceManager serviceManager, org.openspcoop2.core.plugins.dao.IServiceManager pluginsServiceManager, 
 			DriverRegistroServiziDB driverRegistroServiziDB, DriverConfigurazioneDB driverConfigurazioneDB,
-			Logger log) throws Exception{
+			Logger log) {
 		this.log = log;
 		try{
 			this.logDebug("Init Dynamic Utils in corso...");
@@ -156,7 +157,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		}
 	}
 
-	public boolean isTipoSoggettoCompatibile(String tipo1, String tipo2)  throws Exception{
+	public boolean isTipoSoggettoCompatibile(String tipo1, String tipo2)  throws ProtocolException {
 
 		// se uno dei due non e' impostato allora sono compatibili
 		if(StringUtils.isBlank(tipo1) || StringUtils.isBlank(tipo2))
@@ -176,30 +177,30 @@ public class DynamicPdDBeanUtils implements Serializable {
 		}
 
 		Map<String, String> mappaTipi = new HashMap<>();
-		if(tipiDisponibili1 != null && tipiDisponibili1.size() > 0)
+		if(tipiDisponibili1 != null && !tipiDisponibili1.isEmpty())
 			for (String tipo : tipiDisponibili1) {
 				if(!mappaTipi.containsKey(tipo))
 					mappaTipi.put(tipo, tipo);
 			}
 
-		if(tipiDisponibili2 != null && tipiDisponibili2.size() > 0)
+		if(tipiDisponibili2 != null && !tipiDisponibili2.isEmpty())
 			for (String tipo : tipiDisponibili2) {
 				if(!mappaTipi.containsKey(tipo))
 					mappaTipi.put(tipo, tipo);
 			}
 
 		// controllo di validita  i tipi dei soggetti che gestisce il protocollo devono essere gli stessi
-		if(tipiDisponibili1.size() > 0 && tipiDisponibili1.size() != mappaTipi.keySet().size())
+		if(!tipiDisponibili1.isEmpty() && tipiDisponibili1.size() != mappaTipi.keySet().size())
 			return false;
 
-		if(tipiDisponibili2.size() > 0 && tipiDisponibili2.size() != mappaTipi.keySet().size())
+		if(!tipiDisponibili2.isEmpty() && tipiDisponibili2.size() != mappaTipi.keySet().size())
 			return false;
 
 
 		return true;
 	}
 
-	public boolean isTipoSoggettoCompatibileConProtocollo(String tipoSoggetto, String tipoProtocollo)  throws Exception{
+	public boolean isTipoSoggettoCompatibileConProtocollo(String tipoSoggetto, String tipoProtocollo)  throws ProtocolException {
 
 		// se uno dei due non e' impostato allora sono compatibili
 		if(StringUtils.isBlank(tipoSoggetto) || StringUtils.isBlank(tipoProtocollo))
@@ -215,7 +216,7 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return true;
 	}
 
-	public boolean isTipoServizioCompatibileConProtocollo(String tipoServizio, String tipoProtocollo)  throws Exception{
+	public boolean isTipoServizioCompatibileConProtocollo(String tipoServizio, String tipoProtocollo)  throws ProtocolException {
 
 		// se uno dei due non e' impostato allora sono compatibili
 		if(StringUtils.isBlank(tipoServizio) || StringUtils.isBlank(tipoProtocollo))

@@ -144,7 +144,7 @@ public final class UtenteChange extends Action {
 				} else {
 					
 					if(!idSoggetto.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL)) {
-						soggettoSelezionatoUtente  = idSoggetto; // il caso all viene gestito impostando il valore del soggetto selezionato = null;
+						soggettoSelezionatoUtente  = idSoggetto; // il caso all viene gestito impostando il valore del soggetto selezionato = null
 					}
 				}
 
@@ -154,7 +154,7 @@ public final class UtenteChange extends Action {
 				} else {
 					
 					if(!tipoModalita.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL)) {
-						protocolloSelezionatoUtente  = tipoModalita; // il caso ALL viene gestito impostando il valore del protocollo selezionato a null;
+						protocolloSelezionatoUtente  = tipoModalita; // il caso ALL viene gestito impostando il valore del protocollo selezionato a null
 					}
 
 					// 	reset soggetto scelto se cambia il protocollo
@@ -314,6 +314,8 @@ public final class UtenteChange extends Action {
 				List<DataElement> dati = new ArrayList<>();
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
+				
+				pd.setDati(dati);
 			} else if(changeModalita != null) { // clic sul link cambia modalita gateway 
 				// messaggio di cambiamento del protocollo:
 				List<String> protocolli = utentiCore.getProtocolli(request, session);
@@ -352,6 +354,8 @@ public final class UtenteChange extends Action {
 				List<DataElement> dati = new ArrayList<>();
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
+				
+				pd.setDati(dati);
 			} else if(changeSoggetto != null) { // clic sul link cambia soggetto
 
 				String pdMsg = "";
@@ -370,6 +374,8 @@ public final class UtenteChange extends Action {
 				List<DataElement> dati = new ArrayList<>();
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
+				
+				pd.setDati(dati);
 			}else {
 				// provengo dalla maschera di modifica utente
 				// preparo i campi

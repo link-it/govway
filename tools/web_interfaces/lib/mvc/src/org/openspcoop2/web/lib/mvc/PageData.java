@@ -88,6 +88,8 @@ public class PageData implements Serializable {
 	
 	private List<DataElement> comandiAzioneBarraTitoloDettaglioElemento;
 	
+	private boolean nascondiButtonRowLogin;
+	
 	
 	Dialog dialog = null;
 
@@ -104,7 +106,6 @@ public class PageData implements Serializable {
 		this.searchDescription = "";
 		this.searchLabel = "Ricerca";
 		this.searchNote = false;
-		//this.searchNumEntries = 10;
 		this.searchNumEntries = -1; // Per visualizzare sempre
 		this.mode = "";
 		this.message = "";
@@ -134,6 +135,7 @@ public class PageData implements Serializable {
 		this.paginazione = true;
 		this.comandiAzioneBarraTitoloDettaglioElemento = new ArrayList<>();
 		this.setInserisciSearch(true);
+		this.nascondiButtonRowLogin = false;
 	}
 
 	public void setPageDescription(String s) {
@@ -311,8 +313,7 @@ public class PageData implements Serializable {
 		this.hidden.put(name,value);
 	}
 	public String getHidden(String name) {
-		String value = this.hidden.get(name);
-		return value;
+		return this.hidden.get(name);
 	}
 	public void clearHidden() {
 		this.hidden.clear();
@@ -367,18 +368,18 @@ public class PageData implements Serializable {
 		return this.removeButton;
 	}
 
-	public static String GET_PARAMETRO_FILTER_NAME (int position) {
+	public static String getParametroFilterName (int position) {
 		return Costanti.PARAMETRO_FILTER_NAME+position;
 	}
-	public static String GET_PARAMETRO_FILTER_VALUE (int position) {
+	public static String getParametroFilterValue (int position) {
 		return Costanti.PARAMETRO_FILTER_VALUE+position;
 	}
 	
-	public void addFilter(String name, String label, String valueSelected, String [] values, String [] labels, boolean postBack, int size) throws Exception{
+	public void addFilter(String name, String label, String valueSelected, String [] values, String [] labels, boolean postBack, int size) throws PageDataException{
 		this.addFilter(name, label, valueSelected, values, labels, postBack, size, false);
 	}
 	
-	public void addFilter(String name, String label, String valueSelected, String [] values, String [] labels, boolean postBack, int size, boolean disabilitaFiltroRisultati) throws Exception{
+	public void addFilter(String name, String label, String valueSelected, String [] values, String [] labels, boolean postBack, int size, boolean disabilitaFiltroRisultati) throws PageDataException{
 		if(this.filterNames == null) {
 			this.filterNames = new ArrayList<>();
 			this.filterValues = new ArrayList<>();
@@ -386,24 +387,24 @@ public class PageData implements Serializable {
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
+		deName.setName(getParametroFilterName(this.filterNames.size()));
 		if(name==null) {
-			throw new Exception("Name not found");
+			throw new PageDataException("Name not found");
 		}
 		deName.setValue(name);
 		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.SELECT);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
+		deValue.setName(getParametroFilterValue(this.filterValues.size()));
 		if(label==null) {
-			throw new Exception("Label not found");
+			throw new PageDataException("Label not found");
 		}
 		deValue.setLabel(label);
 		deValue.setSelected(valueSelected);
 		deValue.setValue(valueSelected);
 		if(values==null || values.length<=0) {
-			throw new Exception("Values not found");
+			throw new PageDataException("Values not found");
 		}
 		deValue.setValues(values);
 		deValue.setLabels(labels);
@@ -415,7 +416,7 @@ public class PageData implements Serializable {
 		
 	}
 	
-	public void addTextFilter(String name, String label, String value, int size) throws Exception{
+	public void addTextFilter(String name, String label, String value, int size) throws PageDataException{
 		if(this.filterNames == null) {
 			this.filterNames = new ArrayList<>();
 			this.filterValues = new ArrayList<>();
@@ -423,18 +424,18 @@ public class PageData implements Serializable {
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
+		deName.setName(getParametroFilterName(this.filterNames.size()));
 		if(name==null) {
-			throw new Exception("Name not found");
+			throw new PageDataException("Name not found");
 		}
 		deName.setValue(name);
 		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.TEXT_EDIT);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
+		deValue.setName(getParametroFilterValue(this.filterValues.size()));
 		if(label==null) {
-			throw new Exception("Label not found");
+			throw new PageDataException("Label not found");
 		}
 		deValue.setLabel(label);
 		deValue.setValue(value);
@@ -442,7 +443,7 @@ public class PageData implements Serializable {
 		this.filterValues.add(deValue);
 	}
 	
-	public void addTextAreaFilter(String name, String label, String value, int size, Integer rows, Integer cols) throws Exception{
+	public void addTextAreaFilter(String name, String label, String value, int size, Integer rows, Integer cols) throws PageDataException{
 		if(this.filterNames == null) {
 			this.filterNames = new ArrayList<>();
 			this.filterValues = new ArrayList<>();
@@ -450,18 +451,18 @@ public class PageData implements Serializable {
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
+		deName.setName(getParametroFilterName(this.filterNames.size()));
 		if(name==null) {
-			throw new Exception("Name not found");
+			throw new PageDataException("Name not found");
 		}
 		deName.setValue(name);
 		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.TEXT_AREA);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
+		deValue.setName(getParametroFilterValue(this.filterValues.size()));
 		if(label==null) {
-			throw new Exception("Label not found");
+			throw new PageDataException("Label not found");
 		}
 		deValue.setLabel(label);
 		deValue.setValue(value);
@@ -474,7 +475,7 @@ public class PageData implements Serializable {
 		this.filterValues.add(deValue);
 	}
 	
-	public void addNumberFilter(String name, String label, String value, int size, Integer min, Integer max) throws Exception{
+	public void addNumberFilter(String name, String label, String value, int size, Integer min, Integer max) throws PageDataException{
 		if(this.filterNames == null) {
 			this.filterNames = new ArrayList<>();
 			this.filterValues = new ArrayList<>();
@@ -482,18 +483,18 @@ public class PageData implements Serializable {
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
+		deName.setName(getParametroFilterName(this.filterNames.size()));
 		if(name==null) {
-			throw new Exception("Name not found");
+			throw new PageDataException("Name not found");
 		}
 		deName.setValue(name);
 		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.NUMBER);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
+		deValue.setName(getParametroFilterValue(this.filterValues.size()));
 		if(label==null) {
-			throw new Exception("Label not found");
+			throw new PageDataException("Label not found");
 		}
 		deValue.setLabel(label);
 		deValue.setValue(value);
@@ -503,7 +504,7 @@ public class PageData implements Serializable {
 		this.filterValues.add(deValue);
 	}
 	
-	public void addCheckboxFilter(String name, String label, String value, int size) throws Exception{
+	public void addCheckboxFilter(String name, String label, String value, int size) throws PageDataException{
 		if(this.filterNames == null) {
 			this.filterNames = new ArrayList<>();
 			this.filterValues = new ArrayList<>();
@@ -511,18 +512,18 @@ public class PageData implements Serializable {
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
+		deName.setName(getParametroFilterName(this.filterNames.size()));
 		if(name==null) {
-			throw new Exception("Name not found");
+			throw new PageDataException("Name not found");
 		}
 		deName.setValue(name);
 		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.CHECKBOX);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
+		deValue.setName(getParametroFilterValue(this.filterValues.size()));
 		if(label==null) {
-			throw new Exception("Label not found");
+			throw new PageDataException("Label not found");
 		}
 		deValue.setLabel(label);
 		deValue.setValue(value);
@@ -531,7 +532,7 @@ public class PageData implements Serializable {
 		this.filterValues.add(deValue);
 	}
 	
-	public void addSubtitleFilter(String name, String label, boolean visualizzaSottosezioneAperta) throws Exception{
+	public void addSubtitleFilter(String name, String label, boolean visualizzaSottosezioneAperta) throws PageDataException{
 		if(this.filterNames == null) {
 			this.filterNames = new ArrayList<>();
 			this.filterValues = new ArrayList<>();
@@ -540,18 +541,18 @@ public class PageData implements Serializable {
 		// devo salvare anche l'elemento name perche' la jsp naviga sia names che values contemporaneamente per posizione.
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
+		deName.setName(getParametroFilterName(this.filterNames.size()));
 		if(name==null) {
-			throw new Exception("Name not found");
+			throw new PageDataException("Name not found");
 		}
 		deName.setValue(name);
 		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.SUBTITLE);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
+		deValue.setName(getParametroFilterValue(this.filterValues.size()));
 		if(label==null) {
-			throw new Exception("Label not found");
+			throw new PageDataException("Label not found");
 		}
 		deValue.setLabel(label);
 		deValue.setStatoAperturaSezioni(visualizzaSottosezioneAperta ? STATO_APERTURA_SEZIONI.APERTO : STATO_APERTURA_SEZIONI.CHIUSO);
@@ -559,10 +560,10 @@ public class PageData implements Serializable {
 	}
 	
 	
-	public void impostaAperturaSubtitle(String name, Boolean visualizzaSottosezioneAperta, String postbackElementName) throws Exception {
+	public void impostaAperturaSubtitle(String name, Boolean visualizzaSottosezioneAperta, String postbackElementName) throws PageDataException {
 		
 		if(name==null) {
-			throw new Exception("Param name is null");
+			throw new PageDataException("Param name is null");
 		}
 		
 		if(this.filterNames != null) {
@@ -620,7 +621,7 @@ public class PageData implements Serializable {
 		}
 	}
 	
-	public void addHiddenFilter(String name, String value, int size) throws Exception{
+	public void addHiddenFilter(String name, String value, int size) throws PageDataException{
 		if(this.filterNames == null) {
 			this.filterNames = new ArrayList<>();
 			this.filterValues = new ArrayList<>();
@@ -628,16 +629,16 @@ public class PageData implements Serializable {
 		
 		DataElement deName = new DataElement();
 		deName.setType(DataElementType.HIDDEN);
-		deName.setName(GET_PARAMETRO_FILTER_NAME(this.filterNames.size()));
+		deName.setName(getParametroFilterName(this.filterNames.size()));
 		if(name==null) {
-			throw new Exception("Name not found");
+			throw new PageDataException("Name not found");
 		}
 		deName.setValue(name);
 		this.filterNames.add(deName);
 		
 		DataElement deValue = new DataElement();
 		deValue.setType(DataElementType.HIDDEN);
-		deValue.setName(GET_PARAMETRO_FILTER_VALUE(this.filterValues.size()));
+		deValue.setName(getParametroFilterValue(this.filterValues.size()));
 		deValue.setLabel(deValue.getName());
 		deValue.setValue(value);
 		deValue.setSize(size);
@@ -1025,4 +1026,10 @@ public class PageData implements Serializable {
 	public void setInserisciSearch(boolean inserisciSearch) {
 		this.inserisciSearch = inserisciSearch;
 	}
+	public void setNascondiButtonRowLogin(boolean nascondiButtonRowLogin) {
+		this.nascondiButtonRowLogin = nascondiButtonRowLogin;
+	}
+	public boolean isNascondiButtonRowLogin() {
+        return this.nascondiButtonRowLogin;
+    }
 }

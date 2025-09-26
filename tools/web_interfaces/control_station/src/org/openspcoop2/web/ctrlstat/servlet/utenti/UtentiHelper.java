@@ -74,11 +74,11 @@ import org.openspcoop2.web.lib.users.dao.UserPassword;
 public class UtentiHelper extends ConsoleHelper {
 
 	public UtentiHelper(HttpServletRequest request, PageData pd,
-			HttpSession session) throws Exception {
+			HttpSession session) {
 		super(request, pd, session);
 	}
 	public UtentiHelper(ControlStationCore core, HttpServletRequest request, PageData pd,
-			HttpSession session) throws Exception {
+			HttpSession session) {
 		super(core, request, pd, session);
 	}
 
@@ -128,7 +128,7 @@ public class UtentiHelper extends ConsoleHelper {
 	}
 	
 	public List<DataElement> addUtentiToDati(List<DataElement> dati,TipoOperazione tipoOperazione,boolean singlePdD,
-			String nomesu,String pwsu,String confpwsu,InterfaceType interfaceType,
+			String nomesu,String pwsu, InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isReportistica,String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			String changepwd, String [] modalitaGateway,
 			String isSoggettiAll, String isServiziAll, User oldImgUser, String scadenza, Date dataUltimoAggiornamentoPassword , boolean oldScadenza, 
@@ -322,15 +322,6 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setType(DataElementType.SUBTITLE);
 				dati.add(de);
 				
-//				if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
-//					String valueSoggetti = getLabelSezionePddMonitorSoggettiServizi(isDiagnosticaEnabled, isReportisticaEnabled) + 
-//							UtentiCostanti.LABEL_SUFFIX_RESTRIZIONE_SOGGETTI;
-//					de = new DataElement();
-//					de.setType(DataElementType.NOTE);
-//					de.setValue(valueSoggetti);
-//					dati.add(de);
-//				}
-				
 				de = new DataElement();
 				de.setType(DataElementType.CHECKBOX);
 				de.setLabel(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SOGGETTI_TUTTI);
@@ -345,7 +336,7 @@ public class UtentiHelper extends ConsoleHelper {
 					de.setType(DataElementType.LINK);
 					de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SOGGETTI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
 					String nomeLink = UtentiCostanti.LABEL_UTENTI_SOGGETTI;
-					if(contaListe){
+					if(Boolean.TRUE.equals(contaListe)){
 						ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 						this.utentiCore.utentiSoggettiList(nomesu, searchForCount);
 						int num = searchForCount.getNumEntries(Liste.UTENTI_SOGGETTI);
@@ -373,15 +364,6 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setType(DataElementType.SUBTITLE);
 			dati.add(de);
 			
-//			if(TipoOperazione.CHANGE.equals(tipoOperazione)) {
-//				String valueServizi = getLabelSezionePddMonitorSoggettiServizi(isDiagnosticaEnabled, isReportisticaEnabled)+ 
-//						UtentiCostanti.LABEL_SUFFIX_RESTRIZIONE_API;
-//				de = new DataElement();
-//				de.setType(DataElementType.NOTE);
-//				de.setValue(valueServizi);
-//				dati.add(de);
-//			}
-			
 			de = new DataElement();
 			de.setType(DataElementType.CHECKBOX);
 			de.setLabel(UtentiCostanti.LABEL_ABILITAZIONI_PUNTUALI_SERVIZI_TUTTI);
@@ -390,13 +372,13 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setPostBack(true);
 			dati.add(de);
 			
-			if((TipoOperazione.CHANGE.equals(tipoOperazione) && oldImgUser.isPermitAllServizi()==false && !ServletUtils.isCheckBoxEnabled(isServiziAll))) {
+			if((TipoOperazione.CHANGE.equals(tipoOperazione) && !oldImgUser.isPermitAllServizi() && !ServletUtils.isCheckBoxEnabled(isServiziAll))) {
 				
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(UtentiCostanti.SERVLET_NAME_UTENTI_SERVIZI_LIST, new Parameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME, nomesu));
 				String nomeLink = UtentiCostanti.LABEL_UTENTI_SERVIZI;
-				if(contaListe){
+				if(Boolean.TRUE.equals(contaListe)){
 					ConsoleSearch searchForCount = new ConsoleSearch(true,1);
 					this.utentiCore.utentiServiziList(nomesu, searchForCount);
 					int num = searchForCount.getNumEntries(Liste.UTENTI_SERVIZI);
@@ -539,7 +521,6 @@ public class UtentiHelper extends ConsoleHelper {
 							String protocolloName = profiloValues.get(0);
 							String labelProt = ConsoleHelper._getLabelProtocollo(protocolloName);
 							de.setValue(labelProt);
-			//				de.setValue(profiloDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : profiloDefaultUtente);
 							dati.add(de);
 						}
 						
@@ -606,7 +587,6 @@ public class UtentiHelper extends ConsoleHelper {
 									String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
 									de.setValue(labelSoggetto);
 								}
-			//					de.setValue(soggettoDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoDefaultUtente);
 								dati.add(de);
 							}
 							
@@ -689,7 +669,6 @@ public class UtentiHelper extends ConsoleHelper {
 						String protocolloName = profiloValues.get(0);
 						String labelProt = ConsoleHelper._getLabelProtocollo(protocolloName);
 						de.setValue(labelProt);
-	//					de.setValue(profiloDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : profiloDefaultUtente);
 						dati.add(de);
 					}
 					
@@ -756,7 +735,6 @@ public class UtentiHelper extends ConsoleHelper {
 								String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
 								de.setValue(labelSoggetto);
 							}
-	//						de.setValue(soggettoDefaultUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoDefaultUtente);
 							dati.add(de);
 						}
 						
@@ -880,11 +858,9 @@ public class UtentiHelper extends ConsoleHelper {
 			dati.add(de);
 		}
 		
-		
-		
-		boolean loginApplication = this.core.isLoginApplication();
-		
-		if(loginApplication) {
+		boolean visualizzaFormPassword = this.core.isMultiLoginEnabled() || this.core.isVisualizzaFormLoginApplication();
+
+		if(visualizzaFormPassword) {
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PASSWORD);
 			de.setType(DataElementType.TITLE);
@@ -936,11 +912,10 @@ public class UtentiHelper extends ConsoleHelper {
 			dati.add(de);
 		}
 
-		if(loginApplication && TipoOperazione.CHANGE.equals(tipoOperazione)){
+		if(visualizzaFormPassword && TipoOperazione.CHANGE.equals(tipoOperazione)){
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_MODIFICA);
 			de.setType(DataElementType.CHECKBOX);
-			//			de.setOnClick("cambiaPassword(\"suChange\");");
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PW);
 			de.setPostBack(true);
 			de.setSelected(changepwd);
@@ -951,7 +926,7 @@ public class UtentiHelper extends ConsoleHelper {
 		if( (TipoOperazione.ADD.equals(tipoOperazione)) || (ServletUtils.isCheckBoxEnabled(changepwd)) ){
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PW);
-			if(loginApplication) {
+			if(visualizzaFormPassword) {
 				de.setValue(pwsu);
 				de.setType(DataElementType.CRYPT);
 				de.getPassword().setVisualizzaPasswordChiaro(true);
@@ -963,7 +938,7 @@ public class UtentiHelper extends ConsoleHelper {
 					// stesso messaggio in add e change perche' l'amministratore puo' impostare anche password ripetute
 					de.setNote(passwordVerifier.help(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
 				}
-				de.setRequired(true);
+				de.setRequired(!this.core.isMultiLoginEnabled());
 			} else {
 				de.setType(DataElementType.HIDDEN);
 				de.setValue(UtentiCostanti.VALORE_PARAMETRO_PW_MODALITA_NO_LOGIN_APPLICATION);
@@ -980,7 +955,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 
 	public void addChangeUtenteInfoToDati(List<DataElement> dati,
-			String nomesu,String changepwd,String pwsu,String confpwsu,InterfaceType interfaceType,
+			String nomesu,String changepwd,String pwsu,InterfaceType interfaceType,
 			String isServizi,String isDiagnostica,String isReportistica, String isSistema,String isMessaggi,String isUtenti,String isAuditing, String isAccordiCooperazione,
 			boolean scegliSuServizi,
 			String [] uws, boolean scegliSuAccordi,String [] uwp, String [] modalitaGateway, 
@@ -1001,13 +976,6 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setValue(pwsu);
 			de.setType(DataElementType.HIDDEN);
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PW);
-			dati.add(de);
-
-			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PW);
-			de.setValue(confpwsu);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PW);
 			dati.add(de);
 
 			de = new DataElement();
@@ -1316,7 +1284,6 @@ public class UtentiHelper extends ConsoleHelper {
 					String labelProt = ConsoleHelper._getLabelProtocollo(protocolliDispondibili.get(0));
 					de.setValue(labelProt);
 				}
-//				de.setValue(profiloSelezionatoUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : ConsoleHelper._getLabelProtocollo(profiloSelezionatoUtente));
 				dati.add(de);
 				
 			} 
@@ -1395,7 +1362,6 @@ public class UtentiHelper extends ConsoleHelper {
 						String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
 						de.setValue(labelSoggetto);
 					}
-//					de.setValue(soggettoSelezionatoUtente.equals(UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL) ? UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL : soggettoSelezionatoUtente);
 					dati.add(de);
 				}
 			} else {
@@ -1408,7 +1374,8 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 		}
 		
-		if(this.core.isLoginApplication()) {
+		// mostro la sezione per il cambio password solo se l'utente e' un login application e non e' loggato con OAuth2
+		if(this.core.isLoginApplication() && !ServletUtils.isUtenteLoggatoConOAuth2(this.session)) {
 		
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_PASSWORD);
@@ -1418,7 +1385,6 @@ public class UtentiHelper extends ConsoleHelper {
 			de = new DataElement();
 			de.setLabel(UtentiCostanti.LABEL_MODIFICA);
 			de.setType(DataElementType.CHECKBOX);
-			//		de.setOnClick("cambiaPassword(\"changePwd\");");
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CHANGE_PW);
 			de.setPostBack(true);
 			de.setSelected(changepw);
@@ -1431,8 +1397,6 @@ public class UtentiHelper extends ConsoleHelper {
 	
 				PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 				
-	//			if(ServletUtils.getUserFromSession(this.session).getPermessi().isUtenti()==false){
-				
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PW);
 				de.setType(DataElementType.CRYPT);
@@ -1441,8 +1405,6 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setSize(this.getSize());
 				de.setRequired(true);
 				dati.add(de);
-					
-	//			}
 	
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_NUOVA_PW);
@@ -1479,7 +1441,6 @@ public class UtentiHelper extends ConsoleHelper {
 		try {
 			String nomesu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PW);
-			// String confpwsu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
 			String tipoGui = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 			String isServizi = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 			String isDiagnostica = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
@@ -1503,7 +1464,7 @@ public class UtentiHelper extends ConsoleHelper {
 				}
 			}
 
-			boolean loginApplication = this.core.isLoginApplication();
+			boolean visualizzaFormPassword = this.core.isMultiLoginEnabled() || this.core.isVisualizzaFormLoginApplication();
 			
 			// Campi obbligatori
 			if (TipoOperazione.ADD.equals(tipoOperazione) || ServletUtils.isCheckBoxEnabled(changepwd) ) {
@@ -1513,12 +1474,9 @@ public class UtentiHelper extends ConsoleHelper {
 				}
 				boolean checkPassword = true;
 				if(TipoOperazione.CHANGE.equals(tipoOperazione) && !ServletUtils.isCheckBoxEnabled(changepwd)){
-					//if( confpwsu.equals("") && pwsu.equals("") ){
-					//	checkPassword = false;
-					//}
 					checkPassword=false;
 				}
-				if(!loginApplication) {
+				if(this.core.isMultiLoginEnabled()) {
 					checkPassword=false;
 				}
 				if(checkPassword){
@@ -1529,13 +1487,6 @@ public class UtentiHelper extends ConsoleHelper {
 							tmpElenco = tmpElenco + ", "+UtentiCostanti.LABEL_PARAMETRO_UTENTI_PW;
 						}
 					}
-//					if (confpwsu.equals("")) {
-//						if (tmpElenco.equals("")) {
-//							tmpElenco = UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD;
-//						} else {
-//							tmpElenco = tmpElenco + ", "+UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD;
-//						}
-//					}
 				}
 				if(!tmpElenco.equals("")){
 					this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare: " + tmpElenco);
@@ -1544,14 +1495,13 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-//			if ((nomesu.indexOf(" ") != -1) || ( ServletUtils.isCheckBoxEnabled(changepwd) && ( (pwsu.indexOf(" ") != -1) || (confpwsu.indexOf(" ") != -1)))) {
 			if ((nomesu.indexOf(" ") != -1) || ( ServletUtils.isCheckBoxEnabled(changepwd) &&  pwsu.indexOf(" ") != -1 )) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 			
 			// length
-			if(this.checkLength255(nomesu, UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME)==false) {
+			if(!this.checkLength255(nomesu, UtentiCostanti.LABEL_PARAMETRO_UTENTI_USERNAME)) {
 				return false;
 			}
 
@@ -1615,7 +1565,7 @@ public class UtentiHelper extends ConsoleHelper {
 							protocolliEliminati.add(vecchioProtocollo);
 					}
 					
-					if(protocolliEliminati.size() > 0) {
+					if(!protocolliEliminati.isEmpty()) {
 						List<String> nomiUtentiDaRimuovere = new ArrayList<>();
 						nomiUtentiDaRimuovere.add(nomesu);
 						List<String> utentiDaNonEliminare = new ArrayList<>();
@@ -1626,7 +1576,7 @@ public class UtentiHelper extends ConsoleHelper {
 								protocolliNonValidi.add(this.getLabelProtocollo(protocolloDaControllare));
 						}
 						
-						if(utentiDaNonEliminare.size() > 0) {
+						if(!utentiDaNonEliminare.isEmpty()) {
 							if(protocolliNonValidi.size() > 1) {
 								StringBuilder sbPnV = new StringBuilder();
 								for (String protNonVal : protocolliNonValidi) {
@@ -1649,7 +1599,7 @@ public class UtentiHelper extends ConsoleHelper {
 						// Controlli su eventuali soggetti/servizi associati alle modalita' deselezionate
 						for (String protocolloDaControllare : protocolliEliminati) {
 							// controllo servizi
-							if(user.getServizi().size() > 0) {
+							if(!user.getServizi().isEmpty()) {
 								for (IDServizio idServizio : user.getServizi()) {
 									String protocolloAssociatoTipoSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idServizio.getTipo());
 									if(protocolloAssociatoTipoSoggetto.equals(protocolloDaControllare)) {
@@ -1662,7 +1612,7 @@ public class UtentiHelper extends ConsoleHelper {
 								}
 							}
 							// controllo soggetti
-							if(user.getSoggetti().size() > 0) {
+							if(!user.getSoggetti().isEmpty()) {
 								for (IDSoggetto idSoggetto : user.getSoggetti()) {
 									String protocolloAssociatoTipoSoggetto = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(idSoggetto.getTipo());
 									if(protocolloAssociatoTipoSoggetto.equals(protocolloDaControllare)) {
@@ -1689,11 +1639,11 @@ public class UtentiHelper extends ConsoleHelper {
 					boolean oldDiagnostica = user.getPermessi().isDiagnostica();
 					boolean oldReportistica = user.getPermessi().isReportistica();
 						
-					if( (oldDiagnostica || oldReportistica) && user.getServizi().size() > 0) {
+					if( (oldDiagnostica || oldReportistica) && !user.getServizi().isEmpty()) {
 						this.pd.setMessage("L'utente " + nomesu + " non pu&ograve; essere modificato poich&egrave; sono stati rilevate delle API registrate tra le restrizioni dell'utente");
 						return false;
 					}
-					if( (oldDiagnostica || oldReportistica) && user.getSoggetti().size() > 0) {
+					if( (oldDiagnostica || oldReportistica) && !user.getSoggetti().isEmpty()) {
 						this.pd.setMessage("L'utente " + nomesu + " non pu&ograve; essere modificato poich&egrave; sono stati rilevati dei soggetti registrati tra le restrizioni dell'utente");
 						return false;
 					}
@@ -1735,61 +1685,20 @@ public class UtentiHelper extends ConsoleHelper {
 			// Controllo che le password corrispondano
 			boolean checkPassword = true;
 			if(TipoOperazione.CHANGE.equals(tipoOperazione) && !ServletUtils.isCheckBoxEnabled(changepwd)){
-				//if( confpwsu.equals("") && pwsu.equals("") ){
-				//	checkPassword = false;
-				//}
 				checkPassword=false;
 			}
-			if(!loginApplication) {
+			if(this.core.isMultiLoginEnabled()) {
 				checkPassword=false;
 			}
-//			if (checkPassword && !pwsu.equals(confpwsu)) {
-//				this.pd.setMessage("Le password non corrispondono");
-//				return false;
-//			}
 			
 			if (checkPassword){
 				PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 				if(passwordVerifier!=null){
 					StringBuilder motivazioneErrore = new StringBuilder();
-					if(passwordVerifier.validate(nomesu, pwsu, motivazioneErrore)==false){
+					if(!passwordVerifier.validate(nomesu, pwsu, motivazioneErrore)){
 						this.pd.setMessage(motivazioneErrore.toString());
 						return false;
 					}
-					
-					// controllo storico password in caso di change
-					// Attualmente l'amministratore puo' impostare una vecchia password
-//					if(TipoOperazione.CHANGE.equals(tipoOperazione) && passwordVerifier.isHistory()) {
-//						List<UserPassword> precedentiPassword = user.getPrecedentiPassword();
-//						
-////						String tmpPass = pwsu;
-////						if(this.utentiCore.isUtenzePasswordEncryptEnabled()) {
-////							tmpPass = this.utentiCore.getUtenzePasswordManager().crypt(pwsu);
-////						}
-//
-//						// se la lista storico e' vuota controllo la password precedente salvata nel bean
-//						if(precedentiPassword == null || precedentiPassword.isEmpty()) {
-//							boolean trovato = this.utentiCore.getUtenzePasswordManager().check(pwsu, user.getPassword());
-//							if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
-//								trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(pwsu, user.getPassword());
-//							}
-//							if (trovato) {
-//								this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
-//								return false;
-//							}
-//						}
-//						
-//						for (UserPassword userPassword : precedentiPassword) {
-//							boolean trovato = this.utentiCore.getUtenzePasswordManager().check(pwsu, userPassword.getPassword());
-//							if(!trovato && this.utentiCore.getUtenzePasswordManager_backwardCompatibility()!=null) {
-//								trovato = this.utentiCore.getUtenzePasswordManager_backwardCompatibility().check(pwsu, userPassword.getPassword());
-//							}
-//							if (trovato) {
-//								this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA);
-//								return false;
-//							}
-//						}
-//					}
 				}
 			}
 
@@ -1832,7 +1741,7 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 			
 			// se l'utenza che sto creando e' solo Utenti ignoro la modalita gateway
-			if(hasOnlyPermessiUtenti(isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD)==false) {
+			if(!hasOnlyPermessiUtenti(isServizi, isDiagnostica, isReportistica, isSistema, isMessaggi, isUtenti, isAuditing, isAccordiCooperazione, singlePdD)) {
 							
 				if(!modalitaPresenti) {
 					this.pd.setMessage("Selezionare almeno un "+org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_DI_HTML_ESCAPE);
@@ -1846,16 +1755,6 @@ public class UtentiHelper extends ConsoleHelper {
 				}
 			}
 			
-			// Se è stato selezionato solo la configurazione senza il permesso dei servizi non ha senso.
-			if(!singlePdD){
-				/*if( ((isServizi == null) || !isServizi.equals("yes")) &&
-						((isMessaggi == null) || !isMessaggi.equals("yes")) &&
-						((isSistema != null) && isSistema.equals("yes")) ) {
-					this.pd.setMessage("Il Permesso 'C' è selezionabile solo in combinazione con i permessi 'S' e/o 'M'");
-					return false;
-				}*/
-			}
-
 			// Controllo che non esistano altri utenti con lo stesso nome
 			if (TipoOperazione.ADD.equals(tipoOperazione)) {
 				boolean trovato = this.utentiCore.existsUser(nomesu);
@@ -1902,10 +1801,9 @@ public class UtentiHelper extends ConsoleHelper {
 				return true;
 			}
 
-			// String cpwd = this.procToCall.cryptPw(oldpw);
 			User user = ServletUtils.getUserFromSession(this.request, this.session);
 
-			if(user.getPermessi().isUtenti()==false){
+			if(!user.getPermessi().isUtenti()){
 				boolean trovato = this.utentiCore.getUtenzePasswordManager().check(oldpw, user.getPassword());
 				if(!trovato && this.utentiCore.getUtenzePasswordManagerBackwardCompatibility()!=null) {
 					trovato = this.utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(oldpw, user.getPassword());
@@ -1917,7 +1815,7 @@ public class UtentiHelper extends ConsoleHelper {
 				
 				// Controllo che non ci siano spazi nei campi di testo
 				if ((oldpw.indexOf(" ") != -1)) {
-					this.pd.setMessage("Non inserire spazi nei campi di testo");
+					this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 					return false;
 				}
 			}
@@ -1930,12 +1828,12 @@ public class UtentiHelper extends ConsoleHelper {
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((newpw.indexOf(" ") != -1) || (confpw.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 
 			// Controllo che la vecchia password e la nuova corrispondano
-			if(user.getPermessi().isUtenti()==false){
+			if(!user.getPermessi().isUtenti()){
 				if (oldpw.equals(newpw)) {
 					this.pd.setMessage("La nuova password deve essere differente dalla vecchia");
 					return false;
@@ -1951,7 +1849,7 @@ public class UtentiHelper extends ConsoleHelper {
 			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 			if(passwordVerifier!=null){
 				StringBuilder motivazioneErrore = new StringBuilder();
-				if(passwordVerifier.validate(user.getLogin(), newpw, motivazioneErrore)==false){
+				if(!passwordVerifier.validate(user.getLogin(), newpw, motivazioneErrore)){
 					this.pd.setMessage(motivazioneErrore.toString());
 					return false;
 				}
@@ -1959,11 +1857,6 @@ public class UtentiHelper extends ConsoleHelper {
 				// controllo storico password in caso di change
 				if(passwordVerifier.isHistory()) {
 					List<UserPassword> precedentiPassword = user.getPrecedentiPassword();
-					
-//					String tmpPass = newpw;
-//					if(this.utentiCore.isUtenzePasswordEncryptEnabled()) {
-//						tmpPass = this.utentiCore.getUtenzePasswordManager().crypt(newpw);
-//					}
 					
 					if(precedentiPassword == null || precedentiPassword.isEmpty()) {
 						boolean trovato = this.utentiCore.getUtenzePasswordManager().check(newpw, user.getPassword());
@@ -2106,7 +1999,7 @@ public class UtentiHelper extends ConsoleHelper {
 						de.setValue("-");
 					}
 					else {
-						if(protocolliSupportati.size() > 0) {
+						if(!protocolliSupportati.isEmpty()) {
 							Collections.sort(protocolliSupportati);
 							List<String> protocolliInstallati = this.core.getProtocolli();
 							Collections.sort(protocolliInstallati);
@@ -2192,11 +2085,11 @@ public class UtentiHelper extends ConsoleHelper {
 	
 	public List<String> controlloModalitaUtenteDaEliminare(List<String> nomiUtentiDaRimuovere, List<String> utentiDaNonEliminare, User user, List<String> protocolliSupportati) throws DriverRegistroServiziException, DriverUsersDBException {
 		List<String> protocolliNonPiuAssociati = new ArrayList<>();
-		if(protocolliSupportati != null && protocolliSupportati.size() > 0) {
+		if(protocolliSupportati != null && !protocolliSupportati.isEmpty()) {
 			for (String protocollo : protocolliSupportati) {
 				boolean protocolloNonPiuAssociato = controllaEsistenzaUtentePerAssociareIlProtocollo(nomiUtentiDaRimuovere, utentiDaNonEliminare, user.getLogin(), protocollo);
 				if(protocolloNonPiuAssociato)
-				protocolliNonPiuAssociati.add(protocollo);
+					protocolliNonPiuAssociati.add(protocollo);
 			}
 		}
 		
@@ -2212,12 +2105,12 @@ public class UtentiHelper extends ConsoleHelper {
 			
 			List<String> usersByProtocolloSupportato = new ArrayList<>();
 			for (String uDE : usersByProtocolloSupportatoTmp) {
-				if(nomiUtentiDaRimuovere.contains(uDE) == false) {
+				if(!nomiUtentiDaRimuovere.contains(uDE)) {
 					usersByProtocolloSupportato.add(uDE);
 				}
 			}
 			
-			if(usersByProtocolloSupportato.size() < 1) {
+			if(usersByProtocolloSupportato.isEmpty()) {
 				protocolloNonPiuAssociato = true;
 				if(!utentiDaNonEliminare.contains(userLogin))
 					utentiDaNonEliminare.add(userLogin);
@@ -2572,7 +2465,7 @@ public class UtentiHelper extends ConsoleHelper {
 		
 	}
 
-	public boolean utentiSoggettiCheckData(TipoOperazione tipoOperazione, String nomesu, String soggetto) throws Exception{
+	public boolean utentiSoggettiCheckData(TipoOperazione tipoOperazione, String nomesu, String soggetto) {
 		// controllo selezione soggetto
 		if (StringUtils.isEmpty(soggetto) || soggetto.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 			this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NOME_SOGGETTO_OBBLIGATORIO);
@@ -2582,7 +2475,7 @@ public class UtentiHelper extends ConsoleHelper {
 		return true;
 	}
 	
-	public boolean utentiServiziCheckData(TipoOperazione tipoOperazione, String nomesu, String servizio) throws Exception{
+	public boolean utentiServiziCheckData(String nomesu, String servizio) {
 		// controllo selezione soggetto
 		if (StringUtils.isEmpty(servizio) || servizio.equals(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)) {
 			this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NOME_SERVIZIO_OBBLIGATORIO);
@@ -2592,7 +2485,7 @@ public class UtentiHelper extends ConsoleHelper {
 		return true;
 	}
 	
-	public void addUtenteChangePasswordScadutaToDati(List<DataElement> dati, TipoOperazione tipoOperazione) throws Exception{
+	public void addUtenteChangePasswordScadutaToDati(List<DataElement> dati) {
 
 		DataElement de = new DataElement();
 		de.setName(UtentiCostanti.PARAMETRO_UTENTI_FIRST);
@@ -2652,7 +2545,6 @@ public class UtentiHelper extends ConsoleHelper {
 			String newpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PW);
 			String confpw = this.getParameter(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PW);
 
-			// String cpwd = this.procToCall.cryptPw(oldpw);
 			String userToUpdate = ServletUtils.getObjectFromSession(this.request, this.session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 			
 			User user = this.utentiCore.getUser(userToUpdate);
@@ -2668,7 +2560,7 @@ public class UtentiHelper extends ConsoleHelper {
 			
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((oldpw.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 
@@ -2680,7 +2572,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 			// Controllo che non ci siano spazi nei campi di testo
 			if ((newpw.indexOf(" ") != -1) || (confpw.indexOf(" ") != -1)) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
+				this.pd.setMessage(UtentiCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
 				return false;
 			}
 
@@ -2707,11 +2599,6 @@ public class UtentiHelper extends ConsoleHelper {
 				// controllo storico password in caso di change
 				if(passwordVerifier.isHistory()) {
 					List<UserPassword> precedentiPassword = user.getPrecedentiPassword();
-					
-//					String tmpPass = newpw;
-//					if(this.utentiCore.isUtenzePasswordEncryptEnabled()) {
-//						tmpPass = this.utentiCore.getUtenzePasswordManager().crypt(newpw);
-//					}
 					
 					if(precedentiPassword == null || precedentiPassword.isEmpty()) {
 						trovato = this.utentiCore.getUtenzePasswordManager().check(newpw, user.getPassword());

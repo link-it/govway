@@ -648,7 +648,7 @@ public class ControlStationCore {
 	
 	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) { 
 		if(passwordVerifier != null) {
-			return this.isLoginApplication() && passwordVerifier.isCheckPasswordExpire();
+			return this.isLoginApplication() && this.isVisualizzaFormLoginApplication() && passwordVerifier.isCheckPasswordExpire();
 		}
 		
 		return false;
@@ -666,6 +666,7 @@ public class ControlStationCore {
 	/** Login */
 	protected String loginTipo;
 	protected boolean loginApplication;
+	protected boolean visualizzaFormLoginApplication;
 	protected Properties loginProperties;
 	protected String loginUtenteNonAutorizzatoRedirectUrl;
 	protected String loginUtenteNonValidoRedirectUrl;
@@ -673,6 +674,7 @@ public class ControlStationCore {
 	protected String loginSessioneScadutaRedirectUrl;
 	protected boolean logoutMostraButton;
 	protected String logoutUrlDestinazione;
+	protected boolean loginOAuth2Enabled;
 	
 	
 	public String getLoginTipo() {
@@ -681,6 +683,10 @@ public class ControlStationCore {
 
 	public boolean isLoginApplication() {
 		return this.loginApplication;
+	}
+	
+	public boolean isVisualizzaFormLoginApplication() {
+		return this.visualizzaFormLoginApplication;
 	}
 
 	public Properties getLoginProperties() {
@@ -709,6 +715,14 @@ public class ControlStationCore {
 
 	public String getLogoutUrlDestinazione() {
 		return this.logoutUrlDestinazione;
+	}
+	
+	public boolean isLoginOAuth2Enabled() {
+		return this.loginOAuth2Enabled;
+	}
+	
+	public boolean isMultiLoginEnabled() {
+		return this.isLoginApplication() && this.isVisualizzaFormLoginApplication() && this.isLoginOAuth2Enabled();
 	}
 	
 	
@@ -2605,6 +2619,7 @@ public class ControlStationCore {
 		
 		/** Login */
 		this.loginApplication = core.loginApplication;
+		this.visualizzaFormLoginApplication = core.visualizzaFormLoginApplication;
 		this.loginErroreInternoRedirectUrl = core.loginErroreInternoRedirectUrl;
 		this.loginProperties = core.loginProperties;
 		this.loginSessioneScadutaRedirectUrl = core.loginSessioneScadutaRedirectUrl;
@@ -2613,6 +2628,7 @@ public class ControlStationCore {
 		this.loginUtenteNonValidoRedirectUrl = core.loginUtenteNonValidoRedirectUrl;
 		this.logoutMostraButton = core.logoutMostraButton;
 		this.logoutUrlDestinazione = core.logoutUrlDestinazione;
+		this.loginOAuth2Enabled = core.loginOAuth2Enabled;
 		
 		/** Applicativi Console */
 		this.applicativiPwConfiguration = core.applicativiPwConfiguration;
@@ -3242,6 +3258,7 @@ public class ControlStationCore {
 			
 			/** Login */
 			this.loginApplication = consoleProperties.isLoginApplication();
+			this.visualizzaFormLoginApplication = consoleProperties.isVisualizzaFormLoginApplication();
 			this.loginErroreInternoRedirectUrl = consoleProperties.getLoginErroreInternoRedirectUrl();
 			this.loginProperties = consoleProperties.getLoginProperties();
 			this.loginSessioneScadutaRedirectUrl = consoleProperties.getLoginSessioneScadutaRedirectUrl();
@@ -3250,6 +3267,7 @@ public class ControlStationCore {
 			this.loginUtenteNonValidoRedirectUrl = consoleProperties.getLoginUtenteNonValidoRedirectUrl();
 			this.logoutMostraButton = consoleProperties.isMostraButtonLogout();
 			this.logoutUrlDestinazione = consoleProperties.getLogoutUrlDestinazione();
+			this.loginOAuth2Enabled = consoleProperties.isLoginOAuth2Enabled();
 			
 			// Opzioni di Visualizzazione
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();

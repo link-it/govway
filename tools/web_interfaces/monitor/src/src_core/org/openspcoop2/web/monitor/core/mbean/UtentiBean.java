@@ -38,6 +38,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
@@ -68,6 +69,7 @@ import org.slf4j.Logger;
  */
 public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, String>> {
 
+	private static final String ERROR_MSG_CAMBIO_PASSWORD_NON_RIUSCITO = "Cambio Password non riuscito";
 	/**
 	 * 
 	 */
@@ -105,7 +107,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			this.gestionePassword = pddMonitorProperties.isGestionePasswordUtentiAttiva();
 			if(utentiPasswordConfig!=null){
 				this.passwordVerifier = new PasswordVerifier(utentiPasswordConfig);
-				if(this.passwordVerifier.existsRestrictionUpdate()==false){
+				if(!this.passwordVerifier.existsRestrictionUpdate()){
 					this.passwordVerifier = null;
 				}
 			}
@@ -327,8 +329,8 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 
 			this.showFormCambiaPassword = false;
 		} catch (Exception e) {
-			log.error("Cambio Password non riuscito",e);
-			MessageUtils.addErrorMsg("Cambio Password non riuscito");
+			log.error(ERROR_MSG_CAMBIO_PASSWORD_NON_RIUSCITO,e);
+			MessageUtils.addErrorMsg(ERROR_MSG_CAMBIO_PASSWORD_NON_RIUSCITO);
 		}
 
 		return null;
@@ -439,7 +441,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			}
 			
 			// aggiorno data ultima modifica
-//			this.user.setLastUpdatePassword(new Date());
+//			this.user.setLastUpdatePassword(new Date())
 
 			// cript pwd
 			String newPassword = this.passwordManager.crypt(this.nuovaPassword);
@@ -455,8 +457,8 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			// caricamento delle impostazioni utente e redirect alla home
 			return Utility.getLoginBean().ricaricaUtenteDopoCambioPasswordScaduta();
 		} catch (Exception e) {
-			log.error("Cambio Password non riuscito",e);
-			MessageUtils.addErrorMsg("Cambio Password non riuscito");
+			log.error(ERROR_MSG_CAMBIO_PASSWORD_NON_RIUSCITO,e);
+			MessageUtils.addErrorMsg(ERROR_MSG_CAMBIO_PASSWORD_NON_RIUSCITO);
 			return null;
 		}
 	}
@@ -476,13 +478,13 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 
 	public void setShowServizi(Boolean showServizi) { this.showServizi = showServizi; }
 
-	public void setListaSoggettiAssociatiUtente(List<String> lst){}
+	public void setListaSoggettiAssociatiUtente(List<String> lst){ /* metodo vuoto creato per esigenze di framework */ }
 
-	public List<org.openspcoop2.utils.NameValue> getListaSoggettiAssociatiUtente() throws Exception{
-		List<org.openspcoop2.utils.NameValue> lst = new ArrayList<org.openspcoop2.utils.NameValue>();
+	public List<org.openspcoop2.utils.NameValue> getListaSoggettiAssociatiUtente() throws ProtocolException {
+		List<org.openspcoop2.utils.NameValue> lst = new ArrayList<>();
 		List<IDSoggetto> utenteSoggettoList = this.user.getSoggetti();
 
-		if(utenteSoggettoList != null && utenteSoggettoList.size() > 0) {
+		if(utenteSoggettoList != null && !utenteSoggettoList.isEmpty()) {
 			for (IDSoggetto idSog : utenteSoggettoList) {
 				org.openspcoop2.utils.NameValue val = new org.openspcoop2.utils.NameValue();
 				val.setName(NamingUtils.getLabelSoggetto(idSog));
@@ -494,13 +496,13 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		return lst;
 	}
 
-	public void setListaServiziAssociatiUtente(List<String> lst){}
+	public void setListaServiziAssociatiUtente(List<String> lst){/* metodo vuoto creato per esigenze di framework */}
 
-	public List<org.openspcoop2.utils.NameValue> getListaServiziAssociatiUtente() throws Exception{ 
-		List<org.openspcoop2.utils.NameValue> lst = new ArrayList<org.openspcoop2.utils.NameValue>();
+	public List<org.openspcoop2.utils.NameValue> getListaServiziAssociatiUtente() throws ProtocolException{ 
+		List<org.openspcoop2.utils.NameValue> lst = new ArrayList<>();
 		List<IDServizio> utenteServizioList = this.user.getServizi();
 
-		if(utenteServizioList != null && utenteServizioList.size() > 0) {
+		if(utenteServizioList != null && !utenteServizioList.isEmpty()) {
 			for (IDServizio serv : utenteServizioList) {
 				org.openspcoop2.utils.NameValue val = new org.openspcoop2.utils.NameValue();
 				val.setName(NamingUtils.getLabelAccordoServizioParteSpecifica(serv));
@@ -516,9 +518,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		return Costanti.LABEL_PROFILO;
 	}
 
-	public void setProfilo(String profilo) {
-	}
-
+	public void setProfilo(String profilo) { /* metodo vuoto creato per esigenze di framework */ }
 
 	public boolean isGestionePassword() {
 		return this.gestionePassword;
@@ -554,8 +554,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		return false;
 	}
 
-	public void setShowVecchiaPassword(boolean showVecchiaPassword) {
-	}
+	public void setShowVecchiaPassword(boolean showVecchiaPassword) { /* metodo vuoto creato per esigenze di framework */ }
 
 	public String getModalitaDisponibiliUser() throws Exception {
 		List<String> protocolliDisponibli = Utility.getLoginBean().listaProtocolliDisponibilePerUtentePddMonitor();
@@ -609,9 +608,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		return Utility.getLoginBean().listaProtocolliDisponibilePerUtentePddMonitor().size() > 1;
 	}
 
-	public void setVisualizzaSelectModalitaDisponibili(boolean visualizzaSelectModalitaDisponibili) {
-		
-	}
+	public void setVisualizzaSelectModalitaDisponibili(boolean visualizzaSelectModalitaDisponibili) { /* metodo vuoto creato per esigenze di framework */ }
 	
 	public String getModalitaDefaultUtente() {
 		if(this.user.getProtocolloSelezionatoPddMonitor() == null)
@@ -624,9 +621,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		this.user.setProtocolloSelezionatoPddMonitor(modalita);
 	}
 
-	public void modalitaDefaultUtenteSelected(ActionEvent ae) {
-		
-	}
+	public void modalitaDefaultUtenteSelected(ActionEvent ae) { /* metodo vuoto creato per esigenze di framework */	}
 	
 	public String getSoggettoDefaultUtente() {
 		if(this.user.getSoggettoSelezionatoPddMonitor() == null)
@@ -639,25 +634,22 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		this.user.setSoggettoSelezionatoPddMonitor(idSoggettoDefaultUtente);
 	}
 	
-	public void idSoggettoDefaultUtenteSelected(ActionEvent ae) {
-		
-	}
+	public void idSoggettoDefaultUtenteSelected(ActionEvent ae) { /* metodo vuoto creato per esigenze di framework */ }
 	
 	public boolean isVisualizzaSezioneSelezioneSoggetto() {
 		return !this.getModalitaDefaultUtente().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL);
 	}
 
-	public void setVisualizzaSezioneSelezioneSoggetto(boolean visualizzaSezioneSelezioneSoggetto) {
-	}
+	public void setVisualizzaSezioneSelezioneSoggetto(boolean visualizzaSezioneSelezioneSoggetto) { /* metodo vuoto creato per esigenze di framework */	}
 
-	public boolean isVisualizzaSelectSoggettiDisponibili() throws Exception {
+	public boolean isVisualizzaSelectSoggettiDisponibili() {
 		if(!this.getModalitaDefaultUtente().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL))
 			return LoginBean.listaSoggettiDisponibiliPerProtocollo(Utility.getLoggedUser(), this.getModalitaDefaultUtente()).size() > 1;
 			
 		return false;
 	}
 	
-	public String getSoggettoDefault() throws Exception {
+	public String getSoggettoDefault() throws ProtocolException {
 		if(LoginBean.listaSoggettiDisponibiliPerProtocollo(Utility.getLoggedUser(), this.getModalitaDefaultUtente()).size() > 1) {
 			return Costanti.LABEL_PARAMETRO_MODALITA_ALL;
 		}
@@ -668,7 +660,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		return NamingUtils.getLabelSoggetto(idSoggetto);
 	}
 	
-	public List<SelectItem> getSoggettiDisponibiliItems() throws Exception {
+	public List<SelectItem> getSoggettiDisponibiliItems() throws ProtocolException {
 		List<Soggetto> soggettiDisponibli = LoginBean.listaSoggettiDisponibiliPerProtocollo(Utility.getLoggedUser(), this.getModalitaDefaultUtente());
 		List<SelectItem> modalita = new ArrayList<>();
 		
@@ -770,8 +762,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 		return visualizzaSelectIntervalloTemporale;
 	}
 
-	public void setVisualizzaSelectIntervalloTemporale(boolean visualizzaSelectIntervalloTemporale) {
-	}
+	public void setVisualizzaSelectIntervalloTemporale(boolean visualizzaSelectIntervalloTemporale) { /* metodo vuoto creato per esigenze di framework */ }
 	
 	public String getIntervalloTemporaleUtente() {
 		for (Stato stato : this.user.getStati()) {

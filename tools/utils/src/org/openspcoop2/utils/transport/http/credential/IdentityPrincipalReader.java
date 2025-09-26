@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 public class IdentityPrincipalReader implements IPrincipalReader{
 
 
-	private Logger log = null;
+	private transient Logger log = null;
 
 	/**
 	 * 
@@ -48,6 +48,7 @@ public class IdentityPrincipalReader implements IPrincipalReader{
 
 	@Override
 	public void init(Object... parametri) throws PrincipalReaderException {
+		//donothing
 	}
 
 	@Override
@@ -58,8 +59,8 @@ public class IdentityPrincipalReader implements IPrincipalReader{
 			HttpServletCredential identity = new HttpServletCredential(request,this.log);
 			String username = identity.getPrincipal();
 
-			this.log.debug("Username trovato nel principal [identity.getPrincipal()]: ["+username+"]");
-			this.log.debug("Username trovato nel principal [identity.getUsername()]: ["+identity.getUsername()+"]");
+			this.log.debug("Username trovato nel principal [identity.getPrincipal()]: [{}]", username);
+			this.log.debug("Username trovato nel principal [identity.getUsername()]: [{}]",identity.getUsername());
 
 			return username;
 		}catch (Exception e) {

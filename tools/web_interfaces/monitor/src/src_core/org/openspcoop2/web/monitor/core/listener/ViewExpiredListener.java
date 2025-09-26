@@ -62,9 +62,8 @@ public class ViewExpiredListener  implements PhaseListener {
 		boolean timedout = postback && newSession;
 		
 		
-//		log.debug("La View richiesta e' valida: ["+(!timedout)+"]"); 
 		if(timedout) {
-			ViewExpiredListener.log.debug("La View richiesta e' non valida: ["+timedout+"]"); 
+			ViewExpiredListener.log.debug("La View richiesta e' non valida: [{}]", timedout); 
 			Application app = facesCtx.getApplication();
 			ViewHandler viewHandler = app.getViewHandler();
 			UIViewRoot view = viewHandler.createView(facesCtx,"/public/timeoutPage.jsf");
@@ -82,7 +81,7 @@ public class ViewExpiredListener  implements PhaseListener {
 
 	@Override
 	public void afterPhase(PhaseEvent event) {
-
+		// donothing
 	}
 
 	@Override

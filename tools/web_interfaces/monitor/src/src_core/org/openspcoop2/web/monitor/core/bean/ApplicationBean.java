@@ -44,12 +44,13 @@ import org.openspcoop2.core.plugins.Plugin;
 import org.openspcoop2.core.plugins.constants.TipoPlugin;
 import org.openspcoop2.core.plugins.utils.PluginsDriverUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
-import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.IVersionInfo;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean.RuoloBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.listener.AbstractConsoleStartupListener;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
@@ -124,7 +125,7 @@ public class ApplicationBean implements Serializable {
 	private static Logger log =  LoggerManager.getPddMonitorCoreLogger(); 
 
 	private transient LoginBean loginBean;
-	private Map<String, Boolean> funzionalita = new HashMap<String, Boolean>();
+	private Map<String, Boolean> funzionalita = new HashMap<>();
 	private Map<String, Boolean> roles = null;
 	
 	private boolean permessoTransazioni = false;
@@ -136,11 +137,11 @@ public class ApplicationBean implements Serializable {
 
 	private static Map<String, Boolean> funzionalitaStaticInstance = null;
 	private void initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws Exception{
-		_initializeFunzionalita(govwayMonitorProperties);
+		initializeFunzionalitaEngine(govwayMonitorProperties);
 	}
-	private static synchronized void _initializeFunzionalita(PddMonitorProperties govwayMonitorProperties) throws Exception{
+	private static synchronized void initializeFunzionalitaEngine(PddMonitorProperties govwayMonitorProperties) throws UtilsException {
 		if(ApplicationBean.funzionalitaStaticInstance==null){
-			ApplicationBean.funzionalitaStaticInstance = new HashMap<String, Boolean>();
+			ApplicationBean.funzionalitaStaticInstance = new HashMap<>();
 			
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE, govwayMonitorProperties.isAttivoModuloTransazioniBase());
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE, govwayMonitorProperties.isAttivoModuloTransazioniBase());
@@ -229,7 +230,7 @@ public class ApplicationBean implements Serializable {
 	}
 	
 	public Map<String, Boolean>  getRuoliUtente(UserDetailsBean u) {
-		Map<String, Boolean> ruoli = new HashMap<String, Boolean>();
+		Map<String, Boolean> ruoli = new HashMap<>();
 		List<RuoloBean> auths = u.getAuthorities();
 		if (auths != null && !auths.isEmpty()) {
 
@@ -299,20 +300,14 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 		
 		if(!this.permessoTransazioni)
 			return false;
 
 		// le transazioni sono visualizzabili dall' operatore
-		if (
-				//	this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)	||
-
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
-			return true;
-
-		return false;
+		return(this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE));
 	}
 
 	public boolean getShowTransazioniContenuti() {
@@ -325,20 +320,15 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 		
 		if(!this.permessoTransazioni)
 			return false;
 
 		// le transazioni sono visualizzabili dall' operatore
-		if (
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)	||
-
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)	|| 
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE));
 	}
 
 	public boolean getShowRicerchePersonalizzate() {
@@ -351,20 +341,14 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 		
 		if(!this.permessoTransazioni)
 			return false;
 
 		// le ricerche sono visualizzabili dall' operatore
-		if (
-				//				this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE)	||
-
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE));
 	}
 
 
@@ -377,16 +361,12 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// gli allarmi sono visualizzabili dall' operatore
-		if (
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)				|| 
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)	|| 
+				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE));
 	}
 
 
@@ -442,7 +422,7 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 		
 		if(!this.permessoTransazioni)
@@ -455,12 +435,9 @@ public class ApplicationBean implements Serializable {
 			return true;
 		}
 		//per il ruolo operatore bisogna verificare se e' abilitato il live per i non admin
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE) 
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE) 
 				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
-				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE_OPERATORE) )
-			return true;
-
-		return false;
+				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_LIVE_OPERATORE) );
 	}
 
 
@@ -470,7 +447,7 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		if(!this.permessoTransazioni)
@@ -483,12 +460,9 @@ public class ApplicationBean implements Serializable {
 			return true;
 		}
 		//per il ruolo operatore bisogna verificare se e' abilitato il live per i non admin
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE) 
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE) 
 				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_BASE)
-				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_ESITI_LIVE_OPERATORE) )
-			return true;
-
-		return false;
+				&& this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_ESITI_LIVE_OPERATORE) );
 	}
 
 	public boolean getShowProcessi() {
@@ -500,17 +474,11 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// processi visualizzabili solo da amministratore   
-		if (
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)			
-				//				|| 	this.isRuoloAbilitato(ApplicationBean.OPERATORE)
-				)
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE));			
 	}
 
 	public boolean getShowEventi() {
@@ -522,17 +490,11 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// eventi visualizzabili solo da amministratore   
-		if (
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)			
-				//				|| 	this.isRuoloAbilitato(ApplicationBean.OPERATORE)
-				)
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE));			
 	}
 
 
@@ -553,21 +515,14 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 		
 		if(!this.permessoTransazioni)
 			return false;
 
 		// le informazioni sono visualizzabili dall' operatore
-		if (
-				//				this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE)	||
-
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
-			return true;
-
-		return false;
-
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE));
 	}
 
 	public boolean getShowInformazioniEventiTransazioniGrid() {
@@ -580,18 +535,11 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// le informazioni sono visualizzabili dall' operatore
-		if (
-				//				this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE)	||
-
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
-			return true;
-
-		return false;
-
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE));
 	}
 
 
@@ -611,20 +559,14 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 		
 		if(!this.permessoStatistiche)
 			return false;
 
 		// le statistiche sono visualizzabili dall' operatore
-		if (
-				//				this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE)				|| 
-
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE));
 	}
 
 	public boolean getShowStatistichePersonalizzate() {
@@ -637,17 +579,14 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 		
 		if(!this.permessoStatistiche)
 			return false;
 
 		// le statistiche sono visualizzabili dall' operatore
-		if (
-				//						this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE)				|| 
-
-				this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
+		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
 			return true;
 
 		return this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_STATISTICHE_BASE);
@@ -664,18 +603,15 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 		
 		if(!this.permessoStatistiche)
 			return false;
 
 		// le statistiche sono visualizzabili dall' amministratore
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE)
-				|| this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE)
+				|| this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE));
 	}
 
 
@@ -693,15 +629,12 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// I moduli di configurazione possono non essere presenti nella versione open 
-		if((this.getShowConfigurazioneAllarmi() || this.getShowConfigurazioneSonde() || this.getShowConfigurazioneLibreria() || this.getShowConfigurazioneProcessi()) 
-				&& (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE)	|| this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)))
-			return true;
-
-		return false;
+		return ((this.getShowConfigurazioneAllarmi() || this.getShowConfigurazioneSonde() || this.getShowConfigurazioneLibreria() || this.getShowConfigurazioneProcessi()) 
+				&& (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE)	|| this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE)));
 	}
 
 
@@ -716,15 +649,11 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// la configurazione delle statistiche e' visibile al configuratore
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
-			return true;
-
-		// return this.modules.get(ApplicationBean.STATISTICHE_BASE);
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE));
 	}
 
 	public boolean getShowConfigRicerchePersonalizzate() {
@@ -737,14 +666,11 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// le la configurazione delle ricerche e' visualizzabile dal configuratore
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE));
 	}
 
 
@@ -758,13 +684,10 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE));
 	}
 
 
@@ -776,15 +699,10 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
-		//		if (this.isRuoloAbilitato(ApplicationBean.AMMINISTRATORE))
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
-			return true;
-
-		return false;
-
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE));
 	}
 
 	public boolean getShowConfigurazioneSonde() {
@@ -797,14 +715,10 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
-			return true;
-
-		return false;
-
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE));
 	}
 
 	public boolean getShowConfigurazioneLibreria() {
@@ -814,26 +728,27 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// sezione visibile solo al configuratore
 		if (!this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
 			return false;
 
-		if (this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE)
+		return (this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE)
 				|| this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_RICERCHE_PERSONALIZZATE)
 				|| this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_TRANSAZIONI_CONTENUTI)
-				//				|| this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_ALLARMI)
-				|| this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_PROCESSI))
-			return true;
-
-		return false;
+				|| this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_PROCESSI));
 	}
 
 	public boolean getShowCambiaPassword() {
 
 		if(!this.loginApplication) {
+			return false;
+		}
+		
+		// se sono loggato con OAuth2, non posso cambiare la password
+		if (Utility.isUtenteLoggatoOAuth2()) {
 			return false;
 		}
 		
@@ -846,13 +761,7 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
-			return false;
-
-//		if (!this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE))
-//			return true;
-		
-		return true;
+		return (!this.roles.isEmpty());
 	}
 
 
@@ -865,14 +774,11 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// processi visualizzabili dal configuratore
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE));
 	}
 
 	public boolean getShowConfigurazioneAllarmi() {
@@ -888,14 +794,11 @@ public class ApplicationBean implements Serializable {
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// visualizzazione consentita solo all'amministratore
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE));
 	}
 
 	public BrowserInfo getBrowserInfo(){
@@ -908,92 +811,62 @@ public class ApplicationBean implements Serializable {
 
 		return browserInfo;
 	}
-
-//	public void cleanSVG(){
-//		BrowserInfo browserInfo = getBrowserInfo();
-//		try {
-//			if(browserInfo.getBrowserFamily().equals(BrowserFamily.IE)){
-//				HttpServletResponse response = BrowserInfo.getResponse(FacesContext.getCurrentInstance());
-//			//	response.setHeader("X-UA-Compatible", "IE=EmulateIE8");
-//			}
-//		} catch (Exception e) {
-//			ApplicationBean.log.error("Errore durante la lettura delle info Browser:" + e.getMessage(),e);
-//		}
-//
-//	}
 	
 	public boolean isAmministratore() {
 		checkRoles();
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// controllo utente possiede ruolo utente
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE))
-			return true;
-		
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_AMMINISTRATORE));
 	}
 
-	public void setAmministratore(boolean amministratore) {
-	}
+	public void setAmministratore(boolean amministratore) { /* metodo vuoto creato per esigenze di framework */	}
 
 	public boolean isUser() {
 		checkRoles();
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// controllo utente possiede ruolo utente
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_USER))
-			return true;
-		
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_USER));
 	}
 
-	public void setUser(boolean user) {	}
+	public void setUser(boolean user) {	/* metodo vuoto creato per esigenze di framework */ }
 
 	public boolean isConfiguratore() {
 		checkRoles();
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// controllo utente possiede ruolo configuratore
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE))
-			return true;
-
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_CONFIGURATORE));
 	}
 
-	public void setConfiguratore(boolean configuratore) {
-		// nop
-	}
+	public void setConfiguratore(boolean configuratore) { /* metodo vuoto creato per esigenze di framework */ }
 
 	public boolean isOperatore() {
 		checkRoles();
 		if(this.roles == null)
 			return false;
 
-		if(this.roles!= null && this.roles.isEmpty())
+		if(this.roles.isEmpty())
 			return false;
 
 		// controllo utente possiede ruolo operatore
-		if (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE))
-			return true;
-		
-		return false;
+		return (this.isRuoloAbilitato(ApplicationBean.RUOLO_OPERATORE));
 	}
 
-	public void setOperatore(boolean operatore) {
-		// nop
-	}
+	public void setOperatore(boolean operatore) { /* metodo vuoto creato per esigenze di framework */ }
 	
 	public boolean isGraficiSvgEnabled(){
 		return this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_GRAFICI_SVG);
@@ -1117,7 +990,7 @@ public class ApplicationBean implements Serializable {
 	public String getLabelSoggettiCompact() {
 		return org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_PARAMETRO_SOGGETTI_COMPACT;
 	}
-	public String getLabelRisultatoSelezioneSoggetto() throws ProtocolException {
+	public String getLabelRisultatoSelezioneSoggetto() {
 		if(this.loginBean.getSoggettoPddMonitor() == null || this.loginBean.getSoggettoPddMonitor().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
 			return MessageFormat.format("{0} disponibili: {1}", getLabelSoggettiCompact(), this.loginBean.getLabelSoggettoSenzaPrefisso());
 		} else {
@@ -1126,7 +999,7 @@ public class ApplicationBean implements Serializable {
 	}
 	
 	private static final String CACHE_SEPARATOR = "\n";
-	private String _getCacheDetails(String stato, String param) {
+	private String getCacheDetailsEngine(String stato, String param) {
 		String [] split = stato.split(ApplicationBean.CACHE_SEPARATOR);
 		for (int i = 0; i < split.length; i++) {
 			String label = split[i];
@@ -1155,22 +1028,22 @@ public class ApplicationBean implements Serializable {
 		return this.isCacheDatiConfigurazioneEnabled() ? "abilitata" : "disabilitata";
 	}
 	public String getCacheDatiConfigurazioneAlgoritmo() {
-		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "Algoritmo") : "-";
+		return this.isCacheDatiConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheDatiConfigurazioneDetails(), "Algoritmo") : "-";
 	}
 	public String getCacheDatiConfigurazioneDimensione() {
-		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "Dimensione") : "-";
+		return this.isCacheDatiConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheDatiConfigurazioneDetails(), "Dimensione") : "-";
 	}
 	public String getCacheDatiConfigurazioneElementiInCache() {
-		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "ElementiInCache") : "-";
+		return this.isCacheDatiConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheDatiConfigurazioneDetails(), "ElementiInCache") : "-";
 	}
 	public String getCacheDatiConfigurazioneMemoriaOccupata() {
-		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "MemoriaOccupata") : "-";
+		return this.isCacheDatiConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheDatiConfigurazioneDetails(), "MemoriaOccupata") : "-";
 	}
 	public String getCacheDatiConfigurazioneIdleTime() {
-		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "IdleTime") : "-";
+		return this.isCacheDatiConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheDatiConfigurazioneDetails(), "IdleTime") : "-";
 	}
 	public String getCacheDatiConfigurazioneLifeTime() {
-		return this.isCacheDatiConfigurazioneEnabled() ? _getCacheDetails(getCacheDatiConfigurazioneDetails(), "LifeTime") : "-";
+		return this.isCacheDatiConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheDatiConfigurazioneDetails(), "LifeTime") : "-";
 	}
 	public String getCacheDatiConfigurazioneDetails() {
 		try {
@@ -1208,22 +1081,22 @@ public class ApplicationBean implements Serializable {
 		return this.isCacheRicercheConfigurazioneEnabled() ? "abilitata" : "disabilitata";
 	}
 	public String getCacheRicercheConfigurazioneAlgoritmo() {
-		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "Algoritmo") : "-";
+		return this.isCacheRicercheConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheRicercheConfigurazioneDetails(), "Algoritmo") : "-";
 	}
 	public String getCacheRicercheConfigurazioneDimensione() {
-		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "Dimensione") : "-";
+		return this.isCacheRicercheConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheRicercheConfigurazioneDetails(), "Dimensione") : "-";
 	}
 	public String getCacheRicercheConfigurazioneElementiInCache() {
-		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "ElementiInCache") : "-";
+		return this.isCacheRicercheConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheRicercheConfigurazioneDetails(), "ElementiInCache") : "-";
 	}
 	public String getCacheRicercheConfigurazioneMemoriaOccupata() {
-		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "MemoriaOccupata") : "-";
+		return this.isCacheRicercheConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheRicercheConfigurazioneDetails(), "MemoriaOccupata") : "-";
 	}
 	public String getCacheRicercheConfigurazioneIdleTime() {
-		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "IdleTime") : "-";
+		return this.isCacheRicercheConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheRicercheConfigurazioneDetails(), "IdleTime") : "-";
 	}
 	public String getCacheRicercheConfigurazioneLifeTime() {
-		return this.isCacheRicercheConfigurazioneEnabled() ? _getCacheDetails(getCacheRicercheConfigurazioneDetails(), "LifeTime") : "-";
+		return this.isCacheRicercheConfigurazioneEnabled() ? getCacheDetailsEngine(getCacheRicercheConfigurazioneDetails(), "LifeTime") : "-";
 	}
 	public String getCacheRicercheConfigurazioneDetails() {
 		try {

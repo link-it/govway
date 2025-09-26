@@ -30,20 +30,23 @@ import java.io.Serializable;
  */
 public enum PrincipalReaderType implements  Serializable , Cloneable {
 	
-	PRINCIPAL ("principal"),
-	HEADER ("header");
+	PRINCIPAL ("principal","org.openspcoop2.utils.transport.http.credential.IdentityPrincipalReader"),
+	HEADER ("header","org.openspcoop2.utils.transport.http.credential.IdentityHttpReader"),
+	OAUTH2 ("oauth2","org.openspcoop2.utils.oauth2.OAuth2PrincipalReader");
 
 	/** Value */
 	private String value;
+	private String className;
 	public String getValue()
 	{
 		return this.value;
 	}
 
 	/** Official Constructor */
-	PrincipalReaderType(String value)
+	PrincipalReaderType(String value, String className)
 	{
 		this.value = value;
+		this.className = className;
 	}
 	
 	@Override
@@ -65,4 +68,8 @@ public enum PrincipalReaderType implements  Serializable , Cloneable {
 		}
 		return res;
 	}
+	
+	public String getClassName() {
+        return this.className;
+    }
 }

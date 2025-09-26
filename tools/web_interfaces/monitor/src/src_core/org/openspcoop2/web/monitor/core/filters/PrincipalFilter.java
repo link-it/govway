@@ -39,6 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.oauth2.OAuth2Costanti;
 import org.openspcoop2.utils.transport.http.credential.IPrincipalReader;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderException;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderFactory;
@@ -61,6 +63,8 @@ import org.openspcoop2.web.monitor.core.utils.SessionUtils;
  */
 public class PrincipalFilter implements Filter {
 
+	public static final String REDIRECT_ERRORE_DEFAULT = "/public/error.jsf?principalShowForm=true";
+
 	public static final String PRINCIPAL_ERROR_MSG = LoginPhaseListener.PRINCIPAL_ERROR_MSG; 
 
 	private Logger log = LoggerManager.getPddMonitorCoreLogger();
@@ -75,15 +79,17 @@ public class PrincipalFilter implements Filter {
 	public static final String LOGIN_PROPR_PREFIX = "login.props.";
 
 	private boolean loginApplication = true;
-	private String loginTipo = null;
 	private IPrincipalReader principalReader = null;
 	private String loginUtenteNonAutorizzatoRedirectUrl = null;
 	private String loginUtenteNonValidoRedirectUrl = null;
 	private String loginErroreInternoRedirectUrl = null;
 	private String loginSessioneScadutaRedirectUrl = null;
+	
+	private boolean loginOAuth2Enabled = false;
 
 	@Override
 	public void destroy() {
+		//donothing
 	}
 
 	@Override
@@ -95,18 +101,24 @@ public class PrincipalFilter implements Filter {
 		
 			try{
 				this.loginApplication = PddMonitorProperties.getInstance(this.log).isLoginApplication();
-			}catch(Exception e){
+			}catch(UtilsException e){
 				this.loginApplication = true;
+			}
+			
+			try{
+				this.loginOAuth2Enabled = PddMonitorProperties.getInstance(this.log).isLoginOAuth2Enabled();
+			}catch(UtilsException e){
+				// se non riesco a leggere il tipo di login imposto il default null
 			}
 		
 		try{
-			if(!this.loginApplication){
-				this.loginTipo = PddMonitorProperties.getInstance(this.log).getLoginTipo();
+			if(!this.loginApplication || this.loginOAuth2Enabled){
+				String loginTipo = PddMonitorProperties.getInstance(this.log).getLoginTipo();
 
-				if(StringUtils.isEmpty(this.loginTipo))
-					this.loginTipo = PrincipalReaderType.PRINCIPAL.getValue();
+				if(StringUtils.isEmpty(loginTipo))
+					loginTipo = PrincipalReaderType.PRINCIPAL.getValue();
 				
-				this.principalReader = PrincipalReaderFactory.getReader(this.log, this.loginTipo);
+				this.principalReader = PrincipalReaderFactory.getReader(this.log, loginTipo);
 				Properties prop = PddMonitorProperties.getInstance(this.log).getLoginProperties();
 				this.principalReader.init(prop); 
 				
@@ -116,26 +128,25 @@ public class PrincipalFilter implements Filter {
 				this.loginSessioneScadutaRedirectUrl = PddMonitorProperties.getInstance(this.log).getLoginSessioneScadutaRedirectUrl();
 			}
 		}catch(PrincipalReaderException e){
-			this.log.error("Impossibile caricare il principal reader: "+e.getMessage());
+			logError(this.log, "Impossibile caricare il principal reader: "+e.getMessage(), e);
 			throw new ServletException(e);
-		} catch (Exception e) {
-			this.log.error("Impossibile leggere la configurazione della console: "+e.getMessage());
+		} catch (UtilsException e) {
+			logError(this.log, "Impossibile leggere la configurazione della console: "+e.getMessage(), e);
 			throw new ServletException(e);
 		}
 
-		this.log.debug("Usa il principal per il controllo autorizzazione utente ["+!this.loginApplication+"]"); 
+		this.log.debug("Usa il principal per il controllo autorizzazione utente [{}]", (!this.loginApplication)); 
 
 		// popolo la white list degli oggetti che possono essere visti anche se non authenticati, in particolare css, immagini, js, ecc...
-//		if(this.loginApplication){
-			this.excludedPages.add("a4j");
-			this.excludedPages.add("images");
-			this.excludedPages.add("css");
-			this.excludedPages.add("scripts");
-			this.excludedPages.add("fonts");
-			this.excludedPages.add("/report/statistica");
-			this.excludedPages.add("/report/configurazione");
-//		}
-
+		this.excludedPages.add("a4j");
+		this.excludedPages.add("images");
+		this.excludedPages.add("css");
+		this.excludedPages.add("scripts");
+		this.excludedPages.add("fonts");
+		this.excludedPages.add("/report/statistica");
+		this.excludedPages.add("/report/configurazione");
+		this.excludedPages.add("/oauth2/callback");
+		this.excludedPages.add("/oauth2/user");
 	}
 
 	@Override
@@ -147,16 +158,40 @@ public class PrincipalFilter implements Filter {
 			HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 			// Autenticazione gestita dall'applicazione 
 			if(this.loginApplication){
-				// is session expire control required for this request?
-				if (isSessionControlRequiredForThisResource(httpServletRequest)) {
-
-					// is session invalid?
-					if (SessionUtils.isSessionInvalid(httpServletRequest)) {					
+				if (isSessionControlRequiredForThisResource(httpServletRequest) && SessionUtils.isSessionInvalid(httpServletRequest)) {
+					
+					HttpSession sessione = httpServletRequest.getSession(false);
+					Object userInfoObj = sessione.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_USER_INFO);
+					
+					if(userInfoObj == null) { // login classico
 						String redirPageUrl = httpServletRequest.getContextPath() + "/";
 						//se la pagina richiesta e' quella di login allora redirigo direttamente a quella, altrimenti a quella di timeout
-						//redirPageUrl += StringUtils.contains(httpServletRequest.getRequestURI(), getLoginPage()) ? getLoginPage() : getTimeoutPage();
+						//redirPageUrl += StringUtils.contains(httpServletRequest.getRequestURI(), getLoginPage()) ? getLoginPage() : getTimeoutPage()
 						redirPageUrl += getRedirPage(httpServletRequest);
-						//					log.info("session is invalid! redirecting to page : " + redirPageUrl);
+						//					log.info("session is invalid! redirecting to page : " + redirPageUrl)
+						httpServletResponse.sendRedirect(redirPageUrl);
+						return;
+					} else { // login oauth2
+						String username = null;
+						try {
+							username = this.principalReader.getPrincipal(httpServletRequest);
+						} catch (PrincipalReaderException e) {
+							this.log.error("Errore durante la lettura del principal: " + e.getMessage(),e);
+						}
+						
+						this.log.debug("Username trovato: [{}]", username);
+						
+						String redirPageUrl = null;
+						if(username != null) { // redirect verso la servlet di login 
+							redirPageUrl = httpServletRequest.getContextPath() + "/oauth2/user";
+						} else{ // redirect verso la pagina di errore
+							httpServletRequest.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ERROR_CODE, HttpServletResponse.SC_UNAUTHORIZED);
+							httpServletRequest.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ERROR_DETAIL,"Accesso OAuth2 negato");
+							
+							redirPageUrl = StringUtils.isNotEmpty(this.loginUtenteNonAutorizzatoRedirectUrl) ? this.loginUtenteNonAutorizzatoRedirectUrl : 
+								httpServletRequest.getContextPath() + PrincipalFilter.REDIRECT_ERRORE_DEFAULT;
+						}
+						
 						httpServletResponse.sendRedirect(redirPageUrl);
 						return;
 					}
@@ -165,23 +200,23 @@ public class PrincipalFilter implements Filter {
 				if (isSessionControlRequiredForThisResource(httpServletRequest)) {
 					HttpSession sessione = httpServletRequest.getSession();
 
-					//					this.log.debug("Richiesta risorsa privata ["+httpServletRequest.getRequestURI()+"]"); 
+					//					this.log.debug("Richiesta risorsa privata ["+httpServletRequest.getRequestURI()+"]")
 					// Ho richiesto una risorsa protetta cerco il login bean
 					// Cerco il login bean nella sessione, se non c'e' provo a cercarlo nella sessione di JSF
 					LoginBean lb = (LoginBean) sessione.getAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 
-					this.log.debug("LoginBean trovato in sessione ["+(lb!= null)+"]"); 
+					this.log.debug("LoginBean trovato in sessione [{}]", (lb!= null)); 
 
 					if(lb == null){
 						try{
 							FacesContext currentInstance = FacesContext.getCurrentInstance();
-							this.log.debug("FacesContext not null ["+(currentInstance!= null)+"]"); 
+							this.log.debug("FacesContext not null [{}]", (currentInstance!= null)); 
 							if(currentInstance != null){
 								ExternalContext ec = currentInstance.getExternalContext();
-								this.log.debug("ExternalContext not null ["+(ec!= null)+"]");
+								this.log.debug("ExternalContext not null [{}]", (ec!= null));
 								if(ec != null){
 									lb = (LoginBean) ec.getSessionMap().get(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
-									this.log.debug("LoginBean trovato in nella SessionMap JSF ["+(lb!= null)+"]"); 
+									this.log.debug("LoginBean trovato in nella SessionMap JSF [{}]", (lb!= null)); 
 								}
 							}
 						}catch(Exception e){
@@ -196,36 +231,28 @@ public class PrincipalFilter implements Filter {
 					try{
 						loc = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 					}catch(Exception e){
-						this.log.debug("Errore durante controllo Locale: "+ e.getMessage());
+						this.log.debug("Errore durante controllo Locale: "+ e.getMessage(), e);
 						loc = Locale.getDefault();
 					}
 
-					this.log.debug("Locale trovato Valore["+loc.toString()+"]");
-
-
-					//this.log.debug("Login Bean trovato in sessione ["+(lb != null)+"]");
+					this.log.debug("Locale trovato Valore[{}]", loc);
 
 					// Se login bean == null lo creo
 					if(lb == null){
 						// prelevo la lingua della richiesta http
 						Locale localeRequest = request.getLocale();
-						this.log.debug("Locale trovato nella Request["+localeRequest.toString()+"]");
+						this.log.debug("Locale trovato nella Request[{}]", localeRequest);
 
 						lb = new LoginBean(true); 
 						lb.setLoggedIn(false);
 						// supporto alla localizzazione
-						//lb.impostaLocale(localeRequest);
+						//lb.impostaLocale(localeRequest)
 					}
 
-				//	this.log.debug("Login Bean Lingua: ["+lb.getCurrentLang()+"]");
-
-					//					this.log.debug("Login Bean Tipo: ["+lb.getClass().getName()+"]");
-					this.log.debug("Login Bean Utente Loggato: ["+lb.isLoggedIn()+"]"); 
+					this.log.debug("Login Bean Utente Loggato: [{}]", lb.isLoggedIn()); 
 					// se non e' loggato lo loggo
 					if(!lb.isLoggedIn()){
 						// Controllo principal
-//						Identity identity = new Identity(httpServletRequest);
-//						String username = identity.getPrincipal();
 						
 						String username = null;
 						try {
@@ -234,7 +261,7 @@ public class PrincipalFilter implements Filter {
 							this.log.error("Errore durante la lettura del principal: " + e.getMessage(),e);
 						}
 						
-						this.log.debug("Username trovato: ["+username+"]");
+						this.log.debug("Username trovato: [{}]", username);
 
 						// Se l'username che mi arriva e' settato vuol dire che sono autorizzato dal Container
 						if(username != null){
@@ -243,11 +270,11 @@ public class PrincipalFilter implements Filter {
 							lb.setUsername(username); 
 							String loginResult = lb.login();
 							if(loginResult.equals("login")){
-								this.log.debug("Utente non autorizzato: " + lb.getLoginErrorMessage());
+								this.log.debug("Utente non autorizzato: {}", lb.getLoginErrorMessage());
 								lb.logout();
 								String redirPageUrl =
 										StringUtils.isNotEmpty(this.loginUtenteNonAutorizzatoRedirectUrl) ? 
-												this.loginUtenteNonAutorizzatoRedirectUrl : httpServletRequest.getContextPath() + "/public/error.jsf?principalShowForm=true";//+"index.jsp" ;
+												this.loginUtenteNonAutorizzatoRedirectUrl : httpServletRequest.getContextPath() + REDIRECT_ERRORE_DEFAULT;
 
 								// Messaggio di errore
 								sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, lb.getLoginErrorMessage()); 
@@ -255,9 +282,9 @@ public class PrincipalFilter implements Filter {
 								httpServletResponse.sendRedirect(redirPageUrl);
 								return;
 							}else if(loginResult.equals("loginError")){
-								this.log.debug("Errore durante il login: " + lb.getLoginErrorMessage());
+								this.log.debug("Errore durante il login: {}", lb.getLoginErrorMessage());
 								lb.logout();
-								String redirPageUrl = StringUtils.isNotEmpty(this.loginErroreInternoRedirectUrl) ? this.loginErroreInternoRedirectUrl : httpServletRequest.getContextPath() + "/public/error.jsf?principalShowForm=true" ;
+								String redirPageUrl = StringUtils.isNotEmpty(this.loginErroreInternoRedirectUrl) ? this.loginErroreInternoRedirectUrl : httpServletRequest.getContextPath() + REDIRECT_ERRORE_DEFAULT ;
 
 								// Messaggio di errore
 								sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, lb.getLoginErrorMessage()); 
@@ -265,10 +292,10 @@ public class PrincipalFilter implements Filter {
 								httpServletResponse.sendRedirect(redirPageUrl);
 								return;
 							}else if(loginResult.equals("loginUserInvalid")){
-								this.log.debug("Errore durante il caricamento informazioni utente: " + lb.getLoginErrorMessage());
+								this.log.debug("Errore durante il caricamento informazioni utente: {}", lb.getLoginErrorMessage());
 								lb.logout();
 								String redirPageUrl = StringUtils.isNotEmpty(this.loginUtenteNonValidoRedirectUrl) ? 
-										this.loginUtenteNonValidoRedirectUrl : httpServletRequest.getContextPath() + "/public/error.jsf?principalShowForm=true" ;
+										this.loginUtenteNonValidoRedirectUrl : httpServletRequest.getContextPath() + REDIRECT_ERRORE_DEFAULT ;
 
 								// Messaggio di errore
 								sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, lb.getLoginErrorMessage()); 
@@ -290,10 +317,14 @@ public class PrincipalFilter implements Filter {
 									StringUtils.isNotEmpty(this.loginUtenteNonAutorizzatoRedirectUrl) ? 
 									this.loginUtenteNonAutorizzatoRedirectUrl : httpServletRequest.getContextPath() + "/" + "pages/welcome.jsf";
 							//se la pagina richiesta e' quella di login allora redirigo direttamente a quella, altrimenti a quella di timeout
-							//redirPageUrl += StringUtils.contains(httpServletRequest.getRequestURI(), getLoginPage()) ? getLoginPage() : getTimeoutPage();
-							//							redirPageUrl += getRedirPage(httpServletRequest);
-							this.log.debug("Username NULL reidrect ["+redirPageUrl+"]");
-							//					log.info("session is invalid! redirecting to page : " + redirPageUrl);
+							//redirPageUrl += StringUtils.contains(httpServletRequest.getRequestURI(), getLoginPage()) ? getLoginPage() : getTimeoutPage()
+							//							redirPageUrl += getRedirPage(httpServletRequest)
+							this.log.debug("Username NULL redirect [{}]", redirPageUrl);
+							//					log.info("session is invalid! redirecting to page : " + redirPageUrl)
+							
+							// Messaggio di errore
+							sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, "Impossibile autenticare l'utente"); 
+							
 							httpServletResponse.sendRedirect(redirPageUrl);
 							return;
 						}
@@ -315,18 +346,14 @@ public class PrincipalFilter implements Filter {
 			}
 		}  
 
-		//		filterChain.doFilter(request, response);
-
 		try {
-			//	this.log.debug("filterChain.dofilter..."); 
 			filterChain.doFilter(request, response);
 		} catch (ServletException e) {
-			//			this.log.debug(" ServletException ["+e.getRootCause()+"]"); 
 			Throwable rootCause = e.getRootCause();
 			if(rootCause != null){
 				if (rootCause instanceof ViewExpiredException) { // This is true for any FacesException.
 
-					this.log.debug("Rilevata ViewExpiredException: ["+rootCause.getMessage()+"]"); 
+					this.log.debug("Rilevata ViewExpiredException: [{}]", rootCause.getMessage()); 
 					if ((request instanceof HttpServletRequest) && (response instanceof HttpServletResponse)) {
 						HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 						HttpServletResponse httpServletResponse = (HttpServletResponse) response;
@@ -358,30 +385,18 @@ public class PrincipalFilter implements Filter {
 	private boolean isSessionControlRequiredForThisResource(HttpServletRequest httpServletRequest) {
 		String requestPath = httpServletRequest.getRequestURI();
 
-		boolean controlRequired = false;
-		//		if(StringUtils.contains(requestPath, this.timeoutPage) || 
-		//				StringUtils.contains(requestPath, this.loginPage)){
-		//			controlRequired = false;
-		//		}else{
-		controlRequired = true;
-		if(this.excludedPages.size() > 0)
+		boolean controlRequired = true;
+		if(!this.excludedPages.isEmpty()) {
 			for (String page : this.excludedPages) {
 				if(StringUtils.contains(requestPath, page)){
 					controlRequired = false;
 					break;
 				}
 			}
-		else
-			controlRequired = true;
-		//		}
-
+		}
+		
 		return controlRequired;
 	}
-
-	//	private boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
-	//		boolean sessionInValid = (httpServletRequest.getRequestedSessionId() == null) || !httpServletRequest.isRequestedSessionIdValid();
-	//		return sessionInValid;
-	//	}
 
 	private String getRedirPage(HttpServletRequest req){
 		String ctx = req.getContextPath();
@@ -398,69 +413,8 @@ public class PrincipalFilter implements Filter {
 		return res;
 	}
 
+	public static void logError(Logger log, String message, Throwable t) {
+		log.error(message, t);
+	}
+	
 }
-
-/*
- * 
- 	Identity identity = new Identity(httpServletRequest);
-				String username = identity.getUsername();
-				HttpSession sessione = httpServletRequest.getSession();
-
-				// Se l'username che mi arriva e' settato vuol dire che sono autorizzato dal Container
-				if(username != null){
-					// Cerco il login bean nella sessione, se non c'e' provo a cercarlo nella sessione di JSF
-					LoginBean lb = (LoginBean) sessione.getAttribute("loginBean");
-
-					if(lb == null){
-						try{
-							FacesContext currentInstance = FacesContext.getCurrentInstance();
-							if(currentInstance != null){
-								ExternalContext ec = currentInstance.getExternalContext();
-								if(ec != null){
-									lb = (LoginBean) ec.getSessionMap().get("loginBean");
-								}
-							}
-						}catch(Exception e){}
-					} 
-
-					if(lb != null){
-						// Controllo se sono ancora loggato
-						boolean isLogged = lb == null ? false : lb.getIsLoggedIn();
-
-						// Se non sono loggato mi autentico e poi faccio redirect verso la pagina di welcome
-						if(!isLogged){
-							lb.setIsLoggedIn(true);
-							String redirPageUrl = httpServletRequest.getContextPath() + "/"+"index.jsp" ;
-							httpServletResponse.sendRedirect(redirPageUrl);
-							return;
-						} 
-						// se sono loggato non faccio nulla...
-
-						// Se il loginBean ancora non esiste (primo accesso) allora lo creo
-					}else {
-						lb = new LoginBean(true); 
-						lb.setUsername(username); 
-						lb.setIsLoggedIn(true);
-						String redirPageUrl = httpServletRequest.getContextPath() + "/"+"index.jsp" ;
-						httpServletResponse.sendRedirect(redirPageUrl);
-						return;
-					}
-
-				}else {
-					//Se non trovo l'username invalido tutto.
-					if (isSessionControlRequiredForThisResource(httpServletRequest)) {
-
-						// is session invalid?
-						if (isSessionInvalid(httpServletRequest)) {		
-							sessione.setAttribute("loginBean", null);
-							String redirPageUrl = httpServletRequest.getContextPath() + "/";
-							//se la pagina richiesta e' quella di login allora redirigo direttamente a quella, altrimenti a quella di timeout
-							//redirPageUrl += StringUtils.contains(httpServletRequest.getRequestURI(), getLoginPage()) ? getLoginPage() : getTimeoutPage();
-							redirPageUrl += getRedirPage(httpServletRequest);
-							//					log.info("session is invalid! redirecting to page : " + redirPageUrl);
-							httpServletResponse.sendRedirect(redirPageUrl);
-							return;
-						}
-					}
-				}
- */

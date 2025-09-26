@@ -40,6 +40,7 @@ public class ContentAuthorizationCostanti {
 		"/fonts/",
 		"/scripts/",
 		"/public/error.jsf",
+		"/public/errorLoginOAuth2.jsf",
 		"/public/timeoutPage.jsf",
 		"/public/login.jsf",
 		"/FusionCharts/",
@@ -49,7 +50,11 @@ public class ContentAuthorizationCostanti {
 		"/report/configurazione",
 		
 		// Cambio Password Scaduta Utente
-		"/core/pages/form/userPasswordScaduta.jsf"
+		"/core/pages/form/userPasswordScaduta.jsf",
+		
+		// Servlet callback OAuth2
+		"/oauth2/callback",
+		"/oauth2/user",
 	};
 
 	// Elenco delle pagine che sono disponibili al ruolo amministratore

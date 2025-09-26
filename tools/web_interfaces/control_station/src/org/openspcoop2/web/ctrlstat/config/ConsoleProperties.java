@@ -47,6 +47,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
 import org.slf4j.Logger;
 
 
@@ -2104,6 +2105,10 @@ public class ConsoleProperties {
 	public boolean isLoginApplication() throws UtilsException{
 		return this.readBooleanRequiredProperty("login.application");
 	}
+	
+	public boolean isVisualizzaFormLoginApplication() throws UtilsException{
+		return this.readBooleanRequiredProperty("login.application.visualizzaFormLogin");
+	}
 
 	public Properties getLoginProperties() throws UtilsException{
 		return this.reader.readProperties("login.props.");
@@ -2149,5 +2154,15 @@ public class ConsoleProperties {
 			return "";
 		}
 		return this.readProperty(true,"logout.urlDestinazione");
+	}
+	
+	public boolean isLoginOAuth2Enabled() throws UtilsException{
+		String tipoLogin = this.readProperty(true,"login.tipo");
+		
+		if (tipoLogin != null) {
+			return tipoLogin.equals(PrincipalReaderType.OAUTH2.getValue());
+		}
+		
+		return false;
 	}
 }
