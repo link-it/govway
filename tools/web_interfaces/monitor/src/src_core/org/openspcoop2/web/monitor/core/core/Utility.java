@@ -344,6 +344,22 @@ public class Utility {
 		return null;
 	}
 
+	/**
+	 * Ottiene il soggetto selezionato dall'utente loggato per le informazioni di versione
+	 * @return Il soggetto selezionato o null se non disponibile
+	 */
+	public static String getSoggettoSelezionatoPerVersionInfo() {
+		try {
+			User utente = getLoggedUtente();
+			if(utente != null) {
+				return utente.getSoggettoSelezionatoPddMonitor();
+			}
+		} catch(Exception e) {
+			// Ignora errori nel recupero del soggetto, usa licenza generica
+		}
+		return null;
+	}
+
 	public static String getLoggedUtenteModalita() {
 		LoginBean lb = getLoginBean();
 

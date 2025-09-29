@@ -342,11 +342,22 @@ public class ControlStationCore {
 		}
 		String consoleNomeEstesoSuffix = null;
 		if(versionInfoCheck!=null) {
-			if(!StringUtils.isEmpty(versionInfoCheck.getErrorTitleSuffix())) {
-				consoleNomeEstesoSuffix = versionInfoCheck.getErrorTitleSuffix();
+			// Ottieni il soggetto selezionato dalla sessione
+			String soggettoSelezionatoPddConsole = null;
+			try {
+				User userFromSession = ServletUtils.getUserFromSession(request, session);
+				if(userFromSession != null) {
+					soggettoSelezionatoPddConsole = userFromSession.getSoggettoSelezionatoPddConsole();
+				}
+			} catch(Exception e) {
+				// Ignora errori nel recupero del soggetto, usa licenza generica
 			}
-			else if(!StringUtils.isEmpty(versionInfoCheck.getWarningTitleSuffix())) {
-				consoleNomeEstesoSuffix = versionInfoCheck.getWarningTitleSuffix();
+
+			if(!StringUtils.isEmpty(versionInfoCheck.getErrorTitleSuffix(soggettoSelezionatoPddConsole))) {
+				consoleNomeEstesoSuffix = versionInfoCheck.getErrorTitleSuffix(soggettoSelezionatoPddConsole);
+			}
+			else if(!StringUtils.isEmpty(versionInfoCheck.getWarningTitleSuffix(soggettoSelezionatoPddConsole))) {
+				consoleNomeEstesoSuffix = versionInfoCheck.getWarningTitleSuffix(soggettoSelezionatoPddConsole);
 			}
 		}
 		return consoleNomeEstesoSuffix;
@@ -5867,7 +5878,8 @@ public class ControlStationCore {
 		}
 		return this.versionInfo;
 	}
-	public void updateInfoVersion(HttpServletRequest request, HttpSession session, String info) throws UtilsException {
+
+	public void updateInfoVersion(HttpServletRequest request, HttpSession session, byte[] info) throws UtilsException {
 		Connection con = null;
 		try {
 			// prendo una connessione
@@ -5876,7 +5888,7 @@ public class ControlStationCore {
 			if(vInfo!=null) {
 				vInfo.set(info, ControlStationLogger.getPddConsoleCoreLogger(), con, this.tipoDB);
 			}
-		} 
+		}
 		catch(Exception e) {
 			ControlStationLogger.getPddConsoleCoreLogger().error(e.getMessage(),e);
 			throw e;

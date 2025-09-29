@@ -1080,32 +1080,35 @@ public class ApplicationBean implements Serializable {
 		
 		return pVersion;
 	}
-	
+
 	public String getSito(){
 		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
-		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getWebSite())) {
-			return versionInfo.getWebSite();
+		String soggettoSelezionato = Utility.getSoggettoSelezionatoPerVersionInfo();
+		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getWebSite(soggettoSelezionato))) {
+			return versionInfo.getWebSite(soggettoSelezionato);
 		}
 		else {
 			return Costanti.LABEL_OPENSPCOOP2_WEB;
 		}
 	}
-	
+
 	public String getCopyright(){
 		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
-		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getCopyright())) {
-			return versionInfo.getCopyright();
+		String soggettoSelezionato = Utility.getSoggettoSelezionatoPerVersionInfo();
+		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getCopyright(soggettoSelezionato))) {
+			return versionInfo.getCopyright(soggettoSelezionato);
 		}
 		else {
 			return CostantiPdD.OPENSPCOOP2_COPYRIGHT;
 		}
 	}
-	
+
 	public String getLicenza() {
 		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		String soggettoSelezionato = Utility.getSoggettoSelezionatoPerVersionInfo();
 		if(versionInfo!=null) {
 			try {
-				return versionInfo.getInfo();
+				return versionInfo.getInfo(soggettoSelezionato);
 			}catch(Exception e) {
 				ApplicationBean.log.error(e.getMessage(),e);
 				return CostantiPdD.OPENSPCOOP2_LICENSE;
