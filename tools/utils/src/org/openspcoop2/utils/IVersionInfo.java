@@ -33,20 +33,20 @@ public interface IVersionInfo {
 	
 	public void init(Logger log, Object ... objects) throws UtilsException;
 	
-	public String getInfo() throws UtilsException;
+	public String getInfo(Object ... params) throws UtilsException;
 		
-	public String getErrorMessage();
+	public String getErrorMessage(Object ... params);
 	
-	public String getErrorTitleSuffix();
+	public String getErrorTitleSuffix(Object ... params);
 	
-	public String getWarningMessage();
+	public String getWarningMessage(Object ... params);
 	
-	public String getWarningTitleSuffix();
+	public String getWarningTitleSuffix(Object ... params);
 	
-	public String getWebSite();
+	public String getWebSite(Object ... params);
 	
-	public String getCopyright();
+	public String getCopyright(Object ... params);
 	
-	public void set(String info, Logger log, Object ... objects) throws UtilsException;
+	public void set(byte[] info, Logger log, Object ... objects) throws UtilsException;
 	
 }
