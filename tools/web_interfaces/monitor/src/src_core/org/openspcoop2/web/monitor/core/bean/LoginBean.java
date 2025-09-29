@@ -50,6 +50,7 @@ import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.SemaphoreLock;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.Stato;
@@ -219,7 +220,7 @@ public class LoginBean extends AbstractLoginBean {
 				}else{
 					MessageUtils.addErrorMsg("Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Username o password non validi.");
 				}
-			} catch (ServiceException e) {
+			} catch (ServiceException | UtilsException e) {
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+".");
 			} catch (NotFoundException e) {
 				MessageUtils.addErrorMsg("Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Username o password non validi.");
@@ -240,7 +241,7 @@ public class LoginBean extends AbstractLoginBean {
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
 					return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 				}
-			} catch (ServiceException e) {
+			} catch (ServiceException | UtilsException e) {
 				this.loginErrorMessage = "Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+"."; 
 				this.log.error(this.loginErrorMessage);
 				return "loginError";
@@ -763,6 +764,9 @@ public class LoginBean extends AbstractLoginBean {
 			if(this.salvaModificheProfiloSuDB) {
 				this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
 			}
+			
+			this.setvInfo(this.getLoginDao().readVersionInfo());
+			
 		} catch (Exception e) {
 			String errorMessage = "Si e' verificato un errore durante il cambio del soggetto, si prega di riprovare piu' tardi.";
 			this.log.error(e.getMessage(),e);
@@ -1107,25 +1111,24 @@ public class LoginBean extends AbstractLoginBean {
 		return this.vInfo;
 	}
 
-	public void setvInfo(IVersionInfo vInfo) {
+	public void setvInfo(IVersionInfo vInfo) throws UtilsException {
 		this.vInfo = vInfo;
 		if(this.vInfo!=null) {
-			if(!StringUtils.isEmpty(this.vInfo.getErrorTitleSuffix())) {
-				String titolo = this.getTitle();
-				if(!this.vInfo.getErrorTitleSuffix().startsWith(" ")) {
+			String soggettoSelezionato = Utility.getSoggettoSelezionatoPerVersionInfo();
+			String titolo = PddMonitorProperties.getInstance(this.log).getPddMonitorTitle();
+			if(!StringUtils.isEmpty(this.vInfo.getErrorTitleSuffix(soggettoSelezionato))) {
+				if(!this.vInfo.getErrorTitleSuffix(soggettoSelezionato).startsWith(" ")) {
 					titolo = titolo + " ";
 				}
-				titolo = titolo + this.vInfo.getErrorTitleSuffix();
-				this.setTitle(titolo);
+				titolo = titolo + this.vInfo.getErrorTitleSuffix(soggettoSelezionato);
 			}
-			else if(!StringUtils.isEmpty(this.vInfo.getWarningTitleSuffix())) {
-				String titolo = this.getTitle();
-				if(!this.vInfo.getWarningTitleSuffix().startsWith(" ")) {
+			else if(!StringUtils.isEmpty(this.vInfo.getWarningTitleSuffix(soggettoSelezionato))) {
+				if(!this.vInfo.getWarningTitleSuffix(soggettoSelezionato).startsWith(" ")) {
 					titolo = titolo + " ";
 				}
-				titolo = titolo + this.vInfo.getWarningTitleSuffix();
-				this.setTitle(titolo);
+				titolo = titolo + this.vInfo.getWarningTitleSuffix(soggettoSelezionato);
 			}
+			this.setTitle(titolo);
 		}
 	}
 	public List<String> getListaNomiGruppi(){
@@ -1160,7 +1163,7 @@ public class LoginBean extends AbstractLoginBean {
 				return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 			}
 			return "login";
-		} catch (ServiceException e) {
+		} catch (ServiceException | UtilsException e) {
 			this.loginErrorMessage = "Si e' verificato un errore durante il caricamento del profilo utente, impossibile autenticare l'utente "+this.getUsername()+"."; 
 			this.log.error(this.loginErrorMessage);
 			return "loginError";

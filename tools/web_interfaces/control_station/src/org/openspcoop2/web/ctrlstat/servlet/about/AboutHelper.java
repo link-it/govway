@@ -36,8 +36,10 @@ import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TargetType;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
+import org.openspcoop2.web.lib.users.dao.User;
 
 /**
  * AboutHelper
@@ -54,21 +56,41 @@ public class AboutHelper extends ConsoleHelper {
 		super(request, pd,  session);
 	}
 
+	/**
+	 * Ottiene il soggetto selezionato dalla sessione dell'utente
+	 * @return Il nome del soggetto o null se non presente
+	 */
+	private String getSoggettoSelezionatoFromSession() {
+		try {
+			User userFromSession = ServletUtils.getUserFromSession(this.request, this.session);
+			if(userFromSession != null) {
+				return userFromSession.getSoggettoSelezionatoPddConsole();
+			}
+		} catch(Exception e) {
+			// Ignora errori nel recupero del soggetto, usa licenza generica
+		}
+		return null;
+	}
+
 	public List<DataElement> addAboutToDati(List<DataElement> dati,TipoOperazione tipoOperazione, String userLogin,
 			BinaryParameter infoBP) throws UtilsException {
-		 
+
 		IVersionInfo versionInfo = null;
 		try {
 			versionInfo = this.core.getInfoVersion(this.request, this.session);
 		}catch(Exception e) {
 			ControlStationLogger.getPddConsoleCoreLogger().error("Errore durante la lettura delle informazioni sulla versione: "+e.getMessage(),e);
 		}
+
+		// Ottieni il soggetto selezionato
+		String soggettoSelezionato = getSoggettoSelezionatoFromSession();
+
 		if(versionInfo!=null) {
-			if(!StringUtils.isEmpty(versionInfo.getErrorMessage())) {
-				this.pd.setMessage(versionInfo.getErrorMessage(), MessageType.ERROR);
+			if(!StringUtils.isEmpty(versionInfo.getErrorMessage(soggettoSelezionato))) {
+				this.pd.setMessage(versionInfo.getErrorMessage(soggettoSelezionato), MessageType.ERROR);
 			}
-			else if(!StringUtils.isEmpty(versionInfo.getWarningMessage())) {
-				this.pd.setMessage(versionInfo.getWarningMessage(), MessageType.INFO);
+			else if(!StringUtils.isEmpty(versionInfo.getWarningMessage(soggettoSelezionato))) {
+				this.pd.setMessage(versionInfo.getWarningMessage(soggettoSelezionato), MessageType.INFO);
 			}
 		}
 
@@ -91,9 +113,9 @@ public class AboutHelper extends ConsoleHelper {
 		de.setLabelLink(AboutCostanti.LABEL_SITO);
 		de.setType(DataElementType.LINK);
 		de.setTarget(TargetType.BLANK);
-		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getWebSite())) {
-			de.setValue(versionInfo.getWebSite());
-			de.setUrl(versionInfo.getWebSite());
+		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getWebSite(soggettoSelezionato))) {
+			de.setValue(versionInfo.getWebSite(soggettoSelezionato));
+			de.setUrl(versionInfo.getWebSite(soggettoSelezionato));
 		}
 		else {
 			de.setValue(CostantiControlStation.LABEL_OPENSPCOOP2_WEB);
@@ -101,13 +123,13 @@ public class AboutHelper extends ConsoleHelper {
 		}
 		de.setStyleClass(Costanti.INPUT_TEXT_DEFAULT_CSS_CLASS_FONT_SIZE_16);
 		dati.add(de);
-		
+
 		// copyright
 		de = new DataElement();
 		de.setLabel(AboutCostanti.LABEL_COPYRIGHT);
 		de.setType(DataElementType.TEXT);
-		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getCopyright())) {
-			de.setValue(versionInfo.getCopyright());
+		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getCopyright(soggettoSelezionato))) {
+			de.setValue(versionInfo.getCopyright(soggettoSelezionato));
 		}
 		else {
 			de.setValue(AboutCostanti.LABEL_COPYRIGHT_VALUE);
@@ -121,14 +143,20 @@ public class AboutHelper extends ConsoleHelper {
 		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
 		de.setCols(70);
 		if(versionInfo!=null) {
-			String info = versionInfo.getInfo();
-			String [] split = info.split("\n");
-			de.setValue(info);
-			if(split==null || split.length>11) {
-				de.setRows(11);
-			}
-			else {
-				de.setRows(split.length+1);
+			try {
+				String info = versionInfo.getInfo(soggettoSelezionato);
+				String [] split = info.split("\n");
+				de.setValue(info);
+				if(split==null || split.length>11) {
+					de.setRows(11);
+				}
+				else {
+					de.setRows(split.length+1);
+				}
+			} catch(Exception e) {
+				ControlStationLogger.getPddConsoleCoreLogger().error("Errore durante la lettura delle informazioni della licenza: "+e.getMessage(),e);
+				de.setValue("Errore durante la lettura delle informazioni della licenza");
+				de.setRows(2);
 			}
 		}
 		else {
