@@ -1,3 +1,10 @@
+2025-09-30  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio]
+	Risolto Bug #1655
+	Nelle API di monitoraggio, qualora una transazione includa esclusivamente gli header HTTP della chiamata senza il relativo payload, 
+	la risorsa /monitoraggio/transazioni/{id} non restituisce tali header.
+
 2025-09-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
