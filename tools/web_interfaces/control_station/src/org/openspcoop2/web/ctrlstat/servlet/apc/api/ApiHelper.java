@@ -600,6 +600,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		this.pd.setCustomListViewName(ApiCostanti.APC_API_NOME_VISTA_CUSTOM_FORM_API);
 		
 		Parameter pIdAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, as.getId()+"");
+		Parameter pNomeAccordo = new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_NOME, as.getNome());
 		Parameter pTipoAccordo = AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo);
 		
 		IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromAccordo(as);
@@ -614,6 +615,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		List<Parameter> listParametersApi = new ArrayList<>();
 		listParametersApi.add(new Parameter(ApiCostanti.PARAMETRO_APC_API_GESTIONE_PARZIALE, "")); // lasciare per primo
 		listParametersApi.add(pIdAccordo);
+		listParametersApi.add(pNomeAccordo);
 		listParametersApi.add(pTipoAccordo);
 		
 		// In Uso Button
@@ -623,6 +625,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		if(this.core.isElenchiVisualizzaComandoResetCacheSingoloElemento()){
 			List<Parameter> listaParametriChange = new ArrayList<>();				
 			listaParametriChange.add(pIdAccordo);
+			listaParametriChange.add(pNomeAccordo);
 			listaParametriChange.add(pTipoAccordo);
 			
 			this.pd.addComandoResetCacheElementoButton(ApiCostanti.SERVLET_NAME_APC_API_CHANGE, listaParametriChange);

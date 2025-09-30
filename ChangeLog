@@ -1,9 +1,15 @@
+2025-09-30   Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1654
+	Durante il tentativo di modifica della descrizione o del tag di un’API, l’operazione falliva restituendo l’errore: 'Dati incompleti. È necessario indicare un nome'.
+
 2025-09-30  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio]
 	Risolto Bug #1655
 	Nelle API di monitoraggio, qualora una transazione includa esclusivamente gli header HTTP della chiamata senza il relativo payload, 
-	la risorsa /monitoraggio/transazioni/{id} non restituisce tali header.
+	la risorsa /monitoraggio/transazioni/{id} non restituiva tali header.
 
 2025-09-24  Andrea Poli <apoli@link.it>
 
