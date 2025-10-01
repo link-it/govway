@@ -24,10 +24,12 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -40,20 +42,20 @@ import org.openspcoop2.web.lib.users.dao.User;
 public class LoginHelper extends ConsoleHelper {
 
 	public LoginHelper(HttpServletRequest request, PageData pd,
-			HttpSession session) throws Exception {
+			HttpSession session) {
 		super(request, pd, session);
 	}
 	public LoginHelper(ControlStationCore core, HttpServletRequest request, PageData pd,
-			HttpSession session) throws Exception {
+			HttpSession session) {
 		super(core, request, pd, session);
 	}
 	
-	public boolean loginCheckData(LoginTipologia tipoCheck) throws Exception {
+	public boolean loginCheckData(LoginTipologia tipoCheck) throws DriverUsersDBException, DriverControlStationException {
 		String login = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
 		String password = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_PASSWORD);
 		return this.loginCheckData(tipoCheck, login, password);
 	}
-	public boolean loginCheckData(LoginTipologia tipoCheck, String login, String password) throws Exception {
+	public boolean loginCheckData(LoginTipologia tipoCheck, String login, String password) throws DriverUsersDBException, DriverControlStationException {
 		try{
 				
 			// Campi obbligatori
@@ -95,7 +97,6 @@ public class LoginHelper extends ConsoleHelper {
 			}
 			
 			// controllo modalita' associate all'utenza
-			if(trovato) {
 				
 				User uCheck = u;
 				if(uCheck == null) {
@@ -111,25 +112,24 @@ public class LoginHelper extends ConsoleHelper {
 					this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO,MessageType.ERROR_SINTETICO);
 					return false;
 				}
-			}
 
 			// setto l utente in sessione
 			ServletUtils.setUserIntoSession(this.request, this.session, u);
 			
 			return true;
 
-		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+		} catch (DriverUsersDBException | DriverControlStationException e) {
+			ControlStationCore.logError("Exception: " + e.getMessage(), e);
+			throw e;
 		}
 	}
 
-	public boolean loginScadenzaPasswordCheckData(LoginTipologia tipoCheck) throws Exception {
+	public boolean loginScadenzaPasswordCheckData() throws DriverUsersDBException, DriverControlStationException {
 		String login = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
 		String password = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_PASSWORD);
-		return this.loginScadenzaPasswordCheckData(tipoCheck, login, password);
+		return this.loginScadenzaPasswordCheckData(login, password);
 	}
-	public boolean loginScadenzaPasswordCheckData(LoginTipologia tipoCheck, String login, String password) throws Exception {
+	public boolean loginScadenzaPasswordCheckData(String login, String password) throws DriverUsersDBException {
 		try{
 		
 			// elimino attributo che abilita il cambio della password
@@ -152,9 +152,9 @@ public class LoginHelper extends ConsoleHelper {
 			
 			return true;
 
-		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+		} catch (DriverUsersDBException e) {
+			ControlStationCore.logError("Exception: " + e.getMessage(), e);
+			throw e;
 		}
 	}
 }

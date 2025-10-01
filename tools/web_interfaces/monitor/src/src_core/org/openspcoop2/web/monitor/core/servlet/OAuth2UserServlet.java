@@ -14,87 +14,248 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.oauth2.OAuth2Costanti;
+import org.openspcoop2.utils.oauth2.OAuth2Utilities;
 import org.openspcoop2.utils.transport.http.credential.IPrincipalReader;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderException;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderFactory;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.filters.PrincipalFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.SessionUtils;
 import org.slf4j.Logger;
 
 public class OAuth2UserServlet extends HttpServlet {
-	
+
+	private static final String ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES = "Errore durante la lettura delle properties: ";
+
+	private static final String ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE = "Autenticazione Oauth2 non disponibile: si e' verificato un'errore: ";
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
-	
+
 	public OAuth2UserServlet() {
 		super();
 	}
-	
+
 	@Override
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
 		// login utenza  
 		IPrincipalReader principalReader = null;
 		String loginUtenteNonAutorizzatoRedirectUrl = null;
-		String loginUtenteNonValidoRedirectUrl = null;
-		String loginErroreInternoRedirectUrl = null;
 		String loginSessioneScadutaRedirectUrl = null;
-		
+		String oauth2LogoutUrl = null;
 		try {
 			String loginTipo = PddMonitorProperties.getInstance(OAuth2UserServlet.log).getLoginTipo();
 
 			if(StringUtils.isEmpty(loginTipo))
 				loginTipo = PrincipalReaderType.PRINCIPAL.getValue();
-			
-			principalReader = PrincipalReaderFactory.getReader(OAuth2UserServlet.log, loginTipo);
+
 			Properties prop = PddMonitorProperties.getInstance(OAuth2UserServlet.log).getLoginProperties();
-			principalReader.init(prop); 
-			
+
+			principalReader = caricaPrincipalReader(loginTipo, prop); 
+
 			loginUtenteNonAutorizzatoRedirectUrl = PddMonitorProperties.getInstance(OAuth2UserServlet.log).getLoginUtenteNonAutorizzatoRedirectUrl();
-			loginUtenteNonValidoRedirectUrl = PddMonitorProperties.getInstance(OAuth2UserServlet.log).getLoginUtenteNonValidoRedirectUrl();
-			loginErroreInternoRedirectUrl = PddMonitorProperties.getInstance(OAuth2UserServlet.log).getLoginErroreInternoRedirectUrl();
 			loginSessioneScadutaRedirectUrl = PddMonitorProperties.getInstance(OAuth2UserServlet.log).getLoginSessioneScadutaRedirectUrl();
-		} catch (UtilsException e) {
-			log.error("Errore durante la lettura delle properties: " + e.getMessage(),e);
-			throw new ServletException(e);
-		} catch (PrincipalReaderException e) {
-			log.error("Impossibile caricare il principal reader: "+e.getMessage(), e);
-			throw new ServletException(e);
-		} 
 
-		HttpSession sessione = httpServletRequest.getSession();
+			oauth2LogoutUrl = prop.getProperty(OAuth2Costanti.PROP_OAUTH2_LOGOUT_ENDPOINT);
 
-		//					OAuth2UserInfoServlet.log.debug("Richiesta risorsa privata ["+httpServletRequest.getRequestURI()+"]")
-		// Ho richiesto una risorsa protetta cerco il login bean
-		// Cerco il login bean nella sessione, se non c'e' provo a cercarlo nella sessione di JSF
-		LoginBean lb = (LoginBean) sessione.getAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
+			HttpSession sessione = httpServletRequest.getSession();
 
-		OAuth2UserServlet.log.debug("LoginBean trovato in sessione [{}]", (lb!= null)); 
+			// Cerco il login bean nella sessione, se non c'e' provo a cercarlo nella sessione di JSF
+			LoginBean lb = (LoginBean) sessione.getAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 
-		if(lb == null){
-			try{
-				FacesContext currentInstance = FacesContext.getCurrentInstance();
-				OAuth2UserServlet.log.debug("FacesContext not null [{}]", (currentInstance!= null)); 
-				if(currentInstance != null){
-					ExternalContext ec = currentInstance.getExternalContext();
-					OAuth2UserServlet.log.debug("ExternalContext not null [{}]", (ec!= null));
-					if(ec != null){
-						lb = (LoginBean) ec.getSessionMap().get(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
-						OAuth2UserServlet.log.debug("LoginBean trovato in nella SessionMap JSF [{}]", (lb!= null)); 
-					}
+			OAuth2UserServlet.log.debug("LoginBean trovato in sessione [{}]", (lb!= null)); 
+
+			lb = creaLoginBeanSeNonPresente(httpServletRequest, lb);
+
+			OAuth2UserServlet.log.debug("Login Bean Utente Loggato: [{}]", lb.isLoggedIn()); 
+
+			// se non e' loggato lo loggo
+			if(!lb.isLoggedIn()){
+				// Controllo principal
+				String username = getPrincipal(httpServletRequest, principalReader);
+
+				OAuth2UserServlet.log.debug("Username trovato: [{}]", username);
+
+				// Se l'username che mi arriva e' settato vuol dire che sono autorizzato dal Container
+				if(username != null){
+					controllaEsistenzaUtente(httpServletRequest, httpServletResponse, loginUtenteNonAutorizzatoRedirectUrl,
+							oauth2LogoutUrl, sessione, lb,
+							username);
+				}else{
+					utenteNonTrovatoInSessione(httpServletRequest, httpServletResponse, loginUtenteNonAutorizzatoRedirectUrl, sessione);
 				}
-			}catch(Exception e){
-				lb = null;
+			} else {
+				verificaSessioneUtenteLoggato(httpServletRequest, httpServletResponse, loginSessioneScadutaRedirectUrl, lb); 
 			}
+		} catch (PrincipalReaderException e) {
+			httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			try {
+				httpServletResponse.getWriter().write(ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
+			} catch (IOException e1) {
+				log.error("Errore durante la lettura del principal: " + e1.getMessage(), e1);
+			}
+		} catch (IOException e) {
+			OAuth2UserServlet.log.error("Errore durante esecuzione redirect: " + e.getMessage(), e);
+			httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			try {
+				httpServletResponse.getWriter().write(ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
+			} catch (IOException e1) {
+				log.error("Errore durante esecuzione redirect: " + e1.getMessage(), e1);
+			}
+		} catch (UtilsException e) {
+			OAuth2Utilities.logError(log, ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES + e.getMessage(),e);
+			httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			try {
+				httpServletResponse.getWriter().write(ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
+			} catch (IOException e1) {
+				log.error(ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES + e1.getMessage(), e1);
+			}
+		} 
+	}
+
+	private String getPrincipal(HttpServletRequest httpServletRequest, IPrincipalReader principalReader) throws PrincipalReaderException {
+		try {
+			return principalReader.getPrincipal(httpServletRequest);
+		}catch (PrincipalReaderException e) {
+			OAuth2Utilities.logError(log, "Errore durante la lettura del principal: " + e.getMessage(),e);
+			throw e;
+		}
+	}
+
+	private IPrincipalReader caricaPrincipalReader(String loginTipo, Properties prop) throws PrincipalReaderException {
+		try {
+			IPrincipalReader principalReader = PrincipalReaderFactory.getReader(OAuth2UserServlet.log, loginTipo);
+			principalReader.init(prop);
+			return principalReader;
+		}catch (PrincipalReaderException e) {
+			OAuth2Utilities.logError(log, "Impossibile caricare il principal reader: "+e.getMessage(), e);
+			throw e;
+		}
+	}
+
+	private LoginBean creaLoginBeanSeNonPresente(HttpServletRequest httpServletRequest, LoginBean lb) {
+		if(lb == null){
+			lb = leggiLoginBeanDallaSessioneJsf(lb);
 		}
 
 		// check lingua
-
 		OAuth2UserServlet.log.debug("Controllo Locale in corso ...");
+		Locale loc = leggiLocale();
+		OAuth2UserServlet.log.debug("Locale trovato Valore[{}]", loc);
+
+		// Se login bean == null lo creo
+		if(lb == null){
+			lb = creaLoginBeanNonLoggato(httpServletRequest);
+		}
+
+		return lb;
+	}
+
+	private void utenteNonTrovatoInSessione(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+			String loginUtenteNonAutorizzatoRedirectUrl, HttpSession sessione) throws IOException {
+		// ERRORE
+		sessione.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
+		String redirPageUrl =
+				StringUtils.isNotEmpty(loginUtenteNonAutorizzatoRedirectUrl) ? 
+						loginUtenteNonAutorizzatoRedirectUrl : httpServletRequest.getContextPath() + "/" + "pages/welcome.jsf";
+		OAuth2UserServlet.log.debug("Username NULL redirect [{}]", redirPageUrl);
+
+		// Messaggio di errore
+		sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, "Impossibile autenticare l'utente"); 
+
+		httpServletResponse.sendRedirect(redirPageUrl);
+	}
+
+	private void controllaEsistenzaUtente(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+			String loginUtenteNonAutorizzatoRedirectUrl, String oauth2LogoutUrl, HttpSession sessione, LoginBean lb,
+			String username) throws IOException, UtilsException {
+
+		String loginUtenteNonValidoRedirectUrl = PddMonitorProperties.getInstance(OAuth2UserServlet.log).getLoginUtenteNonValidoRedirectUrl();
+		String loginErroreInternoRedirectUrl = PddMonitorProperties.getInstance(OAuth2UserServlet.log).getLoginErroreInternoRedirectUrl();
+
+		// Creo il login bean ed effettuo il login
+		lb.setApplicationLogin(false);
+		lb.setUsername(username); 
+		String loginResult = lb.login();
+		if(loginResult.equals("login")){
+			OAuth2UserServlet.log.debug("Utente non autorizzato: {}", lb.getLoginErrorMessage());
+			String redirPageUrl =
+					StringUtils.isNotEmpty(loginUtenteNonAutorizzatoRedirectUrl) ? 
+							loginUtenteNonAutorizzatoRedirectUrl : Utility.buildInternalRedirectUrl(httpServletRequest, PrincipalFilter.REDIRECT_ERRORE_DEFAULT);
+
+			String idToken = (String) sessione.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
+			String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
+
+			// Messaggio di errore
+			sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, lb.getLoginErrorMessage()); 
+
+			httpServletResponse.sendRedirect(logoutUrl);
+		}else if(loginResult.equals("loginError")){
+			OAuth2UserServlet.log.debug("Errore durante il login: {}", lb.getLoginErrorMessage());
+			String redirPageUrl = StringUtils.isNotEmpty(loginErroreInternoRedirectUrl) ? 
+					loginErroreInternoRedirectUrl : Utility.buildInternalRedirectUrl(httpServletRequest, PrincipalFilter.REDIRECT_ERRORE_DEFAULT);
+
+			String idToken = (String) sessione.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
+			String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
+
+			// Messaggio di errore
+			sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, lb.getLoginErrorMessage()); 
+
+			httpServletResponse.sendRedirect(logoutUrl);
+		}else if(loginResult.equals("loginUserInvalid")){
+			OAuth2UserServlet.log.debug("Errore durante il caricamento informazioni utente: {}", lb.getLoginErrorMessage());
+			String redirPageUrl = StringUtils.isNotEmpty(loginUtenteNonValidoRedirectUrl) ? 
+					loginUtenteNonValidoRedirectUrl : Utility.buildInternalRedirectUrl(httpServletRequest, PrincipalFilter.REDIRECT_ERRORE_DEFAULT);
+
+			String idToken = (String) sessione.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
+			String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
+
+			// Messaggio di errore
+			sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, lb.getLoginErrorMessage()); 
+
+			httpServletResponse.sendRedirect(logoutUrl);
+		}else{
+			OAuth2UserServlet.log.debug("Utente autorizzato");
+			sessione.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, lb);
+			String redirPageUrl = httpServletRequest.getContextPath() + "/"+"index.jsp" ;
+			httpServletResponse.sendRedirect(redirPageUrl);
+		}
+	}
+
+	private void verificaSessioneUtenteLoggato(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, String loginSessioneScadutaRedirectUrl, LoginBean lb) throws IOException {
+		OAuth2UserServlet.log.debug("Login Bean Utente Loggato controllo validita' sessione..."); 
+		// controllo se la sessione e' valida
+		boolean isSessionInvalid = SessionUtils.isSessionInvalid(httpServletRequest);
+
+		// Se non sono loggato mi autentico e poi faccio redirect verso la pagina di welcome
+		if(isSessionInvalid){
+			OAuth2UserServlet.log.debug("Login Bean Utente Loggato controllo validita' sessione [invalida]");
+			lb.logout();
+			String redirPageUrl =  StringUtils.isNotEmpty(loginSessioneScadutaRedirectUrl) ? loginSessioneScadutaRedirectUrl : httpServletRequest.getContextPath() + "/"+"index.jsp" ;
+			httpServletResponse.sendRedirect(redirPageUrl);
+		}
+	}
+
+	private LoginBean creaLoginBeanNonLoggato(HttpServletRequest httpServletRequest) {
+		LoginBean lb;
+		// prelevo la lingua della richiesta http
+		Locale localeRequest = httpServletRequest.getLocale();
+		OAuth2UserServlet.log.debug("Locale trovato nella Request[{}]", localeRequest);
+
+		lb = new LoginBean(true); 
+		lb.setLoggedIn(false);
+		// supporto alla localizzazione
+		//lb.impostaLocale(localeRequest)
+		return lb;
+	}
+
+	private Locale leggiLocale() {
 		Locale loc = null;
 		try{
 			loc = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -102,108 +263,24 @@ public class OAuth2UserServlet extends HttpServlet {
 			OAuth2UserServlet.log.debug("Errore durante controllo Locale: "+ e.getMessage(), e);
 			loc = Locale.getDefault();
 		}
+		return loc;
+	}
 
-		OAuth2UserServlet.log.debug("Locale trovato Valore[{}]", loc);
-
-		// Se login bean == null lo creo
-		if(lb == null){
-			// prelevo la lingua della richiesta http
-			Locale localeRequest = httpServletRequest.getLocale();
-			OAuth2UserServlet.log.debug("Locale trovato nella Request[{}]", localeRequest);
-
-			lb = new LoginBean(true); 
-			lb.setLoggedIn(false);
-			// supporto alla localizzazione
-			//lb.impostaLocale(localeRequest)
-		}
-
-		OAuth2UserServlet.log.debug("Login Bean Utente Loggato: [{}]", lb.isLoggedIn()); 
-		// se non e' loggato lo loggo
-		if(!lb.isLoggedIn()){
-			// Controllo principal
-			
-			String username = null;
-			try {
-				username = principalReader.getPrincipal(httpServletRequest);
-			} catch (PrincipalReaderException e) {
-				OAuth2UserServlet.log.error("Errore durante la lettura del principal: " + e.getMessage(),e);
-			}
-			
-			OAuth2UserServlet.log.debug("Username trovato: [{}]", username);
-
-			// Se l'username che mi arriva e' settato vuol dire che sono autorizzato dal Container
-			if(username != null){
-				// Creo il login bean ed effettuo il login
-				lb.setApplicationLogin(false);
-				lb.setUsername(username); 
-				String loginResult = lb.login();
-				if(loginResult.equals("login")){
-					OAuth2UserServlet.log.debug("Utente non autorizzato: {}", lb.getLoginErrorMessage());
-					lb.logout();
-					String redirPageUrl =
-							StringUtils.isNotEmpty(loginUtenteNonAutorizzatoRedirectUrl) ? 
-									loginUtenteNonAutorizzatoRedirectUrl : httpServletRequest.getContextPath() + PrincipalFilter.REDIRECT_ERRORE_DEFAULT;
-
-					// Messaggio di errore
-					sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, lb.getLoginErrorMessage()); 
-
-					httpServletResponse.sendRedirect(redirPageUrl);
-				}else if(loginResult.equals("loginError")){
-					OAuth2UserServlet.log.debug("Errore durante il login: {}", lb.getLoginErrorMessage());
-					lb.logout();
-					String redirPageUrl = StringUtils.isNotEmpty(loginErroreInternoRedirectUrl) ? loginErroreInternoRedirectUrl : httpServletRequest.getContextPath() + PrincipalFilter.REDIRECT_ERRORE_DEFAULT ;
-
-					// Messaggio di errore
-					sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, lb.getLoginErrorMessage()); 
-
-					httpServletResponse.sendRedirect(redirPageUrl);
-				}else if(loginResult.equals("loginUserInvalid")){
-					OAuth2UserServlet.log.debug("Errore durante il caricamento informazioni utente: {}", lb.getLoginErrorMessage());
-					lb.logout();
-					String redirPageUrl = StringUtils.isNotEmpty(loginUtenteNonValidoRedirectUrl) ? 
-							loginUtenteNonValidoRedirectUrl : httpServletRequest.getContextPath() + PrincipalFilter.REDIRECT_ERRORE_DEFAULT ;
-
-					// Messaggio di errore
-					sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, lb.getLoginErrorMessage()); 
-
-					httpServletResponse.sendRedirect(redirPageUrl);
-				}else{
-					OAuth2UserServlet.log.debug("Utente autorizzato");
-					sessione.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, lb);
-					String redirPageUrl = httpServletRequest.getContextPath() + "/"+"index.jsp" ;
-					httpServletResponse.sendRedirect(redirPageUrl);
+	private LoginBean leggiLoginBeanDallaSessioneJsf(LoginBean lb) {
+		try{
+			FacesContext currentInstance = FacesContext.getCurrentInstance();
+			OAuth2UserServlet.log.debug("FacesContext not null [{}]", (currentInstance!= null)); 
+			if(currentInstance != null){
+				ExternalContext ec = currentInstance.getExternalContext();
+				OAuth2UserServlet.log.debug("ExternalContext not null [{}]", (ec!= null));
+				if(ec != null){
+					lb = (LoginBean) ec.getSessionMap().get(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
+					OAuth2UserServlet.log.debug("LoginBean trovato in nella SessionMap JSF [{}]", (lb!= null)); 
 				}
-			}else{
-
-				// ERRORE
-				sessione.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
-				String redirPageUrl =
-						StringUtils.isNotEmpty(loginUtenteNonAutorizzatoRedirectUrl) ? 
-						loginUtenteNonAutorizzatoRedirectUrl : httpServletRequest.getContextPath() + "/" + "pages/welcome.jsf";
-				//se la pagina richiesta e' quella di login allora redirigo direttamente a quella, altrimenti a quella di timeout
-				//redirPageUrl += StringUtils.contains(httpServletRequest.getRequestURI(), getLoginPage()) ? getLoginPage() : getTimeoutPage()
-				//							redirPageUrl += getRedirPage(httpServletRequest)
-				OAuth2UserServlet.log.debug("Username NULL redirect [{}]", redirPageUrl);
-				//					log.info("session is invalid! redirecting to page : " + redirPageUrl)
-				
-				// Messaggio di errore
-				sessione.setAttribute(PrincipalFilter.PRINCIPAL_ERROR_MSG, "Impossibile autenticare l'utente"); 
-				
-				httpServletResponse.sendRedirect(redirPageUrl);
-				return;
 			}
-		}	else {
-			OAuth2UserServlet.log.debug("Login Bean Utente Loggato controllo validita' sessione..."); 
-			// controllo se la sessione e' valida
-			boolean isSessionInvalid = SessionUtils.isSessionInvalid(httpServletRequest);
-
-			// Se non sono loggato mi autentico e poi faccio redirect verso la pagina di welcome
-			if(isSessionInvalid){
-				OAuth2UserServlet.log.debug("Login Bean Utente Loggato controllo validita' sessione [invalida]");
-				lb.logout();
-				String redirPageUrl =  StringUtils.isNotEmpty(loginSessioneScadutaRedirectUrl) ? loginSessioneScadutaRedirectUrl : httpServletRequest.getContextPath() + "/"+"index.jsp" ;
-				httpServletResponse.sendRedirect(redirPageUrl);
-			} 
+		}catch(Exception e){
+			lb = null;
 		}
+		return lb;
 	}
 }

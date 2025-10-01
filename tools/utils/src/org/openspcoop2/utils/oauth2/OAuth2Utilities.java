@@ -365,4 +365,12 @@ public class OAuth2Utilities {
 		return 10000; // Default connection timeout
 	}
 
+	public static String creaUrlLogout(String idToken, String oauth2LogoutUrl, String redirPageUrl) {
+		String encodedIdToken = URLEncoder.encode(idToken, StandardCharsets.UTF_8);
+		String encodedRedirectUri = URLEncoder.encode(redirPageUrl, StandardCharsets.UTF_8);
+
+		return oauth2LogoutUrl +
+				"?" + OAuth2Costanti.PARAM_NAME_OAUTH2_ID_TOKEN_HINT + "=" + encodedIdToken +
+				"&" + OAuth2Costanti.PARAM_NAME_OAUTH2_POST_LOGOUT_REDIRECT_URI + "=" + encodedRedirectUri;
+	}
 }

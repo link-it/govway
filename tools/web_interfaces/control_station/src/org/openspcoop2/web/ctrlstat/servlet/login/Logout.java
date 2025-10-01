@@ -21,9 +21,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -34,6 +31,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.utils.oauth2.OAuth2Costanti;
+import org.openspcoop2.utils.oauth2.OAuth2Utilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -100,13 +98,8 @@ public final class Logout extends Action {
 				// preparazione dei parametri
 				String redirPageUrl = StringUtils.isNotEmpty(logoutUrlDestinazione) ? 
 						logoutUrlDestinazione : ServletUtils.buildInternalRedirectUrl(request, LoginCostanti.SERVLET_NAME_LOGOUT); // equivalente della chiamata normale
-
-				String encodedIdToken = URLEncoder.encode(idToken, StandardCharsets.UTF_8);
-				String encodedRedirectUri = URLEncoder.encode(redirPageUrl, StandardCharsets.UTF_8);
-
-				String logoutUrl = oauth2LogoutUrl +
-						"?" + OAuth2Costanti.PARAM_NAME_OAUTH2_ID_TOKEN_HINT + "=" + encodedIdToken +
-						"&" + OAuth2Costanti.PARAM_NAME_OAUTH2_POST_LOGOUT_REDIRECT_URI + "=" + encodedRedirectUri;
+				
+				String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
 
 				// se mi sono loggato con oauth2 e la configurazione oauth2 prevede un logoutUrl
 				response.sendRedirect(logoutUrl);

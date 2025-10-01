@@ -2530,7 +2530,7 @@ public class ControlStationCore {
 		}
 	}
 
-	public ControlStationCore(ControlStationCore core) throws DriverControlStationException {
+	public ControlStationCore(ControlStationCore core) {
 
 		/** Impostazioni grafiche */
 		this.consoleNomeSintesi = core.consoleNomeSintesi;

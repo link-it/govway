@@ -30,6 +30,8 @@ import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
  *
  */
 public class ContentAuthorizationCostanti {
+	
+	private ContentAuthorizationCostanti() { /*static only */}
 
 	// Elenco dei path che sono disponibili sempre
 	public static String [] listaPathConsentiti = {
@@ -40,7 +42,6 @@ public class ContentAuthorizationCostanti {
 		"/fonts/",
 		"/scripts/",
 		"/public/error.jsf",
-		"/public/errorLoginOAuth2.jsf",
 		"/public/timeoutPage.jsf",
 		"/public/login.jsf",
 		"/FusionCharts/",

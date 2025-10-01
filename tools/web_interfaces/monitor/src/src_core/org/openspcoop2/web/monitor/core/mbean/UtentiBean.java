@@ -69,6 +69,8 @@ import org.slf4j.Logger;
  */
 public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, String>> {
 
+	private static final String ERROR_MSG_LA_PASSWORD_SCELTA_NON_DEVE_CORRISPONDERE_AD_UNA_PRECEDENTE_PASSWORD = "La password scelta non deve corrispondere ad una precedente password";
+	private static final String ERROR_MSG_LA_VECCHIA_PASSWORD_INDICATA_NON_E_CORRETTA = "La vecchia password indicata non \u00E8 corretta";
 	private static final String ERROR_MSG_CAMBIO_PASSWORD_NON_RIUSCITO = "Cambio Password non riuscito";
 	/**
 	 * 
@@ -179,33 +181,33 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 
 	public String salvaProfilo() {
 		
-		User userToUpdate = this.service.findById(this.user.getLogin());
+		User userToUpdateBean = this.service.findById(this.user.getLogin());
 		
 		String modalitaDefaultUtente = this.user.getProtocolloSelezionatoPddMonitor();
-		userToUpdate.setProtocolloSelezionatoPddMonitor((modalitaDefaultUtente != null && !modalitaDefaultUtente.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) ? modalitaDefaultUtente : null);
+		userToUpdateBean.setProtocolloSelezionatoPddMonitor((modalitaDefaultUtente != null && !modalitaDefaultUtente.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) ? modalitaDefaultUtente : null);
 		String soggettoDefaultUtente = this.user.getSoggettoSelezionatoPddMonitor();
-		userToUpdate.setSoggettoSelezionatoPddMonitor((soggettoDefaultUtente != null && !soggettoDefaultUtente.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) ? soggettoDefaultUtente : null);
+		userToUpdateBean.setSoggettoSelezionatoPddMonitor((soggettoDefaultUtente != null && !soggettoDefaultUtente.equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) ? soggettoDefaultUtente : null);
 		
 		try {
-			((UserService)this.service).salvaModalita(userToUpdate.getLogin(), userToUpdate.getProtocolloSelezionatoPddMonitor());
-			((UserService)this.service).salvaSoggettoPddMonitor(userToUpdate.getLogin(), userToUpdate.getSoggettoSelezionatoPddMonitor());
+			((UserService)this.service).salvaModalita(userToUpdateBean.getLogin(), userToUpdateBean.getProtocolloSelezionatoPddMonitor());
+			((UserService)this.service).salvaSoggettoPddMonitor(userToUpdateBean.getLogin(), userToUpdateBean.getSoggettoSelezionatoPddMonitor());
 			
 			// salvataggio homepage e grafico della console di monitoraggio
 			Stato statoHomePage = new Stato();
 			statoHomePage.setOggetto(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE);
 			statoHomePage.setStato(Utils.incapsulaValoreStato(this.getHomePageUtente()));
 			
-			((UserService)this.service).saveTableState(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE, userToUpdate, statoHomePage);
+			((UserService)this.service).saveTableState(Costanti.OGGETTO_STATO_UTENTE_HOME_PAGE, userToUpdateBean, statoHomePage);
 			
 			Stato statoIntevalloTemporaleHomePage = new Stato();
 			statoIntevalloTemporaleHomePage.setOggetto(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE);
 			statoIntevalloTemporaleHomePage.setStato(Utils.incapsulaValoreStato(this.getIntervalloTemporaleUtente()));
 			
-			((UserService)this.service).saveTableState(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE, userToUpdate, statoIntevalloTemporaleHomePage);
+			((UserService)this.service).saveTableState(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE, userToUpdateBean, statoIntevalloTemporaleHomePage);
 			
 			if(this.salvaModificheProfiloInSessione) {
-				Utility.getLoggedUser().getUtente().setProtocolloSelezionatoPddMonitor(userToUpdate.getProtocolloSelezionatoPddMonitor());
-				Utility.getLoggedUser().getUtente().setSoggettoSelezionatoPddMonitor(userToUpdate.getSoggettoSelezionatoPddMonitor());
+				Utility.getLoggedUser().getUtente().setProtocolloSelezionatoPddMonitor(userToUpdateBean.getProtocolloSelezionatoPddMonitor());
+				Utility.getLoggedUser().getUtente().setSoggettoSelezionatoPddMonitor(userToUpdateBean.getSoggettoSelezionatoPddMonitor());
 			}
 			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Profilo Utente modificato correttamente"));
@@ -226,35 +228,36 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	public String cambioPassword() {
 
 		try {
-			if(StringUtils.isEmpty(this.user.getPassword())){
+			boolean passwordObbligatoria = !Utility.isMultiLoginEnabled();
+			
+			if(passwordObbligatoria && StringUtils.isEmpty(this.user.getPassword())){
 				MessageUtils.addErrorMsg("Il campo Nuova non pu\u00F2 essere vuoto");
 				return null;
 			}
 
-			if(StringUtils.isEmpty(this.confermaPassword)){
+			if(passwordObbligatoria && StringUtils.isEmpty(this.confermaPassword)){
 				MessageUtils.addErrorMsg("Il campo Conferma Nuova non pu\u00F2 essere vuoto");
 				return null;
 			}
 
 			if(this.isShowVecchiaPassword()) {
-				if(StringUtils.isEmpty(this.vecchiaPassword)){
+				if(passwordObbligatoria && StringUtils.isEmpty(this.vecchiaPassword)){
 					MessageUtils.addErrorMsg("Il campo Vecchia non pu\u00F2 essere vuoto");
 					return null;
 				}
 
-				// check vecchia password dal db [TODO]
 				User findById = this.service.findById(this.user.getLogin());
 				boolean trovato = this.passwordManager.check(this.vecchiaPassword, findById.getPassword());
 				if(!trovato && this.passwordManager_backwardCompatibility!=null) {
 					trovato = this.passwordManager_backwardCompatibility.check(this.vecchiaPassword, findById.getPassword());
 				}
 				if (!trovato) {
-					MessageUtils.addErrorMsg("La vecchia password indicata non \u00E8 corretta");
+					MessageUtils.addErrorMsg(ERROR_MSG_LA_VECCHIA_PASSWORD_INDICATA_NON_E_CORRETTA);
 					return null;
 				}
 
 				// controlla che la nuova password non coincida con la vecchia
-				if (StringUtils.equals(this.vecchiaPassword, this.user.getPassword())) {
+				if (passwordObbligatoria && StringUtils.equals(this.vecchiaPassword, this.user.getPassword())) {
 					// errore
 					MessageUtils.addErrorMsg("La nuova password non pu\u00F2 essere uguale alla vecchia");
 					return null;
@@ -271,7 +274,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			boolean updateStoricoPassword = false;
 			if(this.passwordVerifier!=null){
 				StringBuilder motivazioneErrore = new StringBuilder();
-				if(this.passwordVerifier.validate(this.user.getLogin(), this.user.getPassword(), motivazioneErrore)==false){
+				if(!this.passwordVerifier.validate(this.user.getLogin(), this.user.getPassword(), motivazioneErrore)){
 					// errore
 					MessageUtils.addErrorMsg(motivazioneErrore.toString());
 					return null;
@@ -288,7 +291,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 							trovato = this.passwordManager_backwardCompatibility.check(this.user.getPassword(), findById.getPassword());
 						}
 						if (trovato) {
-							MessageUtils.addErrorMsg("La password scelta non deve corrispondere ad una precedente password");
+							MessageUtils.addErrorMsg(ERROR_MSG_LA_PASSWORD_SCELTA_NON_DEVE_CORRISPONDERE_AD_UNA_PRECEDENTE_PASSWORD);
 							return null;
 						}
 					}
@@ -299,7 +302,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 							trovato = this.passwordManager_backwardCompatibility.check(this.user.getPassword(), userPassword.getPassword());
 						}
 						if (trovato) {
-							MessageUtils.addErrorMsg("La password scelta non deve corrispondere ad una precedente password");
+							MessageUtils.addErrorMsg(ERROR_MSG_LA_PASSWORD_SCELTA_NON_DEVE_CORRISPONDERE_AD_UNA_PRECEDENTE_PASSWORD);
 							return null;
 						}
 					}
@@ -358,7 +361,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			}
 
 			if(StringUtils.isEmpty(this.vecchiaPassword)){
-				MessageUtils.addErrorMsg("La vecchia password indicata non \u00E8 corretta");
+				MessageUtils.addErrorMsg(ERROR_MSG_LA_VECCHIA_PASSWORD_INDICATA_NON_E_CORRETTA);
 				return null;
 			}
 			
@@ -368,13 +371,12 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 				return null;
 			}
 
-			// check vecchia password dal db [TODO]
 			boolean trovato = this.passwordManager.check(this.vecchiaPassword, findById.getPassword());
 			if(!trovato && this.passwordManager_backwardCompatibility!=null) {
 				trovato = this.passwordManager_backwardCompatibility.check(this.vecchiaPassword, findById.getPassword());
 			}
 			if (!trovato) {
-				MessageUtils.addErrorMsg("La vecchia password indicata non \u00E8 corretta");
+				MessageUtils.addErrorMsg(ERROR_MSG_LA_VECCHIA_PASSWORD_INDICATA_NON_E_CORRETTA);
 				return null;
 			}
 			
@@ -396,7 +398,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			List<UserPassword> precedentiPassword = null;
 			if(this.passwordVerifier!=null){
 				StringBuilder motivazioneErrore = new StringBuilder();
-				if(this.passwordVerifier.validate(this.userToUpdate, this.nuovaPassword, motivazioneErrore)==false){
+				if(!this.passwordVerifier.validate(this.userToUpdate, this.nuovaPassword, motivazioneErrore)){
 					// errore
 					MessageUtils.addErrorMsg(motivazioneErrore.toString());
 					return null;
@@ -412,7 +414,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 							trovato = this.passwordManager_backwardCompatibility.check(this.nuovaPassword, findById.getPassword());
 						}
 						if (trovato) {
-							MessageUtils.addErrorMsg("La password scelta non deve corrispondere ad una precedente password");
+							MessageUtils.addErrorMsg(ERROR_MSG_LA_PASSWORD_SCELTA_NON_DEVE_CORRISPONDERE_AD_UNA_PRECEDENTE_PASSWORD);
 							return null;
 						}
 					}
@@ -424,7 +426,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 								trovato = this.passwordManager_backwardCompatibility.check(this.nuovaPassword, userPassword.getPassword());
 							}
 							if (trovato) {
-								MessageUtils.addErrorMsg("La password scelta non deve corrispondere ad una precedente password");
+								MessageUtils.addErrorMsg(ERROR_MSG_LA_PASSWORD_SCELTA_NON_DEVE_CORRISPONDERE_AD_UNA_PRECEDENTE_PASSWORD);
 								return null;
 							}
 						}
@@ -792,5 +794,9 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			
 			this.user.getStati().add(statoIntevalloTemporaleHomePage);
 		}
+	}
+	
+	public boolean isPasswordObbligatoria() {
+		return !Utility.isMultiLoginEnabled();
 	}
 }

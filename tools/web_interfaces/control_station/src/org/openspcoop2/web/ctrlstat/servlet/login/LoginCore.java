@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 
 /**
  * LoginCore
@@ -30,11 +31,10 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
  */
 public class LoginCore extends ControlStationCore {
 
-	public LoginCore() throws Exception {
+	public LoginCore() throws DriverControlStationException {
 		super();
 	}
-	public LoginCore(ControlStationCore core) throws Exception {
+	public LoginCore(ControlStationCore core) {
 		super(core);
 	}
-	
 }

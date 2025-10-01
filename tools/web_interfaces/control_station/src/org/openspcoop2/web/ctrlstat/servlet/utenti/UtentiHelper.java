@@ -47,6 +47,7 @@ import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ConsoleSearch;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.login.LoginCostanti;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
@@ -1397,13 +1398,15 @@ public class UtentiHelper extends ConsoleHelper {
 	
 				PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 				
+				boolean passwordObbligatoria = !this.core.isMultiLoginEnabled();
+				
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PW);
 				de.setType(DataElementType.CRYPT);
 				de.setName(UtentiCostanti.PARAMETRO_UTENTE_VECCHIA_PW);
 				de.setValue("");
 				de.setSize(this.getSize());
-				de.setRequired(true);
+				de.setRequired(passwordObbligatoria);
 				dati.add(de);
 	
 				de = new DataElement();
@@ -1412,7 +1415,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setName(UtentiCostanti.PARAMETRO_UTENTE_NUOVA_PW);
 				de.setSize(this.getSize());
 				de.setValue("");
-				de.setRequired(true);
+				de.setRequired(passwordObbligatoria);
 				dati.add(de);
 	
 				de = new DataElement();
@@ -1421,7 +1424,7 @@ public class UtentiHelper extends ConsoleHelper {
 				de.setName(UtentiCostanti.PARAMETRO_UTENTE_CONFERMA_NUOVA_PW);
 				de.setSize(this.getSize());
 				de.setValue("");
-				de.setRequired(true);
+				de.setRequired(passwordObbligatoria);
 				if(passwordVerifier!=null){
 					de.setNote(passwordVerifier.helpUpdate(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
 				}
@@ -1464,8 +1467,6 @@ public class UtentiHelper extends ConsoleHelper {
 				}
 			}
 
-			boolean visualizzaFormPassword = this.core.isMultiLoginEnabled() || this.core.isVisualizzaFormLoginApplication();
-			
 			// Campi obbligatori
 			if (TipoOperazione.ADD.equals(tipoOperazione) || ServletUtils.isCheckBoxEnabled(changepwd) ) {
 				String tmpElenco = "";
@@ -1803,6 +1804,8 @@ public class UtentiHelper extends ConsoleHelper {
 
 			User user = ServletUtils.getUserFromSession(this.request, this.session);
 
+			boolean passwordObbligatoria = !this.core.isMultiLoginEnabled();
+			
 			if(!user.getPermessi().isUtenti()){
 				boolean trovato = this.utentiCore.getUtenzePasswordManager().check(oldpw, user.getPassword());
 				if(!trovato && this.utentiCore.getUtenzePasswordManagerBackwardCompatibility()!=null) {
@@ -1821,7 +1824,7 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			// Campi obbligatori
-			if ( (newpw==null || newpw.equals("")) || (confpw==null || confpw.equals("")) ) {
+			if (passwordObbligatoria && (newpw==null || newpw.equals("")) || (confpw==null || confpw.equals("")) ) {
 				this.pd.setMessage("Dati incompleti. &Egrave; necessario indicare una password");
 				return false;
 			}
@@ -1832,9 +1835,9 @@ public class UtentiHelper extends ConsoleHelper {
 				return false;
 			}
 
-			// Controllo che la vecchia password e la nuova corrispondano
+			// Controllo che la vecchia password e la nuova non corrispondano se e' obbligatoria
 			if(!user.getPermessi().isUtenti()){
-				if (oldpw.equals(newpw)) {
+				if (passwordObbligatoria && oldpw.equals(newpw)) {
 					this.pd.setMessage("La nuova password deve essere differente dalla vecchia");
 					return false;
 				}
@@ -1884,7 +1887,7 @@ public class UtentiHelper extends ConsoleHelper {
 			
 			return true;
 
-		} catch (Exception e) {
+		} catch (DriverControlStationException e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
@@ -2537,7 +2540,7 @@ public class UtentiHelper extends ConsoleHelper {
 		dati.add(de);
 	}
 	
-	boolean changePwScadutaCheckData() throws Exception {
+	boolean changePwScadutaCheckData() throws DriverControlStationException, DriverUsersDBException {
 
 		try{
 
@@ -2548,7 +2551,7 @@ public class UtentiHelper extends ConsoleHelper {
 			String userToUpdate = ServletUtils.getObjectFromSession(this.request, this.session, String.class, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 			
 			User user = this.utentiCore.getUser(userToUpdate);
-
+			
 			boolean trovato = this.utentiCore.getUtenzePasswordManager().check(oldpw, user.getPassword());
 			if(!trovato && this.utentiCore.getUtenzePasswordManagerBackwardCompatibility()!=null) {
 				trovato = this.utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(oldpw, user.getPassword());
@@ -2591,7 +2594,7 @@ public class UtentiHelper extends ConsoleHelper {
 			PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 			if(passwordVerifier!=null){
 				StringBuilder motivazioneErrore = new StringBuilder();
-				if(passwordVerifier.validate(user.getLogin(), newpw, motivazioneErrore)==false){
+				if(!passwordVerifier.validate(user.getLogin(), newpw, motivazioneErrore)){
 					this.pd.setMessage(motivazioneErrore.toString());
 					return false;
 				}
@@ -2626,9 +2629,9 @@ public class UtentiHelper extends ConsoleHelper {
 			
 			return true;
 
-		} catch (Exception e) {
+		} catch (DriverControlStationException | DriverUsersDBException e) {
 			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+			throw e;
 		}
 	}
 	

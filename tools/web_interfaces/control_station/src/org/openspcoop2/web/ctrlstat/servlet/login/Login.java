@@ -104,7 +104,7 @@ public final class Login extends Action {
 			}
 			
 			// controllo scadenza password
-			isOk = loginHelper.loginScadenzaPasswordCheckData(LoginTipologia.WITH_PASSWORD);
+			isOk = loginHelper.loginScadenzaPasswordCheckData();
 			if (!isOk) {
 				
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
@@ -117,7 +117,6 @@ public final class Login extends Action {
 			LoginCore loginCore = new LoginCore();
 			
 			LoginSessionUtilities.setLoginParametersSession(request, session, loginCore, login);
-//			loginHelper.updateTipoInterfaccia();
 			
 			loginCore.performAuditLogin(login);
 			

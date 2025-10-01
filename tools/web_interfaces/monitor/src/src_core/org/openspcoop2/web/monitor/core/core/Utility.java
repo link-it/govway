@@ -1049,4 +1049,14 @@ public class Utility {
 		
 		return false;
 	}
+	
+	public static boolean isMultiLoginEnabled() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			return lb.isMultiLoginEnabled();
+		}
+		
+		return false;
+	}
 }
