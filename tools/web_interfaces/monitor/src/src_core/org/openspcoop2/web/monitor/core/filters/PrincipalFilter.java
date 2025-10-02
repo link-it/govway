@@ -43,13 +43,13 @@ import org.openspcoop2.utils.transport.http.credential.IPrincipalReader;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderException;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderFactory;
 import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
-import org.slf4j.Logger;
-
-import org.openspcoop2.web.monitor.core.listener.LoginPhaseListener;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.listener.LoginPhaseListener;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.SessionUtils;
+import org.slf4j.Logger;
 
 /**
  * PrincipalFilter Filtro base per il controllo della login via Container basata sulla presenza del principal.
@@ -276,6 +276,8 @@ public class PrincipalFilter implements Filter {
 								httpServletResponse.sendRedirect(redirPageUrl);
 								return;
 							}else{
+								ServletUtils.sessionFixation(this.log, httpServletRequest, sessione);
+								
 								this.log.debug("Utente autorizzato");
 								sessione.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, lb);
 								String redirPageUrl = httpServletRequest.getContextPath() + "/"+"index.jsp" ;

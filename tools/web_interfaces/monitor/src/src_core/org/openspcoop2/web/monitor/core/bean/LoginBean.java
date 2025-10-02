@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,6 +54,9 @@ import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.login.FailedAttempts;
+import org.openspcoop2.web.lib.mvc.login.LoginException;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
@@ -189,12 +193,17 @@ public class LoginBean extends AbstractLoginBean {
 				this.log.info("Verifico le credenziali per l'utente ["+this.getUsername()+"]");
 
 				if(this.getLoginDao().login(this.getUsername(),this.getPwd())){
-					//			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-					//			HttpSession session = (HttpSession) ec.getSession(true);
-					//			session.setAttribute("logged", true);
+					
+					FailedAttempts.getInstance().resetTentativiUtente(this.getUsername());
 					
 					// controllo validita' password
 					UserDetailsBean loadUserByUsername = this.getLoginDao().loadUserByUsername(this.getUsername());
+					
+					// session fixation
+					ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+					HttpSession session = (HttpSession) ec.getSession(true);
+					HttpServletRequest request = (HttpServletRequest) ec.getRequest();
+					ServletUtils.sessionFixation(this.log, request, session);
 					
 					if(this.passwordVerifier != null && this.checkPasswordExpire) {
 						User user = loadUserByUsername.getUtente();
@@ -225,6 +234,8 @@ public class LoginBean extends AbstractLoginBean {
 			} catch (NotFoundException e) {
 				MessageUtils.addErrorMsg("Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Username o password non validi.");
 			} catch (UserInvalidException e) {
+				MessageUtils.addErrorMsg("Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+": " + e.getMessage());
+			}  catch (LoginException e) {
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+": " + e.getMessage());
 			}
 		}else{
@@ -271,6 +282,8 @@ public class LoginBean extends AbstractLoginBean {
 			HttpSession session = (HttpSession)fc.getExternalContext().getSession(false);
 			session.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null); 
 			session.invalidate();
+			HttpServletRequest request = (HttpServletRequest) fc.getExternalContext().getRequest();
+			ServletUtils.sessionFixation(this.log, request, session);
 		}catch(Exception e){}
 
 		if(StringUtils.isEmpty(this.logoutDestinazione)){

@@ -27,6 +27,7 @@ import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.utils.IVersionInfo;
+import org.openspcoop2.web.lib.mvc.login.LoginException;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
@@ -41,7 +42,7 @@ import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
  */
 public interface ILoginDAO extends Serializable{
 
-	public boolean login(String username, String pwd) throws ServiceException;
+	public boolean login(String username, String pwd) throws ServiceException, LoginException;
 
 	public Soggetto getSoggetto(IdSoggetto idSog);
 	
