@@ -31,9 +31,7 @@ import org.openspcoop2.utils.transport.ldap.LdapFilter;
 import org.openspcoop2.utils.transport.ldap.LdapQuery;
 import org.openspcoop2.utils.transport.ldap.test.LdapTest;
 import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -142,7 +140,7 @@ public class TestLdap {
 	 * Avvia l'embedded server (ApacheDS) LDAP per i successivi test
 	 * @throws Exception
 	 */
-	@BeforeClass
+	@BeforeClass(alwaysRun = true)
 	private void startServerEngine() throws Exception {
 		TestLogger.info("Starting ldap server...");
 		
@@ -160,7 +158,7 @@ public class TestLdap {
 	/**
 	 * Spegne l'embedded server usato per i test
 	 */
-	@AfterClass
+	@AfterClass(alwaysRun = true)
 	private void stopServerEngine() {
 		TestLogger.info("...stopping ldap server");
 		LdapTest.stopServer();

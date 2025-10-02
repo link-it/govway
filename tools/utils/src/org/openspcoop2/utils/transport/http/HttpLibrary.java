@@ -29,9 +29,11 @@ package org.openspcoop2.utils.transport.http;
  * @version $Rev$, $Date$
  */
 public enum HttpLibrary {
-	
+		
 	HTTPCORE("core"),
 	URLCONNECTION("urlconn");
+	
+	public static final HttpLibrary DEFAULT = HttpLibrary.HTTPCORE; 
 	
 	private final String name;
 	private HttpLibrary(String name) {

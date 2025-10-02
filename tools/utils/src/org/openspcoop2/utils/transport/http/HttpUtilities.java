@@ -49,7 +49,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreType;
@@ -90,7 +89,7 @@ public class HttpUtilities {
 	/** TIMEOUT_READ (2 minuti) */
 	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000; 
 
-	public static final HttpLibrary DEFAULT_HTTP_LIBRARY = HttpLibrary.HTTPCORE;
+	public static final HttpLibrary DEFAULT_HTTP_LIBRARY = HttpLibrary.DEFAULT;
 
 	
 	public static List<String> getClientAddressHeaders() {

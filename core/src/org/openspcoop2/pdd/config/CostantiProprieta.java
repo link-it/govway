@@ -789,7 +789,7 @@ public class CostantiProprieta {
 	public static HttpLibrary getConnettoreHttpLibrary(List<Proprieta> props, String type) {
 		String name = readValue(props, type);
 		if(name == null || StringUtils.isEmpty(name)) {
-			return HttpLibrary.HTTPCORE;
+			return HttpLibrary.DEFAULT;
 		}
 		return HttpLibrary.fromName(name);
 	}

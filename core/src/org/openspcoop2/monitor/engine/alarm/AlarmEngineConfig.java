@@ -58,7 +58,7 @@ public class AlarmEngineConfig implements Serializable {
 	private String activeAlarm_serviceUrl_https_truststoreType = null;
 	private String activeAlarm_serviceUrl_https_truststorePassword = null;
 	
-	private HttpLibrary httpLibrary = HttpLibrary.HTTPCORE;
+	private HttpLibrary httpLibrary = HttpLibrary.DEFAULT;
 	
 	private boolean historyEnabled = true;
 	

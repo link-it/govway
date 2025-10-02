@@ -208,11 +208,11 @@ public class TestCopyStream {
 		Date startDate = new Date();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		InputStream is = isParam;
-		if(limitBytes>0) {
-			is = new LimitedInputStream(is, limitBytes);
-		}
 		if(timeout>0) {
 			is = new TimeoutInputStream(is, timeout);
+		}
+		if(limitBytes>0) {
+			is = new LimitedInputStream(is, limitBytes);
 		}
 		try {
 			if(sizeBuffer>0) {

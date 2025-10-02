@@ -55,7 +55,7 @@ public class OCSPRequestParams {
 	private OCSPConfig config;
 	private boolean isSelfSigned;
 	private boolean isCA;
-	private HttpLibrary httpLibrary = HttpLibrary.HTTPCORE;
+	private HttpLibrary httpLibrary = HttpLibrary.DEFAULT;
 	
 	// serve per validare la catena 
 	private KeyStore configTrustStore; 

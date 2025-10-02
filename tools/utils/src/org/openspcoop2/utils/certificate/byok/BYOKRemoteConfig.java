@@ -82,7 +82,7 @@ public class BYOKRemoteConfig implements Serializable {
 	private boolean httpResponseJsonPathBase64Encoded;
 	private boolean httpResponseJsonPathHexEncoded;
 	
-	private HttpLibrary httpLibrary = HttpLibrary.HTTPCORE;
+	private HttpLibrary httpLibrary = HttpLibrary.DEFAULT;
 	
 	protected BYOKRemoteConfig(String id, Properties p, Logger log, String byokPropertyPrefix) throws UtilsException {
 				
