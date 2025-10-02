@@ -106,6 +106,7 @@ public class StatusUtilities {
 			httpRequest.setConnectTimeout(status.getConnectionTimeout());
 			httpRequest.setMethod(HttpRequestMethod.GET);
 			httpRequest.setHostnameVerifier(https_verificaHostName);
+			httpRequest.setHttpLibrary(status.getHttpLibrary());
 			if(https_autenticazioneServer) {
 				httpRequest.setTrustStorePath(https_truststorePath);
 				httpRequest.setTrustStoreType(https_truststoreType);

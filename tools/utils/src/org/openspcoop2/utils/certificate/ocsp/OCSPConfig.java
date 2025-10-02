@@ -28,6 +28,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ExtendedKeyUsage;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.random.SecureRandomAlgorithm;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
@@ -117,6 +118,8 @@ public class OCSPConfig {
 	private String alternativeTrustStoreCRLType;
 				
 
+	private HttpLibrary httpLibrary = HttpLibrary.URLCONNECTION;
+	
 	public String getId() {
 		return this.id;
 	}
@@ -309,6 +312,9 @@ public class OCSPConfig {
 		return this.alternativeTrustStoreCRLType;
 	}
 
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
+	}
 	
 	protected OCSPConfig(String id, Properties p, Logger log) throws UtilsException {
 		this.id = id;
@@ -489,6 +495,11 @@ public class OCSPConfig {
 					this.alternativeTrustStoreCRLType = KeystoreType.JKS.getNome();
 				}
 			}
+		}
+		
+		String httpLibraryProp = getProperty(id, p, OCSPCostanti.PROPERTY_SUFFIX_HTTP_LIBRARY, false);
+		if (httpLibraryProp != null) {
+			this.httpLibrary = HttpLibrary.fromName(httpLibraryProp);
 		}
 
 	}

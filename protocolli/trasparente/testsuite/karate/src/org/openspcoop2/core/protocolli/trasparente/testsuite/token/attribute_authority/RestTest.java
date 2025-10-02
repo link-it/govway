@@ -172,7 +172,7 @@ public class RestTest extends ConfigLoader {
 		
 		File f = File.createTempFile("dynamicKeystore", ".jwks");
 		try {
-			byte [] content = FileSystemUtilities.readBytesFromFile("/etc/govway/keys/jose_truststore_example.jwks");
+			byte [] content = FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfgKeys() + "/jose_truststore_example.jwks");
 			FileSystemUtilities.writeFile(f, content);
 			
 			AAHeaderMap map = new AAHeaderMap();

@@ -159,7 +159,12 @@ tematiche:
 
    In GovWay è possibile abilitare l'utilizzo di cache che mantengono i dati di configurazioni acceduti, i keystore e i certificati, il risultato dei processi di validazione, autenticazione, autorizzazione e altri aspetti minori.
    Ogni funzionalità è associata ad una cache dedicata i cui parametri sono configurabili come indicato nella sezione :ref:`govWayCaches`.
- 
+
+#. *Esposizione di Informazioni*
+
+   È possibile adottare alcune misure di sicurezza per limitare l'esposizione di informazioni relative all'architettura e alle tecnologie utilizzate.
+   Indicazioni su come configurare l'application server e altri componenti sono fornite nella sezione :ref:`esposizioneInformazioni`.
+
 
 .. toctree::
         :maxdepth: 2
@@ -182,3 +187,4 @@ tematiche:
 	wildflyUrlEncoded
 	securityDomainOther
 	cache
+	esposizioneInformazioni

@@ -42,6 +42,8 @@ import org.openspcoop2.utils.transport.TransportUtils;
  */
 public abstract class AbstractHttp {
 
+	
+	private HttpLibrary httpLibrary = HttpUtilities.DEFAULT_HTTP_LIBRARY;
 	private String contentType;
 	private byte[] content;
 	private Map<String, List<String>> headers = new HashMap<>();
@@ -134,5 +136,13 @@ public abstract class AbstractHttp {
 				.stream()
 				.map(e -> URLEncoder.encode(e.getKey(), StandardCharsets.UTF_8) + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
 				.collect(Collectors.joining("&"));
+	}
+	
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
+	}
+	
+	public void setHttpLibrary(HttpLibrary httpLibrary) {
+		this.httpLibrary = httpLibrary;
 	}
 }

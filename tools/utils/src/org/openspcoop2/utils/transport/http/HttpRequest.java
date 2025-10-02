@@ -44,7 +44,8 @@ public class HttpRequest extends AbstractHttp {
 	private HttpRequestMethod method;
 	
 	private Boolean followRedirects;
-		
+	private Integer maxHopRedirects;
+	
 	private boolean trustAllCerts = false;
 	private KeyStore trustStore;
 	private boolean trustStoreHsm;
@@ -93,6 +94,18 @@ public class HttpRequest extends AbstractHttp {
 
 	public void setFollowRedirects(Boolean followRedirects) {
 		this.followRedirects = followRedirects;
+	}
+	
+	public Integer getMaxHopRedirects() {
+		if (this.maxHopRedirects == null) {
+			String value = System.getProperty("http.maxRedirects", "20");
+			return Integer.valueOf(value);
+		}
+		return this.maxHopRedirects;
+	}
+
+	public void setMaxHopRedirects(Integer maxHopRedirects) {
+		this.maxHopRedirects = maxHopRedirects;
 	}
 
 	public String getBaseUrl() {

@@ -163,7 +163,7 @@ public class RestTest extends ConfigLoader {
 		try {
 		
 			byte [] keystore = null;
-			keystore = FileSystemUtilities.readBytesFromFile("/etc/govway/keys/erogatore.jks");
+			keystore = FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 			PublicKey publicKey = ArchiveLoader.loadFromKeystoreJKS(keystore, "erogatore", "openspcoop").getCertificate().getCertificate().getPublicKey();
 			String jwks = JWKPublicKeyConverter.convert(publicKey, "erogatore", true, false);
 			keystore = jwks.getBytes();
@@ -361,7 +361,7 @@ public class RestTest extends ConfigLoader {
 		Properties props = new Properties();
 		props.put("rs.security.keystore.type","JKS");
 		String password = "openspcoop";
-		props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+		props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 		props.put("rs.security.keystore.alias","erogatore");
 		props.put("rs.security.keystore.password","openspcoop");
 		props.put("rs.security.key.password",password);

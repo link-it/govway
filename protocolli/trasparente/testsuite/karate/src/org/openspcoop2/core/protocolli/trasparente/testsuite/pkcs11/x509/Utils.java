@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.Headers;
 import org.openspcoop2.protocol.engine.constants.Costanti;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
@@ -378,10 +379,10 @@ public class Utils {
 			Properties props = new Properties();
 			if(soggetto1) {
 				if(signature) {
-					props.put("rs.security.keystore.file", "/etc/govway/keys/soggetto1_multipleOU.jks");
+					props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/soggetto1_multipleOU.jks");
 				}
 				else {
-					props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+					props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 					password = "openspcoop";
 				}
 			}

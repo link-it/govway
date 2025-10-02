@@ -54,7 +54,10 @@
                 </fileset>
 		<fileset dir="${required_lib}/angus" >
 			<include name="*.jar"/>
-		</fileset>                           
+		</fileset>
+		<fileset dir="${required_lib}/httpcore" >
+			<include name="*.jar"/>
+		</fileset>
 	</path>
 	<path id="karate_testsuite_dist_govway_java11" >
 		<fileset dir="${openspcoop2.utils.dist_java11}" >

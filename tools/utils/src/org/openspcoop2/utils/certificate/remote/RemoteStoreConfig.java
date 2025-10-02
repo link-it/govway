@@ -155,6 +155,8 @@ public class RemoteStoreConfig extends ExternalResourceConfig {
 		
 		// imposto comunque l'indicazione che si tratta di un multitenant
 		cloned.multitenant=true;
+		
+		cloned.httpLibrary = this.httpLibrary;
 	}
 	
 	public String getStoreName() {

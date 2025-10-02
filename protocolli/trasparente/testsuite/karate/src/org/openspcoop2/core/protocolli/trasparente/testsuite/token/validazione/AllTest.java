@@ -1288,13 +1288,13 @@ public class AllTest extends ConfigLoader {
 		props.put("rs.security.keystore.type","JKS");
 		String password = "openspcoop";
 		if(signWithSoggetto1) {
-			props.put("rs.security.keystore.file", "/etc/govway/keys/soggetto1.jks");
+			props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/soggetto1.jks");
 			props.put("rs.security.keystore.alias","soggetto1");
 			props.put("rs.security.keystore.password","openspcoopjks");
 			props.put("rs.security.key.password",password);
 		}
 		else {
-			props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+			props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 			props.put("rs.security.keystore.alias","erogatore");
 			props.put("rs.security.keystore.password",password);
 			props.put("rs.security.key.password",password);

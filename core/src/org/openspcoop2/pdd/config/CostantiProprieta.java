@@ -41,6 +41,7 @@ import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.security.CertificateValidityCheck;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 
 /**
@@ -780,8 +781,18 @@ public class CostantiProprieta {
 		return v;
 	}
 	
+	// ****  CONNETTORI LIBRERIA *****
+	public static final String CONNETTORE_TOKEN_VALIDATE_LIBRARY = "connettori.token.validate.httplibrary";
+	public static final String CONNETTORE_TOKEN_RETRIEVE_LIBRARY = "connettori.token.retrieve.httplibrary";
+	public static final String CONNETTORE_TOKEN_AUTHORITY_LIBRARY = "connettori.token.authority.httplibrary";
 	
-	
+	public static HttpLibrary getConnettoreHttpLibrary(List<Proprieta> props, String type) {
+		String name = readValue(props, type);
+		if(name == null || StringUtils.isEmpty(name)) {
+			return HttpLibrary.HTTPCORE;
+		}
+		return HttpLibrary.fromName(name);
+	}
 	
 	// ****  REGISTRAZIONE MESSAGGI *****
 		

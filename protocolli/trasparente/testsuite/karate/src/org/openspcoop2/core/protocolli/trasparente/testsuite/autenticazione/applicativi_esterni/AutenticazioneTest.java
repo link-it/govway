@@ -92,7 +92,7 @@ public class AutenticazioneTest extends ConfigLoader {
 		HttpRequest request = new HttpRequest();
 		
 		request.setTrustAllCerts(true);
-		request.setKeyStorePath("/etc/govway/keys/applicativo1_dominio_esterno.jks");
+		request.setKeyStorePath(getGovwayCfgKeys() + "/applicativo1_dominio_esterno.jks");
 		request.setKeyStorePassword("openspcoopjks");
 		request.setKeyPassword("openspcoop");
 		

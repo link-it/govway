@@ -23,6 +23,7 @@ package org.openspcoop2.core.protocolli.trasparente.testsuite;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -345,4 +346,11 @@ public class ConfigLoader {
 
     }
 
+    public static String getGovwayCfg() {
+    	return Path.of(prop.getProperty("govway_cfg_path")).toString();
+    }
+    
+    public static String getGovwayCfgKeys() {
+    	return Path.of(prop.getProperty("govway_cfg_path"), "keys").toString();
+    }
 }

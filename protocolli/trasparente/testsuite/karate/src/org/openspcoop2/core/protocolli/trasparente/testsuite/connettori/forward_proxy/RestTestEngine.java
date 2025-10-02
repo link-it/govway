@@ -209,7 +209,7 @@ public class RestTestEngine extends ConfigLoader {
 				else if("validazioneJwt".equals(operazione)){
 					f = new File("/tmp/response.json");
 					FileSystemUtilities.deleteFile(f);
-					byte[]keystore = FileSystemUtilities.readBytesFromFile("/etc/govway/keys/erogatore.jks");
+					byte[]keystore = FileSystemUtilities.readBytesFromFile(getGovwayCfgKeys() + "/erogatore.jks");
 					PublicKey publicKey = ArchiveLoader.loadFromKeystoreJKS(keystore, "erogatore", "openspcoop").getCertificate().getCertificate().getPublicKey();
 					json = JWKPublicKeyConverter.convert(publicKey, "erogatore", true, false);
 					FileSystemUtilities.writeFile(f, json.getBytes());
@@ -222,7 +222,7 @@ public class RestTestEngine extends ConfigLoader {
 					
 					f = new File("/tmp/response.json");
 					FileSystemUtilities.deleteFile(f);
-					byte[]keystore = FileSystemUtilities.readBytesFromFile("/etc/govway/keys/erogatore.jks");
+					byte[]keystore = FileSystemUtilities.readBytesFromFile(getGovwayCfgKeys() + "/erogatore.jks");
 					PublicKey publicKey = ArchiveLoader.loadFromKeystoreJKS(keystore, "erogatore", "openspcoop").getCertificate().getCertificate().getPublicKey();
 					json = JWKPublicKeyConverter.convert(publicKey, "erogatore", true, false);
 					FileSystemUtilities.writeFile(f, json.getBytes());

@@ -19,6 +19,8 @@
  */
 package org.openspcoop2.monitor.engine.status;
 
+import org.openspcoop2.utils.transport.http.HttpLibrary;
+
 /**
  * PddStatus
  * 
@@ -44,6 +46,7 @@ public class GatewayStatus extends BaseStatus{
 	private int connectionTimeout = 5000; //org.openspcoop2.utils.transport.http.HttpUtilities.HTTP_CONNECTION_TIMEOUT;
 	// Fix: uso un tempo più basso in modo da non bloccare la console
 	private int readConnectionTimeout = 5000; //org.openspcoop2.utils.transport.http.HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+	private HttpLibrary httpLibrary = HttpLibrary.HTTPCORE;
 	
 	public GatewayStatus(){
 		super();
@@ -119,5 +122,13 @@ public class GatewayStatus extends BaseStatus{
 
 	public void setReadConnectionTimeout(int readConnectionTimeout) {
 		this.readConnectionTimeout = readConnectionTimeout;
+	}
+
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
+	}
+
+	public void setHttpLibrary(HttpLibrary httpLibrary) {
+		this.httpLibrary = httpLibrary;
 	}
 }

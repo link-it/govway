@@ -89,7 +89,7 @@ public class ValidazioneJWTDynamicDiscoveryTest extends ConfigLoader {
 		
 		File f = File.createTempFile("dynamicKeystore", ".jwk");
 		byte [] keystore = null;
-		keystore = FileSystemUtilities.readBytesFromFile("/etc/govway/keys/erogatore.jks");
+		keystore = FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 		PublicKey publicKey = ArchiveLoader.loadFromKeystoreJKS(keystore, "erogatore", "openspcoop").getCertificate().getCertificate().getPublicKey();
 		keystore = JWKPublicKeyConverter.convert(publicKey, "erogatore", true, false).getBytes();
 		

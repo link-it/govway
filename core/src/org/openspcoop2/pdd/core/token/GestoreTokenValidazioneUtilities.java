@@ -65,6 +65,8 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE;
+import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPSCORE;
 import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -116,6 +118,7 @@ import org.openspcoop2.utils.security.JsonVerifySignature;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.openspcoop2.utils.transport.http.IOCSPValidator;
@@ -129,6 +132,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * GestoreTokenValidazioneUtilities
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Burlon Tommaso (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -2333,13 +2337,28 @@ public class GestoreTokenValidazioneUtilities {
 		
 		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
 		ConnettoreBaseHTTP connettore = null;
+		
+		List<Proprieta> portProperty = List.of();
+		if (pd != null)
+			portProperty = pd.getProprieta();
+		if (pa != null)
+			portProperty = pa.getProprieta();
+		HttpLibrary lib = CostantiProprieta.getConnettoreHttpLibrary(
+				portProperty, CostantiProprieta.CONNETTORE_TOKEN_VALIDATE_LIBRARY);
+		
 		if(https) {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
-			connettore = new ConnettoreHTTPS();
+			if (lib.equals(HttpLibrary.HTTPCORE))
+				connettore = new ConnettoreHTTPSCORE();
+			else
+				connettore = new ConnettoreHTTPS();
 		}
 		else {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
-			connettore = new ConnettoreHTTP();
+			if (lib.equals(HttpLibrary.HTTPCORE))
+				connettore = new ConnettoreHTTPCORE();
+			else
+				connettore = new ConnettoreHTTP();
 		}
 		connettoreMsg.setIdModulo(idModulo);
 		connettoreMsg.setState(state);

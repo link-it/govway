@@ -196,7 +196,7 @@ public class Utils {
 		File fLdapServer = null;
 		File fLdiff = null;
 		LdapServerTest server = null;
-		try(InputStream is = new FileInputStream("/etc/govway/keys/xca/ExampleCA.crl");
+		try(InputStream is = new FileInputStream(ConfigLoader.getGovwayCfgKeys() + "/xca/ExampleCA.crl");
 				InputStream isLdiff = OCSPTest.class.getResourceAsStream("/org/openspcoop2/utils/certificate/ocsp/test/crl/server.ldif")){
 			byte[] contentCRL = Utilities.getAsByteArray(is);
 			
@@ -698,7 +698,7 @@ public class Utils {
 	}
 	private static String getUrlEncodedCert(String fileName) throws Exception {
 		
-		try(InputStream is = new FileInputStream("/etc/govway/keys/xca/"+fileName)){
+		try(InputStream is = new FileInputStream(ConfigLoader.getGovwayCfgKeys() + "/xca/"+fileName)){
 			String s = Utilities.getAsString(is, Charset.UTF_8.getValue());
 			return UriUtils.encode(s, Charset.UTF_8.getValue());
 		}
@@ -714,23 +714,23 @@ public class Utils {
 		String file = null;
 		if(operazione.equals("case2") || operazione.equals("case2-kid") || operazione.equals("case3")) {
 			alias = "testclient";
-			file = "/etc/govway/keys/ocsp/testClient.jks";
+			file = ConfigLoader.getGovwayCfgKeys() + "/ocsp/testClient.jks";
 		}
 		else if(operazione.equals("case2-revoked") || operazione.equals("case2-revoked-kid") || operazione.equals("case3-revoked")) {
 			alias = "test";
-			file = "/etc/govway/keys/ocsp/test.jks";
+			file = ConfigLoader.getGovwayCfgKeys() + "/ocsp/test.jks";
 		}
 		else if(operazione.endsWith("-expired")) {
 			alias = "ExampleClientScaduto";
-			file = "/etc/govway/keys/xca/ExampleClientScaduto.p12";
+			file = ConfigLoader.getGovwayCfgKeys() + "/xca/ExampleClientScaduto.p12";
 		}
 		else if(operazione.endsWith("-revoked")) {
 			alias = "ExampleClientRevocato";
-			file = "/etc/govway/keys/xca/ExampleClientRevocato.p12";
+			file = ConfigLoader.getGovwayCfgKeys() + "/xca/ExampleClientRevocato.p12";
 		}
 		else {
 			alias = "ExampleClient1";
-			file = "/etc/govway/keys/xca/ExampleClient1.p12";
+			file = ConfigLoader.getGovwayCfgKeys() + "/xca/ExampleClient1.p12";
 		}
 		
 		boolean kid = (operazione.contains("case2") && operazione.endsWith("-kid"));

@@ -241,6 +241,8 @@ public class BYOKInstance {
 		setHttps(log, config, dynamicMap,
 				inputParameters, inputMap, key, http);
 		
+		http.setHttpLibrary(config.getHttpLibrary());
+		
 		return http;
 	}
 	private static void setHttpHeader(BYOKRemoteConfig config, Map<String,Object> dynamicMap, 

@@ -78,6 +78,8 @@ public class ExternalResourceConfig {
 	// informazioni custom aggiuntive
 	protected Map<String, Map<String, String>> multiTenantMetadati = new HashMap<>(); // impostata tramite logica applicativa
 	
+	protected HttpLibrary httpLibrary = HttpLibrary.HTTPCORE;
+	
 	// !! NOTA !!: se si aggiunge un field, bisogna gestirlo nel metodo in org.openspcoop2.utils.certificate.remote.RemoteStoreConfig.newInstanceMultitenant()
 	
 	public int getReadTimeout() {
@@ -279,5 +281,12 @@ public class ExternalResourceConfig {
 
 	public void setMultiTenantMetadati(Map<String, Map<String, String>> multiTenantMetadati) {
 		this.multiTenantMetadati = multiTenantMetadati;
+
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
+	}
+
+	public void setHttpLibrary(HttpLibrary httpLibrary) {
+		this.httpLibrary = httpLibrary;
 	}
 }

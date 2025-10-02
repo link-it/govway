@@ -116,10 +116,13 @@ public class GestoreOCSPResource implements IOCSPResourceReader {
 			externalConfig.setConnectTimeout(this.config.getConnectTimeout());
 			externalConfig.setReadTimeout(this.config.getReadTimeout());
 			
+			externalConfig.setHttpLibrary(this.config.getHttpLibrary());
+			
 			ExternalResource externalResource = GestoreKeystoreCache.getExternalResource(this.requestInfo, resource, externalConfig);
 			if(externalResource!=null && externalResource.getId()!=null) {
 				holderResource.put(externalResource.getId(), externalResource.getResource());
 			}
+			
 		}catch(Exception t) {
 			throw new UtilsException(t.getMessage(),t);
 		}

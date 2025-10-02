@@ -84,7 +84,9 @@ public class CostantiConfigurazione {
 
 	public static final String ALARM_ACTIVE_SERVICE_READ_CONNECTION_TIMEOUT = "org.openspcoop2.monitor.alarm.active.service.readConnectionTimeout";	
 	public static final String ALARM_ACTIVE_SERVICE_CONNECTION_TIMEOUT = "org.openspcoop2.monitor.alarm.active.service.connectionTimeout";	
-	
+
+	public static final String ALARM_ACTIVE_SERVICE_HTTP_LIBRARY = "org.openspcoop2.monitor.alarm.active.service.httpLibrary";	
+
 	public static final String ALARM_HISTORY_ENABLED = "org.openspcoop2.monitor.alarm.history.enabled";
 	
 	public static final String ALARM_MAIL_SENDER_TYPE = "org.openspcoop2.monitor.alarm.mailSender.type";

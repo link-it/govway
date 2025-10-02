@@ -31,6 +31,7 @@ import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.remote.RemoteKeyIdMode;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.properties.PropertiesReader;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 
 /**
@@ -100,6 +101,7 @@ public class RemoteStoreConfigPropertiesUtils {
 	
 	public static final String PROPERTY_MULTITENANT_HTTP_QUERY_PARAMETER_PREFIX = "multiTenant.http.queryParameter.";
 	
+	public static final String PROPERTY_HTTP_LIBRARY = "httpLibrary";
 	
 	public static RemoteStoreConfig read(Properties p, RequestInfo requestInfo) throws KeystoreException {
 		
@@ -168,6 +170,12 @@ public class RemoteStoreConfigPropertiesUtils {
 		List<String> multi = readMultitenant(p);
 		if(multi!=null && !multi.isEmpty()) {
 			setMultitenant(config, multi, p, pReader);
+		}
+		
+		
+		String httpLibraryProp = getProperty(p, PROPERTY_HTTP_LIBRARY, false);
+		if(httpLibraryProp!=null && StringUtils.isNotEmpty(httpLibraryProp)) {
+			config.setHttpLibrary(HttpLibrary.fromName(httpLibraryProp));
 		}
 		
 		return config;

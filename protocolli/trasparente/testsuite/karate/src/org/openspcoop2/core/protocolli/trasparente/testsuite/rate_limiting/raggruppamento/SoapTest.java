@@ -470,7 +470,7 @@ public class SoapTest extends ConfigLoader {
 		// Signature Json
 		JWSOptions options = new JWSOptions(JOSESerialization.COMPACT);
 		Properties signatureProps = new Properties();
-		signatureProps.put("rs.security.keystore.file", "/etc/govway/keys/pa.p12");
+		signatureProps.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/pa.p12");
 		signatureProps.put("rs.security.keystore.type","pkcs12");
 		signatureProps.put("rs.security.keystore.alias","paP12");
 		signatureProps.put("rs.security.keystore.password","keypa");

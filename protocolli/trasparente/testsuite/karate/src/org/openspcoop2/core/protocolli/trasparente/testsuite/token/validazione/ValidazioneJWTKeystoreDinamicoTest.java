@@ -122,15 +122,15 @@ public class ValidazioneJWTKeystoreDinamicoTest extends ConfigLoader {
 		File f = File.createTempFile("dynamicKeystore", "."+tipoKeystore);
 		byte [] keystore = null;
 		if("jks".equals(tipoKeystore)) {
-			keystore = FileSystemUtilities.readBytesFromFile("/etc/govway/keys/erogatore.jks");
+			keystore = FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 		}
 		else if("jwk".equals(tipoKeystore)) {
-			keystore = FileSystemUtilities.readBytesFromFile("/etc/govway/keys/erogatore.jks");
+			keystore = FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 			PublicKey publicKey = ArchiveLoader.loadFromKeystoreJKS(keystore, "erogatore", "openspcoop").getCertificate().getCertificate().getPublicKey();
 			keystore = JWKPublicKeyConverter.convert(publicKey, "erogatore", true, false).getBytes();
 		}
 		else if("public".equals(tipoKeystore)) {
-			keystore = FileSystemUtilities.readBytesFromFile("/etc/govway/keys/erogatore.jks");
+			keystore = FileSystemUtilities.readBytesFromFile(ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 			PublicKey publicKey = ArchiveLoader.loadFromKeystoreJKS(keystore, "erogatore", "openspcoop").getCertificate().getCertificate().getPublicKey();
 			keystore = publicKey.getEncoded();
 		}
@@ -268,7 +268,7 @@ public class ValidazioneJWTKeystoreDinamicoTest extends ConfigLoader {
 		Properties props = new Properties();
 		props.put("rs.security.keystore.type","JKS");
 		String password = "openspcoop";
-		props.put("rs.security.keystore.file", "/etc/govway/keys/erogatore.jks");
+		props.put("rs.security.keystore.file", ConfigLoader.getGovwayCfgKeys() + "/erogatore.jks");
 		props.put("rs.security.keystore.alias","erogatore");
 		props.put("rs.security.keystore.password",password);
 		props.put("rs.security.key.password",password);

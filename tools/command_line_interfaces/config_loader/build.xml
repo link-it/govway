@@ -43,6 +43,7 @@
 			<include name="spring/*"/>
 			<include name="spring-security/*"/>
 			<include name="stub/*"/>
+			<include name="httpcore/*"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >
@@ -165,6 +166,7 @@
 			<fileset dir="${openspcoop2.lib}/shared" includes="velocity-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-4.0.0-gov4j-1.jar"/>
 			<fileset dir="${openspcoop2.lib}/applicationServer/tomcat10" includes="*.jar"/> <!-- Serve per il datasource env -->
+			<fileset dir="${openspcoop2.lib}/httpcore" includes="httpcore5-5.3.4.jar"/>
 		</copy>
 		
 		<antcall target="-distrib_script_cliConfigLoader">

@@ -37,6 +37,7 @@ import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -54,6 +55,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.CostantiProprieta;
 import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -61,6 +63,8 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreHTTPS;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
+import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPCORE;
+import org.openspcoop2.pdd.core.connettori.httpcore5.ConnettoreHTTPSCORE;
 import org.openspcoop2.pdd.core.controllo_traffico.PolicyTimeoutConfig;
 import org.openspcoop2.pdd.core.dynamic.DynamicMapBuilderUtils;
 import org.openspcoop2.pdd.core.token.parser.Claims;
@@ -95,6 +99,7 @@ import org.openspcoop2.utils.security.JwtHeaders;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpResponse;
 import org.slf4j.Logger;
@@ -105,6 +110,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * GestoreTokenNegoziazioneUtilities
  *
  * @author Poli Andrea (poli@link.it)
+ * @author Burlon Tommaso (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -441,13 +447,28 @@ public class GestoreTokenNegoziazioneUtilities {
 		
 		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
 		ConnettoreBaseHTTP connettore = null;
+		
+		List<Proprieta> portProperty = List.of();
+		if (pd != null)
+			portProperty = pd.getProprieta();
+		if (pa != null)
+			portProperty = pa.getProprieta();
+		HttpLibrary lib = CostantiProprieta.getConnettoreHttpLibrary(
+				portProperty, CostantiProprieta.CONNETTORE_TOKEN_RETRIEVE_LIBRARY);
+		
 		if(https) {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
-			connettore = new ConnettoreHTTPS();
+			if (lib.equals(HttpLibrary.HTTPCORE))
+				connettore = new ConnettoreHTTPSCORE();
+			else
+				connettore = new ConnettoreHTTPS();
 		}
 		else {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
-			connettore = new ConnettoreHTTP();
+			if (lib.equals(HttpLibrary.HTTPCORE))
+				connettore = new ConnettoreHTTPCORE();
+			else
+				connettore = new ConnettoreHTTP();
 		}
 		connettoreMsg.setIdModulo(idModulo);
 		connettoreMsg.setState(state);
