@@ -23,6 +23,7 @@ package org.openspcoop2.core.constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 
 /**
@@ -82,8 +83,8 @@ public class CostantiConnettori {
     public static final String CONNETTORE_APIKEY = "apiKey";
     public static final String CONNETTORE_APIKEY_APPID_HEADER = "appIdHeader";
     public static final String CONNETTORE_APIKEY_APPID = "appId";
-    public static final String DEFAULT_HEADER_API_KEY = "X-API-KEY";
-    public static final String DEFAULT_HEADER_APP_ID = "X-APP-ID";
+    public static final String DEFAULT_HEADER_API_KEY = HttpConstants.AUTHORIZATION_HEADER_API_KEY;
+    public static final String DEFAULT_HEADER_APP_ID = HttpConstants.AUTHORIZATION_HEADER_APP_ID;
     
 	/** JMS PROPERTIES */
 	

@@ -24,6 +24,8 @@ import java.net.Proxy;
 import java.security.KeyStore;
 import java.security.cert.CertStore;
 
+import org.slf4j.Logger;
+
 /**
  * Classe che contiene la risposta http
  *
@@ -38,8 +40,20 @@ public class HttpRequest extends AbstractHttp {
 	private int readTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 	private int connectTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
 	
+	private boolean checkConnection = false;
+	
+	private Logger log;
+	private boolean debug = false;
+	
 	private String username;
 	private String password;
+	
+	private String bearerToken;
+	
+	private String apiKey;
+	private String appId;
+	private String apiKeyHeader;
+	private String appIdHeader;
 	
 	private HttpRequestMethod method;
 	
@@ -87,6 +101,67 @@ public class HttpRequest extends AbstractHttp {
 	private String proxyPassword;
 	
 	private boolean disconnect = true;
+	
+	public boolean isCheckConnection() {
+		return this.checkConnection;
+	}
+	public void setCheckConnection(boolean checkConnection) {
+		this.checkConnection = checkConnection;
+	}
+	
+	public boolean isDebug() {
+		return this.debug;
+	}
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+	
+	public Logger getLog() {
+		return this.log;
+	}
+	public void setLog(Logger log) {
+		this.log = log;
+	}
+	public void logDebug(String msg) {
+		if(this.log!=null) {
+			this.log.debug(msg);
+		}
+	}
+	public void logDebug(String msg, Throwable t) {
+		if(this.log!=null) {
+			this.log.debug(msg, t);
+		}
+	}
+	public void logInfo(String msg) {
+		if(this.log!=null) {
+			this.log.info(msg);
+		}
+	}
+	public void logInfo(String msg, Throwable t) {
+		if(this.log!=null) {
+			this.log.info(msg, t);
+		}
+	}
+	public void logError(String msg) {
+		if(this.log!=null) {
+			this.log.error(msg);
+		}
+	}
+	public void logError(String msg, Throwable t) {
+		if(this.log!=null) {
+			this.log.error(msg, t);
+		}
+	}
+	public void logWarn(String msg) {
+		if(this.log!=null) {
+			this.log.warn(msg);
+		}
+	}
+	public void logWarn(String msg, Throwable t) {
+		if(this.log!=null) {
+			this.log.warn(msg, t);
+		}
+	}
 	
 	public Boolean getFollowRedirects() {
 		return this.followRedirects;
@@ -154,6 +229,38 @@ public class HttpRequest extends AbstractHttp {
 		this.password = password;
 	}
 
+	public String getBearerToken() {
+		return this.bearerToken;
+	}
+	public void setBearerToken(String bearerToken) {
+		this.bearerToken = bearerToken;
+	}
+	
+	public String getApiKey() {
+		return this.apiKey;
+	}
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
+	}
+	public String getAppId() {
+		return this.appId;
+	}
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
+	public String getApiKeyHeader() {
+		return this.apiKeyHeader;
+	}
+	public void setApiKeyHeader(String apiKeyHeader) {
+		this.apiKeyHeader = apiKeyHeader;
+	}
+	public String getAppIdHeader() {
+		return this.appIdHeader;
+	}
+	public void setAppIdHeader(String appIdHeader) {
+		this.appIdHeader = appIdHeader;
+	}
+	
 	public HttpRequestMethod getMethod() {
 		return this.method;
 	}

@@ -214,6 +214,9 @@
 				<include name="woodstox-core-7.1.1.jar" />
 				<include name="${stax2-api_jar}" />
 			</lib>
+			<lib dir="${required_lib}/httpcore">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${required_lib_govwayMonitor}/saaj">
 				<include name="*.jar" />
 			</lib>

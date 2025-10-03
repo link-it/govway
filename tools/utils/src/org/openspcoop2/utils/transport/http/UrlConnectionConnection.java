@@ -36,6 +36,7 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.CopyStream;
@@ -71,8 +72,15 @@ class UrlConnectionConnection implements HttpLibraryConnection {
 			
 			// istauro la connessione utilizzando un proxy se abilitato
 			if(request.getProxyType()==null){
+				if(request.isDebug()) {
+					request.logInfo("Creazione connessione alla URL ["+request.getUrl()+"]...");
+				}
 				connection = url.openConnection();
 			} else { 
+				if(request.isDebug()) {
+					request.logInfo("Creazione connessione alla URL ["+request.getUrl()+"] (via proxy "+
+							request.getProxyHostname()+":"+request.getProxyPort()+") (username["+request.getProxyUsername()+"] password["+request.getProxyPassword()+"])...");
+				}
 				if(request.getProxyHostname()==null) {
 					throw new UtilsException("Proxy require a hostname");
 				}
@@ -93,16 +101,45 @@ class UrlConnectionConnection implements HttpLibraryConnection {
 			if(sslContext!=null) {
 				
 				HttpsURLConnection httpsConn = (HttpsURLConnection) httpConn;
-				httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
+				
+				SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+				if(request.isDebug()) {
+					String clientCertificateConfigurated = request.getKeyStorePath();
+					sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
+							request.getLog(), "",
+							clientCertificateConfigurated);
+				}		
+				httpsConn.setSSLSocketFactory(sslSocketFactory);
+				
 				if(!request.isHostnameVerifier()) {
+					if(request.isDebug()) {
+						request.logInfo("HostName verifier disabilitato");
+					}
 					SSLHostNameVerifierDisabled disabilitato = new SSLHostNameVerifierDisabled(LoggerWrapperFactory.getLogger(HttpUtilities.class));
 					httpsConn.setHostnameVerifier(disabilitato);
+				}
+				else if(request.isDebug()) {
+					request.logInfo("HostName verifier abilitato");
+				}
+			}
+			else {
+				if(request.isDebug() && (httpConn instanceof HttpsURLConnection httpsConn) &&
+					httpsConn.getSSLSocketFactory()!=null) {
+					SSLSocketFactory sslSocketFactory = httpsConn.getSSLSocketFactory();
+					String clientCertificateConfigurated = SSLUtilities.getJvmHttpsClientCertificateConfigurated();
+					sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
+							request.getLog(), "",
+							clientCertificateConfigurated);
+					httpsConn.setSSLSocketFactory(sslSocketFactory);
 				}
 			}
 			
 			// imposto il contentType
 			String contentType = request.getContentType();
 			if(contentType!=null){
+				if(request.isDebug()) {
+	        		request.logInfo("Impostazione Content-Type ["+contentType+"]");
+	        	}
 				httpConn.setRequestProperty(HttpConstants.CONTENT_TYPE,contentType);
 			}
 			else if(request.getContent()!=null){
@@ -116,14 +153,22 @@ class UrlConnectionConnection implements HttpLibraryConnection {
 			}
 			
 			// imposto i timeouts
+			if(request.isDebug())
+				request.logInfo("Impostazione http timeout CT["+request.getConnectTimeout()+"] RT["+request.getReadTimeout()+"]");
 			httpConn.setConnectTimeout(request.getConnectTimeout());
 			httpConn.setReadTimeout(request.getReadTimeout());
 			
 			// imposto la gestione dei redirects
 			if(request.getFollowRedirects()!=null) {
+				if(request.isDebug()) {
+	        		request.logInfo("Redirect strategy abilitato");
+	        	}
 				httpConn.setInstanceFollowRedirects(request.getFollowRedirects());
 			}
 			else {
+				if(request.isDebug()) {
+	        		request.logInfo("Redirect strategy disabilitato");
+	        	}
 				httpConn.setInstanceFollowRedirects(false);
 			}
 			
@@ -131,7 +176,40 @@ class UrlConnectionConnection implements HttpLibraryConnection {
 			if(request.getUsername() != null && request.getPassword() != null){
 				String authentication = request.getUsername() + ":" + request.getPassword();
 				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
+				if(request.isDebug())
+					request.logInfo("Impostazione autenticazione (username:"+request.getUsername()+" password:"+request.getPassword()+") ["+authentication+"]");
 				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
+			}
+			
+			// autenticazione bearer
+			if(request.getBearerToken()!=null){
+				String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+request.getBearerToken();
+				if(request.isDebug())
+					request.logInfo("Impostazione autenticazione bearer ["+authorizationHeader+"]");
+				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authorizationHeader);
+			}
+			
+			// Authentication Api Key
+			String apiKey = request.getApiKey();
+			if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
+				String apiKeyHeader = request.getApiKeyHeader();
+				if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+					apiKeyHeader = HttpConstants.AUTHORIZATION_HEADER_API_KEY;
+				}
+				httpConn.setRequestProperty(apiKeyHeader,apiKey);
+				if(request.isDebug())
+					request.logInfo("Impostazione autenticazione api key ["+apiKeyHeader+"]=["+apiKey+"]");
+				
+				String appId = request.getAppId();
+				if(appId!=null && StringUtils.isNotEmpty(appId)){
+					String appIdHeader = request.getAppIdHeader();
+					if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+						appIdHeader = HttpConstants.AUTHORIZATION_HEADER_APP_ID;
+					}
+					httpConn.setRequestProperty(appIdHeader,appId);
+					if(request.isDebug())
+						request.logInfo("Impostazione autenticazione api key (app id) ["+appIdHeader+"]=["+appId+"]");
+				}
 			}
 			
 			// headers
@@ -143,9 +221,26 @@ class UrlConnectionConnection implements HttpLibraryConnection {
 					List<String> values = requestHeaders.get(key);
 					if(values!=null && !values.isEmpty()) {
 						for (String value : values) {
+							if(request.isDebug()) {
+				        		request.logInfo("Aggiungo header ["+key+"]=["+value+"]");
+				        	}
 							httpConn.addRequestProperty(key, value);		
 						}
 					}
+				}
+			}
+			
+			// Verifica solo della connessione
+			if(request.isCheckConnection()) {
+				try {
+					if(request.isDebug())
+						request.logDebug("Connessione in corso ...");
+					httpConn.connect();
+					if(request.isDebug())
+						request.logDebug("Connessione effettuata con successo");
+					return null;
+				}finally {
+					safeDisconnect(httpConn);
 				}
 			}
 			
@@ -263,4 +358,11 @@ class UrlConnectionConnection implements HttpLibraryConnection {
 		}
 	}
 
+	private void safeDisconnect(HttpURLConnection httpConn) {
+		try {
+			httpConn.disconnect();
+		}catch(Exception ignore) {
+			// ignore
+		}
+	}
 }

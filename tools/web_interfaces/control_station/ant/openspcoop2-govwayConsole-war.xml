@@ -399,6 +399,9 @@
 				<include name="cxf-core-*.jar" />
 				<include name="cxf-rt-*.jar" />
 			</lib>
+			<lib dir="${required_lib}/httpcore">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${required_lib_govwayConsole}/saaj">
 				<include name="*.jar" />
 			</lib>

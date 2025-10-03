@@ -23,13 +23,10 @@
 
 package org.openspcoop2.core.registry.driver.xml;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,6 +92,7 @@ import org.openspcoop2.core.registry.driver.ValidazioneSemantica;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -105,6 +103,8 @@ import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
 
@@ -181,23 +181,26 @@ public class DriverRegistroServiziXML extends BeanUtilities
 
 		/* ---- InputStream ---- */
 		InputStream iStream = null;
-		HttpURLConnection httpConn = null;
 		if(this.registry_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX) || this.registry_path.startsWith(org.openspcoop2.utils.Costanti.PROTOCOL_FILE_PREFIX)){
 			try{ 
-				URL url = new URI(this.registry_path).toURL();
-				URLConnection connection = url.openConnection();
-				httpConn = (HttpURLConnection) connection;
-				httpConn.setRequestMethod("GET");
-				httpConn.setDoOutput(true);
-				httpConn.setDoInput(true);
-				iStream = httpConn.getInputStream();
+				HttpResponse response = HttpUtilities.getHTTPResponse(this.registry_path);
+				if(response==null) {
+					throw new UtilsException("Response null");
+				}
+				if(response.getContentStream()!=null) {
+					iStream = response.getContentStream();
+				}
+				else if(response.getContent()!=null && response.getContent().length>0) {
+					iStream = new ByteArrayInputStream(response.getContent());
+				}
+				else {
+					throw new UtilsException("Response empty");
+				}
 			}catch(Exception e) {
 				try{  
-//					if(iStream!=null)
-//						iStream.close();
-					if(httpConn !=null)
-						httpConn.disconnect();
-				} catch(Exception ef) {}
+				} catch(Exception ef) {
+					// ignore
+				}
 				throw new DriverRegistroServiziException("Riscontrato errore durante la creazione dell'inputStream del registro dei servizi (HTTP) : \n\n"+e.getMessage());
 			}
 			this.lastModified = DateManager.getTimeMillis();
@@ -228,11 +231,9 @@ public class DriverRegistroServiziXML extends BeanUtilities
 			try{  
 				if(iStream!=null)
 					iStream.close();
-			} catch(Exception ef) {}
-			try{ 
-				if(httpConn !=null)
-					httpConn.disconnect();
-			} catch(Exception ef) {}
+			} catch(Exception ef) {
+				// ignore
+			}
 			throw new DriverRegistroServiziException("Riscontrato errore durante l'unmarshall del file di configurazione: "+e.getMessage());
 		}
 
@@ -242,13 +243,6 @@ public class DriverRegistroServiziXML extends BeanUtilities
 				iStream.close();
 		} catch(Exception e) {
 			throw new DriverRegistroServiziException("Riscontrato errore durante la chiusura dell'Input Stream: "+e.getMessage());
-		}
-		try{
-			// Chiusura dell'eventuale connessione HTTP
-			if(httpConn !=null)
-				httpConn.disconnect();
-		} catch(Exception e) {
-			throw new DriverRegistroServiziException("Riscontrato errore durante la chiusura dell'Input Stream (http): "+e.getMessage());
 		}
 	}
 

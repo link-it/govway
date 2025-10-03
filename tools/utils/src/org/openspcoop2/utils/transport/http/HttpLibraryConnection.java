@@ -33,7 +33,7 @@ import org.openspcoop2.utils.UtilsException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-interface HttpLibraryConnection {
+public interface HttpLibraryConnection {
 	public HttpResponse send(HttpRequest req, SSLContext sslContext, OCSPTrustManager ocspTrustManager) throws UtilsException, IOException;
 	
 	

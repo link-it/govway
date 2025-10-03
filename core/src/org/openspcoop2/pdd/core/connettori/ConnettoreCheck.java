@@ -20,14 +20,10 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,10 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.Connettore;
@@ -46,8 +39,11 @@ import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaConWarning;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
+import org.openspcoop2.core.constants.ConnettoriHttpImpl;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
@@ -66,19 +62,18 @@ import org.openspcoop2.protocol.registry.CertificateUtils;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.security.keystore.cache.GestoreOCSPResource;
 import org.openspcoop2.utils.LoggerBuffer;
-import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.KeystoreParams;
 import org.openspcoop2.utils.certificate.ocsp.OCSPValidatorImpl;
-import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.regexp.RegExpUtilities;
-import org.openspcoop2.utils.resources.Loader;
-import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
+import org.openspcoop2.utils.transport.http.HttpRequest;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.IBYOKUnwrapManager;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
-import org.openspcoop2.utils.transport.http.WrappedLogSSLSocketFactory;
 import org.slf4j.Logger;
 
 /**
@@ -89,6 +84,8 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ConnettoreCheck {
+	
+	private ConnettoreCheck() {}
 
 	public static boolean checkSupported(org.openspcoop2.core.registry.Connettore connettore) {
 		return checkSupported(connettore.mappingIntoConnettoreConfigurazione());
@@ -100,9 +97,7 @@ public class ConnettoreCheck {
 			tipo = TipiConnettore.valueOf(connettore.getTipo().toUpperCase());
 			if(tipo!=null) {
 				switch (tipo) {
-				case HTTP:
-				case HTTPS:
-				case STATUS:
+				case HTTP, HTTPS, STATUS:
 					return true;
 
 				default:
@@ -110,6 +105,7 @@ public class ConnettoreCheck {
 				}
 			}
 		}catch(Exception e) {
+			// ignore
 		}
 		return false;
 	}
@@ -117,9 +113,9 @@ public class ConnettoreCheck {
 	public static void check(long idConnettore, boolean registro, Logger log) throws ConnettoreException{
 		if(registro) {
 			for (IDriverRegistroServiziGet iDriverRegistroServiziGet : RegistroServiziReader.getDriverRegistroServizi().values()) {
-				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB) {
+				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB driverRegistryDB) {
 					try {
-						org.openspcoop2.core.registry.Connettore connettore = ((DriverRegistroServiziDB)iDriverRegistroServiziGet).getConnettore(idConnettore);
+						org.openspcoop2.core.registry.Connettore connettore = driverRegistryDB.getConnettore(idConnettore);
 						check(connettore, log);
 						return;
 					}catch(Throwable e) {
@@ -130,9 +126,9 @@ public class ConnettoreCheck {
 		}
 		else {
 			IDriverConfigurazioneGet iDriverConfigurazioneGet = ConfigurazionePdDReader.getDriverConfigurazionePdD();
-			if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB) {
+			if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB driverConfigDB) {
 				try {
-					Connettore connettore = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getConnettore(idConnettore);
+					Connettore connettore = driverConfigDB.getConnettore(idConnettore);
 					check(connettore, log);
 					return;
 				}catch(Throwable e) {
@@ -145,9 +141,9 @@ public class ConnettoreCheck {
 	public static void check(String nomeConnettore, boolean registro, Logger log) throws ConnettoreException{
 		if(registro) {
 			for (IDriverRegistroServiziGet iDriverRegistroServiziGet : RegistroServiziReader.getDriverRegistroServizi().values()) {
-				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB) {
+				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB driverRegistryDB) {
 					try {
-						org.openspcoop2.core.registry.Connettore connettore = ((DriverRegistroServiziDB)iDriverRegistroServiziGet).getConnettore(nomeConnettore);
+						org.openspcoop2.core.registry.Connettore connettore = driverRegistryDB.getConnettore(nomeConnettore);
 						check(connettore, log);
 						return;
 					}catch(Throwable e) {
@@ -158,9 +154,9 @@ public class ConnettoreCheck {
 		}
 		else {
 			IDriverConfigurazioneGet iDriverConfigurazioneGet = ConfigurazionePdDReader.getDriverConfigurazionePdD();
-			if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB) {
+			if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB driverConfigDB) {
 				try {
-					Connettore connettore = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getConnettore(nomeConnettore);
+					Connettore connettore = driverConfigDB.getConnettore(nomeConnettore);
 					check(connettore, log);
 					return;
 				}catch(Throwable e) {
@@ -378,7 +374,12 @@ public class ConnettoreCheck {
 	}
 	public static List<Connettore> convertTokenPolicyNegoziazioneToConnettore(GenericProperties gp, Logger log) throws ConnettoreException{
 		try {
+			if(log!=null) {
+				// nop
+			}
+			
 			PolicyNegoziazioneToken policy = TokenUtilities.convertTo(gp);
+			List<Connettore> lNull = null;
 			
 			Connettore connettore = null;
 			
@@ -425,7 +426,7 @@ public class ConnettoreCheck {
 				return l;
 			}
 			
-			return null;
+			return lNull;
 			
 		}catch(Throwable t) {
 			throw new ConnettoreException(t.getMessage(),t);
@@ -433,6 +434,9 @@ public class ConnettoreCheck {
 	}
 	public static List<Connettore> convertAttributeAuthorityToConnettore(GenericProperties gp, Logger log) throws ConnettoreException{
 		try {
+			if(log!=null) {
+				// nop
+			}
 			PolicyAttributeAuthority policy = AttributeAuthorityUtilities.convertTo(gp);
 			
 			Connettore connettore = null;
@@ -565,9 +569,9 @@ public class ConnettoreCheck {
 	private static void checkPolicy(String tipologia, String nome, Logger log,
 			String tipoConnettore) throws ConnettoreException{
 		IDriverConfigurazioneGet iDriverConfigurazioneGet = ConfigurazionePdDReader.getDriverConfigurazionePdD();
-		if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB) {
+		if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB driverConfigDB) {
 			try {
-				GenericProperties gp = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getGenericProperties(tipologia, nome);
+				GenericProperties gp = driverConfigDB.getGenericProperties(tipologia, nome);
 				List<Connettore> l = convertPolicyToConnettore(gp, log);
 				if(l!=null && !l.isEmpty()) {
 					for (Connettore connettore : l) {
@@ -581,9 +585,9 @@ public class ConnettoreCheck {
 							check(connettore, log);
 						}catch(Throwable e) {
 							// lascio l'errore puro, il tipo di endpoint verrà gestito in altri log
-							//String tipo = getPropertyValue(connettore, POLICY_TIPO_ENDPOINT);
+							/**String tipo = getPropertyValue(connettore, POLICY_TIPO_ENDPOINT);
 							//String prefixConnettore = tipo!=null ?  ("["+tipo+"] ") : "";
-							//throw new ConnettoreException(prefixConnettore+e.getMessage(),e);
+							//throw new ConnettoreException(prefixConnettore+e.getMessage(),e);*/
 							throw new ConnettoreException(e.getMessage(),e);					
 						}
 					}
@@ -610,7 +614,7 @@ public class ConnettoreCheck {
 			String url = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+httpProxyHost+":"+(httpProxyPort!=null ? httpProxyPort : 80+"");
 			addProperty(connettore, CostantiConnettori.CONNETTORE_LOCATION, url);
 			
-			/*
+			/**
 			addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME, httpProxyHost);
 			addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT, httpProxyPort!=null ? httpProxyPort : 80+"");
 			
@@ -631,7 +635,7 @@ public class ConnettoreCheck {
 				String url = org.openspcoop2.utils.Costanti.PROTOCOL_HTTP_PREFIX+httpsProxyHost+":"+(httpsProxyPort!=null ? httpsProxyPort : 80+"");
 				addProperty(connettore, CostantiConnettori.CONNETTORE_LOCATION, url);
 				
-				/*
+				/**
 				addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME, httpsProxyHost);
 				addProperty(connettore, CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT, httpsProxyPort!=null ? httpsProxyPort : 443+"");
 				
@@ -666,7 +670,7 @@ public class ConnettoreCheck {
 		
 		if(connettore!=null) {
 			try {
-				_checkHTTP(TipiConnettore.HTTP, connettore, log);
+				checkHTTPEngine(TipiConnettore.HTTP, connettore, log);
 			}catch(Throwable e) {
 				throw new ConnettoreException(e.getMessage(),e);
 			}
@@ -691,29 +695,28 @@ public class ConnettoreCheck {
 	}
 	
 	public static void check(org.openspcoop2.core.registry.Connettore connettore, Logger log) throws ConnettoreException{
-		_check(connettore.mappingIntoConnettoreConfigurazione(), log);
+		checkEngine(connettore.mappingIntoConnettoreConfigurazione(), log);
 	}
 	public static void check(Connettore connettore, Logger log) throws ConnettoreException{
-		_check(connettore, log);
+		checkEngine(connettore, log);
 	}
-	private static void _check(Connettore connettore, Logger log) throws ConnettoreException{
+	private static void checkEngine(Connettore connettore, Logger log) throws ConnettoreException{
 		
-		if(checkSupported(connettore)==false) {
+		if(!checkSupported(connettore)) {
 			throw new ConnettoreException("Tipo '"+connettore.getTipo()+"' non supportato");
 		}
 		
 		try {
-			_checkTokenPolicy(connettore, log);
+			checkTokenPolicyEngine(connettore, log);
 		}catch(Throwable e) {
 			throw new ConnettoreException(e.getMessage(),e);
 		}
 		
 		TipiConnettore tipo = TipiConnettore.valueOf(connettore.getTipo().toUpperCase());
 		switch (tipo) {
-		case HTTP:
-		case HTTPS:
+		case HTTP, HTTPS:
 			try {
-				_checkHTTP(tipo, connettore, log);
+				checkHTTPEngine(tipo, connettore, log);
 			}catch(Throwable e) {
 				throw new ConnettoreException(e.getMessage(),e);
 			}
@@ -725,7 +728,7 @@ public class ConnettoreCheck {
 		
 	}
 	
-	private static void _checkTokenPolicy(Connettore connettore, Logger log) throws Exception {
+	private static void checkTokenPolicyEngine(Connettore connettore, Logger log) throws ConnettoreException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		
 		Map<String,String> properties = connettore.getProperties();
 		
@@ -733,7 +736,7 @@ public class ConnettoreCheck {
 		if(properties!=null && !properties.isEmpty()) {
 			Iterator<String> it = properties.keySet().iterator();
 			while (it.hasNext()) {
-				String propertyName = (String) it.next();
+				String propertyName = it.next();
 				if(CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(propertyName)) {
 					String tokenPolicy = properties.get(propertyName);
 					if(tokenPolicy!=null && !"".equals(tokenPolicy)) {
@@ -787,7 +790,7 @@ public class ConnettoreCheck {
 			connettoreTestPolicy.setProperties(mapProperties);
 
 			try {
-				_checkHTTP(https ? TipiConnettore.HTTPS : TipiConnettore.HTTP, connettoreTestPolicy, log);
+				checkHTTPEngine(https ? TipiConnettore.HTTPS : TipiConnettore.HTTP, connettoreTestPolicy, log);
 			}catch(Exception e) {
 				String prefixConnettore = "[EndpointNegoziazioneToken: "+endpoint+"] ";
 				if(endpointConfig.containsKey(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME)) {
@@ -795,7 +798,7 @@ public class ConnettoreCheck {
 					String portProxy = endpointConfig.getProperty(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
 					prefixConnettore = prefixConnettore+" [via Proxy: "+hostProxy+":"+portProxy+"] ";
 				}
-				throw new Exception(prefixConnettore+e.getMessage(),e);
+				throw new ConnettoreException(prefixConnettore+e.getMessage(),e);
 			}
 		}
 	}
@@ -804,15 +807,14 @@ public class ConnettoreCheck {
 			Iterator<?> it = config.keySet().iterator();
 			while (it.hasNext()) {
 				Object object = it.next();
-				if(object instanceof String) {
-					String key = (String) object;
+				if(object instanceof String key) {
 					mapProperties.put(key, config.getProperty(key));			
 				}
 			}
 		}
 	}
 		
-	private static void _checkHTTP(TipiConnettore tipoConnettore, Connettore connettore, Logger log) throws ConnettoreException, UtilsException, MalformedURLException, URISyntaxException {
+	private static void checkHTTPEngine(TipiConnettore tipoConnettore, Connettore connettore, Logger log) throws ConnettoreException, UtilsException, MalformedURLException {
 		
 		SSLConfig sslContextProperties = null;
 		Map<String,Object> dynamicMap = null;
@@ -896,9 +898,9 @@ public class ConnettoreCheck {
 		
 		// Gestione https
 		SSLContext sslContext = null;
+		OCSPValidatorImpl ocspValidator = null;
 		if(sslContextProperties!=null){
 			
-			OCSPValidatorImpl ocspValidator = null;
 			if(properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY)!=null){
 				String policyType = properties.get(CostantiConnettori.CONNETTORE_HTTPS_TRUST_STORE_OCSP_POLICY);
 				if(policyType!=null && StringUtils.isNotEmpty(policyType)) {
@@ -931,187 +933,112 @@ public class ConnettoreCheck {
 		if(locationDefinedByVariable(location)) {
 			return;
 		}
-		URL url = new URI( location ).toURL();
 		
-		
-		// Creazione Connessione
-		URLConnection connection = null;
-		HttpURLConnection httpConn = null;
-		boolean connect =  false;
-		try {
-			if(proxyType==null){
-				if(debug)
-					logInfo(log,"Creazione connessione alla URL ["+location+"]...");
-				connection = url.openConnection();
+		// timeout
+		int connectionTimeout = -1;
+		int readConnectionTimeout = -1;
+		if(properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){
+			try{
+				connectionTimeout = Integer.parseInt(properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
+			}catch(Exception e){
+				// ignore
 			}
-			else{
-				if(debug)
-					logInfo(log,"Creazione connessione alla URL ["+location+"] (via proxy "+
-								proxyHostname+":"+proxyPort+") (username["+proxyUsername+"] password["+proxyPassword+"])...");
-				
-				if(proxyUsername!=null){
-					//The problem with the 2nd code is that it sets a new default Authenticator and 
-					// I don't want to do that, because this proxy is only used by a part of the application 
-					// and a different part of the application could be using a different proxy.
-					// Vedi articolo: http://stackoverflow.com/questions/34877470/basic-proxy-authentification-for-https-urls-returns-http-1-0-407-proxy-authentic
-					// Authenticator.setDefault(new HttpAuthenticator(this.proxyUsername, this.proxyPassword));
-					
-					// Soluzione attuale:
-					// Dopo aver instaurato la connesione, più sotto nel codice, viene creato l'header Proxy-Authorization
-					// NOTA: Works for HTTP only! Doesn't work for HTTPS!
-				}
-				
-				Proxy proxy = new Proxy(proxyType, new InetSocketAddress(proxyHostname, proxyPort));
-				connection = url.openConnection(proxy);
-			}
-			httpConn = (HttpURLConnection) connection;	
-			
-			
-			// Imposta Contesto SSL se attivo
-			if(sslContextProperties!=null){
-				HttpsURLConnection httpsConn = (HttpsURLConnection) httpConn;
-				SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-				if(debug) {
-					String clientCertificateConfigurated = sslContextProperties.getKeyStoreLocation();
-					sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
-							log, "",
-							clientCertificateConfigurated);
-				}		
-				httpsConn.setSSLSocketFactory(sslSocketFactory);
-				
-				StringBuilder bfLog = new StringBuilder();
-				HostnameVerifier hostnameVerifier = SSLUtilities.generateHostnameVerifier(sslContextProperties, bfLog, 
-						LoggerWrapperFactory.getLogger(ConnettoreCheck.class), new Loader());
-				if(hostnameVerifier!=null){
-					httpsConn.setHostnameVerifier(hostnameVerifier);
-				}
-			}
-			else {
-				if(debug && (httpConn instanceof HttpsURLConnection)) {
-					HttpsURLConnection httpsConn = (HttpsURLConnection) httpConn;
-					if(httpsConn.getSSLSocketFactory()!=null) {
-						SSLSocketFactory sslSocketFactory = httpsConn.getSSLSocketFactory();
-						String clientCertificateConfigurated = SSLUtilities.getJvmHttpsClientCertificateConfigurated();
-						sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
-								log, "",
-								clientCertificateConfigurated);
-						httpsConn.setSSLSocketFactory(sslSocketFactory);
-					}
-				}
-			}
-	
-			
-			// Gestione automatica del redirect
-			// The HttpURLConnection‘s follow redirect is just an indicator, in fact it won’t help you to do the “real” http redirection, you still need to handle it manually.
-			/**
-			if(followRedirect){
-				this.httpConn.setInstanceFollowRedirects(true);
-			}
-			*/
-			// Deve essere impostato a false, altrimenti nel caso si intenda leggere gli header o l'input stream di un 302
-			// si ottiene il seguente errore:
-			//    java.net.HttpRetryException: cannot retry due to redirection, in streaming mode
-			httpConn.setInstanceFollowRedirects(false);
-			
-			// Proxy Authentication BASIC
-			if(proxyType!=null && proxyUsername!=null){
-				if(debug)
-					logDebug(log,"Impostazione autenticazione per proxy (username["+proxyUsername+"] password["+proxyPassword+"]) ...");
-				if(proxyUsername!=null && proxyPassword!=null){
-					String authentication = proxyUsername + ":" + proxyPassword;
-					authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
-					httpConn.setRequestProperty(HttpConstants.PROXY_AUTHORIZATION,authentication);
-				}
-			}
-			
-			// Impostazione timeout
-			int connectionTimeout = -1;
-			int readConnectionTimeout = -1;
-			if(properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)!=null){
-				try{
-					connectionTimeout = Integer.parseInt(properties.get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT));
-				}catch(Exception e){
-				}
-			}
-			if(connectionTimeout==-1){
-				connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
-			}
-			if(properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
-				try{
-					readConnectionTimeout = Integer.parseInt(properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
-				}catch(Exception e){
-				}
-			}
-			if(readConnectionTimeout==-1){
-				readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
-			}
-			if(debug)
-				logInfo(log,"Impostazione http timeout CT["+connectionTimeout+"] RT["+readConnectionTimeout+"]");
-			httpConn.setConnectTimeout(connectionTimeout);
-			httpConn.setReadTimeout(readConnectionTimeout);
-			
-			// Authentication BASIC
-			String user = properties.get(CostantiConnettori.CONNETTORE_USERNAME);
-			String password = properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
-			if(user!=null && password!=null){
-				String authentication = user + ":" + password;
-				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
-				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authentication);
-				if(debug)
-					logInfo(log,"Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]");
-			}
-			
-			// Authentication Bearer Token
-			String bearerToken = properties.get(CostantiConnettori.CONNETTORE_BEARER_TOKEN);
-			if(bearerToken!=null){
-				String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
-				httpConn.setRequestProperty(HttpConstants.AUTHORIZATION,authorizationHeader);
-				if(debug)
-					logInfo(log,"Impostazione autenticazione bearer ["+authorizationHeader+"]");
-			}
-			
-			// Authentication Api Key
-			String apiKey = properties.get(CostantiConnettori.CONNETTORE_APIKEY);
-			if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
-				String apiKeyHeader = properties.get(CostantiConnettori.CONNETTORE_APIKEY_HEADER);
-				if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
-					apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
-				}
-				httpConn.setRequestProperty(apiKeyHeader,apiKey);
-				if(debug)
-					logInfo(log,"Impostazione autenticazione api key ["+apiKeyHeader+"]=["+apiKey+"]");
-				
-				String appId = properties.get(CostantiConnettori.CONNETTORE_APIKEY_APPID);
-				if(appId!=null && StringUtils.isNotEmpty(appId)){
-					String appIdHeader = properties.get(CostantiConnettori.CONNETTORE_APIKEY_APPID_HEADER);
-					if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
-						appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
-					}
-					httpConn.setRequestProperty(appIdHeader,appId);
-					if(debug)
-						logInfo(log,"Impostazione autenticazione api key (app id) ["+appIdHeader+"]=["+appId+"]");
-				}
-			}
-			
-			// Check
-			connect = true;
-			if(debug)
-				logDebug(log,"Connessione in corso ...");
-			httpConn.connect();
-			if(debug)
-				logDebug(log,"Connessione effettuata con successo");
 		}
-		catch(Exception e) {
+		if(connectionTimeout==-1){
+			connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+		}
+		if(properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT)!=null){
+			try{
+				readConnectionTimeout = Integer.parseInt(properties.get(CostantiConnettori.CONNETTORE_READ_CONNECTION_TIMEOUT));
+			}catch(Exception e){
+				// ignore
+			}
+		}
+		if(readConnectionTimeout==-1){
+			readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+		}
+		
+		// Authentication BASIC
+		String user = properties.get(CostantiConnettori.CONNETTORE_USERNAME);
+		String password = properties.get(CostantiConnettori.CONNETTORE_PASSWORD);
+		
+		// Authentication Bearer Token
+		String bearerToken = properties.get(CostantiConnettori.CONNETTORE_BEARER_TOKEN);
+		
+		// Authentication Api Key
+		String apiKey = properties.get(CostantiConnettori.CONNETTORE_APIKEY);
+		String apiKeyHeader = null;
+		String appId = null;
+		String appIdHeader = null;
+		if(apiKey!=null && StringUtils.isNotEmpty(apiKey)){
+			apiKeyHeader = properties.get(CostantiConnettori.CONNETTORE_APIKEY_HEADER);
+			if(apiKeyHeader==null || StringUtils.isEmpty(apiKeyHeader)) {
+				apiKeyHeader = CostantiConnettori.DEFAULT_HEADER_API_KEY;
+			}
+			
+			appId = properties.get(CostantiConnettori.CONNETTORE_APIKEY_APPID);
+			if(appId!=null && StringUtils.isNotEmpty(appId)){
+				appIdHeader = properties.get(CostantiConnettori.CONNETTORE_APIKEY_APPID_HEADER);
+				if(appIdHeader==null || StringUtils.isEmpty(appIdHeader)) {
+					appIdHeader = CostantiConnettori.DEFAULT_HEADER_APP_ID;
+				}
+			}
+		}
+		
+		String httpImpl = properties.get(CostantiConnettori.CONNETTORE_HTTP_IMPL);
+		
+		HttpRequest request = new HttpRequest();
+		request.setUrl(location);
+		request.setDebug(debug);
+		
+		request.setProxyType(proxyType);
+		request.setProxyHostname(proxyHostname);
+		request.setProxyPort(proxyPort);
+		request.setProxyUsername(proxyUsername);
+		request.setProxyPassword(proxyPassword);
+		
+		if(sslContextProperties!=null) {
+			request.setKeyStorePath(sslContextProperties.getKeyStoreLocation());
+		}
+		
+		request.setConnectTimeout(connectionTimeout);
+		request.setReadTimeout(readConnectionTimeout);
+		
+		request.setUsername(user);
+		request.setPassword(password);
+		
+		request.setBearerToken(bearerToken);
+		
+		request.setApiKey(apiKey);
+		request.setApiKeyHeader(apiKeyHeader);
+		request.setAppId(appId);
+		request.setAppIdHeader(appIdHeader);
+		
+		request.setCheckConnection(true);
+		request.setMethod(HttpRequestMethod.GET); // Uso GET come metodo di test
+		
+		HttpLibrary httpLibrary = HttpLibrary.DEFAULT;
+		ConnettoriHttpImpl cImpl = ConnettoriHttpImpl.getConnettoreHttpImplSafe(httpImpl);
+		if(cImpl!=null) {
+			switch (cImpl) {
+			case HTTP_CORE5: {
+				httpLibrary = HttpLibrary.HTTPCORE;
+				break;
+			}
+			case HTTP_URL_CONNECTION: 
+			default: {
+				httpLibrary = HttpLibrary.URLCONNECTION;
+			}
+			}
+		}
+		HttpLibraryConnection conn = HttpLibraryConnection.fromLibrary(httpLibrary);
+		try {
+			conn.send(request, sslContext, ocspValidator!=null ? ocspValidator.getOCSPTrustManager() : null);
+		}catch(Exception e) {
 			String msgException = ConnettoreBase.readConnectionExceptionMessageFromException(e);
 			throw new ConnettoreException(msgException, e);
 		}
-		finally {
-			try {
-				if(httpConn!=null && connect) {
-					httpConn.disconnect();
-				}
-			}catch(Exception e) {}
-		}
+		
 	}
 	
 	
@@ -1188,9 +1115,9 @@ public class ConnettoreCheck {
 	public static String getCertificati(long idConnettore, boolean registro) throws ConnettoreException{
 		if(registro) {
 			for (IDriverRegistroServiziGet iDriverRegistroServiziGet : RegistroServiziReader.getDriverRegistroServizi().values()) {
-				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB) {
+				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB driverRegistryDB) {
 					try {
-						org.openspcoop2.core.registry.Connettore connettore = ((DriverRegistroServiziDB)iDriverRegistroServiziGet).getConnettore(idConnettore);
+						org.openspcoop2.core.registry.Connettore connettore = driverRegistryDB.getConnettore(idConnettore);
 						return getCertificati(connettore);
 					}catch(Throwable e) {
 						throw new ConnettoreException(e.getMessage(),e);
@@ -1200,9 +1127,9 @@ public class ConnettoreCheck {
 		}
 		else {
 			IDriverConfigurazioneGet iDriverConfigurazioneGet = ConfigurazionePdDReader.getDriverConfigurazionePdD();
-			if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB) {
+			if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB driverConfigDB) {
 				try {
-					Connettore connettore = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getConnettore(idConnettore);
+					Connettore connettore = driverConfigDB.getConnettore(idConnettore);
 					return getCertificati(connettore);
 				}catch(Throwable e) {
 					throw new ConnettoreException(e.getMessage(),e);
@@ -1214,9 +1141,9 @@ public class ConnettoreCheck {
 	public static String getCertificati(String nomeConnettore, boolean registro) throws ConnettoreException{
 		if(registro) {
 			for (IDriverRegistroServiziGet iDriverRegistroServiziGet : RegistroServiziReader.getDriverRegistroServizi().values()) {
-				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB) {
+				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB driverRegistryDB) {
 					try {
-						org.openspcoop2.core.registry.Connettore connettore = ((DriverRegistroServiziDB)iDriverRegistroServiziGet).getConnettore(nomeConnettore);
+						org.openspcoop2.core.registry.Connettore connettore = driverRegistryDB.getConnettore(nomeConnettore);
 						return getCertificati(connettore);
 					}catch(Throwable e) {
 						throw new ConnettoreException(e.getMessage(),e);
@@ -1226,9 +1153,9 @@ public class ConnettoreCheck {
 		}
 		else {
 			IDriverConfigurazioneGet iDriverConfigurazioneGet = ConfigurazionePdDReader.getDriverConfigurazionePdD();
-			if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB) {
+			if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB driverConfigDB) {
 				try {
-					Connettore connettore = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getConnettore(nomeConnettore);
+					Connettore connettore = driverConfigDB.getConnettore(nomeConnettore);
 					return getCertificati(connettore);
 				}catch(Throwable e) {
 					throw new ConnettoreException(e.getMessage(),e);
@@ -1240,10 +1167,10 @@ public class ConnettoreCheck {
 	}
 
 	public static String getCertificati(org.openspcoop2.core.registry.Connettore connettore) throws ConnettoreException{
-		return _getCertificati(connettore.mappingIntoConnettoreConfigurazione());
+		return getCertificatiEngine(connettore.mappingIntoConnettoreConfigurazione());
 	}
 	public static String getCertificati(Connettore connettore) throws ConnettoreException{
-		return _getCertificati(connettore);
+		return getCertificatiEngine(connettore);
 	}
 	
 	public static String getCertificatiTokenPolicyValidazione(String nome, Logger log) throws ConnettoreException{
@@ -1273,9 +1200,9 @@ public class ConnettoreCheck {
 	private static String getCertificatiPolicy(String tipologia, String nome, Logger log,
 			String tipoConnettore) throws ConnettoreException{
 		IDriverConfigurazioneGet iDriverConfigurazioneGet = ConfigurazionePdDReader.getDriverConfigurazionePdD();
-		if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB) {
+		if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB driverConfigDB) {
 			try {
-				GenericProperties gp = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getGenericProperties(tipologia, nome);
+				GenericProperties gp = driverConfigDB.getGenericProperties(tipologia, nome);
 				List<Connettore> l = convertPolicyToConnettore(gp, log);
 				List<String> hostPort = new ArrayList<>();
 				if(l!=null && !l.isEmpty()) {
@@ -1309,21 +1236,23 @@ public class ConnettoreCheck {
 									else {
 										hostPort.add(check);
 									}
-								}catch(Throwable t) {}
+								}catch(Throwable t) {
+									// ignore
+								}
 							}
 						}
 						
 						try {
-							String s = _getCertificati(connettore);
+							String s = getCertificatiEngine(connettore);
 							sb.append(s);
 						}catch(Throwable e) {
-							//String tipo = getPropertyValue(connettore, POLICY_TIPO_ENDPOINT);
+							/**String tipo = getPropertyValue(connettore, POLICY_TIPO_ENDPOINT);*/
 							String tipo = null; // lascio l'errore puro, il tipo di endpoint verrà gestito in altri log
 							String prefixConnettore = tipo!=null ?  ("["+tipo+"] ") : "";
 							throw new ConnettoreException(prefixConnettore+e.getMessage(),e);
 						}
 					}
-					if(sb.length()>0) {
+					if(!sb.isEmpty()) {
 						return sb.toString();
 					}
 				}
@@ -1336,19 +1265,19 @@ public class ConnettoreCheck {
 		throw new ConnettoreException("Configurazione con tipologia '"+tipologia+"' e nome '"+nome+"' non trovata");
 	}
 	
-	private static String _getCertificati(Connettore connettore) throws ConnettoreException {
+	private static String getCertificatiEngine(Connettore connettore) throws ConnettoreException {
 		
 		try {
 		
 			Map<String,String> properties = connettore.getProperties();
 			String location = properties!=null ? properties.get(CostantiConnettori.CONNETTORE_LOCATION) : null;	
 			if(location==null || "".equals(location)) {
-				throw new Exception("Il connettore non possiede un endpoint");
+				throw new ConnettoreException("Il connettore non possiede un endpoint");
 			}
 			URL url = new URI( location ).toURL();
 			String host = url.getHost();
 			if(host==null || "".equals(host)) {
-				throw new Exception("L'endpoint '"+host+"' non contiene un host");
+				throw new ConnettoreException("L'endpoint '"+host+"' non contiene un host");
 			}
 			int port = url.getPort();
 			if(port<=0) {
@@ -1359,7 +1288,7 @@ public class ConnettoreCheck {
 					port = 80;
 				}
 				else {
-					throw new Exception("L'endpoint '"+host+"' contiene un protocollo '"+url.getProtocol()+"' non supportato");
+					throw new ConnettoreException("L'endpoint '"+host+"' contiene un protocollo '"+url.getProtocol()+"' non supportato");
 				}
 			}
 			
@@ -1371,14 +1300,4 @@ public class ConnettoreCheck {
 			
 	}
 	
-	private static void logDebug(Logger log, String msg) {
-		if(log!=null) {
-			log.debug(msg);
-		}
-	}
-	private static void logInfo(Logger log, String msg) {
-		if(log!=null) {
-			log.info(msg);
-		}
-	}
 }

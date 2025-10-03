@@ -762,7 +762,7 @@ public class SSLUtilities {
 		try{
 			if(sslConfig.isHostnameVerifier()){
 				if(sslConfig.getClassNameHostnameVerifier()!=null){
-					bfLog.append("HostNamve verifier enabled ["+sslConfig.getClassNameHostnameVerifier()+"]\n");
+					bfLog.append("HostName verifier enabled ["+sslConfig.getClassNameHostnameVerifier()+"]\n");
 					return (HostnameVerifier) loader.newInstance(sslConfig.getClassNameHostnameVerifier());
 				}else{
 					bfLog.append("HostName verifier enabled\n");
