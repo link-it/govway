@@ -118,7 +118,7 @@ public class OCSPConfig {
 	private String alternativeTrustStoreCRLType;
 				
 
-	private HttpLibrary httpLibrary = HttpLibrary.URLCONNECTION;
+	private HttpLibrary httpLibrary = HttpLibrary.HTTP_URL_CONNECTION;
 	
 	public String getId() {
 		return this.id;

@@ -2348,14 +2348,14 @@ public class GestoreTokenValidazioneUtilities {
 		
 		if(https) {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTPS.getNome());
-			if (lib.equals(HttpLibrary.HTTPCORE))
+			if (lib.equals(HttpLibrary.HTTP_CORE5))
 				connettore = new ConnettoreHTTPSCORE();
 			else
 				connettore = new ConnettoreHTTPS();
 		}
 		else {
 			connettoreMsg.setTipoConnettore(TipiConnettore.HTTP.getNome());
-			if (lib.equals(HttpLibrary.HTTPCORE))
+			if (lib.equals(HttpLibrary.HTTP_CORE5))
 				connettore = new ConnettoreHTTPCORE();
 			else
 				connettore = new ConnettoreHTTP();

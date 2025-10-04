@@ -43,7 +43,6 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
-import org.openspcoop2.core.constants.ConnettoriHttpImpl;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
@@ -1018,18 +1017,9 @@ public class ConnettoreCheck {
 		request.setMethod(HttpRequestMethod.GET); // Uso GET come metodo di test
 		
 		HttpLibrary httpLibrary = HttpLibrary.DEFAULT;
-		ConnettoriHttpImpl cImpl = ConnettoriHttpImpl.getConnettoreHttpImplSafe(httpImpl);
+		HttpLibrary cImpl = HttpLibrary.getHttpLibrarySafe(httpImpl);
 		if(cImpl!=null) {
-			switch (cImpl) {
-			case HTTP_CORE5: {
-				httpLibrary = HttpLibrary.HTTPCORE;
-				break;
-			}
-			case HTTP_URL_CONNECTION: 
-			default: {
-				httpLibrary = HttpLibrary.URLCONNECTION;
-			}
-			}
+			httpLibrary = cImpl;
 		}
 		HttpLibraryConnection conn = HttpLibraryConnection.fromLibrary(httpLibrary);
 		try {

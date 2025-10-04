@@ -32,7 +32,6 @@ import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.constants.ConnettoriHttpImpl;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -63,6 +62,7 @@ import org.openspcoop2.utils.certificate.ocsp.OCSPManager;
 import org.openspcoop2.utils.transport.TransportRequestContext;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
@@ -373,7 +373,7 @@ public class ConnettoreUtils {
 				impl = transportContext.getHeaderFirstValue(headerForceLibrary);
 			}
 			
-			ConnettoriHttpImpl cImpl = ConnettoriHttpImpl.getConnettoreHttpImplSafe(impl);
+			HttpLibrary cImpl = HttpLibrary.getHttpLibrarySafe(impl);
 			if(cImpl!=null) {
 				return formatTipoConnettore(tipoConnector, t, cImpl, asyncResponseCallback);
 			}
@@ -435,7 +435,7 @@ public class ConnettoreUtils {
 			boolean forceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting) {
 		ConnettoreUtils.forceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting = forceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting;
 	}
-	private static String formatTipoConnettore(String tipoConnector, TipiConnettore t, ConnettoriHttpImpl cImpl, IAsyncResponseCallback asyncResponseCallback) {
+	private static String formatTipoConnettore(String tipoConnector, TipiConnettore t, HttpLibrary cImpl, IAsyncResponseCallback asyncResponseCallback) {
 		switch (cImpl) {
 		case HTTP_CORE5: {
 			return formatTipoConnettoreHttpCore5Library(tipoConnector, t, asyncResponseCallback);

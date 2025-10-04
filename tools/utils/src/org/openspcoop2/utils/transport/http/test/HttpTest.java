@@ -84,8 +84,8 @@ public class HttpTest {
 		try {
 			startServers();
 
-			test.testFile(HttpLibrary.HTTPCORE);
-			test.testFile(HttpLibrary.URLCONNECTION);
+			test.testFile(HttpLibrary.HTTP_CORE5);
+			test.testFile(HttpLibrary.HTTP_URL_CONNECTION);
 			
 			params = test.methodsHttpDataProvider();
 			for (Object[] param : params)
@@ -99,20 +99,20 @@ public class HttpTest {
 			for (Object[] param : params)
 				test.check((HttpRequest) param[0], (HttpResponse) param[1]);
 			
-			test.testReadTimeout(HttpLibrary.HTTPCORE);
-			test.testReadTimeout(HttpLibrary.URLCONNECTION);
+			test.testReadTimeout(HttpLibrary.HTTP_CORE5);
+			test.testReadTimeout(HttpLibrary.HTTP_URL_CONNECTION);
 			
-			test.testRedirect(HttpLibrary.URLCONNECTION, HttpServletResponse.SC_TEMPORARY_REDIRECT);
-			test.testRedirect(HttpLibrary.HTTPCORE, HttpServletResponse.SC_TEMPORARY_REDIRECT);
+			test.testRedirect(HttpLibrary.HTTP_URL_CONNECTION, HttpServletResponse.SC_TEMPORARY_REDIRECT);
+			test.testRedirect(HttpLibrary.HTTP_CORE5, HttpServletResponse.SC_TEMPORARY_REDIRECT);
 			
-			test.testRedirect(HttpLibrary.URLCONNECTION, HttpServletResponse.SC_MOVED_PERMANENTLY);
-			test.testRedirect(HttpLibrary.HTTPCORE, HttpServletResponse.SC_MOVED_PERMANENTLY);
+			test.testRedirect(HttpLibrary.HTTP_URL_CONNECTION, HttpServletResponse.SC_MOVED_PERMANENTLY);
+			test.testRedirect(HttpLibrary.HTTP_CORE5, HttpServletResponse.SC_MOVED_PERMANENTLY);
 		
-			test.testHttpProxy(HttpLibrary.URLCONNECTION);
-			test.testHttpProxy(HttpLibrary.HTTPCORE);
+			test.testHttpProxy(HttpLibrary.HTTP_URL_CONNECTION);
+			test.testHttpProxy(HttpLibrary.HTTP_CORE5);
 			
-			test.testThrottling(HttpLibrary.URLCONNECTION, 100, 100);
-			test.testThrottling(HttpLibrary.HTTPCORE, 100, 100);
+			test.testThrottling(HttpLibrary.HTTP_URL_CONNECTION, 100, 100);
+			test.testThrottling(HttpLibrary.HTTP_CORE5, 100, 100);
 
 		} finally {
 			stopServers();
@@ -175,7 +175,7 @@ public class HttpTest {
 	 */
 	public Object[][] methodsHttpDataProvider() {
 		
-		HttpLibrary[] httpLibraries = {HttpLibrary.HTTPCORE, HttpLibrary.URLCONNECTION};
+		HttpLibrary[] httpLibraries = {HttpLibrary.HTTP_CORE5, HttpLibrary.HTTP_URL_CONNECTION};
 		
 		Object[][] configs = {
 				{HttpRequestMethod.GET, null, "get"}, 
@@ -215,7 +215,7 @@ public class HttpTest {
 	 */
 	public Object[][] headersHttpDataProvider() {
 		
-		HttpLibrary[] httpLibraries = {HttpLibrary.HTTPCORE, HttpLibrary.URLCONNECTION};
+		HttpLibrary[] httpLibraries = {HttpLibrary.HTTP_CORE5, HttpLibrary.HTTP_URL_CONNECTION};
 		
 		
 		List<Map<String, String>> headers = List.of(
@@ -270,7 +270,7 @@ public class HttpTest {
 	 */
 	public Object[][] paramsHttpDataProvider() {
 		
-		HttpLibrary[] httpLibraries = {HttpLibrary.HTTPCORE, HttpLibrary.URLCONNECTION};
+		HttpLibrary[] httpLibraries = {HttpLibrary.HTTP_CORE5, HttpLibrary.HTTP_URL_CONNECTION};
 		
 		
 		List<Map<String, String>> params = List.of(

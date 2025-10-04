@@ -60,18 +60,18 @@ public class TestHttps {
 	@DataProvider(name="libraryDP")
 	public Object[][] libraryDP(){	
 		return new Object[][] {
-			{HttpLibrary.HTTPCORE},
-			{HttpLibrary.URLCONNECTION}
+			{HttpLibrary.HTTP_CORE5},
+			{HttpLibrary.HTTP_URL_CONNECTION}
 		};
 	}
 	
 	@DataProvider(name="libraryPathDP")
 	public Object[][] libraryPathDP(){	
 		return new Object[][] {
-			{HttpLibrary.HTTPCORE, true},
-			{HttpLibrary.URLCONNECTION, true},
-			{HttpLibrary.HTTPCORE, false},
-			{HttpLibrary.URLCONNECTION, false}
+			{HttpLibrary.HTTP_CORE5, true},
+			{HttpLibrary.HTTP_URL_CONNECTION, true},
+			{HttpLibrary.HTTP_CORE5, false},
+			{HttpLibrary.HTTP_URL_CONNECTION, false}
 		};
 	}
 	

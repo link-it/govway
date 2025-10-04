@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.constants.ConnettoriHttpImpl;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -32,6 +31,7 @@ import org.openspcoop2.pdd.core.connettori.ConnettoreFILE;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
@@ -599,7 +599,7 @@ public class ConnettoriCostanti {
 	}
 
 	public static final String DEFAULT_TIPO_HTTP_IMPL = "default"; 
-	private static final String[] tipiHttpImpl = { DEFAULT_TIPO_HTTP_IMPL, ConnettoriHttpImpl.HTTP_CORE5.getNome() , ConnettoriHttpImpl.HTTP_URL_CONNECTION.getNome() };
+	private static final String[] tipiHttpImpl = { DEFAULT_TIPO_HTTP_IMPL, HttpLibrary.HTTP_CORE5.getName() , HttpLibrary.HTTP_URL_CONNECTION.getName() };
 	public static String[] getTipihttpimpl() {
 		return tipiHttpImpl;
 	}

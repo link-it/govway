@@ -20,6 +20,7 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import org.openspcoop2.utils.UtilsException;
 
 /**
  * HttpLibrary
@@ -30,10 +31,10 @@ package org.openspcoop2.utils.transport.http;
  */
 public enum HttpLibrary {
 		
-	HTTPCORE("core"),
-	URLCONNECTION("urlconn");
+	HTTP_URL_CONNECTION ("java.net.HttpURLConnection"),
+	HTTP_CORE5 ("org.apache.hc.client5");	
 	
-	public static final HttpLibrary DEFAULT = HttpLibrary.HTTPCORE; 
+	public static final HttpLibrary DEFAULT = HttpLibrary.HTTP_CORE5; 
 	
 	private final String name;
 	private HttpLibrary(String name) {
@@ -51,5 +52,59 @@ public enum HttpLibrary {
 			if (lib.getName().equals(name))
 				return lib;
 		return null;
+	}
+	
+	public static HttpLibrary getHttpLibrarySafe(String value) {
+		try {
+			return getHttpLibrary(value);
+		}catch(UtilsException e) {
+			// ignore
+		}
+		return null;
+	}
+	public static HttpLibrary getHttpLibrary(String value) throws UtilsException{
+		if(HTTP_URL_CONNECTION.toString().equals(value)){
+			return HTTP_URL_CONNECTION;
+		}
+		else if(HTTP_CORE5.toString().equals(value)){
+			return HTTP_CORE5;
+		}
+		else{
+			throw new UtilsException("Unknown type '"+value+"' (supported values: "+HttpLibrary.stringValues()+"): "+value);
+		}
+	}
+	
+	public static String stringValues(){
+		StringBuilder res = new StringBuilder();
+		int i=0;
+		for (HttpLibrary tmp : HttpLibrary.values()) {
+			if(i>0)
+				res.append(",");
+			res.append(tmp.getName());
+			i++;
+		}
+		return res.toString();
+	}
+	
+	public static String[] toStringArray(){
+		String[] res = new String[HttpLibrary.values().length];
+		int i=0;
+		for (HttpLibrary tmp : HttpLibrary.values()) {
+			res[i]=tmp.getName();
+			i++;
+		}
+		return res;
+	}
+	
+	@Override
+	public String toString() {
+		return this.name;
+	}
+	
+	public boolean equals(String tlm){
+		if(tlm==null) {
+			return false;
+		}
+		return this.toString().equals(tlm);
 	}
 }

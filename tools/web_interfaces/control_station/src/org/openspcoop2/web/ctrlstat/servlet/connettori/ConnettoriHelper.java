@@ -49,7 +49,6 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.constants.ConnettoriHttpImpl;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiLabel;
@@ -79,6 +78,7 @@ import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.SSLConstants;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
@@ -977,7 +977,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 		de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 		if(showOpzioniAvanzate && TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transferMode) &&
-				ConnettoriHttpImpl.HTTP_URL_CONNECTION.getNome().equals(httpImpl)){
+				HttpLibrary.HTTP_URL_CONNECTION.getName().equals(httpImpl)){
 			de.setType(DataElementType.TEXT_EDIT);
 			de.setSize(this.getSize());
 		}
@@ -5360,8 +5360,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				connettore.addProperty(prop);
 			}
 			
-			if(ConnettoriHttpImpl.HTTP_CORE5.getNome().equals(httpImpl) ||
-					ConnettoriHttpImpl.HTTP_URL_CONNECTION.getNome().equals(httpImpl)){
+			if(HttpLibrary.HTTP_CORE5.getName().equals(httpImpl) ||
+					HttpLibrary.HTTP_URL_CONNECTION.getName().equals(httpImpl)){
 				
 				// nel caso di default non devo creare la proprietà
 				prop = new org.openspcoop2.core.registry.Property();
@@ -5638,8 +5638,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 				connettore.addProperty(prop);
 			}
 			
-			if(ConnettoriHttpImpl.HTTP_CORE5.getNome().equals(httpImpl) ||
-					ConnettoriHttpImpl.HTTP_URL_CONNECTION.getNome().equals(httpImpl)){
+			if(HttpLibrary.HTTP_CORE5.getName().equals(httpImpl) ||
+					HttpLibrary.HTTP_URL_CONNECTION.getName().equals(httpImpl)){
 				
 				// nel caso di default non devo creare la proprietà
 				prop = new org.openspcoop2.core.config.Property();

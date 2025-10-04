@@ -39,8 +39,8 @@ public interface HttpLibraryConnection {
 	
 	public static HttpLibraryConnection fromLibrary(HttpLibrary lib) {
 		return switch (lib) {
-			case HTTPCORE -> new HttpCoreConnection();
-			case URLCONNECTION -> new UrlConnectionConnection();
+			case HTTP_CORE5 -> new HttpCoreConnection();
+			case HTTP_URL_CONNECTION -> new UrlConnectionConnection();
 			default -> null;
 		};
 	}

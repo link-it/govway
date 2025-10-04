@@ -120,23 +120,23 @@ public class HttpsTest extends HttpTest {
 		try {
 			startServers();
 
-			test.testAuth(HttpLibrary.HTTPCORE, false);
-			test.testAuth(HttpLibrary.HTTPCORE, true);
-			test.testAuth(HttpLibrary.URLCONNECTION, false);
-			test.testAuth(HttpLibrary.URLCONNECTION, true);
+			test.testAuth(HttpLibrary.HTTP_CORE5, false);
+			test.testAuth(HttpLibrary.HTTP_CORE5, true);
+			test.testAuth(HttpLibrary.HTTP_URL_CONNECTION, false);
+			test.testAuth(HttpLibrary.HTTP_URL_CONNECTION, true);
 			
-			test.testTrust(HttpLibrary.HTTPCORE, false);
-			test.testTrust(HttpLibrary.HTTPCORE, true);
-			test.testTrust(HttpLibrary.URLCONNECTION, false);
-			test.testTrust(HttpLibrary.URLCONNECTION, true);
+			test.testTrust(HttpLibrary.HTTP_CORE5, false);
+			test.testTrust(HttpLibrary.HTTP_CORE5, true);
+			test.testTrust(HttpLibrary.HTTP_URL_CONNECTION, false);
+			test.testTrust(HttpLibrary.HTTP_URL_CONNECTION, true);
 			
-			test.testTrustAll(HttpLibrary.HTTPCORE, false);
-			test.testTrustAll(HttpLibrary.HTTPCORE, true);
-			test.testTrustAll(HttpLibrary.URLCONNECTION, false);
-			test.testTrustAll(HttpLibrary.URLCONNECTION, true);
+			test.testTrustAll(HttpLibrary.HTTP_CORE5, false);
+			test.testTrustAll(HttpLibrary.HTTP_CORE5, true);
+			test.testTrustAll(HttpLibrary.HTTP_URL_CONNECTION, false);
+			test.testTrustAll(HttpLibrary.HTTP_URL_CONNECTION, true);
 			
-			test.testHttps(HttpLibrary.HTTPCORE);
-			test.testHttps(HttpLibrary.HTTPCORE);
+			test.testHttps(HttpLibrary.HTTP_CORE5);
+			test.testHttps(HttpLibrary.HTTP_CORE5);
 		} catch (Exception e) {
 			throw new UtilsException(e);
 		} finally {

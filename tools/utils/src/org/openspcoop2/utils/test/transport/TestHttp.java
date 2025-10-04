@@ -63,26 +63,26 @@ public class TestHttp {
 	@DataProvider(name="libraryDP")
 	public Object[][] libraryDP(){	
 		return new Object[][] {
-			{HttpLibrary.HTTPCORE},
-			{HttpLibrary.URLCONNECTION}
+			{HttpLibrary.HTTP_CORE5},
+			{HttpLibrary.HTTP_URL_CONNECTION}
 		};
 	}
 	
 	@DataProvider(name="redirectDP")
 	public Object[][] redirectDP(){	
 		return new Object[][] {
-			{HttpLibrary.HTTPCORE, HttpServletResponse.SC_TEMPORARY_REDIRECT},
-			{HttpLibrary.URLCONNECTION, HttpServletResponse.SC_TEMPORARY_REDIRECT},
-			{HttpLibrary.HTTPCORE, HttpServletResponse.SC_MOVED_PERMANENTLY},
-			{HttpLibrary.URLCONNECTION, HttpServletResponse.SC_MOVED_PERMANENTLY}
+			{HttpLibrary.HTTP_CORE5, HttpServletResponse.SC_TEMPORARY_REDIRECT},
+			{HttpLibrary.HTTP_URL_CONNECTION, HttpServletResponse.SC_TEMPORARY_REDIRECT},
+			{HttpLibrary.HTTP_CORE5, HttpServletResponse.SC_MOVED_PERMANENTLY},
+			{HttpLibrary.HTTP_URL_CONNECTION, HttpServletResponse.SC_MOVED_PERMANENTLY}
 		};
 	}
 	
 	@DataProvider(name="throttlingDP")
 	public Object[][] throttlingDP(){	
 		return new Object[][] {
-			{HttpLibrary.HTTPCORE, 100, 100},
-			{HttpLibrary.URLCONNECTION, 100, 100}
+			{HttpLibrary.HTTP_CORE5, 100, 100},
+			{HttpLibrary.HTTP_URL_CONNECTION, 100, 100}
 		};
 	}
 	
