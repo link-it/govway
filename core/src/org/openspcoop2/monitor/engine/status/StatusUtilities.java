@@ -81,18 +81,18 @@ public class StatusUtilities {
 		String https_truststoreType = null;
 		String https_truststorePassword = null;
 		if(https) {
-			https_verificaHostName = status.isHttps_verificaHostName();
-			https_autenticazioneServer = status.isHttps_autenticazioneServer();
+			https_verificaHostName = status.isHttpsVerificaHostName();
+			https_autenticazioneServer = status.isHttpsAutenticazioneServer();
 			if(https_autenticazioneServer) {
-				https_truststorePath = status.getHttps_autenticazioneServer_truststorePath();
+				https_truststorePath = status.getHttpsAutenticazioneServerTruststorePath();
 				if(StringUtils.isEmpty(https_truststorePath)) {
 					throw new Exception("[alias:"+status.getNome()+"] TLS Truststore path non fornito");
 				}
-				https_truststoreType = status.getHttps_autenticazioneServer_truststoreType();
+				https_truststoreType = status.getHttpsAutenticazioneServerTruststoreType();
 				if(StringUtils.isEmpty(https_truststoreType)) {
 					throw new Exception("[alias:"+status.getNome()+"] TLS Truststore type non fornito");
 				}
-				https_truststorePassword = status.getHttps_autenticazioneServer_truststorePassword();
+				https_truststorePassword = status.getHttpsAutenticazioneServerTruststorePassword();
 				if(StringUtils.isEmpty(https_truststorePassword)) {
 					throw new Exception("[alias:"+status.getNome()+"] TLS Truststore password non fornito");
 				}

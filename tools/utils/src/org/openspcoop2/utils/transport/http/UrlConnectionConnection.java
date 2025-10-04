@@ -52,7 +52,7 @@ import org.openspcoop2.utils.io.Base64Utilities;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-class UrlConnectionConnection implements HttpLibraryConnection {
+class UrlConnectionConnection extends HttpLibraryConnection {
 
 	@Override
 	public HttpResponse send(HttpRequest request, SSLContext sslContext, OCSPTrustManager ocspTrustManager) throws UtilsException, IOException {
@@ -123,14 +123,16 @@ class UrlConnectionConnection implements HttpLibraryConnection {
 				}
 			}
 			else {
-				if(request.isDebug() && (httpConn instanceof HttpsURLConnection httpsConn) &&
-					httpsConn.getSSLSocketFactory()!=null) {
-					SSLSocketFactory sslSocketFactory = httpsConn.getSSLSocketFactory();
-					String clientCertificateConfigurated = SSLUtilities.getJvmHttpsClientCertificateConfigurated();
-					sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
-							request.getLog(), "",
-							clientCertificateConfigurated);
-					httpsConn.setSSLSocketFactory(sslSocketFactory);
+				if(request.isDebug() && (httpConn instanceof HttpsURLConnection)) { // compatibile compilazione java 11
+					HttpsURLConnection httpsConn = (HttpsURLConnection) httpConn;
+					if(httpsConn.getSSLSocketFactory()!=null) {
+						SSLSocketFactory sslSocketFactory = httpsConn.getSSLSocketFactory();
+						String clientCertificateConfigurated = SSLUtilities.getJvmHttpsClientCertificateConfigurated();
+						sslSocketFactory = new WrappedLogSSLSocketFactory(sslSocketFactory, 
+								request.getLog(), "",
+								clientCertificateConfigurated);
+						httpsConn.setSSLSocketFactory(sslSocketFactory);
+					}
 				}
 			}
 			

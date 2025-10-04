@@ -175,11 +175,11 @@ public class SondaPddStatus extends BaseSondaPdd implements ISondaPdd{
 				pddStat.setNome(descrizione!=null ? descrizione : nomeSonda);
 				pddStat.setUrl(url);
 				pddStat.setHttps(https);
-				pddStat.setHttps_verificaHostName(httpsVerificaHostName);
-				pddStat.setHttps_autenticazioneServer(httpsAutenticazioneServer);
-				pddStat.setHttps_autenticazioneServer_truststorePath(httpsTruststorePath);
-				pddStat.setHttps_autenticazioneServer_truststoreType(httpsTruststoreType);
-				pddStat.setHttps_autenticazioneServer_truststorePassword(httpsTruststorePassword);
+				pddStat.setHttpsVerificaHostName(httpsVerificaHostName);
+				pddStat.setHttpsAutenticazioneServer(httpsAutenticazioneServer);
+				pddStat.setHttpsAutenticazioneServerTruststorePath(httpsTruststorePath);
+				pddStat.setHttpsAutenticazioneServerTruststoreType(httpsTruststoreType);
+				pddStat.setHttpsAutenticazioneServerTruststorePassword(httpsTruststorePassword);
 				if(connectionTimeout!=null) {
 					pddStat.setConnectionTimeout(connectionTimeout);
 				}

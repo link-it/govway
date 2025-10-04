@@ -34,6 +34,7 @@ import org.openspcoop2.utils.certificate.Certificate;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 
 /**
  * OCSPRequestParams
@@ -55,7 +56,7 @@ public class OCSPRequestParams {
 	private OCSPConfig config;
 	private boolean isSelfSigned;
 	private boolean isCA;
-	private HttpLibrary httpLibrary = HttpLibrary.DEFAULT;
+	private HttpLibrary httpLibrary = HttpLibraryConnection.getDefaultLibrary();
 	
 	// serve per validare la catena 
 	private KeyStore configTrustStore; 

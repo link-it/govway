@@ -24,8 +24,10 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.mail.SenderType;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.utils.transport.http.SSLConfig;
 import org.slf4j.Logger;
@@ -44,21 +46,21 @@ public class AlarmEngineConfig implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String activeAlarm_serviceUrl;
-	private String activeAlarm_serviceUrl_manager_username;
-	private String activeAlarm_serviceUrl_manager_password;
+	private String activeAlarmServiceUrl;
+	private String activeAlarmServiceUrlManagerUsername;
+	private String activeAlarmServiceUrlManagerPassword;
 	
-	private Integer activeAlarm_serviceUrl_connectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
-	private Integer activeAlarm_serviceUrl_readConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
+	private Integer activeAlarmServiceUrlConnectionTimeout = HttpUtilities.HTTP_CONNECTION_TIMEOUT;
+	private Integer activeAlarmServiceUrlReadConnectionTimeout = HttpUtilities.HTTP_READ_CONNECTION_TIMEOUT;
 	
-	private boolean activeAlarm_serviceUrl_https = false;
-	private boolean activeAlarm_serviceUrl_https_verificaHostName = true;
-	private boolean activeAlarm_serviceUrl_https_autenticazioneServer = true;
-	private String activeAlarm_serviceUrl_https_truststorePath = null;
-	private String activeAlarm_serviceUrl_https_truststoreType = null;
-	private String activeAlarm_serviceUrl_https_truststorePassword = null;
+	private boolean activeAlarmServiceUrlHttps = false;
+	private boolean activeAlarmServiceUrlHttpsVerificaHostName = true;
+	private boolean activeAlarmServiceUrlHttpsAutenticazioneServer = true;
+	private String activeAlarmServiceUrlHttpsTruststorePath = null;
+	private String activeAlarmServiceUrlHttpsTruststoreType = null;
+	private String activeAlarmServiceUrlHttpsTruststorePassword = null;
 	
-	private HttpLibrary httpLibrary = HttpLibrary.DEFAULT;
+	private HttpLibrary httpLibrary = HttpLibraryConnection.getDefaultLibrary();
 	
 	private boolean historyEnabled = true;
 	
@@ -297,93 +299,93 @@ public class AlarmEngineConfig implements Serializable {
 		this.scriptShowAllOptions = scriptShowAllOptions;
 	}
 	
-	public String getActiveAlarm_serviceUrl() {
-		return this.activeAlarm_serviceUrl;
+	public String getActiveAlarmServiceUrl() {
+		return this.activeAlarmServiceUrl;
 	}
 
-	public void setActiveAlarm_serviceUrl(String activeAlarm_serviceUrl) {
-		this.activeAlarm_serviceUrl = activeAlarm_serviceUrl;
+	public void setActiveAlarmServiceUrl(String activeAlarmServiceUrl) {
+		this.activeAlarmServiceUrl = activeAlarmServiceUrl;
 	}
 	
-	public String getActiveAlarm_serviceUrl_manager_username() {
-		return this.activeAlarm_serviceUrl_manager_username;
+	public String getActiveAlarmServiceUrlManagerUsername() {
+		return this.activeAlarmServiceUrlManagerUsername;
 	}
 
-	public void setActiveAlarm_serviceUrl_manager_username(String activeAlarm_serviceUrl_manager_username) {
-		this.activeAlarm_serviceUrl_manager_username = activeAlarm_serviceUrl_manager_username;
+	public void setActiveAlarmServiceUrlManagerUsername(String activeAlarmServiceUrlManagerUsername) {
+		this.activeAlarmServiceUrlManagerUsername = activeAlarmServiceUrlManagerUsername;
 	}
 
-	public String getActiveAlarm_serviceUrl_manager_password() {
-		return this.activeAlarm_serviceUrl_manager_password;
+	public String getActiveAlarmServiceUrlManagerPassword() {
+		return this.activeAlarmServiceUrlManagerPassword;
 	}
 
-	public void setActiveAlarm_serviceUrl_manager_password(String activeAlarm_serviceUrl_manager_password) {
-		this.activeAlarm_serviceUrl_manager_password = activeAlarm_serviceUrl_manager_password;
+	public void setActiveAlarmServiceUrlManagerPassword(String activeAlarmServiceUrlManagerPassword) {
+		this.activeAlarmServiceUrlManagerPassword = activeAlarmServiceUrlManagerPassword;
 	}
 	
-	public Integer getActiveAlarm_serviceUrl_connectionTimeout() {
-		return this.activeAlarm_serviceUrl_connectionTimeout;
+	public Integer getActiveAlarmServiceUrlConnectionTimeout() {
+		return this.activeAlarmServiceUrlConnectionTimeout;
 	}
 
-	public void setActiveAlarm_serviceUrl_connectionTimeout(Integer activeAlarm_serviceUrl_connectionTimeout) {
-		this.activeAlarm_serviceUrl_connectionTimeout = activeAlarm_serviceUrl_connectionTimeout;
+	public void setActiveAlarmServiceUrlConnectionTimeout(Integer activeAlarmServiceUrlConnectionTimeout) {
+		this.activeAlarmServiceUrlConnectionTimeout = activeAlarmServiceUrlConnectionTimeout;
 	}
 
-	public Integer getActiveAlarm_serviceUrl_readConnectionTimeout() {
-		return this.activeAlarm_serviceUrl_readConnectionTimeout;
+	public Integer getActiveAlarmServiceUrlReadConnectionTimeout() {
+		return this.activeAlarmServiceUrlReadConnectionTimeout;
 	}
 
-	public void setActiveAlarm_serviceUrl_readConnectionTimeout(Integer activeAlarm_serviceUrl_readConnectionTimeout) {
-		this.activeAlarm_serviceUrl_readConnectionTimeout = activeAlarm_serviceUrl_readConnectionTimeout;
+	public void setActiveAlarmServiceUrlReadConnectionTimeout(Integer activeAlarmServiceUrlReadConnectionTimeout) {
+		this.activeAlarmServiceUrlReadConnectionTimeout = activeAlarmServiceUrlReadConnectionTimeout;
 	}
 
-	public boolean isActiveAlarm_serviceUrl_https() {
-		return this.activeAlarm_serviceUrl_https;
+	public boolean isActiveAlarmServiceUrlHttps() {
+		return this.activeAlarmServiceUrlHttps;
 	}
 
-	public void setActiveAlarm_serviceUrl_https(boolean activeAlarm_serviceUrl_https) {
-		this.activeAlarm_serviceUrl_https = activeAlarm_serviceUrl_https;
+	public void setActiveAlarmServiceUrlHttps(boolean activeAlarmServiceUrlHttps) {
+		this.activeAlarmServiceUrlHttps = activeAlarmServiceUrlHttps;
 	}
 
-	public boolean isActiveAlarm_serviceUrl_https_verificaHostName() {
-		return this.activeAlarm_serviceUrl_https_verificaHostName;
+	public boolean isActiveAlarmServiceUrlHttpsVerificaHostName() {
+		return this.activeAlarmServiceUrlHttpsVerificaHostName;
 	}
 
-	public void setActiveAlarm_serviceUrl_https_verificaHostName(boolean activeAlarm_serviceUrl_https_verificaHostName) {
-		this.activeAlarm_serviceUrl_https_verificaHostName = activeAlarm_serviceUrl_https_verificaHostName;
+	public void setActiveAlarmServiceUrlHttpsVerificaHostName(boolean activeAlarmServiceUrlHttpsVerificaHostName) {
+		this.activeAlarmServiceUrlHttpsVerificaHostName = activeAlarmServiceUrlHttpsVerificaHostName;
 	}
 
-	public boolean isActiveAlarm_serviceUrl_https_autenticazioneServer() {
-		return this.activeAlarm_serviceUrl_https_autenticazioneServer;
+	public boolean isActiveAlarmServiceUrlHttpsAutenticazioneServer() {
+		return this.activeAlarmServiceUrlHttpsAutenticazioneServer;
 	}
 
-	public void setActiveAlarm_serviceUrl_https_autenticazioneServer(
-			boolean activeAlarm_serviceUrl_https_autenticazioneServer) {
-		this.activeAlarm_serviceUrl_https_autenticazioneServer = activeAlarm_serviceUrl_https_autenticazioneServer;
+	public void setActiveAlarmServiceUrlHttpsAutenticazioneServer(
+			boolean activeAlarmServiceUrlHttpsAutenticazioneServer) {
+		this.activeAlarmServiceUrlHttpsAutenticazioneServer = activeAlarmServiceUrlHttpsAutenticazioneServer;
 	}
 
-	public String getActiveAlarm_serviceUrl_https_truststorePath() {
-		return this.activeAlarm_serviceUrl_https_truststorePath;
+	public String getActiveAlarmServiceUrlHttpsTruststorePath() {
+		return this.activeAlarmServiceUrlHttpsTruststorePath;
 	}
 
-	public void setActiveAlarm_serviceUrl_https_truststorePath(String activeAlarm_serviceUrl_https_truststorePath) {
-		this.activeAlarm_serviceUrl_https_truststorePath = activeAlarm_serviceUrl_https_truststorePath;
+	public void setActiveAlarmServiceUrlHttpsTruststorePath(String activeAlarmServiceUrlHttpsTruststorePath) {
+		this.activeAlarmServiceUrlHttpsTruststorePath = activeAlarmServiceUrlHttpsTruststorePath;
 	}
 
-	public String getActiveAlarm_serviceUrl_https_truststoreType() {
-		return this.activeAlarm_serviceUrl_https_truststoreType;
+	public String getActiveAlarmServiceUrlHttpsTruststoreType() {
+		return this.activeAlarmServiceUrlHttpsTruststoreType;
 	}
 
-	public void setActiveAlarm_serviceUrl_https_truststoreType(String activeAlarm_serviceUrl_https_truststoreType) {
-		this.activeAlarm_serviceUrl_https_truststoreType = activeAlarm_serviceUrl_https_truststoreType;
+	public void setActiveAlarmServiceUrlHttpsTruststoreType(String activeAlarmServiceUrlHttpsTruststoreType) {
+		this.activeAlarmServiceUrlHttpsTruststoreType = activeAlarmServiceUrlHttpsTruststoreType;
 	}
 
-	public String getActiveAlarm_serviceUrl_https_truststorePassword() {
-		return this.activeAlarm_serviceUrl_https_truststorePassword;
+	public String getActiveAlarmServiceUrlHttpsTruststorePassword() {
+		return this.activeAlarmServiceUrlHttpsTruststorePassword;
 	}
 
-	public void setActiveAlarm_serviceUrl_https_truststorePassword(String activeAlarm_serviceUrl_https_truststorePassword) {
-		this.activeAlarm_serviceUrl_https_truststorePassword = activeAlarm_serviceUrl_https_truststorePassword;
+	public void setActiveAlarmServiceUrlHttpsTruststorePassword(String activeAlarmServiceUrlHttpsTruststorePassword) {
+		this.activeAlarmServiceUrlHttpsTruststorePassword = activeAlarmServiceUrlHttpsTruststorePassword;
 	}
 	
 	public boolean isOptionsUpdateStateActiveAlarm() {
@@ -450,42 +452,46 @@ public class AlarmEngineConfig implements Serializable {
 		this.optionsFilterApiOrganization = optionsFilterApiOrganization;
 	}
 	
-	protected static AlarmEngineConfig readAlarmEngineConfig(Logger log,AlarmConfigProperties alarmConfigProperties) throws Exception{
+	protected static AlarmEngineConfig readAlarmEngineConfig(Logger log,AlarmConfigProperties alarmConfigProperties) throws UtilsException {
+		
+		if(log!=null) {
+			// nop
+		}
 		
 		AlarmEngineConfig config = new AlarmEngineConfig();
 		
-		config.setActiveAlarm_serviceUrl(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL, true, true));
-		config.setActiveAlarm_serviceUrl_manager_username(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_MANAGER_USERNAME, true, true));
-		config.setActiveAlarm_serviceUrl_manager_password(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_MANAGER_PASSWORD, true, true));
+		config.setActiveAlarmServiceUrl(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL, true, true));
+		config.setActiveAlarmServiceUrlManagerUsername(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_MANAGER_USERNAME, true, true));
+		config.setActiveAlarmServiceUrlManagerPassword(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_MANAGER_PASSWORD, true, true));
 		
 		String readConnectionTimeout = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_READ_CONNECTION_TIMEOUT, false, true);
 		if(StringUtils.isNotEmpty(readConnectionTimeout)) {
-			config.setActiveAlarm_serviceUrl_readConnectionTimeout(Integer.valueOf(readConnectionTimeout));
+			config.setActiveAlarmServiceUrlReadConnectionTimeout(Integer.valueOf(readConnectionTimeout));
 		}
 		String connectionTimeout = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_CONNECTION_TIMEOUT, false, true);
 		if(StringUtils.isNotEmpty(connectionTimeout)) {
-			config.setActiveAlarm_serviceUrl_readConnectionTimeout(Integer.valueOf(connectionTimeout));
+			config.setActiveAlarmServiceUrlReadConnectionTimeout(Integer.valueOf(connectionTimeout));
 		}
 		
 		String https = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_HTTPS, false, true);
 		if(https!=null) {
-			config.setActiveAlarm_serviceUrl_https(Boolean.parseBoolean(https));
+			config.setActiveAlarmServiceUrlHttps(Boolean.parseBoolean(https));
 		}
-		if(config.isActiveAlarm_serviceUrl_https()) {
+		if(config.isActiveAlarmServiceUrlHttps()) {
 			
 			String hostnameVerifier = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_HTTPS_HOSTNAME_VERIFIER, false, true);
 			if(hostnameVerifier!=null) {
-				config.setActiveAlarm_serviceUrl_https_verificaHostName(Boolean.parseBoolean(hostnameVerifier));
+				config.setActiveAlarmServiceUrlHttpsVerificaHostName(Boolean.parseBoolean(hostnameVerifier));
 			}
 			
 			String serverAuth = alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH, false, true);
 			if(serverAuth!=null) {
-				config.setActiveAlarm_serviceUrl_https_autenticazioneServer(Boolean.parseBoolean(serverAuth));
+				config.setActiveAlarmServiceUrlHttpsAutenticazioneServer(Boolean.parseBoolean(serverAuth));
 			}
-			if(config.isActiveAlarm_serviceUrl_https_autenticazioneServer()) {
-				config.setActiveAlarm_serviceUrl_https_truststorePath(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH_TRUSTSTORE_PATH, true, true));
-				config.setActiveAlarm_serviceUrl_https_truststoreType(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH_TRUSTSTORE_TYPE, true, true));
-				config.setActiveAlarm_serviceUrl_https_truststorePassword(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH_TRUSTSTORE_PASSWORD, true, true));
+			if(config.isActiveAlarmServiceUrlHttpsAutenticazioneServer()) {
+				config.setActiveAlarmServiceUrlHttpsTruststorePath(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH_TRUSTSTORE_PATH, true, true));
+				config.setActiveAlarmServiceUrlHttpsTruststoreType(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH_TRUSTSTORE_TYPE, true, true));
+				config.setActiveAlarmServiceUrlHttpsTruststorePassword(alarmConfigProperties.getProperty(CostantiConfigurazione.ALARM_ACTIVE_SERVICE_URL_HTTPS_SERVER_AUTH_TRUSTSTORE_PASSWORD, true, true));
 			}
 		
 		}

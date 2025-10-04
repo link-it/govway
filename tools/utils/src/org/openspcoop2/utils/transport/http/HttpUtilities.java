@@ -89,8 +89,8 @@ public class HttpUtilities {
 	/** TIMEOUT_READ (2 minuti) */
 	public static final int HTTP_READ_CONNECTION_TIMEOUT = 120000; 
 
-	public static final HttpLibrary DEFAULT_HTTP_LIBRARY = HttpLibrary.DEFAULT;
-
+	public static final HttpLibrary DEFAULT_HTTP_LIBRARY = HttpLibraryConnection.getDefaultLibrary();
+			
 	
 	public static List<String> getClientAddressHeaders() {
 		// X-Forwarded-For: A de facto standard for identifying the originating IP address of a client connecting to a web server through an HTTP proxy or load balancer

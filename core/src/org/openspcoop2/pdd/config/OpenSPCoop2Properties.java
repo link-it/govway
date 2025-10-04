@@ -176,6 +176,7 @@ import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.CertificateValidityCheck;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.transport.http.HttpConstants;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.slf4j.Logger;
@@ -225,6 +226,9 @@ public class OpenSPCoop2Properties {
 		}
 	}
 	
+	private static final String PREFIX_PROPERTIES = "Proprietà di govway '";
+	private static final String SUFFIX_NON_IMPOSTATA = "' non impostata";
+	
 	private String getMessaggioProprietaNonImpostata(String pName, int defaultValue){
 		return getMessaggioProprietaNonImpostata(pName, defaultValue+"");
 	}
@@ -235,11 +239,11 @@ public class OpenSPCoop2Properties {
 		return getMessaggioProprietaNonImpostata(pName, defaultValue+"");
 	}
 	private String getMessaggioProprietaNonImpostata(String pName, String defaultValue){
-		return "Proprietà di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+defaultValue;
+		return PREFIX_PROPERTIES+pName+"' non impostata, viene utilizzato il default="+defaultValue;
 	}
 	
 	private String getMessaggioProprietaNonImpostata(String pName){
-		return "Proprietà di openspcoop '"+pName+"' non impostata";
+		return PREFIX_PROPERTIES+pName+SUFFIX_NON_IMPOSTATA;
 	}
 	
 	private String getMessaggioProprietaNonImpostata(String pName, Exception e, int defaultValue){
@@ -252,7 +256,7 @@ public class OpenSPCoop2Properties {
 		return getMessaggioProprietaNonImpostata(pName, e, defaultValue+"");
 	}
 	private String getMessaggioProprietaNonImpostata(String pName, Exception e, String defaultValue){
-		return "Proprietà di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+defaultValue+"; errore:"+e.getMessage();
+		return PREFIX_PROPERTIES+pName+"' non impostata, viene utilizzato il default="+defaultValue+"; errore:"+e.getMessage();
 	}
 	
 	private static final String HEADER_INTEGRAZIONE_SCONOSCIUTO = "L'header di integrazione indicato non esiste nelle classi registrate in GovWay";
@@ -1629,6 +1633,7 @@ public class OpenSPCoop2Properties {
 			
 			isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary();
 			getHeaderForceHttpLibrary();
+			getConnettoriRemoteAccessUtilityLibrary();
 			
 			// Connettore https
 			this.getConnettoreHttpsSecureRandomAlgo();
@@ -14783,7 +14788,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientMaxPerRoute = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE));
 					this.getBIOConfigSyncClientMaxPerRoute = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE;
 				}
 			}catch(java.lang.Exception e) {
@@ -14824,7 +14829,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientMaxTotal = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL));
 					this.getBIOConfigSyncClientMaxTotal = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL;
 				}
 			}catch(java.lang.Exception e) {
@@ -14952,7 +14957,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientCloseIdleConnectionsAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata");
+					this.logWarn(getMessaggioProprietaNonImpostata(pName));
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -14974,7 +14979,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS));
 					this.getBIOConfigSyncClientCloseIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
@@ -14997,7 +15002,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientExpireUnusedAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS));
 					this.getBIOConfigSyncClientExpireUnusedAfterSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
@@ -15020,7 +15025,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientCloseUnusedAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS));
 					this.getBIOConfigSyncClientCloseUnusedAfterSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
@@ -15043,7 +15048,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isBIOConfigSyncClientCloseIdleConnectionsDebug = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					this.isBIOConfigSyncClientCloseIdleConnectionsDebug = true;
 				}
 			}catch(java.lang.Exception e) {
@@ -15066,7 +15071,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isBIOConfigSyncClientUseCustomMessageObjectEntity = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					this.isBIOConfigSyncClientUseCustomMessageObjectEntity = true;
 				}
 			}catch(java.lang.Exception e) {
@@ -15089,7 +15094,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientPipedUnblockedStreamBuffer = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, PipedUnblockedStreamFactory.SIZE_BUFFER));
 					this.getBIOConfigSyncClientPipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
 				}
 			}catch(java.lang.Exception e) {
@@ -15112,7 +15117,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getBIOConfigSyncClientApplicativeThreadPoolSize = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE));
 					this.getBIOConfigSyncClientApplicativeThreadPoolSize = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_POOL_SIZE;
 				}
 			}catch(java.lang.Exception e) {
@@ -15138,7 +15143,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isNIOEnabled = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+false);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, false));
 					this.isNIOEnabled = false;
 				}
 			}catch(java.lang.Exception e) {
@@ -15161,7 +15166,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientMaxPerRoute = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE));
 					this.getNIOConfigAsyncClientMaxPerRoute = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_MAX_CONNECTION_FOR_ROUTE;
 				}
 			}catch(java.lang.Exception e) {
@@ -15202,7 +15207,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientMaxTotal = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL));
 					this.getNIOConfigAsyncClientMaxTotal = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_MAX_CONNECTION_TOTAL;
 				}
 			}catch(java.lang.Exception e) {
@@ -15287,7 +15292,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientCloseIdleConnectionsAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata");
+					this.logWarn(getMessaggioProprietaNonImpostata(pName));
 				}
 			}catch(java.lang.Exception e) {
 				this.logWarn("proprietà di govway '"+pName+"' non impostata, errore:"+e.getMessage(),e);
@@ -15309,7 +15314,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS));
 					this.getNIOConfigAsyncClientCloseIdleConnectionsCheckIntervalSeconds = CostantiPdD.CONNETTORE_BIO_SYNC_CLIENT_CLOSE_IDLE_CONNECTION_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
@@ -15332,7 +15337,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isNIOConfigAsyncClientCloseIdleConnectionsDebug = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					this.isNIOConfigAsyncClientCloseIdleConnectionsDebug = true;
 				}
 			}catch(java.lang.Exception e) {
@@ -15355,7 +15360,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientExpireUnusedAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS));
 					this.getNIOConfigAsyncClientExpireUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_EXPIRE_UNUSED_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
@@ -15378,7 +15383,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncClientCloseUnusedAfterSeconds = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS));
 					this.getNIOConfigAsyncClientCloseUnusedAfterSeconds = CostantiPdD.CONNETTORE_NIO_ASYNC_CLIENT_CLOSE_UNUSED_AFTER_SECONDS;
 				}
 			}catch(java.lang.Exception e) {
@@ -15401,7 +15406,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isNIOConfigAsyncClientUseCustomMessageObjectEntity = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					this.isNIOConfigAsyncClientUseCustomMessageObjectEntity = true;
 				}
 			}catch(java.lang.Exception e) {
@@ -15450,7 +15455,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isNIOConfigAsyncRequestStreamEnabled = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					this.isNIOConfigAsyncRequestStreamEnabled = true;
 				}
 			}catch(java.lang.Exception e) {
@@ -15473,7 +15478,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, PipedUnblockedStreamFactory.SIZE_BUFFER));
 					this.getNIOConfigAsyncRequestPipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
 				}
 			}catch(java.lang.Exception e) {
@@ -15497,7 +15502,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.isNIOConfigAsyncResponseStreamEnabled = java.lang.Boolean.parseBoolean(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+true);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
 					this.isNIOConfigAsyncResponseStreamEnabled = true;
 				}
 			}catch(java.lang.Exception e) {
@@ -15520,7 +15525,7 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer = java.lang.Integer.parseInt(v);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+PipedUnblockedStreamFactory.SIZE_BUFFER);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, PipedUnblockedStreamFactory.SIZE_BUFFER));
 					this.getNIOConfigAsyncResponsePipedUnblockedStreamBuffer = PipedUnblockedStreamFactory.SIZE_BUFFER;
 				}
 			}catch(java.lang.Exception e) {
@@ -15815,6 +15820,28 @@ public class OpenSPCoop2Properties {
 		}
 
 		return this.forceHttpLibraryViaHeader;
+	}
+	
+	private Boolean connettoriRemoteAccessUtilityLibraryRead;
+	private HttpLibrary connettoriRemoteAccessUtilityLibrary;
+	public HttpLibrary getConnettoriRemoteAccessUtilityLibrary() {
+		if(this.connettoriRemoteAccessUtilityLibraryRead == null){
+			String pName = "org.openspcoop2.pdd.connettori.remoteAccessUtility.library";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					this.connettoriRemoteAccessUtilityLibrary = HttpLibrary.getHttpLibrary(name);
+				}
+				this.connettoriRemoteAccessUtilityLibraryRead = true;
+			}catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprietà di govway '"+pName+"': "+e.getMessage(),e);
+				this.forceHttpLibraryViaHeader = null;
+			}  
+		}
+
+		return this.connettoriRemoteAccessUtilityLibrary;
 	}
 	
 
@@ -23111,7 +23138,7 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getSemaphoreTimeoutMS = Long.parseLong(value);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+Semaphore.DEFAULT_LOCK_ACQUISITION_TIMEOUT_MS);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, Semaphore.DEFAULT_LOCK_ACQUISITION_TIMEOUT_MS));
 					this.getSemaphoreTimeoutMS = Semaphore.DEFAULT_LOCK_ACQUISITION_TIMEOUT_MS;
 				}
 
@@ -23136,7 +23163,7 @@ public class OpenSPCoop2Properties {
 					value = value.trim();
 					this.getSemaphoreHoldTimeoutMS = Long.parseLong(value);
 				}else{
-					this.logWarn("proprietà di govway '"+pName+"' non impostata, viene utilizzato il default="+Semaphore.DEFAULT_LOCK_HOLD_TIMEOUT_MS);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, Semaphore.DEFAULT_LOCK_HOLD_TIMEOUT_MS));
 					this.getSemaphoreHoldTimeoutMS = Semaphore.DEFAULT_LOCK_HOLD_TIMEOUT_MS;
 				}
 
@@ -31572,7 +31599,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
-					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX);
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX.name()));
 					this.getControlloTrafficoEsitiPolicyElaborazioneInErrore = EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX;
 				}
 				else {
@@ -34688,7 +34715,7 @@ public class OpenSPCoop2Properties {
 				String name = null;
 				name = this.reader.getValueConvertEnvProperties(pName);
 				if(name==null){
-					this.logWarn("proprietà di govway '"+pName+"' non impostata");
+					this.logWarn(getMessaggioProprietaNonImpostata(pName));
 					name="-1";
 				}
 				name = name.trim();

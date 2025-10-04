@@ -142,19 +142,19 @@ public class AllarmiUtils {
 		request.setContent(content);
 		request.setMethod(method);
 		request.setContentType(contentType);
-		request.setUsername(allarmiConfig.getActiveAlarm_serviceUrl_manager_username());
-		request.setPassword(allarmiConfig.getActiveAlarm_serviceUrl_manager_password());
+		request.setUsername(allarmiConfig.getActiveAlarmServiceUrlManagerUsername());
+		request.setPassword(allarmiConfig.getActiveAlarmServiceUrlManagerPassword());
 		request.setHttpLibrary(allarmiConfig.getHttpLibrary());
 		
-		request.setConnectTimeout(allarmiConfig.getActiveAlarm_serviceUrl_connectionTimeout());
-		request.setReadTimeout(allarmiConfig.getActiveAlarm_serviceUrl_readConnectionTimeout());
+		request.setConnectTimeout(allarmiConfig.getActiveAlarmServiceUrlConnectionTimeout());
+		request.setReadTimeout(allarmiConfig.getActiveAlarmServiceUrlReadConnectionTimeout());
 		
-		if(allarmiConfig.isActiveAlarm_serviceUrl_https()) {
-			request.setHostnameVerifier(allarmiConfig.isActiveAlarm_serviceUrl_https_verificaHostName());
-			if(allarmiConfig.isActiveAlarm_serviceUrl_https_autenticazioneServer()) {
-				request.setTrustStorePath(allarmiConfig.getActiveAlarm_serviceUrl_https_truststorePath());
-				request.setTrustStoreType(allarmiConfig.getActiveAlarm_serviceUrl_https_truststoreType());
-				request.setTrustStorePassword(allarmiConfig.getActiveAlarm_serviceUrl_https_truststorePassword());
+		if(allarmiConfig.isActiveAlarmServiceUrlHttps()) {
+			request.setHostnameVerifier(allarmiConfig.isActiveAlarmServiceUrlHttpsVerificaHostName());
+			if(allarmiConfig.isActiveAlarmServiceUrlHttpsAutenticazioneServer()) {
+				request.setTrustStorePath(allarmiConfig.getActiveAlarmServiceUrlHttpsTruststorePath());
+				request.setTrustStoreType(allarmiConfig.getActiveAlarmServiceUrlHttpsTruststoreType());
+				request.setTrustStorePassword(allarmiConfig.getActiveAlarmServiceUrlHttpsTruststorePassword());
 			}
 			else {
 				request.setTrustAllCerts(true);
@@ -216,7 +216,7 @@ public class AllarmiUtils {
 			return;
 		}
 		
-		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		String prefixUrl = allarmiConfig.getActiveAlarmServiceUrl();
 		if(prefixUrl.endsWith("/")==false){
 			prefixUrl = prefixUrl + "/";
 		}
@@ -319,7 +319,7 @@ public class AllarmiUtils {
 		if(!allarmi.isEmpty()) {
 			for (String nomeAllarme : allarmi) {
 				
-				String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+				String prefixUrl = allarmiConfig.getActiveAlarmServiceUrl();
 				if(prefixUrl.endsWith("/")==false){
 					prefixUrl = prefixUrl + "/";
 				}
@@ -350,7 +350,7 @@ public class AllarmiUtils {
 		List<String> post_urls = new ArrayList<>();
 		List<String> post_contents = new ArrayList<>();
 				
-		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		String prefixUrl = allarmiConfig.getActiveAlarmServiceUrl();
 		if(prefixUrl.endsWith("/")==false){
 			prefixUrl = prefixUrl + "/";
 		}
@@ -369,7 +369,7 @@ public class AllarmiUtils {
 			return false;
 		}
 		
-		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		String prefixUrl = allarmiConfig.getActiveAlarmServiceUrl();
 		if(prefixUrl.endsWith("/")==false){
 			prefixUrl = prefixUrl + "/";
 		}
@@ -387,7 +387,7 @@ public class AllarmiUtils {
 			return "L'allarme è passivo";
 		}
 		
-		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		String prefixUrl = allarmiConfig.getActiveAlarmServiceUrl();
 		if(prefixUrl.endsWith("/")==false){
 			prefixUrl = prefixUrl + "/";
 		}
@@ -402,7 +402,7 @@ public class AllarmiUtils {
 			return;
 		}
 		
-		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		String prefixUrl = allarmiConfig.getActiveAlarmServiceUrl();
 		if(prefixUrl.endsWith("/")==false){
 			prefixUrl = prefixUrl + "/";
 		}
@@ -412,7 +412,7 @@ public class AllarmiUtils {
 	
 	public static String getActiveThreadImages(Logger log, AlarmEngineConfig allarmiConfig) throws Exception{
 
-		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		String prefixUrl = allarmiConfig.getActiveAlarmServiceUrl();
 		if(prefixUrl.endsWith("/")==false){
 			prefixUrl = prefixUrl + "/";
 		}
@@ -434,7 +434,7 @@ public class AllarmiUtils {
 		List<String> post_urls = new ArrayList<>();
 		List<String> post_contents = new ArrayList<>();
 				
-		String prefixUrl = allarmiConfig.getActiveAlarm_serviceUrl();
+		String prefixUrl = allarmiConfig.getActiveAlarmServiceUrl();
 		if(prefixUrl.endsWith("/")==false){
 			prefixUrl = prefixUrl + "/";
 		}

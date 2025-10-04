@@ -439,8 +439,9 @@ public class HttpTest {
 		req.setMethod(HttpRequestMethod.POST);
 		
 		byte[] content = new byte[10000];
-		for (int i = 0; i < content.length; i++)
-			content[i] = (byte) this.rnd.nextInt('a', 'z');
+		for (int i = 0; i < content.length; i++) {
+		    content[i] = (byte) ('a' + this.rnd.nextInt('z' - 'a' + 1)); // compatibile java 11
+		}
 		
 		req.setContent(content);
 		req.setContentType(HttpConstants.CONTENT_TYPE_PLAIN);
@@ -517,7 +518,9 @@ public class HttpTest {
 		for (Map.Entry<String, List<String>> header : expectedHeaders.entrySet()) {
 			// controllo che l'url sia equivalente
 			if (header.getKey().equals(HttpConstants.REDIRECT_LOCATION)) {
-				checkUri(header.getValue().getFirst(), actualHeaders.get(header.getKey()).getFirst());
+				String first = !header.getValue().isEmpty() ? header.getValue().get(0) : null; // compatibile java 11
+				String actualFirst = !actualHeaders.get(header.getKey()).isEmpty() ? actualHeaders.get(header.getKey()).get(0) : null; // compatibile java 11
+				checkUri(first, actualFirst);
 			} else {
 				if(!actualHeaders.get(header.getKey()).equals(header.getValue()))
 					throw new UtilsException("header: " + header.getKey() + " atteso diverso da quello ottenuto");

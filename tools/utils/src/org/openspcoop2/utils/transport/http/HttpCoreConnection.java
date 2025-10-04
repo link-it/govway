@@ -65,7 +65,7 @@ import org.openspcoop2.utils.io.Base64Utilities;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-class HttpCoreConnection implements HttpLibraryConnection {
+class HttpCoreConnection extends HttpLibraryConnection {
 
 	
 	private HttpHost setupProxy(HttpClientBuilder builder, Map<String, List<String>> addHeaders, HttpRequest request) {

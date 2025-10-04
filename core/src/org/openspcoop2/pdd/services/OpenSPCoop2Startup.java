@@ -255,6 +255,7 @@ import org.openspcoop2.utils.security.ProviderUtils;
 import org.openspcoop2.utils.semaphore.Semaphore;
 import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XSDSchemaCollection;
 import org.slf4j.Logger;
@@ -1122,6 +1123,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				ConnettoreUtils.setForceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting(propertiesReader.isConnettoriForceUseNioInAsyncChannelWithBIOOnlyLibrary());
 				OpenSPCoop2Startup.logStartupInfo(""
 						+ "ForceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting: "+ConnettoreUtils.isForceUseHttpCore5NioInAsyncChannelWithHttpUrlConnectionLibrarySetting());
+				
+				// HttpLibrary
+				if(propertiesReader.getConnettoriRemoteAccessUtilityLibrary()!=null) {
+					HttpLibraryConnection.setDefaultLibrary(propertiesReader.getConnettoriRemoteAccessUtilityLibrary());
+				}
+				OpenSPCoop2Startup.logStartupInfo("HttpLibraryConnection: "+HttpLibraryConnection.getDefaultLibrary());
 				
 				// PipeUnblockedStream
 				if(propertiesReader.getPipedUnblockedStreamClassName()!=null) {

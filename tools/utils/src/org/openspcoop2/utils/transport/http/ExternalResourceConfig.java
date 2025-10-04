@@ -78,7 +78,7 @@ public class ExternalResourceConfig {
 	// informazioni custom aggiuntive
 	protected Map<String, Map<String, String>> multiTenantMetadati = new HashMap<>(); // impostata tramite logica applicativa
 	
-	protected HttpLibrary httpLibrary = HttpLibrary.DEFAULT;
+	protected HttpLibrary httpLibrary = HttpLibraryConnection.getDefaultLibrary();
 	
 	// !! NOTA !!: se si aggiunge un field, bisogna gestirlo nel metodo in org.openspcoop2.utils.certificate.remote.RemoteStoreConfig.newInstanceMultitenant()
 	

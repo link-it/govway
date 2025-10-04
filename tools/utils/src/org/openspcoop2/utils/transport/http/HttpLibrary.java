@@ -34,8 +34,6 @@ public enum HttpLibrary {
 	HTTP_URL_CONNECTION ("java.net.HttpURLConnection"),
 	HTTP_CORE5 ("org.apache.hc.client5");	
 	
-	public static final HttpLibrary DEFAULT = HttpLibrary.HTTP_CORE5; 
-	
 	private final String name;
 	private HttpLibrary(String name) {
 		this.name = name;

@@ -42,6 +42,7 @@ import org.openspcoop2.utils.certificate.KeystoreType;
 import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.security.CertificateValidityCheck;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 
 /**
@@ -781,7 +782,9 @@ public class CostantiProprieta {
 		return v;
 	}
 	
+	
 	// ****  CONNETTORI LIBRERIA *****
+	
 	public static final String CONNETTORE_TOKEN_VALIDATE_LIBRARY = "connettori.token.validate.httplibrary";
 	public static final String CONNETTORE_TOKEN_RETRIEVE_LIBRARY = "connettori.token.retrieve.httplibrary";
 	public static final String CONNETTORE_TOKEN_AUTHORITY_LIBRARY = "connettori.token.authority.httplibrary";
@@ -789,10 +792,12 @@ public class CostantiProprieta {
 	public static HttpLibrary getConnettoreHttpLibrary(List<Proprieta> props, String type) {
 		String name = readValue(props, type);
 		if(name == null || StringUtils.isEmpty(name)) {
-			return HttpLibrary.DEFAULT;
+			return HttpLibraryConnection.getDefaultLibrary();
 		}
 		return HttpLibrary.fromName(name);
 	}
+	
+	
 	
 	// ****  REGISTRAZIONE MESSAGGI *****
 		
@@ -1001,7 +1006,7 @@ public class CostantiProprieta {
 		StringBuilder sb = new StringBuilder();
 		if(s!=null) {
 			for (InformazioniIntegrazioneSorgente informazioniIntegrazioneSorgente : s) {
-				if(sb.length()>0) {
+				if(!sb.isEmpty()) {
 					sb.append(", ");
 				}
 				sb.append(informazioniIntegrazioneSorgente);
@@ -1032,7 +1037,7 @@ public class CostantiProprieta {
 		StringBuilder sb = new StringBuilder();
 		if(s!=null) {
 			for (InformazioniIntegrazioneCodifica informazioniIntegrazioneCodifica : s) {
-				if(sb.length()>0) {
+				if(!sb.isEmpty()) {
 					sb.append(", ");
 				}
 				sb.append(informazioniIntegrazioneCodifica);
@@ -1080,7 +1085,7 @@ public class CostantiProprieta {
 		StringBuilder sb = new StringBuilder();
 		if(s!=null) {
 			for (InformazioniIntegrazioneCodifica informazioniIntegrazioneCodifica : s) {
-				if(sb.length()>0) {
+				if(!sb.isEmpty()) {
 					sb.append(", ");
 				}
 				sb.append(informazioniIntegrazioneCodifica);
@@ -1114,8 +1119,7 @@ public class CostantiProprieta {
 		boolean useDefault = readBooleanValueWithDefault(proprieta, SECURITY_HEADERS_DEFAULT_ENABLED, true, SECURITY_HEADERS_VALUE_ENABLED, SECURITY_HEADERS_VALUE_DISABLED);
 		if(useDefault) {
 			for (Object oKey : defaultConfig.keySet()) {
-				if(oKey instanceof String) {
-					String key = (String) oKey;
+				if(oKey instanceof String key) {
 					String value = defaultConfig.getProperty(key);
 					if(StringUtils.isNotEmpty(key) &&
 						value!=null && StringUtils.isNotEmpty(value)) {

@@ -1016,7 +1016,7 @@ public class ConnettoreCheck {
 		request.setCheckConnection(true);
 		request.setMethod(HttpRequestMethod.GET); // Uso GET come metodo di test
 		
-		HttpLibrary httpLibrary = HttpLibrary.DEFAULT;
+		HttpLibrary httpLibrary = HttpLibraryConnection.getDefaultLibrary();
 		HttpLibrary cImpl = HttpLibrary.getHttpLibrarySafe(httpImpl);
 		if(cImpl!=null) {
 			httpLibrary = cImpl;

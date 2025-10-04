@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.slf4j.Logger;
 
 /**
@@ -82,7 +83,7 @@ public class BYOKRemoteConfig implements Serializable {
 	private boolean httpResponseJsonPathBase64Encoded;
 	private boolean httpResponseJsonPathHexEncoded;
 	
-	private HttpLibrary httpLibrary = HttpLibrary.DEFAULT;
+	private HttpLibrary httpLibrary = HttpLibraryConnection.getDefaultLibrary();
 	
 	protected BYOKRemoteConfig(String id, Properties p, Logger log, String byokPropertyPrefix) throws UtilsException {
 				

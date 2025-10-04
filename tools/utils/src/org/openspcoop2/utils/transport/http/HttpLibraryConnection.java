@@ -33,15 +33,28 @@ import org.openspcoop2.utils.UtilsException;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface HttpLibraryConnection {
-	public HttpResponse send(HttpRequest req, SSLContext sslContext, OCSPTrustManager ocspTrustManager) throws UtilsException, IOException;
+public abstract class HttpLibraryConnection {
 	
-	
+	public abstract HttpResponse send(HttpRequest req, SSLContext sslContext, OCSPTrustManager ocspTrustManager) throws UtilsException, IOException;
+		
 	public static HttpLibraryConnection fromLibrary(HttpLibrary lib) {
-		return switch (lib) {
-			case HTTP_CORE5 -> new HttpCoreConnection();
-			case HTTP_URL_CONNECTION -> new UrlConnectionConnection();
-			default -> null;
-		};
+		if(lib==null) {
+			return null;
+		}
+		switch (lib) {
+			case HTTP_CORE5: return new HttpCoreConnection();
+			case HTTP_URL_CONNECTION: return new UrlConnectionConnection();
+			default: return null;
+		}
+	}
+	
+	private static HttpLibrary defaultLibrary = HttpLibrary.HTTP_CORE5; 
+	public static HttpLibrary getDefaultLibrary() {
+		return HttpLibraryConnection.defaultLibrary;
+	}
+	public static void setDefaultLibrary(HttpLibrary defaultLibrary) {
+		if(defaultLibrary!=null) {
+			HttpLibraryConnection.defaultLibrary = defaultLibrary;
+		}
 	}
 }
