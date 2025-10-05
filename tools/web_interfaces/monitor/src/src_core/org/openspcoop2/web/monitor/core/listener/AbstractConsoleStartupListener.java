@@ -59,6 +59,7 @@ import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.ProviderUtils;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.dao.DynamicUtilsServiceCache;
@@ -374,6 +375,20 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 			throw new UtilsRuntimeException(msgErrore,e);
 		}
 
+		
+		
+		// Inizializzo libreria accesso risorse esterne
+		try {
+			if(appProperties.getConnettoriRemoteAccessUtilityLibrary()!=null) {
+				HttpLibraryConnection.setDefaultLibrary(appProperties.getConnettoriRemoteAccessUtilityLibrary());
+			}
+			AbstractConsoleStartupListener.logInfo("HttpLibraryConnection: "+HttpLibraryConnection.getDefaultLibrary());
+		} catch (Exception e) {
+			String msgErrore = "Inizializzazione libreria accesso risorse esterne non riuscita: "+e.getMessage();
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
+		}
+		
 		
 		// Inizializzo Controlli connessioni
 		try {

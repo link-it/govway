@@ -41,6 +41,7 @@ import org.openspcoop2.utils.certificate.hsm.HSMManager;
 import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.security.ProviderUtils;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.slf4j.Logger;
 
 /**
@@ -154,6 +155,9 @@ public class VaultTools {
 		/**String confDir = null;*/ // non sembra servire
 		String protocolloDefault = vaultProperties.getProtocolloDefault();
 		
+		// Inizializzo libreria accesso risorse esterne
+		initConnectorExternalResources(vaultProperties);
+		
 		// Inizializzo Controlli connessioni
 		disableCheckSingleConnectionDataSource();
 		
@@ -232,6 +236,17 @@ public class VaultTools {
 			logCoreInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
 		}catch(Exception e){
 			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	private static void initConnectorExternalResources(VaultProperties properties) throws CoreException {
+		// Inizializzo libreria accesso risorse esterne
+		try {
+			if(properties.getHttpLibrary()!=null) {
+				HttpLibraryConnection.setDefaultLibrary(properties.getHttpLibrary());
+			}
+			logCore.info("HttpLibraryConnection: {}",HttpLibraryConnection.getDefaultLibrary());
+		} catch (Exception e) {
+			doError("Inizializzazione libreria accesso risorse esterne non riuscita",e);
 		}
 	}
 	private static void disableCheckSingleConnectionDataSource() throws CoreException {

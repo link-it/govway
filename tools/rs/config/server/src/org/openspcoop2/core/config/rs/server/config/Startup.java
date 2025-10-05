@@ -52,6 +52,7 @@ import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.ProviderUtils;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
@@ -170,6 +171,16 @@ public class Startup implements ServletContextListener {
 				serverProperties = ServerProperties.getInstance();
 			} catch (Exception e) {
 				doError("Errore durante l'inizializzazione del serverProperties",e);
+			}
+			
+			// Inizializzo libreria accesso risorse esterne
+			try {
+				if(serverProperties.getConnettoriRemoteAccessUtilityLibrary()!=null) {
+					HttpLibraryConnection.setDefaultLibrary(serverProperties.getConnettoriRemoteAccessUtilityLibrary());
+				}
+				Startup.log.info("HttpLibraryConnection: {}",HttpLibraryConnection.getDefaultLibrary());
+			} catch (Exception e) {
+				doError("Inizializzazione libreria accesso risorse esterne non riuscita",e);
 			}
 			
 			// Inizializzo Controlli connessioni

@@ -32,6 +32,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.slf4j.Logger;
 
 /**     
@@ -193,6 +194,15 @@ public class ServerProperties  {
 	public boolean isJdbcCloseConnectionCheckAutocommit() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(true, "jdbc.closeConnection.checkAutocommit");
 		return this.parse(b, true);
+	}
+	
+	public HttpLibrary getConnettoriRemoteAccessUtilityLibrary() throws UtilsException{
+		String lib = this.readProperty(false, "connettori.remoteAccessUtility.library");
+		if(lib!=null){
+			lib = lib.trim();
+			return HttpLibrary.getHttpLibrary(lib);
+		}
+		return null;
 	}
 	
 	public boolean isEnabledAutoMapping() throws UtilsException {

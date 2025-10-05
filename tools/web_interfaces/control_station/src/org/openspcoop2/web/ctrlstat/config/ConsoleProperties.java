@@ -47,6 +47,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.slf4j.Logger;
 
 
@@ -545,6 +546,15 @@ public class ConsoleProperties {
 	
 	public boolean isConnettoriMultipliConsegnaMultiplaEnabled() throws UtilsException{
 		return this.readBooleanRequiredProperty("connettoriMultipli.consegnaMultipla.enabled");
+	}
+	
+	public HttpLibrary getConnettoriRemoteAccessUtilityLibrary() throws UtilsException{
+		String lib = this.readProperty(false, "connettori.remoteAccessUtility.library");
+		if(lib!=null){
+			lib = lib.trim();
+			return HttpLibrary.getHttpLibrary(lib);
+		}
+		return null;
 	}
 	
 	public boolean isApplicativiServerEnabled() throws UtilsException{

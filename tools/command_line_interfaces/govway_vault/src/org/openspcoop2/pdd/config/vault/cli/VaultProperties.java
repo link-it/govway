@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 
 /**
 * VaultProperties
@@ -61,6 +62,8 @@ public class VaultProperties {
 	
 	private String protocolloDefault = null;
 		
+	private HttpLibrary httpLibrary = null;
+	
 	private boolean securityLoadBouncyCastleProvider = false;
 	
 	private String envMapConfig = null;
@@ -88,6 +91,16 @@ public class VaultProperties {
 		// PROPERTIES
 				
 		this.protocolloDefault = this.getProperty(props, "protocolloDefault", true);
+		
+		String lib = this.getProperty(props, "connettori.remoteAccessUtility.library", false);
+		if(lib!=null){
+			lib = lib.trim();
+			try {
+				this.httpLibrary = HttpLibrary.getHttpLibrary(lib);
+			}catch(Exception e) {
+				throw new CoreException(e.getMessage(),e);
+			}
+		}
 		
 		this.securityLoadBouncyCastleProvider = this.getBooleanProperty(props, "security.addBouncyCastleProvider", false);
 		
@@ -150,6 +163,10 @@ public class VaultProperties {
 	
 	public String getProtocolloDefault() {
 		return this.protocolloDefault;
+	}
+	
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
 	}
 	
 	public boolean isSecurityLoadBouncyCastleProvider() {

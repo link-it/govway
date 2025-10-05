@@ -71,6 +71,7 @@ import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.security.ProviderUtils;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.openspcoop2.web.ctrlstat.core.Connettori;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.DBManager;
@@ -172,6 +173,9 @@ public class Loader {
 			byte [] archiveFile = FileSystemUtilities.readBytesFromFile(fFilePath);
 			
 			logCoreDebug("Raccolta parametri terminata");
+			
+			// Inizializzo libreria accesso risorse esterne
+			initConnectorExternalResources(loaderProperties);
 			
 			// Inizializzo Controlli connessioni
 			disableCheckSingleConnectionDataSource();
@@ -477,6 +481,17 @@ public class Loader {
 			logCoreInfo("Aggiunto Security Provider org.bouncycastle.jce.provider.BouncyCastleProvider");
 		}catch(Exception e){
 			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	private static void initConnectorExternalResources(LoaderProperties properties) throws CoreException {
+		// Inizializzo libreria accesso risorse esterne
+		try {
+			if(properties.getHttpLibrary()!=null) {
+				HttpLibraryConnection.setDefaultLibrary(properties.getHttpLibrary());
+			}
+			logCore.info("HttpLibraryConnection: {}",HttpLibraryConnection.getDefaultLibrary());
+		} catch (Exception e) {
+			doError("Inizializzazione libreria accesso risorse esterne non riuscita",e);
 		}
 	}
 	private static void disableCheckSingleConnectionDataSource() throws CoreException {

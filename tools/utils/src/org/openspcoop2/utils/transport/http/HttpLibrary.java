@@ -61,10 +61,10 @@ public enum HttpLibrary {
 		return null;
 	}
 	public static HttpLibrary getHttpLibrary(String value) throws UtilsException{
-		if(HTTP_URL_CONNECTION.toString().equals(value)){
+		if(HTTP_URL_CONNECTION.toString().equalsIgnoreCase(value)){
 			return HTTP_URL_CONNECTION;
 		}
-		else if(HTTP_CORE5.toString().equals(value)){
+		else if(HTTP_CORE5.toString().equalsIgnoreCase(value)){
 			return HTTP_CORE5;
 		}
 		else{

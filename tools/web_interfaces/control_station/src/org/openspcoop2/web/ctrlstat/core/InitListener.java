@@ -71,6 +71,7 @@ import org.openspcoop2.utils.json.YamlSnakeLimits;
 import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.ProviderUtils;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.openspcoop2.utils.xml.XMLDiffImplType;
 import org.openspcoop2.utils.xml.XMLDiffOptions;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
@@ -268,6 +269,17 @@ public class InitListener implements ServletContextListener {
 			}
 			InitListener.logInfo("Inizializzazione resources (properties) govwayConsole effettuata con successo.");
 	
+			// Inizializzo libreria accesso risorse esterne
+			try {
+				if(consoleProperties.getConnettoriRemoteAccessUtilityLibrary()!=null) {
+					HttpLibraryConnection.setDefaultLibrary(consoleProperties.getConnettoriRemoteAccessUtilityLibrary());
+				}
+				InitListener.logInfo("HttpLibraryConnection: "+HttpLibraryConnection.getDefaultLibrary());
+			} catch (Exception e) {
+				String msgErrore = "Inizializzazione libreria accesso risorse esterne non riuscita: "+e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
 			
 			// Inizializzo Controlli connessioni
 			try {

@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.slf4j.Logger;
 
 
@@ -382,5 +383,14 @@ public class ApplicationProperties {
 	public boolean isJdbcCloseConnectionCheckAutocommit() throws UtilsException{
 		BooleanNullable b = this.readBooleanProperty(true, "jdbc.closeConnection.checkAutocommit");
 		return this.parse(b, true);
+	}
+	
+	public HttpLibrary getConnettoriRemoteAccessUtilityLibrary() throws UtilsException{
+		String lib = this.readProperty(false, "connettori.remoteAccessUtility.library");
+		if(lib!=null){
+			lib = lib.trim();
+			return HttpLibrary.getHttpLibrary(lib);
+		}
+		return null;
 	}
 }

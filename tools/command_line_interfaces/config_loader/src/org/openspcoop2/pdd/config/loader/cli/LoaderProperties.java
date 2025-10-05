@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 
 /**
 * LoaderProperties
@@ -60,6 +61,8 @@ public class LoaderProperties {
 	private static final String PROPERTIES_FILE = "/config_loader.cli.properties";
 	
 	private String protocolloDefault = null;
+	
+	private HttpLibrary httpLibrary = null;
 	
 	private boolean policyEnable = false;
 	private boolean pluginEnable = false;
@@ -116,6 +119,16 @@ public class LoaderProperties {
 		// PROPERTIES
 				
 		this.protocolloDefault = this.getProperty(props, "protocolloDefault", true);
+		
+		String lib = this.getProperty(props, "connettori.remoteAccessUtility.library", false);
+		if(lib!=null){
+			lib = lib.trim();
+			try {
+				this.httpLibrary = HttpLibrary.getHttpLibrary(lib);
+			}catch(Exception e) {
+				throw new CoreException(e.getMessage(),e);
+			}
+		}
 		
 		this.policyEnable = this.getBooleanProperty(props, "policy.enable", true);
 		this.pluginEnable = this.getBooleanProperty(props, "plugin.enable", true);
@@ -205,6 +218,10 @@ public class LoaderProperties {
 	
 	public String getProtocolloDefault() {
 		return this.protocolloDefault;
+	}
+	
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
 	}
 	
 	public boolean isPolicyEnable() {
