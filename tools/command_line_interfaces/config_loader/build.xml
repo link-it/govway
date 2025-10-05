@@ -146,6 +146,7 @@
 			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-rs-json-basic-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-core-*.jar"/>
 			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-security-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/httpcore" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/saaj" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/commons" includes="*.jar"/>
 			<fileset dir="${openspcoop2.lib}/spring" includes="*.jar"/>

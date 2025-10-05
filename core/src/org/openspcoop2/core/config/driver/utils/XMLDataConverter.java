@@ -738,12 +738,6 @@ public class XMLDataConverter {
 						throw new UtilsException("Response empty");
 					}
 				}catch(Exception e) {
-					try{  
-						if(iStream!=null)
-							iStream.close();
-					} catch(Exception ef) {
-						// ignore
-					}
 					throw new DriverConfigurazioneException("Riscontrato errore durante la creazione dell'inputStream del Configurazione (HTTP) : \n\n"+e.getMessage());
 				}
 			}else{
