@@ -842,6 +842,10 @@ public class PddMonitorProperties {
 		return this.appProperties.readProperties("login.props.");
 	}
 	
+	public String getLoginRetryDelays() throws UtilsException{
+		return this.appProperties.getProperty("login.retry.delayS", true, true);
+	}
+	
 	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) throws UtilsException { 
 		if(passwordVerifier != null) {
 			return this.isLoginApplication() && passwordVerifier.isCheckPasswordExpire();

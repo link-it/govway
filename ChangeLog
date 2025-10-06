@@ -1,3 +1,11 @@
+2025-10-06  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug #1656
+	Sono state risolte le seguenti vulnerabilità relative alle console di gestione e monitoraggio:
+	- CWE-307 (Brute Force)
+	- CWE-384 (Session Fixation)
+
 2025-09-30  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio]

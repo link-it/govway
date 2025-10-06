@@ -32,6 +32,7 @@ import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.web.lib.mvc.login.LoginException;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.dao.ILoginDAO;
@@ -136,7 +137,7 @@ public abstract class AbstractLoginBean implements Serializable{
 			MessageUtils.addErrorMsg("Si e' verificato un errore, impossibile autenticare l'utente.");
 		} catch (NotFoundException e) {
 			MessageUtils.addErrorMsg("Errore: Username o password non validi.");
-		} catch (UserInvalidException e) {
+		} catch (UserInvalidException | LoginException e) {
 			MessageUtils.addErrorMsg("Si e' verificato un errore, impossibile autenticare l'utente: " + e.getMessage());
 		}
 
