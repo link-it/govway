@@ -2165,4 +2165,8 @@ public class ConsoleProperties {
 		
 		return false;
 	}
+	
+	public String getLoginRetryDelays() throws UtilsException{
+		return this.readProperty(true,"login.retry.delayS");
+	}
 }

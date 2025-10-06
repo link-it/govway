@@ -674,6 +674,7 @@ public class ControlStationCore {
 	protected String loginSessioneScadutaRedirectUrl;
 	protected boolean logoutMostraButton;
 	protected String logoutUrlDestinazione;
+	protected String loginRetryDelays;
 	protected boolean loginOAuth2Enabled;
 	
 	
@@ -717,6 +718,10 @@ public class ControlStationCore {
 		return this.logoutUrlDestinazione;
 	}
 	
+	public String getLoginRetryDelays() throws UtilsException{
+		return this.loginRetryDelays;
+	}
+
 	public boolean isLoginOAuth2Enabled() {
 		return this.loginOAuth2Enabled;
 	}
@@ -724,6 +729,7 @@ public class ControlStationCore {
 	public boolean isMultiLoginEnabled() {
 		return this.isLoginApplication() && this.isVisualizzaFormLoginApplication() && this.isLoginOAuth2Enabled();
 	}
+	
 	
 	
 	/** Applicativi */
@@ -2628,6 +2634,7 @@ public class ControlStationCore {
 		this.loginUtenteNonValidoRedirectUrl = core.loginUtenteNonValidoRedirectUrl;
 		this.logoutMostraButton = core.logoutMostraButton;
 		this.logoutUrlDestinazione = core.logoutUrlDestinazione;
+		this.loginRetryDelays = core.loginRetryDelays;
 		this.loginOAuth2Enabled = core.loginOAuth2Enabled;
 		
 		/** Applicativi Console */
@@ -3267,6 +3274,7 @@ public class ControlStationCore {
 			this.loginUtenteNonValidoRedirectUrl = consoleProperties.getLoginUtenteNonValidoRedirectUrl();
 			this.logoutMostraButton = consoleProperties.isMostraButtonLogout();
 			this.logoutUrlDestinazione = consoleProperties.getLogoutUrlDestinazione();
+			this.loginRetryDelays = consoleProperties.getLoginRetryDelays();
 			this.loginOAuth2Enabled = consoleProperties.isLoginOAuth2Enabled();
 			
 			// Opzioni di Visualizzazione

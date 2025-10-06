@@ -81,6 +81,7 @@ import org.openspcoop2.web.ctrlstat.gestori.GestoriStartupThread;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneRegistroPluginsReader;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementParameter;
+import org.openspcoop2.web.lib.mvc.login.FailedAttempts;
 import org.openspcoop2.web.lib.queue.config.QueueProperties;
 import org.slf4j.Logger;
 
@@ -643,6 +644,14 @@ public class InitListener implements ServletContextListener {
 				InitListener.logError(
 						msgErrore,e);
 				//throw new UtilsRuntimeException(msgErrore,e); non sollevo l'eccezione, e' solo una informazione informativa, non voglio mettere un vincolo che serve per forza un nodo acceso
+			}
+			
+			// Login attempts
+			try{
+				FailedAttempts.createInstance(consoleProperties.getLoginRetryDelays());
+			}catch (UtilsException e) {
+				String msgErrore = "Errore durante l'inizializzazione del FailedAttempts: " + e.getMessage();
+				InitListener.logError(msgErrore,e);
 			}
 			
 			InitListener.setInitialized(true);
