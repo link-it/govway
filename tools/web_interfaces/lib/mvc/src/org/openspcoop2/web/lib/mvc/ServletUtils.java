@@ -927,4 +927,19 @@ public class ServletUtils {
 	public static boolean isUtenteLoggatoConOAuth2(HttpSession session) {
 		return session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN) != null; 
 	}
+	
+	public static void sessionFixation(Logger log, HttpServletRequest request, HttpSession session){
+		
+		log.debug("Session Fixation Protection");
+		log.debug("Old session id: {}", session.getId());
+		
+		String changeSessionId = request.changeSessionId();
+		
+		log.debug("New session id: {}", changeSessionId);
+		log.debug("New session id check: {}", session.getId());
+		
+		log.debug("Session Fixation Protection - END" );
+		
+		
+	}
 }

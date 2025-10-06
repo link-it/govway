@@ -103,6 +103,9 @@ public final class Login extends Action {
 
 			}
 			
+			// session fixation
+			ServletUtils.sessionFixation(ControlStationCore.getLog(), request, session);
+			
 			// controllo scadenza password
 			isOk = loginHelper.loginScadenzaPasswordCheckData();
 			if (!isOk) {

@@ -86,6 +86,9 @@ public final class Logout extends Action {
 			// Rimozione del cookie JSESSIONID
 	        ServletUtils.removeCookieFromResponse(org.openspcoop2.web.lib.mvc.Costanti.COOKIE_NAME_JSESSIONID, request, response);
 	        
+	    	// session fixation
+			ServletUtils.sessionFixation(ControlStationCore.getLog(), request, session);
+	        
 	        // Inizializzo di nuovo GeneralData, dopo aver rimosso
  			// dalla sessione la login dell'utente
  			gd = generalHelper.initGeneralData(request,LoginCostanti.SERVLET_NAME_LOGIN);
