@@ -112,6 +112,37 @@
 		<mkdir dir="${build_govwayMonitor}/tmpNative2ASCII_dest" />
 		<copy file="${properties_govwayMonitor}/govway.msgDiagnostici.properties" todir="${build_govwayMonitor}/tmpNative2ASCII_src" />
 		<native2ascii src="${build_govwayMonitor}/tmpNative2ASCII_src" dest="${build_govwayMonitor}/tmpNative2ASCII_dest" />
+		
+		<!-- Copia dei file jQuery da dentro i jar-->
+		<delete dir="${build_govwayMonitor}/jstmp" />
+		<mkdir dir="${build_govwayMonitor}/jstmp/jquery" />
+		<mkdir dir="${build_govwayMonitor}/jstmp/jquery-ui" />
+		<unzip dest="${build_govwayMonitor}/jstmp/jquery" overwrite="true">
+		  <fileset dir="${required_lib_govwayMonitor}/console" includes="jquery-*.jar"/>
+		  <patternset>
+		    <include name="META-INF/resources/webjars/jquery/**/jquery.min.js"/>
+		  </patternset>
+		</unzip>
+		<copy todir="${build_govwayMonitor}/jstmp/jquery" overwrite="true">
+		  <fileset dir="${build_govwayMonitor}/jstmp/jquery">
+		    <include name="META-INF/resources/webjars/jquery/**/jquery.min.js"/>
+		  </fileset>
+		  <!-- rimuove l'albero di cartelle interne: mantiene solo il nome del file -->
+		  <flattenmapper/>
+		</copy>
+		<unzip dest="${build_govwayMonitor}/jstmp/jquery-ui" overwrite="true">
+			<fileset dir="${required_lib_govwayMonitor}/console" includes="jquery-ui-*.jar"/>
+		  <patternset>
+		    <include name="META-INF/resources/webjars/jquery-ui/*/jquery-ui.min.js"/>
+		  </patternset>
+		</unzip>
+		<copy todir="${build_govwayMonitor}/jstmp/jquery-ui" overwrite="true">
+		  <fileset dir="${build_govwayMonitor}/jstmp/jquery-ui">
+		    <include name="META-INF/resources/webjars/jquery-ui/**/jquery-ui.min.js"/>
+		  </fileset>
+		  <!-- rimuove l'albero di cartelle interne: mantiene solo il nome del file -->
+		  <flattenmapper/>
+		</copy>
 
 		<war destfile="${dist_govwayMonitor}/govwayMonitor.war" webxml="${build_govwayMonitor_war}/WEB-INF/web.xml">
 
@@ -129,9 +160,35 @@
 			<!-- <zipfileset dir="${jsplib}" prefix="jsplib" /> -->
 			<!-- <zipfileset dir="${jslib}" prefix="js" /> -->
 
+			<zipfileset dir="${deploy_govwayMonitor}/web-content/css" prefix="css" />
+			<zipfileset dir="${deploy_govwayMonitor}/web-content/FusionCharts" prefix="FusionCharts" />
+			<zipfileset dir="${deploy_govwayMonitor}/web-content/scripts" prefix="scripts" >
+				<include name="c3.min.js"/>
+				<include name="ChartMap.js"/>
+				<include name="d3.min.js"/>
+				<include name="d3.v4.min.js"/>
+				<include name="d3-format.min.js"/>
+				<include name="heatmap.js"/>
+				<include name="jquery.collapsible.js"/>
+				<include name="shBrushJson.min.js"/>
+				<include name="shBrushXml.min.js"/>
+				<include name="shCore.min.js"/>
+				<include name="SvgRaster.js"/>
+				<include name="XRegExp.min.js"/>
+			</zipfileset>
+			
+			<zipfileset dir="${build_govwayMonitor}/jstmp/jquery" prefix="webjars/jquery/${jQueryVersionDir}" >
+				<include name="jquery.min.js"/>
+			</zipfileset>
+			
+			<zipfileset dir="${build_govwayMonitor}/jstmp/jquery-ui" prefix="webjars/jquery-ui/${jQueryUiVersionDir}" >
+				<include name="jquery-ui.min.js"/>
+			</zipfileset>
+			
 			<fileset dir="${deploy_govwayMonitor}/web-content">
-				<include name="**/*" />
-				<exclude name="properties/**" />
+				<include name="index.jsp" />
+				<include name="timeout.jsp" />
+<!--				<exclude name="properties/**" />-->
 			</fileset>
 			<fileset dir="${deploy_govwayMonitor}/pages">
 				<include name="**/*" />
@@ -179,8 +236,8 @@
 				<include name="commons-compress-1.27.1.jar" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/console">
-				<include name="jquery-3.7.1.jar"/>
-				<include name="jquery-ui-1.14.1.jar"/>
+<!--				<include name="jquery-3.7.1.jar"/>-->
+<!--				<include name="jquery-ui-1.14.1.jar"/>-->
 				<include name="govway-monitor-ui-*.jar"/>
 				<include name="jsoup-1.21.2.jar"/>
 			</lib>

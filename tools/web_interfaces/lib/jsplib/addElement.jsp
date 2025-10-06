@@ -79,10 +79,10 @@ var path = '<%= request.getContextPath()%>';
 </script>
 <script type="text/javascript" src="js/PostBack.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/array-utils.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/typeahead.bundle.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/bootstrap-tagsinput.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/array-utils.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/typeahead.bundle.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/bootstrap-tagsinput.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery.searchabledropdown.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.context-menu.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" nonce="<%= randomNonce %>">
 var nr = 0;

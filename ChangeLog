@@ -1,6 +1,13 @@
 2025-10-06  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug #1657
+	È stata risolte la seguente vulnerabilità relativa alle console di gestione e monitoraggio:
+	- CWE-200 (Information Exposure): esposizione delle Versioni delle Librerie Frontend
+
+2025-10-06  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
 	Risolto Bug #1656
 	Sono state risolte le seguenti vulnerabilità relative alle console di gestione e monitoraggio:
 	- CWE-307 (Brute Force)

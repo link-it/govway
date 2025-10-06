@@ -53,7 +53,7 @@ if(!tabSessionKey.equals("")){
 
 // <span class="item-icon \<\%=icon \%\>"></span>
 %>
-<script type="text/javascript" src="js/autocomplete.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/autocomplete.min.js" nonce="<%= randomNonce %>"></script>
 <% if(StringUtils.isNotEmpty(logoImage)){ %>
 <!-- TR Logo -->
 <!-- TR1: Header1 -->
