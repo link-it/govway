@@ -672,6 +672,7 @@ public class ControlStationCore {
 	protected String loginSessioneScadutaRedirectUrl;
 	protected boolean logoutMostraButton;
 	protected String logoutUrlDestinazione;
+	protected String loginRetryDelays;
 	
 	
 	public String getLoginTipo() {
@@ -708,6 +709,10 @@ public class ControlStationCore {
 
 	public String getLogoutUrlDestinazione() {
 		return this.logoutUrlDestinazione;
+	}
+	
+	public String getLoginRetryDelays() throws UtilsException{
+		return this.loginRetryDelays;
 	}
 	
 	
@@ -2596,6 +2601,7 @@ public class ControlStationCore {
 		this.loginUtenteNonValidoRedirectUrl = core.loginUtenteNonValidoRedirectUrl;
 		this.logoutMostraButton = core.logoutMostraButton;
 		this.logoutUrlDestinazione = core.logoutUrlDestinazione;
+		this.loginRetryDelays = core.loginRetryDelays;
 		
 		/** Applicativi Console */
 		this.applicativiPwConfiguration = core.applicativiPwConfiguration;
@@ -3223,6 +3229,7 @@ public class ControlStationCore {
 			this.loginUtenteNonValidoRedirectUrl = consoleProperties.getLoginUtenteNonValidoRedirectUrl();
 			this.logoutMostraButton = consoleProperties.isMostraButtonLogout();
 			this.logoutUrlDestinazione = consoleProperties.getLogoutUrlDestinazione();
+			this.loginRetryDelays = consoleProperties.getLoginRetryDelays();
 			
 			// Opzioni di Visualizzazione
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();

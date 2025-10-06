@@ -28,6 +28,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.login.FailedAttempts;
 import org.openspcoop2.web.lib.users.dao.User;
 
 /**
@@ -73,6 +74,14 @@ public class LoginHelper extends ConsoleHelper {
 			boolean trovato = this.utentiCore.existsUser(login);
 			User u = null;
 			if (trovato && tipoCheck.equals(LoginTipologia.WITH_PASSWORD)) {
+				// controllo se l'utenza e' da bloccare
+				boolean bloccaUtente = FailedAttempts.getInstance().bloccaUtente(this.log, login);
+				
+				if (bloccaUtente) {
+					this.pd.setMessage("Utenza bloccata, superato il numero di tentativi di accesso massimo!",MessageType.ERROR_SINTETICO);
+					return false;
+				}
+				
 				// Prendo la pw criptata da DB
 				u = this.utentiCore.getUser(login);
 				String pwcrypt = u.getPassword();
@@ -89,10 +98,12 @@ public class LoginHelper extends ConsoleHelper {
 				if (tipoCheck.equals(LoginTipologia.WITHOUT_PASSWORD)) {
 					this.pd.setMessage("Login inesistente!",MessageType.ERROR_SINTETICO);
 				} else {
+					FailedAttempts.getInstance().aggiungiTentativoFallitoUtente(this.log, login);
 					this.pd.setMessage("Login o password errata!",MessageType.ERROR_SINTETICO);
 				}
 				return false;
 			}
+			FailedAttempts.getInstance().resetTentativiUtente(login);
 			
 			// controllo modalita' associate all'utenza
 			if(trovato) {

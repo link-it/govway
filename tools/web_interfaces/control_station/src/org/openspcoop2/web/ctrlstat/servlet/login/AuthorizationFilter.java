@@ -456,6 +456,9 @@ public final class AuthorizationFilter implements Filter {
 								boolean isOk = loginHelper.loginCheckData(LoginTipologia.WITHOUT_PASSWORD, username, null);
 								
 								if(isOk) {
+									// session fixation
+									ServletUtils.sessionFixation(ControlStationCore.getLog(), request, session);
+									
 									// utente loggato
 									ServletUtils.setObjectIntoSession(request, session, this.core.getTipoDatabase(), CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
 									

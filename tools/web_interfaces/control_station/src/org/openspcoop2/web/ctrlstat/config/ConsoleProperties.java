@@ -2052,4 +2052,8 @@ public class ConsoleProperties {
 		}
 		return this.readProperty(true,"logout.urlDestinazione");
 	}
+	
+	public String getLoginRetryDelays() throws UtilsException{
+		return this.readProperty(true,"login.retry.delayS");
+	}
 }

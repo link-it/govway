@@ -28,7 +28,9 @@ import java.util.Arrays;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.UtilsRuntimeException;
+import org.openspcoop2.web.lib.mvc.login.FailedAttempts;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
 
@@ -121,6 +123,14 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 						msgErrore,e);
 				//throw new UtilsRuntimeException(msgErrore,e); non sollevo l'eccezione, e' solo una informazione informativa, non voglio mettere un vincolo che serve per forza un nodo acceso
 			}
+		}
+		
+		// Login attempts
+		try{
+			FailedAttempts.createInstance(govwayMonitorProperties.getLoginRetryDelays());
+		}catch (UtilsException e) {
+			String msgErrore = "Errore durante l'inizializzazione del FailedAttempts: " + e.getMessage();
+			logError(msgErrore,e);
 		}
 	}
 

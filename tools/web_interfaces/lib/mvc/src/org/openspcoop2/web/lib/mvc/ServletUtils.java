@@ -1343,4 +1343,19 @@ public class ServletUtils {
 	    
 	    return input.replaceAll("[:/@]", "_");
 	}
+	
+	public static void sessionFixation(Logger log, HttpServletRequest request, HttpSession session){
+		
+		log.debug("Session Fixation Protection");
+		log.debug("Old session id: {}", session.getId());
+		
+		String changeSessionId = request.changeSessionId();
+		
+		log.debug("New session id: {}", changeSessionId);
+		log.debug("New session id check: {}", session.getId());
+		
+		log.debug("Session Fixation Protection - END" );
+		
+		
+	}
 }

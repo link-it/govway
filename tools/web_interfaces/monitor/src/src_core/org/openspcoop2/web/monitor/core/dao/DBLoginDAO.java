@@ -45,6 +45,8 @@ import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.crypt.CryptConfig;
 import org.openspcoop2.utils.crypt.CryptFactory;
 import org.openspcoop2.utils.crypt.ICrypt;
+import org.openspcoop2.web.lib.mvc.login.FailedAttempts;
+import org.openspcoop2.web.lib.mvc.login.LoginException;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
@@ -154,7 +156,7 @@ public class DBLoginDAO implements ILoginDAO {
 	}
 
 	@Override
-	public boolean login(String username, String pwd) throws ServiceException {
+	public boolean login(String username, String pwd) throws ServiceException, LoginException {
 		try {
 			boolean existsUser = this.utenteDAO.existsUser(username);
 
@@ -163,9 +165,20 @@ public class DBLoginDAO implements ILoginDAO {
 
 			User u = this.utenteDAO.getUser(username);
 			
+			// controllo se l'utenza e' da bloccare
+			boolean bloccaUtente = FailedAttempts.getInstance().bloccaUtente(DBLoginDAO.log, username);
+			
+			if (bloccaUtente) {
+				throw new LoginException("Utenza bloccata, superato il numero di tentativi di accesso massimo!");
+			}
+			
 			boolean trovato = this.passwordManager.check(pwd, u.getPassword());
 			if(!trovato && this.passwordManagerBackwardCompatibility!=null) {
 				trovato = this.passwordManagerBackwardCompatibility.check(pwd, u.getPassword());
+			}
+			
+			if (!trovato) {
+				FailedAttempts.getInstance().aggiungiTentativoFallitoUtente(DBLoginDAO.log, username);
 			}
 			
 			return trovato;
