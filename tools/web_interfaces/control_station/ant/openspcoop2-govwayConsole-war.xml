@@ -11,7 +11,7 @@
 	</taskdef>
 	
 	<import file="../../../../ant/commons/utils.xml" />
-
+	
 	<target name="war_openspcoop2_govwayConsole_resources">	
                 <zip destfile="${build_govwayConsole_resourceDIR}/messageSecurity.zip" basedir="${deploy.dir}" includes="messageSecurity/**/*.xml" />
                 <zip destfile="${build_govwayConsole_resourceDIR}/policyGestioneToken.zip" basedir="${deploy.dir}" includes="policyGestioneToken/**/*.xml" />
@@ -271,6 +271,17 @@
 				</antcall>
 			</then>
 		</if>
+		<!-- imposto la versione di jquery e jquery-ui -->
+		<antcall target="replace_token">
+			<param name="file" value="${build_govwayConsole}/webtmp/web.xml"/>
+			<param name="token" value="JQUERY_VERSION"/>
+			<param name="value" value="${jQueryVersionDir}"/>
+		</antcall>
+		<antcall target="replace_token">
+			<param name="file" value="${build_govwayConsole}/webtmp/web.xml"/>
+			<param name="token" value="JQUERY_UI_VERSION"/>
+			<param name="value" value="${jQueryUiVersionDir}"/>
+		</antcall>
 		<concat destfile="${build_govwayConsole}/webtmp/web.xml" append="yes">
 			<filelist dir="${src_govwayConsole}/WEB-INF/web" files="web.xml.listeners"/>
 		</concat>
@@ -306,6 +317,37 @@
 		   		<copy file="${src_govwayConsole}/WEB-INF/jboss-web.xml" todir="${build_govwayConsole}/tmp"/>
 			</then>
 		</if>
+		
+		<!-- Copia dei file jQuery da dentro i jar-->
+		<delete dir="${build_govwayConsole}/jstmp" />
+		<mkdir dir="${build_govwayConsole}/jstmp/jquery" />
+		<mkdir dir="${build_govwayConsole}/jstmp/jquery-ui" />
+		<unzip dest="${build_govwayConsole}/jstmp/jquery" overwrite="true">
+		  <fileset dir="${required_lib_govwayConsole}/console" includes="jquery-*.jar"/>
+		  <patternset>
+		    <include name="META-INF/resources/webjars/jquery/**/jquery.min.js"/>
+		  </patternset>
+		</unzip>
+		<copy todir="${build_govwayConsole}/jstmp/jquery" overwrite="true">
+		  <fileset dir="${build_govwayConsole}/jstmp/jquery">
+		    <include name="META-INF/resources/webjars/jquery/**/jquery.min.js"/>
+		  </fileset>
+		  <!-- rimuove l'albero di cartelle interne: mantiene solo il nome del file -->
+		  <flattenmapper/>
+		</copy>
+		<unzip dest="${build_govwayConsole}/jstmp/jquery-ui" overwrite="true">
+			<fileset dir="${required_lib_govwayConsole}/console" includes="jquery-ui-*.jar"/>
+		  <patternset>
+		    <include name="META-INF/resources/webjars/jquery-ui/*/jquery-ui.min.js"/>
+		  </patternset>
+		</unzip>
+		<copy todir="${build_govwayConsole}/jstmp/jquery-ui" overwrite="true">
+		  <fileset dir="${build_govwayConsole}/jstmp/jquery-ui">
+		    <include name="META-INF/resources/webjars/jquery-ui/**/jquery-ui.min.js"/>
+		  </fileset>
+		  <!-- rimuove l'albero di cartelle interne: mantiene solo il nome del file -->
+		  <flattenmapper/>
+		</copy>
 
 		<war destfile="${dist_govwayConsole}/govwayConsole.war" webxml="${build_govwayConsole}/webtmp/web.xml">
 
@@ -323,7 +365,28 @@
 
 			<zipfileset dir="${jsp}" prefix="jsp" />
 			<zipfileset dir="${jsplib}" prefix="jsplib" />
-			<zipfileset dir="${jslib}" prefix="js" />
+			<zipfileset dir="${jslib}" prefix="js" >
+				<include name="add-element.js"/>
+			  	<include name="array-utils.min.js"/>
+				<include name="autocomplete.min.js"/>
+				<include name="bootstrap-tagsinput.min.js"/>
+				<include name="jquery.context-menu.min.js"/>
+				<include name="jquery.searchabledropdown.min.js"/>
+				<include name="login-utils.js"/>
+				<include name="PostBack.js"/>
+				<include name="typeahead.bundle.min.js"/>
+				<include name="ui.datepicker-it.js"/>
+				<include name="utils.js"/>
+				<include name="webapps.js"/>
+			</zipfileset>
+			
+			<zipfileset dir="${build_govwayConsole}/jstmp/jquery" prefix="webjars/jquery/${jQueryVersionDir}" >
+				<include name="jquery.min.js"/>
+			</zipfileset>
+			
+			<zipfileset dir="${build_govwayConsole}/jstmp/jquery-ui" prefix="webjars/jquery-ui/${jQueryUiVersionDir}" >
+				<include name="jquery-ui.min.js"/>
+			</zipfileset>
 
 			<fileset dir="${deploy.dir}">
 				<include name="index.html" />
@@ -364,8 +427,8 @@
 				<include name="commons-jcs3-core-3.2.1-gov4j-1.jar"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/console">
-				<include name="jquery-3.7.1.jar"/>
-				<include name="jquery-ui-1.14.1.jar"/>
+<!--				<include name="jquery-3.7.1.jar"/>-->
+<!--				<include name="jquery-ui-1.14.1.jar"/>-->
 				<include name="govway-console-ui-*.jar"/>
 				<include name="jsoup-1.21.2.jar"/>
 			</lib>

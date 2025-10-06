@@ -42,6 +42,10 @@
 	<property name="deploy_govwayMonitor" value="${govwayMonitor}/deploy" />
 	<property name="commons_temaConsole" value="${deploy_govwayMonitor}/tema_css" />
 	<property name="appSec.dir" location="${deploy_govwayMonitor}/applicationSecurity" />
+	<!-- Directory di destinazione libreria jquery puo' essere la versione o il valore offuscato  -->
+    <property name="jQueryVersionDir" value="gw"/>
+    <!-- Directory di destinazione libreria jquery-ui puo' essere la versione o il valore offuscato  -->
+    <property name="jQueryUiVersionDir" value="gw"/>
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true" />

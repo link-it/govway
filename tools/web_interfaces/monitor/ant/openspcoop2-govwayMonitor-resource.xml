@@ -90,6 +90,18 @@
 			</then>
 		</if>
 		
+		<!-- imposto la versione di jquery e jquery-ui -->
+		<antcall target="replace_token">
+			<param name="file" value="${build_govwayMonitor_war}/WEB-INF/web.xml"/>
+			<param name="token" value="JQUERY_VERSION"/>
+			<param name="value" value="${jQueryVersionDir}"/>
+		</antcall>
+		<antcall target="replace_token">
+			<param name="file" value="${build_govwayMonitor_war}/WEB-INF/web.xml"/>
+			<param name="token" value="JQUERY_UI_VERSION"/>
+			<param name="value" value="${jQueryUiVersionDir}"/>
+		</antcall>
+		
 		<!-- web.xml.listeners -->
 		<concat destfile="${build_govwayMonitor_war}/WEB-INF/web.xml" append="yes">
 			<filelist dir="${src_webinf_govwayMonitor}/web" files="web.xml.listeners"/>

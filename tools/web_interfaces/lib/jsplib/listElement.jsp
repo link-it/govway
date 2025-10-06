@@ -236,7 +236,7 @@ function Esporta(tipo) {
 	 });
 </script>
 <script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/jquery.searchabledropdown.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.context-menu.min.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />

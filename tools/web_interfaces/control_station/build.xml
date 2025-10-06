@@ -27,6 +27,10 @@
 	<property name="cfg" location="${basedir}/deploy/properties" />
 	<property name="deploy.dir" location="${basedir}/deploy" />
 	<property name="appSec.dir" location="${deploy.dir}/applicationSecurity" />
+    <!-- Directory di destinazione libreria jquery puo' essere la versione o il valore offuscato  -->
+    <property name="jQueryVersionDir" value="gw"/>
+    <!-- Directory di destinazione libreria jquery-ui puo' essere la versione o il valore offuscato  -->
+    <property name="jQueryUiVersionDir" value="gw"/>
 
 	<!-- Indicazione se produrre la versione per server non j2ee -->
 	<var name="j2ee" value="true" />
