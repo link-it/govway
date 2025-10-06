@@ -351,7 +351,10 @@ class HttpCoreConnection extends HttpLibraryConnection {
         client.close();
         
         // per mantenere la retro compatibilità con urlConnection
-        String returnCode = httpResp.getVersion() + " " + httpResp.getCode() + " " + httpResp.getReasonPhrase();
+        String returnCode = httpResp.getVersion() + " " + httpResp.getCode();
+        if(httpResp.getReasonPhrase()!=null && StringUtils.isNotEmpty(httpResp.getReasonPhrase())) {
+        	returnCode+= " " + httpResp.getReasonPhrase();
+        }
         response.addHeader("ReturnCode", List.of(returnCode));
         
         // certificati server

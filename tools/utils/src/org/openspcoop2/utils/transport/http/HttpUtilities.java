@@ -2327,6 +2327,9 @@ public class HttpUtilities {
 				}
 				boolean encodeBaseLocation = true; // la base location può contenere dei parametri
 				connectionUrl = TransportUtils.buildUrlWithParameters(parameters, request.getForwardProxyEndpoint(), encodeBaseLocation, LoggerWrapperFactory.getLogger(HttpUtilities.class));
+				if(connectionUrl!=null) {
+					request.setUrl(connectionUrl);
+				}
 			}
 			
 			HttpLibraryConnection conn = HttpLibraryConnection.fromLibrary(request.getHttpLibrary());
