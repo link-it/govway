@@ -848,7 +848,8 @@ public class Converter {
 			}
 		}
 		
-		if(extended) {
+		if(extended 
+				&& dumpMessaggio.getContentType()!=null) { // required per TransazioneExtContenutoMessaggioBody
 			TransazioneExtContenutoMessaggioBody body = new TransazioneExtContenutoMessaggioBody();
 			body.setFormato(_convert(dumpMessaggio.getFormatoMessaggio()));
 			body.setContentType(dumpMessaggio.getContentType());
