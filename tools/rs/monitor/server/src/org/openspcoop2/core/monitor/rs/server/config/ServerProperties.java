@@ -253,6 +253,10 @@ public class ServerProperties  {
 		return utenzeCryptConfig;
 	}
 	
+	public String getLoginRetryDelays() throws UtilsException{
+		return this.readProperty(true,"login.retry.delayS");
+	}
+	
 	
 	public int getTransazioniDettaglioVisualizzazioneMessaggiThreshold() throws NumberFormatException, UtilsException {
 		return Integer.valueOf(this.readProperty(true, "transazioni.dettaglio.visualizzazioneMessaggi.threshold"));
