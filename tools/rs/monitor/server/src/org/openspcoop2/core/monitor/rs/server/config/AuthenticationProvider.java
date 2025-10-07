@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.web.lib.mvc.login.LoginException;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.slf4j.Logger;
@@ -95,7 +96,16 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			try {
 				loginService.setPasswordManager(ServerProperties.getInstance().getUtenzeCryptConfig());
 				correct = loginService.login(username, password);
-			}catch(Exception e) {
+			}
+			catch(LoginException e) {
+				if(DBLoginDAO.UTENZA_BLOCCATA.equals(e.getMessage())) {
+					throw new BadCredentialsException("Bad credentials");
+				}
+				else {
+					logAndThrowAuthenticationServiceException("Inizializzazione AuthenticationProvider fallita",e);
+				}
+			}
+			catch(Exception e) {
 				logAndThrowAuthenticationServiceException("Inizializzazione AuthenticationProvider fallita",e);
 			}
 			if(!correct) {
