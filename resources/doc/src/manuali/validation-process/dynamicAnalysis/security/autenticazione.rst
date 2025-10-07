@@ -35,3 +35,18 @@ Evidenze disponibili in:
 - `Autenticazione applicativi di dominio esterno <https://jenkins.link.it/govway-testsuite/trasparente_karate/AutenticazioneApplicativiEsterni/html/>`_
 - `Forward delle credenziali <https://jenkins.link.it/govway-testsuite/trasparente_karate/AutenticazioneGestoreCredenziali/html/>`_
 - `Forward delle credenziali 'principal' <https://jenkins.link.it/govway-testsuite/trasparente_karate/AutenticazioneGestoreCredenzialiPrincipal/html/>`_
+
+Infine, sono disponibili script automatici che verificano il corretto funzionamento delle procedure di login sia sulle console sia sulle API di gestione e di monitoraggio. Durante tali verifiche si attesta l’assenza delle seguenti criticità:
+
+- tentativi di brute force (CWE-307);
+- corretta applicazione dei criteri di autorizzazione;
+- per le sole console, assenza della vulnerabilità di session fixation (CWE-384).
+
+I sorgenti delle verifiche sono disponibili in:
+
+- console di gestione (govwayConsole): `tools/web_interfaces/control_station/testsuite/scripts/verifica_accesso_console_gestione.sh <https://github.com/link-it/govway/tree/master/tools/web_interfaces/control_station/testsuite/scripts/verifica_accesso_console_gestione.sh>`_
+- console di monitoraggio (govwayMonitor): `tools/web_interfaces/monitor/testsuite/scripts/verifica_accesso_console_monitoraggio.sh <https://github.com/link-it/govway/tree/master/tools/web_interfaces/monitor/testsuite/scripts/verifica_accesso_console_monitoraggio.sh>`_
+- API di gestione (govwayAPIConfig): `tools/rs/config/server/testsuite/scripts/verifica_stato_api_configurazione.sh <https://github.com/link-it/govway/tree/master/tools/rs/config/server/testsuite/scripts/verifica_stato_api_configurazione.sh>`_
+- API di monitoraggio (govwayAPIMonitor): `tools/rs/monitor/server/testsuite/scripts/verifica_stato_api_monitoraggio.sh <https://github.com/link-it/govway/tree/master/tools/rs/monitor/server/testsuite/scripts/verifica_stato_api_monitoraggio.sh>`_
+
+Evidenze disponibili nell'output console dell'ambiente di `Continuous Integration Jenkins di GovWay <https://jenkins.link.it/govway/job/GovWay/>`_. 

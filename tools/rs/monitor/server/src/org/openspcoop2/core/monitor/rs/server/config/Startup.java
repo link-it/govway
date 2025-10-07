@@ -59,6 +59,7 @@ import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.ProviderUtils;
+import org.openspcoop2.web.lib.mvc.login.FailedAttempts;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.slf4j.Logger;
@@ -368,6 +369,13 @@ public class Startup implements ServletContextListener {
 					// non sollevo l'eccezione, e' solo una informazione informativa, non voglio mettere un vincolo che serve per forza un nodo acceso
 					Startup.log.error("Errore durante l'inizializzazione del RuntimeConfigReader: "+e.getMessage(),e);
 				}
+			}
+			
+			// Login attempts
+			try{
+				FailedAttempts.createInstance(serverProperties.getLoginRetryDelays());
+			}catch (Exception e) {
+				doError("Errore durante l'inizializzazione del FailedAttempts",e);
 			}
 			
 			Startup.initializedResources = true;

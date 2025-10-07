@@ -112,7 +112,7 @@ if [ ! -z "${ERROR}" ]; then
 fi
 
 if check_login_success "$RESPONSE"; then
-	echo " Accesso GovWay : Login effettuato con successo"
+	echo "     Accesso GovWay : Login effettuato con successo"
 else
 	echo "Login non riuscito - Pagina attesa non trovata"
 	echo ""
@@ -120,6 +120,48 @@ else
 	exit 1
 fi
 echo ""
+
+
+
+RESPONSE=$(do_login "inesistente" "$PASSWORD" "$COOKIE" "$CSRF")
+
+if check_login_success "$RESPONSE"; then
+	echo "Login riuscito - Atteso deny per utente non esistente"
+	echo ""
+	echo "**********************************************"
+	exit 1
+else
+	echo " Accesso GovWay : Login negato con successo" > /dev/null
+fi
+
+RESPONSE=$(do_login "$USERNAME" "errata" "$COOKIE" "$CSRF")
+
+if check_login_success "$RESPONSE"; then
+	echo "Login riuscito - Atteso deny per password errata"
+	echo ""
+	echo "**********************************************"
+	exit 1
+else
+	echo " Accesso GovWay : Login negato con successo" > /dev/null
+fi
+
+
+RESPONSE=$(do_login "operatore" "$PASSWORD" "$COOKIE" "$CSRF")
+
+if check_login_success "$RESPONSE"; then
+	echo "Login riuscito - Atteso deny per utente non abilitato"
+	echo ""
+	echo "**********************************************"
+	exit 1
+else
+	echo " Accesso GovWay : Login negato con successo" > /dev/null
+fi
+echo "     Autorizzazioni: OK"
+echo ""
+
+
+
+
 
 echo " Verifica Session Fixation (CWE-384)        "
 echo ""

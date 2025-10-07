@@ -105,7 +105,8 @@ public class FailedAttempts {
 		return this.failedDelays.get(Math.min(retries - 1, this.failedDelays.size() - 1));
 	}
 
-	public void resetTentativiUtente(String username) {
+	public void resetTentativiUtente(Logger log,String username) {
+		log.debug("utente {} password corrretta", username);
 		this.failedAttemptsMap.remove(username);
 	}
 }
