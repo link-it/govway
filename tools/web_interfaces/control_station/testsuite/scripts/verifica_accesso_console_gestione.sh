@@ -19,7 +19,7 @@ then
 else
 	if [ " Accesso GovWay : Login effettuato con successo" == "$CHK" ]
 	then
-		echo "$CHK" 
+		echo "    $CHK" 
 	else 
 		echo "Login non riuscito"
 		echo "[$CHK]" 
@@ -28,7 +28,76 @@ else
 		exit 1
 	fi
 fi 
+
+DATA_LOGIN_ERRATO="login=inesistente&password=123456"
+CHK=$(curl -s -X POST -d "$DATA_LOGIN_ERRATO" "$BASEURL/login.do"  | grep messages-title-text | awk -F">" '{print $2}' | awk -F"<" '{print " Accesso GovWay : " $1}')
+if [ "X$CHK" == "X" ];
+then
+	echo "Problema di connessione"
+	echo ""
+	echo "**********************************************"
+	exit 1
+else
+	if [ " Accesso GovWay : Login o password errata!" == "$CHK" ]
+	then
+		echo "$CHK" > /dev/null
+	else 
+		echo "Verifica login inesistente non riuscita"
+		echo "[$CHK]" 
+		echo ""
+		echo "**********************************************"
+		exit 1
+	fi
+fi 
+
+DATA_PASSWORD_ERRATO="login=amministratore&password=errata"
+CHK=$(curl -s -X POST -d "$DATA_PASSWORD_ERRATO" "$BASEURL/login.do"  | grep messages-title-text | awk -F">" '{print $2}' | awk -F"<" '{print " Accesso GovWay : " $1}')
+if [ "X$CHK" == "X" ];
+then
+	echo "Problema di connessione"
+	echo ""
+	echo "**********************************************"
+	exit 1
+else
+	if [ " Accesso GovWay : Login o password errata!" == "$CHK" ]
+	then
+		echo "$CHK" > /dev/null
+	else 
+		echo "Verifica password errata non riuscita"
+		echo "[$CHK]" 
+		echo ""
+		echo "**********************************************"
+		exit 1
+	fi
+fi 
 echo ""
+
+DATA_UTENTE_NON_AUTORIZZATO="login=operatore&password=123456"
+CHK=$(curl -s -X POST -d "$DATA_UTENTE_NON_AUTORIZZATO" "$BASEURL/login.do"  | grep messages-title-text | awk -F">" '{print $2}' | awk -F"<" '{print " Accesso GovWay : " $1}')
+if [ "X$CHK" == "X" ];
+then
+	echo "Problema di connessione"
+	echo ""
+	echo "**********************************************"
+	exit 1
+else
+	if [ " Accesso GovWay : L'utente non &egrave; abilitato ad utilizzare la console" == "$CHK" ]
+	then
+		echo "$CHK" > /dev/null
+	else 
+		echo "Verifica utente non autorizzato fallita"
+		echo "[$CHK]" 
+		echo ""
+		echo "**********************************************"
+		exit 1
+	fi
+fi 
+echo "     Autorizzazioni: OK"
+echo ""
+
+
+
+
 
 echo " Verifica Session Fixation (CWE-384)        "
 echo ""

@@ -1,3 +1,10 @@
+2025-10-07  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio, ApiRsConfigurazione]
+	Risolto Bug #1656
+	È stata risolta la seguente vulnerabilità relativa alle API di gestione e monitoraggio:
+	- CWE-307 (Brute Force)
+
 2025-10-06  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole, GovWayMonitor]

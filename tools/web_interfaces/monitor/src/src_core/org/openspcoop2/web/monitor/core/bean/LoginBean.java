@@ -56,7 +56,6 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.mvc.login.FailedAttempts;
 import org.openspcoop2.web.lib.mvc.login.LoginException;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.RicercaUtente;
@@ -216,8 +215,6 @@ public class LoginBean extends AbstractLoginBean {
 				this.log.info("Verifico le credenziali per l'utente [{}]", this.getUsername());
 
 				if(this.getLoginDao().login(this.getUsername(),this.getPwd())){
-					
-					FailedAttempts.getInstance().resetTentativiUtente(this.getUsername());
 					
 					// controllo validita' password
 					UserDetailsBean loadUserByUsername = this.getLoginDao().loadUserByUsername(this.getUsername());

@@ -155,6 +155,8 @@ public class DBLoginDAO implements ILoginDAO {
 		}
 	}
 
+	public static final String UTENZA_BLOCCATA = "Utenza bloccata, superato il numero di tentativi di accesso massimo!";
+	
 	@Override
 	public boolean login(String username, String pwd) throws ServiceException, LoginException {
 		try {
@@ -169,7 +171,7 @@ public class DBLoginDAO implements ILoginDAO {
 			boolean bloccaUtente = FailedAttempts.getInstance().bloccaUtente(DBLoginDAO.log, username);
 			
 			if (bloccaUtente) {
-				throw new LoginException("Utenza bloccata, superato il numero di tentativi di accesso massimo!");
+				throw new LoginException(UTENZA_BLOCCATA);
 			}
 			
 			boolean trovato = this.passwordManager.check(pwd, u.getPassword());
@@ -179,6 +181,9 @@ public class DBLoginDAO implements ILoginDAO {
 			
 			if (!trovato) {
 				FailedAttempts.getInstance().aggiungiTentativoFallitoUtente(DBLoginDAO.log, username);
+			}
+			else {
+				FailedAttempts.getInstance().resetTentativiUtente(DBLoginDAO.log, username);
 			}
 			
 			return trovato;

@@ -428,6 +428,10 @@ public class ServerProperties  {
 		return utenzeCryptConfig;
 	}
 	
+	public String getLoginRetryDelays() throws UtilsException{
+		return this.readProperty(true,"login.retry.delayS");
+	}
+	
 	// Applicativi
 	
 	public String getApplicativiPassword() throws UtilsException{

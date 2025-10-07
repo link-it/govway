@@ -24,12 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
-import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.crypt.CryptConfig;
-import org.openspcoop2.utils.crypt.CryptFactory;
-import org.openspcoop2.utils.crypt.ICrypt;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.servlet.login.LoginHelper;
+import org.openspcoop2.web.ctrlstat.servlet.login.LoginTipologia;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.slf4j.Logger;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -55,17 +53,6 @@ public class AuthenticationProvider implements org.springframework.security.auth
 	private Logger log = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
 	private String configuratorRoleName = "configuratore";	
-
-	private static ICrypt passwordManager = null;
-	private static ICrypt passwordManagerBackwardCompatibility = null;
-	private static synchronized void initPasswordManager(Logger log, CryptConfig config) throws UtilsException {
-		if(passwordManager==null) {
-			passwordManager = CryptFactory.getCrypt(log, config);
-			if(config.isBackwardCompatibility()) {
-				passwordManagerBackwardCompatibility = CryptFactory.getOldMD5Crypt(log);
-			}
-		}
-	}
 	
 	private static String getS(String v) {
 		return "sec"+v+"ret";
@@ -93,39 +80,19 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			throw new AuthenticationServiceException("Inizializzazione AuthenticationProvider fallita: "+e.getMessage(),e);
 		}
 		
-		boolean trovato = false;
+		StringBuilder denyReason = new StringBuilder();
 		org.openspcoop2.web.lib.users.dao.User u = null;
 		try {
-			trovato = utentiCore.existsUser(username);
-			if(trovato) {
-				u = utentiCore.getUser(username);
-			}
+			u = LoginHelper.loginCheckData(this.log, utentiCore, LoginTipologia.WITH_PASSWORD, username, password, denyReason);
 		}catch(Exception e) {
 			throw new AuthenticationServiceException("AuthenticationProvider,ricerca utente fallita: "+e.getMessage(),e);
 		}
-		if(!trovato) {
-			/**throw new UsernameNotFoundException("Username '"+username+"' not found");*/
-			// Fix security: Make sure allowing user enumeration is safe here.
+		
+		if(u==null) {
 			throw new BadCredentialsException("Bad credentials");
 		}
-		String pwcrypt = u.getPassword();
 		
-		try {
-			if(passwordManager==null) {
-				initPasswordManager(this.log, ServerProperties.getInstance().getUtenzeCryptConfig());
-			}
-		}catch(Exception e) {
-			throw new AuthenticationServiceException("Inizializzazione AuthenticationProvider fallita: "+e.getMessage(),e);
-		}
 		
-		boolean match = passwordManager.check(password, pwcrypt);
-		if(!match && passwordManagerBackwardCompatibility!=null) {
-			match = passwordManagerBackwardCompatibility.check(password, pwcrypt);
-		}
-		if(!match) {
-			throw new BadCredentialsException("Bad credentials");
-		}
-
 		List<GrantedAuthority> roles = new ArrayList<>();
 		if(u.getPermessi()!=null && u.getPermessi().isServizi()) {
 			GrantedAuthority grant = new SimpleGrantedAuthority(this.configuratorRoleName);
