@@ -51,18 +51,30 @@ public class OAuth2Utilities {
 
 	private OAuth2Utilities() { /*static only*/ }
 
+	public static String addFirstParameter(String name, String value) {
+		return "?" + getParameter(name, value);
+	}
+	
+	public static String addParameter(String name, String value) {
+		return "&" + getParameter(name, value);
+	}
+	
+	public static String getParameter(String name, String value) {
+		return name + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8);
+	}
+
 	public static String getURLLoginOAuth2(Properties loginProperties, String state) {
 		String authorizationEndpoint = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_AUTHORIZATION_ENDPOINT);
 		String clientId = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_CLIENT_ID);
 		String callbackUri = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_REDIRECT_URL);
 		String scope = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_SCOPE);
 		
-		return authorizationEndpoint
-				+ "?response_type=code"
-				+ "&redirect_uri=" + URLEncoder.encode(callbackUri, StandardCharsets.UTF_8) 
-				+ "&client_id="    + URLEncoder.encode(clientId, StandardCharsets.UTF_8)
-				+ "&scope="        + URLEncoder.encode(scope, StandardCharsets.UTF_8)
-				+ "&state="        + state;
+		return authorizationEndpoint +
+				addFirstParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_RESPONSE_TYPE, "code") +
+				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_REDIRECT_URI, callbackUri) +
+				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_CLIENT_ID, clientId) +
+				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_SCOPE, scope) +
+				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_STATE, state);
 	}
 
 	public static OAuth2Token getToken(Logger log, Properties loginProperties, String code) {
@@ -71,10 +83,11 @@ public class OAuth2Utilities {
 		String clientId = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_CLIENT_ID);
 		String callbackUri = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_REDIRECT_URL);
 
-		String requestTokenBody = "grant_type=authorization_code" +
-				"&code="         + URLEncoder.encode(code, StandardCharsets.UTF_8) +
-				"&redirect_uri=" + URLEncoder.encode(callbackUri, StandardCharsets.UTF_8) +
-				"&client_id="    + URLEncoder.encode(clientId, StandardCharsets.UTF_8);
+		String requestTokenBody =
+				getParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_GRANT_TYPE, "authorization_code") +
+				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_CODE, code) +
+				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_REDIRECT_URI, callbackUri) +
+				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_CLIENT_ID, clientId);
 
 		HttpRequest httpRequest = new HttpRequest();
 
@@ -258,10 +271,10 @@ public class OAuth2Utilities {
 		String tokenEndpoint = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_TOKEN_ENDPOINT);
 		String clientId = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_CLIENT_ID);
 
-		String refreshTokenBody = "grant_type=refresh_token"
-				+ "&refresh_token=" + URLEncoder.encode(refreshToken, StandardCharsets.UTF_8)
-				+ "&client_id="    + URLEncoder.encode(clientId, StandardCharsets.UTF_8) 
-				;
+		String refreshTokenBody =
+				getParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_GRANT_TYPE, "refresh_token") +
+				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_REFRESH_TOKEN, refreshToken) +
+				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_CLIENT_ID, clientId);
 
 		HttpRequest httpRequest = new HttpRequest();
 
@@ -366,11 +379,8 @@ public class OAuth2Utilities {
 	}
 
 	public static String creaUrlLogout(String idToken, String oauth2LogoutUrl, String redirPageUrl) {
-		String encodedIdToken = URLEncoder.encode(idToken, StandardCharsets.UTF_8);
-		String encodedRedirectUri = URLEncoder.encode(redirPageUrl, StandardCharsets.UTF_8);
-
 		return oauth2LogoutUrl +
-				"?" + OAuth2Costanti.PARAM_NAME_OAUTH2_ID_TOKEN_HINT + "=" + encodedIdToken +
-				"&" + OAuth2Costanti.PARAM_NAME_OAUTH2_POST_LOGOUT_REDIRECT_URI + "=" + encodedRedirectUri;
+				addFirstParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_ID_TOKEN_HINT, idToken) +
+				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_POST_LOGOUT_REDIRECT_URI, redirPageUrl);
 	}
 }

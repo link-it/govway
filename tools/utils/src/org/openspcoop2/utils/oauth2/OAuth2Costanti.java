@@ -30,6 +30,8 @@ public class OAuth2Costanti {
 
 	private OAuth2Costanti() {/* static only */}
 	
+	private static final String SCOPE = "scope";
+	
 	public static final String HEADER_NAME_AUTHORIZATION = "Authorization";
 	public static final String MEDIA_TYPE_APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 	public static final String MEDIA_TYPE_APPLICATION_JSON = "application/json";
@@ -44,7 +46,7 @@ public class OAuth2Costanti {
 	public static final String PROP_OAUTH2_CLIENT_ID = PROP_OAUTH2_PREFIX + "clientId";
 	public static final String PROP_OAUTH2_CLIENT_SECRET = PROP_OAUTH2_PREFIX + "clientSecret";
 	public static final String PROP_OAUTH2_REDIRECT_URL = PROP_OAUTH2_PREFIX + "redirectUri";
-	public static final String PROP_OAUTH2_SCOPE = PROP_OAUTH2_PREFIX + "scope";
+	public static final String PROP_OAUTH2_SCOPE = PROP_OAUTH2_PREFIX + SCOPE;
 	public static final String PROP_OAUTH2_PRINCIPAL_CLAIM = PROP_OAUTH2_PREFIX + "principalClaim";
 	
 	public static final String PROP_OAUTH2_READ_TIMEOUT = PROP_OAUTH2_PREFIX + "readTimeout";
@@ -71,7 +73,7 @@ public class OAuth2Costanti {
 	public static final String PARAM_NAME_OAUTH2_CLIENT_ID = "client_id";
 	public static final String PARAM_NAME_OAUTH2_CLIENT_SECRET = "client_secret";
 	public static final String PARAM_NAME_OAUTH2_REDIRECT_URI = "redirect_uri";
-	public static final String PARAM_NAME_OAUTH2_SCOPE = "scope";
+	public static final String PARAM_NAME_OAUTH2_SCOPE = SCOPE;
 	public static final String PARAM_NAME_OAUTH2_CODE = "code";
 	public static final String PARAM_NAME_OAUTH2_STATE = "state";
 	public static final String PARAM_NAME_OAUTH2_GRANT_TYPE = "grant_type";
@@ -79,6 +81,7 @@ public class OAuth2Costanti {
 	public static final String PARAM_NAME_OAUTH2_ERROR = "error";
 	public static final String PARAM_NAME_OAUTH2_ID_TOKEN_HINT = "id_token_hint";
 	public static final String PARAM_NAME_OAUTH2_POST_LOGOUT_REDIRECT_URI = "post_logout_redirect_uri";
+	public static final String PARAM_NAME_OAUTH2_REFRESH_TOKEN = "refresh_token";
 	
 	/** Attributi sessione / request */
 	public static final String ATTRIBUTE_NAME_ERROR_MESSAGE = "oauth2ErrorMessage";
@@ -97,7 +100,7 @@ public class OAuth2Costanti {
 	public static final String FIELD_NAME_ACCESS_TOKEN = "access_token";
 	public static final String FIELD_NAME_EXPIRES_IN = "expires_in";
 	public static final String FIELD_NAME_REFRESH_TOKEN = "refresh_token";
-	public static final String FIELD_NAME_SCOPE = "scope";
+	public static final String FIELD_NAME_SCOPE = SCOPE;
 	public static final String FIELD_NAME_TOKEN_TYPE = "token_type";
 	public static final String FIELD_NAME_ID_TOKEN = "id_token";
 	public static final String FIELD_NAME_KID = "kid";
@@ -124,4 +127,7 @@ public class OAuth2Costanti {
 	public static final String ERRORE_INVALID_REDIRECT_URI = "invalid_redirect_uri";
 	
 	public static final String ERROR_MSG_TOKEN_RICEVUTO_NON_VALIDO = "Token ricevuto non valido";
+	public static final String ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES = "Errore durante la lettura delle properties: ";
+	public static final String ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE = "Autenticazione Oauth2 non disponibile: si e' verificato un'errore: ";
+	public static final String ERROR_MSG_LOGIN_ERRORE_INTERNO = "Il sistema non riesce ad autenticare l'utente.";
 }

@@ -16137,7 +16137,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.add(de);
 	}
 	
-	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws DriverControlStationException {
+	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) {
 		PermessiUtente pu = user.getPermessi();
 		Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 		if(singlePdD==null) {

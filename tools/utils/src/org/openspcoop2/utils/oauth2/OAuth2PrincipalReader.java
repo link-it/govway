@@ -88,13 +88,7 @@ public class OAuth2PrincipalReader implements IPrincipalReader {
 				return null;						
 			}
 
-			OAuth2Token oAuth2Token = OAuth2Utilities.refreshToken(this.log, this.properties, refreshToken);
-
-			// Verifica errori nella risposta
-			if (oAuth2Token.getReturnCode() != 200) {
-				request.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ERROR_CODE, oAuth2Token.getError());
-				request.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ERROR_DETAIL, oAuth2Token.getDescription());
-			}
+			OAuth2Token oAuth2Token = refreshToken(request, refreshToken);
 
 			// richiesta dei certificati
 			Oauth2BaseResponse jwksResponse = OAuth2Utilities.getCertificati(this.log, this.properties); 
@@ -144,6 +138,18 @@ public class OAuth2PrincipalReader implements IPrincipalReader {
 
 		this.log.warn("Utenza non autenticata");
 		return null;
+	}
+
+	private OAuth2Token refreshToken(HttpServletRequest request, String refreshToken) {
+		OAuth2Token oAuth2Token = OAuth2Utilities.refreshToken(this.log, this.properties, refreshToken);
+
+		// Verifica errori nella risposta
+		if (oAuth2Token.getReturnCode() != 200) {
+			request.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ERROR_CODE, oAuth2Token.getError());
+			request.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ERROR_DETAIL, oAuth2Token.getDescription());
+		}
+		
+		return oAuth2Token;
 	}
 
 	@Override

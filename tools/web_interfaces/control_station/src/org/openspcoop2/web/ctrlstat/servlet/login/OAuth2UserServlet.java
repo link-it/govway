@@ -20,6 +20,7 @@
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Properties;
 
@@ -53,7 +54,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
-import org.openspcoop2.web.monitor.core.core.Utility;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 
@@ -65,10 +65,6 @@ import org.springframework.http.HttpStatus;
  * @version $Rev$, $Date$
  */
 public class OAuth2UserServlet extends HttpServlet {
-
-	private static final String ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES = "Errore durante la lettura delle properties: ";
-
-	private static final String ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE = "Autenticazione Oauth2 non disponibile: si e' verificato un'errore: ";
 
 	private static final long serialVersionUID = 1L;
 
@@ -89,6 +85,8 @@ public class OAuth2UserServlet extends HttpServlet {
 		String oauth2LogoutUrl = null;
 		GeneralHelper generalHelper = null;
 
+		HttpSession session = httpServletRequest.getSession();
+
 		try {
 			String loginTipo = ConsoleProperties.getInstance().getLoginTipo();
 
@@ -104,9 +102,6 @@ public class OAuth2UserServlet extends HttpServlet {
 			loginErroreInternoRedirectUrl = ConsoleProperties.getInstance().getLoginErroreInternoRedirectUrl();
 			loginSessioneScadutaRedirectUrl = ConsoleProperties.getInstance().getLoginSessioneScadutaRedirectUrl();
 			oauth2LogoutUrl = prop.getProperty(OAuth2Costanti.PROP_OAUTH2_LOGOUT_ENDPOINT);
-
-
-			HttpSession session = httpServletRequest.getSession();
 
 			generalHelper = new GeneralHelper(session);
 			ControlStationCore core = generalHelper.getCore();
@@ -129,82 +124,20 @@ public class OAuth2UserServlet extends HttpServlet {
 					ControlStationCore.clearAuditManager();
 
 					if(GestoreConsistenzaDati.gestoreConsistenzaDatiInEsecuzione){
-						AuthorizationFilter.setErrorMsg(generalHelper, session, httpServletRequest, httpServletResponse, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE, LoginCostanti.MESSAGGIO_INFO_CONTROLLO_CONSISTENZA_DATI_IN_CORSO, MessageType.INFO, httpServletRequest.getServletContext(), null);
+						log.debug("Controllo di valida non valido: {}", loginHelper.getPd().getMessage());
+						ServletUtils.setObjectIntoSession(httpServletRequest, session, LoginCostanti.MESSAGGIO_INFO_CONTROLLO_CONSISTENZA_DATI_IN_CORSO, Costanti.PRINCIPAL_ERROR_MSG);
+
+						ServletUtils.removeUserLoginFromSession(session);
+
+						// Redirect verso pagina di errore con logout oauth
+						redirectToPagina(log, httpServletRequest, httpServletResponse, session,
+								null, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE, oauth2LogoutUrl);
 						// return so that we do not chain to other filters
 						return;
 					}
 
-					// effettuo il login sul db
-					try {
-						boolean isOk = loginHelper.loginCheckData(LoginTipologia.WITHOUT_PASSWORD, username, null);
+					gestioneUtenteTrovato(httpServletRequest, httpServletResponse, loginUtenteNonAutorizzatoRedirectUrl, loginUtenteNonValidoRedirectUrl, oauth2LogoutUrl, loginHelper, username);
 
-						if(isOk) {
-							// utente loggato
-							ServletUtils.setObjectIntoSession(httpServletRequest, session, core.getTipoDatabase(), CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
-
-							LoginCore loginCore = new LoginCore(core);
-
-							LoginSessionUtilities.setLoginParametersSession(httpServletRequest, session, loginCore, username);
-
-							loginCore.performAuditLogin(username);
-
-							log.debug("Utente autorizzato, effettuo il redirect verso l'applicazione...");
-
-							String redirPageUrl = new Parameter("", httpServletRequest.getContextPath() + "/" + LoginCostanti.SERVLET_NAME_MESSAGE_PAGE,
-									new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO),
-									new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
-									).getValue();
-
-							// redirect dopo il login
-							httpServletResponse.sendRedirect(redirPageUrl);
-						} else {
-							// utenza non valida
-							if(loginHelper.getPd().getMessage().equals(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE) 
-									|| loginHelper.getPd().getMessage().equals(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO)) {
-
-								log.debug("Utente non valido: {}", loginHelper.getPd().getMessage());
-								ServletUtils.setObjectIntoSession(httpServletRequest, session, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_VALIDO, username,	loginHelper.getPd().getMessage()), Costanti.PRINCIPAL_ERROR_MSG);
-
-								ServletUtils.removeUserLoginFromSession(session);
-								String redirPageUrl = StringUtils.isNotEmpty(loginUtenteNonValidoRedirectUrl) ? loginUtenteNonValidoRedirectUrl : 
-									Utility.buildInternalRedirectUrl(httpServletRequest, "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE);
-
-								String idToken = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
-								String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
-
-								// Messaggio di errore
-								httpServletResponse.sendRedirect(logoutUrl);
-								return;
-							}
-
-							log.debug("Utente non autorizzato: {}", loginHelper.getPd().getMessage());
-							ServletUtils.setObjectIntoSession(httpServletRequest, session, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_AUTORIZZATO, username, loginHelper.getPd().getMessage()), Costanti.PRINCIPAL_ERROR_MSG);
-
-							ServletUtils.removeUserLoginFromSession(session);
-							String redirPageUrl = StringUtils.isNotEmpty(loginUtenteNonAutorizzatoRedirectUrl) ? loginUtenteNonAutorizzatoRedirectUrl : 
-								Utility.buildInternalRedirectUrl(httpServletRequest, "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE);
-
-							String idToken = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
-							String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
-
-							// Messaggio di errore
-							httpServletResponse.sendRedirect(logoutUrl);
-						}
-					} catch(IOException | DriverUsersDBException | DriverControlStationException e) {
-						// errore interno
-						log.debug("Errore durante il login: {}", e.getMessage());
-						ServletUtils.removeUserLoginFromSession(session);
-						String redirPageUrl = StringUtils.isNotEmpty(loginErroreInternoRedirectUrl) ? loginErroreInternoRedirectUrl : httpServletRequest.getContextPath() +  "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE ;
-
-						// Messaggio di errore
-						ServletUtils.setObjectIntoSession(httpServletRequest, session, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_ERRORE_INTERNO, Costanti.PRINCIPAL_ERROR_MSG);
-
-						String idToken = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
-						String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
-						
-						httpServletResponse.sendRedirect(logoutUrl);
-						e.printStackTrace();
-					}
 				} else {
 
 					// ERRORE
@@ -213,13 +146,9 @@ public class OAuth2UserServlet extends HttpServlet {
 					// Messaggio di errore
 					ServletUtils.setObjectIntoSession(httpServletRequest, session, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_PRINCIPAL_ASSENTE, Costanti.PRINCIPAL_ERROR_MSG);
 
-					String redirPageUrl =
-							StringUtils.isNotEmpty(loginUtenteNonAutorizzatoRedirectUrl) ? loginUtenteNonAutorizzatoRedirectUrl : httpServletRequest.getContextPath() + "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE;
-				
-					String idToken = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
-					String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
-					
-					httpServletResponse.sendRedirect(logoutUrl);
+					redirectToPagina(log, httpServletRequest, httpServletResponse, session,
+							loginUtenteNonAutorizzatoRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE,
+							oauth2LogoutUrl);
 				}
 			} else {
 
@@ -235,14 +164,10 @@ public class OAuth2UserServlet extends HttpServlet {
 					// Messaggio di errore
 					ServletUtils.setObjectIntoSession(httpServletRequest, session, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_SESSIONE_SCADUTA, Costanti.PRINCIPAL_ERROR_MSG);
 
-					String redirPageUrl =  StringUtils.isNotEmpty(loginSessioneScadutaRedirectUrl)
-							? loginSessioneScadutaRedirectUrl : httpServletRequest.getContextPath() + "/" +  LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE;
-					
-					
-					String idToken = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
-					String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
-					
-					httpServletResponse.sendRedirect(logoutUrl);
+					redirectToPagina(log, httpServletRequest, httpServletResponse, session,
+							loginSessioneScadutaRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE,
+							oauth2LogoutUrl);
+					return;
 				} 
 
 				log.debug("Utente Loggato sessione valida.");
@@ -255,86 +180,163 @@ public class OAuth2UserServlet extends HttpServlet {
 
 				// Controllo autorizzazione sulla funzionalita' richiesta, in base ai permessi dell'utente
 				String servletRichiesta = null;
-				try {
-					ControlStationCore.logDebug("Check autorizzazione dell'utente "+userLogin+" per servlet ["+servletRichiesta+"] ...");
+				ControlStationCore.logDebug("Check autorizzazione dell'utente "+userLogin+" per servlet ["+servletRichiesta+"] ...");
 
-					// Se arrivo in questo punto sto richiedendo una pagina che riguarda una funzionalite' della console
-					// Imposto il CharacterEncoding UTF-8 per risolvere i problemi di encoding evidenziati in OP-407 e OP-571
-					httpServletRequest.setCharacterEncoding("UTF-8");
+				// Se arrivo in questo punto sto richiedendo una pagina che riguarda una funzionalite' della console
+				// Imposto il CharacterEncoding UTF-8 per risolvere i problemi di encoding evidenziati in OP-407 e OP-571
+				httpServletRequest.setCharacterEncoding("UTF-8");
 
-					// Non faccio verificare login/logout
-					if (!"".equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_MESSAGE_PAGE.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
-						StringBuilder bfError = new StringBuilder();
-						if(!GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta, loginHelper, bfError)){
-							ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: "+bfError.toString());
-							AuthorizationFilter.setErrorMsg(generalHelper, session, httpServletRequest, httpServletResponse, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, httpServletRequest.getServletContext(), HttpStatus.FORBIDDEN);
-							// return so that we do not chain to other filters
-							return;
-						}
-					}
-					ControlStationCore.logDebug("Autorizzazione permessa all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]");
-
-					// Controllo se ho cliccato su un tab dove non e' stata rinnovata la sessione
-					String refreshTabId = ServletUtils.getObjectFromSession(httpServletRequest, session, String.class, Costanti.SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID);
-					if(refreshTabId != null) {
-						ControlStationCore.logDebug("Rilevato click su tab dove e' scaduta la sessione, refresh in corso");
-						// elimino il token per evitare loop
-						ServletUtils.removeObjectFromSession(httpServletRequest, session, Costanti.SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID);
-
-						httpServletResponse.sendRedirect(AuthorizationFilter.getRedirectToMessageServletRefreshSessione(httpServletRequest.getContextPath(), HttpStatus.FORBIDDEN));
+				// Non faccio verificare login/logout
+				if (!"".equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_MESSAGE_PAGE.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
+					StringBuilder bfError = new StringBuilder();
+					if(!GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta, loginHelper, bfError)){
+						ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: "+bfError.toString());
+						AuthorizationFilter.setErrorMsg(generalHelper, session, httpServletRequest, httpServletResponse, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, httpServletRequest.getServletContext(), HttpStatus.FORBIDDEN);
+						// return so that we do not chain to other filters
 						return;
 					}
+				}
+				ControlStationCore.logDebug("Autorizzazione permessa all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]");
 
-					// Check Reset delle ricerche
-					String resetSearch = httpServletRequest.getParameter(CostantiControlStation.PARAMETRO_RESET_SEARCH);
-					String postBackElement = httpServletRequest.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
-					if(ServletUtils.isCheckBoxEnabled(resetSearch) && (postBackElement==null || "".equals(postBackElement))) {
+				// Controllo se ho cliccato su un tab dove non e' stata rinnovata la sessione
+				String refreshTabId = ServletUtils.getObjectFromSession(httpServletRequest, session, String.class, Costanti.SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID);
+				if(refreshTabId != null) {
+					ControlStationCore.logDebug("Rilevato click su tab dove e' scaduta la sessione, refresh in corso");
+					// elimino il token per evitare loop
+					ServletUtils.removeObjectFromSession(httpServletRequest, session, Costanti.SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID);
 
-						for (int i = 0; i < Liste.getTotaleListe(); i++) {
-							ServletUtils.removeRisultatiRicercaFromSession(httpServletRequest, session, i);
-						}
-
-						boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(httpServletRequest, session);
-						ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(httpServletRequest, session, ConsoleSearch.class);
-						if(ricerca!=null) {
-							ricerca.reset();
-							for (int i = 0; i < Liste.getTotaleListe(); i++) {
-								loginHelper.initializeFilter(ricerca, i);
-							}
-							if(!existsRicerca) {
-								// salvo in sessione le inizializzazioni
-								ServletUtils.setSearchObjectIntoSession(httpServletRequest, session, ricerca);
-							}
-							ControlStationCore.logDebug("Effettuato reset della ricerca");					
-						}
-					}					
-
-					if("".equals(servletRichiesta) || "/".equals(servletRichiesta))
-						httpServletResponse.sendRedirect(AuthorizationFilter.getRedirectToMessageServlet());
-
-				} catch (Exception e) {
-					ControlStationCore.logError("Errore durante il processo di autorizzazione per l'utente ["+userLogin+"] : " + e.getMessage(),e);
-					AuthorizationFilter.setErrorMsg(generalHelper, session, httpServletRequest, httpServletResponse, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, httpServletRequest.getServletContext(), HttpStatus.SERVICE_UNAVAILABLE);
+					httpServletResponse.sendRedirect(AuthorizationFilter.getRedirectToMessageServletRefreshSessione(httpServletRequest.getContextPath(), HttpStatus.FORBIDDEN));
+					return;
 				}
 
+				resetRicerche(httpServletRequest, session, loginHelper);					
+
+				if("".equals(servletRichiesta) || "/".equals(servletRichiesta)) {
+					httpServletResponse.sendRedirect(AuthorizationFilter.getRedirectToMessageServlet());
+				}
 			}
 
-		} catch (UtilsException | OpenSPCoop2ConfigurationException e) {
-			ControlStationCore.logError(ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES + e.getMessage(),e);
-			httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+		} catch (UtilsException | OpenSPCoop2ConfigurationException | DriverUsersDBException | DriverControlStationException 
+				| PrincipalReaderException | IOException  
+				| InstantiationException | IllegalAccessException | ClassNotFoundException 
+				| IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			ServletUtils.setObjectIntoSession(httpServletRequest, session, OAuth2Costanti.ERROR_MSG_LOGIN_ERRORE_INTERNO, Costanti.PRINCIPAL_ERROR_MSG);
+			// tutti gli errori anche interni provocano il logout federato
 			try {
-				httpServletResponse.getWriter().write(ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
-			} catch (IOException e1) {
-				ControlStationCore.logError(ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES + e1.getMessage(), e1);
-			}
-		} catch (PrincipalReaderException e) {
-			httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-			try {
-				httpServletResponse.getWriter().write(ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
-			} catch (IOException e1) {
-				ControlStationCore.logError("Errore durante la lettura del principal: " + e1.getMessage(), e1);
+				redirectToPagina(log, httpServletRequest, httpServletResponse, session,
+						loginErroreInternoRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE, oauth2LogoutUrl);
+			} catch (IOException e2) {
+				OAuth2UserServlet.log.error("Errore durante esecuzione redirect: " + e2.getMessage(), e2);
+				httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+				try {
+					httpServletResponse.getWriter().write(OAuth2Costanti.ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
+				} catch (IOException e1) {
+					log.error("Errore durante esecuzione redirect: " + e1.getMessage(), e1);
+				}
 			}
 		}
+	}
+
+	private void resetRicerche(HttpServletRequest httpServletRequest, HttpSession session, LoginHelper loginHelper)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, InvocationTargetException,
+			NoSuchMethodException, DriverControlStationException {
+		// Check Reset delle ricerche
+		String resetSearch = httpServletRequest.getParameter(CostantiControlStation.PARAMETRO_RESET_SEARCH);
+		String postBackElement = httpServletRequest.getParameter(Costanti.POSTBACK_ELEMENT_NAME);
+		if(ServletUtils.isCheckBoxEnabled(resetSearch) && (postBackElement==null || "".equals(postBackElement))) {
+
+			for (int i = 0; i < Liste.getTotaleListe(); i++) {
+				ServletUtils.removeRisultatiRicercaFromSession(httpServletRequest, session, i);
+			}
+
+			boolean existsRicerca = ServletUtils.existsSearchObjectFromSession(httpServletRequest, session);
+			ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(httpServletRequest, session, ConsoleSearch.class);
+			if(ricerca!=null) {
+				ricerca.reset();
+				for (int i = 0; i < Liste.getTotaleListe(); i++) {
+					loginHelper.initializeFilter(ricerca, i);
+				}
+				if(!existsRicerca) {
+					// salvo in sessione le inizializzazioni
+					ServletUtils.setSearchObjectIntoSession(httpServletRequest, session, ricerca);
+				}
+				ControlStationCore.logDebug("Effettuato reset della ricerca");					
+			}
+		}
+	}
+
+	private void gestioneUtenteTrovato(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+			String loginUtenteNonAutorizzatoRedirectUrl, String loginUtenteNonValidoRedirectUrl, String oauth2LogoutUrl,
+			LoginHelper loginHelper, String username) throws IOException, DriverUsersDBException {
+		
+		HttpSession session = httpServletRequest.getSession();
+		GeneralHelper generalHelper = new GeneralHelper(session);
+		ControlStationCore core = generalHelper.getCore();
+		
+		// effettuo il login sul db
+		boolean isOk = loginHelper.loginCheckData(LoginTipologia.WITHOUT_PASSWORD, username, null);
+
+		if(isOk) {
+			// utente loggato
+			ServletUtils.setObjectIntoSession(httpServletRequest, session, core.getTipoDatabase(), CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
+
+			LoginCore loginCore = new LoginCore(core);
+
+			LoginSessionUtilities.setLoginParametersSession(httpServletRequest, session, loginCore, username);
+
+			loginCore.performAuditLogin(username);
+
+			log.debug("Utente autorizzato, effettuo il redirect verso l'applicazione...");
+
+			// Redirect interno
+			String redirPageUrl = new Parameter("", httpServletRequest.getContextPath() + "/" + LoginCostanti.SERVLET_NAME_MESSAGE_PAGE,
+					new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO),
+					new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
+					).getValue();
+
+			// redirect dopo il login
+			httpServletResponse.sendRedirect(redirPageUrl);
+		} else {
+			// utente non autorizzato
+			ServletUtils.setObjectIntoSession(httpServletRequest, session, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_AUTORIZZATO, username, loginHelper.getPd().getMessage()), Costanti.PRINCIPAL_ERROR_MSG);
+			String debugMsg = "Utente non autorizzato: {}";
+			String customRedirectUrl = loginUtenteNonAutorizzatoRedirectUrl;
+			
+			// utenza non valida
+			if(loginHelper.getPd().getMessage().equals(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE) 
+					|| loginHelper.getPd().getMessage().equals(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO)) {
+
+				debugMsg = "Utente non valido: {}";
+				customRedirectUrl = loginUtenteNonValidoRedirectUrl;
+				ServletUtils.setObjectIntoSession(httpServletRequest, session, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_VALIDO, username,	loginHelper.getPd().getMessage()), Costanti.PRINCIPAL_ERROR_MSG);
+			}
+
+			log.debug(debugMsg, loginHelper.getPd().getMessage());
+			
+			ServletUtils.removeUserLoginFromSession(session);
+
+			// Redirect verso pagina di errore con logout oauth
+			redirectToPagina(log, httpServletRequest, httpServletResponse, session,
+					customRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE,
+					oauth2LogoutUrl);
+		}
+	}
+
+	private void redirectToPagina(Logger log, HttpServletRequest httpServletRequest,
+			HttpServletResponse httpServletResponse, HttpSession session, String customRedirectUrl, String defaultRedirectUrl,
+			String oauth2LogoutUrl) throws IOException {
+
+		String redirPageUrl =  StringUtils.isNotEmpty(customRedirectUrl)
+				? customRedirectUrl : 
+					ServletUtils.buildInternalRedirectUrl(httpServletRequest, "/" + defaultRedirectUrl);
+
+		String idToken = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
+		String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
+
+		log.debug("Effettuo redirect logout verso pagina: {}", logoutUrl);
+
+		httpServletResponse.sendRedirect(logoutUrl);
+
 	}
 
 	private String getPrincipal(HttpServletRequest httpServletRequest, IPrincipalReader principalReader) throws PrincipalReaderException {
@@ -356,6 +358,6 @@ public class OAuth2UserServlet extends HttpServlet {
 			throw e;
 		}
 	}
-	
-	
+
+
 }

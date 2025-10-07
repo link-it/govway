@@ -86,6 +86,10 @@ import org.slf4j.Logger;
  */
 public class LoginBean extends AbstractLoginBean {
 
+	private static final String ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_UTENTE_NON_REGISTRATO = "Il sistema non riesce ad autenticare l''utente {0}: Utente non registrato.";
+	private static final String ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0_1 = "Si e'' verificato un errore durante il login, impossibile autenticare l''utente {0}: {1}";
+	private static final String ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0 = "Si e'' verificato un errore durante il login, impossibile autenticare l''utente {0}.";
+	private static final String ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_USERNAME_O_PASSWORD_NON_VALIDI = "Il sistema non riesce ad autenticare l''utente {0}: Username o password non validi.";
 	public static final String SEMAPHORE_GET_WIDTH_VOCI_MENU_SOGGETTO = "getWidthVociMenuSoggetto";
 	public static final String SEMAPHORE_GET_VOCI_MENU_SOGGETTO = "getVociMenuSoggetto";
 	public static final String SEMAPHORE_GET_VOCI_MENU_MODALITA = "getVociMenuModalita";
@@ -246,16 +250,14 @@ public class LoginBean extends AbstractLoginBean {
 					this.log.info("Utente [{}] autenticato con successo", this.getUsername());
 					return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 				}else{
-					MessageUtils.addErrorMsg("Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Username o password non validi.");
+					MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_USERNAME_O_PASSWORD_NON_VALIDI, this.getUsername()));
 				}
 			} catch (ServiceException e) {
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+".");
+				MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0, this.getUsername()));
 			} catch (NotFoundException e) {
-				MessageUtils.addErrorMsg("Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Username o password non validi.");
-			} catch (UserInvalidException e) {
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+": " + e.getMessage());
-			}  catch (LoginException e) {
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+": " + e.getMessage());
+				MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_USERNAME_O_PASSWORD_NON_VALIDI, this.getUsername()));
+			} catch (UserInvalidException | LoginException e) {
+				MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0_1, this.getUsername(), e.getMessage()));
 			}
 		}else{
 			this.log.info("Verifico il ticket per l'utente [{}]", this.getUsername());
@@ -272,15 +274,15 @@ public class LoginBean extends AbstractLoginBean {
 					return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 				}
 			} catch (ServiceException e) {
-				this.loginErrorMessage = "Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+"."; 
+				this.loginErrorMessage = MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0, this.getUsername()); 
 				this.log.error(this.loginErrorMessage);
 				return Costanti.OUTCOME_LOGIN_ERROR;
 			} catch (NotFoundException e) {
-				this.loginErrorMessage = "Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Utente non registrato.";
+				this.loginErrorMessage = MessageFormat.format(ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_UTENTE_NON_REGISTRATO, this.getUsername());
 				this.log.debug(this.loginErrorMessage);
 				return Costanti.OUTCOME_LOGIN;
 			} catch (UserInvalidException e) {
-				this.loginErrorMessage = "Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+": " + e.getMessage();
+				this.loginErrorMessage = MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0_1, this.getUsername(), e.getMessage());
 				this.log.debug(this.loginErrorMessage);
 				return Costanti.OUTCOME_LOGIN_USER_INVALID;
 			}

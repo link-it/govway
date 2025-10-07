@@ -56,7 +56,7 @@ public class LoginHelper extends ConsoleHelper {
 		String password = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_PASSWORD);
 		return this.loginCheckData(tipoCheck, login, password);
 	}
-	public boolean loginCheckData(LoginTipologia tipoCheck, String login, String password) throws DriverUsersDBException, DriverControlStationException {
+	public boolean loginCheckData(LoginTipologia tipoCheck, String login, String password) throws DriverUsersDBException {
 		try{
 				
 			// Campi obbligatori
@@ -129,7 +129,7 @@ public class LoginHelper extends ConsoleHelper {
 			
 			return true;
 
-		} catch (DriverUsersDBException | DriverControlStationException e) {
+		} catch (DriverUsersDBException e) {
 			ControlStationCore.logError("Exception: " + e.getMessage(), e);
 			throw e;
 		}

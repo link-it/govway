@@ -30,10 +30,6 @@ import org.slf4j.Logger;
 
 public class OAuth2UserServlet extends HttpServlet {
 
-	private static final String ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES = "Errore durante la lettura delle properties: ";
-
-	private static final String ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE = "Autenticazione Oauth2 non disponibile: si e' verificato un'errore: ";
-
 	private static final long serialVersionUID = 1L;
 
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
@@ -96,7 +92,7 @@ public class OAuth2UserServlet extends HttpServlet {
 		} catch (PrincipalReaderException e) {
 			httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 			try {
-				httpServletResponse.getWriter().write(ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
+				httpServletResponse.getWriter().write(OAuth2Costanti.ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
 			} catch (IOException e1) {
 				log.error("Errore durante la lettura del principal: " + e1.getMessage(), e1);
 			}
@@ -104,17 +100,17 @@ public class OAuth2UserServlet extends HttpServlet {
 			OAuth2UserServlet.log.error("Errore durante esecuzione redirect: " + e.getMessage(), e);
 			httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 			try {
-				httpServletResponse.getWriter().write(ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
+				httpServletResponse.getWriter().write(OAuth2Costanti.ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
 			} catch (IOException e1) {
 				log.error("Errore durante esecuzione redirect: " + e1.getMessage(), e1);
 			}
 		} catch (UtilsException e) {
-			OAuth2Utilities.logError(log, ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES + e.getMessage(),e);
+			OAuth2Utilities.logError(log, OAuth2Costanti.ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES + e.getMessage(),e);
 			httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 			try {
-				httpServletResponse.getWriter().write(ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
+				httpServletResponse.getWriter().write(OAuth2Costanti.ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
 			} catch (IOException e1) {
-				log.error(ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES + e1.getMessage(), e1);
+				log.error(OAuth2Costanti.ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES + e1.getMessage(), e1);
 			}
 		} 
 	}
