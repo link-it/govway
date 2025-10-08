@@ -57,22 +57,31 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class HttpTest {
 
-	private static HttpServerTest server = null;
-	private static HttpProxyTest proxy = null;
+    // Classe interna statica che inizializza l'istanza in modo thread-safe e lazy
+    private static class Holder {
+    	private static HttpServerTest server = null;
+    	private static HttpProxyTest proxy = null;
+    }
 	
 	public static void startServers() throws IOException {
-		if (server != null) {
-			server.close();
-			proxy.close();
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		synchronized (HttpTest.class) {
+			if (Holder.server != null) {
+				Holder.server.close();
+				Holder.proxy.close();
+			}
+			Holder.server = new HttpServerTest();
+			Holder.proxy = new HttpProxyTest(Holder.server);
 		}
-		server = new HttpServerTest();
-		proxy = new HttpProxyTest(server);
 	}
 	
 	public static void stopServers() {
-		if (server != null) {
-			server.close();
-			proxy.close();
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		synchronized (HttpTest.class) {
+			if (Holder.server != null) {
+				Holder.server.close();
+				Holder.proxy.close();
+			}
 		}
 	}
 	
@@ -124,7 +133,7 @@ public class HttpTest {
 	}
 	
 	private String createServerEndpoint(String path) {
-		return String.format("http://localhost:%d%s", server.getPort(), path);
+		return String.format("http://localhost:%d%s", Holder.server.getPort(), path);
 	}
 	
 	protected HttpRequest createBaseRequest(HttpLibrary library) {
@@ -134,9 +143,9 @@ public class HttpTest {
 		req.addHeader("User-Agent", "Java");
 		req.addHeader("Accept-Encoding", "gzip, x-gzip, deflate");
 		req.addHeader("Accept", "*/*");
-		req.addHeader("Host", "localhost:" + server.getPort());
-		req.setUsername(server.getUsername());
-		req.setPassword(server.getPassword());
+		req.addHeader("Host", "localhost:" + Holder.server.getPort());
+		req.setUsername(Holder.server.getUsername());
+		req.setPassword(Holder.server.getPassword());
 		req.setMethod(HttpRequestMethod.GET);
 		
 		return req;
@@ -415,10 +424,10 @@ public class HttpTest {
 	public void testHttpProxy(HttpLibrary httpLibrary) throws UtilsException {
 		HttpRequest req = createBaseRequest(httpLibrary);
 		req.setProxyHostname("127.0.0.1");
-		req.setProxyPort(proxy.getPort());
+		req.setProxyPort(Holder.proxy.getPort());
 		req.setProxyType(Type.HTTP);
-		req.setProxyUsername(proxy.getUsername());
-		req.setProxyPassword(proxy.getPassword());
+		req.setProxyUsername(Holder.proxy.getUsername());
+		req.setProxyPassword(Holder.proxy.getPassword());
 		
 		
 		HttpResponse res = new HttpResponse();		
@@ -435,7 +444,7 @@ public class HttpTest {
 	private final Random rnd = new Random();
 	public void testThrottling(HttpLibrary httpLibrary, int throttlingSize, int throttlingMs) throws UtilsException {
 		HttpRequest req = createBaseRequest(httpLibrary);
-		req.setUrl("http://localhost:" + server.getPort() + "/throttling");
+		req.setUrl("http://localhost:" + Holder.server.getPort() + "/throttling");
 		req.setMethod(HttpRequestMethod.POST);
 		
 		byte[] content = new byte[10000];

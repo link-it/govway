@@ -51,7 +51,10 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.io.CloseMode;
+import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -107,7 +110,10 @@ class HttpCoreConnection extends HttpLibraryConnection {
         }
 	}
 	
-	private void setupSSL(HttpClientBuilder builder, HttpRequest request, SSLContext sslContext) {
+	private PoolingHttpClientConnectionManager setupConnectionManager(HttpClientBuilder builder, HttpRequest request, SSLContext sslContext) {
+		
+		PoolingHttpClientConnectionManager connManager = null;
+		
 		// Set SSL context if provided
         if (sslContext != null) {
         	// 1. Create the socket factory
@@ -128,12 +134,21 @@ class HttpCoreConnection extends HttpLibraryConnection {
 			}
 
         	// 2. Build the connection manager
-        	PoolingHttpClientConnectionManager connManager = PoolingHttpClientConnectionManagerBuilder.create()
+        	connManager = PoolingHttpClientConnectionManagerBuilder.create()
         	    .setTlsSocketStrategy(tlsSocketStrategy)
         	    .build();
         	
         	builder.setConnectionManager(connManager);
+        	
         }
+        else {
+        	connManager = PoolingHttpClientConnectionManagerBuilder.create().build();
+        }
+        
+        connManager.setMaxTotal(1);
+        connManager.setDefaultMaxPerRoute(1);
+        
+        return connManager;
 	}
 	
 	private void addHeader(HttpUriRequestBase httpRequest, Map<String, List<String>> overrideHeaders, HttpRequest request) {
@@ -240,9 +255,12 @@ class HttpCoreConnection extends HttpLibraryConnection {
 			throw new UtilsException("HttpMethod required");
 		}
 		
+		PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = null;
 		try {
 	        // builder per la creazione del client
 	        HttpClientBuilder builder = HttpClients.custom();
+	        builder.setConnectionManagerShared(false);
+	        
 	        Map<String, List<String>> overrideHeaders = new HashMap<>();
 	        
 	        // abilito o disabilito i redirect
@@ -252,7 +270,7 @@ class HttpCoreConnection extends HttpLibraryConnection {
 	        HttpHost proxy = setupProxy(builder, overrideHeaders, request);
 
 	        // imposto la gestione SSL
-	        setupSSL(builder, request, sslContext);
+	        poolingHttpClientConnectionManager = setupConnectionManager(builder, request, sslContext);
 
 	        // creo la richiesta
 	        HttpUriRequestBase httpRequest = new HttpUriRequestBase(
@@ -266,6 +284,10 @@ class HttpCoreConnection extends HttpLibraryConnection {
 	        setupMaxRedirect(configBuilder, request);
 	        setupTimeouts(configBuilder, request);
 	        
+	        // set impostazioni
+	        builder.evictExpiredConnections();
+	        builder.evictIdleConnections(TimeValue.ofSeconds(1));
+	        builder.disableAutomaticRetries();
 	        httpRequest.setConfig(configBuilder.build());
 
 	        // gestione del body
@@ -293,50 +315,80 @@ class HttpCoreConnection extends HttpLibraryConnection {
 	            httpRequest.setEntity(entity);
 	        }
 
-	        CloseableHttpClient client = builder.build();
-	        if(request.isDebug())
-	        	request.logDebug("Connessione in corso ...");
-	        ClassicHttpResponse httpResp = client.executeOpen(proxy, httpRequest, HttpClientContext.create());
-
-	        // === Build response ===
-	        HttpResponse response = new HttpResponse();
-	        response.setResultHTTPOperation(httpResp.getCode());
-	        
-	        // Verifica solo della connessione
- 			if(request.isCheckConnection()) {
- 				return checkConnection(request, client) ;
- 			}
- 			else {		
- 				return processResponse(httpResp, response, client, ocspTrustManager);
- 			}
+	        CloseableHttpClient client = null;
+	        ClassicHttpResponse httpResp = null;
+	        try {
+	        	client = builder.build();
+		        if(request.isDebug())
+		        	request.logDebug("Connessione in corso ...");
+		        httpResp = client.executeOpen(proxy, httpRequest, HttpClientContext.create());
+		        
+		        // === Build response ===
+		        HttpResponse response = new HttpResponse();
+		        response.setResultHTTPOperation(httpResp.getCode());
+		        
+		        // Verifica solo della connessione
+	 			if(request.isCheckConnection()) {
+	 				return checkConnection(request) ;
+	 			}
+	 			else {		
+	 				return processResponse(httpResp, response, ocspTrustManager);
+	 			}
+	        }finally {
+	        	safeClose(httpResp);
+	        	safeDisconnect(client);
+	        }
 	        
 	    } catch (IOException e) {
 	    	throw e;
 	    } catch (Exception e) {
 	        throw new UtilsException(e);
+	    }finally {
+	    	safeDisconnect(poolingHttpClientConnectionManager);
 	    }
 	}
 	
-	private HttpResponse checkConnection(HttpRequest request, CloseableHttpClient client) {
+	private HttpResponse checkConnection(HttpRequest request) {
+		if(request.isDebug())
+			request.logDebug("Connessione effettuata con successo");
+		return null; // uguale a classe UrlConnectionConnection
+	}
+	private void safeClose(ClassicHttpResponse httpResp) {
 		try {
-			if(request.isDebug())
-				request.logDebug("Connessione effettuata con successo");
-			return null; // uguale a classe UrlConnectionConnection
-		}finally {
-			safeDisconnect(client);
+			if(httpResp!=null) {
+				httpResp.close();
+			}
+		}catch(Exception ignore) {
+			// ignore
 		}
 	}
 	private void safeDisconnect(CloseableHttpClient client) {
 		try {
-			client.close();
+			if(client!=null) {
+				client.close();
+			}
+		}catch(Exception ignore) {
+			// ignore
+		}
+	}
+	private void safeDisconnect(PoolingHttpClientConnectionManager cManager) {
+		try {
+			if(cManager!=null) {
+				cManager.close(CloseMode.IMMEDIATE);
+			}
 		}catch(Exception ignore) {
 			// ignore
 		}
 	}
 	
-	private HttpResponse processResponse(ClassicHttpResponse httpResp, HttpResponse response, CloseableHttpClient client, OCSPTrustManager ocspTrustManager) throws IOException {
+	private HttpResponse processResponse(ClassicHttpResponse httpResp, HttpResponse response, OCSPTrustManager ocspTrustManager) throws IOException {
 		Header[] responseHeaders = httpResp.getHeaders();
         for (Header h : responseHeaders) {
+        	if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(h.getName()) &&
+        			response.getContentType()==null // imposto il primo che incontro
+        			) {
+        		response.setContentType(h.getValue());
+        	}
             response.addHeader(h.getName(), List.of(h.getValue()));
         }
 
@@ -344,11 +396,12 @@ class HttpCoreConnection extends HttpLibraryConnection {
         if (entity != null) {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             entity.writeTo(out);
+            out.flush();
+            out.close();
             response.setContent(out.toByteArray());
-            response.setContentType(entity.getContentType());
+            // Consuma completamente l'entity e chiude lo stream sottostante
+            EntityUtils.consumeQuietly(entity);
         }
-
-        client.close();
         
         // per mantenere la retro compatibilità con urlConnection
         String returnCode = httpResp.getVersion() + " " + httpResp.getCode();
