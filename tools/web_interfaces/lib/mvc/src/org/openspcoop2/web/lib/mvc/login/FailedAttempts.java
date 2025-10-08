@@ -42,26 +42,40 @@ public class FailedAttempts {
 	
 	private ConcurrentMap<String, LoginAttempt> failedAttemptsMap;
 	
-	private final List<Duration> failedDelays;
-	
-	private static FailedAttempts instance = null;
-	
-	public static final FailedAttempts getInstance() {
-		return instance;
-	}
-	
-	public static synchronized void createInstance(String loginRetryDelays) throws UtilsException {
-		if (instance == null) {
-			instance = new FailedAttempts(loginRetryDelays);
+	private List<Duration> failedDelays;
+		
+	public static FailedAttempts getInstance() {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		synchronized (FailedAttempts.class) {
+			if (Holder.instance == null) {
+	            throw new IllegalStateException("Instance not initialized. Call createInstance() first.");
+	        }
+	        return Holder.instance;
 		}
 	}
 	
-	public FailedAttempts(String loginRetryDelays) throws UtilsException {
+	public static void createInstance(String loginRetryDelays) throws UtilsException {
+		// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
+		synchronized (FailedAttempts.class) {
+			if (Holder.instance == null) {
+				Holder.instance = new FailedAttempts(loginRetryDelays);
+			} else {
+				throw new UtilsException("Instance already created");
+			}
+		}
+	}
+	
+	private FailedAttempts(String loginRetryDelays) throws UtilsException {
 		this.failedAttemptsMap = new ConcurrentHashMap<>();
 		List<Duration> loginRertyDelays = this.getFailedAttemptDelay(loginRetryDelays);
 		this.failedDelays = new ArrayList<>(loginRertyDelays);
 	}
 
+    // Classe interna statica che inizializza l'istanza in modo thread-safe e lazy
+    private static class Holder {
+        private static FailedAttempts instance;
+    }
+	
 	public LoginAttempt get(String username) {
 		return this.failedAttemptsMap.get(username);
 	}
