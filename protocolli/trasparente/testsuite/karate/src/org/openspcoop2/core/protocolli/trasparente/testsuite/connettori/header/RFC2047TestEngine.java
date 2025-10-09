@@ -171,8 +171,8 @@ public class RFC2047TestEngine extends ConfigLoader {
 		String entryRequestValue = response.getHeaderFirstValue("govway-testsuite-request-testsuite-rfc2047");
 		assertNotNull(entryRequestValue);
 		String msg = "Richiesta [govway-testsuite-request-testsuite-rfc2047] Ricevuto ["+entryRequestValue+"]";
-		String parte1 = "possibile_inviare_un_header";
-		String parte2 = "con/questi_caratteri_nella";
+		String parte1 = "possibile_inviare_un_header_c";
+		String parte2 = "on/questi_caratteri_nella";
 		String parteFinale = "possibile inviare un header con/questi caratteri nella richiesta";
 		String decodeBase64 = new String(Base64Utilities.decode(entryRequestValue));
 		msg = msg + " decodificato ["+decodeBase64+"]";

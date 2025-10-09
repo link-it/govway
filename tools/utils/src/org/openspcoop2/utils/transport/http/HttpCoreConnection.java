@@ -111,9 +111,20 @@ class HttpCoreConnection extends HttpLibraryConnection {
 	}
 	
 	private PoolingHttpClientConnectionManager setupConnectionManager(HttpClientBuilder builder, HttpRequest request, SSLContext sslContext) {
-		
+
 		PoolingHttpClientConnectionManager connManager = null;
-		
+
+		// Configurazione della connessione con timeout
+		org.apache.hc.client5.http.config.ConnectionConfig.Builder connectionConfigBuilder =
+				org.apache.hc.client5.http.config.ConnectionConfig.custom();
+
+		// Imposta il connect timeout nella ConnectionConfig
+		if(request.isDebug())
+			request.logInfo("Impostazione connection config CT["+request.getConnectTimeout()+"]");
+		connectionConfigBuilder.setConnectTimeout(request.getConnectTimeout(), java.util.concurrent.TimeUnit.MILLISECONDS);
+
+		org.apache.hc.client5.http.config.ConnectionConfig connectionConfig = connectionConfigBuilder.build();
+
 		// Set SSL context if provided
         if (sslContext != null) {
         	// 1. Create the socket factory
@@ -124,30 +135,34 @@ class HttpCoreConnection extends HttpLibraryConnection {
         	else {
         		request.logInfo("HostName verifier disabilitato");
         	}
-        	
+
         	TlsSocketStrategy tlsSocketStrategy = new DefaultClientTlsStrategy(sslContext, hostnameVerifier);
         	if(request.isDebug()) {
 				String clientCertificateConfigurated = request.getKeyStorePath();
-				tlsSocketStrategy = new WrappedLogTlsSocketStrategy(tlsSocketStrategy, 
+				tlsSocketStrategy = new WrappedLogTlsSocketStrategy(tlsSocketStrategy,
 						request.getLog(), "",
 						clientCertificateConfigurated);
 			}
 
-        	// 2. Build the connection manager
+        	// 2. Build the connection manager con ConnectionConfig
         	connManager = PoolingHttpClientConnectionManagerBuilder.create()
         	    .setTlsSocketStrategy(tlsSocketStrategy)
+        	    .setDefaultConnectionConfig(connectionConfig)
         	    .build();
-        	
+
         	builder.setConnectionManager(connManager);
-        	
+
         }
         else {
-        	connManager = PoolingHttpClientConnectionManagerBuilder.create().build();
+        	connManager = PoolingHttpClientConnectionManagerBuilder.create()
+        			.setDefaultConnectionConfig(connectionConfig)
+        			.build();
+        	builder.setConnectionManager(connManager);
         }
-        
+
         connManager.setMaxTotal(1);
         connManager.setDefaultMaxPerRoute(1);
-        
+
         return connManager;
 	}
 	
@@ -235,8 +250,10 @@ class HttpCoreConnection extends HttpLibraryConnection {
 	}
 	
 	private void setupTimeouts(RequestConfig.Builder builder, HttpRequest request) {
+		// Il connectTimeout è ora gestito tramite ConnectionConfig nel setupConnectionManager
+		// Qui impostiamo solo connectionRequestTimeout e responseTimeout
 		if(request.isDebug())
-			request.logInfo("Impostazione http timeout CT["+request.getConnectTimeout()+"] RT["+request.getReadTimeout()+"]");
+			request.logInfo("Impostazione request config timeout: connectionRequest["+request.getConnectTimeout()+"] response["+request.getReadTimeout()+"]");
 		builder.setConnectionRequestTimeout(Timeout.ofMilliseconds(request.getConnectTimeout()))
         	.setResponseTimeout(Timeout.ofMilliseconds(request.getReadTimeout()));
 	}

@@ -188,9 +188,9 @@ public class StatusUtils {
 		HttpResponse response = sendRequest(messageType, tipoServizio, StatusUtils.OPERATION_STATUS_CONNETTIVITA, getReturnCodeError(messageType));
 		String idTransazione = getIdTransazione(response);
 		
-		String check = ".*rilevata anomalia; connettività fallita verso il connettore 'ConnettoreErrorRefused' del gruppo 'testRefused': Connection refused.*";
+		String check = ".*rilevata anomalia; connettività fallita verso il connettore 'ConnettoreErrorRefused' del gruppo 'testRefused': .*Connection refused.*";
 		if(TipoServizio.FRUIZIONE.equals(tipoServizio)) {
-			check = ".*rilevata anomalia; connettività fallita verso il connettore del gruppo 'testRefused': Connection refused.*";
+			check = ".*rilevata anomalia; connettività fallita verso il connettore del gruppo 'testRefused': .*Connection refused.*";
 		}
 		
 		DBVerifier.checkMsgDiag(idTransazione, check);
