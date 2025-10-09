@@ -443,7 +443,7 @@ public class ConnettoreHTTPCORE extends ConnettoreExtBaseHTTP {
 			// Preparazione messaggio da spedire
 			// Spedizione byte
 			MessageWriteToRunnable messageWriteToRunnable = null;
-			if(httpBody.isDoOutput()){
+			if(httpBody.isDoOutput() || request.isForceSendContent()){
 				boolean consumeRequestMessage = true;
 				if(this.followRedirects && !gestioneRedirectTramiteLibrerieApache){
 					consumeRequestMessage = false;

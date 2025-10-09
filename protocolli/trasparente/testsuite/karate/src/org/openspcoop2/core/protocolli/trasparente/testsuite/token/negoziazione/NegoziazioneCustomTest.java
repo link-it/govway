@@ -80,7 +80,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		NegoziazioneTest._test(logCore, api_negoziazione, "azure", headers,
 				true,
-				"(Errore di Connessione) [EndpointNegoziazioneToken: http://hostname-ERRATO:8080/govway/SoggettoInternoTest/AuthorizationServerCustomCredentialsDummy/v1/azure?resource=https://vault.azure.net&api-version=2019-08-01&azure_param_1=vAzureValue1&azure_param_2=vAzureValue2] unknown host 'hostname-ERRATO'");
+				"(Errore di Connessione) [EndpointNegoziazioneToken: http://hostname-ERRATO:8080/govway/SoggettoInternoTest/AuthorizationServerCustomCredentialsDummy/v1/azure?resource=https://vault.azure.net&api-version=2019-08-01&azure_param_1=vAzureValue1&azure_param_2=vAzureValue2] unknown host 'hostname-ERRATO");
 		
 		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
 		headers.put("test_hostname", host);
@@ -535,7 +535,7 @@ public class NegoziazioneCustomTest extends ConfigLoader {
 		
 		NegoziazioneTest._test(logCore, api_negoziazione, "mapping_azure", headers,
 				true,
-				"(Errore di Connessione) [EndpointNegoziazioneToken: http://hostname-ERRATO:8080/govway/SoggettoInternoTest/AuthorizationServerCustomCredentialsDummy/v1/mapping_azure?resource=https://vault.azure.net&api-version=2019-08-01&azure_param_1=vAzureValue1&azure_param_2=vAzureValue2] unknown host 'hostname-ERRATO'");
+				"(Errore di Connessione) [EndpointNegoziazioneToken: http://hostname-ERRATO:8080/govway/SoggettoInternoTest/AuthorizationServerCustomCredentialsDummy/v1/mapping_azure?resource=https://vault.azure.net&api-version=2019-08-01&azure_param_1=vAzureValue1&azure_param_2=vAzureValue2] unknown host 'hostname-ERRATO");
 		
 		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
 		headers.put("test_hostname", host);

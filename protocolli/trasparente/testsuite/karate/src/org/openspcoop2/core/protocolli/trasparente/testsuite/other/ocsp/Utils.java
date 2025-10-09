@@ -516,7 +516,9 @@ public class Utils {
 			String ... connectionRefusedMsg) throws Exception {
 		
 		ConfigLoader.resetCache();
-		if(TlsTest.api.equals(api)) {
+		if(TlsTest.api.equals(api) ||
+				TokenPolicyNegoziazioneTest.api.equals(api)||
+				(TokenPolicyValidazioneTest.apiTLS.equals(api))) {
 			ConfigLoader.restartConnectionManager();
 		}
 		
@@ -558,9 +560,11 @@ public class Utils {
 		else {
 			sslThread = OpenSSLThread.newOpenSSLThread_case2(opensslCommand, waitStartupServer);
 		}
-		if(TlsTest.api.equals(api)) {
+		if(TlsTest.api.equals(api) ||
+				TokenPolicyNegoziazioneTest.api.equals(api)||
+				(TokenPolicyValidazioneTest.apiTLS.equals(api))) {
 			ConfigLoader.restartConnectionManager();
-		}		
+		}	
 				
 		Date date = DateManager.getDate();
 		try {
@@ -577,7 +581,9 @@ public class Utils {
 		finally {
 			OpenSSLThread.stopOpenSSLThread(sslThread, waitStopServer);
 		}
-		if(TlsTest.api.equals(api)) {
+		if(TlsTest.api.equals(api) ||
+				TokenPolicyNegoziazioneTest.api.equals(api)||
+				(TokenPolicyValidazioneTest.apiTLS.equals(api))) {
 			ConfigLoader.restartConnectionManager();
 		}
 		if(ForwardProxyConHttpsExternalResourceTest.api.equals(api)) {
@@ -616,7 +622,9 @@ public class Utils {
 		}
 		
 		ConfigLoader.resetCache_excludeCachePrimoLivello();
-		if(TlsTest.api.equals(api)) {
+		if(TlsTest.api.equals(api) ||
+				TokenPolicyNegoziazioneTest.api.equals(api)||
+				(TokenPolicyValidazioneTest.apiTLS.equals(api))) {
 			ConfigLoader.restartConnectionManager();
 		}
 		
@@ -655,7 +663,9 @@ public class Utils {
 		if(TokenPolicyNegoziazioneTest.api.equals(api) || TokenPolicyValidazioneTest.apiTLS.equals(api)) {
 			ConfigLoader.resetCache(false, "GestioneToken");
 		}
-		if(TlsTest.api.equals(api)) {
+		if(TlsTest.api.equals(api) ||
+				TokenPolicyNegoziazioneTest.api.equals(api)||
+				(TokenPolicyValidazioneTest.apiTLS.equals(api))) {
 			ConfigLoader.restartConnectionManager();
 		}
 		
