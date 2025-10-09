@@ -3540,7 +3540,7 @@ public class InoltroBuste extends GenericLib{
 								responseMessage = protocolMessage.getMessage(); // updated
 							}
 							msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
-									+"] ["+responseMessage.getClass().getName()+"]");		
+									+"] ["+(responseMessage!=null ? responseMessage.getClass().getName() : null)+"]");		
 							
 		
 							// Spostato dopo correlazione applicativa

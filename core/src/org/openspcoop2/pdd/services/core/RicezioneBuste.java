@@ -4398,7 +4398,7 @@ public class RicezioneBuste {
 				isMessaggioErroreProtocollo==false && 
 				erroriProcessamento.size()==0 && erroriValidazione.size()==0 &&
 				bustaDiServizio==false){
-			msgDiag.highDebug("Tipo Messaggio Richiesta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
+			msgDiag.highDebug("Tipo Messaggio Richiesta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA
 					+"] ["+requestMessage.getClass().getName()+"]");
 			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory,openspcoopstate.getStatoRichiesta());
 			ProtocolMessage protocolMessage = sbustatore.sbustamento(requestMessage,pddContext,
@@ -4414,8 +4414,8 @@ public class RicezioneBuste {
 				}
 				requestMessage = protocolMessage.getMessage(); // updated
 			}
-			msgDiag.highDebug("Tipo Messaggio Richiesta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
-					+"] ["+requestMessage.getClass().getName()+"]");
+			msgDiag.highDebug("Tipo Messaggio Richiesta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA
+					+"] ["+(requestMessage!=null ? requestMessage.getClass().getName() : null)+"]");
 		}
 		else{
 			headerProtocolloRichiesta = soapHeaderElement;
