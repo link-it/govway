@@ -4555,7 +4555,7 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				!this.isMessaggioErroreProtocollo && 
 				this.erroriProcessamento.isEmpty() && this.erroriValidazione.isEmpty() &&
 				!this.bustaDiServizio){
-			this.msgDiag.highDebug("Tipo Messaggio Richiesta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
+			this.msgDiag.highDebug("Tipo Messaggio Richiesta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA
 					+"] ["+this.requestMessage.getClass().getName()+"]");
 			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(this.protocolFactory,this.openspcoopstate.getStatoRichiesta());
 			ProtocolMessage protocolMessage = sbustatore.sbustamento(this.requestMessage,this.pddContext,
@@ -4571,8 +4571,8 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 				}
 				this.requestMessage = protocolMessage.getMessage(); // updated
 			}
-			this.msgDiag.highDebug("Tipo Messaggio Richiesta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
-					+"] ["+this.requestMessage.getClass().getName()+"]");
+			this.msgDiag.highDebug("Tipo Messaggio Richiesta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA
+					+"] ["+(this.requestMessage!=null ? this.requestMessage.getClass().getName() : null)+"]");
 		}
 		else{
 			headerProtocolloRichiesta = soapHeaderElement;

@@ -3738,7 +3738,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 								this.responseMessage = protocolMessage.getMessage(); // updated
 							}
 							this.msgDiag.highDebug("Tipo Messaggio Risposta dopo lo sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
-									+"] ["+this.responseMessage.getClass().getName()+"]");		
+									+"] ["+(this.responseMessage!=null ? this.responseMessage.getClass().getName() : null)+"]");		
 							
 		
 							// Spostato dopo correlazione applicativa
