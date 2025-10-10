@@ -228,7 +228,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	public String cambioPassword() {
 
 		try {
-			boolean passwordObbligatoria = !Utility.isMultiLoginEnabled();
+			boolean passwordObbligatoria = Utility.isPasswordUtenteObbligatoria();
 			
 			if(passwordObbligatoria && StringUtils.isEmpty(this.user.getPassword())){
 				MessageUtils.addErrorMsg("Il campo Nuova non pu\u00F2 essere vuoto");
@@ -797,6 +797,6 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 	}
 	
 	public boolean isPasswordObbligatoria() {
-		return !Utility.isMultiLoginEnabled();
+		return Utility.isPasswordUtenteObbligatoria();
 	}
 }

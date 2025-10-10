@@ -2105,54 +2105,32 @@ public class ConsoleProperties {
 	public boolean isLoginApplication() throws UtilsException{
 		return this.readBooleanRequiredProperty("login.application");
 	}
-	
-	public boolean isVisualizzaFormLoginApplication() throws UtilsException{
-		return this.readBooleanRequiredProperty("login.application.visualizzaFormLogin");
-	}
 
 	public Properties getLoginProperties() throws UtilsException{
 		return this.reader.readProperties("login.props.");
 	}
 	
 	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.readProperty(true,"login.utenteNonAutorizzato.redirectUrl");
 	}
 
 	public String getLoginUtenteNonValidoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.readProperty(true,"login.utenteNonValido.redirectUrl");
 	}
 	
 	public String getLoginErroreInternoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.readProperty(true,"login.erroreInterno.redirectUrl");
 	}
 
 	public String getLoginSessioneScadutaRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.readProperty(true,"login.sessioneScaduta.redirectUrl");
 	}
 
 	public boolean isMostraButtonLogout() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return true;
-		}
 		return this.readBooleanRequiredProperty("logout.mostraButton.enabled");
 	}
 
 	public String getLogoutUrlDestinazione() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.readProperty(true,"logout.urlDestinazione");
 	}
 	

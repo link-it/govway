@@ -19,16 +19,22 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.mvc.login.FailedAttempts;
@@ -100,6 +106,11 @@ public class LoginHelper extends ConsoleHelper {
 					trovato = utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(password, pwcrypt);
 				}
 			}
+		}
+		
+		//lettura da db in caso di utenza trovata ma senza controllo password
+		if (trovato && tipoCheck.equals(LoginTipologia.WITHOUT_PASSWORD)) {
+			u = utentiCore.getUser(login);
 		}
 
 		if (!trovato) {
@@ -184,5 +195,44 @@ public class LoginHelper extends ConsoleHelper {
 			ControlStationCore.logError("Exception: " + e.getMessage(), e);
 			throw e;
 		}
+	}
+	
+	public void impostaMessaggioEsitoLoginDaSessione() throws DriverControlStationException {
+		this.impostaMessaggioEsitoLoginDaSessione(false);
+	}
+	
+	public void impostaMessaggioEsitoLoginDaSessione(boolean leggiMessaggioDaParametro) throws DriverControlStationException {
+		// lettura parametri errore login dalla sessione
+		String messageText = ServletUtils.removeObjectFromSession(this.request, this.session, String.class, Costanti.PRINCIPAL_ERROR_MSG);
+		if (messageText == null && leggiMessaggioDaParametro) {
+			messageText = this.getParameter(Costanti.PARAMETER_MESSAGE_TEXT);
+		}
+		
+		if(messageText == null) {
+			messageText = Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE;
+		}
+		String messageType = this.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TYPE);
+		MessageType mt = MessageType.ERROR;
+		if(messageType != null) {
+			try {
+				mt = MessageType.fromValue(messageType);
+				if(mt == null)
+					mt = MessageType.ERROR;
+			}catch(Exception e) {
+				mt= MessageType.ERROR;
+			}
+		}
+		String messageTitle = this.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TITLE);
+		String messageBreadcrumbs = this.getParameter(CostantiControlStation.PARAMETER_MESSAGE_BREADCRUMB);
+
+		if(messageBreadcrumbs!= null) {
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<>();
+			lstParam.add(new Parameter(messageBreadcrumbs, null));
+			ServletUtils.setPageDataTitle(this.pd, lstParam);
+		}
+
+		// imposto il messaggio da visualizzare
+		this.pd.setMessage(messageText, messageTitle, mt);
 	}
 }

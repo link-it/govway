@@ -131,7 +131,7 @@
 				<a4j:outputPanel id="loginApplicationPanel" layout="block" rendered="#{true}">
 					<link:fieldset legend="#{msg['login.fieldset.title']}" rendered="#{true}" collapsible="false" closed="false">
 					
-						<c:if test="#{loginBean.visualizzaFormLoginApplication}">
+						<c:if test="#{loginBean.applicationLogin}">
 							<a4j:outputPanel id="loginApplicationExPanel" layout="block" rendered="#{true}">
 								<c:if test="#{loginBean.multiLoginEnabled}">
 									<div class="subtitle accordionSubtitleSection subtitleOpen" id="loginApplication__divEsterno">

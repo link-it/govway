@@ -816,10 +816,6 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("login.application", true, true));
 	}
 	
-	public boolean isVisualizzaFormLoginApplication() throws UtilsException{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("login.application.visualizzaFormLogin", true, true));
-	}
-
 	public Properties getLoginProperties() throws UtilsException{
 		return this.appProperties.readProperties("login.props.");
 	}
@@ -892,44 +888,26 @@ public class PddMonitorProperties {
 	}
 
 	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.appProperties.getProperty("login.utenteNonAutorizzato.redirectUrl", true, true);
 	}
 
 	public String getLoginUtenteNonValidoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.appProperties.getProperty("login.utenteNonValido.redirectUrl", true, true);
 	}
 	
 	public String getLoginErroreInternoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.appProperties.getProperty("login.erroreInterno.redirectUrl", true, true);
 	}
 
 	public String getLoginSessioneScadutaRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.appProperties.getProperty("login.sessioneScaduta.redirectUrl", true, true);
 	}
 
 	public boolean isMostraButtonLogout() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return true;
-		}
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("logout.mostraButton.enabled", true, true));
 	}
 
 	public String getLogoutUrlDestinazione() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.appProperties.getProperty("logout.urlDestinazione", true, true);
 	}
 	

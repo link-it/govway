@@ -55,19 +55,19 @@ public class OAuth2LoginStartServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+		engineDoGet(httpServletRequest, httpServletResponse);
+	}
+
+	private void engineDoGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 		// login utenza  
 		GeneralHelper generalHelper = null;
 		Properties loginProperties = null;
-
-		try {
-			loginProperties = ConsoleProperties.getInstance().getLoginProperties();
-		} catch (UtilsException | OpenSPCoop2ConfigurationException e) {
-			ControlStationCore.logError("Errore durante la lettura delle properties: " + e.getMessage(),e);
-			throw new ServletException(e);
-		}
 		
 		HttpSession session = httpServletRequest.getSession();
 		try {
+			loginProperties = ConsoleProperties.getInstance().getLoginProperties();
+
+			
 			String state = UUID.randomUUID().toString();
 			// 1) Costruisci l'URL di autorizzazione Keycloak
 			String authorizationUrl = OAuth2Utilities.getURLLoginOAuth2(loginProperties, state);
@@ -75,9 +75,22 @@ public class OAuth2LoginStartServlet extends HttpServlet {
 			session.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_OAUTH2_STATE, state);
 
 			httpServletResponse.sendRedirect(authorizationUrl);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			ControlStationCore.logError("Si e' verificato un errore il login OAuth2, impossibile autenticare l'utente: " + e.getMessage(),e);
-			AuthorizationFilter.setErrorMsg(generalHelper, session, httpServletRequest, httpServletResponse, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, httpServletRequest.getServletContext(), HttpStatus.SERVICE_UNAVAILABLE);
+			try {
+			AuthorizationFilter.setErrorMsg(generalHelper, session, httpServletRequest, httpServletResponse, LoginCostanti.INFO_JSP, 
+					LoginCostanti.LABEL_LOGIN_ERRORE, httpServletRequest.getServletContext(), HttpStatus.SERVICE_UNAVAILABLE);
+			} catch (ServletException | IOException e1) {
+				ControlStationCore.logError("Errore durante esecuzione redirect: " + e1.getMessage(), e1);
+			}
+		} catch (UtilsException | OpenSPCoop2ConfigurationException e) {
+			ControlStationCore.logError("Errore durante la lettura delle properties: " + e.getMessage(),e);
+			httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			try {
+				httpServletResponse.getWriter().write(OAuth2Costanti.ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE + e.getMessage());
+			} catch (IOException e1) {
+				ControlStationCore.logError("Errore durante esecuzione redirect: " + e1.getMessage(), e1);
+			}
 		}
 	}
 }

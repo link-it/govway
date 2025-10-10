@@ -48,10 +48,10 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGetEngine(request, response, this.getLog(), this.getLoginProperties());
+		engineDoGet(request, response, this.getLog(), this.getLoginProperties());
 	}
 
-	private void doGetEngine(HttpServletRequest request, HttpServletResponse response, Logger log, Properties loginProperties) {
+	private void engineDoGet(HttpServletRequest request, HttpServletResponse response, Logger log, Properties loginProperties) {
 		HttpSession session = request.getSession(false);
 		try {
 
@@ -72,14 +72,14 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 				throw new Oauth2Exception( jwksResponse.getError(), jwksResponse.getDescription());
 			}
 
-			// validazione token
-			boolean valida = OAuth2Utilities.isValidToken(log, jwksResponse, oAuth2Token);
+			// validazione token (firma + claim configurati)
+			boolean valida = OAuth2Utilities.isValidToken(log, loginProperties, jwksResponse, oAuth2Token);
 
 			if (!valida) {
 				// Token ricevuto non valido
 				OAuth2Utilities.logError(log, OAuth2Costanti.ERROR_MSG_TOKEN_RICEVUTO_NON_VALIDO);
 				
-				throw new Oauth2Exception(OAuth2Costanti.ERROR_MSG_TOKEN_RICEVUTO_NON_VALIDO, OAuth2Costanti.ERROR_MSG_TOKEN_RICEVUTO_NON_VALIDO);
+				throw new Oauth2Exception(OAuth2Costanti.ERROR_MSG_TOKEN_RICEVUTO_NON_VALIDO, OAuth2Costanti.ERROR_MSG_IMPOSSIBILE_AUTENTICARE_UTENTE + OAuth2Costanti.ERROR_MSG_TOKEN_RICEVUTO_NON_VALIDO);
 			}
 
 
@@ -118,8 +118,20 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 
 			request.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ERROR_CODE, e.getErrorCode());
 			request.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ERROR_DETAIL, e.getErrorDetail());
+			request.setAttribute(OAuth2Costanti.PARAM_NAME_PRINCIPAL_ERROR_MSG, e.getErrorDetail());
+			String redirectUrl = this.getConsoleError(request);
+			if(session != null) {
+				// Messaggio di errore
+				session.setAttribute(OAuth2Costanti.PARAM_NAME_PRINCIPAL_ERROR_MSG, e.getErrorDetail());
+				
+				String idToken = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
+				String oauth2LogoutUrl = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_LOGOUT_ENDPOINT);
+				if(idToken != null) {
+					redirectUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirectUrl);
+				}
+			}
 			try {
-				response.sendRedirect(this.getConsoleError(request));
+				response.sendRedirect(redirectUrl);
 			} catch (IOException e1) {
 				log.error("Errore durante esecuzione redirect: " + e1.getMessage(), e1);
 			}

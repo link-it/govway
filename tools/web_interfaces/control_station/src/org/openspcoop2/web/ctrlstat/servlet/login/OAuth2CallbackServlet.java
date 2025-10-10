@@ -29,9 +29,6 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.oauth2.BaseOAuth2CallbackServlet;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
-import org.openspcoop2.web.lib.mvc.Costanti;
-import org.openspcoop2.web.lib.mvc.MessageType;
-import org.openspcoop2.web.lib.mvc.Parameter;
 import org.slf4j.Logger;
 
 /**
@@ -43,6 +40,8 @@ import org.slf4j.Logger;
  */
 public class OAuth2CallbackServlet extends BaseOAuth2CallbackServlet {
 	
+	public static final String PATH_SERVLET_OAUTH2_USER = "/oauth2/user";
+
 	private static final long serialVersionUID = 1L;
 	
 	private static Logger log = ControlStationLogger.getPddConsoleCoreLogger();
@@ -61,16 +60,12 @@ public class OAuth2CallbackServlet extends BaseOAuth2CallbackServlet {
 			log.error("Errore durante la lettura delle properties: " + e.getMessage(),e);
 		} 
 				
-		return StringUtils.isNotEmpty(loginUtenteNonAutorizzatoRedirectUrl) ? loginUtenteNonAutorizzatoRedirectUrl : request.getContextPath() + "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE;
+		return StringUtils.isNotEmpty(loginUtenteNonAutorizzatoRedirectUrl) ? loginUtenteNonAutorizzatoRedirectUrl : request.getContextPath() + "/" + LoginCostanti.SERVLET_NAME_LOGIN;
 	}
 	
 	@Override
 	protected String getConsoleHome(HttpServletRequest request) {
-		return  request.getContextPath() + "/oauth2/user";
-//		return new Parameter("", request.getContextPath() + "/" + LoginCostanti.SERVLET_NAME_MESSAGE_PAGE,
-//				new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO),
-//				new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
-//				).getValue();
+		return  request.getContextPath() + PATH_SERVLET_OAUTH2_USER;
 	}
 	
 	@Override

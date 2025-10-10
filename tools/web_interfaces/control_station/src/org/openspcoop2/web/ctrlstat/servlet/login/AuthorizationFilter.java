@@ -129,6 +129,10 @@ public final class AuthorizationFilter implements Filter {
 		log.debug("Usa il principal per il controllo autorizzazione utente [{}]", (!this.loginApplication)); 
 
 	}
+	
+	private boolean isUtilizzaGestioneUtenzeApplication() {
+		return this.loginApplication || this.core.isLoginOAuth2Enabled();
+	}
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
@@ -151,7 +155,7 @@ public final class AuthorizationFilter implements Filter {
 			log.info("Richiesta Risorsa [{}]", urlRichiesta); 
 			
 			// Autenticazione gestita dall'applicazione 
-			if(this.loginApplication){
+			if(this.isUtilizzaGestioneUtenzeApplication()){
 				HttpSession session = request.getSession(true);
 				ServletUtils.setObjectIntoSession(request, session, this.core.isSinglePdD(), CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 				
@@ -380,8 +384,6 @@ public final class AuthorizationFilter implements Filter {
 									
 									LoginSessionUtilities.setLoginParametersSession(request, session, loginCore, username);
 									
-									// loginHelper.updateTipoInterfaccia();
-									
 									loginCore.performAuditLogin(username);
 									
 									log.debug("Utente autorizzato, effettuo il redirect verso l'applicazione...");
@@ -394,7 +396,7 @@ public final class AuthorizationFilter implements Filter {
 									if(loginHelper.getPd().getMessage().equals(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE) 
 											|| loginHelper.getPd().getMessage().equals(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO)) {
 										
-										log.debug("Utente non valido: " + loginHelper.getPd().getMessage());
+										log.debug("Utente non valido: {}", loginHelper.getPd().getMessage());
 										ServletUtils.setObjectIntoSession(request, session, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_VALIDO, username,	loginHelper.getPd().getMessage()), Costanti.PRINCIPAL_ERROR_MSG);
 										
 										ServletUtils.removeUserLoginFromSession(session);
@@ -405,7 +407,7 @@ public final class AuthorizationFilter implements Filter {
 										return;
 									}
 									
-									log.debug("Utente non autorizzato: " + loginHelper.getPd().getMessage());
+									log.debug("Utente non autorizzato: {}", loginHelper.getPd().getMessage());
 									ServletUtils.setObjectIntoSession(request, session, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_AUTORIZZATO, username, loginHelper.getPd().getMessage()), Costanti.PRINCIPAL_ERROR_MSG);
 									
 									ServletUtils.removeUserLoginFromSession(session);
@@ -417,7 +419,7 @@ public final class AuthorizationFilter implements Filter {
 								}
 							} catch(Exception e) {
 								// errore interno
-								log.debug("Errore durante il login: " + e.getMessage());
+								log.debug("Errore durante il login: {}", e.getMessage());
 								ServletUtils.removeUserLoginFromSession(session);
 								String redirPageUrl = StringUtils.isNotEmpty(this.loginErroreInternoRedirectUrl) ? this.loginErroreInternoRedirectUrl : request.getContextPath() +  "/" + LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE ;
 
@@ -614,13 +616,10 @@ public final class AuthorizationFilter implements Filter {
 					}
 				}
 				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig.getServletContext(), HttpStatus.SERVICE_UNAVAILABLE);
-				// return so that we do not chain to other filters
-				return;
 			}catch(Exception eClose){
 				ControlStationCore.logError("Errore rilevato durante l'authorizationFilter (segnalazione errore)",e);
 			}
 		}
-
 	}
 	
 	public static boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
@@ -678,7 +677,6 @@ public final class AuthorizationFilter implements Filter {
 				lH.makeMenu();
 				
 				LoginSessionUtilities.setLoginParametersSession(request, session, loginCore, userLogin);
-				//lH.updateTipoInterfaccia();
 				
 				// Inizializzo parametri di ricerca
 				ConsoleSearch ricerca = (ConsoleSearch) ServletUtils.getSearchObjectFromSession(request, session, ConsoleSearch.class);
@@ -790,7 +788,7 @@ public final class AuthorizationFilter implements Filter {
 		AuthorizationFilter.setErrorMsg(gh, session, request, response, servletDispatcher , msgErrore, msgErroreTitle, messageType, servletContext, HttpStatus.FORBIDDEN); 
 	}
 	
-	private boolean isRichiestaScrittura(HttpServletRequest request, LoginHelper loginHelper) throws Exception{
+	private boolean isRichiestaScrittura(HttpServletRequest request, LoginHelper loginHelper) throws DriverControlStationException{
 		// Per le operazioni di scrittura si cerca il parametro azione
 		// scarto le chiamate in postback
 		if(!loginHelper.isPostBack() && loginHelper.getParameter(Costanti.PARAMETRO_AZIONE) != null)  {
@@ -800,7 +798,7 @@ public final class AuthorizationFilter implements Filter {
 		return false;
 	}
 	
-	private boolean isGeneraNuovoTokenCSRF(HttpServletRequest request, LoginHelper loginHelper) throws Exception{
+	private boolean isGeneraNuovoTokenCSRF(HttpServletRequest request, LoginHelper loginHelper) {
 		// token attuale viene invalidato e ne viene generato uno nuovo
 		// tranne che per le richieste verso le servlet utils
 		String urlRichiesta = request.getRequestURI();

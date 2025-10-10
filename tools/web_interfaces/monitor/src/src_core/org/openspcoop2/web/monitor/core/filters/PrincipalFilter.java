@@ -148,6 +148,10 @@ public class PrincipalFilter implements Filter {
 		this.excludedPages.add("/oauth2/callback");
 		this.excludedPages.add("/oauth2/user");
 	}
+	
+	private boolean isUtilizzaGestioneUtenzeApplication() {
+		return this.loginApplication || this.loginOAuth2Enabled;
+	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
@@ -157,7 +161,7 @@ public class PrincipalFilter implements Filter {
 			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 			HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 			// Autenticazione gestita dall'applicazione 
-			if(this.loginApplication){
+			if(this.isUtilizzaGestioneUtenzeApplication()){
 				if (isSessionControlRequiredForThisResource(httpServletRequest) && SessionUtils.isSessionInvalid(httpServletRequest)) {
 					
 					HttpSession sessione = httpServletRequest.getSession(false);

@@ -48,14 +48,15 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.gestori.GestoreConsistenzaDati;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
+import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
-import org.springframework.http.HttpStatus;
 
 /**
  * OAuth2UserServlet
@@ -76,12 +77,15 @@ public class OAuth2UserServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+		engineDoGet(httpServletRequest, httpServletResponse);
+	}
+
+	private void engineDoGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 		// login utenza  
 		IPrincipalReader principalReader = null;
 		String loginUtenteNonAutorizzatoRedirectUrl = null;
 		String loginUtenteNonValidoRedirectUrl = null;
 		String loginErroreInternoRedirectUrl = null;
-		String loginSessioneScadutaRedirectUrl = null;
 		String oauth2LogoutUrl = null;
 		GeneralHelper generalHelper = null;
 
@@ -90,8 +94,7 @@ public class OAuth2UserServlet extends HttpServlet {
 		try {
 			String loginTipo = ConsoleProperties.getInstance().getLoginTipo();
 
-			if(StringUtils.isEmpty(loginTipo))
-				loginTipo = PrincipalReaderType.PRINCIPAL.getValue();
+			loginTipo = getTipoLogin(loginTipo);
 
 			Properties prop = ConsoleProperties.getInstance().getLoginProperties();
 
@@ -100,7 +103,6 @@ public class OAuth2UserServlet extends HttpServlet {
 			loginUtenteNonAutorizzatoRedirectUrl = ConsoleProperties.getInstance().getLoginUtenteNonAutorizzatoRedirectUrl();
 			loginUtenteNonValidoRedirectUrl = ConsoleProperties.getInstance().getLoginUtenteNonValidoRedirectUrl();
 			loginErroreInternoRedirectUrl = ConsoleProperties.getInstance().getLoginErroreInternoRedirectUrl();
-			loginSessioneScadutaRedirectUrl = ConsoleProperties.getInstance().getLoginSessioneScadutaRedirectUrl();
 			oauth2LogoutUrl = prop.getProperty(OAuth2Costanti.PROP_OAUTH2_LOGOUT_ENDPOINT);
 
 			generalHelper = new GeneralHelper(session);
@@ -131,12 +133,16 @@ public class OAuth2UserServlet extends HttpServlet {
 
 						// Redirect verso pagina di errore con logout oauth
 						redirectToPagina(log, httpServletRequest, httpServletResponse, session,
-								null, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE, oauth2LogoutUrl);
+								null, LoginCostanti.SERVLET_NAME_LOGIN, oauth2LogoutUrl);
 						// return so that we do not chain to other filters
 						return;
 					}
+					
+					UtentiCore utentiCore = new UtentiCore(core);
+					User user = utentiCore.getUser(username);
 
-					gestioneUtenteTrovato(httpServletRequest, httpServletResponse, loginUtenteNonAutorizzatoRedirectUrl, loginUtenteNonValidoRedirectUrl, oauth2LogoutUrl, loginHelper, username);
+					gestioneUtenteTrovato(httpServletRequest, httpServletResponse, loginUtenteNonAutorizzatoRedirectUrl, loginUtenteNonValidoRedirectUrl,
+							oauth2LogoutUrl, loginHelper, user);
 
 				} else {
 
@@ -147,28 +153,12 @@ public class OAuth2UserServlet extends HttpServlet {
 					ServletUtils.setObjectIntoSession(httpServletRequest, session, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_PRINCIPAL_ASSENTE, Costanti.PRINCIPAL_ERROR_MSG);
 
 					redirectToPagina(log, httpServletRequest, httpServletResponse, session,
-							loginUtenteNonAutorizzatoRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE,
+							loginUtenteNonAutorizzatoRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN,
 							oauth2LogoutUrl);
 				}
 			} else {
-
-				log.debug("Utente Loggato controllo validita' sessione..."); 
-				// controllo se la sessione e' valida
-				boolean isSessionInvalid = AuthorizationFilter.isSessionInvalid(httpServletRequest);
-
-				// Se non sono loggato mi autentico e poi faccio redirect verso la pagina di welcome
-				if(isSessionInvalid){
-					log.debug("Utente Loggato controllo validita' sessione: [invalida]");
-					ServletUtils.removeUserLoginFromSession(session);
-
-					// Messaggio di errore
-					ServletUtils.setObjectIntoSession(httpServletRequest, session, Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_SESSIONE_SCADUTA, Costanti.PRINCIPAL_ERROR_MSG);
-
-					redirectToPagina(log, httpServletRequest, httpServletResponse, session,
-							loginSessioneScadutaRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE,
-							oauth2LogoutUrl);
-					return;
-				} 
+				UtentiCore utentiCore = new UtentiCore(core);
+				User user = utentiCore.getUser(userLogin);
 
 				log.debug("Utente Loggato sessione valida.");
 				ServletUtils.setObjectIntoSession(httpServletRequest, session, core.isSinglePdD(), CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
@@ -176,44 +166,9 @@ public class OAuth2UserServlet extends HttpServlet {
 				// utente loggato
 				ServletUtils.setObjectIntoSession(httpServletRequest, session, core.getTipoDatabase(), CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
 
-				boolean singlePdDBooleanValue = core.isSinglePdD();
-
-				// Controllo autorizzazione sulla funzionalita' richiesta, in base ai permessi dell'utente
-				String servletRichiesta = null;
-				ControlStationCore.logDebug("Check autorizzazione dell'utente "+userLogin+" per servlet ["+servletRichiesta+"] ...");
-
-				// Se arrivo in questo punto sto richiedendo una pagina che riguarda una funzionalite' della console
-				// Imposto il CharacterEncoding UTF-8 per risolvere i problemi di encoding evidenziati in OP-407 e OP-571
-				httpServletRequest.setCharacterEncoding("UTF-8");
-
-				// Non faccio verificare login/logout
-				if (!"".equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_MESSAGE_PAGE.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
-					StringBuilder bfError = new StringBuilder();
-					if(!GestoreAutorizzazioni.autorizzazioneUtente(singlePdDBooleanValue,ControlStationCore.getLog(), servletRichiesta, loginHelper, bfError)){
-						ControlStationCore.logError("Autorizzazione negata all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]: "+bfError.toString());
-						AuthorizationFilter.setErrorMsg(generalHelper, session, httpServletRequest, httpServletResponse, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_AUTORIZZAZIONE_NEGATA,MessageType.ERROR_SINTETICO, httpServletRequest.getServletContext(), HttpStatus.FORBIDDEN);
-						// return so that we do not chain to other filters
-						return;
-					}
-				}
-				ControlStationCore.logDebug("Autorizzazione permessa all'utente "+userLogin+" per la servlet ["+servletRichiesta+"]");
-
-				// Controllo se ho cliccato su un tab dove non e' stata rinnovata la sessione
-				String refreshTabId = ServletUtils.getObjectFromSession(httpServletRequest, session, String.class, Costanti.SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID);
-				if(refreshTabId != null) {
-					ControlStationCore.logDebug("Rilevato click su tab dove e' scaduta la sessione, refresh in corso");
-					// elimino il token per evitare loop
-					ServletUtils.removeObjectFromSession(httpServletRequest, session, Costanti.SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID);
-
-					httpServletResponse.sendRedirect(AuthorizationFilter.getRedirectToMessageServletRefreshSessione(httpServletRequest.getContextPath(), HttpStatus.FORBIDDEN));
-					return;
-				}
-
 				resetRicerche(httpServletRequest, session, loginHelper);					
 
-				if("".equals(servletRichiesta) || "/".equals(servletRichiesta)) {
-					httpServletResponse.sendRedirect(AuthorizationFilter.getRedirectToMessageServlet());
-				}
+				utenteLoggatoCorrettamente(httpServletRequest, httpServletResponse, userLogin, session, core, user);
 			}
 
 		} catch (UtilsException | OpenSPCoop2ConfigurationException | DriverUsersDBException | DriverControlStationException 
@@ -224,7 +179,7 @@ public class OAuth2UserServlet extends HttpServlet {
 			// tutti gli errori anche interni provocano il logout federato
 			try {
 				redirectToPagina(log, httpServletRequest, httpServletResponse, session,
-						loginErroreInternoRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE, oauth2LogoutUrl);
+						loginErroreInternoRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN, oauth2LogoutUrl);
 			} catch (IOException e2) {
 				OAuth2UserServlet.log.error("Errore durante esecuzione redirect: " + e2.getMessage(), e2);
 				httpServletResponse.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
@@ -235,6 +190,12 @@ public class OAuth2UserServlet extends HttpServlet {
 				}
 			}
 		}
+	}
+
+	private String getTipoLogin(String loginTipo) {
+		if(StringUtils.isEmpty(loginTipo))
+			loginTipo = PrincipalReaderType.OAUTH2.getValue();
+		return loginTipo;
 	}
 
 	private void resetRicerche(HttpServletRequest httpServletRequest, HttpSession session, LoginHelper loginHelper)
@@ -267,41 +228,25 @@ public class OAuth2UserServlet extends HttpServlet {
 
 	private void gestioneUtenteTrovato(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
 			String loginUtenteNonAutorizzatoRedirectUrl, String loginUtenteNonValidoRedirectUrl, String oauth2LogoutUrl,
-			LoginHelper loginHelper, String username) throws IOException, DriverUsersDBException {
-		
+			LoginHelper loginHelper, User user) throws IOException, DriverUsersDBException {
+
+		String username = user.getLogin();
 		HttpSession session = httpServletRequest.getSession();
 		GeneralHelper generalHelper = new GeneralHelper(session);
 		ControlStationCore core = generalHelper.getCore();
-		
+
 		// effettuo il login sul db
 		boolean isOk = loginHelper.loginCheckData(LoginTipologia.WITHOUT_PASSWORD, username, null);
 
 		if(isOk) {
 			// utente loggato
-			ServletUtils.setObjectIntoSession(httpServletRequest, session, core.getTipoDatabase(), CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
-
-			LoginCore loginCore = new LoginCore(core);
-
-			LoginSessionUtilities.setLoginParametersSession(httpServletRequest, session, loginCore, username);
-
-			loginCore.performAuditLogin(username);
-
-			log.debug("Utente autorizzato, effettuo il redirect verso l'applicazione...");
-
-			// Redirect interno
-			String redirPageUrl = new Parameter("", httpServletRequest.getContextPath() + "/" + LoginCostanti.SERVLET_NAME_MESSAGE_PAGE,
-					new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO),
-					new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
-					).getValue();
-
-			// redirect dopo il login
-			httpServletResponse.sendRedirect(redirPageUrl);
+			utenteLoggatoCorrettamente(httpServletRequest, httpServletResponse, username, session, core, user);
 		} else {
 			// utente non autorizzato
 			ServletUtils.setObjectIntoSession(httpServletRequest, session, MessageFormat.format(Costanti.MESSAGGIO_ERRORE_LOGIN_CON_PRINCIPAL_UTENTE_NON_AUTORIZZATO, username, loginHelper.getPd().getMessage()), Costanti.PRINCIPAL_ERROR_MSG);
 			String debugMsg = "Utente non autorizzato: {}";
 			String customRedirectUrl = loginUtenteNonAutorizzatoRedirectUrl;
-			
+
 			// utenza non valida
 			if(loginHelper.getPd().getMessage().equals(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE) 
 					|| loginHelper.getPd().getMessage().equals(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO)) {
@@ -312,14 +257,36 @@ public class OAuth2UserServlet extends HttpServlet {
 			}
 
 			log.debug(debugMsg, loginHelper.getPd().getMessage());
-			
+
 			ServletUtils.removeUserLoginFromSession(session);
 
 			// Redirect verso pagina di errore con logout oauth
 			redirectToPagina(log, httpServletRequest, httpServletResponse, session,
-					customRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN_MESSAGE_PAGE,
+					customRedirectUrl, LoginCostanti.SERVLET_NAME_LOGIN,
 					oauth2LogoutUrl);
 		}
+	}
+
+	private void utenteLoggatoCorrettamente(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+			String username, HttpSession session, ControlStationCore core, User user) throws IOException, DriverUsersDBException {
+		ServletUtils.setObjectIntoSession(httpServletRequest, session, core.getTipoDatabase(), CostantiControlStation.SESSION_PARAMETRO_TIPO_DB);
+
+		LoginCore loginCore = new LoginCore(core);
+
+		LoginSessionUtilities.setLoginParametersSession(httpServletRequest, session, loginCore, username, user);
+
+		loginCore.performAuditLogin(username);
+
+		log.debug("Utente autorizzato, effettuo il redirect verso l'applicazione...");
+
+		// Redirect interno
+		String redirPageUrl = new Parameter("", httpServletRequest.getContextPath() + "/" + LoginCostanti.SERVLET_NAME_MESSAGE_PAGE,
+				new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO),
+				new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
+				).getValue();
+
+		// redirect dopo il login
+		httpServletResponse.sendRedirect(redirPageUrl);
 	}
 
 	private void redirectToPagina(Logger log, HttpServletRequest httpServletRequest,

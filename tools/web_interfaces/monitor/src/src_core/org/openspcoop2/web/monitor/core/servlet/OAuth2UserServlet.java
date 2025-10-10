@@ -40,6 +40,10 @@ public class OAuth2UserServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+		engineDoGet(httpServletRequest, httpServletResponse); 
+	}
+
+	private void engineDoGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 		// login utenza  
 		IPrincipalReader principalReader = null;
 		String loginUtenteNonAutorizzatoRedirectUrl = null;
@@ -112,7 +116,7 @@ public class OAuth2UserServlet extends HttpServlet {
 			} catch (IOException e1) {
 				log.error(OAuth2Costanti.ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES + e1.getMessage(), e1);
 			}
-		} 
+		}
 	}
 
 	private String getPrincipal(HttpServletRequest httpServletRequest, IPrincipalReader principalReader) throws PrincipalReaderException {
@@ -234,6 +238,10 @@ public class OAuth2UserServlet extends HttpServlet {
 			OAuth2UserServlet.log.debug("Login Bean Utente Loggato controllo validita' sessione [invalida]");
 			lb.logout();
 			String redirPageUrl =  StringUtils.isNotEmpty(loginSessioneScadutaRedirectUrl) ? loginSessioneScadutaRedirectUrl : httpServletRequest.getContextPath() + "/"+"index.jsp" ;
+			httpServletResponse.sendRedirect(redirPageUrl);
+		} else {
+			OAuth2UserServlet.log.debug("Utente autorizzato");
+			String redirPageUrl = httpServletRequest.getContextPath() + "/"+"index.jsp" ;
 			httpServletResponse.sendRedirect(redirPageUrl);
 		}
 	}

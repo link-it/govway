@@ -48,6 +48,7 @@ public class OAuth2Costanti {
 	public static final String PROP_OAUTH2_REDIRECT_URL = PROP_OAUTH2_PREFIX + "redirectUri";
 	public static final String PROP_OAUTH2_SCOPE = PROP_OAUTH2_PREFIX + SCOPE;
 	public static final String PROP_OAUTH2_PRINCIPAL_CLAIM = PROP_OAUTH2_PREFIX + "principalClaim";
+	public static final String PROP_OAUTH2_CLAIMS_VALIDATION = PROP_OAUTH2_PREFIX + "claims.validation.";
 	
 	public static final String PROP_OAUTH2_READ_TIMEOUT = PROP_OAUTH2_PREFIX + "readTimeout";
 	public static final String PROP_OAUTH2_CONNECT_TIMEOUT = PROP_OAUTH2_PREFIX + "connectTimeout";
@@ -82,6 +83,7 @@ public class OAuth2Costanti {
 	public static final String PARAM_NAME_OAUTH2_ID_TOKEN_HINT = "id_token_hint";
 	public static final String PARAM_NAME_OAUTH2_POST_LOGOUT_REDIRECT_URI = "post_logout_redirect_uri";
 	public static final String PARAM_NAME_OAUTH2_REFRESH_TOKEN = "refresh_token";
+	public static final String PARAM_NAME_PRINCIPAL_ERROR_MSG = "principalErrorMsg";
 	
 	/** Attributi sessione / request */
 	public static final String ATTRIBUTE_NAME_ERROR_MESSAGE = "oauth2ErrorMessage";
@@ -130,4 +132,5 @@ public class OAuth2Costanti {
 	public static final String ERROR_MSG_ERRORE_DURANTE_LA_LETTURA_DELLE_PROPERTIES = "Errore durante la lettura delle properties: ";
 	public static final String ERROR_MSG_AUTENTICAZIONE_OAUTH2_NON_DISPONIBILE_SI_E_VERIFICATO_UN_ERRORE = "Autenticazione Oauth2 non disponibile: si e' verificato un'errore: ";
 	public static final String ERROR_MSG_LOGIN_ERRORE_INTERNO = "Il sistema non riesce ad autenticare l'utente.";
+	public static final String ERROR_MSG_IMPOSSIBILE_AUTENTICARE_UTENTE = "Impossibile autenticare l'utente: ";
 }

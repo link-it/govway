@@ -246,6 +246,15 @@ public class OAuth2Utilities {
 		return response;
 	}
 
+	/**
+	 * Valida un token OAuth2 verificando la firma JWT.
+	 * Questo metodo esegue solo la verifica della firma crittografica.
+	 *
+	 * @param log Logger
+	 * @param jwksResponse Response contenente i certificati JWKS
+	 * @param oAuth2Token Token OAuth2 da validare
+	 * @return true se la firma è valida, false altrimenti
+	 */
 	public static boolean isValidToken(Logger log, Oauth2BaseResponse jwksResponse, OAuth2Token oAuth2Token) {
 		// estraggo info dal token
 		String accessToken = oAuth2Token.getAccessToken();
@@ -264,6 +273,44 @@ public class OAuth2Utilities {
 			logError(log, "Errore durante la verifica del token: " + e.getMessage(), e);
 			return false;
 		}
+	}
+
+	/**
+	 * Valida un token OAuth2 verificando sia la firma JWT che i claim configurati.
+	 * Questo metodo esegue una validazione completa che include:
+	 * 1. Verifica della firma crittografica (tramite JWKS)
+	 * 2. Validazione dei claim configurati nelle properties (oauth2.claims.*)
+	 *
+	 * @param log Logger
+	 * @param loginProperties Properties contenenti la configurazione OAuth2 (include oauth2.claims.*)
+	 * @param jwksResponse Response contenente i certificati JWKS
+	 * @param oAuth2Token Token OAuth2 da validare
+	 * @return true se sia firma che claim sono validi, false altrimenti
+	 */
+	public static boolean isValidToken(Logger log, Properties loginProperties,
+			Oauth2BaseResponse jwksResponse, OAuth2Token oAuth2Token) {
+
+		// 1. Verifica firma JWT
+		boolean signatureValid = isValidToken(log, jwksResponse, oAuth2Token);
+		if (!signatureValid) {
+			logError(log, "Validazione token fallita: firma JWT non valida");
+			return false;
+		}
+
+		// 2. Verifica claim configurati (se presenti)
+		Oauth2ClaimValidator claimValidator = new Oauth2ClaimValidator(log, loginProperties);
+		Oauth2ClaimValidator.ValidationResult claimResult = claimValidator.validate(oAuth2Token.getAccessToken());
+
+		if (!claimResult.isValid()) {
+			logError(log, "Validazione token fallita: claim non validi - " + claimResult.getErrorsAsString());
+			return false;
+		}
+
+		// Token valido sia per firma che per claim
+		if (log != null) {
+			log.debug("Token validato con successo (firma + claim)");
+		}
+		return true;
 	}
 
 	public static OAuth2Token refreshToken(Logger log, Properties loginProperties, String refreshToken) {

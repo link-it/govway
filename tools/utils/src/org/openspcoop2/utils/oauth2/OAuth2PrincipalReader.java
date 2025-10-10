@@ -101,8 +101,8 @@ public class OAuth2PrincipalReader implements IPrincipalReader {
 				return null;
 			}
 
-			// validazione token
-			boolean valida = OAuth2Utilities.isValidToken(this.log, jwksResponse, oAuth2Token);
+			// validazione token (firma + claim configurati)
+			boolean valida = OAuth2Utilities.isValidToken(this.log, this.properties, jwksResponse, oAuth2Token);
 
 			if (!valida) {
 				// Token ricevuto non valido

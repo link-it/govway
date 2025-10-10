@@ -37,7 +37,9 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
 /**
@@ -100,7 +102,12 @@ public final class Logout extends Action {
  			if(idToken != null && oauth2LogoutUrl != null) {
 				// preparazione dei parametri
 				String redirPageUrl = StringUtils.isNotEmpty(logoutUrlDestinazione) ? 
-						logoutUrlDestinazione : ServletUtils.buildInternalRedirectUrl(request, LoginCostanti.SERVLET_NAME_LOGOUT); // equivalente della chiamata normale
+						logoutUrlDestinazione :
+							new Parameter("",
+							ServletUtils.buildInternalRedirectUrl(request, LoginCostanti.SERVLET_NAME_LOGIN),
+							new Parameter(Costanti.PARAMETER_MESSAGE_TEXT,LoginCostanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO),
+							new Parameter(Costanti.PARAMETER_MESSAGE_TYPE,MessageType.INFO_SINTETICO.toString())
+							).getValue();
 				
 				String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
 

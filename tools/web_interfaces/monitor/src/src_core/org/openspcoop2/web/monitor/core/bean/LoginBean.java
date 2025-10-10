@@ -141,7 +141,6 @@ public class LoginBean extends AbstractLoginBean {
 
 	private Properties loginProperties = null;
 	private boolean loginOAuth2Enabled = false;
-	private boolean visualizzaFormLoginApplication = false;
 
 	public LoginBean(boolean initDao){
 		super(initDao);
@@ -183,10 +182,8 @@ public class LoginBean extends AbstractLoginBean {
 			this.salvaModificheProfiloSuDB = PddMonitorProperties.getInstance(this.log).isModificaProfiloUtenteDaLinkAggiornaDB();
 
 			this.loginProperties = PddMonitorProperties.getInstance(this.log).getLoginProperties();
-			
+
 			this.loginOAuth2Enabled = PddMonitorProperties.getInstance(this.log).isLoginOAuth2Enabled();
-			
-			this.visualizzaFormLoginApplication = PddMonitorProperties.getInstance(this.log).isVisualizzaFormLoginApplication();
 
 		} catch (Exception e) {
 			this.log.error("Errore durante la configurazione del logout: " + e.getMessage(),e);
@@ -205,57 +202,7 @@ public class LoginBean extends AbstractLoginBean {
 	@Override
 	public String login() {
 		if(this.isApplicationLogin()){
-			this.userToUpdate = null;
-
-			if(null == this.getUsername() && this.getPwd() == null){		
-				return Costanti.OUTCOME_LOGIN;
-			}
-
-			try{
-				this.log.info("Verifico le credenziali per l'utente [{}]", this.getUsername());
-
-				if(this.getLoginDao().login(this.getUsername(),this.getPwd())){
-					
-					// controllo validita' password
-					UserDetailsBean loadUserByUsername = this.getLoginDao().loadUserByUsername(this.getUsername());
-					
-					// session fixation
-					ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-					HttpSession session = (HttpSession) ec.getSession(true);
-					HttpServletRequest request = (HttpServletRequest) ec.getRequest();
-					ServletUtils.sessionFixation(this.log, request, session);
-					
-					if(this.passwordVerifier != null && this.checkPasswordExpire) {
-						User user = loadUserByUsername.getUtente();
-						if(user.isCheckLastUpdatePassword()) {
-							StringBuilder bfMotivazioneErrore = new StringBuilder(); 
-							if(this.passwordVerifier.isPasswordExpire(user.getLastUpdatePassword(), bfMotivazioneErrore)) {
-								MessageUtils.addErrorMsg(bfMotivazioneErrore.toString());
-								this.userToUpdate = this.getUsername();
-								this.nuovoTokenCsrfListener(null); // genero un token csrf per l'operazione
-								return "utentePasswordChange";
-							}
-						}
-					}
-
-					this.setLoggedIn(true);
-					this.setLoggedUser(loadUserByUsername);
-					this.setDettaglioUtente(this.getLoggedUser().getUtente());
-					this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor());
-					this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
-					this.setvInfo(this.getLoginDao().readVersionInfo());
-					this.log.info("Utente [{}] autenticato con successo", this.getUsername());
-					return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
-				}else{
-					MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_USERNAME_O_PASSWORD_NON_VALIDI, this.getUsername()));
-				}
-			} catch (ServiceException e) {
-				MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0, this.getUsername()));
-			} catch (NotFoundException e) {
-				MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_USERNAME_O_PASSWORD_NON_VALIDI, this.getUsername()));
-			} catch (UserInvalidException | LoginException e) {
-				MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0_1, this.getUsername(), e.getMessage()));
-			}
+			return loginApplicationEngine();
 		}else{
 			this.log.info("Verifico il ticket per l'utente [{}]", this.getUsername());
 			this.loginErrorMessage = null;
@@ -283,6 +230,59 @@ public class LoginBean extends AbstractLoginBean {
 				this.log.debug(this.loginErrorMessage);
 				return Costanti.OUTCOME_LOGIN_USER_INVALID;
 			}
+		}
+		return Costanti.OUTCOME_LOGIN; 
+	}
+
+	public String loginApplicationEngine() {
+		this.userToUpdate = null;
+
+		if(null == this.getUsername() && this.getPwd() == null){		
+			return Costanti.OUTCOME_LOGIN;
+		}
+
+		try{
+			this.log.info("Verifico le credenziali per l'utente [{}]", this.getUsername());
+
+			if(this.getLoginDao().login(this.getUsername(),this.getPwd())){
+
+				// controllo validita' password
+				UserDetailsBean loadUserByUsername = this.getLoginDao().loadUserByUsername(this.getUsername());
+
+				// session fixation
+				ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+				HttpSession session = (HttpSession) ec.getSession(true);
+				HttpServletRequest request = (HttpServletRequest) ec.getRequest();
+				ServletUtils.sessionFixation(this.log, request, session);
+
+				if(this.passwordVerifier != null && this.checkPasswordExpire) {
+					User user = loadUserByUsername.getUtente();
+					StringBuilder bfMotivazioneErrore = new StringBuilder();
+					if(user.isCheckLastUpdatePassword() && this.passwordVerifier.isPasswordExpire(user.getLastUpdatePassword(), bfMotivazioneErrore)) {
+						MessageUtils.addErrorMsg(bfMotivazioneErrore.toString());
+						this.userToUpdate = this.getUsername();
+						this.nuovoTokenCsrfListener(null); // genero un token csrf per l'operazione
+						return "utentePasswordChange";
+					}
+				}
+
+				this.setLoggedIn(true);
+				this.setLoggedUser(loadUserByUsername);
+				this.setDettaglioUtente(this.getLoggedUser().getUtente());
+				this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor());
+				this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
+				this.setvInfo(this.getLoginDao().readVersionInfo());
+				this.log.info("Utente [{}] autenticato con successo", this.getUsername());
+				return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
+			}else{
+				MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_USERNAME_O_PASSWORD_NON_VALIDI, this.getUsername()));
+			}
+		} catch (ServiceException e) {
+			MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0, this.getUsername()));
+		} catch (NotFoundException e) {
+			MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_USERNAME_O_PASSWORD_NON_VALIDI, this.getUsername()));
+		} catch (UserInvalidException | LoginException e) {
+			MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0_1, this.getUsername(), e.getMessage()));
 		}
 		return Costanti.OUTCOME_LOGIN; 
 	}
@@ -491,7 +491,7 @@ public class LoginBean extends AbstractLoginBean {
 				if(listaNomiProtocolli.size() == 1) {
 					return listaNomiProtocolli.get(0); 
 				}
-			}catch(Exception e) {
+			}catch(ProtocolException e) {
 				return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
 			}
 
@@ -515,7 +515,7 @@ public class LoginBean extends AbstractLoginBean {
 
 				this.visualizzaSezioneModalita = !listaNomiProtocolli.isEmpty();
 
-			}catch(Exception e) {
+			}catch(ProtocolException e) {
 				this.visualizzaSezioneModalita = false;
 			}
 		}
@@ -529,14 +529,14 @@ public class LoginBean extends AbstractLoginBean {
 
 				this.visualizzaMenuModalita = listaNomiProtocolli.size() > 1;
 
-			}catch(Exception e) {
+			}catch(ProtocolException e) {
 				this.visualizzaMenuModalita = false;
 			}
 		}
 		return this.visualizzaMenuModalita;
 	}
 
-	public List<String> listaProtocolliDisponibilePerUtentePddMonitor() throws Exception {
+	public List<String> listaProtocolliDisponibilePerUtentePddMonitor() throws ProtocolException {
 		ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
 		MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 		return Utility.getProtocolli(this.getUtente(), pfManager, protocolFactories, true);
@@ -638,7 +638,7 @@ public class LoginBean extends AbstractLoginBean {
 					this.vociMenuModalita.add(menuItem);
 				}
 
-			}catch(Exception e) {
+			}catch(ProtocolException e) {
 				this.vociMenuModalita = new ArrayList<>();
 			}
 
@@ -769,7 +769,7 @@ public class LoginBean extends AbstractLoginBean {
 
 				this.visualizzaMenuSoggetto = listaNomiProtocolli.size() > 1;
 
-			}catch(Exception e) {
+			}catch(ProtocolException e) {
 				this.visualizzaMenuSoggetto = false;
 			}
 		}
@@ -789,7 +789,7 @@ public class LoginBean extends AbstractLoginBean {
 
 				this.visualizzaLinkSelezioneSoggetto = listaNomiProtocolli.size() > numeroMassimoSoggettiSelectListSoggettiOperatiti;
 
-			}catch(Exception e) {
+			}catch(ProtocolException | UtilsException e) {
 				this.visualizzaLinkSelezioneSoggetto = false;
 			}
 		}
@@ -876,18 +876,7 @@ public class LoginBean extends AbstractLoginBean {
 		String labelSelezionato = "";
 		try {
 			if(this.soggettoPddMonitor == null) {
-				try {
-					List<Soggetto> listaNomiSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
-
-					if(listaNomiSoggetti.size() == 1) {
-						IDSoggetto idSoggetto = new IDSoggetto(listaNomiSoggetti.get(0).getTipoSoggetto(), listaNomiSoggetti.get(0).getNomeSoggetto()); 
-						labelSelezionato = NamingUtils.getLabelSoggetto(idSoggetto);  
-					} else {
-						labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
-					}
-				}catch(Exception e) {
-					labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
-				}
+				labelSelezionato = getLabelSoggettoEngineInner();
 
 			} else {
 				String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(this.soggettoPddMonitor);
@@ -895,10 +884,27 @@ public class LoginBean extends AbstractLoginBean {
 				IDSoggetto idSoggetto = new IDSoggetto(tipoSoggettoOperativoSelezionato, nomeSoggettoOperativoSelezionato);
 				labelSelezionato = NamingUtils.getLabelSoggetto(idSoggetto);
 			}
-		} catch (Exception e) {
+		} catch (ProtocolException e) {
 			this.log.error(e.getMessage(), e);
 		}
 		return addPrefix ? MessageFormat.format(Costanti.LABEL_MENU_SOGGETTO_CORRENTE_WITH_PARAM, labelSelezionato) : labelSelezionato;
+	}
+
+	private String getLabelSoggettoEngineInner() {
+		String labelSelezionato = "";
+		try {
+			List<Soggetto> listaNomiSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
+
+			if(listaNomiSoggetti.size() == 1) {
+				IDSoggetto idSoggetto = new IDSoggetto(listaNomiSoggetti.get(0).getTipoSoggetto(), listaNomiSoggetti.get(0).getNomeSoggetto()); 
+				labelSelezionato = NamingUtils.getLabelSoggetto(idSoggetto);  
+			} else {
+				labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+			}
+		}catch(ProtocolException e) {
+			labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+		}
+		return labelSelezionato;
 	}
 
 	public void setLabelSoggetto(String labelSoggetto) { /* donothing */
@@ -907,7 +913,7 @@ public class LoginBean extends AbstractLoginBean {
 	public void setLabelSoggettoSenzaPrefisso(String labelSoggetto) { /* donothing */
 	}
 
-	public List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitor() throws Exception {
+	public List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitor() throws ProtocolException {
 		if(this.listaSoggettiDisponibiliUtente == null) {
 			this.listaSoggettiDisponibiliUtente = listaSoggettiDisponibilePerUtentePddMonitorEngine();
 		}
@@ -915,7 +921,7 @@ public class LoginBean extends AbstractLoginBean {
 		return this.listaSoggettiDisponibiliUtente;
 	}
 
-	private List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitorEngine() throws Exception {
+	private List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitorEngine() throws ProtocolException {
 		User utente = this.getUtente();
 		List<String> protocolliDispondibili = this.listaProtocolliDisponibilePerUtentePddMonitor();
 		String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
@@ -1050,7 +1056,7 @@ public class LoginBean extends AbstractLoginBean {
 					}
 				}
 
-			}catch(Exception e) {
+			}catch(ProtocolException | UtilsException e) {
 				this.vociMenuSoggetto = new ArrayList<>();
 			}
 
@@ -1119,7 +1125,7 @@ public class LoginBean extends AbstractLoginBean {
 
 			if(numeroSoggettiDisponibili == 1)
 				return false;
-		} catch (Exception e) {
+		} catch (ProtocolException e) {
 			this.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
 		}
 		return true;
@@ -1250,15 +1256,11 @@ public class LoginBean extends AbstractLoginBean {
 	public boolean isLoginOAuth2Enabled() {
 		return this.loginOAuth2Enabled;
 	}
-	
-	public boolean isVisualizzaFormLoginApplication() {
-		return this.visualizzaFormLoginApplication;
-	}
-	
+
 	public boolean isMultiLoginEnabled() {
-		return this.isApplicationLogin() && this.isVisualizzaFormLoginApplication() && this.isLoginOAuth2Enabled();
+		return this.isApplicationLogin() && this.isLoginOAuth2Enabled();
 	}
-	
+
 	public boolean isUtenteLoggatoOAuth2() {
 		FacesContext fc = FacesContext.getCurrentInstance();
 		ExternalContext extCtx = fc.getExternalContext();

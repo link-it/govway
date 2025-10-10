@@ -859,7 +859,7 @@ public class UtentiHelper extends ConsoleHelper {
 			dati.add(de);
 		}
 		
-		boolean visualizzaFormPassword = this.core.isMultiLoginEnabled() || this.core.isVisualizzaFormLoginApplication();
+		boolean visualizzaFormPassword = this.core.isLoginApplication();
 
 		if(visualizzaFormPassword) {
 			de = new DataElement();
@@ -1398,7 +1398,7 @@ public class UtentiHelper extends ConsoleHelper {
 	
 				PasswordVerifier passwordVerifier = this.utentiCore.getUtenzePasswordVerifier();
 				
-				boolean passwordObbligatoria = !this.core.isMultiLoginEnabled();
+				boolean passwordObbligatoria = this.core.isLoginApplication() && !this.core.isMultiLoginEnabled();
 				
 				de = new DataElement();
 				de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTE_VECCHIA_PW);
@@ -1804,7 +1804,7 @@ public class UtentiHelper extends ConsoleHelper {
 
 			User user = ServletUtils.getUserFromSession(this.request, this.session);
 
-			boolean passwordObbligatoria = !this.core.isMultiLoginEnabled();
+			boolean passwordObbligatoria = this.core.isLoginApplication() && !this.core.isMultiLoginEnabled();
 			
 			if(!user.getPermessi().isUtenti()){
 				boolean trovato = this.utentiCore.getUtenzePasswordManager().check(oldpw, user.getPassword());

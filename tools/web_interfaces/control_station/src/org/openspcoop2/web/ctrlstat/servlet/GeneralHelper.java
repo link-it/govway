@@ -251,7 +251,7 @@ public class GeneralHelper {
 		dati.add(titoloSezione);
 		
 		// login interno abilitato
-		if(this.core.isVisualizzaFormLoginApplication()) {
+		if(this.core.isLoginApplication()) {
 			// se e' abilitato il login multiplo aggiungo il subtitle
 			if(this.core.isMultiLoginEnabled()) {
 				// subtitle sezione login

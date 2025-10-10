@@ -648,7 +648,7 @@ public class ControlStationCore {
 	
 	public boolean isCheckPasswordExpire(PasswordVerifier passwordVerifier) { 
 		if(passwordVerifier != null) {
-			return this.isLoginApplication() && this.isVisualizzaFormLoginApplication() && passwordVerifier.isCheckPasswordExpire();
+			return this.isLoginApplication() && passwordVerifier.isCheckPasswordExpire();
 		}
 		
 		return false;
@@ -666,7 +666,6 @@ public class ControlStationCore {
 	/** Login */
 	protected String loginTipo;
 	protected boolean loginApplication;
-	protected boolean visualizzaFormLoginApplication;
 	protected Properties loginProperties;
 	protected String loginUtenteNonAutorizzatoRedirectUrl;
 	protected String loginUtenteNonValidoRedirectUrl;
@@ -686,10 +685,6 @@ public class ControlStationCore {
 		return this.loginApplication;
 	}
 	
-	public boolean isVisualizzaFormLoginApplication() {
-		return this.visualizzaFormLoginApplication;
-	}
-
 	public Properties getLoginProperties() {
 		return this.loginProperties;
 	}
@@ -727,7 +722,7 @@ public class ControlStationCore {
 	}
 	
 	public boolean isMultiLoginEnabled() {
-		return this.isLoginApplication() && this.isVisualizzaFormLoginApplication() && this.isLoginOAuth2Enabled();
+		return this.isLoginApplication() && this.isLoginOAuth2Enabled();
 	}
 	
 	
@@ -2625,7 +2620,6 @@ public class ControlStationCore {
 		
 		/** Login */
 		this.loginApplication = core.loginApplication;
-		this.visualizzaFormLoginApplication = core.visualizzaFormLoginApplication;
 		this.loginErroreInternoRedirectUrl = core.loginErroreInternoRedirectUrl;
 		this.loginProperties = core.loginProperties;
 		this.loginSessioneScadutaRedirectUrl = core.loginSessioneScadutaRedirectUrl;
@@ -3265,7 +3259,6 @@ public class ControlStationCore {
 			
 			/** Login */
 			this.loginApplication = consoleProperties.isLoginApplication();
-			this.visualizzaFormLoginApplication = consoleProperties.isVisualizzaFormLoginApplication();
 			this.loginErroreInternoRedirectUrl = consoleProperties.getLoginErroreInternoRedirectUrl();
 			this.loginProperties = consoleProperties.getLoginProperties();
 			this.loginSessioneScadutaRedirectUrl = consoleProperties.getLoginSessioneScadutaRedirectUrl();

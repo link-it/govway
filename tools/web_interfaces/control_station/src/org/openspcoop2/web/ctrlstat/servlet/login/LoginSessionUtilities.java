@@ -46,19 +46,25 @@ public class LoginSessionUtilities {
 	public static void setLoginParametersSession(HttpServletRequest request, HttpSession session, ControlStationCore core,String login) throws DriverUsersDBException {
 				
 		UtentiCore utentiCore = new UtentiCore(core);
+		User user = utentiCore.getUser(login);
+		
+		setLoginParametersSession(request, session, utentiCore, login ,user);
+		
+	}
+	
+	public static void setLoginParametersSession(HttpServletRequest request, HttpSession session, ControlStationCore core,String login, User user) {
 		
 		Boolean contaListe = core.isShowCountElementInLinkList();
 		
 		ServletUtils.setUserLoginIntoSession(session, login);
 		
 		ServletUtils.setContaListeIntoSession(session, contaListe);
-				
-		User user = utentiCore.getUser(login);
 		
 		ServletUtils.setUserIntoSession(request, session, user);
 	
 		setLoginParametersSession(request, session, core, user);
 	}
+	
 	public static void setLoginParametersSession(HttpServletRequest request, HttpSession session, ControlStationCore core, User user) {
 			
 		Boolean showAccordiAzioni = core.isShowAccordiColonnaAzioni();

@@ -86,6 +86,8 @@ public final class Login extends Action {
 			
 			// Se login = null, devo visualizzare la pagina per l'inserimento dati
 			if (login == null) {
+				
+				loginHelper.impostaMessaggioEsitoLoginDaSessione(true);
 	
 				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 				

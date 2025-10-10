@@ -1050,11 +1050,21 @@ public class Utility {
 		return false;
 	}
 	
-	public static boolean isMultiLoginEnabled() {
+//	public static boolean isMultiLoginEnabled() {
+//		LoginBean lb = getLoginBean();
+//
+//		if(lb!= null && lb.isLoggedIn()){
+//			return lb.isMultiLoginEnabled();
+//		}
+//		
+//		return false;
+//	}
+	
+	public static boolean isPasswordUtenteObbligatoria() {
 		LoginBean lb = getLoginBean();
 
 		if(lb!= null && lb.isLoggedIn()){
-			return lb.isMultiLoginEnabled();
+			 return lb.isApplicationLogin() && !lb.isMultiLoginEnabled();
 		}
 		
 		return false;
