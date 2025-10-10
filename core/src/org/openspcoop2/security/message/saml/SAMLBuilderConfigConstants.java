@@ -122,6 +122,7 @@ public class SAMLBuilderConfigConstants {
 	public static final String SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_NOT_ON_OR_AFTER_FORMAT = "openspcoop2.saml.authn.statement.notOnOrAfter.minutes.format";
 	public static final String SAML_CONFIG_BUILDER_AUTHN_STATEMENT_DATA_NOT_ON_OR_AFTER_VALUE = "openspcoop2.saml.authn.statement.notOnOrAfter.minutes.value";
 	public static final String SAML_CONFIG_BUILDER_AUTHN = "openspcoop2.saml.authn";
+	public static final String SAML_CONFIG_BUILDER_AUTHN_DECL_REF = "openspcoop2.saml.authn.declRef";
 	public static final String SAML_CONFIG_BUILDER_AUTHN_SUBJECT_LOCALITY_IP_ADDRESS = "openspcoop2.saml.authn.subjectLocality.ipAddress";
 	public static final String SAML_CONFIG_BUILDER_AUTHN_SUBJECT_LOCALITY_DNS_ADDRESS = "openspcoop2.saml.authn.subjectLocality.dnsAddress";
 	// sia 1.1 che 2.0

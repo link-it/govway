@@ -74,8 +74,8 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-bindings-4.0.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-integration-4.0.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-policy-4.0.0.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-common-4.0.0-gov4j-1.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-4.0.0-gov4j-1.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-common-4.0.0-gov4j-2.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-dom-4.0.0-gov4j-2.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-4.0.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-4.0.0.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-7.1.1.jar"/>	

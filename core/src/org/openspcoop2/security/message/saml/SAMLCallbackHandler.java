@@ -74,8 +74,7 @@ public class SAMLCallbackHandler implements CallbackHandler {
 	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
 		
 		for (int i = 0; i < callbacks.length; i++) {
-			if (callbacks[i] instanceof SAMLCallback) {
-				SAMLCallback callback = (SAMLCallback) callbacks[i];
+			if (callbacks[i] instanceof SAMLCallback callback) {
 				
 				Instant now = Instant.now();
 				
@@ -132,10 +131,10 @@ public class SAMLCallbackHandler implements CallbackHandler {
 					subjectBean.setSubjectConfirmationMethod(this.samlBuilderConfig.getSubjectConfirmationMethod());
 					
 					SubjectConfirmationDataBean subjectConfirmationData = new SubjectConfirmationDataBean();
-					Instant subjectConfirmationMethod_notBefore = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getSubjectConfirmationDataNotBefore());
-					Instant subjectConfirmationMethod_notOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getSubjectConfirmationDataNotOnOrAfter());
-					subjectConfirmationData.setNotBefore(subjectConfirmationMethod_notBefore);
-					subjectConfirmationData.setNotAfter(subjectConfirmationMethod_notOnOrAfter);
+					Instant subjectConfirmationMethodNotBefore = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getSubjectConfirmationDataNotBefore());
+					Instant subjectConfirmationMethodNotOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getSubjectConfirmationDataNotOnOrAfter());
+					subjectConfirmationData.setNotBefore(subjectConfirmationMethodNotBefore);
+					subjectConfirmationData.setNotAfter(subjectConfirmationMethodNotOnOrAfter);
 					subjectConfirmationData.setAddress(this.samlBuilderConfig.getSubjectConfirmationDataAddress());
 					subjectConfirmationData.setInResponseTo(this.samlBuilderConfig.getSubjectConfirmationDataInResponseTo());
 					subjectConfirmationData.setRecipient(this.samlBuilderConfig.getSubjectConfirmationDataRecipient());
@@ -162,16 +161,16 @@ public class SAMLCallbackHandler implements CallbackHandler {
 					
 					ConditionsBean conditions = new ConditionsBean();
 					
-					Instant conditions_notBefore = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getConditionsDataNotBefore());
-					Instant conditions_notOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getConditionsDataNotOnOrAfter());
-					conditions.setNotBefore(conditions_notBefore);
-					conditions.setNotAfter(conditions_notOnOrAfter);
+					Instant conditionsNotBefore = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getConditionsDataNotBefore());
+					Instant conditionsNotOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getConditionsDataNotOnOrAfter());
+					conditions.setNotBefore(conditionsNotBefore);
+					conditions.setNotAfter(conditionsNotOnOrAfter);
 					
 					if(this.samlBuilderConfig.getConditionsAudienceURI()!=null){
 						
 						// per adesso viene gestita una unica audience uri
 						
-						List<AudienceRestrictionBean> lAudience = new ArrayList<AudienceRestrictionBean>();
+						List<AudienceRestrictionBean> lAudience = new ArrayList<>();
 						
 						AudienceRestrictionBean arb = new AudienceRestrictionBean();
 						List<String> uri = new ArrayList<>();
@@ -194,22 +193,22 @@ public class SAMLCallbackHandler implements CallbackHandler {
 					authBean = new AuthenticationStatementBean();
 					authBean.setSubject(subjectBean); // necessario per saml 1.1
 					
-					Instant authnStatement_instant = null;
+					Instant authnStatementInstant = null;
 					if(this.samlBuilderConfig.getAuthnStatementDataInstantDate()!=null) {
-						authnStatement_instant = this.samlBuilderConfig.getAuthnStatementDataInstantDate().toInstant();
+						authnStatementInstant = this.samlBuilderConfig.getAuthnStatementDataInstantDate().toInstant();
 					}
 					else {
-						authnStatement_instant = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getAuthnStatementDataInstant());
+						authnStatementInstant = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getAuthnStatementDataInstant());
 					}
-					Instant authnStatement_notOnOrAfter = null;
+					Instant authnStatementNotOnOrAfter = null;
 					if(this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfterDate()!=null) {
-						authnStatement_notOnOrAfter = this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfterDate().toInstant();
+						authnStatementNotOnOrAfter = this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfterDate().toInstant();
 					}
 					else {
-						authnStatement_notOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfter());
+						authnStatementNotOnOrAfter = SAMLUtilities.minutesOperator(now,this.samlBuilderConfig.getAuthnStatementDataNotOnOrAfter());
 					}
-					authBean.setAuthenticationInstant(authnStatement_instant);
-					authBean.setSessionNotOnOrAfter(authnStatement_notOnOrAfter);
+					authBean.setAuthenticationInstant(authnStatementInstant);
+					authBean.setSessionNotOnOrAfter(authnStatementNotOnOrAfter);
 					
 					if(this.samlBuilderConfig.getAuthnSubjectLocalityIpAddress()!=null || this.samlBuilderConfig.getAuthnSubjectLocalityDnsAddress()!=null) {
 						SubjectLocalityBean subjectLocality = new SubjectLocalityBean();
@@ -219,7 +218,12 @@ public class SAMLCallbackHandler implements CallbackHandler {
 					}
 					
 					authBean.setAuthenticationMethod(this.samlBuilderConfig.getAuthnStatementClassRef());
-					
+
+					// Gestione AuthnContextDeclRef
+					if(this.samlBuilderConfig.getAuthnStatementDeclRef()!=null) {
+						authBean.setAuthnContextDeclRef(this.samlBuilderConfig.getAuthnStatementDeclRef());
+					}
+
 					callback.setAuthenticationStatementData(Collections.singletonList(authBean));
 				}
 				if(authBean==null && !Version.SAML_20.equals(this.samlBuilderConfig.getVersion()) && subjectBean!=null){
@@ -234,12 +238,12 @@ public class SAMLCallbackHandler implements CallbackHandler {
 				// *** AttributeBean ***
 				
 				List<SAMLBuilderConfigAttribute> listAttributes = this.samlBuilderConfig.getAttributes();
-				if(listAttributes!=null && listAttributes.size()>0){
+				if(listAttributes!=null && !listAttributes.isEmpty()){
 					
 					AttributeStatementBean attrBean = new AttributeStatementBean();
 					attrBean.setSubject(subjectBean); // necessario per saml 1.1
 					
-					List<AttributeBean> attributeBeans = new ArrayList<AttributeBean>();
+					List<AttributeBean> attributeBeans = new ArrayList<>();
 				
 					for (SAMLBuilderConfigAttribute configAttribute : listAttributes) {
 						AttributeBean attributeBean = new AttributeBean();

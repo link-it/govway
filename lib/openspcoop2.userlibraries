@@ -250,8 +250,8 @@
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-bindings-4.0.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-integration-4.0.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-policy-4.0.0.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-common-4.0.0-gov4j-1.jar"/>
-	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-dom-4.0.0-gov4j-1.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-common-4.0.0-gov4j-2.jar"/>
+	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-dom-4.0.0-gov4j-2.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-policy-stax-4.0.0.jar"/>
 	<archive path="/op2_3.4.dev/lib/wss4j/wss4j-ws-security-stax-4.0.0.jar"/>
     </library>

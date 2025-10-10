@@ -471,7 +471,17 @@
 			</conditions>
 			<property name="openspcoop2.saml.authn" properties="samlPropRefId" />
 		</item>
-		
+
+		<item type="text" name="authnContextDeclRef" label="Declaration Reference (URI)" required="false"
+			note="URI reference to a SAML 2.0 authentication context declaration">
+			<conditions>
+				<condition and="true">
+					<equals name="samlVersion" value="2.0"/>
+				</condition>
+			</conditions>
+			<property name="openspcoop2.saml.authn.declRef" properties="samlPropRefId" />
+		</item>
+
 		<subsection label="Subject Locality">
 		
 			<item type="text" name="authnSubjectLocalityIPAddress" label="IP Address" required="false">

@@ -238,8 +238,9 @@ public class SAMLBuilderConfig {
 	private int authnStatementDataInstant = 0;
 	private Date authnStatementDataInstantDate = null;
 	private int authnStatementDataNotOnOrAfter = 1 * 60; // 1 ora
-	private Date authnStatementDataNotOnOrAfterDate = null; 
+	private Date authnStatementDataNotOnOrAfterDate = null;
 	private String authnStatementClassRef;
+	private String authnStatementDeclRef;
 	private String authnSubjectLocalityIpAddress;
 	private String authnSubjectLocalityDnsAddress;
 	
@@ -448,6 +449,10 @@ public class SAMLBuilderConfig {
 		tmp = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN, this.authnStatementEnabled);
 		if(tmp!=null){
 			this.authnStatementClassRef = getAuthStatementMethod(tmp, saml2);
+		}
+		tmp = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_DECL_REF, false);
+		if(tmp!=null){
+			this.authnStatementDeclRef = tmp.trim();
 		}
 		this.authnSubjectLocalityIpAddress = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_SUBJECT_LOCALITY_IP_ADDRESS, false);
 		this.authnSubjectLocalityDnsAddress = getProperty(this.p, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_SUBJECT_LOCALITY_DNS_ADDRESS, false);
@@ -961,6 +966,9 @@ public class SAMLBuilderConfig {
 	}
 	public String getAuthnStatementClassRef() {
 		return this.authnStatementClassRef;
+	}
+	public String getAuthnStatementDeclRef() {
+		return this.authnStatementDeclRef;
 	}
 	public String getAuthnSubjectLocalityIpAddress() {
 		return this.authnSubjectLocalityIpAddress;
