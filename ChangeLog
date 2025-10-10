@@ -1,3 +1,10 @@
+2025-10-10  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1659
+	Aggiunta la possibilità di specificare l’elemento 'AuthnContextDeclRef', all’interno di una 'AuthnStatement',
+	nella sezione SAML generata tramite la funzionalità di sicurezza messaggio 'WS-Security SAML Token'.
+
 2025-10-07  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio, ApiRsConfigurazione]

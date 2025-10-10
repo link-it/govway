@@ -68,13 +68,15 @@ public class TestTracciamentoCostanti {
 	public static final String DETAIL_MESSAGGIO = "Ricevuto un Problem Detail (RFC 7807) in seguito all'invio del messaggio applicativo: "+DETAIL;
 	
 	public static final String ERRORE_503_PREFIX = "{\"type\":\"https://govway.org/handling-errors/503/APIUnavailable.html\",\"title\":\"APIUnavailable\",\"status\":503,\"detail\":\"The API Implementation is temporary unavailable\",";
-	
-	public static final File fileTraceProps = new File("/tmp/testfileTrace.properties");
-	public static final File fileTraceLogProps = new File("/tmp/testfileTrace.log4j2.properties");
-	
-	public static final File fileTraceInRequestProps = new File("/tmp/trackingPhaseInRequest.log");
-	public static final File fileTraceOutRequestProps = new File("/tmp/trackingPhaseOutRequest.log");
-	public static final File fileTraceOutResponseProps = new File("/tmp/trackingPhaseOutResponse.log");
-	public static final File fileTracePostOutResponseProps = new File("/tmp/trackingPhasePostOutResponse.log");
+
+	private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
+
+	public static final File fileTraceProps = new File(TMP_DIR, "testfileTrace.properties");
+	public static final File fileTraceLogProps = new File(TMP_DIR, "testfileTrace.log4j2.properties");
+
+	public static final File fileTraceInRequestProps = new File(TMP_DIR, "trackingPhaseInRequest.log");
+	public static final File fileTraceOutRequestProps = new File(TMP_DIR, "trackingPhaseOutRequest.log");
+	public static final File fileTraceOutResponseProps = new File(TMP_DIR, "trackingPhaseOutResponse.log");
+	public static final File fileTracePostOutResponseProps = new File(TMP_DIR, "trackingPhasePostOutResponse.log");
 	
 }
