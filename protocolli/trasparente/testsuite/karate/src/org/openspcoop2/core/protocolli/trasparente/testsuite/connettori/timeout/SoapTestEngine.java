@@ -431,7 +431,8 @@ public class SoapTestEngine extends ConfigLoader {
 				"connessioneClientInterrotta", "connessioneClientInterrotta",
 				null, // gruppo
 				null, // connettore                
-				"Broken pipe",
+				//"Broken pipe", urlConnetion
+				"Connection reset by peer", // httpCore
 				null ,null,
 				idApplicativo, this.mode);
 	}
@@ -448,7 +449,8 @@ public class SoapTestEngine extends ConfigLoader {
 				"connessioneClientInterrotta", "connessioneClientInterrotta",
 				null, // gruppo
 				null, // connettore                
-				"Broken pipe",
+				//"Broken pipe", urlConnetion
+				"Connection reset by peer", // httpCore
 				null ,null,
 				idApplicativo, this.mode);
 	}

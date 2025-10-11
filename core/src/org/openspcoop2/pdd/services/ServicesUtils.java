@@ -177,7 +177,8 @@ public class ServicesUtils {
 		}
 		else if(Utilities.existsInnerException(t, java.io.IOException.class)){
 			Throwable tInner = Utilities.getInnerException(t, java.io.IOException.class);
-			if(tInner!=null && tInner.getMessage()!=null && tInner.getMessage().contains("Broken pipe")) {
+			if(tInner!=null && tInner.getMessage()!=null && 
+					(tInner.getMessage().contains("Broken pipe") || tInner.getMessage().contains("Connection reset by peer"))) {
 				return true;
 			}
 		}
