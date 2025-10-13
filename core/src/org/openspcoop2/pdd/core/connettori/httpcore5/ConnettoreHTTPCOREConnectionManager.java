@@ -416,6 +416,11 @@ public class ConnettoreHTTPCOREConnectionManager {
 			HttpHost proxy = new HttpHost(connectionConfig.getProxyHost(), connectionConfig.getProxyPort());
 			httpClientBuilder.setProxy(proxy);
 		}
+		else {
+			// Quando non c'è un proxy configurato esplicitamente, usa useSystemProperties() per leggere le proprietà JAVA_OPTS
+			// (http.proxyHost, http.proxyPort, https.proxyHost, https.proxyPort, ecc.)
+			httpClientBuilder.useSystemProperties();
+		}
 	}
 	
 	private static TlsSocketStrategy buildSSLConnectionSocketFactory(AbstractConnettoreConnectionConfig connectionConfig,

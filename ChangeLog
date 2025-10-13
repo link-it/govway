@@ -1,3 +1,9 @@
+2025-10-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Risolto Bug #1661
+	Risolta una problematica che impediva l’utilizzo delle proprietà Java http.proxy* e https.proxy* nella nuova libreria HttpCore, impiegata come client HTTP dal gateway.
+
 2025-10-13  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [GovWayCore, Utils]

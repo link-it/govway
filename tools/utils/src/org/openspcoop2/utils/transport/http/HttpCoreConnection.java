@@ -73,25 +73,28 @@ class HttpCoreConnection extends HttpLibraryConnection {
 	
 	private HttpHost setupProxy(HttpClientBuilder builder, Map<String, List<String>> addHeaders, HttpRequest request) {
 		if (request.getProxyType() == null || request.getProxyHostname() == null) {
+			// Quando non c'è un proxy configurato esplicitamente, usa useSystemProperties() per leggere le proprietà JAVA_OPTS
+			// (http.proxyHost, http.proxyPort, https.proxyHost, https.proxyPort, ecc.)
+			builder.useSystemProperties();
 			if(request.isDebug()) {
-				request.logInfo("Impostazione connessione alla URL ["+request.getUrl()+"]...");
+				request.logInfo("Impostazione connessione alla URL ["+request.getUrl()+"] - Utilizzo proprietà di sistema (JAVA_OPTS) per proxy se configurate");
 			}
 			return null;
 		}
-		
+
 		request.logInfo("Impostazione connessione alla URL ["+request.getUrl()+"] (via proxy "+
 				request.getProxyHostname()+":"+request.getProxyPort()+") (username["+request.getProxyUsername()+"] password["+request.getProxyPassword()+"])...");
-		
+
 		HttpHost proxy = new HttpHost(request.getProxyHostname(), request.getProxyPort());
         builder.setProxy(proxy);
-        
+
         // Proxy Authentication BASIC
 		if(request.getProxyUsername() != null && request.getProxyPassword() != null){
 			String authentication = request.getProxyUsername() + ":" + request.getProxyPassword();
 			authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
 			addHeaders.put(HttpConstants.PROXY_AUTHORIZATION, List.of(authentication));
 		}
-		
+
 		return proxy;
 	}
 	
