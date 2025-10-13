@@ -24,7 +24,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -441,17 +443,16 @@ public class RestTestEngine extends ConfigLoader {
 	public void erogazione_connessioneCLientInterrotta() throws Exception {
 		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
 		String idApplicativoClaim = "\"identificativoApplicativo\":\""+idApplicativo+"\"";
-		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON, 
+		_test(TipoServizio.EROGAZIONE, HttpConstants.CONTENT_TYPE_JSON,
 				Bodies.getJson(
-						// Bodies.SMALL_SIZE, rimane da capire come disabilitare il buffer, in tomcat9 non vale piu' socketBuffer=-1 
+						// Bodies.SMALL_SIZE, rimane da capire come disabilitare il buffer, in tomcat9 non vale piu' socketBuffer=-1
 						// Per adesso si usa un messaggio maggiore della dimensione di 8k in modo da andare "fuori" buffer
-						Bodies.SIZE_50K, 
+						Bodies.SIZE_50K,
 						idApplicativoClaim).getBytes(),
 				"connessioneClientInterrotta", "connessioneClientInterrotta",
 				null, // gruppo
-				null, // connettore               
-				//"Broken pipe", urlConnetion
-				"Connection reset by peer", // httpCore
+				null, // connettore
+				Arrays.asList("Connection reset by peer", "Broken pipe"), // wildfly / tomcat
 				null, null,
 				idApplicativo, this.mode);
 	}
@@ -459,17 +460,16 @@ public class RestTestEngine extends ConfigLoader {
 	public void fruizione_connessioneCLientInterrotta() throws Exception {
 		String idApplicativo = System.currentTimeMillis()+"-"+IDUtilities.getUniqueSerialNumber();
 		String idApplicativoClaim = "\"identificativoApplicativo\":\""+idApplicativo+"\"";
-		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON, 
+		_test(TipoServizio.FRUIZIONE, HttpConstants.CONTENT_TYPE_JSON,
 				Bodies.getJson(
-						// Bodies.SMALL_SIZE, rimane da capire come disabilitare il buffer, in tomcat9 non vale piu' socketBuffer=-1 
+						// Bodies.SMALL_SIZE, rimane da capire come disabilitare il buffer, in tomcat9 non vale piu' socketBuffer=-1
 						// Per adesso si usa un messaggio maggiore della dimensione di 8k in modo da andare "fuori" buffer
-						Bodies.SIZE_50K, 
+						Bodies.SIZE_50K,
 						idApplicativoClaim).getBytes(),
 				"connessioneClientInterrotta", "connessioneClientInterrotta",
 				null, // gruppo
-				null, // connettore              
-				//"Broken pipe", urlConnetion
-				"Connection reset by peer", // httpCore
+				null, // connettore
+				Arrays.asList("Connection reset by peer", "Broken pipe"), // wildfly / tomcat
 				null ,null,
 				idApplicativo, this.mode);
 	}
@@ -487,6 +487,7 @@ public class RestTestEngine extends ConfigLoader {
 				null, null, false, 
 				null, mode);
 	}
+	@SuppressWarnings("unused")
 	private static HttpResponse _test(
 			TipoServizio tipoServizio, String contentType, byte[]content,
 			String operazione, String tipoTest, Optional<String> gruppo, Optional<String> connettore, String msgErrore,
@@ -496,8 +497,23 @@ public class RestTestEngine extends ConfigLoader {
 				tipoServizio, contentType, content,
 				operazione, tipoTest, gruppo, connettore, msgErrore,
 				tipoEvento, descrizioneEvento,
-				null, null, false, 
+				null, null, false,
 				applicativeId, mode);
+	}
+	private static HttpResponse _test(
+			TipoServizio tipoServizio, String contentType, byte[]content,
+			String operazione, String tipoTest, Optional<String> gruppo, Optional<String> connettore, List<String> msgErrore,
+			TipoEvento tipoEvento, String descrizioneEvento,
+			String applicativeId, HttpLibraryMode mode) throws Exception {
+		return _testRest(
+				tipoServizio, contentType, content,
+				operazione, tipoTest, gruppo, connettore, msgErrore,
+				tipoEvento, descrizioneEvento,
+				null, null, false,
+				applicativeId,
+				null,
+				logCore,
+				mode);
 	}
 	private static HttpResponse _test(
 			TipoServizio tipoServizio, String contentType, byte[]content,
@@ -531,6 +547,19 @@ public class RestTestEngine extends ConfigLoader {
 	public static HttpResponse _testRest(
 			TipoServizio tipoServizio, String contentType, byte[]content,
 			String operazione, String tipoTest, Optional<String> gruppo, Optional<String> connettore, String msgErrore,
+			TipoEvento tipoEvento, String descrizioneEvento,
+			Integer throttlingByte, Integer throttlingMs, boolean throttlingSend,
+			String applicativeId,
+			String policyName,
+			Logger logCore, HttpLibraryMode mode) throws Exception {
+		return _testRest(tipoServizio, contentType, content, operazione, tipoTest, gruppo, connettore,
+				msgErrore != null ? Arrays.asList(msgErrore) : null,
+				tipoEvento, descrizioneEvento, throttlingByte, throttlingMs, throttlingSend, applicativeId, policyName, logCore, mode);
+	}
+
+	public static HttpResponse _testRest(
+			TipoServizio tipoServizio, String contentType, byte[]content,
+			String operazione, String tipoTest, Optional<String> gruppo, Optional<String> connettore, List<String> msgErrore,
 			TipoEvento tipoEvento, String descrizioneEvento,
 			Integer throttlingByte, Integer throttlingMs, boolean throttlingSend,
 			String applicativeId,
@@ -651,7 +680,14 @@ public class RestTestEngine extends ConfigLoader {
 				response.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 				Utilities.sleep(5000); // aspetto che termina il server
 				response.addHeader("GovWay-Transaction-ID", DBVerifier.getIdTransazioneByIdApplicativoRichiesta(applicativeId));
-			}else if (t instanceof UtilsException u && u.getMessage().equals("Error writing request body to server")) {
+			}else if (
+					t instanceof UtilsException u && 
+					(
+						u.getMessage().equals("Error writing request body to server") 
+						||
+						(operazione.contains("ClientSendSlow") && u.getMessage().contains("Broken pipe") )
+					)
+				) {
 				Utilities.sleep(5000); // aspetto che termina il server
 				String idTransazione = DBVerifier.getIdTransazioneLastRequest(nomeServizio, 1, azione.replace("/", "."), now);
 								
@@ -744,14 +780,34 @@ public class RestTestEngine extends ConfigLoader {
 		
 		long esitoExpected = EsitiProperties.getInstanceFromProtocolName(logCore, Costanti.TRASPARENTE_PROTOCOL_NAME).convertoToCode(esitoTransazioneName);
 		logCore.info("Verifico transazione con stato '"+esitoExpected+"' ("+esitoTransazioneName.toString()+") [msgErrore:"+msgErrore+"] ...");
-		
-		if (esitoTransazioneName.equals(EsitoTransazioneName.ERRORE_REQUEST_TIMEOUT) 
-				|| esitoTransazioneName.equals(EsitoTransazioneName.ERRORE_RESPONSE_TIMEOUT) 
+
+		// Costruisco il pattern regex: se ci sono più messaggi, li metto in OR
+		Pattern msgPattern = null;
+		if (msgErrore != null && !msgErrore.isEmpty()) {
+			if (msgErrore.size() == 1) {
+				// Un solo messaggio: comportamento standard
+				msgPattern = Pattern.compile(".*" + Pattern.quote(msgErrore.get(0)) + ".*", Pattern.CASE_INSENSITIVE);
+			} else {
+				// Più messaggi: costruisco un pattern con OR tra i vari messaggi quotati
+				StringBuilder patternBuilder = new StringBuilder(".*(");
+				for (int i = 0; i < msgErrore.size(); i++) {
+					if (i > 0) {
+						patternBuilder.append("|");
+					}
+					patternBuilder.append(Pattern.quote(msgErrore.get(i)));
+				}
+				patternBuilder.append(").*");
+				msgPattern = Pattern.compile(patternBuilder.toString(), Pattern.CASE_INSENSITIVE);
+			}
+		}
+
+		if (esitoTransazioneName.equals(EsitoTransazioneName.ERRORE_REQUEST_TIMEOUT)
+				|| esitoTransazioneName.equals(EsitoTransazioneName.ERRORE_RESPONSE_TIMEOUT)
 				|| esitoTransazioneName.equals(EsitoTransazioneName.ERRORE_CONNECTION_TIMEOUT))
-			DBVerifier.verify(idTransazione, esitoExpected, Pattern.compile(".*" + Pattern.quote(msgErrore) + ".*", Pattern.CASE_INSENSITIVE), 
+			DBVerifier.verify(idTransazione, esitoExpected, msgPattern,
 					null);
 		else
-			DBVerifier.verify(idTransazione, esitoExpected, Pattern.compile(".*" + Pattern.quote(msgErrore) + ".*", Pattern.CASE_INSENSITIVE), 
+			DBVerifier.verify(idTransazione, esitoExpected, msgPattern,
 					mode); // case insensitive per gestire le varie implementazioni
 		logCore.info("Verifico transazione con stato '"+esitoExpected+"' ("+esitoTransazioneName.toString()+") [msgErrore:"+msgErrore+"] ok");
 		

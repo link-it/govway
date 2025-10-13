@@ -83,3 +83,4 @@ Nelle sezioni successive vengono forniti i dettagli relativi alle modalità di n
 	tokenNegoziazione_jwt
 	tokenNegoziazione_jwt_pdnd
 	tokenNegoziazione_custom
+	tokenNegoziazione_opzioniAvanzate

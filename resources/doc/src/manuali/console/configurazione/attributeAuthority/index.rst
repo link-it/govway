@@ -51,3 +51,4 @@ Le sezioni successive dettagliano i criteri con cui si compone una richiesta di 
 	aaEndpoint
 	aaRichiesta
 	aaRisposta
+	aaOpzioniAvanzate

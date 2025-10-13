@@ -152,6 +152,11 @@ Le seguenti opzione vengono utilizzate sia durante l'invocazione del servizio OC
   .. note::
      L'abilitazione di un proxy applicativo richiede obbligatoriamente la definizione di una tra le due seguenti proprietà: 'ocsp.<idPolicy>.forwardProxy.header' o 'ocsp.<idPolicy>.forwardProxy.queryParameter'.
 
+È possibile selezionare la libreria client utilizzata attraverso la proprietà 'ocsp.<idPolicy>.httpLibrary' valorizzata come segue:
+
+     - 'org.apache.hc.client5': (default) viene utilizzato come client http la libreria `Apache HttpClient 5 <https://hc.apache.org/httpcomponents-client-5.5.x/index.html>`_;
+     - 'java.net.HttpURLConnection': viene utilizzata come client http la precedente libreria utilizzata nelle versioni 3.3.x di GovWay.
+
 Aspetti riguardanti l'attivazione di una validazione del certificato tramite CRL:
 
 - ocsp.<idPolicy>.crl.signingCert.check: [opzionale, default:false] il certificato di firma utilizzato per la risposta OCSP può contenere indicazioni di CRL per la sua validazione. Se presenti verranno verificate se viene abilitata la seguente opzione.

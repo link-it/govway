@@ -58,7 +58,7 @@ il significato dei parametri:
 -  *Libreria Http* tramite questa configurazione è possibile selezionare la libreria client utilizzata per inoltrare le richieste al backend tra:
 
      - 'org.apache.hc.client5': viene utilizzato come client http la libreria `Apache HttpClient 5 <https://hc.apache.org/httpcomponents-client-5.5.x/index.html>`_ la cui configurazione viene descritta nella sezione :ref:`avanzate_canaleIO`.  La libreria viene utilizzata anche selezionando la voce 'Default'.
-     - 'java.net.HttpUrlConnecton': viene utilizzata come client http la precedente libreria utilizzata nelle versioni 3.3.x di GovWay.
+     - 'java.net.HttpUrlConnection': viene utilizzata come client http la precedente libreria utilizzata nelle versioni 3.3.x di GovWay.
       
         .. note::
              La libreria non è utilizzabile insieme alla modalità NIO descritta nella sezione :ref:`avanzate_canaleIO`.

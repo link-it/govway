@@ -47,6 +47,7 @@ import org.openspcoop2.utils.certificate.hsm.HSMUtils;
 import org.openspcoop2.utils.properties.MapProperties;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.security.ProviderUtils;
+import org.openspcoop2.utils.transport.http.HttpLibraryConnection;
 import org.slf4j.Logger;
 
 /**
@@ -131,6 +132,9 @@ public class Generator {
 			logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+"."+tipologia);
 			logSql = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+"."+tipologia+".sql");
 		}
+		
+		// Inizializzo libreria accesso risorse esterne
+		initConnectorExternalResources(logCore, generatorProperties);
 		
 		// Map (environment)
 		try {
@@ -387,6 +391,18 @@ public class Generator {
 		}
 	}
 
+	private static void initConnectorExternalResources(Logger logCore,GeneratorProperties properties) throws UtilsException {
+		// Inizializzo libreria accesso risorse esterne
+		try {
+			if(properties.getHttpLibrary()!=null) {
+				HttpLibraryConnection.setDefaultLibrary(properties.getHttpLibrary());
+			}
+			logCore.info("HttpLibraryConnection: {}",HttpLibraryConnection.getDefaultLibrary());
+		} catch (Exception e) {
+			doError(logCore, "Inizializzazione libreria accesso risorse esterne non riuscita",e);
+		}
+	}
+	
 	private static void doError(Logger logCore,String msg,Exception e) throws UtilsException {
 		String msgErrore = msg+": " + e.getMessage();
 		logCore.error(msgErrore,e);

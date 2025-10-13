@@ -147,3 +147,4 @@ Le sezioni successive dettagliano questi elementi.
 	userInfo
 	tokenForward
         mappingToken
+        validazioneOpzioniAvanzate

@@ -34,6 +34,7 @@ import org.openspcoop2.monitor.engine.statistic.StatisticsForceIndexConfig;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
+import org.openspcoop2.utils.transport.http.HttpLibrary;
 import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 
 /**
@@ -67,6 +68,8 @@ public class GeneratorProperties {
 	private static final String PROPERTIES_FILE = "/batch-statistiche.properties";
 	
 	private String protocolloDefault = null;
+	
+	private HttpLibrary httpLibrary = null;
 	
 	private boolean statisticheGenerazioneBaseOrariaGestioneUltimaOra=false;
 	private boolean statisticheGenerazioneBaseGiornalieraGestioneUltimoGiorno=false;
@@ -123,6 +126,16 @@ public class GeneratorProperties {
 		// PROPERTIES
 				
 		this.protocolloDefault = this.getProperty("protocolloDefault", true);
+		
+		String lib = this.getProperty("connettori.remoteAccessUtility.library", false);
+		if(lib!=null){
+			lib = lib.trim();
+			try {
+				this.httpLibrary = HttpLibrary.getHttpLibrary(lib);
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(),e);
+			}
+		}
 		
 		this.statisticheGenerazioneBaseOrariaGestioneUltimaOra = this.getBooleanProperty("statistiche.generazione.baseOraria.gestioneUltimaOra", true);
 		this.statisticheGenerazioneBaseGiornalieraGestioneUltimoGiorno = this.getBooleanProperty("statistiche.generazione.baseGiornaliera.gestioneUltimoGiorno", true);
@@ -231,6 +244,10 @@ public class GeneratorProperties {
 	
 	public String getProtocolloDefault() {
 		return this.protocolloDefault;
+	}
+	
+	public HttpLibrary getHttpLibrary() {
+		return this.httpLibrary;
 	}
 	
 	public boolean isStatisticheGenerazioneDebug() throws UtilsException {

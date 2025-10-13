@@ -110,6 +110,9 @@ Di seguito vengono fornite tutte le direttive https supportate:
      
      - *clientAuth.key.password*: password della chiave privata.
 	 
-	  
+È infine possibile selezionare la libreria client utilizzata attraverso la direttiva 'kms.<idKMS>.http.httpLibrary' valorizzata come segue:
+
+     - 'org.apache.hc.client5': (default) viene utilizzato come client http la libreria `Apache HttpClient 5 <https://hc.apache.org/httpcomponents-client-5.5.x/index.html>`_;
+     - 'java.net.HttpURLConnection': viene utilizzata come client http la precedente libreria utilizzata nelle versioni 3.3.x di GovWay.	  
     
 
