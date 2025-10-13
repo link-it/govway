@@ -154,7 +154,15 @@ class HttpCoreConnection extends HttpLibraryConnection {
 
         }
         else {
+        	// Quando sslContext non è fornito, usa useSystemProperties() per leggere le proprietà JAVA_OPTS
+        	// (javax.net.ssl.trustStore, javax.net.ssl.keyStore, ecc.)
+        	// Stesso comportamento di ConnettoreHTTPCOREConnectionManager.java:135
+        	if(request.isDebug() && request.getUrl() != null && request.getUrl().toLowerCase().startsWith("https://")) {
+        		String clientCertificateConfigurated = SSLUtilities.getJvmHttpsClientCertificateConfigurated();
+        		request.logInfo("Utilizzo proprietà di sistema (JAVA_OPTS) per SSL - Client certificate: " + clientCertificateConfigurated);
+        	}
         	connManager = PoolingHttpClientConnectionManagerBuilder.create()
+        			.useSystemProperties()
         			.setDefaultConnectionConfig(connectionConfig)
         			.build();
         	builder.setConnectionManager(connManager);

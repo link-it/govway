@@ -459,23 +459,27 @@ public class ConnettoreHTTPCOREConnectionManager {
 			httpClientBuilder.setProxy(proxy);
 		}
 	}
-	private static TlsStrategy buildClientTlsStrategyBuilder(ConnettoreHTTPCOREConnectionConfig connectionConfig, Loader loader, 
-			RequestInfo requestInfo, 
+	private static TlsStrategy buildClientTlsStrategyBuilder(ConnettoreHTTPCOREConnectionConfig connectionConfig, Loader loader,
+			RequestInfo requestInfo,
 			ConnettoreLogger logger) throws UtilsException {
-		SSLContext sslContext = null;
-		HostnameVerifier hostnameVerifier = null;
+		// Se non ci sono proprietà SSL configurate, restituisce null per permettere l'utilizzo di useSystemProperties()
+		// Stesso comportamento della versione BIO (ConnettoreHTTPCOREConnectionManager.buildSSLConnectionSocketFactory)
+		TlsStrategy tlsStrategy = null;
 		if(connectionConfig.getSslContextProperties()!=null) {
+			SSLContext sslContext = null;
+			HostnameVerifier hostnameVerifier = null;
 			StringBuilder bfLog = new StringBuilder();
 			sslContext = buildSSLContext(connectionConfig.getSslContextProperties(), requestInfo, logger, bfLog);
 			hostnameVerifier = SSLUtilities.generateHostnameVerifier(connectionConfig.getSslContextProperties(), bfLog, logger.getLogger(), loader);
 			if(connectionConfig.isDebug()) {
 				logger.debug(bfLog.toString());
 			}
+			ClientTlsStrategyBuilder tlsBuilder = ClientTlsStrategyBuilder.create();
+			tlsBuilder.setSslContext(sslContext);
+			tlsBuilder.setHostnameVerifier(hostnameVerifier);
+			tlsStrategy = tlsBuilder.buildAsync();
 		}
-		ClientTlsStrategyBuilder tlsBuilder = ClientTlsStrategyBuilder.create();
-		tlsBuilder.setSslContext(sslContext);
-		tlsBuilder.setHostnameVerifier(hostnameVerifier);
-		return tlsBuilder.buildAsync();
+		return tlsStrategy;
 	}
 	private static SSLContext buildSSLContext(SSLConfig httpsProperties, RequestInfo requestInfo, 
 			ConnettoreLogger logger, StringBuilder bfLog) throws UtilsException {
