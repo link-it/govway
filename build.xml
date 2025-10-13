@@ -264,6 +264,20 @@
 		</then>
 	</if>
 	<import file="${cli.govwayVault.dir}/build.xml" />
+
+        <!-- Tools - cli - templateScan -->
+        <property name="cli.templateScan.dir" location="${rootDir}/tools/command_line_interfaces/template_scan/" />
+        <available file="${cli.templateScan.dir}/local_env.xml" property="cli_templateScan_localenv.present"/>
+        <if>
+                <not>
+                        <equals arg1="${cli_templateScan_localenv.present}" arg2="true"/>
+                </not>
+                <then>
+                        <copy file="${cli.templateScan.dir}/local_env.xml.template" tofile="${cli.templateScan.dir}/local_env.xml"/>
+                        <replace file="${cli.templateScan.dir}/local_env.xml" token="wildfly/tomcat" value="${as}"/>
+                </then>
+        </if>
+        <import file="${cli.templateScan.dir}/build.xml" />
 	
 	
 	
@@ -481,6 +495,14 @@
 		<antcall target="compile_cliVault">
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_cliVault" value="${cli.govwayVault.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false" />
+		</antcall>
+
+		<antcall target="compile_cliTemplateScan">
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_cliTemplateScan" value="${cli.templateScan.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false" />

@@ -220,6 +220,13 @@
 			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
 			<param name="analyzeJar" value="openspcoop2_cli-vault*.jar"/>
 		</antcall>
+		<!-- CLI TemplateScan -->
+		<antcall target="_findBugs">
+			<param name="analyzeType" value="cli-template-scan"/>
+			<param name="analyzeSrc" value="${openspcoop2}/tools/command_line_interfaces/template_scan/src"/>
+			<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+			<param name="analyzeJar" value="openspcoop2_cli-templateScan*.jar"/>
+		</antcall>		
 
 	</target>
 	<target name="_findBugs">

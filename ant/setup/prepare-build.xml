@@ -23,6 +23,7 @@
 	<import file="./ant/prepare/batchRuntimeRepository-build.xml" />
 	<import file="./ant/prepare/cliVault-build.xml" />
 	<import file="./ant/prepare/cliConfigLoader-build.xml" />
+	<import file="./ant/prepare/cliTemplateScan-build.xml" />
 
 	<property name="build" location="build" />
 	<property name="deploy_sw" location="deploy/sw" />
@@ -52,6 +53,7 @@
 		<antcall target="prepare_batchRuntimeRepository_setup" />
 		<antcall target="prepare_cliVault_setup" />
 		<antcall target="prepare_cliConfigLoader_setup" />
+		<antcall target="prepare_cliTemplateScan_setup" />
 		<antcall target="prepare_sql_setup" />
 		<!-- Elimina i openspcoop2_jars singoli creati -->
 		<delete dir="${deploy_sw_openspcoop2_jars}"/>

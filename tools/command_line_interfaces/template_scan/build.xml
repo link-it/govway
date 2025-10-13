@@ -1,0 +1,161 @@
+<project name="govway_cliTemplateScan" basedir="." default="run">
+
+	<import file="local_env.xml" />
+	<import file="${openspcoop2}/ant/commons/as-check.xml" />
+	<import file="${openspcoop2}/ant/commons/git-build.xml" />
+	<import file="${openspcoop2}/ant/commons/compile-build.xml" />
+	<import file="${openspcoop2}/ant/commons/api-build.xml" />
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${openspcoop2.lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!-- Properties -->
+	<property name="src_cliTemplateScan" location="src" />
+	<property name="build_cliTemplateScan" location="build" />
+	<property name="dist_cliTemplateScan" location="dist" />
+	<property name="doc_cliTemplateScan" location="doc" />
+	<property name="distrib_cliTemplateScan" location="distrib/templateScan" />
+	<property name="properties_cliTemplateScan" location="properties" />
+	<property name="script_cliTemplateScan" location="script" />
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/*README"/>
+			<exclude name="*.userlibraries"/>
+			<include name="commons/*"/>
+			<include name="cxf/*"/>
+			<include name="saaj/*"/>
+			<include name="log/*"/>
+			<include name="security/*"/>
+			<include name="shared/*"/>
+			<include name="soapbox/*"/>
+			<include name="spring/*"/>
+			<include name="spring-security/*"/>
+			<include name="stub/*"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+
+	<!-- Clean -->
+	<target name="clean_cliTemplateScan">
+		<delete dir="${build_cliTemplateScan}" />
+		<delete dir="${dist_cliTemplateScan}" />
+		<delete dir="${distrib_cliTemplateScan}" />
+	</target>
+
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_cliTemplateScan">
+		<mkdir dir="${build_cliTemplateScan}" />
+		<mkdir dir="${dist_cliTemplateScan}" />
+	</target>	
+
+
+	<target name="compile_cliTemplateScan" depends="init_compile_cliTemplateScan">
+
+		<!-- Info git -->
+		<runtarget target="checkgit" />
+		<!-- <echo message="GIT:[${jgit.jar.presente}]"/> -->
+				
+		<!-- org.openspcoop2.pdd.monitor.cli -->
+		<var name="packagesCompiled" value="org.openspcoop2.pdd.template_scan.cli" />
+		<antcall target="compile_src_openspcoop2">
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_cliTemplateScan}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="cli-templateScan"/>
+			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
+			<param name="compile_src_openspcoop2.PACKAGE" value="org.openspcoop2.pdd.template_scan.cli"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+			<param name="dist" value="${dist_cliTemplateScan}"/>
+			<param name="build" value="${build_cliTemplateScan}"/>
+		</antcall>
+				
+		<!-- Jar Complessivo -->
+		<!--
+		<antcall target="jar_2_jar_openspcoop2">
+			<param name="compile_src_openspcoop2.GITINFO" value="${jgit.jar.presente}"/>
+			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="monitor-cli"/>
+			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="."/>
+		</antcall>
+		-->
+			
+	</target>
+
+	<target name="build_cliTemplateScan" depends="compile_cliTemplateScan" />
+	
+	<target name="distrib_cliTemplateScan" depends="build_cliTemplateScan">
+		<mkdir dir="${distrib_cliTemplateScan}"/>
+		<mkdir dir="${distrib_cliTemplateScan}/jdbc"/>
+		<mkdir dir="${distrib_cliTemplateScan}/log"/>
+		<mkdir dir="${distrib_cliTemplateScan}/properties"/>
+		<copy todir="${distrib_cliTemplateScan}/properties">
+			<fileset dir="${properties_cliTemplateScan}" includes="*"/>
+		</copy>
+		<mkdir dir="${distrib_cliTemplateScan}/lib"/>
+		<copy todir="${distrib_cliTemplateScan}/lib">
+			<fileset dir="${dist_cliTemplateScan}" includes="openspcoop2_*.jar"/>
+		</copy>
+		<copy todir="${distrib_cliTemplateScan}/lib">
+			<fileset dir="${openspcoop2.dist}" includes="openspcoop2_*.jar"/>
+		</copy>
+		<copy todir="${distrib_cliTemplateScan}/lib">
+			<fileset dir="${openspcoop2.lib}/log" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-rs-security-jose-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-rs-json-basic-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-core-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/cxf" includes="cxf-rt-security-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/saaj" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/commons" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/spring" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/swagger" includes="*.jar" excludes="swagger-ui-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/openapi4j" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/jackson" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/json" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/security" includes="*.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="xercesImpl-2.12.2.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="joda-time-2.14.0.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="wsdl4j-1.6.3.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="snakeyaml-2.4-gov4j-1.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="freemarker-2.3.34.jar"/>
+			<fileset dir="${openspcoop2.lib}/shared" includes="velocity-*.jar"/>
+			<fileset dir="${openspcoop2.lib}/wss4j" includes="wss4j-ws-security-common-4.0.0-gov4j-2.jar "/>
+			<fileset dir="${openspcoop2.lib}/applicationServer/tomcat11" includes="*.jar"/> <!-- Serve per il datasource env -->
+		</copy>
+		
+		<antcall target="-distrib_script_cliTemplateScan">
+			<param name="NomeScript" value="template_scan"/>
+                </antcall>
+	</target>
+
+	<target name="-distrib_script_cliTemplateScan">
+
+		<copy file="${script_cliTemplateScan}/run.sh" tofile="${distrib_cliTemplateScan}/${NomeScript}.sh"/>
+		<chmod file="${distrib_cliTemplateScan}/${NomeScript}.sh" perm="a+x"/>
+
+		<copy file="${script_cliTemplateScan}/run.cmd" tofile="${distrib_cliTemplateScan}/${NomeScript}.cmd"/>
+		<chmod file="${distrib_cliTemplateScan}/${NomeScript}.cmd" perm="a+x"/>
+	</target>
+		
+		
+	<!-- alias -->
+	<target name="build" depends="distrib_cliTemplateScan"/>
+	<target name="build_openspcoop2_cliTemplateScan_jar" depends="compile_cliTemplateScan"/>
+	<target name="clean" depends="clean_cliTemplateScan"/>
+
+</project>

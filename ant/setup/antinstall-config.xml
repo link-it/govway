@@ -77,6 +77,7 @@
 	<hidden property="antinstaller_tools_system_out" value=""/>
 	<hidden property="antinstaller_tools_cliVault" value=""/>
 	<hidden property="antinstaller_tools_cliConfigLoader" value=""/>
+	<hidden property="antinstaller_tools_cliTemplateScan" value=""/>	
 
     </page>
 
@@ -266,6 +267,7 @@
 	<hidden property="antinstaller_tools_system_out" value=""/>
 	<hidden property="antinstaller_tools_cliVault" value=""/>
 	<hidden property="antinstaller_tools_cliConfigLoader" value=""/>
+	<hidden property="antinstaller_tools_cliTemplateScan" value=""/>	
 
     </page>
 
@@ -315,6 +317,7 @@
 	<hidden property="antinstaller_tools_system_out" value=""/>
 	<hidden property="antinstaller_tools_cliVault" value=""/>
 	<hidden property="antinstaller_tools_cliConfigLoader" value=""/>
+	<hidden property="antinstaller_tools_cliTemplateScan" value=""/>	
 
     </page>
 
@@ -727,6 +730,6 @@
     </page>
 
    <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_batchRuntimeRepository,setup_cliVault,setup_cliConfigLoader,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_batchRuntimeRepository,setup_cliVault,setup_cliConfigLoader,setup_cliTemplateScan,setup_finished"/>
 
 </installer>

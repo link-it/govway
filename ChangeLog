@@ -1,3 +1,12 @@
+2025-10-13  Tommaso Burlon <tommaso.burlon@link.it>
+
+	* [CliTemplateScan]
+	Aggiunta funzionalità #1645
+	Aggiunto il tool 'govway-template-scan', che consente di eseguire una scansione della base dati di configurazione dei template caricati, 
+	al fine di individuare la presenza di una specifica keyword.
+	Questo strumento risulta particolarmente utile, ad esempio per identificare tramite la keyword "commons.lang.", 
+	i template che fanno uso della libreria commons-lang, non più inclusa negli archivi a partire dalle versioni 3.4.1.
+
 2025-10-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]

@@ -42,6 +42,7 @@
 	<classpathentry kind="src" path="tools/command_line_interfaces/monitor_pdd/src"/>
 	<classpathentry kind="src" path="tools/command_line_interfaces/config_loader/src"/>
 	<classpathentry kind="src" path="tools/command_line_interfaces/govway_vault/src"/>
+	<classpathentry kind="src" path="tools/command_line_interfaces/template_scan/src"/>
 	<classpathentry kind="src" path="tools/batch/statistiche/src"/>
 	<classpathentry kind="src" path="tools/batch/runtime-repository/src"/>
 	<classpathentry excluding="*/*.xml" kind="src" path="tools/connection_pool/src"/>

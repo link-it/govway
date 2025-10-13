@@ -1095,6 +1095,40 @@
 				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
 			</else>
                 </if>
+		<!-- CLI GovWayVault -->
+		<var name="projectAnalyze" value="cli-template-scan"/>
+		<if>
+			<or>
+	                        <equals arg1="${govway.group}" arg2="all"/>
+				<equals arg1="${govway.group}" arg2="govway-${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="${projectAnalyze}"/>
+				<equals arg1="${govway.group}" arg2="template-scan"/>
+				<equals arg1="${govway.group}" arg2="templateScan"/>
+				<equals arg1="${govway.group}" arg2="TemplateScan"/>
+			</or>
+                        <then>
+				<if>
+					<equals arg1="${sonar.sources.analyze}" arg2=""/>
+					<then>
+						<var name="sonar.sources.analyze" value="tools/command_line_interfaces/template_scan/src"/>
+					</then>
+					<else>
+						<var name="sonar.sources.analyze" value="${sonar.sources.analyze},tools/command_line_interfaces/template_scan/src"/>
+					</else>
+				</if>
+
+				<antcall target="-prepare">
+					<param name="analyzeType" value="cli-template-scan"/>
+					<param name="analyzeBaseDir" value="${openspcoop2}/tools/command_line_interfaces/template_scan"/>
+					<param name="analyzeSrc" value="${openspcoop2}/tools/command_line_interfaces/template_scan/src"/>
+					<param name="analyzeJarDir" value="${openspcoop2.dist}"/>
+					<param name="analyzeJar" value="openspcoop2_cli-templateScan*.jar"/>
+				</antcall>
+			</then>
+			<else>
+				<echo message="WARN: skip analysis for '${projectAnalyze}'" />
+			</else>
+                </if>                
 
 
 		<!-- Esclusioni -->

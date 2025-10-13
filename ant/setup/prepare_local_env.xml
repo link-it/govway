@@ -103,7 +103,13 @@
 	<property name="required_lib_cliConfigLoader" location="${required_lib}"/>
 	<property name="src_cliConfigLoader" value="${cliConfigLoader}/src" />
 	<import file="${cliConfigLoader}/build.xml"/>
-
+	
+	<!-- CliTemplateScan -->
+	<property name="cliTemplateScan" value="${rootDir}/tools/command_line_interfaces/template_scan/" />
+	<property name="required_lib_cliTemplateScan" location="${required_lib}"/>
+	<property name="src_cliTemplateScan" value="${cliTemplateScan}/src" />
+	<import file="${cliTemplateScan}/build.xml"/>
+	
 	<!-- Trasparente -->
 	<property name="trasparente" value="${rootDir}/protocolli/trasparente"/>
 	<property name="src_trasparente" value="${trasparente}/src" />

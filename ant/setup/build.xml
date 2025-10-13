@@ -26,6 +26,7 @@
 	<import file="./ant/batchRuntimeRepository-build.xml" />
 	<import file="./ant/cliVault-build.xml" />
 	<import file="./ant/cliConfigLoader-build.xml" />
+	<import file="./ant/cliTemplateScan-build.xml" />	
 	<import file="./ant/distrib-build.xml" />
 	<import file="./ant/patch-build.xml" />
 	<import file="./ant/archiveAdd-build.xml" />
@@ -103,6 +104,7 @@
 			antinstaller_tools_system_out=
 			antinstaller_tools_cliVault=
 			antinstaller_tools_cliConfigLoader=
+			antinstaller_tools_cliTemplateScan=
 
 		Informazioni DataSource
 			antinstaller_driver_jdbc_classname=org.postgresql.Driver
@@ -2865,6 +2867,101 @@
 			</then>
 		</if>
 	</target>
+	
+	
+	<target name="setup_cliTemplateScan" depends="_setup_cliTemplateScan"/>
+	<target name="_setup_cliTemplateScan">
+		<if>
+			<not>
+				<equals arg1="${antinstaller_tools_cliTemplateScan}" arg2="false"/>
+			</not>
+			<then>
+				<mkdir dir="${tmp_tools}" /> 
+				<copy todir="${tmp_tools}/govway-template-scan">
+					<fileset dir="${deploy_sw}/tools/govway-template-scan"/>
+				</copy>
+
+				<antcall target="cli_template_scan_properties_settings">
+				    <param name="file" value="${tmp_tools}/govway-template-scan/properties/template_scan.cli.properties"/>
+				</antcall>
+				<antcall target="cli_template_scan_log4j_properties_settings">
+				    <param name="file" value="${tmp_tools}/govway-template-scan/properties/template_scan.cli.log4j2.properties"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${tmp_tools}/govway-template-scan/properties"/>
+				    <param name="file" value="*.properties"/>
+				</antcall>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_tools}/govway-template-scan/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}"/>
+					<then>
+						<copy todir="${tmp_tools}/govway-template-scan/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}"/>
+					<then>
+						<copy todir="${tmp_tools}/govway-template-scan/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${tmp_tools}/govway-template-scan/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}"/>
+					<then>
+						<copy todir="${tmp_tools}/govway-template-scan/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_tools}/govway-template-scan"/>
+					<param name="as" value="BATCH"/>
+					<param name="archiveType" value="BATCH"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+	
 			
 	<target name="setup_finished" depends="_setup_finished"/>
 	<target name="_setup_finished">
