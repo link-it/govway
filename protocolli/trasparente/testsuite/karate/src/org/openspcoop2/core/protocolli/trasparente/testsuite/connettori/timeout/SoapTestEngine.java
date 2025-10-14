@@ -604,7 +604,15 @@ public class SoapTestEngine extends ConfigLoader {
 					(
 						u.getMessage().equals("Error writing request body to server") 
 						||
-						(operazione.contains("ClientSendSlow") && u.getMessage().contains("Broken pipe") )
+						(
+								(
+										operazione.contains("ClientSendSlow") 
+										|| 
+										(operazione.equals("sendCorrelazioneApplicativa") && tipoTest.equals("ClientSendRequestSlow"))
+								)
+								&& 
+								u.getMessage().contains("Broken pipe") 
+						)
 					)
 				) {
 				Utilities.sleep(5000); // aspetto che termina il server
