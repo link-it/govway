@@ -204,7 +204,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 	<target name="_initSQL">
 		<concat destfile="${sqlFileOutput}" append="no">
 <![CDATA[-- GovWay v@VERSIONE@]]>
-		</concat>
+</concat>
 		<replace file="${sqlFileOutput}" token="@VERSIONE@" 
 						 value="${antinstaller_versione_attuale_con_p_level}"/>		
 	</target>

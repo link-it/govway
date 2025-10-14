@@ -12,6 +12,25 @@ Ad esempio se supponiamo uno scenario in cui sia stata installata la versione 3.
 
 NOTA: se tra la versione di partenza e la versione di destinazione è stata rilasciata una versione major, la directory che ne effettua l'upgrade è denominata con la minor della versione di partenza valorizzata con il carattere 'x' (upgrade_3.<major-1>.x_to_2.<major>.0).
 
+1.1) Baseline dei rilasci di major version
+
+Le versioni relative a major differenti possono non essere rilasciate in ordine strettamente sequenziale. Ad esempio, una versione major (es. 3.4.0) può essere rilasciata dopo una versione minor (es. 3.3.17) ma prima di un'altra versione minor successiva (es. 3.3.18). In questo scenario, l'ordine temporale reale potrebbe essere: 3.3.16 → 3.3.17 → 3.4.0 → 3.3.18 → 3.4.1
+
+Inoltre le patch aggiuntive richieste in una versione minor (es. 3.3.18) possono essere presenti anche nella versione minor della major successiva (es. 3.4.1) per gestire gli upgrade che partono direttamente dalla versione major (es. 3.4.0).
+
+Per gestire correttamente questi casi, alcune directory di upgrade possono contenere un file 'baseline-version.txt' che indica quale versione minor della major precedente considerare come riferimento per determinare le patch già applicate.
+
+Esempio concreto:
+- Timeline: 3.3.16 → 3.3.17 → 3.4.0 → 3.3.18 → 3.4.1
+- Il file upgrade_3.4.0_to_3.4.1/baseline-version.txt contiene: 3.3.17
+
+Comportamento durante l'upgrade verso 3.4.1:
+- Se si parte da 3.3.17: applicare upgrade_3.3.17_to_3.3.18, upgrade_3.3.x_to_3.4.0, upgrade_3.4.0_to_3.4.1 (escludere le patch già applicate in upgrade_3.3.17_to_3.3.18)
+- Se si parte da 3.3.18: applicare upgrade_3.3.x_to_3.4.0, upgrade_3.4.0_to_3.4.1
+- Se si parte da 3.4.0: applicare upgrade_3.4.0_to_3.4.1
+
+Il file baseline-version.txt è opzionale e utilizzato solo quando necessario per disambiguare la progressione delle versioni.
+
 
 2) Ordine di Applicabilità delle patch di una Versione
 
