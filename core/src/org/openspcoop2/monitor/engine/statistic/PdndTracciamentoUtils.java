@@ -232,7 +232,7 @@ public class PdndTracciamentoUtils {
 		if(valoreProprieta!=null && StringUtils.isNoneEmpty(valoreProprieta)) {
 			PdndTracciamentoSoggetto soggettoAggregato = info.getInfoByNomeSoggetto(valoreProprieta, true, false);
 			if(soggettoAggregato==null) {
-				throw new ProtocolException("Soggetto '"+valoreProprieta+"' non esistente nella configurazione PdndTracciamento (ricerca per aggregato)?");
+				throw new ProtocolException("Soggetto '"+valoreProprieta+"' non esistente nella configurazione PdndTracciamento (ricerca per aggregato); verifica che il soggetto possieda il tracciamento abilitato?");
 			}
 			soggettoAggregato.addSoggettoAggregato(idSoggetto);
 		}
