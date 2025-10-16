@@ -8,6 +8,27 @@ Background:
         db.update("UPDATE op2_semaphore set node_id=NULL, creation_time=NULL, details=NULL, update_time=NULL WHERE node_id='TESTSUITE' AND applicative_id='GenerazioneStatisticheOrarie'");
     }
     """
+    
+    * def wait_init =
+    """
+    function(db, purpose) {
+    	var count = 0;
+    	do {
+			karate.log("CHECK le operazione di init siano completate")
+            var result = db.readValue("SELECT count(*) FROM transazioni WHERE token_purpose_id = '" + purpose + "'");
+            karate.log(result);
+            try {
+                java.lang.Thread.sleep(100) 
+            } catch (e) {
+
+            }
+            count++;
+        } while(result != 2 && count < 100)
+        
+        if (count >= 100)
+        	karate.fail();
+    }
+    """
 
      * def wait_for_lock =
     """
@@ -95,6 +116,10 @@ Scenario: Preparazione Test ModI
 	And header simulazionepdnd-username = 'rs-monitor-ApplicativoBlockingJWK'
 	When method get
 	Then status 200
+	
+	* def DbUtils = Java.type('org.openspcoop2.core.monitor.rs.testsuite.DbUtils')
+	* def db = new DbUtils(govwayDbConfig)
+	* eval wait_init(db, purpose_ids.id3)
     
 @cleanup
 Scenario: pulizia Test ModI
