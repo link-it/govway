@@ -311,7 +311,7 @@ div.form-container .display-form input[type="checkbox"].controlset {
 	font-size: 16px;
 }
 
-	.subtitle {
+.subtitle {
 /* 	padding: 10px 20px 6px 5px; */
 	padding: 16px 20px 12px 5px;
     margin-left: 232px;
@@ -333,6 +333,143 @@ div.form-container .display-form input[type="checkbox"].controlset {
     font-weight: bold;
     margin-left: 0px;
 	color: ${legend.color};
+}
+
+
+.subtitleCollapsed {
+	padding: 20px 20px 4px 5px;
+}
+
+.subtitleOpen {
+	padding: 20px 20px 4px 5px;
+}
+
+.subtitleBox {
+	padding: 4px 0px 0px 0px;
+}
+
+.subtitle span{
+	font-size: 16px;
+    font-weight: bold;
+    margin-left: 0px;
+    color: ${legend.color};
+}
+
+.subtitle.noBold span{
+	font-weight: normal;
+}
+
+.subtitle span > a.navigatorAnchor {
+	font-size: 16px;
+    font-weight: bold;
+    margin-left: 0px;
+    color: ${legend.color};
+}
+
+.subtitleGroup{
+	padding-left: 0px;
+}
+
+.subtitleAnchor,
+.subtitleRefresh {
+	cursor: pointer;
+	text-decoration: none;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+span.subtitleAnchor,
+span.subtitleRefresh {
+	vertical-align: middle;
+}
+
+.subtitleAnchor:hover,
+.subtitleRefresh:hover {
+	cursor: pointer;
+	text-decoration: none;
+	color: ${a.color} !important;
+}
+
+.subtitle span > a.subtitleAnchor,
+.subtitle span > a.subtitleRefresh {
+	font-size: 16px;
+    font-weight: bold;
+    margin-left: 0px;
+    color: ${legend.color};
+    margin-right: 4px;
+}
+
+.subtitle span > i.material-icons {
+	cursor: pointer;
+    color: ${legend.color};
+}
+
+.subtitle span > i.material-icons:hover {
+	cursor: pointer;
+    color: ${legend.color};
+}
+
+.navigatorAnchor {
+	cursor: default;
+	text-decoration: none;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.navigatorAnchor:hover {
+	cursor: default;
+	text-decoration: none;
+	color: ${a.color} !important;
+}
+
+.navigatorAnchorClosable,
+.navigatorAnchorRefresh {
+	cursor: pointer;
+	text-decoration: none;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.subtitle span > a.navigatorAnchorClosable {
+	font-size: 16px;
+}
+
+span.navigatorAnchorClosable,
+span.navigatorAnchorRefresh{
+	vertical-align: middle;
+}
+
+legend.navigatorAnchorClosable,
+legend.navigatorAnchorRefresh  {
+	cursor: pointer;
+	text-decoration: none;
+    padding-left: 4px;
+    padding-right: 10px;
+}
+
+.navigatorAnchorClosable:hover,
+.navigatorAnchorRefresh:hover  {
+	cursor: pointer;
+	text-decoration: none;
+	color: ${a.color} !important;
+}
+
+.navigatorAnchorClosable legend > a.navigatorAnchorClosable {
+	font-size: 17px;
+    font-weight: bold;
+    margin-left: 0px;
+    color: ${legend.color};
+    margin-right: 4px;
+}
+
+.navigatorAnchorClosable span > i.material-icons {
+	cursor: pointer;
+    color: ${legend.color};
+}
+
+.navigatorAnchorClosable span > i.material-icons:hover {
+	cursor: pointer;
+    color: ${legend.color};
 }
 
 /* /* BUTTONS */ 
@@ -417,6 +554,23 @@ input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover, .but
 	background-color: ${input.button.negative.hover.background.color};
 	color: ${input.button.negative.hover.color};
 	background-image: none;
+}
+
+.loginButtonRow input[type="button"] {
+	color: ${input.button.color};
+	border: 1px solid ${input.button.border.color};
+	background-color: ${input.button.background.color};
+	background-image: none;
+	font-size: 14px; 
+	font-weight: bold;
+	padding: 11px;
+	border-radius: 5px;
+    margin: 8px 0px 8px 0px;
+    min-width: 100px;
+	cursor:pointer;
+	font-family: 'Roboto';
+	text-decoration: none;
+	text-transform: uppercase;	
 }
 
 .labelMostraValoriGrafico {

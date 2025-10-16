@@ -118,6 +118,9 @@ public class UtentiCostanti {
 	
 	public static final String LABEL_UTENTI = "Utenti";
 	public static final String LABEL_INFO_UTENTE = "Utente";
+	public static final String LABEL_INFO_UTENTE_TIPOLOGIA = "Tipo Account";
+	public static final String LABEL_INFO_UTENTE_APPLICATIVO = "Locale";
+	public static final String LABEL_INFO_UTENTE_ESTERNO = "Esterno";
 	public static final String LABEL_UTENTE = "Profilo Utente";
 	public static final String LABEL_PROFILO_UTENTE = "Profilo Utente";
 	public static final String LABEL_PROFILO = "Profilo";
@@ -282,12 +285,13 @@ public class UtentiCostanti {
 	
 	/* VALORI PARAMETRI */
 	public static final String VALORE_PARAMETRO_MODALITA_ALL = "all";
-	public static final String VALORE_PARAMETRO_PW_MODALITA_NO_LOGIN_APPLICATION = "changeit";
+	public static final String VALORE_PARAMETRO_PW_MODALITA_NO_LOGIN_APPLICATION = "";
 	
 	/* MESSAGGI ERRORE */
 	public static final String MESSAGGIO_ERRORE_NOME_SOGGETTO_OBBLIGATORIO = "Selezionare un soggetto";
 	public static final String MESSAGGIO_ERRORE_NOME_SERVIZIO_OBBLIGATORIO = "Selezionare un servizio";
 	public static final String MESSAGGIO_ERRORE_PASSWORD_GIA_UTILIZZATA = "La password scelta non deve corrispondere ad una precedente password";
 	public static final String MESSAGGIO_ERRORE_PASSWORD_NUOVE_DIFFERENTI = "Le password inserite nei campi Nuova e Conferma Nuova non corrispondono";
+	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = "Non inserire spazi nei campi di testo";
 	
 }

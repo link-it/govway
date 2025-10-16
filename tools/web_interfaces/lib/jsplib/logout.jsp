@@ -74,6 +74,8 @@ String randomNonce = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_CS
 	  } else { document.form.submit(); }
 	};
 	
+	function inizializzaSelectSezione(idDiv){}
+	
 	</SCRIPT>
 	<link href="css/roboto/roboto-fontface.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="css/materialIcons/material-icons-fontface.css" type="text/css">

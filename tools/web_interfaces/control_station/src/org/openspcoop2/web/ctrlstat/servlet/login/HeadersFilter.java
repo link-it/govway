@@ -68,7 +68,7 @@ public class HeadersFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
-		GeneralHelper generalHelper = null;
+		
 		try {	
 			// Gestione vulnerabilita' Content Security Policy
 			this.gestioneContentSecurityPolicy(request, response); 
@@ -79,16 +79,13 @@ public class HeadersFilter implements Filter {
 			try{
 				HttpSession session = request.getSession();
 
-				if(generalHelper==null) {
-					try{
-						generalHelper = new GeneralHelper(session);
-					}catch(Exception eClose){
-						ControlStationCore.logError("Errore rilevato durante l'headersFilter (reInit General Helper)",e);
-					}
+				GeneralHelper generalHelper = null;
+				try{
+					generalHelper = new GeneralHelper(session);
+				}catch(Exception eClose){
+					ControlStationCore.logError("Errore rilevato durante l'headersFilter (reInit General Helper)",e);
 				}
-				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.INTERNAL_SERVER_ERROR);
-				// return so that we do not chain to other filters
-				return;
+				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig.getServletContext(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}catch(Exception eClose){
 				ControlStationCore.logError("Errore rilevato durante l'headersFilter (segnalazione errore)",e);
 			}
@@ -109,7 +106,7 @@ public class HeadersFilter implements Filter {
 		
 		if(StringUtils.isNoneBlank(this.core.getCspHeaderValue())) {
 			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId));
-//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId));
+//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId))
 		}
 	}
 }

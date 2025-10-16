@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.monitor.core.bean;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -53,6 +56,8 @@ import org.openspcoop2.utils.Semaphore;
 import org.openspcoop2.utils.SemaphoreLock;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
+import org.openspcoop2.utils.oauth2.OAuth2Costanti;
+import org.openspcoop2.utils.oauth2.OAuth2Utilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.login.LoginException;
@@ -80,6 +85,14 @@ import org.slf4j.Logger;
  */
 public class LoginBean extends AbstractLoginBean {
 
+	private static final String ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_UTENTE_NON_REGISTRATO = "Il sistema non riesce ad autenticare l''utente {0}: Utente non registrato.";
+	private static final String ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0_1 = "Si e'' verificato un errore durante il login, impossibile autenticare l''utente {0}: {1}";
+	private static final String ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0 = "Si e'' verificato un errore durante il login, impossibile autenticare l''utente {0}.";
+	private static final String ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_USERNAME_O_PASSWORD_NON_VALIDI = "Il sistema non riesce ad autenticare l''utente {0}: Username o password non validi.";
+	public static final String SEMAPHORE_GET_WIDTH_VOCI_MENU_SOGGETTO = "getWidthVociMenuSoggetto";
+	public static final String SEMAPHORE_GET_VOCI_MENU_SOGGETTO = "getVociMenuSoggetto";
+	public static final String SEMAPHORE_GET_VOCI_MENU_MODALITA = "getVociMenuModalita";
+
 	/**
 	 * 
 	 */
@@ -103,29 +116,33 @@ public class LoginBean extends AbstractLoginBean {
 	private Boolean visualizzaMenuModalita = null;
 	private Boolean visualizzaSezioneModalita = null;
 	private List<MenuModalitaItem> vociMenuModalita = null;
-	private Semaphore vociMenuModalita_semaphore = new Semaphore("LoginBean.vociMenuModalita");
-	
+	private Semaphore vociMenuModalitaSemaphore = new Semaphore("LoginBean.vociMenuModalita");
+
 	private String soggettoPddMonitor = null;
 	private Boolean visualizzaMenuSoggetto = null;
 	private Boolean visualizzaSezioneSoggetto = null;
 	private List<MenuModalitaItem> vociMenuSoggetto = null;
-	private Semaphore vociMenuSoggetto_semaphore = new Semaphore("LoginBean.vociMenuSoggetto");
+	private Semaphore vociMenuSoggettoSemaphore = new Semaphore("LoginBean.vociMenuSoggetto");
 	private Boolean visualizzaLinkSelezioneSoggetto = null;
-	
+
 	private Configurazione configurazioneGenerale = null;
-	
+
 	private IVersionInfo vInfo;
 	private List<String> listaNomiGruppi = null;
 	private List<Soggetto> listaSoggettiDisponibiliUtente = null;
 	private Boolean showFiltroSoggettoLocale = null;
-	
+
 	private PasswordVerifier passwordVerifier = null;
 	private String userToUpdate = null;
-	
+
 	private boolean checkPasswordExpire = false;
-	
+
 	private boolean salvaModificheProfiloSuDB = false;
-	
+
+	private Properties loginProperties = null;
+	private boolean loginApplication = false;
+	private boolean loginOAuth2Enabled = false;
+
 	public LoginBean(boolean initDao){
 		super(initDao);
 		this.caricaProperties();
@@ -140,30 +157,38 @@ public class LoginBean extends AbstractLoginBean {
 		super(con,autoCommit,serviceManagerProperties,log);
 		this.caricaProperties();
 	}
-	
+
 	private void caricaProperties(){
 		try {
-			this.showLogout = PddMonitorProperties.getInstance(this.log).isMostraButtonLogout();
-			this.logoutDestinazione = PddMonitorProperties.getInstance(this.log).getLogoutUrlDestinazione();
+			PddMonitorProperties pddMonitorProperties = PddMonitorProperties.getInstance(this.log);
+			
+			this.showLogout = pddMonitorProperties.isMostraButtonLogout();
+			this.logoutDestinazione = pddMonitorProperties.getLogoutUrlDestinazione();
 
-			this.setLogoHeaderImage(PddMonitorProperties.getInstance(this.log).getLogoHeaderImage());
-			this.setLogoHeaderLink(PddMonitorProperties.getInstance(this.log).getLogoHeaderLink());
-			this.setLogoHeaderTitolo(PddMonitorProperties.getInstance(this.log).getLogoHeaderTitolo()); 
-			this.setTitle(PddMonitorProperties.getInstance(this.log).getPddMonitorTitle());
-			this.setShowExtendedInfo(PddMonitorProperties.getInstance(this.log).visualizzaPaginaAboutExtendedInfo());
-			
-			String utentiPasswordConfig = PddMonitorProperties.getInstance(this.log).getUtentiPassword();
-			
+			this.setLogoHeaderImage(pddMonitorProperties.getLogoHeaderImage());
+			this.setLogoHeaderLink(pddMonitorProperties.getLogoHeaderLink());
+			this.setLogoHeaderTitolo(pddMonitorProperties.getLogoHeaderTitolo()); 
+			this.setTitle(pddMonitorProperties.getPddMonitorTitle());
+			this.setShowExtendedInfo(pddMonitorProperties.visualizzaPaginaAboutExtendedInfo());
+
+			String utentiPasswordConfig = pddMonitorProperties.getUtentiPassword();
+
 			if(utentiPasswordConfig!=null){
 				this.passwordVerifier = new PasswordVerifier(utentiPasswordConfig);
-				if(this.passwordVerifier.existsRestrictionUpdate()==false){
+				if(!this.passwordVerifier.existsRestrictionUpdate()){
 					this.passwordVerifier = null;
 				}
 			}
+
+			this.checkPasswordExpire = pddMonitorProperties.isCheckPasswordExpire(this.passwordVerifier);
+
+			this.salvaModificheProfiloSuDB = pddMonitorProperties.isModificaProfiloUtenteDaLinkAggiornaDB();
+
+			this.loginProperties = pddMonitorProperties.getLoginProperties();
+
+			this.loginApplication = pddMonitorProperties.isLoginApplication(); 
 			
-			this.checkPasswordExpire = PddMonitorProperties.getInstance(this.log).isCheckPasswordExpire(this.passwordVerifier);
-			
-			this.salvaModificheProfiloSuDB = PddMonitorProperties.getInstance(this.log).isModificaProfiloUtenteDaLinkAggiornaDB();
+			this.loginOAuth2Enabled = pddMonitorProperties.isLoginOAuth2Enabled();
 
 		} catch (Exception e) {
 			this.log.error("Errore durante la configurazione del logout: " + e.getMessage(),e);
@@ -173,7 +198,7 @@ public class LoginBean extends AbstractLoginBean {
 	@Override
 	protected void init() {
 		super.init();
-		
+
 		if(this.isInitDao()){
 			this.setLoginDao(new DBLoginDAO());
 		}
@@ -182,61 +207,9 @@ public class LoginBean extends AbstractLoginBean {
 	@Override
 	public String login() {
 		if(this.isApplicationLogin()){
-			this.userToUpdate = null;
-
-			if(null == this.getUsername() && this.getPwd() == null){		
-				return "login";
-			}
-
-			try{
-				this.log.info("Verifico le credenziali per l'utente ["+this.getUsername()+"]");
-
-				if(this.getLoginDao().login(this.getUsername(),this.getPwd())){
-					
-					// controllo validita' password
-					UserDetailsBean loadUserByUsername = this.getLoginDao().loadUserByUsername(this.getUsername());
-					
-					// session fixation
-					ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-					HttpSession session = (HttpSession) ec.getSession(true);
-					HttpServletRequest request = (HttpServletRequest) ec.getRequest();
-					ServletUtils.sessionFixation(this.log, request, session);
-					
-					if(this.passwordVerifier != null && this.checkPasswordExpire) {
-						User user = loadUserByUsername.getUtente();
-						if(user.isCheckLastUpdatePassword()) {
-							StringBuilder bfMotivazioneErrore = new StringBuilder(); 
-							if(this.passwordVerifier.isPasswordExpire(user.getLastUpdatePassword(), bfMotivazioneErrore)) {
-								MessageUtils.addErrorMsg(bfMotivazioneErrore.toString());
-								this.userToUpdate = this.getUsername();
-								this.nuovoTokenCsrfListener(null); // genero un token csrf per l'operazione
-								return "utentePasswordChange";
-							}
-						}
-					}
-					
-					this.setLoggedIn(true);
-					this.setLoggedUser(loadUserByUsername);
-					this.setDettaglioUtente(this.getLoggedUser().getUtente());
-					this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor());
-					this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
-					this.setvInfo(this.getLoginDao().readVersionInfo());
-					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
-					return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
-				}else{
-					MessageUtils.addErrorMsg("Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Username o password non validi.");
-				}
-			} catch (ServiceException | UtilsException e) {
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+".");
-			} catch (NotFoundException e) {
-				MessageUtils.addErrorMsg("Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Username o password non validi.");
-			} catch (UserInvalidException e) {
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+": " + e.getMessage());
-			}  catch (LoginException e) {
-				MessageUtils.addErrorMsg("Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+": " + e.getMessage());
-			}
+			return loginApplicationEngine();
 		}else{
-			this.log.info("Verifico il ticket per l'utente ["+this.getUsername()+"]");
+			this.log.info("Verifico il ticket per l'utente [{}]", this.getUsername());
 			this.loginErrorMessage = null;
 			try{
 				this.setLoggedUser(this.getLoginDao().loadUserByUsername(this.getUsername()));
@@ -246,48 +219,131 @@ public class LoginBean extends AbstractLoginBean {
 					this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
 					this.setLoggedIn(true);
 					this.setvInfo(this.getLoginDao().readVersionInfo());
-					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
+					this.log.info("Utente [{}] autenticato con successo", this.getUsername());
 					return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 				}
 			} catch (ServiceException | UtilsException e) {
-				this.loginErrorMessage = "Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+"."; 
+				this.loginErrorMessage = MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0, this.getUsername()); 
 				this.log.error(this.loginErrorMessage);
-				return "loginError";
+				return Costanti.OUTCOME_LOGIN_ERROR;
 			} catch (NotFoundException e) {
-				this.loginErrorMessage = "Il sistema non riesce ad autenticare l'utente "+this.getUsername()+": Utente non registrato.";
+				this.loginErrorMessage = MessageFormat.format(ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_UTENTE_NON_REGISTRATO, this.getUsername());
 				this.log.debug(this.loginErrorMessage);
-				return "login";
+				return Costanti.OUTCOME_LOGIN;
 			} catch (UserInvalidException e) {
-				this.loginErrorMessage = "Si e' verificato un errore durante il login, impossibile autenticare l'utente "+this.getUsername()+": " + e.getMessage();
+				this.loginErrorMessage = MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0_1, this.getUsername(), e.getMessage());
 				this.log.debug(this.loginErrorMessage);
-				return "loginUserInvalid";
+				return Costanti.OUTCOME_LOGIN_USER_INVALID;
 			}
 		}
-		return "login"; 
+		return Costanti.OUTCOME_LOGIN; 
+	}
+
+	public String loginApplicationEngine() {
+		this.userToUpdate = null;
+
+		if(null == this.getUsername() && this.getPwd() == null){		
+			return Costanti.OUTCOME_LOGIN;
+		}
+
+		try{
+			this.log.info("Verifico le credenziali per l'utente [{}]", this.getUsername());
+
+			if(this.getLoginDao().login(this.getUsername(),this.getPwd())){
+
+				// controllo validita' password
+				UserDetailsBean loadUserByUsername = this.getLoginDao().loadUserByUsername(this.getUsername());
+
+				// session fixation
+				ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+				HttpSession session = (HttpSession) ec.getSession(true);
+				HttpServletRequest request = (HttpServletRequest) ec.getRequest();
+				ServletUtils.sessionFixation(this.log, request, session);
+
+				if(this.passwordVerifier != null && this.checkPasswordExpire) {
+					User user = loadUserByUsername.getUtente();
+					StringBuilder bfMotivazioneErrore = new StringBuilder();
+					if(user.isCheckLastUpdatePassword() && this.passwordVerifier.isPasswordExpire(user.getLastUpdatePassword(), bfMotivazioneErrore)) {
+						MessageUtils.addErrorMsg(bfMotivazioneErrore.toString());
+						this.userToUpdate = this.getUsername();
+						this.nuovoTokenCsrfListener(null); // genero un token csrf per l'operazione
+						return "utentePasswordChange";
+					}
+				}
+
+				this.setLoggedIn(true);
+				this.setLoggedUser(loadUserByUsername);
+				this.setDettaglioUtente(this.getLoggedUser().getUtente());
+				this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor());
+				this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
+				this.setvInfo(this.getLoginDao().readVersionInfo());
+				this.log.info("Utente [{}] autenticato con successo", this.getUsername());
+				return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
+			}else{
+				MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_USERNAME_O_PASSWORD_NON_VALIDI, this.getUsername()));
+			}
+		} catch (ServiceException | UtilsException e) {
+			MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0, this.getUsername()));
+		} catch (NotFoundException e) {
+			MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_IL_SISTEMA_NON_RIESCE_AD_AUTENTICARE_L_UTENTE_0_USERNAME_O_PASSWORD_NON_VALIDI, this.getUsername()));
+		} catch (UserInvalidException | LoginException e) {
+			MessageUtils.addErrorMsg(MessageFormat.format(ERROR_MSG_SI_E_VERIFICATO_UN_ERRORE_DURANTE_IL_LOGIN_IMPOSSIBILE_AUTENTICARE_L_UTENTE_0_1, this.getUsername(), e.getMessage()));
+		}
+		return Costanti.OUTCOME_LOGIN; 
 	}
 
 	@Override
 	public String logout() {
-		
+
 		try {
 			ApplicationBean.getInstance().resetAllCache();
-		}catch(Throwable t) {}
-		
+		}catch(Throwable t) {/* donothing */}
+
+		String idToken = null;
+		String oauth2LogoutUrl = this.loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_LOGOUT_ENDPOINT);
+		HttpServletRequest httpServletRequest = null;
 		try{
 			FacesContext fc = FacesContext.getCurrentInstance();
+			httpServletRequest = (HttpServletRequest) fc.getExternalContext().getRequest();
 			fc.getExternalContext().getSessionMap().put(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
 			HttpSession session = (HttpSession)fc.getExternalContext().getSession(false);
+			idToken = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
 			session.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null); 
 			session.invalidate();
 			HttpServletRequest request = (HttpServletRequest) fc.getExternalContext().getRequest();
 			ServletUtils.sessionFixation(this.log, request, session);
-		}catch(Exception e){}
+		}catch(Exception e){
+			this.log.error("Si e' verificato un errore durante il logout: "+ e.getMessage(), e);
+		}
 
-		if(StringUtils.isEmpty(this.logoutDestinazione)){
-			if(this.isApplicationLogin())
-				return "login";
-			else 
-				return "logoutAS";
+		try{
+			if(idToken != null && oauth2LogoutUrl != null) {
+				// preparazione dei parametri
+				String redirPageUrl = StringUtils.isNotEmpty(this.logoutDestinazione) ? 
+						this.logoutDestinazione : Utility.buildInternalRedirectUrl(httpServletRequest, "/public/login.jsf"); // equivalente della chiamata normale
+
+
+				String logoutUrl = OAuth2Utilities.creaUrlLogout(idToken, oauth2LogoutUrl, redirPageUrl);
+
+				// se mi sono loggato con oauth2 e la configurazione oauth2 prevede un logoutUrl
+				FacesContext fc = FacesContext.getCurrentInstance();
+				ExternalContext externalContext = fc.getExternalContext();
+				externalContext.redirect(logoutUrl);
+				fc.responseComplete();
+				return null;
+			}
+		} catch (IOException e) {
+			this.log.error("Si e' verificato un errore durante il logout verso l'oauth2 logoutUrl: " + e.getMessage(), e);
+		}
+
+		if(StringUtils.isEmpty(this.logoutDestinazione) 
+				||
+				(this.loginApplication && (idToken == null))
+		){
+			if(this.isApplicationLogin()) {
+				return Costanti.OUTCOME_LOGIN;
+			} else 
+				return Costanti.OUTCOME_LOGOUT_AS;
 		}else {
 			try{
 				FacesContext fc = FacesContext.getCurrentInstance();
@@ -299,9 +355,9 @@ public class LoginBean extends AbstractLoginBean {
 			}
 			return null;
 		}
-		
+
 	}
-	
+
 	public static String getOutcomeLoginSuccess(User user) {
 		String homePage = null;
 		for (Stato stato : user.getStati()) {
@@ -310,18 +366,18 @@ public class LoginBean extends AbstractLoginBean {
 				break;
 			}
 		}
-		
+
 		if(homePage != null) {
 			if(homePage.equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_STATISTICHE)) {
-				return "loginSuccess";
+				return Costanti.OUTCOME_LOGIN_SUCCESS;
 			}
 			else if(homePage.equals(Costanti.VALUE_PARAMETRO_UTENTI_HOME_PAGE_MONITORAGGIO_TRANSAZIONI)) {
-				return "transazioniStart";
+				return Costanti.OUTCOME_TRANSAZIONI_START;
 			}
 		}
-		
-		return "transazioniStart";
-		
+
+		return Costanti.OUTCOME_TRANSAZIONI_START;
+
 	}
 
 
@@ -363,7 +419,7 @@ public class LoginBean extends AbstractLoginBean {
 
 	@Override
 	public void logoutListener(ActionEvent ae) {
-
+		/* donothing */
 	}
 
 	public boolean isShowLogout() {
@@ -377,11 +433,11 @@ public class LoginBean extends AbstractLoginBean {
 	public int getColonneUserInfo() {
 		if(this.colonneUserInfo == null) {
 			// visualizzazione icona stato (spostata a sx)
-			int v1 = 0; //(admin || operatore) ? 1 : 0;
+			int v1 = 0; //(admin || operatore) ? 1 : 0
 
 			//2 visualizzazione modalita'
 			int v2 = this.isVisualizzaSezioneModalita() ? 1 : 0;
-			
+
 			//3 visualizzazione tendina selezione soggetto'
 			int v3 = this.isVisualizzaSezioneSoggetto() ? 1 : 0;
 
@@ -443,31 +499,31 @@ public class LoginBean extends AbstractLoginBean {
 				if(listaNomiProtocolli.size() == 1) {
 					return listaNomiProtocolli.get(0); 
 				}
-			}catch(Exception e) {
+			}catch(ProtocolException e) {
 				return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
 			}
-			
+
 			return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
 		}
-		
+
 		return this.modalita;
 	}
 
 	public void setModalita(String modalita) {
 		this.modalita = modalita;
-		
+
 		if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.modalita))
 			this.modalita = null;
 	}
-	
+
 	public boolean isVisualizzaSezioneModalita()  {
 		if(this.visualizzaSezioneModalita == null) {
 			try {
 				List<String> listaNomiProtocolli = this.listaProtocolliDisponibilePerUtentePddMonitor();
 
-				this.visualizzaSezioneModalita = listaNomiProtocolli.size() > 0;
+				this.visualizzaSezioneModalita = !listaNomiProtocolli.isEmpty();
 
-			}catch(Exception e) {
+			}catch(ProtocolException e) {
 				this.visualizzaSezioneModalita = false;
 			}
 		}
@@ -481,18 +537,17 @@ public class LoginBean extends AbstractLoginBean {
 
 				this.visualizzaMenuModalita = listaNomiProtocolli.size() > 1;
 
-			}catch(Exception e) {
+			}catch(ProtocolException e) {
 				this.visualizzaMenuModalita = false;
 			}
 		}
 		return this.visualizzaMenuModalita;
 	}
 
-	public List<String> listaProtocolliDisponibilePerUtentePddMonitor() throws Exception {
+	public List<String> listaProtocolliDisponibilePerUtentePddMonitor() throws ProtocolException {
 		ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
 		MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
-		List<String> listaNomiProtocolli = Utility.getProtocolli(this.getUtente(), pfManager, protocolFactories, true);
-		return listaNomiProtocolli;
+		return Utility.getProtocolli(this.getUtente(), pfManager, protocolFactories, true);
 	}
 
 	public void setVisualizzaMenuModalita(boolean visualizzaMenuModalita) {
@@ -510,16 +565,16 @@ public class LoginBean extends AbstractLoginBean {
 			this.log.error(e.getMessage(),e);
 			MessageUtils.addErrorMsg(errorMessage);
 		}
-		
+
 		// cambio della modalita' provoca il reset del soggetto
 		this.colonneUserInfo = null;
 		this.listaSoggettiDisponibiliUtente = null;
 		this.showFiltroSoggettoLocale = null;
 		this.setSoggettoPddMonitor(null);
 		this.cambiaSoggetto();
-		
-		
-		return "modalita";
+
+
+		return Costanti.OUTCOME_MODALITA;
 	}
 
 	public String getLabelModalita() throws ProtocolException {
@@ -538,7 +593,7 @@ public class LoginBean extends AbstractLoginBean {
 				}catch(Exception e) {
 					labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
 				}
-				
+
 			} else {
 				labelSelezionato = NamingUtils.getLabelProtocollo(this.modalita);
 			}
@@ -548,30 +603,28 @@ public class LoginBean extends AbstractLoginBean {
 		return MessageFormat.format(Costanti.LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM, labelSelezionato);
 	}
 
-	public void setLabelModalita(String labelModalita) {
+	public void setLabelModalita(String labelModalita) { /* donothing */
 	}
 
 	public List<MenuModalitaItem> getVociMenuModalita() {
-		
-		SemaphoreLock lock = this.vociMenuModalita_semaphore.acquireThrowRuntime("getVociMenuModalita");
+
+		SemaphoreLock lock = this.vociMenuModalitaSemaphore.acquireThrowRuntime(SEMAPHORE_GET_VOCI_MENU_MODALITA);
 		try {
-			
-			this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
+
+			this.vociMenuModalita = new ArrayList<>();
 			try {
 				List<String> listaNomiProtocolli = this.listaProtocolliDisponibilePerUtentePddMonitor();
-				
+
 				if(listaNomiProtocolli != null && listaNomiProtocolli.size() > 1) {
 					// prelevo l'eventuale protocollo selezionato
 					String protocolloSelezionato = this.getUtente().getProtocolloSelezionatoPddMonitor();
 					if(listaNomiProtocolli.size()==1) {
 						protocolloSelezionato = listaNomiProtocolli.get(0); // forzo
 					}
-					
+
 					// prelevo l'eventuale protocollo selezionato
 					// popolo la tendina con i protocolli disponibili
 					for (String protocolloDisponibile : ProtocolUtils.orderProtocolli(listaNomiProtocolli) ) {
-						// String iconProt = this.modalita == null ? Costanti.ICONA_MENU_UTENTE_UNCHECKED : (protocolloDisponibile.equals(this.modalita) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED);
-						
 						String labelProtocollo = NamingUtils.getLabelProtocollo(protocolloDisponibile); 
 						Integer labelProtocolloWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelProtocollo); 
 						MenuModalitaItem menuItem = new MenuModalitaItem(protocolloDisponibile, labelProtocollo, null); 
@@ -580,7 +633,7 @@ public class LoginBean extends AbstractLoginBean {
 							menuItem.setDisabled(true); 
 						this.vociMenuModalita.add(menuItem);
 					}
-	
+
 					// seleziona tutti
 					// (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED
 					String labelTutti = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
@@ -589,57 +642,57 @@ public class LoginBean extends AbstractLoginBean {
 					menuItem.setLabelWidth(labelTuttiWidth); 
 					if((protocolloSelezionato == null)) 
 						menuItem.setDisabled(true);
-					
+
 					this.vociMenuModalita.add(menuItem);
 				}
-	
-			}catch(Throwable e) {
-				this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
+
+			}catch(ProtocolException e) {
+				this.vociMenuModalita = new ArrayList<>();
 			}
-		
+
 			return this.vociMenuModalita;
 		}finally {
-			this.vociMenuModalita_semaphore.release(lock, "getVociMenuModalita");
+			this.vociMenuModalitaSemaphore.release(lock, SEMAPHORE_GET_VOCI_MENU_MODALITA);
 		}
 	}
-	
+
 	public int getWidthVociMenuModalita() {
-		
-		synchronized (this.vociMenuModalita_semaphore) {
-		
+
+		synchronized (this.vociMenuModalitaSemaphore) {
+
 			if(this.vociMenuModalita.isEmpty())
 				return 0;
-	
+
 			int max = 0;
 			for (MenuModalitaItem menuModalitaItem : this.vociMenuModalita) {
 				if(menuModalitaItem.getLabelWidth() > max)
 					max = menuModalitaItem.getLabelWidth();
-					 
+
 			}
-			
+
 			return 44 + max;
-			
+
 		}
 	}
 
-	public void setVociMenuModalita(List<MenuModalitaItem> vociMenuModalita) {
+	public void setVociMenuModalita(List<MenuModalitaItem> vociMenuModalita) { /* donothing */
 	}	
 
 	public List<String> getProtocolliSelezionati() {
 		List<String> protocolliList = new ArrayList<>();
 		try{
 			User utente = this.getUtente();
-			
+
 			if(utente.getProtocolloSelezionatoPddMonitor()!=null) {
 				protocolliList.add(utente.getProtocolloSelezionatoPddMonitor());
 				return protocolliList;
 			}
-			
-			if(utente.getProtocolliSupportati()!=null && utente.getProtocolliSupportati().size()>0) {
+
+			if(utente.getProtocolliSupportati()!=null && !utente.getProtocolliSupportati().isEmpty()) {
 				return utente.getProtocolliSupportati();
 			}
-			
-			
+
+
 			return this.listaProtocolliDisponibilePerUtentePddMonitor();
 
 		}catch (Exception e) {
@@ -648,33 +701,33 @@ public class LoginBean extends AbstractLoginBean {
 			return protocolliList;
 		}
 	}
-	
+
 	public List<InformazioniProtocollo> getListaInformazioniProtocollo() {
-		List<InformazioniProtocollo> listaInformazioniProtocollo = new ArrayList<InformazioniProtocollo>();
-		
+		List<InformazioniProtocollo> listaInformazioniProtocollo = new ArrayList<>();
+
 		List<String> protocolli = this.getProtocolliSelezionati();
-		
+
 		for (String protocollo : protocolli) {
 			try{
 				InformazioniProtocollo informazioniProtocollo = new InformazioniProtocollo();
 				String descrizioneProtocollo = NamingUtils.getDescrizioneProtocollo(protocollo);
 				String webSiteProtocollo = NamingUtils.getWebSiteProtocollo(protocollo);
 				String labelProtocollo = NamingUtils.getLabelProtocollo(protocollo);
-				
+
 				informazioniProtocollo.setDescrizioneProtocollo(descrizioneProtocollo);
 				informazioniProtocollo.setLabelProtocollo(labelProtocollo);
 				informazioniProtocollo.setWebSiteProtocollo(webSiteProtocollo);
-				
+
 				listaInformazioniProtocollo.add(informazioniProtocollo);
 			}catch (Exception e) {
 				this.log.error("Impossibile caricare le informazioni del protocollo ["+protocollo+"]: " + e.getMessage(),e);
 			}
 		}
-				
+
 		return listaInformazioniProtocollo;
 	}
 
-	public void setListaInformazioniProtocollo(List<InformazioniProtocollo> listaInformazioniProtocollo) {
+	public void setListaInformazioniProtocollo(List<InformazioniProtocollo> listaInformazioniProtocollo) { /* donothing */
 	}
 
 	public Configurazione getConfigurazioneGenerale(){
@@ -687,40 +740,28 @@ public class LoginBean extends AbstractLoginBean {
 		}
 		return this.configurazioneGenerale;
 	}
-	
+
 	public String getSoggettoPddMonitor() {
 		if(this.soggettoPddMonitor == null) {
-			// Provocava un bug sul filtro per ruolo operatore, poichè risultava sempre assegnato il soggetto locale, e quindi il filtro per API di un soggetto diverso non comparivano nelle tendine
-//			try {
-//				List<Soggetto> listaSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
-//
-//				if(listaSoggetti.size() == 1) {
-//					IDSoggetto idSoggetto = new IDSoggetto(listaSoggetti.get(0).getTipoSoggetto(), listaSoggetti.get(0).getNomeSoggetto()); 
-//					return  idSoggetto.toString();
-//				}
-//			}catch(Exception e) {
-//				return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
-//			}
-			
 			return Costanti.VALUE_PARAMETRO_MODALITA_ALL;
 		}
-		
+
 		return this.soggettoPddMonitor;
 	}
 
 	public void setSoggettoPddMonitor(String modalita) {
 		this.soggettoPddMonitor = modalita;
-		
+
 		if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.soggettoPddMonitor))
 			this.soggettoPddMonitor = null;
 	}
-	
+
 	public boolean isVisualizzaSezioneSoggetto()  {
 		if(this.visualizzaSezioneSoggetto == null) {
 			try {
 				List<Soggetto> listaSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
 
-				this.visualizzaSezioneSoggetto = listaSoggetti.size() > 0;
+				this.visualizzaSezioneSoggetto = !listaSoggetti.isEmpty();
 
 			}catch(Exception e) {
 				this.visualizzaSezioneSoggetto = false;
@@ -736,7 +777,7 @@ public class LoginBean extends AbstractLoginBean {
 
 				this.visualizzaMenuSoggetto = listaNomiProtocolli.size() > 1;
 
-			}catch(Exception e) {
+			}catch(ProtocolException e) {
 				this.visualizzaMenuSoggetto = false;
 			}
 		}
@@ -746,17 +787,17 @@ public class LoginBean extends AbstractLoginBean {
 	public void setVisualizzaMenuSoggetto(boolean visualizzaMenuSoggetto) {
 		this.visualizzaMenuSoggetto = visualizzaMenuSoggetto;
 	}
-	
+
 	public Boolean getVisualizzaLinkSelezioneSoggetto() {
 		if(this.visualizzaLinkSelezioneSoggetto == null) {
 			try {
 				List<Soggetto> listaNomiProtocolli = this.listaSoggettiDisponibilePerUtentePddMonitor();
-				
+
 				Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = PddMonitorProperties.getInstance(this.log).getNumeroMassimoSoggettiOperativiMenuUtente();
 
 				this.visualizzaLinkSelezioneSoggetto = listaNomiProtocolli.size() > numeroMassimoSoggettiSelectListSoggettiOperatiti;
 
-			}catch(Exception e) {
+			}catch(ProtocolException | UtilsException e) {
 				this.visualizzaLinkSelezioneSoggetto = false;
 			}
 		}
@@ -769,7 +810,7 @@ public class LoginBean extends AbstractLoginBean {
 
 	public String cambiaSoggetto() {
 		this.getLoggedUser().getUtente().setSoggettoSelezionatoPddMonitor(this.soggettoPddMonitor);
-		
+
 		try {
 			if(this.salvaModificheProfiloSuDB) {
 				this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
@@ -782,24 +823,24 @@ public class LoginBean extends AbstractLoginBean {
 			this.log.error(e.getMessage(),e);
 			MessageUtils.addErrorMsg(errorMessage);
 		}
-		
+
 		this.visualizzaSezioneSoggetto = null;
 		this.visualizzaMenuSoggetto = null;	
 		this.visualizzaLinkSelezioneSoggetto = null;
-		
-		return "soggettoPddMonitor";
+
+		return Costanti.OUTCOME_SOGGETTO_PDD_MONITOR;
 	}
-	
-	public void soggettoAutocompleteSelected(ActionEvent ae) {}
-	
+
+	public void soggettoAutocompleteSelected(ActionEvent ae) { /* donothing */ }
+
 	public void setSoggettoPddMonitorAutocomplete(String modalita) {
 		this.soggettoPddMonitor = modalita;
-		
+
 		if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.soggettoPddMonitor))
 			this.soggettoPddMonitor = null;
-		
+
 		this.getLoggedUser().getUtente().setSoggettoSelezionatoPddMonitor(this.soggettoPddMonitor);
-		
+
 		try {
 			if(this.salvaModificheProfiloSuDB) {
 				this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
@@ -809,87 +850,89 @@ public class LoginBean extends AbstractLoginBean {
 			this.log.error(e.getMessage(),e);
 			MessageUtils.addErrorMsg(errorMessage);
 		}
-		
+
 		this.visualizzaSezioneSoggetto = null;
 		this.visualizzaMenuSoggetto = null;	
 		this.visualizzaLinkSelezioneSoggetto = null;
 	}
-	
-	public String getLabelSoggettoNormalized() throws Exception {
-		return _getLabelSoggettoNormalized(true);
+
+	public String getLabelSoggettoNormalized() throws UtilsException {
+		return getLabelSoggettoNormalizedEngine(true);
 	}
-	
-	public String getLabelSoggettoNormalizedSenzaPrefisso() throws Exception {
-		return _getLabelSoggettoNormalized(false);
+
+	public String getLabelSoggettoNormalizedSenzaPrefisso() throws UtilsException {
+		return getLabelSoggettoNormalizedEngine(false);
 	}
-	
-	public String _getLabelSoggettoNormalized(boolean addPrefix) throws Exception {
-		String label = _getLabelSoggetto(addPrefix);
-		
-//		if(label.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelButtonSoggettiOperativiMenuUtente()) {
-//			return Utility.normalizeLabel(label, PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelButtonSoggettiOperativiMenuUtente());
-//		}
-		
+
+	public String getLabelSoggettoNormalizedEngine(boolean addPrefix) throws UtilsException {
+		String label = getLabelSoggettoEngine(addPrefix);
+
 		if(label.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()) {
 			return Utility.normalizeLabel(label, PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente());
 		}
-		
+
 		return null;
 	}
 
-	public String getLabelSoggetto() throws ProtocolException {
-		return _getLabelSoggetto(true);
-	}
-	
-	public String getLabelSoggettoSenzaPrefisso() throws ProtocolException {
-		return _getLabelSoggetto(false);
+	public String getLabelSoggetto() {
+		return getLabelSoggettoEngine(true);
 	}
 
-	private String _getLabelSoggetto(boolean addPrefix) {
+	public String getLabelSoggettoSenzaPrefisso() {
+		return getLabelSoggettoEngine(false);
+	}
+
+	private String getLabelSoggettoEngine(boolean addPrefix) {
 		// prelevo l'eventuale protocollo selezionato
 		String labelSelezionato = "";
 		try {
 			if(this.soggettoPddMonitor == null) {
-				try {
-					List<Soggetto> listaNomiSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
+				labelSelezionato = getLabelSoggettoEngineInner();
 
-					if(listaNomiSoggetti.size() == 1) {
-						IDSoggetto idSoggetto = new IDSoggetto(listaNomiSoggetti.get(0).getTipoSoggetto(), listaNomiSoggetti.get(0).getNomeSoggetto()); 
-						labelSelezionato = NamingUtils.getLabelSoggetto(idSoggetto);  
-					} else {
-						labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
-					}
-				}catch(Exception e) {
-					labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
-				}
-				
 			} else {
 				String tipoSoggettoOperativoSelezionato = Utility.parseTipoSoggetto(this.soggettoPddMonitor);
 				String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(this.soggettoPddMonitor);
 				IDSoggetto idSoggetto = new IDSoggetto(tipoSoggettoOperativoSelezionato, nomeSoggettoOperativoSelezionato);
 				labelSelezionato = NamingUtils.getLabelSoggetto(idSoggetto);
 			}
-		} catch (Exception e) {
+		} catch (ProtocolException e) {
 			this.log.error(e.getMessage(), e);
 		}
 		return addPrefix ? MessageFormat.format(Costanti.LABEL_MENU_SOGGETTO_CORRENTE_WITH_PARAM, labelSelezionato) : labelSelezionato;
 	}
 
-	public void setLabelSoggetto(String labelSoggetto) {
-	}
-	
-	public void setLabelSoggettoSenzaPrefisso(String labelSoggetto) {
-	}
-	
-	public List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitor() throws Exception {
-		if(this.listaSoggettiDisponibiliUtente == null) {
-			this.listaSoggettiDisponibiliUtente = _listaSoggettiDisponibilePerUtentePddMonitor();
+	private String getLabelSoggettoEngineInner() {
+		String labelSelezionato = "";
+		try {
+			List<Soggetto> listaNomiSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
+
+			if(listaNomiSoggetti.size() == 1) {
+				IDSoggetto idSoggetto = new IDSoggetto(listaNomiSoggetti.get(0).getTipoSoggetto(), listaNomiSoggetti.get(0).getNomeSoggetto()); 
+				labelSelezionato = NamingUtils.getLabelSoggetto(idSoggetto);  
+			} else {
+				labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+			}
+		}catch(ProtocolException e) {
+			labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
 		}
-		
+		return labelSelezionato;
+	}
+
+	public void setLabelSoggetto(String labelSoggetto) { /* donothing */
+	}
+
+	public void setLabelSoggettoSenzaPrefisso(String labelSoggetto) { /* donothing */
+	}
+
+	public List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitor() throws ProtocolException {
+		if(this.listaSoggettiDisponibiliUtente == null) {
+			this.listaSoggettiDisponibiliUtente = listaSoggettiDisponibilePerUtentePddMonitorEngine();
+		}
+
 		return this.listaSoggettiDisponibiliUtente;
 	}
-	
-	private List<Soggetto> _listaSoggettiDisponibilePerUtentePddMonitor() throws Exception {
+
+	private List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitorEngine() throws ProtocolException {
 		User utente = this.getUtente();
 		List<String> protocolliDispondibili = this.listaProtocolliDisponibilePerUtentePddMonitor();
 		String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
@@ -899,13 +942,13 @@ public class LoginBean extends AbstractLoginBean {
 		return listaSoggettiDisponibiliPerProtocollo(this.getLoggedUser(), protocolloSelezionato);
 	}
 
-	public static List<Soggetto> listaSoggettiDisponibiliPerProtocollo(UserDetailsBean userDetailsBean, String protocolloSelezionato) throws Exception {
+	public static List<Soggetto> listaSoggettiDisponibiliPerProtocollo(UserDetailsBean userDetailsBean, String protocolloSelezionato) {
 		List<Soggetto> soggettiOperativiDisponibiliUtente = new ArrayList<>();
 		List<Soggetto> soggettiOperativi = DynamicPdDBeanUtils.getInstance(LoggerManager.getPddMonitorCoreLogger()).getListaSoggetti(protocolloSelezionato, TipoPdD.OPERATIVO);
-		
+
 		if(protocolloSelezionato!=null && !"".equals(protocolloSelezionato) && soggettiOperativi != null && !soggettiOperativi.isEmpty()) {
 			List<Soggetto> soggettiAssociatiUtente = Utility.getSoggettiOperativiAssociatiAlProfilo(userDetailsBean, protocolloSelezionato);  
-			
+
 			if(soggettiAssociatiUtente.isEmpty())
 				return soggettiOperativi;
 			else 
@@ -913,40 +956,29 @@ public class LoginBean extends AbstractLoginBean {
 		}
 		return soggettiOperativiDisponibiliUtente;
 	}
-	
-	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettoPddMonitorAutoComplete(Object val) throws Exception{
-		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaGruppi = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
-//		List<SelectItem> listaGruppiTmp = new ArrayList<>();
+
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettoPddMonitorAutoComplete(Object val) {
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaGruppi = new ArrayList<>();
 		if(val==null || StringUtils.isEmpty((String)val)) {
-			
+			//donothing
 		}else{
-			List<MenuModalitaItem>  vociMenuSoggetto  = this.getVociMenuSoggetto();
-			
-			for (MenuModalitaItem menuModalitaItem : vociMenuSoggetto) {
+			List<MenuModalitaItem>  vociMenuSoggettoList  = this.getVociMenuSoggetto();
+
+			for (MenuModalitaItem menuModalitaItem : vociMenuSoggettoList) {
 				if(menuModalitaItem.getLabel().toUpperCase().contains(((String)val).toUpperCase())) {
 					listaGruppi.add(new org.openspcoop2.web.monitor.core.bean.SelectItem(menuModalitaItem.getValue(), menuModalitaItem.getLabel()));
 				}
 			}
-			
-//			listaGruppi.add(0, new org.openspcoop2.web.monitor.core.bean.SelectItem("--", "--"));
-			
-//			for (SelectItem selectItem : listaGruppiTmp) {
-//				String label = selectItem.getLabel();
-//				String value = (String) selectItem.getValue();
-//				
-//				org.openspcoop2.web.monitor.core.bean.SelectItem newItem = new org.openspcoop2.web.monitor.core.bean.SelectItem(value, label);
-//				listaGruppi.add(newItem);
-//			}
 		}
 		return listaGruppi;
 	}
 
 	public List<MenuModalitaItem> getVociMenuSoggetto() {
-		
-		SemaphoreLock lock = this.vociMenuSoggetto_semaphore.acquireThrowRuntime("getVociMenuSoggetto"); 
+
+		SemaphoreLock lock = this.vociMenuSoggettoSemaphore.acquireThrowRuntime(SEMAPHORE_GET_VOCI_MENU_SOGGETTO); 
 		try{
-		
-			this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
+
+			this.vociMenuSoggetto = new ArrayList<>();
 			try {
 				User utente = this.getUtente();
 				List<String> protocolliDispondibili = this.listaProtocolliDisponibilePerUtentePddMonitor();
@@ -954,7 +986,7 @@ public class LoginBean extends AbstractLoginBean {
 				if(protocolliDispondibili.size()==1) {
 					protocolloSelezionato = protocolliDispondibili.get(0); // forzo
 				}
-				
+
 				// prelevo il soggetto selezionato
 				String soggettoOperativoSelezionato = utente.getSoggettoSelezionatoPddMonitor();
 				IDSoggetto idSoggettoOperativo = null;
@@ -963,23 +995,19 @@ public class LoginBean extends AbstractLoginBean {
 					String nomeSoggettoOperativoSelezionato = Utility.parseNomeSoggetto(soggettoOperativoSelezionato);
 					idSoggettoOperativo = new IDSoggetto(tipoSoggettoOperativoSelezionato, nomeSoggettoOperativoSelezionato);
 				}
-				
+
 				List<Soggetto> soggettiOperativi = listaSoggettiDisponibilePerUtentePddMonitor();
-				
+
 				// visualizzo il menu' soggetti solo se e' stato selezionato un protocollo 
 				if(protocolloSelezionato!=null && !"".equals(protocolloSelezionato) &&
 						soggettiOperativi != null && !soggettiOperativi.isEmpty()) {
-					
+
 					if(soggettoOperativoSelezionato==null && soggettiOperativi.size()==1) {
 						Soggetto soggetto = soggettiOperativi.get(0);
 						IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()); 
 						soggettoOperativoSelezionato = idSoggetto.toString(); // forzo
 					}
-	
-					//Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = PddMonitorProperties.getInstance(this.log).getNumeroMassimoSoggettiOperativiMenuUtente();
-					
-	//				if(soggettiOperativi.size() < numeroMassimoSoggettiSelectListSoggettiOperatiti) {
-						
+
 					if(soggettiOperativi.size()>1) {
 						List<String> listaLabel = new ArrayList<>();
 						Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
@@ -991,23 +1019,23 @@ public class LoginBean extends AbstractLoginBean {
 								mapLabelIds.put(labelSoggetto, idSoggetto);
 							}
 						}
-						
+
 						// Per ordinare in maniera case insensistive
-						Collections.sort(listaLabel, new Comparator<String>() {
-							 @Override
+						Collections.sort(listaLabel, new Comparator<>() {
+							@Override
 							public int compare(String o1, String o2) {
-						           return o1.toLowerCase().compareTo(o2.toLowerCase());
-						        }
-							});
-						
+								return o1.toLowerCase().compareTo(o2.toLowerCase());
+							}
+						});
+
 						int i = 1;
 						for (String label : listaLabel) {
 							String labelSoggetto = NamingUtils.getLabelSoggetto(mapLabelIds.get(label)); 
 							MenuModalitaItem menuItem = new MenuModalitaItem(mapLabelIds.get(label).toString(), labelSoggetto, null); 
-							
+
 							if(soggettoOperativoSelezionato != null && mapLabelIds.get(label).toString().equals(idSoggettoOperativo.toString()))
 								menuItem.setDisabled(true);
-							
+
 							Integer labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(menuItem.getLabel()); 
 							if(labelSoggetto.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()) {
 								menuItem.setTooltip(labelSoggetto);
@@ -1016,14 +1044,14 @@ public class LoginBean extends AbstractLoginBean {
 								labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(Utility.normalizeLabel(labelSoggetto, 
 										PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente())); 
 							}
-							
+
 							menuItem.setLabelWidth(labelSoggettoWidth); 
-							
+
 							menuItem.setId("voceSoggetto_"+ (i++));
-							
+
 							this.vociMenuSoggetto.add(menuItem);
 						}
-						
+
 						// seleziona tutti
 						// (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED
 						String labelTutti = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
@@ -1032,91 +1060,89 @@ public class LoginBean extends AbstractLoginBean {
 						menuItem.setLabelWidth(labelTuttiWidth); 
 						if((soggettoOperativoSelezionato == null)) 
 							menuItem.setDisabled(true);
-						
+
 						menuItem.setId("voceSoggetto_"+ (i++));
-						
+
 						this.vociMenuSoggetto.add(menuItem);
 					}
-	//				} 		
 				}
-	
-			}catch(Throwable e) {
-				this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
+
+			}catch(ProtocolException | UtilsException e) {
+				this.vociMenuSoggetto = new ArrayList<>();
 			}
-			
+
 			return this.vociMenuSoggetto;
-			
+
 		}finally {
-			this.vociMenuSoggetto_semaphore.release(lock, "getVociMenuSoggetto"); 
+			this.vociMenuSoggettoSemaphore.release(lock, SEMAPHORE_GET_VOCI_MENU_SOGGETTO); 
 		}
 	}
-	
+
 	public int getWidthVociMenuSoggetto() {
-		
-		SemaphoreLock lock = this.vociMenuSoggetto_semaphore.acquireThrowRuntime("getWidthVociMenuSoggetto"); 
+
+		SemaphoreLock lock = this.vociMenuSoggettoSemaphore.acquireThrowRuntime(SEMAPHORE_GET_WIDTH_VOCI_MENU_SOGGETTO); 
 		try{
-		
+
 			if(this.vociMenuSoggetto.isEmpty())
 				return 0;
-	
+
 			int max = 0;
 			for (MenuModalitaItem menuModalitaItem : this.vociMenuSoggetto) {
 				if(menuModalitaItem.getLabelWidth() > max)
 					max = menuModalitaItem.getLabelWidth();
-					 
+
 			}
-			
+
 			return 44 + max;
-			
+
 		}finally {
-			this.vociMenuSoggetto_semaphore.release(lock, "getWidthVociMenuSoggetto"); 
+			this.vociMenuSoggettoSemaphore.release(lock, SEMAPHORE_GET_WIDTH_VOCI_MENU_SOGGETTO); 
 		}
 	}
 
-	public void setVociMenuSoggetto(List<MenuModalitaItem> vociMenuModalita) {
-	}
-	
+	public void setVociMenuSoggetto(List<MenuModalitaItem> vociMenuModalita) { /* donothing */ }
+
 	public boolean isShowFiltroSoggettoLocale(){
 		if(this.showFiltroSoggettoLocale == null) {
-			this.showFiltroSoggettoLocale =  _isShowFiltroSoggettoLocale();
+			this.showFiltroSoggettoLocale =  isShowFiltroSoggettoLocaleEngine();
 		}
-		
+
 		return this.showFiltroSoggettoLocale;
 	}
 
-	private boolean _isShowFiltroSoggettoLocale() {
+	private boolean isShowFiltroSoggettoLocaleEngine() {
 		try {
 			User utente = Utility.getLoggedUtente();
-			
+
 			String soggettoOperativoSelezionato = utente.getSoggettoSelezionatoPddMonitor();
 			// utente ha selezionato un soggetto
 			if(soggettoOperativoSelezionato != null) {
 				return false;
 			}
-			
+
 			List<String> protocolliDispondibili = this.listaProtocolliDisponibilePerUtentePddMonitor();
 			String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
 			if(protocolliDispondibili.size()==1) {
 				protocolloSelezionato = protocolliDispondibili.get(0); // forzo
 			}
-			
+
 			int numeroSoggettiDisponibili = Utility.getLoggedUser().getUtenteSoggettoProtocolliMap().containsKey(protocolloSelezionato) ? Utility.getLoggedUser().getUtenteSoggettoProtocolliMap().get(protocolloSelezionato).size() : 0;
-			
+
 			if(numeroSoggettiDisponibili == 1)
 				return false;
-						
+
 			List<Soggetto> soggettiOperativi = DynamicPdDBeanUtils.getInstance(this.log).getListaSoggetti(protocolloSelezionato, TipoPdD.OPERATIVO);
 			numeroSoggettiDisponibili = soggettiOperativi != null ? soggettiOperativi.size() : 0;
-			
+
 			if(numeroSoggettiDisponibili == 1)
 				return false;
-		} catch (Exception e) {
+		} catch (ProtocolException e) {
 			this.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
 		}
 		return true;
 	}
-	
-	
+
+
 	public IVersionInfo getvInfo() {
 		return this.vInfo;
 	}
@@ -1143,22 +1169,22 @@ public class LoginBean extends AbstractLoginBean {
 	}
 	public List<String> getListaNomiGruppi(){
 		if(this.listaNomiGruppi == null) {
-		try {
-			this.listaNomiGruppi = DynamicPdDBeanUtils.getInstance(LoggerManager.getPddMonitorCoreLogger()).getListaNomiGruppi();
-		} catch (Exception e) {
-			this.listaNomiGruppi =new ArrayList<>();
-		}
+			try {
+				this.listaNomiGruppi = DynamicPdDBeanUtils.getInstance(LoggerManager.getPddMonitorCoreLogger()).getListaNomiGruppi();
+			} catch (Exception e) {
+				this.listaNomiGruppi =new ArrayList<>();
+			}
 		} 
 		return this.listaNomiGruppi;
 	}
-	
+
 	public boolean isAmministratore() {
 		return this.getLoggedUser().isAdmin();
 	}
-	
+
 	public String ricaricaUtenteDopoCambioPasswordScaduta() {
-	
-		this.log.info("Ricarico Profilo per l'utente ["+this.getUsername()+"]");
+
+		this.log.info("Ricarico Profilo per l'utente [{}]", this.getUsername());
 		this.loginErrorMessage = null;
 		this.userToUpdate = null;
 		try{
@@ -1169,22 +1195,22 @@ public class LoginBean extends AbstractLoginBean {
 				this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
 				this.setLoggedIn(true);
 				this.setvInfo(this.getLoginDao().readVersionInfo());
-				this.log.info("Profilo Utente ["+this.getUsername()+"] caricato con successo");
+				this.log.info("Profilo Utente [{}] caricato con successo", this.getUsername());
 				return LoginBean.getOutcomeLoginSuccess(this.getLoggedUser().getUtente());
 			}
-			return "login";
+			return Costanti.OUTCOME_LOGIN;
 		} catch (ServiceException | UtilsException e) {
 			this.loginErrorMessage = "Si e' verificato un errore durante il caricamento del profilo utente, impossibile autenticare l'utente "+this.getUsername()+"."; 
 			this.log.error(this.loginErrorMessage);
-			return "loginError";
+			return Costanti.OUTCOME_LOGIN_ERROR;
 		} catch (NotFoundException e) {
 			this.loginErrorMessage = "Il sistema non riesce a caricare il profilo utente "+this.getUsername()+": Utente non registrato.";
 			this.log.debug(this.loginErrorMessage);
-			return "login";
+			return Costanti.OUTCOME_LOGIN;
 		} catch (UserInvalidException e) {
 			this.loginErrorMessage = "Si e' verificato un errore durante il caricamento del profilo utente, impossibile autenticare l'utente "+this.getUsername()+": " + e.getMessage();
 			this.log.debug(this.loginErrorMessage);
-			return "loginUserInvalid";
+			return Costanti.OUTCOME_LOGIN_USER_INVALID;
 		}
 	}
 
@@ -1195,23 +1221,71 @@ public class LoginBean extends AbstractLoginBean {
 	public void resetUserToUpdate() {
 		this.userToUpdate = null;
 	}
-	
+
 	public String getCsrf() {
 		FacesContext fc = FacesContext.getCurrentInstance();
 		ExternalContext extCtx = fc.getExternalContext();
 		HttpSession session = (HttpSession)extCtx.getSession(false);
 		String tokenCSRF = CsrfFilter.leggiTokenCSRF(session);
-		this.log.debug("Letto Token CSRF: ["+tokenCSRF+"]"); 
+		this.log.debug("Letto Token CSRF: [{}]", tokenCSRF); 
 		return tokenCSRF;
 	}
-	
+
 	public void nuovoTokenCsrfListener(ActionEvent ae) {
 		FacesContext fc = FacesContext.getCurrentInstance();
 		ExternalContext extCtx = fc.getExternalContext();
 		HttpSession session = (HttpSession)extCtx.getSession(false);
 		String nuovoTokenCSRF = CsrfFilter.generaESalvaTokenCSRF(session);
-		this.log.debug("Generato Nuovo Token CSRF: ["+nuovoTokenCSRF+"]");
+		this.log.debug("Generato Nuovo Token CSRF: [{}]", nuovoTokenCSRF);
 	}
 
-	public void setCsrf(String csrf) {}
+	public void setCsrf(String csrf) { /* donothing*/}
+
+	public String avviaLoginOAuth2() {
+
+		String state = UUID.randomUUID().toString();
+		// 1) Costruisci l'URL di autorizzazione Keycloak
+		String authorizationUrl = null;
+		try {
+			authorizationUrl = OAuth2Utilities.getURLLoginOAuth2(this.loginProperties, state);
+		} catch (Exception e) {
+			this.loginErrorMessage = "Si e' verificato un errore il login OAuth2";
+			this.log.error(this.loginErrorMessage);
+			return Costanti.OUTCOME_LOGIN_ERROR;
+		}
+
+		this.log.debug("Invio richiesta di autorizzazione alla URL: [{}]", authorizationUrl);
+
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		try {
+			// salvataggio dello scope per fare il check nella callback
+			ec.getSessionMap().put(OAuth2Costanti.ATTRIBUTE_NAME_OAUTH2_STATE, state);
+
+			ec.redirect(authorizationUrl);
+		} catch (IOException e) {
+			this.loginErrorMessage = "Si e' verificato un errore il login OAuth2, impossibile autenticare l'utente.";
+			this.log.error(this.loginErrorMessage);
+			return Costanti.OUTCOME_LOGIN_ERROR;
+		}
+		return null;
+	}
+
+	public boolean isLoginApplication() {
+		return this.loginApplication;
+	}
+	
+	public boolean isLoginOAuth2Enabled() {
+		return this.loginOAuth2Enabled;
+	}
+
+	public boolean isMultiLoginEnabled() {
+		return this.isLoginApplication() && this.isLoginOAuth2Enabled();
+	}
+
+	public boolean isUtenteLoggatoOAuth2() {
+		FacesContext fc = FacesContext.getCurrentInstance();
+		ExternalContext extCtx = fc.getExternalContext();
+		HttpSession session = (HttpSession)extCtx.getSession(false);
+		return ServletUtils.isUtenteLoggatoConOAuth2(session);
+	}
 }

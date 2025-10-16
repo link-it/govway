@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 public class IdentityHttpReader implements IPrincipalReader{
 
 
-	private Logger log = null;
+	private transient Logger log = null;
 
 	/**
 	 * 
@@ -72,7 +72,7 @@ public class IdentityHttpReader implements IPrincipalReader{
 		try{
 			String username = request.getHeader(this.headerName);
 
-			this.log.debug("Username trovato nell'header ["+this.headerName+"]: ["+username+"]");
+			this.log.debug("Username trovato nell'header [{}]: [{}]", this.headerName, username);
 			
 			return username;
 		}catch (Exception e) {

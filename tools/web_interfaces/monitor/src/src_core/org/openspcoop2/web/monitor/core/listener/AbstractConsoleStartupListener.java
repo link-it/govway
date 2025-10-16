@@ -375,6 +375,19 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		}
 
 		
+		// Verifico coerenza tipologie di autenticazione
+		try {
+			if(!appProperties.isLoginApplication() && 
+					(appProperties.getLoginTipo()==null || org.apache.commons.lang3.StringUtils.isEmpty(appProperties.getLoginTipo()))){
+				throw new UtilsException("Con login applicativo disabilitato (login.application=false) deve essere obbligatoriamente definito un tipo di login tramite la proprietà 'login.tipo'");
+			}
+		} catch (Exception e) {
+			String msgErrore = "Configurazione login errata: "+e.getMessage();
+			AbstractConsoleStartupListener.logError(msgErrore,e);
+			throw new UtilsRuntimeException(msgErrore,e);
+		}
+		
+		
 		// Inizializzo Controlli connessioni
 		try {
 			Logger logR = LoggerManager.getPddMonitorCoreLogger()!=null ? LoggerManager.getPddMonitorCoreLogger() : AbstractConsoleStartupListener.log;

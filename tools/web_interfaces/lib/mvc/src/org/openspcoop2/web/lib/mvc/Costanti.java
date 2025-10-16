@@ -332,7 +332,8 @@ public class Costanti {
 	public static final String INPUT_TEXT_DEFAULT_CSS_CLASS = "spanNoEdit";
 	public static final String INPUT_TEXT_BOLD_CSS_CLASS = "spanNoEdit-bold";
 	public static final String INPUT_TEXT_BOLD_RED_CSS_CLASS = "spanNoEdit-bold-red";
-	public static final String INPUT_TEXT_DEFAULT_CSS_CLASS_FONT_SIZE_16 = "spanNoEdit16";	
+	public static final String INPUT_TEXT_DEFAULT_CSS_CLASS_FONT_SIZE_16 = "spanNoEdit16";
+	public static final String INPUT_BUTTON_DEFAULT_CSS_CLASS = "deButton";
 	
 	public static final String LABEL_TITOLO_SEZIONE_DEFAULT = "Filtri di Ricerca";
 	

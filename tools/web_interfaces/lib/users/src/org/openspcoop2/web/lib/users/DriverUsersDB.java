@@ -342,6 +342,21 @@ public class DriverUsersDB {
 		}
 	}
 	
+	// fix oracle
+	private static final String DB_PASSWORD_EMPTY_VALUE = " ";
+	private static final String convertToDbValue(String v) {
+		if("".equals(v)) {
+			return DB_PASSWORD_EMPTY_VALUE;
+		}
+		return v;
+	}
+	private static final String convertFromDbValue(String v) {
+		if(DB_PASSWORD_EMPTY_VALUE.equals(v)) {
+			return "";
+		}
+		return v;
+	}
+	
 	public User getUser(Connection conParam, String login) throws DriverUsersDBException {
 		if (login == null)
 			throw new DriverUsersDBException("[getUser] Parametri Non Validi");
@@ -364,7 +379,7 @@ public class DriverUsersDB {
 				user = new User();
 				user.setId(Long.valueOf(rs.getInt("id")));
 				user.setLogin(login);
-				user.setPassword(rs.getString("password"));
+				user.setPassword(convertFromDbValue(rs.getString("password")));
 				user.setLastUpdatePassword(rs.getTimestamp("data_password"));
 				user.setCheckLastUpdatePassword(rs.getInt("check_data_password") == CostantiDB.TRUE);
 				
@@ -470,7 +485,7 @@ public class DriverUsersDB {
 			rs = stm.executeQuery();
 			while (rs.next()) {
 				UserPassword userPassword = new UserPassword();
-				userPassword.setPassword(rs.getString("password"));
+				userPassword.setPassword(convertFromDbValue(rs.getString("password")));
 				userPassword.setDatePassword(rs.getTimestamp("data_password"));
 				user.getPrecedentiPassword().add(userPassword);
 			}
@@ -925,7 +940,7 @@ public class DriverUsersDB {
 			stm = connectionDB.prepareStatement(sqlQuery);
 			int index = 1;
 			stm.setString(index++, login);
-			stm.setString(index++, user.getPassword());
+			stm.setString(index++, convertToDbValue(user.getPassword()));
 			Timestamp dataPassword = DateManager.getTimestamp();
 			if(user.getLastUpdatePassword()!=null) {
 				dataPassword = new Timestamp(user.getLastUpdatePassword().getTime());
@@ -1021,7 +1036,7 @@ public class DriverUsersDB {
 			sqlQuery = sqlQueryObject.createSQLUpdate();
 			stm = connectionDB.prepareStatement(sqlQuery);
 			int index = 1;
-			stm.setString(index++, user.getPassword());
+			stm.setString(index++, convertToDbValue(user.getPassword()));
 			if(user.getLastUpdatePassword()!=null) {
 				stm.setTimestamp(index++, new Timestamp(user.getLastUpdatePassword().getTime()));
 			}
@@ -1155,7 +1170,7 @@ public class DriverUsersDB {
 					stm = connectionDB.prepareStatement(sqlQuery);
 					int index = 1;
 					stm.setLong(index++, idUser);
-					stm.setString(index++, userPassword.getPassword());
+					stm.setString(index++, convertToDbValue(userPassword.getPassword()));
 					stm.setTimestamp(index++, new Timestamp(userPassword.getDatePassword().getTime()));
 					stm.executeUpdate();
 					stm.close();
@@ -2238,7 +2253,7 @@ public class DriverUsersDB {
 			String sqlQuery = sqlQueryObject.createSQLUpdate();
 			stm = connectionDB.prepareStatement(sqlQuery);
 			int index = 1;
-			stm.setString(index++, password);
+			stm.setString(index++, convertToDbValue(password));
 			if(dataAggiornamentoPassword!=null) {
 				stm.setTimestamp(index++, new Timestamp(dataAggiornamentoPassword.getTime()));
 			}
@@ -2283,7 +2298,7 @@ public class DriverUsersDB {
 							stm = connectionDB.prepareStatement(sqlQuery);
 							index = 1;
 							stm.setLong(index++, idUser);
-							stm.setString(index++, userPassword.getPassword());
+							stm.setString(index++, convertToDbValue(userPassword.getPassword()));
 							stm.setTimestamp(index++, new Timestamp(userPassword.getDatePassword().getTime()));
 							stm.executeUpdate();
 							stm.close();

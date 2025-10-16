@@ -43,6 +43,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
+import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.status.SondaPddStatus;
@@ -837,9 +838,19 @@ public class PddMonitorProperties {
 	public boolean isLoginApplication() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("login.application", true, true));
 	}
-
+	
 	public Properties getLoginProperties() throws UtilsException{
 		return this.appProperties.readProperties("login.props.");
+	}
+	
+	public boolean isLoginOAuth2Enabled() throws UtilsException{
+		String tipoLogin = this.appProperties.getProperty("login.tipo", false, true);
+		
+		if (tipoLogin != null) {
+			return tipoLogin.equals(PrincipalReaderType.OAUTH2.getValue());
+		}
+		
+		return false;
 	}
 	
 	public String getLoginRetryDelays() throws UtilsException{
@@ -900,44 +911,26 @@ public class PddMonitorProperties {
 	}
 
 	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.appProperties.getProperty("login.utenteNonAutorizzato.redirectUrl", true, true);
 	}
 
 	public String getLoginUtenteNonValidoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.appProperties.getProperty("login.utenteNonValido.redirectUrl", true, true);
 	}
 	
 	public String getLoginErroreInternoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.appProperties.getProperty("login.erroreInterno.redirectUrl", true, true);
 	}
 
 	public String getLoginSessioneScadutaRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.appProperties.getProperty("login.sessioneScaduta.redirectUrl", true, true);
 	}
 
 	public boolean isMostraButtonLogout() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return true;
-		}
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("logout.mostraButton.enabled", true, true));
 	}
 
 	public String getLogoutUrlDestinazione() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.appProperties.getProperty("logout.urlDestinazione", true, true);
 	}
 	

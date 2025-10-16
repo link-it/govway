@@ -90,7 +90,6 @@ public final class UtentiAdd extends Action {
 	
 			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PW);
-			String confpwsu = null; 
 			String tipoGui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 			
 			String tipoModalitaConsoleGestione = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTE_TIPO_MODALITA);
@@ -217,7 +216,7 @@ public final class UtentiAdd extends Action {
 				}
 				
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
-						nomesu,pwsu,confpwsu,interfaceType,
+						nomesu,pwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false,
 						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
@@ -247,7 +246,7 @@ public final class UtentiAdd extends Action {
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 	
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
-						nomesu,pwsu,confpwsu,interfaceType,
+						nomesu,pwsu,interfaceType,
 						isServizi,isDiagnostica,isReportistica,isSistema,isMessaggi,isUtenti,isAuditing,isAccordiCooperazione,
 						null,modalitaScelte, isSoggettiAll, isServiziAll, null, scadenza, null, false,
 						tipoModalitaConsoleGestione, idSoggettoConsoleGestione, tipoModalitaConsoleMonitoraggio, idSoggettoConsoleMonitoraggio,
@@ -264,6 +263,8 @@ public final class UtentiAdd extends Action {
 			String secretPassword  = pwsu;
 			String secretUser = nomesu;
 			boolean secretAppId = false;
+			
+			boolean noLoginApplication = UtentiCostanti.VALORE_PARAMETRO_PW_MODALITA_NO_LOGIN_APPLICATION.equals(pwsu);
 			
 			// Cripto la password
 			if(utentiCore.isUtenzePasswordEncryptEnabled()) {
@@ -372,7 +373,7 @@ public final class UtentiAdd extends Action {
 			utentiCore.performCreateOperation(userLogin, utentiHelper.smista(), newU);
 	
 			// Messaggio 'Please Copy'
-			if(loginApplication && secret) {
+			if(loginApplication && secret && !noLoginApplication) {
 				utentiHelper.setSecretPleaseCopy(secretPassword, secretUser, secretAppId, ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC, OggettoDialogEnum.UTENTE, nomesu);
 			}
 			

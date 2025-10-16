@@ -19,12 +19,10 @@
  */
 package org.openspcoop2.web.monitor.core.core;
 
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.el.ELContext;
@@ -49,6 +47,7 @@ import org.slf4j.Logger;
  */
 public class Utils {
 
+	private Utils() { /* static only*/ }
 
 	private static Logger log = LoggerWrapperFactory.getLogger(Utils.class);
 
@@ -66,7 +65,7 @@ public class Utils {
 	public static String getMessageFromResourceBundle(
 			String bundleName, 
 			String key, 
-			Object params[], 
+			Object []params, 
 			Locale locale){
 
 		String text = null;
@@ -92,7 +91,6 @@ public class Utils {
 	public static String getMessageFromJSFBundle(String bundleName,String key) {
 		ResourceBundle rb = ResourceBundle.getBundle(bundleName);
 		return rb.getString(key);
-		//return (String)resolveExpression("#{"+bundleName+"['" + key + "']}");
 	}
 
 	// from JSFUtils in Oracle ADF 11g Storefront Demo
@@ -129,34 +127,6 @@ public class Utils {
 	 }
 
 	/**
-	 * Legge le proprieta' dal fileProperties passato come parametro
-	 * 
-	 * @param fileProperties Il path del file properties
-	 * @return Properties lette dal file
-	 * @throws Exception
-	 */
-	public static Properties readProperties(String fileProperties) throws Exception {
-		Properties prop = new Properties();
-		InputStream inProp = Utils.class.getResourceAsStream(fileProperties);
-
-		try {
-			prop.load(inProp);
-
-			return new Properties(prop);
-
-		} catch (Exception e) {
-
-			throw new Exception("Impossibile leggere il file di proprieta [" + fileProperties + "]", e);
-
-		} finally {
-			try {
-				inProp.close();
-			} catch (Exception e) {
-			}
-		}
-	}
-
-	/**
 	 * Controlla che la pagina richiesta sia tra quelle che non necessitano di filtro sui contenuti,
 	 * sono "libere" le pagine di login e timeout, e i path delle risorse richiesta dinamicamente dal framework 
 	 *	
@@ -171,7 +141,7 @@ public class Utils {
 			return false;
 
 		boolean controlRequired = true;
-		if(excludedPaths.size() > 0){
+		if(!excludedPaths.isEmpty()){
 			for (String page : excludedPaths) {
 				if(StringUtils.contains(requestPath, (contextPath + page))){
 					controlRequired = false;

@@ -27,6 +27,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserObjects;
@@ -40,10 +41,10 @@ import org.openspcoop2.web.lib.users.dao.UserObjects;
  */
 public class UtentiCore extends ControlStationCore {
 
-	public UtentiCore() throws Exception {
+	public UtentiCore() throws DriverControlStationException {
 		super();
 	}
-	public UtentiCore(ControlStationCore core) throws Exception {
+	public UtentiCore(ControlStationCore core) {
 		super(core);
 	}
 	

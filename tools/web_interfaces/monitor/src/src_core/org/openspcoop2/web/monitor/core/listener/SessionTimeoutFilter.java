@@ -52,14 +52,12 @@ public class SessionTimeoutFilter implements Filter {
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-
+		// donothing
 	}
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
-
+		// donothing 
 	}
 
 	@Override
@@ -71,18 +69,13 @@ public class SessionTimeoutFilter implements Filter {
 			HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
 			// is session expire control required for this request?
-			if (isSessionControlRequiredForThisResource(httpServletRequest)) {
-
-				// is session invalid?
-				if (SessionUtils.isSessionInvalid(httpServletRequest)) {					
-					String redirPageUrl = httpServletRequest.getContextPath() + "/";
-					//se la pagina richiesta e' quella di login allora redirigo direttamente a quella, altrimenti a quella di timeout
-					//redirPageUrl += StringUtils.contains(httpServletRequest.getRequestURI(), getLoginPage()) ? getLoginPage() : getTimeoutPage();
-					redirPageUrl += getRedirPage(httpServletRequest);
-					SessionTimeoutFilter.log.info("session is invalid! redirecting to page : " + redirPageUrl);
-					httpServletResponse.sendRedirect(redirPageUrl);
-					return;
-				}
+			if (isSessionControlRequiredForThisResource(httpServletRequest) && SessionUtils.isSessionInvalid(httpServletRequest)) {					
+				String redirPageUrl = httpServletRequest.getContextPath() + "/";
+				//se la pagina richiesta e' quella di login allora redirigo direttamente a quella, altrimenti a quella di timeout
+				redirPageUrl += getRedirPage(httpServletRequest);
+				SessionTimeoutFilter.log.info("session is invalid! redirecting to page : {}", redirPageUrl);
+				httpServletResponse.sendRedirect(redirPageUrl);
+				return;
 			}
 		}
 		filterChain.doFilter(request, response);

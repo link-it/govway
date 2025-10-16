@@ -4,4 +4,12 @@
 		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
+	<servlet>
+		<servlet-name>oauth2CallbackServlet</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.core.servlet.OAuth2CallbackServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>oauth2UserServlet</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.core.servlet.OAuth2UserServlet</servlet-class>
+	</servlet>
 	

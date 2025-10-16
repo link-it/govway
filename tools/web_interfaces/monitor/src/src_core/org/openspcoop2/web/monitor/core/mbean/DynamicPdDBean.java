@@ -607,7 +607,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 					listaSoggettiTmp = _getSoggetti(true, false, false, (String)val);
 			}
 			else {
-				ConfigurazioneSoggettiVisualizzatiSearchForm config = Utility.getMultitenantAbilitato_soggettiConfig(this.search!=null ? this.search.getTipologiaRicercaEnum() : null);
+				ConfigurazioneSoggettiVisualizzatiSearchForm config = Utility.getMultitenantAbilitatoSoggettiConfig(this.search!=null ? this.search.getTipologiaRicercaEnum() : null);
 				listaSoggettiTmp = this._getSoggetti(config.isIncludiSoloOperativi(), config.isIncludiSoloEsterni(), config.isEscludiSoggettoSelezionato(), (String)val);
 			}
 		}
@@ -636,7 +636,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 			return _getSoggetti(true, isSupportataAutenticazioneApplicativiEsterni, false, null);
 		}
 		
-		ConfigurazioneSoggettiVisualizzatiSearchForm config = Utility.getMultitenantAbilitato_soggettiConfig(this.search!=null ? this.search.getTipologiaRicercaEnum() : null);
+		ConfigurazioneSoggettiVisualizzatiSearchForm config = Utility.getMultitenantAbilitatoSoggettiConfig(this.search!=null ? this.search.getTipologiaRicercaEnum() : null);
 		return _getSoggetti(config.isIncludiSoloOperativi(), config.isIncludiSoloEsterni(), config.isEscludiSoggettoSelezionato(),null);
 	}
 

@@ -30,6 +30,7 @@ import java.util.Map;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,6 +51,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
 import org.openspcoop2.utils.resources.MapReader;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.LoginBean;
@@ -69,6 +71,8 @@ import org.slf4j.Logger;
  *
  */
 public class Utility {
+	
+	private Utility () { /* static only*/}
 
 	private static final String REPORTISTICA_DIAGNOSTICI_FREQ_INVIO = "reportistica.diagnostici.freq_invio.";
 	private static final String REPORTISTICA_DIAGNOSTICI_INTERVALLO_INTERESSE = "reportistica.diagnostici.intervallo_interesse.";
@@ -94,38 +98,17 @@ public class Utility {
 		FacesContext fc = FacesContext.getCurrentInstance();
 		if(fc!= null){
 			ExternalContext ec = fc.getExternalContext();
-			LoginBean lb = (LoginBean)ec.getSessionMap().get(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
-
-			return lb;
+			return (LoginBean) ec.getSessionMap().get(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 		}
-//		return null;
 		return Utility.loginBean;
 	}
 
 	public static LoginBean getLoginBeanFromSession(HttpSession sessione) {
 		if(sessione!= null){
-			LoginBean lb = (LoginBean)sessione.getAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
-			return lb;
+			return (LoginBean) sessione.getAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 		}
 		return null;
 	}
-
-	// public static String getSoggettoInGestione(){
-	// if(getLoginBean()==null){
-	// setLoginMBean((LoginBean)Utils.resolveExpression("#{loginBean}"));
-	// }
-	//
-	// if(getLoginBean()==null){
-	// return null;
-	// }
-	//
-	// if(!Utility.getLoggedUser().isAdmin()){
-	// return Utility.getLoggedUser().getSoggetto().getNome();
-	// }else{
-	// return Utility.loginBean.getSoggettoInGestione();
-	// }
-	// }
-
 
 	private static synchronized void initFrequenzaInvioDiagnostici() {
 		if (Utility.frequenzaInvioDiagnostici == null) {
@@ -133,7 +116,7 @@ public class Utility {
 					.loadAndOrderProps(Utility.REPORTISTICA_DIAGNOSTICI_FREQ_INVIO);
 		}
 	}
-	public static ArrayList<String> getFrequenzaInvioDiagnostici() {
+	public static List<String> getFrequenzaInvioDiagnostici() {
 		if (Utility.frequenzaInvioDiagnostici == null) {
 			initFrequenzaInvioDiagnostici();
 		}
@@ -146,7 +129,7 @@ public class Utility {
 					.loadAndOrderProps(Utility.REPORTISTICA_TRACCE_FREQ_INVIO);
 		}
 	}
-	public static ArrayList<String> getFrequenzaInvioTracce() {
+	public static List<String> getFrequenzaInvioTracce() {
 		if (Utility.frequenzaInvioTracce == null) {
 			initFrequenzaInvioTracce();
 		}
@@ -159,7 +142,7 @@ public class Utility {
 					.loadAndOrderProps(Utility.REPORTISTICA_DIAGNOSTICI_INTERVALLO_INTERESSE);
 		}
 	}
-	public static ArrayList<String> getIntervalloInteresseDiagnostici() {
+	public static List<String> getIntervalloInteresseDiagnostici() {
 		if (Utility.intervalloInteresseDiagnostici == null) {
 			initIntervalloInteresseDiagnostici();
 		}
@@ -172,7 +155,7 @@ public class Utility {
 					.loadAndOrderProps(Utility.REPORTISTICA_TRACCE_INTERVALLO_INTERESSE);
 		}
 	}
-	public static ArrayList<String> getIntervalloInteresseTracce() {
+	public static List<String> getIntervalloInteresseTracce() {
 		if (Utility.intervalloInteresseTracce == null) {
 			initIntervalloInteresseTracce();
 		}
@@ -185,7 +168,7 @@ public class Utility {
 					.loadAndOrderProps(Utility.STATUS_INTERVALLO_STORICO);
 		}
 	}
-	public static ArrayList<String> getStatoSistemaStorico() {
+	public static List<String> getStatoSistemaStorico() {
 		if (Utility.statoSistemaStorico == null) {
 			initStatoSistemaStorico();
 		}
@@ -222,9 +205,7 @@ public class Utility {
 
 			return ordered;
 		} catch (Exception e) {
-			Utility.log
-			.info("Errore durante il caricamento frequenza invio diagnostici, "
-					+ e.getMessage());
+			Utility.log.info("Errore durante il caricamento frequenza invio diagnostici, {}", e.getMessage());
 			Utility.log.debug(e.getMessage(), e);
 			return null;
 		}
@@ -575,7 +556,7 @@ public class Utility {
 		return false;
 	}
 	
-	public static PortaDelegataSoggettiErogatori getMultitenantAbilitato_fruizione_sceltaSoggettiErogatori() {
+	public static PortaDelegataSoggettiErogatori getMultitenantAbilitatoFruizioneSceltaSoggettiErogatori() {
 		
 		Configurazione configurazioneGenerale = null;
 		
@@ -603,7 +584,7 @@ public class Utility {
 		return null;
 	}
 	
-	public static PortaApplicativaSoggettiFruitori getMultitenantAbilitato_erogazione_sceltaSoggettiFruitori() {
+	public static PortaApplicativaSoggettiFruitori getMultitenantAbilitatoErogazioneSceltaSoggettiFruitori() {
 
 		Configurazione configurazioneGenerale = null;
 		
@@ -631,7 +612,7 @@ public class Utility {
 		return null;
 	}
 	
-	public static ConfigurazioneSoggettiVisualizzatiSearchForm getMultitenantAbilitato_soggettiConfig(TipologiaRicerca ricercaParam) {
+	public static ConfigurazioneSoggettiVisualizzatiSearchForm getMultitenantAbilitatoSoggettiConfig(TipologiaRicerca ricercaParam) {
 		boolean multiTenant = Utility.isMultitenantAbilitato();
 		boolean includiSoloOperativi = false;
 		boolean includiSoloEsterni = false;
@@ -645,7 +626,7 @@ public class Utility {
 			break;
 		case uscita:
 			if(multiTenant) {
-				PortaDelegataSoggettiErogatori scelta = Utility.getMultitenantAbilitato_fruizione_sceltaSoggettiErogatori();
+				PortaDelegataSoggettiErogatori scelta = Utility.getMultitenantAbilitatoFruizioneSceltaSoggettiErogatori();
 				if(scelta==null) {
 					scelta = PortaDelegataSoggettiErogatori.SOGGETTI_ESTERNI;
 				}
@@ -666,7 +647,7 @@ public class Utility {
 			break;
 		case ingresso:
 			if(multiTenant) {
-				PortaApplicativaSoggettiFruitori scelta = Utility.getMultitenantAbilitato_erogazione_sceltaSoggettiFruitori();
+				PortaApplicativaSoggettiFruitori scelta = Utility.getMultitenantAbilitatoErogazioneSceltaSoggettiFruitori();
 				if(scelta==null) {
 					scelta = PortaApplicativaSoggettiFruitori.SOGGETTI_ESTERNI;
 				}
@@ -702,23 +683,6 @@ public class Utility {
 		// il valore e' in byte
 		len = bytes.doubleValue();
 		long d = Math.round(len / 1024);
-		//Originale e funzionante :)
-		//		if (d <= 1) {
-		//			// byte
-		//			Object[] objs = { len };
-		//			res = mf.format(objs);
-		//			res += " B";
-		//		} else if (d > 1 && d < 1000) {
-		//			// kilo byte
-		//			Object[] objs = { len / 1024 };
-		//			res = mf.format(objs);
-		//			res += " KB";
-		//		} else {
-		//			// mega byte
-		//			Object[] objs = { len / 1048576 };
-		//			res = mf.format(objs);
-		//			res += " MB";
-		//		}
 
 		if (d <= 1) {
 			// byte
@@ -746,11 +710,8 @@ public class Utility {
 	}
 
 	public static String numberConverter(Number bytes) {
-		//MessageFormat mf = new MessageFormat("{0,number,#,###,###,##0}");
 		NumberFormat nf = NumberFormat.getInstance(ApplicationBean.getInstance().getLocale());
-		//		Double len = bytes.doubleValue();
 		String res = "";
-		//		Object[] objs = { len };
 		res = nf.format(bytes.longValue());
 
 		return res;
@@ -851,9 +812,9 @@ public class Utility {
 	}
 
 	public static List<String> getListaProtocolli(User utente, List<Soggetto> listaSoggettiGestione, ProtocolFactoryManager pfManager,	MapReader<String, IProtocolFactory<?>> protocolFactories) throws ProtocolException {
-		List<String> listaNomiProtocolli = new  ArrayList<String>();
+		List<String> listaNomiProtocolli = new  ArrayList<>();
 
-		if(listaSoggettiGestione != null && listaSoggettiGestione.size() > 0){
+		if(listaSoggettiGestione != null && !listaSoggettiGestione.isEmpty()){
 			List<String> tipiSoggetti = new ArrayList<>();
 			for (Soggetto soggetto : listaSoggettiGestione) {
 				String tipoSoggetto = soggetto.getTipoSoggetto();
@@ -879,7 +840,7 @@ public class Utility {
 				// Tutti i protocolli
 				Enumeration<String> keys = protocolFactories.keys();
 				while (keys.hasMoreElements()) {
-					String protocolKey = (String) keys.nextElement();
+					String protocolKey = keys.nextElement();
 					if(!listaNomiProtocolli.contains(protocolKey))
 						listaNomiProtocolli.add(protocolKey);
 				}
@@ -888,8 +849,8 @@ public class Utility {
 
 		return ProtocolUtils.orderProtocolli(listaNomiProtocolli);
 	}
-	public static List<Soggetto> getSoggettiOperativiAssociatiAlProfilo(UserDetailsBean u, String profiloSelezionato) throws Exception {
-		List<Soggetto> soggetti = new ArrayList<Soggetto>();
+	public static List<Soggetto> getSoggettiOperativiAssociatiAlProfilo(UserDetailsBean u, String profiloSelezionato) {
+		List<Soggetto> soggetti = new ArrayList<>();
 		
 		if(u.getUtenteSoggettoProtocolliMap().containsKey(profiloSelezionato)) {
 			for (IDSoggetto idSog : u.getUtenteSoggettoProtocolliMap().get(profiloSelezionato)) {
@@ -904,16 +865,15 @@ public class Utility {
 		return soggetti;
 	}
 	
-	public static boolean isTipoSoggettoCompatibileConProtocollo(String tipoSoggetto, String tipoProtocollo)  throws Exception{
+	public static boolean isTipoSoggettoCompatibileConProtocollo(String tipoSoggetto, String tipoProtocollo) throws ProtocolException {
 		return DynamicPdDBeanUtils.getInstance(log).isTipoSoggettoCompatibileConProtocollo(tipoSoggetto, tipoProtocollo);
 	}
 	
 	public static List<Soggetto> getSoggettiGestione(User u, String tipoNomeSoggettoLocale) {
-		List<Soggetto> soggetti = new ArrayList<Soggetto>();
+		List<Soggetto> soggetti = new ArrayList<>();
 		// se il soggetto locale e' specificato allora ritorno solo quello
 		if (StringUtils.isNotEmpty(tipoNomeSoggettoLocale)) {
 
-			// nomi.add(this.soggettoLocale);
 			String tipo = Utility
 					.parseTipoSoggetto(tipoNomeSoggettoLocale);
 			String nome = Utility
@@ -923,7 +883,6 @@ public class Utility {
 				if (idSog.getTipo().equals(tipo)
 						&& idSog.getNome().equals(nome)) {
 					IdSoggetto idsog2 = new IdSoggetto();
-					//					idsog2.setId(idSog.getId());
 					idsog2.setNome(idSog.getNome());
 					idsog2.setTipo(idSog.getTipo());
 					Soggetto soggetto = Utility.getSoggetto(idsog2);
@@ -938,9 +897,8 @@ public class Utility {
 			for (IDSoggetto idSog : u.getSoggetti()) {
 
 				String tipoNome = idSog.getTipo()+"/"+idSog.getNome();
-				if(checkUnique.contains(tipoNome)==false){
+				if(!checkUnique.contains(tipoNome)){
 					IdSoggetto idsog2 = new IdSoggetto();
-					//					idsog2.setId(idSog.getId());
 					idsog2.setNome(idSog.getNome());
 					idsog2.setTipo(idSog.getTipo());
 
@@ -955,23 +913,23 @@ public class Utility {
 		}
 	}
 	
-	public static List<String> getProtocolli(User utente) throws Exception {
+	public static List<String> getProtocolli(User utente) throws ProtocolException {
 		return getProtocolli(utente, false);
 	}
 
-	public static List<String> getProtocolli(User utente, boolean ignoreProtocolloSelezionato) throws Exception {
+	public static List<String> getProtocolli(User utente, boolean ignoreProtocolloSelezionato) throws ProtocolException {
 		ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
 		MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
 		return getProtocolli(utente, pfManager, protocolFactories, ignoreProtocolloSelezionato);
 	}
-	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories) throws Exception {
+	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories) throws ProtocolException {
 		return getProtocolli(utente, pfManager, protocolFactories, false);
 	}
-	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories, boolean ignoreProtocolloSelezionato) throws  Exception {
+	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories, boolean ignoreProtocolloSelezionato) throws  ProtocolException {
 		return getProtocolli(utente, pfManager, protocolFactories, ignoreProtocolloSelezionato, false);
 	}
 	public static List<String> getProtocolli(User utente, ProtocolFactoryManager pfManager, MapReader<String, IProtocolFactory<?>> protocolFactories, boolean ignoreProtocolloSelezionato, 
-			boolean consideraProtocolliCompatibiliSoggettoSelezionato) throws Exception {
+			boolean consideraProtocolliCompatibiliSoggettoSelezionato) throws ProtocolException {
 		List<String> protocolliList = new ArrayList<>();
 
 		if(!ignoreProtocolloSelezionato) {
@@ -989,7 +947,7 @@ public class Utility {
 
 		List<String> listProtocolli = null;
 		
-		if(utente.getProtocolliSupportati()!=null && utente.getProtocolliSupportati().size()>0) {
+		if(utente.getProtocolliSupportati()!=null && !utente.getProtocolliSupportati().isEmpty()) {
 			listProtocolli = ProtocolUtils.orderProtocolli(utente.getProtocolliSupportati());
 		}
 		else {
@@ -1089,6 +1047,40 @@ public class Utility {
 
 		if(lb!= null && lb.isLoggedIn()){
 			return lb.isAmministratore();
+		}
+		
+		return false;
+	}
+	
+	public static String buildInternalRedirectUrl(HttpServletRequest request, String destination) {
+	    return ServletUtils.buildInternalRedirectUrl(request, destination);
+	}
+	
+	public static boolean isUtenteLoggatoOAuth2() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			return lb.isUtenteLoggatoOAuth2();
+		}
+		
+		return false;
+	}
+	
+//	public static boolean isMultiLoginEnabled() {
+//		LoginBean lb = getLoginBean();
+//
+//		if(lb!= null && lb.isLoggedIn()){
+//			return lb.isMultiLoginEnabled();
+//		}
+//		
+//		return false;
+//	}
+	
+	public static boolean isPasswordUtenteObbligatoria() {
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			 return lb.isApplicationLogin() && !lb.isMultiLoginEnabled();
 		}
 		
 		return false;

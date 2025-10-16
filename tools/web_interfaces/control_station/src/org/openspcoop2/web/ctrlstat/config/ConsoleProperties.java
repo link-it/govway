@@ -47,6 +47,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.ZipUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.openspcoop2.utils.transport.http.credential.PrincipalReaderType;
 import org.slf4j.Logger;
 
 
@@ -1004,7 +1005,7 @@ public class ConsoleProperties {
 		}
 	}
 	
-	public String getJmxPdDDescrizione(String alias) throws UtilsException {
+	public String getJmxPdDDescrizione(String alias) {
 		ConfigurazioneNodiRuntime config = getConfigurazioneNodiRuntime();
 		if(config!=null) {
 			return config.getDescrizione(alias);
@@ -2104,7 +2105,7 @@ public class ConsoleProperties {
 	
 	// properties per la gestione del login
 	public String getLoginTipo() throws UtilsException{
-		return this.readProperty(true,"login.tipo");
+		return this.readProperty(false,"login.tipo");
 	}
 
 	public boolean isLoginApplication() throws UtilsException{
@@ -2116,45 +2117,37 @@ public class ConsoleProperties {
 	}
 	
 	public String getLoginUtenteNonAutorizzatoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.readProperty(true,"login.utenteNonAutorizzato.redirectUrl");
 	}
 
 	public String getLoginUtenteNonValidoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.readProperty(true,"login.utenteNonValido.redirectUrl");
 	}
 	
 	public String getLoginErroreInternoRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.readProperty(true,"login.erroreInterno.redirectUrl");
 	}
 
 	public String getLoginSessioneScadutaRedirectUrl() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.readProperty(true,"login.sessioneScaduta.redirectUrl");
 	}
 
 	public boolean isMostraButtonLogout() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return true;
-		}
 		return this.readBooleanRequiredProperty("logout.mostraButton.enabled");
 	}
 
 	public String getLogoutUrlDestinazione() throws UtilsException{
-		if(this.isLoginApplication()) {
-			return "";
-		}
 		return this.readProperty(true,"logout.urlDestinazione");
+	}
+	
+	public boolean isLoginOAuth2Enabled() throws UtilsException{
+		String tipoLogin = this.readProperty(false,"login.tipo");
+		
+		if (tipoLogin != null) {
+			return tipoLogin.equals(PrincipalReaderType.OAUTH2.getValue());
+		}
+		
+		return false;
 	}
 	
 	public String getLoginRetryDelays() throws UtilsException{

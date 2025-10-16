@@ -42,7 +42,7 @@ do_login() {
 		-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
 		-H 'Referer: '"${BASEURL}"'/public/login.jsf' \
 		-H "Cookie: ${cookie}" \
-		-d "javax.faces.ViewState=j_id1&j_id42=j_id42&AJAXREQUEST=_viewRoot&username=${username}&password=${password}&submitBtn=submitBtn&_csrf=${csrf}" \
+		-d "javax.faces.ViewState=j_id1&j_id42=j_id42&AJAXREQUEST=_viewRoot&username=${username}&password=${password}&loginBtn=loginBtn&_csrf=${csrf}" \
 		"${BASEURL}/public/login.jsf" > "$output_file" 2>&1
 	
 	cat "$output_file"
@@ -179,7 +179,7 @@ curl -s -X POST \
 	-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
 	-H 'Referer: '"${BASEURL}"'/public/login.jsf' \
 	-H "Cookie: ${COOKIE1}" \
-	-d "javax.faces.ViewState=j_id1&j_id42=j_id42&AJAXREQUEST=_viewRoot&username=${USERNAME}&password=${PASSWORD}&submitBtn=submitBtn&_csrf=${CSRF1}" \
+	-d "javax.faces.ViewState=j_id1&j_id42=j_id42&AJAXREQUEST=_viewRoot&username=${USERNAME}&password=${PASSWORD}&loginBtn=loginBtn&_csrf=${CSRF1}" \
 	"${BASEURL}/public/login.jsf" -D - > "$OUTPUT_FILE" 2>&1
 
 COOKIE2=$(grep -i "Set-Cookie" "$OUTPUT_FILE" | grep -oP 'JSESSIONID[^;]+' | head -1)
@@ -217,7 +217,7 @@ curl -s -X POST \
 	-H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
 	-H 'Referer: '"${BASEURL}"'/public/login.jsf' \
 	-H "Cookie: ${COOKIE_NEW}" \
-	-d "javax.faces.ViewState=j_id1&j_id42=j_id42&AJAXREQUEST=_viewRoot&username=${USERNAME}&password=${PASSWORD}&submitBtn=submitBtn&_csrf=${CSRF_NEW}" \
+	-d "javax.faces.ViewState=j_id1&j_id42=j_id42&AJAXREQUEST=_viewRoot&username=${USERNAME}&password=${PASSWORD}&loginBtn=loginBtn&_csrf=${CSRF_NEW}" \
 	"${BASEURL}/public/login.jsf" -D - > "$OUTPUT_FILE" 2>&1
 
 COOKIE3=$(grep -i "Set-Cookie" "$OUTPUT_FILE" | grep -oP 'JSESSIONID[^;]+' | head -1)

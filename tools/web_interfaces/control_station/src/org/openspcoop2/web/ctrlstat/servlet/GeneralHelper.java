@@ -53,6 +53,7 @@ import org.openspcoop2.web.lib.mvc.GeneralLink;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.mvc.DataElement.STATO_APERTURA_SEZIONI;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.slf4j.Logger;
@@ -142,7 +143,7 @@ public class GeneralHelper {
 		gd.setUrl(baseUrl);
 		gd.setCss(css);
 		if (displayLogin || displayLogout) {
-			List<GeneralLink> link = new ArrayList<GeneralLink>();
+			List<GeneralLink> link = new ArrayList<>();
 			if (displayLogin) {
 				// in questo ramo non si dovrebbe mai passare, l'authorizationfilter blocca le chiamate quando l'utente nn e' loggato
 				GeneralLink gl1 = new GeneralLink();
@@ -239,26 +240,78 @@ public class GeneralHelper {
 			pd.setTitleList(titlelist);
 		}
 		List<DataElement> dati = new ArrayList<>();
+		
+		pd.setNascondiButtonRowLogin(true); // elimina la riga con il bottone login
+		
 		// titolo sezione login 
 		DataElement titoloSezione = new DataElement();
 		titoloSezione.setLabel(LoginCostanti.LABEL_LOGIN);
 		titoloSezione.setType(DataElementType.TITLE);
 		titoloSezione.setName("");
-
-		DataElement login = new DataElement();
-		login.setLabel(LoginCostanti.LABEL_USERNAME);
-		login.setType(DataElementType.TEXT_EDIT);
-		login.setName(UtentiCostanti.PARAMETRO_UTENTE_LOGIN);
-		login.setStyleClass(Costanti.INPUT_CSS_CLASS);
-		DataElement pwd = new DataElement();
-		pwd.setLabel(UtentiCostanti.LABEL_PASSWORD);
-		pwd.setType(DataElementType.CRYPT);
-		pwd.setName(UtentiCostanti.PARAMETRO_UTENTE_PW);
-		pwd.setStyleClass(Costanti.INPUT_CSS_CLASS);
-
 		dati.add(titoloSezione);
-		dati.add(login);
-		dati.add(pwd);
+		
+		// login interno abilitato
+		if(this.core.isLoginApplication()) {
+			// se e' abilitato il login multiplo aggiungo il subtitle
+			if(this.core.isMultiLoginEnabled()) {
+				// subtitle sezione login
+				DataElement sottoSezioneLogin = new DataElement();
+				sottoSezioneLogin.setLabel(LoginCostanti.LABEL_SUBTITLE_LOGIN_INTERNO);
+				sottoSezioneLogin.setType(DataElementType.SUBTITLE);
+				sottoSezioneLogin.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.APERTO);
+				sottoSezioneLogin.abilitaModalitaAccordion();
+				dati.add(sottoSezioneLogin);
+			}
+			
+			// username
+			DataElement login = new DataElement();
+			login.setLabel(LoginCostanti.LABEL_USERNAME);
+			login.setType(DataElementType.TEXT_EDIT);
+			login.setName(UtentiCostanti.PARAMETRO_UTENTE_LOGIN);
+			login.setStyleClass(Costanti.INPUT_CSS_CLASS);
+			dati.add(login);
+			
+			// password
+			DataElement pwd = new DataElement();
+			pwd.setLabel(UtentiCostanti.LABEL_PASSWORD);
+			pwd.setType(DataElementType.CRYPT);
+			pwd.setName(UtentiCostanti.PARAMETRO_UTENTE_PW);
+			pwd.setStyleClass(Costanti.INPUT_CSS_CLASS);
+			dati.add(pwd);
+			
+			// button login
+			DataElement buttonLogin = new DataElement();
+			buttonLogin.setType(DataElementType.BUTTON);
+			buttonLogin.setValue(LoginCostanti.LABEL_LOGIN);
+			buttonLogin.setOnClick(LoginCostanti.LOGIN_JS_FUNCTION);
+			dati.add(buttonLogin);
+		}
+		
+		
+		if(this.core.isLoginOAuth2Enabled()) {
+			// se e' abilitato il login multiplo aggiungo il subtitle
+			if(this.core.isMultiLoginEnabled()) {
+				// subtitle sezione oauth2 
+				DataElement sottoSezioneOAuth2 = new DataElement();
+				sottoSezioneOAuth2.setLabel(LoginCostanti.LABEL_SUBTITLE_LOGIN_OAUTH);
+				sottoSezioneOAuth2.setType(DataElementType.SUBTITLE);
+				sottoSezioneOAuth2.setStatoAperturaSezioni(STATO_APERTURA_SEZIONI.CHIUSO);
+				sottoSezioneOAuth2.abilitaModalitaAccordion();
+				dati.add(sottoSezioneOAuth2);
+			}
+						
+			// button oauth2
+			DataElement buttonAuth2 = new DataElement();
+			buttonAuth2.setType(DataElementType.BUTTON);
+			buttonAuth2.setValue(LoginCostanti.LABEL_BUTTON_LOGIN_OAUTH2);
+			StringBuilder oauth2ButtonOnClickFunction = new StringBuilder();
+			oauth2ButtonOnClickFunction.append(Costanti.JS_FUNCTION_GO_TO_PREFIX);
+			oauth2ButtonOnClickFunction.append(this.session.getServletContext().getContextPath() + LoginCostanti.SERVLET_NAME_LOGIN_OAUTH2_LOGIN_START);
+			oauth2ButtonOnClickFunction.append(Costanti.JS_FUNCTION_GO_TO_SUFFIX);
+			buttonAuth2.setOnClick(oauth2ButtonOnClickFunction.toString());
+			dati.add(buttonAuth2);
+		}
+		
 		pd.setDati(dati);
 		return pd;
 	}

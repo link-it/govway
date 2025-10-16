@@ -283,6 +283,17 @@ public class InitListener implements ServletContextListener {
 			}
 			InitListener.logInfo("Inizializzazione resources (properties) govwayConsole effettuata con successo.");
 	
+			// Verifico coerenza tipologie di autenticazione
+			try {
+				if(!consoleProperties.isLoginApplication() && 
+						(consoleProperties.getLoginTipo()==null || org.apache.commons.lang3.StringUtils.isEmpty(consoleProperties.getLoginTipo()))){
+					throw new UtilsException("Con login applicativo disabilitato (login.application=false) deve essere obbligatoriamente definito un tipo di login tramite la proprietà 'login.tipo'");
+				}
+			} catch (Exception e) {
+				String msgErrore = "Configurazione login errata: "+e.getMessage();
+				InitListener.logError(msgErrore,e);
+				throw new UtilsRuntimeException(msgErrore,e);
+			}
 			
 			// Inizializzo Controlli connessioni
 			try {

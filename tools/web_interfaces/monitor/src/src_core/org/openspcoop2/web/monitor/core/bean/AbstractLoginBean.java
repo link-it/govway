@@ -34,6 +34,7 @@ import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.web.lib.mvc.login.LoginException;
 import org.openspcoop2.web.lib.users.dao.User;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.dao.ILoginDAO;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
@@ -71,17 +72,17 @@ public abstract class AbstractLoginBean implements Serializable{
 //	public static final String LOGIN_BEAN_SESSION_ATTRIBUTE_NAME = "scopedTarget.loginBean"; // nome del login bean in sessione quando e' gestito dal roxy aspectj
 	public static final String LOGIN_BEAN_SESSION_ATTRIBUTE_NAME = "loginBean";
 
-	public AbstractLoginBean() {
+	protected AbstractLoginBean() {
 		this(false);
 	}
 
-	public AbstractLoginBean(boolean initDao) {
+	protected AbstractLoginBean(boolean initDao) {
 		this.initDao = initDao;
 
 		init();
 	}
 	
-	public AbstractLoginBean(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log) {
+	protected AbstractLoginBean(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log) {
 		this.initDao = false;
 
 		this.loginDao = new DBLoginDAO(con, autoCommit, serviceManagerProperties, log);
@@ -94,7 +95,7 @@ public abstract class AbstractLoginBean implements Serializable{
 			this.loginDao = new DBLoginDAO();
 		}
 		
-		this.mapSoggetti = new HashMap<String, Soggetto>();
+		this.mapSoggetti = new HashMap<>();
 	}
 
 	public void setLoginDao(ILoginDAO loginDao) {
@@ -113,13 +114,14 @@ public abstract class AbstractLoginBean implements Serializable{
 			session.invalidate();
 			this.loggedIn = false;
 		} catch (Exception e) {
+			//donothing
 		}
-		return "login";
+		return Costanti.OUTCOME_LOGIN;
 	}
 
 	public String login() {
 		if (null == this.username || null == this.pwd) {
-			return "login";
+			return Costanti.OUTCOME_LOGIN;
 		}
 
 		this.loggedIn = false;
@@ -128,7 +130,7 @@ public abstract class AbstractLoginBean implements Serializable{
 				this.utenteLoggato = this.loginDao.loadUserByUsername(this.username);
 				this.dettaglioUtente = this.utenteLoggato.getUtente();
 				this.loggedIn = true;
-				return "loginSuccess";
+				return Costanti.OUTCOME_LOGIN_SUCCESS;
 			} else {
 				MessageUtils.addErrorMsg("Errore: Username o password non validi.");
 			}
@@ -141,7 +143,7 @@ public abstract class AbstractLoginBean implements Serializable{
 			MessageUtils.addErrorMsg("Si e' verificato un errore, impossibile autenticare l'utente: " + e.getMessage());
 		}
 
-		return "login";
+		return Costanti.OUTCOME_LOGIN;
 	}
 
 	public UserDetailsBean getLoggedUser() {
@@ -154,8 +156,6 @@ public abstract class AbstractLoginBean implements Serializable{
 
 	public String getUsername() {
 		return this.username;
-//		UserDetailsBean u = this.getLoggedUser();
-//		return u != null ? u.getUsername() : null;
 	}
 
 	public void setUsername(String username) {
@@ -164,8 +164,6 @@ public abstract class AbstractLoginBean implements Serializable{
 
 	public String getPwd() {
 		return this.pwd;
-//		UserDetailsBean u = this.getLoggedUser();
-//		return u != null ? u.getPassword() : null;
 	}
 
 	public void setPwd(String pwd) {

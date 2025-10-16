@@ -383,4 +383,11 @@ public class ApplicationProperties {
 		BooleanNullable b = this.readBooleanProperty(true, "jdbc.closeConnection.checkAutocommit");
 		return this.parse(b, true);
 	}
+	
+	public boolean isLoginApplication() throws UtilsException{
+		return "true".equalsIgnoreCase(this.getProperty("login.application", true, true));
+	}
+	public String getLoginTipo() throws UtilsException{
+		return this.getProperty("login.tipo", true, true);
+	}
 }
