@@ -32,7 +32,7 @@ L'analisi viene effettuata su tutti i sorgenti descritti nella sezione :ref:`rel
 
 - batch: batch-statistiche, batch-runtime-repository;
 
-- cli: cli-config-loader, cli-govway-vault.
+- cli: cli-config-loader, cli-govway-vault, cli-template-scan.
 
 L'esempio seguente attiva l'analisi dei sorgenti solamente per il profilo di interoperabilità 'ModI':
 
