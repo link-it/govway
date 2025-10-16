@@ -724,6 +724,22 @@ button,
    	text-transform: uppercase;	
 }
 
+.de_buttonrow input[type="button"] {
+	color: ${input.button.color};
+	border: 1px solid ${input.button.border.color};
+	background-color: ${input.button.background.color};
+	background-image: none;
+	font-size: 14px; 
+	font-weight: bold;
+	padding: 11px;
+	border-radius: 5px;
+    margin: 8px 0px 8px 0px;
+    min-width: 100px;
+	cursor:pointer;
+	font-family: 'Roboto';
+   	text-transform: uppercase;	
+}
+
 button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow a:hover{
    	border: 1px solid ${input.button.hover.border.color};
 	background-color: ${input.button.hover.background.color};
@@ -834,6 +850,9 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow
 
 .dsImg {
 	cursor: pointer;
+}
+
+.deButton {
 }
 
 /* Page Footer */

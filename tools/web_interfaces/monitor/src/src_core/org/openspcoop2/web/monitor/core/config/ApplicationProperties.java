@@ -393,4 +393,11 @@ public class ApplicationProperties {
 		}
 		return null;
 	}
+	
+	public boolean isLoginApplication() throws UtilsException{
+		return "true".equalsIgnoreCase(this.getProperty("login.application", true, true));
+	}
+	public String getLoginTipo() throws UtilsException{
+		return this.getProperty("login.tipo", true, true);
+	}
 }

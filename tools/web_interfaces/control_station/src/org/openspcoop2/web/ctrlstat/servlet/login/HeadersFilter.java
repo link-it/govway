@@ -88,7 +88,7 @@ public class HeadersFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
-		GeneralHelper generalHelper = null;
+		
 		try {	
 			// dump della richiesta prima di passarla al tool di validazione
 			dumpRichiesta(request, response);
@@ -109,16 +109,13 @@ public class HeadersFilter implements Filter {
 			try{
 				HttpSession session = request.getSession();
 
-				if(generalHelper==null) {
-					try{
-						generalHelper = new GeneralHelper(session);
-					}catch(Exception eClose){
-						ControlStationCore.logError("Errore rilevato durante l'headersFilter (reInit General Helper)",e);
-					}
+				GeneralHelper generalHelper = null;
+				try{
+					generalHelper = new GeneralHelper(session);
+				}catch(Exception eClose){
+					ControlStationCore.logError("Errore rilevato durante l'headersFilter (reInit General Helper)",e);
 				}
-				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig, HttpStatus.SERVICE_UNAVAILABLE);
-				// return so that we do not chain to other filters
-				return;
+				AuthorizationFilter.setErrorMsg(generalHelper, session, request, response, LoginCostanti.INFO_JSP, LoginCostanti.LABEL_LOGIN_ERRORE, this.filterConfig.getServletContext(), HttpStatus.INTERNAL_SERVER_ERROR);
 			}catch(Exception eClose){
 				ControlStationCore.logError("Errore rilevato durante l'headersFilter (segnalazione errore)",e);
 			}
@@ -139,11 +136,14 @@ public class HeadersFilter implements Filter {
 
 		if(StringUtils.isNoneBlank(this.core.getCspHeaderValue())) {
 			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId));
-			//			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId));
+			/**	response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.core.getCspHeaderValue(), uuId, uuId)); */
 		}
 	}
 
 	private void gestioneXContentTypeOptions(HttpServletRequest request, HttpServletResponse response) {
+		if(request!=null) {
+			// nop
+		}
 		if(StringUtils.isNoneBlank(this.core.getXFrameOptionsHeaderValue())) {
 			response.setHeader(HttpConstants.HEADER_NAME_X_FRAME_OPTIONS, this.core.getXFrameOptionsHeaderValue());
 		}
@@ -157,6 +157,10 @@ public class HeadersFilter implements Filter {
 	
 	private void dumpRichiesta(HttpServletRequest request,	HttpServletResponse response) {
 		
+		if(response!=null) {
+			// nop
+		}
+		
         // Crea la safelist personalizzata
         Safelist customSafelist = InputSanitizerProperties.getInstance().getSafelist();
 		
@@ -168,12 +172,14 @@ public class HeadersFilter implements Filter {
             List<String> parametriCorretti = new ArrayList<>();
 
             // Sanifica ogni valore del parametro
-            for (int i = 0; i < paramValues.length; i++) {
-                parametriCorretti.add(Entities.unescape(Jsoup.parse(Jsoup.clean(paramValues[i], customSafelist)).body().html()));
+            if(paramValues!=null && paramValues.length>0) {
+	            for (int i = 0; i < paramValues.length; i++) {
+	                parametriCorretti.add(Entities.unescape(Jsoup.parse(Jsoup.clean(paramValues[i], customSafelist)).body().html()));
+	            }
             }
            
-            log.debug("AAAAAA [{}] Valori Originali [{}]", paramName, StringUtils.join(paramValues, "|")); 
-            log.debug("AAAAAA [{}] Valori Corretti [{}]", paramName, StringUtils.join(parametriCorretti, "|"));
+            log.debug("Parameter [{}] Valori Originali [{}]", paramName, (paramValues!=null && paramValues.length>0) ? StringUtils.join(paramValues, "|") : null); 
+            log.debug("Parameter [{}] Valori Corretti [{}]", paramName, (!parametriCorretti.isEmpty()) ? StringUtils.join(parametriCorretti, "|") : null);
         }
 
 	}

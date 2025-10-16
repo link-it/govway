@@ -30,6 +30,8 @@ import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
  *
  */
 public class ContentAuthorizationCostanti {
+	
+	private ContentAuthorizationCostanti() { /*static only */}
 
 	// Elenco dei path che sono disponibili sempre
 	public static String [] listaPathConsentiti = {
@@ -51,7 +53,11 @@ public class ContentAuthorizationCostanti {
 		"/webjars/",  
 		
 		// Cambio Password Scaduta Utente
-		"/core/pages/form/userPasswordScaduta.jsf"
+		"/core/pages/form/userPasswordScaduta.jsf",
+		
+		// Servlet callback OAuth2
+		"/oauth2/callback",
+		"/oauth2/user",
 	};
 
 	// Elenco delle pagine che sono disponibili al ruolo amministratore

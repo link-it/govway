@@ -18,3 +18,5 @@ function white(str){
 function CheckDati() {
 	document.form.submit();
 };
+
+function inizializzaSelectSezione(idDiv){};

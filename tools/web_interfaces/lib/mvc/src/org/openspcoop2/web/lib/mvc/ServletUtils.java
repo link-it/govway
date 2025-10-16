@@ -43,6 +43,7 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.protocol.sdk.properties.IConsoleHelper;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.oauth2.OAuth2Costanti;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.web.lib.mvc.Dialog.BodyElement;
 import org.openspcoop2.web.lib.mvc.properties.beans.ConfigBean;
@@ -366,27 +367,6 @@ public class ServletUtils {
 	}
 
 	public static void setGeneralAndPageDataIntoSession(HttpServletRequest request, HttpSession session,GeneralData gd,PageData pd){
-		setGeneralAndPageDataIntoSession(request, session, gd, pd, false);
-	}
-	public static void setGeneralAndPageDataIntoSession(HttpServletRequest request, HttpSession session,GeneralData gd,PageData pd,boolean readOnlyDisabled){
-
-		if(!readOnlyDisabled){
-			/**					
-					//CON UN UNICO INTERVENTO SI OTTIENE IL READ ONLY
-					
-					//IN PRATICA RECUPERO L'UTENZA DALLA SESSIONE
-					//SE POSSIEDE IL PERMESSO READ-ONLY ('R' indica che tutte le maschere visualizzate tramite gli altri permessi sono in read-only mode)
-					//DEVE POI ESSERE GESTITA NEL FILTRO DI AUTORIZZAZIONE IL CONTROLLO CHE UN UNTENTE IN READ ONLY NON RICHIEDA UNA ELIMINAZIONE, UNA ADD O UNA MODIFICA
-					
-					pd.disableEditMode();
-					pd.setAddButton(false);
-					pd.setRemoveButton(false);
-					pd.setSelect(false);
-					pd.setAreaBottoni(null);
-					pd.setBottoni(null);
-					pd.setInserisciBottoni(false);
-			*/	
-		}
 		setObjectIntoSession(request, session, gd, Costanti.SESSION_ATTRIBUTE_GENERAL_DATA);
 		setObjectIntoSession(request, session, pd, Costanti.SESSION_ATTRIBUTE_PAGE_DATA);
 	}
@@ -567,14 +547,6 @@ public class ServletUtils {
 			if(mapTabId.containsKey(objectName))
 				return objectClass.cast(mapTabId.get(objectName));
 			
-			// leggi dall request
-			/**if(request != null) {
-				String parameterValue = request.getParameter(objectName);
-				
-				if(parameterValue != null) {
-					return objectClass.cast(parameterValue);
-				}
-			}*/
 		}
 		
 		// comportamento normale
@@ -618,14 +590,6 @@ public class ServletUtils {
 			if(mapTabId.containsKey(objectName))
 				return mapTabId.get(objectName);
 			
-			// leggi dall request
-			/**if(request != null) {
-				String parameterValue = request.getParameter(objectName);
-				
-				if(parameterValue != null) {
-					return objectClass.cast(parameterValue);
-				}
-			}*/
 		}
 		
 		// comportamento normale
@@ -696,7 +660,7 @@ public class ServletUtils {
 					// attributo che indica l'id del tab con la sessione su cui fare refresh
 					mapDest.put(Costanti.SESSION_ATTRIBUTE_TAB_MAP_REFRESH_TAB_ID, idSessioneTabDest); 
 				} else {
-					mapDest = (HashMap<String, Object>) SerializationUtils.clone(((HashMap<String, Object>)mapSrc)); // mappa clonata dalla piu' vecchia sessione creata
+					mapDest = SerializationUtils.clone(((HashMap<String, Object>)mapSrc)); // mappa clonata dalla piu' vecchia sessione creata
 				}
 			} else {
 				mapDest = new HashMap<>(); // nuova mappa dopo login.
@@ -900,7 +864,7 @@ public class ServletUtils {
 	}
 
 	public static String generaTokenCSRF(String sessionTabID) {
-		return  sessionTabID + "_" + System.currentTimeMillis();
+		return sessionTabID + "_" + System.currentTimeMillis();
 	}
 	
 	public static String leggiTokenCSRF(HttpServletRequest request, HttpSession session) {
@@ -1342,6 +1306,38 @@ public class ServletUtils {
 	    }
 	    
 	    return input.replaceAll("[:/@]", "_");
+	}
+	
+	public static String buildInternalRedirectUrl(HttpServletRequest request, String destination) {
+	    String scheme = request.getScheme();               // http o https
+	    String serverName = request.getServerName();       // es: www.example.com
+	    int serverPort = request.getServerPort();          // es: 8080
+	    String contextPath = request.getContextPath();     // es: /app
+
+	    StringBuilder url = new StringBuilder();
+	    url.append(scheme).append("://").append(serverName);
+
+	    boolean isStandardPort = 
+	        ("http".equals(scheme) && serverPort == 80) || 
+	        ("https".equals(scheme) && serverPort == 443);
+
+	    if (!isStandardPort) {
+	        url.append(":").append(serverPort);
+	    }
+	    
+		if (destination.startsWith("/")) {
+			// destination is an absolute path
+			url.append(contextPath).append(destination);
+		} else {
+			// destination is a relative path
+			url.append(contextPath).append("/").append(destination);
+		}
+
+	    return url.toString();
+	}
+	
+	public static boolean isUtenteLoggatoConOAuth2(HttpSession session) {
+		return session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN) != null; 
 	}
 	
 	public static void sessionFixation(Logger log, HttpServletRequest request, HttpSession session){

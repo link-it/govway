@@ -47,7 +47,6 @@ import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.mvc.TipoOperazione;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.lib.users.dao.UserPassword;
 
@@ -101,7 +100,7 @@ public final class UtentePasswordChange extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 				
-				utentiHelper.addUtenteChangePasswordScadutaToDati(dati, TipoOperazione.CHANGE);
+				utentiHelper.addUtenteChangePasswordScadutaToDati(dati);
 				
 				pd.setDati(dati);
 		
@@ -122,7 +121,7 @@ public final class UtentePasswordChange extends Action {
 
 				dati.add(ServletUtils.getDataElementForEditModeFinished());
 
-				utentiHelper.addUtenteChangePasswordScadutaToDati(dati, TipoOperazione.CHANGE);
+				utentiHelper.addUtenteChangePasswordScadutaToDati(dati);
 
 				pd.setDati(dati);
 
@@ -164,7 +163,6 @@ public final class UtentePasswordChange extends Action {
 
 			// porto l'utente dove andrebbe dopo il login effettuato con successo.
 			LoginSessionUtilities.setLoginParametersSession(request, session, utentiCore, userToUpdate);
-			//utentiHelper.updateTipoInterfaccia();
 			
 			utentiCore.performAuditLogin(userToUpdate);
 			

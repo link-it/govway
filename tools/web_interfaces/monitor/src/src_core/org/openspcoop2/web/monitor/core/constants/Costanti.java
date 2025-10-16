@@ -34,7 +34,7 @@ import javax.faces.model.SelectItem;
  */
 public class Costanti {
 	
-	private Costanti() {}
+	private Costanti() { /* Costanti non istanziabili */ }
 
 	public static final String LABEL_MENU_MODALITA_CORRENTE_WITH_PARAM = org.openspcoop2.core.constants.Costanti.LABEL_PARAMETRO_PROTOCOLLO_COMPACT+": {0}";
 	public static final String LABEL_MENU_SOGGETTO_CORRENTE_WITH_PARAM = "Soggetto: {0}";
@@ -125,7 +125,16 @@ public class Costanti {
 	public static final String SELEZIONATI_PRIMI_X_ELEMENTI_LABEL_KEY = "commons.search.selezionatiPrimiElementi.label";
 	
 	
-	
+	/* Outcomes */
+	public static final String OUTCOME_SOGGETTO_PDD_MONITOR = "soggettoPddMonitor";
+	public static final String OUTCOME_MODALITA = "modalita";
+	public static final String OUTCOME_TRANSAZIONI_START = "transazioniStart";
+	public static final String OUTCOME_LOGIN_SUCCESS = "loginSuccess";
+	public static final String OUTCOME_LOGIN_USER_INVALID = "loginUserInvalid";
+	public static final String OUTCOME_LOGIN_ERROR = "loginError";
+	public static final String OUTCOME_LOGIN = "login";
+	public static final String OUTCOME_LOGOUT_AS = "logoutAS";
+		
 	/* costanti properties file messages_it.properties*/ 
 	
 	public static final String SEARCH_BUTTON_NUOVA_RICERCA_LABEL_KEY = "commons.search.button.nuovaRicerca.label";

@@ -5,7 +5,9 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:rich="http://richfaces.org/rich"
       xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:c="http://java.sun.com/jstl/core"
       xmlns:link="http://www.link.it">
+     	<f:loadBundle var="msg" basename="messages" />
       	<ui:param value="false" name="insertSideBar" />
       	<ui:param value="Benvenuto. Inserisci le credenziali di accesso." name="title"  />
 		<ui:define name="body">
@@ -15,32 +17,179 @@
 					}
 				#pCampiObbligatori {display: none;	}	
 				#crumbs {display: none;	}	
-				#submitBtn { margin-left: 20px; }				
+				#submitBtn { margin-left: 20px; }		
 			</style>
-			<script type="text/javascript" nonce="#{_csp_random_nonce}">
-					//<![CDATA[
-					   jQuery(document).ready(visualizzaComandoMostraPassword);
-					   
-					   function visualizzaComandoMostraPassword(){
-						   aggiungiComandoMostraPassword('password');
-					   }
-					 //]]>
-			</script>
+			<c:if test="#{loginBean.loginApplication}">
+				<script type="text/javascript" nonce="#{_csp_random_nonce}">
+						//<![CDATA[
+						   jQuery(document).ready(visualizzaComandoMostraPassword);
+						   
+						   function visualizzaComandoMostraPassword(){
+							   aggiungiComandoMostraPassword('password');
+						   }
+						 //]]>
+				</script>
+			</c:if>
+			
+			<script type="text/javascript"  nonce="#{_csp_random_nonce}">
+				//<![CDATA[
+				jQuery(document).ready(function () {
+				    
+				    jQuery(".accordionSubtitleSection").each(function () {
+				        const divEsternoId = jQuery(this).attr("id"); // es: subtitle_de_name_1__divEsterno
+				        const baseId = divEsternoId.replace("__divEsterno", "");
+				        const sectionId = baseId + "__id";
+				        const anchorId = baseId + "__anchor";
+				        const iconId = baseId + "__icon";
+				        const accordionId = baseId + "__accordion";
+				        const tooltipNascondiSezione = "#{msg['commons.subtitle.nascondi.tooltip']}";
+				        const iconNascondiSezione = "#{msg['commons.subtitle.nascondi.icona']}";
+				        const tooltipVisualizzaSezione = "#{msg['commons.subtitle.visualizza.tooltip']}";
+				        const iconVisualizzaSezione = "#{msg['commons.subtitle.visualizza.icona']}";
+				
+				        var aperto = jQuery(this).hasClass("subtitleOpen");
+				
+				        // Inizializza visibilità al load
+				        if (aperto) {
+				            jQuery("#" + sectionId).show();
+				            jQuery("#" + iconId).html(iconNascondiSezione);
+				            jQuery("#" + iconId).attr("title", tooltipNascondiSezione);
+				            jQuery("#" + anchorId).attr("title", tooltipNascondiSezione);
+				        } else {
+				            jQuery("#" + sectionId).hide();
+				            jQuery("#" + iconId).html(iconVisualizzaSezione);
+				            jQuery("#" + iconId).attr("title", tooltipVisualizzaSezione);
+				            jQuery("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+				        }
+				
+				     	// Toggle (indipendente per ogni sezione)
+				        jQuery("#" + anchorId + ", #" + iconId).click(function () {
+				        	toggleSezione(baseId, iconVisualizzaSezione, iconNascondiSezione, tooltipVisualizzaSezione, tooltipNascondiSezione);
+				        });
+				    });
+				    
+				    function apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione) {
+				        const sectionId = baseId + "__id";
+				        const anchorId  = baseId + "__anchor";
+				        const iconId    = baseId + "__icon";
+				        const divId     = baseId + "__divEsterno";
+
+				        jQuery("#" + sectionId).show();
+				        jQuery("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
+				        jQuery("#" + anchorId).attr("title", tooltipNascondiSezione);
+				        jQuery("#" + divId).removeClass("subtitleCollapsed").addClass("subtitleOpen");
+				    }
+
+				    function chiudiSezione(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione) {
+				        const sectionId = baseId + "__id";
+				        const anchorId  = baseId + "__anchor";
+				        const iconId    = baseId + "__icon";
+				        const divId     = baseId + "__divEsterno";
+
+				        jQuery("#" + sectionId).hide();
+				        jQuery("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
+				        jQuery("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+				        jQuery("#" + divId).removeClass("subtitleOpen").addClass("subtitleCollapsed");
+				    }
+
+				    function chiudiTutteLeSezioni(exceptBaseId, iconVisualizzaSezione, tooltipVisualizzaSezione) {
+				        jQuery(".accordionSubtitleSection").each(function () {
+				            const b = this.id.replace("__divEsterno", "");
+				            if (b === exceptBaseId) return;
+				            chiudiSezione(b, iconVisualizzaSezione, tooltipVisualizzaSezione);
+				        });
+				    }
+
+				    function toggleSezione(baseId, iconVisualizzaSezione, iconNascondiSezione, tooltipVisualizzaSezione, tooltipNascondiSezione) {
+				        const sectionId   = baseId + "__id";
+				        const accordionId = baseId + "__accordion";
+
+				        const isOpen       = jQuery("#" + sectionId).is(":visible");
+				        const useAccordion = (jQuery("#" + accordionId).val() === "true");
+
+				        if (useAccordion) {
+				        	// Accordion: se è già aperta non fare nulla (non si chiude)
+				            if (isOpen) {
+				                return; // keep-open behavior
+				            }
+				            // Se era chiusa, chiudi le altre e apri questa
+				            chiudiTutteLeSezioni(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
+				            apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione);
+				        } else {
+				            // Modalità indipendente: toggle puro sulla singola sezione
+				            if (isOpen) {
+				                chiudiSezione(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
+				            } else {
+				                apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione);
+				            }
+				        }
+				    }
+				});
+				//]]>
+				</script>
 			
 			<h:form prependId="false">
 				<input type="hidden" id="_csrfLogin" name="_csrf" value="#{loginBean.csrf}"/>
-				<link:fieldset legend="Login" rendered="#{true}" collapsible="false" closed="false">
-					<link:prop label="Username">
-						<h:inputText label="Username" id="username" value="#{loginBean.username}" required="true" styleClass="inputLink"/>
-					</link:prop>
+				<a4j:outputPanel id="loginApplicationPanel" layout="block" rendered="#{true}">
+					<link:fieldset legend="#{msg['login.fieldset.title']}" rendered="#{true}" collapsible="false" closed="false">
 					
-					<link:prop label="Password">
-						<h:inputSecret label="Password" id="password" value="#{loginBean.pwd}" required="true" styleClass="inputLink"/>
-					</link:prop>
-				</link:fieldset>
-				<div class="buttonrow">
-					<a4j:commandButton id="submitBtn" styleClass="icon-login" action="#{loginBean.login}" value="Login" />
-				</div>
+						<c:if test="#{loginBean.loginApplication}">
+							<a4j:outputPanel id="loginApplicationExPanel" layout="block" rendered="#{true}">
+								<c:if test="#{loginBean.multiLoginEnabled}">
+									<div class="subtitle accordionSubtitleSection subtitleOpen" id="loginApplication__divEsterno">
+										<span class="subtitleGroup">
+											<span class="subtitleAnchor">
+					       						<i class="material-icons md-16" id="loginApplication__icon" title="#{msg['commons.subtitle.nascondi.tooltip']}">#{msg['commons.subtitle.nascondi.icona']}</i>
+					       					</span>
+					       					<a id="loginApplication__anchor" class="navigatorAnchorClosable" title="#{msg['commons.subtitle.nascondi.tooltip']}">#{msg['login.interno.subtitle.label']}</a>
+										</span>
+										<input type="hidden" id="loginApplication__accordion" value="true"/>
+									</div>
+								</c:if>
+								
+								<a4j:outputPanel id="loginApplication__id" layout="block" rendered="#{true}" styleClass="subtitleBox">
+									<link:prop label="#{msg['login.username.label']}">
+										<h:inputText label="#{msg['login.username.label']}" id="username" value="#{loginBean.username}" required="true" styleClass="inputLink"/>
+									</link:prop>
+									
+									<link:prop label="#{msg['login.password.label']}">
+										<h:inputSecret label="#{msg['login.password.label']}" id="password" value="#{loginBean.pwd}" required="true" styleClass="inputLink"/>
+									</link:prop>
+									
+									<link:prop label="">
+										<a4j:outputPanel id="loginApplicationForm2Panel" layout="block" styleClass="loginButtonRow" rendered="#{true}">
+											<a4j:commandButton id="loginBtn" styleClass="icon-login" action="#{loginBean.login}" value="#{msg['login.button.label']}" />
+										</a4j:outputPanel>
+									</link:prop>
+								</a4j:outputPanel>
+							</a4j:outputPanel>
+						</c:if>
+						
+						<c:if test="#{loginBean.loginOAuth2Enabled}">
+							<a4j:outputPanel id="loginOauth2ExPanel" layout="block" rendered="#{true}">
+								<c:if test="#{loginBean.multiLoginEnabled}">
+									<div class="subtitle accordionSubtitleSection subtitleCollapsed" id="loginOAuth__divEsterno">
+										<span class="subtitleGroup">
+											<span class="subtitleAnchor">
+					       						<i class="material-icons md-16" id="loginOAuth__icon" title="#{msg['commons.subtitle.visualizza.tooltip']}">#{msg['commons.subtitle.visualizza.icona']}</i>
+					       					</span>
+					       					<a id="loginOAuth__anchor" class="navigatorAnchorClosable" title="#{msg['commons.subtitle.visualizza.tooltip']}">#{msg['login.oauth2.subtitle.label']}</a>
+										</span>
+										<input type="hidden" id="loginOAuth__accordion" value="true"/>
+									</div>
+								</c:if>
+								
+								<a4j:outputPanel id="loginOAuth__id" layout="block" rendered="#{true}" styleClass="subtitleBox">
+									<link:prop label="">
+										<a4j:outputPanel id="loginOAuthForm2Panel" layout="block" styleClass="loginButtonRow" rendered="#{true}">
+											<a4j:commandButton id="oauth2LoginBtn" styleClass="icon-login" action="#{loginBean.avviaLoginOAuth2}" value="#{msg['login.oauth2.button.label']}" />
+										</a4j:outputPanel>
+									</link:prop>
+								</a4j:outputPanel>
+							</a4j:outputPanel>
+						</c:if>
+					</link:fieldset>
+				</a4j:outputPanel>
 			</h:form>
 		</ui:define>
 </ui:composition>

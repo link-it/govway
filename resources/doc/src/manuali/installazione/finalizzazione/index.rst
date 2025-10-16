@@ -183,7 +183,7 @@ tematiche:
 	apiRest
 	cluster/index
 	ssl/index
-        idmEsterno
+        idmEsterno/index
 	wildflyUrlEncoded
 	securityDomainOther
 	cache

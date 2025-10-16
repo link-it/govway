@@ -68,6 +68,22 @@
     <servlet-name>cacheManager</servlet-name>
 	<servlet-class>org.openspcoop2.web.ctrlstat.servlet.utils.CacheManager</servlet-class>
   </servlet>
+  
+  <!-- OAuth2 Servlet -->
+  <servlet>
+		<servlet-name>oauth2CallbackServlet</servlet-name>
+		<servlet-class>org.openspcoop2.web.ctrlstat.servlet.login.OAuth2CallbackServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>oauth2UserServlet</servlet-name>
+		<servlet-class>org.openspcoop2.web.ctrlstat.servlet.login.OAuth2UserServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>oauth2LoginStartServlet</servlet-name>
+		<servlet-class>org.openspcoop2.web.ctrlstat.servlet.login.OAuth2LoginStartServlet</servlet-class>
+	</servlet>
 
   <!-- Servlet per il download dei documenti -->
   <servlet-mapping>
@@ -128,4 +144,20 @@
     <servlet-name>action</servlet-name>
     <url-pattern>*.do</url-pattern>
   </servlet-mapping>
+  
+  <!-- OAuth2 Servlet Mapping -->
+  <servlet-mapping>
+		<servlet-name>oauth2CallbackServlet</servlet-name>
+		<url-pattern>/oauth2/callback</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>oauth2UserServlet</servlet-name>
+		<url-pattern>/oauth2/user</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>oauth2LoginStartServlet</servlet-name>
+		<url-pattern>/oauth2/loginStart</url-pattern>
+	</servlet-mapping>
 

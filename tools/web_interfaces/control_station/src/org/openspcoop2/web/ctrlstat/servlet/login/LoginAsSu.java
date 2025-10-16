@@ -73,7 +73,7 @@ public final class LoginAsSu extends Action {
 			// Se login = null, devo visualizzare la pagina per l'inserimento dati
 			if (login == null) {
 	
-				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, LoginCostanti.OBJECT_NAME_LOGIN_AS_SU, ForwardParams.LOGIN());
 			}
@@ -82,7 +82,7 @@ public final class LoginAsSu extends Action {
 			boolean isOk = loginHelper.loginCheckData(LoginTipologia.WITHOUT_PASSWORD);
 			if (!isOk) {
 				
-				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
+				ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, LoginCostanti.OBJECT_NAME_LOGIN_AS_SU, ForwardParams.LOGIN());
 			}
@@ -107,7 +107,7 @@ public final class LoginAsSu extends Action {
 	
 			pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO);
 	
-			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd, true);
+			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
 	
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, LoginCostanti.OBJECT_NAME_LOGIN_AS_SU, ForwardParams.LOGIN());

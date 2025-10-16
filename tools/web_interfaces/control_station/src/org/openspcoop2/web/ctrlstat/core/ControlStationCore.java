@@ -673,6 +673,7 @@ public class ControlStationCore {
 	protected boolean logoutMostraButton;
 	protected String logoutUrlDestinazione;
 	protected String loginRetryDelays;
+	protected boolean loginOAuth2Enabled;
 	
 	
 	public String getLoginTipo() {
@@ -682,7 +683,7 @@ public class ControlStationCore {
 	public boolean isLoginApplication() {
 		return this.loginApplication;
 	}
-
+	
 	public Properties getLoginProperties() {
 		return this.loginProperties;
 	}
@@ -714,6 +715,15 @@ public class ControlStationCore {
 	public String getLoginRetryDelays() throws UtilsException{
 		return this.loginRetryDelays;
 	}
+
+	public boolean isLoginOAuth2Enabled() {
+		return this.loginOAuth2Enabled;
+	}
+	
+	public boolean isMultiLoginEnabled() {
+		return this.isLoginApplication() && this.isLoginOAuth2Enabled();
+	}
+	
 	
 	
 	/** Applicativi */
@@ -2509,7 +2519,7 @@ public class ControlStationCore {
 		}
 	}
 
-	public ControlStationCore(ControlStationCore core) throws DriverControlStationException {
+	public ControlStationCore(ControlStationCore core) {
 
 		/** Impostazioni grafiche */
 		this.consoleNomeSintesi = core.consoleNomeSintesi;
@@ -2602,6 +2612,7 @@ public class ControlStationCore {
 		this.logoutMostraButton = core.logoutMostraButton;
 		this.logoutUrlDestinazione = core.logoutUrlDestinazione;
 		this.loginRetryDelays = core.loginRetryDelays;
+		this.loginOAuth2Enabled = core.loginOAuth2Enabled;
 		
 		/** Applicativi Console */
 		this.applicativiPwConfiguration = core.applicativiPwConfiguration;
@@ -3230,6 +3241,7 @@ public class ControlStationCore {
 			this.logoutMostraButton = consoleProperties.isMostraButtonLogout();
 			this.logoutUrlDestinazione = consoleProperties.getLogoutUrlDestinazione();
 			this.loginRetryDelays = consoleProperties.getLoginRetryDelays();
+			this.loginOAuth2Enabled = consoleProperties.isLoginOAuth2Enabled();
 			
 			// Opzioni di Visualizzazione
 			this.showJ2eeOptions = consoleProperties.isShowJ2eeOptions();

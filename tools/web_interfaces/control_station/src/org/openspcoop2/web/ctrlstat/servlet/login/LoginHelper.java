@@ -1,9 +1,9 @@
 /*
- * GovWay - A customizable API Gateway 
+ * GovWay - A customizable API Gateway
  * https://govway.org
- * 
- * Copyright (c) 2005-2025 Link.it srl (https://link.it). 
- * 
+ *
+ * Copyright (c) 2005-2025 Link.it srl (https://link.it).
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
  * the Free Software Foundation.
@@ -19,15 +19,22 @@
  */
 package org.openspcoop2.web.ctrlstat.servlet.login;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
+import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.login.FailedAttempts;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
@@ -44,21 +51,21 @@ import org.slf4j.Logger;
 public class LoginHelper extends ConsoleHelper {
 
 	public LoginHelper(HttpServletRequest request, PageData pd,
-			HttpSession session) throws Exception {
+			HttpSession session) {
 		super(request, pd, session);
 	}
 	public LoginHelper(ControlStationCore core, HttpServletRequest request, PageData pd,
-			HttpSession session) throws Exception {
+			HttpSession session) {
 		super(core, request, pd, session);
 	}
-	
-	public boolean loginCheckData(LoginTipologia tipoCheck) throws Exception {
+
+	public boolean loginCheckData(LoginTipologia tipoCheck) throws DriverUsersDBException, DriverControlStationException {
 		String login = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
 		String password = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_PASSWORD);
 		return this.loginCheckData(tipoCheck, login, password);
 	}
 	public static User loginCheckData(Logger log, UtentiCore utentiCore, LoginTipologia tipoCheck, String login, String password, StringBuilder denyReason) throws DriverUsersDBException {
-				
+
 		// Campi obbligatori
 		if (login.equals("")) {
 			if(denyReason!=null) {
@@ -81,14 +88,12 @@ public class LoginHelper extends ConsoleHelper {
 		if (trovato && tipoCheck.equals(LoginTipologia.WITH_PASSWORD)) {
 			// controllo se l'utenza e' da bloccare
 			boolean bloccaUtente = FailedAttempts.getInstance().bloccaUtente(log, login);
-			
 			if (bloccaUtente) {
 				if(denyReason!=null) {
 					denyReason.append("Utenza bloccata, superato il numero di tentativi di accesso massimo!");
 				}
 				return null;
 			}
-			
 			// Prendo la pw criptata da DB
 			u = utentiCore.getUser(login);
 			String pwcrypt = u.getPassword();
@@ -99,6 +104,11 @@ public class LoginHelper extends ConsoleHelper {
 					trovato = utentiCore.getUtenzePasswordManagerBackwardCompatibility().check(password, pwcrypt);
 				}
 			}
+		}
+		
+		//lettura da db in caso di utenza trovata ma senza controllo password
+		if (trovato && tipoCheck.equals(LoginTipologia.WITHOUT_PASSWORD)) {
+			u = utentiCore.getUser(login);
 		}
 
 		if (!trovato) {
@@ -115,26 +125,26 @@ public class LoginHelper extends ConsoleHelper {
 			return null;
 		}
 		FailedAttempts.getInstance().resetTentativiUtente(log, login);
-		
+
 		return u;
 	}
-	public boolean loginCheckData(LoginTipologia tipoCheck, String login, String password) throws Exception {
+	public boolean loginCheckData(LoginTipologia tipoCheck, String login, String password) throws DriverUsersDBException {
 		try{
-				
+
 			StringBuilder denyReason = new StringBuilder();
 			User u = loginCheckData(this.log, this.utentiCore, tipoCheck, login, password, denyReason);
 			if(u==null) {
 				this.pd.setMessage(denyReason.toString(),MessageType.ERROR_SINTETICO);
 				return false;
 			}
-			
-			// controllo modalita' associate all'utenza		
+
+			// controllo modalita' associate all'utenza
 			
 			if(this.hasOnlyPermessiDiagnosticaReportistica(this.utentiCore.getUser(login))) {
 				this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE,MessageType.ERROR_SINTETICO);
 				return false;
 			}
-			
+
 			if(!u.isConfigurazioneValidaAbilitazioni()) {
 				this.pd.setMessage(LoginCostanti.MESSAGGIO_ERRORE_UTENTE_NON_ABILITATO_UTILIZZO_CONSOLE_CONFIGURAZIONE_NON_CORRETTO,MessageType.ERROR_SINTETICO);
 				return false;
@@ -142,23 +152,23 @@ public class LoginHelper extends ConsoleHelper {
 
 			// setto l utente in sessione
 			ServletUtils.setUserIntoSession(this.request, this.session, u);
-			
+
 			return true;
 
-		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+		} catch (DriverUsersDBException e) {
+			ControlStationCore.logError("Exception: " + e.getMessage(), e);
+			throw e;
 		}
 	}
 
-	public boolean loginScadenzaPasswordCheckData(LoginTipologia tipoCheck) throws Exception {
+	public boolean loginScadenzaPasswordCheckData() throws DriverUsersDBException, DriverControlStationException {
 		String login = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_LOGIN);
 		String password = this.getParameter(LoginCostanti.PARAMETRO_LOGIN_PASSWORD);
-		return this.loginScadenzaPasswordCheckData(tipoCheck, login, password);
+		return this.loginScadenzaPasswordCheckData(login, password);
 	}
-	public boolean loginScadenzaPasswordCheckData(LoginTipologia tipoCheck, String login, String password) throws Exception {
+	public boolean loginScadenzaPasswordCheckData(String login, String password) throws DriverUsersDBException {
 		try{
-		
+
 			// elimino attributo che abilita il cambio della password
 			ServletUtils.removeObjectFromSession(this.request, this.session, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
 			// controllo scadenza password
@@ -166,7 +176,7 @@ public class LoginHelper extends ConsoleHelper {
 			if(this.utentiCore.isCheckPasswordExpire(passwordVerifier)) {
 				User u = this.utentiCore.getUser(login);
 				if(u.isCheckLastUpdatePassword()) {
-					StringBuilder bfMotivazioneErrore = new StringBuilder(); 
+					StringBuilder bfMotivazioneErrore = new StringBuilder();
 					if(passwordVerifier.isPasswordExpire(u.getLastUpdatePassword(), bfMotivazioneErrore)) {
 						// imposto attributo che abilita il cambio della password
 						ServletUtils.setObjectIntoSession(this.request, this.session, login, LoginCostanti.ATTRIBUTO_MODALITA_CAMBIA_PWD_SCADUTA);
@@ -176,12 +186,51 @@ public class LoginHelper extends ConsoleHelper {
 					}
 				}
 			}
-			
+
 			return true;
 
-		} catch (Exception e) {
-			this.log.error("Exception: " + e.getMessage(), e);
-			throw new Exception(e);
+		} catch (DriverUsersDBException e) {
+			ControlStationCore.logError("Exception: " + e.getMessage(), e);
+			throw e;
 		}
+	}
+	
+	public void impostaMessaggioEsitoLoginDaSessione() throws DriverControlStationException {
+		this.impostaMessaggioEsitoLoginDaSessione(false);
+	}
+	
+	public void impostaMessaggioEsitoLoginDaSessione(boolean leggiMessaggioDaParametro) throws DriverControlStationException {
+		// lettura parametri errore login dalla sessione
+		String messageText = ServletUtils.removeObjectFromSession(this.request, this.session, String.class, Costanti.PRINCIPAL_ERROR_MSG);
+		if (messageText == null && leggiMessaggioDaParametro) {
+			messageText = this.getParameter(Costanti.PARAMETER_MESSAGE_TEXT);
+		}
+		
+		if(messageText == null) {
+			messageText = Costanti.MESSAGGIO_SISTEMA_NON_DISPONIBILE;
+		}
+		String messageType = this.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TYPE);
+		MessageType mt = MessageType.ERROR;
+		if(messageType != null) {
+			try {
+				mt = MessageType.fromValue(messageType);
+				if(mt == null)
+					mt = MessageType.ERROR;
+			}catch(Exception e) {
+				mt= MessageType.ERROR;
+			}
+		}
+		String messageTitle = this.getParameter(CostantiControlStation.PARAMETER_MESSAGE_TITLE);
+		String messageBreadcrumbs = this.getParameter(CostantiControlStation.PARAMETER_MESSAGE_BREADCRUMB);
+
+		if(messageBreadcrumbs!= null) {
+			// setto la barra del titolo
+			List<Parameter> lstParam = new ArrayList<>();
+			lstParam.add(new Parameter(messageBreadcrumbs, null));
+			ServletUtils.setPageDataTitle(this.pd, lstParam);
+		}
+
+		// imposto il messaggio da visualizzare
+		this.pd.setMessage(messageText, messageTitle, mt);
 	}
 }

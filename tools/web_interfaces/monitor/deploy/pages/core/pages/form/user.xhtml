@@ -24,7 +24,7 @@
 					<h:form id="formRoleUser" prependId="false">
 						<a4j:outputPanel id="formPnl" ajaxRendered="false" layout="block">
 							<input type="hidden" id="_csrfFormPnl" name="_csrf" value="#{loginBean.csrf}"/>
-							<a4j:outputPanel rendered="#{applicationBean.user and applicationBean.showCambiaPassword and utentiBean.showFormCambiaPassword}">
+							<a4j:outputPanel rendered="#{applicationBean.user and applicationBean.showCambiaPassword and utentiBean.showFormCambiaPassword and utentiBean.passwordObbligatoria}">
 								<p class="legend" id="pCampiObbligatori">
 									<strong>Note:</strong> (<em>*</em>) Campi obbligatori 
 								</p>
@@ -155,15 +155,15 @@
 														 //]]>
 												</script>
 											
-												<link:prop label="Vecchia" required="true" rendered="#{utentiBean.showVecchiaPassword}">
+												<link:prop label="Vecchia" required="#{utentiBean.passwordObbligatoria}" rendered="#{utentiBean.showVecchiaPassword}">
 													<h:inputSecret label="Vecchia" id="_oldPwdChange" value="#{utentiBean.vecchiaPassword}"  styleClass="inputLinkLong"/>
 												</link:prop>
 											
-												<link:prop label="Nuova" required="true">
+												<link:prop label="Nuova" required="#{utentiBean.passwordObbligatoria}">
 													<h:inputSecret label="Nuova" id="_pwdChange" value="#{utentiBean.user.password}"   styleClass="inputLinkLong"/>
 												</link:prop>
 													
-												<link:prop label="Conferma Nuova" required="true" note="#{utentiBean.notePassword}" noteEscape="false">
+												<link:prop label="Conferma Nuova" required="#{utentiBean.passwordObbligatoria}" note="#{utentiBean.notePassword}" noteEscape="false">
 													<h:inputSecret id="conpwdChange" label="Conferma Nuova" value="#{utentiBean.confermaPassword}"   styleClass="inputLinkLong"/>
 												</link:prop>
 											</a4j:outputPanel>

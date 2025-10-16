@@ -78,6 +78,106 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 <tr>
 	<td valign=top>
 		<div class="<%= classPanelTitolo %>" >
+		<script type="text/javascript" nonce="<%= randomNonce %>">
+
+$(document).ready(function () {
+
+    $(".accordionSubtitleSearchSection").each(function () {
+        const divEsternoId = $(this).attr("id"); // es: subtitle_de_name_1__divEsterno
+        const baseId = divEsternoId.replace("__divEsterno", "");
+        const sectionId = baseId + "__id";
+        const anchorId = baseId + "__anchor";
+        const iconId = baseId + "__icon";
+        const accordionId = baseId + "__accordion";
+        const tooltipNascondiSezione = '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>';
+        const iconNascondiSezione = '<%= Costanti.ICON_NASCONDI_SUBTITLE%>';
+        const tooltipVisualizzaSezione = '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>';
+        const iconVisualizzaSezione = '<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>';
+
+        var aperto = $(this).hasClass("subtitleOpen");
+
+        // Inizializza visibilità al load
+        if (aperto) {
+            $("#" + sectionId).show();
+            $("#" + iconId).html(iconNascondiSezione);
+            $("#" + iconId).attr("title", tooltipNascondiSezione);
+            $("#" + anchorId).attr("title", tooltipNascondiSezione);
+        } else {
+            $("#" + sectionId).hide();
+            $("#" + iconId).html(iconVisualizzaSezione);
+            $("#" + iconId).attr("title", tooltipVisualizzaSezione);
+            $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+        }
+
+     	// Toggle (indipendente per ogni sezione)
+        $("#" + anchorId + ", #" + iconId).click(function () {
+        	toggleSezione(baseId, iconVisualizzaSezione, iconNascondiSezione, tooltipVisualizzaSezione, tooltipNascondiSezione);
+        });
+    });
+    
+    function apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione) {
+        const sectionId = baseId + "__id";
+        const anchorId  = baseId + "__anchor";
+        const iconId    = baseId + "__icon";
+        const divId     = baseId + "__divEsterno";
+
+        $("#" + sectionId).show();
+        $("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
+        $("#" + anchorId).attr("title", tooltipNascondiSezione);
+        $("#" + divId).removeClass("subtitleCollapsed").addClass("subtitleOpen");
+        inizializzaSelectFiltro();
+    }
+
+    function chiudiSezione(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione) {
+        const sectionId = baseId + "__id";
+        const anchorId  = baseId + "__anchor";
+        const iconId    = baseId + "__icon";
+        const divId     = baseId + "__divEsterno";
+
+        $("#" + sectionId).hide();
+        $("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
+        $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+        $("#" + divId).removeClass("subtitleOpen").addClass("subtitleCollapsed");
+    }
+
+    function chiudiTutteLeSezioni(exceptBaseId, iconVisualizzaSezione, tooltipVisualizzaSezione) {
+        $(".accordionSubtitleSearchSection").each(function () {
+            const b = this.id.replace("__divEsterno", "");
+            if (b === exceptBaseId) return;
+            chiudiSezione(b, iconVisualizzaSezione, tooltipVisualizzaSezione);
+        });
+    }
+
+    function toggleSezione(baseId, iconVisualizzaSezione, iconNascondiSezione, tooltipVisualizzaSezione, tooltipNascondiSezione) {
+        const sectionId   = baseId + "__id";
+        const accordionId = baseId + "__accordion";
+
+        const isOpen       = $("#" + sectionId).is(":visible");
+        const useAccordion = ($("#" + accordionId).val() === "true");
+
+        if (useAccordion) {
+        	// Accordion: se è già aperta non fare nulla (non si chiude)
+            if (isOpen) {
+                return; // keep-open behavior
+            }
+            // Se era chiusa, chiudi le altre e apri questa
+            chiudiTutteLeSezioni(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
+            apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione);
+        } else {
+            // Modalità indipendente: toggle puro sulla singola sezione
+            if (isOpen) {
+                chiudiSezione(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
+            } else {
+                apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione);
+            }
+        }
+    }
+    
+});
+
+
+</script>
+		
 			<table class="tabella" id="panelListaRicercaHeader">
 				<tbody>
 					<tr>
@@ -180,86 +280,22 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 					            			subtitleOpen = false;
 					        			}
 										
-					        			String cssClassSubtitle = "subtitle " + labelStyleClass + " subtitleCollapsed";
+					        			String cssClassSubtitle = "subtitle accordionSubtitleSearchSection " + labelStyleClass + " subtitleCollapsed";
 					        			
 					    				if(filtro.isVisualizzaSezioneAperta()){
-					    					cssClassSubtitle = "subtitle " + labelStyleClass + " subtitleOpen";
+					    					cssClassSubtitle = "subtitle accordionSubtitleSearchSection " + labelStyleClass + " subtitleOpen";
 					    				}
+					    				 boolean accordion = filtro.isModalitaAccordion();
 					    				%>
 					        			<div class="<%= cssClassSubtitle %>" id="<%= filterName  %>__divEsterno">
 					        				<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
+					        				<input type="hidden" id="<%= filterName  %>__accordion" value="<%=accordion %>" />
 					        				<span class="subtitleGroup">
 					        					<span class="subtitleAnchor">
 					        						<i class="material-icons md-16" id="<%= filterName  %>__icon" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%></i>
 					        					</span>
 					        					<a id="<%= filterName  %>__anchor" name="<%=rowName %>" class="subtitleAnchor" title="<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>"><%=deLabel %></a>
 					        				</span>
-					        				<script type="text/javascript" nonce="<%= randomNonce %>">
-					        					$(document).ready(function() {
-              									<%
-              										boolean sub = filtro.isVisualizzaSezioneAperta();
-									      		%>
-									      		var subtitle_<%= filterName  %>_aperto = <%=sub %>; 
-									      		
-									      		if(subtitle_<%= filterName  %>_aperto){
-								      				$("#<%= filterId  %>").show();
-								      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-								      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-								      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-								      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
-								      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
-								      			} else {
-								      				$("#<%= filterId  %>").hide();
-								      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-								      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-								      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-								      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
-								      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
-								      			}
-									      		
-									      		$("#<%= filterName  %>__anchor").click(function(){
-									      			subtitle_<%= filterName  %>_aperto = !subtitle_<%= filterName  %>_aperto;
-									      			
-									      			if(subtitle_<%= filterName  %>_aperto){
-									      				$("#<%= filterId  %>").show();
-									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
-									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
-									      				inizializzaSelectFiltro();
-									      			} else {
-									      				$("#<%= filterId  %>").hide();
-									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
-									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
-									      			}
-									      		});
-									      		
-									      		$("#<%= filterName  %>__icon").click(function(){
-									      			subtitle_<%= filterName  %>_aperto = !subtitle_<%= filterName  %>_aperto;
-									      			
-									      			if(subtitle_<%= filterName  %>_aperto){
-									      				$("#<%= filterId  %>").show();
-									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleCollapsed');
-									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleOpen');
-									      				inizializzaSelectFiltro();
-									      			} else {
-									      				$("#<%= filterId  %>").hide();
-									      				$("#<%= filterName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SEZIONE_FILTRI_RICERCA%>');
-									      				$("#<%= filterName  %>__divEsterno").removeClass('subtitleOpen');
-									      				$("#<%= filterName  %>__divEsterno").addClass('subtitleCollapsed');
-									      			}
-									      		});
-          										});
-					        				</script>
 					        			</div>
 					        			<%
 					        			

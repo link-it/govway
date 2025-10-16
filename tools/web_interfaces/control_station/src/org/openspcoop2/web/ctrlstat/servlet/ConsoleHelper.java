@@ -2532,7 +2532,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			int index=0;
-			String nameFilter = PageData.GET_PARAMETRO_FILTER_NAME(index);
+			String nameFilter = PageData.getParametroFilterName(index);
 			if(this.core.isConservaRisultatiRicerca()==false) {
 				ricerca.clearFilters(idLista);
 				this.initializeFilter(ricerca,idLista);	
@@ -2541,7 +2541,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String paramFilterName = this.getParameter(nameFilter);
 				paramFilterName = paramFilterName.trim();
 				
-				String paramFilterValue = this.getParameter( PageData.GET_PARAMETRO_FILTER_VALUE(index));
+				String paramFilterValue = this.getParameter( PageData.getParametroFilterValue(index));
 				if(paramFilterValue==null) {
 					paramFilterValue = "";
 				}
@@ -2553,7 +2553,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				ricerca.addFilter(idLista, paramFilterName, paramFilterValue);
 				
 				index++;
-				nameFilter = PageData.GET_PARAMETRO_FILTER_NAME(index);
+				nameFilter = PageData.getParametroFilterName(index);
 			}
 
 			return ricerca;
@@ -15914,7 +15914,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.add(de);
 	}
 	
-	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) throws DriverControlStationException {
+	public boolean hasOnlyPermessiDiagnosticaReportistica(User user) {
 		PermessiUtente pu = user.getPermessi();
 		Boolean singlePdD = ServletUtils.getObjectFromSession(this.request, this.session, Boolean.class, CostantiControlStation.SESSION_PARAMETRO_SINGLE_PDD);
 		if(singlePdD==null) {

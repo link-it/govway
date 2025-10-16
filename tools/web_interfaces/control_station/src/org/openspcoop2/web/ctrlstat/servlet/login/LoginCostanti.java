@@ -85,6 +85,9 @@ public class LoginCostanti {
 		SERVLET_MESSAGE_PAGE.add(SERVLET_NAME_LOGIN_MESSAGE_PAGE);
 	}
 	
+	public static final String SERVLET_NAME_LOGIN_OAUTH2_CALLBACK = "/oauth2/callback";
+	public static final String SERVLET_NAME_LOGIN_OAUTH2_USER = "/oauth2/user";
+	public static final String SERVLET_NAME_LOGIN_OAUTH2_LOGIN_START = "/oauth2/loginStart";
 	
 	/* LABEL GENERALI */
 	
@@ -101,7 +104,11 @@ public class LoginCostanti {
 	public static final String LABEL_ERRORE = "Errore";
 	public static final String LABEL_CONSOLE_RIPRISTINATA = "Console ripristinata con successo.";
 	public static final String LABEL_LOGIN_PASSWORD_AGGIORNATA_CON_SUCCESSO = "Password aggiornata con successo";
-	public static final String LABEL_REFRESH_SESSIONE_CONSOLE_RIPRISTINATA = "Sessione scaduta; &egrave; stata creata una nuova sessione per consentire l'utilizzo della console."; 
+	public static final String LABEL_REFRESH_SESSIONE_CONSOLE_RIPRISTINATA = "Sessione scaduta; &egrave; stata creata una nuova sessione per consentire l'utilizzo della console.";
+	
+	public static final String LABEL_SUBTITLE_LOGIN_INTERNO = "Account Locale";
+	public static final String LABEL_SUBTITLE_LOGIN_OAUTH = "Autenticazione OIDC";
+	public static final String LABEL_BUTTON_LOGIN_OAUTH2 = "Accedi";
 	
 	/* LABEL MENU' AZIONI UTENTE */
 	

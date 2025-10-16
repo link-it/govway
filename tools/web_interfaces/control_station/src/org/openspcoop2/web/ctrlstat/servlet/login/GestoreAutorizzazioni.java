@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.apc.api.ApiCostanti;
@@ -78,14 +79,14 @@ public class GestoreAutorizzazioni {
 	}
 
 	private static UtentiCore utentiCore = null;
-	private static synchronized void init(boolean singlePdD) throws Exception{
+	private static synchronized void init(boolean singlePdD) throws DriverControlStationException{
 		if(GestoreAutorizzazioni.permessi==null){
 			GestoreAutorizzazioni.permessi = new GestoreAutorizzazioni(singlePdD);
 			core = new ControlStationCore();
 			utentiCore = new UtentiCore(core);
 		}
 	}
-	public static boolean autorizzazioneUtente(boolean singlePdD,Logger log,String nomeServlet,LoginHelper loginHelper, StringBuilder bfError) throws Exception{
+	public static boolean autorizzazioneUtente(boolean singlePdD,Logger log,String nomeServlet,LoginHelper loginHelper, StringBuilder bfError) throws DriverControlStationException {
 		if(GestoreAutorizzazioni.permessi==null)
 			GestoreAutorizzazioni.init(singlePdD);
 		
@@ -471,7 +472,7 @@ public class GestoreAutorizzazioni {
 	}
 	
 	
-	public boolean permettiVisualizzazione(Logger log,String nomeServlet,LoginHelper loginHelper, StringBuilder bfError) throws Exception{
+	public boolean permettiVisualizzazione(Logger log,String nomeServlet,LoginHelper loginHelper, StringBuilder bfError) throws DriverControlStationException {
 		
 		String login = ServletUtils.getUserLoginFromSession(loginHelper.getSession());
 		User user = null;

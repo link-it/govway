@@ -88,10 +88,8 @@ public class UtentiServiziAdd extends Action {
 			User user = utentiCore.getUser(nomesu);
 			ConsoleSearch searchServizi = new ConsoleSearch(true);
 			List<String> protocolli = user.getProtocolliSupportati();
-			if(protocollo == null) {
-				if(protocolli!=null && !protocolli.isEmpty()) {
-					protocollo = utentiCore.getProtocolloDefault(request, null, protocolli);
-				}
+			if(protocollo == null && protocolli!=null && !protocolli.isEmpty()) {
+				protocollo = utentiCore.getProtocolloDefault(request, null, protocolli);
 			}
 			
 			searchServizi.addFilter(Liste.SERVIZI, Filtri.FILTRO_PROTOCOLLO, protocollo);
@@ -175,7 +173,7 @@ public class UtentiServiziAdd extends Action {
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = utentiHelper.utentiServiziCheckData(TipoOperazione.ADD,nomesu,servizio);
+			boolean isOk = utentiHelper.utentiServiziCheckData(nomesu, servizio);
 			if (!isOk) {
 				ServletUtils.setPageDataTitle(pd,lstParam);
 				

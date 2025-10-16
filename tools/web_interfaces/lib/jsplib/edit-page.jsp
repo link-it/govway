@@ -158,6 +158,197 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 		<tr> 
 			<td valign=top colspan="2">		
 			<div class="<%=classDivPanelLista %>">
+				<script type="text/javascript" nonce="<%= randomNonce %>">
+
+$(document).ready(function () {
+
+    $(".accordionFieldsetSection").each(function () {
+        const divEsternoId = $(this).attr("id"); // es: fieldset_de_name_1__divEsterno
+        const baseId = divEsternoId.replace("__divEsterno", "");
+        const sectionId = baseId + "__id";
+        const anchorId = baseId + "__anchor";
+        const iconId = baseId + "__icon";
+        const tooltipNascondiSezione = '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>';
+        const iconNascondiSezione = '<%= Costanti.ICON_NASCONDI_FIELDSET%>';
+        const tooltipVisualizzaSezione = '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>';
+        const iconVisualizzaSezione = '<%= Costanti.ICON_VISUALIZZA_FIELDSET%>';
+
+        var aperto = $(this).hasClass("subtitleOpen");
+
+        // Inizializza visibilità al load
+        if (aperto) {
+            $("#" + sectionId).show();
+            $("#" + iconId).html(iconNascondiSezione);
+            $("#" + iconId).attr("title", tooltipNascondiSezione);
+            $("#" + anchorId).attr("title", tooltipNascondiSezione);
+        } else {
+            $("#" + sectionId).hide();
+            $("#" + iconId).html(iconVisualizzaSezione);
+            $("#" + iconId).attr("title", tooltipVisualizzaSezione);
+            $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+        }
+
+        // Toggle (indipendente per ogni sezione)
+        $("#" + anchorId + ", #" + iconId).click(function () {
+        	toggleFieldset(baseId, iconVisualizzaSezione, iconNascondiSezione, tooltipVisualizzaSezione, tooltipNascondiSezione);
+        });
+    });
+    
+    function apriFieldset(baseId, iconNascondiSezione, tooltipNascondiSezione) {
+        const sectionId = baseId + "__id";
+        const anchorId  = baseId + "__anchor";
+        const iconId    = baseId + "__icon";
+        const divId     = baseId + "__divEsterno";
+
+        $("#" + sectionId).show();
+        $("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
+        $("#" + anchorId).attr("title", tooltipNascondiSezione);
+        $("#" + divId).removeClass("fieldsetCollapsed");
+        inizializzaSelectSezione(sectionId);
+    }
+
+    function chiudiFieldset(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione) {
+        const sectionId = baseId + "__id";
+        const anchorId  = baseId + "__anchor";
+        const iconId    = baseId + "__icon";
+        const divId     = baseId + "__divEsterno";
+
+        $("#" + sectionId).hide();
+        $("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
+        $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+        $("#" + divId).addClass("fieldsetCollapsed");
+    }
+
+    function chiudiTuttiFieldset(exceptBaseId, iconVisualizzaSezione, tooltipVisualizzaSezione) {
+        $(".accordionFieldsetSection").each(function () {
+            const b = this.id.replace("__divEsterno", "");
+            if (b === exceptBaseId) return;
+            chiudiFieldset(b, iconVisualizzaSezione, tooltipVisualizzaSezione);
+        });
+    }
+
+    function toggleFieldset(baseId, iconVisualizzaSezione, iconNascondiSezione, tooltipVisualizzaSezione, tooltipNascondiSezione) {
+        const sectionId   = baseId + "__id";
+        const accordionId = baseId + "__accordion";
+
+        const isOpen       = $("#" + sectionId).is(":visible");
+        const useAccordion = ($("#" + accordionId).val() === "true");
+
+        if (useAccordion) {
+         	// Accordion: se è già aperta non fare nulla (non si chiude)
+            if (isOpen) {
+                return; // keep-open behavior
+            }
+            // Se era chiusa, chiudi le altre e apri questa
+            chiudiTuttiFieldset(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
+            apriFieldset(baseId, iconNascondiSezione, tooltipNascondiSezione);
+        } else {
+            // Modalità indipendente: toggle puro sulla singola sezione
+            if (isOpen) {
+            	chiudiFieldset(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
+            } else {
+            	apriFieldset(baseId, iconNascondiSezione, tooltipNascondiSezione);
+            }
+        }
+    }
+    
+    
+    $(".accordionSubtitleSection").each(function () {
+        const divEsternoId = $(this).attr("id"); // es: subtitle_de_name_1__divEsterno
+        const baseId = divEsternoId.replace("__divEsterno", "");
+        const sectionId = baseId + "__id";
+        const anchorId = baseId + "__anchor";
+        const iconId = baseId + "__icon";
+        const accordionId = baseId + "__accordion";
+        const tooltipNascondiSezione = '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>';
+        const iconNascondiSezione = '<%= Costanti.ICON_NASCONDI_SUBTITLE%>';
+        const tooltipVisualizzaSezione = '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>';
+        const iconVisualizzaSezione = '<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>';
+
+        var aperto = $(this).hasClass("subtitleOpen");
+
+        // Inizializza visibilità al load
+        if (aperto) {
+            $("#" + sectionId).show();
+            $("#" + iconId).html(iconNascondiSezione);
+            $("#" + iconId).attr("title", tooltipNascondiSezione);
+            $("#" + anchorId).attr("title", tooltipNascondiSezione);
+        } else {
+            $("#" + sectionId).hide();
+            $("#" + iconId).html(iconVisualizzaSezione);
+            $("#" + iconId).attr("title", tooltipVisualizzaSezione);
+            $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+        }
+
+     	// Toggle (indipendente per ogni sezione)
+        $("#" + anchorId + ", #" + iconId).click(function () {
+        	toggleSezione(baseId, iconVisualizzaSezione, iconNascondiSezione, tooltipVisualizzaSezione, tooltipNascondiSezione);
+        });
+    });
+    
+    function apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione) {
+        const sectionId = baseId + "__id";
+        const anchorId  = baseId + "__anchor";
+        const iconId    = baseId + "__icon";
+        const divId     = baseId + "__divEsterno";
+
+        $("#" + sectionId).show();
+        $("#" + iconId).html(iconNascondiSezione).attr("title", tooltipNascondiSezione);
+        $("#" + anchorId).attr("title", tooltipNascondiSezione);
+        $("#" + divId).removeClass("subtitleCollapsed").addClass("subtitleOpen");
+        inizializzaSelectSezione(sectionId);
+    }
+
+    function chiudiSezione(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione) {
+        const sectionId = baseId + "__id";
+        const anchorId  = baseId + "__anchor";
+        const iconId    = baseId + "__icon";
+        const divId     = baseId + "__divEsterno";
+
+        $("#" + sectionId).hide();
+        $("#" + iconId).html(iconVisualizzaSezione).attr("title", tooltipVisualizzaSezione);
+        $("#" + anchorId).attr("title", tooltipVisualizzaSezione);
+        $("#" + divId).removeClass("subtitleOpen").addClass("subtitleCollapsed");
+    }
+
+    function chiudiTutteLeSezioni(exceptBaseId, iconVisualizzaSezione, tooltipVisualizzaSezione) {
+        $(".accordionSubtitleSection").each(function () {
+            const b = this.id.replace("__divEsterno", "");
+            if (b === exceptBaseId) return;
+            chiudiSezione(b, iconVisualizzaSezione, tooltipVisualizzaSezione);
+        });
+    }
+
+    function toggleSezione(baseId, iconVisualizzaSezione, iconNascondiSezione, tooltipVisualizzaSezione, tooltipNascondiSezione) {
+        const sectionId   = baseId + "__id";
+        const accordionId = baseId + "__accordion";
+
+        const isOpen       = $("#" + sectionId).is(":visible");
+        const useAccordion = ($("#" + accordionId).val() === "true");
+
+        if (useAccordion) {
+        	// Accordion: se è già aperta non fare nulla (non si chiude)
+            if (isOpen) {
+                return; // keep-open behavior
+            }
+            // Se era chiusa, chiudi le altre e apri questa
+            chiudiTutteLeSezioni(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
+            apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione);
+        } else {
+            // Modalità indipendente: toggle puro sulla singola sezione
+            if (isOpen) {
+                chiudiSezione(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
+            } else {
+                apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione);
+            }
+        }
+    }
+    
+    
+});
+
+
+</script>
 				<table class="<%=classTabellaPanelLista %>">
 
 <%
@@ -232,9 +423,9 @@ for (int i = 0; i < dati.size(); i++) {
     				cssClassTitle = "navigatorAnchorClosable";
     				cssClassLegend = "navigatorAnchorClosable";
     				
-    				cssClassFieldset = "fieldsetCollapsed";
+    				cssClassFieldset = "accordionFieldsetSection fieldsetCollapsed";
     				if(de.isVisualizzaSezioneAperta()){
-    					cssClassFieldset = "";
+    					cssClassFieldset = "accordionFieldsetSection";
     				}
     			}
     			
@@ -281,72 +472,14 @@ for (int i = 0; i < dati.size(); i++) {
 	    						%>
 	    						<a id="<%= deName  %>__anchor" name="<%=rowName %>" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
 	    					</legend>
-	    						<%
-	    							if(gestioneAperturaFieldset){
-	    						%>
-	    							<script type="text/javascript" nonce="<%= randomNonce %>">
-			        					$(document).ready(function() {
-       									<%
-       										boolean sub = de.isVisualizzaSezioneAperta();
-							      		%>
-							      		var subtitle_<%= deName  %>_aperto = <%=sub %>; 
-							      		
-							      		if(subtitle_<%= deName  %>_aperto){
-						      				$("#<%= titleDivId  %>").show();
-						      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-						      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
-						      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-						      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
-						      			} else {
-						      				$("#<%= titleDivId  %>").hide();
-						      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-						      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
-						      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-						      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
-						      			}
-							      		
-							      		$("#<%= deName  %>__anchor").click(function(){
-							      			subtitle_<%= deName  %>_aperto = !subtitle_<%= deName  %>_aperto;
-							      			
-							      			if(subtitle_<%= deName  %>_aperto){
-							      				$("#<%= titleDivId  %>").show();
-							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-							      				inizializzaSelectSezione('<%= titleDivId  %>');
-							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
-							      			} else {
-							      				$("#<%= titleDivId  %>").hide();
-							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
-							      			}
-							      		});
-							      		
-							      		$("#<%= deName  %>__icon").click(function(){
-							      			subtitle_<%= deName  %>_aperto = !subtitle_<%= deName  %>_aperto;
-							      			
-							      			if(subtitle_<%= deName  %>_aperto){
-							      				$("#<%= titleDivId  %>").show();
-							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_FIELDSET%>');
-							      				inizializzaSelectSezione('<%= titleDivId  %>');
-							      				$("#<%= deName  %>__fieldset").removeClass('fieldsetCollapsed');
-							      			} else {
-							      				$("#<%= titleDivId  %>").hide();
-							      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_FIELDSET%>');
-							      				$("#<%= deName  %>__fieldset").addClass('fieldsetCollapsed');
-							      			}
-							      		});
-        										});
-			        				</script>
-	    						<%
-	    							}
-	    						%>
+	    					       <%
+					               if(gestioneAperturaFieldset){
+					            	   boolean accordion = de.isModalitaAccordion();
+					       			%>
+					       			<input type="hidden" id="<%= deName  %>__accordion" value="<%=accordion %>" />
+		    					<%
+			    					}
+		    					%>
 	    						<%
     							if(refresh){
     								String chiamataEventoPostback = Costanti.POSTBACK_VIA_POST_FUNCTION_PREFIX;
@@ -372,7 +505,6 @@ for (int i = 0; i < dati.size(); i++) {
     			}
     		} else { // else title
     			if (type.equals("subtitle")){
-    				
     				// gestion apertura e chiusura.
         			STATO_APERTURA_SEZIONI statoAperturaSezione = de.getStatoSottosezione();
         			boolean gestioneAperturaSubTitle = !STATO_APERTURA_SEZIONI.DISABILITATO.equals(statoAperturaSezione);
@@ -390,9 +522,9 @@ for (int i = 0; i < dati.size(); i++) {
         				titoloComandoApertura = " title=\""+ Costanti.TOOLTIP_VISUALIZZA_SUBTITLE +"\"";
         				cssClassTitle = "navigatorAnchorClosable";
         				
-        				cssClassSubtitle = "subtitle " + labelStyleClass + " subtitleCollapsed";
+        				cssClassSubtitle = "subtitle accordionSubtitleSection " + labelStyleClass + " subtitleCollapsed";
         				if(de.isVisualizzaSezioneAperta()){
-        					cssClassSubtitle = "subtitle " + labelStyleClass + " subtitleOpen";
+        					cssClassSubtitle = "subtitle accordionSubtitleSection " + labelStyleClass + " subtitleOpen";
         				}
         			}
         			
@@ -429,7 +561,7 @@ for (int i = 0; i < dati.size(); i++) {
 	       					<%
    							}
    	    					%>
-							<a id="<%= deName  %>__anchor" name="<%=rowName %>" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>"><%=deLabel %></a>
+							<a id="<%= deName  %>__anchor" name="<%=rowName %>" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
 	       				</span>
 	       				<%
 							} else {
@@ -456,77 +588,13 @@ for (int i = 0; i < dati.size(); i++) {
 							}
 						%>
 						<%
-							if(gestioneAperturaSubTitle){
-						%>
-	        			<script type="text/javascript" nonce="<%= randomNonce %>">
-	       					$(document).ready(function() {
-							<%
-								boolean sub = de.isVisualizzaSezioneAperta();
-				      		%>
-				      		var subtitle_<%= deName  %>_aperto = <%=sub %>; 
-				      		
-				      		if(subtitle_<%= deName  %>_aperto){
-			      				$("#<%= subtitleDeId  %>").show();
-			      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-			      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
-			      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-			      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
-			      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
-			      			} else {
-			      				$("#<%= subtitleDeId  %>").hide();
-			      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-			      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
-			      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-			      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
-			      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
-			      			}
-				      		
-				      		$("#<%= deName  %>__anchor").click(function(){
-				      			subtitle_<%= deName  %>_aperto = !subtitle_<%= deName  %>_aperto;
-				      			
-				      			if(subtitle_<%= deName  %>_aperto){
-				      				$("#<%= subtitleDeId  %>").show();
-				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
-				      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
-				      				inizializzaSelectSezione('<%= subtitleDeId  %>');
-				      			} else {
-				      				$("#<%= subtitleDeId  %>").hide();
-				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
-				      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
-				      			}
-				      		});
-				      		
-				      		$("#<%= deName  %>__icon").click(function(){
-				      			subtitle_<%= deName  %>_aperto = !subtitle_<%= deName  %>_aperto;
-				      			
-				      			if(subtitle_<%= deName  %>_aperto){
-				      				$("#<%= subtitleDeId  %>").show();
-				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_NASCONDI_SUBTITLE%>');
-				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleCollapsed');
-				      				$("#<%= deName  %>__divEsterno").addClass('subtitleOpen');
-				      				inizializzaSelectSezione('<%= subtitleDeId  %>');
-				      			} else {
-				      				$("#<%= subtitleDeId  %>").hide();
-				      				$("#<%= deName  %>__anchor").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").html('<%= Costanti.ICON_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__icon").prop('title', '<%= Costanti.TOOLTIP_VISUALIZZA_SUBTITLE%>');
-				      				$("#<%= deName  %>__divEsterno").removeClass('subtitleOpen');
-				      				$("#<%= deName  %>__divEsterno").addClass('subtitleCollapsed');
-				      			}
-				      		});
-	    										});
-	       				</script>
-       				<%
-						}
-					%>
+			               if(gestioneAperturaSubTitle){
+			            	   boolean accordion = de.isModalitaAccordion();
+				       			%>
+				       			<input type="hidden" id="<%= deName  %>__accordion" value="<%=accordion %>" />
+    					<%
+	    					}
+    					%>
 					<%
 						if(refresh){
 							String chiamataEventoPostback = Costanti.POSTBACK_VIA_POST_FUNCTION_PREFIX;
@@ -1055,17 +1123,19 @@ for (int i = 0; i < dati.size(); i++) {
 		                            				%>
 		                                			<div class="prop">
 		                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
-		                                				<input id="<%=id %>" type="button" value="<%= de.getValue() %>">
-		                                				<% if(!deNote.equals("")){ %>
-									      					<p class="note <%= labelStyleClass %>"><%=deNote %></p>
-									      				<% } %>
-									      				<script type="text/javascript" nonce="<%= randomNonce %>">
-													      	 $(document).ready(function(){
-																	$('#<%=id %>').click(function() {
-																		<%= visualizzaAjaxStatus %><%= de.getOnClick() %>;
+		                                				<div class="de_buttonrow">
+			                                				<input id="<%=id %>" type="button" value="<%= de.getValue() %>" class="<%= classInput %>" />
+			                                				<% if(!deNote.equals("")){ %>
+										      					<p class="note <%= labelStyleClass %>"><%=deNote %></p>
+										      				<% } %>
+										      				<script type="text/javascript" nonce="<%= randomNonce %>">
+														      	 $(document).ready(function(){
+																		$('#<%=id %>').click(function() {
+																			<%= visualizzaAjaxStatus %><%= de.getOnClick() %>;
+																		});
 																	});
-																});
-														</script>
+															</script>
+														</div>
 		                                			</div>
 		                                			<%
 		                                		} else { // else button
@@ -1760,6 +1830,8 @@ for (int i = 0; i < dati.size(); i++) {
 <%
 
 if (visualizzaBottoneLogin) {
+	boolean nascondiButtonRowLogin = pd.isNascondiButtonRowLogin();
+	if(!nascondiButtonRowLogin){
 	  %><tr class="buttonrow">
 		  <td colspan="2">
 		  	<div class="buttonrowform">
@@ -1775,7 +1847,8 @@ if (visualizzaBottoneLogin) {
 		  </td>
 	  </tr>
 	  <%
-	}
+	} // end if visualizza barra login
+}
 else
 if (pd.getMode().equals("view")) {
   %><tr class="buttonrow">

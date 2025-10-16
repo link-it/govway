@@ -41,6 +41,7 @@ import org.openspcoop2.web.lib.mvc.DataElement;
  */
 public class Utilities {
 
+	private Utilities() {/*static only */}
 
 	public static boolean contains(String value,String [] listaValoriPossibili){
 		if(value==null)
@@ -71,7 +72,7 @@ public class Utilities {
 	
 	
 	private static TipologiaConnettori TIPOLOGIA_CONNETTORI = null;
-	public static TipologiaConnettori getTipologiaConnettori(ControlStationCore core) throws Exception {
+	public static TipologiaConnettori getTipologiaConnettori(ControlStationCore core) {
 
 		if (Utilities.TIPOLOGIA_CONNETTORI == null) {
 			Utilities.readTipologiaConnettori(core);
@@ -94,7 +95,7 @@ public class Utilities {
 	  * Legge il valore della proprieta' impostata nel file di configurazione se
 	  * la proprieta' e' nulla setta il valore di default (ALL)
 	  */
-	 public static void readTipologiaConnettori(ControlStationCore core) throws Exception {
+	 public static void readTipologiaConnettori(ControlStationCore core) {
 		 
 		 if (core.isShowAllConnettori()) {
 			 Utilities.TIPOLOGIA_CONNETTORI = TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL;
@@ -120,30 +121,12 @@ public class Utilities {
 
 		 return toRem;
 	 }
-
-	
-
-
-
-
-	
-
-
+	 
 	 public static String getTestoVisualizzabile(byte [] b,StringBuilder stringBuffer) {
 		 try{
 			 // 1024 = 1K
 			 // Visualizzo al massimo 250K
 			 int max = 250 * 1024;
-//			 if(b.length>max){
-//				 return "Visualizzazione non riuscita: la dimensione supera 250K";
-//			 }
-//
-//			 for (int i = 0; i < b.length; i++) {
-//				 if(!Utilities.isPrintableChar((char)b[i])){
-//
-//					 return "Visualizzazione non riuscita: il documento contiene caratteri non visualizzabili";
-//				 }
-//			 }
 			 stringBuffer.append(org.openspcoop2.utils.Utilities.convertToPrintableText(b, max));
 			 return null;
 
@@ -151,17 +134,5 @@ public class Utilities {
 			 ControlStationCore.logError("getTestoVisualizzabile error", e);
 			 return e.getMessage();
 		 }
-
 	 }
-
-//	 public static boolean isPrintableChar( char c ) {
-//		 if ( Character.isDefined(c))
-//		 {
-//			 return true;
-//		 }
-//		 else{
-//			 return false;
-//		 }
-//	 }
-
 }

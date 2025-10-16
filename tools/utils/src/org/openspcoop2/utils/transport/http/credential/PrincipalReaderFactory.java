@@ -32,31 +32,27 @@ import org.slf4j.Logger;
  */
 public class PrincipalReaderFactory {
 	
+	private PrincipalReaderFactory() { /*static only*/ }
+	
 	public static IPrincipalReader getReader(Logger log, String nomePrincipalReader) throws PrincipalReaderException{
 		
-		log.debug("Caricamento Principal Reader ["+nomePrincipalReader+"] in corso...");
+		log.debug("Caricamento Principal Reader [{}] in corso...", nomePrincipalReader);
 		
 		PrincipalReaderType principalReaderType = PrincipalReaderType.toEnumConstant(nomePrincipalReader);
 		
 		String className = null;
 		if(principalReaderType != null){
-			switch(principalReaderType){
-			case PRINCIPAL:
-				return new IdentityPrincipalReader(log);
-			case HEADER:
-				return new IdentityHttpReader(log);
-			}
+			className = principalReaderType.getClassName();
 		} else {
 			// se non ho trovato una classe corrispondente al paramentro allora carico la classe indicata 
 			className = nomePrincipalReader;
 		}
 		
-		log.debug("Caricamento classe ["+className+"] in corso...");
+		log.debug("Caricamento classe [{}] in corso...", className);
 		try{
 			Class<?> c = Class.forName(className);
 			Constructor<?> constructor = c.getConstructor(Logger.class);
-			IPrincipalReader p = (IPrincipalReader) constructor.newInstance(log);
-			return  p;
+			return (IPrincipalReader) constructor.newInstance(log);
 		} catch (Exception e) {
 			throw new PrincipalReaderException("Impossibile caricare la classe indicata ["+className+"] " + e.getMessage(), e);
 		}

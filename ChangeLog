@@ -1,3 +1,9 @@
+2025-10-15  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Aggiunta funzionalità #1618
+	Aggiunto il supporto per l’integrazione delle console con un authorization server conforme agli standard OpenID Connect (OIDC) e OAuth 2.0.
+
 2025-10-13  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [CliTemplateScan]

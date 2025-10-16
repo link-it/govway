@@ -53,6 +53,7 @@ public class IEFilter implements Filter {
 	@Override
 
 	public void init(FilterConfig filterConfig) throws ServletException {
+		//do nothing
 	}
 
 	@Override
@@ -65,18 +66,18 @@ public class IEFilter implements Filter {
 
 			try{
 
-				log.debug("Decodifica Browser da Header UserAgent ["+userAgent+"]");
+				log.debug("Decodifica Browser da Header UserAgent [{}]", userAgent);
 				BrowserInfo browserInfo = BrowserInfo.getBrowserInfo(userAgent);
 
 				String browsername = browserInfo.getBrowserName();
 				Double browserversion = browserInfo.getVersion();
 
-				log.debug("Browser Riconosciuto: Name ["+browsername+"] Version ["+browserversion+"].");
+				log.debug("Browser Riconosciuto: Name [{}] Version [{}].", browsername, browserversion);
 
 				if(browserInfo.getBrowserFamily().equals(BrowserFamily.IE)){
 
 					//Imposto l'header http necessario per forzare la visualizzazione.
-//					((HttpServletResponse) response).setHeader("X-UA-Compatible", "IE=EmulateIE8");
+//					((HttpServletResponse) response).setHeader("X-UA-Compatible", "IE=EmulateIE8")
 					// per tutte le versioni
 					((HttpServletResponse) response).setHeader("X-UA-Compatible", "IE=edge");
 
@@ -105,6 +106,7 @@ public class IEFilter implements Filter {
 	@Override
 
 	public void destroy() {
+		//do nothing
 	}
 
 	// Request Wrapper. Catches the getHeader for Accept. When it is text/css we will return simply "text/css, */*"

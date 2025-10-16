@@ -28,6 +28,7 @@ import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.costanti.TipologiaConnettori;
 import org.openspcoop2.web.ctrlstat.servlet.utenti.UtentiCore;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
+import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.User;
 
@@ -39,24 +40,32 @@ import org.openspcoop2.web.lib.users.dao.User;
  * @version $Rev$, $Date$
  */
 public class LoginSessionUtilities {
+	
+	private LoginSessionUtilities() { /* static only */ }
 
-	public static void setLoginParametersSession(HttpServletRequest request, HttpSession session, ControlStationCore core,String login) throws Exception{
+	public static void setLoginParametersSession(HttpServletRequest request, HttpSession session, ControlStationCore core,String login) throws DriverUsersDBException {
 				
 		UtentiCore utentiCore = new UtentiCore(core);
+		User user = utentiCore.getUser(login);
+		
+		setLoginParametersSession(request, session, utentiCore, login ,user);
+		
+	}
+	
+	public static void setLoginParametersSession(HttpServletRequest request, HttpSession session, ControlStationCore core,String login, User user) {
 		
 		Boolean contaListe = core.isShowCountElementInLinkList();
 		
 		ServletUtils.setUserLoginIntoSession(session, login);
 		
 		ServletUtils.setContaListeIntoSession(session, contaListe);
-				
-		User user = utentiCore.getUser(login);
 		
 		ServletUtils.setUserIntoSession(request, session, user);
 	
 		setLoginParametersSession(request, session, core, user);
 	}
-	public static void setLoginParametersSession(HttpServletRequest request, HttpSession session, ControlStationCore core, User user) throws Exception{
+	
+	public static void setLoginParametersSession(HttpServletRequest request, HttpSession session, ControlStationCore core, User user) {
 			
 		Boolean showAccordiAzioni = core.isShowAccordiColonnaAzioni();
 		Boolean gestioneInfoProtocol = core.isShowAccordiInformazioniProtocollo();
@@ -94,7 +103,7 @@ public class LoginSessionUtilities {
 	}
 	
 	
-	public static void cleanLoginParametersSession(HttpServletRequest request, HttpSession session) throws Exception{
+	public static void cleanLoginParametersSession(HttpServletRequest request, HttpSession session) {
 		
 		ServletUtils.removeUserLoginFromSession(session);
 		

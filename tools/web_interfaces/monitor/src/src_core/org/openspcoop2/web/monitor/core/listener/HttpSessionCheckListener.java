@@ -44,13 +44,13 @@ public class HttpSessionCheckListener implements HttpSessionListener {
 	
 	@Override
 	public void sessionCreated(HttpSessionEvent e) {
-		HttpSessionCheckListener.log.debug("session "+e.getSession().getId()+" created.");
+		HttpSessionCheckListener.log.debug("session {} created.", e.getSession().getId());
 		
 	}
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent e) {
-		HttpSessionCheckListener.log.debug("session "+e.getSession().getId()+" destroyed.");
+		HttpSessionCheckListener.log.debug("session {} destroyed.", e.getSession().getId());
 		try{
 			cleanUp(e.getSession());
 		}catch (Exception ex) {
@@ -58,11 +58,11 @@ public class HttpSessionCheckListener implements HttpSessionListener {
 		}
 	}
 	
-	private void cleanUp(HttpSession session) throws Exception{
+	private void cleanUp(HttpSession session) {
 		//recuper utente dalla sessione se esiste
 		LoginBean lb = (LoginBean)session.getAttribute(AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME);
 		if(lb!=null){
-			HttpSessionCheckListener.log.debug("remove user "+lb.getUsername()+" from session");
+			HttpSessionCheckListener.log.debug("remove user {} from session", lb.getUsername());
 			session.setAttribute(AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
 		}else{
 			HttpSessionCheckListener.log.debug("no login info found in session, nothing to do.");

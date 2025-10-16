@@ -15,3 +15,11 @@
 		<servlet-name>ArchizioZipUpload</servlet-name>
 		<url-pattern>/archivioZipUpload</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>oauth2CallbackServlet</servlet-name>
+		<url-pattern>/oauth2/callback</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>oauth2UserServlet</servlet-name>
+		<url-pattern>/oauth2/user</url-pattern>
+	</servlet-mapping>
