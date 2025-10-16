@@ -348,7 +348,8 @@ Prerequisiti:
 	statistiche.pdnd.tracciamento.maxAttempts = 3
 	statistiche.pdnd.tracciamento.pending.check=0
 
-	statistiche.pdnd.tracciamento.baseUrl=http://127.0.0.1:8091
+	#statistiche.pdnd.tracciamento.baseUrl=http://127.0.0.1:8091
+	statistiche.pdnd.tracciamento.baseUrl=http://localhost:8080/govway/rest/in/DemoSoggettoErogatore/MockServerInvocatoDaBatch/v1
 	statistiche.pdnd.tracciamento.readTimeout=15000
 	statistiche.pdnd.tracciamento.connectTimeout=10000
 

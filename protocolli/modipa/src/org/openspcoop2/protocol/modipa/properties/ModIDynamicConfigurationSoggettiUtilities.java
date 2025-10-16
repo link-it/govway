@@ -341,6 +341,10 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 			StringProperty idTracciamentoItemValue = (StringProperty) ProtocolPropertiesUtils.getAbstractPropertyById(properties, ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ID);
 			boolean tracciamentoAbilitato = idTracciamentoItemValue!=null && idTracciamentoItemValue.getValue()!=null && ModIConsoleCostanti.MODIPA_SOGGETTI_PDND_TRACING_ENABLE_ID.equals(idTracciamentoItemValue.getValue());
 			
+			if(!tracciamentoAbilitato) {
+				validateDynamicConfigTracciamentoDisabilitato(registryReader, id);
+			}
+			
 			boolean isSoggettoAggregatore = false;
 			if(id!=null) {
 				isSoggettoAggregatore = isSoggettoAggregatore(id.getNome(), registryReader);
@@ -367,6 +371,16 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 				validatePdndInfoIdExists(registryReader, id, 
 						ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_ID, ModIConsoleCostanti.MODIPA_SOGGETTI_ID_ENTE_LABEL, idEnteItemValue.getValue());
 			}
+		}
+	}
+	private static void validateDynamicConfigTracciamentoDisabilitato(IRegistryReader registryReader, IDSoggetto id) throws ProtocolException {
+		
+		List<String> list = null;
+		if(id!=null && id.getNome()!=null) {
+			list = getSoggettiOperativiRiferisconoSoggettoAggregato(id.getNome(), registryReader);
+		}
+		if(list!=null && !list.isEmpty()) {
+			throw new ProtocolException("Non è possibile disabilitare il tracciamento PDND; il soggetto '"+id.getNome()+"' risulta selezionato come aggregatore di report per altri soggetti: "+list);
 		}
 	}
 	private static void validateDynamicConfigSoggettoAggregato(ProtocolProperties properties, IRegistryReader registryReader) throws ProtocolException {
@@ -547,4 +561,5 @@ public class ModIDynamicConfigurationSoggettiUtilities {
 		}
 		return listSoggetti;
 	}
+	
 }
