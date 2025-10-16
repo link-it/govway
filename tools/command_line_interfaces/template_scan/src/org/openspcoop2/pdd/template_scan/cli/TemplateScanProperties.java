@@ -64,18 +64,20 @@ public class TemplateScanProperties {
 	public static final String ATTRIBUTE_AUTHORITY_SEGMENT = "Attribute Authority";
 	public static final String ATTRIBUTE_AUTHORITY_REQUEST_SEGMENT = "Richiesta";
 	
-	private static TemplateScanProperties instance = null;
-	public static TemplateScanProperties getInstance() {
-		if (instance == null) {
-			synchronized (TemplateScanProperties.class) {
-				try(InputStream is = TemplateScanProperties.class.getResourceAsStream(TemplateScanProperties.PROPERTIES_FILE)) {
-					instance = new TemplateScanProperties(is);
-				} catch (IOException e) {
-					throw new IllegalStateException(e);
-				}
+	private static class InstanceHolder {
+		private static final TemplateScanProperties INSTANCE = createInstance();
+
+		private static TemplateScanProperties createInstance() {
+			try(InputStream is = TemplateScanProperties.class.getResourceAsStream(TemplateScanProperties.PROPERTIES_FILE)) {
+				return new TemplateScanProperties(is);
+			} catch (IOException e) {
+				throw new IllegalStateException(e);
 			}
 		}
-		return instance;
+	}
+
+	public static TemplateScanProperties getInstance() {
+		return InstanceHolder.INSTANCE;
 	}
 	
 	private String readProperty(Properties p, String key, boolean required) {
