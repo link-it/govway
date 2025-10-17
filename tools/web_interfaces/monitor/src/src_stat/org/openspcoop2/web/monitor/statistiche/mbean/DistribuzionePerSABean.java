@@ -95,7 +95,6 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 	}
 	private void initDpSAB() {
 		this.setChartId("distribuzioneSA");
-		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -217,10 +216,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 	@Override
 	public String getData(){
-		if(((StatsSearchForm)this.search).isUseGraficiSVG())
-			return this.getJson();
-
-		return this.getXml();
+		return this.getJson();
 	}
 
 	public String getCaption() {

@@ -6,7 +6,6 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:link="http://www.link.it"
-	xmlns:fc="http://www.fusioncharts.com"
     xmlns:c="http://java.sun.com/jstl/core">
     <f:loadBundle var="msg" basename="messages" />
 	<ui:define name="navbar">
@@ -28,13 +27,12 @@
 		<a4j:keepAlive beanName="distribuzionePerAzioneBean" />
 		<a4j:keepAlive beanName="analisiStatisticaBean" />
 		
-		<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not distribuzioneAzioneSearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/d3-format.min.js" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/c3.min.js" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/ChartMap.js" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/SvgRaster.js" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/heatmap.js" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" />
-		<a4j:outputPanel id="scriptSVGPanel" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+		<a4j:loadScript src="/scripts/d3-format.min.js" />
+		<a4j:loadScript src="/scripts/c3.min.js" />
+		<a4j:loadScript src="/scripts/ChartMap.js" />
+		<a4j:loadScript src="/scripts/SvgRaster.js" />
+		<a4j:loadScript src="/scripts/heatmap.js" />
+		<a4j:outputPanel id="scriptSVGPanel">
    			<script type="text/javascript" nonce="#{_csp_random_nonce}">
    			//<![CDATA[
    				var nomeFileImageExport = '#{distribuzionePerAzioneBean.exportFilenamePng}';
@@ -56,26 +54,7 @@
 	   		 //]]>	
 			</script>
 		</a4j:outputPanel>	
-		<a4j:outputPanel id="scriptsNoSVGPanel" rendered="#{not distribuzioneAzioneSearchForm.useGraficiSVG}">
-			<script type="text/javascript" nonce="#{_csp_random_nonce}">
-				//<![CDATA[
-					function updateChart(data){
-						var c = getChartFromId(chartId);
-						data0 = data;
-						c.setDataXML(data0);
-					}
-					
-					function updateChart2(slider){
-						var c = getChartFromId(chartId);
-						chartWidth = '' + slider.value;
-						c.resizeTo(chartWidth,chartHeight);
-						c.setDataXML(data0);
-						c.render(chartDivId);
-					}
-					 //]]>	
-			</script>
-		</a4j:outputPanel>
-		<a4j:outputPanel id="mainPnlDA" ajaxRendered="false">
+				<a4j:outputPanel id="mainPnlDA" ajaxRendered="false">
 			<c:if test="#{distribuzioneAzioneSearchForm._value_tipoReport == 'tabella'}">
 				<rich:panel rendered="#{distribuzioneAzioneSearchForm._value_tipoReport == 'tabella'}" styleClass="noborder">
 					<h:form>
@@ -174,14 +153,13 @@
 						</script>
 					</a4j:outputPanel>
 				</rich:panel>
-			</c:if>
+				</c:if>
 			<c:if test="#{distribuzioneAzioneSearchForm._value_tipoReport == 'pie_chart'}">
-				<a4j:loadScript src="/scripts/d3.min.js" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" />
+				<a4j:loadScript src="/scripts/d3.min.js" />
 				<rich:panel id="chartPanel" rendered="#{distribuzioneAzioneSearchForm._value_tipoReport == 'pie_chart'}" styleClass="noborder">
 					<div id="distribuzioneAzioneDiv"></div>
 					<a4j:outputPanel id="scriptPieChartPanel" rendered="#{true}">
-						<c:if test="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
-							<a4j:outputPanel id="svgChartPanel" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+						<a4j:outputPanel id="svgChartPanel">
 								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 									//<![CDATA[
 					   				var chartId = 'distribuzioneAzioneId';
@@ -195,26 +173,6 @@
 					   			 //]]>	
 								</script>
 							</a4j:outputPanel>
-						</c:if>
-						<c:if test="#{not distribuzioneAzioneSearchForm.useGraficiSVG}">
-							<a4j:outputPanel id="flashChartPanel" rendered="#{not distribuzioneAzioneSearchForm.useGraficiSVG}">
-								<script type="text/javascript" nonce="#{_csp_random_nonce}">
-									//<![CDATA[
-									var chartId = 'distribuzioneAzioneId';
-					   				var chartDivId = 'distribuzioneAzioneDiv';
-					   				var chartWidth = '' + jQuery('#chartPanel_body').width();
-									var chartHeight = '650';
-									var data0 = "#{distribuzionePerAzioneBean.data}";
-									
-									var chart_andamentoTemporale = new FusionCharts('#{request.contextPath}/FusionCharts/Pie3D.swf', chartId, chartWidth, chartHeight, '0', '1');
-									chart_andamentoTemporale.setTransparent(true);
-									chart_andamentoTemporale.setDataXML(data0);
-									chart_andamentoTemporale.render(chartDivId); 
-									 //]]>	
-								</script>
-							</a4j:outputPanel>
-						</c:if>
-						
 						<ui:include src="/stat/includes/timeoutModale.xhtml">
 			               	<ui:param name="mBean" value="#{distribuzionePerAzioneBean}" />
 			               	<ui:param name="id" value="modale_pie_chart" />
@@ -225,7 +183,6 @@
 						<rich:panel id="formCmdPanel" styleClass="noborder" bodyClass="nopadding">
 							<a4j:form id="cmdPanel">
 								<input type="hidden" id="_csrfFormCmdPanel" name="_csrf" value="#{loginBean.csrf}"/>
-								<h:inputHidden value="true" id="usaSVG"/>
 								<a4j:commandLink value="#{distribuzionePerAzioneBean.prevBtnLabel}" reRender="scriptPieChartPanel,gridComandi">
 									<a4j:actionparam name="dir" value="prev" assignTo="#{distribuzionePerAzioneBean.dir}" actionListener="#{distribuzionePerAzioneBean.updateChartDateOffset}"/>
 								</a4j:commandLink>
@@ -243,7 +200,6 @@
 								<div class="form-container noborder">
 									<a4j:form rendered="#{distribuzionePerAzioneBean.visualizzaComandiExport}" id="formSlider">
 										<input type="hidden" id="_csrfFormSliderPanel" name="_csrf" value="#{loginBean.csrf}"/>
-										<h:inputHidden value="true" id="usaSVG"/>
 										<h:panelGrid columns="2">
 											<h:outputLabel value="Numero Risultati" styleClass="labelSpinnerGraficiSolo" />
 											<rich:inputNumberSpinner value="#{distribuzionePerAzioneBean.slice}" minValue="#{distribuzionePerAzioneBean.minCategorie}" id="numeroRisultatiSlider"
@@ -268,8 +224,8 @@
 								<h:commandLink id="exportPdfLink" target="_blank" action="#{distribuzionePerAzioneBean.esportaPdf}" title="Esporta i risultati in formato PDF">
 									<h:outputText value="PDF" />
 								</h:commandLink>
-								<h:outputText value=" | " rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}"/>
-								<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('distribuzioneAzioneDiv'); return false;" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+								<h:outputText value=" | "/>
+								<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('distribuzioneAzioneDiv'); return false;">
 									<h:outputText value="PNG" /> 
 								</h:commandLink>
 							</h:form>
@@ -277,9 +233,9 @@
 						</h:panelGrid>
 					</div>
 				</rich:panel>
-			</c:if>
+				</c:if>
 			<c:if test="#{distribuzioneAzioneSearchForm.visualizzaGraficoBars}">
-				<a4j:loadScript src="/scripts/d3.min.js" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" />
+				<a4j:loadScript src="/scripts/d3.min.js" />
 				<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
 			   				jQuery(document).ready(function() {
@@ -296,8 +252,7 @@
 				<rich:panel id="chartPanelBars" rendered="#{distribuzioneAzioneSearchForm._value_tipoReport == 'bar_chart'}" styleClass="noborder">
 					<div id="distribuzioneAzioneBarsDiv"></div>
 					<a4j:outputPanel id="scriptBarChartPanel" rendered="#{true}">
-						<c:if test="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
-							<a4j:outputPanel id="svgBarChartPanel" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+						<a4j:outputPanel id="svgBarChartPanel">
 								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					   			//<![CDATA[
 					   				var chartId = 'distribuzioneAzioneBarsId';
@@ -311,26 +266,6 @@
 					   			 //]]>	
 								</script>
 							</a4j:outputPanel>
-						</c:if>
-						<c:if test="#{not distribuzioneAzioneSearchForm.useGraficiSVG}">
-							<a4j:outputPanel id="flashBarChartPanel" rendered="#{not distribuzioneAzioneSearchForm.useGraficiSVG}">
-								<script type="text/javascript" nonce="#{_csp_random_nonce}">
-								//<![CDATA[
-									var chartId = 'distribuzioneAzioneBarsId';
-					   				var chartDivId = 'distribuzioneAzioneBarsDiv';
-					   				var chartWidth = '' + jQuery('#chartPanelBars_body').width();
-									var chartHeight = '650';
-									var data0 = "#{distribuzionePerAzioneBean.data}";
-									
-									var chart_andamentoTemporale = new FusionCharts('#{request.contextPath}/FusionCharts/MSColumn2D.swf', chartId, chartWidth, chartHeight, '0', '1');
-									chart_andamentoTemporale.setTransparent(true);
-									chart_andamentoTemporale.setDataXML(data0);
-									chart_andamentoTemporale.render(chartDivId); 
-									 //]]>	
-								</script>
-							</a4j:outputPanel>
-						</c:if>
-						
 						<ui:include src="/stat/includes/timeoutModale.xhtml">
 			               	<ui:param name="mBean" value="#{distribuzionePerSABean}" />
 			               	<ui:param name="id" value="modale_bar_chart" />
@@ -341,7 +276,6 @@
 							<rich:panel id="formCmdPanelBars" styleClass="noborder" bodyClass="nopadding">
 								<a4j:form id="cmdBarsPanel">
 									<input type="hidden" id="_csrfFormCmdBarsPanel" name="_csrf" value="#{loginBean.csrf}"/>
-									<h:inputHidden value="true" id="usaSVG"/>
 									<a4j:commandLink value="#{distribuzionePerAzioneBean.prevBtnLabel}" reRender="scriptBarChartPanel,gridComandiBars">
 										<a4j:actionparam name="dir" value="prev" assignTo="#{distribuzionePerAzioneBean.dir}" actionListener="#{distribuzionePerAzioneBean.updateChartDateOffset}"/>
 									</a4j:commandLink>
@@ -359,16 +293,15 @@
 								<div class="form-container noborder">
 									<a4j:form rendered="#{distribuzionePerAzioneBean.visualizzaComandiExport}" id="formSliderBars">
 										<input type="hidden" id="_csrfFormSliderPanelBars" name="_csrf" value="#{loginBean.csrf}"/>
-										<a4j:outputPanel rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+										<a4j:outputPanel>
 											<style type="text/css" nonce="#{_csp_random_nonce}">
 												div.form-container div.rich-combobox {
 													    margin-left: 0px;
 												}
 											</style>	
 										</a4j:outputPanel>
-										<h:inputHidden value="true" id="usaSVG"/>
-										<h:panelGrid columns="#{distribuzioneAzioneSearchForm.useGraficiSVG ? 5 : 3 }" >
-											<h:panelGrid columns="2" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+										<h:panelGrid columns="5" >
+											<h:panelGrid columns="2">
 												<h:outputLabel value="Label" styleClass="direzioneLabelGrafici" />
 												<rich:comboBox id="rotazioneCombo" value="#{distribuzionePerAzioneBean.direzioneLabel}" defaultLabel="Seleziona Label"
 													  width="100" enableManualInput="false">
@@ -378,7 +311,7 @@
 													<a4j:support status="mainStatus" event="onselect" reRender="scriptBarChartPanel,gridComandiBars" actionListener="#{distribuzionePerAzioneBean.updateChartDirezioneLabel}" />
 												</rich:comboBox>
 											</h:panelGrid>
-											<a4j:outputPanel rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" layout="block" >
+											<a4j:outputPanel layout="block" >
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
@@ -388,7 +321,7 @@
 													<a4j:support event="onchange" actionListener="#{distribuzionePerAzioneBean.updateChartNumeroRisultati}" reRender="scriptBarChartPanel,gridComandiBars"/>
 												</rich:inputNumberSpinner>
 											</h:panelGrid>
-											<a4j:outputPanel rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" layout="block" >
+											<a4j:outputPanel layout="block" >
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
@@ -415,8 +348,8 @@
 									<h:commandLink id="bars_exportPdfLink" target="_blank" action="#{distribuzionePerAzioneBean.esportaPdf}" title="Esporta i risultati in formato PDF">
 										<h:outputText value="PDF" />
 									</h:commandLink>
-									<h:outputText value=" | " rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" />
-									<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('distribuzioneAzioneBarsDiv'); return false;" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+									<h:outputText value=" | " />
+									<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('distribuzioneAzioneBarsDiv'); return false;">
 										<h:outputText value="PNG" /> 
 									</h:commandLink>
 								</h:form>
@@ -424,7 +357,7 @@
 						</h:panelGrid>
 					</div>
 				</rich:panel>
-			</c:if>
+				</c:if>
 			<c:if test="#{distribuzioneAzioneSearchForm.visualizzaGraficoHeatmap}">
 				<a4j:loadScript src="/scripts/d3.v4.min.js" />
 				<script type="text/javascript" nonce="#{_csp_random_nonce}">
@@ -443,8 +376,7 @@
 				<rich:panel id="chartPanelHeatmap" rendered="#{distribuzioneAzioneSearchForm.visualizzaGraficoHeatmap}" styleClass="noborder">
 					<div id="distribuzioneAzioneHeatmapDiv" class="c3"></div>
 					<a4j:outputPanel id="scriptHeatmapChartPanel" rendered="#{true}">
-						<c:if test="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
-							<a4j:outputPanel id="svgHeatmapChartPanel" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+						<a4j:outputPanel id="svgHeatmapChartPanel">
 								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					   			//<![CDATA[
 					   				var chartId = 'distribuzioneAzioneHeatmapId';
@@ -459,8 +391,6 @@
 					   			 //]]>	
 								</script>
 							</a4j:outputPanel>
-						</c:if>
-						
 						<ui:include src="/stat/includes/timeoutModale.xhtml">
 			               	<ui:param name="mBean" value="#{distribuzionePerSABean}" />
 			               	<ui:param name="id" value="modale_heatmap_chart" />
@@ -471,7 +401,6 @@
 							<rich:panel id="formCmdPanelHeatmap" styleClass="noborder" bodyClass="nopadding">
 								<a4j:form id="cmdHeatmapPanel">
 									<input type="hidden" id="_csrfFormCmdHeatmapPanel" name="_csrf" value="#{loginBean.csrf}"/>
-									<h:inputHidden value="true" id="usaSVG"/>
 									<a4j:commandLink value="#{distribuzionePerAzioneBean.prevBtnLabel}" reRender="scriptHeatmapChartPanel,gridComandiHeatmap">
 										<a4j:actionparam name="dir" value="prev" assignTo="#{distribuzionePerAzioneBean.dir}" actionListener="#{distribuzionePerAzioneBean.updateChartDateOffset}"/>
 									</a4j:commandLink>
@@ -489,16 +418,15 @@
 								<div class="form-container noborder">
 									<a4j:form rendered="#{distribuzionePerAzioneBean.visualizzaComandiExport}" id="formSliderHeatmap">
 										<input type="hidden" id="_csrfFormSliderHeatmap" name="_csrf" value="#{loginBean.csrf}"/>
-										<a4j:outputPanel rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+										<a4j:outputPanel>
 											<style type="text/css" nonce="#{_csp_random_nonce}">
 												div.form-container div.rich-combobox {
 													    margin-left: 0px;
 												}
 											</style>	
 										</a4j:outputPanel>
-										<h:inputHidden value="true" id="usaSVG"/>
-										<h:panelGrid columns="#{distribuzioneAzioneSearchForm.useGraficiSVG ? 7 : 3 }" >
-											<h:panelGrid columns="2" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+										<h:panelGrid columns="7" >
+											<h:panelGrid columns="2">
 												<h:outputLabel value="Label" styleClass="direzioneLabelGrafici" />
 												<rich:comboBox id="rotazioneCombo" value="#{distribuzionePerAzioneBean.direzioneLabel}" defaultLabel="Seleziona Label"
 													  width="100" enableManualInput="false">
@@ -508,7 +436,7 @@
 													<a4j:support status="mainStatus" event="onselect" reRender="scriptHeatmapChartPanel,gridComandiHeatmap" actionListener="#{distribuzionePerAzioneBean.updateChartDirezioneLabel}" />
 												</rich:comboBox>
 											</h:panelGrid>
-											<a4j:outputPanel rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" layout="block" >
+											<a4j:outputPanel layout="block" >
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
@@ -518,10 +446,10 @@
 													<a4j:support event="onchange" actionListener="#{distribuzionePerAzioneBean.updateChartNumeroRisultati}" reRender="scriptHeatmapChartPanel,gridComandiHeatmap"/>
 												</rich:inputNumberSpinner>
 											</h:panelGrid>
-											<a4j:outputPanel rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" layout="block" >
+											<a4j:outputPanel layout="block" >
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
-											<h:panelGrid columns="2" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+											<h:panelGrid columns="2">
 												<h:outputLabel value="Mostra Valori" styleClass="labelMostraValoriGrafico" />
 												<rich:comboBox id="visualizzaValoriNelleCelle" value="#{distribuzionePerAzioneBean.visualizzaTotaleNelleCelleGraficoHeatmap}" 
 													defaultLabel="Mostra valori grafico" width="55" enableManualInput="false" converter="selectItemConverter">
@@ -530,7 +458,7 @@
 													<a4j:support status="mainStatus" event="onselect" reRender="scriptHeatmapChartPanel,gridComandiHeatmap" actionListener="#{distribuzionePerAzioneBean.updateChartVisualizzaTotaleNelleCelleGraficoHeatmap}" />
 												</rich:comboBox>
 											</h:panelGrid>
-											<a4j:outputPanel rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" layout="block" >
+											<a4j:outputPanel layout="block" >
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
@@ -557,8 +485,8 @@
 									<h:commandLink id="heatmap_exportPdfLink" target="_blank" action="#{distribuzionePerAzioneBean.esportaPdf}" title="Esporta i risultati in formato PDF">
 										<h:outputText value="PDF" />
 									</h:commandLink>
-									<h:outputText value=" | " rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}" />
-									<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('distribuzioneAzioneHeatmapDiv'); return false;" rendered="#{distribuzioneAzioneSearchForm.useGraficiSVG}">
+									<h:outputText value=" | " />
+									<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('distribuzioneAzioneHeatmapDiv'); return false;">
 										<h:outputText value="PNG" /> 
 									</h:commandLink>
 								</h:form>
@@ -566,7 +494,7 @@
 						</h:panelGrid>
 					</div>
 				</rich:panel>
-			</c:if>
+				</c:if>
 		</a4j:outputPanel>
 	</ui:define>
 </ui:composition>

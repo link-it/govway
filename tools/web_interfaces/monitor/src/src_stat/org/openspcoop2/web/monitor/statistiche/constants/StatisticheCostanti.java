@@ -153,7 +153,6 @@ public class StatisticheCostanti {
 			"isMostraUnitaTempoDistribuzioneNonTemporale_periodoPersonalizzato",
 			"andamentoTemporalePerEsiti",
 			"statisticheLatenzaPortaEnabled",
-			"usaSVG",
 			"isCloned",
 			"action",
 			"periodoDellaRicerca",

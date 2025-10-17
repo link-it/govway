@@ -95,7 +95,6 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 	}
 	private void initSPB() {
 		this.setChartId("statistichePersonalizzate");
-		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}
 	
 	public void setStatisticheGiornaliereService(
@@ -256,10 +255,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 	
 	@Override
 	public String getData(){
-		if(((StatsSearchForm)this.search).isUseGraficiSVG())
-			return this.getJson();
-		
-		return this.getXml();
+		return this.getJson();
 	}
 	
 

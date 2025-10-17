@@ -6,7 +6,6 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:link="http://www.link.it"
-	xmlns:fc="http://www.fusioncharts.com"
     xmlns:c="http://java.sun.com/jstl/core">
 
 	<ui:define name="navbar">
@@ -27,13 +26,12 @@
 	<ui:define name="body">
 		<a4j:keepAlive beanName="andamentoTemporaleBean" />
 		<a4j:keepAlive beanName="analisiStatisticaBean" />
-		<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not andamentoTemporaleSearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/d3.min.js" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/d3-format.min.js" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/c3.min.js" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/ChartMap.js" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/SvgRaster.js" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" />
-		<a4j:outputPanel id="scriptSVGPanel" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
+		<a4j:loadScript src="/scripts/d3.min.js" />
+		<a4j:loadScript src="/scripts/d3-format.min.js" />
+		<a4j:loadScript src="/scripts/c3.min.js" />
+		<a4j:loadScript src="/scripts/ChartMap.js" />
+		<a4j:loadScript src="/scripts/SvgRaster.js" />
+		<a4j:outputPanel id="scriptSVGPanel">
    			<script type="text/javascript" nonce="#{_csp_random_nonce}">
    			//<![CDATA[
    				var nomeFileImageExport = '#{andamentoTemporaleBean.exportFilenamePng}';
@@ -52,29 +50,7 @@
 	   		 //]]>	
 			</script>
 		</a4j:outputPanel>	
-		<a4j:outputPanel id="scriptsNoSVGPanel" rendered="#{not andamentoTemporaleSearchForm.useGraficiSVG}">
-			<script type="text/javascript" nonce="#{_csp_random_nonce}">
-				//<![CDATA[
-					function updateChart(data){
-						var c = getChartFromId(chartId);
-						data0 = data;
-						c.setDataXML(data0);
-						c.resizeTo(chartWidth,chartHeight);
-					}
-					
-					function updateChart2(slider){
-						var c = getChartFromId(chartId);
-						chartWidth = '' + slider.value;
-						c.resizeTo(chartWidth,chartHeight);
-						c.setDataXML(data0);
-						c.render(chartDivId);
-					}
-					
-					 //]]>	
-			</script>
-		</a4j:outputPanel>
-		
-		<a4j:outputPanel id="mainPnlAT" ajaxRendered="false">
+				<a4j:outputPanel id="mainPnlAT" ajaxRendered="false">
 			<c:if test="#{andamentoTemporaleSearchForm._value_tipoReport == 'tabella'}">
 			   	<rich:panel rendered="#{andamentoTemporaleSearchForm._value_tipoReport == 'tabella'}" styleClass="noborder">
 					<h:form>
@@ -208,22 +184,21 @@
 						</h:form>
 					</rich:panel>
 				</rich:panel>
-				
+
 				<a4j:outputPanel id="timeoutCtr" layout="block" styleClass="" rendered="#{andamentoTemporaleDM.timeoutEvent}">
 					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						//<![CDATA[
 						   jQuery(document).ready(controllaEventoTimeout);
-				
-						   function controllaEventoTimeout(){  
+
+						   function controllaEventoTimeout(){
 							   if(#{andamentoTemporaleDM.timeoutEvent}){
 									Richfaces.showModalPanel('table_timeoutModal');
 								}
 						   }
-						 //]]>	
+						 //]]>
 					</script>
 				</a4j:outputPanel>
 			</c:if>
-			
 			<c:if test="#{andamentoTemporaleSearchForm._value_tipoReport == 'line_chart'}">
 				<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					//<![CDATA[
@@ -242,8 +217,7 @@
 				<rich:panel id="chartPanel" rendered="#{andamentoTemporaleSearchForm._value_tipoReport == 'line_chart'}" styleClass="noborder">
 					<div id="andamentoTemporaleDiv"></div>
 					<a4j:outputPanel id="scriptLineChartPanel" rendered="#{true}">
-						<c:if test="#{andamentoTemporaleSearchForm.useGraficiSVG}">
-							<a4j:outputPanel id="svgChartPanel" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
+						<a4j:outputPanel id="svgChartPanel">
 								<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					   				var chartId = 'andamentoTemporaleId';
 					   				var chartDivId = 'andamentoTemporaleDiv';
@@ -255,24 +229,6 @@
 					   				createChart(chartDivId, data0, chartType, chartWidth, chartHeight);
 								</script>
 							</a4j:outputPanel>
-						</c:if>
-						<c:if test="#{not andamentoTemporaleSearchForm.useGraficiSVG}">
-							<a4j:outputPanel id="flashChartPanel" rendered="#{not andamentoTemporaleSearchForm.useGraficiSVG}">
-								<script type="text/javascript" nonce="#{_csp_random_nonce}">
-									var chartId = 'andamentoTemporaleId';
-					   				var chartDivId = 'andamentoTemporaleDiv';
-					   				var chartWidth = '' + jQuery('#chartPanel_body').width();
-									var chartHeight = '650';
-									var data0 = "#{andamentoTemporaleBean.data}";
-									
-									var chart_andamentoTemporale = new FusionCharts('#{request.contextPath}/FusionCharts/ScrollCombi2D.swf', chartId, chartWidth, chartHeight, '0', '1');
-									chart_andamentoTemporale.setTransparent(true);
-									chart_andamentoTemporale.setDataXML(data0);
-									chart_andamentoTemporale.render(chartDivId);
-								</script>
-							</a4j:outputPanel>
-						</c:if>
-						
 						<ui:include src="/stat/includes/timeoutModale.xhtml">
 			               	<ui:param name="mBean" value="#{andamentoTemporaleBean}" />
 			               	<ui:param name="id" value="modale_line_chart" />
@@ -283,7 +239,6 @@
 							<rich:panel id="formCmdPanel" styleClass="noborder" bodyClass="nopadding">
 								<a4j:form id="cmdPanel">
 									<input type="hidden" id="_csrfCmdPanel" name="_csrf" value="#{loginBean.csrf}"/>
-									<h:inputHidden value="true" id="usaSVG"/>
 									<a4j:commandLink value="#{andamentoTemporaleBean.prevBtnLabel}" reRender="scriptLineChartPanel,gridComandi">
 										<a4j:actionparam name="dir" value="prev" assignTo="#{andamentoTemporaleBean.dir}" actionListener="#{andamentoTemporaleBean.updateChartDateOffset}" />
 									</a4j:commandLink>
@@ -301,16 +256,15 @@
 								<div class="form-container noborder">
 									<a4j:form rendered="#{andamentoTemporaleBean.visualizzaComandiExport}" id="formSlider">
 										<input type="hidden" id="_csrfFormSlider" name="_csrf" value="#{loginBean.csrf}"/>
-										<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
+										<a4j:outputPanel>
 											<style type="text/css" nonce="#{_csp_random_nonce}">
 												div.form-container div.rich-combobox {
 													    margin-left: 0px;
 												}
 											</style>	
 										</a4j:outputPanel>
-										<h:inputHidden value="true" id="usaSVG"/>
-										<h:panelGrid columns="#{(andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel) ? 5 : 3 }" >
-											<h:panelGrid columns="2" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
+										<h:panelGrid columns="#{andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel ? 5 : 3}" >
+											<h:panelGrid columns="2">
 												<h:outputLabel value="Label" styleClass="direzioneLabelGrafici"/>
 												<rich:comboBox id="rotazioneCombo" value="#{andamentoTemporaleBean.direzioneLabel}" defaultLabel="Seleziona Label"
 													  width="100" enableManualInput="false">
@@ -320,10 +274,10 @@
 													<a4j:support status="mainStatus" event="onselect" reRender="scriptLineChartPanel,gridComandi" actionListener="#{andamentoTemporaleBean.updateChartDirezioneLabel}"/>
 												</rich:comboBox>
 											</h:panelGrid>
-											<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}" layout="block" >
+											<a4j:outputPanel rendered="#{andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}" layout="block" >
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
-											<h:panelGrid columns="2" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}">
+											<h:panelGrid columns="2" rendered="#{andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}">
 												<h:outputLabel value="Numero Label" styleClass="labelSpinnerGrafici" />
 												<rich:inputNumberSpinner value="#{andamentoTemporaleBean.slice}" minValue="#{andamentoTemporaleBean.minCategorie}" id="numeroRisultatiSlider"
 													maxValue="#{andamentoTemporaleBean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici"
@@ -331,7 +285,7 @@
 													<a4j:support event="onchange" actionListener="#{andamentoTemporaleBean.updateChartNumeroLabel}" reRender="scriptLineChartPanel,gridComandi" />
 												</rich:inputNumberSpinner>
 											</h:panelGrid>
-											<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" layout="block" >
+											<a4j:outputPanel layout="block" >
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
@@ -358,8 +312,8 @@
 									<h:commandLink id="exportPdfLink" target="_blank" action="#{andamentoTemporaleBean.esportaPdf}" title="Esporta i risultati in formato PDF">
 										<h:outputText value="PDF" />
 									</h:commandLink>
-									<h:outputText value=" | " rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}"/>
-									<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('andamentoTemporaleDiv'); return false;" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
+									<h:outputText value=" | "/>
+									<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('andamentoTemporaleDiv'); return false;">
 										<h:outputText value="PNG" /> 
 									</h:commandLink>
 								</h:form>
@@ -386,8 +340,7 @@
 				<rich:panel id="chartPanelBars" rendered="#{andamentoTemporaleSearchForm._value_tipoReport == 'bar_chart'}" styleClass="noborder">
 					<div id="andamentoTemporaleBarsDiv"></div>
 					<a4j:outputPanel id="scriptBarChartPanel" rendered="#{true}">
-						<c:if test="#{andamentoTemporaleSearchForm.useGraficiSVG}">
-							<a4j:outputPanel id="svgBarChartPanel" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
+						<a4j:outputPanel id="svgBarChartPanel">
 					   			<script type="text/javascript" nonce="#{_csp_random_nonce}">
 					   			//<![CDATA[
 					   				var chartId = 'andamentoTemporaleBarsId';
@@ -401,26 +354,6 @@
 					   			 //]]>	
 								</script>
 					   		</a4j:outputPanel>
-				   		</c:if>
-				   		<c:if test="#{not andamentoTemporaleSearchForm.useGraficiSVG}">
-							<a4j:outputPanel id="flashBarChartPanel" rendered="#{not andamentoTemporaleSearchForm.useGraficiSVG}">
-								<script type="text/javascript" nonce="#{_csp_random_nonce}">
-								//<![CDATA[
-									var chartId = 'andamentoTemporaleBarsId';
-					   				var chartDivId = 'andamentoTemporaleBarsDiv';
-					   				var chartWidth = '' + jQuery('#chartPanelBars_body').width();
-									var chartHeight = '650';
-									var data0 = "#{andamentoTemporaleBean.data}";
-									
-									var chart_andamentoTemporale = new FusionCharts('#{request.contextPath}/FusionCharts/MSColumn2D.swf', chartId, chartWidth, chartHeight, '0', '1');
-									chart_andamentoTemporale.setTransparent(true);
-									chart_andamentoTemporale.setDataXML(data0);
-									chart_andamentoTemporale.render(chartDivId); 
-									 //]]>	
-								</script>
-							</a4j:outputPanel>
-						</c:if>
-						
 						<ui:include src="/stat/includes/timeoutModale.xhtml">
 			               	<ui:param name="mBean" value="#{andamentoTemporaleBean}" />
 			               	<ui:param name="id" value="modale_bar_chart" />
@@ -432,7 +365,6 @@
 							<rich:panel id="formCmdPanelBars" styleClass="noborder" bodyClass="nopadding" >
 								<a4j:form id="cmdPanelBars">
 									<input type="hidden" id="_csrfFormCmdPanelBars" name="_csrf" value="#{loginBean.csrf}"/>
-									<h:inputHidden value="true" id="usaSVG"/>
 									<a4j:commandLink value="#{andamentoTemporaleBean.prevBtnLabel}" reRender="scriptBarChartPanel,gridComandiBars">
 										<a4j:actionparam name="dir" value="prev" assignTo="#{andamentoTemporaleBean.dir}" actionListener="#{andamentoTemporaleBean.updateChartDateOffset}"/>
 									</a4j:commandLink>
@@ -450,16 +382,15 @@
 								<div class="form-container noborder">
 									<a4j:form rendered="#{andamentoTemporaleBean.visualizzaComandiExport}" id="formSliderBars">
 										<input type="hidden" id="_csrfFormSliderBars" name="_csrf" value="#{loginBean.csrf}"/>
-										<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
+										<a4j:outputPanel>
 											<style type="text/css" nonce="#{_csp_random_nonce}">
 												div.form-container div.rich-combobox {
 													    margin-left: 0px;
 												}
 											</style>	
 										</a4j:outputPanel>
-										<h:inputHidden value="true" id="usaSVG"/>
-										<h:panelGrid columns="#{(andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel) ? 5 : 3 }" >
-											<h:panelGrid columns="2" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
+										<h:panelGrid columns="#{andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel ? 5 : 3}" >
+											<h:panelGrid columns="2">
 												<h:outputLabel value="Label" styleClass="direzioneLabelGrafici" />
 												<rich:comboBox id="rotazioneCombo" value="#{andamentoTemporaleBean.direzioneLabel}" defaultLabel="Seleziona Label"
 													  width="100" enableManualInput="false">
@@ -469,10 +400,10 @@
 													<a4j:support status="mainStatus" event="onselect" reRender="scriptBarChartPanel,gridComandiBars" actionListener="#{andamentoTemporaleBean.updateChartDirezioneLabel}"/>
 												</rich:comboBox>
 											</h:panelGrid>
-											<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}" layout="block" >
+											<a4j:outputPanel rendered="#{andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}" layout="block" >
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
-											<h:panelGrid columns="2" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}">
+											<h:panelGrid columns="2" rendered="#{andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}">
 												<h:outputLabel value="Numero Label" styleClass="labelSpinnerGrafici" />
 												<rich:inputNumberSpinner value="#{andamentoTemporaleBean.slice}" minValue="#{andamentoTemporaleBean.minCategorie}" id="numeroRisultatiSliderBars"
 													maxValue="#{andamentoTemporaleBean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici"
@@ -480,7 +411,7 @@
 													<a4j:support event="onchange" actionListener="#{andamentoTemporaleBean.updateChartNumeroLabel}" reRender="scriptBarChartPanel,gridComandiBars"/>
 												</rich:inputNumberSpinner>
 											</h:panelGrid>
-											<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" layout="block" >
+											<a4j:outputPanel layout="block" >
 												<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 											</a4j:outputPanel>
 											<h:panelGrid columns="2">
@@ -507,8 +438,8 @@
 									<h:commandLink id="exportPdfLink" target="_blank" action="#{andamentoTemporaleBean.esportaPdf}" title="Esporta i risultati in formato PDF">
 										<h:outputText value="PDF" />
 									</h:commandLink>
-									<h:outputText value=" | " rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" />
-									<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('andamentoTemporaleBarsDiv'); return false;" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
+									<h:outputText value=" | " />
+									<h:commandLink id="exportImgLink" target="_blank" value="" title="Esporta i risultati in formato PNG" onclick="getImage('andamentoTemporaleBarsDiv'); return false;">
 										<h:outputText value="PNG" /> 
 									</h:commandLink> 
 								</h:form>

@@ -117,7 +117,6 @@ public class ApplicationBean implements Serializable {
 	public static final String FUNZIONALITA_GENERICHE = "funzionalita_generiche";
 	public static final String FUNZIONALITA_ARCHIVIAZIONE_DATI = "dump_contenuti";
 	public static final String FUNZIONALITA_GESTIONE_PASSWORD = "gestione_password";
-	public static final String FUNZIONALITA_GRAFICI_SVG = "grafici_svg";
 	public static final String FUNZIONALITA_REPORT = "report";
 
 	/* Ruoli */
@@ -178,9 +177,6 @@ public class ApplicationBean implements Serializable {
 			// Funzionalita' gestione password, controlla la gestione della password quando la console viene utilizzata in modalita' login esterno.
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_GESTIONE_PASSWORD, govwayMonitorProperties.isGestionePasswordUtentiAttiva());
 
-			// funzionalita utilizza grafici in modalita' svg
-			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_GRAFICI_SVG, govwayMonitorProperties.isGraficiSvgEnabled());
-			
 			// funzionalita visualizzazione dei report in formato PDF 
 			ApplicationBean.funzionalitaStaticInstance.put(ApplicationBean.FUNZIONALITA_REPORT, govwayMonitorProperties.isAttivoModuloReports());
 			
@@ -945,19 +941,6 @@ public class ApplicationBean implements Serializable {
 
 		return browserInfo;
 	}
-
-//	public void cleanSVG(){
-//		BrowserInfo browserInfo = getBrowserInfo();
-//		try {
-//			if(browserInfo.getBrowserFamily().equals(BrowserFamily.IE)){
-//				HttpServletResponse response = BrowserInfo.getResponse(FacesContext.getCurrentInstance());
-//			//	response.setHeader("X-UA-Compatible", "IE=EmulateIE8");
-//			}
-//		} catch (Exception e) {
-//			ApplicationBean.log.error("Errore durante la lettura delle info Browser:" + e.getMessage(),e);
-//		}
-//
-//	}
 	
 	public boolean isAmministratore() {
 		checkRoles();
@@ -1030,29 +1013,6 @@ public class ApplicationBean implements Serializable {
 
 	public void setOperatore(boolean operatore) {
 		// nop
-	}
-	
-	public boolean isGraficiSvgEnabled(){
-		return this.isFunzionalitaAbilitata(ApplicationBean.FUNZIONALITA_GRAFICI_SVG);
-	}
-
-	public void cleanSVG(){
-		BrowserInfo browserInfo = getBrowserInfo();
-		try {
-			if(browserInfo.getBrowserFamily().equals(BrowserFamily.IE)){
-				// solo per <= 8
-//				if(browserInfo.getVersion() != null && browserInfo.getVersion().intValue() <= 8){
-//					HttpServletResponse response = BrowserInfo.getResponse(FacesContext.getCurrentInstance());
-//					response.setHeader("X-UA-Compatible", "IE=EmulateIE8");
-//				}
-				
-				// per tutte le versioni
-				HttpServletResponse response = BrowserInfo.getResponse(FacesContext.getCurrentInstance());
-				response.setHeader("X-UA-Compatible", "IE=edge");
-			}
-		} catch (Exception e) {
-			ApplicationBean.log.error("Errore durante la lettura delle info Browser:" + e.getMessage(),e);
-		}
 	}
 
 	public String getIdProdotto(){

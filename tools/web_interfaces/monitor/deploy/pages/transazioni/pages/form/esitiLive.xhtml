@@ -4,18 +4,15 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:fc="http://www.fusioncharts.com"
 	xmlns:link="http://www.link.it"
 	template="/templates/defaultTemplate.xhtml">
 	<ui:define name="body">
 		<style type="text/css" nonce="#{_csp_random_nonce}">
-			#crumbs {display: none;	}					
+			#crumbs {display: none;	}
 		</style>
-		<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not summaryBean.useGraficiSVG}" />
-		<a4j:loadScript src="/FusionCharts/FusionChartsExportComponent.js" rendered="#{not summaryBean.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/d3.min.js" rendered="#{summaryBean.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/c3.min.js" rendered="#{summaryBean.useGraficiSVG}" />
-		<a4j:loadScript src="/scripts/ChartMap.js" rendered="#{summaryBean.useGraficiSVG}" />
+		<a4j:loadScript src="/scripts/d3.min.js" />
+		<a4j:loadScript src="/scripts/c3.min.js" />
+		<a4j:loadScript src="/scripts/ChartMap.js" />
 		
 		<a4j:keepAlive beanName="summaryBean"/>
 			
@@ -27,7 +24,6 @@
 			<a4j:region id="regionPoll"  >
 				<a4j:form id="formPoll" prependId="false">
 					<input type="hidden" id="_csrfFormPoll" name="_csrf" value="#{loginBean.csrf}"/>	
-					<h:inputHidden value="true" id="usaSVG"/> 			
 					<a4j:jsFunction id="pollFn" name="poll" limitToList="true" data="#{summaryBean.dataLive}" oncomplete="updateChart(data)"/> 
 					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						var cdifp = #{summaryBean.intervalloRefresh};
@@ -78,7 +74,7 @@
 					<a4j:jsFunction id="functTransazioni" action="transazioni" name="showTransazioni"/>
 				</h:form>
 				<div id='summaryDivLive'></div>
-				<a4j:outputPanel id="svgChartPanel" rendered="#{summaryBean.useGraficiSVG}" >
+				<a4j:outputPanel id="svgChartPanel" >
 					<script type="text/javascript" nonce="#{_csp_random_nonce}"> 
 						var chartDivId = 'summaryDivLive';
 						var chartWidth = jQuery('#summaryCtLive_body').width();
@@ -91,24 +87,6 @@
 						
 						var data0 = '#{summaryBean.dataLive}';
 						createChart(chartDivId, data0, 'line', chartWidth, chartHeight);
-					</script>
-				</a4j:outputPanel>
-				<a4j:outputPanel id="flashChartPanel" rendered="#{not summaryBean.useGraficiSVG}">
-					<script type="text/javascript" nonce="#{_csp_random_nonce}">
-						var chartDivId = 'summaryDivLive';
-						var chartWidth =  '';
-						chartWidth += jQuery('#summaryCtLive_body').width();
-						
-						function updateChart(data){
-							startCounter();
-							var c = getChartFromId('summaryChartLiveId');					
-							c.setDataXML(data);
-						}
-					
-						var chart_summary_live = new FusionCharts('#{request.contextPath}/FusionCharts/MSLine.swf', 'summaryChartLiveId', chartWidth, '650', '0', '1');
-						chart_summary_live.setTransparent(true);
-						chart_summary_live.setDataXML("#{summaryBean.dataLive}");
-						chart_summary_live.render(chartDivId);
 					</script>
 				</a4j:outputPanel>
 			</a4j:outputPanel>

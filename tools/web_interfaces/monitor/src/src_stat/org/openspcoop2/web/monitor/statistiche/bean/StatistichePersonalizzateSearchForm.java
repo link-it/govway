@@ -359,13 +359,11 @@ implements StatisticsContext{
 			if(this.getPeriodo().equals("Personalizzato")){
 				if(this.getDataInizio() == null){
 					MessageUtils.addErrorMsg("Selezionare Data Inizio");
-					this.cleanSVG();
 					return null;
 				}
 
 				if(this.getDataFine() == null){
 					MessageUtils.addErrorMsg("Selezionare Data Fine");
-					this.cleanSVG();
 					return null;
 				}
 			}
@@ -373,7 +371,6 @@ implements StatisticsContext{
 			// Servizio E' obbligatorio
 			if(StringUtils.isEmpty(this.getNomeServizio()) || this.getNomeServizio().equals("--")){
 				MessageUtils.addErrorMsg("Selezionare il Servizio.");
-				this.cleanSVG();
 				return null;
 			}
 			
@@ -384,22 +381,19 @@ implements StatisticsContext{
 			
 			if(this.getStatistichePersonalizzate() == null){
 				MessageUtils.addErrorMsg("Non sono presenti statistiche personalizzate.");
-				this.cleanSVG();
 				return null;
 			}
-			
+
 			// Statistica E' obbligatoria
 			if(this.getStatistichePersonalizzate().getStatistiche() != null && this.getStatistichePersonalizzate().getStatistiche().size() > 0 && this.getStatisticaSelezionata() == null) {
 				MessageUtils.addErrorMsg("Selezionare una Statistica.");
-				this.cleanSVG();
 				return null;
 			}
-			
+
 			// risorsa della statistica personalizzata
 			if(this.getTipoReport().equals(TipoReport.ANDAMENTO_TEMPORALE)) {
 				if(this.getValoriRisorsa() == null || this.getValoriRisorsa().length == 0) {
 					MessageUtils.addErrorMsg("E' necessario selezionare almeno un Valore Risorsa.");
-					this.cleanSVG();
 					return null;
 				}
 			}
@@ -439,12 +433,10 @@ implements StatisticsContext{
 				}
 			}
 
-			this.cleanSVG();
 			return null;
 		} catch (SearchException re) {
 			String msg = re.getMessage();
 			MessageUtils.addErrorMsg(msg);
-			this.cleanSVG();
 			return null;
 		}
 

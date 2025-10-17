@@ -1064,40 +1064,8 @@ public class StatsSearchForm extends BaseSearchForm{
 		this.action = action;
 	}
 
-	public boolean isUseGraficiSVG() {
-		if(this.useGraficiSVG==null) {
-			BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
-			this.useGraficiSVG =ApplicationBean.getInstance().isGraficiSvgEnabled() && !BrowserFilter.disabilitaGraficiSVG(browserInfo);
-	
-			LoggerManager.getPddMonitorCoreLogger().debug("Usa grafici SVG ["+this.useGraficiSVG+"]");
-		}
-	
-		return this.useGraficiSVG;
-	}
-
-	public void setUseGraficiSVG(boolean useGraficiSVG) {
-		this.useGraficiSVG = useGraficiSVG;
-	}
-
 	private String action = null;
 
-
-	private Boolean useGraficiSVG = null;
-
-
-	private boolean usaSVG = true;
-
-	public boolean isUsaSVG() {
-		return this.usaSVG;
-	}
-	public void setUsaSVG(boolean usaSVG) {
-		this.usaSVG = usaSVG;
-	}
-
-	public void cleanSVG(){
-		ApplicationBean.getInstance().cleanSVG();
-	}
-	
 	public void tornaAiFiltri(ActionEvent ae){
 		Date dataInizioDellaRicerca = this.getDataInizioDellaRicerca();
 		Date dataFineDellaRicerca = this.getDataFineDellaRicerca();
@@ -1175,9 +1143,9 @@ public class StatsSearchForm extends BaseSearchForm{
 	
 	public boolean isVisualizzaNumeroDimensioni() {
 		TipoReport tipoReportToCheck = this.getTipoReport();
-		
-		// si visualizza se e' stato scelto  il report tabella o barchart con grafici svg attivi
-		return tipoReportToCheck != null && (tipoReportToCheck.equals(TipoReport.TABELLA) || (tipoReportToCheck.equals(TipoReport.BAR_CHART) && this.isUseGraficiSVG()));
+
+		// si visualizza se e' stato scelto  il report tabella o barchart
+		return tipoReportToCheck != null && (tipoReportToCheck.equals(TipoReport.TABELLA) || tipoReportToCheck.equals(TipoReport.BAR_CHART));
 	}
 	
 	public List<SelectItem> getDimensioniCustomDisponibili() throws UtilsException {
@@ -1370,10 +1338,10 @@ public class StatsSearchForm extends BaseSearchForm{
 	public boolean isVisualizzaGraficoHeatmap() {
 		TipoReport tipoReportToCheck = this.getTipoReport();
 		NumeroDimensioni numeroDimensioniToCheck = this.getNumeroDimensioni();
-		return (tipoReportToCheck != null && (tipoReportToCheck.equals(TipoReport.BAR_CHART) && this.isUseGraficiSVG())) &&
-				(numeroDimensioniToCheck != null && 
+		return (tipoReportToCheck != null && tipoReportToCheck.equals(TipoReport.BAR_CHART)) &&
+				(numeroDimensioniToCheck != null &&
 					(numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_3) || numeroDimensioniToCheck.equals(NumeroDimensioni.DIMENSIONI_3_CUSTOM)
-				)) 
+				))
 				;
 	}
 	

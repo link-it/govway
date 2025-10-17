@@ -91,7 +91,6 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 	}
 	private void initDpSB() {
 		this.setChartId("distribuzioneSoggetto");
-		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -221,10 +220,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 
 	@Override
 	public String getData(){
-		if(((StatsSearchForm)this.search).isUseGraficiSVG())
-			return this.getJson();
-
-		return this.getXml();
+		return this.getJson();
 	}
 
 	public String getCaption(){

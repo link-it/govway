@@ -72,11 +72,10 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	private Integer numeroLabelAsseXDistribuzioneTemporale = 13; // viene scelto 13 per non far vedere la casella nelle ultime 12 ore (12+intervalloCorrente).
 	private boolean nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati = true;
 	/*
-	 * chart info  
+	 * chart info
 	 */
 	private String data;
 	private String chartId =null;
-	private String filename = null;
 	
 	/*
 	 * prev/actual/next
@@ -269,14 +268,6 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 
 	public void setChartId(String chartId) {
 		this.chartId = chartId;
-	}
-
-	public String getFilename() {
-		return this.filename;
-	}
-
-	public void setFilename(String filename) {
-		this.filename = filename;
 	}
 
 	public void updateChartDateOffset(ActionEvent e) {

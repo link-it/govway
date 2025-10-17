@@ -152,7 +152,6 @@ public class SummaryBean implements Serializable{
 	private transient IUserService userService;
 	private boolean funzionalitaStatisticaAbilitata;
 
-	private boolean useGraficiSVG = false;
 	
 	private DynamicPdDBeanUtils dynamicUtils = null;
 	
@@ -789,10 +788,7 @@ public class SummaryBean implements Serializable{
 	}
 
 	public String getData(){
-		if(isUseGraficiSVG())
-			return this.getJson();
-
-		return this.getXml();
+		return this.getJson();
 	}
 
 
@@ -874,10 +870,7 @@ public class SummaryBean implements Serializable{
 
 
 	public String getDataLive(){
-		if(isUseGraficiSVG())
-			return this.getJsonLive();
-
-		return this.getXmlLive();
+		return this.getJsonLive();
 	}
 
 	/**
@@ -1455,19 +1448,6 @@ public class SummaryBean implements Serializable{
 		return list;
 	}
 
-	public boolean isUseGraficiSVG() {
-		BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
-		this.useGraficiSVG =ApplicationBean.getInstance().isGraficiSvgEnabled() && !BrowserFilter.disabilitaGraficiSVG(browserInfo);
-
-		LoggerManager.getPddMonitorCoreLogger().trace("Usa grafici SVG ["+this.useGraficiSVG+"]");
-
-
-		return this.useGraficiSVG;
-	}
-
-	public void setUseGraficiSVG(boolean useGraficiSVG) {
-		this.useGraficiSVG = useGraficiSVG;
-	}
 	
 	public String getSoggettiAssociatiSelectItemsWidth() throws Exception{
 		this.soggettiAssociatiSelectItemsWidthCheck = false;

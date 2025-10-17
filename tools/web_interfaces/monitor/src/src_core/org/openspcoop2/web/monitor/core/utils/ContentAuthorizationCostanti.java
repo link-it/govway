@@ -42,14 +42,13 @@ public class ContentAuthorizationCostanti {
 		"/public/error.jsf",
 		"/public/timeoutPage.jsf",
 		"/public/login.jsf",
-		"/FusionCharts/",
 		"/index.jsp",
 		"/login.jsp",
 		"/timeout.jsp",
 		"/report/statistica",
 		"/report/configurazione",
-		"/webjars/",  
-		
+		"/webjars/",
+
 		// Cambio Password Scaduta Utente
 		"/core/pages/form/userPasswordScaduta.jsf"
 	};

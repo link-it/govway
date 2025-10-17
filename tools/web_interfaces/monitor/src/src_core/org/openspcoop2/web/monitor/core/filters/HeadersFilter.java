@@ -233,11 +233,6 @@ public class HeadersFilter implements Filter {
 				throw new ValidationException(MessageFormat.format(IL_PARAMETRO_0_CONTIENE_UN_VALORE_NON_VALIDO_1, paramName, parameterValueOriginale));
 			}
 
-			// valdiazione parametro controllo grafici svg
-			if(paramName.endsWith(BrowserFilter.PARAMETRO_SVG) && !ServletUtils.checkBooleanParameter(seqReq, paramName)){
-				throw new ValidationException(MessageFormat.format(IL_PARAMETRO_0_CONTIENE_UN_VALORE_NON_VALIDO_1, paramName, parameterValueOriginale));
-			}
-
 			// validazione attacco path traversal, la forma dei valori utilizzari e' pagina.jsf, /pagina.jsf o \pagina.jsf con pagina.jsf che coincide con il contextpath della richiesta
 			log.trace("Verifica attacco Path traversal per il parametro [{}], valore [{}], lastpath [{}]", paramName, parameterValueFiltrato, lastPathSegment);
 			// evito il check per i parametri vuoti sulla root dell'applicazione

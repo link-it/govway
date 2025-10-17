@@ -802,12 +802,6 @@ public class PddMonitorProperties {
 	
 
 	
-	// controllo abilitazione dei grafici svg
-	
-	public boolean isGraficiSvgEnabled() throws UtilsException{
-		return "true".equalsIgnoreCase(this.appProperties.getProperty("grafici.visualizzazioneSvg.enabled", true, true));
-	}
-	
 	// Abilita il caching delle richieste multipart
 	public boolean isMultipartRequestCache() throws UtilsException{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("abilitaMultipartRequestCache.enabled", true, true));
