@@ -107,7 +107,8 @@ public class JWTParser {
 		}
 		String payload = this.getPayload();
 		if(payload!=null) {
-			return new String(Base64Utilities.decode(payload));
+			this.jweDecodedPayload = new String(Base64Utilities.decode(payload));
+			return this.jweDecodedPayload;
 		}
 		return null;
 	}
