@@ -252,13 +252,14 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		
 		stat.setStatoPdnd(PossibiliStatiPdnd.ERROR);
 		
-		
-		for (JsonNode node : errors) {
-			String code = node.get("code").asText();
-			
-			if (code.equals("TRACING_ALREADY_EXISTS")) {
-				stat.setStatoPdnd(PossibiliStatiPdnd.PENDING);
-				this.updateTracingIdStats.put(stat.getDataTracciamento(), stat);
+		if(errors!=null) {
+			for (JsonNode node : errors) {
+				String code = node.get("code").asText();
+				
+				if (code.equals("TRACING_ALREADY_EXISTS")) {
+					stat.setStatoPdnd(PossibiliStatiPdnd.PENDING);
+					this.updateTracingIdStats.put(stat.getDataTracciamento(), stat);
+				}
 			}
 		}
 	}
