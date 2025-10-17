@@ -40,6 +40,11 @@ Configurare l'ambiente di esecuzione dei test:
         in alternativa devono essere disabilitati i timer PDND
                org.openspcoop2.pdd.statistiche.pdnd.tracciamento.generazione.enabled=false
                org.openspcoop2.pdd.statistiche.pdnd.tracciamento.pubblicazione.enabled=false		
+
+	 - Per i test sul tracing PDND, installare i timer come batch esterni ed inserire nel file batch-statistiche.properties le seguenti proprieta:
+	 
+	 	# Disabilitare il delay in modo che funzioni anche se il batch viene eseguito subito dopo mezzanotte
+		statistiche.pdnd.tracciamento.generazione.delayMinutes=0
 		
 	  Alla fine dei test disabilitare tale proprietà
 

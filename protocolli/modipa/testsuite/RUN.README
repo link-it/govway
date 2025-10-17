@@ -329,6 +329,9 @@ Prerequisiti:
 
 	statistiche.pdnd.tracciamento.DemoSoggettoErogatore.http.headers=pdd:DemoSoggettoErogatore
 	statistiche.pdnd.tracciamento.DemoSoggettoErogatore2.http.headers=pdd:DemoSoggettoErogatore2
+	
+	# Disabilitare il delay in modo che funzioni anche se il batch viene eseguito subito dopo mezzanotte
+	statistiche.pdnd.tracciamento.generazione.delayMinutes=0
 
 + Impostare la proprieta `batch_path` nel file src/testsuite.properties con il path alla cartella dei batch
  
