@@ -4,29 +4,25 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:fc="http://www.fusioncharts.com"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:link="http://www.link.it">
 	<a4j:outputPanel>
 		<c:if test="#{applicationBean.operatore or applicationBean.amministratore}">
 			<a4j:keepAlive beanName="summaryBean"/>
-			<a4j:loadScript src="/FusionCharts/FusionCharts.js" rendered="#{not summaryBean.useGraficiSVG}"/>
-			<a4j:loadScript src="/FusionCharts/FusionChartsExportComponent.js" rendered="#{not summaryBean.useGraficiSVG}" />
-			<a4j:loadScript src="/scripts/d3.min.js" rendered="#{summaryBean.useGraficiSVG}" />
-			<a4j:loadScript src="/scripts/d3-format.min.js" rendered="#{summaryBean.useGraficiSVG}" />
-			<a4j:loadScript src="/scripts/c3.min.js" rendered="#{summaryBean.useGraficiSVG}" />
-			<a4j:loadScript src="/scripts/ChartMap.min.js" rendered="#{summaryBean.useGraficiSVG}" />
-			
-			<rich:panel id="summaryCt">			
+			<a4j:loadScript src="/scripts/d3.min.js" />
+			<a4j:loadScript src="/scripts/d3-format.min.js" />
+			<a4j:loadScript src="/scripts/c3.min.js" />
+			<a4j:loadScript src="/scripts/ChartMap.min.js" />
+
+			<rich:panel id="summaryCt">
 				<f:facet name="header">
 					<h:outputText value="Monitoraggio Transazioni" />
 				</f:facet>
-				
+
 				<a4j:outputPanel layout="block" styleClass="form-container noborder padding-left-0">
 					<a4j:region id="summaryFormRegion" renderRegionOnly="true">
 						<a4j:form>
 							<input type="hidden" id="_csrfSummaryForm" name="_csrf" value="#{loginBean.csrf}"/>
-							<h:inputHidden value="true" id="usaSVG"/> 
 							<a4j:outputPanel id="periodoPnl" ajaxRendered="false" layout="block">
 								<link:prop label="Periodo" labelId="labelPeriodoCombo">
 									<rich:comboBox value="#{summaryBean.periodo}" defaultLabel="Seleziona Periodo"
@@ -42,13 +38,13 @@
 								</link:prop>
 							</a4j:outputPanel>
 							<link:prop label="#{applicationBean.labelProfilo}" rendered="#{summaryBean.showListaProtocolli}">
-								<rich:comboBox id="protocolloCombo" value="#{summaryBean.protocollo}" converter="selectItemConverter" 
+								<rich:comboBox id="protocolloCombo" value="#{summaryBean.protocollo}" converter="selectItemConverter"
 									defaultLabel="Seleziona #{applicationBean.labelProfilo}" directInputSuggestions="true" width="416" enableManualInput="false">
 									<f:selectItems value="#{summaryBean.protocolli}"/>
 									<a4j:support status="mainStatus" event="onselect" actionListener="#{summaryBean.protocolloSelected}" data="#{summaryBean.data}" oncomplete="updateChart(data)" reRender="summaryCt,sogLocaleCombo,soggettoServizioPnl"/>
 								</rich:comboBox>
 							</link:prop>
-							
+
 							<link:prop label="Tipo" rendered="#{summaryBean.showTipologiaRicerca}">
 								<a4j:region renderRegionOnly="true">
 									<rich:comboBox id="tipologiaCombo" value="#{summaryBean.tipologiaRicerca}" defaultLabel="Seleziona Tipologia" converter="selectItemConverter"
@@ -58,7 +54,7 @@
 									</rich:comboBox>
 								</a4j:region>
 							</link:prop>
-							
+
 							<link:prop label="Contesto" rendered="#{summaryBean.showEsitiContesto and not summaryBean.selectedShowAllProtocols}">
 								<rich:comboBox id="esitoContestoCombo" value="#{summaryBean.esitoContesto}"
 									defaultLabel="Seleziona contesto" directInputSuggestions="true"
@@ -67,7 +63,7 @@
 									<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)"/>
 								</rich:comboBox>
 							</link:prop>
-							
+
 							<a4j:outputPanel id="soggettoServizioPnl" ajaxRendered="false" layout="block">
 								<c:if test="#{!applicationBean.amministratore}">
 									<link:prop label="#{summaryBean.labelTipiNomiSoggettiServiziAssociati}" rendered="#{summaryBean.showFiltroSoggettoLocale  and not summaryBean.selectedShowAllProtocols}">
@@ -94,7 +90,7 @@
 													<h:outputText value="#{selectItem.label}" rendered="true" />
 												</h:column>
 												<a4j:support status="mainStatus" event="onselect" data="#{summaryBean.data}" oncomplete="updateChart(data)" >
-													<f:setPropertyActionListener value="#{selectItem.value}" target="#{summaryBean.soggettoLocale}" /> 
+													<f:setPropertyActionListener value="#{selectItem.value}" target="#{summaryBean.soggettoLocale}" />
 												</a4j:support>
 											</rich:suggestionbox>
 											<h:inputHidden id="sogLocaleInputHidden" value="#{summaryBean.soggettoLocale}" />
@@ -109,7 +105,7 @@
 				</a4j:outputPanel>
 				<rich:spacer height="20px"/>
 				<div id='summaryDiv'></div>
-				<a4j:outputPanel id="svgChartPanel" rendered="#{summaryBean.useGraficiSVG}">
+				<a4j:outputPanel id="svgChartPanel">
 					<script type="text/javascript" nonce="#{_csp_random_nonce}">
 						var chartId = 'summaryDiv';
 						var chartWidth = jQuery('#summaryCt_body').width() -50;
@@ -119,31 +115,13 @@
 							//chartWidth = jQuery('#summaryCt_body').width() -50;
 							createChart(chartId, data, 'bar', chartWidth, chartHeight);
 						}
-					
+
 						var data0 = '#{summaryBean.data}';
 						// init
 						createChart(chartId, data0, 'bar', chartWidth, chartHeight);
 					</script>
 				</a4j:outputPanel>
-				<a4j:outputPanel id="flashChartPanel" rendered="#{not summaryBean.useGraficiSVG}">
-					<script type="text/javascript" nonce="#{_csp_random_nonce}">
-						var chartId = 'summaryDiv';
-						var chartWidth =  '';
-						chartWidth += jQuery('#summaryCt_body').width() -12;
-						
-						function updateChart(data){
-							var c = getChartFromId('summaryChartId');					
-							c.setDataXML(data);
-						}
-					
-						var chart_summary = new FusionCharts('#{request.contextPath}/FusionCharts/MSColumn2D.swf', 'summaryChartId', chartWidth, '650', '0', '1');
-						chart_summary.setTransparent(true);
-						chart_summary.setDataXML("#{summaryBean.data}");
-						chart_summary.render(chartId);
-					</script>
-				</a4j:outputPanel>
 			</rich:panel>
-			
 		</c:if>
 		<c:if test="#{!applicationBean.operatore and !applicationBean.amministratore}">
 			<c:if test="#{applicationBean.configuratore}">
@@ -153,5 +131,5 @@
 			</c:if>
 		</c:if>
 	</a4j:outputPanel>
-	
+
 </ui:composition>

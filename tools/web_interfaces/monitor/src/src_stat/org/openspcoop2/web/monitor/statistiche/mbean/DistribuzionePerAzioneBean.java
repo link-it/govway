@@ -93,7 +93,6 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 	}
 	private void initDpAB() {
 		this.setChartId("distribuzioneAzione");
-		this.setFilename("../FusionCharts/ScrollCombi2D.swf");
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -227,10 +226,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 	
 	@Override
 	public String getData(){
-		if(((StatsSearchForm)this.search).isUseGraficiSVG())
-			return this.getJson();
-		
-		return this.getXml();
+		return this.getJson();
 	}
 
 	public String getCaption() {

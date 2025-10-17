@@ -28,7 +28,6 @@
 			<rich:panel headerClass="outpanelHeader" id="menuct" rendered="#{loginBean.loggedIn}">
 				<a4j:form id="transazioniForm">
 					<input type="hidden" id="_csrfMenuTransazioniForm" name="_csrf" value="#{loginBean.csrf}"/>
-					<h:inputHidden value="true" id="tf_usaSVG"/> 
 					<rich:panelMenu expandMode="none" mode="server">
 						<rich:panelMenuGroup label="#{msg['menu.monitoraggio.label']}" expanded="true" id="monitoraggioMenuGroup"
 							rendered="#{applicationBean.showTransazioniBase}">

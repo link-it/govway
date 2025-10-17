@@ -13,9 +13,9 @@ if (serverPort != 80 && serverPort != 443) {
     url.append(":").append(serverPort);
 }
 
-url.append(contextPath).append("/public/timeoutPage.jsf?usaSVG=true");
+url.append(contextPath).append("/public/timeoutPage.jsf");
 
-// response.sendRedirect(request.getContextPath()+"/pages/welcome.jsf?usaSVG=true");
+// response.sendRedirect(request.getContextPath()+"/pages/welcome.jsf");
 response.sendRedirect(url.toString());
 
 %>

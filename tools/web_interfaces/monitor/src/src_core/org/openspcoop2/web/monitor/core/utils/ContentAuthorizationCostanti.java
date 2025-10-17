@@ -1,9 +1,9 @@
 /*
- * GovWay - A customizable API Gateway 
+ * GovWay - A customizable API Gateway
  * https://govway.org
- * 
+ *
  * Copyright (c) 2005-2026 Link.it srl (https://link.it).
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
  * the Free Software Foundation.
@@ -23,14 +23,14 @@ import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 
 /**
  * ContentAuthorizationCostanti
- * 
+ *
  * @author Pintori Giuliano (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  *
  */
 public class ContentAuthorizationCostanti {
-	
+
 	private ContentAuthorizationCostanti() { /*static only */}
 
 	// Elenco dei path che sono disponibili sempre
@@ -44,13 +44,12 @@ public class ContentAuthorizationCostanti {
 		"/public/error.jsf",
 		"/public/timeoutPage.jsf",
 		"/public/login.jsf",
-		"/FusionCharts/",
 		"/index.jsp",
 		"/login.jsp",
 		"/timeout.jsp",
 		"/report/statistica",
 		"/report/configurazione",
-		"/webjars/",  
+		"/webjars/",
 
 		// Cambio Password Scaduta Utente
 		"/core/pages/form/userPasswordScaduta.jsf",
@@ -76,20 +75,20 @@ public class ContentAuthorizationCostanti {
 		"/transazioni/pages/list/transazioni.jsf",
 		"/transazioni/pages/form/transazioni.jsf",
 		"/transazioni/pages/form/transazioniLivello2.jsf",
-		
+
 		//Servlet Archivio Zip
 		"/archivioZipUpload",
-		
+
 		// Esiti Live
 		"/transazioni/pages/form/esitiLive.jsf",
 
 		// Password Utenti
 		"/core/pages/form/user.jsf",
-		
+
 		// Ricerche Utente
 		"/core/pages/list/ricercheUtenteList.jsf",
 		"/core/pages/form/modificaRicercaUtente.jsf",
-		
+
 		//Servlet Ricerche Utente
 		"/ricercheUpload",
 		"/ricercheExporter",
@@ -97,32 +96,32 @@ public class ContentAuthorizationCostanti {
 		// Stats
 		"/stat/pages/list/configurazioniGenerali.jsf",
 		"/stat/pages/form/dettaglioConfigurazione.jsf",
-		
+
 		//Servlet Configurazioni Exporter
 		"/configurazioniexporter",
 
 		// Eventi
 		"/eventi/pages/form/evento.jsf",
 		"/eventi/pages/list/eventi.jsf",
-		
+
 		// Allarmi
 		"/allarmi/pages/form/allarme.jsf",
 		"/allarmi/pages/form/dettaglioAllarmeHistory.jsf",
 		"/allarmi/pages/list/statoAllarmi.jsf",
 		"/allarmi/pages/list/allarmeHistory.jsf",
-	}; 
+	};
 
 	// Elenco delle pagine che sono disponibili al ruolo configuratore
 	public static String[] listaPagineRuoloConfiguratore = {
 		// welcome page
-		"/commons/pages/welcome.jsf",	
+		"/commons/pages/welcome.jsf",
 		"/commons/pages/about.jsf",
 		"/commons/pages/modalita.jsf",
 		"/commons/pages/soggettoPddMonitor.jsf",
-			
+
 		// Configurazione Utenti
 		"/core/pages/form/user.jsf",
-		
+
 		// Ricerche Utente
 		"/core/pages/list/ricercheUtenteList.jsf",
 		"/core/pages/form/modificaRicercaUtente.jsf",
@@ -138,7 +137,7 @@ public class ContentAuthorizationCostanti {
 		"/commons/pages/welcome.jsf",
 		"/commons/pages/modalita.jsf",
 		"/commons/pages/soggettoPddMonitor.jsf",
-			
+
 		// Monitoraggio
 		"/commons/pages/about.jsf",
 		"/transazioni/pages/list/transazioni.jsf",
@@ -157,21 +156,21 @@ public class ContentAuthorizationCostanti {
 		"/transazioni/pages/form/faultTransazioneApplicativoServer.jsf",
 		"/transazioni/pages/form/dettaglioDumpMultipart.jsf",
 		"/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServerMultipart.jsf",
-		
+
 		//Servlet Archivio Zip
 		"/archivioZipUpload",
 
 		// Configurazione Utenti
 		"/core/pages/form/user.jsf",
-		
+
 		// Ricerche Utente
 		"/core/pages/list/ricercheUtenteList.jsf",
 		"/core/pages/form/modificaRicercaUtente.jsf",
-		
+
 		//Servlet Ricerche Utente
 		"/ricercheUpload",
 		"/ricercheExporter",
-		
+
 		// Servlet Exporter
 		"/diagnosticiexporter",
 		"/tracceexporter",
@@ -200,16 +199,16 @@ public class ContentAuthorizationCostanti {
 		"/stat/pages/list/statistichePdndTracingList.jsf",
 		"/stat/pages/form/statistichePdndTracingDettaglio.jsf",
 		"/stat/pages/form/statistichePdndTracingTipiRicerca.jsf",
-		
+
 		// Allarmi
 		"/allarmi/pages/form/allarme.jsf",
 		"/allarmi/pages/form/dettaglioAllarmeHistory.jsf",
 		"/allarmi/pages/list/statoAllarmi.jsf",
 		"/allarmi/pages/list/allarmeHistory.jsf",
-		
+
 		//Servlet Configurazioni Exporter
 		"/configurazioniexporter",
-		
+
 		//Servlet Tracing PDND Exporter
 		"/tracingpdndexporter"
 	};
@@ -244,7 +243,7 @@ public class ContentAuthorizationCostanti {
 		{"/tracceexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
 		{"/transazioniexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
 		{"/transazionicsvexporter",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
-		
+
 		//Servlet Archivio Zip
 		{"/archivioZipUpload",ApplicationBean.FUNZIONALITA_EXPORT_TRANSAZIONI},
 
@@ -260,7 +259,7 @@ public class ContentAuthorizationCostanti {
 		{"/core/pages/form/userPasswordScaduta.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
 		{"/core/pages/list/ricercheUtenteList.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
 		{"/core/pages/form/modificaRicercaUtente.jsf",ApplicationBean.FUNZIONALITA_UTENTI},
-		
+
 		//Servlet Ricerche Utente
 		{"/ricercheUpload",ApplicationBean.FUNZIONALITA_UTENTI},
 		{"/ricercheExporter",ApplicationBean.FUNZIONALITA_UTENTI},
@@ -270,10 +269,10 @@ public class ContentAuthorizationCostanti {
 		{"/stat/pages/form/analisiStatisticaFiltriRicerca.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		{"/stat/pages/list/configurazioniGenerali.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		{"/stat/pages/form/dettaglioConfigurazione.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		
+
 		//Servlet Configurazioni Exporter
 		{"/configurazioniexporter",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		
+
 		{"/stat/pages/form/andamentoTemporale.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		{"/stat/pages/form/andamentoTemporaleGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		{"/stat/pages/form/distribSA.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
@@ -289,15 +288,15 @@ public class ContentAuthorizationCostanti {
 		// Statistiche personalizzate
 		{"/stat/pages/form/statsPersonalizzate.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
 		{"/stat/pages/form/statsPersonalizzateGrafico.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_PERSONALIZZATE},
-		
+
 		// Tracing PDND
 		{"/stat/pages/list/statistichePdndTracingList.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		{"/stat/pages/form/statistichePdndTracingDettaglio.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
 		{"/stat/pages/form/statistichePdndTracingTipiRicerca.jsf",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		
+
 		//Servlet Tracing PDND Exporter
 		{"/tracingpdndexporter",ApplicationBean.FUNZIONALITA_STATISTICHE_BASE},
-		
+
 		// Allarmi
 		{"/allarmi/pages/form/allarme.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},
 		{"/allarmi/pages/form/dettaglioAllarmeHistory.jsf",ApplicationBean.FUNZIONALITA_ALLARMI},

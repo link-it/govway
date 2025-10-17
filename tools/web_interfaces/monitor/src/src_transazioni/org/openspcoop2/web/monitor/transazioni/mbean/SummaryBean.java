@@ -1,9 +1,9 @@
 /*
- * GovWay - A customizable API Gateway 
+ * GovWay - A customizable API Gateway
  * https://govway.org
- * 
+ *
  * Copyright (c) 2005-2026 Link.it srl (https://link.it).
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
  * the Free Software Foundation.
@@ -91,7 +91,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * SummaryBean
- * 
+ *
  * @author Pintori Giuliano (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
@@ -102,7 +102,7 @@ public class SummaryBean implements Serializable{
 	private static final String STATO_PERIODO = Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE;
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -129,18 +129,18 @@ public class SummaryBean implements Serializable{
 	private transient EsitiProperties esitiProperties;
 
 	private List<SelectItem> soggettiAssociati = null;
-	
+
 	private Integer soggettiAssociatiSelectItemsWidth = 0;
 	private Integer soggettiSelectItemsWidth = 0;
-	
+
 	private volatile boolean soggettiAssociatiSelectItemsWidthCheck = false;
 	private volatile boolean soggettiSelectItemsWidthCheck = false;
-	
+
 	private volatile boolean showTipologiaRicerca;
 	private boolean tipologiaRicercaEntrambiEnabled;
 	private TipologiaRicerca defaultTipologiaRicerca;
-	private TipologiaRicerca tipologiaRicerca;	
-	
+	private TipologiaRicerca tipologiaRicerca;
+
 	private Integer maxSelectItemsWidth = 900;
 
 	private Integer defaultSelectItemsWidth = 412;
@@ -152,24 +152,23 @@ public class SummaryBean implements Serializable{
 	private transient IUserService userService;
 	private boolean funzionalitaStatisticaAbilitata;
 
-	private volatile boolean useGraficiSVG = false;
-	
+
 	private DynamicPdDBeanUtils dynamicUtils = null;
-	
+
 	private int protocolliSupportati = 0;
 	private String protocollo;
 	private String protocolloDefault;
 	private List<SelectItem> protocolli= null;
-	
+
 	private boolean salvaModificheProfiloSuDB = false;
 
 
-	public SummaryBean() {		
+	public SummaryBean() {
 		this.lastRequest = new Date();
 
 		try {
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(SummaryBean.log);
-			
+
 			this.salvaModificheProfiloSuDB = govwayMonitorProperties.isModificaProfiloUtenteDaLinkAggiornaDB();
 
 			this.intervalloRefresh = govwayMonitorProperties.getIntervalloRefreshEsitiLive();
@@ -177,9 +176,9 @@ public class SummaryBean implements Serializable{
 			this.intervalloRefresh = (Integer.parseInt(this.intervalloRefresh) ) + ""; //* 1000
 
 			this.dynamicUtils = new DynamicPdDBeanUtils(SummaryBean.log);
-			
+
 			this.dynamicUtilsService = new DynamicUtilsService();
-			
+
 			this.userService = new UserService();
 
 			// controllo se e' abilitata la funzionalita' delle statistiche
@@ -198,25 +197,25 @@ public class SummaryBean implements Serializable{
 				this.periodoDefault = CostantiReport.PERIODO_NOT_SET;
 				this.report = ReportFactory.getInstance().getTransazioniReportManager();
 			}
-			
+
 			IProtocolFactory<?> protocolFactory = null;
 			User utente =  Utility.getLoggedUtente();
-			
+
 			if(utente.getProtocolliSupportati() !=null && utente.getProtocolliSupportati().size() > 0) {
 				this.protocolliSupportati = utente.getProtocolliSupportati().size();
 			}
 			else {
 				this.protocolliSupportati = ProtocolFactoryManager.getInstance().getProtocolFactories().size();
 			}
-			
+
 			boolean utenteNonHaSelezionatoUnProtocolloInAltoADestra = false;
 			if(this.isShowListaProtocolli()) {
 				String loggedUtenteModalita = Utility.getLoggedUtenteModalita();
-				
+
 				if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteModalita)) {
-					
+
 					utenteNonHaSelezionatoUnProtocolloInAltoADestra = true;
-					
+
 					if(utente.getProtocolliSupportati() !=null && utente.getProtocolliSupportati().size() > 0) {
 						if(utente.getProtocolliSupportati().contains(ProtocolFactoryManager.getInstance().getDefaultProtocolFactory().getProtocol())) {
 							protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
@@ -233,7 +232,7 @@ public class SummaryBean implements Serializable{
 				} else {
 					protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(loggedUtenteModalita);
 				}
-				
+
 			}
 			else {
 				// utente ha selezionato una modalita'
@@ -245,26 +244,26 @@ public class SummaryBean implements Serializable{
 					protocolFactory = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
 				}
 			}
-			
+
 			if(protocolFactory!=null) {
 				this.protocollo = protocolFactory.getProtocol();
 				this.protocolloDefault = protocolFactory.getProtocol();
 			}
-			
+
 			if(utenteNonHaSelezionatoUnProtocolloInAltoADestra && this.protocolliSupportati>1) {
 				this.protocollo = Costanti.VALUE_PARAMETRO_MODALITA_ALL; // default: tutti
 			}
-			
+
 			this.showTipologiaRicerca = govwayMonitorProperties.isVisualizzaFiltroRuoloSummary();
 			if(this.showTipologiaRicerca) {
 				this.tipologiaRicercaEntrambiEnabled = govwayMonitorProperties.isVisualizzaVoceEntrambiFiltroRuoloSummary();
 				this.tipologiaRicerca = this.getDefaultTipologiaRicercaEnum();
 			}
-			
+
 		} catch (Exception e) {
-			SummaryBean.log.error("Errore durante la init del SummaryBean: "+e.getMessage(),e); 
+			SummaryBean.log.error("Errore durante la init del SummaryBean: "+e.getMessage(),e);
 		}
-		
+
 		try {
 			this.esitiProperties = EsitiProperties.getInstanceFromProtocolName(SummaryBean.log, this.protocolloDefault);
 		} catch (Exception e) {
@@ -303,7 +302,7 @@ public class SummaryBean implements Serializable{
 	public void setEsitoContesto(String esitoContesto) {
 		this.esitoContesto = esitoContesto;
 	}
-	
+
 	public boolean isShowTipologiaRicerca() {
 		return this.showTipologiaRicerca;
 	}
@@ -318,9 +317,9 @@ public class SummaryBean implements Serializable{
 	public void setTipologiaRicerca(String tipologiaRicerca) {
 		if (StringUtils.isEmpty(tipologiaRicerca) || "--".equals(tipologiaRicerca))
 			this.tipologiaRicerca = null;
-		else 
+		else
 			this.setTipologiaRicerca(TipologiaRicerca.valueOf(tipologiaRicerca));
-		
+
 	}
 
 	public TipologiaRicerca getTipologiaRicercaEnum() {
@@ -330,22 +329,22 @@ public class SummaryBean implements Serializable{
 	public void setTipologiaRicerca(TipologiaRicerca tipologiaRicerca) {
 		this.tipologiaRicerca = tipologiaRicerca;
 	}
-	
+
 	public String getDefaultTipologiaRicerca() {
 		return this.getDefaultTipologiaRicercaEnum() != null ? this.getDefaultTipologiaRicercaEnum().toString() : "";
 	}
-	
+
 	public TipologiaRicerca getDefaultTipologiaRicercaEnum() {
 		if(this.defaultTipologiaRicerca != null) {
 			return this.defaultTipologiaRicerca;
 		} else {
-			if(this.tipologiaRicercaEntrambiEnabled) 
+			if(this.tipologiaRicercaEntrambiEnabled)
 				return TipologiaRicerca.all;
-			else 
+			else
 				return TipologiaRicerca.ingresso;
 		}
 	}
-	
+
 	public void setDefaultTipologiaRicerca(TipologiaRicerca defaultTipologiaRicerca) {
 		this.defaultTipologiaRicerca = defaultTipologiaRicerca;
 	}
@@ -353,34 +352,34 @@ public class SummaryBean implements Serializable{
 	public void setDefaultTipologiaRicerca(String defaultTipologiaRicerca) {
 		if (StringUtils.isEmpty(defaultTipologiaRicerca) || "--".equals(defaultTipologiaRicerca))
 			this.defaultTipologiaRicerca = null;
-		else 
+		else
 			this.setDefaultTipologiaRicerca(TipologiaRicerca.valueOf(defaultTipologiaRicerca));
 	}
-	
+
 	public List<SelectItem> getTipologieRicerca() throws Exception {
 		List<SelectItem> listaTipologie = new ArrayList<SelectItem>();
-		
+
 		listaTipologie.add(new SelectItem(TipologiaRicerca.ingresso.toString(),"Erogazione"));
 		listaTipologie.add(new SelectItem(TipologiaRicerca.uscita.toString(),"Fruizione"));
 		if(this.tipologiaRicercaEntrambiEnabled)
 			listaTipologie.add(new SelectItem(TipologiaRicerca.all.toString(),"Erogazione/Fruizione"));
-		
+
 		return listaTipologie;
 	}
-	
+
 	public void tipologiaRicercaListener(ActionEvent ae) {
 		// se cambia la tipologia di ricerca devo azzerare le scelte precedenti
 		this.soggettoLocale = null;
 	}
 
-	
+
 	private Date startDateForLabel;
 	private Date endDateForLabel;
 
 	public String getPrintPeriodo(){
 		Calendar max = Calendar.getInstance();
 		this.endDateForLabel=max.getTime();
-		
+
 		Calendar min = (Calendar) max.clone();
 		if(CostantiReport.ULTIMO_ANNO.equals(this.periodo)){
 			//calcolo 12 mesi dal mese attuale
@@ -411,19 +410,19 @@ public class SummaryBean implements Serializable{
 			min.clear(Calendar.SECOND);
 			min.clear(Calendar.MILLISECOND);
 		}
-		
+
 		this.startDateForLabel = min.getTime();
 		return AbstractDateSearchForm.printPeriodo(this.startDateForLabel, this.endDateForLabel);
 	}
-	
+
 	public void periodoListener(ActionEvent ae){
 		getPrintPeriodo();
 	}
-	
+
 	public String getXml(){
 		if(CostantiReport.PERIODO_NOT_SET.equals(this.periodo)){
 			return "<chart></chart>";
-		}	
+		}
 
 		int[] error_array = new int[this.offset];
 		int[] fault_array = new int[this.offset];
@@ -513,14 +512,14 @@ public class SummaryBean implements Serializable{
 
 			Date s = actualStart.getTime();
 			Date e = actualEnd.getTime();
-			
+
 			if(i==0){
 				this.startDateForLabel = (Date) s.clone();
 			}
 			if(i==(this.offset-1)){
 				this.endDateForLabel = (Date) e.clone();
 			}
-			
+
 			// controllo che l'estremo superiore non sia nel futuro...
 //			if(e.after(new Date()) && (CostantiReport.ULTIMI_30_GIORNI.equals(this.periodo))){
 //				actualEnd = Calendar.getInstance();
@@ -556,7 +555,7 @@ public class SummaryBean implements Serializable{
 		}
 
 		String color = Colors.CODE_OK+","+Colors.CODE_FAULT_APPLICATIVO+","+Colors.CODE_ERROR;
-		
+
 		sdf = new SimpleDateFormat("dd MMMMM yyyy HH:mm", ApplicationBean.getInstance().getLocale());
 		StringBuilder sb = new StringBuilder();
 		sb.append("<chart pallete='3' caption='");
@@ -586,7 +585,7 @@ public class SummaryBean implements Serializable{
 		sb.append("</dataset>");
 
 		sb.append("<dataset seriesName='" + CostantiGrafici.FAULT_LABEL + "' showValues='"+showValues+"' showLabels='1'>");
-		for (int i=0;i<this.offset;i++){			 
+		for (int i=0;i<this.offset;i++){
 			sb.append("	<set value='");
 			sb.append(fault_array[i]);
 			sb.append("' />");
@@ -594,83 +593,83 @@ public class SummaryBean implements Serializable{
 		sb.append("</dataset>");
 
 		sb.append("<dataset seriesName='" + CostantiGrafici.ERRORE_LABEL + "' showValues='"+showValues+"' showLabels='1'>");
-		for (int i=0;i<this.offset;i++){			 
+		for (int i=0;i<this.offset;i++){
 			sb.append("	<set value='");
 			sb.append(error_array[i]);
 			sb.append("' />");
 		}
 		sb.append("</dataset>");
-		
+
 		sb.append("</chart> ");
 		return sb.toString();
 	}
 
 	public String getJson(){
-		
+
 		try {
 			JSONUtils jsonUtils = JSONUtils.getInstance();
-			
+
 			ObjectNode grafico = jsonUtils.newObjectNode();
-			
+
 			if(!CostantiReport.PERIODO_NOT_SET.equals(this.periodo)){
-	
+
 				grafico.put(CostantiGrafici.USA_COLORI_AUTOMATICI_KEY, false);
 				grafico.put(CostantiGrafici.TITOLO_KEY, this.getCaption());
 				grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, this.getSubCaption());
 				grafico.put(CostantiGrafici.Y_AXIS_LABEL_KEY, CostantiGrafici.NUMERO_ESITI_LABEL);
 				grafico.put(CostantiGrafici.MOSTRA_LEGENDA_KEY, true);
-	
+
 				ArrayNode categorie = jsonUtils.newArrayNode();
 				ObjectNode categoria = jsonUtils.newObjectNode();
 				categoria.put(CostantiGrafici.KEY_KEY , CostantiGrafici.OK_KEY);
 				categoria.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.OK_LABEL);
 				categoria.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_OK);
 				categorie.add(categoria);
-	
+
 				ObjectNode categoria2 = jsonUtils.newObjectNode();
 				categoria2.put(CostantiGrafici.KEY_KEY , CostantiGrafici.FAULT_KEY);
 				categoria2.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.FAULT_LABEL);
 				categoria2.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_FAULT_APPLICATIVO);
 				categorie.add(categoria2);
-	
+
 				ObjectNode categoria3 = jsonUtils.newObjectNode();
 				categoria3.put(CostantiGrafici.KEY_KEY , CostantiGrafici.ERRORE_KEY);
 				categoria3.put(CostantiGrafici.LABEL_KEY , CostantiGrafici.ERRORE_LABEL);
 				categoria3.put(CostantiGrafici.COLORE_KEY , Colors.CSS_COLOR_ERROR);
 				categorie.add(categoria3);
-	
+
 				// Inserisco le catergorie del grafico
 				grafico.set(CostantiGrafici.CATEGORIE_KEY, categorie);
-	
+
 				try{
 					ArrayNode dati = jsonUtils.newArrayNode();
-	
+
 					int[] errorArray = new int[this.offset];
 					int[] faultArray = new int[this.offset];
 					int[] okArray = new int[this.offset];
 					String[] labelArray = new String[this.offset];
-	
+
 					SimpleDateFormat sdf = null;
 					SimpleDateFormat sdfend = null;
 					Calendar wEnd = null;
 					Calendar wStart = null;
 					Calendar actualStart = null;
-	
+
 					int field = Calendar.DATE;
 					int increment = 0;
-	
+
 					wEnd=Calendar.getInstance();
 					wEnd.setTime(this.maxDate);
-	
-	
+
+
 					wStart = (Calendar)wEnd.clone();
 					wStart.setTime(this.minDate);
-	
+
 					boolean clearEndMs = false;
-	
+
 					if(CostantiReport.ULTIMO_ANNO.equals(this.periodo)){
 						sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_MMM_YY, ApplicationBean.getInstance().getLocale());
-	
+
 						field = Calendar.MONTH;
 						increment = 1;
 						//siccome incremento i mesi devo impostare l'actual come 00:00 del primo del mese
@@ -680,53 +679,53 @@ public class SummaryBean implements Serializable{
 						actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
 						actualStart.clear(Calendar.SECOND);
 						actualStart.clear(Calendar.MILLISECOND);
-	
-	
+
+
 					}else if(CostantiReport.ULTIMI_30_GIORNI.equals(this.periodo)){
 						sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, ApplicationBean.getInstance().getLocale());
 						sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM, ApplicationBean.getInstance().getLocale());
 						field = Calendar.WEEK_OF_YEAR;
 						increment = 1;
-	
+
 						actualStart = (Calendar) wStart.clone();
 						actualStart.set(Calendar.HOUR_OF_DAY,actualStart.getActualMinimum(Calendar.HOUR_OF_DAY));
 						actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
 						actualStart.clear(Calendar.SECOND);
 						actualStart.clear(Calendar.MILLISECOND);
-	
+
 					}else if(CostantiReport.ULTIMI_7_GIORNI.equals(this.periodo)){
 						sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_EEE_DD_MM, ApplicationBean.getInstance().getLocale());
 						field = Calendar.DATE;
 						increment = 1;
-	
+
 						actualStart = (Calendar) wStart.clone();
 						actualStart.set(Calendar.HOUR_OF_DAY,actualStart.getActualMinimum(Calendar.HOUR_OF_DAY));
 						actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
 						actualStart.clear(Calendar.SECOND);
 						actualStart.clear(Calendar.MILLISECOND);
-	
+
 					}else if(CostantiReport.ULTIME_24_ORE.equals(this.periodo)){
 						sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
 						sdfend = new SimpleDateFormat(CostantiGrafici.PATTERN_HH, ApplicationBean.getInstance().getLocale());
 						field = Calendar.HOUR_OF_DAY;
 						increment = 1;
-	
+
 						actualStart = (Calendar) wStart.clone();
 						actualStart.set(Calendar.MINUTE,actualStart.getActualMinimum(Calendar.MINUTE));
 						actualStart.clear(Calendar.SECOND);
 						actualStart.clear(Calendar.MILLISECOND);
 						clearEndMs = true;
 					}
-	
+
 					for (int i=0;i<this.offset;i++){
 						Calendar actualEnd = (Calendar)actualStart.clone();
 						actualEnd.add(field, increment);
-	
+
 						actualEnd.add(Calendar.MILLISECOND, -1);
-	
+
 						Date s = actualStart.getTime();
 						Date e = actualEnd.getTime();
-	
+
 						ResLive r = null;
 						try{
 							String protocolloSelected = this.isSelectedShowAllProtocols() ? null : this.protocollo;
@@ -736,7 +735,7 @@ public class SummaryBean implements Serializable{
 							SummaryBean.log.error(er.getMessage(),er);
 							return null;
 						}
-	
+
 						errorArray[i] = r.getEsitoKo().intValue();
 						faultArray[i] = r.getEsitoFault().intValue();
 						okArray[i] = r.getEsitoOk().intValue();
@@ -749,12 +748,12 @@ public class SummaryBean implements Serializable{
 						}
 						else
 							labelArray[i] = sdf.format(s);
-	
+
 						//incremento actual
 						actualStart.add(field, increment);
-	
+
 						ObjectNode bar = jsonUtils.newObjectNode();
-	
+
 						bar.put(CostantiGrafici.DATA_KEY, labelArray[i]);
 						bar.put(CostantiGrafici.DATA_LABEL_KEY, labelArray[i]);
 						bar.put(CostantiGrafici.OK_KEY, okArray[i]);
@@ -763,10 +762,10 @@ public class SummaryBean implements Serializable{
 						bar.put(CostantiGrafici.OK_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.OK_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(okArray[i]));
 						bar.put(CostantiGrafici.FAULT_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.FAULT_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(faultArray[i]));
 						bar.put(CostantiGrafici.ERRORE_KEY + CostantiGrafici.TOOLTIP_SUFFIX, CostantiGrafici.ERRORE_LABEL + ", "+ labelArray[i] + ", " + Utility.numberConverter(errorArray[i]));
-	
+
 						dati.add(bar);
 					}
-	
+
 					grafico.set(CostantiGrafici.DATI_KEY, dati);
 					grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, dati.size() > 12 ? CostantiGrafici.DIREZIONE_LABEL_OBLIQUO : CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE);
 					grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
@@ -775,24 +774,21 @@ public class SummaryBean implements Serializable{
 					return "";
 				}
 				/**String json = grafico != null ?  jsonUtils.toString(grafico) : "";
-				log.debug(json);*/ 
-				
-				return jsonUtils.toString(grafico);	
+				log.debug(json);*/
+
+				return jsonUtils.toString(grafico);
 			}
-	
-			return ""; 
-			
+
+			return "";
+
 		}catch(Exception e) {
 			log.error("Generazione JSON non riuscita: "+e.getMessage(),e);
-			return ""; 
+			return "";
 		}
 	}
 
 	public String getData(){
-		if(isUseGraficiSVG())
-			return this.getJson();
-
-		return this.getXml();
+		return this.getJson();
 	}
 
 
@@ -804,12 +800,12 @@ public class SummaryBean implements Serializable{
 		if(!(this.isShowFiltroSoggettoLocale() && Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteSoggettoPddMonitor))) {
 			forceSoggettoLocale = loggedUtenteSoggettoPddMonitor;
 		}
-		
+
 		String tipoProtocollo = this.getProtocollo();
-		
+
 		int foundSoggetti = loggedUser.getUtenteSoggettoProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteSoggettoProtocolliMap().get(tipoProtocollo).size() : 0;
 		int foundServizi = loggedUser.getUtenteServizioProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteServizioProtocolliMap().get(tipoProtocollo).size() : 0;
-		
+
 		if((foundServizi + foundSoggetti) == 1) {
 			IDServizio idServizio =  null;
 			if(foundServizi == 1) {
@@ -826,7 +822,7 @@ public class SummaryBean implements Serializable{
 		String tipoServizio = null;
 		String nomeServizio = null;
 		Integer versioneServizio = null;
-		
+
 		IDServizio idServizio = null;
 		if(this.soggettoLocale!=null && !StringUtils.isEmpty(this.soggettoLocale) && !"--".equals(this.soggettoLocale)){
 			idServizio = Utility.parseSoggettoServizio(this.soggettoLocale);
@@ -841,7 +837,7 @@ public class SummaryBean implements Serializable{
 			tipoServizio = idServizio.getTipo(); // possono essere null
 			nomeServizio = idServizio.getNome(); // possono essere null
 		}
-		
+
 		return PermessiUtenteOperatore.getPermessiUtenteOperatore(loggedUser, tipoSoggettoLocale, nomeSoggettoLocale, tipoServizio, nomeServizio,versioneServizio);
 	}
 
@@ -853,7 +849,7 @@ public class SummaryBean implements Serializable{
 		}else{
 			sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MMMMM_YYYY_ORE_HH_MM, ApplicationBean.getInstance().getLocale());
 		}
-		String res = MessageFormat.format(CostantiGrafici.DAL_AL_PATTERN, sdf.format(this.getMinDate()), sdf.format(this.getMaxDate())); 
+		String res = MessageFormat.format(CostantiGrafici.DAL_AL_PATTERN, sdf.format(this.getMinDate()), sdf.format(this.getMaxDate()));
 
 		return StringEscapeUtils.escapeXml10(res);
 	}
@@ -867,17 +863,14 @@ public class SummaryBean implements Serializable{
 		return this.maxDate;
 	}
 
-	
+
 	private String getCaption() {
-		return StringEscapeUtils.escapeXml10(CostantiGrafici.DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO); 
+		return StringEscapeUtils.escapeXml10(CostantiGrafici.DISTRIBUZIONE_ESITO_DEI_MESSAGGI_NELL_ULTIMO_PERIODO);
 	}
 
 
 	public String getDataLive(){
-		if(isUseGraficiSVG())
-			return this.getJsonLive();
-
-		return this.getXmlLive();
+		return this.getJsonLive();
 	}
 
 	/**
@@ -891,7 +884,7 @@ public class SummaryBean implements Serializable{
 
 		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
-		//se idPorta e' null allora recupera tutti gli esiti 
+		//se idPorta e' null allora recupera tutti gli esiti
 		ResLive esiti=null;
 		try {
 			String protocolloSelected = this.isSelectedShowAllProtocols() ? null : this.protocollo;
@@ -903,7 +896,7 @@ public class SummaryBean implements Serializable{
 		}
 
 		//aggiorno lastRequest
-		this.lastRequest = esiti.getRisultato(); 
+		this.lastRequest = esiti.getRisultato();
 
 		synchronized (this.dataLive) {
 			//aggiungo elemento
@@ -917,7 +910,7 @@ public class SummaryBean implements Serializable{
 		String url = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath()+"/pages/list/transazioni.jsf";
 
 		String color = Colors.CODE_OK+","+Colors.CODE_FAULT_APPLICATIVO+","+Colors.CODE_ERROR;
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append( "<chart clickURL='");
 		sb.append(url);
@@ -959,12 +952,12 @@ public class SummaryBean implements Serializable{
 	}
 
 	public String getJsonLive(){
-		
+
 		JSONUtils jsonUtils = JSONUtils.getInstance();
-		
+
 		try{
 			ObjectNode grafico = jsonUtils.newObjectNode();
-			
+
 			grafico.put(CostantiGrafici.USA_COLORI_AUTOMATICI_KEY, false);
 			grafico.put(CostantiGrafici.TITOLO_KEY, CostantiGrafici.ESITO_TRANSAZIONI_LABEL);
 			grafico.put(CostantiGrafici.SOTTOTITOLO_KEY, "");
@@ -992,10 +985,10 @@ public class SummaryBean implements Serializable{
 
 			// Inserisco le catergorie del grafico
 			grafico.set(CostantiGrafici.CATEGORIE_KEY, categorie);
-			
+
 			SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
-			//se idPorta e' null allora recupera tutti gli esiti 
+			//se idPorta e' null allora recupera tutti gli esiti
 			ResLive esiti=null;
 			try {
 				String protocolloSelected = this.isSelectedShowAllProtocols() ? null : this.protocollo;
@@ -1007,7 +1000,7 @@ public class SummaryBean implements Serializable{
 			}
 
 			//aggiorno lastRequest
-			this.lastRequest = esiti.getRisultato(); 
+			this.lastRequest = esiti.getRisultato();
 
 			synchronized (this.dataLive) {
 				//aggiungo elemento
@@ -1019,9 +1012,9 @@ public class SummaryBean implements Serializable{
 			}
 
 			ArrayNode dati = jsonUtils.newArrayNode();
-			
+
 			for (ResLive res : this.dataLive) {
-				
+
 				String data = formatter.format(res.getRisultato());
 				String nOk = res.getEsitoOk()+"";
 				String nFault = res.getEsitoFault()+"";
@@ -1042,12 +1035,12 @@ public class SummaryBean implements Serializable{
 			grafico.set(CostantiGrafici.DATI_KEY, dati);
 			grafico.put(CostantiGrafici.X_AXIS_LABEL_DIREZIONE_KEY, dati.size() > 12 ? CostantiGrafici.DIREZIONE_LABEL_OBLIQUO : CostantiGrafici.DIREZIONE_LABEL_ORIZZONTALE);
 			grafico.put(CostantiGrafici.X_AXIS_GRID_LINES_KEY,true);
-			
+
 			return jsonUtils.toString(grafico);
 		}catch(Exception e){
 			SummaryBean.log.error("Errore durante la generazione del json live: " + e.getMessage(),e);
 			return "";
-		}	
+		}
 	}
 
 	public String getPeriodo() {
@@ -1085,7 +1078,7 @@ public class SummaryBean implements Serializable{
 			min.clear(Calendar.SECOND);
 			min.clear(Calendar.MILLISECOND);
 			this.minDate=min.getTime();
-			
+
 			this.offset=5;
 		}
 		else if(CostantiReport.ULTIMI_7_GIORNI.equals(periodo)){
@@ -1099,7 +1092,7 @@ public class SummaryBean implements Serializable{
 			min.clear(Calendar.SECOND);
 			min.clear(Calendar.MILLISECOND);
 			this.minDate=min.getTime();
-			
+
 			this.offset=7;
 		}
 		else if(CostantiReport.ULTIME_24_ORE.equals(periodo)){
@@ -1128,27 +1121,27 @@ public class SummaryBean implements Serializable{
 			this.soggettoLocale = null;
 		}
 	}
-	
+
 	public String getLabelSoggettoLocale() {
 		return this.labelSoggettoLocale;
 	}
 
 	public void setLabelSoggettoLocale(String labelSoggettoLocale) {
 		this.labelSoggettoLocale = labelSoggettoLocale;
-		
+
 		if (StringUtils.isEmpty(this.labelSoggettoLocale) || "--".equals(this.labelSoggettoLocale)) {
 			this.labelSoggettoLocale = null;
 		}
 	}
-	
+
 	public String getSoggettoLocaleTooltip() {
 		if(this.soggettoLocale!=null && !StringUtils.isEmpty(this.soggettoLocale) && !"--".equals(this.soggettoLocale)){
 			try {
 				String tipoProtocollo = this.getProtocollo();
 				IDServizio idServizio = Utility.parseSoggettoServizio(this.soggettoLocale);
 				String	nomeServizio = idServizio.getNome(); // possono essere null
-				String label = nomeServizio ==  null ? NamingUtils.getLabelSoggetto(tipoProtocollo, idServizio.getSoggettoErogatore()) : NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo, idServizio); 
-				
+				String label = nomeServizio ==  null ? NamingUtils.getLabelSoggetto(tipoProtocollo, idServizio.getSoggettoErogatore()) : NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo, idServizio);
+
 				return label;
 			} catch (Exception e) {
 				SummaryBean.log.error(e.getMessage(), e);
@@ -1175,11 +1168,11 @@ public class SummaryBean implements Serializable{
 		return list;
 
 	}
-	
+
 	public List<SelectItem> getTipiNomiSoggettiAssociati() throws Exception {
 		return _getTipiNomiSoggettiAssociati(false);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public List<SelectItem> _getTipiNomiSoggettiAssociati(boolean soloOperativi) throws Exception {
 		if(!this.soggettiAssociatiSelectItemsWidthCheck){
@@ -1191,11 +1184,11 @@ public class SummaryBean implements Serializable{
 			if(loggedUser!=null){
 				String tipoProtocollo = this.getProtocollo();
 				Map<String,String> mapInternal = new HashMap<>();
-				
+
 				if(tipoProtocollo != null) {
 					List<IDSoggetto> tipiNomiSoggettiAssociati = loggedUser.getUtenteSoggettoProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteSoggettoProtocolliMap().get(tipoProtocollo) : new ArrayList<>();
 					List<IDServizio> tipiNomiServiziAssociati = loggedUser.getUtenteServizioProtocolliMap().containsKey(tipoProtocollo) ? loggedUser.getUtenteServizioProtocolliMap().get(tipoProtocollo) : new ArrayList<>();
-					
+
 					// se ho selezionato un protocollo devo filtrare per protocollo
 					if(tipiNomiSoggettiAssociati !=null && tipiNomiSoggettiAssociati.size() > 0) {
 						for (IDSoggetto utenteSoggetto : tipiNomiSoggettiAssociati) {
@@ -1210,14 +1203,14 @@ public class SummaryBean implements Serializable{
 							}
 						}
 					}
-					
+
 					if(tipiNomiServiziAssociati !=null && tipiNomiServiziAssociati.size() > 0) {
 						for (IDServizio utenteServizio : tipiNomiServiziAssociati) {
 							lstServTmp.add(utenteServizio);
 						}
 					}
 				}
-				
+
 				if(lstSoggTmp!=null && lstSoggTmp.size()>0){
 					for (IDSoggetto idSoggetto  : lstSoggTmp) {
 						IDServizio idServizio = new IDServizio();
@@ -1226,14 +1219,14 @@ public class SummaryBean implements Serializable{
 						mapInternal.put(ParseUtility.convertToSoggettoServizio(idServizio), label);
 					}
 				}
-				
+
 				if(lstServTmp!=null && lstServTmp.size()>0){
 					for (IDServizio idServizio : lstServTmp) {
 						String label = tipoProtocollo != null ?  NamingUtils.getLabelAccordoServizioParteSpecifica(tipoProtocollo, idServizio) : NamingUtils.getLabelAccordoServizioParteSpecifica(idServizio);
 						mapInternal.put(ParseUtility.convertToSoggettoServizio(idServizio), label);
 					}
 				}
-				
+
 				if(mapInternal.size()>0){
 					//convert map to a List
 					List<Entry<String, String>> tmpList = new LinkedList<Map.Entry<String, String>>(mapInternal.entrySet());
@@ -1251,7 +1244,7 @@ public class SummaryBean implements Serializable{
 					for (Entry<String, String> entry : tmpList) {
 						sortedMap.put(entry.getKey(), entry.getValue());
 					}
-					
+
 					for (String key : sortedMap.keySet()) {
 						this.soggettiAssociati.add(new SelectItem(key, sortedMap.get(key)));
 					}
@@ -1269,41 +1262,41 @@ public class SummaryBean implements Serializable{
 
 		return this.soggettiAssociati;
 	}
-	
+
 	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettiServiziAutoComplete(Object val) throws Exception {
 		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaServizi = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
 		List<SelectItem> listaServiziTmp = new ArrayList<>();
 		if(val==null || StringUtils.isEmpty((String)val)) {
-			listaServiziTmp.add(0, new SelectItem("--", "--"));			
+			listaServiziTmp.add(0, new SelectItem("--", "--"));
 		}else{
 			listaServiziTmp = this._soggettiServiziAutoComplete((String)val);
 		}
-		
+
 		for (SelectItem selectItem : listaServiziTmp) {
 			String label = selectItem.getLabel();
 			String value = (String) selectItem.getValue();
-			
+
 			org.openspcoop2.web.monitor.core.bean.SelectItem newItem = new org.openspcoop2.web.monitor.core.bean.SelectItem(value, label);
 			listaServizi.add(newItem);
 		}
 
 		return listaServizi;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public List<SelectItem> _soggettiServiziAutoComplete(Object val) throws Exception {
 		this.soggettiSelectItemsWidth = 0;
 		List<SelectItem> list = new ArrayList<SelectItem>();
 		list.add(new SelectItem("--","--"));
-		
+
 		String tipoProtocollo = this.getProtocollo();
-		
+
 		if(val!=null && !StringUtils.isEmpty((String)val)){
 			String tipoSoggetto = null;
 			String nomeSoggetto = null;
-			
+
 			Map<String,String> mapInternal = new HashMap<>();
-			
+
 			// se non ho fissato un soggetto posso cercare anche per soggetto
 			if(this.isShowFiltroSoggettoLocale()) {
 				List<Soggetto> listSoggetti = this.dynamicUtilsService.soggettiAutoComplete(tipoProtocollo,(String)val);
@@ -1323,10 +1316,10 @@ public class SummaryBean implements Serializable{
 					if(!Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(loggedUtenteSoggettoPddMonitor)) {
 						tipoSoggetto = Utility.parseTipoSoggetto(loggedUtenteSoggettoPddMonitor);
 						nomeSoggetto = Utility.parseNomeSoggetto(loggedUtenteSoggettoPddMonitor);
-					}	
+					}
 				}
 			}
-			
+
 			List<AccordoServizioParteSpecifica> listServizi = this.dynamicUtilsService.getServizi(tipoProtocollo, null, tipoSoggetto, nomeSoggetto,(String)val,false);
 			if(listServizi!=null && listServizi.size()>0){
 				for (AccordoServizioParteSpecifica asps : listServizi) {
@@ -1339,7 +1332,7 @@ public class SummaryBean implements Serializable{
 					mapInternal.put(ParseUtility.convertToSoggettoServizio(idServizio), label);
 				}
 			}
-			
+
 			if(mapInternal.size()>0){
 				//convert map to a List
 				List<Entry<String, String>> tmpList = new LinkedList<Map.Entry<String, String>>(mapInternal.entrySet());
@@ -1357,16 +1350,16 @@ public class SummaryBean implements Serializable{
 				for (Entry<String, String> entry : tmpList) {
 					sortedMap.put(entry.getKey(), entry.getValue());
 				}
-				
+
 				for (String key : sortedMap.keySet()) {
 					list.add(new SelectItem(key, sortedMap.get(key)));
 				}
 			}
 		}
-		
+
 		Integer lunghezzaSelectList = this.dynamicUtils.getLunghezzaSelectList(list);
 		this.soggettiSelectItemsWidth = Math.max(this.soggettiSelectItemsWidth,  lunghezzaSelectList);
-		
+
 		return list;
 
 	}
@@ -1387,7 +1380,7 @@ public class SummaryBean implements Serializable{
 //				p = null;
 
 			p = Utils.incapsulaValoreStato(p);
-			
+
 			// salvataggio su DB solo se previsto nelle properties
 			if(this.salvaModificheProfiloSuDB) {
 				Stato state = this.userService.getTableState(SummaryBean.STATO_PERIODO,Utility.getLoggedUtente());
@@ -1396,8 +1389,8 @@ public class SummaryBean implements Serializable{
 			} else {
 				// imposto il nuovo valore nell'utenza in sessione
 				for (Stato stato : Utility.getLoggedUtente().getStati()) {
-					if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE)) {		
-						stato.setStato(p);						
+					if(stato.getOggetto().equals(Costanti.OGGETTO_STATO_UTENTE_INTERVALLO_TEMPORALE_HOME_PAGE)) {
+						stato.setStato(p);
 						break;
 					}
 				}
@@ -1437,9 +1430,9 @@ public class SummaryBean implements Serializable{
 
 			String protocolloSelected = this.isSelectedShowAllProtocols() ? this.protocolloDefault : this.protocollo;
 			EsitoUtils esitoUtils = new EsitoUtils(SummaryBean.log, protocolloSelected);
-			
+
 			list.add(new SelectItem(EsitoUtils.ALL_VALUE_AS_STRING,esitoUtils.getEsitoContestoLabelFromValue(EsitoUtils.ALL_VALUE_AS_STRING)));
-			
+
 			List<String> esiti = this.esitiProperties.getEsitiTransactionContextCodeOrderLabel();
 			for (String esito : esiti) {
 
@@ -1455,31 +1448,18 @@ public class SummaryBean implements Serializable{
 		return list;
 	}
 
-	public boolean isUseGraficiSVG() {
-		BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
-		this.useGraficiSVG =ApplicationBean.getInstance().isGraficiSvgEnabled() && !BrowserFilter.disabilitaGraficiSVG(browserInfo);
 
-		LoggerManager.getPddMonitorCoreLogger().trace("Usa grafici SVG ["+this.useGraficiSVG+"]");
-
-
-		return this.useGraficiSVG;
-	}
-
-	public void setUseGraficiSVG(boolean useGraficiSVG) {
-		this.useGraficiSVG = useGraficiSVG;
-	}
-	
 	public String getSoggettiAssociatiSelectItemsWidth() throws Exception{
 		this.soggettiAssociatiSelectItemsWidthCheck = false;
 		getTipiNomiSoggettiAssociati();
 		this.soggettiAssociatiSelectItemsWidthCheck = true;
 		return checkWidthLimits(this.soggettiAssociatiSelectItemsWidth).toString();
 	}
-	
+
 	public Integer getSoggettiAssociatiSelectItemsWidthAsInteger() throws Exception{
 		return checkWidthLimits(this.soggettiAssociatiSelectItemsWidth);
 	}
-	
+
 	public boolean isSoggettiAssociatiSelectItemsWidthCheck() {
 		return this.soggettiAssociatiSelectItemsWidthCheck;
 	}
@@ -1487,15 +1467,15 @@ public class SummaryBean implements Serializable{
 	public void setSoggettiAssociatiSelectItemsWidthCheck(boolean soggettiAssociatiSelectItemsWidthCheck) {
 		this.soggettiAssociatiSelectItemsWidthCheck = soggettiAssociatiSelectItemsWidthCheck;
 	}
-	
+
 	public String getSoggettiSelectItemsWidth() throws Exception{
 		return checkWidthLimits(this.soggettiSelectItemsWidth).toString();
 	}
-	
+
 	public Integer getSoggettiSelectItemsWidthAsInteger() throws Exception{
 		return checkWidthLimits(this.soggettiSelectItemsWidth);
 	}
-	
+
 	public boolean isSoggettiSelectItemsWidthCheck() {
 		return this.soggettiSelectItemsWidthCheck;
 	}
@@ -1503,7 +1483,7 @@ public class SummaryBean implements Serializable{
 	public void setSoggettiSelectItemsWidthCheck(boolean soggettiSelectItemsWidthCheck) {
 		this.soggettiSelectItemsWidthCheck = soggettiSelectItemsWidthCheck;
 	}
-	
+
 	public Integer checkWidthLimits(Integer value){
 		// valore deve essere compreso minore del max ma almeno quanto la default
 		Integer toRet = Math.max(this.defaultSelectItemsWidth, value);
@@ -1512,7 +1492,7 @@ public class SummaryBean implements Serializable{
 
 		return toRet;
 	}
-	
+
 	/**
 	 * I nomi spcoop dei soggetti associati all'utente loggato
 	 */
@@ -1520,15 +1500,15 @@ public class SummaryBean implements Serializable{
 		User u = Utility.getLoggedUtente();
 		return Utility.getSoggettiGestione(u,this.soggettoLocale);
 	}
-	
+
 	public String getProtocollo() {
 		if(this.isShowListaProtocolli()) {
 			if(!Utility.getLoginBean().getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL)) {
-				this.setProtocollo(Utility.getLoginBean().getModalita()); 
+				this.setProtocollo(Utility.getLoginBean().getModalita());
 			}
 		} else {
 			User utente = Utility.getLoggedUtente();
-			
+
 			// utente ha selezionato una modalita'
 			if(utente.getProtocolloSelezionatoPddMonitor()!=null) {
 				this.setProtocollo(utente.getProtocolloSelezionatoPddMonitor());
@@ -1538,14 +1518,14 @@ public class SummaryBean implements Serializable{
 				try {
 					this.setProtocollo(ProtocolFactoryManager.getInstance().getDefaultProtocolFactory().getProtocol());
 				} catch (ProtocolException e) {
-					this.setProtocollo(null); 
+					this.setProtocollo(null);
 				}
 			}
 		}
-		
+
 		return this.protocollo;
 	}
-	
+
 	public void setProtocollo(String protocollo) {
 		this.protocollo = protocollo;
 
@@ -1562,7 +1542,7 @@ public class SummaryBean implements Serializable{
 		}
 		try {
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
-			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();
 			User utente = Utility.getLoggedUtente();
 			List<String> listaNomiProtocolli = Utility.getProtocolli(utente, pfManager, protocolFactories, true);
 
@@ -1573,7 +1553,7 @@ public class SummaryBean implements Serializable{
 
 		} catch (ProtocolException e) {
 			SummaryBean.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
-		}  
+		}
 
 
 		return this.protocolli;
@@ -1586,22 +1566,22 @@ public class SummaryBean implements Serializable{
 	public boolean isShowListaProtocolli(){
 		try {
 			ProtocolFactoryManager pfManager = org.openspcoop2.protocol.engine.ProtocolFactoryManager.getInstance();
-			MapReader<String, IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
+			MapReader<String, IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();
 			int numeroProtocolli = protocolFactories.size();
 
 			// se c'e' installato un solo protocollo non visualizzo la select List.
 			if(numeroProtocolli == 1)
 				return false;
-			
-			
+
+
 			User utente = Utility.getLoggedUtente();
-			
+
 			// utente ha selezionato una modalita'
 			if(utente.getProtocolloSelezionatoPddMonitor()!=null) {
 				return false;
 			}
-			
-			
+
+
 			if(utente.getProtocolliSupportati() !=null && utente.getProtocolliSupportati().size() <= 1) {
 				return false;
 			}
@@ -1616,33 +1596,33 @@ public class SummaryBean implements Serializable{
 
 		} catch (Exception e) {
 			SummaryBean.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
-		}  
+		}
 
 		return true;
 	}
-	
+
 	public boolean isSetFiltroProtocollo() {
 		boolean setFilter = StringUtils.isNotEmpty(this.getProtocollo()) &&
 				(this.isShowListaProtocolli() || !Utility.getLoginBean().getModalita().equals(Costanti.VALUE_PARAMETRO_MODALITA_ALL));
-		
+
 		return setFilter;
 	}
-	
+
 	public void protocolloSelected(ActionEvent ae) {
 		this.soggettoLocale = null;
 		this.labelSoggettoLocale = null;
 	}
-	
+
 	public String getLabelServizio() {
-		return !this.isShowFiltroSoggettoLocale() ? 
+		return !this.isShowFiltroSoggettoLocale() ?
 				MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY) :
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SUMMARY_SOGGETTO_LOCALE_SERVIZIO_LABEL_KEY);
 	}
-	
+
 	public boolean isShowFiltroSoggettoLocale(){
 		return Utility.getLoginBean().isShowFiltroSoggettoLocale();
 	}
-	
+
 	public String getLabelTipiNomiSoggettiServiziAssociati(){
 		User utente = Utility.getLoggedUtente();
 		boolean foundSoggetti = utente.getSoggetti() != null && utente.getSoggetti().size() > 0;

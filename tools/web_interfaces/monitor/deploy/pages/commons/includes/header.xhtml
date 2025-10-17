@@ -27,7 +27,6 @@
 	      	<a4j:region id="headerPaginaLive" renderRegionOnly="true">
 	      		<h:form prependId="false" >
 	      			<a4j:outputPanel layout="block" ajaxRendered="false" id="headerPaginaLivePanel">
-		      			<h:inputHidden value="true" id="ps_usaSVG"/> 
 		           		<table class="tablePageHeader">
 		            		<tbody>
 			            		<tr>
@@ -36,7 +35,7 @@
 											<a4j:outputPanel layout="block" rendered="#{statusBean.enable}" id="statusPdd" styleClass="">
 												<input type="hidden" id="_csrfHeader" name="_csrf" value="#{loginBean.csrf}"/>
 												<input type="hidden" id="_csrfHeaderCheck" name="_crsfCheck" value="#{_csp_random_nonce}"/>
-												<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/statoPdd.jsf?usaSVG=true" class="titleStatusIconLinkRight">
+												<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/statoPdd.jsf" class="titleStatusIconLinkRight">
 													<h:graphicImage value="#{statusBean.iconaStato}" width="16" height="16" id="iconaStatusPdd" styleClass="vertical-align-bottom" >
 														<rich:toolTip id="toolIconaStatusPdd" for="iconaStatusPdd" mode="client" value="#{statusBean.tooltipIconaStato}" direction="bottom-left"/>
 													</h:graphicImage>
@@ -86,7 +85,7 @@
 			            				</td>
 									</c:if>
 					                <td class="#{(applicationBean.amministratore or applicationBean.operatore) ? 'tdTitoloNoPaddingLeft' : 'tdTitolo'}">
-				                		<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/welcome.jsf?usaSVG=true" class="titleStatusIconLinkLeft">
+				                		<a href="#{facesContext.externalContext.request.contextPath}/commons/pages/welcome.jsf" class="titleStatusIconLinkLeft">
 											<h:outputText value="#{loginBean.title}" id="licenseOutputText"  styleClass="appTitle"/>
 										</a>
 										<c:if test="#{!(applicationBean.amministratore or applicationBean.operatore)}">

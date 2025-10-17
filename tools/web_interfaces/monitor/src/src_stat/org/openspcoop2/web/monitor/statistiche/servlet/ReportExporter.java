@@ -423,8 +423,6 @@ public class ReportExporter extends HttpServlet{
 				statSearchForm = new StatsSearchForm();
 			}
 			statSearchForm.setUser(user.getUtente());
-			statSearchForm.setUsaSVG(true);
-			statSearchForm.setUseGraficiSVG(true);
 			statSearchForm.setAction(tipoDistribuzioneReport);
 			
 			String protocollo = setProtocolParametersInSearchForm(req, statSearchForm);
