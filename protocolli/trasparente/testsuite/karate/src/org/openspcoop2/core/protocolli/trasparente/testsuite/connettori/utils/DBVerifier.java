@@ -142,6 +142,52 @@ public class DBVerifier {
 	}
 	
 	
+	
+	
+	
+	
+	
+	public static void existsDiagnostico(String idTransazione, String diagnostico) throws Exception  {
+		
+		// La scrittura su database avviene dopo aver risposto al client
+		
+		Utilities.sleep(100); 
+		try {
+			DBVerifier.existsDiagnosticoEngine(idTransazione, diagnostico);
+		}catch(Throwable t) {
+			Utilities.sleep(500);
+			try {
+				DBVerifier.existsDiagnosticoEngine(idTransazione, diagnostico);
+			}catch(Throwable t2) {
+				Utilities.sleep(2000);
+				try {
+					DBVerifier.existsDiagnosticoEngine(idTransazione, diagnostico);
+				}catch(Throwable t3) {
+					Utilities.sleep(5000);
+					DBVerifier.existsDiagnosticoEngine(idTransazione, diagnostico);
+				}
+			}
+		}
+	}
+	private static void existsDiagnosticoEngine(String idTransazione,  String diagnostico) throws Exception  {
+		
+		String query = "select count(*) from msgdiagnostici where id_transazione = ? and messaggio LIKE '%"+diagnostico+"%'";
+		log().info(query);
+		
+		int	count = dbUtils().readValue(query, Integer.class, idTransazione);
+		String msg = "IdTransazione: "+idTransazione;
+		assertTrue(msg+" Cerco dettaglio '"+diagnostico+"'; count trovati: "+count+"", (count>0));
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static String getIdTransazioneByIdApplicativoRichiesta(String idApplicativo) throws Exception  {
 		return getIdTransazioneByIdApplicativoRichiesta(idApplicativo, null, true);
 	}

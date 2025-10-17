@@ -1,3 +1,11 @@
+2025-10-17  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1662
+	Corretta la gestione della codifica dei caratteri speciali [ e ] nelle query string delle URL.
+	In precedenza, GovWay applicava una doppia codifica ai parametri contenenti questi caratteri (es. test%5B%5D → test%255B%255D), 
+	causando errori di interpretazione lato applicativo.
+
 2025-10-15  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole, GovWayMonitor]
