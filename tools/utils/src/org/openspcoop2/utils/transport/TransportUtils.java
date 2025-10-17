@@ -554,25 +554,26 @@ public class TransportUtils {
 		if(encodeLocation) {
 			locationEncoded = UriUtils.encodeQuery(location,Charset.UTF_8.getValue());
 		}
-		
+
 		if(parameters != null && parameters.size()>0){
 			StringBuilder urlBuilder = new StringBuilder(locationEncoded);
 			Iterator<String> keys = parameters.keySet().iterator();
 			while (keys.hasNext()) {
-				
+
 				String key = keys.next();
 				List<String> list = parameters.get(key);
 				if(list!=null && !list.isEmpty()) {
-				
+
 					for (String value : list) {
-						
+
 						if(!urlBuilder.toString().contains("?"))
 							urlBuilder.append("?");
 						else
 							urlBuilder.append("&");
-						
+
+						String encodedKey = key;
 						try{
-							key = urlEncodeParam(key,Charset.UTF_8.getValue());
+							encodedKey = urlEncodeParam(key,Charset.UTF_8.getValue());
 						}catch(Exception e){
 							if(log!=null) {
 								log.error("URLEncode key["+key+"] error: "+e.getMessage(),e);
@@ -581,9 +582,10 @@ public class TransportUtils {
 								LoggerWrapperFactory.getLogger(TransportUtils.class).error("URLEncode key["+key+"] error: "+e.getMessage(),e);
 							}
 						}
-						
+
+						String encodedValue = value;
 						try{
-							value = urlEncodeParam(value,Charset.UTF_8.getValue());
+							encodedValue = urlEncodeParam(value,Charset.UTF_8.getValue());
 						}catch(Exception e){
 							if(log!=null) {
 								log.error("URLEncode value:["+value+"] error: "+e.getMessage(),e);
@@ -592,12 +594,12 @@ public class TransportUtils {
 								LoggerWrapperFactory.getLogger(TransportUtils.class).error("URLEncode value:["+value+"] error: "+e.getMessage(),e);
 							}
 						}
-						
-						String keyValue = key+"="+value;
+
+						String keyValue = encodedKey+"="+encodedValue;
 						urlBuilder.append(keyValue);
-						
+
 					}
-					
+
 				}
 			}
 			return urlBuilder.toString();
