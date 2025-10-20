@@ -36,8 +36,14 @@ import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
  * @version $Rev$, $Date$
  */
 public class StatisticheUtils {
+	
+	private StatisticheUtils() {}
 
 	public static void selezionaRecordValidi(IExpression expr, StatisticaModel model) throws ExpressionNotImplementedException, ExpressionException{
+		// Seleziona record stabili: stato >= 1 (include stato 1, 2 e 3)
+		// stato 1: intervalli precedenti stabili
+		// stato 2: record ancora validi in fase di aggiornamento
+		// stato 3: intervallo corrente stabile
 		expr.greaterEquals(model.STATO_RECORD, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
 	}
 	
@@ -48,7 +54,7 @@ public class StatisticheUtils {
 		String  sbFunctionValue = getSqlCalcolaMedia(columnLatenza, columnRichieste);
 		Class<?> functionValueType = Long.class;
 		
-		return new FunctionField(sbFunctionValue.toString(),functionValueType,"","",alias);
+		return new FunctionField(sbFunctionValue,functionValueType,"","",alias);
 	}
 	
 	public static String getSqlCalcolaMedia(String columnLatenza, String columnRichieste) {

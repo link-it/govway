@@ -1,3 +1,11 @@
+2025-10-20  Andrea Poli <apoli@link.it>
+
+	* [BatchStatistiche]
+	Aggiunta funzionalità #1663
+	Introdotto stato_record=3 per record statistici dell'intervallo corrente (vs stato=1 per intervalli passati). 
+	Aggiunta configurabilità dei criteri di raggruppamento, tramite proprietà '*.groupBy.<campo>', per ottimizzare la cardinalità delle aggregazioni.
+	Rivisto lo script di inizializzazione della tabella transazioni_esiti per associare alla colonna govway_status_class il numero della classe anziché l’identificativo della tabella di riferimento.
+
 2025-10-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

@@ -30,7 +30,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.monitor.engine.statistic.StatisticsConfig;
 import org.openspcoop2.monitor.engine.statistic.StatisticsForceIndexConfig;
+import org.openspcoop2.monitor.engine.statistic.StatisticsGroupByConfig;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
@@ -253,7 +255,15 @@ public class GeneratorProperties {
 	public StatisticsForceIndexConfig getStatisticheGenerazioneForceIndexConfig() {
 		return this.statisticheGenerazioneForceIndexConfig;
 	}
-		
+
+	private StatisticsGroupByConfig statisticheGenerazioneGroupByConfig = null;
+	public StatisticsGroupByConfig getStatisticheGenerazioneGroupByConfig() throws UtilsException {
+		if(this.statisticheGenerazioneGroupByConfig==null){
+			this.statisticheGenerazioneGroupByConfig = StatisticsConfig.parseGroupByConfig(this.props, "statistiche.generazione.");
+		}
+		return this.statisticheGenerazioneGroupByConfig;
+	}
+
 	public boolean isGenerazioneStatisticheUseUnionForLatency() {
 		return this.generazioneStatisticheUseUnionForLatency;
 	}

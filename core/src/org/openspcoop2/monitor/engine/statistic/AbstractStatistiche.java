@@ -97,6 +97,16 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractStatistiche implements IStatisticsEngine {
 
+	private static final String PREFIX_GENERAZIONE_STATISTICA = "Generazione statistiche [";
+	private static final String PREFIX_INVOCAZIONE = "---- Invocazione [";
+	private static final String PREFIX_VALORI_QUERY_DATA_INGRESSO_RICHIESTA = "Valori query (ms) tr.data_ingresso_richiesta>[";
+	private static final String LOG_AND_VALORI_QUERY_DATA_INGRESSO_RICHIESTA = "] AND tr.data_ingresso_richiesta<=[";
+	private static final String LOG_INTERVALLO_DATE = "] Intervallo date: [";
+	private static final String LOG_SUFFIX_IN_CORSO = ") ...";
+	private static final String LOG_SUFFIX_TERMINATA = ") terminata";
+	private static final String LOG_RECORD = "\nRecord: ";
+	private static final String LOG_SEPARATORE = ") e (";
+	
 	protected Logger logger = LoggerWrapperFactory.getLogger(AbstractStatistiche.class);
 	private void logDebug(String msg) {
 		if(this.logger!=null) {
@@ -135,6 +145,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 	private IConfigurazioneStatisticaService confStatisticaDAO =null;
 	private TipiDatabase databaseType;
 	private StatisticsForceIndexConfig forceIndexConfig;
+	private StatisticsGroupByConfig groupByConfig;
 
 	private static final String SUFFIX_NON_INIZIALIZZATO = "] non inizializzato";
 
@@ -207,7 +218,10 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			}
 			
 			this.forceIndexConfig = config.getForceIndexConfig();
-			
+
+			// Inizializzo la configurazione per il GROUP BY leggendola da config
+			this.groupByConfig = config.getGroupByConfig();
+
 			this.initialized = true;
 			
 		} catch (Exception e) {
@@ -359,19 +373,34 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		
 		// Algoritmo
 		// Per la data in fase di aggiornamento:
+		// - 0) si convertono i record con stato_record=3 che non appartengono più all'intervallo corrente in stato_record=1
 		// - 1) si elimina eventuali record rimasti "sporchi" (stato_record <1)
 		// - 2) i record esistenti nell'intervallo vengono portati al valore stato_record=2
 		// - 3) i nuovi record aggiunti vengono creati con stato_record=0
-		// - 4) si fa un unico comando di update nell'intervallo con CASE WHEN stato_record==2 THEN -2 WHEN stato_record==0 THEN 1
+		// - 4) si fa un unico comando di update nell'intervallo con CASE WHEN stato_record==2 THEN -2 WHEN stato_record==0 THEN 1 o 3
+		//      dove stato_record=3 viene utilizzato per i dati stabili dell'intervallo corrente (ora attuale, giorno attuale, etc.)
+		//      mentre stato_record=1 viene utilizzato per i dati stabili degli intervalli precedenti
 		// - 5) si eliminano i record nell'intervallo con stato_record=-2
-		
+
+		// Conversione stato 3 -> 1 per intervalli non più correnti (Fase 0)
+		Date now = new Date();
+		Date nowTruncated = truncDate(now, false);
+		if(this.debug)
+			this.logDebug("----------- conversione Fase0 (stato 3->1 per intervalli passati) ------------");
+		boolean esito = this.convertStatoIntervalloCorrenteInPassato(nowTruncated);
+		if(!esito) {
+			return false;
+		}
+		if(this.debug)
+			this.logDebug("------------ conversione Fase0 (stato 3->1 per intervalli passati) -----------");
+
 		/**if(dataUltimaGenerazioneStatistiche.compareTo(nowMenoUno) == 0){*/
 		// L'IF sopra non lo devo fare, se spengo la macchina, e la riaccendo dopo due ore, l'eliminazione delle statistiche gia' generate riguarda nowMenoDue
 		// Se ho la stessa data devo eliminare l'intervallo, posso gia' averlo generato
 		// Eliminazione (Fase 1)
 		if(this.debug)
 			this.logDebug("----------- pulizia Fase1 (DataUguale) ------------");
-		boolean esito = this.deleteFisicoStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO, false);
+		esito = this.deleteFisicoStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO, false);
 		if(!esito) {
 			return false;
 		}
@@ -381,7 +410,6 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		if(!esito) {
 			return false;
 		}
-		//}
 
 		// Aggiornamento (Fase 2)
 		if(this.debug)
@@ -424,13 +452,27 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		}
 
 		// Promozione Record (Fase4)
+		// Verifico se l'intervallo corrente è quello in fase di aggiornamento
+		// Riutilizzo nowTruncated calcolato nella Fase 0
+		Date intervalloInAggiornamento = this.truncDate(this.incrementDate(dataUltimaGenerazioneStatistiche, false), false);
+		boolean isIntervalloCorrente = intervalloInAggiornamento.equals(nowTruncated);
+
+		int statoFinale = isIntervalloCorrente ?
+				CostantiDB.STATISTICHE_STATO_RECORD_VALIDO_INTERVALLO_CORRENTE :
+				CostantiDB.STATISTICHE_STATO_RECORD_VALIDO;
+
+		if(this.debug) {
+			this.logDebug("Intervallo in aggiornamento: " + intervalloInAggiornamento + ", Now truncated: " + nowTruncated +
+					", isIntervalloCorrente: " + isIntervalloCorrente + ", stato finale: " + statoFinale);
+		}
+
 		boolean unicaPromozione = true; // deve essere un unico comando sql
 		if(unicaPromozione) {
 			if(this.debug)
 				this.logDebug("----------- promozione Fase4 (DataUguale) ------------");
-			esito = this.updateStatoRecordStatistiche( null, dataUltimaGenerazioneStatistiche, 
+			esito = this.updateStatoRecordStatistiche( null, dataUltimaGenerazioneStatistiche,
 					CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO,
-					CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
+					CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, statoFinale);
 			if(!esito) {
 				return false;
 			}
@@ -438,17 +480,17 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		else {
 			if(this.debug)
 				this.logDebug("----------- promozione Fase4 (DataUguale) ------------");
-			esito = this.updateStatoRecordStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche, 
+			esito = this.updateStatoRecordStatistiche( TipoPdD.DELEGATA, dataUltimaGenerazioneStatistiche,
 					CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO,
-					CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
+					CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, statoFinale);
 			if(!esito) {
 				return false;
 			}
 			if(this.debug)
 				this.logDebug("------------ promozione Fase4 (DataUguale) -----------");
-			esito = this.updateStatoRecordStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche, 
+			esito = this.updateStatoRecordStatistiche( TipoPdD.APPLICATIVA, dataUltimaGenerazioneStatistiche,
 					CostantiDB.STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_ELIMINATO,
-					CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, CostantiDB.STATISTICHE_STATO_RECORD_VALIDO);
+					CostantiDB.STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO, statoFinale);
 			if(!esito) {
 				return false;
 			}
@@ -510,7 +552,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		boolean generazioneOk = true;
 		
 		if(this.debug){
-			this.logDebug("Generazione statistiche (union) ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
+			this.logDebug("Generazione statistiche (union) ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+LOG_SUFFIX_IN_CORSO);
 		}
 		try{
 			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.transazioneSearchDAO).getFieldConverter(); 
@@ -534,24 +576,23 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			Date dateNext = incrementDate(data, false);
 			
 			IExpression exprConLatenze = this.transazioneSearchDAO.newExpression();
-			StatisticsUtils.setExpressionNotNullDate(this.transazioneSearchDAO, exprConLatenze, data, dateNext, tipoPdD, null, fieldConverter);
-			
+			StatisticsUtils.setExpressionNotNullDate(this.transazioneSearchDAO, exprConLatenze, data, dateNext, tipoPdD, null, fieldConverter, this.groupByConfig);
+
 			IExpression exprSenzaLatenze = this.transazioneSearchDAO.newExpression();
-			StatisticsUtils.setExpressionNullDate(this.transazioneSearchDAO, exprSenzaLatenze, data, dateNext, tipoPdD, null, fieldConverter);
+			StatisticsUtils.setExpressionNullDate(this.transazioneSearchDAO, exprSenzaLatenze, data, dateNext, tipoPdD, null, fieldConverter, this.groupByConfig);
 
 			if(this.debug){
-				this.logDebug("Genero statistiche ["+this.getTipoStatistiche()+"] Intervallo date: ["+data.toString()+" - "+dateNext.toString()+"]");
-				this.logDebug("Valori query (ms) tr.data_ingresso_richiesta>["+data.getTime()+"] AND tr.data_ingresso_richiesta<=["+dateNext.getTime()+"]");
+				this.logDebug("Genero statistiche ["+this.getTipoStatistiche()+LOG_INTERVALLO_DATE+data.toString()+" - "+dateNext.toString()+"]");
+				this.logDebug(PREFIX_VALORI_QUERY_DATA_INGRESSO_RICHIESTA+data.getTime()+LOG_AND_VALORI_QUERY_DATA_INGRESSO_RICHIESTA+dateNext.getTime()+"]");
 			}
 
-			if(this.forceIndexConfig!=null){
-				if(this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione()!=null){
-					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione();
-					if(!listForceIndexes.isEmpty()){
-						for (Index index : listForceIndexes) {
-							exprConLatenze.addForceIndex(index);
-							exprSenzaLatenze.addForceIndex(index);
-						}
+			if(this.forceIndexConfig!=null &&
+				this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione()!=null){
+				List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione();
+				if(!listForceIndexes.isEmpty()){
+					for (Index index : listForceIndexes) {
+						exprConLatenze.addForceIndex(index);
+						exprSenzaLatenze.addForceIndex(index);
 					}
 				}
 			}
@@ -562,8 +603,8 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			for (FunctionField functionField : selectListConLatenze) {
 				latenzeUnionExpr.addSelectFunctionField(functionField);
 			}
-			StatisticsUtils.addSelectUnionField(latenzeUnionExpr, fieldConverter);
-			
+			StatisticsUtils.addSelectUnionField(latenzeUnionExpr, fieldConverter, this.groupByConfig);
+
 			UnionExpression senzaLatenzeUnionExpr = new UnionExpression(exprSenzaLatenze);
 			for (FunctionField functionField : selectListSenzaLatenze) {
 				senzaLatenzeUnionExpr.addSelectFunctionField(functionField);
@@ -571,7 +612,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			for (ConstantField constantField : selectListCostantiLatenze) {
 				senzaLatenzeUnionExpr.addSelectField(constantField, constantField.getAlias());
 			}
-			StatisticsUtils.addSelectUnionField(senzaLatenzeUnionExpr, fieldConverter);
+			StatisticsUtils.addSelectUnionField(senzaLatenzeUnionExpr, fieldConverter, this.groupByConfig);
 			
 			Union union = new Union();
 			union.setUnionAll(true);
@@ -610,8 +651,10 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 					String r = "";
 					if(stat!=null) {
 						try {
-							r ="\nRecord: "+stat.toString();
-						}catch(Throwable tPrint) {}
+							r =LOG_RECORD+stat.toString();
+						}catch(Throwable tPrint) {
+							// ignore
+						}
 					}
 					this.logError("Rilevato errore durante la registrazione del singolo record di informazione statistica: "+eSingoloRecord.getMessage()+r,eSingoloRecord);
 					generazioneOk = false;
@@ -619,16 +662,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			}
 
 
-		} catch (ServiceException e){
-			this.logError(e.getMessage(),e);
-			generazioneOk = false;
-		} catch (NotImplementedException e) {
-			this.logError(e.getMessage(),e);
-			generazioneOk = false;
-		} catch (ExpressionNotImplementedException e) {
-			this.logError(e.getMessage(),e);
-			generazioneOk = false;
-		} catch (ExpressionException e) {
+		} catch (ServiceException | NotImplementedException | ExpressionNotImplementedException | ExpressionException e){
 			this.logError(e.getMessage(),e);
 			generazioneOk = false;
 		} catch (NotFoundException e) {
@@ -641,7 +675,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		}  
 
 		if(this.debug){
-			this.logDebug("Generazione statistiche ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+			this.logDebug(PREFIX_GENERAZIONE_STATISTICA+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+LOG_SUFFIX_TERMINATA);
 		}
 				
 		return generazioneOk;
@@ -652,7 +686,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		boolean generazioneOk = true;
 		
 		if(this.debug){
-			this.logDebug("Generazione statistiche ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
+			this.logDebug(PREFIX_GENERAZIONE_STATISTICA+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+LOG_SUFFIX_IN_CORSO);
 		}
 		try{
 			IExpression expr = this.transazioneSearchDAO.newExpression();
@@ -667,20 +701,19 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			// ** Where **
 			// Creo intervallo
 			Date dateNext = incrementDate(data, false);
-			StatisticsUtils.setExpression(this.transazioneSearchDAO, expr, data, dateNext, tipoPdD, false, null, fieldConverter);
+			StatisticsUtils.setExpression(this.transazioneSearchDAO, expr, data, dateNext, tipoPdD, false, null, fieldConverter, this.groupByConfig);
 
 			if(this.debug){
-				this.logDebug("Genero statistiche ["+this.getTipoStatistiche()+"] Intervallo date: ["+data.toString()+" - "+dateNext.toString()+"]");
-				this.logDebug("Valori query (ms) tr.data_ingresso_richiesta>["+data.getTime()+"] AND tr.data_ingresso_richiesta<=["+dateNext.getTime()+"]");
+				this.logDebug("Genero statistiche ["+this.getTipoStatistiche()+LOG_INTERVALLO_DATE+data.toString()+" - "+dateNext.toString()+"]");
+				this.logDebug(PREFIX_VALORI_QUERY_DATA_INGRESSO_RICHIESTA+data.getTime()+LOG_AND_VALORI_QUERY_DATA_INGRESSO_RICHIESTA+dateNext.getTime()+"]");
 			}
 
-			if(this.forceIndexConfig!=null){
-				if(this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione()!=null){
-					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione();
-					if(!listForceIndexes.isEmpty()){
-						for (Index index : listForceIndexes) {
-							expr.addForceIndex(index);
-						}
+			if(this.forceIndexConfig!=null &&
+				this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione()!=null){
+				List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione();
+				if(!listForceIndexes.isEmpty()){
+					for (Index index : listForceIndexes) {
+						expr.addForceIndex(index);
 					}
 				}
 			}
@@ -704,7 +737,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 						this.addLatenze(data, dateNext, tipoPdD, stat, fieldConverter);
 					}catch(Throwable eSingoloRecordAddLatenze) {
 						this.logError("Rilevato errore durante la lettura delle latenze di un singolo record di informazione statistica: "+eSingoloRecordAddLatenze.getMessage()+
-								"\nRecord: "+stat.toString(),eSingoloRecordAddLatenze);
+								LOG_RECORD+stat.toString(),eSingoloRecordAddLatenze);
 						generazioneOk = false;
 					}
 									
@@ -724,8 +757,10 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 					String r = "";
 					if(stat!=null) {
 						try {
-							r ="\nRecord: "+stat.toString();
-						}catch(Throwable tPrint) {}
+							r =LOG_RECORD+stat.toString();
+						}catch(Throwable tPrint) {
+							// ignore
+						}
 					}
 					this.logError("Rilevato errore durante la registrazione del singolo record di informazione statistica: "+eSingoloRecord.getMessage()+r,eSingoloRecord);
 					generazioneOk = false;
@@ -733,16 +768,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			}
 
 
-		} catch (ServiceException e){
-			this.logError(e.getMessage(),e);
-			generazioneOk = false;
-		} catch (NotImplementedException e) {
-			this.logError(e.getMessage(),e);
-			generazioneOk = false;
-		} catch (ExpressionNotImplementedException e) {
-			this.logError(e.getMessage(),e);
-			generazioneOk = false;
-		} catch (ExpressionException e) {
+		} catch (ServiceException | NotImplementedException | ExpressionNotImplementedException | ExpressionException e){
 			this.logError(e.getMessage(),e);
 			generazioneOk = false;
 		} catch (NotFoundException e) {
@@ -755,7 +781,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		}  
 
 		if(this.debug){
-			this.logDebug("Generazione statistiche ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+			this.logDebug(PREFIX_GENERAZIONE_STATISTICA+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+LOG_SUFFIX_TERMINATA);
 		}
 				
 		return generazioneOk;
@@ -771,31 +797,30 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		if(this.debug)
 			this.logDebug("Salvo statistica con data ["+next+"]");
 	
-		return StatisticsUtils.readStatisticBean(stat, row, fieldConverter, useFieldConverter);
+		return StatisticsUtils.readStatisticBean(stat, row, fieldConverter, useFieldConverter, this.groupByConfig);
 	}
 	
 	private void addLatenze(Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat, ISQLFieldConverter fieldConverter) throws Exception{
 		
 		IExpression exprDateNotNull = this.transazioneSearchDAO.newExpression();
-		StatisticsUtils.setExpression(this.transazioneSearchDAO, exprDateNotNull, data, dateNext, tipoPdD, true, stat, fieldConverter);
+		StatisticsUtils.setExpression(this.transazioneSearchDAO, exprDateNotNull, data, dateNext, tipoPdD, true, stat, fieldConverter, this.groupByConfig);
 		
 		List<FunctionField> selectListDateNotNull = new ArrayList<>();
 		
 		StatisticsUtils.addSelectFunctionFieldLatencyTransaction(tipoPdD, fieldConverter, selectListDateNotNull);
 		
 		if(this.debug){
-			this.logDebug("Leggo ulteriormente statistiche con campi data not null ["+this.getTipoStatistiche()+"] Intervallo date: ["+data.toString()+" - "+dateNext.toString()+"]");
-			this.logDebug("Valori query (ms) tr.data_ingresso_richiesta>["+data.getTime()+"] AND tr.data_ingresso_richiesta<=["+dateNext.getTime()+"]");
+			this.logDebug("Leggo ulteriormente statistiche con campi data not null ["+this.getTipoStatistiche()+LOG_INTERVALLO_DATE+data.toString()+" - "+dateNext.toString()+"]");
+			this.logDebug(PREFIX_VALORI_QUERY_DATA_INGRESSO_RICHIESTA+data.getTime()+LOG_AND_VALORI_QUERY_DATA_INGRESSO_RICHIESTA+dateNext.getTime()+"]");
 		}
 
 		try{
-			if(this.forceIndexConfig!=null){
-				if(this.forceIndexConfig.getTransazioniForceIndexGroupByLatenze()!=null){
-					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByLatenze();
-					if(!listForceIndexes.isEmpty()){
-						for (Index index : listForceIndexes) {
-							exprDateNotNull.addForceIndex(index);
-						}
+			if(this.forceIndexConfig!=null &&
+				this.forceIndexConfig.getTransazioniForceIndexGroupByLatenze()!=null){
+				List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByLatenze();
+				if(!listForceIndexes.isEmpty()){
+					for (Index index : listForceIndexes) {
+						exprDateNotNull.addForceIndex(index);
 					}
 				}
 			}
@@ -923,15 +948,15 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 				IStatisticProcessing statProcessing = (IStatisticProcessing) cStatPersonalizzata.newInstance();
 				if(this.isEnabledStatisticTypeCustom(statProcessing)){
 					if(this.debug){
-						this.logDebug("---- Invocazione ["+cStatPersonalizzata.getClassName()+"."+this.getStatisticPluginMethodName()+"()] ...");
+						this.logDebug(PREFIX_INVOCAZIONE+cStatPersonalizzata.getClassName()+"."+this.getStatisticPluginMethodName()+"()] ...");
 					}
 					try {
 						this.callStatisticPluginMethod(statProcessing, stat);
 						if(this.debug){
-							this.logDebug("---- Invocazione ["+cStatPersonalizzata.getClassName()+"."+this.getStatisticPluginMethodName()+"()] terminata");
+							this.logDebug(PREFIX_INVOCAZIONE+cStatPersonalizzata.getClassName()+"."+this.getStatisticPluginMethodName()+"()] terminata");
 						}
 					} catch (Exception e) {
-						this.logError("---- Invocazione ["+cStatPersonalizzata.getClassName()+"."+this.getStatisticPluginMethodName()+"()] terminata con errori: "+e.getMessage(), e);
+						this.logError(PREFIX_INVOCAZIONE+cStatPersonalizzata.getClassName()+"."+this.getStatisticPluginMethodName()+"()] terminata con errori: "+e.getMessage(), e);
 					} 
 				}
 				else{
@@ -1020,12 +1045,12 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			
 			if(this.debug){
 				this.logDebug("Generazione statistica personalizzata ["+idStatisticaPersonalizzata+"] ["+this.getTipoStatistiche()+"] ["+tipoPdD+
-						"]("+this.getIntervalloStatistica(dateStatistics,false)+") ...");
+						"]("+this.getIntervalloStatistica(dateStatistics,false)+LOG_SUFFIX_IN_CORSO);
 			}
 			
 			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.transazioneSearchDAO).getFieldConverter(); 
 			
-			Map<String, StatisticaContenuti> statisticheContenuti = new HashMap<String, StatisticaContenuti>();
+			Map<String, StatisticaContenuti> statisticheContenuti = new HashMap<>();
 			
 			
 			String idRisorsa = null;
@@ -1052,10 +1077,10 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			// Creo espressione
 			List<AliasFilter> aliases = new ArrayList<>();
 			if(gropuByStato){
-				StatisticsUtils.setExpressionByStato(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter);
+				StatisticsUtils.setExpressionByStato(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter, this.groupByConfig);
 			}else{
-				StatisticsUtils.setExpressionStatsPersonalizzate(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter, 
-						aliases, idRisorsa, risorseFiltri);
+				StatisticsUtils.setExpressionStatsPersonalizzate(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter,
+						aliases, idRisorsa, this.groupByConfig, risorseFiltri);
 			}
 
 			// aggiungo eventuale filtro personalizzato
@@ -1066,18 +1091,17 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			
 			if(this.debug){
 				this.logDebug("Analizzo dati di base statistica personalizzata ["+idStatisticaPersonalizzata+"]  ["+this.getTipoStatistiche()+
-						"] Intervallo date: ["+dateLeft.toString()+" - "+dateRight.toString()+"]");
-				this.logDebug("Valori query (ms) tr.data_ingresso_richiesta>["+dateLeft.getTime()+"] AND tr.data_ingresso_richiesta<=["+dateRight.getTime()+"]");
+						LOG_INTERVALLO_DATE+dateLeft.toString()+" - "+dateRight.toString()+"]");
+				this.logDebug(PREFIX_VALORI_QUERY_DATA_INGRESSO_RICHIESTA+dateLeft.getTime()+LOG_AND_VALORI_QUERY_DATA_INGRESSO_RICHIESTA+dateRight.getTime()+"]");
 				this.logDebug("Expr: "+expr.toString());
 			}
 
-			if(this.forceIndexConfig!=null){
-				if(this.forceIndexConfig.getTransazioniForceIndexGroupByCustomNumeroDimensione()!=null){
-					List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByCustomNumeroDimensione();
-					if(!listForceIndexes.isEmpty()){
-						for (Index index : listForceIndexes) {
-							expr.addForceIndex(index);
-						}
+			if(this.forceIndexConfig!=null &&
+				this.forceIndexConfig.getTransazioniForceIndexGroupByCustomNumeroDimensione()!=null){
+				List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByCustomNumeroDimensione();
+				if(!listForceIndexes.isEmpty()){
+					for (Index index : listForceIndexes) {
+						expr.addForceIndex(index);
 					}
 				}
 			}
@@ -1132,10 +1156,10 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 				// Creo espressione
 				aliases = new ArrayList<>();
 				if(gropuByStato){
-					StatisticsUtils.setExpressionByStato(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter);
+					StatisticsUtils.setExpressionByStato(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, false, stat, fieldConverter, this.groupByConfig);
 				}else{
-					StatisticsUtils.setExpressionStatsPersonalizzate(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, true, stat, fieldConverter, 
-							aliases, idRisorsa, risorseFiltri);
+					StatisticsUtils.setExpressionStatsPersonalizzate(this.transazioneSearchDAO, expr, dateLeft, dateRight, tipoPdD, true, stat, fieldConverter,
+							aliases, idRisorsa, this.groupByConfig, risorseFiltri);
 				}
 
 				// aggiungo eventuale filtro personalizzato
@@ -1146,8 +1170,8 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 	
 				if(this.debug){
 					this.logDebug("Analizzo dati sulla latenza per la statistica personalizzata ["+idStatisticaPersonalizzata+"]  ["+
-							this.getTipoStatistiche()+"] Intervallo date: ["+dateLeft.toString()+" - "+dateRight.toString()+"]");
-					this.logDebug("Valori query (ms) tr.data_ingresso_richiesta>["+dateLeft.getTime()+"] AND tr.data_ingresso_richiesta<=["+dateRight.getTime()+"]");
+							this.getTipoStatistiche()+LOG_INTERVALLO_DATE+dateLeft.toString()+" - "+dateRight.toString()+"]");
+					this.logDebug(PREFIX_VALORI_QUERY_DATA_INGRESSO_RICHIESTA+dateLeft.getTime()+LOG_AND_VALORI_QUERY_DATA_INGRESSO_RICHIESTA+dateRight.getTime()+"]");
 				}
 	
 				if(this.forceIndexConfig!=null
@@ -1164,10 +1188,9 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 	
 				for (Map<String, Object> row : list) {
 					
-					if(list.size()>1){
-						if(risorsaAggregata!=null){
-							throw new Exception("Localizzata più di una entry?? Comportamento non atteso per una risorsa aggregata");
-						}
+					if(list.size()>1 &&
+						risorsaAggregata!=null){
+						throw new ServiceException("Localizzata più di una entry?? Comportamento non atteso per una risorsa aggregata");
 					}
 					
 					// Update della statistica per quanto concerne i valori
@@ -1215,14 +1238,6 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			}
 
 
-		} catch (ServiceException e){
-			this.logError(e.getMessage(),e);
-		} catch (NotImplementedException e) {
-			this.logError(e.getMessage(),e);
-		} catch (ExpressionNotImplementedException e) {
-			this.logError(e.getMessage(),e);
-		} catch (ExpressionException e) {
-			this.logError(e.getMessage(),e);
 		} catch (NotFoundException e) {
 			if(this.debug){
 				this.logDebug(e.getMessage(),e);
@@ -1233,7 +1248,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 
 		if(this.debug){
 			this.logDebug("Generazione statistica personalizzata ["+idStatisticaPersonalizzata+"] ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+
-					this.getIntervalloStatistica(dateStatistics,false)+") terminata");
+					this.getIntervalloStatistica(dateStatistics,false)+LOG_SUFFIX_TERMINATA);
 		}
 	}
 
@@ -1250,7 +1265,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 	private boolean updateStatoRecordStatistiche( TipoPdD tipoPdD, Date data, int stato) {
 
 		if(this.debug){
-			this.logDebug("Update record statistiche allo stato '"+stato+"' ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
+			this.logDebug("Update record statistiche allo stato '"+stato+"' ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+LOG_SUFFIX_IN_CORSO);
 		}
 
 		try{
@@ -1287,29 +1302,29 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		}
 		finally {
 			if(this.debug){
-				this.logDebug("Update record statistiche allo stato '"+stato+"' ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+				this.logDebug("Update record statistiche allo stato '"+stato+"' ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+LOG_SUFFIX_TERMINATA);
 			}
 		}
 
 	}
 	
-	private boolean updateStatoRecordStatistiche( TipoPdD tipoPdD, Date data, 
+	private boolean updateStatoRecordStatistiche( TipoPdD tipoPdD, Date data,
 			int case1WhenStato, int case1ThenStato,
 			int case2WhenStato, int case2ThenStato) {
 
 		if(this.debug){
-			this.logDebug("Update record statistiche negli stati con CASE ("+case1WhenStato+"->"+case1ThenStato+") e ("+case2WhenStato+"->"+case2ThenStato+")  ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
+			this.logDebug("Update record statistiche negli stati con CASE ("+case1WhenStato+"->"+case1ThenStato+LOG_SEPARATORE+case2WhenStato+"->"+case2ThenStato+")  ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+LOG_SUFFIX_IN_CORSO);
 		}
 
 		try{
 			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.statisticaServiceDAO).getFieldConverter();
 			TipiDatabase tipoDB = fieldConverter.getDatabaseType();
 			String nomeColonna = fieldConverter.toColumn(this.model.STATO_RECORD, false);
-			
+
 			Case caseSql = new Case(CastColumnType.INT);
 			caseSql.addCase(nomeColonna+"=?", "?");
 			caseSql.addCase(nomeColonna+"=?", "?");
-			
+
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
 			sqlQueryObject.addUpdateTable(fieldConverter.toTable(this.model));
 			sqlQueryObject.addUpdateField(nomeColonna, caseSql);
@@ -1318,11 +1333,11 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 				sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.TIPO_PORTA, false)+"=?");
 			}
 			sqlQueryObject.setANDLogicOperator(true);
-			
+
 			Date next = this.truncDate(this.incrementDate(data, false),false);
 			if(this.debug){
 				this.logDebug("Aggiorno statistiche ["+this.getTipoStatistiche()+"]");
-				this.logDebug("Valori update stato record CASE ("+case1WhenStato+"->"+case1ThenStato+") e ("+case2WhenStato+"->"+case2ThenStato+") tr.data_ingresso_richiesta=["+next.getTime()+"]");
+				this.logDebug("Valori update stato record CASE ("+case1WhenStato+"->"+case1ThenStato+LOG_SEPARATORE+case2WhenStato+"->"+case2ThenStato+") tr.data_ingresso_richiesta=["+next.getTime()+"]");
 			}
 			List<Object> l = new ArrayList<>();
 			l.add(case1WhenStato); l.add(case1ThenStato);
@@ -1331,9 +1346,9 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			if(tipoPdD!=null) {
 				l.add(TipoPdD.DELEGATA.equals(tipoPdD)? PddRuolo.DELEGATA.getValue() : PddRuolo.APPLICATIVA.getValue());
 			}
-			int righeModificate = this.statisticaServiceDAO.nativeUpdate(sqlQueryObject.createSQLUpdate(), 
+			int righeModificate = this.statisticaServiceDAO.nativeUpdate(sqlQueryObject.createSQLUpdate(),
 					l.toArray(new Object[1]));
-			
+
 			if(this.debug){
 				this.logDebug("Modificate ["+righeModificate+"] entry");
 			}
@@ -1342,21 +1357,66 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 
 		}catch(Throwable e){
 			this.logError(e.getMessage(), e);
-			
+
 			return false;
 		}
 		finally {
 			if(this.debug){
-				this.logDebug("Update record statistiche negli stati con CASE ("+case1WhenStato+"->"+case1ThenStato+") e ("+case2WhenStato+"->"+case2ThenStato+") ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+				this.logDebug("Update record statistiche negli stati con CASE ("+case1WhenStato+"->"+case1ThenStato+LOG_SEPARATORE+case2WhenStato+"->"+case2ThenStato+") ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+LOG_SUFFIX_TERMINATA);
 			}
 		}
 
 	}
-	
+
+	private boolean convertStatoIntervalloCorrenteInPassato(Date nowTruncated) {
+
+		if(this.debug){
+			this.logDebug("Conversione record con stato 3 (intervallo corrente) in stato 1 (intervalli precedenti) per date < ["+nowTruncated+"] ...");
+		}
+
+		try{
+
+			ISQLFieldConverter fieldConverter = ((IDBServiceUtilities<?>)this.statisticaServiceDAO).getFieldConverter();
+			TipiDatabase tipoDB = fieldConverter.getDatabaseType();
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addUpdateTable(fieldConverter.toTable(this.model));
+			sqlQueryObject.addUpdateField(fieldConverter.toColumn(this.model.STATO_RECORD, false), "?");
+			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.STATO_RECORD, false)+"=?");
+			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.DATA, false)+"<?");
+			sqlQueryObject.setANDLogicOperator(true);
+
+			if(this.debug){
+				this.logDebug("Converto record con stato_record=3 e data<["+nowTruncated.getTime()+"] in stato_record=1");
+			}
+			int righeModificate = this.statisticaServiceDAO.nativeUpdate(sqlQueryObject.createSQLUpdate(),
+					CostantiDB.STATISTICHE_STATO_RECORD_VALIDO,
+					CostantiDB.STATISTICHE_STATO_RECORD_VALIDO_INTERVALLO_CORRENTE,
+					nowTruncated);
+
+			if(this.debug){
+				this.logDebug("Convertite ["+righeModificate+"] entry da stato 3 a stato 1");
+			}
+
+			return true;
+
+		}catch(Throwable e){
+			this.logError(e.getMessage(), e);
+
+			return false;
+		}
+		finally {
+			if(this.debug){
+				this.logDebug("Conversione record con stato 3 in stato 1 per date < ["+nowTruncated+"] terminata");
+			}
+		}
+
+	}
+
 	private boolean deleteFisicoStatistiche( TipoPdD tipoPdD, Date data , int statoRecord, boolean equalsStatoRecord) {
 
 		if(this.debug){
-			this.logDebug("Eliminazione statistiche con stato record '"+statoRecord+"' equals_stato_record:"+equalsStatoRecord+" ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") ...");
+			this.logDebug("Eliminazione statistiche con stato record '"+statoRecord+"' equals_stato_record:"+equalsStatoRecord+" ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+LOG_SUFFIX_IN_CORSO);
 		}
 
 		try{
@@ -1401,7 +1461,7 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		}
 		finally {
 			if(this.debug){
-				this.logDebug("Eliminazione statistiche con stato record '"+statoRecord+"' equals_stato_record:"+equalsStatoRecord+" ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+") terminata");
+				this.logDebug("Eliminazione statistiche con stato record '"+statoRecord+"' equals_stato_record:"+equalsStatoRecord+" ["+this.getTipoStatistiche()+"] ["+tipoPdD+"]("+this.getIntervalloStatistica(data)+LOG_SUFFIX_TERMINATA);
 			}
 		}
 

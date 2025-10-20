@@ -76,54 +76,61 @@ public class StatisticsUtils {
 	}
 	
 	public static void setExpressionNotNullDate(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat,
-			ISQLFieldConverter fieldConverter) throws Exception{
-		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD, 
-				true, false, 
-				stat, fieldConverter, 
-				false, 
-				null,null);
+			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws Exception{
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
+				true, false,
+				stat, fieldConverter,
+				false,
+				null,null,
+				groupByConfig);
 	}
 	public static void setExpressionNullDate(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat,
-			ISQLFieldConverter fieldConverter) throws Exception{
-		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD, 
-				false, true, 
-				stat, fieldConverter, 
-				false, 
-				null,null);
+			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws Exception{
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
+				false, true,
+				stat, fieldConverter,
+				false,
+				null,null,
+				groupByConfig);
 	}
 	public static void setExpression(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
-			ISQLFieldConverter fieldConverter) throws Exception{
-		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD, 
-				setNotNullDate, false, 
-				stat, fieldConverter, 
-				false, 
-				null,null);
+			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws Exception{
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
+				setNotNullDate, false,
+				stat, fieldConverter,
+				false,
+				null,null,
+				groupByConfig);
 	}
 	public static void setExpressionByStato(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
-			ISQLFieldConverter fieldConverter) throws Exception{
-		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD, 
-				setNotNullDate, false, 
-				stat, fieldConverter, 
-				true, 
-				null,null);
+			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws Exception{
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
+				setNotNullDate, false,
+				stat, fieldConverter,
+				true,
+				null,null,
+				groupByConfig);
 	}
 	public static void setExpressionStatsPersonalizzate(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
 			ISQLFieldConverter fieldConverter,
 			List<AliasFilter> aliases,
 			String idRisorsa,
+			StatisticsGroupByConfig groupByConfig,
 			StatisticResourceFilter ... risorseFiltri) throws Exception{
-		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD, 
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
 				setNotNullDate, false,
 				stat, fieldConverter,
 				false,
-				aliases,idRisorsa, 
+				aliases,idRisorsa,
+				groupByConfig,
 				risorseFiltri);
 	}
-	private static void setExpressionEngine(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, 
-			boolean setNotNullDate, boolean setNullDate, 
+	private static void setExpressionEngine(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD,
+			boolean setNotNullDate, boolean setNullDate,
 			StatisticBean stat, ISQLFieldConverter fieldConverter,
 			boolean groupByStato,
 			List<AliasFilter> aliases, String idRisorsa,
+			StatisticsGroupByConfig groupByConfig,
 			StatisticResourceFilter ... risorseFiltri) throws Exception{
 		
 		expr.and();
@@ -157,24 +164,30 @@ public class StatisticsUtils {
 			// Sono state prese le informazioni anche con null poichè senno non venivano contate nelle statistiche le transazioni che non possedevano info sui servizi. (es porta delegata non trovata)
 			String pddCodice = stat.getIdPorta();
 			StatisticsUtils.setCondition(expr, pddCodice, Transazione.model().PDD_CODICE);
+
 			String tipoMittente = stat.getMittente()!=null ? stat.getMittente().getTipo() : null;
 			StatisticsUtils.setCondition(expr, tipoMittente, Transazione.model().TIPO_SOGGETTO_FRUITORE);
 			String nomeMittente = stat.getMittente()!=null ? stat.getMittente().getNome() : null;
 			StatisticsUtils.setCondition(expr, nomeMittente, Transazione.model().NOME_SOGGETTO_FRUITORE);
+
 			String tipoDestinatario = stat.getDestinatario()!=null ? stat.getDestinatario().getTipo() : null;
 			StatisticsUtils.setCondition(expr, tipoDestinatario, Transazione.model().TIPO_SOGGETTO_EROGATORE);
 			String nomeDestinatario = stat.getDestinatario()!=null ? stat.getDestinatario().getNome() : null;
 			StatisticsUtils.setCondition(expr, nomeDestinatario, Transazione.model().NOME_SOGGETTO_EROGATORE);
+
 			String tipoServizio = stat.getTipoServizio();
 			StatisticsUtils.setCondition(expr, tipoServizio, Transazione.model().TIPO_SERVIZIO);
+
 			String nomeServizio = stat.getServizio();
 			StatisticsUtils.setCondition(expr, nomeServizio, Transazione.model().NOME_SERVIZIO);
+
 			Integer versioneServizio = stat.getVersioneServizio();
 			StatisticsUtils.setCondition(expr, versioneServizio, Transazione.model().VERSIONE_SERVIZIO);
+
 			String azione = stat.getAzione();
 			StatisticsUtils.setCondition(expr, azione, Transazione.model().AZIONE);
-			
-			
+
+
 //			if(TipoPdD.DELEGATA.equals(tipoPdD)){
 			// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
 			if(Costanti.SERVIZIO_APPLICATIVO_ANONIMO.equals(stat.getServizioApplicativo()) || stat.getServizioApplicativo()==null || Costanti.INFORMAZIONE_NON_DISPONIBILE.equals(stat.getServizioApplicativo())){
@@ -191,10 +204,10 @@ public class StatisticsUtils {
 //					expr.equals(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE,stat.getServizioApplicativo());
 //				}
 //			}
-			
+
 			String trasportoMittente = stat.getTrasportoMittente();
 			StatisticsUtils.setCondition(expr, trasportoMittente, Transazione.model().TRASPORTO_MITTENTE);
-			
+
 			String tokenIssuer = stat.getTokenIssuer();
 			StatisticsUtils.setCondition(expr, tokenIssuer, Transazione.model().TOKEN_ISSUER);
 			String tokenClientId = stat.getTokenClientId();
@@ -205,21 +218,21 @@ public class StatisticsUtils {
 			StatisticsUtils.setCondition(expr, tokenUsername, Transazione.model().TOKEN_USERNAME);
 			String tokenMail = stat.getTokenMail();
 			StatisticsUtils.setCondition(expr, tokenMail, Transazione.model().TOKEN_MAIL);
-			
+
 			String clientAddress = stat.getClientAddress();
 			StatisticsUtils.setCondition(expr, clientAddress, Transazione.model().CLIENT_ADDRESS);
-			
+
 			String gruppo = stat.getGruppo();
 			StatisticsUtils.setCondition(expr, gruppo, Transazione.model().GRUPPI);
-			
+
 			String uriApi = stat.getApi();
 			StatisticsUtils.setCondition(expr, uriApi, Transazione.model().URI_API);
-			
+
 			String clusterId = stat.getClusterId();
 			StatisticsUtils.setCondition(expr, clusterId, Transazione.model().CLUSTER_ID);
-			
+
 			expr.equals(Transazione.model().ESITO, stat.getEsito()!=null ? stat.getEsito() : -1);
-			
+
 			String esitoContesto = stat.getEsitoContesto();
 			StatisticsUtils.setCondition(expr, esitoContesto, Transazione.model().ESITO_CONTESTO);
 		}
@@ -268,39 +281,99 @@ public class StatisticsUtils {
 		// ** GROUP BY **
 		expr.addGroupBy(Transazione.model().PDD_RUOLO);
 		expr.addGroupBy(Transazione.model().PDD_CODICE);
-		expr.addGroupBy(Transazione.model().TIPO_SOGGETTO_FRUITORE);
-		expr.addGroupBy(Transazione.model().NOME_SOGGETTO_FRUITORE);
-		expr.addGroupBy(Transazione.model().TIPO_SOGGETTO_EROGATORE);
-		expr.addGroupBy(Transazione.model().NOME_SOGGETTO_EROGATORE);
-		expr.addGroupBy(Transazione.model().TIPO_SERVIZIO);
-		expr.addGroupBy(Transazione.model().NOME_SERVIZIO);
-		expr.addGroupBy(Transazione.model().VERSIONE_SERVIZIO);
-		expr.addGroupBy(Transazione.model().AZIONE);
+
+		if(groupByConfig.isTipoMittente()) {
+			expr.addGroupBy(Transazione.model().TIPO_SOGGETTO_FRUITORE);
+		}
+		if(groupByConfig.isNomeMittente()) {
+			expr.addGroupBy(Transazione.model().NOME_SOGGETTO_FRUITORE);
+		}
+
+		if(groupByConfig.isTipoDestinatario()) {
+			expr.addGroupBy(Transazione.model().TIPO_SOGGETTO_EROGATORE);
+		}
+		if(groupByConfig.isNomeDestinatario()) {
+			expr.addGroupBy(Transazione.model().NOME_SOGGETTO_EROGATORE);
+		}
+
+		if(groupByConfig.isTipoServizio()) {
+			expr.addGroupBy(Transazione.model().TIPO_SERVIZIO);
+		}
+
+		if(groupByConfig.isServizio()) {
+			expr.addGroupBy(Transazione.model().NOME_SERVIZIO);
+		}
+
+		if(groupByConfig.isVersioneServizio()) {
+			expr.addGroupBy(Transazione.model().VERSIONE_SERVIZIO);
+		}
+
+		if(groupByConfig.isAzione()) {
+			expr.addGroupBy(Transazione.model().AZIONE);
+		}
+
 		// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
-//		if(TipoPdD.DELEGATA.equals(tipoPdD)){
-		expr.addGroupBy(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE);
-//		}else{
-//			expr.addGroupBy(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE);
-//		}
-		expr.addGroupBy(Transazione.model().TRASPORTO_MITTENTE);
-		expr.addGroupBy(Transazione.model().TOKEN_ISSUER);
-		expr.addGroupBy(Transazione.model().TOKEN_CLIENT_ID);
-		expr.addGroupBy(Transazione.model().TOKEN_SUBJECT);
-		expr.addGroupBy(Transazione.model().TOKEN_USERNAME);
-		expr.addGroupBy(Transazione.model().TOKEN_MAIL);
-		expr.addGroupBy(Transazione.model().CLIENT_ADDRESS);
-		expr.addGroupBy(Transazione.model().GRUPPI);
-		expr.addGroupBy(Transazione.model().URI_API);
-		expr.addGroupBy(Transazione.model().CLUSTER_ID);
-		expr.addGroupBy(Transazione.model().ESITO);
-		expr.addGroupBy(Transazione.model().ESITO_CONTESTO);
+		if(groupByConfig.isServizioApplicativo()) {
+			/**		if(TipoPdD.DELEGATA.equals(tipoPdD)){*/
+			expr.addGroupBy(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE);
+			/**		}else{
+						expr.addGroupBy(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE);
+					}*/
+		}
+
+		if(groupByConfig.isTrasportoMittente()) {
+			expr.addGroupBy(Transazione.model().TRASPORTO_MITTENTE);
+		}
+
+		if(groupByConfig.isTokenIssuer()) {
+			expr.addGroupBy(Transazione.model().TOKEN_ISSUER);
+		}
+		if(groupByConfig.isTokenClientId()) {
+			expr.addGroupBy(Transazione.model().TOKEN_CLIENT_ID);
+		}
+		if(groupByConfig.isTokenSubject()) {
+			expr.addGroupBy(Transazione.model().TOKEN_SUBJECT);
+		}
+		if(groupByConfig.isTokenUsername()) {
+			expr.addGroupBy(Transazione.model().TOKEN_USERNAME);
+		}
+		if(groupByConfig.isTokenMail()) {
+			expr.addGroupBy(Transazione.model().TOKEN_MAIL);
+		}
+
+		if(groupByConfig.isClientAddress()) {
+			expr.addGroupBy(Transazione.model().CLIENT_ADDRESS);
+		}
+
+		if(groupByConfig.isGruppo()) {
+			expr.addGroupBy(Transazione.model().GRUPPI);
+		}
+
+		if(groupByConfig.isApi()) {
+			expr.addGroupBy(Transazione.model().URI_API);
+		}
+
+		if(groupByConfig.isClusterId()) {
+			expr.addGroupBy(Transazione.model().CLUSTER_ID);
+		}
+
+		if(groupByConfig.isEsito()) {
+			expr.addGroupBy(Transazione.model().ESITO);
+		}
+
+		if(groupByConfig.isEsitoContesto()) {
+			expr.addGroupBy(Transazione.model().ESITO_CONTESTO);
+		}
+
 		if(groupByStato){
 			expr.addGroupBy(Transazione.model().STATO);
 		}
+
 		if(idRisorsa!=null){
 			expr.addGroupBy(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME);
 			expr.addGroupBy(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE);
 		}
+
 		if(aliases!=null && aliases.size()>0){
 			for (AliasFilter aliasFilter : aliases) {
 				IAliasTableField afName = aliasFilter.getNomeFiltro(); 
@@ -333,42 +406,96 @@ public class StatisticsUtils {
 		}
 	}
 	
-	public static void addSelectUnionField(UnionExpression expr, ISQLFieldConverter fieldConverter) throws Exception {
-			addSelectUnionField(expr, fieldConverter,
+	public static void addSelectUnionField(UnionExpression expr, ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws Exception {
+			addSelectUnionField(expr, fieldConverter, groupByConfig,
 					false,
 					null, null);
 	}
-	public static void addSelectUnionField(UnionExpression expr, ISQLFieldConverter fieldConverter,
+	public static void addSelectUnionField(UnionExpression expr, ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig,
 			boolean groupByStato,
 			List<AliasFilter> aliases, String idRisorsa) throws Exception {
 		expr.addSelectField(Transazione.model().PDD_RUOLO, fieldConverter.toColumn(Transazione.model().PDD_RUOLO, false));
 		expr.addSelectField(Transazione.model().PDD_CODICE, fieldConverter.toColumn(Transazione.model().PDD_CODICE, false));
-		expr.addSelectField(Transazione.model().TIPO_SOGGETTO_FRUITORE, fieldConverter.toColumn(Transazione.model().TIPO_SOGGETTO_FRUITORE, false));
-		expr.addSelectField(Transazione.model().NOME_SOGGETTO_FRUITORE, fieldConverter.toColumn(Transazione.model().NOME_SOGGETTO_FRUITORE, false));
-		expr.addSelectField(Transazione.model().TIPO_SOGGETTO_EROGATORE, fieldConverter.toColumn(Transazione.model().TIPO_SOGGETTO_EROGATORE, false));
-		expr.addSelectField(Transazione.model().NOME_SOGGETTO_EROGATORE, fieldConverter.toColumn(Transazione.model().NOME_SOGGETTO_EROGATORE, false));
-		expr.addSelectField(Transazione.model().TIPO_SERVIZIO, fieldConverter.toColumn(Transazione.model().TIPO_SERVIZIO, false));
-		expr.addSelectField(Transazione.model().NOME_SERVIZIO, fieldConverter.toColumn(Transazione.model().NOME_SERVIZIO, false));
-		expr.addSelectField(Transazione.model().VERSIONE_SERVIZIO, fieldConverter.toColumn(Transazione.model().VERSIONE_SERVIZIO, false));
-		expr.addSelectField(Transazione.model().AZIONE, fieldConverter.toColumn(Transazione.model().AZIONE, false));
+
+		if(groupByConfig.isTipoMittente()) {
+			expr.addSelectField(Transazione.model().TIPO_SOGGETTO_FRUITORE, fieldConverter.toColumn(Transazione.model().TIPO_SOGGETTO_FRUITORE, false));
+		}
+		if(groupByConfig.isNomeMittente()) {
+			expr.addSelectField(Transazione.model().NOME_SOGGETTO_FRUITORE, fieldConverter.toColumn(Transazione.model().NOME_SOGGETTO_FRUITORE, false));
+		}
+
+		if(groupByConfig.isTipoDestinatario()) {
+			expr.addSelectField(Transazione.model().TIPO_SOGGETTO_EROGATORE, fieldConverter.toColumn(Transazione.model().TIPO_SOGGETTO_EROGATORE, false));
+		}
+		if(groupByConfig.isNomeDestinatario()) {
+			expr.addSelectField(Transazione.model().NOME_SOGGETTO_EROGATORE, fieldConverter.toColumn(Transazione.model().NOME_SOGGETTO_EROGATORE, false));
+		}
+
+		if(groupByConfig.isTipoServizio()) {
+			expr.addSelectField(Transazione.model().TIPO_SERVIZIO, fieldConverter.toColumn(Transazione.model().TIPO_SERVIZIO, false));
+		}
+		if(groupByConfig.isServizio()) {
+			expr.addSelectField(Transazione.model().NOME_SERVIZIO, fieldConverter.toColumn(Transazione.model().NOME_SERVIZIO, false));
+		}
+		if(groupByConfig.isVersioneServizio()) {
+			expr.addSelectField(Transazione.model().VERSIONE_SERVIZIO, fieldConverter.toColumn(Transazione.model().VERSIONE_SERVIZIO, false));
+		}
+		if(groupByConfig.isAzione()) {
+			expr.addSelectField(Transazione.model().AZIONE, fieldConverter.toColumn(Transazione.model().AZIONE, false));
+		}
+
 		// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
-//		if(TipoPdD.DELEGATA.equals(tipoPdD)){
-		expr.addSelectField(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE, fieldConverter.toColumn(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE, false));
-//		}else{
-//			expr.addSelectField(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE, fieldConverter.toColumn(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE, false));
-//		}
-		expr.addSelectField(Transazione.model().TRASPORTO_MITTENTE, fieldConverter.toColumn(Transazione.model().TRASPORTO_MITTENTE, false));
-		expr.addSelectField(Transazione.model().TOKEN_ISSUER, fieldConverter.toColumn(Transazione.model().TOKEN_ISSUER, false));
-		expr.addSelectField(Transazione.model().TOKEN_CLIENT_ID, fieldConverter.toColumn(Transazione.model().TOKEN_CLIENT_ID, false));
-		expr.addSelectField(Transazione.model().TOKEN_SUBJECT, fieldConverter.toColumn(Transazione.model().TOKEN_SUBJECT, false));
-		expr.addSelectField(Transazione.model().TOKEN_USERNAME, fieldConverter.toColumn(Transazione.model().TOKEN_USERNAME, false));
-		expr.addSelectField(Transazione.model().TOKEN_MAIL, fieldConverter.toColumn(Transazione.model().TOKEN_MAIL, false));
-		expr.addSelectField(Transazione.model().CLIENT_ADDRESS, fieldConverter.toColumn(Transazione.model().CLIENT_ADDRESS, false));
-		expr.addSelectField(Transazione.model().GRUPPI, fieldConverter.toColumn(Transazione.model().GRUPPI, false));
-		expr.addSelectField(Transazione.model().URI_API, fieldConverter.toColumn(Transazione.model().URI_API, false));
-		expr.addSelectField(Transazione.model().CLUSTER_ID, fieldConverter.toColumn(Transazione.model().CLUSTER_ID, false));
-		expr.addSelectField(Transazione.model().ESITO, fieldConverter.toColumn(Transazione.model().ESITO, false));
-		expr.addSelectField(Transazione.model().ESITO_CONTESTO, fieldConverter.toColumn(Transazione.model().ESITO_CONTESTO, false));
+		if(groupByConfig.isServizioApplicativo()) {
+			/**		if(TipoPdD.DELEGATA.equals(tipoPdD)){*/
+			expr.addSelectField(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE, fieldConverter.toColumn(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE, false));
+			/**		}else{
+						expr.addSelectField(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE, fieldConverter.toColumn(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE, false));
+					}*/
+		}
+
+		if(groupByConfig.isTrasportoMittente()) {
+			expr.addSelectField(Transazione.model().TRASPORTO_MITTENTE, fieldConverter.toColumn(Transazione.model().TRASPORTO_MITTENTE, false));
+		}
+
+		if(groupByConfig.isTokenIssuer()) {
+			expr.addSelectField(Transazione.model().TOKEN_ISSUER, fieldConverter.toColumn(Transazione.model().TOKEN_ISSUER, false));
+		}
+		if(groupByConfig.isTokenClientId()) {
+			expr.addSelectField(Transazione.model().TOKEN_CLIENT_ID, fieldConverter.toColumn(Transazione.model().TOKEN_CLIENT_ID, false));
+		}
+		if(groupByConfig.isTokenSubject()) {
+			expr.addSelectField(Transazione.model().TOKEN_SUBJECT, fieldConverter.toColumn(Transazione.model().TOKEN_SUBJECT, false));
+		}
+		if(groupByConfig.isTokenUsername()) {
+			expr.addSelectField(Transazione.model().TOKEN_USERNAME, fieldConverter.toColumn(Transazione.model().TOKEN_USERNAME, false));
+		}
+		if(groupByConfig.isTokenMail()) {
+			expr.addSelectField(Transazione.model().TOKEN_MAIL, fieldConverter.toColumn(Transazione.model().TOKEN_MAIL, false));
+		}
+
+		if(groupByConfig.isClientAddress()) {
+			expr.addSelectField(Transazione.model().CLIENT_ADDRESS, fieldConverter.toColumn(Transazione.model().CLIENT_ADDRESS, false));
+		}
+
+		if(groupByConfig.isGruppo()) {
+			expr.addSelectField(Transazione.model().GRUPPI, fieldConverter.toColumn(Transazione.model().GRUPPI, false));
+		}
+
+		if(groupByConfig.isApi()) {
+			expr.addSelectField(Transazione.model().URI_API, fieldConverter.toColumn(Transazione.model().URI_API, false));
+		}
+
+		if(groupByConfig.isClusterId()) {
+			expr.addSelectField(Transazione.model().CLUSTER_ID, fieldConverter.toColumn(Transazione.model().CLUSTER_ID, false));
+		}
+
+		if(groupByConfig.isEsito()) {
+			expr.addSelectField(Transazione.model().ESITO, fieldConverter.toColumn(Transazione.model().ESITO, false));
+		}
+
+		if(groupByConfig.isEsitoContesto()) {
+			expr.addSelectField(Transazione.model().ESITO_CONTESTO, fieldConverter.toColumn(Transazione.model().ESITO_CONTESTO, false));
+		}
 		if(groupByStato){
 			expr.addSelectField(Transazione.model().STATO, fieldConverter.toColumn(Transazione.model().STATO, false));
 		}
@@ -479,13 +606,13 @@ public class StatisticsUtils {
 		
 	}
 	
-	public static StatisticBean readStatisticBean(StatisticBean stat,Map<String, Object> row, ISQLFieldConverter fieldConverter, boolean useFieldConverter) throws ExpressionException{
-		
+	public static StatisticBean readStatisticBean(StatisticBean stat,Map<String, Object> row, ISQLFieldConverter fieldConverter, boolean useFieldConverter, StatisticsGroupByConfig groupByConfig) throws ExpressionException{
+
 		stat.setIdPorta(StatisticsUtils.getValueFromMap(Transazione.model().PDD_CODICE,row,fieldConverter,useFieldConverter));
 		String TipoPortaS = StatisticsUtils.getValueFromMap(Transazione.model().PDD_RUOLO,row,fieldConverter,useFieldConverter);
 		TipoPdD tipo = TipoPdD.toTipoPdD(TipoPortaS);
 		stat.setTipoPorta(tipo);
-		
+
 		/*
 		String sa= null;
 		Object saObject = null;
@@ -510,53 +637,122 @@ public class StatisticsUtils {
 		// poichè un applicativo viene identificato univocamente se si considera sia il nome dell'applicativo che il soggetto proprietario.
 		// Il group by sulle fruizioni, se si usa l'informazione anonima, non porta problemi perchè l'entry anonima sarà 1 sempre, essendo il soggetto fruitore uno solo (Soggetto locale impostato).
 		// Il group by sulle erogazioni produrrà invece più entry anonime se si hanno più soggetto che la invocano senza un applicativo specifico.
-		stat.setServizioApplicativo(StatisticsUtils.getValueFromMap(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,row,fieldConverter,useFieldConverter));
-						
-		stat.setTrasportoMittente(StatisticsUtils.getValueFromMap(Transazione.model().TRASPORTO_MITTENTE,row,fieldConverter,useFieldConverter));
-		
-		stat.setTokenIssuer(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_ISSUER,row,fieldConverter,useFieldConverter));
-		stat.setTokenClientId(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_CLIENT_ID,row,fieldConverter,useFieldConverter));
-		stat.setTokenSubject(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_SUBJECT,row,fieldConverter,useFieldConverter));
-		stat.setTokenUsername(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_USERNAME,row,fieldConverter,useFieldConverter));
-		stat.setTokenMail(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_MAIL,row,fieldConverter,useFieldConverter));
-		
-		stat.setClientAddress(StatisticsUtils.getValueFromMap(Transazione.model().CLIENT_ADDRESS,row,fieldConverter,useFieldConverter));
-		
-		stat.setGruppo(StatisticsUtils.getValueFromMap(Transazione.model().GRUPPI,row,fieldConverter,useFieldConverter));
-		
-		stat.setApi(StatisticsUtils.getValueFromMap(Transazione.model().URI_API,row,fieldConverter,useFieldConverter));
-		
-		stat.setClusterId(StatisticsUtils.getValueFromMap(Transazione.model().CLUSTER_ID,row,fieldConverter,useFieldConverter));
-		
-//		stat.setMittente(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_FRUITORE.getFieldName()), (String)row.get(Transazione.model().NOME_SOGGETTO_FRUITORE .getFieldName())));
-//		stat.setDestinatario(new IDSoggetto((String)row.get(Transazione.model().TIPO_SOGGETTO_EROGATORE.getFieldName()),(String)row.get(Transazione.model().NOME_SOGGETTO_EROGATORE.getFieldName())));
-//		stat.setTipoServizio((String)row.get(Transazione.model().TIPO_SERVIZIO.getFieldName()));
-//		stat.setServizio((String)row.get(Transazione.model().NOME_SERVIZIO.getFieldName()));
-//		Object azObject = row.get(Transazione.model().AZIONE.getFieldName());
-//		String az = null;
-//		if(azObject!=null && !(azObject instanceof org.apache.commons.lang.ObjectUtils.Null)){ 
-//			az = (String) azObject;
-//		}
-//		stat.setAzione(az != null ? az : " ");
-		
+		if(groupByConfig.isServizioApplicativo()) {
+			stat.setServizioApplicativo(StatisticsUtils.getValueFromMap(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setServizioApplicativo(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isTrasportoMittente()) {
+			stat.setTrasportoMittente(StatisticsUtils.getValueFromMap(Transazione.model().TRASPORTO_MITTENTE,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setTrasportoMittente(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isTokenIssuer()) {
+			stat.setTokenIssuer(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_ISSUER,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setTokenIssuer(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+		if(groupByConfig.isTokenClientId()) {
+			stat.setTokenClientId(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_CLIENT_ID,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setTokenClientId(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+		if(groupByConfig.isTokenSubject()) {
+			stat.setTokenSubject(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_SUBJECT,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setTokenSubject(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+		if(groupByConfig.isTokenUsername()) {
+			stat.setTokenUsername(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_USERNAME,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setTokenUsername(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+		if(groupByConfig.isTokenMail()) {
+			stat.setTokenMail(StatisticsUtils.getValueFromMap(Transazione.model().TOKEN_MAIL,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setTokenMail(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isClientAddress()) {
+			stat.setClientAddress(StatisticsUtils.getValueFromMap(Transazione.model().CLIENT_ADDRESS,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setClientAddress(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isGruppo()) {
+			stat.setGruppo(StatisticsUtils.getValueFromMap(Transazione.model().GRUPPI,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setGruppo(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isApi()) {
+			stat.setApi(StatisticsUtils.getValueFromMap(Transazione.model().URI_API,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setApi(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isClusterId()) {
+			stat.setClusterId(StatisticsUtils.getValueFromMap(Transazione.model().CLUSTER_ID,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setClusterId(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
 		// Gestisco i possibili valori null con '-'.
 		// Sono state prese le informazioni anche con null poichè senno non venivano contate nelle statistiche le transazioni che non possedevano info sui servizi. (es porta delegata non trovata)
-		stat.setMittente(new IDSoggetto(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SOGGETTO_FRUITORE,row,fieldConverter,useFieldConverter), 
-										StatisticsUtils.getValueFromMap(Transazione.model().NOME_SOGGETTO_FRUITORE,row,fieldConverter,useFieldConverter)));
-		
-		stat.setDestinatario(new IDSoggetto(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SOGGETTO_EROGATORE,row,fieldConverter,useFieldConverter), 
-											StatisticsUtils.getValueFromMap(Transazione.model().NOME_SOGGETTO_EROGATORE,row,fieldConverter,useFieldConverter)));
-		
-		stat.setTipoServizio(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SERVIZIO,row,fieldConverter,useFieldConverter));
-		stat.setServizio(StatisticsUtils.getValueFromMap(Transazione.model().NOME_SERVIZIO,row,fieldConverter,useFieldConverter));
-		stat.setVersioneServizio(StatisticsUtils.getIntegerValueFromMap(Transazione.model().VERSIONE_SERVIZIO,row,false,fieldConverter,useFieldConverter));
-		
-		stat.setAzione(StatisticsUtils.getValueFromMap(Transazione.model().AZIONE,row,fieldConverter,useFieldConverter));
-		
-		stat.setEsito(StatisticsUtils.getIntegerValueFromMap(Transazione.model().ESITO,row,true,fieldConverter,useFieldConverter));
-		
-		stat.setEsitoContesto(StatisticsUtils.getValueFromMap(Transazione.model().ESITO_CONTESTO,row,fieldConverter,useFieldConverter));
-		
+		String tipoMittente = groupByConfig.isTipoMittente() ?
+			StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SOGGETTO_FRUITORE,row,fieldConverter,useFieldConverter) :
+			Costanti.INFORMAZIONE_NON_DISPONIBILE;
+		String nomeMittente = groupByConfig.isNomeMittente() ?
+			StatisticsUtils.getValueFromMap(Transazione.model().NOME_SOGGETTO_FRUITORE,row,fieldConverter,useFieldConverter) :
+			Costanti.INFORMAZIONE_NON_DISPONIBILE;
+		stat.setMittente(new IDSoggetto(tipoMittente, nomeMittente));
+
+		String tipoDestinatario = groupByConfig.isTipoDestinatario() ?
+			StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SOGGETTO_EROGATORE,row,fieldConverter,useFieldConverter) :
+			Costanti.INFORMAZIONE_NON_DISPONIBILE;
+		String nomeDestinatario = groupByConfig.isNomeDestinatario() ?
+			StatisticsUtils.getValueFromMap(Transazione.model().NOME_SOGGETTO_EROGATORE,row,fieldConverter,useFieldConverter) :
+			Costanti.INFORMAZIONE_NON_DISPONIBILE;
+		stat.setDestinatario(new IDSoggetto(tipoDestinatario, nomeDestinatario));
+
+		if(groupByConfig.isTipoServizio()) {
+			stat.setTipoServizio(StatisticsUtils.getValueFromMap(Transazione.model().TIPO_SERVIZIO,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setTipoServizio(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isServizio()) {
+			stat.setServizio(StatisticsUtils.getValueFromMap(Transazione.model().NOME_SERVIZIO,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setServizio(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isVersioneServizio()) {
+			stat.setVersioneServizio(StatisticsUtils.getIntegerValueFromMap(Transazione.model().VERSIONE_SERVIZIO,row,false,fieldConverter,useFieldConverter));
+		} else {
+			stat.setVersioneServizio(Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isAzione()) {
+			stat.setAzione(StatisticsUtils.getValueFromMap(Transazione.model().AZIONE,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setAzione(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isEsito()) {
+			stat.setEsito(StatisticsUtils.getIntegerValueFromMap(Transazione.model().ESITO,row,true,fieldConverter,useFieldConverter));
+		} else {
+			stat.setEsito(Costanti.INFORMAZIONE_VERSIONE_NON_DISPONIBILE);
+		}
+
+		if(groupByConfig.isEsitoContesto()) {
+			stat.setEsitoContesto(StatisticsUtils.getValueFromMap(Transazione.model().ESITO_CONTESTO,row,fieldConverter,useFieldConverter));
+		} else {
+			stat.setEsitoContesto(Costanti.INFORMAZIONE_NON_DISPONIBILE);
+		}
+
 		return stat;
 	}
 	private static String getValueFromMap(IField field, Map<String, Object> row, ISQLFieldConverter fieldConverter, boolean useFieldConverter) throws ExpressionException{

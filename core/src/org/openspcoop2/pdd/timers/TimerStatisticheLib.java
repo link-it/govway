@@ -510,7 +510,10 @@ public class TimerStatisticheLib {
 			
 			// aggiorno configurazione per forceIndex
 			this.statisticsConfig.setForceIndexConfig(this.op2Properties.getStatisticheGenerazioneExternalForceIndexRepository());
-			
+
+			// aggiorno configurazione per groupBy
+			this.statisticsConfig.setGroupByConfig(this.op2Properties.getStatisticheGenerazioneGroupByConfig());
+
 			String causa = "Generazione Statistiche";
 			try {
 				GestoreMessaggi.acquireLock(

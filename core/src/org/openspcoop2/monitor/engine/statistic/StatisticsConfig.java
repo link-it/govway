@@ -32,6 +32,8 @@ import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.properties.InstanceProperties;
+import org.openspcoop2.utils.properties.PropertiesReader;
 import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 import org.slf4j.Logger;
 
@@ -91,7 +93,10 @@ public class StatisticsConfig {
 	private boolean pdndTracciamentoErogazioniEnabled = true;
 	private boolean pdndTracciamentoFruizioniEnabled = true;
 	private int pdndTracciamentoGenerazioneDelayMinutes = 0;
-	
+
+	/** Group By Configuration **/
+	private StatisticsGroupByConfig groupByConfig = new StatisticsGroupByConfig(); // default
+
 	private static final String FALSE = "false";
 	
 	/** Costruttore */
@@ -193,14 +198,17 @@ public class StatisticsConfig {
 				} else {
 					this.statisticheMensiliGestioneUltimoIntervallo = false;
 				}
-				
+
+				// Inizializzazione groupByConfig
+				this.groupByConfig = parseGroupByConfig(props.getReader(), "org.openspcoop2.monitor.statistic.");
+
 			}
-			
+
 		}catch(Exception e){
 			throw new EngineException(e.getMessage(),e);
 		}
 	}
-	
+
 	private static boolean parsePdndGenerazioneTracciamentoProperty(MonitorProperties props) throws UtilsException {
 		String propId = CostantiConfigurazione.PDND_GENERAZIONE_TRACCIAMENTO_ENABLED;
 		return "true".equals(props.getProperty(propId, "true", true));
@@ -265,7 +273,61 @@ public class StatisticsConfig {
 		String value = props.getProperty(propId, "", false);
 		return value == null || StringUtils.isEmpty(value.trim()) ? null : Integer.valueOf(value);
 	}
-	
+
+	public static StatisticsGroupByConfig parseGroupByConfig(InstanceProperties props, String prefix) throws UtilsException {
+		return parseGroupByConfig(props,  null, prefix);
+	}
+	public static StatisticsGroupByConfig parseGroupByConfig(PropertiesReader props, String prefix) throws UtilsException {
+		return parseGroupByConfig(null, props, prefix);
+	}
+	private static StatisticsGroupByConfig parseGroupByConfig(InstanceProperties propsIP,  PropertiesReader propsPR, String prefix) throws UtilsException {
+		StatisticsGroupByConfig config = new StatisticsGroupByConfig();
+
+		// Lettura proprietà per ogni campo del GROUP BY
+		// Se la proprietà non esiste, rimane il default (true)
+		// Il prefix viene concatenato con "groupBy.<nomeCampo>"
+		String groupByPrefix = prefix + "groupBy.";
+
+		config.setTipoMittente(getBooleanProperty(propsIP, propsPR, groupByPrefix + "tipoMittente"));
+		config.setNomeMittente(getBooleanProperty(propsIP, propsPR, groupByPrefix + "nomeMittente"));
+		config.setTipoDestinatario(getBooleanProperty(propsIP, propsPR, groupByPrefix + "tipoDestinatario"));
+		config.setNomeDestinatario(getBooleanProperty(propsIP, propsPR, groupByPrefix + "nomeDestinatario"));
+		config.setTipoServizio(getBooleanProperty(propsIP, propsPR, groupByPrefix + "tipoServizio"));
+		config.setServizio(getBooleanProperty(propsIP, propsPR, groupByPrefix + "servizio"));
+		config.setVersioneServizio(getBooleanProperty(propsIP, propsPR, groupByPrefix + "versioneServizio"));
+		config.setAzione(getBooleanProperty(propsIP, propsPR, groupByPrefix + "azione"));
+		config.setServizioApplicativo(getBooleanProperty(propsIP, propsPR, groupByPrefix + "servizioApplicativo"));
+		config.setTrasportoMittente(getBooleanProperty(propsIP, propsPR, groupByPrefix + "trasportoMittente"));
+		config.setTokenIssuer(getBooleanProperty(propsIP, propsPR, groupByPrefix + "tokenIssuer"));
+		config.setTokenClientId(getBooleanProperty(propsIP, propsPR, groupByPrefix + "tokenClientId"));
+		config.setTokenSubject(getBooleanProperty(propsIP, propsPR, groupByPrefix + "tokenSubject"));
+		config.setTokenUsername(getBooleanProperty(propsIP, propsPR, groupByPrefix + "tokenUsername"));
+		config.setTokenMail(getBooleanProperty(propsIP, propsPR, groupByPrefix + "tokenMail"));
+		config.setEsito(getBooleanProperty(propsIP, propsPR, groupByPrefix + "esito"));
+		config.setEsitoContesto(getBooleanProperty(propsIP, propsPR, groupByPrefix + "esitoContesto"));
+		config.setGruppo(getBooleanProperty(propsIP, propsPR, groupByPrefix + "gruppo"));
+		config.setApi(getBooleanProperty(propsIP, propsPR, groupByPrefix + "api"));
+		config.setClusterId(getBooleanProperty(propsIP, propsPR, groupByPrefix + "clusterId"));
+		config.setClientAddress(getBooleanProperty(propsIP, propsPR, groupByPrefix + "clientAddress"));
+
+		return config;
+	}
+
+	private static boolean getBooleanProperty(InstanceProperties propsIP,  PropertiesReader propsPR, String propertyName) throws UtilsException {
+		// Se la proprietà non esiste, ritorna true (default)
+		String value = null;
+		if(propsIP!=null) {
+			value = propsIP.getValueConvertEnvProperties(propertyName);
+		}
+		else if(propsPR!=null) {
+			value = propsPR.getValue_convertEnvProperties(propertyName);
+		} 
+		if(value == null) {
+			return true;
+		}
+		return "true".equalsIgnoreCase(value.trim());
+	}
+
 	public Logger getLogCore() {
 		return this.logCore;
 	}
@@ -485,5 +547,13 @@ public class StatisticsConfig {
 
 	public void setPdndTracciamentoGenerazioneDelayMinutes(int pdndTracciamentoGenerazioneDelayMinutes) {
 		this.pdndTracciamentoGenerazioneDelayMinutes = pdndTracciamentoGenerazioneDelayMinutes;
+	}
+
+	public StatisticsGroupByConfig getGroupByConfig() {
+		return this.groupByConfig;
+	}
+
+	public void setGroupByConfig(StatisticsGroupByConfig groupByConfig) {
+		this.groupByConfig = groupByConfig;
 	}
 }
