@@ -1,15 +1,4 @@
--- classe esitifgovway_status
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 1 , 'Completata con Successo' );
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 2 , 'Fault Applicativo' );
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 3 , 'Richiesta Scartata' );
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 4 , 'Errore di Consegna' );
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 5 , 'Autorizzazione Negata' );
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 6 , 'Policy Controllo Traffico Violate' );
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 7 , 'Errori Servizio IntegrationManager/MessageBox' );
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 8 , 'Errori Processamento Richiesta' );
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 9 , 'Errori Processamento Risposta' );
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 10 , 'Errore Generico' );
-INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 11 , 'Errore Client Indisponibile' );
+delete from transazioni_esiti;
 
 -- esiti
 INSERT INTO transazioni_esiti (govway_status, govway_status_key, govway_status_detail, govway_status_description, govway_status_class) VALUES ( 0 , 'OK' , 'Ok' , 'Transazione gestita con successo' , 1 );

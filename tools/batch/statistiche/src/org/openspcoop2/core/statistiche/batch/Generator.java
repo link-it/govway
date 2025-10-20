@@ -299,7 +299,10 @@ public class Generator {
 			
 			// aggiorno configurazione per forceIndex
 			statisticsConfig.setForceIndexConfig(generatorProperties.getStatisticheGenerazioneForceIndexConfig());
-			
+
+			// aggiorno configurazione per groupBy
+			statisticsConfig.setGroupByConfig(generatorProperties.getStatisticheGenerazioneGroupByConfig());
+
 		}catch(Exception e){
 			throw new UtilsException("Errore durante la generazione delle statistiche (InitConfigurazione): "+e.getMessage(),e);
 		}

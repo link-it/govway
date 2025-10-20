@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/db2/archiviComunicazioni/2025-10-20-patch.sql

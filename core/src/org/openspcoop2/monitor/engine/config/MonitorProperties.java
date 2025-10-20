@@ -67,12 +67,15 @@ public class MonitorProperties {
 
 	/** Reader delle proprieta' impostate nel file 'server.properties' */
 	private MonitorInstanceProperties reader;
-
+	public MonitorInstanceProperties getReader() {
+		return this.reader;
+	}
 
 
 
 
 	/* ********  C O S T R U T T O R E  ******** */
+
 
 	/**
 	 * Viene chiamato in causa per istanziare il properties reader

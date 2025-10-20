@@ -64,7 +64,9 @@ import org.openspcoop2.message.AttachmentsProcessingMode;
 import org.openspcoop2.message.ForwardConfig;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.utils.WWWAuthenticateErrorCode;
+import org.openspcoop2.monitor.engine.statistic.StatisticsConfig;
 import org.openspcoop2.monitor.engine.statistic.StatisticsForceIndexConfig;
+import org.openspcoop2.monitor.engine.statistic.StatisticsGroupByConfig;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autenticazione.WWWAuthenticateConfig;
 import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
@@ -2804,8 +2806,9 @@ public class OpenSPCoop2Properties {
 				this.getStatisticheGenerazioneTimerLockAttesaAttiva();
 				this.getStatisticheGenerazioneTimerLockCheckInterval();
 				this.getStatisticheGenerazioneExternalForceIndexRepository();
-				
-				
+				this.getStatisticheGenerazioneGroupByConfig();
+
+
 				this.isStatistichePdndTracciamentoErogazioniEnabled();
 				this.isStatistichePdndTracciamentoFruizioniEnabled();
 				this.isStatistichePdndTracciamentoGenerazioneEnabled();
@@ -34772,7 +34775,20 @@ public class OpenSPCoop2Properties {
 		}
 		return null;
 	}
-	
+
+	private StatisticsGroupByConfig statisticheGenerazioneGroupByConfig = null;
+	public StatisticsGroupByConfig getStatisticheGenerazioneGroupByConfig() throws CoreException {
+		if(this.statisticheGenerazioneGroupByConfig==null){
+			try {
+				this.statisticheGenerazioneGroupByConfig = StatisticsConfig.parseGroupByConfig(this.reader, "org.openspcoop2.pdd.statistiche.generazione.");
+			} catch (UtilsException e) {
+				throw new CoreException(e.getMessage(),e);
+			}
+		}
+
+		return this.statisticheGenerazioneGroupByConfig;
+	}
+
 	/* ------------- Tracing PDND ---------------------*/
 
 	private Integer getStatistichePdndTracciamentoGenerazioneTimerIntervalSeconds = null;

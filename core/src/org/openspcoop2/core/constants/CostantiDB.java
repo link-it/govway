@@ -496,6 +496,7 @@ public final class CostantiDB {
     
     public static final int STATISTICHE_STATO_RECORD_VALIDO = 1; // finito anche in patch sql
     public static final int STATISTICHE_STATO_RECORD_ANCORA_VALIDO_IN_FASE_DI_AGGIORNAMENTO = 2;
+    public static final int STATISTICHE_STATO_RECORD_VALIDO_INTERVALLO_CORRENTE = 3;
     public static final int STATISTICHE_STATO_RECORD_IN_AGGIORNAMENTO = 0;
     public static final int STATISTICHE_STATO_RECORD_ELIMINATO = -2;
     
