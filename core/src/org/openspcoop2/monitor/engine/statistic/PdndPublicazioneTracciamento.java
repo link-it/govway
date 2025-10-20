@@ -240,7 +240,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 	}
 	
 	private void writePdndError(StatistichePdndTracing stat, JsonNode response) throws StatisticsEngineException {
-		ArrayNode errors = (ArrayNode) response.get("errors");
+		ArrayNode errors = (ArrayNode) response.get(PDND_RESPONSE_ERRORS_CLAIM);
 		
 		try {
 			stat.setErrorDetails(getErrorDetails(PDND_PUBLISHING_ERROR, errors));
@@ -294,6 +294,8 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 		}
 	}
 	
+	private static final String PDND_RESPONSE_ERRORS_CLAIM = "errors";
+	
 	private void checkSendTraceResult(StatistichePdndTracing stat, HttpResponse res, String errMsg) throws StatisticsEngineException {
 		// errore nella comunicazione con la pdnd
 		if (res == null) {
@@ -331,7 +333,7 @@ public class PdndPublicazioneTracciamento implements IStatisticsEngine {
 					"Content-Type della risposta non di tipo json, content-type: " + res.getContentType()
 							+ ", content: " + new String(content)));
 			stat.setStato(PossibiliStatiRichieste.FAILED);
-		} else if (node == null) {
+		} else if (node == null || node.get(PDND_RESPONSE_ERRORS_CLAIM)==null) {
 			// il json fornito dalla pdnd non è stato parsato correttamente
 			stat.setErrorDetails(getErrorDetails(PDND_PUBLISHING_ERROR,
 					"Non è stato possibile interpretare il contenuto: " + new String(content)));
