@@ -1,6 +1,15 @@
 2025-10-20  Andrea Poli <apoli@link.it>
 
 	* [BatchStatistiche]
+	Risolto Bug #1660
+	Migliorato il calcolo della latenza totale nelle aggregazioni statistiche:
+	- ora viene calcolata anche per le transazioni prive delle date di consegna al backend (data_uscita_richiesta e data_ingresso_risposta), aumentando la copertura e la precisione delle metriche;
+	- corretta la formula di calcolo delle latenze medie per escludere dal denominatore le richieste con latenza non disponibile (NULL o -1), 
+	  eliminando la sottostima sistematica precedentemente causata da transazioni con esiti di errore e timestamp incompleti.
+
+2025-10-20  Andrea Poli <apoli@link.it>
+
+	* [BatchStatistiche]
 	Aggiunta funzionalità #1663
 	Introdotto stato_record=3 per record statistici dell'intervallo corrente (vs stato=1 per intervalli passati). 
 	Aggiunta configurabilità dei criteri di raggruppamento, tramite proprietà '*.groupBy.<campo>', per ottimizzare la cardinalità delle aggregazioni.

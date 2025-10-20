@@ -58,10 +58,20 @@ public class StatisticheUtils {
 	}
 	
 	public static String getSqlCalcolaMedia(String columnLatenza, String columnRichieste) {
+		// Calcola la media ponderata escludendo i record con latenza NULL o < 0
+		// Formula: SUM(CASE WHEN latenza >= 0 THEN latenza*richieste ELSE 0 END) /
+		//          SUM(CASE WHEN latenza >= 0 THEN richieste ELSE 0 END)
+		// Compatibile con: PostgreSQL, MySQL, HSQL, Oracle, SQL Server
 		StringBuilder sbFunctionValue = new StringBuilder("(");
-		sbFunctionValue.append("SUM(").append(columnLatenza).append("*").append(columnRichieste).append(")");
+		// Numeratore: somma solo le latenze valide (>= 0) moltiplicate per le richieste
+		sbFunctionValue.append("SUM(CASE WHEN ").append(columnLatenza).append(" >= 0 THEN ");
+		sbFunctionValue.append(columnLatenza).append("*").append(columnRichieste);
+		sbFunctionValue.append(" ELSE 0 END)");
 		sbFunctionValue.append("/");
-		sbFunctionValue.append("SUM(").append(columnRichieste).append(")");
+		// Denominatore: somma solo le richieste con latenza valida (>= 0)
+		sbFunctionValue.append("SUM(CASE WHEN ").append(columnLatenza).append(" >= 0 THEN ");
+		sbFunctionValue.append(columnRichieste);
+		sbFunctionValue.append(" ELSE 0 END)");
 		sbFunctionValue.append(")");
 		return sbFunctionValue.toString();
 	}
