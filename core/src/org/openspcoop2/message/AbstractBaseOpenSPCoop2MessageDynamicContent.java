@@ -499,7 +499,8 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 		} catch (MessageException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new MessageException(e.getMessage(), e);
+			Throwable eInner = Utilities.getInnerNotEmptyMessageException(e);
+			throw new MessageException(eInner!=null ? eInner.getMessage() : e.getMessage(), e);
 		} finally {
 			if (consume) {
 				try {
