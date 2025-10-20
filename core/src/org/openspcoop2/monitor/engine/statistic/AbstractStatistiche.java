@@ -561,23 +561,38 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			List<FunctionField> selectList = new ArrayList<>();
 			StatisticsUtils.addSelectFieldCountTransaction(selectList);
 			StatisticsUtils.addSelectFieldSizeTransaction(tipoPdD, selectList);
-			
-			List<FunctionField> selectListConLatenze = new ArrayList<>();
-			selectListConLatenze.addAll(selectList);
-			StatisticsUtils.addSelectFunctionFieldLatencyTransaction(tipoPdD, fieldConverter, selectListConLatenze);
-			
+
+			// 1. Transazioni con tutte le date: tutte le latenze calcolabili
+			List<FunctionField> selectListConTutteLatenze = new ArrayList<>();
+			selectListConTutteLatenze.addAll(selectList);
+			StatisticsUtils.addSelectFunctionFieldLatencyTransaction(tipoPdD, fieldConverter, selectListConTutteLatenze, true, true, true);
+
+			// 2. Transazioni con solo date per latenza totale: solo latenza totale calcolabile
+			List<FunctionField> selectListConSoloLatenzaTotale = new ArrayList<>();
+			selectListConSoloLatenzaTotale.addAll(selectList);
+			StatisticsUtils.addSelectFunctionFieldLatencyTransaction(tipoPdD, fieldConverter, selectListConSoloLatenzaTotale, true, false, false);
+			List<ConstantField> selectListCostantiLatenzaServizioPorta = new ArrayList<>();
+			StatisticsUtils.addSelectConstantFieldLatencyTransaction(tipoPdD, fieldConverter, selectListCostantiLatenzaServizioPorta, false, true, true);
+
+			// 3. Transazioni senza date per latenza totale: nessuna latenza calcolabile
 			List<FunctionField> selectListSenzaLatenze = new ArrayList<>();
 			selectListSenzaLatenze.addAll(selectList);
-			List<ConstantField> selectListCostantiLatenze = new ArrayList<>();
-			StatisticsUtils.addSelectConstantFieldLatencyTransaction(tipoPdD, fieldConverter, selectListCostantiLatenze);
+			List<ConstantField> selectListCostantiTutteLatenze = new ArrayList<>();
+			StatisticsUtils.addSelectConstantFieldLatencyTransaction(tipoPdD, fieldConverter, selectListCostantiTutteLatenze, true, true, true);
 
 			// ** Where **
 			// Creo intervallo
 			Date dateNext = incrementDate(data, false);
-			
-			IExpression exprConLatenze = this.transazioneSearchDAO.newExpression();
-			StatisticsUtils.setExpressionNotNullDate(this.transazioneSearchDAO, exprConLatenze, data, dateNext, tipoPdD, null, fieldConverter, this.groupByConfig);
 
+			// 1. Espressione per transazioni con TUTTE le date NOT NULL
+			IExpression exprConTutteLatenze = this.transazioneSearchDAO.newExpression();
+			StatisticsUtils.setExpressionAllDatesNotNull(this.transazioneSearchDAO, exprConTutteLatenze, data, dateNext, tipoPdD, null, fieldConverter, this.groupByConfig);
+
+			// 2. Espressione per transazioni con SOLO date per latenza totale
+			IExpression exprConSoloLatenzaTotale = this.transazioneSearchDAO.newExpression();
+			StatisticsUtils.setExpressionOnlyTotalLatencyDates(this.transazioneSearchDAO, exprConSoloLatenzaTotale, data, dateNext, tipoPdD, null, fieldConverter, this.groupByConfig);
+
+			// 3. Espressione per transazioni SENZA date per latenza totale
 			IExpression exprSenzaLatenze = this.transazioneSearchDAO.newExpression();
 			StatisticsUtils.setExpressionNullDate(this.transazioneSearchDAO, exprSenzaLatenze, data, dateNext, tipoPdD, null, fieldConverter, this.groupByConfig);
 
@@ -591,36 +606,49 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 				List<Index> listForceIndexes = this.forceIndexConfig.getTransazioniForceIndexGroupByNumeroDimensione();
 				if(!listForceIndexes.isEmpty()){
 					for (Index index : listForceIndexes) {
-						exprConLatenze.addForceIndex(index);
+						exprConTutteLatenze.addForceIndex(index);
+						exprConSoloLatenzaTotale.addForceIndex(index);
 						exprSenzaLatenze.addForceIndex(index);
 					}
 				}
 			}
-			
-			// ** Union **
-			
-			UnionExpression latenzeUnionExpr = new UnionExpression(exprConLatenze);
-			for (FunctionField functionField : selectListConLatenze) {
-				latenzeUnionExpr.addSelectFunctionField(functionField);
-			}
-			StatisticsUtils.addSelectUnionField(latenzeUnionExpr, fieldConverter, this.groupByConfig);
 
+			// ** Union **
+
+			// 1. Union expression per transazioni con tutte le latenze
+			UnionExpression tutteLatenzeUnionExpr = new UnionExpression(exprConTutteLatenze);
+			for (FunctionField functionField : selectListConTutteLatenze) {
+				tutteLatenzeUnionExpr.addSelectFunctionField(functionField);
+			}
+			StatisticsUtils.addSelectUnionField(tutteLatenzeUnionExpr, fieldConverter, this.groupByConfig);
+
+			// 2. Union expression per transazioni con solo latenza totale
+			UnionExpression soloLatenzaTotaleUnionExpr = new UnionExpression(exprConSoloLatenzaTotale);
+			for (FunctionField functionField : selectListConSoloLatenzaTotale) {
+				soloLatenzaTotaleUnionExpr.addSelectFunctionField(functionField);
+			}
+			for (ConstantField constantField : selectListCostantiLatenzaServizioPorta) {
+				soloLatenzaTotaleUnionExpr.addSelectField(constantField, constantField.getAlias());
+			}
+			StatisticsUtils.addSelectUnionField(soloLatenzaTotaleUnionExpr, fieldConverter, this.groupByConfig);
+
+			// 3. Union expression per transazioni senza latenze
 			UnionExpression senzaLatenzeUnionExpr = new UnionExpression(exprSenzaLatenze);
 			for (FunctionField functionField : selectListSenzaLatenze) {
 				senzaLatenzeUnionExpr.addSelectFunctionField(functionField);
 			}
-			for (ConstantField constantField : selectListCostantiLatenze) {
+			for (ConstantField constantField : selectListCostantiTutteLatenze) {
 				senzaLatenzeUnionExpr.addSelectField(constantField, constantField.getAlias());
 			}
 			StatisticsUtils.addSelectUnionField(senzaLatenzeUnionExpr, fieldConverter, this.groupByConfig);
-			
+
 			Union union = new Union();
 			union.setUnionAll(true);
-			for (String alias : latenzeUnionExpr.getReturnFieldAliases()) {
+			for (String alias : tutteLatenzeUnionExpr.getReturnFieldAliases()) {
 				union.addField(alias);
 			}
-			
-			List<Map<String, Object>> list = this.transazioneSearchDAO.union(union, latenzeUnionExpr, senzaLatenzeUnionExpr);
+
+			List<Map<String, Object>> list = this.transazioneSearchDAO.union(union, tutteLatenzeUnionExpr, soloLatenzaTotaleUnionExpr, senzaLatenzeUnionExpr);
 			
 			for (Map<String, Object> row : list) {
 				

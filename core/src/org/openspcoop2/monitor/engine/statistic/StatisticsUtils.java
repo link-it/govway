@@ -41,6 +41,8 @@ import org.openspcoop2.generic_project.beans.UnionExpression;
 import org.openspcoop2.generic_project.beans.UnixTimestampIntervalField;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.monitor.engine.constants.Costanti;
@@ -60,7 +62,13 @@ import org.openspcoop2.utils.sql.SQLQueryObjectException;
  * @version $Rev$, $Date$
  */
 public class StatisticsUtils {
+	
+	private StatisticsUtils() {}
 
+	private static final String LATENZA_TOTALE = "latenza_totale";
+	private static final String LATENZA_SERVIZIO = "latenza_servizio";
+	private static final String LATENZA_PORTA_RICHIESTA = "latenza_porta_richiesta";
+	private static final String LATENZA_PORTA_RISPOSTA = "latenza_porta_risposta";
 	
 	public static Long readLongValue(Map<String, Object> row, String alias){
 		Object object = row.get(alias);
@@ -75,37 +83,87 @@ public class StatisticsUtils {
 		return null;
 	}
 	
+	/**
+	 * Deprecato: usa setExpressionAllDatesNotNull invece
+	 * @throws NotImplementedException 
+	 * @throws ServiceException 
+	 * @throws ExpressionException 
+	 * @throws ExpressionNotImplementedException 
+	 */
+	@Deprecated
 	public static void setExpressionNotNullDate(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat,
-			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws Exception{
+			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
+		StatisticsUtils.setExpressionAllDatesNotNull(transazioneSearchDAO, expr, data, dateNext, tipoPdD, stat, fieldConverter, groupByConfig);
+	}
+
+	/**
+	 * Seleziona transazioni con TUTTE e 4 le date NOT NULL.
+	 * Permette il calcolo di tutte le latenze (totale, servizio, porta).
+	 * @throws NotImplementedException 
+	 * @throws ServiceException 
+	 * @throws ExpressionException 
+	 * @throws ExpressionNotImplementedException 
+	 */
+	public static void setExpressionAllDatesNotNull(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat,
+			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
 		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
-				true, false,
+				true, false, false,
 				stat, fieldConverter,
 				false,
 				null,null,
 				groupByConfig);
 	}
-	public static void setExpressionNullDate(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat,
-			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws Exception{
+
+	/**
+	 * Seleziona transazioni con SOLO le 2 date necessarie per la latenza totale NOT NULL
+	 * (data_ingresso_richiesta e data_uscita_risposta), ma almeno una delle altre 2 date è NULL.
+	 * Permette il calcolo della sola latenza totale.
+	 * @throws NotImplementedException 
+	 * @throws ServiceException 
+	 * @throws ExpressionException 
+	 * @throws ExpressionNotImplementedException 
+	 */
+	public static void setExpressionOnlyTotalLatencyDates(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat,
+			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
 		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
-				false, true,
+				false, false, true,
+				stat, fieldConverter,
+				false,
+				null,null,
+				groupByConfig);
+	}
+
+	/**
+	 * Seleziona transazioni dove almeno una delle 2 date necessarie per la latenza totale è NULL
+	 * (data_ingresso_richiesta o data_uscita_risposta).
+	 * Non permette il calcolo di alcuna latenza.
+	 * @throws NotImplementedException 
+	 * @throws ServiceException 
+	 * @throws ExpressionException 
+	 * @throws ExpressionNotImplementedException 
+	 */
+	public static void setExpressionNullDate(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, StatisticBean stat,
+			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
+		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
+				false, true, false,
 				stat, fieldConverter,
 				false,
 				null,null,
 				groupByConfig);
 	}
 	public static void setExpression(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
-			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws Exception{
+			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
 		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
-				setNotNullDate, false,
+				setNotNullDate, false, false,
 				stat, fieldConverter,
 				false,
 				null,null,
 				groupByConfig);
 	}
 	public static void setExpressionByStato(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD, boolean setNotNullDate, StatisticBean stat,
-			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws Exception{
+			ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
 		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
-				setNotNullDate, false,
+				setNotNullDate, false, false,
 				stat, fieldConverter,
 				true,
 				null,null,
@@ -116,9 +174,9 @@ public class StatisticsUtils {
 			List<AliasFilter> aliases,
 			String idRisorsa,
 			StatisticsGroupByConfig groupByConfig,
-			StatisticResourceFilter ... risorseFiltri) throws Exception{
+			StatisticResourceFilter ... risorseFiltri) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
 		StatisticsUtils.setExpressionEngine(transazioneSearchDAO, expr, data, dateNext, tipoPdD,
-				setNotNullDate, false,
+				setNotNullDate, false, false,
 				stat, fieldConverter,
 				false,
 				aliases,idRisorsa,
@@ -126,12 +184,16 @@ public class StatisticsUtils {
 				risorseFiltri);
 	}
 	private static void setExpressionEngine(ITransazioneServiceSearch transazioneSearchDAO, IExpression expr, Date data, Date dateNext, TipoPdD tipoPdD,
-			boolean setNotNullDate, boolean setNullDate,
+			boolean setAllDatesNotNull, boolean setNullTotalLatencyDates, boolean setOnlyTotalLatencyDates,
 			StatisticBean stat, ISQLFieldConverter fieldConverter,
 			boolean groupByStato,
 			List<AliasFilter> aliases, String idRisorsa,
 			StatisticsGroupByConfig groupByConfig,
-			StatisticResourceFilter ... risorseFiltri) throws Exception{
+			StatisticResourceFilter ... risorseFiltri) throws ExpressionNotImplementedException, ExpressionException, ServiceException, NotImplementedException {
+		
+		if(fieldConverter!=null) {
+			// nop
+		}
 		
 		expr.and();
 		
@@ -151,14 +213,14 @@ public class StatisticsUtils {
 		
 		if(stat!=null){
 			// condizioni di group by messe anche in equals
-//			expr.equals(Transazione.model().PDD_CODICE,stat.getIdPorta());
-//			expr.equals(Transazione.model().TIPO_SOGGETTO_FRUITORE, stat.getMittente()!=null ? stat.getMittente().getTipo() : null);
-//			expr.equals(Transazione.model().NOME_SOGGETTO_FRUITORE, stat.getMittente()!=null ? stat.getMittente().getNome() : null);
-//			expr.equals(Transazione.model().TIPO_SOGGETTO_EROGATORE, stat.getDestinatario()!=null ? stat.getDestinatario().getTipo() : null);
-//			expr.equals(Transazione.model().NOME_SOGGETTO_EROGATORE, stat.getDestinatario()!=null ? stat.getDestinatario().getNome() : null);
-//			expr.equals(Transazione.model().TIPO_SERVIZIO, stat.getTipoServizio());
-//			expr.equals(Transazione.model().NOME_SERVIZIO, stat.getServizio());
-//			expr.equals(Transazione.model().AZIONE, stat.getAzione());
+			/**expr.equals(Transazione.model().PDD_CODICE,stat.getIdPorta());
+			expr.equals(Transazione.model().TIPO_SOGGETTO_FRUITORE, stat.getMittente()!=null ? stat.getMittente().getTipo() : null);
+			expr.equals(Transazione.model().NOME_SOGGETTO_FRUITORE, stat.getMittente()!=null ? stat.getMittente().getNome() : null);
+			expr.equals(Transazione.model().TIPO_SOGGETTO_EROGATORE, stat.getDestinatario()!=null ? stat.getDestinatario().getTipo() : null);
+			expr.equals(Transazione.model().NOME_SOGGETTO_EROGATORE, stat.getDestinatario()!=null ? stat.getDestinatario().getNome() : null);
+			expr.equals(Transazione.model().TIPO_SERVIZIO, stat.getTipoServizio());
+			expr.equals(Transazione.model().NOME_SERVIZIO, stat.getServizio());
+			expr.equals(Transazione.model().AZIONE, stat.getAzione());*/
 
 			// Gestisco i possibili valori null con '-'.
 			// Sono state prese le informazioni anche con null poichè senno non venivano contate nelle statistiche le transazioni che non possedevano info sui servizi. (es porta delegata non trovata)
@@ -188,7 +250,7 @@ public class StatisticsUtils {
 			StatisticsUtils.setCondition(expr, azione, Transazione.model().AZIONE);
 
 
-//			if(TipoPdD.DELEGATA.equals(tipoPdD)){
+			/**if(TipoPdD.DELEGATA.equals(tipoPdD)){*/
 			// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
 			if(Costanti.SERVIZIO_APPLICATIVO_ANONIMO.equals(stat.getServizioApplicativo()) || stat.getServizioApplicativo()==null || Costanti.INFORMAZIONE_NON_DISPONIBILE.equals(stat.getServizioApplicativo())){
 				expr.isNull(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE);
@@ -196,14 +258,14 @@ public class StatisticsUtils {
 			else{
 				expr.equals(Transazione.model().SERVIZIO_APPLICATIVO_FRUITORE,stat.getServizioApplicativo());
 			}
-//			}else{
-//				if(Costanti.SERVIZIO_APPLICATIVO_ANONIMO.equals(stat.getServizioApplicativo()) || stat.getServizioApplicativo()==null){
-//					expr.isNull(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE);
-//				}
-//				else{
-//					expr.equals(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE,stat.getServizioApplicativo());
-//				}
-//			}
+			/**}else{
+				if(Costanti.SERVIZIO_APPLICATIVO_ANONIMO.equals(stat.getServizioApplicativo()) || stat.getServizioApplicativo()==null){
+					expr.isNull(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE);
+				}
+				else{
+					expr.equals(Transazione.model().SERVIZIO_APPLICATIVO_EROGATORE,stat.getServizioApplicativo());
+				}
+			}*/
 
 			String trasportoMittente = stat.getTrasportoMittente();
 			StatisticsUtils.setCondition(expr, trasportoMittente, Transazione.model().TRASPORTO_MITTENTE);
@@ -239,28 +301,37 @@ public class StatisticsUtils {
 		else{
 			// Gestisco i possibili valori null con '-'.
 			// Sono state prese le informazioni anche con null poichè senno non venivano contate nelle statistiche le transazioni che non possedevano info sui servizi. (es porta delegata non trovata)
-//			expr.isNotNull(Transazione.model().PDD_CODICE);
-//			expr.isNotNull(Transazione.model().TIPO_SOGGETTO_FRUITORE);
-//			expr.isNotNull(Transazione.model().NOME_SOGGETTO_FRUITORE);
-//			expr.isNotNull(Transazione.model().TIPO_SOGGETTO_EROGATORE);
-//			expr.isNotNull(Transazione.model().NOME_SOGGETTO_EROGATORE);
-//			expr.isNotNull(Transazione.model().TIPO_SERVIZIO);
-//			expr.isNotNull(Transazione.model().NOME_SERVIZIO);
-//			expr.isNotNull(Transazione.model().VERSIONE_SERVIZIO);
+			/**expr.isNotNull(Transazione.model().PDD_CODICE);
+			expr.isNotNull(Transazione.model().TIPO_SOGGETTO_FRUITORE);
+			expr.isNotNull(Transazione.model().NOME_SOGGETTO_FRUITORE);
+			expr.isNotNull(Transazione.model().TIPO_SOGGETTO_EROGATORE);
+			expr.isNotNull(Transazione.model().NOME_SOGGETTO_EROGATORE);
+			expr.isNotNull(Transazione.model().TIPO_SERVIZIO);
+			expr.isNotNull(Transazione.model().NOME_SERVIZIO);
+			expr.isNotNull(Transazione.model().VERSIONE_SERVIZIO);*/
 		}
 		
-		if(setNotNullDate){
+		if(setAllDatesNotNull){
+			// Tutte e 4 le date NOT NULL: calcolo tutte le latenze
 			expr.isNotNull(Transazione.model().DATA_USCITA_RICHIESTA);
 			expr.isNotNull(Transazione.model().DATA_INGRESSO_RISPOSTA);
 			expr.isNotNull(Transazione.model().DATA_USCITA_RISPOSTA);
 		}
-		else if(setNullDate) {
-			IExpression exprNullDate = transazioneSearchDAO.newExpression();
-			exprNullDate.isNotNull(Transazione.model().DATA_USCITA_RICHIESTA);
-			exprNullDate.isNotNull(Transazione.model().DATA_INGRESSO_RISPOSTA);
-			exprNullDate.isNotNull(Transazione.model().DATA_USCITA_RISPOSTA);
-			exprNullDate.and();
-			expr.not(exprNullDate);
+		else if(setOnlyTotalLatencyDates) {
+			// Solo date per latenza totale NOT NULL, ma almeno una delle altre 2 è NULL
+			expr.isNotNull(Transazione.model().DATA_USCITA_RISPOSTA);
+
+			// Almeno una delle altre 2 date deve essere NULL
+			IExpression exprAtLeastOneNull = transazioneSearchDAO.newExpression();
+			exprAtLeastOneNull.isNull(Transazione.model().DATA_USCITA_RICHIESTA);
+			exprAtLeastOneNull.or(transazioneSearchDAO.newExpression().isNull(Transazione.model().DATA_INGRESSO_RISPOSTA));
+			expr.and(exprAtLeastOneNull);
+		}
+		else if(setNullTotalLatencyDates) {
+			// Almeno una delle 2 date per latenza totale è NULL: nessuna latenza calcolabile
+			IExpression exprNullTotalLatency = transazioneSearchDAO.newExpression();
+			exprNullTotalLatency.isNull(Transazione.model().DATA_USCITA_RISPOSTA);
+			expr.or(exprNullTotalLatency);
 		}
 
 		if(idRisorsa!=null){
@@ -270,7 +341,7 @@ public class StatisticsUtils {
 			for (int i = 0; i < risorseFiltri.length; i++) {
 				AliasFilter af = new AliasFilter();
 				IAliasTableField atf = new AliasTableComplexField((ComplexField)Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME, FilterUtils.getNextAliasStatisticsTable());
-				//System.out.println("FILTRO["+i+"]= ("+af.getAliasTable()+") "+risorseFiltri[i]);
+				/**System.out.println("FILTRO["+i+"]= ("+af.getAliasTable()+") "+risorseFiltri[i]);*/
 				af.setNomeFiltro(atf);
 				af.setStatisticFilterName(risorseFiltri[i].getStatisticFilterName());
 				aliases.add(af);
@@ -374,7 +445,7 @@ public class StatisticsUtils {
 			expr.addGroupBy(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE);
 		}
 
-		if(aliases!=null && aliases.size()>0){
+		if(aliases!=null && !aliases.isEmpty()){
 			for (AliasFilter aliasFilter : aliases) {
 				IAliasTableField afName = aliasFilter.getNomeFiltro(); 
 				expr.addGroupBy(afName);
@@ -406,14 +477,14 @@ public class StatisticsUtils {
 		}
 	}
 	
-	public static void addSelectUnionField(UnionExpression expr, ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws Exception {
+	public static void addSelectUnionField(UnionExpression expr, ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig) throws ExpressionException {
 			addSelectUnionField(expr, fieldConverter, groupByConfig,
 					false,
 					null, null);
 	}
 	public static void addSelectUnionField(UnionExpression expr, ISQLFieldConverter fieldConverter, StatisticsGroupByConfig groupByConfig,
 			boolean groupByStato,
-			List<AliasFilter> aliases, String idRisorsa) throws Exception {
+			List<AliasFilter> aliases, String idRisorsa) throws ExpressionException {
 		expr.addSelectField(Transazione.model().PDD_RUOLO, fieldConverter.toColumn(Transazione.model().PDD_RUOLO, false));
 		expr.addSelectField(Transazione.model().PDD_CODICE, fieldConverter.toColumn(Transazione.model().PDD_CODICE, false));
 
@@ -503,7 +574,7 @@ public class StatisticsUtils {
 			expr.addSelectField(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME, fieldConverter.toColumn(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME, false));
 			expr.addSelectField(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE, fieldConverter.toColumn(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.VALORE, false));
 		}
-		if(aliases!=null && aliases.size()>0){
+		if(aliases!=null && !aliases.isEmpty()){
 			for (AliasFilter aliasFilter : aliases) {
 				IAliasTableField afName = aliasFilter.getNomeFiltro(); 
 				expr.addSelectField(afName, afName.getFieldName());
@@ -532,8 +603,15 @@ public class StatisticsUtils {
 	
 	public static void addSelectFieldSizeTransaction(TipoPdD tipoPdD,List<FunctionField> selectList) throws ExpressionException{
 		
+		if(tipoPdD!=null) {
+			// nop
+		}
+		
 		// Dimensione Transazioni
-		FunctionField fSum1 = null, fSum2= null, fSum3= null, fSum4= null;
+		FunctionField fSum1 = null;
+		FunctionField fSum2 = null;
+		FunctionField fSum3 = null;
+		FunctionField fSum4= null;
 		
 		fSum1 = new FunctionField(Transazione.model().RICHIESTA_INGRESSO_BYTES, Function.SUM, "message_bytes_in_richiesta");
 		fSum2 = new FunctionField(Transazione.model().RICHIESTA_USCITA_BYTES, Function.SUM, "message_bytes_out_richiesta");
@@ -546,74 +624,103 @@ public class StatisticsUtils {
 		selectList.add(fSum4);
 	}
 	
-	public static void addSelectFunctionFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter, 
+	public static void addSelectFunctionFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter,
 			List<FunctionField> selectFunctionList) throws ExpressionException, SQLQueryObjectException{
-		_addSelectFieldLatencyTransaction(tipoPdD, fieldConverter, selectFunctionList, null);
+		addSelectFieldLatencyTransactionEngine(tipoPdD, fieldConverter, selectFunctionList, null, true, true, true);
 	}
-	public static void addSelectConstantFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter, 
+	public static void addSelectConstantFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter,
 			List<ConstantField> selectConstantList) throws ExpressionException, SQLQueryObjectException{
-		_addSelectFieldLatencyTransaction(tipoPdD, fieldConverter, null, selectConstantList);
+		addSelectFieldLatencyTransactionEngine(tipoPdD, fieldConverter, null, selectConstantList, true, true, true);
 	}
-	private static void _addSelectFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter, 
+
+	/**
+	 * Versioni parametriche che permettono di scegliere quali latenze calcolare
+	 */
+	public static void addSelectFunctionFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter,
+			List<FunctionField> selectFunctionList, boolean includeTotal, boolean includeService, boolean includeGateway) throws ExpressionException, SQLQueryObjectException{
+		addSelectFieldLatencyTransactionEngine(tipoPdD, fieldConverter, selectFunctionList, null, includeTotal, includeService, includeGateway);
+	}
+	public static void addSelectConstantFieldLatencyTransaction(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter,
+			List<ConstantField> selectConstantList, boolean includeTotal, boolean includeService, boolean includeGateway) throws ExpressionException, SQLQueryObjectException{
+		addSelectFieldLatencyTransactionEngine(tipoPdD, fieldConverter, null, selectConstantList, includeTotal, includeService, includeGateway);
+	}
+	private static void addSelectFieldLatencyTransactionEngine(TipoPdD tipoPdD,ISQLFieldConverter fieldConverter,
 			List<FunctionField> selectFunctionList,
-			List<ConstantField> selectConstantList) throws ExpressionException, SQLQueryObjectException{
-		
+			List<ConstantField> selectConstantList,
+			boolean includeTotal, boolean includeService, boolean includeGateway) throws ExpressionException, SQLQueryObjectException{
+
+		if(tipoPdD!=null) {
+			// nop
+		}
+
 		if(selectFunctionList!=null) {
-		
-			// Latenza Totale
-			UnixTimestampIntervalField latenzaTotale = new UnixTimestampIntervalField("unix_latenza_totale", fieldConverter, true, 
-					Transazione.model().DATA_USCITA_RISPOSTA, Transazione.model().DATA_INGRESSO_RICHIESTA);
-			FunctionField fLatenzaTotaleAvg = new FunctionField(latenzaTotale, Function.AVG, "latenza_totale");
-			selectFunctionList.add(fLatenzaTotaleAvg);
-			
-			// Latenza Servizio
-			UnixTimestampIntervalField latenzaServizio = new UnixTimestampIntervalField("unix_latenza_servizio", fieldConverter, true, 
-					Transazione.model().DATA_INGRESSO_RISPOSTA, Transazione.model().DATA_USCITA_RICHIESTA);
-			FunctionField fLatenzaServizioAvg = new FunctionField(latenzaServizio, Function.AVG, "latenza_servizio");
-			selectFunctionList.add(fLatenzaServizioAvg);
-			
-			// Latenza Gateway Richiesta
-			UnixTimestampIntervalField latenzaPortaRichiesta = new UnixTimestampIntervalField("unix_latenza_richiesta", fieldConverter, true, 
-					Transazione.model().DATA_USCITA_RICHIESTA, Transazione.model().DATA_INGRESSO_RICHIESTA);
-			FunctionField fLatenzaPortaRichiestaAvg = new FunctionField(latenzaPortaRichiesta, Function.AVG, "latenza_porta_richiesta");
-			selectFunctionList.add(fLatenzaPortaRichiestaAvg);
-			
-			// Latenza Gateway Risposta
-			UnixTimestampIntervalField latenzaPortaRisposta = new UnixTimestampIntervalField("unix_latenza_risposta", fieldConverter, true, 
-					Transazione.model().DATA_USCITA_RISPOSTA, Transazione.model().DATA_INGRESSO_RISPOSTA);
-			FunctionField fLatenzaPortaRispostaAvg = new FunctionField(latenzaPortaRisposta, Function.AVG, "latenza_porta_risposta");
-			selectFunctionList.add(fLatenzaPortaRispostaAvg);
-			
+
+			if(includeTotal) {
+				// Latenza Totale
+				UnixTimestampIntervalField latenzaTotale = new UnixTimestampIntervalField("unix_latenza_totale", fieldConverter, true,
+						Transazione.model().DATA_USCITA_RISPOSTA, Transazione.model().DATA_INGRESSO_RICHIESTA);
+				FunctionField fLatenzaTotaleAvg = new FunctionField(latenzaTotale, Function.AVG, LATENZA_TOTALE);
+				selectFunctionList.add(fLatenzaTotaleAvg);
+			}
+
+			if(includeService) {
+				// Latenza Servizio
+				UnixTimestampIntervalField latenzaServizio = new UnixTimestampIntervalField("unix_latenza_servizio", fieldConverter, true,
+						Transazione.model().DATA_INGRESSO_RISPOSTA, Transazione.model().DATA_USCITA_RICHIESTA);
+				FunctionField fLatenzaServizioAvg = new FunctionField(latenzaServizio, Function.AVG, LATENZA_SERVIZIO);
+				selectFunctionList.add(fLatenzaServizioAvg);
+			}
+
+			if(includeGateway) {
+				// Latenza Gateway Richiesta
+				UnixTimestampIntervalField latenzaPortaRichiesta = new UnixTimestampIntervalField("unix_latenza_richiesta", fieldConverter, true,
+						Transazione.model().DATA_USCITA_RICHIESTA, Transazione.model().DATA_INGRESSO_RICHIESTA);
+				FunctionField fLatenzaPortaRichiestaAvg = new FunctionField(latenzaPortaRichiesta, Function.AVG, LATENZA_PORTA_RICHIESTA);
+				selectFunctionList.add(fLatenzaPortaRichiestaAvg);
+
+				// Latenza Gateway Risposta
+				UnixTimestampIntervalField latenzaPortaRisposta = new UnixTimestampIntervalField("unix_latenza_risposta", fieldConverter, true,
+						Transazione.model().DATA_USCITA_RISPOSTA, Transazione.model().DATA_INGRESSO_RISPOSTA);
+				FunctionField fLatenzaPortaRispostaAvg = new FunctionField(latenzaPortaRisposta, Function.AVG, LATENZA_PORTA_RISPOSTA);
+				selectFunctionList.add(fLatenzaPortaRispostaAvg);
+			}
+
 		}
 		else {
-			
-			// Latenza Totale
-			ConstantField latenzaTotale = new ConstantField("latenza_totale", Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
-			selectConstantList.add(latenzaTotale);
-			
-			// Latenza Servizio
-			ConstantField latenzaServizio = new ConstantField("latenza_servizio", Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
-			selectConstantList.add(latenzaServizio);
-			
-			// Latenza Gateway Richiesta
-			ConstantField latenzaPortaRichiesta = new ConstantField("latenza_porta_richiesta", Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
-			selectConstantList.add(latenzaPortaRichiesta);
-			
-			// Latenza Gateway Risposta
-			ConstantField latenzaPortaRisposta = new ConstantField("latenza_porta_risposta", Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
-			selectConstantList.add(latenzaPortaRisposta);
+
+			if(includeTotal) {
+				// Latenza Totale
+				ConstantField latenzaTotale = new ConstantField(LATENZA_TOTALE, Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
+				selectConstantList.add(latenzaTotale);
+			}
+
+			if(includeService) {
+				// Latenza Servizio
+				ConstantField latenzaServizio = new ConstantField(LATENZA_SERVIZIO, Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
+				selectConstantList.add(latenzaServizio);
+			}
+
+			if(includeGateway) {
+				// Latenza Gateway Richiesta
+				ConstantField latenzaPortaRichiesta = new ConstantField(LATENZA_PORTA_RICHIESTA, Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
+				selectConstantList.add(latenzaPortaRichiesta);
+
+				// Latenza Gateway Risposta
+				ConstantField latenzaPortaRisposta = new ConstantField(LATENZA_PORTA_RISPOSTA, Costanti.INFORMAZIONE_LATENZA_NON_DISPONIBILE, Long.class);
+				selectConstantList.add(latenzaPortaRisposta);
+			}
 		}
-		
+
 	}
 	
 	public static StatisticBean readStatisticBean(StatisticBean stat,Map<String, Object> row, ISQLFieldConverter fieldConverter, boolean useFieldConverter, StatisticsGroupByConfig groupByConfig) throws ExpressionException{
 
 		stat.setIdPorta(StatisticsUtils.getValueFromMap(Transazione.model().PDD_CODICE,row,fieldConverter,useFieldConverter));
-		String TipoPortaS = StatisticsUtils.getValueFromMap(Transazione.model().PDD_RUOLO,row,fieldConverter,useFieldConverter);
-		TipoPdD tipo = TipoPdD.toTipoPdD(TipoPortaS);
+		String tipoPortaS = StatisticsUtils.getValueFromMap(Transazione.model().PDD_RUOLO,row,fieldConverter,useFieldConverter);
+		TipoPdD tipo = TipoPdD.toTipoPdD(tipoPortaS);
 		stat.setTipoPorta(tipo);
 
-		/*
+		/**
 		String sa= null;
 		Object saObject = null;
 		// Nella consultazione delle statistiche si utilizzano sempre gli applicativi fruitori come informazione fornita.
@@ -848,7 +955,7 @@ public class StatisticsUtils {
 	public static void updateStatisticsBeanLatencyTransactionInfo(StatisticBean stat,Map<String, Object> row){
 		// Latenza Totale
 		long latenzaTotaleValue = -1;
-		Long tmp = StatisticsUtils.readLongValue(row, "latenza_totale");
+		Long tmp = StatisticsUtils.readLongValue(row, LATENZA_TOTALE);
 		if(tmp!=null){
 			latenzaTotaleValue = tmp.longValue();
 		}
@@ -856,7 +963,7 @@ public class StatisticsUtils {
 		
 		// Latenza Servizio
 		long latenzaServizioValue = -1;
-		tmp = StatisticsUtils.readLongValue(row, "latenza_servizio");
+		tmp = StatisticsUtils.readLongValue(row, LATENZA_SERVIZIO);
 		if(tmp!=null){
 			latenzaServizioValue = tmp.longValue();
 		}
@@ -864,12 +971,12 @@ public class StatisticsUtils {
 		
 		// Latenza Gateway
 		long latenzaPortaRichiestaValue = -1;
-		tmp = StatisticsUtils.readLongValue(row, "latenza_porta_richiesta");
+		tmp = StatisticsUtils.readLongValue(row, LATENZA_PORTA_RICHIESTA);
 		if(tmp!=null){
 			latenzaPortaRichiestaValue = tmp.longValue();
 		}
 		long latenzaPortaRispostaValue = -1;
-		tmp = StatisticsUtils.readLongValue(row, "latenza_porta_risposta");
+		tmp = StatisticsUtils.readLongValue(row, LATENZA_PORTA_RISPOSTA);
 		if(tmp!=null){
 			latenzaPortaRispostaValue = tmp.longValue();
 		}
@@ -892,7 +999,7 @@ public class StatisticsUtils {
 		String aliasValore = Transazione.model().STATO.getFieldName();
 		Object oValore = row.get(aliasValore);
 		String valore = null;
-		if(oValore!=null && oValore instanceof String){
+		if(oValore instanceof String){
 			String s = (String) oValore;
 			if(!"".equals(s)){
 				valore = s;
@@ -924,13 +1031,13 @@ public class StatisticsUtils {
 		StatisticsUtils.setRisorsaValore(statisticaContenuti, risorsaNome, (String)row.get(aliasValore));
 		
 		
-//		java.util.Iterator<String> itS = row.keySet().iterator();
-//		while (itS.hasNext()) {
-//			String key = (String) itS.next();
-//			System.out.println("ESEMPIO KEY["+key+"]");
-//		}
+		/**java.util.Iterator<String> itS = row.keySet().iterator();
+		while (itS.hasNext()) {
+			String key = (String) itS.next();
+			System.out.println("ESEMPIO KEY["+key+"]");
+		}*/
 		
-		if(aliases.size()>0){
+		if(!aliases.isEmpty()){
 			for (int i = 0; i < aliases.size(); i++) {
 				AliasFilter af = aliases.get(i);
 				IAliasTableField afName = af.getNomeFiltro();
@@ -954,7 +1061,7 @@ public class StatisticsUtils {
 	public static void fillStatisticsContenuti(String idStatistica,StatisticaContenuti statisticaContenuti,RisorsaAggregata risorsaAggregata) throws EngineException{
 		
 		StatisticsUtils.setRisorsaValore(statisticaContenuti, idStatistica, risorsaAggregata.getValoreRisorsaAggregata());
-		if(risorsaAggregata.getFiltri()!=null && risorsaAggregata.getFiltri().size()>0){
+		if(risorsaAggregata.getFiltri()!=null && !risorsaAggregata.getFiltri().isEmpty()){
 			for (int i = 0; i < risorsaAggregata.getFiltri().size(); i++) {
 				String nome = risorsaAggregata.getFiltri().get(i).getResourceID();
 				String valore = ContentFormatter.toString(risorsaAggregata.getFiltri().get(i).getValue());
