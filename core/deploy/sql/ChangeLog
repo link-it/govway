@@ -1,3 +1,7 @@
+2025-10-20  Andrea Poli <apoli@link.it>
+
+	Rivisto lo script di inizializzazione della tabella transazioni_esiti per associare alla colonna govway_status_class il numero della classe anziché l’identificativo della tabella di riferimento.
+
 2025-05-19  Tommaso Burlon <tommaso.burlon@link.it>
 
         Aggiunta tabella statistiche_pdnd_tracing che permette il salvataggio dei 
