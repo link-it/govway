@@ -55,33 +55,34 @@ public class UrlArrayParameterRestTestEngine extends ConfigLoader {
 	
 	static final String API = "TestUrlParameterRest";
 	
-	private static final String ARRAY = "arrayParam";
+	private static final String ARRAY = "arrayParam[]";
+	private static final String ARRAY_ENCODED = TransportUtils.urlEncodeParam(ARRAY, Charset.UTF_8.getValue());
 	private static final String SINGLE = "singleParam";
 	
 	@Test
 	public void test1() throws Exception {
-		String urlArrayParameters = ARRAY+"[]=1&"+ARRAY+"[]=2&"+ARRAY+"[]=3&"+ARRAY+"[]=4&"+ARRAY+"[]=5";
+		String urlArrayParameters = ARRAY_ENCODED+"=1&"+ARRAY_ENCODED+"=2&"+ARRAY_ENCODED+"=3&"+ARRAY_ENCODED+"=4&"+ARRAY_ENCODED+"=5";
 		String urlSingle = SINGLE+"=true";
 		test(5, "", "true",
 				urlArrayParameters, urlSingle);
 	}
 	@Test
 	public void test2() throws Exception {
-		String urlArrayParameters = ARRAY+"[]=s1&"+ARRAY+"[]=s2&"+ARRAY+"[]=s3&"+ARRAY+"[]=s4&"+ARRAY+"[]=s5";
+		String urlArrayParameters = ARRAY_ENCODED+"=s1&"+ARRAY_ENCODED+"=s2&"+ARRAY_ENCODED+"=s3&"+ARRAY_ENCODED+"=s4&"+ARRAY_ENCODED+"=s5";
 		String urlSingle = SINGLE+"=valore";
 		test(5, "s", "valore",
 				urlArrayParameters, urlSingle);
 	}
 	@Test
 	public void test3() throws Exception {
-		String urlArrayParameters = ARRAY+"[]=1&"+ARRAY+"[]=2&"+ARRAY+"[]=3&"+ARRAY+"[]=4&"+ARRAY+"[]=5";
+		String urlArrayParameters = ARRAY_ENCODED+"=1&"+ARRAY_ENCODED+"=2&"+ARRAY_ENCODED+"=3&"+ARRAY_ENCODED+"=4&"+ARRAY_ENCODED+"=5";
 		String urlSingle = SINGLE+"=true";
 		test(5, "", "true",
 				urlSingle, urlArrayParameters);
 	}
 	@Test
 	public void test4() throws Exception {
-		String urlArrayParameters = ARRAY+"[]=s1&"+ARRAY+"[]=s2&"+ARRAY+"[]=s3&"+ARRAY+"[]=s4&"+ARRAY+"[]=s5";
+		String urlArrayParameters = ARRAY_ENCODED+"=s1&"+ARRAY_ENCODED+"=s2&"+ARRAY_ENCODED+"=s3&"+ARRAY_ENCODED+"=s4&"+ARRAY_ENCODED+"=s5";
 		String urlSingle = SINGLE+"=valore";
 		test(5, "s", "valore",
 				urlSingle, urlArrayParameters);
@@ -89,7 +90,7 @@ public class UrlArrayParameterRestTestEngine extends ConfigLoader {
 	
 	@Test
 	public void testSoloArray() throws Exception {
-		String urlArrayParameters = ARRAY+"[]=1&"+ARRAY+"[]=2&"+ARRAY+"[]=3&"+ARRAY+"[]=4&"+ARRAY+"[]=5";
+		String urlArrayParameters = ARRAY_ENCODED+"=1&"+ARRAY_ENCODED+"=2&"+ARRAY_ENCODED+"=3&"+ARRAY_ENCODED+"=4&"+ARRAY_ENCODED+"=5";
 		test(5, "", null,
 				urlArrayParameters);
 	}
@@ -133,7 +134,7 @@ public class UrlArrayParameterRestTestEngine extends ConfigLoader {
 		}
 		
 		if(arraySize>0) {
-			List<String> l = response.getHeaderValues("GovWay-TestSuite-"+ARRAY+"[]");
+			List<String> l = response.getHeaderValues("GovWay-TestSuite-"+ARRAY);
 			assertNotNull(l);
 			for (int i = 0; i < arraySize; i++) {
 				String atteso = prefixArrayValue+(i+1);
