@@ -50,16 +50,18 @@ public class FSRecoveryDiagnosticiImpl extends AbstractFSRecovery {
 			IDiagnosticProducer diagnosticoAppender,
 			File directory, File directoryDLQ,
 			int tentativi,
-			long msAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
+			long msAttesaProcessingFile,
+			long maxFileProcessed) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile, maxFileProcessed);
 		this.diagnosticoAppender = diagnosticoAppender;
 	}
 
 	@Override
-	public void process(Connection connection) {
+	public long process(Connection connection) {
 		this.log.info("Recovery Diagnostici ...");
-		super.process(connection);
+		long l = super.process(connection);
 		this.log.info("Recovery Diagnostici completato");
+		return l;
 	}
 
 	@Override

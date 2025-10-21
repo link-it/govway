@@ -46,8 +46,9 @@ public class FSRecoveryDumpImpl extends AbstractFSRecovery {
 			IDumpProducer dumpAppender,
 			File directory, File directoryDLQ,
 			int tentativi,
-			long msAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
+			long msAttesaProcessingFile,
+			long maxFileProcessed) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile, maxFileProcessed);
 		this.dumpAppender = dumpAppender;
 	}
 
@@ -57,10 +58,11 @@ public class FSRecoveryDumpImpl extends AbstractFSRecovery {
 	}
 	
 	@Override
-	public void process(Connection connection) {
+	public long process(Connection connection) {
 		this.log.info("Recovery Dump ...");
-		super.process(connection);
+		long l = super.process(connection);
 		this.log.info("Recovery Dump completato");
+		return l;
 	}
 
 	@Override

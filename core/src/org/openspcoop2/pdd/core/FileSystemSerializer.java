@@ -29,7 +29,7 @@ import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateUtils;
-import org.openspcoop2.utils.id.IDUtilities;
+import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
 /**     
@@ -137,7 +137,15 @@ public class FileSystemSerializer {
 		
 		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(FORMAT_NEW);
 		
-		String nomeFile = prefix+"_"+dateformat.format(date)+"_"+IDUtilities.getUniqueSerialNumber("FileSystemSerializer")+".xml";
+		/**long uniqueId = IDUtilities.getUniqueSerialNumber("FileSystemSerializer");*/
+		// Fix: per renderlo univoco indipendentemente dalla macchina
+		String uniqueId = null;
+		try {
+			uniqueId = UniqueIdentifierManager.newUniqueIdentifier().getAsString().replace("-", "_");
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+		String nomeFile = prefix+"_"+dateformat.format(date)+"__"+uniqueId+".xml";
 		File f = new File(dir, nomeFile);
 		FileSystemUtilities.writeFile(f, oggettSerializzato);
 		

@@ -41,11 +41,17 @@ public class FSRecoveryEventi {
 			boolean debug,
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM,
 			File directory, File directoryDLQ,
-			int tentativi, long msAttesaProcessingFile) {
-		this.impl = new FSRecoveryEventiImpl(log, debug, pluginsEventiSM, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
+			int tentativi, long msAttesaProcessingFile,
+			long maxFileProcessed) {
+		this.impl = new FSRecoveryEventiImpl(log, debug, pluginsEventiSM, directory, directoryDLQ, tentativi, msAttesaProcessingFile, maxFileProcessed);
 	}
 
-	public void process(){
+	public long process(FSRecoveryObjectType objectType){
+		
+		if(objectType!=null) {
+			// nop
+		}
+		
 		// process file presenti nella directory.
 		// Per ogni file fare il marshall dell'oggetto 'it.link.pdd.core.plugins.eventi.utils.serializer.JaxbDeserializer'
 		// Usare poi il service this.pluginsEventiSM.getEventoService().create(obj); per salvare su database
@@ -67,7 +73,7 @@ public class FSRecoveryEventi {
 		// NOTA: usare this.debug per emettere o meno informazioni in this.log
 
 		// NOTA: in DLQ estrapolare la data (solo anno mese e giorno) dal nome del file e usarla come nome della directory all'interno di DLQ.
-		this.impl.process(null);
+		return this.impl.process(null);
 	}
 
 }

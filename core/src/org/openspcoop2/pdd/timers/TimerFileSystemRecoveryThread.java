@@ -34,12 +34,24 @@ import org.openspcoop2.core.config.utils.OpenSPCoopAppenderUtilities;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.engine.fs_recovery.FSRecoveryConfig;
 import org.openspcoop2.monitor.engine.fs_recovery.FSRecoveryLibrary;
+import org.openspcoop2.monitor.engine.fs_recovery.FSRecoveryObjectType;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
+import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaProducer;
+import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.id.serial.InfoStatistics;
+import org.openspcoop2.utils.semaphore.Semaphore;
+import org.openspcoop2.utils.semaphore.SemaphoreConfiguration;
+import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.openspcoop2.utils.threads.BaseThread;
 import org.slf4j.Logger;
 
@@ -63,10 +75,14 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 	}
 
 	public static final String ID_MODULO = "TimerFileSystemRecovery";
-		
+
+	/** Numero massimo di iterazioni per evitare loop infinito */
+	private static final int MAX_ITERATIONS = 10000;
+
 	/** Logger utilizzato per debug. */
 	private Logger logCore = null;
 	private Logger logSql = null;
+	private Logger logTimer = null;
 	
 	/** Indicazione se deve essere effettuato il log delle query */
 	private boolean debug = false;	
@@ -76,6 +92,8 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 	
 	private long recoveryEventiProcessingFileAfterMs;
 	private long recoveryTransazioniProcessingFileAfterMs;
+	
+	private long recoveryMaxFileLimit;
 	
 	private OpenSPCoop2Properties properties;
 	
@@ -96,16 +114,38 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 
 	private static final String ID_TIMER = "__timerFileSystemRecovery";
 	
+	private TimerLock timerLock = null;
+
+	/** Semaforo */
+	private Semaphore semaphore = null;
+	private InfoStatistics semaphore_statistics;
+	
+	private MsgDiagnostico msgDiag = null;
+	
 	/** Costruttore 
 	 * @throws CoreException */
-	public TimerFileSystemRecoveryThread(Logger logCore, Logger logSql) throws TimerException, CoreException{
+	public TimerFileSystemRecoveryThread(Logger logCore, Logger logSql, Logger logTimer) throws TimerException, CoreException{
 	
 		this.properties = OpenSPCoop2Properties.getInstance();
 		
 		this.logCore = logCore;
 		this.logSql = logSql;
+		this.logTimer = logTimer;
 	
 		this.setTimeout(this.properties.getFileSystemRecoveryTimerIntervalSeconds());
+		
+		try {
+			this.msgDiag = MsgDiagnostico.newInstance(ID_MODULO);
+			this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_FILESYSTEM_RECOVERY);
+			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER, ID_MODULO);
+		} catch (Exception e) {
+			String msgErrore = "Riscontrato Errore durante l'inizializzazione del MsgDiagnostico";
+			this.logTimerError(msgErrore,e);
+			throw new TimerException(msgErrore,e);
+		}
+		
+		this.msgDiag.logPersonalizzato("avvioInCorso");
+		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
 		
 		this.debug = this.properties.isFileSystemRecoveryDebug();
 		
@@ -114,6 +154,8 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 		
 		this.recoveryEventiProcessingFileAfterMs = this.properties.getFileSystemRecoveryEventsProcessingFileAfterMs();
 		this.recoveryTransazioniProcessingFileAfterMs = this.properties.getFileSystemRecoveryTransactionProcessingFileAfterMs();
+		
+		this.recoveryMaxFileLimit = this.properties.getFileSystemRecoveryMaxFileLimit();
 		
 		DAOFactoryProperties daoFactoryProperties = null;
 		try{
@@ -230,6 +272,33 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 			} 
 			
 		}
+		
+		if(this.properties.isFileSystemRecoveryLockEnabled()) {
+			this.timerLock = new TimerLock(TipoLock.GESTIONE_FILESYSTEM_TRACE_RECOVERY);
+	
+			if(this.properties.isTimerLockByDatabase()) {
+				this.semaphore_statistics = new InfoStatistics();
+	
+				SemaphoreConfiguration config = GestoreMessaggi.newSemaphoreConfiguration(this.properties.getFileSystemRecoveryLockMaxLife(), 
+						this.properties.getFileSystemRecoveryLockIdleTime());
+	
+				TipiDatabase databaseType = TipiDatabase.toEnumConstant(this.properties.getDatabaseType());
+				try {
+					this.semaphore = new Semaphore(this.semaphore_statistics, SemaphoreMapping.newInstance(this.timerLock.getIdLock()), 
+							config, databaseType, this.logTimer);
+				}catch(Exception e) {
+					throw new TimerException(e.getMessage(),e);
+				}
+			}
+		}
+		
+		String sec = "secondi";
+		if(this.getTimeout() == 1)
+			sec = "secondo";
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.getTimeout()+" "+sec);
+		
+		this.msgDiag.logPersonalizzato("avvioEffettuato");
+		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
 	}
 	
 	private FSRecoveryConfig conf = null;
@@ -259,6 +328,8 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 			
 			this.conf.setProcessingTransactionFileAfterMs(this.recoveryTransazioniProcessingFileAfterMs);
 			
+			this.conf.setMaxFileLimit(this.recoveryMaxFileLimit);
+			
 			return true;
 		}catch(Exception e){
 			this.logCore.error("Errore durante il recovery da file system (InitConfigurazione): "+e.getMessage(),e);
@@ -277,7 +348,7 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 				dbManager = DBTransazioniManager.getInstance();
 				r = dbManager.getResource(this.properties.getIdentitaPortaDefaultWithoutProtocol(), ID_MODULO, null);
 				if(r==null){
-					throw new Exception("Risorsa al database non disponibile");
+					throw new CoreException("Risorsa al database non disponibile");
 				}
 				Connection con = (Connection) r.getResource();
 				if(con == null)
@@ -296,15 +367,84 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 							this.daoFactory.getServiceManager(org.openspcoop2.core.eventi.utils.ProjectInfo.getInstance(), con,
 							this.daoFactoryServiceManagerPropertiesPluginsEventi, this.daoFactoryLogger);
 				}
-									
-				FSRecoveryLibrary.generate(this.conf, 
-						this.daoFactory, this.daoFactoryLogger, this.daoFactoryServiceManagerPropertiesTransazioni,
-						this.properties.getGestioneSerializableDBAttesaAttiva(), this.properties.getGestioneSerializableDBCheckInterval(),
-						transazioniSM, 
-						this.loggerTracciamentoOpenSPCoopAppender, 
-						this.loggerMsgDiagnosticoOpenSPCoopAppender,
-						this.loggerDumpOpenSPCoopAppender, this.transazioniRegistrazioneDumpHeadersCompactEnabled,
-						pluginsSM, con);
+						
+				
+				String causa = "Recupero transazioni da file system";
+				try{
+					if(this.properties.isFileSystemRecoveryLockEnabled()) {
+						GestoreMessaggi.acquireLock(
+								this.semaphore, con, this.timerLock,
+								this.msgDiag, causa, 
+								this.properties.getFileSystemRecoveryGetLockAttesaAttiva(), 
+								this.properties.getFileSystemRecoveryGetLockCheckInterval());
+					}
+				
+					// Eventi
+					List<FSRecoveryObjectType> eventi = FSRecoveryObjectType.getOperazioniEventi();
+					if(eventi!=null && !eventi.isEmpty()) {
+						boolean maxIterationsReached = false;
+						for (FSRecoveryObjectType fsRecoveryObjectType : eventi) {
+							int iteration = 0;
+							long processed = 0;
+							do {
+								processed = process(fsRecoveryObjectType, con,
+										transazioniSM,
+										pluginsSM);
+								iteration++;
+								if(iteration >= MAX_ITERATIONS) {
+									String msg = "Raggiunto numero massimo di iterazioni ("+MAX_ITERATIONS+") per il tipo '"+fsRecoveryObjectType+"' (Eventi)";
+									this.logCore.warn(msg);
+									this.logTimer.warn(msg);
+									maxIterationsReached = true;
+									break;
+								}
+							} while(processed > 0);
+							if(maxIterationsReached) {
+								// voglio che vega comuunque terminata la gestione delle transazioni
+								break;
+							}
+						}
+					}
+
+					// Transazioni
+					List<FSRecoveryObjectType> transazioni = FSRecoveryObjectType.getOperazioniTransazioni();
+					if(transazioni!=null && !transazioni.isEmpty()) {
+						boolean maxIterationsReached = false;
+						for (FSRecoveryObjectType fsRecoveryObjectType : transazioni) {
+							int iteration = 0;
+							long processed = 0;
+							do {
+								processed = process(fsRecoveryObjectType, con,
+										transazioniSM,
+										pluginsSM);
+								iteration++;
+								if(iteration >= MAX_ITERATIONS) {
+									String msg = "Raggiunto numero massimo di iterazioni ("+MAX_ITERATIONS+") per il tipo '"+fsRecoveryObjectType+"' (Transazioni)";
+									this.logCore.warn(msg);
+									this.logTimer.warn(msg);
+									maxIterationsReached = true;
+									break;
+								}
+							} while(processed > 0);
+							if(maxIterationsReached) {
+								// voglio che vega comuunque terminata la gestione delle transazioni
+								break;
+							}
+						}
+					}
+					
+					
+				}finally{
+					if(this.properties.isFileSystemRecoveryLockEnabled()) {
+						try{
+							GestoreMessaggi.releaseLock(
+									this.semaphore, con, this.timerLock,
+									this.msgDiag, causa);
+						}catch(Exception e){
+							// ignore
+						}
+					}
+				}
 				
 			}catch(Exception e){
 				this.logCore.error("Errore durante il recovery da file system: "+e.getMessage(),e);
@@ -320,6 +460,8 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 		}
 		else {
 			this.logCore.info("Timer "+ID_MODULO+" disabilitato");
+			this.msgDiag.logPersonalizzato("disabilitato");
+			this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("disabilitato"));
 		}
 				
 	}
@@ -330,4 +472,52 @@ public class TimerFileSystemRecoveryThread extends BaseThread{
 			this.logCore.info("Thread per il recovery da file system terminato");
 			
 	}
+	
+	private long process(FSRecoveryObjectType objectType, Connection con,
+			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
+			org.openspcoop2.core.eventi.dao.IServiceManager pluginsSM) {
+		
+		long startGenerazione = DateManager.getTimeMillis();
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_RECORD, objectType.name()); // riferito a intervallo
+		this.msgDiag.logPersonalizzato("recovery.inCorso");
+		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("recovery.inCorso"));
+		
+		if(this.properties.isFileSystemRecoveryLockEnabled()) {
+			try{
+				GestoreMessaggi.updateLock(
+						this.semaphore, con, this.timerLock,
+						this.msgDiag, "Recovery  '"+objectType+"' ...");
+			}catch(Throwable e){
+				this.msgDiag.logErroreGenerico(e,ID_MODULO+"-UpdateLock");
+				this.logTimer.error(ID_MODULO+"-UpdateLock: "+e.getMessage(),e);
+				return -1;
+			}
+		}
+		
+		long l = FSRecoveryLibrary.generate(this.conf, 
+				this.daoFactory, this.daoFactoryLogger, this.daoFactoryServiceManagerPropertiesTransazioni,
+				this.properties.getGestioneSerializableDBAttesaAttiva(), this.properties.getGestioneSerializableDBCheckInterval(),
+				transazioniSM, 
+				this.loggerTracciamentoOpenSPCoopAppender, 
+				this.loggerMsgDiagnosticoOpenSPCoopAppender,
+				this.loggerDumpOpenSPCoopAppender, this.transazioniRegistrazioneDumpHeadersCompactEnabled,
+				pluginsSM, con,
+				objectType);
+			
+		long endGenerazione = DateManager.getTimeMillis();
+		String tempoImpiegato = Utilities.convertSystemTimeIntoStringMillisecondi((endGenerazione-startGenerazione), true);
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TEMPO_GENERAZIONE, tempoImpiegato); 
+		this.msgDiag.addKeyword(CostantiPdD.KEY_NUMERO_RECORD, l+""); 
+		this.msgDiag.logPersonalizzato("recovery.effettuata");
+		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("recovery.effettuata"));
+		
+		return l;
+	}
+	
+	private void logTimerError(String msgErrore, Exception e) {
+		if(this.logTimer!=null) {
+			this.logTimer.error(msgErrore,e);
+		}
+	}
 }
+

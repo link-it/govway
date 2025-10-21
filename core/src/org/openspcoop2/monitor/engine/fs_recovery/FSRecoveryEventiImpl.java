@@ -45,16 +45,18 @@ public class FSRecoveryEventiImpl extends AbstractFSRecovery {
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM,
 			File directory, File directoryDLQ,
 			int tentativi,
-			long msAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
+			long msAttesaProcessingFile,
+			long maxFileProcessed) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile, maxFileProcessed);
 		this.pluginsEventiSM = pluginsEventiSM;
 	}
 
 	@Override
-	public void process(Connection connection) {
+	public long process(Connection connection) {
 		this.log.info("Recovery Eventi ...");
-		super.process(connection);
+		long l = super.process(connection);
 		this.log.info("Recovery Eventi completato");
+		return l;
 	}
 
 	@Override

@@ -55,9 +55,9 @@ public class FSRecoveryLibrary {
 				gestioneSerializableDBAttesaAttiva, gestioneSerializableDBCheckInterval,
 				transazioniSM, tracciamentoAppender, diagnosticoAppender, 
 				dumpAppender, transazioniRegistrazioneDumpHeadersCompactEnabled,
-				pluginsEventiSM, null);
+				pluginsEventiSM, null, null);
 	}
-	public static void generate(FSRecoveryConfig config,
+	public static long generate(FSRecoveryConfig config,
 			DAOFactory daoFactory, Logger daoFactoryLogger, ServiceManagerProperties daoFactoryServiceManagerProperties,
 			long gestioneSerializableDBAttesaAttiva, int gestioneSerializableDBCheckInterval,
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
@@ -65,13 +65,17 @@ public class FSRecoveryLibrary {
 			IDiagnosticProducer diagnosticoAppender,
 			IDumpProducer dumpAppender, boolean transazioniRegistrazioneDumpHeadersCompactEnabled,
 			org.openspcoop2.core.eventi.dao.IServiceManager pluginsEventiSM,
-			Connection connection){
+			Connection connection,
+			FSRecoveryObjectType objectType){
 		try{
 			
 			File dir =  new File(config.getRepository());
 			checkDir(dir, false, false);
 			
-			if(config.isRipristinoEventi()){
+			long l = 0;
+			
+			if(config.isRipristinoEventi() && 
+					(objectType==null || objectType.isGestioneEventi())){
 				if(config.isDebug()){
 					config.getLogCore().debug("Esecuzione thread per ripristino eventi ....");
 				}
@@ -82,8 +86,12 @@ public class FSRecoveryLibrary {
 				checkDir(dirEventiDLQ, true, true);
 				
 				FSRecoveryEventi fs = new FSRecoveryEventi(config.getLogCore(),config.isDebug(), pluginsEventiSM,
-						dirEventi,dirEventiDLQ, config.getTentativi(), config.getProcessingEventFileAfterMs());
-				fs.process();
+						dirEventi,dirEventiDLQ, config.getTentativi(), config.getProcessingEventFileAfterMs(), config.getMaxFileLimit());
+				long lInternal = fs.process(objectType);
+				if(lInternal<0) {
+					return lInternal;
+				}
+				l+=lInternal;
 				
 				if(config.isDebug()){
 					config.getLogCore().debug("Esecuzione thread per ripristino eventi terminato");
@@ -94,7 +102,8 @@ public class FSRecoveryLibrary {
 				}
 			}
 			
-			if(config.isRipristinoTransazioni()){
+			if(config.isRipristinoTransazioni() && 
+					(objectType==null || objectType.isGestioneTransazionii())){
 				if(config.isDebug()){
 					config.getLogCore().debug("Esecuzione thread per ripristino transazioni ....");
 				}
@@ -141,8 +150,12 @@ public class FSRecoveryLibrary {
 						dirTransazioniApplicativoServer, dirTransazioniApplicativoServerDLQ,
 						dirTransazioniApplicativoServerConsegnaTerminata, dirTransazioniApplicativoServerConsegnaTerminataDLQ,
 						dirTransazioni,dirTransazioniDLQ,
-						config.getTentativi(), config.getProcessingTransactionFileAfterMs());
-				fs.process(connection);
+						config.getTentativi(), config.getProcessingTransactionFileAfterMs(), config.getMaxFileLimit());
+				long lInternal = fs.process(objectType, connection);
+				if(lInternal<0) {
+					return lInternal;
+				}
+				l+=lInternal;
 				
 				if(config.isDebug()){
 					config.getLogCore().debug("Esecuzione thread per ripristino transazioni terminato");
@@ -153,8 +166,11 @@ public class FSRecoveryLibrary {
 				}
 			}
 			
+			return l;
+			
 		}catch(Exception e){
 			config.getLogCore().error("Errore durante il recovery da file system: "+e.getMessage(),e);
+			return -1;
 		} 
 	}
 	

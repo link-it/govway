@@ -4019,7 +4019,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					if(debug)
 						logRecoveryFS.debug("Avvio inizializzazione thread per recovery da file system ...");
 					OpenSPCoop2Startup.this.threadFileSystemRecovery = new TimerFileSystemRecoveryThread(logRecoveryFS,
-							OpenSPCoop2Logger.getLoggerOpenSPCoopFileSystemRecoverySql(debug));
+							OpenSPCoop2Logger.getLoggerOpenSPCoopFileSystemRecoverySql(debug),
+							OpenSPCoop2Logger.getLoggerOpenSPCoopTimers());
 					OpenSPCoop2Startup.this.threadFileSystemRecovery.start();
 					forceLogRecoveryFileSystem.info("Thread per la gestione transazioni stateful avviato correttamente");
 					TimerFileSystemRecoveryThread.setSTATE( TimerState.ENABLED );

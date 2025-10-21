@@ -49,6 +49,8 @@ public enum TipoLock implements Serializable {
 	
 	GESTIONE_PULIZIA_MESSAGGI_ANOMALI ("PuliziaMessaggiAnomali"),
 	
+	GESTIONE_FILESYSTEM_TRACE_RECOVERY ("FileSystemTraceRecovery"), 
+	
 	GENERAZIONE_STATISTICHE_ORARIE (getLockStatistico(TipoIntervalloStatistico.STATISTICHE_ORARIE)), 
 	GENERAZIONE_STATISTICHE_GIORNALIERE (getLockStatistico(TipoIntervalloStatistico.STATISTICHE_GIORNALIERE)), 
 	GENERAZIONE_STATISTICHE_SETTIMANALI (getLockStatistico(TipoIntervalloStatistico.STATISTICHE_SETTIMANALI)), 

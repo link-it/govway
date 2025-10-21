@@ -50,6 +50,17 @@ tematiche:
    tramite console a più di un soggetto interno al dominio seguire le
    indicazioni presenti nella sezione :ref:`multiTenant`.
 
+#. *Modalità di Tracciamento*
+
+   GovWay registra le informazioni relative alle comunicazioni gestite attraverso un sistema di tracciamento configurabile su database e/o su file. È importante valutare attentamente le modalità di tracciamento da attivare in base alle esigenze di monitoraggio e alle risorse disponibili.
+
+   La configurazione di default prevede il tracciamento su database nella fase finale "*Risposta consegnata*", con attivazione automatica di un processo di failover su filesystem in caso di indisponibilità del database.
+
+   .. warning::
+      Il processo di failover richiede adeguato spazio disco nella directory configurata (default: */var/govway/resources*) per serializzare temporaneamente le tracce in attesa di essere riversate nel database.
+
+   Per maggiori dettagli sulle fasi di tracciamento, sul tracciamento su database con failover e sul tracciamento su file seguire le indicazioni presenti nella sezione :ref:`tracciamentoInstall`.
+
 #. *Gestione CORS*
 
    Nella configurazione di default di GovWay è abilitata la gestione del
@@ -174,6 +185,7 @@ tematiche:
         secrets/index
         urlInvocazione
 	multiTenant
+	tracciamento/index
 	cors
 	rateLimiting/index
 	tempiRisposta

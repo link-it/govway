@@ -530,6 +530,17 @@
 			<param name="value" value="false"/>
 		</antcall>
 		
+		<if>
+			<equals arg1="${antinstaller_gestione_nodi}" arg2="dynamic"/>
+			<then>
+				<antcall target="set_property">
+					<param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.resources.fileSystemRecovery.lock.enabled"/>
+					<param name="value" value="true"/>
+				</antcall>
+			</then>
+		</if>				
+		
 		<!-- 
 		  PROTOCOL DEFAULT
 		  SOGGETTO DEFAULT

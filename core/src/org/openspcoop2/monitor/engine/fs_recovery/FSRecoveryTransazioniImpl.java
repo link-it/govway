@@ -49,16 +49,18 @@ public class FSRecoveryTransazioniImpl extends AbstractFSRecovery {
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM,
 			File directory, File directoryDLQ,
 			int tentativi,
-			long msAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
+			long msAttesaProcessingFile,
+			long maxFileProcessed) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile, maxFileProcessed);
 		this.transazioniSM = transazioniSM;
 	}
 
 	@Override
-	public void process(Connection connection) {
+	public long process(Connection connection) {
 		this.log.info("Recovery Transazioni ...");
-		super.process(connection);
+		long l = super.process(connection);
 		this.log.info("Recovery Transazioni completato");
+		return l;
 	}
 	
 	private static boolean enrichEventi = false;	

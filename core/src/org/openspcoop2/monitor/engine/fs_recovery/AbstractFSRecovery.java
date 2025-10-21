@@ -42,19 +42,22 @@ public abstract class AbstractFSRecovery {
 	protected File directoryDLQ;
 	protected int tentativi;
 	protected long msAttesaProcessingFile;
+	protected long maxFileProcessed;
 	
 	protected AbstractFSRecovery( 
 			Logger log,
 			boolean debug,
 			File directory, File directoryDLQ,
 			int tentativi,
-			long msAttesaProcessingFile) {
+			long msAttesaProcessingFile,
+			long maxFileProcessed) {
 		this.log = log;
 		this.debug = debug;
 		this.directory = directory;
 		this.directoryDLQ = directoryDLQ;
 		this.tentativi = tentativi;
 		this.msAttesaProcessingFile = msAttesaProcessingFile;
+		this.maxFileProcessed = maxFileProcessed;
 	}
 	
 	public abstract void insertObject(File file, Connection connection) throws UtilsException, UtilsMultiException;
@@ -85,8 +88,10 @@ public abstract class AbstractFSRecovery {
 		}
 	}
 	
-	public void process(Connection connection){
+	public long process(Connection connection){
 
+		long count = 0;
+				
 		// process file presenti nella directory.
 		// Per ogni file fare il marshall dell'oggetto 'it.link.pdd.core.plugins.eventi.utils.serializer.JaxbDeserializer'
 		try {
@@ -107,15 +112,23 @@ public abstract class AbstractFSRecovery {
 					else {
 						countProcessatiConErrore++;
 					}
+					count++;
+					if(this.maxFileProcessed>0 && count>=this.maxFileProcessed) {
+						this.logInfo("Processamento di ["+filesToProcess.length+"] file terminato; raggiunto max numero di file processabili: "+this.maxFileProcessed+". ["+countProcessatiCorrettamente+"] file processati correttamente, ["+countProcessatiConErrore+"] con errore");
+						return count;
+					}
 				}
 				this.logInfo("Processamento di ["+filesToProcess.length+"] file completato. ["+countProcessatiCorrettamente+"] file processati correttamente, ["+countProcessatiConErrore+"] con errore");
 			} else {
 				this.logInfo("Nessun file da processare");
 			}
+			return count;
 			
 		}catch(Exception e) {
 			this.logError("Errore durante Il Recovery: "+e.getMessage(), e);
+			return -1;
 		}
+		
 	}
 	private boolean process(Connection connection, File file) throws UtilsException{
 		try {
