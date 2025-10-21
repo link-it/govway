@@ -56,8 +56,9 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM, 
 			File directory, File directoryDLQ,
 			int tentativi,
-			long msAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
+			long msAttesaProcessingFile,
+			long maxFileProcessed) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile, maxFileProcessed);
 		
 		this.transazioniSM = transazioniSM;
 		this.daoFactory = daoFactory;
@@ -68,10 +69,11 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 	}
 
 	@Override
-	public void process(Connection connection) {
+	public long process(Connection connection) {
 		this.log.info("Recovery TransazioneServerApplicativo ...");
-		super.process(connection);
+		long l = super.process(connection);
 		this.log.info("Recovery TransazioneServerApplicativo completato");
+		return l;
 	}
 	
 	@Override

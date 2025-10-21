@@ -1,3 +1,9 @@
+2025-10-21  Andrea Poli <apoli@link.it>
+
+	Aggiunto semaforo per il recupero delle tracce da filesystem
+
+	INSERT INTO OP2_SEMAPHORE (applicative_id) VALUES ('FileSystemTraceRecovery');
+
 2025-10-20  Andrea Poli <apoli@link.it>
 
 	Rivisto lo script di inizializzazione della tabella transazioni_esiti per associare alla colonna govway_status_class il numero della classe anziché l’identificativo della tabella di riferimento.

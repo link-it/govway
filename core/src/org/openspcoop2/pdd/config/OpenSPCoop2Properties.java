@@ -2621,6 +2621,15 @@ public class OpenSPCoop2Properties {
 				this.isFileSystemRecoveryTimerTransactionEnabled();
 				this.getFileSystemRecoveryEventsProcessingFileAfterMs();
 				this.getFileSystemRecoveryTransactionProcessingFileAfterMs();
+				this.getFileSystemRecoveryMaxFileLimit();
+			}
+			if(this.isFileSystemRecoveryLockEnabled()) {
+				if(this.isTimerLockByDatabase()) {
+					this.getFileSystemRecoveryLockMaxLife();
+					this.getFileSystemRecoveryLockIdleTime();
+				}
+				this.getFileSystemRecoveryGetLockAttesaAttiva();
+				this.getFileSystemRecoveryGetLockCheckInterval();
 			}
 			
 			// ControlloTraffico
@@ -31229,6 +31238,161 @@ public class OpenSPCoop2Properties {
 		return this.getFileSystemRecoveryTransactionProcessingFileAfterMs;
 	}
 	
+	private Long getFileSystemRecoveryMaxFileLimit = null;
+	public long getFileSystemRecoveryMaxFileLimit() throws CoreException {	
+		if(this.getFileSystemRecoveryMaxFileLimit==null){
+			String pName = "org.openspcoop2.pdd.resources.fileSystemRecovery.maxFileLimit";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					throw new CoreException("Proprieta' non impostata");
+				}
+				name = name.trim();
+				this.getFileSystemRecoveryMaxFileLimit = Long.valueOf(name);
+			} catch(java.lang.Exception e) {
+				this.logError("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new CoreException(e.getMessage(),e);
+			}    
+		}
+
+		return this.getFileSystemRecoveryMaxFileLimit;
+	}
+	
+	private Boolean isFileSystemRecoveryLockEnabled = null;
+	public boolean isFileSystemRecoveryLockEnabled() {	
+		String pName = "org.openspcoop2.pdd.resources.fileSystemRecovery.lock.enabled";
+		if(this.isFileSystemRecoveryLockEnabled==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+				if(name==null){
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, true));
+					name="true";
+				}
+				name = name.trim();
+				this.isFileSystemRecoveryLockEnabled = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, true));
+				this.isFileSystemRecoveryLockEnabled = true;
+			}    
+		}
+
+		return this.isFileSystemRecoveryLockEnabled;
+	}
+	
+	private Integer getFileSystemRecoveryLockMaxLife = null;
+	public int getFileSystemRecoveryLockMaxLife() {	
+		if(this.getFileSystemRecoveryLockMaxLife==null){
+			String pName = "org.openspcoop2.pdd.resources.fileSystemRecovery.lock.maxLife";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					this.getFileSystemRecoveryLockMaxLife = java.lang.Integer.parseInt(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.TIMER_LOCK_MAX_LIFE));
+					this.getFileSystemRecoveryLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, CostantiPdD.TIMER_LOCK_MAX_LIFE));
+				this.getFileSystemRecoveryLockMaxLife = CostantiPdD.TIMER_LOCK_MAX_LIFE;
+			}  
+			if(this.getFileSystemRecoveryLockMaxLife!=null && this.getFileSystemRecoveryLockMaxLife>0) {
+				// trasformo in millisecondi l'informazione fornita in secondi
+				this.getFileSystemRecoveryLockMaxLife = this.getFileSystemRecoveryLockMaxLife *1000;
+			}
+		}
+
+		if(this.getFileSystemRecoveryLockMaxLife!=null) {
+			return this.getFileSystemRecoveryLockMaxLife.intValue();
+		}
+		return -1;
+	}
+	
+	private Integer getFileSystemRecoveryLockIdleTime = null;
+	public int getFileSystemRecoveryLockIdleTime() {	
+		if(this.getFileSystemRecoveryLockIdleTime==null){
+			String pName = "org.openspcoop2.pdd.resources.fileSystemRecovery.lock.idleTime";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					this.getFileSystemRecoveryLockIdleTime = java.lang.Integer.parseInt(name);
+				}else{
+					this.logWarn(getMessaggioProprietaNonImpostata(pName, CostantiPdD.TIMER_LOCK_IDLE_TIME));
+					this.getFileSystemRecoveryLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn(getMessaggioProprietaNonImpostata(pName, e, CostantiPdD.TIMER_LOCK_IDLE_TIME));
+				this.getFileSystemRecoveryLockIdleTime = CostantiPdD.TIMER_LOCK_IDLE_TIME;
+			} 
+			if(this.getFileSystemRecoveryLockIdleTime!=null && this.getFileSystemRecoveryLockIdleTime>0) {
+				// trasformo in millisecondi l'informazione fornita in secondi
+				this.getFileSystemRecoveryLockIdleTime = this.getFileSystemRecoveryLockIdleTime *1000;
+			}
+		}
+
+		if(this.getFileSystemRecoveryLockIdleTime!=null) {
+			return this.getFileSystemRecoveryLockIdleTime.intValue();
+		}
+		return -1;
+	}
+	
+	private Long getFileSystemRecoveryGetLockAttesaAttiva = null;
+	public long getFileSystemRecoveryGetLockAttesaAttiva() {	
+		if(this.getFileSystemRecoveryGetLockAttesaAttiva==null){
+			String pName = "org.openspcoop2.pdd.resources.fileSystemRecovery.lock.attesaAttiva";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					long time = java.lang.Long.parseLong(name);
+					this.getFileSystemRecoveryGetLockAttesaAttiva = time*1000;
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA);
+					this.getFileSystemRecoveryGetLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_ATTESA_ATTIVA+", errore:"+e.getMessage(),e);
+				this.getFileSystemRecoveryGetLockAttesaAttiva = CostantiPdD.GET_LOCK_ATTESA_ATTIVA;
+			}    
+		}
+
+		return this.getFileSystemRecoveryGetLockAttesaAttiva;
+	}
+
+	private Integer getFileSystemRecoveryGetLockCheckInterval = null;
+	public int getFileSystemRecoveryGetLockCheckInterval() {	
+		if(this.getFileSystemRecoveryGetLockCheckInterval==null){
+			String pName = "org.openspcoop2.pdd.resources.fileSystemRecovery.lock.check";
+			try{ 
+				String name = null;
+				name = this.reader.getValueConvertEnvProperties(pName);
+
+				if(name!=null){
+					name = name.trim();
+					int time = java.lang.Integer.parseInt(name);
+					this.getFileSystemRecoveryGetLockCheckInterval = time;
+				}else{
+					this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL);
+					this.getFileSystemRecoveryGetLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.logWarn("Proprieta' di openspcoop '"+pName+"' non impostato, viene utilizzato il default="+CostantiPdD.GET_LOCK_CHECK_INTERVAL+", errore:"+e.getMessage(),e);
+				this.getFileSystemRecoveryGetLockCheckInterval = CostantiPdD.GET_LOCK_CHECK_INTERVAL;
+			}  
+		}
+
+		return this.getFileSystemRecoveryGetLockCheckInterval;
+	}
 	
 	
 	

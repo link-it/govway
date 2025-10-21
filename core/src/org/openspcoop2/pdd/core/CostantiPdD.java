@@ -722,6 +722,10 @@ public class CostantiPdD {
     public static final String KEY_DATI_OPERAZIONE = "@DATI_OPERAZIONE@";
     /** Costante che identifica una keyword per rappresentare il dettaglio di una operazione */
     public static final String KEY_DETTAGLI_OPERAZIONE = "@DETTAGLI_OPERAZIONE@";
+    /** Costante che identifica una keyword per rappresentare un tipo di record */
+    public static final String KEY_TIPO_RECORD = "@TIPO_RECORD@";
+    /** Costante che identifica una keyword per rappresentare il numero di record */
+    public static final String KEY_NUMERO_RECORD = "@NUMERO_RECORD@";
     /** Costante che identifica una keyword per rappresentare un tipo di statistica */
     public static final String KEY_TIPO_STATISTICA = "@TIPO_STATISTICA@";
     /** Costante che identifica una keyword per rappresentare un intervallo temporale */

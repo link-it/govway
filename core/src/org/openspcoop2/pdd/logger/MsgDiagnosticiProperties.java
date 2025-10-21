@@ -784,6 +784,7 @@ public class MsgDiagnosticiProperties {
 	public static final String MSG_DIAG_TIMER_GESTORE_CHIAVI_PDND="timerGestoreChiaviPDND.";
 	public static final String MSG_DIAG_TIMER_GESTORE_OPERAZIONI_ASINCRONE="timerGestoreOperazioniAsincrone.";
 	public static final String MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE="timerSvecchiamentoOperazioniAsincrone.";
+	public static final String MSG_DIAG_TIMER_FILESYSTEM_RECOVERY="timerFileSystemRecovery.";
 	public static final String MSG_DIAG_OPENSPCOOP_STARTUP="openspcoopStartup.";
 	public static final String MSG_DIAG_ALL="all.";
 	// Keyword
@@ -1494,6 +1495,12 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE+"svecchiamento.inCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE+"svecchiamento.effettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_TIMER_SVECCHIAMENTO_OPERAZIONI_ASINCRONE+"svecchiamento.fallita",		
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_FILESYSTEM_RECOVERY+"avvioInCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_FILESYSTEM_RECOVERY+"avvioEffettuato",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_FILESYSTEM_RECOVERY+"disabilitato",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_FILESYSTEM_RECOVERY+"recovery",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_FILESYSTEM_RECOVERY+"recovery.inCorso",
+		MsgDiagnosticiProperties.MSG_DIAG_TIMER_FILESYSTEM_RECOVERY+"recovery.effettuata",		
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"pdd",
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"IntegrationManager",
 		MsgDiagnosticiProperties.MSG_DIAG_OPENSPCOOP_STARTUP+"erroreGenerico",

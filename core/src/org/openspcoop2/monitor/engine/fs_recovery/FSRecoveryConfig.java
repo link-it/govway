@@ -20,6 +20,7 @@
 package org.openspcoop2.monitor.engine.fs_recovery;
 
 import org.openspcoop2.monitor.engine.exceptions.EngineException;
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.monitor.engine.config.MonitorProperties;
 import org.openspcoop2.monitor.engine.constants.CostantiConfigurazione;
 
@@ -53,6 +54,9 @@ public class FSRecoveryConfig {
 	/** Indicazione dopo quanti millisecondi iniziare a processare un file presente nel repository */
 	private long processingTransactionFileAfterMs;
 	private long processingEventFileAfterMs;
+	
+	/** Indicazione sul numero massimo di file processati */
+	private long maxFileLimit = -1;
 	
 	/** Repository */
 	private String repository = null;
@@ -96,6 +100,11 @@ public class FSRecoveryConfig {
 				this.processingEventFileAfterMs = Long.parseLong(props.getProperty(CostantiConfigurazione.FS_RECOVERY_EVENTS_PROCESSING_FILE_AFTER_MS, true, true));
 				
 				this.processingTransactionFileAfterMs = Long.parseLong(props.getProperty(CostantiConfigurazione.FS_RECOVERY_TRANSACTION_PROCESSING_FILE_AFTER_MS, true, true));
+				
+				String max = props.getProperty(CostantiConfigurazione.FS_RECOVERY_MAX_FILE_LIMIT, false, true);
+				if(max!=null && StringUtils.isNotEmpty(max)) {
+					this.maxFileLimit = Long.parseLong(max);
+				}
 				
 				this.defaultProtocol = props.getProperty(CostantiConfigurazione.PDD_MONITOR_DEFAULT_PROTOCOL, false, true);
 			}
@@ -167,6 +176,13 @@ public class FSRecoveryConfig {
 	}
 	public void setProcessingEventFileAfterMs(long processingEventFileAfterMs) {
 		this.processingEventFileAfterMs = processingEventFileAfterMs;
+	}
+
+	public long getMaxFileLimit() {
+		return this.maxFileLimit;
+	}
+	public void setMaxFileLimit(long maxFileLimit) {
+		this.maxFileLimit = maxFileLimit;
 	}
 	
 	public String getDefaultProtocol() {

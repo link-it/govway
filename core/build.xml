@@ -476,7 +476,7 @@
 			<param name="SQLDirectory" value="${sql}"/>
 			<param name="SQLDestFile" value="${dist}/RepositoryTracceDiagnostici.sql"/>
 			<param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioMessaggiDiagnostici.sql archiviComunicazioni/ArchivioTracce.sql archiviComunicazioni/ArchivioTransazioni.sql archiviComunicazioni/ArchivioEventi.sql"/>
-			<param name="SQLDataFiles" value="init/archiviComunicazioni/ArchivioTransazioni_data.sql"/>
+			<param name="SQLDataFiles" value="init/archiviComunicazioni/ArchivioTransazioni_data.sql init/archiviComunicazioni/Semaphore_transazioni_data.sql"/>
 			<param name="SQLInsertDBInfo" value="" />
 		</antcall>
                 <antcall target="build_sql">
@@ -507,7 +507,7 @@
                         <param name="SQLDirectory" value="${sql}"/>
                         <param name="SQLDestFile" value="${dist}/RepositoryStatistiche.sql"/>
                         <param name="SQLSourceFiles" value="archiviComunicazioni/ArchivioStatistiche.sql"/>
-                        <param name="SQLDataFiles" value="init/archiviComunicazioni/ArchivioStatistiche_data.sql init/runtimePdD/Semaphore_statistiche_data.sql"/>
+                        <param name="SQLDataFiles" value="init/archiviComunicazioni/ArchivioStatistiche_data.sql init/archiviComunicazioni/Semaphore_statistiche_data.sql"/>
                         <param name="SQLInsertDBInfo" value="" />
                 </antcall>
                 <antcall target="build_sql">

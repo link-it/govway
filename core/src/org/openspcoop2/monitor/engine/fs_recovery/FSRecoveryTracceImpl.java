@@ -45,16 +45,18 @@ public class FSRecoveryTracceImpl extends AbstractFSRecovery {
 			ITracciaProducer tracciamentoAppender,
 			File directory, File directoryDLQ,
 			int tentativi,
-			long msAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
+			long msAttesaProcessingFile,
+			long maxFileProcessed) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile, maxFileProcessed);
 		this.tracciamentoAppender = tracciamentoAppender;
 	}
 
 	@Override
-	public void process(Connection connection) {
+	public long process(Connection connection) {
 		this.log.info("Recovery Tracce ...");
-		super.process(connection);
+		long l = super.process(connection);
 		this.log.info("Recovery Tracce completato");
+		return l;
 	}
 
 	@Override

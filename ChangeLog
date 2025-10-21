@@ -1,3 +1,12 @@
+2025-10-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1612
+	Introdotta gestione tramite semaforo su database per coordinare i timer di recupero delle tracce tra più nodi in ambiente cluster, 
+	consentendo l'utilizzo sicuro di un volume persistente condiviso per il failover del tracciamento. 
+	Aggiunta documentazione sulla configurazione del tracciamento, sul processo di failover e sui requisiti di spazio disco, con particolare attenzione agli ambienti cloud orchestrati.
+	I file delle tracce salvati su filesystem contengono ora nel nome un UUID che ne garantisce l’univocità.
+
 2025-10-20  Andrea Poli <apoli@link.it>
 
 	* [BatchStatistiche]

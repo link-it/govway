@@ -57,8 +57,9 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM, 
 			File directory, File directoryDLQ,
 			int tentativi,
-			long msAttesaProcessingFile) {
-		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile);
+			long msAttesaProcessingFile,
+			long maxFileProcessed) {
+		super(log, debug, directory, directoryDLQ, tentativi, msAttesaProcessingFile, maxFileProcessed);
 		
 		this.transazioniSM = transazioniSM;
 		this.daoFactory = daoFactory;
@@ -69,10 +70,11 @@ public class FSRecoveryTransazioniApplicativoServerConsegnaTerminataImpl extends
 	}
 
 	@Override
-	public void process(Connection connection) {
+	public long process(Connection connection) {
 		this.log.info("Recovery TransazioneServerApplicativo aggiornamento informazione di consegna terminata ...");
-		super.process(connection);
+		long l = super.process(connection);
 		this.log.info("Recovery TransazioneServerApplicativo aggiornamento informazione di consegna terminata completato");
+		return l;
 	}
 	
 	@Override

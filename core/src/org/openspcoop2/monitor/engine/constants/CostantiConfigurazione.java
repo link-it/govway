@@ -63,6 +63,7 @@ public class CostantiConfigurazione {
 	public static final String FS_RECOVERY_DEBUG = "org.openspcoop2.monitor.fileSystemRecovery.debug";
 	public static final String FS_RECOVERY_REPOSITORY_DIR = "org.openspcoop2.monitor.fileSystemRecovery.repository";
 	public static final String FS_RECOVERY_MAX_ATTEMPTS = "org.openspcoop2.monitor.fileSystemRecovery.maxAttempts";
+	public static final String FS_RECOVERY_MAX_FILE_LIMIT = "org.openspcoop2.monitor.fileSystemRecovery.maxFileLimit";
 	public static final String FS_RECOVERY_EVENTS_ENABLED = "org.openspcoop2.monitor.fileSystemRecovery.events.enabled";
 	public static final String FS_RECOVERY_EVENTS_PROCESSING_FILE_AFTER_MS = "org.openspcoop2.monitor.fileSystemRecovery.events.processingFileAfterMs";
 	public static final String FS_RECOVERY_TRANSACTION_ENABLED = "org.openspcoop2.monitor.fileSystemRecovery.transaction.enabled";
