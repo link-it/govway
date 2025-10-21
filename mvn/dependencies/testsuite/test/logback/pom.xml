@@ -17,7 +17,7 @@
 
 		<jar.group.name>logback</jar.group.name>
 		
-		<logback.version>1.5.15</logback.version>
+		<logback.version>1.5.19</logback.version>
 
 	</properties>
 
