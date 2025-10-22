@@ -746,17 +746,58 @@ public class AuditAppender {
 				CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PASSWORD.equals(nomeProprieta) ||
 				CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PASSWORD.equals(nomeProprieta);
 	}
-	
-	
+
+	/**
+	 * Classe interna per offuscare le informazioni sensibili senza cifratura BYOK
+	 * Sostituisce i valori sensibili con ***
+	 */
+	private static class ObfuscatedBYOKUtilities extends DriverBYOKUtilities {
+
+		private static final String OBFUSCATED_VALUE = "***";
+
+		public ObfuscatedBYOKUtilities() {
+			super(null);
+		}
+
+		@Override
+		public String wrap(String value) throws UtilsException {
+			if(value==null || value.isEmpty()) {
+				return value;
+			}
+			return OBFUSCATED_VALUE;
+		}
+
+		@Override
+		public byte[] wrap(byte[] value) throws UtilsException {
+			if(value==null || value.length==0) {
+				return value;
+			}
+			return OBFUSCATED_VALUE.getBytes();
+		}
+	}
+
+
 	private String serialize(Object object,org.openspcoop2.utils.serialization.Filter listFilter, boolean registrazioneBinari,
 			DriverBYOKUtilities byok)throws AuditException{
-		if(byok!=null) {
-			try {
-				object = byok(byok, object);
-			}catch(Exception e) {
-				throw new AuditException(e.getMessage(),e);
+		DriverBYOKUtilities byokUtilizzato = byok;
+		try {
+			if(byok==null || byok.getDriverBYOK(true, false) == null) {
+				// se non è attivo un byok di cifratura/wrap
+				// devo comunque nascondere le informazioni sensibili
+				// sfrutto l'offuscamento tramite un BYOK di mascheramento
+				// NOTA: gli oggetti reali non vengono modificati poichè dentro il metodo byok(..) viene effettuato il clone
+				byokUtilizzato = newObfuscatedBYOKUtilities();
 			}
+		}catch(Exception e) {
+			throw new AuditException(e.getMessage(),e);
 		}
+		
+		try {
+			object = byok(byokUtilizzato, object);
+		}catch(Exception e) {
+			throw new AuditException(e.getMessage(),e);
+		}
+
 		if(Costanti.DUMP_JSON_FORMAT.equals(AuditAppender.configurazioneAuditing.getDumpFormat())){
 			return this.serializeJsonObject(object, listFilter, registrazioneBinari);
 		}
@@ -764,6 +805,14 @@ public class AuditAppender {
 			return this.serializeXMLObject(object, listFilter, registrazioneBinari);
 		}else {
 			throw new AuditException("Tipo di formattazione non conosciuta: "+AuditAppender.configurazioneAuditing.getDumpFormat());
+		}
+	}
+	
+	private ObfuscatedBYOKUtilities newObfuscatedBYOKUtilities() throws AuditException {
+		try {
+			return new ObfuscatedBYOKUtilities();
+		}catch(Exception e) {
+			throw new AuditException(e.getMessage(),e);
 		}
 	}
 }

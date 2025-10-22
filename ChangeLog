@@ -1,3 +1,9 @@
+2025-10-22  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1627
+	Migliorata la gestione delle informazioni sensibili nel report di auditing quando la funzionalità BYOK non è attiva.
+
 2025-10-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
