@@ -76,7 +76,7 @@ public class DriverBYOKUtilities {
 		this.nodoruntime = nodoruntime;
 	}
 	
-	private DriverBYOK getDriverBYOK(boolean wrap, boolean unwrap) throws UtilsException{
+	public DriverBYOK getDriverBYOK(boolean wrap, boolean unwrap) throws UtilsException{
 		return this.nodoruntime ?
 				getDriverBYOKRuntimeNode(wrap, unwrap) :
 				getDriverBYOKManagerNode(wrap, unwrap);
