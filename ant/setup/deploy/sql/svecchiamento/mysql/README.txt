@@ -23,6 +23,6 @@ Questo significa che: verranno mantenuti i dati generati nei 30 giorni precedent
 
 ### Esecuzione
 
-Esempio di esecuzione dello script per Oracle:
+Esempio di esecuzione dello script per MySQL:
 
-sqlplus govwayuser/govwaypassword@DB_GOVWAY < svecchiamento.sql >> "svecchiamento-$(date +'%d').stdout.log" 2> "svecchiamento-$(date +'%d').stderr.log"
+mysql -u govwayuser -pgovwaypass govwaydb < svecchiamento.sql >> "svecchiamento-$(date +'%d').stdout.log" 2> "svecchiamento-$(date +'%d').stderr.log"
