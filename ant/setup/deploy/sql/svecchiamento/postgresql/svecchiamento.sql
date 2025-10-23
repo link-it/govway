@@ -1,6 +1,6 @@
 -- pulizia di 10 giorni di transazioni mantenendo sulle tabelle gli ultimi 30 giorni
 \set clean '\'10 days\''
-\set retention '\'31 days\''
+\set retention '\'30 days\''
 \set start 'CURRENT_DATE - interval :retention - interval :clean'
 \set end 'CURRENT_DATE - interval :retention '
 

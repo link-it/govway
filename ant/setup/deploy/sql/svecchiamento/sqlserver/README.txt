@@ -20,3 +20,9 @@ Questo significa che: verranno mantenuti i dati generati nei 30 giorni precedent
 È possibile modificare la politica di default, editando lo script e modificando i parametri 'clean' e 'retention' definiti in testa allo script stesso.
 
 È consigliabile sempre far verificare lo script SQL modificati dal DBA, in modo da assicurare che siano utilizzabili correttamente nell'installazione oggetto di manutenzione.
+
+### Esecuzione
+
+Esempio di esecuzione dello script per SQL Server:
+
+sqlcmd -S localhost -U govwayuser -P govwaypass -d govwaydb -i svecchiamento.sql -o "svecchiamento-$(date +'%d').stdout.log"
