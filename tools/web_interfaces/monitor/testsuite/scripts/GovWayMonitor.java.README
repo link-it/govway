@@ -1,0 +1,5 @@
+Attenzione ad allineare sempre anche la chiamata in 
+        @Override
+        protected String getLoginRequestData() {
+               return "AJAXREQUEST=_viewRoot&j_id46=j_id46&username={%username%}&password={%password%}&javax.faces.ViewState=j_id1&loginBtn=loginBtn&";
+        }

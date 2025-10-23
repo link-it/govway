@@ -59,20 +59,23 @@ public class OAuth2LoginStartServlet extends HttpServlet {
 	}
 
 	private void engineDoGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-		// login utenza  
+		// login utenza
 		GeneralHelper generalHelper = null;
 		Properties loginProperties = null;
-		
+
 		HttpSession session = httpServletRequest.getSession();
 		try {
 			loginProperties = ConsoleProperties.getInstance().getLoginProperties();
 
-			
+
 			String state = UUID.randomUUID().toString();
 			// 1) Costruisci l'URL di autorizzazione Keycloak
 			String authorizationUrl = OAuth2Utilities.getURLLoginOAuth2(loginProperties, state);
 
 			session.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_OAUTH2_STATE, state);
+
+			// Log debug sessione iniziale
+			ControlStationCore.logDebug("[OAuth2LoginStart] Session ID: " + session.getId() + ", State salvato: " + state);
 
 			httpServletResponse.sendRedirect(authorizationUrl);
 		} catch (IOException e) {

@@ -81,7 +81,7 @@ public class OAuth2UserServlet extends HttpServlet {
 	}
 
 	private void engineDoGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-		// login utenza  
+		// login utenza
 		IPrincipalReader principalReader = null;
 		String loginUtenteNonAutorizzatoRedirectUrl = null;
 		String loginUtenteNonValidoRedirectUrl = null;
@@ -90,6 +90,12 @@ public class OAuth2UserServlet extends HttpServlet {
 		GeneralHelper generalHelper = null;
 
 		HttpSession session = httpServletRequest.getSession();
+
+		// Log debug sessione OAuth2UserServlet
+		log.debug("[OAuth2User] Session ID: {}, Session creation time: {}, Last accessed time: {}",
+			session.getId(),
+			new java.util.Date(session.getCreationTime()),
+			new java.util.Date(session.getLastAccessedTime()));
 
 		try {
 			String loginTipo = ConsoleProperties.getInstance().getLoginTipo();

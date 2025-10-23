@@ -41,7 +41,7 @@
 	</init-param>
 	<init-param>
 		<param-name>sameSite.value</param-name>
-		<param-value>Strict</param-value> <!-- Strict, Lax o None -->
+		<param-value>Lax</param-value> <!-- Strict, Lax o None -->
 	</init-param>
 	<init-param>
 		<param-name>sameSite.logCategory</param-name>

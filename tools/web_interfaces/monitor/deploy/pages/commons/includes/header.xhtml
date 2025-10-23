@@ -196,7 +196,7 @@
 										                <rich:menuItem submitMode="server" value="Profilo utente" action="editUser" actionListener="#{loginBean.nuovoTokenCsrfListener}" >
 										                	<f:setPropertyActionListener value="#{loginBean.loggedUser.username}" target="#{utentiBean.id}"></f:setPropertyActionListener>
 										                </rich:menuItem>
-										                <rich:menuItem submitMode="server" value="Logout" action="#{loginBean.logout}" actionListener="#{loginBean.logoutListener}"  rendered="#{loginBean.showLogout == 'true'}"/>
+										                <rich:menuItem submitMode="ajax" value="Logout" action="#{loginBean.logout}" actionListener="#{loginBean.logoutListener}"  rendered="#{loginBean.showLogout == 'true'}"/>
 										            </rich:dropDownMenu>
 												</h:panelGrid>
 											</h:panelGroup>

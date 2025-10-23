@@ -1462,6 +1462,7 @@ public class LoginBean extends AbstractLoginBean {
 			ec.getSessionMap().put(OAuth2Costanti.ATTRIBUTE_NAME_OAUTH2_STATE, state);
 
 			ec.redirect(authorizationUrl);
+			FacesContext.getCurrentInstance().responseComplete();
 		} catch (IOException e) {
 			this.loginErrorMessage = "Si e' verificato un errore il login OAuth2, impossibile autenticare l'utente.";
 			this.log.error(this.loginErrorMessage);

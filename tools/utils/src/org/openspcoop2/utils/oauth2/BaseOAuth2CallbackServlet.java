@@ -55,6 +55,26 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 		HttpSession session = request.getSession(false);
 		try {
 
+			// Log debug sessione callback
+			if (session != null) {
+				log.debug("[OAuth2Callback] Session ID: {}, Session creation time: {}, Last accessed time: {}",
+					session.getId(),
+					new java.util.Date(session.getCreationTime()),
+					new java.util.Date(session.getLastAccessedTime()));
+				String stateInSession = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_OAUTH2_STATE);
+				log.debug("[OAuth2Callback] State in session: {}", stateInSession);
+			} else {
+				log.warn("[OAuth2Callback] Session is NULL - session lost during OAuth2 flow");
+			}
+
+			String stateFromRequest = request.getParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_STATE);
+			log.debug("[OAuth2Callback] State from OAuth2 provider: {}", stateFromRequest);
+
+			// Verifica che la sessione esista prima di validare i parametri
+			if (session == null) {
+				throw new Oauth2Exception(HttpServletResponse.SC_BAD_REQUEST+"", "Sessione non valida o scaduta. Impossibile completare l'autenticazione OAuth2.");
+			}
+
 			String code = validaParametriRichiesta(request, session);
 
 			OAuth2Token oAuth2Token = OAuth2Utilities.getToken(log, loginProperties, code);
@@ -94,6 +114,9 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 			// ricreo la sessione se non presente
 			session = request.getSession(true);
 
+			// Log debug sessione dopo autenticazione
+			log.debug("[OAuth2Callback] Session ID dopo autenticazione: {}, Access token salvato", session.getId());
+
 			// Salva token e scadenza se vuoi gestire refresh
 			session.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ACCESS_TOKEN, oAuth2Token.getAccessToken());
 			session.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN, oAuth2Token.getIdToken());
@@ -103,6 +126,7 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 			session.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_USER_INFO, oauth2UserInfo);
 
 			// 7) Redirect alla home o pagina protetta
+			log.debug("[OAuth2Callback] Redirect to console home");
 			response.sendRedirect(this.getConsoleHome(request));
 		} catch (IOException e) {
 			log.error("Errore durante lo scambio del token OAuth2: " + e.getMessage(), e);
@@ -153,9 +177,12 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 
 		// verifica state
 		if (StringUtils.isNotBlank(state)) {
-			String stateFromSession = session != null ? (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_OAUTH2_STATE) : null ;
-			if(StringUtils.isBlank(stateFromSession) || !stateFromSession.equals(state)) {
-				throw new Oauth2Exception(HttpServletResponse.SC_BAD_REQUEST+"", "Parametro 'state' non valido.");
+			String stateFromSession = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_OAUTH2_STATE);
+			if(StringUtils.isBlank(stateFromSession)) {
+				throw new Oauth2Exception(HttpServletResponse.SC_BAD_REQUEST+"", "Parametro 'state' non presente in sessione. La sessione potrebbe essere scaduta durante l'autenticazione OAuth2.");
+			}
+			if(!stateFromSession.equals(state)) {
+				throw new Oauth2Exception(HttpServletResponse.SC_BAD_REQUEST+"", "Parametro 'state' non valido. Possibile tentativo di CSRF o sessione corrotta.");
 			}
 		}
 		return code;

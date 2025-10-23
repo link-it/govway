@@ -1,0 +1,6 @@
+Attenzione ad allineare sempre anche la chiamata in
+        @Override
+        protected String getLoginRequestData() {
+                return "login={%username%}&password={%password%}";
+        }
+
