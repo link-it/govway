@@ -77,9 +77,9 @@ public class XSDUtils {
 	public boolean isXSDSchema(Node xsd) throws XMLException {
 		try{
 			if(xsd == null){
-				throw new Exception("Schema xsd da verificare non definito");
+				throw new XMLException("Schema xsd da verificare non definito");
 			}
-			//System.out.println("LOCAL["+xsd.getLocalName()+"]  NAMESPACE["+xsd.getNamespaceURI()+"]");
+			/**System.out.println("LOCAL["+xsd.getLocalName()+"]  NAMESPACE["+xsd.getNamespaceURI()+"]");*/
 			if(!"schema".equals(xsd.getLocalName())){
 				return false;
 			}
@@ -104,7 +104,7 @@ public class XSDUtils {
 	public String getTargetNamespace(byte[]xsd) throws XMLException {
 		try{
 			if(!this.xmlUtils.isDocument(xsd)){
-				throw new Exception("Schema xsd non e' un documento valido");
+				throw new XMLException("Schema xsd non e' un documento valido");
 			}
 			Document docXML = this.xmlUtils.newDocument(xsd);
 			Element elemXML = docXML.getDocumentElement();
@@ -126,14 +126,14 @@ public class XSDUtils {
 	public String getTargetNamespace(Node xsd) throws XMLException {
 		try{
 			if(xsd == null){
-				throw new Exception("Schema xsd non e' un documento valido");
+				throw new XMLException("Schema xsd non e' un documento valido");
 			}
-			//System.out.println("LOCAL["+elemXML.getLocalName()+"]  NAMESPACE["+elemXML.getNamespaceURI()+"]");
+			/**System.out.println("LOCAL["+elemXML.getLocalName()+"]  NAMESPACE["+elemXML.getNamespaceURI()+"]");*/
 			if(!"schema".equals(xsd.getLocalName())){
-				throw new Exception("Root element non e' uno schema xsd ("+xsd.getLocalName()+")");
+				throw new XMLException("Root element non e' uno schema xsd ("+xsd.getLocalName()+")");
 			}
 			String targetNamespace = this.xmlUtils.getAttributeValue(xsd, "targetNamespace");
-			//System.out.println("TARGET["+targetNamespace+"]");
+			/**System.out.println("TARGET["+targetNamespace+"]");*/
 			return targetNamespace;
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
@@ -148,27 +148,27 @@ public class XSDUtils {
 	// SCHEMA LOCATION
 	public void updateSchemaLocation(Node schemaImportInclude, String newLocation){
 		
-		//System.out.println("------------------------- updateSchemaLocation -------------------------------");
+		/**System.out.println("------------------------- updateSchemaLocation -------------------------------");*/
 		
 		if(schemaImportInclude!=null && schemaImportInclude.getAttributes()!=null && schemaImportInclude.getAttributes().getLength()>0){
 			
-//			try{
-//				System.out.println(" PRIMA: "+this.xmlUtils.toString(schemaImportInclude));
-//			}catch(Exception e){System.out.println("ERRORE PRIMA");}
+			/**try{
+				System.out.println(" PRIMA: "+this.xmlUtils.toString(schemaImportInclude));
+			}catch(Exception e){System.out.println("ERRORE PRIMA");}*/
 			
 			Attr oldSchemaLocation = (Attr) schemaImportInclude.getAttributes().getNamedItem("schemaLocation");
 			this.xmlUtils.removeAttribute(oldSchemaLocation, (Element)schemaImportInclude);
 			
-//			try{
-//				System.out.println(" REMOVE: "+this.xmlUtils.toString(schemaImportInclude));
-//			}catch(Exception e){System.out.println("ERRORE REMOVE");}
+			/**try{
+				System.out.println(" REMOVE: "+this.xmlUtils.toString(schemaImportInclude));
+			}catch(Exception e){System.out.println("ERRORE REMOVE");}*/
 			
 			oldSchemaLocation.setValue(newLocation);
 			this.xmlUtils.addAttribute(oldSchemaLocation, (Element)schemaImportInclude);
 			
-//			try{
-//				System.out.println(" DOPO: "+this.xmlUtils.toString(schemaImportInclude));
-//			}catch(Exception e){System.out.println("ERRORE DOPO");}
+			/**try{
+				System.out.println(" DOPO: "+this.xmlUtils.toString(schemaImportInclude));
+			}catch(Exception e){System.out.println("ERRORE DOPO");}*/
 		}
 		
 	}
@@ -181,14 +181,14 @@ public class XSDUtils {
 	public String getImportNamespace(Node xsd) throws XMLException {
 		try{
 			if(xsd == null){
-				throw new Exception("Non e' un import valido");
+				throw new XMLException("Non e' un import valido");
 			}
-			//System.out.println("LOCAL["+elemXML.getLocalName()+"]  NAMESPACE["+elemXML.getNamespaceURI()+"]");
+			/**System.out.println("LOCAL["+elemXML.getLocalName()+"]  NAMESPACE["+elemXML.getNamespaceURI()+"]");*/
 			if(!"import".equals(xsd.getLocalName())){
-				throw new Exception("Root element non e' un import di uno schema xsd ("+xsd.getLocalName()+")");
+				throw new XMLException("Root element non e' un import di uno schema xsd ("+xsd.getLocalName()+")");
 			}
 			String targetNamespace = this.xmlUtils.getAttributeValue(xsd, "namespace");
-			//System.out.println("TARGET["+targetNamespace+"]");
+			/**System.out.println("TARGET["+targetNamespace+"]");*/
 			return targetNamespace;
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
@@ -197,14 +197,14 @@ public class XSDUtils {
 	public String getImportSchemaLocation(Node xsd) throws XMLException {
 		try{
 			if(xsd == null){
-				throw new Exception("Non e' un import valido");
+				throw new XMLException("Non e' un import valido");
 			}
-			//System.out.println("LOCAL["+elemXML.getLocalName()+"]  NAMESPACE["+elemXML.getNamespaceURI()+"]");
+			/**System.out.println("LOCAL["+elemXML.getLocalName()+"]  NAMESPACE["+elemXML.getNamespaceURI()+"]");*/
 			if(!"import".equals(xsd.getLocalName())){
-				throw new Exception("Root element non e' un import di uno schema xsd ("+xsd.getLocalName()+")");
+				throw new XMLException("Root element non e' un import di uno schema xsd ("+xsd.getLocalName()+")");
 			}
 			String targetNamespace = this.xmlUtils.getAttributeValue(xsd, "schemaLocation");
-			//System.out.println("TARGET["+targetNamespace+"]");
+			/**System.out.println("TARGET["+targetNamespace+"]");*/
 			return targetNamespace;
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
@@ -212,11 +212,11 @@ public class XSDUtils {
 	}
 	
 	public boolean isSchemaWithOnlyImports(Node xsd) throws XMLException {
-		if(this.isXSDSchema(xsd)==false){
+		if(!this.isXSDSchema(xsd)){
 			throw new XMLException("Il parametro fornito non è uno schema"); // non è uno schmea
 		}
 		List<Node> listChild = this.xmlUtils.getNotEmptyChildNodes(xsd, false);
-		if(listChild==null || listChild.size()<=0){
+		if(listChild==null || listChild.isEmpty()){
 			return false; // schema vuoto
 		}
 		boolean schemaConSoloImports = true;
@@ -239,14 +239,14 @@ public class XSDUtils {
 	public String getIncludeSchemaLocation(Node xsd) throws XMLException {
 		try{
 			if(xsd == null){
-				throw new Exception("Non e' un import valido");
+				throw new XMLException("Non e' un import valido");
 			}
-			//System.out.println("LOCAL["+elemXML.getLocalName()+"]  NAMESPACE["+elemXML.getNamespaceURI()+"]");
+			/**System.out.println("LOCAL["+elemXML.getLocalName()+"]  NAMESPACE["+elemXML.getNamespaceURI()+"]");*/
 			if(!"include".equals(xsd.getLocalName())){
-				throw new Exception("Root element non e' un include di uno schema xsd ("+xsd.getLocalName()+")");
+				throw new XMLException("Root element non e' un include di uno schema xsd ("+xsd.getLocalName()+")");
 			}
 			String targetNamespace = this.xmlUtils.getAttributeValue(xsd, "schemaLocation");
-			//System.out.println("TARGET["+targetNamespace+"]");
+			/**System.out.println("TARGET["+targetNamespace+"]");*/
 			return targetNamespace;
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
@@ -254,11 +254,11 @@ public class XSDUtils {
 	}
 	
 	public boolean isSchemaWithOnlyIncludes(Node xsd) throws XMLException {
-		if(this.isXSDSchema(xsd)==false){
+		if(!this.isXSDSchema(xsd)){
 			throw new XMLException("Il parametro fornito non è uno schema"); // non è uno schmea
 		}
 		List<Node> listChild = this.xmlUtils.getNotEmptyChildNodes(xsd, false);
-		if(listChild==null || listChild.size()<=0){
+		if(listChild==null || listChild.isEmpty()){
 			return false; // schema vuoto
 		}
 		boolean schemaConSoloIncludes = true;
@@ -281,11 +281,11 @@ public class XSDUtils {
 	// IMPORT - INCLUDE
 	
 	public boolean isSchemaWithOnlyImportsAndIncludes(Node xsd) throws XMLException {
-		if(this.isXSDSchema(xsd)==false){
+		if(!this.isXSDSchema(xsd)){
 			throw new XMLException("Il parametro fornito non è uno schema"); // non è uno schmea
 		}
 		List<Node> listChild = this.xmlUtils.getNotEmptyChildNodes(xsd, false);
-		if(listChild==null || listChild.size()<=0){
+		if(listChild==null || listChild.isEmpty()){
 			return false; // schema vuoto
 		}
 		boolean schemaConSoloImportsAndIncludes = true;
@@ -355,7 +355,7 @@ public class XSDUtils {
 	private List<Node> readImportsIncludes(String targetNamespaceSchema,Document xsdD,Node xsdE,boolean imports,boolean includes) throws XMLException{
 
 		try{
-			List<Node> nodes = new ArrayList<Node>();
+			List<Node> nodes = new ArrayList<>();
 			NodeList list = null;
 			if(xsdD!=null){
 				list = xsdD.getChildNodes(); 
@@ -405,7 +405,9 @@ public class XSDUtils {
 							if(targetNamespaceSchema==null){
 								try{
 									targetNamespaceSchema = this.getImportNamespace(child);
-								}catch(Exception e){}
+								}catch(Exception e){
+									// ignore
+								}
 							}	
 
 							child.setUserData("TargetNamespaceSchema", targetNamespaceSchema, null);
@@ -438,57 +440,57 @@ public class XSDUtils {
 	// REMOVE
 
 	public void removeImport(Document xsd,Node importNode){
-		this.removeImports_engine(xsd,null,true,false,importNode);
+		this.removeImportsEngine(xsd,null,true,false,importNode);
 	}
 	public void removeInclude(Document xsd,Node includeNode){
-		this.removeImports_engine(xsd,null,false,true,includeNode);
+		this.removeImportsEngine(xsd,null,false,true,includeNode);
 	}
 
 	public void removeImport(Element xsd,Node importNode){
-		this.removeImports_engine(null,xsd,true,false,importNode);
+		this.removeImportsEngine(null,xsd,true,false,importNode);
 	}
 	public void removeInclude(Element xsd,Node includeNode){
-		this.removeImports_engine(null,xsd,false,true,includeNode);
+		this.removeImportsEngine(null,xsd,false,true,includeNode);
 	}
 
 	public void removeImport(Node xsd,Node importNode){
-		this.removeImports_engine(null,xsd,true,false,importNode);
+		this.removeImportsEngine(null,xsd,true,false,importNode);
 	}
 	public void removeInclude(Node xsd,Node includeNode){
-		this.removeImports_engine(null,xsd,false,true,includeNode);
+		this.removeImportsEngine(null,xsd,false,true,includeNode);
 	}
 
 	public void removeImports(Document xsd){
-		this.removeImports_engine(xsd,null,true,false,null);
+		this.removeImportsEngine(xsd,null,true,false,null);
 	}
 	public void removeIncludes(Document xsd){
-		this.removeImports_engine(xsd,null,false,true,null);
+		this.removeImportsEngine(xsd,null,false,true,null);
 	}
 	public void removeImportsAndIncludes(Document xsd){
-		this.removeImports_engine(xsd,null,true,true,null);
+		this.removeImportsEngine(xsd,null,true,true,null);
 	}
 
 	public void removeImports(Element xsd){
-		this.removeImports_engine(null,xsd,true,false,null);
+		this.removeImportsEngine(null,xsd,true,false,null);
 	}
 	public void removeIncludes(Element xsd){
-		this.removeImports_engine(null,xsd,false,true,null);
+		this.removeImportsEngine(null,xsd,false,true,null);
 	}
 	public void removeImportsAndIncludes(Element xsd){
-		this.removeImports_engine(null,xsd,true,true,null);
+		this.removeImportsEngine(null,xsd,true,true,null);
 	}
 
 	public void removeImports(Node xsd){
-		this.removeImports_engine(null,xsd,true,false,null);
+		this.removeImportsEngine(null,xsd,true,false,null);
 	}
 	public void removeIncludes(Node xsd){
-		this.removeImports_engine(null,xsd,false,true,null);
+		this.removeImportsEngine(null,xsd,false,true,null);
 	}
 	public void removeImportsAndIncludes(Node xsd){
-		this.removeImports_engine(null,xsd,true,true,null);
+		this.removeImportsEngine(null,xsd,true,true,null);
 	}
 
-	private void removeImports_engine(Document xsdD,Node xsdE,boolean imports,boolean includes,Node importIncludeNode){
+	private void removeImportsEngine(Document xsdD,Node xsdE,boolean imports,boolean includes,Node importIncludeNode){
 
 		NodeList list = null;
 		if(xsdD!=null){
@@ -584,6 +586,10 @@ public class XSDUtils {
 		
 	public XSDSchemaCollection buildSchemaCollection(Map<String, byte[]> resources,Map<String, List<String>> mappingNamespaceLocations,Logger logger) throws XMLException {
 
+		if(logger!=null) {
+			// nop
+		}
+		
 		// ---------  Check esistenza almeno 1 schema --------- 
 		if(resources.size()==0){
 			throw new XMLException("Schemi non presenti");
@@ -723,12 +729,11 @@ public class XSDUtils {
 				}
 				else{
 					String systemIdNewSchema = "System_OpenSPCoop_Id_"+indexSystemId+".xsd";
-					indexSystemId++;
-					bfContenitori.append("\t<xsd:import namespace=\""+targetNamespace+"\" schemaLocation=\""+systemIdNewSchema+"\" />\n");
 
 					// Creo schema che contiene tutti gli schemi con stesso target namespace e registro la nuova risorsa 
 					StringBuilder bfStessoNamespace = new StringBuilder();
 					bfStessoNamespace.append("<xsd:schema targetNamespace=\""+targetNamespace+"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n");
+					int insertedSchemas = 0;
 					for(int i=0;i<splitLocations.size();i++){
 
 						// Devo includere uno schema solo se questo non e' gia' a sua volta incluso o importato da un altro schema con stesso namespace.
@@ -748,9 +753,9 @@ public class XSDUtils {
 									if(node!=null){
 										String schemaLocation = this.getImportSchemaLocation(node);
 										if(schemaLocation!=null){
-											//System.out.println("IMPORT: "+schemaLocation);
+											/**System.out.println("IMPORT: "+schemaLocation);*/
 											String baseLocation = getBaseNameXSDLocation(schemaLocation);
-											//System.out.println("IMPORT-BASE: "+baseLocation);
+											/**System.out.println("IMPORT-BASE: "+baseLocation);*/
 											if(splitLocations.get(i).equals(baseLocation)){
 												findImportInclude = true;
 												break;
@@ -769,9 +774,9 @@ public class XSDUtils {
 									if(node!=null){
 										String schemaLocation = this.getIncludeSchemaLocation(node);
 										if(schemaLocation!=null){
-											//System.out.println("INCLUDE: "+schemaLocation);
+											/**System.out.println("INCLUDE: "+schemaLocation);*/
 											String baseLocation = getBaseNameXSDLocation(schemaLocation);
-											//System.out.println("INCLUDE-BASE: "+baseLocation);
+											/**System.out.println("INCLUDE-BASE: "+baseLocation);*/
 											if(splitLocations.get(i).equals(baseLocation)){
 												findImportInclude = true;
 												break;
@@ -785,12 +790,18 @@ public class XSDUtils {
 							}
 						}
 
-						if(findImportInclude==false)
+						if(!findImportInclude) {
 							bfStessoNamespace.append("\t<xsd:include schemaLocation=\""+splitLocations.get(i)+"\" />\n");
+							insertedSchemas++;
+						}
 					}
 					bfStessoNamespace.append("</xsd:schema>");
-					//System.out.println("NUOVA REGISTRAZIONE PER ["+systemIdNewSchema+"] ["+bfStessoNamespace.toString()+"]");
-					resources.put(systemIdNewSchema, bfStessoNamespace.toString().getBytes());
+					/**System.out.println("NUOVA REGISTRAZIONE PER ["+systemIdNewSchema+"] ["+bfStessoNamespace.toString()+"]");*/
+					if (insertedSchemas > 0) {
+						bfContenitori.append("\t<xsd:import namespace=\""+targetNamespace+"\" schemaLocation=\""+systemIdNewSchema+"\" />\n");
+						resources.put(systemIdNewSchema, bfStessoNamespace.toString().getBytes());
+						indexSystemId++;
+					}
 
 				}
 			}
@@ -798,7 +809,7 @@ public class XSDUtils {
 			bf.append(bfImportNormali.toString());
 			bf.append("</xsd:schema>");
 			schemaPerValidazione = bf.toString().getBytes();
-			//System.out.println("XSD: ["+bf.toString()+"]");
+			/**System.out.println("XSD: ["+bf.toString()+"]");*/
 
 		}catch(Exception e){
 			throw new XMLException("Creazione dello schema fallita: "+e.getMessage(),e);
