@@ -1,0 +1,83 @@
+--- /opt/local/svn_interno/branches/products/openspcoop2/3.3/binary_releases/3.3.17/govway-src-3.3.17/ant/setup/deploy/resources/core/console_local.properties	2025-07-10 15:28:31.000000000 +0200
++++ ant/setup/deploy/resources/core/console_local.properties	2025-10-25 21:17:18.522674497 +0200
+@@ -19,7 +19,7 @@
+ # Disabilitando la proprietà 'login.application' viene utilizzata la classe indicata nella proprietà 'login.tipo' per ottenere il principal dell'utente che sta effettuando l'accesso alla console.
+ # NOTA: Il principal deve corrispondere ad uno degli utenti registrati.
+ # Deve essere indicata una classe che implementa l'interfaccia 'org.openspcoop2.utils.credential.IPrincipalReader'.
+-# In alternativa è possibile utilizzare gli alias alle due implementazioni built-in di seguito descritte.
++# In alternativa è possibile utilizzare gli alias alle tre implementazioni built-in di seguito descritte.
+ #
+ # - header (org.openspcoop2.utils.credential.IdentityHttpReader): 
+ #   Il principal è atteso all'interno dell'header http 'GovWay-Console-Principal'.
+@@ -32,12 +32,71 @@
+ #   Richiede un'autenticazione degli utenti configurata a livello di container delegandola all'application server che ospita la console.  
+ #   Dovrà quindi essere modificato il file web.xml per definire: <security-constraint> + <login-config> + <security-role>.
+ #login.tipo=principal
++# - oauth2 (org.openspcoop2.utils.transport.http.oauth2.OAuth2PrincipalReader)
++#   Si occupa di estrarre il principal dalla sessione creata autenticando l'utente sul server Oauth2
++#   E' necessario configurare tutte le properties nella forma login.props.oauth2.nomeProp1=val1
++#   N.B.
++#   L'autenticazione con Modalita' OAuth2 puo' essere usata contemporaneamente alla modalita' di autenticazione interna
++#login.tipo=oauth2
+ #
+ # Eventuali proprietà di configurazione da fornire alla classe indicata nella proprietà 'login.tipo' possono essere indicate nella forma seguente.
+ #login.props.nomeProp1=val1
+ #...
+ #login.props.nomePropN=valN
+ 
++# Proprieta' specifiche per l'implementazione OAuth2
++
++# Url dell'authorization server
++#login.props.oauth2.authorization.endpoint=
++# Url dove richiedere il token
++#login.props.oauth2.token.endpoint=
++# Url dove scaricare le indormazioni utente
++#login.props.oauth2.userInfo.endpoint=
++# URL di validazione dei certificati JWT
++#login.props.oauth2.jwks.endpoint=
++# URL del servizio logout federato
++#login.props.oauth2.logout.endpoint=
++# Client ID rilasciato dal server OAuth2
++#login.props.oauth2.clientId=
++# URL dove viene rediretto l'utente dopo l'autenticazione
++#login.props.oauth2.redirectUri=
++# Scope dell'autenticazione
++#login.props.oauth2.scope=
++# Nome del claim da dove leggere il principal
++#login.props.oauth2.principalClaim=
++
++# Parametri timeout connessione verso il server OAuth2
++#login.props.oauth2.readTimeout=15000
++#login.props.oauth2.connectTimeout=10000
++
++# Validazione dei claim del token
++# Inserire una riga per ogni claim da validare nella forma: login.props.oauth2.claims.validation.claimName=claimValues (lista di valori separati da virgola)
++#login.props.oauth2.claims.validation.claimName=claimValue1,claimValue2,...
++
++# Abilita PKCE (Proof Key for Code Exchange) - RFC 7636
++# Quando abilitato, migliora la sicurezza del flusso OAuth2 Authorization Code
++# Raccomandato per client pubblici e applicazioni web
++#login.props.oauth2.pkce.enabled=false
++# Metodo PKCE da utilizzare (valori: S256, plain)
++# - S256: usa SHA-256 hash del code_verifier (RACCOMANDATO, default)
++# - plain: usa il code_verifier direttamente (solo se il server non supporta S256)
++#login.props.oauth2.pkce.method=S256
++
++# Truststore https
++#login.props.oauth2.https.hostnameVerifier=true
++#login.props.oauth2.https.trustAllCerts=false
++#login.props.oauth2.https.trustStore=PATH
++#login.props.oauth2.https.trustStore.password=changeme
++#login.props.oauth2.https.trustStore.type=jks
++#login.props.oauth2.https.trustStore.crl=PATH
++
++# Keystore https
++#login.props.oauth2.https.keyStore=PATH
++#login.props.oauth2.https.keyStore.password=changeme
++#login.props.oauth2.https.keyStore.type=jks
++#login.props.oauth2.https.key.alias=mykey
++#login.props.oauth2.https.key.password=changeme
++
+ # Nel caso l'applicazione sia integrata all'interno di un'altra console o portale, 
+ # è possibile ridefinire le url alle quali verrà rediretto l'utente nei casi in cui non viene autorizzata la normale navigazione.
+ # Lasciando le proprietà non valorizzate verranno utilizzati le pagine di default previste dall'applicazione.

@@ -22,7 +22,11 @@ package org.openspcoop2.utils.oauth2;
 import java.io.Serializable;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.MessageFormat;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Properties;
 
@@ -64,18 +68,121 @@ public class OAuth2Utilities {
 		return name + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8);
 	}
 
+	/**
+	 * Genera un code_verifier PKCE secondo RFC 7636.
+	 * Il code_verifier è una stringa random di alta entropia di lunghezza tra 43 e 128 caratteri,
+	 * usando caratteri unreserved [A-Z] / [a-z] / [0-9] / "-" / "." / "_" / "~"
+	 *
+	 * @return code_verifier generato (64 caratteri)
+	 */
+	public static String generateCodeVerifier() {
+		SecureRandom secureRandom = new SecureRandom();
+		byte[] code = new byte[48]; // 48 bytes = 64 caratteri in base64url
+		secureRandom.nextBytes(code);
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(code);
+	}
+
+	/**
+	 * Calcola il code_challenge dal code_verifier usando SHA-256.
+	 * code_challenge = BASE64URL(SHA256(ASCII(code_verifier)))
+	 *
+	 * @param codeVerifier Il code_verifier generato
+	 * @return code_challenge calcolato
+	 * @throws UtilsException se SHA-256 non è disponibile
+	 */
+	public static String generateCodeChallenge(String codeVerifier) throws UtilsException {
+		return generateCodeChallenge(codeVerifier, OAuth2Costanti.CODE_CHALLENGE_METHOD_S256);
+	}
+
+	/**
+	 * Calcola il code_challenge dal code_verifier usando il metodo specificato.
+	 *
+	 * Metodi supportati (RFC 7636):
+	 * - S256: code_challenge = BASE64URL(SHA256(ASCII(code_verifier))) [RACCOMANDATO]
+	 * - plain: code_challenge = code_verifier
+	 *
+	 * @param codeVerifier Il code_verifier generato
+	 * @param method Il metodo da usare: "S256" o "plain"
+	 * @return code_challenge calcolato
+	 * @throws UtilsException se il metodo non è supportato o SHA-256 non è disponibile
+	 */
+	public static String generateCodeChallenge(String codeVerifier, String method) throws UtilsException {
+		if (OAuth2Costanti.CODE_CHALLENGE_METHOD_PLAIN.equalsIgnoreCase(method)) {
+			// Metodo plain: code_challenge = code_verifier
+			return codeVerifier;
+		} else if (OAuth2Costanti.CODE_CHALLENGE_METHOD_S256.equalsIgnoreCase(method)) {
+			// Metodo S256: code_challenge = BASE64URL(SHA256(code_verifier))
+			try {
+				MessageDigest digest = MessageDigest.getInstance("SHA-256");
+				byte[] hash = digest.digest(codeVerifier.getBytes(StandardCharsets.US_ASCII));
+				return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
+			} catch (NoSuchAlgorithmException e) {
+				throw new UtilsException("SHA-256 algorithm not available for PKCE code challenge generation", e);
+			}
+		} else {
+			throw new UtilsException("Unsupported PKCE method: " + method + ". Supported methods are: S256, plain");
+		}
+	}
+
+	/**
+	 * Verifica se PKCE è abilitato nelle properties.
+	 *
+	 * @param loginProperties Properties di configurazione OAuth2
+	 * @return true se PKCE è abilitato, false altrimenti (default: false)
+	 */
+	public static boolean isPkceEnabled(Properties loginProperties) {
+		String pkceEnabled = getProperty(loginProperties, OAuth2Costanti.PROP_OAUTH2_PKCE_ENABLED);
+		return pkceEnabled != null && Boolean.parseBoolean(pkceEnabled);
+	}
+
+	/**
+	 * Restituisce il metodo PKCE configurato nelle properties.
+	 *
+	 * @param loginProperties Properties di configurazione OAuth2
+	 * @return Il metodo configurato ("S256" o "plain"), default: "S256"
+	 */
+	public static String getPkceMethod(Properties loginProperties) {
+		String method = getProperty(loginProperties, OAuth2Costanti.PROP_OAUTH2_PKCE_METHOD);
+		if (method == null || method.isEmpty()) {
+			return OAuth2Costanti.CODE_CHALLENGE_METHOD_S256; // Default: S256 (raccomandato)
+		}
+		// Normalizza il metodo (case-insensitive)
+		if (OAuth2Costanti.CODE_CHALLENGE_METHOD_PLAIN.equalsIgnoreCase(method)) {
+			return OAuth2Costanti.CODE_CHALLENGE_METHOD_PLAIN;
+		}
+		return OAuth2Costanti.CODE_CHALLENGE_METHOD_S256;
+	}
+
 	public static String getURLLoginOAuth2(Properties loginProperties, String state) throws UtilsException {
+		return getURLLoginOAuth2(loginProperties, state, null);
+	}
+
+	public static String getURLLoginOAuth2(Properties loginProperties, String state, String codeChallenge) throws UtilsException {
+		return getURLLoginOAuth2(loginProperties, state, codeChallenge, null);
+	}
+
+	public static String getURLLoginOAuth2(Properties loginProperties, String state, String codeChallenge, String codeChallengeMethod) throws UtilsException {
 		String authorizationEndpoint = checkAndReturnValue(loginProperties, OAuth2Costanti.PROP_OAUTH2_AUTHORIZATION_ENDPOINT);
 		String clientId = checkAndReturnValue(loginProperties, OAuth2Costanti.PROP_OAUTH2_CLIENT_ID);
 		String callbackUri = checkAndReturnValue(loginProperties, OAuth2Costanti.PROP_OAUTH2_REDIRECT_URL);
 		String scope = checkAndReturnValue(loginProperties, OAuth2Costanti.PROP_OAUTH2_SCOPE);
-		
-		return authorizationEndpoint +
+
+		String url = authorizationEndpoint +
 				addFirstParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_RESPONSE_TYPE, "code") +
 				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_REDIRECT_URI, callbackUri) +
 				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_CLIENT_ID, clientId) +
 				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_SCOPE, scope) +
 				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_STATE, state);
+
+		// Aggiungi parametri PKCE se code_challenge è fornito
+		if (codeChallenge != null && !codeChallenge.isEmpty()) {
+			url += addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_CODE_CHALLENGE, codeChallenge);
+			// Usa il metodo fornito o default S256
+			String method = codeChallengeMethod != null ? codeChallengeMethod : OAuth2Costanti.CODE_CHALLENGE_METHOD_S256;
+			url += addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_CODE_CHALLENGE_METHOD, method);
+		}
+
+		return url;
 	}
 	private static String checkAndReturnValue(Properties loginProperties, String pName) throws UtilsException {
 		String value = getProperty(loginProperties, pName);
@@ -109,6 +216,10 @@ public class OAuth2Utilities {
 	}
 	
 	public static OAuth2Token getToken(Logger log, Properties loginProperties, String code) {
+		return getToken(log, loginProperties, code, null);
+	}
+
+	public static OAuth2Token getToken(Logger log, Properties loginProperties, String code, String codeVerifier) {
 
 		String tokenEndpoint = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_TOKEN_ENDPOINT);
 		String clientId = loginProperties.getProperty(OAuth2Costanti.PROP_OAUTH2_CLIENT_ID);
@@ -119,6 +230,11 @@ public class OAuth2Utilities {
 				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_CODE, code) +
 				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_REDIRECT_URI, callbackUri) +
 				addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_CLIENT_ID, clientId);
+
+		// Aggiungi code_verifier se PKCE è abilitato
+		if (codeVerifier != null && !codeVerifier.isEmpty()) {
+			requestTokenBody += addParameter(OAuth2Costanti.PARAM_NAME_OAUTH2_CODE_VERIFIER, codeVerifier);
+		}
 
 		HttpRequest httpRequest = new HttpRequest();
 

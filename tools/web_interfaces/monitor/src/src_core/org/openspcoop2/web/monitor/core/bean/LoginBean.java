@@ -1244,10 +1244,32 @@ public class LoginBean extends AbstractLoginBean {
 	public String avviaLoginOAuth2() {
 
 		String state = UUID.randomUUID().toString();
-		// 1) Costruisci l'URL di autorizzazione Keycloak
+
+		// Genera code_verifier e code_challenge se PKCE è abilitato
+		String codeChallenge = null;
+		String codeChallengeMethod = null;
+		if (OAuth2Utilities.isPkceEnabled(this.loginProperties)) {
+			try {
+				String codeVerifier = OAuth2Utilities.generateCodeVerifier();
+				codeChallengeMethod = OAuth2Utilities.getPkceMethod(this.loginProperties);
+				codeChallenge = OAuth2Utilities.generateCodeChallenge(codeVerifier, codeChallengeMethod);
+
+				// Memorizza code_verifier in sessione per il callback
+				ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+				ec.getSessionMap().put(OAuth2Costanti.ATTRIBUTE_NAME_CODE_VERIFIER, codeVerifier);
+
+				this.log.debug("PKCE abilitato: metodo={}, code_verifier generato e memorizzato in sessione", codeChallengeMethod);
+			} catch (UtilsException e) {
+				this.loginErrorMessage = "Si e' verificato un errore durante la generazione PKCE per il login OAuth2";
+				this.log.error(this.loginErrorMessage, e);
+				return Costanti.OUTCOME_LOGIN_ERROR;
+			}
+		}
+
+		// Costruisci l'URL di autorizzazione OAuth2 con parametri PKCE se abilitati
 		String authorizationUrl = null;
 		try {
-			authorizationUrl = OAuth2Utilities.getURLLoginOAuth2(this.loginProperties, state);
+			authorizationUrl = OAuth2Utilities.getURLLoginOAuth2(this.loginProperties, state, codeChallenge, codeChallengeMethod);
 		} catch (Exception e) {
 			this.loginErrorMessage = "Si e' verificato un errore il login OAuth2";
 			this.log.error(this.loginErrorMessage);
@@ -1258,7 +1280,7 @@ public class LoginBean extends AbstractLoginBean {
 
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		try {
-			// salvataggio dello scope per fare il check nella callback
+			// salvataggio dello state per fare il check nella callback
 			ec.getSessionMap().put(OAuth2Costanti.ATTRIBUTE_NAME_OAUTH2_STATE, state);
 
 			ec.redirect(authorizationUrl);
