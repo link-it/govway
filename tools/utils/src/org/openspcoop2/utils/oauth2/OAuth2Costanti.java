@@ -49,7 +49,9 @@ public class OAuth2Costanti {
 	public static final String PROP_OAUTH2_SCOPE = PROP_OAUTH2_PREFIX + SCOPE;
 	public static final String PROP_OAUTH2_PRINCIPAL_CLAIM = PROP_OAUTH2_PREFIX + "principalClaim";
 	public static final String PROP_OAUTH2_CLAIMS_VALIDATION = PROP_OAUTH2_PREFIX + "claims.validation.";
-	
+	public static final String PROP_OAUTH2_PKCE_ENABLED = PROP_OAUTH2_PREFIX + "pkce.enabled";
+	public static final String PROP_OAUTH2_PKCE_METHOD = PROP_OAUTH2_PREFIX + "pkce.method";
+
 	public static final String PROP_OAUTH2_READ_TIMEOUT = PROP_OAUTH2_PREFIX + "readTimeout";
 	public static final String PROP_OAUTH2_CONNECT_TIMEOUT = PROP_OAUTH2_PREFIX + "connectTimeout";
 
@@ -84,7 +86,14 @@ public class OAuth2Costanti {
 	public static final String PARAM_NAME_OAUTH2_POST_LOGOUT_REDIRECT_URI = "post_logout_redirect_uri";
 	public static final String PARAM_NAME_OAUTH2_REFRESH_TOKEN = "refresh_token";
 	public static final String PARAM_NAME_PRINCIPAL_ERROR_MSG = "principalErrorMsg";
-	
+
+	// PKCE (RFC 7636)
+	public static final String PARAM_NAME_OAUTH2_CODE_CHALLENGE = "code_challenge";
+	public static final String PARAM_NAME_OAUTH2_CODE_CHALLENGE_METHOD = "code_challenge_method";
+	public static final String PARAM_NAME_OAUTH2_CODE_VERIFIER = "code_verifier";
+	public static final String CODE_CHALLENGE_METHOD_S256 = "S256";
+	public static final String CODE_CHALLENGE_METHOD_PLAIN = "plain";
+
 	/** Attributi sessione / request */
 	public static final String ATTRIBUTE_NAME_ERROR_MESSAGE = "oauth2ErrorMessage";
 	public static final String ATTRIBUTE_NAME_ERROR_CODE = "oauth2ErrorCode";
@@ -96,8 +105,9 @@ public class OAuth2Costanti {
 	public static final String ATTRIBUTE_NAME_USER_INFO = "oauth2UserInfo";
 	public static final String ATTRIBUTE_NAME_OAUTH2_STATE = "oauth2state";
 	public static final String ATTRIBUTE_NAME_ID_TOKEN = "oauthIdToken";
-	
-	
+	public static final String ATTRIBUTE_NAME_CODE_VERIFIER = "oauth2code_verifier";
+
+
 	/** Field json */
 	public static final String FIELD_NAME_ACCESS_TOKEN = "access_token";
 	public static final String FIELD_NAME_EXPIRES_IN = "expires_in";

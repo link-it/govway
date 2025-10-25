@@ -121,3 +121,18 @@ Per abilitare l’autenticazione tramite Keycloak è necessario intervenire sui 
         #login.props.oauth2.https.keyStore.type=jks
         #login.props.oauth2.https.key.alias=mykey
         #login.props.oauth2.https.key.password=changeme
+
+8. Abilitazione di PKCE (Proof Key for Code Exchange) per maggiore sicurezza. PKCE è un'estensione di OAuth 2.0 (RFC 7636) che migliora la sicurezza del flusso Authorization Code, particolarmente raccomandata per client pubblici e applicazioni web:
+
+     ::
+
+        # Abilita PKCE (Proof Key for Code Exchange) - RFC 7636
+        login.props.oauth2.pkce.enabled=true
+
+        # Metodo PKCE da utilizzare (valori: S256, plain)
+        # - S256: usa SHA-256 hash del code_verifier (RACCOMANDATO, default)
+        # - plain: usa il code_verifier direttamente (solo se il server non supporta S256)
+        login.props.oauth2.pkce.method=S256
+
+   .. note::
+      **PKCE** protegge contro attacchi di intercettazione del codice di autorizzazione. Il metodo **S256** (default) è raccomandato in quanto più sicuro. Il metodo **plain** dovrebbe essere usato solo se l'authorization server non supporta SHA-256.

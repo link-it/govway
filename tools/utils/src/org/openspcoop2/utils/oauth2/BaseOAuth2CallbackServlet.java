@@ -77,7 +77,15 @@ public abstract class BaseOAuth2CallbackServlet extends HttpServlet {
 
 			String code = validaParametriRichiesta(request, session);
 
-			OAuth2Token oAuth2Token = OAuth2Utilities.getToken(log, loginProperties, code);
+			// Recupera code_verifier dalla sessione se PKCE è abilitato
+			String codeVerifier = null;
+			if (session != null && OAuth2Utilities.isPkceEnabled(loginProperties)) {
+				codeVerifier = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_CODE_VERIFIER);
+				// Rimuovi code_verifier dalla sessione dopo l'uso (one-time use)
+				session.removeAttribute(OAuth2Costanti.ATTRIBUTE_NAME_CODE_VERIFIER);
+			}
+
+			OAuth2Token oAuth2Token = OAuth2Utilities.getToken(log, loginProperties, code, codeVerifier);
 
 			if (oAuth2Token.getReturnCode() != 200) {
 				throw new Oauth2Exception( oAuth2Token.getError(), oAuth2Token.getDescription());
