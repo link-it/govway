@@ -2581,6 +2581,10 @@ public class ConfigurazioneCostanti {
 		return null;
 	}
 	
+	public static final String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE = "console.audit.log4j2.properties";
+	public static final String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE_LOADER_INSTANCE = "console_local.audit.log4j2.properties";
+	public static final String DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE_LOG_PROPERTIES = "OPENSPCOOP2_CONSOLE_AUDIT_LOG_PROPERTIES";
+	
 	/* MESSAGGI */
 	
 	public static final String LABEL_PLUGIN_CLASSE_IN_USO_BODY_HEADER_NESSUN_RISULTATO = "Il plugin non risulta utilizzato in alcuna configurazione";

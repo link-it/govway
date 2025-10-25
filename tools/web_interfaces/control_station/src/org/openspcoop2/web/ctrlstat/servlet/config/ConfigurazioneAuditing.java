@@ -139,8 +139,16 @@ public final class ConfigurazioneAuditing extends Action {
 						appender.setClassName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_CLASS_NAME);
 						AppenderProperty pr1 = new AppenderProperty();
 						pr1.setName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_NAME);
-						pr1.setValue(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE);
+						pr1.setValue(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE);
 						appender.addProperty(pr1);
+						AppenderProperty pr11 = new AppenderProperty();
+						pr11.setName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_NAME_LOADER_INSTANCE);
+						pr11.setValue(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE_LOADER_INSTANCE);
+						appender.addProperty(pr11);
+						AppenderProperty pr12 = new AppenderProperty();
+						pr12.setName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_NAME_LOG_PROPERTIES);
+						pr12.setValue(ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_FILE_CONFIGURAZIONE_VALUE_LOG_PROPERTIES);
+						appender.addProperty(pr12);
 						AppenderProperty pr2 = new AppenderProperty();
 						pr2.setName(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_CATEGORY_NAME);
 						pr2.setValue(AuditCostanti.DEFAULT_VALUE_PARAMETRO_AUDIT_APPENDER_PROPERTY_CATEGORY_VALUE);

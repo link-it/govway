@@ -1,3 +1,11 @@
+2025-10-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1665
+	Risolto un problema che impediva l’accesso alla console dopo la disabilitazione e successiva riabilitazione dell’opzione Log4j Auditing.
+	In tali condizioni, il log riportava l’errore: 
+	"Inizializzazione appender[log4jAppender] non riuscita: InputStream [audit.log4j2.properties] non trovato".
+
 2025-10-24  Tommaso Burlon <tommaso.burlon@link.it>
 
 	* [Utils]
