@@ -928,18 +928,38 @@ public class ServletUtils {
 		return session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN) != null; 
 	}
 	
-	public static void sessionFixation(Logger log, HttpServletRequest request, HttpSession session){
-		
+	public static HttpSession sessionFixation(Logger log, HttpServletRequest request, HttpSession session){
+
 		log.debug("Session Fixation Protection");
 		log.debug("Old session id: {}", session.getId());
-		
+
 		String changeSessionId = request.changeSessionId();
-		
+
 		log.debug("New session id: {}", changeSessionId);
-		log.debug("New session id check: {}", session.getId());
-		
+
+		// Recupera la nuova sessione dopo il changeSessionId
+		// Usa getSession(true) per assicurarsi di ottenere la sessione valida
+		HttpSession newSession = request.getSession(true);
+
+		log.debug("New session id check: {}", newSession != null ? newSession.getId() : "null");
+
 		log.debug("Session Fixation Protection - END" );
-		
-		
+
+		return newSession;
+	}
+
+	public static boolean isStaticResource(String uri, String[] paths) {
+		// Verifica se l'URI contiene una delle directory specificate nell'array
+		if (uri == null || paths == null) {
+			return false;
+		}
+
+		for (String path : paths) {
+			if (path != null && uri.indexOf("/" + path) != -1) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

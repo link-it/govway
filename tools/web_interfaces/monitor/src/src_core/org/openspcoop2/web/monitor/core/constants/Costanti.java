@@ -49,9 +49,17 @@ public class Costanti {
 	public static final String VALUE_PARAMETRO_MODALITA_ALL = "qualsiasi";
 	
 	public static final String ICONS_BASE = "/images/tema_link/" ;
-	
+
 	public static final String ICONA_MENU_UTENTE_CHECKED = ICONS_BASE +"checkbox_checked_white.png";
 	public static final String ICONA_MENU_UTENTE_UNCHECKED = ICONS_BASE + "checkbox_unchecked_white.png";
+
+	/* Directory risorse statiche */
+	public static final String A4J_DIR = "a4j";
+	public static final String RESOURCES_DIR = "resources";
+	public static final String IMAGES_DIR = "images";
+	public static final String CSS_DIR = "css";
+	public static final String FONTS_DIR = "fonts";
+	public static final String SCRIPTS_DIR = "scripts";
 	
 	public static final String DATASOURCE = "dataSource";
 	

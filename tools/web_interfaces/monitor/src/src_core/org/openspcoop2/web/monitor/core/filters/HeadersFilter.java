@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
@@ -74,9 +75,12 @@ public class HeadersFilter implements Filter {
 		try {
 			HttpServletRequest request = (HttpServletRequest) req;
 			HttpServletResponse response = (HttpServletResponse) res;
-			
+
 			// Gestione vulnerabilita' Content Security Policy
-			this.gestioneContentSecurityPolicy(request, response); 
+			this.gestioneContentSecurityPolicy(request, response);
+
+			// Gestione Cache-Control per risorse statiche
+			gestioneCacheControl(request, response, log);
 
 			// faccio proseguire le chiamate ai filtri
 			chain.doFilter(request, response);
@@ -98,13 +102,42 @@ public class HeadersFilter implements Filter {
 	private void gestioneContentSecurityPolicy(HttpServletRequest request, HttpServletResponse response) {
 		// Per abilitare l'esecuzione solo degli script che vogliamo far eseguire, si genera un UUID random e si assegna ai tag script con attributo src e a gli script inline nelle pagine
 		// L'id degli script abilitati e' indicato all'interno del campo script-src
-		
+
 		String uuId = UUID.randomUUID().toString().replace("-", "");
 		request.setAttribute(Costanti.REQUEST_ATTRIBUTE_CSP_RANDOM_NONCE, uuId);
-		
+
 		if(StringUtils.isNoneBlank(this.cspHeaderValue)) {
 			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFormat.format(this.cspHeaderValue, uuId, uuId));
 //			response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY_REPORT_ONLY, MessageFormat.format(this.cspHeaderValue, uuId, uuId));
+		}
+	}
+
+	private static void gestioneCacheControl(HttpServletRequest request, HttpServletResponse response, Logger log) {
+		// Gestione Cache-Control per risorse statiche (a4j, resources, images, css, fonts, scripts)
+		String requestUri = request.getRequestURI();
+
+		if (requestUri != null) {
+			// Array delle directory delle risorse statiche da controllare
+			String[] staticResourceDirs = {
+				org.openspcoop2.web.monitor.core.constants.Costanti.A4J_DIR,
+				org.openspcoop2.web.monitor.core.constants.Costanti.RESOURCES_DIR,
+				org.openspcoop2.web.monitor.core.constants.Costanti.IMAGES_DIR,
+				org.openspcoop2.web.monitor.core.constants.Costanti.CSS_DIR,
+				org.openspcoop2.web.monitor.core.constants.Costanti.FONTS_DIR,
+				org.openspcoop2.web.monitor.core.constants.Costanti.SCRIPTS_DIR
+			};
+
+			// Verifica se la risorsa e' statica (a4j, resources, images, css, fonts, scripts)
+			if (ServletUtils.isStaticResource(requestUri, staticResourceDirs)) {
+				// Per risorse statiche: disabilita la cache
+				// no-cache: richiede rivalidazione prima di usare la copia cachata
+				// no-store: impedisce completamente il caching
+				// must-revalidate: forza la rivalidazione delle risorse scadute
+				log.debug("Impostazione header Cache-Control per risorsa statica: {}", requestUri);
+				response.setHeader(HttpConstants.CACHE_STATUS_HTTP_1_1, HttpConstants.CACHE_STATUS_HTTP_1_1_DISABLE_CACHE);
+				response.setHeader(HttpConstants.CACHE_STATUS_HTTP_1_0, HttpConstants.CACHE_STATUS_HTTP_1_0_DISABLE_CACHE);
+				response.setDateHeader(HttpConstants.CACHE_STATUS_PROXY_EXPIRES, HttpConstants.CACHE_STATUS_PROXY_EXPIRES_DISABLE_CACHE);
+			}
 		}
 	}
 }

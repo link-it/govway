@@ -82,19 +82,16 @@ public final class Logout extends Action {
 			String oauth2LogoutUrl = loginCore.getLoginProperties().getProperty(OAuth2Costanti.PROP_OAUTH2_LOGOUT_ENDPOINT);
 			
 			LoginSessionUtilities.cleanLoginParametersSession(request, session);
-	
-			pd.setMessage(LoginCostanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO); 
-			
+
+			pd.setMessage(LoginCostanti.LABEL_LOGOUT_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO);
+
 			// Rimozione del cookie JSESSIONID
 	        ServletUtils.removeCookieFromResponse(org.openspcoop2.web.lib.mvc.Costanti.COOKIE_NAME_JSESSIONID, request, response);
-	        
-	    	// session fixation
-			ServletUtils.sessionFixation(ControlStationCore.getLog(), request, session);
-	        
+
 	        // Inizializzo di nuovo GeneralData, dopo aver rimosso
  			// dalla sessione la login dell'utente
  			gd = generalHelper.initGeneralData(request,LoginCostanti.SERVLET_NAME_LOGIN);
- 			
+
  			ServletUtils.setGeneralAndPageDataIntoSession(request, session, gd, pd);
  			
  			String logoutUrlDestinazione = loginCore.getLogoutUrlDestinazione();
