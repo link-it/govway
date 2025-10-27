@@ -42,6 +42,7 @@ import org.w3c.dom.NodeList;
  *
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author Burlon Tommaso (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
