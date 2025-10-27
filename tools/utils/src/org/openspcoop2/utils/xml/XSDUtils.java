@@ -40,6 +40,7 @@ import org.w3c.dom.NodeList;
  *
  *
  * @author Poli Andrea (apoli@link.it)
+ * @author Burlon Tommaso (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -723,12 +724,11 @@ public class XSDUtils {
 				}
 				else{
 					String systemIdNewSchema = "System_OpenSPCoop_Id_"+indexSystemId+".xsd";
-					indexSystemId++;
-					bfContenitori.append("\t<xsd:import namespace=\""+targetNamespace+"\" schemaLocation=\""+systemIdNewSchema+"\" />\n");
 
 					// Creo schema che contiene tutti gli schemi con stesso target namespace e registro la nuova risorsa 
 					StringBuilder bfStessoNamespace = new StringBuilder();
 					bfStessoNamespace.append("<xsd:schema targetNamespace=\""+targetNamespace+"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n");
+					int insertedSchemas = 0;
 					for(int i=0;i<splitLocations.size();i++){
 
 						// Devo includere uno schema solo se questo non e' gia' a sua volta incluso o importato da un altro schema con stesso namespace.
@@ -785,13 +785,18 @@ public class XSDUtils {
 							}
 						}
 
-						if(findImportInclude==false)
+						if(!findImportInclude) {
 							bfStessoNamespace.append("\t<xsd:include schemaLocation=\""+splitLocations.get(i)+"\" />\n");
+							insertedSchemas++;
+						}
 					}
 					bfStessoNamespace.append("</xsd:schema>");
 					//System.out.println("NUOVA REGISTRAZIONE PER ["+systemIdNewSchema+"] ["+bfStessoNamespace.toString()+"]");
-					resources.put(systemIdNewSchema, bfStessoNamespace.toString().getBytes());
-
+					if (insertedSchemas > 0) {
+						bfContenitori.append("\t<xsd:import namespace=\""+targetNamespace+"\" schemaLocation=\""+systemIdNewSchema+"\" />\n");
+						resources.put(systemIdNewSchema, bfStessoNamespace.toString().getBytes());
+						indexSystemId++;
+					}
 				}
 			}
 			bf.append(bfContenitori.toString());
