@@ -24,7 +24,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.Base64;
 import java.util.Map;
@@ -35,6 +34,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.JWKSet;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.random.RandomGenerator;
 import org.openspcoop2.utils.security.JOSESerialization;
 import org.openspcoop2.utils.security.JWTOptions;
 import org.openspcoop2.utils.security.JWTParser;
@@ -76,9 +76,9 @@ public class OAuth2Utilities {
 	 * @return code_verifier generato (64 caratteri)
 	 */
 	public static String generateCodeVerifier() {
-		SecureRandom secureRandom = new SecureRandom();
+		RandomGenerator randomGenerator = new RandomGenerator(true);
 		byte[] code = new byte[48]; // 48 bytes = 64 caratteri in base64url
-		secureRandom.nextBytes(code);
+		randomGenerator.nextRandomBytes(code);
 		return Base64.getUrlEncoder().withoutPadding().encodeToString(code);
 	}
 
