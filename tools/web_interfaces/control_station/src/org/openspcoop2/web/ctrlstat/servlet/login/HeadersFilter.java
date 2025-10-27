@@ -39,8 +39,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.security.InputSanitizerProperties;
 import org.openspcoop2.web.lib.mvc.security.SecurityProperties;
 import org.openspcoop2.web.lib.mvc.security.Validatore;
@@ -103,6 +105,9 @@ public class HeadersFilter implements Filter {
 			// Aggiungo header
 			this.gestioneXContentTypeOptions(seqReq, seqRes);
 			
+			// Gestione Cache-Control per risorse statiche
+			gestioneCacheControl(seqReq, seqRes, log);
+
 			chain.doFilter(seqReq, seqRes);
 		} catch (Exception e) {
 			ControlStationCore.logError("Errore rilevato durante l'headersFilter",e);
@@ -182,5 +187,32 @@ public class HeadersFilter implements Filter {
             log.debug("Parameter [{}] Valori Corretti [{}]", paramName, (!parametriCorretti.isEmpty()) ? StringUtils.join(parametriCorretti, "|") : null);
         }
 
+	}
+
+	private static void gestioneCacheControl(HttpServletRequest request, HttpServletResponse response, Logger log) {
+		// Gestione Cache-Control per risorse statiche (CSS, JS, fonts, images)
+		String requestUri = request.getRequestURI();
+
+		if (requestUri != null) {
+			// Array delle directory delle risorse statiche da controllare
+			String[] staticResourceDirs = {
+				CostantiControlStation.IMAGES_DIR,
+				CostantiControlStation.CSS_DIR,
+				CostantiControlStation.FONTS_DIR,
+				CostantiControlStation.JS_DIR
+			};
+
+			// Verifica se la risorsa e' statica (css, js, fonts, images)
+			if (ServletUtils.isStaticResource(requestUri, staticResourceDirs)) {
+				// Per risorse statiche: disabilita la cache
+				// no-cache: richiede rivalidazione prima di usare la copia cachata
+				// no-store: impedisce completamente il caching
+				// must-revalidate: forza la rivalidazione delle risorse scadute
+				log.debug("Impostazione header Cache-Control per risorsa statica: {}", requestUri);
+				response.setHeader(HttpConstants.CACHE_STATUS_HTTP_1_1, HttpConstants.CACHE_STATUS_HTTP_1_1_DISABLE_CACHE);
+				response.setHeader(HttpConstants.CACHE_STATUS_HTTP_1_0, HttpConstants.CACHE_STATUS_HTTP_1_0_DISABLE_CACHE);
+				response.setDateHeader(HttpConstants.CACHE_STATUS_PROXY_EXPIRES, HttpConstants.CACHE_STATUS_PROXY_EXPIRES_DISABLE_CACHE);
+			}
+		}
 	}
 }

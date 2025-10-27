@@ -313,7 +313,7 @@ public class PrincipalFilter implements Filter {
 								httpServletResponse.sendRedirect(redirPageUrl);
 								return;
 							}else{
-								ServletUtils.sessionFixation(this.log, httpServletRequest, sessione);
+								sessione = ServletUtils.sessionFixation(this.log, httpServletRequest, sessione);
 								
 								this.log.debug("Utente autorizzato");
 								sessione.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, lb);

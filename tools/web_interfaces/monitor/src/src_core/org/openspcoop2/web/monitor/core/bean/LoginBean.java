@@ -277,11 +277,11 @@ public class LoginBean extends AbstractLoginBean {
 				// controllo validita' password
 				UserDetailsBean loadUserByUsername = this.getLoginDao().loadUserByUsername(this.getUsername());
 
-				// session fixation
+				// session fixation - recupera la nuova sessione
 				ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 				HttpSession session = (HttpSession) ec.getSession(true);
 				HttpServletRequest request = (HttpServletRequest) ec.getRequest();
-				ServletUtils.sessionFixation(this.log, request, session);
+				session = ServletUtils.sessionFixation(this.log, request, session);
 
 				if(this.passwordVerifier != null && this.checkPasswordExpire) {
 					User user = loadUserByUsername.getUtente();
@@ -331,10 +331,9 @@ public class LoginBean extends AbstractLoginBean {
 			fc.getExternalContext().getSessionMap().put(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
 			HttpSession session = (HttpSession)fc.getExternalContext().getSession(false);
 			idToken = (String) session.getAttribute(OAuth2Costanti.ATTRIBUTE_NAME_ID_TOKEN);
-			session.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null); 
+			session.setAttribute(org.openspcoop2.web.monitor.core.bean.AbstractLoginBean.LOGIN_BEAN_SESSION_ATTRIBUTE_NAME, null);
+			// Non serve fare sessionFixation prima dell'invalidate, la sessione viene comunque invalidata
 			session.invalidate();
-			HttpServletRequest request = (HttpServletRequest) fc.getExternalContext().getRequest();
-			ServletUtils.sessionFixation(this.log, request, session);
 		}catch(Exception e){
 			this.log.error("Si e' verificato un errore durante il logout: "+ e.getMessage(), e);
 		}

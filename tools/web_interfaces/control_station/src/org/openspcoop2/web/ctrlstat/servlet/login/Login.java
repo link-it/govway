@@ -105,8 +105,8 @@ public final class Login extends Action {
 
 			}
 			
-			// session fixation
-			ServletUtils.sessionFixation(ControlStationCore.getLog(), request, session);
+			// session fixation - recupera la nuova sessione
+			session = ServletUtils.sessionFixation(ControlStationCore.getLog(), request, session);
 			
 			// controllo scadenza password
 			isOk = loginHelper.loginScadenzaPasswordCheckData();
