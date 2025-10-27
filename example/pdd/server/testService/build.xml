@@ -140,6 +140,8 @@
 			<or>
 				<equals arg1="${as}" arg2="wildfly35" />
 				<equals arg1="${as}" arg2="wildfly36" />
+				<equals arg1="${as}" arg2="wildfly37" />
+				<equals arg1="${as}" arg2="wildfly38" />
 			</or>
 			<then>
 				<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly35" 
@@ -162,6 +164,8 @@
 			<or>
 				<equals arg1="${as}" arg2="wildfly35" />
 				<equals arg1="${as}" arg2="wildfly36" />
+				<equals arg1="${as}" arg2="wildfly37" />
+				<equals arg1="${as}" arg2="wildfly38" />
 			</or>
 			<then>
 				<copy file="${src}/WEB-INF/${jboss_deployment_structure}.wildfly35" 

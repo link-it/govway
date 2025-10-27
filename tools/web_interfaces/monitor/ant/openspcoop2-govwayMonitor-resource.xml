@@ -230,6 +230,8 @@
 			<or>
 				<equals arg1="${as}" arg2="wildfly35" />
 				<equals arg1="${as}" arg2="wildfly36" />
+				<equals arg1="${as}" arg2="wildfly37" />
+				<equals arg1="${as}" arg2="wildfly38" />
 			</or>
 			<then>
 				<concat destfile="${build_govwayMonitor_war}/WEB-INF/jboss-deployment-structure.xml" append="yes">
