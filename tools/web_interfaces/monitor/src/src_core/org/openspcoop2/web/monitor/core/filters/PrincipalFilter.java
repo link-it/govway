@@ -148,6 +148,7 @@ public class PrincipalFilter implements Filter {
 		this.excludedPages.add("/report/configurazione");
 		this.excludedPages.add("/oauth2/callback");
 		this.excludedPages.add("/oauth2/user");
+		this.excludedPages.add("/check");
 	}
 	
 	private boolean isUtilizzaGestioneUtenzeApplication() {

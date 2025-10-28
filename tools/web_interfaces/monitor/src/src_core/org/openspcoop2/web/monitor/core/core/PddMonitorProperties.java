@@ -591,6 +591,21 @@ public class PddMonitorProperties {
 		DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(this.log);
 		return daoFactoryProperties.getTipoDatabaseEnum(projectInfo);
 	}
+
+	// health check queries
+
+	public String getCheckDbConfigurazioneQuery() throws UtilsException{
+		return this.getProperty("check.db.configurazione.query", false, true);
+	}
+
+	public String getCheckDbStatisticheQuery() throws UtilsException{
+		return this.getProperty("check.db.statistiche.query", false, true);
+	}
+
+	public String getCheckDbTracciamentoQuery() throws UtilsException{
+		return this.getProperty("check.db.tracciamento.query", false, true);
+	}
+
 	// configurazioni jmx
 	
 	private String _getJmxPdD_value(boolean required, String alias, String prop) throws UtilsException{

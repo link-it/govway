@@ -51,13 +51,16 @@ public class ContentAuthorizationCostanti {
 		"/report/statistica",
 		"/report/configurazione",
 		"/webjars/",  
-		
+
 		// Cambio Password Scaduta Utente
 		"/core/pages/form/userPasswordScaduta.jsf",
-		
+
 		// Servlet callback OAuth2
 		"/oauth2/callback",
 		"/oauth2/user",
+
+		// Health check endpoint
+		"/check",
 	};
 
 	// Elenco delle pagine che sono disponibili al ruolo amministratore

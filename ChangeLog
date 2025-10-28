@@ -1,3 +1,9 @@
+2025-10-28  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Aggiunta funzionalità #1666
+	Aggiunto il contesto pubblico 'check', utilizzabile come 'health check' negli ambienti di gestione (manager) in cui non è distribuita la componente runtime.
+
 2025-10-28  Andrea Poli <apoli@link.it>
 
 	* [ProtocolloSDI]

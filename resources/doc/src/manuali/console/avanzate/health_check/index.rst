@@ -106,3 +106,7 @@ Di seguito un esempio di errore derivante da un aggiornamento dei dati statistic
           Statistics HealthCheck failed
           Hourly statistical information found whose last update is older than the allowed threshold (1); last generation date: 2024-07-29_15:00:00.000
 
+.. toctree::
+        :maxdepth: 2
+        
+	manager
