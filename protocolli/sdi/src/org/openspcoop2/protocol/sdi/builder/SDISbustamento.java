@@ -44,6 +44,7 @@ import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRicezioneFattur
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioTrasmissioneFatture;
 import org.openspcoop2.protocol.sdi.utils.SDIUtils;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
@@ -224,24 +225,43 @@ public class SDISbustamento {
 		
 	}
 	
-	public SOAPElement sbustamentoRisposta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(Busta busta,OpenSPCoop2Message msgParam) throws ProtocolException{
+	public SOAPElement sbustamentoRisposta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(Busta busta, OpenSPCoop2Message msgParam, Context context) throws ProtocolException{
 		try{
-			
+
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
 			OpenSPCoop2MessageFactory messageFactory = msgParam.getFactory();
-			
+
 			SOAPElement element = null;
 			Object ctxNotificaScartoEsitoCommittente = msg.removeContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI);
-						
+
+			// Recupera NomeFile e IdentificativoSdI dal context (salvati durante l'imbustamento)
+			// Il backend non ritorna questi valori nella risposta
+			String nomeFileRichiesta = null;
+			String identificativoSdIRichiesta = null;
+			if(context != null) {
+				if(context.containsKey(org.openspcoop2.pdd.core.CostantiPdD.BUSTA_RICHIESTA_SDI_NOME_FILE)) {
+					Object nomeFileObj = context.getObject(org.openspcoop2.pdd.core.CostantiPdD.BUSTA_RICHIESTA_SDI_NOME_FILE);
+					if(nomeFileObj instanceof String) {
+						nomeFileRichiesta = (String) nomeFileObj;
+					}
+				}
+				if(context.containsKey(org.openspcoop2.pdd.core.CostantiPdD.BUSTA_RICHIESTA_SDI_IDENTIFICATIVO_SDI)) {
+					Object idSdiObj = context.getObject(org.openspcoop2.pdd.core.CostantiPdD.BUSTA_RICHIESTA_SDI_IDENTIFICATIVO_SDI);
+					if(idSdiObj instanceof String) {
+						identificativoSdIRichiesta = (String) idSdiObj;
+					}
+				}
+			}
+
 			SOAPBody soapBody = msg.getSOAPBody();
-			
+
 			// estraggo header
 			element = SDIUtils.readHeader(msg);
 			
 			// Leggo se presente una notifica scarto esito committente
 			byte [] xmlNotificaScartoEsitoCommittente = null;
 			if(ctxNotificaScartoEsitoCommittente!=null){
-				//System.out.println("OTTIMIZZATO");
+				/**System.out.println("OTTIMIZZATO");*/
 				it.gov.fatturapa.sdi.messaggi.v1_0.ScartoEsitoCommittenteType scarto = (it.gov.fatturapa.sdi.messaggi.v1_0.ScartoEsitoCommittenteType) ctxNotificaScartoEsitoCommittente;
 				it.gov.fatturapa.sdi.messaggi.v1_0.ObjectFactory of = new it.gov.fatturapa.sdi.messaggi.v1_0.ObjectFactory();
 				it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbSerializer serializer = new it.gov.fatturapa.sdi.messaggi.v1_0.utils.serializer.JaxbSerializer();
@@ -249,7 +269,7 @@ public class SDISbustamento {
 				
 			}else{
 				
-				//System.out.println("NON OTTIMIZZATO");
+				/**System.out.println("NON OTTIMIZZATO");*/
 				Element elementBody = SoapUtils.getNotEmptyFirstChildSOAPElement(soapBody);
 				List<Node> childs = SoapUtils.getNotEmptyChildNodes(messageFactory, elementBody, false);
 				for (int i = 0; i < childs.size(); i++) {
@@ -265,14 +285,14 @@ public class SDISbustamento {
 									
 									Element e = MTOMUtilities.getIfExistsXomReference(messageFactory, (Element)scartoChild);
 									if(e!=null){
-										//System.out.println("NON OTTIMIZZATO MTOM");
+										/**System.out.println("NON OTTIMIZZATO MTOM");*/
 										// mtom
 										AttachmentPart ap = this.getAttachmentPart(msg, e);
 										if(ap!=null) {
 											xmlNotificaScartoEsitoCommittente = Utilities.getAsByteArray(ap.getDataHandler().getInputStream());
 										}
 									}else{
-										//System.out.println("NON OTTIMIZZATO NO MTOM");
+										/**System.out.println("NON OTTIMIZZATO NO MTOM");*/
 										// no mtom
 										xmlNotificaScartoEsitoCommittente = Base64Utilities.decode(scartoChild.getTextContent());
 									}
@@ -298,7 +318,7 @@ public class SDISbustamento {
 			
 			// se esiste uno scarto committente lo aggiungo come body
 			if(xmlNotificaScartoEsitoCommittente!=null){
-				//soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlNotificaScartoEsitoCommittente)));
+				/**soapBody.addChildElement(SoapUtils.getSoapFactory(msg.getMessageType()).createElement(this.xmlUtils.newElement(xmlNotificaScartoEsitoCommittente)));*/
 				// Bug Fix: OP-752
 				
 				// USO Comunque il tunnel SOAP altrimenti l'xml viene modificato e la firma non e' piu' valida
@@ -324,7 +344,16 @@ public class SDISbustamento {
 					msg.setForcedResponseCode("200");
 				}
 			}
-			
+
+			// Ripristina il NomeFile e l'IdentificativoSDI dalla richiesta
+			// (il backend non li ritorna nella risposta)
+			if(nomeFileRichiesta != null) {
+				busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, nomeFileRichiesta);
+			}
+			if(identificativoSdIRichiesta != null) {
+				busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdIRichiesta);
+			}
+
 			return element;
 			
 		}catch(Exception e){

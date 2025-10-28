@@ -5303,14 +5303,36 @@ public class RicezioneContenutiApplicativi {
 		}
 		OutResponsePDMessage outResponsePDMessage = new OutResponsePDMessage();
 		outResponsePDMessage.setBustaRichiesta(bustaRichiesta);
+		Busta bustaRisposta = null;
 		if(bustaRispostaObject instanceof Busta){
-			Busta bustaRisposta = (Busta) bustaRispostaObject;
-			// aggiungo proprieta' (vengono serializzate negli header di integrazione)
-			if(bustaRisposta.sizeProperties()>0){
-				String[]propertyNames = bustaRisposta.getPropertiesNames();
-				for (int i = 0; i < propertyNames.length; i++) {
-					outResponsePDMessage.getBustaRichiesta().addProperty(propertyNames[i], bustaRisposta.getProperty(propertyNames[i]));
+			bustaRisposta = (Busta) bustaRispostaObject;
+		}
+		else if(bustaRispostaObject == null && Costanti.SDI_PROTOCOL_NAME.equalsIgnoreCase(protocolFactory.getProtocol()) &&
+			// Failover condizionale: se bustaRisposta è null e il protocollo è SDI,
+			// verifica se esistono NomeFile e IdentificativoSdI salvati nel context
+			// per permettere il recupero di questi valori anche in caso di errore
+			pddContext != null) {
+			// Recupera NomeFile
+			if(pddContext.containsKey(CostantiPdD.BUSTA_RICHIESTA_SDI_NOME_FILE)) {
+				Object nomeFileSDIObject = pddContext.getObject(CostantiPdD.BUSTA_RICHIESTA_SDI_NOME_FILE);
+				if(nomeFileSDIObject instanceof String) {
+					outResponsePDMessage.getBustaRichiesta().addProperty("NomeFile", (String) nomeFileSDIObject);
 				}
+			}
+			// Recupera IdentificativoSdI
+			if(pddContext.containsKey(CostantiPdD.BUSTA_RICHIESTA_SDI_IDENTIFICATIVO_SDI)) {
+				Object idSdiObject = pddContext.getObject(CostantiPdD.BUSTA_RICHIESTA_SDI_IDENTIFICATIVO_SDI);
+				if(idSdiObject instanceof String) {
+					outResponsePDMessage.getBustaRichiesta().addProperty("IdentificativoSdI", (String) idSdiObject);
+				}
+			}
+		}
+		if(bustaRisposta != null &&
+			// aggiungo proprieta' (vengono serializzate negli header di integrazione)
+			bustaRisposta.sizeProperties()>0){
+			String[]propertyNames = bustaRisposta.getPropertiesNames();
+			for (int i = 0; i < propertyNames.length; i++) {
+				outResponsePDMessage.getBustaRichiesta().addProperty(propertyNames[i], bustaRisposta.getProperty(propertyNames[i]));
 			}
 		}
 		outResponsePDMessage.setMessage(responseMessage);

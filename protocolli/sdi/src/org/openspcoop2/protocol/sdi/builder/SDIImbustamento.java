@@ -75,7 +75,7 @@ public class SDIImbustamento {
 		this.sdiProperties = SDIProperties.getInstance(bustaBuilder.getProtocolFactory().getLogger());
 	}
 	
-	public SOAPElement creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(IProtocolFactory<?> protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam) throws ProtocolException{
+	public SOAPElement creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(IProtocolFactory<?> protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam, org.openspcoop2.protocol.sdk.Context context) throws ProtocolException{
 		
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
@@ -424,7 +424,12 @@ public class SDIImbustamento {
 			
 			// salvo nomeFile
 			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, fileSdi.getNomeFile());
-			
+
+			// Salva solo il NomeFile nel context per permettere il recupero in caso di errore
+			if(context != null && this.sdiProperties.isEnableFatturazioneAttivaHeaderIntegrazioneGestioneErrore()) {
+				context.addObject(org.openspcoop2.pdd.core.CostantiPdD.BUSTA_RICHIESTA_SDI_NOME_FILE, fileSdi.getNomeFile());
+			}
+
 			// soapAction
 			msg.setSoapAction(SDICostantiServizioRiceviFile.SDI_SOAP_ACTION_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE);
 			
@@ -485,7 +490,7 @@ public class SDIImbustamento {
 	
 	public SOAPElement creaRichiesta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(IProtocolFactory<?> protocolFactory, IState state, Busta busta, OpenSPCoop2Message msgParam,
 			boolean isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov,
-			boolean isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov) throws ProtocolException{
+			boolean isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov, org.openspcoop2.protocol.sdk.Context context) throws ProtocolException{
 		
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
@@ -675,7 +680,13 @@ public class SDIImbustamento {
 			// salvo informazioni
 			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdi+"");
 			busta.addProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE, fileSdi.getNomeFile());
-			
+
+			// Salva NomeFile e IdentificativoSdI nel context per permettere il recupero in caso di errore e in risposta OK
+			if(context != null && this.sdiProperties.isEnableFatturazionePassivaHeaderIntegrazioneGestioneErrore()) {
+				context.addObject(org.openspcoop2.pdd.core.CostantiPdD.BUSTA_RICHIESTA_SDI_NOME_FILE, fileSdi.getNomeFile());
+				context.addObject(org.openspcoop2.pdd.core.CostantiPdD.BUSTA_RICHIESTA_SDI_IDENTIFICATIVO_SDI, identificativoSdi+"");
+			}
+
 			// detach body
 			soapBody.removeContents();
 			

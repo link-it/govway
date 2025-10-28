@@ -114,13 +114,13 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 			// Servizio
 			if(SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE.equals(busta.getServizio())
 					&& SDICostantiServizioRiceviFile.SDI_SERVIZIO_RICEVI_FILE_AZIONE_RICEVI_FILE.equals(busta.getAzione())){
-				element = this.sdiImbustamento.creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(this.protocolFactory, this.state, busta, msg);
+				element = this.sdiImbustamento.creaRichiesta_ServizioSdIRiceviFile_AzioneRiceviFile(this.protocolFactory, this.state, busta, msg, context);
 			}
 			else if(SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA.equals(busta.getServizio())
 					&& SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO.equals(busta.getAzione())){
 				element = this.sdiImbustamento.creaRichiesta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(this.protocolFactory,this.state,busta,msg,
 						this.sdiProperties.isEnableGenerazioneMessaggiCompatibilitaNamespaceSenzaGov(),
-						this.sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov());
+						this.sdiProperties.isEnableValidazioneMessaggiCompatibilitaNamespaceSenzaGov(), context);
 			}
 			else{
 				boolean whiteList = false;
@@ -276,7 +276,7 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 					}
 					else if(SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA.equals(busta.getServizio())
 							&& SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_NOTIFICA_ESITO_AZIONE_NOTIFICA_ESITO.equals(busta.getAzione())){
-						se = this.sdiSbustamento.sbustamentoRisposta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(busta, msg);
+						se = this.sdiSbustamento.sbustamentoRisposta_ServizioSdIRiceviNotifica_AzioneNotificaEsito(busta, msg, context);
 					}
 					else{
 						boolean whiteList = false;

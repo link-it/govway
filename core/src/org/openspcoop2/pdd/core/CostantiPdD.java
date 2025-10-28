@@ -441,7 +441,10 @@ public class CostantiPdD {
     public static final String WSDL_EROGATORE = "Wsdl erogatore";
     
     public static final MapKey<String> BUSTA_RISPOSTA = Map.newMapKey("BustaProprietaHeaderIntegrazione");
-    
+    public static final MapKey<String> BUSTA_RICHIESTA_SDI_HEADER_INTEGRAZIONE = Map.newMapKey("BustaRichiestaSDIHeaderIntegrazione");
+    public static final MapKey<String> BUSTA_RICHIESTA_SDI_NOME_FILE = Map.newMapKey("BustaRichiestaSDINomeFile");
+    public static final MapKey<String> BUSTA_RICHIESTA_SDI_IDENTIFICATIVO_SDI = Map.newMapKey("BustaRichiestaSDIIdentificativoSdI");
+
     public static final String CHECK_STATO_PDD_EXECUTE_HEALTH_CHECK_STATS = "executeHealthCheckStats";
     public static final String CHECK_STATO_PDD_EXECUTE_HOURLY_HEALTH_CHECK_STATS = "executeHourlyHealthCheckStats";
     public static final String CHECK_STATO_PDD_EXECUTE_DAILY_HEALTH_CHECK_STATS = "executeDailyHealthCheckStats";

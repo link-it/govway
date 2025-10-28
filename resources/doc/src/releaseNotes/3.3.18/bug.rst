@@ -31,6 +31,10 @@ Sono stati risolti i seguenti bug:
 
 - Corretto errore di inizializzazione degli schemi XSD ("Cannot resolve the name '... to a(n) type definition component'") dovuto alla presenza di inclusioni circolari tra file XSD.
 
+Per il profilo di interoperabilità 'Fatturazione Elettronica' è stata gestita la seguente issue:
+
+- (https://github.com/link-it/govway/issues/214) In caso di errore di comunicazione con il backend (ad esempio per read timeout), il sistema restituisce comunque l’header HTTP 'GovWay-SDI-NomeFile', contenente il nome del file della fattura inviata. In questo modo è possibile identificare correttamente il nome del file associato alla fattura, anche in presenza di errori di comunicazione.
+
 Per la console di gestione sono stati risolti i seguenti bug:
 
 - Migliorata la gestione delle informazioni sensibili nel report di auditing quando la funzionalità BYOK non è attiva.
