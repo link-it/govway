@@ -12,4 +12,8 @@
 		<servlet-name>oauth2UserServlet</servlet-name>
 		<servlet-class>org.openspcoop2.web.monitor.core.servlet.OAuth2UserServlet</servlet-class>
 	</servlet>
-	
+	<servlet>
+		<servlet-name>checkServlet</servlet-name>
+		<servlet-class>org.openspcoop2.web.monitor.core.servlet.CheckServlet</servlet-class>
+	</servlet>
+

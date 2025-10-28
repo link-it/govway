@@ -30,4 +30,4 @@ Funzionalità Avanzate
 	logger/index.rst
 	plugins/index.rst
 	suap
-	health_check
+	health_check/index.rst

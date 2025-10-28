@@ -11,3 +11,7 @@
 		<servlet-name>oauth2UserServlet</servlet-name>
 		<url-pattern>/oauth2/user</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>checkServlet</servlet-name>
+		<url-pattern>/check</url-pattern>
+	</servlet-mapping>

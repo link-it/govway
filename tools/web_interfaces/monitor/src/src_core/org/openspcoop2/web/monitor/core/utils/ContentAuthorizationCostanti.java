@@ -49,13 +49,16 @@ public class ContentAuthorizationCostanti {
 		"/timeout.jsp",
 		"/report/statistica",
 		"/report/configurazione",
-		
+
 		// Cambio Password Scaduta Utente
 		"/core/pages/form/userPasswordScaduta.jsf",
-		
+
 		// Servlet callback OAuth2
 		"/oauth2/callback",
 		"/oauth2/user",
+
+		// Health check endpoint
+		"/check",
 	};
 
 	// Elenco delle pagine che sono disponibili al ruolo amministratore

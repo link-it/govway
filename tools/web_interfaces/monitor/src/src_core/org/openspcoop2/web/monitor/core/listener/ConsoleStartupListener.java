@@ -44,6 +44,8 @@ import org.openspcoop2.web.monitor.core.thread.ThreadExecutorManager;
  */
 public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 
+	public static volatile boolean initialized = false;
+
 	private InitRuntimeConfigReader initRuntimeConfigReader;
 
 	@Override
@@ -132,6 +134,10 @@ public class ConsoleStartupListener extends AbstractConsoleStartupListener{
 			String msgErrore = "Errore durante l'inizializzazione del FailedAttempts: " + e.getMessage();
 			logError(msgErrore,e);
 		}
+
+		// Imposta il flag di inizializzazione completata
+		initialized = true;
+		logInfo("govwayMonitor inizializzato con successo.");
 	}
 
 
