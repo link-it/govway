@@ -69,8 +69,24 @@ public class OAuth2LoginStartServlet extends HttpServlet {
 
 
 			String state = UUID.randomUUID().toString();
-			// 1) Costruisci l'URL di autorizzazione Keycloak
-			String authorizationUrl = OAuth2Utilities.getURLLoginOAuth2(loginProperties, state);
+
+			// Gestione PKCE (Proof Key for Code Exchange)
+			String codeChallenge = null;
+			String codeChallengeMethod = null;
+			if (OAuth2Utilities.isPkceEnabled(loginProperties)) {
+				// Genera code_verifier e salva in sessione
+				String codeVerifier = OAuth2Utilities.generateCodeVerifier();
+				session.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_CODE_VERIFIER, codeVerifier);
+
+				// Calcola code_challenge dal code_verifier
+				codeChallengeMethod = OAuth2Utilities.getPkceMethod(loginProperties);
+				codeChallenge = OAuth2Utilities.generateCodeChallenge(codeVerifier, codeChallengeMethod);
+
+				ControlStationCore.logDebug("[OAuth2LoginStart] PKCE enabled, method: " + codeChallengeMethod);
+			}
+
+			// 1) Costruisci l'URL di autorizzazione con parametri PKCE se abilitato
+			String authorizationUrl = OAuth2Utilities.getURLLoginOAuth2(loginProperties, state, codeChallenge, codeChallengeMethod);
 
 			session.setAttribute(OAuth2Costanti.ATTRIBUTE_NAME_OAUTH2_STATE, state);
 
