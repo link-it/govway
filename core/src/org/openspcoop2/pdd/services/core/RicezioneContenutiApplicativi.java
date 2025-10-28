@@ -5432,7 +5432,31 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 		}
 		OutResponsePDMessage outResponsePDMessage = new OutResponsePDMessage();
 		outResponsePDMessage.setBustaRichiesta(this.bustaRichiesta);
-		if(bustaRispostaObject instanceof Busta bustaRisposta &&
+		Busta bustaRisposta = null;
+		if(bustaRispostaObject instanceof Busta b){
+			bustaRisposta = b;
+		}
+		else if(bustaRispostaObject == null && Costanti.SDI_PROTOCOL_NAME.equalsIgnoreCase(this.protocolFactory.getProtocol()) &&
+			// Failover condizionale: se bustaRisposta è null e il protocollo è SDI,
+			// verifica se esistono NomeFile e IdentificativoSdI salvati nel context
+			// per permettere il recupero di questi valori anche in caso di errore
+			pddContext != null) {
+			// Recupera NomeFile
+			if(pddContext.containsKey(CostantiPdD.BUSTA_RICHIESTA_SDI_NOME_FILE)) {
+				Object nomeFileSDIObject = pddContext.getObject(CostantiPdD.BUSTA_RICHIESTA_SDI_NOME_FILE);
+				if(nomeFileSDIObject instanceof String s) {
+					outResponsePDMessage.getBustaRichiesta().addProperty("NomeFile", s);
+				}
+			}
+			// Recupera IdentificativoSdI
+			if(pddContext.containsKey(CostantiPdD.BUSTA_RICHIESTA_SDI_IDENTIFICATIVO_SDI)) {
+				Object idSdiObject = pddContext.getObject(CostantiPdD.BUSTA_RICHIESTA_SDI_IDENTIFICATIVO_SDI);
+				if(idSdiObject instanceof String s) {
+					outResponsePDMessage.getBustaRichiesta().addProperty("IdentificativoSdI", s);
+				}
+			}
+		}
+		if(bustaRisposta != null &&
 			// aggiungo proprieta' (vengono serializzate negli header di integrazione)
 			bustaRisposta.sizeProperties()>0){
 			String[]propertyNames = bustaRisposta.getPropertiesNames();

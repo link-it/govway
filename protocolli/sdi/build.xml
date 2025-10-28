@@ -90,6 +90,7 @@
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/fatturapa/sdi/fatturapa/v1_0"/>
 			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-fatturapa-v10"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/constants/package-info.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.fatturapa.sdi.fatturapa.v1_0"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="sdi"/>
@@ -106,6 +107,7 @@
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/fatturapa/sdi/fatturapa/v1_1"/>
 			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-fatturapa-v11"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/constants/package-info.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.fatturapa.sdi.fatturapa.v1_1"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="sdi"/>
@@ -122,6 +124,7 @@
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/agenziaentrate/ivaservizi/docs/xsd/fatture/v1_0/"/>
 			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-fatturasemplificata-v10"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/constants/package-info.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_0"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="sdi"/>
@@ -138,6 +141,7 @@
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/agenziaentrate/ivaservizi/docs/xsd/fatture/v1_2/"/>
 			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-fatturapa-v12"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/constants/package-info.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="sdi"/>
@@ -154,6 +158,7 @@
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/fatturapa/sdi/messaggi/v1_0"/>
 			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-messaggi-v10"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/constants/package-info.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.fatturapa.sdi.messaggi.v1_0"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="sdi"/>
@@ -170,6 +175,7 @@
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/agenziaentrate/ivaservizi/docs/xsd/fattura/messaggi/v1_0"/>
 			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-messaggi-fattura-v10"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/constants/package-info.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="sdi"/>
@@ -186,6 +192,7 @@
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/fatturapa/sdi/ws/ricezione/v1_0/types"/>
 			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-wsricezione-v10"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/constants/package-info.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.fatturapa.sdi.ws.ricezione.v1_0.types"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="sdi"/>
@@ -202,6 +209,7 @@
 			<param name="compile_src_openspcoop2.SRC_DIR" value="${src_sdi}/it/gov/fatturapa/sdi/ws/trasmissione/v1_0/types"/>
 			<param name="compile_src_openspcoop2.GIT_ID_NAME" value="sdi-protocol-wstrasmissione-v10"/>
 			<param name="compile_src_openspcoop2.BUILD_INCLUDES" value="**/*.java"/>
+			<param name="compile_src_openspcoop2.BUILD_EXCLUDES" value="**/constants/package-info.java"/>
 			<param name="compile_src_openspcoop2.SRC_PREFIX" value=""/>
 			<param name="compile_src_openspcoop2.PACKAGE" value="it.gov.fatturapa.sdi.ws.trasmissione.v1_0.types"/>
 			<param name="compile_src_openspcoop2.DIST_DIR_NAME" value="sdi"/>

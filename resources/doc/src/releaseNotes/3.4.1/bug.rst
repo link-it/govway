@@ -53,6 +53,10 @@ Sono stati risolti i seguenti bug per la componente runtime del gateway:
     ...
     Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.NoClassDefFoundError: jdk/dynalink/Namespace 
 
+Per il profilo di interoperabilità 'Fatturazione Elettronica' è stata gestita la seguente issue:
+
+- (https://github.com/link-it/govway/issues/214) In caso di errore di comunicazione con il backend (ad esempio per read timeout), il sistema restituisce comunque l’header HTTP 'GovWay-SDI-NomeFile', contenente il nome del file della fattura inviata. In questo modo è possibile identificare correttamente il nome del file associato alla fattura, anche in presenza di errori di comunicazione.
+
 Per entrambe le console è stato risolto un problema che impediva:
 
 - (https://github.com/link-it/govway/issues/250) l’autenticazione alle console per le utenze con password contenenti i caratteri & # % ^ < >;

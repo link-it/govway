@@ -43,6 +43,16 @@ public class SDIProperties {
 	/** Logger utilizzato per errori eventuali. */
 	private Logger log = null;
 
+	private void logError(String msg, Throwable e) {
+		if(this.log!=null) {
+			this.log.error(msg,e);
+		}
+	}
+	private void logError(String msg) {
+		if(this.log!=null) {
+			this.log.error(msg);
+		}
+	}
 
 	/** Copia Statica */
 	private static SDIProperties sdiProperties = null;
@@ -81,7 +91,7 @@ public class SDIProperties {
 			}
 			propertiesReader.load(properties);
 		}catch(Exception e) {
-			this.log.error("Riscontrato errore durante la lettura del file 'sdi.properties': "+e.getMessage());
+			this.logError("Riscontrato errore durante la lettura del file 'sdi.properties': "+e.getMessage());
 			throw new ProtocolException("SDIProperties initialize error: "+e.getMessage(),e);
 		}finally{
 			try{
@@ -212,7 +222,7 @@ public class SDIProperties {
 			
 		}catch(java.lang.Exception e) {
 			String msg = "Riscontrato errore durante la validazione della proprieta' del protocollo sdi, "+e.getMessage();
-			this.log.error(msg,e);
+			this.logError(msg,e);
 			throw new ProtocolException(msg,e);
 		}
 	}
@@ -242,7 +252,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -274,7 +284,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -306,7 +316,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -338,7 +348,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -370,7 +380,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -402,7 +412,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -434,7 +444,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -466,7 +476,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -477,11 +487,11 @@ public class SDIProperties {
 	private Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale = null;
 	public Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale() throws ProtocolException{
 		if(this.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale==null){
-			
+
 			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.nomeFile.gestioneOpzionale";
-			
-			try{  
-				String value = this.reader.getValueConvertEnvProperties(propertyName); 
+
+			try{
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
 
 				if (value != null){
 					value = value.trim();
@@ -492,12 +502,39 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
 
 		return this.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale;
+	}
+
+	private Boolean isEnableFatturazioneAttivaHeaderIntegrazioneGestioneErrore = null;
+	public Boolean isEnableFatturazioneAttivaHeaderIntegrazioneGestioneErrore() throws ProtocolException{
+		if(this.isEnableFatturazioneAttivaHeaderIntegrazioneGestioneErrore==null){
+
+			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.headerIntegrazione.gestioneErrore";
+
+			try{
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+
+				if (value != null){
+					value = value.trim();
+					this.isEnableFatturazioneAttivaHeaderIntegrazioneGestioneErrore = Boolean.parseBoolean(value);
+				}else{
+					// Default: false per mantenere comportamento attuale
+					this.isEnableFatturazioneAttivaHeaderIntegrazioneGestioneErrore = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.logError(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return this.isEnableFatturazioneAttivaHeaderIntegrazioneGestioneErrore;
 	}
 	
 	/**
@@ -524,7 +561,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -550,7 +587,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -576,7 +613,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -608,7 +645,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -640,7 +677,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -672,14 +709,41 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
 
 		return this.isEnable_fatturazionePassiva_generazioneNomeFileEsito;
 	}
-	
+
+	private Boolean isEnableFatturazionePassivaHeaderIntegrazioneGestioneErrore = null;
+	public Boolean isEnableFatturazionePassivaHeaderIntegrazioneGestioneErrore() throws ProtocolException{
+		if(this.isEnableFatturazionePassivaHeaderIntegrazioneGestioneErrore==null){
+
+			String propertyName = "org.openspcoop2.protocol.sdi.fatturazionePassiva.headerIntegrazione.gestioneErrore";
+
+			try{
+				String value = this.reader.getValueConvertEnvProperties(propertyName);
+
+				if (value != null){
+					value = value.trim();
+					this.isEnableFatturazionePassivaHeaderIntegrazioneGestioneErrore = Boolean.parseBoolean(value);
+				}else{
+					// Default: false per mantenere comportamento attuale
+					this.isEnableFatturazionePassivaHeaderIntegrazioneGestioneErrore = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.logError(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return this.isEnableFatturazionePassivaHeaderIntegrazioneGestioneErrore;
+	}
+
 	public boolean isTracciamentoRequiredFromConfiguration() throws ProtocolException {
 		return this.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura() ||
 				this.isEnable_fatturazionePassiva_notifiche_enrichInfoFromFattura();
@@ -698,7 +762,7 @@ public class SDIProperties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.dataSource', errore:"+e.getMessage());
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.dataSource', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
 				this.tracciamentoDatasource_read = true;
@@ -720,7 +784,7 @@ public class SDIProperties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.tipoDatabase', errore:"+e.getMessage());
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.tipoDatabase', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}finally {
 				this.tracciamentoTipoDatabase_read = true;
@@ -739,7 +803,7 @@ public class SDIProperties {
 				}
 				
 			}catch(java.lang.Exception e) {
-				this.log.error("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.dataSource.property.*', errore:"+e.getMessage());
+				this.logError("Proprieta' di openspcoop 'org.openspcoop2.protocol.sdi.tracce.dataSource.property.*', errore:"+e.getMessage());
 				throw new ProtocolException(e);
 			}
     	}
@@ -771,7 +835,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -803,7 +867,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -835,7 +899,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -867,7 +931,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -899,7 +963,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -931,7 +995,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -963,7 +1027,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -995,7 +1059,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1027,7 +1091,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1059,7 +1123,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1091,7 +1155,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1123,7 +1187,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1158,7 +1222,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1190,7 +1254,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1224,7 +1288,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1258,7 +1322,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1290,7 +1354,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1319,7 +1383,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1348,7 +1412,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
@@ -1377,7 +1441,7 @@ public class SDIProperties {
 
 			}catch(java.lang.Exception e) {
 				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
-				this.log.error(msg,e);
+				this.logError(msg,e);
 				throw new ProtocolException(msg,e);
 			}
 		}
