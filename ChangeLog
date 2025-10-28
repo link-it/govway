@@ -1,3 +1,13 @@
+2025-10-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug
+	Risolta anomalia che rendeva inutilizzabile l'utilizzo della validazione dei contenuti con la libreria 'swagger_request_validator' su wildfly.
+	Nei log veniva riportato il seguente errore:
+		Caused by: java.lang.NoClassDefFoundError: Could not initialize class com.github.fge.jsonschema.core.util.RegexECMA
+		...
+		Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.NoClassDefFoundError: jdk/dynalink/Namespace 
+
 2025-10-27  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

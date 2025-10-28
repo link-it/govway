@@ -46,6 +46,13 @@ Sono stati risolti i seguenti bug per la componente runtime del gateway:
 
 - Corretto errore di inizializzazione degli schemi XSD ("Cannot resolve the name '... to a(n) type definition component'") dovuto alla presenza di inclusioni circolari tra file XSD.
 
+- Risolta anomalia che rendeva inutilizzabile l'utilizzo della validazione dei contenuti con la libreria 'swagger_request_validator' su wildfly.
+  Nei log veniva riportato il seguente errore:
+  
+    Caused by: java.lang.NoClassDefFoundError: Could not initialize class com.github.fge.jsonschema.core.util.RegexECMA
+    ...
+    Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.NoClassDefFoundError: jdk/dynalink/Namespace 
+
 Per entrambe le console è stato risolto un problema che impediva:
 
 - (https://github.com/link-it/govway/issues/250) l’autenticazione alle console per le utenze con password contenenti i caratteri & # % ^ < >;

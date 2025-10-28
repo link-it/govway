@@ -47,8 +47,17 @@
 					<path name="com/sun/net/httpserver"/>
 				</paths>
 			</system>
+			<module name="jdk.dynalink" export="true"/>
 		</dependencies>
 		end export dependencies -->
+		<!-- Modulo 'jdk.dynalink' necessario per Rhino su Java 21 
+			Caused by: java.lang.NoClassDefFoundError: Could not initialize class com.github.fge.jsonschema.core.util.RegexECMA262Helper
+			at deployment.govway.ear//com.github.fge.jsonschema.core.keyword.syntax.checkers.common.PatternPropertiesSyntaxChecker.extraChecks(PatternPropertiesSyntaxChecker.java:66)
+			... 90 more
+			Caused by: java.lang.ExceptionInInitializerError: Exception java.lang.NoClassDefFoundError: jdk/dynalink/Namespace [in thread "http-worker task-1"]
+			at deployment.govway.ear//org.mozilla.javascript.optimizer.BodyCodegen.addDynamicInvoke(BodyCodegen.java:4598)
+			at deployment.govway.ear//com.github.fge.jsonschema.core.util.RegexECMA262Helper.<clinit>(RegexECMA262Helper.java:112)				
+		-->
 	</deployment>
 	<sub-deployment name="govway.war">
 		<exclusions>
