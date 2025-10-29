@@ -114,6 +114,9 @@ Examples:
 |fruizione_modi_oauth.json|
 |fruizione_modi_oauth_keystore_default.json|
 |fruizione_modi_oauth_keystore_ridefinito.json|
+|fruizione_modi_oauth_keystore_ridefinito_jwk.json|
+|fruizione_modi_oauth_keystore_ridefinito_keypair.json|
+|fruizione_modi_oauth_keystore_ridefinito_keypair_nopassw.json|
 |fruizione_modi_oauth_keystore_ridefinito_archivio.json|
 |fruizione_modi_oauth_keystore_ridefinito_hsm.json|
 
@@ -174,6 +177,7 @@ Examples:
 |fruizione_modi_soap_iu_indirizzo_ip.json|
 |fruizione_modi_soap_risposta_truststore_ridefinito.json|
 |fruizione_modi_soap_risposta_truststore_ridefinito_hsm.json|
+|fruizione_modi_soap_risposta_truststore_ridefinito_jwk.json|
 |fruizione_modi_soap_risposta_truststore_ridefinito_pdnd.json|
 |fruizione_modi_soap_risposta_truststore_ridefinito_ocsp.json|
 |fruizione_modi_soap_ttl_risposta.json|
@@ -181,6 +185,9 @@ Examples:
 |fruizione_modi_soap_wsato_verifica_risposta_disabilitata.json|
 |fruizione_modi_soap_keystore_fruizione_default.json|
 |fruizione_modi_soap_keystore_fruizione_ridefinito.json|
+|fruizione_modi_soap_keystore_fruizione_ridefinito_jwk.json|
+|fruizione_modi_soap_keystore_fruizione_ridefinito_keypair.json|
+|fruizione_modi_soap_keystore_fruizione_ridefinito_keypair_nopasswd.json|
 |fruizione_modi_soap_keystore_fruizione_ridefinito_archivio.json|
 |fruizione_modi_soap_keystore_fruizione_ridefinito_hsm.json|
 |fruizione_modi_soap_keystore_fruizione_definito_token_policy.json|
@@ -350,6 +357,7 @@ Examples:
 |fruizione_modi_rest_ttl_risposta.json|
 |fruizione_modi_rest_risposta_truststore_ridefinito.json|
 |fruizione_modi_rest_risposta_truststore_ridefinito_trust_senza_password.json|
+|fruizione_modi_rest_risposta_truststore_ridefinito_jwk.json|
 |fruizione_modi_rest_risposta_truststore_ridefinito_hsm.json|
 |fruizione_modi_rest_risposta_truststore_ridefinito_pdnd.json|
 |fruizione_modi_rest_risposta_truststore_ridefinito_ocsp.json|
@@ -358,6 +366,9 @@ Examples:
 |fruizione_modi_rest_keystore_fruizione_default.json|
 |fruizione_modi_rest_keystore_fruizione_ridefinito.json|
 |fruizione_modi_rest_keystore_fruizione_ridefinito_keystore_senza_password.json|
+|fruizione_modi_rest_keystore_fruizione_ridefinito_jwk.json|
+|fruizione_modi_rest_keystore_fruizione_ridefinito_keypair.json|
+|fruizione_modi_rest_keystore_fruizione_ridefinito_keypair_nopasswd.json|
 |fruizione_modi_rest_keystore_fruizione_ridefinito_archivio.json|
 |fruizione_modi_rest_keystore_fruizione_ridefinito_hsm.json|
 |fruizione_modi_rest_keystore_fruizione_definito_token_policy.json|

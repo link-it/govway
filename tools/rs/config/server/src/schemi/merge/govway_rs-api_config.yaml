@@ -9690,6 +9690,22 @@ components:
             maxLength: 4000
             type: "string"
             example: "/path/to/keystore"
+    BaseKeyStorePublicFile:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/BaseKeyStore"
+      - required:
+        - "keystore_path"
+        type: "object"
+        properties:
+          keystore_path:
+            maxLength: 4000
+            type: "string"
+            example: "/path/to/keystore"
+          public_key_path:
+            maxLength: 4000
+            type: "string"
+            example: "/path/to/public"
     BaseKeyStoreArchive:
       type: "object"
       allOf:
@@ -11465,7 +11481,7 @@ components:
     ModIKeyStoreFile:
       type: "object"
       allOf:
-      - $ref: "#/components/schemas/BaseKeyStoreFile"
+      - $ref: "#/components/schemas/BaseKeyStorePublicFile"
       - required:
         - "keystore_tipo"
         - "tipologia"
@@ -11474,7 +11490,7 @@ components:
           tipologia:
             $ref: "#/components/schemas/ModIKeystoreTipologiaEnum"
           keystore_tipo:
-            $ref: "#/components/schemas/ModIKeystoreEnum"
+            $ref: "#/components/schemas/ModIKeystoreFullEnum"
     ModIKeyStoreFileApplicativo:
       type: "object"
       allOf:
@@ -13016,6 +13032,7 @@ components:
       enum:
       - "jks"
       - "pkcs11"
+      - "jwk"
       - "pdnd"
     ModIKeystoreEnum:
       type: "string"
@@ -13023,6 +13040,14 @@ components:
       enum:
       - "jks"
       - "pkcs12"
+    ModIKeystoreFullEnum:
+      type: "string"
+      example: "jks"
+      enum:
+      - "jks"
+      - "pkcs12"
+      - "jwk"
+      - "keys"
     ModIKeystoreTipologiaEnum:
       type: "string"
       example: "filesystem"

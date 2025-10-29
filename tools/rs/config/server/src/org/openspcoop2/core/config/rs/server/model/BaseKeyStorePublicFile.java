@@ -25,51 +25,49 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ModIKeyStoreFile extends BaseKeyStorePublicFile implements OneOfModIKeyStoreRidefinitoDatiKeystore {
+public class BaseKeyStorePublicFile extends BaseKeyStore {
   
-  @Schema(required = true, description = "")
-  private ModIKeystoreTipologiaEnum tipologia = null;
+  @Schema(example = "/path/to/keystore", required = true, description = "")
+  private String keystorePath = null;
   
-  @Schema(required = true, description = "")
-  private ModIKeystoreFullEnum keystoreTipo = null;
+  @Schema(example = "/path/to/public", description = "")
+  private String publicKeyPath = null;
  /**
-   * Get tipologia
-   * @return tipologia
+   * Get keystorePath
+   * @return keystorePath
   **/
-  @Override
-@JsonProperty("tipologia")
+  @JsonProperty("keystore_path")
   @NotNull
   @Valid
-  public ModIKeystoreTipologiaEnum getTipologia() {
-    return this.tipologia;
+ @Size(max=4000)  public String getKeystorePath() {
+    return this.keystorePath;
   }
 
-  public void setTipologia(ModIKeystoreTipologiaEnum tipologia) {
-    this.tipologia = tipologia;
+  public void setKeystorePath(String keystorePath) {
+    this.keystorePath = keystorePath;
   }
 
-  public ModIKeyStoreFile tipologia(ModIKeystoreTipologiaEnum tipologia) {
-    this.tipologia = tipologia;
+  public BaseKeyStorePublicFile keystorePath(String keystorePath) {
+    this.keystorePath = keystorePath;
     return this;
   }
 
  /**
-   * Get keystoreTipo
-   * @return keystoreTipo
+   * Get publicKeyPath
+   * @return publicKeyPath
   **/
-  @JsonProperty("keystore_tipo")
-  @NotNull
+  @JsonProperty("public_key_path")
   @Valid
-  public ModIKeystoreFullEnum getKeystoreTipo() {
-    return this.keystoreTipo;
+ @Size(max=4000)  public String getPublicKeyPath() {
+    return this.publicKeyPath;
   }
 
-  public void setKeystoreTipo(ModIKeystoreFullEnum keystoreTipo) {
-    this.keystoreTipo = keystoreTipo;
+  public void setPublicKeyPath(String publicKeyPath) {
+    this.publicKeyPath = publicKeyPath;
   }
 
-  public ModIKeyStoreFile keystoreTipo(ModIKeystoreFullEnum keystoreTipo) {
-    this.keystoreTipo = keystoreTipo;
+  public BaseKeyStorePublicFile publicKeyPath(String publicKeyPath) {
+    this.publicKeyPath = publicKeyPath;
     return this;
   }
 
@@ -77,10 +75,10 @@ public class ModIKeyStoreFile extends BaseKeyStorePublicFile implements OneOfMod
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ModIKeyStoreFile {\n");
-    sb.append("    ").append(ModIKeyStoreFile.toIndentedString(super.toString())).append("\n");
-    sb.append("    tipologia: ").append(ModIKeyStoreFile.toIndentedString(this.tipologia)).append("\n");
-    sb.append("    keystoreTipo: ").append(ModIKeyStoreFile.toIndentedString(this.keystoreTipo)).append("\n");
+    sb.append("class BaseKeyStorePublicFile {\n");
+    sb.append("    ").append(BaseKeyStorePublicFile.toIndentedString(super.toString())).append("\n");
+    sb.append("    keystorePath: ").append(BaseKeyStorePublicFile.toIndentedString(this.keystorePath)).append("\n");
+    sb.append("    publicKeyPath: ").append(BaseKeyStorePublicFile.toIndentedString(this.publicKeyPath)).append("\n");
     sb.append("}");
     return sb.toString();
   }

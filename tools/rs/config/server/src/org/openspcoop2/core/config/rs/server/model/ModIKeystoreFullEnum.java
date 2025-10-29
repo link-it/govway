@@ -23,17 +23,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Gets or Sets ModITruststoreEnum
+ * Gets or Sets ModIKeystoreFullEnum
  */
-public enum ModITruststoreEnum {
+public enum ModIKeystoreFullEnum {
 JKS("jks"),
-  PKCS11("pkcs11"),
+  PKCS12("pkcs12"),
   JWK("jwk"),
-  PDND("pdnd");
+  KEYS("keys");
 
   private String value;
 
-  ModITruststoreEnum(String value) {
+  ModIKeystoreFullEnum(String value) {
     this.value = value;
   }
 
@@ -44,8 +44,8 @@ JKS("jks"),
   }
 
   @JsonCreator
-  public static ModITruststoreEnum fromValue(String text) {
-    for (ModITruststoreEnum b : ModITruststoreEnum.values()) {
+  public static ModIKeystoreFullEnum fromValue(String text) {
+    for (ModIKeystoreFullEnum b : ModIKeystoreFullEnum.values()) {
       if (String.valueOf(b.value).equals(text)) {
         return b;
       }
