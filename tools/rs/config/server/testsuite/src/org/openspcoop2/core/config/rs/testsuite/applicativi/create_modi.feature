@@ -100,6 +100,9 @@ Examples:
 |applicativo_interno_url_x5u.json|
 |applicativo_interno_token_keystore_archive.json|
 |applicativo_interno_token_keystore_file.json|
+|applicativo_interno_token_keystore_file_jwk.json|
+|applicativo_interno_token_keystore_file_keypair.json|
+|applicativo_interno_token_keystore_file_keypair_nopassw.json|
 |applicativo_interno_token_keystore_hsm.json|
 |applicativo_interno_token.json|
 |applicativo_interno_token_solo_clientId.json|

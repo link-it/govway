@@ -71,6 +71,7 @@ import org.openspcoop2.core.config.rs.server.model.ModIKeyStoreFile;
 import org.openspcoop2.core.config.rs.server.model.ModIKeyStoreHSM;
 import org.openspcoop2.core.config.rs.server.model.ModIKeyStoreRidefinito;
 import org.openspcoop2.core.config.rs.server.model.ModIKeystoreEnum;
+import org.openspcoop2.core.config.rs.server.model.ModIKeystoreFullEnum;
 import org.openspcoop2.core.config.rs.server.model.ModIKeystoreTipologiaEnum;
 import org.openspcoop2.core.config.rs.server.model.ModISicurezzaMessaggioRestAlgoritmoFirma;
 import org.openspcoop2.core.config.rs.server.model.ModISicurezzaMessaggioRestRiferimentoX509;
@@ -132,7 +133,8 @@ public class ModiErogazioniApiHelper {
 	private static final String TIPO_TRUSTSTORE_PDND_NON_INDICATO = "Tipo truststore pdnd non indicato";
 	private static final String TIPO_TRUSTSTORE_PDND_SCONOSCIUTO_PREFIX = "Tipo truststore pdnd sconosciuto: ";
 	private static final String TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX = "Tipo truststore sconosciuto: ";
-	private static final String TIPO_TRUSTSTORE_NON_SUPPORTATO_SSL = "Truststore PDND non supportato con configurazione ssl";
+	private static final String TIPO_TRUSTSTORE_JWK_NON_SUPPORTATO_SSL = "Truststore JWK non supportato con configurazione ssl";
+	private static final String TIPO_TRUSTSTORE_PDND_NON_SUPPORTATO_SSL = "Truststore PDND non supportato con configurazione ssl";
 	
 	public static FruizioneModI getFruizioneModI(AccordoServizioParteSpecifica asps, ErogazioniEnv env, ProfiloEnum profilo, Map <String, AbstractProperty<?>> p) throws CoreException, DriverRegistroServiziNotFound, DriverRegistroServiziException {
 		if(profilo == null || (!profilo.equals(ProfiloEnum.MODI) && !profilo.equals(ProfiloEnum.MODIPA))) {
@@ -420,8 +422,11 @@ public class ModiErogazioniApiHelper {
 				truststore.setPdndTipo(truststoreTipoString);
 			}
 			else {
-				if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS)) {
+				if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS)) {
 					tipo = ModITruststoreEnum.JKS;
+				}
+				else if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JWK)) {
+					tipo = ModITruststoreEnum.JWK;
 				}
 			}
 			truststore.setTruststoreTipo(tipo);
@@ -567,14 +572,18 @@ public class ModiErogazioniApiHelper {
 		else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH)) {
 			ModIKeyStoreFile datiKeystore = new ModIKeyStoreFile().tipologia(ModIKeystoreTipologiaEnum.FILESYSTEM);
 
-			ModIKeystoreEnum keystoreTipo = null;
+			ModIKeystoreFullEnum keystoreTipo = null;
 
 			String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_TYPE, true);
 
 			if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
-				keystoreTipo = ModIKeystoreEnum.JKS;
+				keystoreTipo = ModIKeystoreFullEnum.JKS;
 			} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
-				keystoreTipo = ModIKeystoreEnum.PKCS12;
+				keystoreTipo = ModIKeystoreFullEnum.PKCS12;
+			} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK)) {
+				keystoreTipo = ModIKeystoreFullEnum.JWK;
+			} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR)) {
+				keystoreTipo = ModIKeystoreFullEnum.KEYS;
 			}
 
 			datiKeystore.setKeystoreTipo(keystoreTipo);
@@ -582,6 +591,7 @@ public class ModiErogazioniApiHelper {
 			datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
 			datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
 			datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH, true));
+			datiKeystore.setPublicKeyPath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH_PUBLIC_KEY, false));
 			datiKeystore.setKeystoreByokPolicy(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, false));
 
 			ks.setDatiKeystore(datiKeystore);
@@ -647,6 +657,9 @@ public class ModiErogazioniApiHelper {
 			else {
 				if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS)) {
 					tipo = ModITruststoreEnum.JKS;
+				}
+				else if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JWK)) {
+					tipo = ModITruststoreEnum.JWK;
 				}
 			}
 			truststore.setTruststoreTipo(tipo);
@@ -841,14 +854,18 @@ public class ModiErogazioniApiHelper {
 			else if(keystoreModeString.equals(ModICostanti.MODIPA_KEYSTORE_MODE_VALUE_PATH)) {
 				ModIKeyStoreFile datiKeystore = new ModIKeyStoreFile().tipologia(ModIKeystoreTipologiaEnum.FILESYSTEM);
 
-				ModIKeystoreEnum keystoreTipo = null;
+				ModIKeystoreFullEnum keystoreTipo = null;
 
 				String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_TYPE, true);
 
 				if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
-					keystoreTipo = ModIKeystoreEnum.JKS;
+					keystoreTipo = ModIKeystoreFullEnum.JKS;
 				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
-					keystoreTipo = ModIKeystoreEnum.PKCS12;
+					keystoreTipo = ModIKeystoreFullEnum.PKCS12;
+				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK)) {
+					keystoreTipo = ModIKeystoreFullEnum.JWK;
+				} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR)) {
+					keystoreTipo = ModIKeystoreFullEnum.KEYS;
 				}
 
 				datiKeystore.setKeystoreTipo(keystoreTipo);
@@ -856,6 +873,7 @@ public class ModiErogazioniApiHelper {
 				datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
 				datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
 				datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH, true));
+				datiKeystore.setPublicKeyPath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH_PUBLIC_KEY, false));
 				datiKeystore.setKeystoreByokPolicy(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, false));
 
 				ks.setDatiKeystore(datiKeystore);
@@ -1166,8 +1184,11 @@ public class ModiErogazioniApiHelper {
 				truststore.setPdndTipo(truststoreTipoString);
 			}
 			else {
-				if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS)) {
+				if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS)) {
 					tipo = ModITruststoreEnum.JKS;
+				}
+				else if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JWK)) {
+					tipo = ModITruststoreEnum.JWK;
 				}
 			}
 			truststore.setTruststoreTipo(tipo);
@@ -1411,6 +1432,9 @@ public class ModiErogazioniApiHelper {
 			else {
 				if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS)) {
 					tipo = ModITruststoreEnum.JKS;
+				}
+				else if(truststoreTipoString.equals(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JWK)) {
+					tipo = ModITruststoreEnum.JWK;
 				}
 			}
 			truststore.setTruststoreTipo(tipo);
@@ -1867,6 +1891,8 @@ public class ModiErogazioniApiHelper {
 			switch(truststoreRidefinito.getTruststoreTipo()) {
 			case JKS:tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS;
 				break;
+			case JWK:tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JWK;
+				break;
 			case PKCS11:
 				tipo = truststoreRidefinito.getPcks11Tipo();
 				if(tipo==null) {
@@ -1918,6 +1944,8 @@ public class ModiErogazioniApiHelper {
 				switch(truststoreRidefinito.getTruststoreTipo()) {
 				case JKS:tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS;
 					break;
+				case JWK:
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_JWK_NON_SUPPORTATO_SSL);
 				case PKCS11:
 					tipo = truststoreRidefinito.getPcks11Tipo();
 					if(tipo==null) {
@@ -1925,7 +1953,7 @@ public class ModiErogazioniApiHelper {
 					}
 					break;
 				case PDND:
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_NON_SUPPORTATO_SSL);
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PDND_NON_SUPPORTATO_SSL);
 				default:
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 				}
@@ -2120,12 +2148,16 @@ public class ModiErogazioniApiHelper {
 				
 				String tipo = null;
 				switch(fsKeystore.getKeystoreTipo()) {
-				case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
-					break;
-				case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
-					break;
-				default:
-					break;
+					case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
+						break;
+					case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
+						break;
+					case JWK:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK;
+						break;
+					case KEYS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR;
+						break;
+					default:
+						break;
 				}
 				
 				p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
@@ -2133,6 +2165,9 @@ public class ModiErogazioniApiHelper {
 				p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, fsKeystore.getKeyPassword());
 				p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
 				p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, fsKeystore.getKeystorePath());
+				if(fsKeystore.getPublicKeyPath()!=null && StringUtils.isNotEmpty(fsKeystore.getPublicKeyPath())) {
+					p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH_PUBLIC_KEY, fsKeystore.getPublicKeyPath());
+				}
 				p.addProperty(ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, fsKeystore.getKeystoreByokPolicy());
 			} else {
 				ModIKeyStoreArchive archiveKeystore = (ModIKeyStoreArchive)keystoreRidefinito.getDatiKeystore();
@@ -2498,6 +2533,8 @@ public class ModiErogazioniApiHelper {
 			switch(truststoreRidefinito.getTruststoreTipo()) {
 			case JKS:tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS;
 				break;
+			case JWK:tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JWK;
+				break;
 			case PKCS11:
 				tipo = truststoreRidefinito.getPcks11Tipo();
 				if(tipo==null) {
@@ -2549,6 +2586,8 @@ public class ModiErogazioniApiHelper {
 				switch(truststoreRidefinito.getTruststoreTipo()) {
 				case JKS:tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS;
 					break;
+				case JWK:
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_JWK_NON_SUPPORTATO_SSL);							
 				case PKCS11:
 					tipo = truststoreRidefinito.getPcks11Tipo();
 					if(tipo==null) {
@@ -2556,7 +2595,7 @@ public class ModiErogazioniApiHelper {
 					}
 					break;
 				case PDND:
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_NON_SUPPORTATO_SSL);					
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(TIPO_TRUSTSTORE_PDND_NON_SUPPORTATO_SSL);					
 				default:
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(ModiErogazioniApiHelper.TIPO_TRUSTSTORE_SCONOSCIUTO_PREFIX+truststoreRidefinito.getTruststoreTipo());
 				}
@@ -2720,7 +2759,10 @@ public class ModiErogazioniApiHelper {
 			String tipo = null;
 			switch (truststoreRidefinito.getTruststoreTipo()) {
 			case JKS:
-				tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_TYPE_VALUE_JKS;
+				tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS;
+				break;
+			case JWK:
+				tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JWK;
 				break;
 			case PKCS11:
 				tipo = truststoreRidefinito.getPcks11Tipo();
@@ -2936,12 +2978,16 @@ public class ModiErogazioniApiHelper {
 			
 			String tipo = null;
 			switch(fsKeystore.getKeystoreTipo()) {
-			case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
-				break;
-			case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
-				break;
-			default:
-				break;
+				case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
+					break;
+				case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
+					break;
+				case JWK:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK;
+					break;
+				case KEYS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR;
+					break;
+				default:
+					break;
 			}
 			
 			p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
@@ -2949,6 +2995,9 @@ public class ModiErogazioniApiHelper {
 			p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, fsKeystore.getKeyPassword());
 			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
 			p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, fsKeystore.getKeystorePath());
+			if(fsKeystore.getPublicKeyPath()!=null && StringUtils.isNotEmpty(fsKeystore.getPublicKeyPath())) {
+				p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH_PUBLIC_KEY, fsKeystore.getPublicKeyPath());
+			}
 			p.addProperty(ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, fsKeystore.getKeystoreByokPolicy());
 		} else {
 			ModIKeyStoreArchive archiveKeystore = (ModIKeyStoreArchive)keystoreRidefinito.getDatiKeystore();
@@ -3198,7 +3247,11 @@ public class ModiErogazioniApiHelper {
 			
 			String tipo = null;
 			switch(truststoreRidefinito.getTruststoreTipo()) {
-			case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
+			case JKS:
+				tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JKS;
+				break;
+			case JWK:
+				tipo = ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_TYPE_VALUE_JWK;
 				break;
 			case PKCS11:
 				tipo = truststoreRidefinito.getPcks11Tipo();

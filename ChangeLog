@@ -1,3 +1,9 @@
+2025-10-29  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]
+	Risolto Bug #1668
+	Aggiunto supporto alle API di configurazione per truststore e keystore di tipo 'jwk' e per keystore di tipo 'key pair' nella configurazione di applicativi, erogazioni e fruizioni ModI.
+	
 2025-10-28  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]

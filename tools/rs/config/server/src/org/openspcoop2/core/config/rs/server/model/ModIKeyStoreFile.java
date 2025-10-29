@@ -25,13 +25,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 
-public class ModIKeyStoreFile extends BaseKeyStoreFile implements OneOfModIKeyStoreRidefinitoDatiKeystore {
+public class ModIKeyStoreFile extends BaseKeyStorePublicFile implements OneOfModIKeyStoreRidefinitoDatiKeystore {
   
   @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
   private ModIKeystoreTipologiaEnum tipologia = null;
   
   @Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, description = "")
-  private ModIKeystoreEnum keystoreTipo = null;
+  private ModIKeystoreFullEnum keystoreTipo = null;
  /**
    * Get tipologia
    * @return tipologia
@@ -60,15 +60,15 @@ public class ModIKeyStoreFile extends BaseKeyStoreFile implements OneOfModIKeySt
   @JsonProperty("keystore_tipo")
   @NotNull
   @Valid
-  public ModIKeystoreEnum getKeystoreTipo() {
+  public ModIKeystoreFullEnum getKeystoreTipo() {
     return this.keystoreTipo;
   }
 
-  public void setKeystoreTipo(ModIKeystoreEnum keystoreTipo) {
+  public void setKeystoreTipo(ModIKeystoreFullEnum keystoreTipo) {
     this.keystoreTipo = keystoreTipo;
   }
 
-  public ModIKeyStoreFile keystoreTipo(ModIKeystoreEnum keystoreTipo) {
+  public ModIKeyStoreFile keystoreTipo(ModIKeystoreFullEnum keystoreTipo) {
     this.keystoreTipo = keystoreTipo;
     return this;
   }

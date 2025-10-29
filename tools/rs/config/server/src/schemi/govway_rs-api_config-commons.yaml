@@ -719,6 +719,22 @@ components:
               type: string
               maxLength: 4000
               example: '/path/to/keystore'
+    BaseKeyStorePublicFile:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/BaseKeyStore'
+        - type: object
+          required: 
+            - keystore_path
+          properties:
+            keystore_path:
+              type: string
+              maxLength: 4000
+              example: '/path/to/keystore' 
+            public_key_path:
+              type: string
+              maxLength: 4000
+              example: '/path/to/public'                            
     BaseKeyStoreArchive:
       type: object
       allOf:
@@ -2557,7 +2573,7 @@ components:
     ModIKeyStoreFile:
       type: object      
       allOf:
-        - $ref: '#/components/schemas/BaseKeyStoreFile'
+        - $ref: '#/components/schemas/BaseKeyStorePublicFile'
         - type: object
           required:
             - tipologia 
@@ -2566,7 +2582,7 @@ components:
             tipologia:
               $ref: '#/components/schemas/ModIKeystoreTipologiaEnum'
             keystore_tipo:
-              $ref: '#/components/schemas/ModIKeystoreEnum'
+              $ref: '#/components/schemas/ModIKeystoreFullEnum'
     ModIKeyStoreFileApplicativo:
       type: object      
       allOf:
@@ -3916,12 +3932,16 @@ components:
       default: api
     ModITruststoreEnum:
       type: string
-      enum: ['jks', 'pkcs11', 'pdnd']
+      enum: ['jks', 'pkcs11', 'jwk', 'pdnd']
       example: 'jks'
     ModIKeystoreEnum:
       type: string
       enum: ['jks', 'pkcs12']
       example: 'jks'
+    ModIKeystoreFullEnum:
+      type: string
+      enum: ['jks', 'pkcs12', 'jwk', 'keys']
+      example: 'jks'      
     ModIKeystoreTipologiaEnum:
       type: string
       enum: ['archivio', 'filesystem', 'hsm']

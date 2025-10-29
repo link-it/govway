@@ -47,6 +47,8 @@ Per la console di monitoraggio sono stati risolti i seguenti bug:
 
 Per le API di configurazione sono stati risolti i seguenti bug:
 
+- Aggiunto supporto per truststore e keystore di tipo 'jwk' e per keystore di tipo 'key pair' nella configurazione di applicativi, erogazioni e fruizioni ModI.
+
 - La registrazione di un servizio applicativo nel controllo accessi di un’erogazione, tramite l’endpoint '/erogazioni/{nome_erogazione}/{versione_erogazione}/configurazioni/controllo-accessi/autorizzazione/token/applicativi' risultava troppo restrittiva rispetto alla console di gestione 'govwayConsole'. In particolare, con la seguente configurazione:
 
 	- API di tipo ModI con generazione token di tipo PDND

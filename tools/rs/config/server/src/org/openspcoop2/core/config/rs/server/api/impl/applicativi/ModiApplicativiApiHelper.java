@@ -22,6 +22,7 @@ package org.openspcoop2.core.config.rs.server.api.impl.applicativi;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.rs.server.api.impl.ProtocolPropertiesHelper;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
@@ -36,6 +37,7 @@ import org.openspcoop2.core.config.rs.server.model.ModIKeyStoreArchive;
 import org.openspcoop2.core.config.rs.server.model.ModIKeyStoreFileApplicativo;
 import org.openspcoop2.core.config.rs.server.model.ModIKeyStoreHSMApplicativo;
 import org.openspcoop2.core.config.rs.server.model.ModIKeystoreEnum;
+import org.openspcoop2.core.config.rs.server.model.ModIKeystoreFullEnum;
 import org.openspcoop2.core.config.rs.server.model.ModIKeystoreTipologiaEnum;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
@@ -108,12 +110,16 @@ public class ModiApplicativiApiHelper {
 	
 							String tipo = null;
 							switch(fsKeystore.getKeystoreTipo()) {
-							case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
-							break;
-							case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
-							break;
-							default:
-								break;
+								case JKS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS;
+									break;
+								case PKCS12:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12;
+									break;
+								case JWK:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK;
+									break;
+								case KEYS:tipo = ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR;
+									break;									
+								default:
+									break;
 							}
 	
 							p.addProperty(ModICostanti.MODIPA_KEYSTORE_TYPE, tipo);
@@ -121,6 +127,9 @@ public class ModiApplicativiApiHelper {
 							p.addProperty(ModICostanti.MODIPA_KEY_PASSWORD, fsKeystore.getKeyPassword());
 							p.addProperty(ModICostanti.MODIPA_KEYSTORE_PASSWORD, fsKeystore.getKeystorePassword());
 							p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH, fsKeystore.getKeystorePath());
+							if(fsKeystore.getPublicKeyPath()!=null && StringUtils.isNotEmpty(fsKeystore.getPublicKeyPath())) {
+								p.addProperty(ModICostanti.MODIPA_KEYSTORE_PATH_PUBLIC_KEY, fsKeystore.getPublicKeyPath());
+							}
 							p.addProperty(ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, fsKeystore.getKeystoreByokPolicy());
 							
 							if( fsKeystore.getKeystoreCertificato()!=null && fsKeystore.getKeystoreCertificato().length>0) {
@@ -267,14 +276,18 @@ public class ModiApplicativiApiHelper {
 					ModIKeyStoreFileApplicativo datiKeystore = new ModIKeyStoreFileApplicativo();
 					datiKeystore.tipologia(ModIKeystoreTipologiaEnum.FILESYSTEM);
 
-					ModIKeystoreEnum keystoreTipo = null;
+					ModIKeystoreFullEnum keystoreTipo = null;
 
 					String keystoreTipoString = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_TYPE, true);
 
 					if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JKS)) {
-						keystoreTipo = ModIKeystoreEnum.JKS;
+						keystoreTipo = ModIKeystoreFullEnum.JKS;
 					} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_PKCS12)) {
-						keystoreTipo = ModIKeystoreEnum.PKCS12;
+						keystoreTipo = ModIKeystoreFullEnum.PKCS12;
+					} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_JWK)) {
+						keystoreTipo = ModIKeystoreFullEnum.JWK;
+					} else if(keystoreTipoString.equals(ModICostanti.MODIPA_KEYSTORE_TYPE_VALUE_KEY_PAIR)) {
+						keystoreTipo = ModIKeystoreFullEnum.KEYS;
 					}
 
 					datiKeystore.setKeystoreTipo(keystoreTipo);
@@ -282,6 +295,7 @@ public class ModiApplicativiApiHelper {
 					datiKeystore.setKeyPassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEY_PASSWORD, true));
 					datiKeystore.setKeystorePassword(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PASSWORD, true));
 					datiKeystore.setKeystorePath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH, true));
+					datiKeystore.setPublicKeyPath(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_PATH_PUBLIC_KEY, false));
 					datiKeystore.setKeystoreByokPolicy(ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_KEYSTORE_BYOK_POLICY, false));
 					
 					datiKeystore.setKeystoreCertificato(ProtocolPropertiesHelper.getByteArrayProperty(p, ModICostanti.MODIPA_KEYSTORE_CERTIFICATE, false));
