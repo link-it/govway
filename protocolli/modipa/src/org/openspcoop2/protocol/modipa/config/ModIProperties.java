@@ -1133,7 +1133,9 @@ public class ModIProperties {
 			String value = this.reader.getValueConvertEnvProperties(propertyPrefix); 
 			if (value != null){
 				value = value.trim();
-				force = "false".equals(value);
+				if("false".equalsIgnoreCase(value)) {
+					force = false;
+				}
 			}
 			return force;			
 		}catch(java.lang.Exception e) {
