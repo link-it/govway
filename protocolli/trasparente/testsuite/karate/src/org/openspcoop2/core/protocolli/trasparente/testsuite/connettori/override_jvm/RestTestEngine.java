@@ -94,7 +94,7 @@ public class RestTestEngine extends ConfigLoader {
 	public void erogazione_configFileDinamica_applicativoMittente_error() throws Exception {
 		
 		String errore = "Ricevuto un Problem Detail (RFC 7807) in seguito all'invio del messaggio applicativo: {\"type\":\"https://govway.org/handling-errors/403/AuthorizationContentDeny.html\",\"title\":\"AuthorizationContentDeny\",\"status\":403,\"detail\":\"Unauthorized request content\"";
-		if(Utils.isJenkins() || this.mode.isNIO()) {
+		if((Utils.isJenkins() || this.mode.isNIO()) && !Utils.isWildfly()) {
 			errore = "Errore avvenuto durante la consegna HTTP: Received fatal alert: bad_certificate";
 		}
 		
@@ -107,7 +107,7 @@ public class RestTestEngine extends ConfigLoader {
 	public void fruizione_configFileDinamica_applicativoMittente_error() throws Exception {
 		
 		String errore = "Ricevuto un Problem Detail (RFC 7807) in seguito all'invio della busta di cooperazione: {\"type\":\"https://govway.org/handling-errors/403/AuthorizationContentDeny.html\",\"title\":\"AuthorizationContentDeny\",\"status\":403,\"detail\":\"Unauthorized request content\"";
-		if(Utils.isJenkins() || this.mode.isNIO()) {
+		if((Utils.isJenkins() || this.mode.isNIO()) && !Utils.isWildfly()) {
 			errore = "Errore avvenuto durante la consegna HTTP: Received fatal alert: bad_certificate";
 		}
 		

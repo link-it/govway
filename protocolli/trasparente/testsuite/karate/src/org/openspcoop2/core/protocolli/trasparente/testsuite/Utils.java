@@ -64,20 +64,27 @@ import net.minidev.json.JSONObject;
 * 
 */
 public class Utils {
+	
+	private Utils() {}
 
 	public static boolean isJenkins() {
-		String j = System.getProperty("jenkins");
-		if(j!=null) {
-			if("true".equalsIgnoreCase(j.trim())) {
-				return true;
-			}
+		return isEngine("jenkins");
+	}
+	public static boolean isWildfly() {
+		return isEngine("wildfly");
+	}
+	private static boolean isEngine(String propName) {
+		String j = System.getProperty(propName);
+		if(j!=null &&
+			"true".equalsIgnoreCase(j.trim())) {
+			return true;
 		}
 		
 		try(InputStream inputStream = ConfigLoader.class.getClassLoader().getResourceAsStream(ConfigLoader.propFileName);) {
 			if (inputStream != null) {
 				Properties prop = new Properties();
 				prop.load(inputStream);
-				String pJ = prop.getProperty("jenkins");
+				String pJ = prop.getProperty(propName);
 				if(pJ!=null && "true".equalsIgnoreCase(pJ.trim())) {
 					return true;
 				}

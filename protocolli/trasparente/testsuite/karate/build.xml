@@ -275,6 +275,8 @@
 					<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 
 					<sysproperty key="wait" value="${wait}"/>
+					<sysproperty key="wildfly" value="${wildfly}"/>
+					<sysproperty key="jenkins" value="${jenkins}"/>
 
 					<classpath refid="karate_testsuite" />
 					<classpath location="${build_testsuite}" />
@@ -377,6 +379,8 @@
 											<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 
 											<sysproperty key="wait" value="${wait}"/>
+											<sysproperty key="wildfly" value="${wildfly}"/>
+											<sysproperty key="jenkins" value="${jenkins}"/>
 
 											<classpath refid="karate_testsuite" />
 											<classpath location="${build_testsuite}" />
@@ -413,6 +417,8 @@
 											<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 
 											<sysproperty key="wait" value="${wait}"/>
+											<sysproperty key="wildfly" value="${wildfly}"/>
+											<sysproperty key="jenkins" value="${jenkins}"/>
 
 											<classpath refid="karate_testsuite" />
 											<classpath location="${build_testsuite}" />
@@ -454,6 +460,8 @@
 											<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 
 											<sysproperty key="wait" value="${wait}"/>
+											<sysproperty key="wildfly" value="${wildfly}"/>
+											<sysproperty key="jenkins" value="${jenkins}"/>
 
 											<classpath refid="karate_testsuite" />
 											<classpath location="${build_testsuite}" />
@@ -494,6 +502,8 @@
 											<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 
 											<sysproperty key="wait" value="${wait}"/>
+											<sysproperty key="wildfly" value="${wildfly}"/>
+											<sysproperty key="jenkins" value="${jenkins}"/>
 
 											<classpath refid="karate_testsuite" />
 											<classpath location="${build_testsuite}" />

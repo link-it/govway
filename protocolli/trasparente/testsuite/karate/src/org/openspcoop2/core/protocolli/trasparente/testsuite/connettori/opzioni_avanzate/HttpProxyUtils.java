@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.Utils;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.DBVerifier;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibrary;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.connettori.utils.HttpLibraryMode;
@@ -332,7 +333,7 @@ public class HttpProxyUtils {
 		case UNLINK:
 		case PUT:
 		case PATCH:
-			if(HttpLibrary.URLCONNECTION.equals(mode.getLibrary())) {
+			if(HttpLibrary.URLCONNECTION.equals(mode.getLibrary()) && !Utils.isWildfly()) {
 				error = proxyAuth ?
 						HttpProxyUtils.getConnectionErrorMessageProxyAuth(method, soap)
 						:

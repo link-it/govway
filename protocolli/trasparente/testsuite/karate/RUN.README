@@ -521,7 +521,8 @@ Di seguito vengono descritti i test del package 'connettori':
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.proxy_pass
 
 - 'override_jvm', verifica la funzionalità di overriding delle configurazioni jvm per gli endpoint https
-   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.override_jvm
+   NOTA: utilizza l'opzione -Dwildfly=true su application server wildfly
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.override_jvm [-Dwildfly=true]
 
 - 'tls', verifica la funzionalità tls
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.tls
@@ -539,7 +540,8 @@ Di seguito vengono descritti i test del package 'connettori':
    ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.status   
    
 - 'opzioni_avanzate', verifica le funzionalità avanzate dei connettori (serializzazione content-transfer-encoding o content-lenth, http-proxy, ...)
-   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.opzioni_avanzate
+   NOTA: utilizza l'opzione -Dwildfly=true su application server wildfly
+   ant run_test -Ddelete=false -Dload=false -Dpackage=connettori.opzioni_avanzate [-Dwildfly=true]
 
 Di seguito vengono descritti i test del package 'token':
 
