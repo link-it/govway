@@ -21,7 +21,7 @@ mancanti.
 
    - -Dfile.encoding=UTF-8
 
-#. *Application Server WildFly* (http://wildfly.org); viene supportata la versione 27-28 (compatibile con JBoss EAP 8.0) e le versioni dalla 35 alla 36. In alternativa è possibile effettuare
+#. *Application Server WildFly* (http://wildfly.org); viene supportata la versione 27-28 (compatibile con JBoss EAP 8.0) e le versioni dalla 35 alla 38 (compatibile con JBoss EAP 8.1). In alternativa è possibile effettuare
    l'installazione su Apache Tomcat (http://tomcat.apache.org) versione 11.
 
    .. note::
@@ -49,4 +49,4 @@ sulla seguente piattaforma di riferimento:
 
 -  *PostgreSQL 13 (version: 13.21)*, *PostgreSQL 16 (version: 16.1)* e *Oracle 11g ExpressEdition (version: 11.2.0.2.0)*
 
--  *WildFly 28 (version: 28.0.1.Final)*, *WildFly 36 (version: 36.0.1.Final)* e *Tomcat 11 (version: 11.0.8)*
+-  *WildFly 38 (version: 38.0.0.Final)* e *Tomcat 11 (version: 11.0.8)*
