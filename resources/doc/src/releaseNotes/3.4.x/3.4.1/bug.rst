@@ -72,6 +72,8 @@ Per la console di gestione sono stati risolti i seguenti bug:
 
 - Migliorata la gestione delle informazioni sensibili nel report di auditing quando la funzionalità BYOK non è attiva.
 
+- I caratteri accentati inseriti nelle aree di testo non venivano salvati correttamente.
+
 - Risolto un problema che impediva l’accesso alla console dopo la disabilitazione e successiva riabilitazione dell’opzione Log4j Auditing. In tali condizioni, il log riportava l’errore: "Inizializzazione appender[log4jAppender] non riuscita: InputStream [audit.log4j2.properties] non trovato".
 
 Per la console di monitoraggio sono stati risolti i seguenti bug:

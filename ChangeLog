@@ -2,6 +2,12 @@
 
 	* Rilasciata versione 3.4.1
 
+2025-10-30  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug #1670
+	I caratteri accentati inseriti nelle aree di testo non venivano salvati correttamente.
+
 2025-10-29  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]

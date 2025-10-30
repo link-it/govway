@@ -249,7 +249,7 @@ public final class AuthorizationFilter implements Filter {
 								// Se arrivo in questo punto sto richiedendo una pagina che riguarda una funzionalite' della console
 								// Imposto il CharacterEncoding UTF-8 per risolvere i problemi di encoding evidenziati in OP-407 e OP-571
 								//System.out.println("SET ENCODING RISOLVERE BUG");
-								request.setCharacterEncoding("UTF-8");
+								/**request.setCharacterEncoding("UTF-8"); Non serve poichè impostato tramite UTF8Filter*/
 								
 								// Non faccio verificare login/logout
 								if (!"".equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_MESSAGE_PAGE.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
@@ -597,7 +597,7 @@ public final class AuthorizationFilter implements Filter {
 								// Se arrivo in questo punto sto richiedendo una pagina che riguarda una funzionalite' della console
 								// Imposto il CharacterEncoding UTF-8 per risolvere i problemi di encoding evidenziati in OP-407 e OP-571
 								//System.out.println("SET ENCODING RISOLVERE BUG");
-								request.setCharacterEncoding("UTF-8");
+								/**request.setCharacterEncoding("UTF-8"); Non serve poichè impostato tramite UTF8Filter*/
 								
 								// Non faccio verificare login/logout
 								if (!"".equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_MESSAGE_PAGE.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGIN.equals(servletRichiesta) && !LoginCostanti.SERVLET_NAME_LOGOUT.equals(servletRichiesta)) {
