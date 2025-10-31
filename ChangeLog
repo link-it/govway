@@ -1,5 +1,11 @@
 2025-10-31  Andrea Poli <apoli@link.it>
 
+	* [ApiRsConfigurazione]
+	Risolto Bug #1672
+	Corretto il comportamento della risorsa /api-config/v1/soggetti/{nome} che non restituiva risultati per i soggetti privi di autenticazione configurata. 
+	
+2025-10-31  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore]
 	Risolto Bug #1671
 	Aggiornata la gestione delle govlet SUAP: l’indicazione del soggetto nella sezione audience e nel connettore dell’erogazione esterna 

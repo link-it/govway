@@ -530,7 +530,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		OneOfBaseCredenzialiCredenziali ret = null;		
 		
 		// Questo è il caso di autenticazione di tipo NESSUNO.
-		if (govwayCredsList == null)
+		if (govwayCredsList == null || govwayCredsList.isEmpty())
 			return ret;
 		
 		Object govwayCreds = govwayCredsList.get(0); // riportato dal metodo chiamante

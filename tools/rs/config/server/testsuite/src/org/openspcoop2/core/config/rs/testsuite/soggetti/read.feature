@@ -12,6 +12,8 @@ Background:
 * eval randomize(soggetto_proprieta, ["nome", "credenziali.userid" ])
 * eval soggetto_proprieta.ruoli = []
 
+* def soggetto_esterno_no_credenziali = read('classpath:bodies/soggetto-esterno-senza-credenziali.json') 
+
 @FindAll200
 Scenario: Soggetti FindAll 200 OK
     
@@ -59,6 +61,35 @@ Scenario: Soggetti Get 200 OK (presenza di proprieta')
 
     Given url configUrl
     And path 'soggetti' , soggetto_proprieta.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method delete
+    Then status 204
+
+@Get200_soggetto_senza_credenziale
+Scenario: Soggetti Get 200 OK (senza credenziali)
+
+    Given url configUrl
+    And path 'soggetti'
+    And  header Authorization = govwayConfAuth
+    And request soggetto_esterno_no_credenziali
+    And params query_params
+    When method post
+    Then assert responseStatus == 201
+
+    # READ
+
+    Given url configUrl
+    And path 'soggetti' , soggetto_esterno_no_credenziali.nome
+    And header Authorization = govwayConfAuth
+    And params query_params
+    When method get
+    Then status 200
+
+    # DELETE
+
+    Given url configUrl
+    And path 'soggetti' , soggetto_esterno_no_credenziali.nome
     And header Authorization = govwayConfAuth
     And params query_params
     When method delete
