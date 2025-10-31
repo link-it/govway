@@ -1,5 +1,12 @@
 2025-10-31  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore]
+	Risolto Bug #1671
+	Aggiornata la gestione delle govlet SUAP: l’indicazione del soggetto nella sezione audience e nel connettore dell’erogazione esterna 
+	è ora impostata dinamicamente in base al soggetto specificato durante il caricamento della govlet (rimosso il valore cablato "ENTE").
+
+2025-10-31  Andrea Poli <apoli@link.it>
+
 	* Rilasciata versione 3.3.18
 
 2025-10-29  Andrea Poli <apoli@link.it>
