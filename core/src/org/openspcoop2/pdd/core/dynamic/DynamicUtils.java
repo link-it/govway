@@ -147,6 +147,8 @@ public class DynamicUtils {
 					Costanti.MAP_INTEGRATION.equalsIgnoreCase(key)
 						||
 					(Costanti.MAP_INTEGRATION+Costanti.MAP_SUFFIX_RESPONSE).equalsIgnoreCase(key)
+					||
+					Costanti.MAP_SECURITY_TOKEN.equalsIgnoreCase(key)
 					){
 					dynamicMap.put(key, o);
 				}

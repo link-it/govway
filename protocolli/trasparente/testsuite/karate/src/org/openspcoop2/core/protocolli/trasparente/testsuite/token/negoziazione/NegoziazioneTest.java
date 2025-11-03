@@ -28,6 +28,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.Bodies;
 import org.openspcoop2.core.protocolli.trasparente.testsuite.ConfigLoader;
+import org.openspcoop2.core.protocolli.trasparente.testsuite.rate_limiting.TipoServizio;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -47,6 +48,8 @@ import org.slf4j.Logger;
 public class NegoziazioneTest extends ConfigLoader {
 
 	public static final String api_negoziazione = "TestNegoziazioneToken";
+	
+	public static final String HEADER_SEC_TOKEN = "x-sec-token"; // uso per verificare trasformazione anche in 
 	
 	@Test
 	public void clientid_clientsecret() throws Exception {
@@ -1034,7 +1037,14 @@ public class NegoziazioneTest extends ConfigLoader {
 	}
 	
 	@Test
-	public void signedJWT2() throws Exception {
+	public void signedJWT2Erogazione() throws Exception {
+		signedJWT2Engine(TipoServizio.EROGAZIONE);
+	}
+	@Test
+	public void signedJWT2Fruizione() throws Exception {
+		signedJWT2Engine(TipoServizio.FRUIZIONE);
+	}
+	private void signedJWT2Engine(TipoServizio tipoServizio) throws Exception {
 	
 		// AccessToken ritornato è opaco (nel test signedJWT3 sarà un JWT)
 		
@@ -1048,7 +1058,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers_0.put("test-decode-position", "0");
 		headers_0.put("test-p2", "testNegoziazioneP2");
 		
-		HttpResponse response = _test(logCore, api_negoziazione, "signedJWT2", headers_0,
+		HttpResponse response = _test(logCore, tipoServizio, api_negoziazione, "signedJWT2", headers_0,
 				false,
 				null,
 				"\"type\":\"retrieved_token\"",
@@ -1077,6 +1087,10 @@ public class NegoziazioneTest extends ConfigLoader {
 				);
 		String idRichiestaOriginale_0 = response.getHeaderFirstValue("GovWay-Transaction-ID");
 		
+		// verifico header risposta generata con trasformazione
+		String hdrSecTokenTrovato = response.getHeaderFirstValue(HEADER_SEC_TOKEN);
+		assertNotNull("Atteso header '"+HEADER_SEC_TOKEN+" diverso da null; trovato:'"+hdrSecTokenTrovato+"'", hdrSecTokenTrovato);
+		
 		// serviva prima di implementare i parametri dinamici all'interno della chiave della cache.
 		//org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
 		
@@ -1088,7 +1102,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		headers_1.put("test-decode-position", "1");
 		headers_1.put("test-p2", "testNegoziazioneP2");
 		
-		response = _test(logCore, api_negoziazione, "signedJWT2", headers_1,
+		response = _test(logCore, tipoServizio, api_negoziazione, "signedJWT2", headers_1,
 				false,
 				null,
 				"\"type\":\"retrieved_token\"",
@@ -1121,13 +1135,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		// provo a modificare una informazione dinamica, il precedente token salvato in cache non deve essere riutilizzato
 		
 		headers_0.put("test-azione", "signedJWT2ERRATA");
-		_test(logCore, api_negoziazione, "signedJWT2", headers_0,
+		_test(logCore, tipoServizio, api_negoziazione, "signedJWT2", headers_0,
 				true,
 				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
 		headers_0.put("test-azione", "signedJWT2");
 		
 		headers_1.put("test-azione", "signedJWT2ERRATA");
-		_test(logCore, api_negoziazione, "signedJWT2", headers_1,
+		_test(logCore, tipoServizio, api_negoziazione, "signedJWT2", headers_1,
 				true,
 				"Connessione terminata con errore (codice trasporto: 404)%UndefinedOperation");
 		headers_1.put("test-azione", "signedJWT2");
@@ -1137,13 +1151,13 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// Sull'header non vi sono informazioni dinamiche per questa policy
 //		headers_0.put("test-suffix", "DYNAMICERRATA");
-//		_test(logCore, api_negoziazione, "signedJWT2", headers_0,
+//		_test(logCore, tipoServizio, api_negoziazione, "signedJWT2", headers_0,
 //				true,
 //				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
 //		headers_0.put("test-suffix", "DYNAMIC");
 		
 		headers_1.put("test-suffix", "DYNAMICERRATA");
-		_test(logCore, api_negoziazione, "signedJWT2", headers_1,
+		_test(logCore, tipoServizio, api_negoziazione, "signedJWT2", headers_1,
 				true,
 				"Connessione terminata con errore (codice trasporto: 403)%AuthorizationContentDeny");
 		headers_1.put("test-suffix", "DYNAMIC");
@@ -1152,7 +1166,7 @@ public class NegoziazioneTest extends ConfigLoader {
 		
 		// effettuo un altro test verificando che viene utilizzato il token salvato in cache
 		
-		_test(logCore, api_negoziazione, "signedJWT2", headers_0,
+		_test(logCore, tipoServizio, api_negoziazione, "signedJWT2", headers_0,
 				false,
 				null,
 				"\"type\":\"retrieved_token\"",
@@ -1181,7 +1195,7 @@ public class NegoziazioneTest extends ConfigLoader {
 				"\"transactionId\":\""+idRichiestaOriginale_0+"\""
 				);
 		
-		_test(logCore, api_negoziazione, "signedJWT2", headers_1,
+		_test(logCore, tipoServizio, api_negoziazione, "signedJWT2", headers_1,
 				false,
 				null,
 				"\"type\":\"retrieved_token\"",
@@ -1778,11 +1792,24 @@ public class NegoziazioneTest extends ConfigLoader {
 			Map<String, String> headers, 
 			boolean error, String diagnostico,
 			String ... tokenInfoCheck) throws Exception {
+		return  _test(logCore, TipoServizio.EROGAZIONE, api, operazione,
+					headers, 
+					error, diagnostico,
+					tokenInfoCheck);
+	}
+	protected static HttpResponse _test(Logger logCore, TipoServizio tipoServizio, String api, String operazione,
+			Map<String, String> headers, 
+			boolean error, String diagnostico,
+			String ... tokenInfoCheck) throws Exception {
 		
 		String contentType = HttpConstants.CONTENT_TYPE_JSON;
 		byte[]content = Bodies.getJson(Bodies.SMALL_SIZE).getBytes();
 		
-		String url = System.getProperty("govway_base_path") + "/SoggettoInternoTest/"+api+"/v1/"+operazione;
+		String suffix = tipoServizio == TipoServizio.FRUIZIONE ?
+				"/out/SoggettoInternoTestFruitore/SoggettoInternoTest/"+api+"/v1/"+operazione :
+				"/SoggettoInternoTest/"+api+"/v1/"+operazione;
+		String url = System.getProperty("govway_base_path") + 
+				suffix	;
 		
 		HttpRequest request = new HttpRequest();
 		

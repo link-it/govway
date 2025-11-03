@@ -1,3 +1,10 @@
+2025-11-03  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1674
+	Risolta anomalia che impediva l’utilizzo della keyword 'securityToken' nelle trasformazioni di risposta
+	per API configurate esclusivamente con la negoziazione token, senza pattern di sicurezza aggiuntivi.
+	
 2025-10-31  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione]
