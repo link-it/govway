@@ -1398,6 +1398,12 @@
 				<antcall target="_initSQL_${antinstaller_tipo_database}">
 					<param name="sqlFileOutput" value="${tmp_sql}/${tracceSqlScriptName}"/>
 				</antcall>
+				<concat destfile="${tmp_sql}/${tracceSqlScriptName}" append="yes" >
+	       				<header filtering="no" trimleading="yes">
+</header>
+				  <filelist dir="${deploy_sql}"
+				           files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
+				</concat>				
 			</then>
 		</if>
 		<concat destfile="${tmp_sql}/${tracceSqlScriptName}" append="yes" >
@@ -1460,12 +1466,12 @@
 			<then>
 				<var name="statsSqlScriptName" value="GovWayTracciamento.sql"/>
 				<var name="statsSqlDbName" value="${antinstaller_dbname_log}"/>
-				<concat destfile="${tmp_sql}/${statsSqlScriptName}" append="yes" >
+				<!-- già aggiunto nella gestione tracce <concat destfile="${tmp_sql}/${statsSqlScriptName}" append="yes" >
 	       				<header filtering="no" trimleading="yes">
 </header>
 				  <filelist dir="${deploy_sql}"
 				           files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
-				</concat>
+				</concat> -->
 			</then>
 		</if>
 		<concat destfile="${tmp_sql}/${statsSqlScriptName}" append="yes" >
