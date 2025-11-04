@@ -95,7 +95,8 @@ boolean inserisciDivComandiAffiancati =
 			// inseririsco tutti i comandi da visualizzare nella barra 
 			for(int idxLink =0; idxLink < listaComandiDaVisualizzareNellaBarra.size() ; idxLink ++ ){
 				DataElement de = (DataElement) listaComandiDaVisualizzareNellaBarra.get(idxLink);
-				String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+				String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+				String deTip = !toolTipVal.equals("") ? " title=\"" + toolTipVal + "\"" : "";
 				String classLink = "";
 				String deTarget = " ";
 		  		if (!de.getTarget().equals("")) {
@@ -148,7 +149,8 @@ boolean inserisciDivComandiAffiancati =
 				// creazione elementi hidden necessari per visualizzare le modali
 				for(int idxLink =0; idxLink < listaComandiDaVisualizzareNelMenu.size() ; idxLink ++ ){
 					DataElement de = (DataElement) listaComandiDaVisualizzareNelMenu.get(idxLink);
-					String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+					String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+					String deTip = !toolTipVal.equals("") ? " title=\"" + toolTipVal + "\"" : "";
 					String classLink = "";
 					String numeroLink = numeroEntry + "_" + idxLink;
 					
@@ -210,7 +212,8 @@ boolean inserisciDivComandiAffiancati =
 						<% 
 							for(int idxLink =0; idxLink < listaComandiDaVisualizzareNelMenu.size() ; idxLink ++ ){
 								DataElement de = (DataElement) listaComandiDaVisualizzareNelMenu.get(idxLink);
-								String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+								String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+								String deTip = !toolTipVal.equals("") ? " title=\"" + toolTipVal + "\"" : "";
 								String classLink = "";
 								String numeroLink = numeroEntry + "_" + idxLink;
 								
@@ -219,7 +222,7 @@ boolean inserisciDivComandiAffiancati =
 									
 									%>
 									// add third item with function
-						            contextMenu_<%=numeroEntry %>.menu().addItem('<%=de.getToolTip()%>', function () {
+						            contextMenu_<%=numeroEntry %>.menu().addItem('<%=toolTipVal%>', function () {
 							            <%
 										
 										if(de.getInfo() != null) {
@@ -310,7 +313,7 @@ boolean inserisciDivComandiAffiancati =
 									
 									String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									%>
-									contextMenu_<%=numeroEntry %>.menu().addItem('<%=de.getToolTip()%>', function () {
+									contextMenu_<%=numeroEntry %>.menu().addItem('<%=toolTipVal%>', function () {
 										
 										<%= deVisualizzaAjaxStatus %>
 										

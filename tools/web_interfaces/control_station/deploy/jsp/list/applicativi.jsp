@@ -97,7 +97,8 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 			
 			<% if(listTags.size() > 0){
 				DataElement tag0 = listTags.get(0);
-				String ruoliTooltip = !tag0.getToolTip().equals("") ? " title=\"" + tag0.getToolTip() + "\"" : "";
+				String deTagToolTipVal = ServletUtils.escapeHTMLAttribute(tag0.getToolTip());
+				String ruoliTooltip = !deTagToolTipVal.equals("") ? " title=\"" + deTagToolTipVal + "\"" : "";
 				String ruoliUrl = tag0.getUrl();
 				
 				%>
@@ -149,7 +150,8 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 					// creazione elementi hidden necessari per visualizzare le modali
 					for(int idxLink =0; idxLink < listImmagini.size() ; idxLink ++ ){
 						DataElement de = (DataElement) listImmagini.get(idxLink);
-						String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+						String deToolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+						String deTip = !deToolTipVal.equals("") ? " title=\"" + deToolTipVal + "\"" : "";
 						String classLink = "";
 						String numeroLink = numeroEntryS + "_" + idxLink;
 						
@@ -201,7 +203,8 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 						<% 
 							for(int idxLink =0; idxLink < listImmagini.size() ; idxLink ++ ){
 								DataElement de = (DataElement) listImmagini.get(idxLink);
-								String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+								String deToolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+								String deTip = !deToolTipVal.equals("") ? " title=\"" + deToolTipVal + "\"" : "";
 								String classLink = "";
 								String numeroLink = numeroEntryS + "_" + idxLink;
 								
@@ -210,7 +213,7 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 									
 									%>
 									// add third item with function
-						            contextMenu_<%=numeroEntry %>.menu().addItem('<%=de.getToolTip()%>', function () {
+						            contextMenu_<%=numeroEntry %>.menu().addItem('<%=deToolTipVal%>', function () {
 							            <%
 										
 										if(de.getInfo() != null) {
@@ -264,7 +267,7 @@ visualizzaMetadati = listRiepilogo.size() > 1;
 									
 									String deVisualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									%>
-									contextMenu_<%=numeroEntry %>.menu().addItem('<%=de.getToolTip()%>', function () {
+									contextMenu_<%=numeroEntry %>.menu().addItem('<%=deToolTipVal%>', function () {
 										
 										<%= deVisualizzaAjaxStatus %>
 										

@@ -175,7 +175,7 @@ $(document).ready(function () {
 
         var aperto = $(this).hasClass("subtitleOpen");
 
-        // Inizializza visibilità al load
+        // Inizializza visibilitï¿½ al load
         if (aperto) {
             $("#" + sectionId).show();
             $("#" + iconId).html(iconNascondiSezione);
@@ -235,7 +235,7 @@ $(document).ready(function () {
         const useAccordion = ($("#" + accordionId).val() === "true");
 
         if (useAccordion) {
-         	// Accordion: se è già aperta non fare nulla (non si chiude)
+         	// Accordion: se ï¿½ giï¿½ aperta non fare nulla (non si chiude)
             if (isOpen) {
                 return; // keep-open behavior
             }
@@ -243,7 +243,7 @@ $(document).ready(function () {
             chiudiTuttiFieldset(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
             apriFieldset(baseId, iconNascondiSezione, tooltipNascondiSezione);
         } else {
-            // Modalità indipendente: toggle puro sulla singola sezione
+            // Modalitï¿½ indipendente: toggle puro sulla singola sezione
             if (isOpen) {
             	chiudiFieldset(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
             } else {
@@ -267,7 +267,7 @@ $(document).ready(function () {
 
         var aperto = $(this).hasClass("subtitleOpen");
 
-        // Inizializza visibilità al load
+        // Inizializza visibilitï¿½ al load
         if (aperto) {
             $("#" + sectionId).show();
             $("#" + iconId).html(iconNascondiSezione);
@@ -327,7 +327,7 @@ $(document).ready(function () {
         const useAccordion = ($("#" + accordionId).val() === "true");
 
         if (useAccordion) {
-        	// Accordion: se è già aperta non fare nulla (non si chiude)
+        	// Accordion: se ï¿½ giï¿½ aperta non fare nulla (non si chiude)
             if (isOpen) {
                 return; // keep-open behavior
             }
@@ -335,7 +335,7 @@ $(document).ready(function () {
             chiudiTutteLeSezioni(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
             apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione);
         } else {
-            // Modalità indipendente: toggle puro sulla singola sezione
+            // Modalitï¿½ indipendente: toggle puro sulla singola sezione
             if (isOpen) {
                 chiudiSezione(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
             } else {
@@ -738,7 +738,8 @@ for (int i = 0; i < dati.size(); i++) {
 													String classLink = image.getStyleClass();
 													String deIconName = image.getImage(); 
 		                					
-													String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+													String toolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+													String deTip = !toolTipVal.equals("") ? " title=\"" + toolTipVal + "\"" : "";
 		                							
 		                							String deTarget = " ";
 											  		if (!image.getTarget().equals("")) {
@@ -1027,6 +1028,8 @@ for (int i = 0; i < dati.size(); i++) {
 										      				if(bottoneGeneraPassword){
 										      					PasswordGenerator pwdGen = dePwd.getPasswordGenerator();
 										      					String id = "form-gen-pass-link_" + i;
+										      					
+										      					String toolTipVal = ServletUtils.escapeHTMLAttribute(dePwd.getTooltipButtonGeneraPassword());
 										      				%>
 										      					<script type="text/javascript" nonce="<%= randomNonce %>">
 										      						var pwdGenerate_<%= deName %>_idx = 0;
@@ -1049,7 +1052,7 @@ for (int i = 0; i < dati.size(); i++) {
 										      						}
 										      					</script>
 										      					<span class="spanButtonGeneraBox">
-									      							<input id="<%=id %>" class="buttonGeneraPassword" type="button" title="<%=dePwd.getTooltipButtonGeneraPassword() %>" value="<%=dePwd.getLabelButtonGeneraPassword() %>">
+									      							<input id="<%=id %>" class="buttonGeneraPassword" type="button" title="<%=toolTipVal %>" value="<%=dePwd.getLabelButtonGeneraPassword() %>">
 									      							<script type="text/javascript" nonce="<%= randomNonce %>">
 																      	 $(document).ready(function(){
 																				$('#<%=id %>').click(function() {
@@ -1196,7 +1199,8 @@ for (int i = 0; i < dati.size(); i++) {
 		                                      						String selValNoEdit = (de.getSelected() != "") ? de.getSelected() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 		                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span></div><%
 		                               							} else {
-																	String selTitle = (de.getToolTip()!=null && !de.getToolTip().equals("")) ? ("title='"+de.getToolTip()+"'") : " ";
+		                               								String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+																	String selTitle = (toolTipVal!=null && !toolTipVal.equals("")) ? ("title='"+toolTipVal+"'") : " ";
 		                               								String selId = "select_" + i;
 		                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selTitle %> class="<%= classInput %>"><%
 		                          									String [] values = de.getValues();
