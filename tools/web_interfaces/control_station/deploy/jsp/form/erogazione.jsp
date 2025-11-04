@@ -143,7 +143,7 @@
 								    stile = "even";
 							  	}
 								
-							  	String copyToClipboard = de.getCopyToClipboard();
+								String copyToClipboard = ServletUtils.escapeHTMLAttribute(de.getCopyToClipboard());
 							  	
 							  	if (type.equals("hidden")) {
 						    		%>
@@ -170,16 +170,17 @@
 				            				
 				            				String tooltipTextValNoEdit = "";
 											
-				            				if(de.getToolTip()!=null && !de.getToolTip().equals("")){
-												tooltipTextValNoEdit = " title=\"" + de.getToolTip() + "\"";	
+				            				String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+				            				if(toolTipVal!=null && !toolTipVal.equals("")){
+												tooltipTextValNoEdit = " title=\"" + toolTipVal + "\"";	
 											}
 				            				
 											if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
 												if(tooltipTextValNoEdit==null || "".equals(tooltipTextValNoEdit)){
-													tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
+													tooltipTextValNoEdit = " title=\"" + ServletUtils.escapeHTMLAttribute(textValNoEdit) + "\"";
 												}
 												textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
-											}	
+											}
 											
 											String deTextId = rowName+"_txt";
 											String dataCopy = "";
@@ -220,7 +221,8 @@
 																String classLink = "";
 																String deIconName = image.getImage(); 
 					                					
-																String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+																String imageToolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+																String deTip = !imageToolTipVal.equals("") ? " title=\"" + imageToolTipVal + "\"" : "";
 					                							
 					                							String deTarget = " ";
 														  		if (!image.getTarget().equals("")) {
@@ -311,7 +313,8 @@
 																			String classLink = "";
 																			String deIconName = image.getImage(); 
 								                					
-																			String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+																			String imageToolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+																			String deTip = !imageToolTipVal.equals("") ? " title=\"" + imageToolTipVal + "\"" : "";
 								                							
 								                							String deTarget = " ";
 																	  		if (!image.getTarget().equals("")) {
@@ -406,7 +409,8 @@
 																				String classLink = "";
 																				String deIconName = image.getImage(); 
 									                					
-																				String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+																				String imageToolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+																				String deTip = !imageToolTipVal.equals("") ? " title=\"" + imageToolTipVal + "\"" : "";
 									                							
 									                							String deTarget = " ";
 																		  		if (!image.getTarget().equals("")) {
@@ -490,7 +494,8 @@
 																					String classLink = "";
 																					String deIconName = image.getImage(); 
 										                					
-																					String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+																					String imageToolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+																					String deTip = !imageToolTipVal.equals("") ? " title=\"" + imageToolTipVal + "\"" : "";
 										                							
 										                							String deTarget = " ";
 																			  		if (!image.getTarget().equals("")) {
@@ -566,7 +571,8 @@
 																						String classLink = "";
 																						String deIconName = image.getImage(); 
 											                					
-																						String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+																						String imageToolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+																						String deTip = !imageToolTipVal.equals("") ? " title=\"" + imageToolTipVal + "\"" : "";
 											                							
 											                							String deTarget = " ";
 																				  		if (!image.getTarget().equals("")) {
@@ -624,7 +630,8 @@
 	                                                       
 	                                                    String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 	                                                    String type = de.getType();
-	                                                    String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+	                                                    String deToolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+	                                                    String deTip =  deToolTipVal != null && !deToolTipVal.equals("") ? " title=\"" + deToolTipVal + "\"" : "";
 	                                                    String classInput= de.getStyleClass();
 	                                                    String labelStyleClass= de.getLabelStyleClass();
 	                                                    String iconLink =  de.getIcon();
@@ -660,8 +667,9 @@
 											  
 												String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 											  	String type = de.getType();
-											  	String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
-											  	String classInput= de.getStyleClass();
+											  	String deToolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+											  	String deTip =  deToolTipVal != null && !deToolTipVal.equals("") ? " title=\"" + deToolTipVal + "\"" : "";
+											  	String classInput = de.getStyleClass();
 											  	String labelStyleClass= de.getLabelStyleClass();
 											  	String iconLink =  de.getIcon();
 											  	
@@ -708,7 +716,8 @@
 					  					String deAbilitazioneName = !deAbilitazione.getName().equals("") ? deAbilitazione.getName() : "de_name_"+ (gruppo.size() - 2);
 					  					String deAbilitazioneNote = deAbilitazione.getNote();
 					  					String deAbilitazioneLabelStyleClass= deAbilitazione.getLabelStyleClass();
-					  					String deAbilitazioneTip =  " title=\"" + deAbilitazione.getToolTip() + "\"";
+					  					String deAbilitazioneToolTipVal = ServletUtils.escapeHTMLAttribute(deAbilitazione.getToolTip());
+					  					String deAbilitazioneTip =  " title=\"" + deAbilitazioneToolTipVal + "\"";
 					  					
 					  					DataElement deNuovaConfigurazione =  (DataElement) gruppo.get(gruppo.size() - 1);
 										String deNuovaConfigurazioneLabel = !deNuovaConfigurazione.getLabel().equals("") ? deNuovaConfigurazione.getLabel() : "&nbsp;";
@@ -731,7 +740,8 @@
 										  	String deNote = de.getNote();
 										  	String classInput= de.getStyleClass();
 										  	String labelStyleClass= de.getLabelStyleClass();
-										  	String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+										  	String deToolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+										  	String deTip =  deToolTipVal != null && !deToolTipVal.equals("") ? " title=\"" + deToolTipVal + "\"" : "";
 										  	String deHiddenId = "__i_hidden_lbl_de_"+z+"_"+i;
 										  	
 										  	if (type.equals("hidden")) {
@@ -862,7 +872,8 @@
 													  		<div id="aggiungiConfigurazioneModalBody_<%= z %>" class="contenutoModal">
 			                                        			<div class="prop">
 			                                        				<%
-																	String selTitle = (deNuovaConfigurazione.getToolTip()!=null && !deNuovaConfigurazione.getToolTip().equals("")) ? ("title='"+deNuovaConfigurazione.getToolTip()+"'") : " ";
+			                                        				String deNuovaConfigurazioneToolTipVal = ServletUtils.escapeHTMLAttribute(deNuovaConfigurazione.getToolTip());
+																	String selTitle = (deNuovaConfigurazioneToolTipVal!=null && !deNuovaConfigurazioneToolTipVal.equals("")) ? ("title='"+deNuovaConfigurazioneToolTipVal+"'") : " ";
 																	String selId = "select_" + z;
 		                          									%>
 		                          									<label class="<%= deNuovaConfigurazioneLabelStyleClass %>" for="<%= selId  %>"><%=deNuovaConfigurazioneLabel %></label>

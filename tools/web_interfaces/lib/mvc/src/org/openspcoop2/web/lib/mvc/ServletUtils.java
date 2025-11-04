@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts.action.ActionForward;
@@ -961,5 +962,59 @@ public class ServletUtils {
 		}
 
 		return false;
+	}
+	
+	/**
+	 * Sanitizza una stringa per essere usata in un attributo HTML title (tooltip).
+	 * Rimuove tag HTML, markdown, normalizza gli spazi e limita la lunghezza.
+	 *
+	 * @param value Il testo da sanitizzare
+	 * @return Il testo sanitizzato adatto per l'attributo title
+	 */
+	public static String escapeHTMLAttribute(String value) {
+		if (value == null || value.trim().isEmpty()) {
+			return "";
+		}
+
+		String sanitized = value;
+
+		// Rimuovi tag HTML
+		sanitized = sanitized.replaceAll("<[^>]+>", "");
+
+		// Rimuovi markdown headers (# ## ### etc)
+		sanitized = sanitized.replaceAll("#{1,6}\\s+", "");
+
+		// Rimuovi markdown bold/italic (**text** __text__ *text* _text_)
+		sanitized = sanitized.replaceAll("[*_]{1,2}([^*_]+)[*_]{1,2}", "$1");
+
+		// Rimuovi markdown links [text](url)
+		sanitized = sanitized.replaceAll("\\[([^\\]]+)\\]\\([^)]+\\)", "$1");
+
+		// Converti entities HTML comuni
+		sanitized = sanitized.replace("&quot;", "\"");
+		sanitized = sanitized.replace("&lt;", "<");
+		sanitized = sanitized.replace("&gt;", ">");
+		sanitized = sanitized.replace("&amp;", "&");
+		sanitized = sanitized.replace("&nbsp;", " ");
+
+		// Rimuovi caratteri di escape backslash
+		sanitized = sanitized.replace("\\-", "-");
+		sanitized = sanitized.replace("\\>", ">");
+
+		// Normalizza spazi bianchi (tab, newline, spazi multipli)
+		sanitized = sanitized.replaceAll("\\s+", " ");
+
+		// Trim
+		sanitized = sanitized.trim();
+
+		// Limita lunghezza (max 250 caratteri per compatibilità browser)
+		if (sanitized.length() > 250) {
+			sanitized = sanitized.substring(0, 247) + "...";
+		}
+
+		// Escape HTML per sicurezza
+		sanitized = StringEscapeUtils.escapeHtml(sanitized);
+
+		return sanitized;
 	}
 }

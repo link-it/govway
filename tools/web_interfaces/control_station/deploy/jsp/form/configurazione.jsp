@@ -700,7 +700,7 @@ function inizializzaSelectFiltro(){
 													    stile = "even";
 												  	}
 													
-													String copyToClipboard = de.getCopyToClipboard();
+													String copyToClipboard = ServletUtils.escapeHTMLAttribute(de.getCopyToClipboard());
 												  	
 												  	if (type.equals("hidden")) {
 											    		%>
@@ -727,13 +727,14 @@ function inizializzaSelectFiltro(){
 									            				
 									            				String tooltipTextValNoEdit = "";
 																
-									            				if(de.getToolTip()!=null && !de.getToolTip().equals("")){
-																	tooltipTextValNoEdit = " title=\"" + de.getToolTip() + "\"";	
+									            				String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+									            				if(toolTipVal!=null && !toolTipVal.equals("")){
+																	tooltipTextValNoEdit = " title=\"" + toolTipVal + "\"";	
 																}
 									            				
 																if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
 																	if(tooltipTextValNoEdit==null || "".equals(tooltipTextValNoEdit)){
-																		tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
+																		tooltipTextValNoEdit = " title=\"" + ServletUtils.escapeHTMLAttribute(textValNoEdit) + "\"";
 																	}
 																	textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
 																}
@@ -785,7 +786,8 @@ function inizializzaSelectFiltro(){
 																					String classLink = "";
 																					String deIconName = image.getImage(); 
 										                					
-																					String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+																					String imageToolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+																					String deTip = !imageToolTipVal.equals("") ? " title=\"" + imageToolTipVal + "\"" : "";
 										                							
 										                							String deTarget = " ";
 																			  		if (!image.getTarget().equals("")) {
@@ -883,7 +885,8 @@ function inizializzaSelectFiltro(){
 																								String classLink = "";
 																								String deIconName = image.getImage(); 
 													                					
-																								String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+																								String imageToolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+																								String deTip = !imageToolTipVal.equals("") ? " title=\"" + imageToolTipVal + "\"" : "";
 													                							
 													                							String deTarget = " ";
 																						  		if (!image.getTarget().equals("")) {
@@ -987,7 +990,8 @@ function inizializzaSelectFiltro(){
 																									String classLink = "";
 																									String deIconName = image.getImage(); 
 														                					
-																									String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+																									String imageToolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+																									String deTip = !imageToolTipVal.equals("") ? " title=\"" + imageToolTipVal + "\"" : "";
 														                							
 														                							String deTarget = " ";
 																							  		if (!image.getTarget().equals("")) {
@@ -1063,7 +1067,8 @@ function inizializzaSelectFiltro(){
 																										String classLink = "";
 																										String deIconName = image.getImage(); 
 															                					
-																										String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+																										String imageToolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+																										String deTip = !imageToolTipVal.equals("") ? " title=\"" + imageToolTipVal + "\"" : "";
 															                							
 															                							String deTarget = " ";
 																								  		if (!image.getTarget().equals("")) {

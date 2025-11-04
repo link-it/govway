@@ -245,7 +245,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 							    String classLink = "";
 							    String classSpan = de.getLabelStyleClass();
 							    String cssClassTdStyle = !de.getStyle().equals("") ? "tdStyle-"+i+"-"+j : "";
-							    String copyToClipboard = de.getCopyToClipboard();
+							    String copyToClipboard = ServletUtils.escapeHTMLAttribute(de.getCopyToClipboard());
 								String dataCopy = "";
 								
 								// valore da copiare negli appunti
@@ -277,8 +277,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 							    		//tooltip
 								  		String tip = "";
 								  		boolean showTip=false;
-								  		if(de.getToolTip()!=null && !"".equals(de.getToolTip())){
-								  			tip=de.getToolTip();
+								  		String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+								  		if(toolTipVal!=null && !"".equals(toolTipVal)){
+								  			tip=toolTipVal;
 								  			showTip=true;
 								  		}
 								  		//se la lunghezza del dato impostato come value e' > della larghezza della
@@ -291,7 +292,7 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  			res=de.getValue().trim().substring(0,size)+" ...";
 								  			//se nn e' stato specificato un tip precedentemente
 								  			//metto come tip il valore completo del campo
-								  			if(!showTip) tip=de.getValue();
+								  			if(!showTip) tip=ServletUtils.escapeHTMLAttribute(de.getValue());
 								  			
 								  			showTip=true;
 								  		}
@@ -312,8 +313,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 								  		
 								  		if(de.isVisualizzaLinkApriNuovaFinestra()) { // stringa senza link e icona sulla dx
 								  			String deIconName = de.getIcon(); 
-								  			if(de.getToolTip()!=null && !"".equals(de.getToolTip())){
-								  				tip=de.getToolTip();
+								  			if(toolTipVal!=null && !"".equals(toolTipVal)){
+									  			tip=toolTipVal;
 								  				deTip = " title=\"" + tip + "\"";
 								  			}
 								  			%><span class="<%= classSpan %>"  <%= dataCopy %> id="<%= deTextId%>"><%= de.getValue() %></span>
@@ -348,8 +349,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 										if (!de.getOnClick().equals("")) {
 											String tip = "";
 											String deTip = " ";
-									  		if(de.getToolTip()!=null && !"".equals(de.getToolTip())){
-								  				tip=de.getToolTip();
+											String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+											if(toolTipVal!=null && !"".equals(toolTipVal)){
+									  			tip=toolTipVal;
 								  				deTip = " title=\"" + tip + "\"";
 								  			}
 										  //getOnClick
@@ -366,8 +368,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 										} else {
 											String tip = "";
 											String deTip = " ";
-									  		if(de.getToolTip()!=null && !"".equals(de.getToolTip())){
-								  				tip=de.getToolTip();
+											String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+											if(toolTipVal!=null && !"".equals(toolTipVal)){
+									  			tip=toolTipVal;
 								  				deTip = " title=\"" + tip + "\"";
 								  			}
 										  //string only
@@ -401,7 +404,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 													DataElementImage image = de.getImage().get(idxLink);
 													String deIconName = image.getImage(); 
 		                					
-													String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
+													String toolTipVal = ServletUtils.escapeHTMLAttribute(image.getToolTip());
+													String deTip = !toolTipVal.equals("") ? " title=\"" + toolTipVal + "\"" : "";
 		                							
 		                							String deTarget = " ";
 											  		if (!image.getTarget().equals("")) {
@@ -496,8 +500,9 @@ if (hidden!=null && !hidden.isEmpty()) {
 												 	else if("config_disable".equals(de.getSelected())){
 												 		image = "verified_grey.png";
 													}
-									  				String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
-									  				String altImg = !de.getToolTip().equals("") ? de.getToolTip() : "-"; 
+												 	String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+									  				String tooltip = !toolTipVal.equals("") ? " title=\"" + toolTipVal + "\"" : ""; 
+									  				String altImg = !toolTipVal.equals("") ? toolTipVal : "-"; 
 									  				 
 									  				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									  				String id = "tabella-checkbox-link_" + i;
@@ -527,7 +532,8 @@ if (hidden!=null && !hidden.isEmpty()) {
 										      		}
 									  			 } else {
 									  				 if (de.getType().equals("button")) {
-									  					String deTip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
+									  					String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
+									  					String deTip = !toolTipVal.equals("") ? " title=\"" + toolTipVal + "\"" : "";
 														
 									  					if(de.getInfo() != null) {
 															DataElementInfo deInfo = de.getInfo();

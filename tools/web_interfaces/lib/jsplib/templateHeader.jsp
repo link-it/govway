@@ -132,8 +132,9 @@ if(!tabSessionKey.equals("")){
 	// 															}
 	
 																String toolTip = " ";
-																if(!l.getTooltip().equals("")){
-																	toolTip = " title=\"" + l.getTooltip() + "\"";
+																String toolTipVal = ServletUtils.escapeHTMLAttribute(l.getTooltip());
+																if(!toolTipVal.equals("")){
+																	toolTip = " title=\"" + toolTipVal + "\"";
 														  		}
 																
 																if(l.getUrl().equals("")){

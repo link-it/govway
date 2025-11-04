@@ -86,7 +86,8 @@ Dialog finestraDialog = (Dialog) request.getAttribute(idFinestraModale);
 				String labelStyleClass= de.getLabelStyleClass();
 				String classInput= de.getStyleClass();
 				String iconaCtrlC = Costanti.ICON_COPY;
-				String iconaCtrlCTitle = (de.getTooltipCopyAction()!=null && !de.getTooltipCopyAction().equals("")) ? ("title='"+de.getTooltipCopyAction()+"'") : " ";
+				String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getTooltipCopyAction());
+				String iconaCtrlCTitle = (toolTipVal!=null && !toolTipVal.equals("")) ? ("title='"+toolTipVal+"'") : " ";
 				String deHiddenId = "__i_hidden_lbl_de_"+i;
 				
 				boolean visualizzaIconCopia = de.isVisualizzaCopyAction();
