@@ -1,3 +1,11 @@
+2025-11-04  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolto Bug #1675
+	Corretta generazione dello script SQL 'GovWayTracciamento.sql' che, 
+	nella modalità di installazione avanzata con database dedicato al tracciamento, 
+	non includeva la creazione della tabella 'OP2_SEMAPHORE'.
+
 2025-11-03  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
