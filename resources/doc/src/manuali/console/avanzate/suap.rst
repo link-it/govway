@@ -28,6 +28,7 @@ Gli errori gestiti da GovWay sono i seguenti:
 - *ERROR_401_003 - AgID-JWT-Signature* token not found: la richiesta non contiene l'header AgID-JWT-Signature.
 - *ERROR_401_004 - invalid AgID-JWT-Signature token*: token nell'header AgID-JWT-Signature non valido.
 - *ERROR_404_001 - resource not found*: risorsa richiesta non esistente.
+- *ERROR_428_001* - hash not found: gestisce esclusivamente il caso in cui il parametro obbligatorio 'If-Match' non sia presente nella richiesta.
 - *ERROR_500_007 - response processing error*: copre solamente i due casi seguenti:
 
     - backend non disponibile: rappresenta la casistica in cui il backend non è raggiungibile per vari motivi (es. connection refused, connection timeout, read timeout).  
