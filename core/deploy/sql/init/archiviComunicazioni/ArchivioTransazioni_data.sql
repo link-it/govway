@@ -1,4 +1,4 @@
--- classe esitifgovway_status
+-- classe esiti
 INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 1 , 'Completata con Successo' );
 INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 2 , 'Fault Applicativo' );
 INSERT INTO transazioni_classe_esiti (govway_status, govway_status_detail) VALUES ( 3 , 'Richiesta Scartata' );
