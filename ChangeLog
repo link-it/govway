@@ -1,3 +1,13 @@
+2025-11-05  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug #1676
+	(https://github.com/link-it/govway/issues/261)
+	È stata corretta un’anomalia che impediva il corretto funzionamento della console.
+	Il problema era dovuto alla presenza di un doppio carattere “//” all’interno dei riferimenti di alcune risorse,
+	che causava il malfunzionamento dell’applicazione nel caso in cui l’ingress posto davanti alla console eseguisse l’operazione di merge slash.
+	Tale comportamento provocava errori JavaScript che rendevano la webapp inutilizzabile, impedendo l’accesso alla schermata di login.
+
 2025-11-04  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]	

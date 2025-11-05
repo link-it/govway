@@ -1,4 +1,4 @@
-ALTER TABLE transazioni ADD token_id VARCHAR(50);
+ALTER TABLE transazioni ADD token_id VARCHAR2(50);
 
 CREATE INDEX INDEX_TR_TOKEN_ID ON transazioni (token_id);
 
