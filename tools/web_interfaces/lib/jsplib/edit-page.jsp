@@ -165,7 +165,7 @@ $(document).ready(function () {
 
         var aperto = $(this).hasClass("subtitleOpen");
 
-        // Inizializza visibilit� al load
+        // Inizializza visibilità al load
         if (aperto) {
             $("#" + sectionId).show();
             $("#" + iconId).html(iconNascondiSezione);
