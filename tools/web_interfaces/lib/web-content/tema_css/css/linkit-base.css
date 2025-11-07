@@ -608,6 +608,10 @@ td.tableHeaderChkAll-noList {
 	width:16px;
 }
 
+td.valignTop {
+ 	vertical-align: top;
+ }
+
 p.legend {
 	margin-bottom: 1em;
 }

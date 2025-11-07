@@ -1,3 +1,9 @@
+2025-11-07  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]	
+	Risolto Bug #1681
+	Risolte segnalazioni 'A form label must be associated with a control.' di SonarQube sulla pagina jsp 'edit-page.jsp'
+
 2025-11-05  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]

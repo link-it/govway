@@ -79,7 +79,7 @@ if(idsTextArea == null)
 %>
 
 
-<td valign="top" class="td2PageBody">
+<td class="valignTop" class="td2PageBody">
 	<form name="form" <%=encTypeS %> action="<%= gd.getUrl() %>" method="post">
 		<!-- Breadcrumbs -->
 		<jsp:include page="/jsplib/titlelist.jsp" flush="true" />
@@ -136,7 +136,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 <table class="tabella-ext">
 	<% if(titoloSezione != null) { %>
 	<tr>
-		<td valign=top colspan="2">
+		<td class="valignTop" colspan="2">
 			<div class="<%= classPanelTitolo %>" >
 				<table class="tabella" id="panelDettaglioHeader">
 					<tbody>
@@ -156,7 +156,7 @@ String tabSessionKey = ServletUtils.getTabIdFromRequestAttribute(request);
 	<% }%>
 	<!-- Riga tabella -->
 		<tr> 
-			<td valign=top colspan="2">		
+			<td class="valignTop" colspan="2">		
 			<div class="<%=classDivPanelLista %>">
 				<script type="text/javascript" nonce="<%= randomNonce %>">
 
@@ -470,7 +470,7 @@ for (int i = 0; i < dati.size(); i++) {
 	    						<%
 	    							}
 	    						%>
-	    						<a id="<%= deName  %>__anchor" name="<%=rowName %>" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
+	    						<a id="<%= deName  %>__anchor" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
 	    					</legend>
 	    					       <%
 					               if(gestioneAperturaFieldset){
@@ -561,7 +561,7 @@ for (int i = 0; i < dati.size(); i++) {
 	       					<%
    							}
    	    					%>
-							<a id="<%= deName  %>__anchor" name="<%=rowName %>" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
+							<a id="<%= deName  %>__anchor" class="<%=cssClassTitle %>" <%=titoloComandoApertura %>><%=deLabel %></a>
 	       				</span>
 	       				<%
 							} else {
@@ -574,12 +574,12 @@ for (int i = 0; i < dati.size(); i++) {
 									<span class="subtitleRefresh">
 										<i class="material-icons md-16" id="<%= deName  %>__icon_refresh" title="<%= Costanti.ICONA_REFRESH_SEZIONE_TOOLTIP%>"><%= Costanti.ICONA_REFRESH_SEZIONE%></i>
 									</span>
-									<a name="<%=rowName %>"  class="<%=cssClassTitle %>" ><%=deLabel %></a>
+									<a class="<%=cssClassTitle %>" ><%=deLabel %></a>
 								</span>
 	       					<%
    							} else {
    	    					%>
-   	    						<span class="subtitle"><a name="<%=rowName %>"  class="<%=cssClassTitle %>" ><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
+   	    						<span class="subtitle"><a class="<%=cssClassTitle %>" ><%=deLabel %>&nbsp;&nbsp;&nbsp;&nbsp;</a></span>
    	    					<%
    							}
    	    					%>
@@ -626,13 +626,14 @@ for (int i = 0; i < dati.size(); i++) {
         		} else { // else subtitle
 	    			if (type.equals("note")){
 	    				String noteValue = !de.getValue().equals("") ? de.getValue() : "&nbsp;";
+	    				String noteId = "form-note_" + i ;
 	    				
 	    				%>
 	        			<div class="prop">
-						<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
+						<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=noteId %>"><%=deLabel %></label>
         					<div class="<%=classDivNoEdit %>">
-							<span class="<%=classSpanNoEdit %>"><%=noteValue %></span>
-						</div>
+								<span class="<%=classSpanNoEdit %>" id="<%=noteId %>"><%=noteValue %></span>
+							</div>
 	        			</div>
 	        			<%
 	        		} else { // else note
@@ -654,7 +655,7 @@ for (int i = 0; i < dati.size(); i++) {
 							boolean visualizzaConferma = deConfirm != null;
 	        				%>
 	            			<div class="prop prop-link">
-	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabelLink %></label>
+	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabelLink %></label>
 	            				<div class="<%=classDivNoEdit %>"> 
 	            					<% if (!visualizzaConferma) { %>
 		            					<span class="<%=classSpanNoEdit %>"><a id="<%=id %>" href="<%= de.getUrl() %>" <%=deTarget %> ><%= de.getValue() %></a></span>
@@ -723,11 +724,13 @@ for (int i = 0; i < dati.size(); i++) {
 	            			if (type.equals("text")){
 	            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 	            				classSpanNoEdit = de.getStyleClass(); // gestione override classe di default 24/03/2021
+	            				
+	            				String textId = "form-text_" + i ;
 	            				%>
 	                			<div class="prop">
-	                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
+	                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=textId %>"><%=deLabel %></label>
 	                				<div class="<%=classDivNoEdit %>"> 
-		                				<span class="<%=classSpanNoEdit %>"><%= textValNoEdit %></span>
+		                				<span class="<%=classSpanNoEdit %>" id="<%=textId %>"><%= textValNoEdit %></span>
 		                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 		                				
 		                				<% 
@@ -779,18 +782,19 @@ for (int i = 0; i < dati.size(); i++) {
 	                			<%
 	                		} else { // else text
 	                			if (type.equals("textedit")){
+	                				String textId = "form-textedit_" + i ;
 	                				%>
 	                    			<div class="prop">
-	                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+	                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=textId %>"><%=deLabel %></label>
 	                    				<%
 								    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 								    		String taeditValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 								    		%><div class="<%=classDivNoEdit %>"> 
-								    			<span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span>
+								    			<span class="<%=classSpanNoEdit %>" id="<%=textId %>"><%= taeditValNoEdit %></span>
 								    			</div><%
 								    	} else {
 								    		String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
-								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> >
+								      		%><input type="text" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%= selDataAttributes %> id="<%=textId %>" >
 								      		<%
 								      			if(!de.getDataAttributesAsString().equals("")){
 								      				
@@ -921,21 +925,22 @@ for (int i = 0; i < dati.size(); i++) {
 	                    			<%
 	                    		} else { // else textedit
 	                    			if (type.equals("number")){
+	                    				String numberId = "form-number_" + i ;
 		                				%>
 		                    			<div class="prop">
-		                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+		                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=numberId %>"><%=deLabel %></label>
 		                    				<%
 									    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 									    		String taeditValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 									    		%><div class="<%=classDivNoEdit %>"> 
-									    			<span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span>
+									    			<span class="<%=classSpanNoEdit %>" id="<%=numberId %>"><%= taeditValNoEdit %></span>
 									    			</div><%
 									    	} else {
 									    		String minvalue = de.getMinValue() != null ? " min=\"" + de.getMinValue() + "\"" : "";
 									    		String maxValue = de.getMaxValue() != null ? " max=\"" + de.getMaxValue() + "\"" : "";
 									    		String customJsFunction = de.getCustomJsFunction() != null && !de.getCustomJsFunction().equals("")  ? " gw-function=\"" + de.getCustomJsFunction() + "\"" : "";
 									    		
-									      		%><input type="number" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
+									      		%><input type="number" name="<%= deName %>" value="<%= de.getValue() %>" class="<%= classInput %>" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> id="<%=numberId %>" >
 									      	<% 
 								      		if(deInfo != null){
 								      			String idDivIconInfo = "divIconInfo_"+i;
@@ -970,10 +975,10 @@ for (int i = 0; i < dati.size(); i++) {
 		                    				String idPwd = "pwd_" + i;
 		                    				%>
 		                        			<div class="prop">
-		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
+		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=idPwd %>"><%=deLabel %></label>
 		                        				<%
 							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=dePwdNoEdit %></span></div><%
+													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%=idPwd %>"><%=dePwdNoEdit %></span></div><%
 							   					} else {
 							   						String idPwdEye = "pwd_" + i + "_eye";
 							   						String idPwdEyeSpan = "pwd_" + i + "_eye_span";
@@ -1091,11 +1096,11 @@ for (int i = 0; i < dati.size(); i++) {
 		            	     					}
 		                        				%>
 		                            			<div class="prop">
-		                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+		                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=inputId %>"><%=deLabel %></label>
 		                            				<%
 							     					if ((pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) && de.isLabelAffiancata()) {
 							     						String taValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
-							     						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= taValNoEdit %></span></div><%
+							     						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%=inputId %>"><%= taValNoEdit %></span></div><%
 							     					} else {
 							     						String taNoEdit = type.equals("textarea") ? " " : " readonly ";
 							     						%><div class="txtA_div">
@@ -1125,7 +1130,7 @@ for (int i = 0; i < dati.size(); i++) {
 		                            				String id = "form-btn-link_" + i;
 		                            				%>
 		                                			<div class="prop">
-		                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+		                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
 		                                				<div class="de_buttonrow">
 			                                				<input id="<%=id %>" type="button" value="<%= de.getValue() %>" class="<%= classInput %>" />
 			                                				<% if(!deNote.equals("")){ %>
@@ -1151,12 +1156,12 @@ for (int i = 0; i < dati.size(); i++) {
 		                                				String id = "form-file_" + i;
 		                                				%>
 		                                    			<div class="prop">
-		                                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+		                                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
 		                                    				<%
 		                                    				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 		                                    	     			String fileValue = (de.getValue() != null && !de.getValue().equals("")) ? de.getValue() : "not defined";
 		                                    	            	%> 
-		                                    	            	<div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=fileValue %></span></div><%
+		                                    	            	<div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%=id %>"><%=fileValue %></span></div><%
 		                                    	      		} else {
 		                                    	          		%><input id="<%=id %>" size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  <%= multipleFiles  %> />
 													  		<% if(!de.getOnChange().equals("")){ 
@@ -1191,17 +1196,18 @@ for (int i = 0; i < dati.size(); i++) {
 		                                    			<%
 		                                    		} else { // else file
 		                                    			if (type.equals("select")){
+		                                    				String selId = "select_" + i;
 		                                    				%>
 		                                        			<div class="prop">
-		                                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+		                                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=selId %>"><%=deLabel %></label>
 		                                        				<%
 		                                        				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 		                                      						String selValNoEdit = (de.getSelected() != "") ? de.getSelected() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
-		                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span></div><%
+		                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%= selId  %>" ><%= selValNoEdit %></span></div><%
 		                               							} else {
 		                               								String toolTipVal = ServletUtils.escapeHTMLAttribute(de.getToolTip());
 																	String selTitle = (toolTipVal!=null && !toolTipVal.equals("")) ? ("title='"+toolTipVal+"'") : " ";
-		                               								String selId = "select_" + i;
+		                               								
 		                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selTitle %> class="<%= classInput %>"><%
 		                          									String [] values = de.getValues();
 		                                        					if (values != null) {
@@ -1268,17 +1274,18 @@ for (int i = 0; i < dati.size(); i++) {
 		                                        			<%
 		                                        		} else { // else select
 		                                        			if(type.equals("multi-select")){
+		                                        				String selId = "select_" + i;
 		                                        				%>
 	                                        					<div class="prop">
-			                                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+			                                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=selId %>"><%=deLabel %></label>
 			                                        				<%
 			                                        				if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 			                                      						String selValNoEdit = (de.getSelezionatiAsString() != "") ? de.getSelezionatiAsString() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
-			                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span></div><%
+			                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%= selId  %>"><%= selValNoEdit %></span></div><%
 			                               							} else {
 			                               								String selSize = " size='"+de.getRows()+"' ";
 			                               								String selDataAttributes = !de.getDataAttributesAsString().equals("") ? de.getDataAttributesAsString() : " ";
-			                               								String selId = "select_" + i;
+			                               								
 			                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selSize %> class="<%= classInput %>" multiple <%= selDataAttributes %> ><%
 			                          									String [] values = de.getValues();
 			                                        					if (values != null) {
@@ -1356,11 +1363,12 @@ for (int i = 0; i < dati.size(); i++) {
 		                                        				<%
 		                                        			} else { // else multi-select
 		                                        				if (type.equals("checkbox")){
+		                                        					String id = "form-checkbox-link_" + i;
 			                                        				%>
 			                                            			<div class="prop">
-			                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+			                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
 			                                            				<%
-			                                            				String id = "form-checkbox-link_" + i;
+			                                            				
 								    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
 								    									String disVal = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") ? "disabled=\"disabled\"" : "";
 								    									String controlSetClass = deInfo != null ? "controlset-cb-info" : "controlset";
@@ -1422,16 +1430,17 @@ for (int i = 0; i < dati.size(); i++) {
 			                                            			<%
 			                                            		} else { // else checkbox
 			                                            			if (type.equals("radio")){
+			                                            				String idControlSet = "form-radio-link_" + i;
 			                                            				%>
 			                                                			<div class="prop">
-			                                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+			                                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=idControlSet %>"><%=deLabel %></label>
 			                                                				<%
 						   	        										if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 						   	        											String radioValNoEdit = !de.getSelected().equals("") ? de.getSelected() : "not defined";
-						    													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=radioValNoEdit %></span></div><%
+						    													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>" id="<%=idControlSet %>" ><%=radioValNoEdit %></span></div><%
 						    												} else {
 						    													%>
-						    													<table class="controlset">
+						    													<table class="controlset" id="<%=idControlSet %>">
 						    														<tr>
 						    													<%
 							  													String [] values = de.getValues();
@@ -1460,14 +1469,15 @@ for (int i = 0; i < dati.size(); i++) {
 			                                                			<%
 			                                                		} else { // else radio
 			                                                			if(type.equals("interval-number")){
+			                                                				String id = "form-interval-number_" + i;
 			                                                				%>
 			                                                					<div class="prop">
-												                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
+												                    				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=id %>"><%=deLabel %></label>
 												                    				<%
 																			    	if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 																			    		String taeditValNoEdit = de.getValuesNoEdit(pd.getMode());
 																			    		%><div class="<%=classDivNoEdit %>"> 
-																			    			<span class="<%=classSpanNoEdit %>"><%= taeditValNoEdit %></span>
+																			    			<span class="<%=classSpanNoEdit %>" id="<%=id %>"><%= taeditValNoEdit %></span>
 																			    			</div><%
 																			    	} else {
 																			    		String minvalue = de.getMinValue() != null ? " min=\"" + de.getMinValue() + "\"" : "";
@@ -1482,7 +1492,7 @@ for (int i = 0; i < dati.size(); i++) {
 																			      				String valueI = de.getValues()[z] == null ? "" : de.getValues()[z];
 																			      		%>
 																			      			<div class="intervalInnerDiv">
-																			      				<input type="number" name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
+																			      				<input type="number" id="<%=id %>" name="<%= nameI %>" value="<%= valueI %>" class="<%= classInput %> intervalInnerInput" <%=minvalue %> <%=maxValue %> <%=customJsFunction %> >
 																			      			</div>
 																			      		<%
 																				      		} // end for
@@ -1512,7 +1522,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        		                    				String idPwd = "pwd_" + i;
 			                        		                    				%>
 			                        		                        			<div class="prop">
-			                        		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
+			                        		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" for="<%=idPwd %>" ><%=deLabel %></label>
 			                        		                        				<%
 			                        							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
 			                        													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= Costanti.PARAMETER_LOCK_DEFAULT_VALUE  %></span></div><%
@@ -1575,6 +1585,13 @@ for (int i = 0; i < dati.size(); i++) {
 			                        							   						String spanComaniInternoInputClass = visualizzaTuttiComandiInternoInput ? "lock-span-comandi-input lock-span-comandi-input-x2" : "lock-span-comandi-input";
 			                        				                    				
 			                        							   						String titleIconaModifica = visualizzaTuttiComandiInternoInput ? Costanti.ICONA_EDIT_TOOLTIP : Costanti.ICONA_REIMPOSTA_TOOLTIP;
+			                        							   						
+			                        							   						String autocompleteAttr = "";
+			                        							   						
+			                        							   						if("password".equals(dePwdType)){
+                                    							   							autocompleteAttr = "autocomplete=\"new-password\"";
+                                    							   						}
+			                        							   						
 			                        													%>
 			                        													<div class="lock-container">
 			                        													<%
@@ -1582,7 +1599,7 @@ for (int i = 0; i < dati.size(); i++) {
 			                        								          				%>
 			                        														<div class="lock-input-container">
 			                        													<% } %>
-				                        													<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %> autocomplete="new-password">
+				                        													<input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" id="<%=idPwd %>" value="<%= lockValue %>" <%=lockDisabled %> <%=autocompleteAttr %>>
 				                        													<input type="hidden" name="<%= hiddenLockName  %>" id="<%=hiddenLockId %>" value="<%= de.getValue()  %>">
 			                        													<%
 			                        							          				if (visualizzaComandiInternoInput) {
