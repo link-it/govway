@@ -225,7 +225,7 @@ $(document).ready(function () {
         const useAccordion = ($("#" + accordionId).val() === "true");
 
         if (useAccordion) {
-         	// Accordion: se � gi� aperta non fare nulla (non si chiude)
+         	// Accordion: se è già aperta non fare nulla (non si chiude)
             if (isOpen) {
                 return; // keep-open behavior
             }
@@ -233,7 +233,7 @@ $(document).ready(function () {
             chiudiTuttiFieldset(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
             apriFieldset(baseId, iconNascondiSezione, tooltipNascondiSezione);
         } else {
-            // Modalit� indipendente: toggle puro sulla singola sezione
+            // Modalità indipendente: toggle puro sulla singola sezione
             if (isOpen) {
             	chiudiFieldset(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
             } else {
@@ -257,7 +257,7 @@ $(document).ready(function () {
 
         var aperto = $(this).hasClass("subtitleOpen");
 
-        // Inizializza visibilit� al load
+        // Inizializza visibilità al load
         if (aperto) {
             $("#" + sectionId).show();
             $("#" + iconId).html(iconNascondiSezione);
@@ -317,7 +317,7 @@ $(document).ready(function () {
         const useAccordion = ($("#" + accordionId).val() === "true");
 
         if (useAccordion) {
-        	// Accordion: se � gi� aperta non fare nulla (non si chiude)
+        	// Accordion: se è già aperta non fare nulla (non si chiude)
             if (isOpen) {
                 return; // keep-open behavior
             }
@@ -325,7 +325,7 @@ $(document).ready(function () {
             chiudiTutteLeSezioni(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
             apriSezione(baseId, iconNascondiSezione, tooltipNascondiSezione);
         } else {
-            // Modalit� indipendente: toggle puro sulla singola sezione
+            // Modalità indipendente: toggle puro sulla singola sezione
             if (isOpen) {
                 chiudiSezione(baseId, iconVisualizzaSezione, tooltipVisualizzaSezione);
             } else {
