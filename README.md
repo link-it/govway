@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://www.link.it/wp-content/uploads/2025/01/logo-govway.svg" alt="GovWay Logo" width="200"/>
+</p>
+
 # GovWay - API Gateway per la Pubblica Amministrazione
 [![Quality Gate Status](https://jenkins.link.it/govway-sonarqube-badge)](https://jenkins.link.it/govway-sonarqube/dashboard?id=govway)
 [![Build Status](https://jenkins.link.it/govway/buildStatus/icon?job=GovWay&style=plastic)](https://jenkins.link.it/govway/job/GovWay/)
