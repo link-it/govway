@@ -196,9 +196,15 @@ public class Semaphore {
 				return acquireWithTimeout(methodName, idTransazione);
 			}
 		}
+		catch(SemaphoreTimeoutException ste) {
+			if(this.isInstanceDebug()) {
+				debug(getPrefix(methodName, idTransazione)+" acquire("+this.getInstanceLockAcquisitionTimeoutMs()+"ms) failed: "+ste.getMessage());
+			}
+			throw new UtilsException(ste.getMessage(),ste);
+		}
 		catch(InterruptedException ie) {
 			if(this.isInstanceDebug()) {
-				debug(getPrefix(methodName, idTransazione)+" acquire("+this.getInstanceLockAcquisitionTimeoutMs()+"ms) failed: "+ie.getMessage());
+				debug(getPrefix(methodName, idTransazione)+" interrupted: "+ie.getMessage());
 			}
 			Thread.currentThread().interrupt();
 			throw new UtilsException(ie.getMessage(),ie);
@@ -219,7 +225,7 @@ public class Semaphore {
 		}
 		return new SemaphoreLock(this, methodName, idTransazione);
 	}
-	private SemaphoreLock acquireWithTimeout(String methodName, String idTransazione) throws InterruptedException {
+	private SemaphoreLock acquireWithTimeout(String methodName, String idTransazione) throws InterruptedException, SemaphoreTimeoutException {
 		if(this.isInstanceDebug()) {
 			debug(getPrefix(methodName, idTransazione)+" acquire("+this.getInstanceLockAcquisitionTimeoutMs()+"ms) ...");
 		}
@@ -231,7 +237,7 @@ public class Semaphore {
 			acquire = this.reentrantLock.tryLock(this.getInstanceLockAcquisitionTimeoutMs(), TimeUnit.MILLISECONDS);
 		}
 		if(!acquire) {
-			throw new InterruptedException("["+this.semaphoreName+"] Could not acquire semaphore after "+this.getInstanceLockAcquisitionTimeoutMs()+"ms");
+			throw new SemaphoreTimeoutException("["+this.semaphoreName+"] Could not acquire semaphore after "+this.getInstanceLockAcquisitionTimeoutMs()+"ms");
 		}
 		if(this.isInstanceDebug()) {
 			debug(getPrefix(methodName, idTransazione)+" acquired");
