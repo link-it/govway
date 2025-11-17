@@ -8781,9 +8781,9 @@ public class GestoreMessaggi  {
 					lockAcquired = LOCK_SEMAPHORE.tryAcquire(attesaAttivaLock, TimeUnit.MILLISECONDS);
 				}catch(InterruptedException ie) {
 				    Thread.currentThread().interrupt();
-				    throw new UtilsException("Timeout: lock non disponibile dopo una attesa di "+attesaAttivaLock+"ms (attuale modulo proprietario: "+GestoreMessaggi.LOCK_MODULO+", causa: "+GestoreMessaggi.LOCK.toString()+"): "+ie.getMessage(),ie);
+				    throw new UtilsException("Interrupted: lock non disponibile dopo una attesa di "+attesaAttivaLock+"ms (attuale modulo proprietario: "+GestoreMessaggi.LOCK_MODULO+", causa: "+GestoreMessaggi.LOCK.toString()+"): "+ie.getMessage(),ie);
 				}
-				if(lockAcquired==false){
+				if(!lockAcquired){
 					throw new UtilsException("Timeout: lock non disponibile dopo una attesa di "+attesaAttivaLock+"ms (attuale modulo proprietario: "+GestoreMessaggi.LOCK_MODULO+", causa: "+GestoreMessaggi.LOCK.toString()+")");
 				}
 		
