@@ -518,7 +518,7 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="consegna-terminata",required=false,nillable=false,defaultValue="false")
-  protected boolean consegnaTerminata = false;
+  protected volatile boolean consegnaTerminata = false;
 
   @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")
@@ -527,15 +527,15 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="dettaglio-esito",required=false,nillable=false)
-  protected int dettaglioEsito;
+  protected volatile int dettaglioEsito;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="consegna-trasparente",required=false,nillable=false,defaultValue="false")
-  protected boolean consegnaTrasparente = false;
+  protected volatile boolean consegnaTrasparente = false;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="consegna-integration-manager",required=false,nillable=false,defaultValue="false")
-  protected boolean consegnaIntegrationManager = false;
+  protected volatile boolean consegnaIntegrationManager = false;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="identificativo-messaggio",required=false,nillable=false)
@@ -602,7 +602,7 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="numero-tentativi",required=false,nillable=false,defaultValue="0")
-  protected int numeroTentativi = 0;
+  protected volatile int numeroTentativi = 0;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="cluster-id-presa-in-carico",required=false,nillable=false)
@@ -619,7 +619,7 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="dettaglio-esito-ultimo-errore",required=false,nillable=false)
-  protected int dettaglioEsitoUltimoErrore;
+  protected volatile int dettaglioEsitoUltimoErrore;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="codice-risposta-ultimo-errore",required=false,nillable=false)
@@ -657,7 +657,7 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="numero-prelievi-im",required=false,nillable=false,defaultValue="0")
-  protected int numeroPrelieviIm = 0;
+  protected volatile int numeroPrelieviIm = 0;
 
   @jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @jakarta.xml.bind.annotation.XmlSchemaType(name="dateTime")

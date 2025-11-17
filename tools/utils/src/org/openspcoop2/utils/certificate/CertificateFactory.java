@@ -36,7 +36,7 @@ public class CertificateFactory {
 	
 	private CertificateFactory() {}
 
-	private static boolean useBouncyCastleProvider = false;
+	private static volatile boolean useBouncyCastleProvider = false;
 	public static boolean isUseBouncyCastleProvider() {
 		return useBouncyCastleProvider;
 	}

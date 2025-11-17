@@ -68,7 +68,7 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 	protected String connectionViaJDBCPassword = null;
 
     /** SingleConnection */
-	protected boolean singleConnection = false;
+	protected volatile boolean singleConnection = false;
 	protected HashMap<BasicProducerType, Connection> singleConnectionConnectionMap = new HashMap<>(); 
 	protected HashMap<BasicProducerType, String> singleConnectionSourceMap = new HashMap<>(); 
 	
@@ -76,10 +76,10 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 	protected String tipoDatabase = null; 
 
 	/** OpenSPCoop Connection */
-	protected boolean openspcoopConnection = false;
+	protected volatile boolean openspcoopConnection = false;
     
 	/** Emit debug info */
-	protected boolean debug = false;
+	protected volatile boolean debug = false;
 
 	/** forceIndex */
 	protected boolean forceIndex = false;
@@ -91,7 +91,7 @@ public class BasicProducer extends BasicComponentFactory implements IMonitoraggi
 	protected IProtocolConfiguration protocolConfiguration;
 	
 	/** ISAlive */
-	protected boolean isAlive = true;
+	protected volatile boolean isAlive = true;
 	
 	private BasicProducerType producerType;
 	

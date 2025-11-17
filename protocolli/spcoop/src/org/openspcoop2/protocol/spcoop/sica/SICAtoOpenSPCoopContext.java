@@ -126,34 +126,34 @@ public class SICAtoOpenSPCoopContext {
 
 	/** Indicazione se i package vengono generati con il .project
 	  Tale file e' necessario per importare i package nel SICAClient */
-	private boolean SICAClient_generaProject = true;
+	private volatile boolean SICAClient_generaProject = true;
 
 	/** Indicazione se i package vengono generate con le informazioni 
 	 inserite dal RegistroSICA Generale in fase di pubblicazione:
 	 - versione
 	 - soggetto erogatore/referente */
-	private boolean SICAClient_includiInfoRegistroGenerale = true;
+	private volatile boolean SICAClient_includiInfoRegistroGenerale = true;
 
 	/** Indica se il nome degli accordi deve essere limitato al numero di caratteri limite uguale a 32. */
-	private boolean  SICAClient_nomeAccordo_32CaratteriMax = true;
+	private volatile boolean  SICAClient_nomeAccordo_32CaratteriMax = true;
 
 
 	// --------- Documento di Modalita' esplicita delle informazioni eGov -------------
 
 	/** Indicazione se le informazioni sul protocollo spcoop vengono inserite
 	 come documento di specifica semiformale (proprietà = true) o come allegato generico (proprietà = false) */ 
-	private boolean InformazioniEGov_specificaSemiformale = true;
+	private volatile boolean InformazioniEGov_specificaSemiformale = true;
 
 	/** Indicazione se le informazioni sul protocollo spcoop vengono generate tramite lo schema xsd
 	 utilizzato nel ClientSICA  o tramite lo schema definito dal documento
 	 'Struttura dell'accordo di servizio e dell'accordo di cooperazione: versione 1.0' del CNIPA */
-	private boolean InformazioniEGov_wscp = false;
+	private volatile boolean InformazioniEGov_wscp = false;
 	
 	/** Opzione valida SOLO SE InformazioniEGov.wscp = false
 	 Indicare il namespace da utilizzare per le informazioni sul protocollo spcoop.
 	 Sul documento  'Struttura dell'accordo di servizio e dell'accordo di cooperazione: versione 1.0' del cnipa viene indicato "http://www.cnipa.it/collProfiles" (true)
 	 Da comunicazioni CNIPA il namespace sembrerebbe comunque cambiato in "http://spcoop.gov.it/collProfiles" (false) */
-	private boolean InformazioniEGov_wscpDisabled_namespaceCnipa = false;
+	private volatile boolean InformazioniEGov_wscpDisabled_namespaceCnipa = false;
 	
 	/** Opzione valida SOLO SE InformazioniEGov.wscp = false
 	 il Client SICA permette di costruire XML che possiedono un prefix nel root element,
@@ -164,7 +164,7 @@ public class SICAtoOpenSPCoopContext {
 	 Questo XML non e' validabile rispetto all'XSD poiche' e-govVersion non e' qualificato.
 	
 	 Se si abilita la proprieta' sottostante, vengono accettati anche tali file XML malformati. */
-	private boolean InformazioniEGov_wscpDisabled_childUnqualified=true;
+	private volatile boolean InformazioniEGov_wscpDisabled_childUnqualified= true;
 
 	/** Opzione valida SOLO SE InformazioniEGov.wscp = true
 	 Il client SICA si aspetta un file wscp che possiedono un prefix nel root element wscp,
@@ -175,50 +175,50 @@ public class SICAtoOpenSPCoopContext {
 	 		<versioneEGOV>....
 	
 	 Se si abilita la proprieta' sottostante, vengono sia gestiti (e accettati) che prodotti xml compatibili con il ClientSICA (non validabili rispetto all'xsd) */
-	private boolean InformazioniEGov_wscpEnabled_childUnqualified=true;
+	private volatile boolean InformazioniEGov_wscpEnabled_childUnqualified= true;
 	
 	/** Indicazione se nelle informazioni sul protocollo spcoop vengono inseriti nomi di azioni e servizi qualificati con prefisso e namespace
 	  Il Namespace utilizzato sara' il target namespace del wsdl concettuale */
-	private boolean  InformazioniEGov_nomiSPCoop_qualified=true;
+	private volatile boolean  InformazioniEGov_nomiSPCoop_qualified= true;
 
 
 
 	// --------- Gestione documenti WSDL/XSD ----------------------
 
 	/** Indicazione se i documenti trattati devono essere formattati */
-	private boolean WSDL_XSD_prettyDocuments = false;
+	private volatile boolean WSDL_XSD_prettyDocuments = false;
 
 	/** Indicazione se i wsdl e gli xsd presenti nei package devono essere preprocessati prima
 	 di importarli o esportali nel registro dei servizi di OpenSPCoop.
 	 In caso di pre-processamento attivo, tutti gli import e gli include presenti vengono allineati
 	 con la struttura dei package del registro dei servizi di OpenSPCoop (in caso di import) 
 	 o con la struttura dei package CNIPA (in caso di export) */
-	private boolean WSDL_XSD_allineaImportInclude = true;
+	private volatile boolean WSDL_XSD_allineaImportInclude = true;
 
 	/** Se viene abilitata l'opzione:
 	 - in fase di ESPORTAZIONE, dal registro dei servizi OpenSPCoop, 
 	 	i package degli accordi parte specifica conterranno dei porti di accesso WSDL che includono la parte comune direttamente nel WSDL.
 	 - in fase di IMPORTAZIONE dei package viene attuato il processo inverso.*/ 
-	private boolean WSDL_XSD_accordiParteSpecifica_gestioneParteComune = true;
+	private volatile boolean WSDL_XSD_accordiParteSpecifica_gestioneParteComune = true;
 	
 	/** Questa opzione viene interpretata solo se l'opzione  'WSDL_XSD.accordiParteSpecifica.gestioneParteComune' e' disabilitata
 	 Se si abilita, in fase di esportazione viene controllato che all'interno del wsdl implementativo l'import della parte comune non sia presente (e se presente viene eliminato).*/
-	private boolean WSDL_XSD_accordiParteSpecifica_openspcoopToSica_eliminazioneImportParteComune = false;
+	private volatile boolean WSDL_XSD_accordiParteSpecifica_openspcoopToSica_eliminazioneImportParteComune = false;
 
 	/** Questa opzione viene interpretata solo se l'opzione  'WSDL_XSD.accordiParteSpecifica.gestioneParteComune' e' disabilitata
 	 Se si abilita, in fase di importazione viene controllato che all'interno del wsdl implementativo l'import della parte comune sia presente (e se non presente viene aggiunto). */
-	private boolean WSDL_XSD_accordiParteSpecifica_sicaToOpenspcoop_aggiuntaImportParteComune = false;
+	private volatile boolean WSDL_XSD_accordiParteSpecifica_sicaToOpenspcoop_aggiuntaImportParteComune = false;
 	
 	/** Indicazione se devono essere prodotti dei WSDL vuoti, in caso non sia definita la parte implementativa fruitore o erogatore
 	 negli accordi di servizio parte specifica */
-	private boolean WSDL_XSD_accordiParteSpecifica_wsdlEmpty = true;
+	private volatile boolean WSDL_XSD_accordiParteSpecifica_wsdlEmpty = true;
 	
 	
 	
 	
 	// --------- Compatibilita' Client SICA ----------------------
 	/** Indicazione se i package devono essere creati SICAClient compatibility */
-	private boolean SICAClientCompatibility = false;
+	private volatile boolean SICAClientCompatibility = false;
 	
 	/** Lista di proprieta' sopra definite, separate da virgola, che si vogliono utilizzare come abilitate per creare package compatibili per il ClientSICA */
 	private Map<String, Boolean> SICAClientEnabledOptions = new HashMap<String, Boolean>();

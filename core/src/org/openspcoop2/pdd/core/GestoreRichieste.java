@@ -73,7 +73,7 @@ public class GestoreRichieste {
 
 	private GestoreRichieste() {}
 	
-	private static boolean useCache = true;
+	private static volatile boolean useCache = true;
 	public static boolean isUseCache() {
 		return useCache;
 	}

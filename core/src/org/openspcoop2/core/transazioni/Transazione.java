@@ -1196,19 +1196,19 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="ruolo-transazione",required=true,nillable=false)
-  protected int ruoloTransazione;
+  protected volatile int ruoloTransazione;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="esito",required=false,nillable=false)
-  protected int esito;
+  protected volatile int esito;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="esito-sincrono",required=false,nillable=false)
-  protected int esitoSincrono;
+  protected volatile int esitoSincrono;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="consegne-multiple-in-corso",required=false,nillable=false)
-  protected int consegneMultipleInCorso;
+  protected volatile int consegneMultipleInCorso;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="esito-contesto",required=false,nillable=false)
@@ -1406,7 +1406,7 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="versione-servizio",required=false,nillable=false)
-  protected int versioneServizio;
+  protected volatile int versioneServizio;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="azione",required=false,nillable=false)
@@ -1570,11 +1570,11 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="duplicati-richiesta",required=false,nillable=false,defaultValue="0")
-  protected int duplicatiRichiesta = 0;
+  protected volatile int duplicatiRichiesta = 0;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="duplicati-risposta",required=false,nillable=false,defaultValue="0")
-  protected int duplicatiRisposta = 0;
+  protected volatile int duplicatiRisposta = 0;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="cluster-id",required=false,nillable=false)
@@ -1598,7 +1598,7 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBeanWithId impl
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="tipo-api",required=false,nillable=false)
-  protected int tipoApi;
+  protected volatile int tipoApi;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="uri-api",required=false,nillable=false)

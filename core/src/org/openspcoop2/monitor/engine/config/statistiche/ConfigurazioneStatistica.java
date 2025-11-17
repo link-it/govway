@@ -136,7 +136,7 @@ public class ConfigurazioneStatistica extends org.openspcoop2.utils.beans.BaseBe
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="enabled",required=true,nillable=false)
-  protected boolean enabled;
+  protected volatile boolean enabled;
 
   @XmlElement(name="plugin",required=true,nillable=false)
   protected InfoPlugin plugin;

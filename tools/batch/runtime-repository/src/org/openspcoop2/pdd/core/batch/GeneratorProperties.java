@@ -60,15 +60,15 @@ public class GeneratorProperties {
 	
 	private String protocolloDefault;
 	
-	private int refreshConnessione;
+	private volatile int refreshConnessione;
 	
-	private int scadenzaMessaggiMinuti;
+	private volatile int scadenzaMessaggiMinuti;
 
-	private boolean messaggiLogQuery;
-	private int messaggiFinestraSecondi;
+	private volatile boolean messaggiLogQuery;
+	private volatile int messaggiFinestraSecondi;
 	
 	private String repositoryBuste;
-	private boolean useDataRegistrazione;
+	private volatile boolean useDataRegistrazione;
 	
 	private PropertiesReader props;
 

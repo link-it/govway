@@ -54,7 +54,7 @@ public class MerlinKeystore implements Serializable {
 	private String passwordStore = null;
 	private String passwordPrivateKey = null;
 	
-	private boolean hsm;
+	private volatile boolean hsm;
 	
 	@Override
 	public String toString() {

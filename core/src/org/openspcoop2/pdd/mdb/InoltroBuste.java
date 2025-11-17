@@ -349,18 +349,18 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 
 	private Validatore validatore = null;
 	private IValidazioneSemantica validazioneSemantica = null;
-	private boolean readQualifiedAttribute;
-	private boolean validazioneIDBustaCompleta;
+	private volatile boolean readQualifiedAttribute;
+	private volatile boolean validazioneIDBustaCompleta;
 	private ProprietaValidazioneErrori pValidazioneErrori = null;
 
 	private Date dataPrimaInvocazioneConnettore = null;
 	private Date dataTerminataInvocazioneConnettore = null;
 
-	private boolean invokerNonSupportato = false;
-	private boolean errorConsegna = false;
+	private volatile boolean invokerNonSupportato = false;
+	private volatile boolean errorConsegna = false;
 	private String motivoErroreConsegna = null;
 	private Exception eccezioneProcessamentoConnettore = null;
-	private boolean riconsegna = false;
+	private volatile boolean riconsegna = false;
 	private java.sql.Timestamp dataRiconsegna = null;
 
 	private String tipoConnector = null;
@@ -371,8 +371,8 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 	private IConnettore connectorSenderForDisconnect = null;
 	private String location = "";
 
-	private boolean asyncWait = false;
-	private boolean rollbackRichiesta = true;
+	private volatile boolean asyncWait = false;
+	private volatile boolean rollbackRichiesta = true;
 
 	private Busta bustaRichiesta = null;
 	private String idMessageRequest = null;
@@ -398,30 +398,30 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 	private boolean useResponseForParseException = false;
 	
 	private TransportResponseContext transportResponseContext = null;
-	private int codiceRitornato = -1;
+	private volatile int codiceRitornato = -1;
 	private OpenSPCoop2MessageFactory faultMessageFactory = null;
 	private SOAPFault soapFault = null;
 	private ProblemRFC7807 restProblem = null;
-	private boolean enrichSoapFaultApplicativo;
-	private boolean enrichSoapFaultPdD;
+	private volatile boolean enrichSoapFaultApplicativo;
+	private volatile boolean enrichSoapFaultPdD;
 		
 	private TipoPdD tipoPdD = null;
 	private PortaDelegata pd = null;
 	private RichiestaDelegata richiestaDelegata = null;
 	private ServizioApplicativo sa = null;
-	private boolean functionAsRouter = false;
-	private boolean portaDiTipoStateless= false;
-	private boolean statelessAsincrono = false;
-	private boolean oneWayVersione11;
+	private volatile boolean functionAsRouter = false;
+	private volatile boolean portaDiTipoStateless= false;
+	private volatile boolean statelessAsincrono = false;
+	private volatile boolean oneWayVersione11;
 
-	private boolean sendRispostaApplicativa = false;
-	private boolean gestioneBusteNonRiscontrateAttive = false;
-	private boolean isBlockedTransactionResponseMessageWithTransportCodeError = false;
-	private boolean sbustamentoInformazioniProtocolloRisposta = false;
-	private boolean richiestaAsincronaSimmetricaStateless = false;
-	private boolean newConnectionForResponse = false; 
+	private volatile boolean sendRispostaApplicativa = false;
+	private volatile boolean gestioneBusteNonRiscontrateAttive = false;
+	private volatile boolean isBlockedTransactionResponseMessageWithTransportCodeError = false;
+	private volatile boolean sbustamentoInformazioniProtocolloRisposta = false;
+	private volatile boolean richiestaAsincronaSimmetricaStateless = false;
+	private volatile boolean newConnectionForResponse = false; 
 	
-	private boolean gestioneManifest = false;
+	private volatile boolean gestioneManifest = false;
 	private ProprietaManifestAttachments proprietaManifestAttachments;
 
 	@Override
@@ -4051,7 +4051,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 							}
 						}
 						else{
-							if(this.responseMessage.getParseException()!=null){
+							if(this.responseMessage!=null && this.responseMessage.getParseException()!=null){
 								this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO, true);
 								OpenSPCoop2Message responseMessageError = 
 										this.generatoreErrore.build(this.pddContext,IntegrationFunctionError.UNPROCESSABLE_RESPONSE_CONTENT,
@@ -5227,7 +5227,7 @@ public class InoltroBuste extends GenericLib implements IAsyncResponseCallback{
 									OpenSPCoop2Message responseMessageError = 
 											this.generatoreErrore.build(this.pddContext,integrationFunctionError,
 													ex.getErrore(),ex,
-														(this.responseMessage!=null ? this.responseMessage.getParseException() : null));
+														this.responseMessage.getParseException());
 									this.ejbUtils.sendRispostaApplicativaErrore(responseMessageError,this.richiestaDelegata,this.rollbackRichiesta,this.pd,this.sa);
 									this.openspcoopstate.releaseResource();
 									esito.setEsitoInvocazione(true);

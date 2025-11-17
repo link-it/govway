@@ -391,13 +391,13 @@ public class RicezioneContenutiApplicativi implements IAsyncResponseCallback {
 	private HeaderIntegrazione headerIntegrazioneRisposta;
 	private String[] tipiIntegrazionePD;
 	
-	private boolean portaStateless = false;
+	private volatile boolean portaStateless = false;
 	private boolean oneWayVers11 = false;
-	private boolean richiestaAsincronaSimmetricaStateless;
-	
-	private boolean localForward;
-	
-	private boolean asyncWait = false;
+	private volatile boolean richiestaAsincronaSimmetricaStateless;
+
+	private volatile boolean localForward;
+
+	private volatile boolean asyncWait = false;
 	
 	public RicezioneContenutiApplicativi(
 			RicezioneContenutiApplicativiContext context,

@@ -1863,7 +1863,7 @@ public class ZIPReadUtils  {
 		String nomeSoggettoKey = (nomeSoggetto!=null ? nomeSoggetto : "" );
 		Integer versioneKey = (versioneAccordoInt!=null ? versioneAccordoInt : -1 );
 		if(servizioComposto){
-			key = ArchiveAccordoServizioComposto.buildKey(tipoSoggettoKey, nomeSoggettoKey, nomeAccordo, versioneKey);
+			key = ArchiveAccordoServizioComposto.buildKeyComposto(tipoSoggettoKey, nomeSoggettoKey, nomeAccordo, versioneKey);
 		}else{
 			key = ArchiveAccordoServizioParteComune.buildKey(tipoSoggettoKey, nomeSoggettoKey, nomeAccordo, versioneKey);
 		}

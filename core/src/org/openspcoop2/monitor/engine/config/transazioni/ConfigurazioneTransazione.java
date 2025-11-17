@@ -182,7 +182,7 @@ public class ConfigurazioneTransazione extends org.openspcoop2.utils.beans.BaseB
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="enabled",required=true,nillable=false)
-  protected boolean enabled;
+  protected volatile boolean enabled;
 
   @XmlElement(name="configurazione-transazione-plugin",required=true,nillable=false)
   private List<ConfigurazioneTransazionePlugin> configurazioneTransazionePlugin = new ArrayList<>();

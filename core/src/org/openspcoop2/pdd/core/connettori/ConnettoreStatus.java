@@ -375,7 +375,7 @@ public class ConnettoreStatus extends ConnettoreBaseWithResponse {
 		String lifetimeRaw = this.getDynamicProperty(this.tipoConnettore, false, CostantiConnettori.CONNETTORE_STATUS_STAT_LIFETIME, this.dynamicMap);
 		
 		if (periodRaw == null)
-			throw new ConnettoreException("il tipo del periodo statistico non corretto, valori possibili: " + TipoPeriodoStatistico.toArray());
+			throw new ConnettoreException("il tipo del periodo statistico non corretto, valori possibili: " + java.util.Arrays.toString(TipoPeriodoStatistico.toArray()));
 		
 		TipoPeriodoStatistico period = TipoPeriodoStatistico.valueOf(periodRaw.toUpperCase());
 		Integer periodValue = Integer.valueOf(periodValueRaw);

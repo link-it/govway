@@ -131,8 +131,8 @@ public class ApplicationBean implements Serializable {
 	private Map<String, Boolean> funzionalita = new HashMap<>();
 	private Map<String, Boolean> roles = null;
 	
-	private boolean permessoTransazioni = false;
-	private boolean permessoStatistiche = false;
+	private volatile boolean permessoTransazioni = false;
+	private volatile boolean permessoStatistiche = false;
 	
 	private boolean loginApplication = true;
 	

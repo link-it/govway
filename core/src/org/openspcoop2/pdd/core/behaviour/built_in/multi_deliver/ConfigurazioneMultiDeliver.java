@@ -37,11 +37,11 @@ public class ConfigurazioneMultiDeliver {
 
 	private String transazioneSincrona_nomeConnettore;
 	
-	private boolean notificheByEsito = true;
-	private boolean notificheByEsito_ok = true;
-	private boolean notificheByEsito_fault = true;
-	private boolean notificheByEsito_erroriConsegna = false;
-	private boolean notificheByEsito_erroriProcessamento = false;
+	private volatile boolean notificheByEsito = true;
+	private volatile boolean notificheByEsito_ok = true;
+	private volatile boolean notificheByEsito_fault = true;
+	private volatile boolean notificheByEsito_erroriConsegna = false;
+	private volatile boolean notificheByEsito_erroriProcessamento = false;
 	// le richieste scartate non arrivano alla gestione della consegna in smistatore e quindi non potranno nemmeno essere notifiate
 	//private boolean notificheByEsito_richiesteScartate = false;
 	private List<Integer> initTransazioneSincrona_esitiPerSpedireNotifiche;

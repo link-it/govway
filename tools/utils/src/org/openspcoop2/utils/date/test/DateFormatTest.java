@@ -496,7 +496,7 @@ class TestDate extends Thread{
 	private boolean dateTime;
 	private boolean jodaTime;
 	private boolean convert;
-	private boolean finished = false;
+	private volatile boolean finished = false;
 
 	public boolean isFinished() {
 		return this.finished;

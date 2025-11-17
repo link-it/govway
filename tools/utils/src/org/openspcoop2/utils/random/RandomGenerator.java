@@ -36,7 +36,7 @@ import org.openspcoop2.utils.io.Base64Utilities;
 
 public class RandomGenerator {
 
-	private boolean useSecureRandom = false;
+	private volatile boolean useSecureRandom = false;
 	// https://docs.oracle.com/en/java/javase/11/docs/specs/security/standard-names.html#securerandom-number-generation-algorithms
 	private String algorithmSecureRandom = null;
 	

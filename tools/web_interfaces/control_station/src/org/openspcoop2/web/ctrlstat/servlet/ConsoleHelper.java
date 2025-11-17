@@ -3458,7 +3458,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 	}
 	
-	private static boolean riusoIdCorrelazioneApplicativaPA = false; // riuso non abilitato nella porta applicativa
+	private static volatile boolean riusoIdCorrelazioneApplicativaPA = false;
 	public static boolean isRiusoIdCorrelazioneApplicativaPA() {
 		return riusoIdCorrelazioneApplicativaPA;
 	}

@@ -43,7 +43,7 @@ import org.slf4j.Logger;
  */
 public class AlarmThread implements Runnable {
 
-	private int periodMillis;
+	private volatile int periodMillis;
 	private String tipo;
 	private String classname;
 	private IAlarm alarm;
@@ -52,8 +52,8 @@ public class AlarmThread implements Runnable {
 	private AlarmEngineConfig alarmEngineConfig;
 	private String threadName;
 	private AlarmThreadStatus threadStatus = null;
-	private boolean terminated = false;
-	private boolean forceNewCheck = false;
+	private volatile boolean terminated = false;
+	private volatile boolean forceNewCheck = false;
 	
 	private AlarmLogger alarmLogger;
 	

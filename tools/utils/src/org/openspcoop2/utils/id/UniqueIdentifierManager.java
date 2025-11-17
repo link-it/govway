@@ -58,7 +58,7 @@ public class UniqueIdentifierManager {
 	private static boolean bufferSupported_staticInstance;
 	
 	/** Generazione UID Disabiltiata */
-	private static boolean generazioneUIDDisabilitata = false;
+	private static volatile boolean generazioneUIDDisabilitata = false;
 	public static boolean isGenerazioneUIDDisabilitata() {
 		return UniqueIdentifierManager.generazioneUIDDisabilitata;
 	}

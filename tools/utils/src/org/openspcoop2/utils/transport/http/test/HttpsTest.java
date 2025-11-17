@@ -94,7 +94,7 @@ public class HttpsTest extends HttpTest {
 		return trustStore;
 	}
 	
-	public static void startServers() throws IOException {
+	public static void startHttpsServers() throws IOException {
 		if (server != null) {
 			server.close();
 		}
@@ -108,7 +108,7 @@ public class HttpsTest extends HttpTest {
 		}
 	}
 	
-	public static void stopServers() {
+	public static void stopHttpsServers() {
 		if (server != null) {
 			server.close();
 		}
@@ -118,7 +118,7 @@ public class HttpsTest extends HttpTest {
 				
 		HttpsTest test = new HttpsTest();
 		try {
-			startServers();
+			startHttpsServers();
 
 			test.testAuth(HttpLibrary.HTTP_CORE5, false);
 			test.testAuth(HttpLibrary.HTTP_CORE5, true);
@@ -140,7 +140,7 @@ public class HttpsTest extends HttpTest {
 		} catch (Exception e) {
 			throw new UtilsException(e);
 		} finally {
-			stopServers();
+			stopHttpsServers();
 		}
 	}
 	

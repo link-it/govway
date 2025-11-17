@@ -1870,7 +1870,7 @@ public class ExporterArchiveUtils {
 			tipoSoggetto = idAccordoServizio.getSoggettoReferente().getTipo();
 			nomeSoggetto = idAccordoServizio.getSoggettoReferente().getNome();
 		}
-		String key =  ArchiveAccordoServizioComposto.buildKey(tipoSoggetto,nomeSoggetto,
+		String key =  ArchiveAccordoServizioComposto.buildKeyComposto(tipoSoggetto,nomeSoggetto,
 				idAccordoServizio.getNome(),idAccordoServizio.getVersione());
 		org.openspcoop2.core.registry.AccordoServizioParteComune as = null;
 		if(archive.getAccordiServizioComposto().containsKey(key)){

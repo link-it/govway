@@ -136,12 +136,12 @@ public class GestoreMessaggi  {
 	public IOpenSPCoopState getOpenspcoopstate() {
 		return this.openspcoopstate;
 	}
-	private boolean isRichiesta=false;
-	private boolean readyForDrop = false; // usato solo nello stateless, indica se il messaggio puo' essere cancellato dal db
-	private boolean portaDiTipoStateless = false;
+	private volatile boolean isRichiesta=false;
+	private volatile boolean readyForDrop = false; // usato solo nello stateless, indica se il messaggio puo' essere cancellato dal db
+	private volatile boolean portaDiTipoStateless = false;
 	/** Indicazione se siamo in modalita di routing stateless */
-	private boolean routingStateless;
-	private boolean oneWayVersione11 = false;
+	private volatile boolean routingStateless;
+	private volatile boolean oneWayVersione11 = false;
 
 
 

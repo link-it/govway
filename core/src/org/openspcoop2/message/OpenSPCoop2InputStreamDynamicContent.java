@@ -38,7 +38,7 @@ public class OpenSPCoop2InputStreamDynamicContent extends org.apache.commons.io.
 
 	private DumpByteArrayOutputStream buffer;
 	
-	private boolean isReadAll = false;
+	private volatile boolean isReadAll = false;
 	
 	@SuppressWarnings("deprecation")
 	public OpenSPCoop2InputStreamDynamicContent(org.apache.commons.io.input.BoundedInputStream is, DumpByteArrayOutputStream buffer) {

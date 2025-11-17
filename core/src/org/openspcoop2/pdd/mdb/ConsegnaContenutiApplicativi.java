@@ -332,11 +332,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 	private Date dataConsegna = null;
 	private Date oraRegistrazione = null;
 
-	private boolean invokerNonSupportato = false;
-	private boolean errorConsegna = false;
+	private volatile boolean invokerNonSupportato = false;
+	private volatile boolean errorConsegna = false;
 	private String motivoErroreConsegna = null;
 	private Exception eccezioneProcessamentoConnettore = null;
-	private boolean riconsegna = false;
+	private volatile boolean riconsegna = false;
 	private java.sql.Timestamp dataRiconsegna = null;
 
 	private String tipoConnector = null;
@@ -348,7 +348,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 	private GestioneErrore gestioneConsegnaConnettore = null;
 	private String location = "";
 	
-	private boolean asyncWait = false;
+	private volatile boolean asyncWait = false;
 	
 	private Busta bustaRichiesta = null;
 	private String idMessaggioConsegna = null;
@@ -357,14 +357,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 	private OpenSPCoop2Message consegnaMessageTrasformato = null;
 	private HttpRequestMethod httpRequestMethod = null;
 	private OutRequestContext outRequestContext = null;
-	private boolean isRicevutaAsincrona = false;
+	private volatile boolean isRicevutaAsincrona = false;
 	private OutRequestPAMessage outRequestPAMessage;
-	private boolean consegnaPerRiferimento = false;
+	private volatile boolean consegnaPerRiferimento = false;
 
 	private OpenSPCoop2Message responseMessage = null;
 	private String identificativoMessaggioDoveSalvareLaRisposta = null; 
 	private boolean useResponseForParseException = false;
-	private boolean rispostaPerRiferimento = false;
+	private volatile boolean rispostaPerRiferimento = false;
 	
 	private String idMessageResponse = null;
 	
@@ -383,8 +383,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 	private IDServizio servizioHeaderIntegrazione = null;
 
 	private TransportResponseContext transportResponseContext = null;
-	private int codiceRitornato = -1;
-	private long responseContentLength = -1;
+	private volatile int codiceRitornato = -1;
+	private volatile long responseContentLength = -1;
 	private OpenSPCoop2MessageFactory faultMessageFactory = null;
 	private SOAPFault soapFault = null;
 	private ProblemRFC7807 restProblem = null;
@@ -396,20 +396,20 @@ public class ConsegnaContenutiApplicativi extends GenericLib implements IAsyncRe
 	private List<Proprieta> proprietaPorta = null;
 	private PortaDelegata pd = null;
 	private RichiestaDelegata richiestaDelegata = null;
-	private boolean oneWayVersione11;
-	
-	private boolean portaDiTipoStateless = false;
-	private boolean salvaRispostaPerNotifiche = false;
+	private volatile boolean oneWayVersione11;
+
+	private volatile boolean portaDiTipoStateless = false;
+	private volatile boolean salvaRispostaPerNotifiche = false;
 	private MessaggioDaNotificare tipiMessaggiNotificabili = null;
 
 	private LocalForwardEngine localForwardEngine = null;
-	private boolean localForward = false;
+	private volatile boolean localForward = false;
 
-	private boolean existsModuloInAttesaRispostaApplicativa = false;
-	private boolean isBlockedTransactionResponseMessageWithTransportCodeError = false;
+	private volatile boolean existsModuloInAttesaRispostaApplicativa = false;
+	private volatile boolean isBlockedTransactionResponseMessageWithTransportCodeError = false;
 
-	private boolean allegaBody = false;
-	private boolean scartaBody = false;
+	private volatile boolean allegaBody = false;
+	private volatile boolean scartaBody = false;
 
 	private String [] tipiIntegrazione = null;
 

@@ -753,7 +753,7 @@ public class ClientTest {
 class ClientTestThread implements Runnable{
 
 	private static List<String> check = new ArrayList<>();
-	private static boolean valoriDuplicati = false;
+	private static volatile boolean valoriDuplicati = false;
 	
 	private static synchronized void put(String v,boolean rilevaValoriDuplicati) throws Exception{
 		if(!check.contains(v)){
@@ -797,8 +797,8 @@ class ClientTestThread implements Runnable{
 		return this.valoriGenerati;
 	}
 
-	private boolean finished = false;
-	private boolean error = false;
+	private volatile boolean finished = false;
+	private volatile boolean error = false;
 	
 	public boolean isError() {
 		return this.error;

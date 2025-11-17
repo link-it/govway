@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openspcoop2.utils.CopyStream;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -44,7 +45,7 @@ import org.springframework.util.FastByteArrayOutputStream;
 public class DumpByteArrayOutputStream_FastImpl extends FastByteArrayOutputStream implements IDumpByteArrayOutputStream {
 
 	private int soglia = -1; // -1 senza soglia
-	private int attuale = 0;
+	private AtomicInteger attuale = new AtomicInteger(0);
 	private File repositoryFile = null;
 	private String idTransazione;
 	private String tipoMessaggio;
@@ -103,9 +104,9 @@ public class DumpByteArrayOutputStream_FastImpl extends FastByteArrayOutputStrea
 	@Override
 	public void writeInBuffer(int b) throws IOException {
 		if(this.soglia>0) {
-			if(this.attuale>this.soglia) {
+			if(this.attuale.get()>this.soglia) {
 				try {
-					this.attuale++;
+					this.attuale.incrementAndGet();
 					
 					if(this.f==null) {
 						checkInitFile();
@@ -122,16 +123,16 @@ public class DumpByteArrayOutputStream_FastImpl extends FastByteArrayOutputStrea
 				return;
 			}
 		}
-		this.attuale++;
+		this.attuale.incrementAndGet();
 		super.write(b);
 	}
 
 	@Override
 	public void writeInBuffer(byte[] b, int off, int len) throws IOException {
 		if(this.soglia>0) {
-			if( (this.attuale>this.soglia) || ((this.attuale+len)>this.soglia) ) {
+			if( (this.attuale.get()>this.soglia) || ((this.attuale.get()+len)>this.soglia) ) {
 				try {
-					this.attuale=this.attuale+len;
+					this.attuale.addAndGet(len);
 					
 					if(this.f==null) {
 						checkInitFile();
@@ -148,7 +149,7 @@ public class DumpByteArrayOutputStream_FastImpl extends FastByteArrayOutputStrea
 				return;
 			}
 		}
-		this.attuale=this.attuale+len;
+		this.attuale.addAndGet(len);
 		super.write(b, off, len);
 	}
 
@@ -156,9 +157,9 @@ public class DumpByteArrayOutputStream_FastImpl extends FastByteArrayOutputStrea
 	@Override
 	public void writeInBuffer(byte[] b) throws IOException {
 		if(this.soglia>0) {
-			if( (this.attuale>this.soglia) || ((this.attuale+b.length)>this.soglia) ) {
+			if( (this.attuale.get()>this.soglia) || ((this.attuale.get()+b.length)>this.soglia) ) {
 				try {
-					this.attuale=this.attuale+b.length;
+					this.attuale.addAndGet(b.length);
 					
 					if(this.f==null) {
 						checkInitFile();
@@ -175,7 +176,7 @@ public class DumpByteArrayOutputStream_FastImpl extends FastByteArrayOutputStrea
 				return;
 			}
 		}
-		this.attuale=this.attuale+b.length;
+		this.attuale.addAndGet(b.length);
 		super.write(b);
 	}
 

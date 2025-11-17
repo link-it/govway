@@ -123,7 +123,7 @@ public class Info {
 	
 	private Logger log;
 	
-	private boolean base64;
+	private volatile boolean base64;
 	
 	private Map<String, String> properties = new HashMap<>();
 	

@@ -88,7 +88,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 	private String colonna_data_id_msg_risposta = null;
 	private String colonna_id_messaggio_risposta = null;
 	
-	private boolean useTransactionIdForTest = false; // solo per test
+	private volatile boolean useTransactionIdForTest = false;
 	public boolean isUseTransactionIdForTest() {
 		return this.useTransactionIdForTest;
 	}

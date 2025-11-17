@@ -167,17 +167,17 @@ public class EJBUtils {
 	private MsgDiagnostico msgDiag;
 	
 	/** Indicazione se siamo in modalita oneway11 */
-	private boolean oneWayVersione11 = false;
+	private volatile boolean oneWayVersione11 = false;
 	/** Indicazione se la porta delegata/applicativa richiesta una modalita stateless (oneway o sincrono) 
 	 *  Il caso oneway11 possiedera questo booleano con il valore false.
 	 * */
-	private boolean portaDiTipoStateless_esclusoOneWay11;
+	private volatile boolean portaDiTipoStateless_esclusoOneWay11;
 	/** Indicazione se deve essere gestita la richiesta in caso di errore */
-	private boolean rollbackRichiestaInCasoErrore = true;
+	private volatile boolean rollbackRichiestaInCasoErrore = true;
 	/** Indicazione se deve essere gestita la richiesta in caso di errore */
-	private boolean rollbackRichiestaInCasoErrore_rollbackHistory = true;
+	private volatile boolean rollbackRichiestaInCasoErrore_rollbackHistory = true;
 	/** Indicazione se siamo in modalita di routing */
-	private boolean routing;
+	private volatile boolean routing;
 	
 	
 	/** PropertiesReader */
@@ -192,9 +192,9 @@ public class EJBUtils {
 	private Timestamp ricezioneMsgRisposta;
 
 	/** Reply on new Connection: buste, escluse le buste di risposta sincrona */
-	private boolean replyOnNewConnection;
+	private volatile boolean replyOnNewConnection;
 	/** Utilizzo indirizzo telematico: utilizzo dell'indirizzo telematico */
-	private boolean utilizzoIndirizzoTelematico;
+	private volatile boolean utilizzoIndirizzoTelematico;
 
 	/** Tipologia di porta di domino del soggetto mittente */
 	private String implementazionePdDSoggettoMittente;
@@ -1478,11 +1478,11 @@ public class EJBUtils {
 	 * @param gestoreMessaggi il Gestore Messaggi utilizzato per la registrazione dei destinatari del messaggio
 	 * 
 	 */
-	private boolean gestioneStatelessConIntegrationManager = false;
+	private volatile boolean gestioneStatelessConIntegrationManager = false;
 	public boolean isGestioneStatelessConIntegrationManager() {
 		return this.gestioneStatelessConIntegrationManager;
 	}
-	private boolean gestioneSolamenteConIntegrationManager = false;
+	private volatile boolean gestioneSolamenteConIntegrationManager = false;
 	public boolean isGestioneSolamenteConIntegrationManager() {
 		return this.gestioneSolamenteConIntegrationManager;
 	}

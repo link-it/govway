@@ -132,15 +132,15 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	boolean sortTypeAsc = true;
 	
 	/** Distinct */
-	private boolean distinct = false;
+	private volatile boolean distinct = false;
 	
 	/** Limit */
-	int limit = -1;
+	volatile int limit = -1;
 	/** Offset */
-	int offset = -1;
+	volatile int offset = -1;
 
 	/** SelectForUpdate */
-	boolean selectForUpdate = false;
+	volatile boolean selectForUpdate = false;
 	
 	/* UPDATE */
 	/** List di Field per l'update */
@@ -160,7 +160,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	private TipiDatabase tipoDatabase;
 
 	/* preCheck */
-	private boolean precheckQuery = true;
+	private volatile boolean precheckQuery = true;
 	public void setPrecheckQuery(boolean precheckQuery) {
 		this.precheckQuery = precheckQuery;
 	}
@@ -173,7 +173,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	}
 
 	// Force to false SelectForUpdate in CRUD Method
-	private boolean forceSelectForUpdateDisabledForNotQueryMethod = false; // viene usato nel progetto generic forzato a true per JDBC_SQLObjectFactory
+	private volatile boolean forceSelectForUpdateDisabledForNotQueryMethod = false; // viene usato nel progetto generic forzato a true per JDBC_SQLObjectFactory
 	public void setForceSelectForUpdateDisabledForNotQueryMethod(boolean forceSelectForUpdateDisabledForNotQueryMethod) {
 		this.forceSelectForUpdateDisabledForNotQueryMethod = forceSelectForUpdateDisabledForNotQueryMethod;
 	}

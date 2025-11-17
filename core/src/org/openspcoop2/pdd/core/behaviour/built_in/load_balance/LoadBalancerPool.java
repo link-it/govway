@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,8 +70,8 @@ public class LoadBalancerPool implements Serializable{
 		try {
 			StringBuilder bf = new StringBuilder();
 			bf.append("Connectors: ").append(this.connectorMap.size());
-			bf.append("\nTotal Weight: ").append(this.totalWeight);
-			bf.append("\nPosition: ").append(this.position);
+			bf.append("\nTotal Weight: ").append(this.totalWeight.get());
+			bf.append("\nPosition: ").append(this.position.get());
 			if(this.healthCheck!=null) {
 				bf.append("\nPassiveHealtCheck: ").append(this.healthCheck.isPassiveCheckEnabled());
 				if(this.healthCheck.isPassiveCheckEnabled()){
@@ -111,9 +112,9 @@ public class LoadBalancerPool implements Serializable{
 	protected Map<String, Integer> connectorMap = new HashMap<>();
 	protected Map<String, Integer> connectorMap_activeConnections = new HashMap<>();
 	protected Map<String, Date> connectorMap_errorDate = new HashMap<>();
-	private int totalWeight = 0;
-	
-	private int position = -1;
+	private AtomicInteger totalWeight = new AtomicInteger(0);
+
+	private AtomicInteger position = new AtomicInteger(0);
 	
 	
 	
@@ -170,18 +171,20 @@ public class LoadBalancerPool implements Serializable{
 		
 	}
 	private int _getNextPosition(boolean checkByWeight) {
-		this.position++;
+		int pos = this.position.incrementAndGet();
 		if(checkByWeight) {
-			if(this.position==this.totalWeight) {
-				this.position = 0;
+			if(pos==this.totalWeight.get()) {
+				this.position.set(0);
+				pos = 0;
 			}
 		}
 		else {
-			if(this.position==this.connectorMap.size()) {
-				this.position = 0;
+			if(pos==this.connectorMap.size()) {
+				this.position.set(0);
+				pos = 0;
 			}
 		}
-		return this.position;
+		return pos;
 	}
 	
 	
@@ -320,7 +323,7 @@ public class LoadBalancerPool implements Serializable{
 				throw new BehaviourException("Already exists connector '"+name+"'");
 			}
 			this.connectorMap.put(name, weight);
-			this.totalWeight = this.totalWeight+weight;
+			this.totalWeight.addAndGet(weight);
 		}finally{
 			this.getLock().release(lock, "addConnector");
 		}

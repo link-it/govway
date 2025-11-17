@@ -43,8 +43,8 @@ import org.slf4j.Logger;
 public class DBManager {
 
 	private static Logger checkLogger = null;
-	private static boolean checkIsClosed = true;
-	private static boolean checkAutocommit = true;
+	private static volatile boolean checkIsClosed = true;
+	private static volatile boolean checkAutocommit = true;
 	public static boolean isCheckIsClosed() {
 		return checkIsClosed;
 	}

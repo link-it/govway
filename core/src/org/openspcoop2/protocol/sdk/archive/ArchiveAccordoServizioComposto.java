@@ -40,7 +40,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
  */
 public class ArchiveAccordoServizioComposto extends ArchiveAccordoServizioParteComune {
 
-	public static String buildKey(String tipoSoggetto,String nomeSoggetto,String nomeAccordo,Integer versione) throws ProtocolException{
+	public static String buildKeyComposto(String tipoSoggetto,String nomeSoggetto,String nomeAccordo,Integer versione) throws ProtocolException{
 		
 		if(tipoSoggetto==null){
 			throw new ProtocolException("tipoSoggetto non fornito");
@@ -84,7 +84,7 @@ public class ArchiveAccordoServizioComposto extends ArchiveAccordoServizioParteC
 		if(this.accordoServizioParteComune.getVersione()!=null){
 			versione = this.accordoServizioParteComune.getVersione();
 		}
-		return ArchiveAccordoServizioComposto.buildKey(tipoSoggetto, nomeSoggetto, 
+		return ArchiveAccordoServizioComposto.buildKeyComposto(tipoSoggetto, nomeSoggetto,
 				nomeAccordo,versione);
 	}
 	

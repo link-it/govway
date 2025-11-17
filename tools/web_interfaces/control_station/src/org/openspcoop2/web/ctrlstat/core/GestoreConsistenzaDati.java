@@ -40,7 +40,7 @@ public class GestoreConsistenzaDati implements Runnable {
 
 	private boolean initForceMapping;
 	
-	private boolean stop = false;
+	private volatile boolean stop = false;
 	public void setStop(boolean stop) {
 		this.stop = stop;
 	}
@@ -74,7 +74,9 @@ public class GestoreConsistenzaDati implements Runnable {
 			if(!this.stop){
 				statoOperazione = "[Inizializzazione Mapping Erogazione] ";
 				this.log.debug("Controllo Consistenza Dati Mapping Erogazione-PA ....");
-				core.initMappingErogazione(this.initForceMapping,this.log);
+				if(core!=null) {
+					core.initMappingErogazione(this.initForceMapping,this.log);
+				}
 				this.log.debug("Controllo Consistenza Dati Mapping Erogazione-PA completato con successo");
 			}
 
@@ -82,7 +84,9 @@ public class GestoreConsistenzaDati implements Runnable {
 			if(!this.stop){
 				statoOperazione = "[Inizializzazione Mapping Fruizione] ";
 				this.log.debug("Controllo Consistenza Dati Mapping Fruizione-PD ....");
-				core.initMappingFruizione(this.initForceMapping,this.log);
+				if(core!=null) {
+					core.initMappingFruizione(this.initForceMapping,this.log);
+				}
 				this.log.debug("Controllo Consistenza Dati Mapping Fruizione-PD completato con successo");
 			}
 			

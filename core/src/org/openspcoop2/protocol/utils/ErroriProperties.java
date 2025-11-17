@@ -42,12 +42,12 @@ import org.slf4j.Logger;
 public class ErroriProperties {
 
 	// 400
-	private static boolean FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST = false;
+	private static volatile boolean FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST = false;
 	// 502
-	private static boolean FORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE = false;
-	private static boolean FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR = false;
+	private static volatile boolean FORCE_SPECIFIC_ERROR_TYPE_FOR_BAD_RESPONSE = false;
+	private static volatile boolean FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_RESPONSE_ERROR = false;
 	// 503
-	private static boolean FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR = false;
+	private static volatile boolean FORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_ERROR = false;
 
 	// 400
 	public static boolean isFORCE_SPECIFIC_ERROR_TYPE_FOR_INTERNAL_BAD_REQUEST() {

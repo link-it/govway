@@ -351,7 +351,7 @@ public class GestoreKeystoreCaching {
 
 	
 	
-	private static long itemCrlLifeSecond; 
+	private static volatile long itemCrlLifeSecond;
 	public static void setCacheCrlLifeSeconds(long itemCrlLifeSecondParam) {
 		itemCrlLifeSecond = itemCrlLifeSecondParam;
 		org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.setKeystoreCacheJCSCrlLifeSeconds(itemCrlLifeSecond>0 ? (int)itemCrlLifeSecond : 7200);

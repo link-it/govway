@@ -249,8 +249,8 @@ public class DateUtils {
 	 * Quindi per rispettare rigorosamente l'RFC 3339, deve essere usate la "T" (o eventualmente "t").
 	 * Tuttavia, in altri contesti o per migliorare la leggibilità, potrebbe essere accettabile usare uno spazio, ma ciò è fuori dall'ambito strettamente RFC 3339.
 	 */
-	private static boolean dateTimeAllowLowerCaseTZ = false;
-	private static boolean dateTimeAllowSpaceSeparator = false;
+	private static volatile boolean dateTimeAllowLowerCaseTZ = false;
+	private static volatile boolean dateTimeAllowSpaceSeparator = false;
 	public static boolean isDateTimeAllowLowerCaseTZ() {
 		return dateTimeAllowLowerCaseTZ;
 	}

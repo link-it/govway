@@ -68,8 +68,8 @@ public class IDSerialGenerator {
 	}
 
 	static Logger checkLogger = null;
-	static boolean checkIsClosed = true;
-	static boolean checkAutocommit = true;
+	static volatile boolean checkIsClosed = true;
+	static volatile boolean checkAutocommit = true;
 	public static boolean isCheckIsClosed() {
 		return checkIsClosed;
 	}

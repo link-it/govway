@@ -750,7 +750,7 @@ public class ModIDynamicConfigurationAccordiParteComuneUtilities {
 
 	}
 	
-	private static boolean permettiModificaNomeAccordo = true;
+	private static volatile boolean permettiModificaNomeAccordo = true;
 	public static boolean isPermettiModificaNomeAccordo() {
 		return permettiModificaNomeAccordo;
 	}

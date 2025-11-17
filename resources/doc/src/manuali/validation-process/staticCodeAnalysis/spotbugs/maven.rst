@@ -61,5 +61,5 @@ L'esempio seguente attiva l'analisi dei sorgenti solamente per le utilità di ba
 
     mvn verify -Dspotbugs=verify 
                -Dtestsuite=none -Dpackage=none -Dowasp=none 
-               -Dspotbugs.home=/tmp/spotbugs-4.8.6 
+               -Dspotbugs.home=/tmp/spotbugs-4.9.8
                -Dspotbugs.skipPackages=protocol-as4,protocol-modipa,protocol-sdi,protocol-spcoop,protocol-trasparente,web-lib-audit,web-lib-mvc,web-lib-queue,web-lib-users,web-loader,web-govwayConsole,web-govwayMonitor,rs-config,rs-monitor,batch-statistiche,batch-runtime-repository,cli-config-loader,cli-govway-vault,cli-template-scan

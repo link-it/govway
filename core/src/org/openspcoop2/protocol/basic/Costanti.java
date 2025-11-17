@@ -258,7 +258,7 @@ public class Costanti {
 	
 	
 	
-	private static boolean TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE = false;
+	private static volatile boolean TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE = false;
 	
 	public static boolean isTRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE() {
 		return TRANSACTION_ERROR_SOAP_USE_GOVWAY_STATUS_AS_FAULT_CODE;
@@ -270,7 +270,7 @@ public class Costanti {
 
 
 
-	private static boolean TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE = false;
+	private static volatile boolean TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE = false;
 	
 	public static boolean isTRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE() {
 		return TRANSACTION_ERROR_SOAP_GENERATE_HTTP_HEADER_GOVWAY_CODE;
@@ -294,7 +294,7 @@ public class Costanti {
 	}
 	
 	
-	private static boolean TRANSACTION_ERROR_STATUS_ABILITATO = false;
+	private static volatile boolean TRANSACTION_ERROR_STATUS_ABILITATO = false;
 	
 	public static boolean isTRANSACTION_ERROR_STATUS_ABILITATO() {
 		return TRANSACTION_ERROR_STATUS_ABILITATO;
@@ -305,7 +305,7 @@ public class Costanti {
 
 
 
-	private static boolean TRANSACTION_ERROR_INSTANCE_ID_ABILITATO = false;
+	private static volatile boolean TRANSACTION_ERROR_INSTANCE_ID_ABILITATO = false;
 	
 	public static boolean isTRANSACTION_ERROR_INSTANCE_ID_ABILITATO() {
 		return TRANSACTION_ERROR_INSTANCE_ID_ABILITATO;
@@ -316,7 +316,7 @@ public class Costanti {
 
 
 
-	private static boolean TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS = false;
+	private static volatile boolean TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS = false;
 	
 	public static boolean isTRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS() {
 		return TRANSACTION_FORCE_SPECIFIC_ERROR_DETAILS;
@@ -327,7 +327,7 @@ public class Costanti {
 
 
 
-	private static boolean TRANSACTION_ERROR_SOAP_FAULT_ADD_FAULT_DETAILS_WITH_PROBLEM_RFC7807 = false;
+	private static volatile boolean TRANSACTION_ERROR_SOAP_FAULT_ADD_FAULT_DETAILS_WITH_PROBLEM_RFC7807 = false;
 	
     public static boolean isTRANSACTION_ERROR_SOAP_FAULT_ADD_FAULT_DETAILS_WITH_PROBLEM_RFC7807() {
 		return TRANSACTION_ERROR_SOAP_FAULT_ADD_FAULT_DETAILS_WITH_PROBLEM_RFC7807;

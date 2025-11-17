@@ -68,9 +68,9 @@ public class RequestConfig implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static boolean useCacheForExternalResource = false;
-	private static boolean useCacheForOCSPResponse = false;
-	private static boolean useCacheForRemoteStore = false;
+	private static volatile boolean useCacheForExternalResource = false;
+	private static volatile boolean useCacheForOCSPResponse = false;
+	private static volatile boolean useCacheForRemoteStore = false;
 	
 	public static boolean isUseCacheForExternalResource() {
 		return useCacheForExternalResource;
@@ -94,7 +94,7 @@ public class RequestConfig implements java.io.Serializable {
 	
 	private String key = null;
 	
-	private boolean cached = false;
+	private volatile boolean cached = false;
 
 	private transient org.openspcoop2.utils.Semaphore semaphore = null; // possono essere alimentati da thread differenti
 	

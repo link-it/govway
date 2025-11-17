@@ -231,11 +231,11 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="firmato",required=false)
-  protected boolean firmato = false;
+  protected volatile boolean firmato = false;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="riservato",required=false)
-  protected boolean riservato = false;
+  protected volatile boolean riservato = false;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="anyURI")
   @XmlAttribute(name="coordinatore",required=false)

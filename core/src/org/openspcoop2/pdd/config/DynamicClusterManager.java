@@ -88,7 +88,7 @@ public class DynamicClusterManager {
 		this.op2Properties = OpenSPCoop2Properties.getInstance();
 	}
 	
-	private boolean rateLimitingGestioneCluster = false;
+	private volatile boolean rateLimitingGestioneCluster = false;
 	public boolean isRateLimitingGestioneCluster() {
 		return this.rateLimitingGestioneCluster;
 	}
@@ -96,7 +96,7 @@ public class DynamicClusterManager {
 		this.rateLimitingGestioneCluster = rateLimitingGestioneCluster;
 	}
 	
-	private int identificativoNumerico = -1;
+	private volatile int identificativoNumerico = -1;
 	public int getIdentificativoNumerico() {
 		return this.identificativoNumerico;
 	}

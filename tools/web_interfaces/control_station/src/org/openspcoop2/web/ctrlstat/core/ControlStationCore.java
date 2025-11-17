@@ -1333,7 +1333,7 @@ public class ControlStationCore {
 	private boolean conservaRisultatiRicerca = false;
 	
 	private static Boolean conservaRisultatiRicercaStaticInfoRead = null;
-	private static boolean conservaRisultatiRicercaStaticInfo = false;
+	private static volatile boolean conservaRisultatiRicercaStaticInfo = false;
 	public static Boolean getConservaRisultatiRicercaStaticInfoRead() {
 		return conservaRisultatiRicercaStaticInfoRead;
 	}

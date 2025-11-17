@@ -61,7 +61,7 @@ public class AlphanumericGenerator extends AbstractStringIdentifierGenerator imp
 	/**
 	 * Should the counter wrap.
 	 */
-	private boolean wrapping = true;
+	private volatile boolean wrapping = true;
 
 	/**
 	 * The counter.
@@ -69,7 +69,7 @@ public class AlphanumericGenerator extends AbstractStringIdentifierGenerator imp
 	private char[] count = null;
 
 
-	private char START_CHAR = 'a';
+	private volatile char START_CHAR = 'a';
 	public void setStartChar(char startChar) throws UtilsException{
 		try{
 			if(!RegularExpressionEngine.isMatch((startChar+""),"^[a-z]$")){
@@ -84,7 +84,7 @@ public class AlphanumericGenerator extends AbstractStringIdentifierGenerator imp
 		this.START_CHAR = startChar;
 	}
 	
-	private char END_CHAR = 'z';
+	private volatile char END_CHAR = 'z';
 	public void setEndChar(char endChar) throws UtilsException{
 		try{
 			if(!RegularExpressionEngine.isMatch((endChar+""),"^[a-z]$")){
@@ -99,7 +99,7 @@ public class AlphanumericGenerator extends AbstractStringIdentifierGenerator imp
 		this.END_CHAR = endChar;
 	}
 
-	private boolean upperChar = true;
+	private volatile boolean upperChar = true;
 	public void setUpperChar(boolean upperChar) throws UtilsException {
 		//System.out.println("SET UPPER ["+upperChar+"]");
 		if(!upperChar && !this.lowerChar){
@@ -108,7 +108,7 @@ public class AlphanumericGenerator extends AbstractStringIdentifierGenerator imp
 		this.upperChar = upperChar;
 	}
 
-	private boolean lowerChar = true;
+	private volatile boolean lowerChar = true;
 	public void setLowerChar(boolean lowerChar) throws UtilsException {
 		//System.out.println("SET LOWER ["+lowerChar+"]");
 		if(!lowerChar && !this.upperChar){
@@ -118,7 +118,7 @@ public class AlphanumericGenerator extends AbstractStringIdentifierGenerator imp
 	}
 
 	
-	private char START_DIGIT = '0';
+	private volatile char START_DIGIT = '0';
 	private boolean nonAncoraUtilizzato = true;
 	public void setStartDigit(char startDigit) throws UtilsException{
 //		if(this.nonAncoraUtilizzato==false){
@@ -138,7 +138,7 @@ public class AlphanumericGenerator extends AbstractStringIdentifierGenerator imp
 		}
 	}
 	
-	private char END_DIGIT = '9';
+	private volatile char END_DIGIT = '9';
 	public void setEndDigit(char endDigit) throws UtilsException{
 		if(Character.isDigit(endDigit)==false){
 			throw new UtilsException("Deve essere fornito un numero");

@@ -114,7 +114,7 @@ public class SummaryBean implements Serializable{
 	private Date maxDate;
 	private String periodo;
 	private String periodoDefault = CostantiReport.PERIODO_NOT_SET;
-	private int offset;
+	private volatile int offset;
 	private String soggettoLocale;
 	private String labelSoggettoLocale;
 
@@ -133,10 +133,10 @@ public class SummaryBean implements Serializable{
 	private Integer soggettiAssociatiSelectItemsWidth = 0;
 	private Integer soggettiSelectItemsWidth = 0;
 	
-	private boolean soggettiAssociatiSelectItemsWidthCheck = false;
-	private boolean soggettiSelectItemsWidthCheck = false;
+	private volatile boolean soggettiAssociatiSelectItemsWidthCheck = false;
+	private volatile boolean soggettiSelectItemsWidthCheck = false;
 	
-	private boolean showTipologiaRicerca;
+	private volatile boolean showTipologiaRicerca;
 	private boolean tipologiaRicercaEntrambiEnabled;
 	private TipologiaRicerca defaultTipologiaRicerca;
 	private TipologiaRicerca tipologiaRicerca;	
@@ -152,7 +152,7 @@ public class SummaryBean implements Serializable{
 	private transient IUserService userService;
 	private boolean funzionalitaStatisticaAbilitata;
 
-	private boolean useGraficiSVG = false;
+	private volatile boolean useGraficiSVG = false;
 	
 	private DynamicPdDBeanUtils dynamicUtils = null;
 	

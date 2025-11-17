@@ -213,55 +213,55 @@ public class StatoPdd extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="num-msg-in-consegna",required=true,nillable=false,defaultValue="0")
-  protected long numMsgInConsegna = 0l;
+  protected volatile long numMsgInConsegna = 0l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="tempo-medio-attesa-in-consegna",required=true,nillable=false,defaultValue="-1")
-  protected long tempoMedioAttesaInConsegna = -1l;
+  protected volatile long tempoMedioAttesaInConsegna = -1l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="tempo-max-attesa-in-consegna",required=true,nillable=false,defaultValue="-1")
-  protected long tempoMaxAttesaInConsegna = -1l;
+  protected volatile long tempoMaxAttesaInConsegna = -1l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="num-msg-in-spedizione",required=true,nillable=false,defaultValue="0")
-  protected long numMsgInSpedizione = 0l;
+  protected volatile long numMsgInSpedizione = 0l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="tempo-medio-attesa-in-spedizione",required=true,nillable=false,defaultValue="-1")
-  protected long tempoMedioAttesaInSpedizione = -1l;
+  protected volatile long tempoMedioAttesaInSpedizione = -1l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="tempo-max-attesa-in-spedizione",required=true,nillable=false,defaultValue="-1")
-  protected long tempoMaxAttesaInSpedizione = -1l;
+  protected volatile long tempoMaxAttesaInSpedizione = -1l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="num-msg-in-processamento",required=true,nillable=false,defaultValue="0")
-  protected long numMsgInProcessamento = 0l;
+  protected volatile long numMsgInProcessamento = 0l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="tempo-medio-attesa-in-processamento",required=true,nillable=false,defaultValue="-1")
-  protected long tempoMedioAttesaInProcessamento = -1l;
+  protected volatile long tempoMedioAttesaInProcessamento = -1l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="tempo-max-attesa-in-processamento",required=true,nillable=false,defaultValue="-1")
-  protected long tempoMaxAttesaInProcessamento = -1l;
+  protected volatile long tempoMaxAttesaInProcessamento = -1l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="tot-messaggi",required=true,nillable=false,defaultValue="0")
-  protected long totMessaggi = 0l;
+  protected volatile long totMessaggi = 0l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="tempo-medio-attesa",required=true,nillable=false,defaultValue="-1")
-  protected long tempoMedioAttesa = -1l;
+  protected volatile long tempoMedioAttesa = -1l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="tempo-max-attesa",required=true,nillable=false,defaultValue="-1")
-  protected long tempoMaxAttesa = -1l;
+  protected volatile long tempoMaxAttesa = -1l;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="long")
   @XmlElement(name="tot-messaggi-duplicati",required=true,nillable=false,defaultValue="0")
-  protected long totMessaggiDuplicati = 0l;
+  protected volatile long totMessaggiDuplicati = 0l;
 
   @jakarta.xml.bind.annotation.XmlTransient
   protected Filtro filtro;

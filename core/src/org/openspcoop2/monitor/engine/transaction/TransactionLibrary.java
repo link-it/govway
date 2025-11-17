@@ -92,8 +92,8 @@ public class TransactionLibrary {
 			int poolSize, int msgForThread) {
 		
 		int totaleTransazioni = 0;
-		ExecutorService threadsPool = null;
-		try {
+		ExecutorService threadsPoolShutdown = null;
+		try (ExecutorService threadsPool = Executors.newFixedThreadPool(poolSize);){
 			
 			org.openspcoop2.core.transazioni.dao.IServiceManager serviceManagerTransazioni = (org.openspcoop2.core.transazioni.dao.IServiceManager) 
 					daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
@@ -103,9 +103,8 @@ public class TransactionLibrary {
 					daoFactory.getServiceManager(org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance());
 			org.openspcoop2.core.commons.search.dao.IServiceManager serviceManagerUtils = (org.openspcoop2.core.commons.search.dao.IServiceManager) 
 					daoFactory.getServiceManager(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
-			
-			threadsPool = Executors.newFixedThreadPool(poolSize);
-			
+					
+			threadsPoolShutdown = threadsPool;
 			
 			// ServiceLibraryManager
 			BasicServiceLibraryReader basicServiceLibraryReader = new BasicServiceLibraryReader(serviceManagerPluginsBase, serviceManagerUtils, debug);
@@ -260,12 +259,14 @@ public class TransactionLibrary {
 			logCore.error("TransactionProcessor ha riscontrato un errore: "+e.getMessage(),e);
 			return;
 		}finally{
-			try{
-				logCore.info("Shutdown pool ...");
-				threadsPool.shutdown(); 
-				logCore.info("Shutdown pool ok");
-			}catch(Throwable e){
-				// ignore
+			if(threadsPoolShutdown != null) {
+				try{
+					logCore.info("Shutdown pool ...");
+					threadsPoolShutdown.shutdown();
+					logCore.info("Shutdown pool ok");
+				}catch(Throwable e){
+					// ignore
+				}
 			}
 		}
 

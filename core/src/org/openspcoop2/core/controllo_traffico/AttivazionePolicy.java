@@ -245,11 +245,11 @@ public class AttivazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWithI
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="posizione",required=true,nillable=false)
-  protected int posizione;
+  protected volatile int posizione;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="continua-valutazione",required=true,nillable=false,defaultValue="false")
-  protected boolean continuaValutazione = false;
+  protected volatile boolean continuaValutazione = false;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="id-policy",required=true,nillable=false)
@@ -257,15 +257,15 @@ public class AttivazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWithI
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="enabled",required=true,nillable=false)
-  protected boolean enabled;
+  protected volatile boolean enabled;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="warning-only",required=true,nillable=false,defaultValue="false")
-  protected boolean warningOnly = false;
+  protected volatile boolean warningOnly = false;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="ridefinisci",required=true,nillable=false)
-  protected boolean ridefinisci;
+  protected volatile boolean ridefinisci;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="valore",required=false,nillable=false)

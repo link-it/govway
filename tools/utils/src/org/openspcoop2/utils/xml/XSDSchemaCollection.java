@@ -52,8 +52,8 @@ import org.slf4j.Logger;
 */
 public class XSDSchemaCollection {
 
-	private static boolean serializeXSDSchemiBuildSchemaSuccessDefault = false;
-	private static boolean serializeXSDSchemiBuildSchemaErrorDefault = true;
+	private static volatile boolean serializeXSDSchemiBuildSchemaSuccessDefault = false;
+	private static volatile boolean serializeXSDSchemiBuildSchemaErrorDefault = true;
 	private static File serializeXSDSchemiBuildSchemaDefaultDir = null; 
 	public static boolean isSerializeXSDSchemiBuildSchemaSuccessDefault() {
 		return serializeXSDSchemiBuildSchemaSuccessDefault;
@@ -78,8 +78,8 @@ public class XSDSchemaCollection {
 	private Map<String, byte[]> resources;
 	private Map<String, List<String>> mappingNamespaceLocations;
 		
-	private boolean serializeXSDSchemiBuildSchemaSuccess = false;
-	private boolean serializeXSDSchemiBuildSchemaError = true;
+	private volatile boolean serializeXSDSchemiBuildSchemaSuccess = false;
+	private volatile boolean serializeXSDSchemiBuildSchemaError = true;
 	private File serializeXSDSchemiBuildSchemaDir = null; 
 	
 	public XSDSchemaCollection() {

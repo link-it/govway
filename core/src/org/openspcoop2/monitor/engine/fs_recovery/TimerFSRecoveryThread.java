@@ -90,7 +90,7 @@ public class TimerFSRecoveryThread extends Thread{
 	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled;
 	
     // VARIABILE PER STOP
-	private boolean stop = false;
+	private volatile boolean stop = false;
 	
 	public boolean isStop() {
 		return this.stop;

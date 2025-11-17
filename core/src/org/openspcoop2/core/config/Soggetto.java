@@ -419,11 +419,11 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBeanWithId impleme
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="dominio-default",required=false)
-  protected boolean dominioDefault = false;
+  protected volatile boolean dominioDefault = false;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="router",required=false)
-  protected boolean router = false;
+  protected volatile boolean router = false;
 
   @jakarta.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="pd-url-prefix-rewriter",required=false)

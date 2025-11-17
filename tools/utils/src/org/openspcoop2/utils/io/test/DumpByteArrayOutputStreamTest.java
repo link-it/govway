@@ -46,6 +46,8 @@ public class DumpByteArrayOutputStreamTest {
 		
 		testDefaultImpl();
 
+		System.out.println("Testsuite completata");
+		
 	}
 
 	public static void testFastImpl() throws Exception {

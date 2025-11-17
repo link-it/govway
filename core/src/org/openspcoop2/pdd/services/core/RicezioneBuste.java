@@ -411,9 +411,9 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 	private java.util.List<Eccezione> erroriValidazione;
 	private java.util.List<Eccezione> erroriProcessamento;
 	private OpenSPCoop2Message requestMessage;
-	private boolean isMessaggioErroreProtocollo;
-	private boolean bustaDiServizio;
-	private boolean mittenteAnonimo = false;
+	private volatile boolean isMessaggioErroreProtocollo;
+	private volatile boolean bustaDiServizio;
+	private volatile boolean mittenteAnonimo = false;
 	private String implementazionePdDMittente;
 	private RuoloBusta ruoloBustaRicevuta;
 	private String versioneProtocollo;
@@ -426,15 +426,15 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 	private PortaApplicativa pa = null;
 	private PortaDelegata pd = null;
 		
-	private boolean oneWayVersione11;
-	private boolean oneWayStateless;
-	private boolean sincronoStateless;
-	private boolean asincronoStateless;
-	private boolean portaStateless;
-	private boolean routingStateless;
-	private boolean functionAsRouter;
-	private boolean newConnectionForResponse;
-	private boolean utilizzoIndirizzoTelematico;
+	private volatile boolean oneWayVersione11;
+	private volatile boolean oneWayStateless;
+	private volatile boolean sincronoStateless;
+	private volatile boolean asincronoStateless;
+	private volatile boolean portaStateless;
+	private volatile boolean routingStateless;
+	private volatile boolean functionAsRouter;
+	private volatile boolean newConnectionForResponse;
+	private volatile boolean utilizzoIndirizzoTelematico;
 	
 	private OpenSPCoopState openspcoopstate = null;
 	private Tracciamento tracciamento = null;
@@ -462,10 +462,10 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 	private IProtocolFactory<?> protocolFactory;
 	private IProtocolVersionManager moduleManager;
 	private ITraduttore traduttore;
-	private boolean readQualifiedAttribute;
+	private volatile boolean readQualifiedAttribute;
 	private ProprietaManifestAttachments proprietaManifestAttachments;
 
-	private boolean asyncWait = false;
+	private volatile boolean asyncWait = false;
 	
 	public RicezioneBuste(RicezioneBusteContext context,
 			RicezioneBusteExternalErrorGenerator generatoreErrore,
@@ -6825,8 +6825,8 @@ public class RicezioneBuste implements IAsyncResponseCallback {
 		return _comportamentoStateless(false, invokedFromAsyncConnector);
 	}
 	private EsitoLib esitoStatelessAfterSendRequest;
-	private boolean terminataGestioneStateless = false;
-	private boolean terminataGestioneStatelessErrorBeforeAsyncrConnettore = false;
+	private volatile boolean terminataGestioneStateless = false;
+	private volatile boolean terminataGestioneStatelessErrorBeforeAsyncrConnettore = false;
 	private boolean _comportamentoStateless(boolean gestioneRichiesta, boolean invokedFromAsyncConnector) {
 		
 		boolean esitoReturn = true;
