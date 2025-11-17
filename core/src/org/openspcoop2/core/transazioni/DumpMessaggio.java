@@ -591,7 +591,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBeanWithId im
 
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="post-processed",required=false,nillable=false,defaultValue="1")
-  protected int postProcessed = 1;
+  protected volatile int postProcessed = 1;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="multipart-header-ext",required=false,nillable=false)

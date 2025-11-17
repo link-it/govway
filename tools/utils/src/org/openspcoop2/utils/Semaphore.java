@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 public class Semaphore {
 
 	public static final long DEFAULT_LOCK_ACQUISITION_TIMEOUT_MS = 30000;
-	private static long defaultLockAcquisitionTimeoutMs = DEFAULT_LOCK_ACQUISITION_TIMEOUT_MS;
+	private static volatile long defaultLockAcquisitionTimeoutMs = DEFAULT_LOCK_ACQUISITION_TIMEOUT_MS;
 	public static long getDefaultLockAcquisitionTimeoutMs() {
 		return defaultLockAcquisitionTimeoutMs;
 	}
@@ -45,7 +45,7 @@ public class Semaphore {
 	}
 	
 	public static final long DEFAULT_LOCK_HOLD_TIMEOUT_MS = 60000;
-	private static long defaultLockHoldTimeoutMs = DEFAULT_LOCK_HOLD_TIMEOUT_MS;
+	private static volatile long defaultLockHoldTimeoutMs = DEFAULT_LOCK_HOLD_TIMEOUT_MS;
 	public static long getDefaultLockHoldTimeoutMs() {
 		return defaultLockHoldTimeoutMs;
 	}
@@ -61,7 +61,7 @@ public class Semaphore {
 		Semaphore.logDebug = logDebug;
 	}
 
-	private static boolean defaultDebug = false;
+	private static volatile boolean defaultDebug = false;
 	public static boolean isDefaultDebug() {
 		return defaultDebug;
 	}
@@ -80,7 +80,7 @@ public class Semaphore {
 		this.instanceLockAcquisitionTimeoutMs = timeoutMs;
 	}
 	
-	private long instanceLockHoldTimeoutMs = -1;
+	private volatile long instanceLockHoldTimeoutMs = -1;
 	public long getInstanceLockHoldTimeoutMs() {
 		return this.instanceLockHoldTimeoutMs>0 ? this.instanceLockHoldTimeoutMs : defaultLockHoldTimeoutMs;
 	}
@@ -88,7 +88,7 @@ public class Semaphore {
 		this.instanceLockHoldTimeoutMs = timeoutMs;
 	}
 
-	private boolean instanceDebug = false;
+	private volatile boolean instanceDebug = false;
 	public boolean isInstanceDebug() {
 		return this.instanceDebug || defaultDebug;
 	}
@@ -104,7 +104,7 @@ public class Semaphore {
 		Semaphore.semaphoreType = semaphoreType;
 	}
 
-	private static boolean fair = true;
+	private static volatile boolean fair = true;
 	public static boolean isFair() {
 		return fair;
 	}

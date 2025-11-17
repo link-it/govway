@@ -59,9 +59,9 @@ public class StatusBean implements Serializable {
 
 	private String iconaStato = "";
 
-	private boolean aggiornamentoAutomatico = false;
+	private volatile boolean aggiornamentoAutomatico = false;
 
-	private boolean enable ;
+	private volatile boolean enable ;
 	
 	private Date dataAggiornamento = null;
 	

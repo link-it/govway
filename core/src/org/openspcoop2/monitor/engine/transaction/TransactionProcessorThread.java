@@ -50,7 +50,7 @@ public class TransactionProcessorThread implements Runnable {
 	private DAOFactory daoFactory;
 	
 	private int threadNumber;
-	private boolean finished = false;
+	private volatile boolean finished = false;
 
 	private boolean debug;
 

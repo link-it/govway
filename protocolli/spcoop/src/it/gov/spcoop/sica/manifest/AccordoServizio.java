@@ -222,10 +222,10 @@ public class AccordoServizio extends org.openspcoop2.utils.beans.BaseBean implem
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="firmato",required=false)
-  protected boolean firmato = false;
+  protected volatile boolean firmato = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="riservato",required=false)
-  protected boolean riservato = false;
+  protected volatile boolean riservato = false;
 
 }

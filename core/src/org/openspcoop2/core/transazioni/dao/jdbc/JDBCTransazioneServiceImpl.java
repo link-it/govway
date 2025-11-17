@@ -590,19 +590,11 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, Transazione transazione, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 		throw new NotImplementedException("Table without long id column PK");
 	}
-	
-	private static boolean efficiente = true;    
-    public static boolean isEfficiente() {
-		return efficiente;
-	}
-	public static void setEfficiente(boolean efficiente) {
-		JDBCTransazioneServiceImpl.efficiente = efficiente;
-	}
-	
+
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, String id, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		
-		if(efficiente) {
+
+		if(isEfficiente()) {
 			updateFieldsOptimized(jdbcProperties, log, connection, sqlQueryObject, id, null, updateFields);
 		}
 		else {
@@ -616,8 +608,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 	
 	@Override
 	public void updateFields(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, String id, IExpression condition, UpdateField ... updateFields) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		
-		if(efficiente) {
+
+		if(isEfficiente()) {
 			updateFieldsOptimized(jdbcProperties, log, connection, sqlQueryObject, id, condition, updateFields);
 		}
 		else {

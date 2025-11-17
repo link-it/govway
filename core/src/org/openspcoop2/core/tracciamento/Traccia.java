@@ -244,7 +244,7 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
   protected java.lang.String identificativoCorrelazioneRisposta;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected boolean correlazioneApplicativaAndMatch = false;
+  protected volatile boolean correlazioneApplicativaAndMatch = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="location",required=true,nillable=false)
@@ -254,7 +254,7 @@ public class Traccia extends org.openspcoop2.utils.beans.BaseBeanWithId implemen
   protected Busta busta;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected boolean ricercaSoloBusteErrore = false;
+  protected volatile boolean ricercaSoloBusteErrore = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="busta-raw",required=false,nillable=false)

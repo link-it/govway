@@ -1350,7 +1350,7 @@ public class DynamicTest {
 			byte[]template = Utilities.getAsByteArrayOuputStream(DynamicTest.class.getResourceAsStream("/org/openspcoop2/pdd/core/dynamic/test/TestDynamic.ftl")).toByteArray();
 			Template templateObject = new Template("xml2jsonDynamicFTL", template);
 			// verifico thread safe template
-			
+
 			boolean error = false;
 			Exception exception = null;
 			try {
@@ -2044,10 +2044,10 @@ class ClientTestThread implements Runnable{
 		this.freemarker = freemarker;
 	}
 	
-	private boolean finished = false;
-	private boolean error = false;
-	
-	private Exception exception = null;
+	private volatile boolean finished = false;
+	private volatile boolean error = false;
+
+	private volatile Exception exception = null;
 	public Exception getException() {
 		return this.exception;
 	}

@@ -973,7 +973,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="utilizzo-senza-azione",required=false)
-  protected boolean utilizzoSenzaAzione = false;
+  protected volatile boolean utilizzoSenzaAzione = false;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String filtroDuplicatiRawEnumValue;

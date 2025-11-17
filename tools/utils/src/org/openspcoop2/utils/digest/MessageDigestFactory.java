@@ -33,7 +33,7 @@ import java.security.Security;
  */
 public class MessageDigestFactory {
 
-	private static boolean useBouncyCastleProvider = false;
+	private static volatile boolean useBouncyCastleProvider = false;
 	public static boolean isUseBouncyCastleProvider() {
 		return useBouncyCastleProvider;
 	}

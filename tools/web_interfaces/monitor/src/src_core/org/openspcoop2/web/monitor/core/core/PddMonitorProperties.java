@@ -883,7 +883,7 @@ public class PddMonitorProperties {
 	// propertiy per la gestione del console.font
 	private String consoleFontName = null;
 	private String consoleFontFamilyName = null;
-	private int consoleFontStyle = -1;
+	private volatile int consoleFontStyle = -1;
 	
 	public String getConsoleFont() throws UtilsException{
 		return this.appProperties.getProperty("console.font", true, true);

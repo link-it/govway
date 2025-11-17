@@ -96,12 +96,12 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private String idTransazione;
 	private String idEgov;
 	private String identificativoPorta;
-	private boolean isRisposta;
+	private volatile boolean isRisposta;
 
 	private transient ITracciaDriver driver;
 	private transient ITransazioniService transazioniService;
 	
-	private boolean visualizzaIdCluster = false;
+	private volatile boolean visualizzaIdCluster = false;
 	private boolean clusterDinamico = false;
 	
 	private String selectedTab = null;
@@ -118,10 +118,10 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	private transient IProtocolFactory<?> protocolFactory;
 	
-	private boolean showFaultCooperazione = false;
-	private boolean showFaultIntegrazione = false;
+	private volatile boolean showFaultCooperazione = false;
+	private volatile boolean showFaultIntegrazione = false;
 
-	private boolean visualizzaDataAccettazione = false;
+	private volatile boolean visualizzaDataAccettazione = false;
 	private Boolean hasDumpRichiestaIngresso = null;
 	private Boolean hasDumpRichiestaUscita = null;
 	private Boolean hasDumpRispostaIngresso = null;
@@ -143,7 +143,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private Boolean hasDumpBinarioMultipartRispostaIngresso = null;
 	private Boolean hasDumpBinarioMultipartRispostaUscita = null;
 	
-	private boolean dataUscitaRispostaValorizzataDopoSpedizioneRisposta = false;
+	private volatile boolean dataUscitaRispostaValorizzataDopoSpedizioneRisposta = false;
 	
 	private TipoMessaggio exportContenuto;
 	

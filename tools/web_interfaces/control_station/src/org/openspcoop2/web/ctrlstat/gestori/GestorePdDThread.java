@@ -99,8 +99,8 @@ public class GestorePdDThread extends GestoreGeneral {
 	private Logger log = null;
 
 	/** run */
-	private boolean stop = false;
-	private boolean isRunning = false;
+	private volatile boolean stop = false;
+	private volatile boolean isRunning = false;
 	public boolean isRunning() {
 		return this.isRunning;
 	}
@@ -129,7 +129,7 @@ public class GestorePdDThread extends GestoreGeneral {
 	private DBManager dbm;
 	private Connection con;
 
-	private boolean singlePdD = false;
+	private volatile boolean singlePdD = false;
 
 	/** Web Service */
 	private org.openspcoop2.core.config.ws.client.portaapplicativa.all.PortaApplicativaSoap11Service portaApplicativaService;

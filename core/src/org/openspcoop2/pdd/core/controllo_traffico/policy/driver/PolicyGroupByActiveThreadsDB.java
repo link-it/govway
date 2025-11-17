@@ -101,7 +101,7 @@ public class PolicyGroupByActiveThreadsDB implements Serializable,IPolicyGroupBy
 		return _rnd;
 	}
 	
-	private boolean mapExists = false;
+	private volatile boolean mapExists = false;
 	
 	private ActivePolicy activePolicy;
 	private PolicyGroupByActiveThreadsType tipoGestore;

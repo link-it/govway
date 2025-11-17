@@ -100,8 +100,8 @@ public class GestoreRegistroThread extends GestoreGeneral {
 	private String name = null;
 	
 	/** run */
-	public boolean stop = false;
-	private boolean isRunning = false;
+	public volatile boolean stop = false;
+	private volatile boolean isRunning = false;
 	public boolean isRunning() {
 		return this.isRunning;
 	}
@@ -137,7 +137,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 	private org.openspcoop2.core.registry.ws.client.soggetto.all.Soggetto soggettoPort;
 	private org.openspcoop2.core.registry.ws.client.portadominio.all.PortaDominio pddPort;
 
-	private boolean singlePdD = false;
+	private volatile boolean singlePdD = false;
 
 	// Logger
 	private Logger log;

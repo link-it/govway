@@ -2074,7 +2074,7 @@ public class ConsoleProperties {
 	// propertiy per la gestione del console.font
 	private String consoleFontName = null;
 	private String consoleFontFamilyName = null;
-	private int consoleFontStyle = -1;
+	private volatile int consoleFontStyle = -1;
 	
 	public String getConsoleFont() throws UtilsException{
 		return this.readProperty(true,"console.font");

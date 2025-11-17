@@ -65,7 +65,7 @@ public class TimerStatisticheThread extends Thread{
 	private org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM;
 	
     // VARIABILE PER STOP
-	private boolean stop = false;
+	private volatile boolean stop = false;
 	
 	public boolean isStop() {
 		return this.stop;

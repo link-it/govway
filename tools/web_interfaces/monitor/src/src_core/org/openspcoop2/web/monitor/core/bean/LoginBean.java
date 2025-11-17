@@ -102,7 +102,7 @@ public class LoginBean extends AbstractLoginBean {
 
 	private String loginErrorMessage = null;
 
-	private boolean showLogout = true;
+	private volatile boolean showLogout = true;
 
 	private String logoutDestinazione = null;
 
@@ -110,7 +110,7 @@ public class LoginBean extends AbstractLoginBean {
 	private String logoHeaderTitolo = null;
 	private String logoHeaderLink = null;
 	private String title = null;
-	private boolean showExtendedInfo = false;
+	private volatile boolean showExtendedInfo = false;
 
 	private String modalita = null;
 	private Boolean visualizzaMenuModalita = null;

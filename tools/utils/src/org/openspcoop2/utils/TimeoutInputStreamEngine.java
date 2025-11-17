@@ -35,11 +35,11 @@ public class TimeoutInputStreamEngine extends InputStream {
 
 
 	private long createDateMs;
-	private int timeoutMs;
+	private volatile int timeoutMs;
 	private InputStream isWrapped = null;
 	private String prefixError = "";
 	private Map<Object> ctx;
-	private boolean checkDisabled = false;
+	private volatile boolean checkDisabled = false;
 	
 	private ITimeoutNotifier notifier;
 	

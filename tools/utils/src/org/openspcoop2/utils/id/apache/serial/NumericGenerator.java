@@ -54,7 +54,7 @@ public class NumericGenerator extends AbstractStringIdentifierGenerator implemen
     private static final long serialVersionUID = 20060121L;
     
     /** Should the counter wrap. */
-    private boolean wrapping;
+    private volatile boolean wrapping;
     /** The counter. */
     private long count = 0;
 

@@ -22,7 +22,7 @@
 
 	<taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties">
 		<classpath>
-			<pathelement location="${openspcoop2.lib}/staticAnalysis/spotbugs-ant-4.8.6.jar"/>
+			<pathelement location="${openspcoop2.lib}/staticAnalysis/spotbugs-ant-4.9.8.jar"/>
 		</classpath>
 	</taskdef>
 
@@ -296,10 +296,10 @@
 				<echo message="Output '${spotbugs.outputType}': ${reportFileName}"/>
 				<spotbugs home="${spotbugs.home}"
 				    output="${spotbugs.outputType}"
-				    outputFile="${reportFileName}" 
+				    outputFile="${reportFileName}"
 				    effort="${_spotBugsEfforts}"
 				    reportLevel="${spotbugs.confidence}"
-				    nested="${spotbugs.nested}" 
+				    nested="${spotbugs.nested}"
 				    failOnError="${spotbugs.failOnError}"
 				    timeout="${spotbugs.timeout}"
 				    jvmargs="${spotbugs.jvmargs}"

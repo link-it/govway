@@ -73,8 +73,8 @@ public class SmistatoreThread extends Thread {
 	private static Logger log = null;
 	
 	/** run */
-	private boolean stop = false;
-	private boolean isRunning = false;
+	private volatile boolean stop = false;
+	private volatile boolean isRunning = false;
 	public boolean isRunning() {
 		return this.isRunning;
 	}

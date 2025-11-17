@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -746,9 +747,9 @@ class ClientTestThread implements Runnable{
 	private Semaphore semaphore;
 	private Connection con;
 	
-	private boolean lockAcquisito;
-	private boolean lockRilasciato;
-	private int lockAggiornamenti;
+	private volatile boolean lockAcquisito;
+	private volatile boolean lockRilasciato;
+	private AtomicInteger lockAggiornamenti = new AtomicInteger(0);
 	public boolean isLockAcquisito() {
 		return this.lockAcquisito;
 	}
@@ -756,15 +757,15 @@ class ClientTestThread implements Runnable{
 		return this.lockRilasciato;
 	}
 	public int getLockAggiornamenti() {
-		return this.lockAggiornamenti;
+		return this.lockAggiornamenti.get();
 	}
 
 	private int index;
 	@SuppressWarnings("unused")
 	private boolean debug;
 
-	private boolean finished = false;
-	private boolean error = false;
+	private volatile boolean finished = false;
+	private volatile boolean error = false;
 	
 	public boolean isError() {
 		return this.error;
@@ -781,7 +782,7 @@ class ClientTestThread implements Runnable{
 		this.con = con;
 		this.lockAcquisito = false;
 		this.lockRilasciato = false;
-		this.lockAggiornamenti = 0;
+		this.lockAggiornamenti.set(0);
 		this.index = index;
 		this.debug = debug;
 	}
@@ -812,7 +813,7 @@ class ClientTestThread implements Runnable{
 					//throw new UtilsException("Lock non aggiornato (iterazione-"+j+")");
 					return;
 				}
-				this.lockAggiornamenti++;
+				this.lockAggiornamenti.incrementAndGet();
 			}
 			
 			Utilities.sleep(50);

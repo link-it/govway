@@ -224,7 +224,7 @@ public class Plugin extends org.openspcoop2.utils.beans.BaseBeanWithId implement
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="stato",required=false,nillable=false,defaultValue="true")
-  protected boolean stato = true;
+  protected volatile boolean stato = true;
 
   @XmlElement(name="plugin-servizio-compatibilita",required=true,nillable=false)
   private List<PluginServizioCompatibilita> pluginServizioCompatibilita = new ArrayList<>();

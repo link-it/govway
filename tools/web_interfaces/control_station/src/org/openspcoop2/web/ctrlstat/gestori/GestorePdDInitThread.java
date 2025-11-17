@@ -57,7 +57,7 @@ public class GestorePdDInitThread extends Thread {
 	// public static boolean stop = false;
 	private static Map<String, IGestore> gestoriPdd = new HashMap<String, IGestore>();
 
-	private boolean singlePdD = false;
+	private volatile boolean singlePdD = false;
 	private boolean enginePDD = false;
 	
 	/** Costruttore 

@@ -369,7 +369,7 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBeanWit
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="use-as-client",required=false)
-  protected boolean useAsClient = false;
+  protected volatile boolean useAsClient = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=false)

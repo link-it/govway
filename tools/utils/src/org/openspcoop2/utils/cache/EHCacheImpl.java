@@ -61,8 +61,8 @@ public class EHCacheImpl extends AbstractCacheImpl {
 	}
 
 	private Cache<String, Serializable> cache = null;
-	private int maxSize = -1;
-	private int maxLifeTime = -1; // secondi
+	private volatile int maxSize = -1;
+	private volatile int maxLifeTime = -1; // secondi
 	
 
 	public EHCacheImpl(String name) throws UtilsException{

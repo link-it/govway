@@ -66,7 +66,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 	/** DBManager */
 	private static DBManager manager = null;
 	/** TransactionIsolation level */
-	private static int transactionIsolationLevel = -1;
+	private static volatile int transactionIsolationLevel = -1;
 	public static void setTransactionIsolationLevel(int transactionIsolationLevel) {
 		DBManager.transactionIsolationLevel = transactionIsolationLevel;
 	}
@@ -82,12 +82,12 @@ public class DBManager implements IMonitoraggioRisorsa {
 	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione = new java.util.concurrent.ConcurrentHashMap<>();
 	
 	/** Informazioni sui check */
-	private static boolean getConnectionCheckAutoCommitDisabled;
-	private static boolean getConnectionCheckTransactionIsolation;
-	private static int getConnectionCheckTransactionIsolationExpected;
+	private static volatile boolean getConnectionCheckAutoCommitDisabled;
+	private static volatile boolean getConnectionCheckTransactionIsolation;
+	private static volatile int getConnectionCheckTransactionIsolationExpected;
 	
 	/** Stato di inizializzazione del manager */
-	private static boolean initialized = false;
+	private static volatile boolean initialized = false;
 
 	public static String[] getStatoRisorse() {	
 		return getStatoRisorse(DBManager.risorseInGestione);

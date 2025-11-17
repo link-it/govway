@@ -71,7 +71,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 		return logger;
 	}
 
-	private static boolean checkSecrets = false;
+	private static volatile boolean checkSecrets = false;
 	private static final Semaphore semaphoreCheckSecrets = new Semaphore("GovWaySecrets");
 	private static void checkSecrets() {
 		if(!checkSecrets) {

@@ -57,7 +57,7 @@ public class GestoreRunnable extends Thread{
 	private String name;
 	
     // VARIABILE PER STOP
-	private boolean stop = false;
+	private volatile boolean stop = false;
 	
 	public boolean isStop() {
 		return this.stop;

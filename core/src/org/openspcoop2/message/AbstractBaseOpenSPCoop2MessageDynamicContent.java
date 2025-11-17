@@ -54,14 +54,14 @@ public abstract class AbstractBaseOpenSPCoop2MessageDynamicContent<T> extends Ab
 
 	protected boolean supportReadOnly = true;
 
-	protected boolean contentUpdatable = false;
+	protected volatile boolean contentUpdatable = false;
 	protected T content;
-	protected boolean hasContent = false;
+	protected volatile boolean hasContent = false;
 
 	protected OpenSPCoop2MessageSoapStreamReader soapStreamReader;
 
 	protected DumpByteArrayOutputStream contentBuffer;
-	private static int soglia;
+	private static volatile int soglia;
 	private static File repositoryFile;
 
 	public static void setSoglia(int soglia) {

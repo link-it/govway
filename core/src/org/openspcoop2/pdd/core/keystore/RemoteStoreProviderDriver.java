@@ -60,7 +60,7 @@ import org.slf4j.Logger;
  */
 public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 
-	private static int keyMaxLifeMinutes = -1; // infinito
+	private static volatile int keyMaxLifeMinutes = -1;
 	public static int getKeyMaxLifeMinutes() {
 		return keyMaxLifeMinutes;
 	}
@@ -330,7 +330,7 @@ public class RemoteStoreProviderDriver implements IRemoteStoreProvider {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	private static boolean createEntryIfNotExists = true;
+	private static volatile boolean createEntryIfNotExists = true;
 	public static void setCreateEntryIfNotExists(boolean createEntryIfNotExists) {
 		RemoteStoreProviderDriver.createEntryIfNotExists = createEntryIfNotExists;
 	}

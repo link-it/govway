@@ -143,7 +143,7 @@ public class DigestTest {
 		if (!Arrays.areEqual(output, digest))
 			throw new UtilsException("digest: " + new String(digest) + " is not equals to " + new String(output));
 		if (!engine.check(clear, seed, digest))
-			throw new UtilsException("check digest failed for clear text: " + clear);
+			throw new UtilsException("check digest failed for clear text: " + (clear!=null ? new String(clear) : null));
 		
 		return output;
 	}

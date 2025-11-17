@@ -70,33 +70,33 @@ public class GeneratorProperties {
 	
 	private String protocolloDefault = null;
 	
-	private boolean statisticheGenerazioneBaseOrariaGestioneUltimaOra=false;
-	private boolean statisticheGenerazioneBaseGiornalieraGestioneUltimoGiorno=false;
-	private boolean statisticheGenerazioneBaseSettimanaleGestioneUltimaSettimana=false;
-	private boolean statisticheGenerazioneBaseMensileGestioneUltimoMese=false;
+	private volatile boolean statisticheGenerazioneBaseOrariaGestioneUltimaOra=false;
+	private volatile boolean statisticheGenerazioneBaseGiornalieraGestioneUltimoGiorno=false;
+	private volatile boolean statisticheGenerazioneBaseSettimanaleGestioneUltimaSettimana=false;
+	private volatile boolean statisticheGenerazioneBaseMensileGestioneUltimoMese= false;
 	
 	private StatisticsForceIndexConfig statisticheGenerazioneForceIndexConfig = null;
 	
-	private long waitMsBeforeNextInterval = -1;
+	private volatile long waitMsBeforeNextInterval = -1;
 	
-	private boolean waitStatiInConsegna = false;
+	private volatile boolean waitStatiInConsegna = false;
 	
-	private boolean generazioneStatisticheUseUnionForLatency = true;
+	private volatile boolean generazioneStatisticheUseUnionForLatency = true;
 	
-	private boolean generazioneStatisticheCustom = false;
-	private boolean analisiTransazioniCustom = false;
+	private volatile boolean generazioneStatisticheCustom = false;
+	private volatile boolean analisiTransazioniCustom = false;
 
 	private File pddMonitorFrameworkRepositoryJars = null;
 	
 	/** Richiesta configurata per effettuare chiamate al tracing pdnd **/
 	private HttpRequestConfig pdndTracingRequestConfig;
-	private boolean pdndTracingSoggettiDisabled = false;
+	private volatile boolean pdndTracingSoggettiDisabled = false;
 	private Set<String> pdndTracingSoggettiEnabled;
 	private Integer pdndTracingMaxAttempt = null;
-	private boolean pdndTracingErogazioniEnabled = true;
-	private boolean pdndTracingFruizioniEnabled = true;
+	private volatile boolean pdndTracingErogazioniEnabled = true;
+	private volatile boolean pdndTracingFruizioniEnabled = true;
 	private List<Integer> pdndTracingPendingCheck = null;
-	private int pdndTracingGenerazioneDelayMinutes = 0; 
+	private volatile int pdndTracingGenerazioneDelayMinutes = 0;
 	
 	private PropertiesReader props;
 	

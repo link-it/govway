@@ -828,7 +828,7 @@ public class Utilities {
 
 	// Metodi per il logging dell'heap space
 
-	private static boolean freeMemoryLog = false;
+	private static volatile boolean freeMemoryLog = false;
 	public static boolean isFreeMemoryLog() {
 		return freeMemoryLog;
 	}

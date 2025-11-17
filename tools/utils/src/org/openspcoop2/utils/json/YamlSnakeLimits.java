@@ -34,7 +34,7 @@ import org.slf4j.Logger;
  */
 public class YamlSnakeLimits {
 
-	private static boolean DEBUG = false;
+	private static volatile boolean DEBUG = false;
 	public static boolean isDEBUG() {
 		return DEBUG;
 	}

@@ -75,7 +75,7 @@ public class TimerMonitoraggioRisorseThread extends BaseThread{
 	}
 
 	/** Indicazione di risorse correttamente disponibili */
-	private static boolean risorseDisponibili = true;
+	private static volatile boolean risorseDisponibili = true;
 	private static void setRisorseDisponibili(boolean risorseDisponibili) {
 		TimerMonitoraggioRisorseThread.risorseDisponibili = risorseDisponibili;
 	}

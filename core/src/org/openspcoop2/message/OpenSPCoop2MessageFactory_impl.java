@@ -56,7 +56,7 @@ import org.w3c.dom.Element;
 
 public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 
-	private static boolean soapPassthroughImpl = true;
+	private static volatile boolean soapPassthroughImpl = true;
 	public static void setSoapPassthroughImpl(boolean soapPassthroughImpl) {
 		OpenSPCoop2MessageFactory_impl.soapPassthroughImpl = soapPassthroughImpl;
 	}

@@ -114,7 +114,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 	protected ITraduttore traduttore;
 	protected OpenSPCoop2MessageFactory errorFactory = null;
 	protected org.openspcoop2.message.xml.MessageXMLUtils xmlUtils;
-	protected boolean omitXMLDeclaration;
+	protected volatile boolean omitXMLDeclaration;
 	
 	public ErroreApplicativoBuilder(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory);

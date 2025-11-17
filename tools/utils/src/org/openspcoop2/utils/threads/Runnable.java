@@ -38,7 +38,7 @@ public class Runnable extends Thread{
 	private RunnableLogger log = null;
 
 	// VARIABILE PER STOP
-	private boolean stop = false;
+	private volatile boolean stop = false;
 	
 	public boolean isStop() {
 		return this.stop;
@@ -48,7 +48,7 @@ public class Runnable extends Thread{
 		this.stop = stop;
 	}
 	
-	private boolean finished = false;
+	private volatile boolean finished = false;
 	public boolean isFinished() {
 		return this.finished;
 	}
@@ -56,7 +56,7 @@ public class Runnable extends Thread{
 	private int checkIntervalMs = -1; // ogni X ms reinvoco l'instance
 	private IRunnableInstance instance;
 	
-	private boolean initialized = false; 
+	private volatile boolean initialized = false; 
 	
 	/** Costruttore */
 	public Runnable(RunnableLogger runnableLogger, IRunnableInstance instance,int checkIntervalMs) throws UtilsException{

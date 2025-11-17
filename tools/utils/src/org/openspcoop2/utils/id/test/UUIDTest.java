@@ -354,7 +354,7 @@ public class UUIDTest {
 class ClientTestThread implements Runnable{
 
 	private List<String> check = new ArrayList<>();
-	private boolean valoriDuplicati = false;
+	private volatile boolean valoriDuplicati = false;
 	
 	private void put(String v,boolean rilevaValoriDuplicati) throws Exception{
 		if(!this.check.contains(v)){
@@ -393,8 +393,8 @@ class ClientTestThread implements Runnable{
 		return this.valoriGenerati;
 	}
 
-	private boolean finished = false;
-	private boolean error = false;
+	private volatile boolean finished = false;
+	private volatile boolean error = false;
 	
 	private Exception exception = null;
 	public Exception getException() {

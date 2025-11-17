@@ -535,7 +535,7 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="built-in",required=true,nillable=false,defaultValue="false")
-  protected boolean builtIn = false;
+  protected volatile boolean builtIn = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="descrizione",required=true,nillable=false)
@@ -547,7 +547,7 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="simultanee",required=true,nillable=false,defaultValue="false")
-  protected boolean simultanee = false;
+  protected volatile boolean simultanee = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="unsignedLong")
   @XmlElement(name="valore",required=false,nillable=false)
@@ -605,11 +605,11 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="applicabilita-con-congestione",required=true,nillable=false,defaultValue="false")
-  protected boolean applicabilitaConCongestione = false;
+  protected volatile boolean applicabilitaConCongestione = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="applicabilita-degrado-prestazionale",required=true,nillable=false,defaultValue="false")
-  protected boolean applicabilitaDegradoPrestazionale = false;
+  protected volatile boolean applicabilitaDegradoPrestazionale = false;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String degradoAvgTimeModalitaControlloRawEnumValue;
@@ -647,7 +647,7 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="applicabilita-stato-allarme",required=true,nillable=false,defaultValue="false")
-  protected boolean applicabilitaStatoAllarme = false;
+  protected volatile boolean applicabilitaStatoAllarme = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="allarme-nome",required=false,nillable=false)
@@ -659,6 +659,6 @@ public class ConfigurazionePolicy extends org.openspcoop2.utils.beans.BaseBeanWi
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="allarme-not-stato",required=true,nillable=false,defaultValue="false")
-  protected boolean allarmeNotStato = false;
+  protected volatile boolean allarmeNotStato = false;
 
 }

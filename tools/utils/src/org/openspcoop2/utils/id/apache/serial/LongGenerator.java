@@ -54,7 +54,7 @@ public class LongGenerator extends AbstractLongIdentifierGenerator implements Se
     private static final long serialVersionUID = 20060122L;
 
     /** Should the counter wrap. */
-    private boolean wrapping;
+    private volatile boolean wrapping;
     /** The counter. */
     private long count = 0;
     

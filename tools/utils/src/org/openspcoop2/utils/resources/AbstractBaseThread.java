@@ -32,7 +32,7 @@ import org.openspcoop2.utils.Utilities;
 public abstract class AbstractBaseThread extends Thread {
 
     // VARIABILE PER STOP
-	private boolean stop = false;
+	private volatile boolean stop = false;
 	
 	public boolean isStop() {
 		return this.stop;
@@ -43,8 +43,8 @@ public abstract class AbstractBaseThread extends Thread {
 	}
 	
 	// VARIABILE PER CONTROLLARE OGNI QUANTO VIENE ESEGUITA LA BUSINESS LOGIC DEL TIMER
-	
-	private int timeout = 10; // ogni 10 secondi per default
+
+	private volatile int timeout = 10; // ogni 10 secondi per default
 	
 	public int getTimeout() {
 		return this.timeout;
@@ -55,8 +55,8 @@ public abstract class AbstractBaseThread extends Thread {
 	}
 	
 	// VARIABILE PER CONTROLLARE LO STATO DI VITA
-	
-	private boolean finished = false;
+
+	private volatile boolean finished = false;
 	
 	public void setFinished(boolean finished) {
 		this.finished = finished;

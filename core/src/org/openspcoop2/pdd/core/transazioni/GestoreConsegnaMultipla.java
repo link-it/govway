@@ -977,7 +977,7 @@ public class GestoreConsegnaMultipla {
 		transazioneApplicativoServer.setDettaglioEsito(esitiProperties.convertoToCode(name));
 	}
 
-	private static boolean debugStaticValue = true;
+	private static volatile boolean debugStaticValue = true;
 	public static boolean isDebug() {
 		return debugStaticValue;
 	}

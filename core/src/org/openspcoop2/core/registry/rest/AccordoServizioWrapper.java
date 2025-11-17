@@ -109,7 +109,7 @@ public class AccordoServizioWrapper implements java.io.Serializable, Cloneable{
 	}
 
 	/** Indicazione se il registro e' su DB */
-	private boolean registroServiziDB = false;
+	private volatile boolean registroServiziDB = false;
 	public boolean isRegistroServiziDB() {
 		return this.registroServiziDB;
 	}

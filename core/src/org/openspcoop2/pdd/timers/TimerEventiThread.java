@@ -77,23 +77,23 @@ public class TimerEventiThread extends BaseThread{
 	
 	/** ConnectionTimeout */
 	private int checkConnectionTimeoutEveryXTimes = 1;
-	private int offsetConnectionTimeoutEveryXTimes = 0;
+	private java.util.concurrent.atomic.AtomicInteger offsetConnectionTimeoutEveryXTimes = new java.util.concurrent.atomic.AtomicInteger(0);
 	private Date lastIntervalConnectionTimeout;
-	
+
 	/** RequestReadTimeout */
 	private int checkRequestReadTimeoutEveryXTimes = 1;
-	private int offsetRequestReadTimeoutEveryXTimes = 0;
+	private java.util.concurrent.atomic.AtomicInteger offsetRequestReadTimeoutEveryXTimes = new java.util.concurrent.atomic.AtomicInteger(0);
 	private Date lastIntervalRequestReadTimeout;
-	
+
 	private int checkReadTimeoutEveryXTimes = 1;
-	private int offsetReadTimeoutEveryXTimes = 0;
+	private java.util.concurrent.atomic.AtomicInteger offsetReadTimeoutEveryXTimes = new java.util.concurrent.atomic.AtomicInteger(0);
 	private Date lastIntervalReadTimeout;
-	
+
 	/** Immagine */
 	@SuppressWarnings("unused")
 	private boolean forceCheckPrimoAvvio = false;
-	
-	private static boolean inizializzazioneAttiva = false;
+
+	private static volatile boolean inizializzazioneAttiva = false;
 	public static boolean isInizializzazioneAttiva() {
 		return inizializzazioneAttiva;
 	}
@@ -209,7 +209,7 @@ public class TimerEventiThread extends BaseThread{
 							this.lastIntervalConnectionTimeout = this.notificatoreEventi.processConnectionTimeout(this.log, (this.getTimeout()*this.checkConnectionTimeoutEveryXTimes), this.lastIntervalConnectionTimeout, con, this.debug);
 						}
 						else {
-							this.notificatoreEventi.emitProcessConnectionTimeoutSkip(this.log, this.debug, this.offsetConnectionTimeoutEveryXTimes, this.checkConnectionTimeoutEveryXTimes);
+							this.notificatoreEventi.emitProcessConnectionTimeoutSkip(this.log, this.debug, this.offsetConnectionTimeoutEveryXTimes.get(), this.checkConnectionTimeoutEveryXTimes);
 						}
 					}catch(Exception e){
 						this.log.error("Errore durante la generazione degli eventi di connection timeout: "+e.getMessage(),e);
@@ -222,7 +222,7 @@ public class TimerEventiThread extends BaseThread{
 							this.lastIntervalRequestReadTimeout = this.notificatoreEventi.processRequestReadTimeout(this.log, (this.getTimeout()*this.checkRequestReadTimeoutEveryXTimes), this.lastIntervalRequestReadTimeout, con, this.debug);
 						}
 						else {
-							this.notificatoreEventi.emitProcessRequestReadTimeoutSkip(this.log, this.debug, this.offsetRequestReadTimeoutEveryXTimes, this.checkRequestReadTimeoutEveryXTimes);
+							this.notificatoreEventi.emitProcessRequestReadTimeoutSkip(this.log, this.debug, this.offsetRequestReadTimeoutEveryXTimes.get(), this.checkRequestReadTimeoutEveryXTimes);
 						}
 					}catch(Exception e){
 						this.log.error("Errore durante la generazione degli eventi di request read timeout: "+e.getMessage(),e);
@@ -235,7 +235,7 @@ public class TimerEventiThread extends BaseThread{
 							this.lastIntervalReadTimeout = this.notificatoreEventi.processReadTimeout(this.log, (this.getTimeout()*this.checkReadTimeoutEveryXTimes), this.lastIntervalReadTimeout, con, this.debug);
 						}
 						else {
-							this.notificatoreEventi.emitProcessReadTimeoutSkip(this.log, this.debug, this.offsetReadTimeoutEveryXTimes, this.checkReadTimeoutEveryXTimes);
+							this.notificatoreEventi.emitProcessReadTimeoutSkip(this.log, this.debug, this.offsetReadTimeoutEveryXTimes.get(), this.checkReadTimeoutEveryXTimes);
 						}
 					}catch(Exception e){
 						this.log.error("Errore durante la generazione degli eventi di request read timeout: "+e.getMessage(),e);
@@ -269,41 +269,41 @@ public class TimerEventiThread extends BaseThread{
 	}
 			
 	private boolean isAnalyzeConnectionTimeout() {
-		this.offsetConnectionTimeoutEveryXTimes++;
+		int offset = this.offsetConnectionTimeoutEveryXTimes.incrementAndGet();
 		boolean esito = false;
-		if(this.offsetConnectionTimeoutEveryXTimes==this.checkConnectionTimeoutEveryXTimes) {
-			/**System.out.println("CONNECTION TIMEOUT CHECK '"+this.offsetConnectionTimeoutEveryXTimes+"'=='"+this.checkConnectionTimeoutEveryXTimes+"' TRUE");*/
+		if(offset==this.checkConnectionTimeoutEveryXTimes) {
+			/**System.out.println("CONNECTION TIMEOUT CHECK '"+offset+"'=='"+this.checkConnectionTimeoutEveryXTimes+"' TRUE");*/
 			esito = true;
-			this.offsetConnectionTimeoutEveryXTimes = 0;
+			this.offsetConnectionTimeoutEveryXTimes.set(0);
 		}
 		/**else {
-			System.out.println("CONNECTION TIMEOUT CHECK '"+this.offsetConnectionTimeoutEveryXTimes+"'<>'"+this.checkConnectionTimeoutEveryXTimes+"' FALSE");
+			System.out.println("CONNECTION TIMEOUT CHECK '"+offset+"'<>'"+this.checkConnectionTimeoutEveryXTimes+"' FALSE");
 		}*/
 		return esito;
 	}
 	private boolean isAnalyzeRequestReadTimeout() {
-		this.offsetRequestReadTimeoutEveryXTimes++;
+		int offset = this.offsetRequestReadTimeoutEveryXTimes.incrementAndGet();
 		boolean esito = false;
-		if(this.offsetRequestReadTimeoutEveryXTimes==this.checkRequestReadTimeoutEveryXTimes) {
-			/**System.out.println("REQUEST READ TIMEOUT CHECK '"+this.offsetRequestReadTimeoutEveryXTimes+"'=='"+this.checkRequestReadTimeoutEveryXTimes+"' TRUE");*/
+		if(offset==this.checkRequestReadTimeoutEveryXTimes) {
+			/**System.out.println("REQUEST READ TIMEOUT CHECK '"+offset+"'=='"+this.checkRequestReadTimeoutEveryXTimes+"' TRUE");*/
 			esito = true;
-			this.offsetRequestReadTimeoutEveryXTimes = 0;
+			this.offsetRequestReadTimeoutEveryXTimes.set(0);
 		}
 		/**else {
-			System.out.println("REQUEST READ TIMEOUT CHECK '"+this.offsetRequestReadTimeoutEveryXTimes+"'<>'"+this.checkRequestReadTimeoutEveryXTimes+"' FALSE");
+			System.out.println("REQUEST READ TIMEOUT CHECK '"+offset+"'<>'"+this.checkRequestReadTimeoutEveryXTimes+"' FALSE");
 		}*/
 		return esito;
 	}
 	private boolean isAnalyzeReadTimeout() {
-		this.offsetReadTimeoutEveryXTimes++;
+		int offset = this.offsetReadTimeoutEveryXTimes.incrementAndGet();
 		boolean esito = false;
-		if(this.offsetReadTimeoutEveryXTimes==this.checkReadTimeoutEveryXTimes) {
-			/**System.out.println("READ TIMEOUT CHECK '"+this.offsetReadTimeoutEveryXTimes+"'=='"+this.checkReadTimeoutEveryXTimes+"' TRUE");*/
+		if(offset==this.checkReadTimeoutEveryXTimes) {
+			/**System.out.println("READ TIMEOUT CHECK '"+offset+"'=='"+this.checkReadTimeoutEveryXTimes+"' TRUE");*/
 			esito = true;
-			this.offsetReadTimeoutEveryXTimes = 0;
+			this.offsetReadTimeoutEveryXTimes.set(0);
 		}
 		else {
-			/**System.out.println("READ TIMEOUT CHECK '"+this.offsetReadTimeoutEveryXTimes+"'<>'"+this.checkReadTimeoutEveryXTimes+"' FALSE");*/
+			/**System.out.println("READ TIMEOUT CHECK '"+offset+"'<>'"+this.checkReadTimeoutEveryXTimes+"' FALSE");*/
 		}
 		return esito;
 	}

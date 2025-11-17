@@ -278,8 +278,8 @@ public class JDBCServiceManagerBase {
 	// Metodi che non devono essere utilizzati dagli sviluppatori jdbc che implementano i metodi veri e propri
 	
 	private static Logger checkLogger = null;
-	private static boolean checkIsClosed = true;
-	private static boolean checkAutocommit = true;
+	private static volatile boolean checkIsClosed = true;
+	private static volatile boolean checkAutocommit = true;
 	public static boolean isCheckIsClosed() {
 		return checkIsClosed;
 	}

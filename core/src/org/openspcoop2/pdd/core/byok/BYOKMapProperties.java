@@ -104,11 +104,11 @@ public class BYOKMapProperties extends MapProperties {
 	private Map<String, Object> dynamicMap = null;
 	private boolean checkJmxPrefixOperazioneNonRiuscita = false;
 	
-	private boolean existsUnwrapPropertiesAfterGovWayStartup = false;
+	private volatile boolean existsUnwrapPropertiesAfterGovWayStartup = false;
 	public boolean isExistsUnwrapPropertiesAfterGovWayStartup() {
 		return this.existsUnwrapPropertiesAfterGovWayStartup;
 	}
-	private boolean isGovWayStarted = false; // usato per caricare variabili che devono essere trattate solo sui nodi run
+	private volatile boolean isGovWayStarted = false;
 	public boolean isGovWayStarted() {
 		return this.isGovWayStarted;
 	}

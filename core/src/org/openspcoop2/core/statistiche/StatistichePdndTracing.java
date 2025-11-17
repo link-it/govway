@@ -289,7 +289,7 @@ public class StatistichePdndTracing extends org.openspcoop2.utils.beans.BaseBean
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="force-publish",required=true,nillable=false,defaultValue="false")
-  protected boolean forcePublish = false;
+  protected volatile boolean forcePublish = false;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String statoRawEnumValue;
@@ -307,6 +307,6 @@ public class StatistichePdndTracing extends org.openspcoop2.utils.beans.BaseBean
 
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="history",required=true,nillable=false)
-  protected int history;
+  protected volatile int history;
 
 }

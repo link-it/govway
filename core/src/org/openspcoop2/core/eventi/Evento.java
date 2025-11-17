@@ -173,7 +173,7 @@ public class Evento extends org.openspcoop2.utils.beans.BaseBeanWithId implement
 
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="severita",required=true,nillable=false)
-  protected int severita;
+  protected volatile int severita;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
