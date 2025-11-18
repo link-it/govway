@@ -625,6 +625,25 @@ public final class ConfigurazioneSistemaAdd extends Action {
 								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_PREFIX+
 								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_STATISTICHE_MENSILI;
 					}
+					
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_GENERAZIONE.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoGenerazione(alias);
+						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_GENERAZIONE);
+						tipo =ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_TIMER_PREFIX+"'"+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND_TRACCIAMENTO+
+								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_GENERAZIONE+"'";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX+
+								ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND_TRACCIAMENTO+
+								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_GENERAZIONE;
+					}
+					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_PUBBLICAZIONE.equals(nomeParametroPostBack)){
+						nomeAttributo = confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerPdndTracciamentoPubblicazione(alias);
+						nuovoStato = confHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_PUBBLICAZIONE);
+						tipo =ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_STATO_TIMER_PREFIX+"'"+ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND_TRACCIAMENTO+
+								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_PUBBLICAZIONE+"'";
+						labelDialog = ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_TIMER_PREFIX+
+								ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_TIMERS_PDND_TRACCIAMENTO+
+								ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_PDND_TRACCIAMENTO_PUBBLICAZIONE;
+					}
 	
 					else if(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_GESTORE_MESSAGGI_PULIZIA_MESSAGGI_ELIMINATI.equals(nomeParametroPostBack)){
 						nomeAttributo = confCore.getJmxPdDConfigurazioneSistemaNomeAttributoTimerGestoreMessaggiPuliziaMessaggiEliminati(alias);
