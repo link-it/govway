@@ -22,6 +22,7 @@ package org.openspcoop2.protocol.utils;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.constants.CostantiDB;
@@ -103,7 +104,10 @@ public class ModIKeystoreUtils {
 			
 			if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) || 
 				CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
-				this.securityMessageKeystoreKeyAlgorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM);
+				this.securityMessageKeystoreKeyAlgorithm = ProtocolPropertiesUtils.getOptionalStringValuePropertyConfig(sa.getProtocolPropertyList(), CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM);
+				if(this.securityMessageKeystoreKeyAlgorithm==null || StringUtils.isEmpty(this.securityMessageKeystoreKeyAlgorithm)) {
+					this.securityMessageKeystoreKeyAlgorithm = CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE;
+				}
 			}
 		}
 		
@@ -228,6 +232,9 @@ public class ModIKeystoreUtils {
 					if(CostantiDB.KEYSTORE_TYPE_KEY_PAIR.equalsIgnoreCase(this.securityMessageKeystoreType) || 
 						CostantiDB.KEYSTORE_TYPE_PUBLIC_KEY.equalsIgnoreCase(this.securityMessageKeystoreType)) {
 						this.securityMessageKeystoreKeyAlgorithm = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM);
+						if(this.securityMessageKeystoreKeyAlgorithm==null || StringUtils.isEmpty(this.securityMessageKeystoreKeyAlgorithm)) {
+							this.securityMessageKeystoreKeyAlgorithm = CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE;
+						}
 					}
 				}
 				
