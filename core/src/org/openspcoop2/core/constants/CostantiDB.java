@@ -22,6 +22,7 @@
 
 package org.openspcoop2.core.constants;
 
+import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.certificate.KeystoreType;
 
 /**
@@ -1015,6 +1016,7 @@ public final class CostantiDB {
     public static final String MODIPA_KEYSTORE_PATH_PUBLIC_KEY = "modipaKeystorePathPublicKey";
     
     public static final String MODIPA_KEYSTORE_KEY_ALGORITHM = "modipaKeystoreKeyPairAlgo";
+    public static final String MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE = KeyUtils.ALGO_RSA;
     
     public static final String MODIPA_KEYSTORE_PASSWORD = "modipaKeystorePassword";
     

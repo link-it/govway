@@ -28,7 +28,6 @@ import java.util.List;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.pdd.core.dynamic.DynamicHelperCostanti;
 import org.openspcoop2.protocol.engine.constants.Costanti;
-import org.openspcoop2.utils.certificate.KeyUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
@@ -143,7 +142,7 @@ public class ModIConsoleCostanti {
     
 	public static final String MODIPA_KEYSTORE_KEY_ALGORITHM_LABEL = CostantiLabel.MODIPA_STORE_ALGORITHM_ID_LABEL;
 	public static final String MODIPA_KEYSTORE_KEY_ALGORITHM_ID = ModICostanti.MODIPA_KEYSTORE_ALGORITHM;
-	public static final String MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE = KeyUtils.ALGO_RSA;
+	public static final String MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE = ModICostanti.MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE;
 	
     public static final String MODIPA_KEYSTORE_PASSWORD_LABEL = "Password";
 	public static final String MODIPA_KEYSTORE_PASSWORD_ID = ModICostanti.MODIPA_KEYSTORE_PASSWORD;

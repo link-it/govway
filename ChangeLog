@@ -1,3 +1,12 @@
+2025-11-18  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione]
+	Risolto Bug #1685
+	Effettuando la registrazione di un applicativo ModI con coppia di chiavi nel keystore e utilizzandolo per la fruizione di una API, 
+	la cui token policy è configurata per utilizzare le chiavi dell'applicativo, si ottiene l'errore:
+	"Il tipo di keystore indicato nella token policy 'api-pdnd-attestazione' non è utilizzabile: Property [modipaKeystoreKeyPairAlgo] not found"
+	L'errore non si verifica se la configurazione viene effettuata tramite console.
+
 2025-11-17  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

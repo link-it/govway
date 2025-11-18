@@ -166,6 +166,7 @@ public class ModICostanti {
     public static final String MODIPA_KEYSTORE_PATH_PUBLIC_KEY = CostantiDB.MODIPA_KEYSTORE_PATH_PUBLIC_KEY;
     
     public static final String MODIPA_KEYSTORE_ALGORITHM = CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM;
+    public static final String MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE = CostantiDB.MODIPA_KEYSTORE_KEY_ALGORITHM_DEFAULT_VALUE;
     
     public static final String MODIPA_KEYSTORE_PASSWORD = CostantiDB.MODIPA_KEYSTORE_PASSWORD;
     

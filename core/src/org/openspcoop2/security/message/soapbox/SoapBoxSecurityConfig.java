@@ -77,7 +77,7 @@ import org.openspcoop2.utils.date.DateManager;
 public class SoapBoxSecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
 
     
-	private boolean symmetricSharedKey = false;
+	private volatile boolean symmetricSharedKey = false;
 	public boolean isSymmetricSharedKey() {
 		return this.symmetricSharedKey;
 	}
