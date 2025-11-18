@@ -1,5 +1,11 @@
 2025-11-18  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Risolto Bug #1686
+	Corretta un’anomalia che impediva l’abilitazione/disabilitazione dei timer di generazione e pubblicazione del tracciamento PDND dalla console.
+	
+2025-11-18  Andrea Poli <apoli@link.it>
+
 	* [ApiRsConfigurazione]
 	Risolto Bug #1685
 	Effettuando la registrazione di un applicativo ModI con coppia di chiavi nel keystore e utilizzandolo per la fruizione di una API, 
