@@ -54,6 +54,8 @@ public class ValidazioneJWTTest extends ConfigLoader {
 	public static final String validazioneHeader = "TestValidazioneToken-ValidazioneJWT-Header";
 		
 	public static final String validazioneHeaderUseX5C = "TestValidazioneToken-ValidazioneJWT-useX5C";
+	
+	public static final String validazioneCheckIat = "TestValidazioneToken-ValidazioneJWT-checkIat";
 
 	private static final String EXAMPLE_CLIENT_1 = "ExampleClient1";
 	private static final String EXAMPLE_CLIENT_SCADUTO = "ExampleClientScaduto";
@@ -183,6 +185,59 @@ public class ValidazioneJWTTest extends ConfigLoader {
 				"Token expired; iat time '%' too old",
 				Utilities.credenzialiMittente, mapExpectedTokenInfo);
 	}
+	
+	
+	// Verifica proprietà 'tokenValidation.iat.maxAgeMinutes'
+	@Test
+	public void iatInvalidCheckDisabled() throws Exception {
+		iatInvalidCheckSuccess("not");
+	}
+	@Test
+	public void iatInvalidCheckEnabledByPropertyOk() throws Exception {
+		iatInvalidCheckSuccess("success");
+	}
+	private void iatInvalidCheckSuccess(String action) throws Exception {
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put("test-username", Utilities.username);
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_dates(true, null, 
+				false, null,
+				false, 
+				mapExpectedTokenInfo));
+		
+		Utilities._test(logCore, TipoServizio.EROGAZIONE, validazioneCheckIat, action, headers,  null,
+				null,
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
+	}
+	@Test
+	public void iatInvalidChecEnabledByPropertyKo() throws Exception {
+		iatInvalidCheckSuccessFailure("requiredClaims");
+	}
+	@Test
+	public void iatInvalidChecEnaabledByDefault() throws Exception {
+		iatInvalidCheckSuccessFailure("ignoreCase");
+	}
+	private void iatInvalidCheckSuccessFailure(String action) throws Exception {
+		
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheToken(logCore);
+		org.openspcoop2.core.protocolli.trasparente.testsuite.Utils.resetCacheAutorizzazione(logCore);
+		
+		List<String> mapExpectedTokenInfo = new ArrayList<>();
+		Map<String, String> headers = new HashMap<>();
+		headers.put(HttpConstants.AUTHORIZATION, HttpConstants.AUTHORIZATION_PREFIX_BEARER+buildJWT_dates(true, null, 
+				false, null,
+				false, 
+				mapExpectedTokenInfo));
+		headers.put("test-username", Utilities.username);
+		
+		Utilities._test(logCore, TipoServizio.EROGAZIONE, validazioneCheckIat, action, headers,  null,
+				"Token expired; iat time '%' too old",
+				Utilities.credenzialiMittente, mapExpectedTokenInfo);
+	}
+	
 	
 	@Test
 	public void iatInTheFuture() throws Exception {

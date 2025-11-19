@@ -171,6 +171,8 @@ public class CostantiProprieta {
 	
 	public static final String TOKEN_VALIDATION_VALIDITY_CHECK = "tokenValidation.validityCheck";
 	
+	public static final String TOKEN_VALIDATION_IAT_MAX_AGE_MINUTES = "tokenValidation.iat.maxAgeMinutes";
+	
 	public static CertificateValidityCheck getTokenValidationCertificateValidityCheck(List<Proprieta> proprieta, CertificateValidityCheck defaultValue) {
 		String v = readValue(proprieta, TOKEN_VALIDATION_VALIDITY_CHECK);
 		if(v!=null && !StringUtils.isEmpty(v)){
@@ -179,6 +181,16 @@ public class CostantiProprieta {
 			if(c!=null) {
 				return c;
 			}
+		}
+		return defaultValue;
+	}
+	
+	public static Long getTokenValidationIatMaxAgeMilliseconds(List<Proprieta> proprieta, Long defaultValue) {
+		String v = readValue(proprieta, TOKEN_VALIDATION_IAT_MAX_AGE_MINUTES);
+		if(v!=null && !StringUtils.isEmpty(v)){
+			v=v.trim();
+			Long c = Long.valueOf(v);
+			return c.longValue()>0 ? (c.longValue()* 60l * 1000l) : null; // consento di azzerare il controllo
 		}
 		return defaultValue;
 	}
@@ -213,6 +225,8 @@ public class CostantiProprieta {
 	
 	public static final String ATTRIBUTE_AUTHORITY_VALIDITY_CHECK = "attributeAuthority.validityCheck";
 	
+	public static final String ATTRIBUTE_AUTHORITY_IAT_MAX_AGE_MINUTES = "attributeAuthority.iat.maxAgeMinutes";
+	
 	
 	public static CertificateValidityCheck getAttributeAuthorityCertificateValidityCheck(List<Proprieta> proprieta, CertificateValidityCheck defaultValue) {
 		String v = readValue(proprieta, ATTRIBUTE_AUTHORITY_VALIDITY_CHECK);
@@ -226,6 +240,15 @@ public class CostantiProprieta {
 		return defaultValue;
 	}
 	
+	public static Long getAttributeAuthorityIatMaxAgeMilliseconds(List<Proprieta> proprieta, Long defaultValue) {
+		String v = readValue(proprieta, ATTRIBUTE_AUTHORITY_IAT_MAX_AGE_MINUTES);
+		if(v!=null && !StringUtils.isEmpty(v)){
+			v=v.trim();
+			Long c = Long.valueOf(v);
+			return c.longValue()>0 ? (c.longValue()* 60l * 1000l) : null; // consento di azzerare il controllo
+		}
+		return defaultValue;
+	}
 	
 	
 	

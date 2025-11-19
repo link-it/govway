@@ -23,6 +23,8 @@ Di seguito vengono descritte le opzioni richieste per ogni tipo.
     - false: il controllo viene disabilitato; questo consente di accettare token firmati con certificati scaduti;
     - ifNotInTruststore: permette di eseguire la verifica della validità del certificato di firma solo se il certificato non è presente nel truststore utilizzato per la validazione (ad esempio, quando nel truststore è presente solo la CA). Con questa impostazione, un certificato scaduto verrà accettato se è presente nel truststore; in caso contrario, la transazione verrà rifiutata.
 
+  È inoltre possibile personalizzare il controllo sull'età massima del token ricevuto dall'Attribute Authority rispetto al claim 'iat' (issued at), che identifica il momento in cui il token è stato emesso. Registrando la :ref:`configProprieta` '*attributeAuthority.iat.maxAgeMinutes*' sull'erogazione o sulla fruizione, è possibile specificare il tempo massimo in minuti oltre il quale un token viene considerato troppo vecchio e quindi rifiutato. Il valore indicato rappresenta i minuti di validità a partire dalla data di emissione del token (iat). Se non configurata, viene utilizzata la configurazione globale presente nel file 'govway.properties'. Impostando il valore a 0 è possibile disabilitare completamente questo controllo.
+
 -  *JSON*: la risposta viene processata come messaggio JSON. Se gli attributi sono contenuti in uno o più elementi devono esserne elencati i nomi separandoli tramite virgola. Invece lasciando vuoto il campo '*Attributi*' tutti gli elementi presenti saranno interpretati come attributi.
 
    .. figure:: ../../_figure_console/AA-risposta-json.png

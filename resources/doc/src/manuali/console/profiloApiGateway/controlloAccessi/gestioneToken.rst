@@ -44,6 +44,8 @@ Durante il processo di validazione, se il token viene firmato tramite un certifi
 - false: il controllo viene disabilitato; questo consente di accettare token firmati con certificati scaduti;
 - ifNotInTruststore: permette di eseguire la verifica della validità del certificato di firma solo se il certificato non è presente nel truststore utilizzato per la validazione (ad esempio, quando nel truststore è presente solo la CA). Con questa impostazione, un certificato scaduto verrà accettato se è presente nel truststore; in caso contrario, la transazione verrà rifiutata.
 
+È inoltre possibile personalizzare il controllo sull'età massima del token ricevuto rispetto al claim 'iat' (issued at), che identifica il momento in cui il token è stato emesso. Registrando la :ref:`configProprieta` '*tokenValidation.iat.maxAgeMinutes*' sull'erogazione o sulla fruizione, è possibile specificare il tempo massimo in minuti oltre il quale un token viene considerato troppo vecchio e quindi rifiutato. Il valore indicato rappresenta i minuti di validità a partire dalla data di emissione del token (iat). Se non configurata, viene utilizzata la configurazione globale presente nel file 'govway.properties'. Impostando il valore a 0 è possibile disabilitare completamente questo controllo.
+
 **- Introspection** 
 
 Consente di abilitare/disabilitare l'operazione di Token Introspection, al fine di validare il token ricevuto ed ottenere le metainformazioni associate (ad esempio scope e riferimento al possessore del token). 

@@ -2211,7 +2211,7 @@ public class GestoreToken {
 				// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
 				GestoreTokenAttributeAuthorityUtilities.validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
 						policyAttributeAuthority.isSaveErrorInCache(),
-						dynamicParameters);
+						dynamicParameters, pa, pd);
 			}
 			
 		}
@@ -2317,7 +2317,7 @@ public class GestoreToken {
 							// ricontrollo tutte le date (l'ho appena preso, dovrebbero essere buone) 
 							GestoreTokenAttributeAuthorityUtilities.validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
 									policyAttributeAuthority.isSaveErrorInCache(),
-									dynamicParameters);
+									dynamicParameters, pa, pd);
 						}
 					}
 					else {
@@ -2328,7 +2328,7 @@ public class GestoreToken {
 							// controllo la data qua
 							GestoreTokenAttributeAuthorityUtilities.validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
 									policyAttributeAuthority.isSaveErrorInCache(),
-									dynamicParameters);
+									dynamicParameters, pa, pd);
 							if(!esitoRecuperoAttributi.isValido() && !esitoRecuperoAttributi.isDateValide()) {
 								// DEVO riavviare la negoziazione poichè è scaduto
 								GestoreToken.cacheAttributeAuthority.remove(keyCache);
@@ -2351,7 +2351,7 @@ public class GestoreToken {
 					// controllo la data qua
 					GestoreTokenAttributeAuthorityUtilities.validazioneInformazioniAttributiRecuperati(esitoRecuperoAttributi, policyAttributeAuthority, 
 							policyAttributeAuthority.isSaveErrorInCache(),
-							dynamicParameters);
+							dynamicParameters, pa, pd);
 					if(!esitoRecuperoAttributi.isValido() && !esitoRecuperoAttributi.isDateValide()) {
 						org.openspcoop2.utils.Semaphore lockAttributeAuthority = getLockAttributeAuthority(aaName);
 						SemaphoreLock lock = lockAttributeAuthority.acquire("removeAttributes", idTransazione);
