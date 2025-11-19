@@ -1,3 +1,9 @@
+2025-11-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1687
+	Nella validazione di un token JWT tramite token policy, è ora possibile sovrascrivere l'intervallo temporale di validità del claim 'iat' definito a livello globale.
+
 2025-11-18  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

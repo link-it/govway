@@ -51,8 +51,6 @@ import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.mvc.properties.provider.ProviderException;
-import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -646,7 +644,8 @@ public class GestoreTokenAttributeAuthorityUtilities {
 	}
 	
 	static void validazioneInformazioniAttributiRecuperati(EsitoRecuperoAttributi esitoRecuperoAttributi, PolicyAttributeAuthority policyAttributeAuthority, boolean saveErrorInCache,
-			AttributeAuthorityDynamicParameters dynamicParameters) throws TokenException, ProviderException, ProviderValidationException {
+			AttributeAuthorityDynamicParameters dynamicParameters,
+			PortaApplicativa pa, PortaDelegata pd) throws TokenException {
 		
 		Date now = DateManager.getDate();
 		
@@ -689,6 +688,15 @@ public class GestoreTokenAttributeAuthorityUtilities {
 			Long old = null;
 			try {
 				old = OpenSPCoop2Properties.getInstance().getGestioneTokenIatTimeCheckMilliseconds();
+				
+				List<Proprieta> proprieta = null;
+	    		if(pa!=null) {
+	    			proprieta = pa.getProprietaList();
+	    		}
+	    		else if(pd!=null) {
+	    			proprieta = pd.getProprietaList();
+	    		}
+	    		old = CostantiProprieta.getAttributeAuthorityIatMaxAgeMilliseconds(proprieta, old);
 			}catch(Exception e) {
 				throw new TokenException(e.getMessage(),e);
 			}

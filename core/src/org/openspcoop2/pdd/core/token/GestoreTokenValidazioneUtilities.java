@@ -40,7 +40,6 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.CostantiLabel;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -1699,34 +1698,51 @@ public class GestoreTokenValidazioneUtilities {
 		return policyGestioneTokenPDND.contains(tokenPolicy);
 	}
 	
-	private static List<Proprieta> readProprieta(AbstractDatiInvocazione datiInvocazione) throws DriverConfigurazioneException {
-		List<Proprieta> l = null;
-		if(datiInvocazione instanceof DatiInvocazionePortaDelegata) {
-			DatiInvocazionePortaDelegata d = (DatiInvocazionePortaDelegata) datiInvocazione;
-			PortaDelegata pd = d.getPd();
-			if(pd==null && d.getIdPD()!=null) {
-				ConfigurazionePdDManager configManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
-				pd = configManager.getPortaDelegataSafeMethod(d.getIdPD(), datiInvocazione.getRequestInfo());
+	private static List<Proprieta> readProprieta(AbstractDatiInvocazione datiInvocazione) throws CoreException {
+		try {
+			List<Proprieta> l = new ArrayList<>();
+			if(datiInvocazione instanceof DatiInvocazionePortaDelegata) {
+				DatiInvocazionePortaDelegata d = (DatiInvocazionePortaDelegata) datiInvocazione;
+				PortaDelegata pd = d.getPd();
+				if(pd==null && d.getIdPD()!=null) {
+					ConfigurazionePdDManager configManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+					pd = configManager.getPortaDelegataSafeMethod(d.getIdPD(), datiInvocazione.getRequestInfo());
+				}
+				if(pd!=null) {
+					return pd.getProprieta();
+				}
 			}
-			if(pd!=null) {
-				return pd.getProprieta();
+			else {
+				DatiInvocazionePortaApplicativa d = (DatiInvocazionePortaApplicativa) datiInvocazione;
+				PortaApplicativa pa = d.getPa();
+				if(pa==null && d.getIdPA()!=null) {
+					ConfigurazionePdDManager configManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
+					pa = configManager.getPortaApplicativaSafeMethod(d.getIdPA(), datiInvocazione.getRequestInfo());
+				}
+				if(pa!=null) {
+					return pa.getProprieta();
+				}
 			}
+			return l;
+		}catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
 		}
-		else {
-			DatiInvocazionePortaApplicativa d = (DatiInvocazionePortaApplicativa) datiInvocazione;
-			PortaApplicativa pa = d.getPa();
-			if(pa==null && d.getIdPA()!=null) {
-				ConfigurazionePdDManager configManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState());
-				pa = configManager.getPortaApplicativaSafeMethod(d.getIdPA(), datiInvocazione.getRequestInfo());
-			}
-			if(pa!=null) {
-				return pa.getProprieta();
-			}
-		}
-		return l;
 	}
 	
-	static boolean isIatRequired(Logger log, PolicyGestioneToken policyGestioneToken, AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocollo, OpenSPCoop2Properties op2Properties) throws CoreException {
+	static Long getIatTimeCheckMilliseconds(Logger log,  OpenSPCoop2Properties op2Properties,
+			List<Proprieta> props) throws CoreException {
+		
+		Long defaultValue = op2Properties.getGestioneTokenIatTimeCheckMilliseconds();
+				
+		try {
+			return CostantiProprieta.getTokenValidationIatMaxAgeMilliseconds(props, defaultValue);
+		}catch(Exception e) {
+			throw new CoreException(e.getMessage(),e);
+		}
+	}
+	
+	static boolean isIatRequired(Logger log, PolicyGestioneToken policyGestioneToken, AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocollo, OpenSPCoop2Properties op2Properties,
+			List<Proprieta> props) throws CoreException {
 		
 		String p = protocollo!=null ? protocollo.getProtocol() : "";
 		
@@ -1746,14 +1762,14 @@ public class GestoreTokenValidazioneUtilities {
 		}
 		
 		try {
-			List<Proprieta> props = readProprieta(datiInvocazione);
 			return CostantiProprieta.isTokenValidationClaimsIatRequired(props, required);
 		}catch(Exception e) {
 			throw new CoreException(e.getMessage(),e);
 		}
 	}
 	
-	static boolean isExpRequired(Logger log, PolicyGestioneToken policyGestioneToken, AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocollo, OpenSPCoop2Properties op2Properties) throws CoreException {
+	static boolean isExpRequired(Logger log, PolicyGestioneToken policyGestioneToken, AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocollo, OpenSPCoop2Properties op2Properties,
+			List<Proprieta> props) throws CoreException {
 		
 		String p = protocollo!=null ? protocollo.getProtocol() : "";
 		
@@ -1773,14 +1789,14 @@ public class GestoreTokenValidazioneUtilities {
 		}
 		
 		try {
-			List<Proprieta> props = readProprieta(datiInvocazione);
 			return CostantiProprieta.isTokenValidationClaimsExpRequired(props, required);
 		}catch(Exception e) {
 			throw new CoreException(e.getMessage(),e);
 		}
 	}
 	
-	static boolean isNbfRequired(Logger log, PolicyGestioneToken policyGestioneToken, AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocollo, OpenSPCoop2Properties op2Properties) throws CoreException {
+	static boolean isNbfRequired(Logger log, PolicyGestioneToken policyGestioneToken, AbstractDatiInvocazione datiInvocazione, IProtocolFactory<?> protocollo, OpenSPCoop2Properties op2Properties,
+			List<Proprieta> props) throws CoreException {
 		
 		String p = protocollo!=null ? protocollo.getProtocol() : "";
 		
@@ -1800,7 +1816,6 @@ public class GestoreTokenValidazioneUtilities {
 		}
 		
 		try {
-			List<Proprieta> props = readProprieta(datiInvocazione);
 			return CostantiProprieta.isTokenValidationClaimsNbfRequired(props, required);
 		}catch(Exception e) {
 			throw new CoreException(e.getMessage(),e);
@@ -1819,11 +1834,15 @@ public class GestoreTokenValidazioneUtilities {
 			
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 		
+		List<Proprieta> props = null;
+		
 		/** === EXP === ***/
 		
 		if(esitoGestioneToken.isValido() && checkRequired) {
 			
-			boolean check = isExpRequired(log, policyGestioneToken, datiInvocazione, protocolFactory, op2Properties);
+			props = readProprieta(datiInvocazione);
+			
+			boolean check = isExpRequired(log, policyGestioneToken, datiInvocazione, protocolFactory, op2Properties, props);
 			if(check && esitoGestioneToken.getInformazioniToken().getExp()==null) {
 				esitoGestioneToken.setTokenValidazioneFallita();
 				esitoGestioneToken.setDateValide(false);
@@ -1881,7 +1900,11 @@ public class GestoreTokenValidazioneUtilities {
 		
 		if(esitoGestioneToken.isValido() && checkRequired) {
 			
-			boolean check = isNbfRequired(log, policyGestioneToken, datiInvocazione, protocolFactory, op2Properties);
+			if(props==null) {
+				props = readProprieta(datiInvocazione);
+			}
+			
+			boolean check = isNbfRequired(log, policyGestioneToken, datiInvocazione, protocolFactory, op2Properties, props);
 			if(check && esitoGestioneToken.getInformazioniToken().getNbf()==null) {
 				esitoGestioneToken.setTokenValidazioneFallita();
 				esitoGestioneToken.setDateValide(false);
@@ -1937,7 +1960,11 @@ public class GestoreTokenValidazioneUtilities {
 		
 		if(esitoGestioneToken.isValido() && checkRequired) {
 			
-			boolean check = isIatRequired(log, policyGestioneToken, datiInvocazione, protocolFactory, op2Properties);
+			if(props==null) {
+				props = readProprieta(datiInvocazione);
+			}
+			
+			boolean check = isIatRequired(log, policyGestioneToken, datiInvocazione, protocolFactory, op2Properties, props);
 			if(check && esitoGestioneToken.getInformazioniToken().getIat()==null) {
 				esitoGestioneToken.setTokenValidazioneFallita();
 				esitoGestioneToken.setDateValide(false);
@@ -1957,14 +1984,19 @@ public class GestoreTokenValidazioneUtilities {
 		}
 		
 		if(esitoGestioneToken.isValido() &&
-			esitoGestioneToken.getInformazioniToken().getIat()!=null) {				
+			esitoGestioneToken.getInformazioniToken().getIat()!=null) {		
+			
+			if(props==null) {
+				props = readProprieta(datiInvocazione);
+			}
+			
 			/*
 			 *   The "iat" (issued at) claim identifies the time at which the JWT was
 			 *   issued.  This claim can be used to determine the age of the JWT.
 			 *   The iat Claim can be used to reject tokens that were issued too far away from the current time, 
 			 *   limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is Client specific. 
 			 **/
-			Long old = op2Properties.getGestioneTokenIatTimeCheckMilliseconds();
+			Long old = getIatTimeCheckMilliseconds(log,  op2Properties, props);
 			if(old!=null) {
 				Date oldMax = new Date((DateManager.getTimeMillis() - old.longValue()));
 				if(esitoGestioneToken.getInformazioniToken().getIat().before(oldMax)) {
