@@ -25,11 +25,14 @@ import java.util.concurrent.CompletionStage;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsRuntimeException;
 import org.slf4j.Logger;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.MemberLeftException;
 import com.hazelcast.cp.IAtomicLong;
 import com.hazelcast.spi.exception.DistributedObjectDestroyedException;
+import com.hazelcast.spi.exception.TargetNotMemberException;
 
 /**
  * DatoAtomicLong
@@ -114,7 +117,7 @@ public class DatoAtomicLong {
 	}
 	private AtomicLongResponse processFailOver(String prefix, AtomicLongOperation op, long arg1, long arg2) {
 		boolean success = false;
-		DistributedObjectDestroyedException eFinal = null;
+		RuntimeException eFinal = null;
 		AtomicLongResponse v = null;
 		for (int i = 0; i < this.failover; i++) {
 			try {
@@ -133,6 +136,24 @@ public class DatoAtomicLong {
 				else {
 					this.logControlloTraffico.error(prefix+"il tenativo i="+i+" di ricreare il contatore è fallito: "+e.getMessage(),e);
 				}
+			} catch (RuntimeException e) {
+				// Controlla se è causata da MemberLeftException o TargetNotMemberException
+				Throwable cause = e.getCause();
+				String exceptionName = e.getClass().getSimpleName();
+				String causeName = cause != null ? cause.getClass().getSimpleName() : "null";
+
+				if (isMemberRelatedError(e, cause, exceptionName, causeName)) {
+					eFinal = e;
+					if(i==0) {
+						this.logControlloTraffico.error(prefix+"errore relativo a membro cluster ("+exceptionName+"/"+causeName+") durante operazione (verrà riprovata l'operazione): "+e.getMessage(),e);
+					}
+					else {
+						this.logControlloTraffico.error(prefix+"il tenativo i="+i+" è fallito per errore membro cluster ("+exceptionName+"/"+causeName+"): "+e.getMessage(),e);
+					}
+				} else {
+					// Se non è un errore relativo ai membri, rilancia immediatamente
+					throw e;
+				}
 			}
 		}
 		if(!success) {
@@ -140,14 +161,39 @@ public class DatoAtomicLong {
 		}
 		return v;
 	}
-	private void throwDistributedObjectDestroyedException(String prefix, DistributedObjectDestroyedException eFinal) {
-		String msg = prefix+"tutti i tentativi di ricreare il contatore sono falliti";
+
+	private boolean isMemberRelatedError(Throwable e, Throwable cause, String exceptionName, String causeName) {
+		// Controlla prima con instanceof per verifica diretta del tipo
+		if (e instanceof MemberLeftException || e instanceof TargetNotMemberException) {
+			return true;
+		}
+		if (cause instanceof MemberLeftException || cause instanceof TargetNotMemberException) {
+			return true;
+		}
+
+		// Controlla per nome della classe (fallback se instanceof non funziona)
+		if (exceptionName.contains("MemberLeft") || exceptionName.contains("TargetNotMember")) {
+			return true;
+		}
+		if (causeName.contains("MemberLeft") || causeName.contains("TargetNotMember")) {
+			return true;
+		}
+
+		// Controlla anche nel messaggio dell'eccezione
+		String message = e.getMessage();
+		return message != null && (message.contains("Member") && message.contains("left cluster") ||
+		                        message.contains("Not Member") ||
+		                        message.contains("target") && message.contains("not") && message.contains("member"));
+	}
+
+	private void throwDistributedObjectDestroyedException(String prefix, RuntimeException eFinal) {
+		String msg = prefix+"tutti i tentativi di eseguire l'operazione sul contatore sono falliti";
 		this.logControlloTraffico.error(msg);
 		if(eFinal!=null) {
 			throw eFinal;
 		}
 		else {
-			throw new DistributedObjectDestroyedException("tutti i tentativi di ricreare il contatore sono falliti"); // l'eccezione eFinal esiste
+			throw new UtilsRuntimeException("tutti i tentativi di eseguire l'operazione sul contatore sono falliti");
 		}
 	}
 	

@@ -1,3 +1,9 @@
+2025-11-20  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1688
+	Introdotta gestione delle eccezioni 'TargetNotMemberException' e 'MemberLeftException' durante le operazioni effettuate sui contatori distribuiti nel rate limiting.
+
 2025-11-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
