@@ -23,8 +23,8 @@ if (!Array.from) {
     };
     var toInteger = function (value) {
       var number = Number(value);
-      if (isNaN(number)) { return 0; }
-      if (number === 0 || !isFinite(number)) { return number; }
+      if (Number.isNaN(number)) { return 0; }
+      if (number === 0 || !Number.isFinite(number)) { return number; }
       return (number > 0 ? 1 : -1) * Math.floor(Math.abs(number));
     };
     var maxSafeInteger = Math.pow(2, 53) - 1;
@@ -39,7 +39,7 @@ if (!Array.from) {
       var C = this;
 
       // 2. Let items be ToObject(arrayLike).
-      var items = Object(arrayLike);
+      var items = new Object(arrayLike);
 
       // 3. ReturnIfAbrupt(items).
       if (arrayLike == null) {
@@ -70,7 +70,7 @@ if (!Array.from) {
       // 13. a. Let A be the result of calling the [[Construct]] internal method 
       // of C with an argument list containing the single item len.
       // 14. a. Else, Let A be ArrayCreate(len).
-      var A = isCallable(C) ? Object(new C(len)) : new Array(len);
+      var A = isCallable(C) ? new Object(new C(len)) : new Array(len);
 
       // 16. Let k be 0.
       var k = 0;

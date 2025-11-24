@@ -70,15 +70,15 @@ String jQueryUiVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUT
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, jQueryUiVersion) %>" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/ui.datepicker-it.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
-<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/webapps.min.js" nonce="<%= randomNonce %>"></script>
 <!--Funzioni di utilita -->
 <script type="text/javascript" nonce="<%= randomNonce %>">
 var iddati = '<%= iddati %>';
 var params = '<%= params %>';
 var path = '<%= request.getContextPath()%>';
 </script>
-<script type="text/javascript" src="js/PostBack.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/PostBack.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/utils.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/array-utils.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/typeahead.bundle.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/bootstrap-tagsinput.min.js" nonce="<%= randomNonce %>"></script>
@@ -111,7 +111,7 @@ function CheckDati() {
 };
 
 </script>
-<script type="text/javascript" src="js/add-element.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/add-element.min.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsp/addElementCustom.jsp" flush="true" />
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />

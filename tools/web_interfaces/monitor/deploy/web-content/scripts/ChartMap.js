@@ -168,7 +168,7 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
         },
         onrendered: function() {
             var _svg = this.svg.node();
-            var _svg_width = parseFloat(_svg.getAttribute('width'));
+            var _svg_width = Number.parseFloat(_svg.getAttribute('width'));
             var _title = _svg.querySelector('#title');
             var _subtitle = _svg.querySelector('#subtitle');
             var _warning = _svg.querySelector('#warning');
@@ -365,7 +365,7 @@ function generateChart(id, _dataJson, _type, _size, _barwidth) {
         _ellipsis.setAttributeNS(null,"opacity", 0);
         _ellipsis.appendChild(document.createTextNode('...'));
         svg.appendChild(_ellipsis);
-        c3.extra.ellipsis_textLength = 2*parseInt(_ellipsis.getComputedTextLength());
+        c3.extra.ellipsis_textLength = 2*Number.parseInt(_ellipsis.getComputedTextLength());
         svg.removeChild(_ellipsis);
 
         d3.select("body").append("div").attr("class", "tooltip-category-div").style("opacity", 0)
@@ -464,8 +464,8 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.subtitle = _dataJson.hasOwnProperty('sottotitolo')?labelUnescape(_dataJson.sottotitolo):'';
     dpChart.yLabel = _dataJson.hasOwnProperty('yAxisLabel')?labelUnescape(_dataJson.yAxisLabel):'';
     dpChart.showLegend = _dataJson.hasOwnProperty('mostraLegenda')?_dataJson.mostraLegenda:true;
-    dpChart.limit = _dataJson.hasOwnProperty('limit')?parseInt(_dataJson.limit,10):-1;
-    dpChart.limitLegenda = _dataJson.hasOwnProperty('limitLegenda')?parseInt(_dataJson.limitLegenda,10):-1;
+    dpChart.limit = _dataJson.hasOwnProperty('limit')?Number.parseInt(_dataJson.limit,10):-1;
+    dpChart.limitLegenda = _dataJson.hasOwnProperty('limitLegenda')?Number.parseInt(_dataJson.limitLegenda,10):-1;
     dpChart.valueOnLegend = _dataJson.hasOwnProperty('valueOnLegend')?_dataJson.valueOnLegend:false;
     dpChart.rotation = _dataJson.hasOwnProperty('xAxisLabelDirezione')?Math.abs(_dataJson.xAxisLabelDirezione):0;
     dpChart.rotation = dpChart.rotation != 0?-dpChart.rotation:0;
@@ -509,8 +509,8 @@ function chartMapping(_dataJson, _type, _size) {
             heatMapColorRange.push(maxTmp.colore);
             
             // dominio dei valori minimo e massimo
-            heatMapColorDomain.push(parseInt(minTmp.valore, 10));
-            heatMapColorDomain.push(parseInt(maxTmp.valore, 10));
+            heatMapColorDomain.push(Number.parseInt(minTmp.valore, 10));
+            heatMapColorDomain.push(Number.parseInt(maxTmp.valore, 10));
 		}
 		
 		dpChart.heatMapColorRange = heatMapColorRange;
@@ -718,10 +718,10 @@ function txty(attr, tx, ty, replace) {
         }
         replace = replace || false;
         if(!replace){
-            tmp[0] = parseFloat(tmp[0].split('translate(')[1])+tx;
+            tmp[0] = Number.parseFloat(tmp[0].split('translate(')[1])+tx;
             tmp[0] = 'translate('+tmp[0];
 
-            tmp[1] = parseFloat(tmp[1].split(')')[0])+ty;
+            tmp[1] = Number.parseFloat(tmp[1].split(')')[0])+ty;
             tmp[1] += ')';
         }
         else {

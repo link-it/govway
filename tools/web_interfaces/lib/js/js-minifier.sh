@@ -1,0 +1,1 @@
+../../../../ant/commons/js-minifier.sh

@@ -91,8 +91,8 @@ response.setHeader(HttpConstants.HEADER_NAME_CONTENT_SECURITY_POLICY, MessageFor
 <!-- JQuery lib-->
 <script type="text/javascript" src="webjars/jquery/3.6.4/jquery.min.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
-<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
-<script type="text/javascript" src="js/login-utils.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/webapps.min.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/login-utils.min.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" /> 
 <script type="text/javascript" nonce="<%= randomNonce %>">

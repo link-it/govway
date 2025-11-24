@@ -121,7 +121,7 @@ function URLEncode(url) {
       if (SAFECHARS.indexOf(ch) != -1) {
 	encoded += ch;
       } else {
-	var charCode = ch.charCodeAt(0);
+	var charCode = ch.codePointAt(0);
 	if (charCode > 255) {
 	  encoded += "+";
 	} else {
@@ -142,13 +142,13 @@ function customInputNumberChangeEventHandler(e){
     	// do nothing
     } else {
     	if(e.target.min){
-    		if(parseInt(e.target.min) > parseInt(e.target.value)){
+    		if(Number.parseInt(e.target.min) > Number.parseInt(e.target.value)){
     			e.target.value = e.target.min;
     		}
     	}
 
     	if(e.target.max){
-    		if(parseInt(e.target.max) < parseInt(e.target.value)){
+    		if(Number.parseInt(e.target.max) < Number.parseInt(e.target.value)){
     			e.target.value = e.target.max;
     		}
     	}
@@ -164,13 +164,13 @@ function inputNumberChangeEventHandler(e){
     	}
     } else {
     	if(e.target.min){
-    		if(parseInt(e.target.min) > parseInt(e.target.value)){
+    		if(Number.parseInt(e.target.min) > Number.parseInt(e.target.value)){
     			e.target.value = e.target.min;
     		}
     	}
 
     	if(e.target.max){
-    		if(parseInt(e.target.max) < parseInt(e.target.value)){
+    		if(Number.parseInt(e.target.max) < Number.parseInt(e.target.value)){
     			e.target.value = e.target.max;
     		}
     	}

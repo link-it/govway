@@ -80,7 +80,7 @@ String jQueryUiVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUT
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_UI_PATH, jQueryUiVersion) %>" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
-<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/webapps.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" nonce="<%= randomNonce %>">
 var nomeServletAdd_Custom = '<%= nomeServletAdd %>';
 var nomeServletDel_Custom = '<%= nomeServletDel %>';
@@ -235,7 +235,7 @@ function Esporta(tipo) {
 		});
 	 });
 </script>
-<script type="text/javascript" src="js/utils.js" nonce="<%= randomNonce %>"></script>
+<script type="text/javascript" src="js/utils.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.searchabledropdown.min.js" nonce="<%= randomNonce %>"></script>
 <script type="text/javascript" src="js/jquery.context-menu.min.js" nonce="<%= randomNonce %>"></script>
 <jsp:include page="/jsplib/menuUtente.jsp" flush="true" />

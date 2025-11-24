@@ -368,18 +368,18 @@
 			<zipfileset dir="${jsp}" prefix="jsp" />
 			<zipfileset dir="${jsplib}" prefix="jsplib" />
 			<zipfileset dir="${jslib}" prefix="js" >
-				<include name="add-element.js"/>
+				<include name="add-element.min.js"/>
 			  	<include name="array-utils.min.js"/>
 				<include name="autocomplete.min.js"/>
 				<include name="bootstrap-tagsinput.min.js"/>
 				<include name="jquery.context-menu.min.js"/>
 				<include name="jquery.searchabledropdown.min.js"/>
-				<include name="login-utils.js"/>
-				<include name="PostBack.js"/>
+				<include name="login-utils.min.js"/>
+				<include name="PostBack.min.js"/>
 				<include name="typeahead.bundle.min.js"/>
 				<include name="ui.datepicker-it.js"/>
-				<include name="utils.js"/>
-				<include name="webapps.js"/>
+				<include name="utils.min.js"/>
+				<include name="webapps.min.js"/>
 			</zipfileset>
 			
 			<zipfileset dir="${build_govwayConsole}/jstmp/jquery" prefix="webjars/jquery/${jQueryVersionDir}" >

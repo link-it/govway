@@ -9,7 +9,7 @@ var XRegExp;
 
 if (XRegExp) {
     // Avoid running twice, since that would break references to native globals
-    throw Error("can't load XRegExp twice in the same frame");
+    throw new Error("can't load XRegExp twice in the same frame");
 }
 
 // Run within an anonymous function to protect variables and avoid new globals
@@ -36,7 +36,7 @@ if (XRegExp) {
         // Tokens become part of the regex construction process, so protect against infinite
         // recursion when an XRegExp is constructed within a token handler or trigger
         if (isInsideConstructor)
-            throw Error("can't call the XRegExp constructor within token definition functions");
+            throw new Error("can't call the XRegExp constructor within token definition functions");
 
         flags = flags || "";
         context = { // `this` object for custom tokens
@@ -72,7 +72,7 @@ if (XRegExp) {
             }
         }
 
-        regex = RegExp(output.join(""), real.replace.call(flags, flagClip, ""));
+        regex = new RegExp(output.join(""), real.replace.call(flags, flagClip, ""));
         regex._xregexp = {
             source: pattern,
             captureNames: context.hasNamedCapture ? context.captureNames : null
@@ -156,7 +156,7 @@ if (XRegExp) {
 
     // Accepts a `RegExp` instance; returns a copy with the `/g` flag set. The copy has a fresh
     // `lastIndex` (set to zero). If you want to copy a regex without forcing the `global`
-    // property, use `XRegExp(regex)`. Do not use `RegExp(regex)` because it will not preserve
+    // property, use `XRegExp(regex)`. Do not use `new RegExp(regex)` because it will not preserve
     // special properties required for named capture
     XRegExp.copyAsGlobal = function (regex) {
         return clone(regex, "g");
@@ -166,7 +166,7 @@ if (XRegExp) {
     // can safely be used at any point within a regex to match the provided literal string. Escaped
     // characters are [ ] { } ( ) * + ? - . , \ ^ $ | # and whitespace
     XRegExp.escape = function (str) {
-        return str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+        return str.replaceAll(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     };
 
     // Accepts a string to search, regex to search with, position to start the search within the
@@ -187,7 +187,7 @@ if (XRegExp) {
     // syntax and flag changes. Should be run after XRegExp and any plugins are loaded
     XRegExp.freezeTokens = function () {
         XRegExp.addToken = function () {
-            throw Error("can't run addToken after freezeTokens");
+            throw new Error("can't run addToken after freezeTokens");
         };
     };
 
@@ -274,7 +274,7 @@ if (XRegExp) {
             // Fix browsers whose `exec` methods don't consistently return `undefined` for
             // nonparticipating capturing groups
             if (!compliantExecNpcg && match.length > 1 && indexOf(match, "") > -1) {
-                r2 = RegExp(this.source, real.replace.call(getNativeFlags(this), "g", ""));
+                r2 = new RegExp(this.source, real.replace.call(getNativeFlags(this), "g", ""));
                 // Using `str.slice(match.index)` rather than `match[0]` in case lookahead allowed
                 // matching due to characters outside the match
                 real.replace.call(str.slice(match.index), r2, function () {
@@ -316,7 +316,7 @@ if (XRegExp) {
     // Adds named capture support and fixes browser bugs in native method
     String.prototype.match = function (regex) {
         if (!XRegExp.isRegExp(regex))
-            regex = RegExp(regex); // Native `RegExp`
+            regex = new RegExp(regex); // Native `RegExp`
         if (regex.global) {
             var result = real.match.apply(this, arguments);
             regex.lastIndex = 0; // Fix IE bug
@@ -349,7 +349,8 @@ if (XRegExp) {
             result = real.replace.call(this, search, function () {
                 if (captureNames) {
                     // Change the `arguments[0]` string primitive to a String object which can store properties
-                    arguments[0] = new String(arguments[0]);
+                    // eslint-disable-next-line no-new-wrappers
+                    arguments[0] = new String(arguments[0]); // NOSONAR - Intentional: String object needed to store named capture properties
                     // Store named backreferences on `arguments[0]`
                     for (var i = 0; i < captureNames.length; i++) {
                         if (captureNames[i])
@@ -430,7 +431,7 @@ if (XRegExp) {
 
         // Behavior for `limit`: if it's...
         // - `undefined`: No limit
-        // - `NaN` or zero: Return an empty array
+        // - `Number.NaN` or zero: Return an empty array
         // - A positive number: Use `Math.floor(limit)`
         // - A negative number: No limit
         // - Other: Type-convert, then use the above rules
@@ -588,7 +589,7 @@ if (XRegExp) {
             // Keep backreferences separate from subsequent literal numbers. Preserve back-
             // references to named groups that are undefined at this point as literal strings
             return index > -1 ?
-                "\\" + (index + 1) + (isNaN(match.input.charAt(match.index + match[0].length)) ? "" : "(?:)") :
+                "\\" + (index + 1) + (Number.isNaN(match.input.charAt(match.index + match[0].length)) ? "" : "(?:)") :
                 match[0];
         }
     );
@@ -643,7 +644,7 @@ if (XRegExp) {
     RegExp.prototype.addFlags = function (s) {return clone(this, s);};
     RegExp.prototype.execAll = function (s) {var r = []; XRegExp.iterate(s, this, function (m) {r.push(m);}); return r;};
     RegExp.prototype.forEachExec = function (s, f, c) {return XRegExp.iterate(s, this, f, c);};
-    RegExp.prototype.validate = function (s) {var r = RegExp("^(?:" + this.source + ")$(?!\\s)", getNativeFlags(this)); if (this.global) this.lastIndex = 0; return s.search(r) === 0;};
+    RegExp.prototype.validate = function (s) {var r = new RegExp("^(?:" + this.source + ")$(?!\\s)", getNativeFlags(this)); if (this.global) this.lastIndex = 0; return s.search(r) === 0;};
     */
 
 })();

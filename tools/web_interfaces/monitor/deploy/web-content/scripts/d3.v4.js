@@ -11,7 +11,7 @@ const crypto = window.crypto || window.msCrypto;
 var version = "4.13.0";
 
 function ascending(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : Number.NaN;
 }
 
 function bisector(compare) {
@@ -82,11 +82,11 @@ function cross(values0, values1, reduce) {
 }
 
 function descending(a, b) {
-  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : Number.NaN;
 }
 
 function number(x) {
-  return x === null ? NaN : +x;
+  return x === null ? Number.NaN : +x;
 }
 
 function variance(values, valueof) {
@@ -100,7 +100,7 @@ function variance(values, valueof) {
 
   if (valueof == null) {
     while (++i < n) {
-      if (!isNaN(value = number(values[i]))) {
+      if (!Number.isNaN(value = number(values[i]))) {
         delta = value - mean;
         mean += delta / ++m;
         sum += delta * (value - mean);
@@ -110,7 +110,7 @@ function variance(values, valueof) {
 
   else {
     while (++i < n) {
-      if (!isNaN(value = number(valueof(values[i], i, values)))) {
+      if (!Number.isNaN(value = number(valueof(values[i], i, values)))) {
         delta = value - mean;
         mean += delta / ++m;
         sum += delta * (value - mean);
@@ -183,7 +183,7 @@ function sequence(start, stop, step) {
   start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
 
   var i = -1,
-      n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
+      n = Math.trunc(Math.max(0, Math.ceil((stop - start) / step))),
       range = new Array(n);
 
   while (++i < n) {
@@ -207,7 +207,7 @@ function ticks(start, stop, count) {
   stop = +stop, start = +start, count = +count;
   if (start === stop && count > 0) return [start];
   if (reverse = stop < start) n = start, start = stop, stop = n;
-  if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
+  if ((step = tickIncrement(start, stop, count)) === 0 || !Number.isFinite(step)) return [];
 
   if (step > 0) {
     start = Math.ceil(start / step);
@@ -382,14 +382,14 @@ function mean(values, valueof) {
 
   if (valueof == null) {
     while (++i < n) {
-      if (!isNaN(value = number(values[i]))) sum += value;
+      if (!Number.isNaN(value = number(values[i]))) sum += value;
       else --m;
     }
   }
 
   else {
     while (++i < n) {
-      if (!isNaN(value = number(valueof(values[i], i, values)))) sum += value;
+      if (!Number.isNaN(value = number(valueof(values[i], i, values)))) sum += value;
       else --m;
     }
   }
@@ -405,7 +405,7 @@ function median(values, valueof) {
 
   if (valueof == null) {
     while (++i < n) {
-      if (!isNaN(value = number(values[i]))) {
+      if (!Number.isNaN(value = number(values[i]))) {
         numbers.push(value);
       }
     }
@@ -413,7 +413,7 @@ function median(values, valueof) {
 
   else {
     while (++i < n) {
-      if (!isNaN(value = number(valueof(values[i], i, values)))) {
+      if (!Number.isNaN(value = number(valueof(values[i], i, values)))) {
         numbers.push(value);
       }
     }
@@ -513,7 +513,7 @@ function shuffle(array, i0, i1) {
 	// originale: i = Math.random() * m-- | 0;
 	// modificato
 	crypto.getRandomValues(randomIndexArray);
-    i = randomIndexArray[0] % m-- | 0;
+    i = Math.trunc(randomIndexArray[0] % m--);
     // modificato
     t = array[m + i0];
     array[m + i0] = array[i + i0];
@@ -650,11 +650,11 @@ function axis(orient, scale) {
 
       tickExit = tickExit.transition(context)
           .attr("opacity", epsilon)
-          .attr("transform", function(d) { return isFinite(d = position(d)) ? transform(d) : this.getAttribute("transform"); });
+          .attr("transform", function(d) { return Number.isFinite(d = position(d)) ? transform(d) : this.getAttribute("transform"); });
 
       tickEnter
           .attr("opacity", epsilon)
-          .attr("transform", function(d) { var p = this.parentNode.__axis; return transform(p && isFinite(p = p(d)) ? p : position(d)); });
+          .attr("transform", function(d) { var p = this.parentNode.__axis; return transform(p && Number.isFinite(p = p(d)) ? p : position(d)); });
     }
 
     tickExit.remove();
@@ -1147,7 +1147,7 @@ function selection_sort(compare) {
 }
 
 function ascending$1(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : Number.NaN;
 }
 
 function selection_call() {
@@ -2200,8 +2200,8 @@ define(Color, color, {
 function color(format) {
   var m;
   format = (format + "").trim().toLowerCase();
-  return (m = reHex3.exec(format)) ? (m = parseInt(m[1], 16), new Rgb((m >> 8 & 0xf) | (m >> 4 & 0x0f0), (m >> 4 & 0xf) | (m & 0xf0), ((m & 0xf) << 4) | (m & 0xf), 1)) // #f00
-      : (m = reHex6.exec(format)) ? rgbn(parseInt(m[1], 16)) // #ff0000
+  return (m = reHex3.exec(format)) ? (m = Number.parseInt(m[1], 16), new Rgb((m >> 8 & 0xf) | (m >> 4 & 0x0f0), (m >> 4 & 0xf) | (m & 0xf0), ((m & 0xf) << 4) | (m & 0xf), 1)) // #f00
+      : (m = reHex6.exec(format)) ? rgbn(Number.parseInt(m[1], 16)) // #ff0000
       : (m = reRgbInteger.exec(format)) ? new Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
       : (m = reRgbPercent.exec(format)) ? new Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
       : (m = reRgbaInteger.exec(format)) ? rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
@@ -2209,7 +2209,7 @@ function color(format) {
       : (m = reHslPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
       : (m = reHslaPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
       : named.hasOwnProperty(format) ? rgbn(named[format])
-      : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0)
+      : format === "transparent" ? new Rgb(Number.NaN, Number.NaN, Number.NaN, 0)
       : null;
 }
 
@@ -2218,7 +2218,7 @@ function rgbn(n) {
 }
 
 function rgba(r, g, b, a) {
-  if (a <= 0) r = g = b = NaN;
+  if (a <= 0) r = g = b = Number.NaN;
   return new Rgb(r, g, b, a);
 }
 
@@ -2259,7 +2259,7 @@ define(Rgb, rgb, extend(Color, {
         && (0 <= this.opacity && this.opacity <= 1);
   },
   toString: function() {
-    var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
+    var a = this.opacity; a = Number.isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
     return (a === 1 ? "rgb(" : "rgba(")
         + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", "
         + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", "
@@ -2269,9 +2269,9 @@ define(Rgb, rgb, extend(Color, {
 }));
 
 function hsla(h, s, l, a) {
-  if (a <= 0) h = s = l = NaN;
-  else if (l <= 0 || l >= 1) h = s = NaN;
-  else if (s <= 0) h = NaN;
+  if (a <= 0) h = s = l = Number.NaN;
+  else if (l <= 0 || l >= 1) h = s = Number.NaN;
+  else if (s <= 0) h = Number.NaN;
   return new Hsl(h, s, l, a);
 }
 
@@ -2286,7 +2286,7 @@ function hslConvert(o) {
       b = o.b / 255,
       min = Math.min(r, g, b),
       max = Math.max(r, g, b),
-      h = NaN,
+      h = Number.NaN,
       s = max - min,
       l = (max + min) / 2;
   if (s) {
@@ -2323,7 +2323,7 @@ define(Hsl, hsl, extend(Color, {
   },
   rgb: function() {
     var h = this.h % 360 + (this.h < 0) * 360,
-        s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
+        s = Number.isNaN(h) || Number.isNaN(this.s) ? 0 : this.s,
         l = this.l,
         m2 = l + (l < 0.5 ? l : 1 - l) * s,
         m1 = 2 * l - m2;
@@ -2335,7 +2335,7 @@ define(Hsl, hsl, extend(Color, {
     );
   },
   displayable: function() {
-    return (0 <= this.s && this.s <= 1 || isNaN(this.s))
+    return (0 <= this.s && this.s <= 1 || Number.isNaN(this.s))
         && (0 <= this.l && this.l <= 1)
         && (0 <= this.opacity && this.opacity <= 1);
   }
@@ -2397,8 +2397,8 @@ define(Lab, lab, extend(Color, {
   },
   rgb: function() {
     var y = (this.l + 16) / 116,
-        x = isNaN(this.a) ? y : y + this.a / 500,
-        z = isNaN(this.b) ? y : y - this.b / 200;
+        x = Number.isNaN(this.a) ? y : y + this.a / 500,
+        z = Number.isNaN(this.b) ? y : y - this.b / 200;
     y = Yn * lab2xyz(y);
     x = Xn * lab2xyz(x);
     z = Zn * lab2xyz(z);
@@ -2475,8 +2475,8 @@ function cubehelixConvert(o) {
       l = (BC_DA * b + ED * r - EB * g) / (BC_DA + ED - EB),
       bl = b - l,
       k = (E * (g - l) - C * bl) / D,
-      s = Math.sqrt(k * k + bl * bl) / (E * l * (1 - l)), // NaN if l=0 or l=1
-      h = s ? Math.atan2(k, bl) * rad2deg - 120 : NaN;
+      s = Math.sqrt(k * k + bl * bl) / (E * l * (1 - l)), // Number.NaN if l=0 or l=1
+      h = s ? Math.atan2(k, bl) * rad2deg - 120 : Number.NaN;
   return new Cubehelix(h < 0 ? h + 360 : h, s, l, o.opacity);
 }
 
@@ -2501,9 +2501,9 @@ define(Cubehelix, cubehelix, extend(Color, {
     return new Cubehelix(this.h, this.s, this.l * k, this.opacity);
   },
   rgb: function() {
-    var h = isNaN(this.h) ? 0 : (this.h + 120) * deg2rad,
+    var h = Number.isNaN(this.h) ? 0 : (this.h + 120) * deg2rad,
         l = +this.l,
-        a = isNaN(this.s) ? 0 : this.s * l * (1 - l),
+        a = Number.isNaN(this.s) ? 0 : this.s * l * (1 - l),
         cosh = Math.cos(h),
         sinh = Math.sin(h);
     return new Rgb(
@@ -2567,18 +2567,18 @@ function exponential(a, b, y) {
 
 function hue(a, b) {
   var d = b - a;
-  return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : constant$3(isNaN(a) ? b : a);
+  return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : constant$3(Number.isNaN(a) ? b : a);
 }
 
 function gamma(y) {
   return (y = +y) === 1 ? nogamma : function(a, b) {
-    return b - a ? exponential(a, b, y) : constant$3(isNaN(a) ? b : a);
+    return b - a ? exponential(a, b, y) : constant$3(Number.isNaN(a) ? b : a);
   };
 }
 
 function nogamma(a, b) {
   var d = b - a;
-  return d ? linear(a, d) : constant$3(isNaN(a) ? b : a);
+  return d ? linear(a, d) : constant$3(Number.isNaN(a) ? b : a);
 }
 
 var interpolateRgb = (function rgbGamma(y) {
@@ -2754,7 +2754,7 @@ function interpolateValue(a, b) {
       : b instanceof color ? interpolateRgb
       : b instanceof Date ? date
       : Array.isArray(b) ? array$1
-      : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object
+      : typeof b.valueOf !== "function" && typeof b.toString !== "function" || Number.isNaN(b) ? object
       : reinterpolate)(a, b);
 }
 
@@ -3307,7 +3307,7 @@ function create$1(node, id, self) {
     self.state = ENDED;
     self.timer.stop();
     delete schedules[id];
-    for (var i in schedules) return; // eslint-disable-line no-unused-vars
+    if (Object.keys(schedules).length > 0) return;
     delete node.__transition;
   }
 }
@@ -3655,7 +3655,10 @@ function transition_on(name, listener) {
 function removeFunction(id) {
   return function() {
     var parent = this.parentNode;
-    for (var i in this.__transition) if (+i !== id) return;
+    var hasOtherTransition = Object.keys(this.__transition).some(function(key) {
+      return +key !== id;
+    });
+    if (hasOtherTransition) return;
     if (parent) parent.removeChild(this);
   };
 }
@@ -5087,8 +5090,9 @@ CustomMap.prototype = map$1.prototype = {
     return size;
   },
   empty: function() {
-    for (var property in this) if (property[0] === prefix) return false;
-    return true;
+    return !Object.keys(this).some(function(property) {
+      return property[0] === prefix;
+    });
   },
   each: function(f) {
     for (var property in this) if (property[0] === prefix) f(this[property], property.slice(1), this);
@@ -5282,7 +5286,7 @@ function inferColumns(rows) {
 
 function dsv(delimiter) {
   var reFormat = new RegExp("[\"" + delimiter + "\n\r]"),
-      DELIMITER = delimiter.charCodeAt(0);
+      DELIMITER = delimiter.codePointAt(0);
 
   function parse(text, f) {
     var convert, columns, rows = parseRows(text, function(row, i) {
@@ -5303,8 +5307,8 @@ function dsv(delimiter) {
         eol = false; // current token followed by EOL?
 
     // Strip the trailing newline.
-    if (text.charCodeAt(N - 1) === NEWLINE) --N;
-    if (text.charCodeAt(N - 1) === RETURN) --N;
+    if (text.codePointAt(N - 1) === NEWLINE) --N;
+    if (text.codePointAt(N - 1) === RETURN) --N;
 
     function token() {
       if (eof) return EOF;
@@ -5312,18 +5316,18 @@ function dsv(delimiter) {
 
       // Unescape quotes.
       var i, j = I, c;
-      if (text.charCodeAt(j) === QUOTE) {
-        while (I++ < N && text.charCodeAt(I) !== QUOTE || text.charCodeAt(++I) === QUOTE);
+      if (text.codePointAt(j) === QUOTE) {
+        while (I++ < N && text.codePointAt(I) !== QUOTE || text.codePointAt(++I) === QUOTE);
         if ((i = I) >= N) eof = true;
-        else if ((c = text.charCodeAt(I++)) === NEWLINE) eol = true;
-        else if (c === RETURN) { eol = true; if (text.charCodeAt(I) === NEWLINE) ++I; }
-        return text.slice(j + 1, i - 1).replace(/""/g, "\"");
+        else if ((c = text.codePointAt(I++)) === NEWLINE) eol = true;
+        else if (c === RETURN) { eol = true; if (text.codePointAt(I) === NEWLINE) ++I; }
+        return text.slice(j + 1, i - 1).replaceAll('""', "\"");
       }
 
       // Find next delimiter or newline.
       while (I < N) {
-        if ((c = text.charCodeAt(i = I++)) === NEWLINE) eol = true;
-        else if (c === RETURN) { eol = true; if (text.charCodeAt(I) === NEWLINE) ++I; }
+        if ((c = text.codePointAt(i = I++)) === NEWLINE) eol = true;
+        else if (c === RETURN) { eol = true; if (text.codePointAt(I) === NEWLINE) ++I; }
         else if (c !== DELIMITER) continue;
         return text.slice(j, i);
       }
@@ -5361,7 +5365,7 @@ function dsv(delimiter) {
 
   function formatValue(text) {
     return text == null ? ""
-        : reFormat.test(text += "") ? "\"" + text.replace(/"/g, "\"\"") + "\""
+        : reFormat.test(text += "") ? "\"" + text.replaceAll('"', "\"\"") + "\""
         : text;
   }
 
@@ -5447,7 +5451,7 @@ function tree_add(d) {
 }
 
 function add(tree, x, y, d) {
-  if (isNaN(x) || isNaN(y)) return tree; // ignore invalid points
+  if (Number.isNaN(x) || Number.isNaN(y)) return tree; // ignore invalid points
 
   var parent,
       node = tree._root,
@@ -5502,7 +5506,7 @@ function addAll(data) {
 
   // Compute the points and their extent.
   for (i = 0; i < n; ++i) {
-    if (isNaN(x = +this._x.call(null, d = data[i])) || isNaN(y = +this._y.call(null, d))) continue;
+    if (Number.isNaN(x = +this._x.call(null, d = data[i])) || Number.isNaN(y = +this._y.call(null, d))) continue;
     xz[i] = x;
     yz[i] = y;
     if (x < x0) x0 = x;
@@ -5527,7 +5531,7 @@ function addAll(data) {
 }
 
 function tree_cover(x, y) {
-  if (isNaN(x = +x) || isNaN(y = +y)) return this; // ignore invalid points
+  if (Number.isNaN(x = +x) || Number.isNaN(y = +y)) return this; // ignore invalid points
 
   var x0 = this._x0,
       y0 = this._y0,
@@ -5537,7 +5541,7 @@ function tree_cover(x, y) {
   // If the quadtree has no extent, initialize them.
   // Integer extent are necessary so that if we later double the extent,
   // the existing quadrant boundaries don’t change due to floating point error!
-  if (isNaN(x0)) {
+  if (Number.isNaN(x0)) {
     x1 = (x0 = Math.floor(x)) + 1;
     y1 = (y0 = Math.floor(y)) + 1;
   }
@@ -5596,7 +5600,7 @@ function tree_data() {
 function tree_extent(_) {
   return arguments.length
       ? this.cover(+_[0][0], +_[0][1]).cover(+_[1][0], +_[1][1])
-      : isNaN(this._x0) ? undefined : [[this._x0, this._y0], [this._x1, this._y1]];
+      : Number.isNaN(this._x0) ? undefined : [[this._x0, this._y0], [this._x1, this._y1]];
 }
 
 function Quad(node, x0, y0, x1, y1) {
@@ -5677,7 +5681,7 @@ function tree_find(x, y, radius) {
 }
 
 function tree_remove(d) {
-  if (isNaN(x = +this._x.call(null, d)) || isNaN(y = +this._y.call(null, d))) return this; // ignore invalid points
+  if (Number.isNaN(x = +this._x.call(null, d)) || Number.isNaN(y = +this._y.call(null, d))) return this; // ignore invalid points
 
   var parent,
       node = this._root,
@@ -5803,7 +5807,7 @@ function tree_y(_) {
 }
 
 function quadtree(nodes, x, y) {
-  var tree = new Quadtree(x == null ? defaultX : x, y == null ? defaultY : y, NaN, NaN, NaN, NaN);
+  var tree = new Quadtree(x == null ? defaultX : x, y == null ? defaultY : y, Number.NaN, Number.NaN, Number.NaN, Number.NaN);
   return nodes == null ? tree : tree.addAll(nodes);
 }
 
@@ -6125,12 +6129,12 @@ function simulation(nodes) {
   function initializeNodes() {
     for (var i = 0, n = nodes.length, node; i < n; ++i) {
       node = nodes[i], node.index = i;
-      if (isNaN(node.x) || isNaN(node.y)) {
+      if (Number.isNaN(node.x) || Number.isNaN(node.y)) {
         var radius = initialRadius * Math.sqrt(i), angle = i * initialAngle;
         node.x = radius * Math.cos(angle);
         node.y = radius * Math.sin(angle);
       }
-      if (isNaN(node.vx) || isNaN(node.vy)) {
+      if (Number.isNaN(node.vx) || Number.isNaN(node.vy)) {
         node.vx = node.vy = 0;
       }
     }
@@ -6350,7 +6354,7 @@ function radial(radius, x, y) {
     radiuses = new Array(n);
     for (i = 0; i < n; ++i) {
       radiuses[i] = +radius(nodes[i], i, nodes);
-      strengths[i] = isNaN(radiuses[i]) ? 0 : +strength(nodes[i], i, nodes);
+      strengths[i] = Number.isNaN(radiuses[i]) ? 0 : +strength(nodes[i], i, nodes);
     }
   }
 
@@ -6397,7 +6401,7 @@ function x$2(x) {
     strengths = new Array(n);
     xz = new Array(n);
     for (i = 0; i < n; ++i) {
-      strengths[i] = isNaN(xz[i] = +x(nodes[i], i, nodes)) ? 0 : +strength(nodes[i], i, nodes);
+      strengths[i] = Number.isNaN(xz[i] = +x(nodes[i], i, nodes)) ? 0 : +strength(nodes[i], i, nodes);
     }
   }
 
@@ -6437,7 +6441,7 @@ function y$2(y) {
     strengths = new Array(n);
     yz = new Array(n);
     for (i = 0; i < n; ++i) {
-      strengths[i] = isNaN(yz[i] = +y(nodes[i], i, nodes)) ? 0 : +strength(nodes[i], i, nodes);
+      strengths[i] = Number.isNaN(yz[i] = +y(nodes[i], i, nodes)) ? 0 : +strength(nodes[i], i, nodes);
     }
   }
 
@@ -6461,7 +6465,7 @@ function y$2(y) {
 // significant digits p, where x is positive and p is in [1, 21] or undefined.
 // For example, formatDecimal(1.23) returns ["123", 0].
 function formatDecimal(x, p) {
-  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
+  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // Number.NaN, ±Infinity
   var i, coefficient = x.slice(0, i);
 
   // The string returned by toExponential either has the form \d\.\d+e[-+]\d+
@@ -6473,7 +6477,7 @@ function formatDecimal(x, p) {
 }
 
 function exponent$1(x) {
-  return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
+  return x = formatDecimal(Math.abs(x)), x ? x[1] : Number.NaN;
 }
 
 function formatGroup(grouping, thousands) {
@@ -6497,7 +6501,7 @@ function formatGroup(grouping, thousands) {
 
 function formatNumerals(numerals) {
   return function(value) {
-    return value.replace(/[0-9]/g, function(i) {
+    return value.replaceAll(/[0-9]/g, function(i) {
       return numerals[+i];
     });
   };
@@ -6609,9 +6613,9 @@ FormatSpecifier.prototype.toString = function() {
       + this.sign
       + this.symbol
       + (this.zero ? "0" : "")
-      + (this.width == null ? "" : Math.max(1, this.width | 0))
+      + (this.width == null ? "" : Math.max(1, Math.trunc(this.width)))
       + (this.comma ? "," : "")
-      + (this.precision == null ? "" : "." + Math.max(0, this.precision | 0))
+      + (this.precision == null ? "" : "." + Math.max(0, Math.trunc(this.precision)))
       + this.type;
 };
 
@@ -6687,7 +6691,7 @@ function formatLocale(locale) {
         if (maybeSuffix) {
           i = -1, n = value.length;
           while (++i < n) {
-            if (c = value.charCodeAt(i), 48 > c || c > 57) {
+            if (c = value.codePointAt(i), 48 > c || c > 57) {
               valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix;
               value = value.slice(0, i);
               break;
@@ -7193,7 +7197,7 @@ function bounds(feature) {
   ranges = range = null;
 
   return lambda0$1 === Infinity || phi0 === Infinity
-      ? [[NaN, NaN], [NaN, NaN]]
+      ? [[Number.NaN, Number.NaN], [Number.NaN, Number.NaN]]
       : [[lambda0$1, phi0], [lambda1, phi1]];
 }
 
@@ -7338,7 +7342,7 @@ function centroid(object) {
     if (W1 < epsilon$2) x = X0, y = Y0, z = Z0;
     m = x * x + y * y + z * z;
     // If the feature still has an undefined ccentroid, then return.
-    if (m < epsilon2$1) return [NaN, NaN];
+    if (m < epsilon2$1) return [Number.NaN, Number.NaN];
   }
 
   return [atan2(y, x) * degrees$1, asin(z / sqrt(m)) * degrees$1];
@@ -7834,9 +7838,9 @@ var clipAntimeridian = clip(
 // intersections or the line was empty; 1 - no intersections; 2 - there were
 // intersections, and the first and last segments should be rejoined.
 function clipAntimeridianLine(stream) {
-  var lambda0 = NaN,
-      phi0 = NaN,
-      sign0 = NaN,
+  var lambda0 = Number.NaN,
+      phi0 = Number.NaN,
+      sign0 = Number.NaN,
       clean; // no intersections
 
   return {
@@ -7870,7 +7874,7 @@ function clipAntimeridianLine(stream) {
     },
     lineEnd: function() {
       stream.lineEnd();
-      lambda0 = phi0 = NaN;
+      lambda0 = phi0 = Number.NaN;
     },
     clean: function() {
       return 2 - clean; // if intersections, rejoin first and last segments
@@ -8261,7 +8265,7 @@ function clipRectangle(x0, y0, x1, y1) {
       if (polygon) polygon.push(ring = []);
       first = true;
       v_ = false;
-      x_ = y_ = NaN;
+      x_ = y_ = Number.NaN;
     }
 
     // TODO rather than special-case polygons, simply handle them separately.
@@ -8717,7 +8721,7 @@ var centroidStream$1 = {
     var centroid = Z2$1 ? [X2$1 / Z2$1, Y2$1 / Z2$1]
         : Z1$1 ? [X1$1 / Z1$1, Y1$1 / Z1$1]
         : Z0$1 ? [X0$1 / Z0$1, Y0$1 / Z0$1]
-        : [NaN, NaN];
+        : [Number.NaN, Number.NaN];
     X0$1 = Y0$1 = Z0$1 =
     X1$1 = Y1$1 = Z1$1 =
     X2$1 = Y2$1 = Z2$1 = 0;
@@ -8794,14 +8798,14 @@ PathContext.prototype = {
     this._line = 0;
   },
   polygonEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._point = 0;
   },
   lineEnd: function() {
     if (this._line === 0) this._context.closePath();
-    this._point = NaN;
+    this._point = Number.NaN;
   },
   point: function(x, y) {
     switch (this._point) {
@@ -8879,14 +8883,14 @@ PathString.prototype = {
     this._line = 0;
   },
   polygonEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._point = 0;
   },
   lineEnd: function() {
     if (this._line === 0) this._string.push("Z");
-    this._point = NaN;
+    this._point = Number.NaN;
   },
   point: function(x, y) {
     switch (this._point) {
@@ -9124,7 +9128,7 @@ function resample$1(project, delta2) {
     }
 
     function lineStart() {
-      x0 = NaN;
+      x0 = Number.NaN;
       resampleStream.point = linePoint;
       stream.lineStart();
     }
@@ -10072,7 +10076,7 @@ function shuffle$1(array) {
     // originale: i = Math.random() * m-- | 0;
     // modificato
     crypto.getRandomValues(randomIndexArray);
-    i = randomIndexArray[0] % m-- | 0;
+    i = Math.trunc(randomIndexArray[0] % m--);
     // modificato
     t = array[m];
     array[m] = array[i];
@@ -11264,7 +11268,7 @@ function abort(q, e) {
   var i = q._tasks.length, t;
   q._error = e; // ignore active callbacks
   q._data = undefined; // allow gc
-  q._waiting = NaN; // prevent starting
+  q._waiting = Number.NaN; // prevent starting
 
   while (--i >= 0) {
     if (t = q._tasks[i]) {
@@ -11276,7 +11280,7 @@ function abort(q, e) {
     }
   }
 
-  q._active = NaN; // allow notification
+  q._active = Number.NaN; // allow notification
   maybeNotify(q);
 }
 
@@ -11868,7 +11872,7 @@ function tickFormat(domain, count, specifier) {
   switch (specifier.type) {
     case "s": {
       var value = Math.max(Math.abs(start), Math.abs(stop));
-      if (specifier.precision == null && !isNaN(precision = precisionPrefix(step, value))) specifier.precision = precision;
+      if (specifier.precision == null && !Number.isNaN(precision = precisionPrefix(step, value))) specifier.precision = precision;
       return exports.formatPrefix(specifier, value);
     }
     case "":
@@ -11876,12 +11880,12 @@ function tickFormat(domain, count, specifier) {
     case "g":
     case "p":
     case "r": {
-      if (specifier.precision == null && !isNaN(precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop))))) specifier.precision = precision - (specifier.type === "e");
+      if (specifier.precision == null && !Number.isNaN(precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop))))) specifier.precision = precision - (specifier.type === "e");
       break;
     }
     case "f":
     case "%": {
-      if (specifier.precision == null && !isNaN(precision = precisionFixed(step))) specifier.precision = precision - (specifier.type === "%") * 2;
+      if (specifier.precision == null && !Number.isNaN(precision = precisionFixed(step))) specifier.precision = precision - (specifier.type === "%") * 2;
       break;
     }
   }
@@ -12005,7 +12009,7 @@ function reinterpolate$1(a, b) {
 }
 
 function pow10(x) {
-  return isFinite(x) ? +("1e" + x) : x < 0 ? 0 : x;
+  return Number.isFinite(x) ? +("1e" + x) : x < 0 ? 0 : x;
 }
 
 function powp(base) {
@@ -12163,12 +12167,12 @@ function quantile$$1() {
   }
 
   function scale(x) {
-    if (!isNaN(x = +x)) return range[bisectRight(thresholds, x)];
+    if (!Number.isNaN(x = +x)) return range[bisectRight(thresholds, x)];
   }
 
   scale.invertExtent = function(y) {
     var i = range.indexOf(y);
-    return i < 0 ? [NaN, NaN] : [
+    return i < 0 ? [Number.NaN, Number.NaN] : [
       i > 0 ? thresholds[i - 1] : domain[0],
       i < thresholds.length ? thresholds[i] : domain[domain.length - 1]
     ];
@@ -12177,7 +12181,7 @@ function quantile$$1() {
   scale.domain = function(_) {
     if (!arguments.length) return domain.slice();
     domain = [];
-    for (var i = 0, n = _.length, d; i < n; ++i) if (d = _[i], d != null && !isNaN(d = +d)) domain.push(d);
+    for (var i = 0, n = _.length, d; i < n; ++i) if (d = _[i], d != null && !Number.isNaN(d = +d)) domain.push(d);
     domain.sort(ascending);
     return rescale();
   };
@@ -12227,7 +12231,7 @@ function quantize$1() {
 
   scale.invertExtent = function(y) {
     var i = range.indexOf(y);
-    return i < 0 ? [NaN, NaN]
+    return i < 0 ? [Number.NaN, Number.NaN]
         : i < 1 ? [x0, domain[0]]
         : i >= n ? [domain[n - 1], x1]
         : [domain[i - 1], domain[i]];
@@ -12329,7 +12333,7 @@ function newInterval(floori, offseti, count, field) {
 
     interval.every = function(step) {
       step = Math.floor(step);
-      return !isFinite(step) || !(step > 0) ? null
+      return !Number.isFinite(step) || !(step > 0) ? null
           : !(step > 1) ? interval
           : interval.filter(field
               ? function(d) { return field(d) % step === 0; }
@@ -12351,7 +12355,7 @@ var millisecond = newInterval(function() {
 // An optimized implementation for this simple case.
 millisecond.every = function(k) {
   k = Math.floor(k);
-  if (!isFinite(k) || !(k > 0)) return null;
+  if (!Number.isFinite(k) || !(k > 0)) return null;
   if (!(k > 1)) return millisecond;
   return newInterval(function(date) {
     date.setTime(Math.floor(date / k) * k);
@@ -12473,7 +12477,7 @@ var year = newInterval(function(date) {
 
 // An optimized implementation for this simple case.
 year.every = function(k) {
-  return !isFinite(k = Math.floor(k)) || !(k > 0) ? null : newInterval(function(date) {
+  return !Number.isFinite(k = Math.floor(k)) || !(k > 0) ? null : newInterval(function(date) {
     date.setFullYear(Math.floor(date.getFullYear() / k) * k);
     date.setMonth(0, 1);
     date.setHours(0, 0, 0, 0);
@@ -12573,7 +12577,7 @@ var utcYear = newInterval(function(date) {
 
 // An optimized implementation for this simple case.
 utcYear.every = function(k) {
-  return !isFinite(k = Math.floor(k)) || !(k > 0) ? null : newInterval(function(date) {
+  return !Number.isFinite(k = Math.floor(k)) || !(k > 0) ? null : newInterval(function(date) {
     date.setUTCFullYear(Math.floor(date.getUTCFullYear() / k) * k);
     date.setUTCMonth(0, 1);
     date.setUTCHours(0, 0, 0, 0);
@@ -12744,7 +12748,7 @@ function formatLocale$1(locale) {
       if (!(date instanceof Date)) date = new Date(+date);
 
       while (++i < n) {
-        if (specifier.charCodeAt(i) === 37) {
+        if (specifier.codePointAt(i) === 37) {
           string.push(specifier.slice(j, i));
           if ((pad = pads[c = specifier.charAt(++i)]) != null) c = specifier.charAt(++i);
           else pad = c === "e" ? " " : "0";
@@ -12801,7 +12805,7 @@ function formatLocale$1(locale) {
       // If a time zone is specified, all fields are interpreted as UTC and then
       // offset according to the specified time zone.
       if ("Z" in d) {
-        d.H += d.Z / 100 | 0;
+        d.H += Math.trunc(d.Z / 100);
         d.M += d.Z % 100;
         return utcDate(d);
       }
@@ -12820,12 +12824,12 @@ function formatLocale$1(locale) {
 
     while (i < n) {
       if (j >= m) return -1;
-      c = specifier.charCodeAt(i++);
+      c = specifier.codePointAt(i++);
       if (c === 37) {
         c = specifier.charAt(i++);
         parse = parses[c in pads ? specifier.charAt(i++) : c];
         if (!parse || ((j = parse(d, string, j)) < 0)) return -1;
-      } else if (c != string.charCodeAt(j++)) {
+      } else if (c != string.codePointAt(j++)) {
         return -1;
       }
     }
@@ -12947,7 +12951,7 @@ function pad(value, fill, width) {
 }
 
 function requote(s) {
-  return s.replace(requoteRe, "\\$&");
+  return s.replaceAll(requoteRe, "\\$&");
 }
 
 function formatRe(names) {
@@ -13125,7 +13129,7 @@ function formatFullYear(d, p) {
 function formatZone(d) {
   var z = d.getTimezoneOffset();
   return (z > 0 ? "-" : (z *= -1, "+"))
-      + pad(z / 60 | 0, "0", 2)
+      + pad(Math.trunc(z / 60), "0", 2)
       + pad(z % 60, "0", 2);
 }
 
@@ -13250,7 +13254,7 @@ var formatIso = Date.prototype.toISOString
 
 function parseIsoNative(string) {
   var date = new Date(string);
-  return isNaN(date) ? null : date;
+  return Number.isNaN(date) ? null : date;
 }
 
 var parseIso = +new Date("2000-01-01T00:00:00.000Z")
@@ -13756,7 +13760,7 @@ Linear.prototype = {
     this._line = 0;
   },
   areaEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._point = 0;
@@ -13805,7 +13809,7 @@ function line() {
     if (context == null) output = curve(buffer = path());
 
     for (i = 0; i <= n; ++i) {
-      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+      if ((i < n && defined(d = data[i], i, data)) !== defined0) {
         if (defined0 = !defined0) output.lineStart();
         else output.lineEnd();
       }
@@ -13862,7 +13866,7 @@ function area$2() {
     if (context == null) output = curve(buffer = path());
 
     for (i = 0; i <= n; ++i) {
-      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+      if ((i < n && defined(d = data[i], i, data)) !== defined0) {
         if (defined0 = !defined0) {
           j = i;
           output.areaStart();
@@ -13943,7 +13947,7 @@ function area$2() {
 }
 
 function descending$1(a, b) {
-  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : Number.NaN;
 }
 
 function identity$7(d) {
@@ -14359,11 +14363,11 @@ Basis.prototype = {
     this._line = 0;
   },
   areaEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._x0 = this._x1 =
-    this._y0 = this._y1 = NaN;
+    this._y0 = this._y1 = Number.NaN;
     this._point = 0;
   },
   lineEnd: function() {
@@ -14400,7 +14404,7 @@ BasisClosed.prototype = {
   areaEnd: noop$2,
   lineStart: function() {
     this._x0 = this._x1 = this._x2 = this._x3 = this._x4 =
-    this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = NaN;
+    this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = Number.NaN;
     this._point = 0;
   },
   lineEnd: function() {
@@ -14450,11 +14454,11 @@ BasisOpen.prototype = {
     this._line = 0;
   },
   areaEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._x0 = this._x1 =
-    this._y0 = this._y1 = NaN;
+    this._y0 = this._y1 = Number.NaN;
     this._point = 0;
   },
   lineEnd: function() {
@@ -14555,11 +14559,11 @@ Cardinal.prototype = {
     this._line = 0;
   },
   areaEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._x0 = this._x1 = this._x2 =
-    this._y0 = this._y1 = this._y2 = NaN;
+    this._y0 = this._y1 = this._y2 = Number.NaN;
     this._point = 0;
   },
   lineEnd: function() {
@@ -14606,7 +14610,7 @@ CardinalClosed.prototype = {
   areaEnd: noop$2,
   lineStart: function() {
     this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 =
-    this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN;
+    this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = Number.NaN;
     this._point = 0;
   },
   lineEnd: function() {
@@ -14665,11 +14669,11 @@ CardinalOpen.prototype = {
     this._line = 0;
   },
   areaEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._x0 = this._x1 = this._x2 =
-    this._y0 = this._y1 = this._y2 = NaN;
+    this._y0 = this._y1 = this._y2 = Number.NaN;
     this._point = 0;
   },
   lineEnd: function() {
@@ -14736,11 +14740,11 @@ CatmullRom.prototype = {
     this._line = 0;
   },
   areaEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._x0 = this._x1 = this._x2 =
-    this._y0 = this._y1 = this._y2 = NaN;
+    this._y0 = this._y1 = this._y2 = Number.NaN;
     this._l01_a = this._l12_a = this._l23_a =
     this._l01_2a = this._l12_2a = this._l23_2a =
     this._point = 0;
@@ -14799,7 +14803,7 @@ CatmullRomClosed.prototype = {
   areaEnd: noop$2,
   lineStart: function() {
     this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 =
-    this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN;
+    this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = Number.NaN;
     this._l01_a = this._l12_a = this._l23_a =
     this._l01_2a = this._l12_2a = this._l23_2a =
     this._point = 0;
@@ -14870,11 +14874,11 @@ CatmullRomOpen.prototype = {
     this._line = 0;
   },
   areaEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._x0 = this._x1 = this._x2 =
-    this._y0 = this._y1 = this._y2 = NaN;
+    this._y0 = this._y1 = this._y2 = Number.NaN;
     this._l01_a = this._l12_a = this._l23_a =
     this._l01_2a = this._l12_2a = this._l23_2a =
     this._point = 0;
@@ -14988,12 +14992,12 @@ MonotoneX.prototype = {
     this._line = 0;
   },
   areaEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._x0 = this._x1 =
     this._y0 = this._y1 =
-    this._t0 = NaN;
+    this._t0 = Number.NaN;
     this._point = 0;
   },
   lineEnd: function() {
@@ -15005,7 +15009,7 @@ MonotoneX.prototype = {
     this._line = 1 - this._line;
   },
   point: function(x, y) {
-    var t1 = NaN;
+    var t1 = Number.NaN;
 
     x = +x, y = +y;
     if (x === this._x1 && y === this._y1) return; // Ignore coincident points.
@@ -15058,7 +15062,7 @@ Natural.prototype = {
     this._line = 0;
   },
   areaEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
     this._x = [];
@@ -15125,10 +15129,10 @@ Step.prototype = {
     this._line = 0;
   },
   areaEnd: function() {
-    this._line = NaN;
+    this._line = Number.NaN;
   },
   lineStart: function() {
-    this._x = this._y = NaN;
+    this._x = this._y = Number.NaN;
     this._point = 0;
   },
   lineEnd: function() {
@@ -15174,7 +15178,7 @@ function none$1(series, order) {
   for (var i = 1, j, s0, s1 = series[order[0]], n, m = s1.length; i < n; ++i) {
     s0 = s1, s1 = series[order[i]];
     for (j = 0; j < m; ++j) {
-      s1[j][1] += s1[j][0] = isNaN(s0[j][1]) ? s0[j][0] : s0[j][1];
+      s1[j][1] += s1[j][0] = Number.isNaN(s0[j][1]) ? s0[j][0] : s0[j][1];
     }
   }
 }

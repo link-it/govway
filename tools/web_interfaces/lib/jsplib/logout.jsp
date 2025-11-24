@@ -60,8 +60,8 @@ String jQueryVersion = (String) request.getAttribute(Costanti.REQUEST_ATTRIBUTE_
 		<!-- JQuery lib-->
 	<script type="text/javascript" src="<%=MessageFormat.format(Costanti.LIB_JQUERY_PATH, jQueryVersion) %>" nonce="<%= randomNonce %>"></script>
 	<jsp:include page="/jsplib/browserUtils.jsp" flush="true" />
-	<script type="text/javascript" src="js/webapps.js" nonce="<%= randomNonce %>"></script>
-	<script type="text/javascript" src="js/login-utils.js" nonce="<%= randomNonce %>"></script>
+	<script type="text/javascript" src="js/webapps.min.js" nonce="<%= randomNonce %>"></script>
+	<script type="text/javascript" src="js/login-utils.min.js" nonce="<%= randomNonce %>"></script>
 	<jsp:include page="/jsplib/menuUtente.jsp" flush="true" />
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 </head>

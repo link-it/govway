@@ -1009,9 +1009,12 @@ function Esporta(tipo) {
 										           return false;
 										       });
 
-											$("li[id^='li-tabs']").click(function() { 
-												$(this).children('a').click();
-											});
+											$("li[id^='li-tabs']").click(function(e) {
+												if (!$(e.target).is('a')) {
+												var link = $(this).find('a')[0];
+												if (link) link.click();
+											} 
+												});
 										}
 									
 										$(document).ready(function(){

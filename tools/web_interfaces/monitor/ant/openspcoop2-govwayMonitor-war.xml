@@ -164,16 +164,15 @@
 			<zipfileset dir="${deploy_govwayMonitor}/web-content/FusionCharts" prefix="FusionCharts" />
 			<zipfileset dir="${deploy_govwayMonitor}/web-content/scripts" prefix="scripts" >
 				<include name="c3.min.js"/>
-				<include name="ChartMap.js"/>
+				<include name="ChartMap.min.js"/>
 				<include name="d3.min.js"/>
 				<include name="d3.v4.min.js"/>
 				<include name="d3-format.min.js"/>
-				<include name="heatmap.js"/>
-				<include name="jquery.collapsible.js"/>
+				<include name="heatmap.min.js"/>
 				<include name="shBrushJson.min.js"/>
 				<include name="shBrushXml.min.js"/>
 				<include name="shCore.min.js"/>
-				<include name="SvgRaster.js"/>
+				<include name="SvgRaster.min.js"/>
 				<include name="XRegExp.min.js"/>
 			</zipfileset>
 			
