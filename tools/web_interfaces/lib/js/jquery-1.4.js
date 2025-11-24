@@ -1508,7 +1508,7 @@ jQuery.extend({
 	}
 });
 var fcleanup = function( nm ) {
-	return nm.replace(/[^\w\s\.\|`]/g, function( ch ) {
+	return nm.replaceAll(/[^\w\s\.\|`]/g, function( ch ) {
 		return "\\" + ch;
 	});
 };
@@ -2422,7 +2422,7 @@ function liveHandler( event ) {
 }
 
 function liveConvert( type, selector ) {
-	return ["live", type, selector.replace(/\./g, "`").replace(/ /g, "&")].join(".");
+	return ["live", type, selector.replaceAll(/\./g, "`").replaceAll(/ /g, "&")].join(".");
 }
 
 jQuery.each( ("blur focus focusin focusout load resize scroll unload click dblclick " +
@@ -2636,7 +2636,7 @@ Sizzle.find = function(expr, context, isXML){
 			match.splice(1,1);
 
 			if ( left.substr( left.length - 1 ) !== "\\" ) {
-				match[1] = (match[1] || "").replace(/\\/g, "");
+				match[1] = (match[1] || "").replaceAll(/\\/g, "");
 				set = Expr.find[ type ]( match, context, isXML );
 				if ( set != null ) {
 					expr = expr.replace( Expr.match[ type ], "" );
@@ -2855,7 +2855,7 @@ var Expr = Sizzle.selectors = {
 	},
 	preFilter: {
 		CLASS: function(match, curLoop, inplace, result, not, isXML){
-			match = " " + match[1].replace(/\\/g, "") + " ";
+			match = " " + match[1].replaceAll(/\\/g, "") + " ";
 
 			if ( isXML ) {
 				return match;
@@ -2863,7 +2863,7 @@ var Expr = Sizzle.selectors = {
 
 			for ( var i = 0, elem; (elem = curLoop[i]) != null; i++ ) {
 				if ( elem ) {
-					if ( not ^ (elem.className && (" " + elem.className + " ").replace(/[\t\n]/g, " ").indexOf(match) >= 0) ) {
+					if ( not ^ (elem.className && (" " + elem.className + " ").replaceAll(/[\t\n]/g, " ").indexOf(match) >= 0) ) {
 						if ( !inplace ) {
 							result.push( elem );
 						}
@@ -2876,7 +2876,7 @@ var Expr = Sizzle.selectors = {
 			return false;
 		},
 		ID: function(match){
-			return match[1].replace(/\\/g, "");
+			return match[1].replaceAll(/\\/g, "");
 		},
 		TAG: function(match, curLoop){
 			return match[1].toLowerCase();
@@ -2899,7 +2899,7 @@ var Expr = Sizzle.selectors = {
 			return match;
 		},
 		ATTR: function(match, curLoop, inplace, result, not, isXML){
-			var name = match[1].replace(/\\/g, "");
+			var name = match[1].replaceAll(/\\/g, "");
 			
 			if ( !isXML && Expr.attrMap[name] ) {
 				match[1] = Expr.attrMap[name];
@@ -4335,7 +4335,7 @@ jQuery.extend({
 		}
 
 		// ignore negative width and height values #1599
-		if ( (name === "width" || name === "height") && parseFloat(value) < 0 ) {
+		if ( (name === "width" || name === "height") && Number.parseFloat(value) < 0 ) {
 			value = undefined;
 		}
 
@@ -4349,13 +4349,13 @@ jQuery.extend({
 				style.zoom = 1;
 
 				// Set the alpha filter to set the opacity
-				var opacity = parseInt( value, 10 ) + "" === "NaN" ? "" : "alpha(opacity=" + value * 100 + ")";
+				var opacity = Number.parseInt( value, 10 ) + "" === "Number.NaN" ? "" : "alpha(opacity=" + value * 100 + ")";
 				var filter = style.filter || jQuery.curCSS( elem, "filter" ) || "";
 				style.filter = ralpha.test(filter) ? filter.replace(ralpha, opacity) : opacity;
 			}
 
 			return style.filter && style.filter.indexOf("opacity=") >= 0 ?
-				(parseFloat( ropacity.exec(style.filter)[1] ) / 100) + "":
+				(Number.parseFloat( ropacity.exec(style.filter)[1] ) / 100) + "":
 				"";
 		}
 
@@ -4386,13 +4386,13 @@ jQuery.extend({
 
 				jQuery.each( which, function() {
 					if ( !extra ) {
-						val -= parseFloat(jQuery.curCSS( elem, "padding" + this, true)) || 0;
+						val -= Number.parseFloat(jQuery.curCSS( elem, "padding" + this, true)) || 0;
 					}
 
 					if ( extra === "margin" ) {
-						val += parseFloat(jQuery.curCSS( elem, "margin" + this, true)) || 0;
+						val += Number.parseFloat(jQuery.curCSS( elem, "margin" + this, true)) || 0;
 					} else {
-						val -= parseFloat(jQuery.curCSS( elem, "border" + this + "Width", true)) || 0;
+						val -= Number.parseFloat(jQuery.curCSS( elem, "border" + this + "Width", true)) || 0;
 					}
 				});
 			}
@@ -4415,7 +4415,7 @@ jQuery.extend({
 		// IE uses filters for opacity
 		if ( !jQuery.support.opacity && name === "opacity" && elem.currentStyle ) {
 			ret = ropacity.test(elem.currentStyle.filter || "") ?
-				(parseFloat(RegExp.$1) / 100) + "" :
+				(Number.parseFloat(RegExp.$1) / 100) + "" :
 				"";
 
 			return ret === "" ?
@@ -5369,7 +5369,7 @@ jQuery.fn.extend({
 						start = e.cur(true) || 0;
 
 					if ( parts ) {
-						var end = parseFloat( parts[2] ),
+						var end = Number.parseFloat( parts[2] ),
 							unit = parts[3] || "px";
 
 						// We need to compute starting value
@@ -5511,8 +5511,8 @@ jQuery.fx.prototype = {
 			return this.elem[ this.prop ];
 		}
 
-		var r = parseFloat(jQuery.css(this.elem, this.prop, force));
-		return r && r > -10000 ? r : parseFloat(jQuery.curCSS(this.elem, this.prop)) || 0;
+		var r = Number.parseFloat(jQuery.css(this.elem, this.prop, force));
+		return r && r > -10000 ? r : Number.parseFloat(jQuery.curCSS(this.elem, this.prop)) || 0;
 	},
 
 	// Start an animation from one number to another
@@ -5753,16 +5753,16 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 				left += elem.offsetLeft;
 
 				if ( jQuery.offset.doesNotAddBorder && !(jQuery.offset.doesAddBorderForTableAndCells && /^t(able|d|h)$/i.test(elem.nodeName)) ) {
-					top  += parseFloat( computedStyle.borderTopWidth  ) || 0;
-					left += parseFloat( computedStyle.borderLeftWidth ) || 0;
+					top  += Number.parseFloat( computedStyle.borderTopWidth  ) || 0;
+					left += Number.parseFloat( computedStyle.borderLeftWidth ) || 0;
 				}
 
 				prevOffsetParent = offsetParent, offsetParent = elem.offsetParent;
 			}
 
 			if ( jQuery.offset.subtractsBorderForOverflowNotVisible && computedStyle.overflow !== "visible" ) {
-				top  += parseFloat( computedStyle.borderTopWidth  ) || 0;
-				left += parseFloat( computedStyle.borderLeftWidth ) || 0;
+				top  += Number.parseFloat( computedStyle.borderTopWidth  ) || 0;
+				left += Number.parseFloat( computedStyle.borderLeftWidth ) || 0;
 			}
 
 			prevComputedStyle = computedStyle;
@@ -5784,7 +5784,7 @@ if ( "getBoundingClientRect" in document.documentElement ) {
 
 jQuery.offset = {
 	initialize: function() {
-		var body = document.body, container = document.createElement("div"), innerDiv, checkDiv, table, td, bodyMarginTop = parseFloat( jQuery.curCSS(body, "marginTop", true) ) || 0,
+		var body = document.body, container = document.createElement("div"), innerDiv, checkDiv, table, td, bodyMarginTop = Number.parseFloat( jQuery.curCSS(body, "marginTop", true) ) || 0,
 			html = "<div class='div-jquery-offset-initialize'><div></div></div><table class='table-jquery-offset-initialize' cellpadding='0' cellspacing='0'><tr><td></td></tr></table>";
 
 		jQuery.extend( container.style, { position: "absolute", top: 0, left: 0, margin: 0, border: 0, width: "1px", height: "1px", visibility: "hidden" } );
@@ -5819,8 +5819,8 @@ jQuery.offset = {
 		jQuery.offset.initialize();
 
 		if ( jQuery.offset.doesNotIncludeMarginInBodyOffset ) {
-			top  += parseFloat( jQuery.curCSS(body, "marginTop",  true) ) || 0;
-			left += parseFloat( jQuery.curCSS(body, "marginLeft", true) ) || 0;
+			top  += Number.parseFloat( jQuery.curCSS(body, "marginTop",  true) ) || 0;
+			left += Number.parseFloat( jQuery.curCSS(body, "marginLeft", true) ) || 0;
 		}
 
 		return { top: top, left: left };
@@ -5833,8 +5833,8 @@ jQuery.offset = {
 		}
 		var curElem   = jQuery( elem ),
 			curOffset = curElem.offset(),
-			curTop    = parseInt( jQuery.curCSS( elem, "top",  true ), 10 ) || 0,
-			curLeft   = parseInt( jQuery.curCSS( elem, "left", true ), 10 ) || 0;
+			curTop    = Number.parseInt( jQuery.curCSS( elem, "top",  true ), 10 ) || 0,
+			curLeft   = Number.parseInt( jQuery.curCSS( elem, "left", true ), 10 ) || 0;
 
 		if ( jQuery.isFunction( options ) ) {
 			options = options.call( elem, i, curOffset );
@@ -5872,12 +5872,12 @@ jQuery.fn.extend({
 		// Subtract element margins
 		// note: when an element has margin: auto the offsetLeft and marginLeft
 		// are the same in Safari causing offset.left to incorrectly be 0
-		offset.top  -= parseFloat( jQuery.curCSS(elem, "marginTop",  true) ) || 0;
-		offset.left -= parseFloat( jQuery.curCSS(elem, "marginLeft", true) ) || 0;
+		offset.top  -= Number.parseFloat( jQuery.curCSS(elem, "marginTop",  true) ) || 0;
+		offset.left -= Number.parseFloat( jQuery.curCSS(elem, "marginLeft", true) ) || 0;
 
 		// Add offsetParent borders
-		parentOffset.top  += parseFloat( jQuery.curCSS(offsetParent[0], "borderTopWidth",  true) ) || 0;
-		parentOffset.left += parseFloat( jQuery.curCSS(offsetParent[0], "borderLeftWidth", true) ) || 0;
+		parentOffset.top  += Number.parseFloat( jQuery.curCSS(offsetParent[0], "borderTopWidth",  true) ) || 0;
+		parentOffset.left += Number.parseFloat( jQuery.curCSS(offsetParent[0], "borderLeftWidth", true) ) || 0;
 
 		// Subtract the two offsets
 		return {

@@ -468,7 +468,7 @@ function getFilenameFromContentDisposition(xhr) {
         var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
         var matches = filenameRegex.exec(contentDisposition);
         if (matches != null && matches[1]) {
-            filename = matches[1].replace(/['"]/g, ''); // Rimuovi eventuali apici o virgolette
+            filename = matches[1].replaceAll(/['"]/g, ''); // Rimuovi eventuali apici o virgolette
         }
     }
     return filename;

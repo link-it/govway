@@ -1,0 +1,84 @@
+<project name="openspcoop2-minifier-govwayMonitor">
+    <description>
+       Minifier js relativi al package org.openspcoop2.web.monitor
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/js-build.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+
+	<target name="minify_js_monitor">
+		<antcall target="minify_js_core"/>
+		<antcall target="minify_js_webcontent"/>
+	</target>		
+
+	<target name="minify_js_core">
+	
+	   	<!-- extendedDataTable.js -->
+	   	<delete file="${src_core_govwayMonitor}/META-INF/resources/scripts/extendedDataTable.min.js"/>
+	    	<antcall target="minify">
+		    	<param name="js-commons.script.dir" value="${openspcoop2}/ant/commons"/>
+			<param name="js-src" value="${src_core_govwayMonitor}/META-INF/resources/scripts/extendedDataTable.js"/>
+			<param name="js-dest" value="${src_core_govwayMonitor}/META-INF/resources/scripts/extendedDataTable.min.js"/>
+		</antcall>
+
+		<!-- jquery.collapsible.js -->
+	    	<delete file="${src_core_govwayMonitor}/META-INF/resources/scripts/jquery.collapsible.min.js"/>
+	    	<antcall target="minify">
+			<param name="js-commons.script.dir" value="${openspcoop2}/ant/commons"/>
+			<param name="js-src" value="${src_core_govwayMonitor}/META-INF/resources/scripts/jquery.collapsible.js"/>
+			<param name="js-dest" value="${src_core_govwayMonitor}/META-INF/resources/scripts/jquery.collapsible.min.js"/>
+		</antcall>
+		
+		<!-- pagedDataTable.js -->
+	    	<delete file="${src_core_govwayMonitor}/META-INF/resources/scripts/pagedDataTable.min.js"/>
+	    	<antcall target="minify">
+			<param name="js-commons.script.dir" value="${openspcoop2}/ant/commons"/>
+			<param name="js-src" value="${src_core_govwayMonitor}/META-INF/resources/scripts/pagedDataTable.js"/>
+			<param name="js-dest" value="${src_core_govwayMonitor}/META-INF/resources/scripts/pagedDataTable.min.js"/>
+		</antcall>
+
+		<!-- simpleDataTable.js -->
+	    	<delete file="${src_core_govwayMonitor}/META-INF/resources/scripts/simpleDataTable.min.js"/>
+	    	<antcall target="minify">
+			<param name="js-commons.script.dir" value="${openspcoop2}/ant/commons"/>
+			<param name="js-src" value="${src_core_govwayMonitor}/META-INF/resources/scripts/simpleDataTable.js"/>
+			<param name="js-dest" value="${src_core_govwayMonitor}/META-INF/resources/scripts/simpleDataTable.min.js"/>
+		</antcall>
+
+		<!-- utils.js -->
+	    	<delete file="${src_core_govwayMonitor}/META-INF/resources/scripts/utils.min.js"/>
+	    	<antcall target="minify">
+			<param name="js-commons.script.dir" value="${openspcoop2}/ant/commons"/>
+			<param name="js-src" value="${src_core_govwayMonitor}/META-INF/resources/scripts/utils.js"/>
+			<param name="js-dest" value="${src_core_govwayMonitor}/META-INF/resources/scripts/utils.min.js"/>
+		</antcall>
+
+	</target>
+
+	<target name="minify_js_webcontent">
+	
+	   	<!-- d3-format.src.js -->
+	   	<delete file="${deploy_govwayMonitor}/web-content/scripts/d3-format.min.js"/>
+	    	<antcall target="minify">
+		    	<param name="js-commons.script.dir" value="${openspcoop2}/ant/commons"/>
+			<param name="js-src" value="${deploy_govwayMonitor}/web-content/scripts/d3-format.src.js"/>
+			<param name="js-dest" value="${deploy_govwayMonitor}/web-content/scripts/d3-format.min.js"/>
+		</antcall>
+		
+	   	<!-- d3.v4.js -->
+	   	<delete file="${deploy_govwayMonitor}/web-content/scripts/d3.v4.min.js"/>
+	    	<antcall target="minify">
+		    	<param name="js-commons.script.dir" value="${openspcoop2}/ant/commons"/>
+			<param name="js-src" value="${deploy_govwayMonitor}/web-content/scripts/d3.v4.js"/>
+			<param name="js-dest" value="${deploy_govwayMonitor}/web-content/scripts/d3.v4.min.js"/>
+		</antcall>
+		
+	</target>
+
+</project>

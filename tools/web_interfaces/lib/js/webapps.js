@@ -30,7 +30,7 @@ function URLEncode(url) {
       if (SAFECHARS.indexOf(ch) != -1) {
 	encoded += ch;
       } else {
-	var charCode = ch.charCodeAt(0);
+	var charCode = ch.codePointAt(0);
 	if (charCode > 255) {
 	  encoded += "+";
 	} else {

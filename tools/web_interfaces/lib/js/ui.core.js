@@ -10,7 +10,7 @@
 ;(function($) {
 
 var _remove = $.fn.remove,
-	isFF2 = $.browser.mozilla && (parseFloat($.browser.version) < 1.9);
+	isFF2 = $.browser.mozilla && (Number.parseFloat($.browser.version) < 1.9);
 
 //Helper functions and ui object
 $.ui = {
@@ -205,8 +205,8 @@ $.extend($.expr[':'], {
 		return (/input|select|textarea|button|object/.test(nodeName)
 			? !element.disabled
 			: 'a' == nodeName || 'area' == nodeName
-				? element.href || !isNaN(tabIndex)
-				: !isNaN(tabIndex))
+				? element.href || !Number.isNaN(tabIndex)
+				: !Number.isNaN(tabIndex))
 			// the element and all of its ancestors must be visible
 			// the browser may report that the area is hidden
 			&& !$(element)['area' == nodeName ? 'parents' : 'closest'](':hidden').length;
@@ -214,7 +214,7 @@ $.extend($.expr[':'], {
 
 	tabbable: function(element) {
 		var tabIndex = $.attr(element, 'tabindex');
-		return (isNaN(tabIndex) || tabIndex >= 0) && $(element).is(':focusable');
+		return (Number.isNaN(tabIndex) || tabIndex >= 0) && $(element).is(':focusable');
 	}
 });
 

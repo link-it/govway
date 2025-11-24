@@ -161,8 +161,8 @@ $.timePicker =
 		else if(input.match(/^\d{2}:\d{2}$/))
 		{
 			var s = input.split(":");
-			var hours = parseFloat(s[0]);
-			var minutes = parseFloat(s[1]);
+			var hours = Number.parseFloat(s[0]);
+			var minutes = Number.parseFloat(s[1]);
 			minutes += hours * 60;
 			var output = new Date();
 			output.setTime(minutes * 60 * 1000);

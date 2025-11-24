@@ -1,0 +1,54 @@
+<project name="openspcoop2-js-build" basedir=".">
+    <description>
+        js minifier (prerequisito: npm install -g terser)
+    </description>
+
+	<!-- Directory dove si trova questo file build.xml -->
+	<dirname property="js-commons.script.dir" file="${ant.file}"/>
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+
+	<target name="minify">
+	
+		<if>
+			<equals arg1="${js-src}" arg2="$${js-src}"/>
+			<then>
+				<fail message="Parametro 'js-src' non fornito"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${js-dest}" arg2="$${js-src}"/>
+			<then>
+				<fail message="Parametro 'js-dest' non fornito"/>
+			</then>
+		</if>			
+	
+		<exec executable="${js-commons.script.dir}/js-minifier.sh">
+			<arg value="${js-src}"/>
+			<arg value="${js-dest}"/>
+		</exec>
+	</target>
+	
+	
+	<target name="validate">
+	
+		<if>
+			<equals arg1="${js-src}" arg2="$${js-src}"/>
+			<then>
+				<fail message="Parametro 'js-src' non fornito"/>
+			</then>
+		</if>		
+	
+		<exec executable="${js-commons.script.dir}/js-validator.sh">
+			<arg value="${js-src}"/>
+		</exec>
+	</target>	
+
+</project>

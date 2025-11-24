@@ -12,9 +12,9 @@ else{
 			global = globalThis;
 		}
 		else{
-			global = global || self; 
-			factory(global.d3 = global.d3 || {});
+			global = global || self;
 		}
+		factory(global.d3 = global.d3 || {});
 	}
 }
 //typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -24,7 +24,7 @@ else{
 
 function formatDecimal(x) {
   return Math.abs(x = Math.round(x)) >= 1e21
-      ? x.toLocaleString("en").replace(/,/g, "")
+      ? x.toLocaleString("en").replaceAll(',', "")
       : x.toString(10);
 }
 
@@ -32,7 +32,7 @@ function formatDecimal(x) {
 // significant digits p, where x is positive and p is in [1, 21] or undefined.
 // For example, formatDecimalParts(1.23) returns ["123", 0].
 function formatDecimalParts(x, p) {
-  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
+  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // Number.NaN, ±Infinity
   var i, coefficient = x.slice(0, i);
 
   // The string returned by toExponential either has the form \d\.\d+e[-+]\d+
@@ -44,7 +44,7 @@ function formatDecimalParts(x, p) {
 }
 
 function exponent(x) {
-  return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
+  return x = formatDecimalParts(Math.abs(x)), x ? x[1] : Number.NaN;
 }
 
 function formatGroup(grouping, thousands) {
@@ -68,7 +68,7 @@ function formatGroup(grouping, thousands) {
 
 function formatNumerals(numerals) {
   return function(value) {
-    return value.replace(/[0-9]/g, function(i) {
+    return value.replaceAll(/[0-9]/g, function(i) {
       return numerals[+i];
     });
   };
@@ -115,9 +115,9 @@ FormatSpecifier.prototype.toString = function() {
       + this.sign
       + this.symbol
       + (this.zero ? "0" : "")
-      + (this.width === undefined ? "" : Math.max(1, this.width | 0))
+      + (this.width === undefined ? "" : Math.max(1, Math.trunc(this.width)))
       + (this.comma ? "," : "")
-      + (this.precision === undefined ? "" : "." + Math.max(0, this.precision | 0))
+      + (this.precision === undefined ? "" : "." + Math.max(0, Math.trunc(this.precision)))
       + (this.trim ? "~" : "")
       + this.type;
 };
@@ -289,7 +289,7 @@ function formatLocale(locale) {
         var valueNegative = value < 0 || 1 / value < 0;
 
         // Perform the initial formatting.
-        value = isNaN(value) ? nan : formatType(Math.abs(value), precision);
+        value = Number.isNaN(value) ? nan : formatType(Math.abs(value), precision);
 
         // Trim insignificant zeros.
         if (trim) value = formatTrim(value);
@@ -306,7 +306,7 @@ function formatLocale(locale) {
         if (maybeSuffix) {
           i = -1, n = value.length;
           while (++i < n) {
-            if (c = value.charCodeAt(i), 48 > c || c > 57) {
+            if (c = value.codePointAt(i), 48 > c || c > 57) {
               valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix;
               value = value.slice(0, i);
               break;

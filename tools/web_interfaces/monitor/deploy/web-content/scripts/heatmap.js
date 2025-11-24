@@ -263,7 +263,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	
 			// sposto il tooltip verso sinistra in caso scavalchi la larghezza massima del grafico
 			let maxX = this.parentElement.parentElement.attributes.width.value;
-			let tooltipWidth = parseFloat(tooltip.style('width'));
+			let tooltipWidth = Number.parseFloat(tooltip.style('width'));
 			let diffX = (posX + tooltipWidth) - maxX;
 			if(diffX > 0){
 				posX -= diffX; 
@@ -313,7 +313,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 	
 			// sposto il tooltip verso sinistra in caso scavalchi la larghezza massima del grafico
 			let maxX = this.parentElement.parentElement.attributes.width.value;
-			let tooltipWidth = parseFloat(tooltip.style('width'));
+			let tooltipWidth = Number.parseFloat(tooltip.style('width'));
 			let diffX = (posX + tooltipWidth) - maxX;
 			if(diffX > 0){
 				posX -= diffX; 
@@ -403,7 +403,7 @@ function generateHeatMapChart(id, _dataJson, _type, _size, _barwidth) {
 				if(dp.heatMapVisualizzaValoreZero){
 					return d.totale_label;
 				} else {
-					if(d.totale_label && parseInt(d.totale_label) != 0) { 
+					if(d.totale_label && Number.parseInt(d.totale_label) != 0) { 
 						return d.totale_label;
 						}
 					else {

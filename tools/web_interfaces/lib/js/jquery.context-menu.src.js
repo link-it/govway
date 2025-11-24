@@ -147,7 +147,7 @@ var mouseButton = {
              * @type {number}
              * @private
              */
-            var _zindex = parseInt($(this).css('z-index'));
+            var _zindex = Number.parseInt($(this).css('z-index'));
 
             /**
              * Check z-index update if high.

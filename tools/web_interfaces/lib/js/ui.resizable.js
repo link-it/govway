@@ -306,8 +306,8 @@ $.widget("ui.resizable", $.extend({}, $.ui.mouse, {
 							soffsetw = ista ? 0 : self.sizeDiff.width;
 
 			var s = { width: (self.size.width - soffsetw), height: (self.size.height - soffseth) },
-				left = (parseInt(self.element.css('left'), 10) + (self.position.left - self.originalPosition.left)) || null,
-				top = (parseInt(self.element.css('top'), 10) + (self.position.top - self.originalPosition.top)) || null;
+				left = (Number.parseInt(self.element.css('left'), 10) + (self.position.left - self.originalPosition.left)) || null,
+				top = (Number.parseInt(self.element.css('top'), 10) + (self.position.top - self.originalPosition.top)) || null;
 
 			if (!o.animate)
 				this.element.css($.extend(s, { top: top, left: left }));
@@ -356,7 +356,7 @@ $.widget("ui.resizable", $.extend({}, $.ui.mouse, {
 	_respectSize: function(data, event) {
 
 		var isNumber = function(value) {
-			return !isNaN(parseInt(value, 10))
+			return !Number.isNaN(Number.parseInt(value, 10))
 		};
 
 		var el = this.helper, o = this.options, pRatio = this._aspectRatio || event.shiftKey, a = this.axis,
@@ -399,7 +399,7 @@ $.widget("ui.resizable", $.extend({}, $.ui.mouse, {
 					p = [prel.css('paddingTop'), prel.css('paddingRight'), prel.css('paddingBottom'), prel.css('paddingLeft')];
 
 				this.borderDif = $.map(b, function(v, i) {
-					var border = parseInt(v,10)||0, padding = parseInt(p[i],10)||0;
+					var border = Number.parseInt(v,10)||0, padding = Number.parseInt(p[i],10)||0;
 					return border + padding;
 				});
 			}
@@ -543,8 +543,8 @@ $.ui.plugin.add("resizable", "alsoResize", {
 		_store = function(exp) {
 			$(exp).each(function() {
 				$(this).data("resizable-alsoresize", {
-					width: parseInt($(this).width(), 10), height: parseInt($(this).height(), 10),
-					left: parseInt($(this).css('left'), 10), top: parseInt($(this).css('top'), 10)
+					width: Number.parseInt($(this).width(), 10), height: Number.parseInt($(this).height(), 10),
+					left: Number.parseInt($(this).css('left'), 10), top: Number.parseInt($(this).css('top'), 10)
 				});
 			});
 		};
@@ -615,8 +615,8 @@ $.ui.plugin.add("resizable", "animate", {
 							soffsetw = ista ? 0 : self.sizeDiff.width;
 
 		var style = { width: (self.size.width - soffsetw), height: (self.size.height - soffseth) },
-					left = (parseInt(self.element.css('left'), 10) + (self.position.left - self.originalPosition.left)) || null,
-						top = (parseInt(self.element.css('top'), 10) + (self.position.top - self.originalPosition.top)) || null;
+					left = (Number.parseInt(self.element.css('left'), 10) + (self.position.left - self.originalPosition.left)) || null,
+						top = (Number.parseInt(self.element.css('top'), 10) + (self.position.top - self.originalPosition.top)) || null;
 
 		self.element.animate(
 			$.extend(style, top && left ? { top: top, left: left } : {}), {
@@ -625,10 +625,10 @@ $.ui.plugin.add("resizable", "animate", {
 				step: function() {
 
 					var data = {
-						width: parseInt(self.element.css('width'), 10),
-						height: parseInt(self.element.css('height'), 10),
-						top: parseInt(self.element.css('top'), 10),
-						left: parseInt(self.element.css('left'), 10)
+						width: Number.parseInt(self.element.css('width'), 10),
+						height: Number.parseInt(self.element.css('height'), 10),
+						top: Number.parseInt(self.element.css('top'), 10),
+						left: Number.parseInt(self.element.css('left'), 10)
 					};
 
 					if (pr) pr.css({ width: data.width, height: data.height });
@@ -789,7 +789,7 @@ $.ui.plugin.add("resizable", "grid", {
 });
 
 var num = function(v) {
-	return parseInt(v, 10) || 0;
+	return Number.parseInt(v, 10) || 0;
 };
 
 })(jQuery);

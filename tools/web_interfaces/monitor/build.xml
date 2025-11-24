@@ -13,6 +13,7 @@
 	<import file="./ant/openspcoop2-govwayMonitor_allarmi-build.xml" />
 	<import file="./ant/openspcoop2-govwayMonitor-war.xml" />
 	<import file="./ant/openspcoop2-govwayMonitor-codeGen.xml" />
+	<import file="./ant/openspcoop2-govwayMonitor-minifier.xml" />
 	<import file="./ant/openspcoop2-govwayMonitor-resource.xml" />
 	<import file="${mvc}/build.xml" />
 	<import file="${users}/build.xml" />

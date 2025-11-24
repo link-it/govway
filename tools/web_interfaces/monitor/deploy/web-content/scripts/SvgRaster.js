@@ -27,18 +27,18 @@ function getSheet(name) {
 
 
 function c3_response(data, params) {
-    params.svg_style = data.replace(/\r?\n|\r/g, '');
+    params.svg_style = data.replaceAll(/\r?\n|\r/g, '');
     var client = new HttpCSSCall();
     client.get(params.cmcss.href, cmcss_response, error, params);
 }
 
 function cmcss_response(data, params) {
-    params.svg_style += data.replace(/\r?\n|\r/g, '');
+    params.svg_style += data.replaceAll(/\r?\n|\r/g, '');
     params.svg_style += 'line.c3-xgrid:not(:last-child){fill: none;stroke: #aaa;stroke-width: 1;stroke-dasharray: 3;}';
     params.svg_style += 'line.c3-xgrid:last-child{fill: none;stroke-width: 0;}';
     params.svg_style += 'line.c3-ygrid{fill: none;stroke: #aaa;stroke-width: 1;stroke-dasharray: 3;}.c3-axis ';
     params.svg_style += '.domain{fill: none;stroke: black;stroke-width: 1;}';
-    params.svg_style = params.svg_style.replace(/\s+/g, ' ').split('}');
+    params.svg_style = params.svg_style.replaceAll(/\s+/g, ' ').split('}');
 
     checkSvgClass(params.svg_style, params.id);
 }
@@ -105,7 +105,7 @@ function checkSvgClass(all_style, id) {
                     arr = new Uint8Array(len);
 
                 for (var i = 0; i < len; i++ ) {
-                    arr[i] = binStr.charCodeAt(i);
+                    arr[i] = binStr.codePointAt(i);
                 }
 
                 callback( new Blob( [arr], {type: type || 'image/png'} ) );
@@ -134,10 +134,10 @@ function encode_btoa(input) {
     var str = String(input);
     for (
         var block, charCode, idx = 0, map = chars, output = '';
-        str.charAt(idx | 0) || (map = '=', idx % 1);
+        str.charAt(Math.trunc(idx)) || (map = '=', idx % 1);
         output += map.charAt(63 & block >> 8 - idx % 1 * 8)
     ) {
-        charCode = str.charCodeAt(idx += 3/4);
+        charCode = str.codePointAt(idx += 3/4);
         if (charCode > 0xFF) {
             throw new Error("Image characters outside of the Latin1 range.");
         }
@@ -172,17 +172,17 @@ function alternative_b64_encode(input) {
     input = this._utf8_encode(input);
     while (i < input.length) {
 
-        chr1 = input.charCodeAt(i++);
-        chr2 = input.charCodeAt(i++);
-        chr3 = input.charCodeAt(i++);
+        chr1 = input.codePointAt(i++);
+        chr2 = input.codePointAt(i++);
+        chr3 = input.codePointAt(i++);
         enc1 = chr1 >> 2;
         enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
         enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
         enc4 = chr3 & 63;
 
-        if (isNaN(chr2)) {
+        if (Number.isNaN(chr2)) {
             enc3 = enc4 = 64;
-        } else if (isNaN(chr3)) {
+        } else if (Number.isNaN(chr3)) {
             enc4 = 64;
         }
         output = output + _keyStr.charAt(enc1) + _keyStr.charAt(enc2) + _keyStr.charAt(enc3) + _keyStr.charAt(enc4);
@@ -192,21 +192,21 @@ function alternative_b64_encode(input) {
 }
 
 function _utf8_encode(string) {
-    string = string.replace(/\r\n/g,"\n");
+    string = string.replaceAll('\r\n',"\n");
     var utftext = "";
     for (var n = 0; n < string.length; n++) {
-        var c = string.charCodeAt(n);
+        var c = string.codePointAt(n);
         if (c < 128) {
-            utftext += String.fromCharCode(c);
+            utftext += String.fromCodePoint(c);
         }
         else if((c > 127) && (c < 2048)) {
-            utftext += String.fromCharCode((c >> 6) | 192);
-            utftext += String.fromCharCode((c & 63) | 128);
+            utftext += String.fromCodePoint((c >> 6) | 192);
+            utftext += String.fromCodePoint((c & 63) | 128);
         }
         else {
-            utftext += String.fromCharCode((c >> 12) | 224);
-            utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-            utftext += String.fromCharCode((c & 63) | 128);
+            utftext += String.fromCodePoint((c >> 12) | 224);
+            utftext += String.fromCodePoint(((c >> 6) & 63) | 128);
+            utftext += String.fromCodePoint((c & 63) | 128);
         }
     }
 

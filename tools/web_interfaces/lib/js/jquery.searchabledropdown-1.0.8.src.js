@@ -57,7 +57,7 @@
         var search = null;
 
 		// do not attach on IE6 or lower
-		if ($.browser.msie && parseInt(jQuery.browser.version) < 7)
+		if ($.browser.msie && Number.parseInt(jQuery.browser.version) < 7)
 			return this;
 
     	// only active select elements with drop down capability
@@ -379,7 +379,7 @@
 
     		// adjust search text field
     		// IE7
-    		if($.browser.msie && parseInt(jQuery.browser.version) < 8) {
+    		if($.browser.msie && Number.parseInt(jQuery.browser.version) < 8) {
     			input.css("padding", "0px");
     			input.css("padding-left", "3px");
     			input.css("border-left-width", "2px");
@@ -616,7 +616,7 @@
         
         function calcolaIdx(idValue) {
         	var pos = idValue.indexOf("_");
-        	return parseInt(idValue.substr(pos + 1));
+        	return Number.parseInt(idValue.substr(pos + 1));
         };
         
         function hoverOn(e) {
@@ -662,8 +662,8 @@
             	regexp = "^" + regexp;
             // wildcard support
             if(settings.wildcards) {
-            	regexp = regexp.replace(/\\\*/g, ".*");
-            	regexp = regexp.replace(/\\\?/g, ".");
+            	regexp = regexp.replaceAll(/\\\*/g, ".*");
+            	regexp = regexp.replaceAll(/\\\?/g, ".");
             }
             // ignore case sensitive
             var flags = null;
@@ -708,8 +708,8 @@
          */
         function parseFloatPx(value) {
 			try {
-				value = parseFloat(value.replace(/[\s]*px/, ""));
-				if(!isNaN(value))
+				value = Number.parseFloat(value.replace(/[\s]*px/, ""));
+				if(!Number.isNaN(value))
 					return value;
 			}
 			catch(e) {}

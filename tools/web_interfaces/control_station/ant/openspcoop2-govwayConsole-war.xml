@@ -366,7 +366,9 @@
 
 			<zipfileset dir="${jsp}" prefix="jsp" />
 			<zipfileset dir="${jsplib}" prefix="jsplib" />
-			<zipfileset dir="${jslib}" prefix="js" />
+			<zipfileset dir="${jslib}" prefix="js" >
+				<exclude name="*.sh" />
+			</zipfileset>
 
 			<fileset dir="${deploy.dir}">
 				<include name="index.html" />

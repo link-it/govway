@@ -29,12 +29,12 @@ $.widget("ui.tabs", {
 	},
 
 	_tabId: function(a) {
-		return a.title && a.title.replace(/\s/g, '_').replace(/[^A-Za-z0-9\-_:\.]/g, '')
+		return a.title && a.title.replaceAll(/\s/g, '_').replaceAll(/[^A-Za-z0-9\-_:\.]/g, '')
 			|| this.options.idPrefix + $.data(a);
 	},
 
 	_sanitizeSelector: function(hash) {
-		return hash.replace(/:/g, '\\:'); // we need this because an id may contain a ":"
+		return hash.replaceAll(/:/g, '\\:'); // we need this because an id may contain a ":"
 	},
 
 	_cookie: function() {
@@ -117,7 +117,7 @@ $.widget("ui.tabs", {
 					});
 				}
 				else if (o.cookie)
-					o.selected = parseInt(self._cookie(), 10);
+					o.selected = Number.parseInt(self._cookie(), 10);
 
 				else if (this.$lis.filter('.ui-tabs-selected').length)
 					o.selected = this.$lis.index(this.$lis.filter('.ui-tabs-selected'));
@@ -381,7 +381,7 @@ $.widget("ui.tabs", {
 			index = this.$tabs.length; // append by default
 
 		var self = this, o = this.options;
-		var $li = $(o.tabTemplate.replace(/#\{href\}/g, url).replace(/#\{label\}/g, label));
+		var $li = $(o.tabTemplate.replaceAll(/#\{href\}/g, url).replaceAll(/#\{label\}/g, label));
 		$li.addClass('ui-state-default ui-corner-top').data('destroy.tabs', true);
 
 		var id = url.indexOf('#') == 0 ? url.replace('#', '') : this._tabId( $('a:first-child', $li)[0] );

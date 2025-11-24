@@ -153,7 +153,7 @@ $.widget("ui.draggable", $.extend({}, $.ui.mouse, {
 
 		if((this.options.revert == "invalid" && !dropped) || (this.options.revert == "valid" && dropped) || this.options.revert === true || ($.isFunction(this.options.revert) && this.options.revert.call(this.element, dropped))) {
 			var self = this;
-			$(this.helper).animate(this.originalPosition, parseInt(this.options.revertDuration, 10), function() {
+			$(this.helper).animate(this.originalPosition, Number.parseInt(this.options.revertDuration, 10), function() {
 				self._trigger("stop", event);
 				self._clear();
 			});
@@ -221,8 +221,8 @@ $.widget("ui.draggable", $.extend({}, $.ui.mouse, {
 			po = { top: 0, left: 0 };
 
 		return {
-			top: po.top + (parseInt(this.offsetParent.css("borderTopWidth"),10) || 0),
-			left: po.left + (parseInt(this.offsetParent.css("borderLeftWidth"),10) || 0)
+			top: po.top + (Number.parseInt(this.offsetParent.css("borderTopWidth"),10) || 0),
+			left: po.left + (Number.parseInt(this.offsetParent.css("borderLeftWidth"),10) || 0)
 		};
 
 	},
@@ -232,8 +232,8 @@ $.widget("ui.draggable", $.extend({}, $.ui.mouse, {
 		if(this.cssPosition == "relative") {
 			var p = this.element.position();
 			return {
-				top: p.top - (parseInt(this.helper.css("top"),10) || 0) + this.scrollParent.scrollTop(),
-				left: p.left - (parseInt(this.helper.css("left"),10) || 0) + this.scrollParent.scrollLeft()
+				top: p.top - (Number.parseInt(this.helper.css("top"),10) || 0) + this.scrollParent.scrollTop(),
+				left: p.left - (Number.parseInt(this.helper.css("left"),10) || 0) + this.scrollParent.scrollLeft()
 			};
 		} else {
 			return { top: 0, left: 0 };
@@ -243,8 +243,8 @@ $.widget("ui.draggable", $.extend({}, $.ui.mouse, {
 
 	_cacheMargins: function() {
 		this.margins = {
-			left: (parseInt(this.element.css("marginLeft"),10) || 0),
-			top: (parseInt(this.element.css("marginTop"),10) || 0)
+			left: (Number.parseInt(this.element.css("marginLeft"),10) || 0),
+			top: (Number.parseInt(this.element.css("marginTop"),10) || 0)
 		};
 	},
 
@@ -272,10 +272,10 @@ $.widget("ui.draggable", $.extend({}, $.ui.mouse, {
 			var over = ($(ce).css("overflow") != 'hidden');
 
 			this.containment = [
-				co.left + (parseInt($(ce).css("borderLeftWidth"),10) || 0) + (parseInt($(ce).css("paddingLeft"),10) || 0) - this.margins.left,
-				co.top + (parseInt($(ce).css("borderTopWidth"),10) || 0) + (parseInt($(ce).css("paddingTop"),10) || 0) - this.margins.top,
-				co.left+(over ? Math.max(ce.scrollWidth,ce.offsetWidth) : ce.offsetWidth) - (parseInt($(ce).css("borderLeftWidth"),10) || 0) - (parseInt($(ce).css("paddingRight"),10) || 0) - this.helperProportions.width - this.margins.left,
-				co.top+(over ? Math.max(ce.scrollHeight,ce.offsetHeight) : ce.offsetHeight) - (parseInt($(ce).css("borderTopWidth"),10) || 0) - (parseInt($(ce).css("paddingBottom"),10) || 0) - this.helperProportions.height - this.margins.top
+				co.left + (Number.parseInt($(ce).css("borderLeftWidth"),10) || 0) + (Number.parseInt($(ce).css("paddingLeft"),10) || 0) - this.margins.left,
+				co.top + (Number.parseInt($(ce).css("borderTopWidth"),10) || 0) + (Number.parseInt($(ce).css("paddingTop"),10) || 0) - this.margins.top,
+				co.left+(over ? Math.max(ce.scrollWidth,ce.offsetWidth) : ce.offsetWidth) - (Number.parseInt($(ce).css("borderLeftWidth"),10) || 0) - (Number.parseInt($(ce).css("paddingRight"),10) || 0) - this.helperProportions.width - this.margins.left,
+				co.top+(over ? Math.max(ce.scrollHeight,ce.offsetHeight) : ce.offsetHeight) - (Number.parseInt($(ce).css("borderTopWidth"),10) || 0) - (Number.parseInt($(ce).css("paddingBottom"),10) || 0) - this.helperProportions.height - this.margins.top
 			];
 		} else if(o.containment.constructor == Array) {
 			this.containment = o.containment;
@@ -721,7 +721,7 @@ $.ui.plugin.add("draggable", "stack", {
 		var o = $(this).data("draggable").options;
 
 		var group = $.makeArray($(o.stack.group)).sort(function(a,b) {
-			return (parseInt($(a).css("zIndex"),10) || o.stack.min) - (parseInt($(b).css("zIndex"),10) || o.stack.min);
+			return (Number.parseInt($(a).css("zIndex"),10) || o.stack.min) - (Number.parseInt($(b).css("zIndex"),10) || o.stack.min);
 		});
 
 		$(group).each(function(i) {

@@ -115,7 +115,7 @@
             $$.initWithData($$.convertColumnsToData(config.data_columns));
         }
         else {
-            throw Error('url or json or rows or columns is required.');
+            throw new Error('url or json or rows or columns is required.');
         }
     };
 
@@ -409,12 +409,12 @@
         // for subchart
         $$.margin2 = config.axis_rotated ? {
             top: $$.margin.top,
-            right: NaN,
+            right: Number.NaN,
             bottom: 20 + legendHeightForBottom,
             left: $$.rotated_padding_left
         } : {
             top: $$.currentHeight - subchartHeight - legendHeightForBottom,
-            right: NaN,
+            right: Number.NaN,
             bottom: xAxisHeight + legendHeightForBottom,
             left: $$.margin.left
         };
@@ -422,7 +422,7 @@
         // for legend
         $$.margin3 = {
             top: 0,
-            right: NaN,
+            right: Number.NaN,
             bottom: 0,
             left: 0
         };
@@ -1061,10 +1061,10 @@
             parsedDate = date;
         } else if (typeof date === 'string') {
             parsedDate = $$.dataTimeFormat($$.config.data_xFormat).parse(date);
-        } else if (typeof date === 'number' && !isNaN(date)) {
+        } else if (typeof date === 'number' && !Number.isNaN(date)) {
             parsedDate = new Date(+date);
         }
-        if (!parsedDate || isNaN(+parsedDate)) {
+        if (!parsedDate || Number.isNaN(+parsedDate)) {
             window.console.error("Failed to parse x '" + date + "' to Date object");
         }
         return parsedDate;
@@ -1527,10 +1527,10 @@
         if (yTargets.length === 0) { // use current domain if target of axisId is none
             return axisId === 'y2' ? $$.y2.domain() : $$.y.domain();
         }
-        if (isNaN(yDomainMin)) { // set minimum to zero when not number
+        if (Number.isNaN(yDomainMin)) { // set minimum to zero when not number
             yDomainMin = 0;
         }
-        if (isNaN(yDomainMax)) { // set maximum to have same value as yDomainMin
+        if (Number.isNaN(yDomainMax)) { // set maximum to have same value as yDomainMin
             yDomainMax = yDomainMin;
         }
         if (yDomainMin === yDomainMax) {
@@ -1852,7 +1852,7 @@
         var $$ = this;
         var xs = $$.d3.set($$.d3.merge(targets.map(function (t) { return t.values.map(function (v) { return +v.x; }); }))).values();
         xs = $$.isTimeSeries() ? xs.map(function (x) { return new Date(+x); }) : xs.map(function (x) { return +x; });
-        return xs.sort(function (a, b) { return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN; });
+        return xs.sort(function (a, b) { return a < b ? -1 : a > b ? 1 : a >= b ? 0 : Number.NaN; });
     };
     c3_chart_internal_fn.addHiddenTargetIds = function (targetIds) {
         this.hiddenTargetIds = this.hiddenTargetIds.concat(targetIds);
@@ -2125,7 +2125,7 @@
         return data;
     };
     c3_chart_internal_fn.findValueInJson = function (object, path) {
-        path = path.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties (replace [] with .)
+        path = path.replaceAll(/\[(\w+)\]/g, '.$1'); // convert indexes to properties (replace [] with .)
         path = path.replace(/^\./, '');           // strip a leading dot
         var pathArray = path.split('.');
         for (var i = 0; i < pathArray.length; ++i) {
@@ -2217,7 +2217,7 @@
                 id_org: id,
                 values: data.map(function (d, i) {
                     var xKey = $$.getXKey(id), rawX = d[xKey],
-                        value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null, x;
+                        value = d[id] !== null && !Number.isNaN(d[id]) ? +d[id] : null, x;
                     // use x as categories if custom x and categorized
                     if ($$.isCustomX() && $$.isCategorized() && index === 0 && !isUndefined(rawX)) {
                         if (index === 0 && i === 0) {
@@ -4050,7 +4050,7 @@
 
         $$.margin3 = {
             top: $$.isLegendRight ? 0 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
-            right: NaN,
+            right: Number.NaN,
             bottom: 0,
             left: $$.isLegendRight ? $$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
         };
@@ -4854,7 +4854,7 @@
             var reduce = 0;
             for (var i = 0; i < d.values.length; i++) {
                 var dd = d.values[i];
-                reduce = reduce + parseFloat(dd.value);
+                reduce = reduce + Number.parseFloat(dd.value);
             }
             return reduce;
         });
@@ -4896,10 +4896,10 @@
             }
             index++;
         });
-        if (isNaN(d.startAngle)) {
+        if (Number.isNaN(d.startAngle)) {
             d.startAngle = 0;
         }
-        if (isNaN(d.endAngle)) {
+        if (Number.isNaN(d.endAngle)) {
             d.endAngle = d.startAngle;
         }
         if ($$.isGaugeType(d.data)) {
@@ -4946,8 +4946,8 @@
             updated = $$.updateAngle(d), c, x, y, h, ratio, translate = "";
         if (updated && !$$.hasType('gauge')) {
             c = this.svgArc.centroid(updated);
-            x = isNaN(c[0]) ? 0 : c[0];
-            y = isNaN(c[1]) ? 0 : c[1];
+            x = Number.isNaN(c[0]) ? 0 : c[0];
+            y = Number.isNaN(c[1]) ? 0 : c[1];
             h = Math.sqrt(x * x + y * y);
             if ($$.hasType('donut') && config.donut_label_ratio) {
                 ratio = isFunction(config.donut_label_ratio) ? config.donut_label_ratio(d, $$.radius, h) : config.donut_label_ratio;
@@ -5208,10 +5208,10 @@
                 //                        endAngle: Math.PI*2,
                 //                    };
                 //                }
-                if (isNaN(this._current.startAngle)) {
+                if (Number.isNaN(this._current.startAngle)) {
                     this._current.startAngle = 0;
                 }
-                if (isNaN(this._current.endAngle)) {
+                if (Number.isNaN(this._current.endAngle)) {
                     this._current.endAngle = this._current.startAngle;
                 }
                 interpolate = d3.interpolate(this._current, updated);
@@ -5835,7 +5835,7 @@
             var id = d.id || (d.data && d.data.id) || d, color;
 
             // if callback function is provided
-            if (colors[id] instanceof Function) {
+            if (typeof colors[id] === 'function') {
                 color = colors[id](d);
             }
             // if specified, choose that color
@@ -5848,7 +5848,7 @@
                 color = pattern[ids.indexOf(id) % pattern.length];
                 colors[id] = color;
             }
-            return callback instanceof Function ? callback(color, d) : color;
+            return typeof callback === 'function' ? callback(color, d) : color;
         };
     };
     c3_chart_internal_fn.generateLevelColor = function () {
@@ -6089,7 +6089,7 @@
         return CLASS.chartArc + this.classTarget(d.data.id);
     };
     c3_chart_internal_fn.getTargetSelectorSuffix = function (targetId) {
-        return targetId || targetId === 0 ? ('-' + targetId).replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, '-') : '';
+        return targetId || targetId === 0 ? ('-' + targetId).replaceAll(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, '-') : '';
     };
     c3_chart_internal_fn.selectorTarget = function (id, prefix) {
         return (prefix || '') + '.' + CLASS.target + this.getTargetSelectorSuffix(id);
@@ -6148,7 +6148,7 @@
             return found;
         },
         sanitise = c3_chart_internal_fn.sanitise = function (str) {
-            return typeof str === 'string' ? str.replace(/</g, '&lt;').replace(/>/g, '&gt;') : str;
+            return typeof str === 'string' ? str.replaceAll('<', '&lt;').replaceAll('>', '&gt;') : str;
         },
         getPathBox = c3_chart_internal_fn.getPathBox = function (path) {
             var box = path.getBoundingClientRect(),
@@ -6375,7 +6375,7 @@
     c3_chart_fn.unload = function (args) {
         var $$ = this.internal;
         args = args || {};
-        if (args instanceof Array) {
+        if (Array.isArray(args)) {
             args = {ids: args};
         } else if (typeof args === 'string') {
             args = {ids: [args]};
@@ -7844,7 +7844,7 @@
          }
 
          SVGPathSegList.prototype._checkValidIndex = function(index) {
-             if (isNaN(index) || index < 0 || index >= this.numberOfItems)
+             if (Number.isNaN(index) || index < 0 || index >= this.numberOfItems)
                  throw "INDEX_SIZE_ERR";
          }
 

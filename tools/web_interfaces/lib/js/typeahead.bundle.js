@@ -1370,7 +1370,7 @@
             }
         }
         Input.normalizeQuery = function(str) {
-            return _.toStr(str).replace(/^\s*/g, "").replace(/\s{2,}/g, " ");
+            return _.toStr(str).replaceAll(/^\s*/g, "").replaceAll(/\s{2,}/g, " ");
         };
         _.mixin(Input.prototype, EventEmitter, {
             _onBlur: function onBlur() {
@@ -1784,7 +1784,7 @@
         }
         _.mixin(Menu.prototype, EventEmitter, {
             _onSelectableClick: function onSelectableClick($e) {
-                if(parseFloat(jQuery().jquery) < 2) $e.currentTarget = $e.target;
+                if(Number.parseFloat(jQuery().jquery) < 2) $e.currentTarget = $e.target;
                 this.trigger("selectableClicked", $($e.currentTarget));
             },
             _onRendered: function onRendered(type, dataset, suggestions, async) {
@@ -1816,7 +1816,7 @@
                 elTop = $el.position().top;
                 elBottom = elTop + $el.outerHeight(true);
                 nodeScrollTop = this.$node.scrollTop();
-                nodeHeight = this.$node.height() + parseInt(this.$node.css("paddingTop"), 10) + parseInt(this.$node.css("paddingBottom"), 10);
+                nodeHeight = this.$node.height() + Number.parseInt(this.$node.css("paddingTop"), 10) + Number.parseInt(this.$node.css("paddingBottom"), 10);
                 if (elTop < 0) {
                     this.$node.scrollTop(nodeScrollTop + elTop);
                 } else if (nodeHeight < elBottom) {

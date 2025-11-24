@@ -153,7 +153,7 @@ $.extend(Datepicker.prototype, {
 	_doKeyPress: function(e) {
 		var inst = $.datepicker._getInst(this._calId);
 		var chars = $.datepicker._possibleChars(inst._get('dateFormat'));
-		var chr = String.fromCharCode(e.charCode == undefined ? e.keyCode : e.charCode);
+		var chr = String.fromCodePoint(e.charCode == undefined ? e.keyCode : e.charCode);
 		return (chr < ' ' || !chars || chars.indexOf(chr) > -1);
 	},
 
@@ -472,7 +472,7 @@ $.extend(Datepicker.prototype, {
 			$(this).click(function() {
 				var attrVal = $(this).attr('_can_adjust_month_plus');
 				var params = attrVal.split(',');
-				var offset = parseInt(params[1]);
+				var offset = Number.parseInt(params[1]);
 				jQuery.datepicker._adjustDate(params[0] , offset , params[2]);
 			});
 		});	
@@ -481,7 +481,7 @@ $.extend(Datepicker.prototype, {
 			$(this).click(function() {
 				var attrVal = $(this).attr('_can_adjust_month_minus');
 				var params = attrVal.split(',');
-				var offset = parseInt(params[1]);
+				var offset = Number.parseInt(params[1]);
 				jQuery.datepicker._adjustDate(params[0] , -offset , params[2]);
 			});
 		});	
@@ -1112,7 +1112,7 @@ $.extend(DatepickerInstance.prototype, {
 		this._endDay = this._endMonth = this._endYear = null;
 		var shortYearCutoff = this._get('shortYearCutoff');
 		shortYearCutoff = (typeof shortYearCutoff != 'string' ? shortYearCutoff :
-			new Date().getFullYear() % 100 + parseInt(shortYearCutoff, 10));
+			new Date().getFullYear() % 100 + Number.parseInt(shortYearCutoff, 10));
 		var date = this._getDefaultDate();
 		if (dates.length > 0) {
 			var dayNamesShort = this._get('dayNamesShort');
@@ -1329,12 +1329,12 @@ $.extend(DatepickerInstance.prototype, {
 				endYear = drawYear + 10;
 			}
 			else if (years[0].charAt(0) == '+' || years[0].charAt(0) == '-') {
-				year = drawYear + parseInt(years[0], 10);
-				endYear = drawYear + parseInt(years[1], 10);
+				year = drawYear + Number.parseInt(years[0], 10);
+				endYear = drawYear + Number.parseInt(years[1], 10);
 			}
 			else {
-				year = parseInt(years[0], 10);
-				endYear = parseInt(years[1], 10);
+				year = Number.parseInt(years[0], 10);
+				endYear = Number.parseInt(years[1], 10);
 			}
 			year = (minDate ? Math.max(year, minDate.getFullYear()) : year);
 			endYear = (maxDate ? Math.min(endYear, maxDate.getFullYear()) : endYear);

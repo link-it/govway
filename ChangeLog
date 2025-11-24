@@ -1,3 +1,9 @@
+2025-11-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug #1690
+	Corrette segnalazioni vulnerabilità rilevate da SonarQube v25.11.0.114957 su alcune pagine xhtml, js e jsp.
+
 2025-11-20  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

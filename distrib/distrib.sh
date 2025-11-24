@@ -172,6 +172,7 @@ infoPrintln "---------------------------------------"
 WORKING_COPY=${PWD}/../
 DOC_WORKING_COPY="${WORKING_COPY}/resources/doc"
 CHECKS_WORKING_COPY="${WORKING_COPY}/distrib/check"
+JS_CHECK_WORKING_COPY="${WORKING_COPY}/distrib/check/VerificaJs.sh"
 OPENSPCOOP_SRC_FILE="govway-src-${TAG_FULL_VERSION}"
 OPENSPCOOP_PDD_FILE="govway-installer-${TAG_FULL_VERSION}"
 OPENSPCOOP_EXTERNAL_LIB_FILE="govway-external-lib-${TAG_FULL_VERSION}"
@@ -209,7 +210,7 @@ fi
 if [ $# -eq 0 ] ; then
     if [ "$SKIP_CHECKS" == "true" ]
     then
-	    warningPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti non eseguite su richiesta utente."
+	    warningPrintln "Verifiche (GPL/JavaDoc/StringBuffer/Javascript) sui sorgenti non eseguite su richiesta utente."
     else
 	    infoPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti ..."
 	    pushd ${WORKING_COPY} >> ${LOG_FILE} 2>&1
@@ -235,6 +236,25 @@ if [ $# -eq 0 ] ; then
 	    done
 	    popd >> ${LOG_FILE} 2>&1
 	    infoPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti terminata correttamente"
+	    
+	    infoPrintln "Verifiche (Javascript) sui sorgenti ..."
+	    pushd ${WORKING_COPY} >> ${LOG_FILE} 2>&1
+	    rm -f ${LOG_DIR}/esecuzione_js.log
+	    ERROROUTPUT=
+	    for check in tools/web_interfaces/lib/js tools/web_interfaces/monitor
+	    do
+		    debugPrintln "Esecuzione js check in $check"
+		    OUTPUTCHECK=$(bash ${JS_CHECK_WORKING_COPY} $check 2>&1)
+		    if [ $? -ne 0 ] 
+		    then
+			    ERROROUTPUT=true
+			    echo "${OUTPUTCHECK}" >> ${LOG_DIR}/esecuzione_js.log
+			    errorPrintln "Esecuzione js check in $check in errore."
+			    infoPrintln "Verificare l'output dell'esecuzione sul file ${LOG_DIR}/esecuzione_js.log"
+		    fi
+	    done
+	    popd >> ${LOG_FILE} 2>&1
+	    infoPrintln "Verifiche (Javascript) sui sorgenti terminata correttamente"
     fi
     [ -n "${ERROROUTPUT}" ] && exit 2
 fi

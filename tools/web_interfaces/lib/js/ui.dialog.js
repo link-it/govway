@@ -186,7 +186,7 @@ $.widget("ui.dialog", {
 
 		var maxZ = this.options.zIndex, options = this.options;
 		$('.ui-dialog:visible').each(function() {
-			maxZ = Math.max(maxZ, parseInt($(this).css('z-index'), 10) || options.zIndex);
+			maxZ = Math.max(maxZ, Number.parseInt($(this).css('z-index'), 10) || options.zIndex);
 		});
 		(this.overlay && this.overlay.$el.css('z-index', ++maxZ));
 		(this.shadow && this.shadow.css('z-index', ++maxZ));
@@ -564,11 +564,11 @@ $.extend($.ui.dialog.overlay, {
 					if ($dialog.length) {
 						var $overlays = $('.ui-dialog-overlay');
 						if ($overlays.length) {
-							var maxZ = parseInt($overlays.css('z-index'), 10);
+							var maxZ = Number.parseInt($overlays.css('z-index'), 10);
 							$overlays.each(function() {
-								maxZ = Math.max(maxZ, parseInt($(this).css('z-index'), 10));
+								maxZ = Math.max(maxZ, Number.parseInt($(this).css('z-index'), 10));
 							});
-							allow = parseInt($dialog.css('z-index'), 10) > maxZ;
+							allow = Number.parseInt($dialog.css('z-index'), 10) > maxZ;
 						} else {
 							allow = true;
 						}

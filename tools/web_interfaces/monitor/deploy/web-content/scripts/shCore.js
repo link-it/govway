@@ -757,9 +757,9 @@ function eachLine(str, callback)
  */
 function trimFirstAndLastLines(str)
 {
-	//return str.replace(/^[ ]*[\n]+|[\n]*[ ]*$/g, '');
-	var tmp = str.replace(/^[ ]*[\n]+/g, '');
-	tmp = tmp.replace(/[\n]*[ ]*$/g, '');
+	//return str.replaceAll(/^[ ]*[\n]+|[\n]*[ ]*$/g, '');
+	var tmp = str.replaceAll(/^[ ]*[\n]+/g, '');
+	tmp = tmp.replaceAll(/[\n]*[ ]*$/g, '');
 	return tmp;
 };
 
@@ -799,10 +799,10 @@ function parseParams(str)
 	while ((match = regex.exec(str)) != null) 
 	{
 		//var value = match.value
-		//	.replace(/^['"]|['"]$/g, '') // strip quotes from end of strings
+		//	.replaceAll(/^['"]|['"]$/g, '') // strip quotes from end of strings
 		//	;
-		var value = match.value.replace(/^['"]/g, '');
-		value = value.replace(/['"]$/g, '');
+		var value = match.value.replaceAll(/^['"]/g, '');
+		value = value.replaceAll(/['"]$/g, '');
 		
 		// try to parse array value
 		if (value != null && arrayRegex.test(value))
@@ -826,13 +826,13 @@ function parseParams(str)
  */
 function wrapLinesWithCode(str, css)
 {
-	if (str == null || str.length == 0 || str == '\n') 
+	if (str == null || str.length == 0 || str == '\n')
 		return str;
 
-	str = str.replace(/</g, '&lt;');
+	str = str.replaceAll('<', '&lt;');
 
 	// Replace two or more sequential spaces with &nbsp; leaving last space untouched.
-	str = str.replace(/ {2,}/g, function(m)
+	str = str.replaceAll(/ {2,}/g, function(m)
 	{
 		var spaces = '';
 		
@@ -894,11 +894,11 @@ function padNumber(number, length)
 function processTabs(code, tabSize)
 {
 	var tab = '';
-	
+
 	for (var i = 0; i < tabSize; i++)
 		tab += ' ';
 
-	return code.replace(/\t/g, tab);
+	return code.replaceAll('\t', tab);
 };
 
 /**
@@ -959,12 +959,12 @@ function processSmartTabs(code, tabSize)
 function fixInputString(str)
 {
 	var br = /<br\s*\/?>|&lt;br\s*\/?&gt;/gi;
-	
+
 	if (sh.config.bloggerMode == true)
-		str = str.replace(br, '\n');
+		str = str.replaceAll(br, '\n');
 
 	if (sh.config.stripBrs == true)
-		str = str.replace(br, '');
+		str = str.replaceAll(br, '');
 		
 	return str;
 };
@@ -977,9 +977,9 @@ function fixInputString(str)
  */
 function trim(str)
 {
-	//return str.replace(/^\s+|\s+$/g, '');
-	var tmp = str.replace(/^\s+/g, '');
-	tmp = tmp.replace(/\s+$/g, '');
+	//return str.replaceAll(/^\s+|\s+$/g, '');
+	var tmp = str.replaceAll(/^\s+/g, '');
+	tmp = tmp.replaceAll(/\s+$/g, '');
 	return tmp;
 };
 
@@ -1415,7 +1415,7 @@ sh.Highlighter.prototype = {
 	figureOutLineNumbers: function(code)
 	{
 		var lines = [],
-			firstLine = parseInt(this.getParam('first-line'))
+			firstLine = Number.parseInt(this.getParam('first-line'))
 			;
 		
 		eachLine(code, function(line, index)
@@ -1473,13 +1473,13 @@ sh.Highlighter.prototype = {
 	{
 		var html = '',
 			count = splitLines(code).length,
-			firstLine = parseInt(this.getParam('first-line')),
+			firstLine = Number.parseInt(this.getParam('first-line')),
 			pad = this.getParam('pad-line-numbers')
 			;
 		
 		if (pad == true)
 			pad = (firstLine + count - 1).toString().length;
-		else if (isNaN(pad) == true)
+		else if (Number.isNaN(pad))
 			pad = 0;
 			
 		for (var i = 0; i < count; i++)
@@ -1506,7 +1506,7 @@ sh.Highlighter.prototype = {
 		
 		var lines = splitLines(html),
 			padLength = this.getParam('pad-line-numbers'),
-			firstLine = parseInt(this.getParam('first-line')),
+			firstLine = Number.parseInt(this.getParam('first-line')),
 			html = '',
 			brushName = this.getParam('brush')
 			;
@@ -1627,7 +1627,7 @@ sh.Highlighter.prototype = {
 		classes.push(this.getParam('brush'));
 
 		code = trimFirstAndLastLines(code)
-			.replace(/\r/g, ' ') // IE lets these buggers through
+			.replaceAll('\r', ' ') // IE lets these buggers through
 			;
 
 		tabSize = this.getParam('tab-size');
@@ -1738,12 +1738,12 @@ sh.Highlighter.prototype = {
 	getKeywords: function(str)
 	{
 		//str = str
-		//	.replace(/^\s+|\s+$/g, '')
-		//	.replace(/\s+/g, '|')
+		//	.replaceAll(/^\s+|\s+$/g, '')
+		//	.replaceAll(/\s+/g, '|')
 		//	;
-		str = str.replace(/^\s+/g, '');
-	    str = str.replace(/\s+$/g, '');
-	    str = str.replace(/\s+/g, '|');
+		str = str.replaceAll(/^\s+/g, '');
+	    str = str.replaceAll(/\s+$/g, '');
+	    str = str.replaceAll(/\s+/g, '|');
 		
 		return '\\b(?:' + str + ')\\b';
 	},
