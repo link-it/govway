@@ -1,3 +1,10 @@
+2025-11-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1691
+	Aggiornata la gestione delle govlet SUAP: risolto un problema di validazione delle richieste nel servizio ET-to-BO 
+	che impediva il corretto riconoscimento dell’evento cdss_convened, dovuto a una definizione incoerente del campo event nella specifica OpenAPI.
+
 2025-11-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, GovWayMonitor]
