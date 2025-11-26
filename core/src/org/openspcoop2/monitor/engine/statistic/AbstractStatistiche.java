@@ -385,9 +385,10 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		// Conversione stato 3 -> 1 per intervalli non più correnti (Fase 0)
 		Date now = new Date();
 		Date nowTruncated = truncDate(now, false);
+		Date dataMinima = this.calculateDataMinimaForFase0(dataUltimaGenerazioneStatistiche);
 		if(this.debug)
 			this.logDebug("----------- conversione Fase0 (stato 3->1 per intervalli passati) ------------");
-		boolean esito = this.convertStatoIntervalloCorrenteInPassato(nowTruncated);
+		boolean esito = this.convertStatoIntervalloCorrenteInPassato(nowTruncated, dataMinima);
 		if(!esito) {
 			return false;
 		}
@@ -1396,10 +1397,10 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 
 	}
 
-	private boolean convertStatoIntervalloCorrenteInPassato(Date nowTruncated) {
+	private boolean convertStatoIntervalloCorrenteInPassato(Date nowTruncated, Date dataMinima) {
 
 		if(this.debug){
-			this.logDebug("Conversione record con stato 3 (intervallo corrente) in stato 1 (intervalli precedenti) per date < ["+nowTruncated+"] ...");
+			this.logDebug("Conversione record con stato 3 (intervallo corrente) in stato 1 (intervalli precedenti) per date in range ["+dataMinima+"] - ["+nowTruncated+"] ...");
 		}
 
 		try{
@@ -1412,18 +1413,20 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 			sqlQueryObject.addUpdateField(fieldConverter.toColumn(this.model.STATO_RECORD, false), "?");
 			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.STATO_RECORD, false)+"=?");
 			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.DATA, false)+"<?");
+			sqlQueryObject.addWhereCondition(fieldConverter.toColumn(this.model.DATA, false)+">=?");
 			sqlQueryObject.setANDLogicOperator(true);
 
 			if(this.debug){
-				this.logDebug("Converto record con stato_record=3 e data<["+nowTruncated.getTime()+"] in stato_record=1");
+				this.logDebug("Converto record con stato_record=3 e data in range ["+dataMinima.getTime()+"] - ["+nowTruncated.getTime()+"] in stato_record=1");
 			}
 			int righeModificate = this.statisticaServiceDAO.nativeUpdate(sqlQueryObject.createSQLUpdate(),
 					CostantiDB.STATISTICHE_STATO_RECORD_VALIDO,
 					CostantiDB.STATISTICHE_STATO_RECORD_VALIDO_INTERVALLO_CORRENTE,
-					nowTruncated);
+					nowTruncated,
+					dataMinima);
 
 			if(this.debug){
-				this.logDebug("Convertite ["+righeModificate+"] entry da stato 3 a stato 1");
+				this.logDebug("Convertite ["+righeModificate+"] entry da stato 3 a stato 1. Range temporale: ["+dataMinima+"] - ["+nowTruncated+"]");
 			}
 
 			return true;
@@ -1435,10 +1438,65 @@ public abstract class AbstractStatistiche implements IStatisticsEngine {
 		}
 		finally {
 			if(this.debug){
-				this.logDebug("Conversione record con stato 3 in stato 1 per date < ["+nowTruncated+"] terminata");
+				this.logDebug("Conversione record con stato 3 in stato 1 per date in range ["+dataMinima+"] - ["+nowTruncated+"] terminata");
 			}
 		}
 
+	}
+
+	/**
+	 * Calcola la data minima da usare nella Fase 0 per limitare il range temporale
+	 * della query di conversione stato_record 3->1.
+	 *
+	 * Logica:
+	 * - Normalmente i record con stato_record=3 dovrebbero esistere solo per l'intervallo corrente o comunque per la data di ultima generazione delle statistiche
+	 * - In caso di fallimento batch precedente, potrebbero esistere record anomali di pochi intervalli fa
+	 * - Aggiungiamo un safety margin minimo per coprire eventuali fallimenti recenti
+	 * - Questo permette anche il partition pruning riducendo drasticamente le partizioni da scansionare
+	 *
+	 * @param dataUltimaGenerazioneStatistiche Data ultima generazione statistiche stabile
+	 * @return Data minima da usare nel WHERE data >= ?
+	 */
+	private Date calculateDataMinimaForFase0(Date dataUltimaGenerazioneStatistiche) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dataUltimaGenerazioneStatistiche);
+
+		switch (this.getTipoStatistiche()) {
+			case STATISTICHE_ORARIE:
+				// Safety margin: 2 ore (copre eventuali crash recenti)
+				cal.add(Calendar.HOUR_OF_DAY, -2);
+				break;
+
+			case STATISTICHE_GIORNALIERE:
+				// Safety margin: 2 giorni
+				cal.add(Calendar.DAY_OF_MONTH, -2);
+				break;
+
+			case STATISTICHE_SETTIMANALI:
+				// Safety margin: 2 settimane
+				cal.add(Calendar.WEEK_OF_YEAR, -2);
+				break;
+
+			case STATISTICHE_MENSILI:
+				// Safety margin: 1 mese
+				cal.add(Calendar.MONTH, -1);
+				break;
+
+			default:
+				// Default: 7 giorni
+				cal.add(Calendar.DAY_OF_MONTH, -7);
+				break;
+		}
+
+		Date dataMinima = cal.getTime();
+
+		if(this.debug) {
+			this.logDebug("Fase 0: data minima calcolata = " + dataMinima +
+					" (dataUltimaGenerazione=" + dataUltimaGenerazioneStatistiche +
+					", tipo=" + this.getTipoStatistiche() + ", safety margin applicato)");
+		}
+
+		return dataMinima;
 	}
 
 	private boolean deleteFisicoStatistiche( TipoPdD tipoPdD, Date data , int statoRecord, boolean equalsStatoRecord) {
