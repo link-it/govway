@@ -37,17 +37,17 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourException;
  */
 public class LoadBalancer {
 
-	private static java.util.Random _rnd = null;
+	private static java.util.Random rndInternal = null;
 	private static synchronized void initRandomInstance() {
-		if(_rnd==null) {
-			_rnd = new SecureRandom();
+		if(rndInternal==null) {
+			rndInternal = new SecureRandom();
 		}
 	}
 	public static java.util.Random getRandomInstance() {
-		if(_rnd==null) {
+		if(rndInternal==null) {
 			initRandomInstance();
 		}
-		return _rnd;
+		return rndInternal;
 	}
 	
 	private PdDContext pddContext;
@@ -84,14 +84,14 @@ public class LoadBalancer {
 		List<String> serverList = new ArrayList<>();
 		serverList.addAll(servers);
 		int position = this.pool.getNextPosition(false);
-		String target = serverList.get(position);
-		return target;
+		// String target = 
+		return serverList.get(position);
 	}
 	private String getWeightRoundRobin() throws BehaviourException {
 		List<String> serverList = this.pool.getWeightList(false); // il passive health check viene effettuato dentro il metodo nextPosition
 		int position = this.pool.getNextPosition(true);
-		String target = serverList.get(position);
-		return target;
+		// String target = 
+		return serverList.get(position);
 	}
 
 
@@ -103,20 +103,20 @@ public class LoadBalancer {
 		List<String> serverList = new ArrayList<>();
 		serverList.addAll(servers);
 		int randomIndex = getRandomInstance().nextInt(serverList.size());
-		String target = serverList.get(randomIndex);
-		return target;
+		// String target = 
+		return serverList.get(randomIndex);
 	}
 	private String getWeightRandom() throws BehaviourException {
 		List<String> serverList = this.pool.getWeightList(true);
 		Integer index = getRandomInstance().nextInt(serverList.size());
-		String target = serverList.get(index);
-		return target;
+		// String target = 
+		return serverList.get(index);
 	}
 
 	public static String getIpSourceFromContet(PdDContext pddContext) {
 		Object oIpAddressRemote = pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLIENT_IP_REMOTE_ADDRESS);
 		String ipAddressRemote = null;
-		if(oIpAddressRemote!=null && (oIpAddressRemote instanceof String)){
+		if(oIpAddressRemote instanceof String){
 			ipAddressRemote = (String)oIpAddressRemote;
 		}
 		if (ipAddressRemote == null) {
@@ -125,16 +125,15 @@ public class LoadBalancer {
 		
 		Object oIpAddressTransport = pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLIENT_IP_TRANSPORT_ADDRESS);
 		String ipAddressTransport = null;
-		if(oIpAddressTransport!=null && (oIpAddressTransport instanceof String)){
+		if(oIpAddressTransport instanceof String){
 			ipAddressTransport = (String)oIpAddressTransport;
 		}
 		if (ipAddressTransport == null) {
 			ipAddressTransport = "-";
 		}
 		
-		String clientIp = ipAddressRemote+" "+ipAddressTransport;
-		
-		return clientIp;
+		//String clientIp = 
+		return ipAddressRemote+" "+ipAddressTransport;
 	}
 	
 	private String getIpSourceHash() throws BehaviourException {
