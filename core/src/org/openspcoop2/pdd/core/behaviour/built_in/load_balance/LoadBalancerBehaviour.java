@@ -114,10 +114,7 @@ public class LoadBalancerBehaviour extends AbstractBehaviour implements IBehavio
 			}
 
 		}
-		catch(BehaviourEmitDiagnosticException e){
-			throw e;
-		}
-		catch(BehaviourException e){
+		catch(BehaviourEmitDiagnosticException | BehaviourException e){
 			throw e;
 		}
 		

@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
 import org.openspcoop2.generic_project.exception.NotFoundException;
+import org.openspcoop2.utils.UtilsRuntimeException;
 
 /**     
  * BehaviourType
@@ -87,7 +88,7 @@ public enum LoadBalancerType implements IEnumeration , Serializable , Cloneable 
 	public boolean isSticky() {
 		return this.sticky;
 	}
-	public void setSticky(boolean sticky) {
+	void setSticky(boolean sticky) {
 		this.sticky = sticky;
 	}
 
@@ -116,21 +117,36 @@ public enum LoadBalancerType implements IEnumeration , Serializable , Cloneable 
 	
 	/** compatibility with the generated bean (reflection) */
 	public boolean equals(Object object,List<String> fieldsNotCheck){
-		if( !(object instanceof LoadBalancerType) ){
-			throw new RuntimeException("Wrong type: "+object.getClass().getName());
+		if(fieldsNotCheck!=null) {
+			// nop
 		}
-		return this.equals(((LoadBalancerType)object));
+		if( !(object instanceof LoadBalancerType) ){
+			throw new UtilsRuntimeException("Wrong type: "+object.getClass().getName());
+		}
+		return this.equals((object));
 	}
 	public String toString(boolean reportHTML){
+		if(reportHTML) {
+			// nop
+		}
 		return toString();
 	}
   	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
+  		if(reportHTML && fieldsNotIncluded!=null) {
+			// nop
+		}
   		return toString();
   	}
   	public String diff(Object object,StringBuilder bf,boolean reportHTML){
+  		if(reportHTML && object!=null) {
+			// nop
+		}
 		return bf.toString();
 	}
 	public String diff(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){
+		if(reportHTML && object!=null && fieldsNotIncluded!=null) {
+			// nop
+		}
 		return bf.toString();
 	}
 	

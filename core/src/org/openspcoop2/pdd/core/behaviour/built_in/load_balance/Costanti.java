@@ -27,6 +27,8 @@ package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
  * @version $Rev$, $Date$
  */
 public class Costanti  {
+	
+	private Costanti() {}
 
 	public static final String ROUND_ROBIN = "roundRobin";
 	public static final String RANDOM = "random";
