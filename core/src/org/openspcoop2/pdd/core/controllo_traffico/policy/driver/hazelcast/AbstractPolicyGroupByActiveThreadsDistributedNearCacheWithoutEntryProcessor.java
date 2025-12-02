@@ -50,7 +50,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 
 	private boolean putAsync = false;
 
-	public AbstractPolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessor(ActivePolicy policy, String uniqueIdMap, HazelcastInstance hazelcast, PolicyGroupByActiveThreadsType type) throws PolicyException {
+	protected AbstractPolicyGroupByActiveThreadsDistributedNearCacheWithoutEntryProcessor(ActivePolicy policy, String uniqueIdMap, HazelcastInstance hazelcast, PolicyGroupByActiveThreadsType type) throws PolicyException {
 		super(policy, uniqueIdMap, type, hazelcast);
 		this.putAsync = PolicyGroupByActiveThreadsType.HAZELCAST_NEAR_CACHE_UNSAFE_ASYNC_MAP.equals(type);
 	}
@@ -69,14 +69,13 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 			newDati = true;
 		}
 		else {
-			if(datiCollezionati.getUpdatePolicyDate()!=null) {
-				if(!datiCollezionati.getUpdatePolicyDate().equals(this.activePolicy.getInstanceConfiguration().getUpdateTime())) {
-					// data aggiornata
-					datiCollezionati.resetCounters(this.activePolicy.getInstanceConfiguration().getUpdateTime());
-				}
+			if(datiCollezionati.getUpdatePolicyDate()!=null &&
+				!datiCollezionati.getUpdatePolicyDate().equals(this.activePolicy.getInstanceConfiguration().getUpdateTime())) {
+				// data aggiornata
+				datiCollezionati.resetCounters(this.activePolicy.getInstanceConfiguration().getUpdateTime());
 			}
 		}
-		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+		DatiCollezionati datiCollezionatiPerPolicyVerifier = datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
 		if(newDati) {
 			datiCollezionatiPerPolicyVerifier.initDatiIniziali(this.activePolicy);
 			datiCollezionatiPerPolicyVerifier.checkDate(log, this.activePolicy); // inizializza le date se ci sono
@@ -105,7 +104,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 		if(datiCollezionati == null) {
 			throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 		} else {
-			DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+			DatiCollezionati datiCollezionatiPerPolicyVerifier = datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
 			
 			boolean updated = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx, datiCollezionatiPerPolicyVerifier);	
 			if(updated) {
@@ -133,25 +132,25 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 		if(datiCollezionati == null) {
 			throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
 		} else {
-			//System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ...");
+			/**System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ...");*/
 			datiCollezionati.registerEndRequest(log, this.activePolicy, ctx, dati);
-			//System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ok");
+			/**System.out.println("<"+idTransazione+">registerStopRequest registerEndRequest ok");*/
 			if(isApplicabile){
-				//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ...");
+				/**System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ...");*/
 				List<Integer> esitiCodeOk = null;
-				List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
+				List<Integer> esitiCodeKoSenzaFaultApplicativo = null;
 				List<Integer> esitiCodeFaultApplicativo = null;
 				try {
 					EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,dati.getProtocollo());
 					esitiCodeOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
-					esitiCodeKo_senzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+					esitiCodeKoSenzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 					esitiCodeFaultApplicativo = esitiProperties.getEsitiCodeFaultApplicativo();
 				}catch(Exception e) {
 					throw new PolicyException(e.getMessage(),e);
 				}
 				datiCollezionati.updateDatiEndRequestApplicabile(log, this.activePolicy, ctx, dati,
-						esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo, isViolata);
-				//System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ok");
+						esitiCodeOk,esitiCodeKoSenzaFaultApplicativo, esitiCodeFaultApplicativo, isViolata);
+				/**System.out.println("<"+idTransazione+">registerStopRequest updateDatiEndRequestApplicabile ok");*/
 				if(this.putAsync) {
 					this.distributedMap.putAsync(datiGroupBy, datiCollezionati);
 				}
@@ -166,9 +165,10 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributedNearCacheWith
 	public void resetCounters() {
 		
 		if(this.distributedMap.size()>0){
-			//		FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
-			//		for (var entry : this.distributedMap) {
-			for (IDUnivocoGroupByPolicy datiGroupBy : this.distributedMap.keySet()) {
+			/**		FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
+					for (var entry : this.distributedMap) {*/
+			for (java.util.Map.Entry<IDUnivocoGroupByPolicy,DatiCollezionati> entry : this.distributedMap.entrySet()) {
+				IDUnivocoGroupByPolicy datiGroupBy = entry.getKey();
 				DatiCollezionati datiCollezionati = this.distributedMap.get(datiGroupBy);
 				datiCollezionati.resetCounters();
 				this.distributedMap.put(datiGroupBy, datiCollezionati);

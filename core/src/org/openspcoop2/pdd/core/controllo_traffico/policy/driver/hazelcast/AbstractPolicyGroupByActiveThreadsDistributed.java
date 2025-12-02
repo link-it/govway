@@ -56,16 +56,16 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 	
 	protected PolicyGroupByActiveThreadsType type;
 	
-	protected String uniqueIdMap_idActivePolicy;
-	protected Date uniqueIdMap_updateTime;
+	protected String uniqueIdMapIdActivePolicy;
+	protected Date uniqueIdMapUpdateTime;
 	
-	public AbstractPolicyGroupByActiveThreadsDistributed(ActivePolicy policy, String uniqueIdMap, PolicyGroupByActiveThreadsType type, HazelcastInstance hazelcast) throws PolicyException {
+	protected AbstractPolicyGroupByActiveThreadsDistributed(ActivePolicy policy, String uniqueIdMap, PolicyGroupByActiveThreadsType type, HazelcastInstance hazelcast) throws PolicyException {
 		this.activePolicy = policy;
 		this.hazelcast = hazelcast;
 	
-		this.uniqueIdMap_idActivePolicy = UniqueIdentifierUtilities.extractIdActivePolicy(uniqueIdMap);
+		this.uniqueIdMapIdActivePolicy = UniqueIdentifierUtilities.extractIdActivePolicy(uniqueIdMap);
 		try {
-			this.uniqueIdMap_updateTime = UniqueIdentifierUtilities.extractUpdateTimeActivePolicy(uniqueIdMap);
+			this.uniqueIdMapUpdateTime = UniqueIdentifierUtilities.extractUpdateTimeActivePolicy(uniqueIdMap);
 		}catch(Exception e) {
 			throw new PolicyException(e.getMessage(),e);
 		}
@@ -102,7 +102,7 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 		}
 		
 		if (oneMapForeachPolicy) {
-			this.distributedMap = this.hazelcast.getMap(mapName + this.uniqueIdMap_idActivePolicy + "-rate-limiting");
+			this.distributedMap = this.hazelcast.getMap(mapName + this.uniqueIdMapIdActivePolicy + "-rate-limiting");
 			log.info("Hazelcast: Utilizzo Una Distributed Map per gruppo.");
 		} else {
 			this.distributedMap = this.hazelcast.getMap(mapName+"rate-limiting");
@@ -141,7 +141,8 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 	@Override
 	public void initMap(Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		if(map!=null && !map.isEmpty()) {
-			for (IDUnivocoGroupByPolicy datiGroupBy : map.keySet()) {
+			for (java.util.Map.Entry<IDUnivocoGroupByPolicy,DatiCollezionati> entry : map.entrySet()) {
+				IDUnivocoGroupByPolicy datiGroupBy = entry.getKey();
 				datiGroupBy = augmentIDUnivoco(datiGroupBy);
 				DatiCollezionati dati = map.get(datiGroupBy);
 				InitProcessor initProcessor = new InitProcessor(dati);
@@ -161,9 +162,10 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 		// mi aspetto che sulla map vengano già registrati così.
 		
 		if(filtro!=null){
-	//		FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
-	//		for (var entry : this.distributedMap) {
-			for (IDUnivocoGroupByPolicy datiGroupBy : this.distributedMap.keySet()) {
+			/**FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
+			for (var entry : this.distributedMap) {*/
+			for (java.util.Map.Entry<IDUnivocoGroupByPolicy,DatiCollezionati> entry : this.distributedMap.entrySet()) {
+				IDUnivocoGroupByPolicy datiGroupBy = entry.getKey();
 				if(!datiGroupBy.match(filtro)){
 					continue;
 				}
@@ -183,13 +185,13 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 
 	@Override
 	public void remove() throws UtilsException{
-	//		FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
-	//		for (var entry : this.distributedMap) {
-		List<IDUnivocoGroupByPolicy> deleteList = new ArrayList<IDUnivocoGroupByPolicy>();
+		/**	FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
+			for (var entry : this.distributedMap) {*/
+		List<IDUnivocoGroupByPolicy> deleteList = new ArrayList<>();
 		for (IDUnivocoGroupByPolicy datiGroupBy : this.distributedMap.keySet()) {
 			if(datiGroupBy instanceof IDUnivocoGroupByPolicyMapId){
 				IDUnivocoGroupByPolicyMapId mapId = (IDUnivocoGroupByPolicyMapId) datiGroupBy;
-				if(this.uniqueIdMap_idActivePolicy.equals(mapId.getUniqueMapId())) {
+				if(this.uniqueIdMapIdActivePolicy.equals(mapId.getUniqueMapId())) {
 					deleteList.add(datiGroupBy);
 				}
 			}
@@ -204,27 +206,30 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 	public String printInfos(Logger log, String separatorGroups) throws UtilsException {
 		return printInfos(log, separatorGroups, this.distributedMap);
 	}
-	protected String printInfos(Logger log, String separatorGroups, Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) throws UtilsException {
+	protected String printInfos(Logger log, String separatorGroups, Map<IDUnivocoGroupByPolicy, DatiCollezionati> map) {
 		StringBuilder bf = new StringBuilder();
 
-		//System.out.println("\n\nPRINT INFO");
+		/**System.out.println("\n\nPRINT INFO");*/
 		
-		for (IDUnivocoGroupByPolicy datiGroupBy : map.keySet()) {
+		for (java.util.Map.Entry<IDUnivocoGroupByPolicy,DatiCollezionati> entry : map.entrySet()) {
+			
+			IDUnivocoGroupByPolicy datiGroupBy = entry.getKey();
 			
 			DatiCollezionati datiCollezionati = map.get(datiGroupBy);
 			
-//		FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
-//		for (var entry : this.distributedMap) {
-//			IDUnivocoGroupByPolicy datiGroupBy = entry.getKey();
+		/**FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
+		for (var entry : this.distributedMap) {
+			IDUnivocoGroupByPolicy datiGroupBy = entry.getKey();*/
 			
-			if (!OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy()) {
+			if (OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy()!=null &&
+					!OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy().booleanValue()) {
 				IDUnivocoGroupByPolicyMapId mapId = (IDUnivocoGroupByPolicyMapId) datiGroupBy;
-				if(!this.uniqueIdMap_idActivePolicy.equals(mapId.getUniqueMapId())) {
+				if(!this.uniqueIdMapIdActivePolicy.equals(mapId.getUniqueMapId())) {
 					continue;
 				}
 			}
 			
-			//System.out.println("ID["+datiGroupBy.hashCode()+"] ["+datiGroupBy.toString()+"] ["+datiGroupBy.toString(false)+"]");
+			/**System.out.println("ID["+datiGroupBy.hashCode()+"] ["+datiGroupBy.toString()+"] ["+datiGroupBy.toString(false)+"]");*/
 					
 			bf.append(separatorGroups);
 			bf.append("\n");
@@ -233,8 +238,8 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 			bf.append("Criterio di Collezionamento dei Dati\n");
 			bf.append(datiGroupBy.toString(true));
 			bf.append("\n");
-//			entry.getValue().checkDate(log, this.activePolicy); // imposta correttamente gli intervalli
-//			bf.append(entry.getValue().toString());
+			/**entry.getValue().checkDate(log, this.activePolicy); // imposta correttamente gli intervalli
+			bf.append(entry.getValue().toString());*/
 			datiCollezionati.checkDate(log, this.activePolicy); // imposta correttamente gli intervalli
 			bf.append(datiCollezionati.toString());
 			bf.append("\n");
@@ -252,14 +257,15 @@ public abstract class AbstractPolicyGroupByActiveThreadsDistributed implements I
 	
 	protected IDUnivocoGroupByPolicy augmentIDUnivoco(IDUnivocoGroupByPolicy idUnivoco) {
 		// utile sempre aggiungere un id per l'inizializzazione
-		if (OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy()) {
+		if (OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy()!=null &&
+				OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryHazelcastOneMapForeachPolicy().booleanValue()) {
 			return idUnivoco;
 		} else {
 			if(idUnivoco instanceof IDUnivocoGroupByPolicyMapId) {
 				return idUnivoco;
 			}
 			else {
-				return new IDUnivocoGroupByPolicyMapId(idUnivoco, this.uniqueIdMap_idActivePolicy); // NOTA: non serve gestirlo all'interno poichè verrà creato un nuovo identificativo //, this.uniqueIdMap_updateTime);
+				return new IDUnivocoGroupByPolicyMapId(idUnivoco, this.uniqueIdMapIdActivePolicy); /** NOTA: non serve gestirlo all'interno poichè verrà creato un nuovo identificativo //, this.uniqueIdMap_updateTime);*/
 			}
 		}
 	}

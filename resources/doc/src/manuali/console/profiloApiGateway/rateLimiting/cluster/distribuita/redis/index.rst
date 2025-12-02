@@ -15,9 +15,14 @@ La url di connessione verso il database Redis deve essere configurata sul file *
 
 Su Redis viene attualmente supportata una tecnica di sincronizzazione con misurazione esatta attivabile impostando la sincronizzazione '*Distribuita*', implementazione '*Redis*' e scegliendo le voci '*Misurazione esatta*' e '*Algoritmo atomic-long-counters*' (:numref:`configurazioneSincronizzazioneRateLimitingRedisAtomicLongCounters`). Con questa modalità sia il dato 'master' che quelli locali al nodo risultano essere sempre aggiornati.
 
-  .. figure:: ../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingRedisAtomicLongCounters.png
+  .. figure:: ../../../../../_figure_console/ConfigurazioneSincronizzazioneRateLimitingRedisAtomicLongCounters.png
     :scale: 100%
     :align: center
     :name: configurazioneSincronizzazioneRateLimitingRedisAtomicLongCounters
 
     Sincronizzazione Distribuita 'Redis' con misurazione delle metriche esatta
+    
+.. toctree::
+   :maxdepth: 2
+
+   configurazione  

@@ -40,6 +40,6 @@ GovWay consente di avere un conteggio delle metriche effettuato tramite una dell
    :maxdepth: 2
 
    hazelcast/index
-   redis
+   redis/index
    embedded
 

@@ -71,14 +71,13 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends AbstractPoli
 			newDati = true;
 		}
 		else {
-			if(datiCollezionati.getUpdatePolicyDate()!=null) {
-				if(!datiCollezionati.getUpdatePolicyDate().equals(this.activePolicy.getInstanceConfiguration().getUpdateTime())) {
-					// data aggiornata
-					datiCollezionati.resetCounters(this.activePolicy.getInstanceConfiguration().getUpdateTime());
-				}
+			if(datiCollezionati.getUpdatePolicyDate()!=null &&
+				!datiCollezionati.getUpdatePolicyDate().equals(this.activePolicy.getInstanceConfiguration().getUpdateTime())) {
+				// data aggiornata
+				datiCollezionati.resetCounters(this.activePolicy.getInstanceConfiguration().getUpdateTime());
 			}
 		}
-		DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+		DatiCollezionati datiCollezionatiPerPolicyVerifier = datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
 		if(newDati) {
 			datiCollezionatiPerPolicyVerifier.initDatiIniziali(this.activePolicy);
 			datiCollezionatiPerPolicyVerifier.checkDate(log, this.activePolicy); // inizializza le date se ci sono
@@ -104,14 +103,15 @@ public class PolicyGroupByActiveThreadsDistributedNearCache extends AbstractPoli
 		// per adesso se la policy non è ancora arrivata nella near cache, agisco in locale come se fosse la prima richiesta.
 		DatiCollezionati datiCollezionati = this.distributedMap.get(datiGroupBy);			
 		if(datiCollezionati == null) {
-			log.debug("(idTransazione:"+idTransazione+") Policy non ancora in Near Cache. Conto come fosse la prima richiesta; dati identificativi ["+datiGroupBy.toString()+"]");
+			String msg = "(idTransazione:"+idTransazione+") Policy non ancora in Near Cache. Conto come fosse la prima richiesta; dati identificativi ["+datiGroupBy.toString()+"]";
+			log.debug(msg);
 			
 			Date gestorePolicyConfigDate = PolicyDateUtils.readGestorePolicyConfigDateIntoContext(ctx);
 			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime(), gestorePolicyConfigDate);
 			datiCollezionati.registerStartRequest(log, this.activePolicy, null);
 			return datiCollezionati;
 		} else {
-			DatiCollezionati datiCollezionatiPerPolicyVerifier = (DatiCollezionati) datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
+			DatiCollezionati datiCollezionatiPerPolicyVerifier = datiCollezionati.newInstance(); // i valori utilizzati dal policy verifier verranno impostati con il valore impostato nell'operazione chiamata
 			
 			boolean update = datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx, datiCollezionatiPerPolicyVerifier);
 			if(update) {

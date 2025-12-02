@@ -1,3 +1,10 @@
+2025-12-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità #1693
+	Aggiunto supporto per la configurazione di un TTL (Time To Live) sui contatori Redis utilizzati nel rate limiting distribuito, 
+	consentendo la pulizia automatica dei contatori relativi a client non più attivi.
+
 2025-11-26  Andrea Poli <apoli@link.it>
 
 	* [BatchStatistiche]
