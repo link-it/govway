@@ -31539,8 +31539,185 @@ public class OpenSPCoop2Properties {
 		
 		return this.isControlloTrafficoGestorePolicyInMemoryRedisThrowExceptionIfRedisNotReady;
 	}
-	
-	
+
+	// ---- TTL Configuration for Redis Rate Limiting Counters ----
+
+	private Boolean isControlloTrafficoGestorePolicyInMemoryRedisTTLEnabled = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryRedisTTLEnabled() {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ttl.enabled";
+
+		if(this.isControlloTrafficoGestorePolicyInMemoryRedisTTLEnabled==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if(value!=null){
+					value = value.trim();
+					this.isControlloTrafficoGestorePolicyInMemoryRedisTTLEnabled = Boolean.parseBoolean(value);
+				}else{
+					this.logDebug(getMessaggioProprietaNonImpostata(pName, true));
+					this.isControlloTrafficoGestorePolicyInMemoryRedisTTLEnabled = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isControlloTrafficoGestorePolicyInMemoryRedisTTLEnabled = true;
+			}
+		}
+
+		return this.isControlloTrafficoGestorePolicyInMemoryRedisTTLEnabled;
+	}
+
+	private Long controlloTrafficoGestorePolicyInMemoryRedisTTLDefaultSeconds = null;
+	public long getControlloTrafficoGestorePolicyInMemoryRedisTTLDefaultSeconds() {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ttl.defaultSeconds";
+
+		if(this.controlloTrafficoGestorePolicyInMemoryRedisTTLDefaultSeconds==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if(value!=null){
+					value = value.trim();
+					this.controlloTrafficoGestorePolicyInMemoryRedisTTLDefaultSeconds = Long.parseLong(value);
+				}else{
+					this.controlloTrafficoGestorePolicyInMemoryRedisTTLDefaultSeconds = 300L; // 5 minuti default
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, 300L),e);
+				this.controlloTrafficoGestorePolicyInMemoryRedisTTLDefaultSeconds = 300L;
+			}
+		}
+
+		return this.controlloTrafficoGestorePolicyInMemoryRedisTTLDefaultSeconds;
+	}
+
+	private Integer controlloTrafficoGestorePolicyInMemoryRedisTTLIntervalMultiplier = null;
+	public int getControlloTrafficoGestorePolicyInMemoryRedisTTLIntervalMultiplier() {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ttl.intervalMultiplier";
+
+		if(this.controlloTrafficoGestorePolicyInMemoryRedisTTLIntervalMultiplier==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if(value!=null){
+					value = value.trim();
+					this.controlloTrafficoGestorePolicyInMemoryRedisTTLIntervalMultiplier = Integer.parseInt(value);
+				}else{
+					this.controlloTrafficoGestorePolicyInMemoryRedisTTLIntervalMultiplier = 2; // TTL = intervallo × 2
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, 2),e);
+				this.controlloTrafficoGestorePolicyInMemoryRedisTTLIntervalMultiplier = 2;
+			}
+		}
+
+		return this.controlloTrafficoGestorePolicyInMemoryRedisTTLIntervalMultiplier;
+	}
+
+	private Long controlloTrafficoGestorePolicyInMemoryRedisTTLMinSeconds = null;
+	public long getControlloTrafficoGestorePolicyInMemoryRedisTTLMinSeconds() {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ttl.minSeconds";
+
+		if(this.controlloTrafficoGestorePolicyInMemoryRedisTTLMinSeconds==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if(value!=null){
+					value = value.trim();
+					this.controlloTrafficoGestorePolicyInMemoryRedisTTLMinSeconds = Long.parseLong(value);
+				}else{
+					this.controlloTrafficoGestorePolicyInMemoryRedisTTLMinSeconds = 60L; // 1 minuto minimo
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, 60L),e);
+				this.controlloTrafficoGestorePolicyInMemoryRedisTTLMinSeconds = 60L;
+			}
+		}
+
+		return this.controlloTrafficoGestorePolicyInMemoryRedisTTLMinSeconds;
+	}
+
+	private Long controlloTrafficoGestorePolicyInMemoryRedisTTLMaxSeconds = null;
+	public long getControlloTrafficoGestorePolicyInMemoryRedisTTLMaxSeconds() {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ttl.maxSeconds";
+
+		if(this.controlloTrafficoGestorePolicyInMemoryRedisTTLMaxSeconds==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if(value!=null){
+					value = value.trim();
+					this.controlloTrafficoGestorePolicyInMemoryRedisTTLMaxSeconds = Long.parseLong(value);
+				}else{
+					this.controlloTrafficoGestorePolicyInMemoryRedisTTLMaxSeconds = 604800L; // 7 giorni massimo
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, 604800L),e);
+				this.controlloTrafficoGestorePolicyInMemoryRedisTTLMaxSeconds = 604800L;
+			}
+		}
+
+		return this.controlloTrafficoGestorePolicyInMemoryRedisTTLMaxSeconds;
+	}
+
+	private Boolean isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteIntervalBased = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteIntervalBased() {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ttl.renewOnWrite.intervalBased";
+
+		if(this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteIntervalBased==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if(value!=null){
+					value = value.trim();
+					this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteIntervalBased = Boolean.parseBoolean(value);
+				}else{
+					// Default: false - non serve rinnovare il TTL per policy con intervallo temporale definito
+					// poiché il TTL è già calcolato come multiplo dell'intervallo e i contatori delle finestre
+					// precedenti non ricevono più scritture (le nuove richieste scrivono sui contatori della finestra corrente)
+					this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteIntervalBased = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, false),e);
+				this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteIntervalBased = false;
+			}
+		}
+
+		return this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteIntervalBased;
+	}
+
+	private Boolean isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteWithoutInterval = null;
+	public boolean isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteWithoutInterval() {
+		String pName = "org.openspcoop2.pdd.controlloTraffico.gestorePolicy.inMemory.REDIS.ttl.renewOnWrite.withoutInterval";
+
+		if(this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteWithoutInterval==null){
+			try{
+				String value = this.reader.getValueConvertEnvProperties(pName);
+
+				if(value!=null){
+					value = value.trim();
+					this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteWithoutInterval = Boolean.parseBoolean(value);
+				}else{
+					// Default: true - per policy senza intervallo temporale (es. richieste simultanee) o con TTL
+					// troncato al valore massimo, il rinnovo del TTL ad ogni scrittura garantisce che i contatori
+					// rimangano attivi finché il client effettua richieste
+					this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteWithoutInterval = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.logError(getMessaggioProprietaNonImpostata(pName, e, true),e);
+				this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteWithoutInterval = true;
+			}
+		}
+
+		return this.isControlloTrafficoGestorePolicyInMemoryRedisTTLRenewOnWriteWithoutInterval;
+	}
+
+
 	private String getControlloTrafficoGestorePolicyWSUrl = null;
 	public String getControlloTrafficoGestorePolicyWSUrl() throws CoreException {	
 		if(this.getControlloTrafficoGestorePolicyWSUrl==null){

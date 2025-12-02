@@ -67,7 +67,7 @@ public class EndRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolic
 	
 	@Override
 	public Boolean  process(Entry<IDUnivocoGroupByPolicy, DatiCollezionati> entry) {
-		//System.out.println("<"+idTransazione+"> registerStartRequest distribuita");
+		/**System.out.println("<"+idTransazione+"> registerStartRequest distribuita");*/
 		DatiCollezionati datiCollezionati = entry.getValue();
 		if(datiCollezionati == null) {
 			System.out.println("<"/*+idTransazione*/+">updateDatiStartRequestApplicabile Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+entry.getKey().toString()+"]");
@@ -80,21 +80,21 @@ public class EndRequestProcessor implements EntryProcessor<IDUnivocoGroupByPolic
 		if(this.isApplicabile) {
 			datiCollezionati.registerEndRequest(log, this.activePolicy, this.ctx, this.dati);
 			List<Integer> esitiCodeOk = null;
-			List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
+			List<Integer> esitiCodeKoSenzaFaultApplicativo = null;
 			List<Integer> esitiCodeFaultApplicativo = null;
 			try {
 				// In queste tre di sotto pare il logger non venga utilizzato
 				EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,this.dati.getProtocollo()); 
 				esitiCodeOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
-				esitiCodeKo_senzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+				esitiCodeKoSenzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 				esitiCodeFaultApplicativo = esitiProperties.getEsitiCodeFaultApplicativo();
 				datiCollezionati.updateDatiEndRequestApplicabile(
 						log, 	// logger
 						this.activePolicy, this.ctx, this.dati,
-						esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo, 
+						esitiCodeOk,esitiCodeKoSenzaFaultApplicativo, esitiCodeFaultApplicativo, 
 						this.isViolata);
 			}catch(Exception e) {
-				//throw new PolicyException(e.getMessage(),e); TODO: Ristabilire il comportamento corretto in questo caso, bisogna sollevare una eccezione nel nodo che ha chiamato questo processor
+				/**throw new PolicyException(e.getMessage(),e); Ristabilire il comportamento corretto in questo caso, bisogna sollevare una eccezione nel nodo che ha chiamato questo processor*/
 				System.out.println("<"/*+idTransazione*/+">EndRequestProcessor, errore sulla policy con dati identificativi ["+entry.getKey().toString()+"]: " + e.getMessage());
 				return false;
 			}

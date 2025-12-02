@@ -64,11 +64,12 @@ public class PolicyGroupByActiveThreadsDistributedNoCache extends AbstractPolicy
 		
 		datiGroupBy = augmentIDUnivoco(datiGroupBy);
 
-		DatiCollezionati datiCollezionati = this.distributedMap.executeOnKey(datiGroupBy, new UpdateDatiRequestProcessor(this.activePolicy, ctx));
-		//if (datiCollezionati != null) {
-		//	throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
-		//}
-		return datiCollezionati;
+		/**DatiCollezionati datiCollezionati = */
+		return this.distributedMap.executeOnKey(datiGroupBy, new UpdateDatiRequestProcessor(this.activePolicy, ctx));
+		/**if (datiCollezionati != null) {
+			throw new PolicyNotFoundException("Non sono presenti alcun threads registrati per la richiesta con dati identificativi ["+datiGroupBy.toString()+"]");
+		}
+		return datiCollezionati;*/
 	}
 	
 	

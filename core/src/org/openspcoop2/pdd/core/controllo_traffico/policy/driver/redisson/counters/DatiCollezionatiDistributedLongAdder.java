@@ -65,6 +65,12 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	private final IDUnivocoGroupByPolicyMapId groupByPolicyMapId;
 	private final int groupByPolicyMapIdHashCode;
 
+	// TTL configuration per la pulizia automatica dei contatori
+	private final transient RedisTTLConfig ttlConfig;
+	// TTL config per contatori senza intervallo temporale (es. activeRequestCounter, policyDate)
+	// Questi contatori devono avere renewTTLOnWrite=true per rimanere attivi
+	private final transient RedisTTLConfig ttlConfigNoInterval;
+
 	// data di registrazione/aggiornamento policy
 	
 	// final: sono i contatori che non dipendono da una finestra temporale
@@ -110,11 +116,16 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 		
 	public DatiCollezionatiDistributedLongAdder(Logger log, Date updatePolicyDate, Date gestorePolicyConfigDate, RedissonClient  redisson, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
 		super(updatePolicyDate, gestorePolicyConfigDate);
-	
+
 		this.redisson = redisson;
 		this.groupByPolicyMapId = groupByPolicyMapId;
 		this.groupByPolicyMapIdHashCode = this.groupByPolicyMapId.hashCode();
-		
+
+		// Inizializza configurazione TTL basata sulla policy
+		this.ttlConfig = RedisTTLConfig.fromPolicy(activePolicy);
+		// TTL config per contatori senza intervallo (activeRequestCounter, policyDate)
+		this.ttlConfigNoInterval = RedisTTLConfig.forCountersWithoutInterval();
+
 		this.initDatiIniziali(activePolicy);
 		this.checkDate(log, activePolicy); // inizializza le date se ci sono
 		
@@ -155,18 +166,23 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 	
 	public DatiCollezionatiDistributedLongAdder(Logger log, DatiCollezionati dati, RedissonClient redisson, IDUnivocoGroupByPolicyMapId groupByPolicyMapId, ActivePolicy activePolicy) {
 		super(dati.getUpdatePolicyDate(), dati.getGestorePolicyConfigDate());
-		
+
 		if(log!=null) {
 			// nop
 		}
-		
+
 		// Inizializzo il padre
 		dati.setValuesIn(this, false);
-		
+
 		this.redisson = redisson;
 		this.groupByPolicyMapId = groupByPolicyMapId;
 		this.groupByPolicyMapIdHashCode = this.groupByPolicyMapId.hashCode();
-		
+
+		// Inizializza configurazione TTL basata sulla policy
+		this.ttlConfig = RedisTTLConfig.fromPolicy(activePolicy);
+		// TTL config per contatori senza intervallo (activeRequestCounter, policyDate)
+		this.ttlConfigNoInterval = RedisTTLConfig.forCountersWithoutInterval();
+
 		this.distributedPolicyDate = this.initPolicyDate();
 		this.distributedUpdatePolicyDate = this.initUpdatePolicyDate();
 		
@@ -227,9 +243,14 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 										
 			} else {
 			*/
-				Long polDate = this.distributedPolicyDegradoPrestazionaleDate!=null ? this.distributedPolicyDegradoPrestazionaleDate.get() : null;
+				Long polDate = null;
+				if(this.distributedPolicyDegradoPrestazionaleDate!=null) {
+					polDate = this.distributedPolicyDegradoPrestazionaleDate.get();
+					// Assicura che il TTL sia applicato anche se il contatore è stato creato da un altro nodo
+					this.distributedPolicyDegradoPrestazionaleDate.ensureTTLApplied();
+				}
 				initPolicyCounters(polDate);
-				
+
 			/**}*/
 		}
 		
@@ -255,79 +276,99 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 					this.distributedPolicyDegradoPrestazionaleCounter.add(getPolicyDegradoPrestazionaleCounter);
 				}
 			}  else {
-			*/	
-				Long degradoPrestazionaleTime = this.distributedPolicyDate!=null ? this.distributedPolicyDate.get() : null;
+			*/
+				Long degradoPrestazionaleTime = null;
+				if(this.distributedPolicyDate!=null) {
+					degradoPrestazionaleTime = this.distributedPolicyDate.get();
+					// Assicura che il TTL sia applicato anche se il contatore è stato creato da un altro nodo
+					this.distributedPolicyDate.ensureTTLApplied();
+				}
 				initPolicyCountersDegradoPrestazionale(degradoPrestazionaleTime);
-				
+
 			/**}*/
 		}
-		
+
 		this.initialized = true;
 	}
 	
 	private DatoRAtomicLong initPolicyDate() {
 		if(this.policyRealtime!=null && this.policyRealtime){
+			// Usa ttlConfigNoInterval perché policyDate non è un contatore di intervallo:
+			// mantiene il timestamp dell'intervallo corrente e vive attraverso più finestre temporali
 			return new DatoRAtomicLong(this.redisson,
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
+					this.ttlConfigNoInterval);
 		}
 		return null;
 	}
 	private DatoRAtomicLong initUpdatePolicyDate() {
 		if(this.policyRealtime!=null && this.policyRealtime){
+			// Usa ttlConfigNoInterval perché updatePolicyDate non è un contatore di intervallo
 			return new DatoRAtomicLong(this.redisson,
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_UPDATE_POLICY_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
+					this.ttlConfigNoInterval);
 		}
 		return null;
 	}
 	private DatoRAtomicLong initPolicyDegradoPrestazionaleDate() {
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
+			// Usa ttlConfigNoInterval perché policyDegradoPrestazionaleDate non è un contatore di intervallo
 			return new DatoRAtomicLong(this.redisson,
 					this.groupByPolicyMapIdHashCode+
 					BuilderDatiCollezionatiDistributed.DISTRUBUITED_POLICY_DEGRADO_PRESTAZIONALE_DATE+
-					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1));
+					(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1),
+					this.ttlConfigNoInterval);
 		}
 		return null;
 	}
-	
+
 	private DatoRLongAdder initActiveRequestCounters() {
+		// Usa ttlConfigNoInterval perché activeRequestCounter non ha un intervallo temporale:
+		// conta le richieste attive in quel momento e deve rimanere attivo finché il client fa richieste
 		return new DatoRLongAdder(this.redisson,
 				getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_ACTIVE_REQUEST_COUNTER,
-						(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1)));
+						(this.gestorePolicyConfigDate!=null ? this.gestorePolicyConfigDate.getTime() : -1)),
+				this.ttlConfigNoInterval);
 	}
-	
+
 	private void initPolicyCounters(Long policyDate) {
 
 		if(this.policyRealtime!=null && this.policyRealtime){
-						
+
 			this.distributedPolicyRequestCounter = new DatoRLongAdder(this.redisson,
-					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_REQUEST_COUNTER,policyDate));
-			
+					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_REQUEST_COUNTER,policyDate),
+					this.ttlConfig);
+
 			this.distributedPolicyDenyRequestCounter = new DatoRLongAdder(this.redisson,
-					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DENY_REQUEST_COUNTER,policyDate));
-			
+					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DENY_REQUEST_COUNTER,policyDate),
+					this.ttlConfig);
+
 			if(this.tipoRisorsa==null || !isRisorsaContaNumeroRichieste(this.tipoRisorsa)){
 				this.distributedPolicyCounter = new DatoRLongAdder(this.redisson,
-						this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_COUNTER,policyDate));
+						this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_COUNTER,policyDate),
+						this.ttlConfig);
 			}
 		}
-		
+
 	}
-	
+
 	private void initPolicyCountersDegradoPrestazionale(Long policyDate) {
-		
+
 		if(this.policyDegradoPrestazionaleRealtime!=null && this.policyDegradoPrestazionaleRealtime){
 			this.distributedPolicyDegradoPrestazionaleCounter = new DatoRLongAdder(this.redisson,
-					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_COUNTER,policyDate));
+					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_COUNTER,policyDate),
+					this.ttlConfig);
 
 			this.distributedPolicyDegradoPrestazionaleRequestCounter = new DatoRLongAdder(this.redisson,
-					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_REQUEST_COUNTER,policyDate));
+					this.getRLongAdderName(BuilderDatiCollezionatiDistributed.DISTRUBUITED_INTERVAL_POLICY_DEGRADO_PRESTAZIONALE_REQUEST_COUNTER,policyDate),
+					this.ttlConfig);
 
-		}	
-		
+		}
+
 	}
 	
 	
@@ -369,16 +410,21 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 					}
 										
 				}
+				else {
+					// Se compareAndSet fallisce, il contatore esiste già (creato da altro nodo).
+					// Assicuriamo che abbia il TTL applicato.
+					this.distributedPolicyDate.ensureTTLApplied();
+				}
 
 				if(actualSuper!=policyDate) {
-					
+
 					// Serve per inizializzare i nuovi riferimenti ai contatori
 					initPolicyCounters(policyDate);
-					
+
 					// Serve per aggiornare la copia in ram del nodo in cui non si e' entrati nell'if precedente
 					super.resetPolicyCounterForDate(date);
 				}
-				
+
 			}finally {
 				this.lock.release(slock, "resetPolicyCounterForDate");
 			}
@@ -387,8 +433,8 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 			super.resetPolicyCounterForDate(date);
 		}
 	}
-	
-	
+
+
 	@Override
 	protected void resetPolicyCounterForDateDegradoPrestazionale(Date date) {
 		
@@ -424,16 +470,21 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 					}
 										
 				}
-				
+				else {
+					// Se compareAndSet fallisce, il contatore esiste già (creato da altro nodo).
+					// Assicuriamo che abbia il TTL applicato.
+					this.distributedPolicyDegradoPrestazionaleDate.ensureTTLApplied();
+				}
+
 				if(actualSuper!=policyDate) {
-					
+
 					// Serve per inizializzare i nuovi riferimenti ai contatori
 					initPolicyCountersDegradoPrestazionale(policyDate);
-					
+
 					// Serve per aggiornare la copia in ram del nodo in cui non si e' entrati nell'if precedente
 					super.resetPolicyCounterForDateDegradoPrestazionale(date);
 				}
-				
+
 			}finally {
 				this.lock.release(slock, "resetPolicyCounterForDateDegradoPrestazionale");
 			}
@@ -442,8 +493,8 @@ public class DatiCollezionatiDistributedLongAdder  extends DatiCollezionati impl
 			super.resetPolicyCounterForDateDegradoPrestazionale(date);
 		}
 	}
-	
-	
+
+
 	@Override
 	public void resetCounters(Date updatePolicyDate) {
 		super.resetCounters(updatePolicyDate);

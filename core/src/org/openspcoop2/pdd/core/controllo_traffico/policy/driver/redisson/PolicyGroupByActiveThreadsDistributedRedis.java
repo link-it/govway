@@ -64,17 +64,17 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 	
 	protected PolicyGroupByActiveThreadsType type;
 	
-	protected String uniqueIdMap_idActivePolicy;
-	protected Date uniqueIdMap_updateTime;
+	protected String uniqueIdMapIdActivePolicy;
+	protected Date uniqueIdMapUpdateTime;
 	
 	public PolicyGroupByActiveThreadsDistributedRedis(ActivePolicy activePolicy, String uniqueIdMap,
 			RedissonClient redisson) throws PolicyException {
 		this.activePolicy = activePolicy;
 		this.redisson = redisson;
 		
-		this.uniqueIdMap_idActivePolicy = UniqueIdentifierUtilities.extractIdActivePolicy(uniqueIdMap);
+		this.uniqueIdMapIdActivePolicy = UniqueIdentifierUtilities.extractIdActivePolicy(uniqueIdMap);
 		try {
-			this.uniqueIdMap_updateTime = UniqueIdentifierUtilities.extractUpdateTimeActivePolicy(uniqueIdMap);
+			this.uniqueIdMapUpdateTime = UniqueIdentifierUtilities.extractUpdateTimeActivePolicy(uniqueIdMap);
 		}catch(Exception e) {
 			throw new PolicyException(e.getMessage(),e);
 		}
@@ -87,13 +87,13 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		boolean oneMapForeachPolicy = OpenSPCoop2Properties.getInstance().isControlloTrafficoGestorePolicyInMemoryRedisOneMapForeachPolicy();
 		String mapName = "redis-";
 		if (oneMapForeachPolicy) {
-			this.mapId = mapName + this.uniqueIdMap_idActivePolicy + "-rate-limiting";
+			this.mapId = mapName + this.uniqueIdMapIdActivePolicy + "-rate-limiting";
 			this.distributedMap = redisson.getMap(this.mapId);
-			log.info("Hazelcast: Utilizzo Una Distributed Map per gruppo.");
+			log.info("Redis: Utilizzo Una Distributed Map per gruppo.");
 		} else {
 			this.mapId = mapName + "rate-limiting";
 			this.distributedMap = redisson.getMap(this.mapId);
-			log.info("Hazelcast: Utilizzo Una Distributed Map globale.");
+			log.info("Redis: Utilizzo Una Distributed Map globale.");
 		}
 	}
 
@@ -111,18 +111,17 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 			datiCollezionati = new DatiCollezionati(this.activePolicy.getInstanceConfiguration().getUpdateTime(), gestorePolicyConfigDate);
 		}
 		else {
-			if(datiCollezionati.getUpdatePolicyDate()!=null) {
-				if(!datiCollezionati.getUpdatePolicyDate().equals(this.activePolicy.getInstanceConfiguration().getUpdateTime())) {
-					// data aggiornata
-					datiCollezionati.resetCounters(this.activePolicy.getInstanceConfiguration().getUpdateTime());
-				}
+			if(datiCollezionati.getUpdatePolicyDate()!=null &&
+				!datiCollezionati.getUpdatePolicyDate().equals(this.activePolicy.getInstanceConfiguration().getUpdateTime())) {
+				// data aggiornata
+				datiCollezionati.resetCounters(this.activePolicy.getInstanceConfiguration().getUpdateTime());
 			}
 		}
 		
 		datiCollezionati.registerStartRequest(log, this.activePolicy, ctx);
 		
 		// mi salvo l'attuale stato
-		DatiCollezionati datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.newInstance(); 
+		DatiCollezionati datiCollezionatiReaded = datiCollezionati.newInstance(); 
 		
 		map.fastPut(datiGroupBy, datiCollezionati);
 		
@@ -152,7 +151,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		datiCollezionati.updateDatiStartRequestApplicabile(log, this.activePolicy, ctx);
 		
 		// mi salvo l'attuale stato
-		DatiCollezionati datiCollezionatiReaded = (DatiCollezionati) datiCollezionati.newInstance(); 
+		DatiCollezionati datiCollezionatiReaded = datiCollezionati.newInstance(); 
 		
 		map.fastPut(datiGroupBy, datiCollezionati);
 		
@@ -182,18 +181,18 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		if(isApplicabile) {
 			datiCollezionati.registerEndRequest(log, this.activePolicy, ctx, dati);
 			List<Integer> esitiCodeOk = null;
-			List<Integer> esitiCodeKo_senzaFaultApplicativo = null;
+			List<Integer> esitiCodeKoSenzaFaultApplicativo = null;
 			List<Integer> esitiCodeFaultApplicativo = null;
 			try {
 				// In queste tre di sotto pare il logger non venga utilizzato
 				EsitiProperties esitiProperties = EsitiProperties.getInstanceFromProtocolName(log,dati.getProtocollo());
 				esitiCodeOk = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo();
-				esitiCodeKo_senzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
+				esitiCodeKoSenzaFaultApplicativo = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo();
 				esitiCodeFaultApplicativo = esitiProperties.getEsitiCodeFaultApplicativo();
 				datiCollezionati.updateDatiEndRequestApplicabile(
 						log, 	// logger
 						this.activePolicy, ctx, dati,
-						esitiCodeOk,esitiCodeKo_senzaFaultApplicativo, esitiCodeFaultApplicativo, 
+						esitiCodeOk,esitiCodeKoSenzaFaultApplicativo, esitiCodeFaultApplicativo, 
 						isViolata);
 			}catch(Exception e) {
 				throw new PolicyException(e.getMessage(),e);
@@ -239,7 +238,7 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 		
 		for (var entry :  cloned) {
 			if(filtro!=null){
-				IDUnivocoGroupBy<IDUnivocoGroupByPolicy> idAstype = (IDUnivocoGroupBy<IDUnivocoGroupByPolicy>) entry.getKey();
+				IDUnivocoGroupBy<IDUnivocoGroupByPolicy> idAstype = entry.getKey();
 				if(!idAstype.match(filtro)){
 					continue;
 				}
@@ -252,20 +251,16 @@ public class PolicyGroupByActiveThreadsDistributedRedis  implements IPolicyGroup
 
 	@Override
 	public void resetCounters() {
-		this.distributedMap.forEach( (var id, var dati) -> {
-			dati.resetCounters();
-		});
+		this.distributedMap.forEach( (var id, var dati) -> dati.resetCounters());
 	}
 	
 	@Override
 	public void remove() throws UtilsException{
-	//		FIX: iterando nella maniera sottostante si ottiene il seguente errore se si usa la near-cache: key cannot be of type Data! hazelcast 
-	//		for (var entry : this.distributedMap) {
-		List<IDUnivocoGroupByPolicy> deleteList = new ArrayList<IDUnivocoGroupByPolicy>();
+		List<IDUnivocoGroupByPolicy> deleteList = new ArrayList<>();
 		for (IDUnivocoGroupByPolicy datiGroupBy : this.distributedMap.keySet()) {
 			if(datiGroupBy instanceof IDUnivocoGroupByPolicyMapId){
-				IDUnivocoGroupByPolicyMapId mapId = (IDUnivocoGroupByPolicyMapId) datiGroupBy;
-				if(this.uniqueIdMap_idActivePolicy.equals(mapId.getUniqueMapId())) {
+				IDUnivocoGroupByPolicyMapId mapIdCheck = (IDUnivocoGroupByPolicyMapId) datiGroupBy;
+				if(this.uniqueIdMapIdActivePolicy.equals(mapIdCheck.getUniqueMapId())) {
 					deleteList.add(datiGroupBy);
 				}
 			}
