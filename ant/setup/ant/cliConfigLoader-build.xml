@@ -74,7 +74,29 @@
 				</then>
 			</elseif>
 		</if>
-		
+
+		<!-- ENV REQUIRED -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.conf.required"/>
+			<param name="value" value="${antinstaller_confDir_env}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.log.required"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.dbType.required"/>
+			<param name="value" value="false"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.defaultEntityName.required"/>
+			<param name="value" value="false"/>
+		</antcall>
+
 		<!-- BouncyCastle -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

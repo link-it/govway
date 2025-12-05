@@ -30,6 +30,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -97,6 +98,7 @@ public class Generator {
 			Properties props = new Properties();
 			try(FileInputStream fis = new FileInputStream(Generator.class.getResource("/batch-runtime-repository.log4j2.properties").getFile())){
 				props.load(fis);
+				PropertiesEnvUtils.resolveGovWayEnvVariables(props);
 				LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
 				LoggerWrapperFactory.setLogConfiguration(props);
 			}
@@ -104,10 +106,7 @@ public class Generator {
 			throw new UtilsException("Impostazione logging fallita: "+e.getMessage());
 		}
 		
-		GeneratorProperties generatorProperties = GeneratorProperties.getInstance();
-		
 		// Inizializzazione log di default
-		Logger logStartup = null;
 		TipoRuntimeRepository tipoGestoreDefault = null;
 		if(listTipiDaProcessare!=null && !listTipiDaProcessare.isEmpty()) {
 			tipoGestoreDefault = listTipiDaProcessare.get(0);
@@ -115,11 +114,12 @@ public class Generator {
 		else {
 			tipoGestoreDefault = TipoRuntimeRepository.MESSAGGI;
 		}
+		Logger logStartup = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+tipoGestoreDefault.getValue()+".error");
+
+		GeneratorProperties generatorProperties = GeneratorProperties.getInstance(logStartup);
+
 		if(generatorProperties.isMessaggiDebug()) {
 			logStartup = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+tipoGestoreDefault.getValue());
-		}
-		else {
-			logStartup = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+tipoGestoreDefault.getValue()+".error");
 		}
 		
 		// Map (environment)

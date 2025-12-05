@@ -21,6 +21,29 @@
 			<param name="token" value="confDirectory"/>
 			<param name="value" value="${work_dir}"/>
 		</antcall>
+
+		<!-- ENV REQUIRED -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.conf.required"/>
+			<param name="value" value="${antinstaller_confDir_env}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.log.required"/>
+			<param name="value" value="${antinstaller_logDir_env}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.dbType.required"/>
+			<param name="value" value="${antinstaller_dbType_env}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="env.defaultEntityName.required"/>
+			<param name="value" value="${antinstaller_entity_env}"/>
+		</antcall>
+
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="forceIndex.repository"/>
@@ -263,7 +286,7 @@
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="db.tipoDatabase"/>
-			<param name="value" value="${antinstaller_tipo_database}"/>
+			<param name="value" value="${db_type}"/>
 		</antcall>
 				
 		<!-- DATASOURCE -->
@@ -400,9 +423,9 @@
 	
 	<!-- log4j2.properties -->
 	<target name="govwayMonitor_log4j_properties_settings">
-		
+
 		<available file="${file}" property="file.present"/>
-		
+
 		<if>
 			<istrue value="${file.present}"/>
 			<then>
@@ -414,11 +437,11 @@
 				<antcall target="replace_token">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="/var/govway/log"/>
-					<param name="value" value="${log_dir}"/>
+					<param name="value" value="${log_dir_log4j}"/>
 				</antcall>
 			</then>
 		</if>
-		
+
 	</target>
 		
 </project>

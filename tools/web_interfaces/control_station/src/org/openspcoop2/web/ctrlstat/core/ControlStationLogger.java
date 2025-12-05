@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
@@ -110,7 +111,9 @@ public class ControlStationLogger {
 			}
 		}
 
-		LoggerWrapperFactory.patchLoggers(loggerProperties, 
+		PropertiesEnvUtils.resolveGovWayEnvVariables(loggerProperties);
+
+		LoggerWrapperFactory.patchLoggers(loggerProperties,
 				org.openspcoop2.utils.Costanti.ENV_LOG_CONSOLE,
 				Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, "govwayConsole"));
 

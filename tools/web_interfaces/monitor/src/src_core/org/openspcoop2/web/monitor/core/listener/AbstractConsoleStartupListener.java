@@ -31,6 +31,7 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.core.commons.dao.DAOFactoryInstanceProperties;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.transazioni.utils.DumpUtils;
@@ -292,6 +293,7 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 		try {
 			ApplicationProperties.initialize(AbstractConsoleStartupListener.log, getApplicationProperties(), getLocalApplicationPropertyName(), getLocalApplicationProperties());
 			appProperties = ApplicationProperties.getInstance(AbstractConsoleStartupListener.log);
+			PropertiesEnvUtils.checkRequiredEnvProperties(appProperties.getEnvProperties(), AbstractConsoleStartupListener.log, "govwayMonitor");
 		}catch (Exception e) {
 			String msgErrore = "Errore durante l'inizializzazione del ApplicationProperties: "
 					+ e.getMessage();
@@ -339,7 +341,9 @@ public abstract class AbstractConsoleStartupListener implements ServletContextLi
 				}
 			}
 
-			LoggerWrapperFactory.patchLoggers(loggerProperties, 
+			PropertiesEnvUtils.resolveGovWayEnvVariables(loggerProperties);
+
+			LoggerWrapperFactory.patchLoggers(loggerProperties,
 					org.openspcoop2.utils.Costanti.ENV_LOG_MONITOR,
 					Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, "govwayMonitor"));
 			

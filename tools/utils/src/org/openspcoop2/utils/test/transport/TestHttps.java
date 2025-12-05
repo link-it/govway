@@ -27,6 +27,7 @@ import java.security.cert.CertificateException;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.test.Costanti;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
+import org.openspcoop2.utils.transport.http.test.HttpTest;
 import org.openspcoop2.utils.transport.http.test.HttpsTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -49,12 +50,12 @@ public class TestHttps {
 	
 	@BeforeClass(alwaysRun = true)
 	public void startServer() throws IOException {
-		HttpsTest.startServers();
+		HttpTest.startServers();
 	}
 	
 	@AfterClass(alwaysRun = true)
 	public void stopServer() {
-		HttpsTest.stopServers();
+		HttpTest.stopServers();
 	}
 	
 	@DataProvider(name="libraryDP")

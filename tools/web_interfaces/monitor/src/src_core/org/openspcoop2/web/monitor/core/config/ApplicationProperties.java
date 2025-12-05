@@ -123,6 +123,15 @@ public class ApplicationProperties {
 	
 	/* ********  P R O P E R T I E S  ******** */
 
+	private static final String ENV_PROPERTIES_PREFIX = "env.";
+	public Properties getEnvProperties() throws UtilsException {
+		try {
+			return this.reader.readProperties(ENV_PROPERTIES_PREFIX);
+		} catch (Exception e) {
+			throw new UtilsException("Error reading environment properties: " + e.getMessage(), e);
+		}
+	}
+
 	private String getPropertyPrefix(String property) {
 		return "Property ["+property+"] ";
 	}

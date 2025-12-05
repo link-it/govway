@@ -25,6 +25,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
+import org.openspcoop2.utils.properties.PropertiesReader;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
 
 /**
@@ -37,16 +40,16 @@ import org.openspcoop2.utils.transport.http.HttpLibrary;
 public class VaultProperties {
 	
 	private static VaultProperties staticInstance = null;
-	private static synchronized void init() throws CoreException{
+	private static synchronized void init(Logger log) throws CoreException{
 		if(VaultProperties.staticInstance == null){
-			VaultProperties.staticInstance = new VaultProperties();
+			VaultProperties.staticInstance = new VaultProperties(log);
 		}
 	}
-	public static VaultProperties getInstance() throws CoreException{
+	public static VaultProperties getInstance(Logger log) throws CoreException{
 		if(VaultProperties.staticInstance == null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 			synchronized (VaultProperties.class) {
-				VaultProperties.init();
+				VaultProperties.init(log);
 			}
 		}
 		return VaultProperties.staticInstance;
@@ -78,7 +81,7 @@ public class VaultProperties {
 	private String byokEnvSecretsConfig = null;
 	private boolean byokEnvSecretsConfigRequired = false;
 	
-	private VaultProperties() throws CoreException {
+	private VaultProperties(Logger log) throws CoreException {
 
 		Properties props = new Properties();
 		try {
@@ -87,7 +90,14 @@ public class VaultProperties {
 		} catch(Exception e) {
 			throw new CoreException("Errore durante l'init delle properties", e);
 		}
-		
+
+		try {
+			PropertiesReader propsReader = new PropertiesReader(props, true);
+			PropertiesEnvUtils.checkRequiredEnvProperties(propsReader.readProperties("env."), log, "govway_vault");
+		} catch(Exception e) {
+			throw new CoreException("Errore durante l'init delle properties", e);
+		}
+
 		// PROPERTIES
 				
 		this.protocolloDefault = this.getProperty(props, "protocolloDefault", true);

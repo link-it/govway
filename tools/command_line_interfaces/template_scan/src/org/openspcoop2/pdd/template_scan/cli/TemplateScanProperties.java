@@ -23,6 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.properties.PropertiesReader;
+
 /**
  * TemplateScanProperties
  *
@@ -70,7 +75,7 @@ public class TemplateScanProperties {
 		private static TemplateScanProperties createInstance() {
 			try(InputStream is = TemplateScanProperties.class.getResourceAsStream(TemplateScanProperties.PROPERTIES_FILE)) {
 				return new TemplateScanProperties(is);
-			} catch (IOException e) {
+			} catch (IOException | CoreException | UtilsException e) {
 				throw new IllegalStateException(e);
 			}
 		}
@@ -92,10 +97,13 @@ public class TemplateScanProperties {
 		return Boolean.valueOf(p.getProperty(key));
 	}
 	
-	private TemplateScanProperties(InputStream is) throws IOException {
+	private TemplateScanProperties(InputStream is) throws IOException, CoreException, UtilsException {
 		Properties p = new Properties();
 		p.load(is);
-		
+
+		PropertiesReader propsReader = new PropertiesReader(p, true);
+		PropertiesEnvUtils.checkRequiredEnvProperties(propsReader.readProperties("env."), null, "template_scan");
+
 		this.dbUsername = readProperty(p, "db.user", true);
 		this.dbPassword = readProperty(p, "db.password", true);
 		this.dbType = readProperty(p, "db.type", true);

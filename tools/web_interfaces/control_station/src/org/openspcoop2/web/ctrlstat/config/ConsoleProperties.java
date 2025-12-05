@@ -217,7 +217,16 @@ public class ConsoleProperties {
 
 	
 	/* ----- Funzionalità Generiche -------- */
-	
+
+	private static final String ENV_PROPERTIES_PREFIX = "env.";
+	public Properties getEnvProperties() throws UtilsException {
+		try {
+			return this.reader.readProperties(ENV_PROPERTIES_PREFIX);
+		} catch (Exception e) {
+			throw new UtilsException("Error reading environment properties: " + e.getMessage(), e);
+		}
+	}
+
 	public String getConfDirectory() throws UtilsException{
 		return this.readProperty(false, "confDirectory");
 	}

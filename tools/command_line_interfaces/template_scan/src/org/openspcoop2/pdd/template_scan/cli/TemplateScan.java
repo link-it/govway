@@ -31,6 +31,7 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.CostantiProprieta;
 import org.openspcoop2.core.id.IDServizio;
@@ -438,9 +439,10 @@ public class TemplateScan {
 		Properties propertiesLog4j = new Properties();
 		try (InputStream inPropLog4j = TemplateScan.class.getResourceAsStream(TemplateScanProperties.LOG_PROPERTIES_FILE);){
 			propertiesLog4j.load(inPropLog4j);
+			PropertiesEnvUtils.resolveGovWayEnvVariables(propertiesLog4j);
 			LoggerWrapperFactory.setLogConfiguration(propertiesLog4j);
 		} catch(java.lang.Exception e) {
 			throw new CoreException("Impossibile leggere i dati dal file '" + TemplateScanProperties.LOG_PROPERTIES_FILE + "': "+e.getMessage());
-		} 
+		}
 	}
 }

@@ -1,3 +1,9 @@
+2025-12-05  Andrea Poli <apoli@link.it>
+
+	* [InstallerVersioneBinaria]
+	Aggiunta funzionalità #1680
+	Introdotta gestione delle variabili GOVWAY_CONF, GOVWAY_LOG, GOVWAY_DB_TYPE e GOVWAY_DEFAULT_ENTITY_NAME
+
 2025-12-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

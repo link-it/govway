@@ -25,6 +25,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
+import org.openspcoop2.utils.properties.PropertiesReader;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.transport.http.HttpLibrary;
 
 /**
@@ -37,16 +40,16 @@ import org.openspcoop2.utils.transport.http.HttpLibrary;
 public class LoaderProperties {
 	
 	private static LoaderProperties staticInstance = null;
-	private static synchronized void init() throws CoreException{
+	private static synchronized void init(Logger log) throws CoreException{
 		if(LoaderProperties.staticInstance == null){
-			LoaderProperties.staticInstance = new LoaderProperties();
+			LoaderProperties.staticInstance = new LoaderProperties(log);
 		}
 	}
-	public static LoaderProperties getInstance() throws CoreException{
+	public static LoaderProperties getInstance(Logger log) throws CoreException{
 		if(LoaderProperties.staticInstance == null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 			synchronized (LoaderProperties.class) {
-				LoaderProperties.init();
+				LoaderProperties.init(log);
 			}
 		}
 		return LoaderProperties.staticInstance;
@@ -106,7 +109,7 @@ public class LoaderProperties {
 	private String byokEnvSecretsConfig = null;
 	private boolean byokEnvSecretsConfigRequired = false;
 	
-	private LoaderProperties() throws CoreException {
+	private LoaderProperties(Logger log) throws CoreException {
 
 		Properties props = new Properties();
 		try {
@@ -115,7 +118,14 @@ public class LoaderProperties {
 		} catch(Exception e) {
 			throw new CoreException("Errore durante l'init delle properties", e);
 		}
-		
+
+		try {
+			PropertiesReader propsReader = new PropertiesReader(props, true);
+			PropertiesEnvUtils.checkRequiredEnvProperties(propsReader.readProperties("env."), log, "config_loader");
+		} catch(Exception e) {
+			throw new CoreException("Errore durante l'init delle properties", e);
+		}
+
 		// PROPERTIES
 				
 		this.protocolloDefault = this.getProperty(props, "protocolloDefault", true);

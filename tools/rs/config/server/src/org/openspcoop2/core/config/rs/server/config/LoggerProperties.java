@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -99,7 +100,10 @@ public class LoggerProperties {
 				/**System.out.println("CHECK NUOVO VALORE ["+key+"]: "+loggerProperties.get(key));*/
 			}
 		}
-		LoggerWrapperFactory.patchLoggers(loggerProperties, 
+
+		PropertiesEnvUtils.resolveGovWayEnvVariables(loggerProperties);
+
+		LoggerWrapperFactory.patchLoggers(loggerProperties,
 				org.openspcoop2.utils.Costanti.ENV_LOG_API_CONFIG,
 				Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, "govwayAPIConfig"));
 		

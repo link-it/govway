@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.id.IDServizio;
@@ -266,6 +267,7 @@ public class OpenSPCoop2Logger {
 				java.util.Properties op2Properties = new java.util.Properties();
 				op2Properties.load(isOp2);
 				confDir = op2Properties.getProperty("org.openspcoop2.pdd.confDirectory");
+				confDir = PropertiesEnvUtils.resolveGovWayEnvVariables(confDir);
 			}
 			
 			java.util.Properties loggerProperties = new java.util.Properties();
@@ -293,13 +295,15 @@ public class OpenSPCoop2Logger {
 					//System.out.println("CHECK NUOVO VALORE: "+loggerProperties.get(key));
 				}
 			}
-			
-			LoggerWrapperFactory.patchLoggers(loggerProperties,  
+
+			PropertiesEnvUtils.resolveGovWayEnvVariables(loggerProperties);
+
+			LoggerWrapperFactory.patchLoggers(loggerProperties,
 					org.openspcoop2.utils.Costanti.ENV_LOG_GOVWAY,
 					Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, APP_NAME));
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties);
 			initializeLogDirs(loggerProperties, false);
-			
+
 			return true;
 		}catch(Exception e){
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.error("Riscontrato errore durante l'inizializzazione del sistema di logging di OpenSPCoop: "
@@ -355,15 +359,15 @@ public class OpenSPCoop2Logger {
 			}
 			
 			if(loadExternalConfiguration){
-			
-				loadExternal(logConsole, CostantiPdD.OPENSPCOOP2_LOGGER_PROPERTIES ,CostantiPdD.OPENSPCOOP2_LOGGER_LOCAL_PATH, 
+
+				loadExternal(logConsole, CostantiPdD.OPENSPCOOP2_LOGGER_PROPERTIES ,CostantiPdD.OPENSPCOOP2_LOGGER_LOCAL_PATH,
 						rootDirectory, loggerProperties, objectProperties);
-				
+
 			}
-			
-			
-			
-			LoggerWrapperFactory.patchLoggers(loggerProperties, 
+
+			PropertiesEnvUtils.resolveGovWayEnvVariables(loggerProperties);
+
+			LoggerWrapperFactory.patchLoggers(loggerProperties,
 					org.openspcoop2.utils.Costanti.ENV_LOG_GOVWAY,
 					Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, APP_NAME));
 			
@@ -901,7 +905,8 @@ public class OpenSPCoop2Logger {
 					}
 					logConsole.info("Protocol '"+protocol+"': Log4j config append");
 					if(loggerPropertiesProtocolAdjunct!=null) {
-						LoggerWrapperFactory.patchLoggers(loggerPropertiesProtocolAdjunct,  
+						PropertiesEnvUtils.resolveGovWayEnvVariables(loggerPropertiesProtocolAdjunct);
+						LoggerWrapperFactory.patchLoggers(loggerPropertiesProtocolAdjunct,
 								org.openspcoop2.utils.Costanti.ENV_LOG_GOVWAY,
 								Map.of(org.openspcoop2.utils.Costanti.VAR_LOGGER_APPNAME, APP_NAME));
 						LoggerWrapperFactory.setLogConfiguration(loggerPropertiesProtocolAdjunct,true);

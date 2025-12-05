@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.pdd.core.byok.BYOKMapProperties;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
@@ -149,9 +150,9 @@ public class VaultTools {
 	
 	private static void process(VaultUpdateConfig updateConfig, VaultEncDecConfig encDecConfig) throws CoreException {
 		logCoreDebug("Raccolta parametri terminata");
-		
+
 		// properties
-		VaultProperties vaultProperties = VaultProperties.getInstance();
+		VaultProperties vaultProperties = VaultProperties.getInstance(logCore);
 		/**String confDir = null;*/ // non sembra servire
 		String protocolloDefault = vaultProperties.getProtocolloDefault();
 		
@@ -215,10 +216,11 @@ public class VaultTools {
 		Properties propertiesLog4j = new Properties();
 		try (InputStream inPropLog4j = VaultTools.class.getResourceAsStream("/govway_vault.cli.log4j2.properties");){
 			propertiesLog4j.load(inPropLog4j);
+			PropertiesEnvUtils.resolveGovWayEnvVariables(propertiesLog4j);
 			LoggerWrapperFactory.setLogConfiguration(propertiesLog4j);
 		} catch(java.lang.Exception e) {
 			throw new CoreException("Impossibile leggere i dati dal file 'govway_vault.cli.log4j2.properties': "+e.getMessage());
-		} 
+		}
 	}
 	private static VaultOperationType parseOperationType(String utilizzoErrato,String [] args) throws CoreException{
 		VaultOperationType opType = null;

@@ -47,6 +47,7 @@
 	<property name="tmp_sql_completi" location="${build}/sql_completi" />
 	<property name="tmp_ds" location="${build}/ds" />
 	<property name="tmp_cfg" location="${build}/cfg" />
+	<property name="tmp_protocol_jars" location="${build}/protocol_jars" />
 	
 	<!-- Ripulisce la distribuzione -->
 	<target name="clean">
@@ -266,6 +267,54 @@
 		</else>
 	</if>
 
+	<if>
+		<or>
+			<equals arg1="${antinstaller_confDir_env}" arg2="true" />
+		</or>
+		<then>
+			<var name="directory_lavoro_openspcoop" value="$${GOVWAY_CONF}"/>
+		</then>
+		<else>
+			<var name="directory_lavoro_openspcoop" value="${antinstaller_directory_lavoro_openspcoop}"/>
+		</else>
+	</if> 
+	<if>
+		<or>
+			<equals arg1="${antinstaller_logDir_env}" arg2="true" />
+		</or>
+		<then>
+			<var name="directory_log_openspcoop" value="$${GOVWAY_LOG}"/>
+			<var name="directory_log_openspcoop_log4j" value="$${env:GOVWAY_LOG:-$${sys:GOVWAY_LOG}}"/>
+		</then>
+		<else>
+			<var name="directory_log_openspcoop" value="${antinstaller_directory_log_openspcoop}"/>
+			<var name="directory_log_openspcoop_log4j" value="${antinstaller_directory_log_openspcoop}"/>
+		</else>
+	</if> 	       
+	<if>
+		<or>
+			<equals arg1="${antinstaller_dbType_env}" arg2="true" />
+		</or>
+		<then>
+			<var name="db_type" value="$${GOVWAY_DB_TYPE}"/>
+		</then>
+		<else>
+			<var name="db_type" value="${antinstaller_tipo_database}"/>
+		</else>
+	</if>
+	<if>
+		<or>
+			<equals arg1="${antinstaller_entity_env}" arg2="true" />
+		</or>
+		<then>
+			<var name="entity_name" value="$${GOVWAY_DEFAULT_ENTITY_NAME}"/>
+		</then>
+		<else>
+			<var name="entity_name" value="${antinstaller_nomesoggetto}"/>
+		</else>
+	</if>	
+
+
 	
 	<target name="setup" depends="clean,init">
 
@@ -297,7 +346,7 @@
 		</if>
 		
 		<if>
-		        <equals arg1="${antinstaller_directory_lavoro_openspcoop}" arg2="" />
+		        <equals arg1="${directory_lavoro_openspcoop}" arg2="" />
 		        <then>
 		                <echo message="Errore: deve essere specificata una directory di lavoro" />
 		                <fail message="Errore: deve essere specificata una directory di lavoro"/>
@@ -305,7 +354,7 @@
 		</if>
 
 		<if>
-		        <equals arg1="${antinstaller_directory_log_openspcoop}" arg2="" />
+		        <equals arg1="${directory_log_openspcoop}" arg2="" />
 		        <then>
 		                <echo message="Errore: deve essere specificata una directory di log" />
 		                <fail message="Errore: deve essere specificata una directory di log"/>
@@ -320,10 +369,12 @@
 				<os family="dos"/>
 			</or>
 			<then>
-				<propertyregex property="work_dir" override="true" input="${antinstaller_directory_lavoro_openspcoop}" 
-					defaultValue="${antinstaller_directory_lavoro_openspcoop}" regexp="\\" replace="/" />
-				<propertyregex property="log_dir" override="true" input="${antinstaller_directory_log_openspcoop}" 
-					defaultValue="${antinstaller_directory_log_openspcoop}" regexp="\\" replace="/" />
+				<propertyregex property="work_dir" override="true" input="${directory_lavoro_openspcoop}" 
+					defaultValue="${directory_lavoro_openspcoop}" regexp="\\" replace="/" />
+				<propertyregex property="log_dir" override="true" input="${directory_log_openspcoop}"
+					defaultValue="${directory_log_openspcoop}" regexp="\\" replace="/" />
+				<propertyregex property="log_dir_log4j" override="true" input="${directory_log_openspcoop_log4j}"
+					defaultValue="${directory_log_openspcoop_log4j}" regexp="\\" replace="/" />
 				<if>
 					<not>
 						<equals arg1="${antinstaller_batch_dir}" arg2="" />
@@ -339,8 +390,9 @@
 
 			</then>
 	    		<else>
-	    			<property name="work_dir" value="${antinstaller_directory_lavoro_openspcoop}"/>
-				<property name="log_dir" value="${antinstaller_directory_log_openspcoop}"/>
+	    			<property name="work_dir" value="${directory_lavoro_openspcoop}"/>
+				<property name="log_dir" value="${directory_log_openspcoop}"/>
+				<property name="log_dir_log4j" value="${directory_log_openspcoop_log4j}"/>
 				<if>
 					<not>
 						<equals arg1="${antinstaller_batch_dir}" arg2="" />
@@ -382,6 +434,19 @@
                                 <echo message="DOPO Normalizzazione LogDIR [${log_dir}]"/>
                         </then>
                 </if> 
+                <if>
+                        <matches pattern=".*/$" string="${log_dir_log4j}" /> 
+                        <then>
+                                <echo message="Normalizzazione LogDIR log4j [${log_dir_log4j}]"/>
+				<propertyregex property="log_dir_log4j"
+					      input="${log_dir_log4j}"
+					      regexp="(.*)/$"
+					      select="\1"
+					      casesensitive="false" 
+					      override="true"/>
+                                <echo message="DOPO Normalizzazione LogDIR log4j [${log_dir_log4j}]"/>
+                        </then>
+                </if> 
 		<if>
 			<not>
 				<equals arg1="${batch_dir}" arg2="" />
@@ -402,7 +467,16 @@
 				</if>
 			</then>
 		</if>
-		
+
+		<!-- Copia i JAR di protocollo originali nella directory temporanea prima di modificarli -->
+		<mkdir dir="${tmp_protocol_jars}"/>
+		<copy todir="${tmp_protocol_jars}">
+			<fileset dir="${deploy_sw}">
+				<include name="openspcoop2_*-protocol_*.jar"/>
+				<exclude name="openspcoop2_*-protocol_*Stub_cxf.jar"/>
+			</fileset>
+		</copy>
+
 		<!-- Impostazione Trasparente -->
 		<if>
 			<istrue value="${antinstaller_protocollo_trasparente}" />
@@ -499,18 +573,18 @@
 
 	</target>
 	<target name="_setup_workDir_protocollo">
-		<!-- impostazione proprieta' in as4.properties -->
-		<fileset dir="${deploy_sw}" id="archiveProtocol.txt">
+		<!-- impostazione proprieta' nel file di protocollo -->
+		<fileset dir="${tmp_protocol_jars}" id="archiveProtocol.txt">
 		        <include name="openspcoop2_${protocolName}-protocol_*.jar"/>
 			<exclude name="openspcoop2_${protocolName}-protocol_*Stub_cxf.jar"/>
 		</fileset>
 		<pathconvert pathsep=" " property="archiveProtocol_name.txt" refid="archiveProtocol.txt">
-		        <map from="${deploy_sw}/" to=""/>
+		        <map from="${tmp_protocol_jars}/" to=""/>
 		</pathconvert>
 		<!-- <echo message="FILE_NAME '${protocolName}' [${archiveProtocol_name.txt}]"/> -->
-		
+
 		<delete dir="${tmp_cfg}/JAR_${protocolName}"/>
-		<unzip src="${deploy_sw}/${archiveProtocol_name.txt}" dest="${tmp_cfg}/JAR_${protocolName}"/>
+		<unzip src="${tmp_protocol_jars}/${archiveProtocol_name.txt}" dest="${tmp_cfg}/JAR_${protocolName}"/>
 		<concat destfile="${tmp_cfg}/JAR_${protocolName}/${protocolName}.properties" append="yes" >
 
 # ----- Personalizzazione Setup GovWay (confDirectory) -------------
@@ -524,8 +598,9 @@
 			<param name="value" value="${work_dir}"/>
 		</antcall>
 
-		<delete file="${deploy_sw}/${archiveProtocol_name.txt}"/>
-		<jar destfile="${deploy_sw}/${archiveProtocol_name.txt}" basedir="${tmp_cfg}/JAR_${protocolName}"/>
+		<!-- Scrivo il JAR modificato nella directory temporanea invece di sovrascrivere l'originale -->
+		<mkdir dir="${tmp_protocol_jars}"/>
+		<jar destfile="${tmp_protocol_jars}/${archiveProtocol_name.txt}" basedir="${tmp_cfg}/JAR_${protocolName}"/>
 		<delete dir="${tmp_cfg}/JAR_${protocolName}"/>
 	</target>
 
@@ -540,7 +615,7 @@
 		<copy file="${deploy_resources}/protocolli/modipa/modipa_local.properties" todir="${tmp_cfg}"/>
 
 		<replace file="${tmp_cfg}/modipa_local.properties" token="WORK_DIR" value="${work_dir}"/>
-		<replace file="${tmp_cfg}/modipa_local.properties" token="/SOGGETTO_LOCALE/" value="/${antinstaller_nomesoggetto}/"/>
+		<replace file="${tmp_cfg}/modipa_local.properties" token="/SOGGETTO_LOCALE/" value="/${entity_name}/"/>
 		<antcall target="dos2unix">
 			<param name="dir" value="${tmp_cfg}"/>
 		    <param name="file" value="modipa_local.properties"/>
@@ -582,17 +657,17 @@
 		<replace file="${tmp_cfg}/as4_local.properties" token="WORK_DIR" value="${work_dir}"/>
 
 		<!-- impostazione proprieta' in as4.properties -->
-                <fileset dir="${deploy_sw}" id="archiveAS4.txt">
+                <fileset dir="${tmp_protocol_jars}" id="archiveAS4.txt">
                         <include name="openspcoop2_as4-protocol_*.jar"/>
 			<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
                 </fileset>
 		<pathconvert pathsep=" " property="archiveAS4_name.txt" refid="archiveAS4.txt">
-                        <map from="${deploy_sw}/" to=""/>
+                        <map from="${tmp_protocol_jars}/" to=""/>
                 </pathconvert>
 		<!-- <echo message="FILE_NAME [${archiveAS4_name.txt}]"/> -->
-                
+
 		<delete dir="${tmp_cfg}/JAR_AS4"/>
-		<unzip src="${deploy_sw}/${archiveAS4_name.txt}" dest="${tmp_cfg}/JAR_AS4"/>
+		<unzip src="${tmp_protocol_jars}/${archiveAS4_name.txt}" dest="${tmp_cfg}/JAR_AS4"/>
 		<concat destfile="${tmp_cfg}/JAR_AS4/as4.properties" append="yes" >
 
 # ----- Personalizzazione Setup GovWay (as4) -------------
@@ -611,7 +686,7 @@
 		<antcall target="set_property">
 			<param name="file" value="${tmp_cfg}/JAR_AS4/as4.properties"/>
 			<param name="token" value="org.openspcoop2.protocol.as4.ack.trace.tipoDatabase"/>
-			<param name="value" value="${antinstaller_tipo_database}"/>
+			<param name="value" value="${db_type}"/>
 		</antcall>
 		<antcall target="set_property">
 			<param name="file" value="${tmp_cfg}/JAR_AS4/as4.properties"/>
@@ -623,8 +698,8 @@
 			<param name="token" value="org.openspcoop2.protocol.as4.ack.domibus.tipoDatabase"/>
 			<param name="value" value="${antinstaller_as4_tipo_database}"/>
 		</antcall>
-		<delete file="${deploy_sw}/${archiveAS4_name.txt}"/>
-		<jar destfile="${deploy_sw}/${archiveAS4_name.txt}" basedir="${tmp_cfg}/JAR_AS4"/>
+		<delete file="${tmp_protocol_jars}/${archiveAS4_name.txt}"/>
+		<jar destfile="${tmp_protocol_jars}/${archiveAS4_name.txt}" basedir="${tmp_cfg}/JAR_AS4"/>
 		<delete dir="${tmp_cfg}/JAR_AS4"/>
 
 	</target>
@@ -638,16 +713,16 @@
 			<then>
 				
 				<!-- impostazione proprieta' in sdi.properties -->
-				<fileset dir="${deploy_sw}" id="archiveSDI.txt">
+				<fileset dir="${tmp_protocol_jars}" id="archiveSDI.txt">
 				        <include name="openspcoop2_sdi-protocol_*.jar"/>
 				</fileset>
 				<pathconvert pathsep=" " property="archiveSDI_name.txt" refid="archiveSDI.txt">
-				        <map from="${deploy_sw}/" to=""/>
+				        <map from="${tmp_protocol_jars}/" to=""/>
 				</pathconvert>
 				<!-- <echo message="FILE_NAME [${archiveSDI_name.txt}]"/> -->
-				
+
 				<delete dir="${tmp_cfg}/JAR_SDI"/>
-				<unzip src="${deploy_sw}/${archiveSDI_name.txt}" dest="${tmp_cfg}/JAR_SDI"/>
+				<unzip src="${tmp_protocol_jars}/${archiveSDI_name.txt}" dest="${tmp_cfg}/JAR_SDI"/>
 				<concat destfile="${tmp_cfg}/JAR_SDI/sdi.properties" append="yes" >
 
 # ----- Personalizzazione Setup GovWay (sdi) -------------
@@ -657,8 +732,8 @@
 					<param name="token" value="org.openspcoop2.protocol.sdi.tracce.dataSource"/>
 					<param name="value" value="${datasource_pdd_name}"/>
 				</antcall>
-				<delete file="${deploy_sw}/${archiveSDI_name.txt}"/>
-				<jar destfile="${deploy_sw}/${archiveSDI_name.txt}" basedir="${tmp_cfg}/JAR_SDI"/>
+				<delete file="${tmp_protocol_jars}/${archiveSDI_name.txt}"/>
+				<jar destfile="${tmp_protocol_jars}/${archiveSDI_name.txt}" basedir="${tmp_cfg}/JAR_SDI"/>
 				<delete dir="${tmp_cfg}/JAR_SDI"/>
 				
 			</then>
@@ -700,7 +775,7 @@
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_archivi}/govway.ear/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 							    	<include name="openspcoop2_trasparente-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -712,7 +787,7 @@
 					<istrue value="${antinstaller_protocollo_modipa}" />
 					<then>
 						<copy todir="${tmp_archivi}/govway.ear/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_modipa-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -724,7 +799,7 @@
 					<istrue value="${antinstaller_protocollo_spcoop}" />
 					<then>
 						<copy todir="${tmp_archivi}/govway.ear/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_spcoop-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -736,7 +811,7 @@
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_archivi}/govway.ear/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_as4-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -785,7 +860,7 @@
 					<istrue value="${antinstaller_protocollo_sdi}" />
 					<then>
 						<copy todir="${tmp_archivi}/govway.ear/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_sdi-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -800,7 +875,7 @@
 					</and>
 					<then>
 						<unzip src="${tmp_archivi}/govway.ear/properties/apiConfig.zip" dest="${tmp_archivi}/apiConfigZIP"/>
-						<replace dir="${tmp_archivi}/apiConfigZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiConfigZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<replace dir="${tmp_archivi}/apiConfigZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
 						<replace dir="${tmp_archivi}/apiConfigZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
 						<delete file="${tmp_archivi}/govway.ear/properties/apiConfig.zip" />
@@ -814,7 +889,7 @@
 					</and>
 					<then>
 						<unzip src="${tmp_archivi}/govway.ear/properties/apiMonitor.zip" dest="${tmp_archivi}/apiMonitorZIP"/>
-						<replace dir="${tmp_archivi}/apiMonitorZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiMonitorZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<replace dir="${tmp_archivi}/apiMonitorZIP" token="USERNAME_MONITOR" value="${antinstaller_pddmonitor_username}"/>
 						<replace dir="${tmp_archivi}/apiMonitorZIP" token="PASSWORD_MONITOR" value="${antinstaller_pddmonitor_password}"/>
 						<delete file="${tmp_archivi}/govway.ear/properties/apiMonitor.zip" />
@@ -828,7 +903,7 @@
 					</and>
 					<then>
 						<unzip src="${tmp_archivi}/govway.ear/properties/apiRestStatus.zip" dest="${tmp_archivi}/apiRestStatusZIP"/>
-						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
 						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
 						<delete file="${tmp_archivi}/govway.ear/properties/apiRestStatus.zip" />
@@ -842,7 +917,7 @@
 					</and>
 					<then>
 						<unzip src="${tmp_archivi}/govway.ear/properties/apiSoapStatus.zip" dest="${tmp_archivi}/apiSoapStatusZIP"/>
-						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
 						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
 						<delete file="${tmp_archivi}/govway.ear/properties/apiSoapStatus.zip" />
@@ -857,25 +932,25 @@
 					<then>
 						<!-- API-PDND-->
 						<unzip src="${tmp_archivi}/govway.ear/properties/apiPDND.zip" dest="${tmp_archivi}/apiPDNDZIP"/>
-						<replace dir="${tmp_archivi}/apiPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<delete file="${tmp_archivi}/govway.ear/properties/apiPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.ear/properties/apiPDND.zip" basedir="${tmp_archivi}/apiPDNDZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDZIP"/>
 						<!-- API-PDNDv2-->
 						<unzip src="${tmp_archivi}/govway.ear/properties/apiPDNDv2.zip" dest="${tmp_archivi}/apiPDNDv2ZIP"/>
-						<replace dir="${tmp_archivi}/apiPDNDv2ZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiPDNDv2ZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<delete file="${tmp_archivi}/govway.ear/properties/apiPDNDv2.zip" />
 						<zip destfile="${tmp_archivi}/govway.ear/properties/apiPDNDv2.zip" basedir="${tmp_archivi}/apiPDNDv2ZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDv2ZIP"/>
 						<!-- Signal Hub -->
 						<unzip src="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" dest="${tmp_archivi}/signalHubPDNDZIP"/>
-						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<delete file="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.ear/properties/signalHubPDND.zip" basedir="${tmp_archivi}/signalHubPDNDZIP"/>
 						<delete dir="${tmp_archivi}/signalHubPDNDZIP"/>
 						<!-- TracingPDND -->
 						<unzip src="${tmp_archivi}/govway.ear/properties/tracingPDND.zip" dest="${tmp_archivi}/tracingPDNDZIP"/>
-						<replace dir="${tmp_archivi}/tracingPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/tracingPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<delete file="${tmp_archivi}/govway.ear/properties/tracingPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.ear/properties/tracingPDND.zip" basedir="${tmp_archivi}/tracingPDNDZIP"/>
 						<delete dir="${tmp_archivi}/tracingPDNDZIP"/>
@@ -933,7 +1008,7 @@
 					</and>
 					<then>
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiConfig.zip" dest="${tmp_archivi}/apiConfigZIP"/>
-						<replace dir="${tmp_archivi}/apiConfigZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiConfigZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<replace dir="${tmp_archivi}/apiConfigZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
 						<replace dir="${tmp_archivi}/apiConfigZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiConfig.zip" />
@@ -947,7 +1022,7 @@
 					</and>
 					<then>
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiMonitor.zip" dest="${tmp_archivi}/apiMonitorZIP"/>
-						<replace dir="${tmp_archivi}/apiMonitorZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiMonitorZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<replace dir="${tmp_archivi}/apiMonitorZIP" token="USERNAME_MONITOR" value="${antinstaller_pddmonitor_username}"/>
 						<replace dir="${tmp_archivi}/apiMonitorZIP" token="PASSWORD_MONITOR" value="${antinstaller_pddmonitor_password}"/>
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiMonitor.zip" />
@@ -961,7 +1036,7 @@
 					</and>
 					<then>
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiRestStatus.zip" dest="${tmp_archivi}/apiRestStatusZIP"/>
-						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
 						<replace dir="${tmp_archivi}/apiRestStatusZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiRestStatus.zip" />
@@ -975,7 +1050,7 @@
 					</and>
 					<then>
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiSoapStatus.zip" dest="${tmp_archivi}/apiSoapStatusZIP"/>
-						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="USERNAME_CONFIG" value="${antinstaller_pddconsole_username}"/>
 						<replace dir="${tmp_archivi}/apiSoapStatusZIP" token="PASSWORD_CONFIG" value="${antinstaller_pddconsole_password}"/>
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiSoapStatus.zip" />
@@ -990,25 +1065,25 @@
 					<then>
 						<!-- API-PDND-->
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" dest="${tmp_archivi}/apiPDNDZIP"/>
-						<replace dir="${tmp_archivi}/apiPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDND.zip" basedir="${tmp_archivi}/apiPDNDZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDZIP"/>
 						<!-- API-PDNDv2-->
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv2.zip" dest="${tmp_archivi}/apiPDNDv2ZIP"/>
-						<replace dir="${tmp_archivi}/apiPDNDv2ZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/apiPDNDv2ZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv2.zip" />
 						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/apiPDNDv2.zip" basedir="${tmp_archivi}/apiPDNDv2ZIP"/>
 						<delete dir="${tmp_archivi}/apiPDNDv2ZIP"/>
 						<!-- Signal Hub -->
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" dest="${tmp_archivi}/signalHubPDNDZIP"/>
-						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/signalHubPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/signalHubPDND.zip" basedir="${tmp_archivi}/signalHubPDNDZIP"/>
 						<delete dir="${tmp_archivi}/signalHubPDNDZIP"/>
 						<!-- Tracing PDND -->
 						<unzip src="${tmp_archivi}/govway.war/WEB-INF/classes/tracingPDND.zip" dest="${tmp_archivi}/tracingPDNDZIP"/>
-						<replace dir="${tmp_archivi}/tracingPDNDZIP" token="SOGGETTO_LOCALE" value="${antinstaller_nomesoggetto}"/>
+						<replace dir="${tmp_archivi}/tracingPDNDZIP" token="SOGGETTO_LOCALE" value="${entity_name}"/>
 						<delete file="${tmp_archivi}/govway.war/WEB-INF/classes/tracingPDND.zip" />
 						<zip destfile="${tmp_archivi}/govway.war/WEB-INF/classes/tracingPDND.zip" basedir="${tmp_archivi}/tracingPDNDZIP"/>
 						<delete dir="${tmp_archivi}/tracingPDNDZIP"/>
@@ -1066,7 +1141,7 @@
 			<istrue value="${antinstaller_protocollo_trasparente}" />
 			<then>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_trasparente-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -1078,7 +1153,7 @@
 			<istrue value="${antinstaller_protocollo_modipa}" />
 			<then>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_modipa-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -1090,7 +1165,7 @@
 			<istrue value="${antinstaller_protocollo_spcoop}" />
 			<then>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_spcoop-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -1102,7 +1177,7 @@
 			<istrue value="${antinstaller_protocollo_as4}" />
 			<then>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_as4-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -1120,7 +1195,7 @@
 			<istrue value="${antinstaller_protocollo_sdi}" />
 			<then>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_sdi-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -1132,13 +1207,58 @@
 	
 	<target name="setup_sql" >
 		<if>
+			<istrue value="${antinstaller_allSql}"/>
+			<then>
+				<!-- Genera SQL per tutti i database supportati -->
+				<foreach list="postgresql,mysql,oracle,sqlserver,hsql,db2" param="current_db_type" delimiter="," target="_setup_sql_by_db_type_if_exists"/>
+			</then>
+			<else>
+				<!-- Genera SQL solo per il database specificato -->
+				<antcall target="_setup_sql_by_db_type">
+					<param name="param_db_type" value="${antinstaller_tipo_database}"/>
+				</antcall>
+			</else>
+		</if>
+	</target>
+
+	<target name="_setup_sql_by_db_type_if_exists">
+		<if>
+			<available file="${deploy_sql}/${current_db_type}" type="dir"/>
+			<then>
+				<!-- Ridefinisco tmp_sql per usare sottodirectory per questo database -->
+				<var name="tmp_sql_original" value="${tmp_sql}"/>
+				<var name="tmp_sql_completi_original" value="${tmp_sql_completi}"/>
+				<var name="tmp_sql" unset="true"/>
+				<var name="tmp_sql_completi" unset="true"/>
+				<var name="tmp_sql" value="${tmp_sql_original}/${current_db_type}"/>
+				<var name="tmp_sql_completi" value="${tmp_sql_completi_original}/${current_db_type}"/>
+				<mkdir dir="${tmp_sql}"/>
+
+				<antcall target="_setup_sql_by_db_type">
+					<param name="param_db_type" value="${current_db_type}"/>
+				</antcall>
+
+				<!-- Ripristino i valori originali -->
+				<var name="tmp_sql" unset="true"/>
+				<var name="tmp_sql_completi" unset="true"/>
+				<var name="tmp_sql" value="${tmp_sql_original}"/>
+				<var name="tmp_sql_completi" value="${tmp_sql_completi_original}"/>
+			</then>
+		</if>
+	</target>
+
+	<target name="_setup_sql_by_db_type">
+		<if>
 			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
 			<then>
-				<antcall target="_setup_sql_nuova_installazione"/>
+				<antcall target="_setup_sql_nuova_installazione">
+					<param name="param_db_type" value="${param_db_type}"/>
+				</antcall>
 			</then>
 			<else>
 				<!-- Genero comunque sql completi -->
 				<antcall target="_setup_sql_nuova_installazione">
+					<param name="param_db_type" value="${param_db_type}"/>
 					<param name="sqlForceNuovaInstallazione" value="true"/>
 				</antcall>
 				<mkdir dir="${tmp_sql_completi}"/>
@@ -1147,16 +1267,20 @@
 						<include name="*.sql"/>
 					</fileset>
 				</move>
-				
-				<antcall target="_setup_sql_aggiornamento"/>
+
+				<antcall target="_setup_sql_aggiornamento">
+					<param name="param_db_type" value="${param_db_type}"/>
+				</antcall>
 			</else>
 		</if>
-		<antcall target="_sql_settings_installer_properties"/>
+		<antcall target="_sql_settings_installer_properties">
+			<param name="param_db_type" value="${param_db_type}"/>
+		</antcall>
 	</target>
 	<target name="_setup_sql_nuova_installazione">
 		
 		<copy todir="${tmp_sql}">
-			<fileset dir="${deploy_sql}/${antinstaller_tipo_database}">
+			<fileset dir="${deploy_sql}/${param_db_type}">
 		    		<include name="govway-*drop.sql"/>
 				<include name="govway-*delete.sql"/>
 			</fileset>
@@ -1166,14 +1290,14 @@
 		<!-- *** Runtime *** -->
 		<var name="runtimeSqlScriptName" value="GovWay.sql"/>
 		<var name="runtimeSqlDbName" value="${antinstaller_dbname}"/>
-		<antcall target="_initSQL_${antinstaller_tipo_database}">
+		<antcall target="_initSQL_${param_db_type}">
 			<param name="sqlFileOutput" value="${tmp_sql}/${runtimeSqlScriptName}"/>
 		</antcall>
 		<concat destfile="${tmp_sql}/${runtimeSqlScriptName}" append="yes" >
 	      		<header filtering="no" trimleading="yes">
 </header>
 		  <filelist dir="${deploy_sql}"
-                           files="${antinstaller_tipo_database}/GovWayRuntime.sql"/>
+                           files="${param_db_type}/GovWayRuntime.sql"/>
 		</concat>
 
 		<!-- Correggo e ripulisco indici inutili -->
@@ -1190,14 +1314,14 @@
 			<then>
 				<var name="configSqlScriptName" value="GovWayConfigurazione.sql"/>
 				<var name="configSqlDbName" value="${antinstaller_dbname_config}"/>
-				<antcall target="_initSQL_${antinstaller_tipo_database}">
+				<antcall target="_initSQL_${param_db_type}">
 					<param name="sqlFileOutput" value="${tmp_sql}/${configSqlScriptName}"/>
 				</antcall>
 				<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
 	       				<header filtering="no" trimleading="yes">
 </header>
 				  <filelist dir="${deploy_sql}"
-				           files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
+				           files="${param_db_type}/GovWaySemaphore.sql"/>
 				</concat>
 			</then>
 		</if>
@@ -1205,14 +1329,14 @@
 		<if>
 			<istrue value="${build_monitoraggio}" />
 			<then>
-				<var name="monitoraggioSqlInternalName" value=" ${antinstaller_tipo_database}/GovWayMonitoraggio.sql"/>
+				<var name="monitoraggioSqlInternalName" value=" ${param_db_type}/GovWayMonitoraggio.sql"/>
 			</then>
 		</if>
 		<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
 	       		<header filtering="no" trimleading="yes">
 </header>
 		  <filelist dir="${deploy_sql}"
-                           files="${antinstaller_tipo_database}/GovWayConfig.sql init.sql${monitoraggioSqlInternalName}"/>
+                           files="${param_db_type}/GovWayConfig.sql init.sql${monitoraggioSqlInternalName}"/>
 		</concat>
 		
 		<!-- trasparente -->
@@ -1405,14 +1529,14 @@
 			<then>
 				<var name="tracceSqlScriptName" value="GovWayTracciamento.sql"/>
 				<var name="tracceSqlDbName" value="${antinstaller_dbname_log}"/>
-				<antcall target="_initSQL_${antinstaller_tipo_database}">
+				<antcall target="_initSQL_${param_db_type}">
 					<param name="sqlFileOutput" value="${tmp_sql}/${tracceSqlScriptName}"/>
 				</antcall>
 				<concat destfile="${tmp_sql}/${tracceSqlScriptName}" append="yes" >
 	       				<header filtering="no" trimleading="yes">
 </header>
 				  <filelist dir="${deploy_sql}"
-				           files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
+				           files="${param_db_type}/GovWaySemaphore.sql"/>
 				</concat>				
 			</then>
 		</if>
@@ -1420,7 +1544,7 @@
 	       		<header filtering="no" trimleading="yes">
 </header>
 		  <filelist dir="${deploy_sql}"
-                           files="${antinstaller_tipo_database}/GovWayTracce.sql"/>
+                           files="${param_db_type}/GovWayTracce.sql"/>
 		</concat>
 		<if>
 			<equals arg1="${antinstaller_log_db}" arg2="log"/>
@@ -1429,7 +1553,7 @@
 	       				<header filtering="no" trimleading="yes">
 </header>
 				  <filelist dir="${deploy_sql}"
-				           files="${antinstaller_tipo_database}/GovWayTracceDBInfo.sql"/>
+				           files="${param_db_type}/GovWayTracceDBInfo.sql"/>
 				</concat>
 			</then>
 		</if>
@@ -1460,14 +1584,14 @@
 			<then>
 				<var name="statsSqlScriptName" value="GovWayStatistiche.sql"/>
 				<var name="statsSqlDbName" value="${antinstaller_dbname_stats}"/>
-				<antcall target="_initSQL_${antinstaller_tipo_database}">
+				<antcall target="_initSQL_${param_db_type}">
 					<param name="sqlFileOutput" value="${tmp_sql}/${statsSqlScriptName}"/>
 				</antcall>
 				<concat destfile="${tmp_sql}/${statsSqlScriptName}" append="yes" >
 	       				<header filtering="no" trimleading="yes">
 </header>
 				  <filelist dir="${deploy_sql}"
-				           files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
+				           files="${param_db_type}/GovWaySemaphore.sql"/>
 				</concat>
 			</then>
 		</if>
@@ -1480,7 +1604,7 @@
 	       				<header filtering="no" trimleading="yes">
 </header>
 				  <filelist dir="${deploy_sql}"
-				           files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
+				           files="${param_db_type}/GovWaySemaphore.sql"/>
 				</concat> -->
 			</then>
 		</if>
@@ -1488,7 +1612,7 @@
 	       		<header filtering="no" trimleading="yes">
 </header>
 		  <filelist dir="${deploy_sql}"
-                           files="${antinstaller_tipo_database}/GovWayStatistiche.sql"/>
+                           files="${param_db_type}/GovWayStatistiche.sql"/>
 		</concat>
 		<if>
 			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
@@ -1497,7 +1621,7 @@
 	       				<header filtering="no" trimleading="yes">
 </header>
 				  <filelist dir="${deploy_sql}"
-				           files="${antinstaller_tipo_database}/GovWayStatisticheDBInfo.sql"/>
+				           files="${param_db_type}/GovWayStatisticheDBInfo.sql"/>
 				</concat>
 			</then>
 		</if>
@@ -1594,7 +1718,7 @@
 	       					<header filtering="no" trimleading="yes">
 </header>
 				  			<filelist dir="${deploy_sql}"
-				           			files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
+				           			files="${param_db_type}/GovWaySemaphore.sql"/>
 </concat>
 						<concat destfile="${tmp_sql}/${configSqlScriptNameGenerato}" append="yes" >
 	       					<header filtering="no" trimleading="yes">
@@ -2129,7 +2253,7 @@
 			<istrue value="${antinstaller_protocollo_trasparente}" />
 			<then>
 				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_trasparente-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2141,7 +2265,7 @@
 			<istrue value="${antinstaller_protocollo_modipa}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_modipa-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2153,7 +2277,7 @@
 			<istrue value="${antinstaller_protocollo_spcoop}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_spcoop-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2165,7 +2289,7 @@
 			<istrue value="${antinstaller_protocollo_as4}" />
 			<then>
 				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_as4-protocol_*.jar"/>
 						<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 					</fileset>
@@ -2178,7 +2302,7 @@
 			<istrue value="${antinstaller_protocollo_sdi}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_sdi-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2223,7 +2347,7 @@
 			<istrue value="${antinstaller_protocollo_trasparente}" />
 			<then>
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_trasparente-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2235,7 +2359,7 @@
 			<istrue value="${antinstaller_protocollo_modipa}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_modipa-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2247,7 +2371,7 @@
 			<istrue value="${antinstaller_protocollo_spcoop}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_spcoop-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2259,7 +2383,7 @@
 			<istrue value="${antinstaller_protocollo_as4}" />
 			<then>
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_as4-protocol_*.jar"/>
 						<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 					</fileset>
@@ -2272,7 +2396,7 @@
 			<istrue value="${antinstaller_protocollo_sdi}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
-					<fileset dir="${deploy_sw}">
+					<fileset dir="${tmp_protocol_jars}">
 						<include name="openspcoop2_sdi-protocol_*.jar"/>
 					</fileset>
 					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2320,7 +2444,7 @@
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_trasparente-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2332,7 +2456,7 @@
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_modipa-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2344,7 +2468,7 @@
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_spcoop-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2356,7 +2480,7 @@
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_as4-protocol_*.jar"/>
 								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 							</fileset>
@@ -2369,7 +2493,7 @@
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_sdi-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2416,7 +2540,7 @@
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_trasparente-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2428,7 +2552,7 @@
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_modipa-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2440,7 +2564,7 @@
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_spcoop-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2452,7 +2576,7 @@
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_as4-protocol_*.jar"/>
 								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 							</fileset>
@@ -2465,7 +2589,7 @@
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_sdi-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2514,7 +2638,7 @@
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_batch}/generatoreStatistiche/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_trasparente-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2526,7 +2650,7 @@
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${tmp_batch}/generatoreStatistiche/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_modipa-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2538,7 +2662,7 @@
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${tmp_batch}/generatoreStatistiche/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_spcoop-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2550,7 +2674,7 @@
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_batch}/generatoreStatistiche/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_as4-protocol_*.jar"/>
 								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 							</fileset>
@@ -2563,7 +2687,7 @@
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${tmp_batch}/generatoreStatistiche/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_sdi-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2611,7 +2735,7 @@
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_batch}/gestoreRuntimeRepository/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_trasparente-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2623,7 +2747,7 @@
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${tmp_batch}/gestoreRuntimeRepository/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_modipa-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2635,7 +2759,7 @@
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${tmp_batch}/gestoreRuntimeRepository/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_spcoop-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2647,7 +2771,7 @@
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_batch}/gestoreRuntimeRepository/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_as4-protocol_*.jar"/>
 								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 							</fileset>
@@ -2660,7 +2784,7 @@
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${tmp_batch}/gestoreRuntimeRepository/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_sdi-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2708,7 +2832,7 @@
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_tools}/govway-vault-cli/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_trasparente-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2720,7 +2844,7 @@
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${tmp_tools}/govway-vault-cli/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_modipa-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2732,7 +2856,7 @@
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${tmp_tools}/govway-vault-cli/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_spcoop-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2744,7 +2868,7 @@
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_tools}/govway-vault-cli/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_as4-protocol_*.jar"/>
 								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 							</fileset>
@@ -2757,7 +2881,7 @@
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${tmp_tools}/govway-vault-cli/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_sdi-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2808,7 +2932,7 @@
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_tools}/govway-config-loader/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_trasparente-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2820,7 +2944,7 @@
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${tmp_tools}/govway-config-loader/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_modipa-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2832,7 +2956,7 @@
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${tmp_tools}/govway-config-loader/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_spcoop-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2844,7 +2968,7 @@
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_tools}/govway-config-loader/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_as4-protocol_*.jar"/>
 								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 							</fileset>
@@ -2857,7 +2981,7 @@
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${tmp_tools}/govway-config-loader/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_sdi-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2902,7 +3026,7 @@
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_tools}/govway-template-scan/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_trasparente-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2914,7 +3038,7 @@
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${tmp_tools}/govway-template-scan/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_modipa-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2926,7 +3050,7 @@
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${tmp_tools}/govway-template-scan/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_spcoop-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
@@ -2938,7 +3062,7 @@
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_tools}/govway-template-scan/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_as4-protocol_*.jar"/>
 								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 							</fileset>
@@ -2951,7 +3075,7 @@
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${tmp_tools}/govway-template-scan/lib">
-							<fileset dir="${deploy_sw}">
+							<fileset dir="${tmp_protocol_jars}">
 								<include name="openspcoop2_sdi-protocol_*.jar"/>
 							</fileset>
 							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>

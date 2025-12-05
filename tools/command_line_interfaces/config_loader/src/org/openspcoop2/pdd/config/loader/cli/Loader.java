@@ -36,6 +36,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
@@ -130,7 +131,7 @@ public class Loader {
 			boolean smista = false;
 			
 			// properties
-			LoaderProperties loaderProperties = LoaderProperties.getInstance();
+			LoaderProperties loaderProperties = LoaderProperties.getInstance(logCore);
 			String confDir = null; // non sembra servire
 			String protocolloDefault = loaderProperties.getProtocolloDefault();
 			String userLogin = loaderProperties.getUtente();
@@ -402,10 +403,11 @@ public class Loader {
 		Properties propertiesLog4j = new Properties();
 		try (InputStream inPropLog4j = Loader.class.getResourceAsStream("/config_loader.cli.log4j2.properties");){
 			propertiesLog4j.load(inPropLog4j);
+			PropertiesEnvUtils.resolveGovWayEnvVariables(propertiesLog4j);
 			LoggerWrapperFactory.setLogConfiguration(propertiesLog4j);
 		} catch(java.lang.Exception e) {
 			throw new CoreException("Impossibile leggere i dati dal file 'config_loader.cli.log4j2.properties': "+e.getMessage());
-		} 
+		}
 	}
 	private static LoaderOperationType parseOperationType(String utilizzoErrato,String [] args) throws CoreException{
 		LoaderOperationType opType = null;
