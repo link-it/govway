@@ -1,3 +1,11 @@
+2025-12-05  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]	
+	Risolto Bug #1695
+	(https://github.com/link-it/govway/issues/269)
+	Corretto il flusso di autenticazione OIDC nella console, 
+	evitando la validazione dei campi del login locale quando entrambe le modalità di autenticazione (locale e OIDC) sono abilitate.
+
 2025-12-05  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]
