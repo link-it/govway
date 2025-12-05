@@ -355,12 +355,12 @@
 					<antcall target="replace_token">
 					    <param name="file" value="${configFile}"/>
 						<param name="token" value="postgresql"/>
-						<param name="value" value="${antinstaller_tipo_database}"/>
+						<param name="value" value="${db_type}"/>
 					</antcall>
 					<antcall target="replace_token">
 					    <param name="file" value="${configFile}"/>
 						<param name="token" value="oracle"/>
-						<param name="value" value="${antinstaller_tipo_database}"/>
+						<param name="value" value="${db_type}"/>
 					</antcall>
 
 					<!-- Datasource runtime -->

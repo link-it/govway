@@ -30,12 +30,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.monitor.engine.statistic.StatisticsConfig;
 import org.openspcoop2.monitor.engine.statistic.StatisticsForceIndexConfig;
 import org.openspcoop2.monitor.engine.statistic.StatisticsGroupByConfig;
 import org.openspcoop2.utils.BooleanNullable;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.PropertiesReader;
+import org.slf4j.Logger;
 import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 
 /**
@@ -48,16 +50,16 @@ import org.openspcoop2.utils.transport.http.HttpRequestConfig;
 public class GeneratorProperties {
 	
 	private static GeneratorProperties staticInstance = null;
-	private static synchronized void init() throws UtilsException{
+	private static synchronized void init(Logger log) throws UtilsException{
 		if(GeneratorProperties.staticInstance == null){
-			GeneratorProperties.staticInstance = new GeneratorProperties();
+			GeneratorProperties.staticInstance = new GeneratorProperties(log);
 		}
 	}
-	public static GeneratorProperties getInstance() throws UtilsException{
+	public static GeneratorProperties getInstance(Logger log) throws UtilsException{
 		if(GeneratorProperties.staticInstance == null){
 			// spotbugs warning 'SING_SINGLETON_GETTER_NOT_SYNCHRONIZED': l'istanza viene creata allo startup
 			synchronized (GeneratorProperties.class) {
-				GeneratorProperties.init();
+				GeneratorProperties.init(log);
 			}
 		}
 		return GeneratorProperties.staticInstance;
@@ -101,7 +103,7 @@ public class GeneratorProperties {
 	private PropertiesReader props;
 	
 	
-	private GeneratorProperties() throws UtilsException {
+	private GeneratorProperties(Logger log) throws UtilsException {
 
 		Properties pr = new Properties();
 		try {
@@ -111,13 +113,19 @@ public class GeneratorProperties {
 			throw new UtilsException("Errore durante l'init delle properties", e);
 		}
 		this.props = new PropertiesReader(pr, true);
+
+		try {
+			PropertiesEnvUtils.checkRequiredEnvProperties(this.props.readProperties("env."), log, "batch-statistiche");
+		} catch(Exception e) {
+			throw new UtilsException("Errore durante l'init delle properties", e);
+		}
 		
 		try {
 			this.statisticheGenerazioneForceIndexConfig = new StatisticsForceIndexConfig(pr);
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
-		
+
 	}
 	
 	public void initProperties() throws UtilsException {

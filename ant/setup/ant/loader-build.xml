@@ -115,7 +115,7 @@
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="nomePddOperativa_CtrlstatSinglePdD"/>
-			<param name="value" value="PdD${antinstaller_nomesoggetto}"/>
+			<param name="value" value="PdD${entity_name}"/>
 		</antcall>
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
@@ -143,12 +143,12 @@
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="registroServizi.tipoDatabase"/>
-			<param name="value" value="${antinstaller_tipo_database}"/>
+			<param name="value" value="${db_type}"/>
 		</antcall>
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="configPdD.tipoDatabase"/>
-			<param name="value" value="${antinstaller_tipo_database}"/>
+			<param name="value" value="${db_type}"/>
 		</antcall>
 		
 		<!-- DATASOURCE -->

@@ -32,6 +32,7 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.monitor.engine.alarm.AlarmConfigProperties;
@@ -176,10 +177,11 @@ public class Startup implements ServletContextListener {
 			ServerProperties serverProperties = null;
 			try {
 				serverProperties = ServerProperties.getInstance();
+				PropertiesEnvUtils.checkRequiredEnvProperties(serverProperties.getEnvProperties(), Startup.log, "govwayAPIConfig");
 			} catch (Exception e) {
 				doError("Errore durante l'inizializzazione del serverProperties",e);
 			}
-			
+
 			// Inizializzo Controlli connessioni
 			try {
 				Logger logR = Startup.log;

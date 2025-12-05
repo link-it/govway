@@ -29,6 +29,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
@@ -146,7 +147,8 @@ public class AuditLog4JAppender implements IAuditAppender {
 					}
 				}
 			}
-			
+
+			PropertiesEnvUtils.resolveGovWayEnvVariables(loggerProperties);
 			LoggerWrapperFactory.setLogConfiguration(loggerProperties,true);
 			
 			// Logger

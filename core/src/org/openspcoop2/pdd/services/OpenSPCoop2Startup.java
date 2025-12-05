@@ -57,6 +57,7 @@ import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.jminix.console.tool.StandaloneMiniConsole;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAttributeAuthority;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
@@ -512,6 +513,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			OpenSPCoop2Properties propertiesReader = OpenSPCoop2Properties.getInstance();
+			try{
+				PropertiesEnvUtils.checkRequiredEnvProperties(propertiesReader.getEnvProperties(), log, "govway");
+			}catch(CoreException e){
+				this.logError(e.getMessage(),e);
+				return;
+			}
 			// Di seguito vengono attivati gli engine che richiedono di essere caricati prima della validazione del file di proprietà
 			
 			

@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.config;
 import java.util.Properties;
 
 import org.slf4j.Logger;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.InstanceProperties;
@@ -43,7 +44,8 @@ class OpenSPCoop2InstanceProperties extends InstanceProperties {
 		
 		// Leggo directory di configurazione
 		String confDir = super.getValue("org.openspcoop2.pdd.confDirectory");
-		
+		confDir = PropertiesEnvUtils.resolveGovWayEnvVariables(confDir);
+
 		super.setLocalFileImplementation(CostantiPdD.OPENSPCOOP2_PROPERTIES,CostantiPdD.OPENSPCOOP2_PROPERTIES_LOCAL_PATH, confDir);
 		
 		if(localProperties!=null){

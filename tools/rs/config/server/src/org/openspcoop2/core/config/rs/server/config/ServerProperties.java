@@ -124,6 +124,15 @@ public class ServerProperties  {
 
 	/* ********  M E T O D I  ******** */
 
+	private static final String ENV_PROPERTIES_PREFIX = "env.";
+	public Properties getEnvProperties() throws UtilsException {
+		try {
+			return this.reader.readProperties(ENV_PROPERTIES_PREFIX);
+		} catch (Exception e) {
+			throw new UtilsException("Error reading environment properties: " + e.getMessage(), e);
+		}
+	}
+
 	private boolean parse(BooleanNullable b, boolean defaultValue) {
 		return (b!=null && b.getValue()!=null) ? b.getValue() : defaultValue;
 	}

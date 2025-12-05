@@ -21,6 +21,7 @@ package org.openspcoop2.web.monitor.core.config;
 
 import java.util.Properties;
 
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.properties.InstanceProperties;
@@ -45,7 +46,8 @@ public class ApplicationInstanceProperties extends InstanceProperties {
 			
 		// Leggo directory di configurazione
 		String confDir = super.getValue("confDirectory");
-		
+		confDir = PropertiesEnvUtils.resolveGovWayEnvVariables(confDir);
+
 		super.setLocalFileImplementation(localPropertyName,localPropertiesPath, confDir);
 		
 	}

@@ -4166,8 +4166,15 @@ public class OpenSPCoop2Properties {
 			}
 		}
 	}
-	
-	
+
+	private static final String ENV_PROPERTIES_PREFIX = "org.openspcoop2.pdd.env.";
+	public Properties getEnvProperties() throws CoreException {
+		try {
+			return this.reader.readProperties(ENV_PROPERTIES_PREFIX);
+		} catch (Exception e) {
+			throw new CoreException("Error reading environment properties: " + e.getMessage(), e);
+		}
+	}
 
 
 

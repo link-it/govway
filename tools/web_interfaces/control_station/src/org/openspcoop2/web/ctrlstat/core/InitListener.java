@@ -37,6 +37,7 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.DBUtils;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -257,7 +258,8 @@ public class InitListener implements ServletContextListener {
 					throw new UtilsException("ConsoleProperties not initialized");
 				}
 				consoleProperties = ConsoleProperties.getInstance();
-				
+				PropertiesEnvUtils.checkRequiredEnvProperties(consoleProperties.getEnvProperties(), InitListener.log, "govwayConsole");
+
 				if(!DatasourceProperties.initialize(confDir, confPropertyName, confLocalPathPrefix,InitListener.log)){
 					throw new UtilsException("DatasourceProperties not initialized");
 				}

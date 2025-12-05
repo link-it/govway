@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
+import org.openspcoop2.core.commons.PropertiesEnvUtils;
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.monitor.engine.statistic.StatisticsConfig;
@@ -116,6 +117,7 @@ public class Generator {
 			Properties props = new Properties();
 			try(FileInputStream fis = new FileInputStream(Generator.class.getResource("/batch-statistiche.log4j2.properties").getFile())){
 				props.load(fis);
+				PropertiesEnvUtils.resolveGovWayEnvVariables(props);
 				LoggerWrapperFactory.setDefaultConsoleLogConfiguration(Level.ERROR);
 				LoggerWrapperFactory.setLogConfiguration(props);
 				logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+"."+tipologia+".error");
@@ -125,7 +127,7 @@ public class Generator {
 			throw new UtilsException("Impostazione logging fallita: "+e.getMessage());
 		}
 		
-		GeneratorProperties generatorProperties = GeneratorProperties.getInstance();
+		GeneratorProperties generatorProperties = GeneratorProperties.getInstance(logCore);
 		
 		if(generatorProperties.isStatisticheGenerazioneDebug()) {
 			logCore = LoggerWrapperFactory.getLogger(LOGGER_PREFIX+nomeLogger+"."+tipologia);

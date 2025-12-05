@@ -1171,182 +1171,21 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 
 
 		<!-- SQL -->
-		<mkdir dir="${dist}/sql"/>
-		<copy todir="${dist}/sql">
-			<fileset dir="${tmp_sql}">
-		                <include name="GovWay*.sql"/>
-		        </fileset>
-		</copy>
 		<if>
-			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
+			<istrue value="${antinstaller_allSql}"/>
 			<then>
-				<var name="configInitSqlScriptName" value="GovWay_init.sql"/>
-				<if>
-					<equals arg1="${antinstaller_config_db}" arg2="config"/>
-					<then>
-						<var name="configInitSqlScriptName" value="GovWayConfigurazione_init.sql"/>
-					</then>
-				</if>				
-				<concat destfile="${dist}/sql/${configInitSqlScriptName}" append="yes">
-					<fileset dir="${tmp_sql}">
-					    	<include name="InstallerProperties.sql"/>
-					</fileset>
-				</concat>
+				<!-- Copia SQL per tutti i database supportati -->
+				<foreach list="postgresql,mysql,oracle,sqlserver,hsql,db2" param="current_db_type" delimiter="," target="_distrib_sql_by_db_type_if_exists"/>
 			</then>
 			<else>
-				<var name="configUpgradeSqlScriptName" value="GovWay_upgrade_${antinstaller_versione_attuale}.sql"/>
-				<if>
-					<equals arg1="${antinstaller_config_db}" arg2="config"/>
-					<then>
-						<var name="configUpgradeSqlScriptName" value="GovWayConfigurazione_upgrade_${antinstaller_versione_attuale}.sql"/>
-					</then>
-				</if>
-				<concat destfile="${dist}/sql/${configUpgradeSqlScriptName}" append="yes">
-					<fileset dir="${tmp_sql}">
-					    	<include name="InstallerProperties.sql"/>
-					</fileset>
-				</concat>
+				<!-- Copia SQL solo per il database specificato -->
+				<antcall target="_distrib_sql_by_db_type">
+					<param name="param_db_type" value="${antinstaller_tipo_database}"/>
+					<param name="param_dist_sql" value="${dist}/sql"/>
+				</antcall>
 			</else>
 		</if>
 
-		<if>
-			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
-			<then>
-				<mkdir dir="${dist}/sql/completi"/>
-				<copy todir="${dist}/sql/completi">
-					<fileset dir="${tmp_sql_completi}">
-						<include name="GovWay*.sql"/>
-					</fileset>
-				</copy>
-			</then>
-		</if>
-			
-		<if>
-			<or>
-				<equals arg1="${build_sql_script_drop}" arg2="true"/>
-				<equals arg1="${build_sql_script_delete}" arg2="true"/>
-				<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
-			</or>
-			<then>
-				<mkdir dir="${dist}/sql/utilities"/>
-			</then>
-		</if>
-		<if>
-			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
-			<then>
-				<if>
-					<equals arg1="${build_sql_script_drop}" arg2="true"/>
-					<then>
-						<mkdir dir="${dist}/sql/utilities/drop"/>
-						<copy todir="${dist}/sql/utilities/drop">
-							<fileset dir="${tmp_sql}">
-						    		<include name="govway-*drop.sql"/>
-							</fileset>
-						</copy>
-					</then>
-				</if>
-
-				<if>
-					<equals arg1="${build_sql_script_delete}" arg2="true"/>
-					<then>
-						<mkdir dir="${dist}/sql/utilities/delete"/>
-						<copy todir="${dist}/sql/utilities/delete">
-							<fileset dir="${tmp_sql}">
-								<include name="govway-*delete.sql"/>
-							</fileset>
-						</copy>
-					</then>
-				</if>
-			</then>
-			<else>
-				<if>
-					<equals arg1="${build_sql_script_drop}" arg2="true"/>
-					<then>
-						<mkdir dir="${dist}/sql/utilities/drop"/>
-						<copy todir="${dist}/sql/utilities/drop">
-							<fileset dir="${tmp_sql_completi}">
-						    		<include name="govway-*drop.sql"/>
-							</fileset>
-						</copy>
-					</then>
-				</if>
-
-				<if>
-					<equals arg1="${build_sql_script_delete}" arg2="true"/>
-					<then>
-						<mkdir dir="${dist}/sql/utilities/delete"/>
-						<copy todir="${dist}/sql/utilities/delete">
-							<fileset dir="${tmp_sql_completi}">
-								<include name="govway-*delete.sql"/>
-							</fileset>
-						</copy>
-					</then>
-				</if>
-
-				<mkdir dir="${dist}/sql/utilities/as"/>
-				<copy todir="${dist}/sql/utilities/as">
-					<fileset dir="${deploy_sql}/as">
-					    	<include name="*.sql"/>
-					</fileset>
-				</copy>
-			</else>
-		</if>
-		<if>
-			<equals arg1="${antinstaller_tipo_database}" arg2="postgresql"/>
-			<then>
-				<mkdir dir="${dist}/sql/utilities/svecchiamento"/>
-				<copy todir="${dist}/sql/utilities/svecchiamento">
-					<fileset dir="${deploy_sql}/svecchiamento/postgresql">
-				    		<include name="*"/>
-					</fileset>
-				</copy>
-			</then>
-		</if>
-		<if>
-			<equals arg1="${antinstaller_tipo_database}" arg2="oracle"/>
-			<then>
-				<mkdir dir="${dist}/sql/utilities/svecchiamento"/>
-				<copy todir="${dist}/sql/utilities/svecchiamento">
-					<fileset dir="${deploy_sql}/svecchiamento/oracle">
-				    		<include name="*"/>
-					</fileset>
-				</copy>
-			</then>
-		</if>
-		<if>
-			<equals arg1="${antinstaller_tipo_database}" arg2="sqlserver"/>
-			<then>
-				<mkdir dir="${dist}/sql/utilities/svecchiamento"/>
-				<copy todir="${dist}/sql/utilities/svecchiamento">
-					<fileset dir="${deploy_sql}/svecchiamento/sqlserver">
-				    		<include name="*"/>
-					</fileset>
-				</copy>
-			</then>
-		</if>
-		<if>
-			<equals arg1="${antinstaller_tipo_database}" arg2="mysql"/>
-			<then>
-				<mkdir dir="${dist}/sql/utilities/svecchiamento"/>
-				<copy todir="${dist}/sql/utilities/svecchiamento">
-					<fileset dir="${deploy_sql}/svecchiamento/mysql">
-				    		<include name="*"/>
-					</fileset>
-				</copy>
-			</then>
-		</if>
-		<if>
-			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
-			<then>
-				<mkdir dir="${dist}/sql/profili"/>
-				<copy todir="${dist}/sql/profili">
-					<fileset dir="${tmp_sql}/profili">
-				    		<include name="GovWay*.sql"/>
-					</fileset>
-				</copy>
-			</then>
-		</if>
-		
 		<!-- Archivio -->
 		<mkdir dir="${dist}/archivi"/>
 		<if>
@@ -1556,6 +1395,210 @@ IDENTIFICATIVOGRUPPO.remoteAccess.checkStatus.url=URLSERVIZIOCHECK]]></replaceva
 				</copy>
 				<chmod dir="${dist}/tools" perm="a+x" includes="**/*.sh"/>
 				<chmod dir="${dist}/tools" perm="a+x" includes="**/*.cmd"/>
+			</then>
+		</if>
+	</target>
+
+	<target name="_distrib_sql_by_db_type_if_exists">
+		<if>
+			<available file="${deploy_sql}/${current_db_type}" type="dir"/>
+			<then>
+				<!-- Ridefinisco tmp_sql per leggere dalla sottodirectory di questo database -->
+				<var name="tmp_sql_original" value="${tmp_sql}"/>
+				<var name="tmp_sql_completi_original" value="${tmp_sql_completi}"/>
+				<var name="tmp_sql" unset="true"/>
+				<var name="tmp_sql_completi" unset="true"/>
+				<var name="tmp_sql" value="${tmp_sql_original}/${current_db_type}"/>
+				<var name="tmp_sql_completi" value="${tmp_sql_completi_original}/${current_db_type}"/>
+
+				<antcall target="_distrib_sql_by_db_type">
+					<param name="param_db_type" value="${current_db_type}"/>
+					<param name="param_dist_sql" value="${dist}/sql/${current_db_type}"/>
+				</antcall>
+
+				<!-- Ripristino i valori originali -->
+				<var name="tmp_sql" unset="true"/>
+				<var name="tmp_sql_completi" unset="true"/>
+				<var name="tmp_sql" value="${tmp_sql_original}"/>
+				<var name="tmp_sql_completi" value="${tmp_sql_completi_original}"/>
+			</then>
+		</if>
+	</target>
+
+	<target name="_distrib_sql_by_db_type">
+		<mkdir dir="${param_dist_sql}"/>
+		<copy todir="${param_dist_sql}">
+			<fileset dir="${tmp_sql}">
+		                <include name="GovWay*.sql"/>
+		        </fileset>
+		</copy>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
+			<then>
+				<var name="configInitSqlScriptName" value="GovWay_init.sql"/>
+				<if>
+					<equals arg1="${antinstaller_config_db}" arg2="config"/>
+					<then>
+						<var name="configInitSqlScriptName" value="GovWayConfigurazione_init.sql"/>
+					</then>
+				</if>
+				<concat destfile="${param_dist_sql}/${configInitSqlScriptName}" append="yes">
+					<fileset dir="${tmp_sql}">
+					    	<include name="InstallerProperties.sql"/>
+					</fileset>
+				</concat>
+			</then>
+			<else>
+				<var name="configUpgradeSqlScriptName" value="GovWay_upgrade_${antinstaller_versione_attuale}.sql"/>
+				<if>
+					<equals arg1="${antinstaller_config_db}" arg2="config"/>
+					<then>
+						<var name="configUpgradeSqlScriptName" value="GovWayConfigurazione_upgrade_${antinstaller_versione_attuale}.sql"/>
+					</then>
+				</if>
+				<concat destfile="${param_dist_sql}/${configUpgradeSqlScriptName}" append="yes">
+					<fileset dir="${tmp_sql}">
+					    	<include name="InstallerProperties.sql"/>
+					</fileset>
+				</concat>
+			</else>
+		</if>
+
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			<then>
+				<mkdir dir="${param_dist_sql}/completi"/>
+				<copy todir="${param_dist_sql}/completi">
+					<fileset dir="${tmp_sql_completi}">
+						<include name="GovWay*.sql"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
+
+		<if>
+			<or>
+				<equals arg1="${build_sql_script_drop}" arg2="true"/>
+				<equals arg1="${build_sql_script_delete}" arg2="true"/>
+				<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			</or>
+			<then>
+				<mkdir dir="${param_dist_sql}/utilities"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
+			<then>
+				<if>
+					<equals arg1="${build_sql_script_drop}" arg2="true"/>
+					<then>
+						<mkdir dir="${param_dist_sql}/utilities/drop"/>
+						<copy todir="${param_dist_sql}/utilities/drop">
+							<fileset dir="${tmp_sql}">
+						    		<include name="govway-*drop.sql"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
+
+				<if>
+					<equals arg1="${build_sql_script_delete}" arg2="true"/>
+					<then>
+						<mkdir dir="${param_dist_sql}/utilities/delete"/>
+						<copy todir="${param_dist_sql}/utilities/delete">
+							<fileset dir="${tmp_sql}">
+								<include name="govway-*delete.sql"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
+			</then>
+			<else>
+				<if>
+					<equals arg1="${build_sql_script_drop}" arg2="true"/>
+					<then>
+						<mkdir dir="${param_dist_sql}/utilities/drop"/>
+						<copy todir="${param_dist_sql}/utilities/drop">
+							<fileset dir="${tmp_sql_completi}">
+						    		<include name="govway-*drop.sql"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
+
+				<if>
+					<equals arg1="${build_sql_script_delete}" arg2="true"/>
+					<then>
+						<mkdir dir="${param_dist_sql}/utilities/delete"/>
+						<copy todir="${param_dist_sql}/utilities/delete">
+							<fileset dir="${tmp_sql_completi}">
+								<include name="govway-*delete.sql"/>
+							</fileset>
+						</copy>
+					</then>
+				</if>
+
+				<mkdir dir="${param_dist_sql}/utilities/as"/>
+				<copy todir="${param_dist_sql}/utilities/as">
+					<fileset dir="${deploy_sql}/as">
+					    	<include name="*.sql"/>
+					</fileset>
+				</copy>
+			</else>
+		</if>
+		<if>
+			<equals arg1="${param_db_type}" arg2="postgresql"/>
+			<then>
+				<mkdir dir="${param_dist_sql}/utilities/svecchiamento"/>
+				<copy todir="${param_dist_sql}/utilities/svecchiamento">
+					<fileset dir="${deploy_sql}/svecchiamento/postgresql">
+				    		<include name="*"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${param_db_type}" arg2="oracle"/>
+			<then>
+				<mkdir dir="${param_dist_sql}/utilities/svecchiamento"/>
+				<copy todir="${param_dist_sql}/utilities/svecchiamento">
+					<fileset dir="${deploy_sql}/svecchiamento/oracle">
+				    		<include name="*"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${param_db_type}" arg2="sqlserver"/>
+			<then>
+				<mkdir dir="${param_dist_sql}/utilities/svecchiamento"/>
+				<copy todir="${param_dist_sql}/utilities/svecchiamento">
+					<fileset dir="${deploy_sql}/svecchiamento/sqlserver">
+				    		<include name="*"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${param_db_type}" arg2="mysql"/>
+			<then>
+				<mkdir dir="${param_dist_sql}/utilities/svecchiamento"/>
+				<copy todir="${param_dist_sql}/utilities/svecchiamento">
+					<fileset dir="${deploy_sql}/svecchiamento/mysql">
+				    		<include name="*"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			<then>
+				<mkdir dir="${param_dist_sql}/profili"/>
+				<copy todir="${param_dist_sql}/profili">
+					<fileset dir="${tmp_sql}/profili">
+				    		<include name="GovWay*.sql"/>
+					</fileset>
+				</copy>
 			</then>
 		</if>
 	</target>
