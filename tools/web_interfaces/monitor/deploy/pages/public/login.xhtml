@@ -128,12 +128,14 @@
 				//]]>
 				</script>
 			
-			<h:form prependId="false">
-				<input type="hidden" id="_csrfLogin" name="_csrf" value="#{loginBean.csrf}"/>
+			
+				
 				<a4j:outputPanel id="loginApplicationPanel" layout="block" rendered="#{true}">
 					<link:fieldset legend="#{msg['login.fieldset.title']}" rendered="#{true}" collapsible="false" closed="false">
 					
 						<c:if test="#{loginBean.loginApplication}">
+						<h:form prependId="false">
+							<input type="hidden" id="_csrfLogin" name="_csrf" value="#{loginBean.csrf}"/>
 							<a4j:outputPanel id="loginApplicationExPanel" layout="block" rendered="#{true}">
 								<c:if test="#{loginBean.multiLoginEnabled}">
 									<div class="subtitle accordionSubtitleSection subtitleOpen" id="loginApplication__divEsterno">
@@ -163,9 +165,12 @@
 									</link:prop>
 								</a4j:outputPanel>
 							</a4j:outputPanel>
+							</h:form>
 						</c:if>
 						
 						<c:if test="#{loginBean.loginOAuth2Enabled}">
+						<h:form prependId="false">
+							<input type="hidden" id="_csrfLogin2" name="_csrf" value="#{loginBean.csrf}"/>
 							<a4j:outputPanel id="loginOauth2ExPanel" layout="block" rendered="#{true}">
 								<c:if test="#{loginBean.multiLoginEnabled}">
 									<div class="subtitle accordionSubtitleSection subtitleCollapsed" id="loginOAuth__divEsterno">
@@ -187,9 +192,10 @@
 									</link:prop>
 								</a4j:outputPanel>
 							</a4j:outputPanel>
+							</h:form>
 						</c:if>
 					</link:fieldset>
 				</a4j:outputPanel>
-			</h:form>
+			
 		</ui:define>
 </ui:composition>
