@@ -267,6 +267,16 @@
 		</else>
 	</if>
 
+	<!-- Gestione antinstaller_confDir_env -->
+	<if>
+		<or>
+			<equals arg1="${antinstaller_confDir_env}" arg2="" />
+			<equals arg1="${antinstaller_confDir_env}" arg2="$${antinstaller_confDir_env}" />
+		</or>
+		<then>
+			<var name="antinstaller_confDir_env" value="false"/>
+		</then>
+	</if>
 	<if>
 		<or>
 			<equals arg1="${antinstaller_confDir_env}" arg2="true" />
@@ -277,7 +287,18 @@
 		<else>
 			<var name="directory_lavoro_openspcoop" value="${antinstaller_directory_lavoro_openspcoop}"/>
 		</else>
-	</if> 
+	</if>
+
+	<!-- Gestione antinstaller_logDir_env -->
+	<if>
+		<or>
+			<equals arg1="${antinstaller_logDir_env}" arg2="" />
+			<equals arg1="${antinstaller_logDir_env}" arg2="$${antinstaller_logDir_env}" />
+		</or>
+		<then>
+			<var name="antinstaller_logDir_env" value="false"/>
+		</then>
+	</if>
 	<if>
 		<or>
 			<equals arg1="${antinstaller_logDir_env}" arg2="true" />
@@ -290,7 +311,18 @@
 			<var name="directory_log_openspcoop" value="${antinstaller_directory_log_openspcoop}"/>
 			<var name="directory_log_openspcoop_log4j" value="${antinstaller_directory_log_openspcoop}"/>
 		</else>
-	</if> 	       
+	</if>
+
+	<!-- Gestione antinstaller_dbType_env -->
+	<if>
+		<or>
+			<equals arg1="${antinstaller_dbType_env}" arg2="" />
+			<equals arg1="${antinstaller_dbType_env}" arg2="$${antinstaller_dbType_env}" />
+		</or>
+		<then>
+			<var name="antinstaller_dbType_env" value="false"/>
+		</then>
+	</if>
 	<if>
 		<or>
 			<equals arg1="${antinstaller_dbType_env}" arg2="true" />
@@ -302,6 +334,17 @@
 			<var name="db_type" value="${antinstaller_tipo_database}"/>
 		</else>
 	</if>
+
+	<!-- Gestione antinstaller_entity_env -->
+	<if>
+		<or>
+			<equals arg1="${antinstaller_entity_env}" arg2="" />
+			<equals arg1="${antinstaller_entity_env}" arg2="$${antinstaller_entity_env}" />
+		</or>
+		<then>
+			<var name="antinstaller_entity_env" value="false"/>
+		</then>
+	</if>
 	<if>
 		<or>
 			<equals arg1="${antinstaller_entity_env}" arg2="true" />
@@ -312,10 +355,21 @@
 		<else>
 			<var name="entity_name" value="${antinstaller_nomesoggetto}"/>
 		</else>
-	</if>	
+	</if>
+
+	<!-- Gestione antinstaller_allSql -->
+	<if>
+		<or>
+			<equals arg1="${antinstaller_allSql}" arg2="" />
+			<equals arg1="${antinstaller_allSql}" arg2="$${antinstaller_allSql}" />
+		</or>
+		<then>
+			<var name="antinstaller_allSql" value="false"/>
+		</then>
+	</if>
 
 
-	
+
 	<target name="setup" depends="clean,init">
 
 		<if>
