@@ -37,11 +37,11 @@
         
         <!-- NOTA: le seguenti proprietà consentono di attivare la gestione tramite variabile delle directory di configurazione e log, del tipo di database e del nome del soggetto.
 	-->
-        <hidden property="antinstaller_confDir_env" defaultValue="false"/>
-        <hidden property="antinstaller_logDir_env" defaultValue="false"/>
-        <hidden property="antinstaller_entity_env" defaultValue="false"/>
-        <hidden property="antinstaller_dbType_env" defaultValue="false"/>
-        <hidden property="antinstaller_allSql" defaultValue="false"/>       
+        <hidden property="antinstaller_confDir_env" value="false"/>
+        <hidden property="antinstaller_logDir_env" value="false"/>
+        <hidden property="antinstaller_entity_env" value="false"/>
+        <hidden property="antinstaller_dbType_env" value="false"/>
+        <hidden property="antinstaller_allSql" value="false"/>       
         
     </page>
 
