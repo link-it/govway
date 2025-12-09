@@ -113,4 +113,11 @@ Upgrade to version 3.0.8, 4.5.2 or later.</vulnerabilityName>
      <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
      <vulnerabilityName>jquery issue: 162</vulnerabilityName>
   </suppress>
+  <suppress>
+   <notes><![CDATA[
+   file name: swagger-codegen-cli-3.0.46-gov4j-1.jar: jquery-1.8.3.min.js
+   ]]></notes>
+   <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
+   <vulnerabilityName>jquery issue: 11974</vulnerabilityName>
+  </suppress>  
 </suppressions>

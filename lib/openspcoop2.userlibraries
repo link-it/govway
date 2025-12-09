@@ -207,7 +207,7 @@
 	<archive path="/op2_3.4.dev/lib/shared/xmlunit-legacy-2.10.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/xmlunit-core-2.10.2.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/ehcache-3.10.8.jar"/>
-	<archive path="/op2_3.4.dev/lib/shared/rhino-1.8.0.jar"/>
+	<archive path="/op2_3.4.dev/lib/shared/rhino-1.8.1.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/hazelcast-5.3.8.jar"/>
 	<archive path="/op2_3.4.dev/lib/shared/hibernate-core-6.6.18.Final.jar"/>
 	<!-- spring -->

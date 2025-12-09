@@ -120,6 +120,7 @@ public class Map<T> extends HashMap<MapKey<String>, T> implements Serializable {
 	public T put(MapKey<String> key, T value) {
 		return addObject(key, value);
 	}
+	@SuppressWarnings("deprecation")
 	@Deprecated
 	public T put(String key, T value) {
 		return addObject(key, value);
@@ -189,6 +190,7 @@ public class Map<T> extends HashMap<MapKey<String>, T> implements Serializable {
 	@Override
 	@Deprecated
 	public T getOrDefault(Object key, T defaultValue) {
+		@SuppressWarnings("deprecation")
 		T o = this.get(key);
 		if(o!=null) {
 			return o;
@@ -226,6 +228,7 @@ public class Map<T> extends HashMap<MapKey<String>, T> implements Serializable {
 	@Deprecated
 	@Override
 	public boolean remove(Object key, Object value) {
+		@SuppressWarnings("deprecation")
 		T o = this.remove(key);
 		return value.equals(o);
 	}
