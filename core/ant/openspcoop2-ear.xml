@@ -863,7 +863,7 @@
 				<include name="java-uuid-generator-4.0.1.jar"/>
 				<include name="freemarker-2.3.31.jar"/>
 				<include name="snakeyaml-1.33-gov4j-1.jar"/>
-				<include name="rhino-1.7.14.jar"/>
+				<include name="rhino-1.7.14.1.jar"/>
 				<include name="${hazelcast-all_jar}"/>
 				<include name="${hazelcast-hibernate_jar}"/>
 				<include name="ehcache-3.10.0.jar"/>

@@ -50,7 +50,7 @@
 		<xmlunit.version>2.10.0</xmlunit.version>
 		<xom.version>1.2.11</xom.version>
 		<ehcache.version>3.10.2</ehcache.version>
-		<rhino.version>1.7.14</rhino.version>
+		<rhino.version>1.7.14.1</rhino.version>
 		<hazelcast.version>5.3.8</hazelcast.version>
 		<hibernate.version>6.1.4.Final</hibernate.version>
 	</properties>

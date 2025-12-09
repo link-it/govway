@@ -241,7 +241,7 @@
 	<archive path="/op2_3.3.dev/lib/shared/reflections-0.10.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/javassist-3.29.2-GA.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/ehcache-3.10.2.jar"/>
-	<archive path="/op2_3.3.dev/lib/shared/rhino-1.7.14.jar"/>
+	<archive path="/op2_3.3.dev/lib/shared/rhino-1.7.14.1.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/hibernate-core-6.1.4.Final.jar"/>
 	<archive path="/op2_3.3.dev/lib/shared/hazelcast-5.3.8.jar"/>
 	<!-- spring -->

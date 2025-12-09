@@ -1,3 +1,10 @@
+2025-12-09  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug #1696
+	Risolta la seguente vulnerabilità relative ai jar di terza parte:
+	- CVE-2025-66453: aggiornata libreria 'org.mozilla:rhino' alla versione 1.7.14.1 
+
 2025-12-05  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]	
