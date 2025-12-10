@@ -1290,11 +1290,25 @@
 	</target>
 
 	<target name="_setup_sql_by_db_type">
+
+		<!-- La modalita' full degli indici non e' supportata per mysql e db2 -->
+		<var name="index_full_supported" value="true"/>
+		<if>
+			<or>
+				<equals arg1="${param_db_type}" arg2="mysql"/>
+				<equals arg1="${param_db_type}" arg2="db2"/>
+			</or>
+			<then>
+				<var name="index_full_supported" value="false"/>
+			</then>
+		</if>
+
 		<if>
 			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
 			<then>
 				<antcall target="_setup_sql_nuova_installazione">
 					<param name="param_db_type" value="${param_db_type}"/>
+					<param name="index_full_supported" value="${index_full_supported}"/>
 				</antcall>
 			</then>
 			<else>
@@ -1302,6 +1316,7 @@
 				<antcall target="_setup_sql_nuova_installazione">
 					<param name="param_db_type" value="${param_db_type}"/>
 					<param name="sqlForceNuovaInstallazione" value="true"/>
+					<param name="index_full_supported" value="${index_full_supported}"/>
 				</antcall>
 				<mkdir dir="${tmp_sql_completi}"/>
 				<move todir="${tmp_sql_completi}">
@@ -1312,6 +1327,7 @@
 
 				<antcall target="_setup_sql_aggiornamento">
 					<param name="param_db_type" value="${param_db_type}"/>
+					<param name="index_full_supported" value="${index_full_supported}"/>
 				</antcall>
 			</else>
 		</if>
@@ -2994,6 +3010,16 @@
 					<param name="as" value="BATCH"/>
 					<param name="archiveType" value="BATCH"/>
 				</antcall>
+
+				<!-- Gestione dinamica env.defaultEntityName.required negli script -->
+				<if>
+					<istrue value="${antinstaller_entity_env}"/>
+					<then>
+						<antcall target="_batch_statistiche_entity_required_scripts">
+							<param name="batch_dir" value="${tmp_batch}/generatoreStatistiche"/>
+						</antcall>
+					</then>
+				</if>
 			</then>
 		</if>
 	</target>
