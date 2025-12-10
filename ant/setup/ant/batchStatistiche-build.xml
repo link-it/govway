@@ -422,10 +422,9 @@
 		</if>
 	</target>
 	
-	
 	<!-- batch-statistiche.log4j2.properties -->
 	<target name="batch_statistiche_log4j_properties_settings">
-		
+
 		<concat destfile="${file}" append="yes" >
 
 # ----- Personalizzazione Setup GovWay -------------
@@ -510,5 +509,92 @@
 			</then>
 		</if>
 	</target>
+	
+	<!-- Modifica gli script batch per gestire dinamicamente env.defaultEntityName.required -->
+	<target name="_batch_statistiche_entity_required_scripts">
+
+		<!-- Script .sh che devono impostare env.defaultEntityName.required=false (generaStatistiche* e generaReportPDND) -->
+		<foreach target="_batch_statistiche_add_entity_required_sh" param="script_file" delimiter=";">
+			<path>
+				<fileset dir="${batch_dir}">
+					<include name="generaStatistiche*.sh"/>
+					<include name="generaReportPDND.sh"/>
+				</fileset>
+			</path>
+			<param name="entity_required_value" value="false"/>
+		</foreach>
+
+		<!-- Script .sh che devono impostare env.defaultEntityName.required=true (pubblicaReportPDND) -->
+		<foreach target="_batch_statistiche_add_entity_required_sh" param="script_file" delimiter=";">
+			<path>
+				<fileset dir="${batch_dir}">
+					<include name="pubblicaReportPDND.sh"/>
+				</fileset>
+			</path>
+			<param name="entity_required_value" value="true"/>
+		</foreach>
+
+		<!-- Script .cmd che devono impostare env.defaultEntityName.required=false (generaStatistiche* e generaReportPDND) -->
+		<foreach target="_batch_statistiche_add_entity_required_cmd" param="script_file" delimiter=";">
+			<path>
+				<fileset dir="${batch_dir}">
+					<include name="generaStatistiche*.cmd"/>
+					<include name="generaReportPDND.cmd"/>
+				</fileset>
+			</path>
+			<param name="entity_required_value" value="false"/>
+		</foreach>
+
+		<!-- Script .cmd che devono impostare env.defaultEntityName.required=true (pubblicaReportPDND) -->
+		<foreach target="_batch_statistiche_add_entity_required_cmd" param="script_file" delimiter=";">
+			<path>
+				<fileset dir="${batch_dir}">
+					<include name="pubblicaReportPDND.cmd"/>
+				</fileset>
+			</path>
+			<param name="entity_required_value" value="true"/>
+		</foreach>
+
+	</target>
+
+	<!-- Aggiunge il comando sed negli script .sh per modificare env.defaultEntityName.required -->
+	<target name="_batch_statistiche_add_entity_required_sh">
+
+		<!-- Determina il valore opposto per il sed (sostituisce l'altro valore con quello desiderato) -->
+		<if>
+			<equals arg1="${entity_required_value}" arg2="false"/>
+			<then>
+				<var name="entity_required_opposite" value="true"/>
+			</then>
+			<else>
+				<var name="entity_required_opposite" value="false"/>
+			</else>
+		</if>
+
+		<!-- Aggiunge la riga sed prima del comando COMMAND= -->
+		<replace file="${script_file}"
+			token="COMMAND=&quot;$${JAVA_HOME}/bin/java&quot;"
+			value="# Imposta env.defaultEntityName.required a ${entity_required_value} prima dell'esecuzione${line.separator}sed -i 's/env.defaultEntityName.required=${entity_required_opposite}/env.defaultEntityName.required=${entity_required_value}/g' &quot;$${BATCH_CONFIG}/batch-statistiche.properties&quot;${line.separator}${line.separator}COMMAND=&quot;$${JAVA_HOME}/bin/java&quot;"/>
+	</target>
+
+	<!-- Aggiunge il comando powershell negli script .cmd per modificare env.defaultEntityName.required -->
+	<target name="_batch_statistiche_add_entity_required_cmd">
+
+		<!-- Determina il valore opposto -->
+		<if>
+			<equals arg1="${entity_required_value}" arg2="false"/>
+			<then>
+				<var name="entity_required_opposite" value="true"/>
+			</then>
+			<else>
+				<var name="entity_required_opposite" value="false"/>
+			</else>
+		</if>
+
+		<!-- Aggiunge il comando powershell prima del comando set COMMAND= -->
+		<replace file="${script_file}"
+			token="set COMMAND=&quot;%JAVA_HOME%\bin\java&quot;"
+			value="REM Imposta env.defaultEntityName.required a ${entity_required_value} prima dell'esecuzione${line.separator}powershell -Command &quot;(Get-Content '%BATCH_CONFIG%\batch-statistiche.properties') -replace 'env.defaultEntityName.required=${entity_required_opposite}', 'env.defaultEntityName.required=${entity_required_value}' | Set-Content '%BATCH_CONFIG%\batch-statistiche.properties'&quot;${line.separator}${line.separator}set COMMAND=&quot;%JAVA_HOME%\bin\java&quot;"/>
+	</target>	
 		
 </project>

@@ -231,11 +231,14 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 	</target>
 
 	<target name="sql_settings_index_transazioni">
-			
+
 		<if>
-			<equals arg1="${antinstaller_index_transazioni}" arg2="full"/>
+			<and>
+				<equals arg1="${antinstaller_index_transazioni}" arg2="full"/>
+				<istrue value="${index_full_supported}"/>
+			</and>
 			<then>
-		
+
 				<antcall target="replace_token">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="CREATE INDEX INDEX_TR_ENTRY"/>
@@ -257,7 +260,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 			<not>
 				<istrue value="${antinstaller_protocollo_modipa}" />
 			</not>
-			<then>				
+			<then>
 				<antcall target="replace_token">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="CREATE INDEX INDEX_TR_PDND_STATS"/>
@@ -267,18 +270,21 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 				    <param name="file" value="${file}"/>
 					<param name="token" value="CREATE INDEX INDEX_TR_PURPOSE_ID"/>
 					<param name="value" value="-- CREATE INDEX INDEX_TR_PURPOSE_ID"/>
-				</antcall>						
+				</antcall>
 			</then>
 		</if>
-	
+
 	</target>
 
 	<target name="sql_settings_index_transazioni_update">
-			
+
 		<if>
-			<equals arg1="${antinstaller_index_transazioni}" arg2="full"/>
+			<and>
+				<equals arg1="${antinstaller_index_transazioni}" arg2="full"/>
+				<istrue value="${index_full_supported}"/>
+			</and>
 			<then>
-		
+
 				<antcall target="replace_token">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="-- DROP INDEX INDEX_TR_SEARCH"/>
@@ -302,15 +308,18 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 
 			</then>
 		</if>
-	
+
 	</target>
 
 	<target name="sql_settings_index_statistiche">
-			
+
 		<if>
-			<equals arg1="${antinstaller_index_statistiche}" arg2="full"/>
+			<and>
+				<equals arg1="${antinstaller_index_statistiche}" arg2="full"/>
+				<istrue value="${index_full_supported}"/>
+			</and>
 			<then>
-		
+
 				<antcall target="replace_token">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="CREATE INDEX INDEX_STAT_HOUR_ENTRY "/>
@@ -354,15 +363,18 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 
 			</then>
 		</if>
-	
+
 	</target>
 
 	<target name="sql_settings_index_statistiche_update">
-			
+
 		<if>
-			<equals arg1="${antinstaller_index_statistiche}" arg2="full"/>
+			<and>
+				<equals arg1="${antinstaller_index_statistiche}" arg2="full"/>
+				<istrue value="${index_full_supported}"/>
+			</and>
 			<then>
-		
+
 				<antcall target="replace_token">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="-- DROP INDEX INDEX_STAT_HOUR"/>
@@ -471,7 +483,7 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 
 			</then>
 		</if>
-	
+
 	</target>
 
 	<target name="sql_split_ddl_dml">
