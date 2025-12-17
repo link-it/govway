@@ -2488,17 +2488,6 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		modiSignalHubSubtitleItem.setType(ConsoleItemType.HIDDEN);
 		configuration.addConsoleItem(modiSignalHubSubtitleItem);
 		
-		// operation
-		StringConsoleItem modiSignalHubOpItem = (StringConsoleItem) 
-				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
-				ConsoleItemType.SELECT,
-				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, 
-				(rest ? ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_REST_LABEL : ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_SOAP_LABEL ));
-		modiSignalHubOpItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_NOTE);
-		modiSignalHubOpItem.setRequired(true);
-		modiSignalHubOpItem.setType(ConsoleItemType.HIDDEN);
-		configuration.addConsoleItem(modiSignalHubOpItem);
-
 		// pseudonymization (checkbox aggiunta solo se abilitata dalle properties)
 		if(modiProperties.isSignalHubPseudonymizationChoiceEnabled()) {
 			BooleanConsoleItem modiSignalHubPseudonymizationItem = (BooleanConsoleItem)
@@ -2513,6 +2502,17 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			modiSignalHubPseudonymizationItem.setType(ConsoleItemType.HIDDEN);
 			configuration.addConsoleItem(modiSignalHubPseudonymizationItem);
 		}
+		
+		// operation
+		StringConsoleItem modiSignalHubOpItem = (StringConsoleItem) 
+				ProtocolPropertiesFactory.newConsoleItem(ConsoleItemValueType.STRING,
+				ConsoleItemType.SELECT,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, 
+				(rest ? ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_REST_LABEL : ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_SOAP_LABEL ));
+		modiSignalHubOpItem.setNote(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_NOTE);
+		modiSignalHubOpItem.setRequired(true);
+		modiSignalHubOpItem.setType(ConsoleItemType.HIDDEN);
+		configuration.addConsoleItem(modiSignalHubOpItem);
 
 		// alg
 		StringConsoleItem modiSignalHubAlgItem = (StringConsoleItem) 
@@ -2664,14 +2664,15 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			}
 		}
 
+		
+		// signalHub pseudonymization
+		updatePdndInfoSignalHubPseudonymization(consoleConfiguration, properties,
+				signalHub && modiProperties.isSignalHubPseudonymizationChoiceEnabled());
+		
 		// signalHub operation
 		updatePdndInfoSignalHubOperation(api, portType, idServizio,
 				consoleConfiguration, properties,
-				log, signalHub);
-
-		// signalHub pseudonymization
-		updatePdndInfoSignalHubPseudonymization(consoleConfiguration, properties,
-				enabled);
+				log, enabled);
 
 		// signalHub algorithm
 		updatePdndInfoSignalHubAlgo(modiProperties,
@@ -3172,11 +3173,12 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			pseudonymization = modiSignalHubPseudonymizationItemValue!=null && modiSignalHubPseudonymizationItemValue.getValue()!=null && modiSignalHubPseudonymizationItemValue.getValue().booleanValue();
 		}
 
-		// operation
-		validatePdndInfoSignalHubOperation(api, idServizio, portType, consoleConfiguration, properties);
 
 		// Le validazioni di algorithm, seed size e lifetime vengono eseguite solo se la pseudonymization è attiva
 		if(pseudonymization) {
+			// operation
+			validatePdndInfoSignalHubOperation(api, idServizio, portType, consoleConfiguration, properties);
+			
 			// algorithm
 			validatePdndInfoSignalHubAlgorithm(consoleConfiguration, properties);
 
