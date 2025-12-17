@@ -395,6 +395,7 @@ public final class CostantiLabel {
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_LABEL = "Signal Hub";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_REST_LABEL = "Risorsa";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_SOAP_LABEL = "Azione";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_LABEL = "Pseudoanonimizzazione";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_LABEL = "Algoritmo";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_LABEL = "Dimensione Seme";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_LABEL = "Giorni Rotazione Seme";

@@ -1149,6 +1149,7 @@ public final class CostantiDB {
     
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID = "modipaInfoGenSignalHub";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID = "modipaInfoGenSignalHubOp";
+    public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_ID = "modipaInfoGenSignalHubPseudonymization";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID = "modipaInfoGenSignalHubAlg";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID = "modipaInfoGenSignalHubSeedSize";
     public static final String MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID = "modipaInfoGenSignalHubSeedLifetime";

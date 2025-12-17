@@ -10994,6 +10994,8 @@ components:
           type: "string"
         ruolo:
           type: "string"
+        pseudoanonimizzazione:
+          type: "boolean"
     FruizioneModI:
       required:
       - "modi"

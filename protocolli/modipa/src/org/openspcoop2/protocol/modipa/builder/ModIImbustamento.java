@@ -974,21 +974,28 @@ public class ModIImbustamento {
 			objectId = "-";
 			objectType = "-";
 		} else {
-			
-			// per le operazione UPDATE, CREATE, DELETE ottengo i dati per produrre il digest dell'id
-			DigestServiceParams param = obtainDigestServiceParam(context, idServizio, serialGenerator, serialGeneratorParameter);
-			
-			// configuro il generatore di digest
-			DigestConfig digestConfig = new DigestConfig();
-			digestConfig.setDigestType(param.getDigestAlgorithm());
-			digestConfig.setSaltLength(param.getSeed().length);
-			digestConfig.setHashComposition(this.modiProperties.getSignalHubHashCompose());
-			digestConfig.setBase64Encode(true);
-			
-			IDigest digestGenerator = DigestFactory.getDigest(this.log, digestConfig);
-			
-			// produco il digest e il numero seriale del segnale
-			objectId = new String(digestGenerator.digest(objectId.getBytes(), param.getSeed()));
+
+			// Verifico se la pseudoanonimizzazione è abilitata
+			boolean pseudonymizationEnabled = isPseudonymizationEnabled(context);
+
+			if(pseudonymizationEnabled) {
+				// per le operazione UPDATE, CREATE, DELETE ottengo i dati per produrre il digest dell'id
+				DigestServiceParams param = obtainDigestServiceParam(context, idServizio, serialGenerator, serialGeneratorParameter);
+
+				// configuro il generatore di digest
+				DigestConfig digestConfig = new DigestConfig();
+				digestConfig.setDigestType(param.getDigestAlgorithm());
+				digestConfig.setSaltLength(param.getSeed().length);
+				digestConfig.setHashComposition(this.modiProperties.getSignalHubHashCompose());
+				digestConfig.setBase64Encode(true);
+
+				IDigest digestGenerator = DigestFactory.getDigest(this.log, digestConfig);
+
+				// produco il digest e il numero seriale del segnale
+				objectId = new String(digestGenerator.digest(objectId.getBytes(), param.getSeed()));
+			}
+			// Se pseudonymization è disabilitata, l'objectId rimane invariato (non viene fatto l'hash)
+
 			signalId = Long.valueOf(serialGenerator.buildID(serialGeneratorParameter));
 		}
 		
@@ -1019,7 +1026,32 @@ public class ModIImbustamento {
 		
 		return msg;
 	}
-	
+
+	private boolean isPseudonymizationEnabled(Context context) throws ProtocolException {
+		// Ottiene le protocol properties dal context
+		List<ProtocolProperty> eServiceProperties = SignalHubUtils.obtainSignalHubProtocolProperty(context);
+
+		// Se la scelta della pseudonymization non è abilitata dalle properties globali,
+		// la pseudonymization è sempre attiva (default behavior)
+		if(!this.modiProperties.isSignalHubPseudonymizationChoiceEnabled()) {
+			return true;
+		}
+
+		// Cerca la property specifica della pseudonymization
+		for (ProtocolProperty pp : eServiceProperties) {
+			if(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_ID.equals(pp.getName())) {
+				if(pp.getBooleanValue() != null) {
+					return pp.getBooleanValue();
+				}
+				// Se il valore è null, usa true come default
+				return true;
+			}
+		}
+
+		// Se la property non esiste, usa true come default (backward compatibility)
+		return true;
+	}
+
 	private static final String ERROR_MESSAGE_SEED_NOT_UPDATED = "seed update non riuscito";
 	private DigestServiceParams obtainDigestServiceParam(Context context, IDServizio idServizio, IDSerialGenerator serialGenerator, IDSerialGeneratorParameter serialGeneratorParameter) throws ProtocolException, UtilsException, DriverConfigurazioneException {		
 		

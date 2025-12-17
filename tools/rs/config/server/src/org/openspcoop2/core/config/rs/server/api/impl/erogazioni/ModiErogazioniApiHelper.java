@@ -105,6 +105,7 @@ import org.openspcoop2.protocol.modipa.config.ModIAuditClaimConfig;
 import org.openspcoop2.protocol.modipa.config.ModIAuditConfig;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.properties.AbstractProperty;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesFactory;
@@ -3318,7 +3319,7 @@ public class ModiErogazioniApiHelper {
 	private static void fillErogazioneModIInfoGeneraliSignalHub(ProtocolProperties p, ErogazioneModIInfoGenerali informazioniGenerali) {
 		if (informazioniGenerali.getSignalHub() != null) {
 			p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, true);
-			
+
 			ErogazioneModISignalHub signalHubConf = informazioniGenerali.getSignalHub();
 			p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ALGORITHM_ID, signalHubConf.getAlgoritmo());
 			p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_OPERATION_ID, signalHubConf.getRisorsa());
@@ -3328,6 +3329,22 @@ public class ModiErogazioniApiHelper {
 				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID, signalHubConf.getApplicativo());
 			p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, signalHubConf.getGiorniRotazione());
 			p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, signalHubConf.getDimensioneSeme());
+			// Salva sempre il valore di pseudoanonimizzazione
+			// Se la scelta non è abilitata dalle properties, forza sempre true
+			// Altrimenti usa il valore ricevuto (o true se null)
+			boolean pseudoValue;
+			
+			try {
+				ModIProperties modiProperties = ModIProperties.getInstance();
+				if(!modiProperties.isSignalHubPseudonymizationChoiceEnabled()) {
+					pseudoValue = true; // Se la scelta non è abilitata, pseudonymization è sempre true
+				} else {
+					pseudoValue = !Boolean.FALSE.equals(signalHubConf.isPseudoanonimizzazione());
+				}
+				p.addProperty(ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_ID, pseudoValue);
+			} catch (ProtocolException e) {
+				throw FaultCode.ERRORE_INTERNO.toException();
+			}
 		}
 	}
 	
@@ -3400,6 +3417,7 @@ public class ModiErogazioniApiHelper {
 		String saName = ProtocolPropertiesHelper.getStringProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID, false);
 		Integer seedLifetime = ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_LIFETIME_ID, false);
 		Integer seedSize = ProtocolPropertiesHelper.getIntegerProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_SEED_SIZE_ID, false);
+		Boolean pseudoanonimizzazione = ProtocolPropertiesHelper.getBooleanProperty(p, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PSEUDONYMIZATION_ID, false, true);
 
 		ErogazioneModISignalHub signalHubConf = new ErogazioneModISignalHub();
 		signalHubConf.algoritmo(digestAlgorithm)
@@ -3407,7 +3425,8 @@ public class ModiErogazioniApiHelper {
 		.dimensioneSeme(seedSize)
 		.risorsa(operation)
 		.ruolo(role)
-		.giorniRotazione(seedLifetime);
+		.giorniRotazione(seedLifetime)
+		.pseudoanonimizzazione(pseudoanonimizzazione);
 		infoGenerali.setSignalHub(signalHubConf);
 	}
 

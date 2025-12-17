@@ -2067,6 +2067,8 @@ components:
             type: string
          ruolo:
             type: string
+         pseudoanonimizzazione:
+            type: boolean
     # ModI Fruizione
     FruizioneModI:
       type: object

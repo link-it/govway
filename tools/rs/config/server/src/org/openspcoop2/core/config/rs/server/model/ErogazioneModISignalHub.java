@@ -44,6 +44,9 @@ public class ErogazioneModISignalHub  {
   
   @Schema(description = "")
   private String ruolo = null;
+  
+  @Schema(description = "")
+  private Boolean pseudoanonimizzazione = null;
  /**
    * Get risorsa
    * @return risorsa
@@ -162,6 +165,25 @@ public class ErogazioneModISignalHub  {
     return this;
   }
 
+ /**
+   * Get pseudoanonimizzazione
+   * @return pseudoanonimizzazione
+  **/
+  @JsonProperty("pseudoanonimizzazione")
+  @Valid
+  public Boolean isPseudoanonimizzazione() {
+    return this.pseudoanonimizzazione;
+  }
+
+  public void setPseudoanonimizzazione(Boolean pseudoanonimizzazione) {
+    this.pseudoanonimizzazione = pseudoanonimizzazione;
+  }
+
+  public ErogazioneModISignalHub pseudoanonimizzazione(Boolean pseudoanonimizzazione) {
+    this.pseudoanonimizzazione = pseudoanonimizzazione;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -174,6 +196,7 @@ public class ErogazioneModISignalHub  {
     sb.append("    giorniRotazione: ").append(ErogazioneModISignalHub.toIndentedString(this.giorniRotazione)).append("\n");
     sb.append("    applicativo: ").append(ErogazioneModISignalHub.toIndentedString(this.applicativo)).append("\n");
     sb.append("    ruolo: ").append(ErogazioneModISignalHub.toIndentedString(this.ruolo)).append("\n");
+    sb.append("    pseudoanonimizzazione: ").append(ErogazioneModISignalHub.toIndentedString(this.pseudoanonimizzazione)).append("\n");
     sb.append("}");
     return sb.toString();
   }
