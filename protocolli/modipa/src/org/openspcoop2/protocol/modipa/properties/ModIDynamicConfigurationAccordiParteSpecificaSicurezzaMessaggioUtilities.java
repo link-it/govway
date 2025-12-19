@@ -3076,7 +3076,7 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_ID, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL);
 		
 		validatePdndInfoIdExists(registryReader, idServizio, modiEServiceIdItemValue, modiDescriptorIdItemValue,
-				ModIProperties.getInstance().isPdndDescriptorIdCheckUnique());
+				ModIProperties.getInstance().isPdndEServiceIdCheckUnique());
 		// signalHub
 		
 		boolean signalHub = false;
