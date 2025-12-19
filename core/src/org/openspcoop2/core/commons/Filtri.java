@@ -31,6 +31,7 @@ import java.util.List;
  * Filtri
  * 
  * @author Stefano Corallo - corallo@link.it
+ * @author Tommaso Burlon - tommaso.burlon@link.it
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -236,7 +237,10 @@ public final class Filtri
 	public static final String FILTRO_MODI_AUDIENCE = "filtroModiAudience";
 	public static final String FILTRO_MODI_DIGEST_RICHIESTA = "filtroModiDigestRich";
 	public static final String FILTRO_MODI_INFORMAZIONI_UTENTE = "filtroModiInfoUtente";
-	
+	public static final String FILTRO_MODI_SIGNAL_HUB = "filtroModiSignalHub";
+	public static final String FILTRO_MODI_SERVICE_ID = "filtroModiServiceId";
+	public static final String FILTRO_MODI_DESCRIPTOR_ID = "filtroModiDescriptorId";
+
 	public static final String FILTRO_PROPRIETA_NOME = "filtroPropNome";
 	public static final String FILTRO_PROPRIETA_VALORE = "filtroPropValore";
 	

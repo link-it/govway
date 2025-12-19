@@ -60,11 +60,127 @@ import org.slf4j.Logger;
  * Funzioni di utilita utilizzate dai driver
  *
  * @author Stefano Corallo (corallo@link.it)
+ * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
 public class DBUtils {
 
+	
+	
+	public static class FiltroModIErogazioneFruizione {
+		private String sicurezzaCanale;
+		private String sicurezzaMessaggio;
+		private String sorgenteToken;
+		private Boolean digestRichiesta;
+		private String infoUtente;
+		private String keystore;
+		private String audience;
+		
+		private Boolean signalHub;
+		private String serviceId;
+		private String descriptorId;
+		
+		public FiltroModIErogazioneFruizione() {
+			// ignore
+		}
+
+		public String getSicurezzaCanale() {
+			return this.sicurezzaCanale;
+		}
+
+		public void setSicurezzaCanale(String sicurezzaCanale) {
+			this.sicurezzaCanale = sicurezzaCanale;
+		}
+
+		public String getSicurezzaMessaggio() {
+			return this.sicurezzaMessaggio;
+		}
+
+		public void setSicurezzaMessaggio(String sicurezzaMessaggio) {
+			this.sicurezzaMessaggio = sicurezzaMessaggio;
+		}
+
+		public String getSorgenteToken() {
+			return this.sorgenteToken;
+		}
+
+		public void setSorgenteToken(String sorgenteToken) {
+			this.sorgenteToken = sorgenteToken;
+		}
+
+		public Boolean getDigestRichiesta() {
+			return this.digestRichiesta;
+		}
+
+		public void setDigestRichiesta(Boolean digestRichiesta) {
+			this.digestRichiesta = digestRichiesta;
+		}
+
+		public String getInfoUtente() {
+			return this.infoUtente;
+		}
+
+		public void setInfoUtente(String infoUtente) {
+			this.infoUtente = infoUtente;
+		}
+
+		public String getKeystore() {
+			return this.keystore;
+		}
+
+		public void setKeystore(String keystore) {
+			this.keystore = keystore;
+		}
+
+		public String getAudience() {
+			return this.audience;
+		}
+
+		public void setAudience(String audience) {
+			this.audience = audience;
+		}
+
+		public Boolean getSignalHub() {
+			return this.signalHub;
+		}
+
+		public void setSignalHub(Boolean signalHub) {
+			this.signalHub = signalHub;
+		}
+
+		public String getServiceId() {
+			return this.serviceId;
+		}
+
+		public void setServiceId(String serviceId) {
+			this.serviceId = serviceId;
+		}
+
+		public String getDescriptorId() {
+			return this.descriptorId;
+		}
+
+		public void setDescriptorId(String descriptorId) {
+			this.descriptorId = descriptorId;
+		}
+		
+		public boolean isFilterEnabled() {
+			return this.sicurezzaCanale != null 
+					|| this.sicurezzaMessaggio != null 
+					|| this.sorgenteToken != null 
+					|| this.digestRichiesta != null
+					|| this.infoUtente != null
+					|| this.keystore != null
+					|| this.audience != null
+					|| this.signalHub != null
+					|| this.serviceId != null
+					|| this.descriptorId != null;
+		}
+		
+		
+	}
+	
 	private DBUtils() {}
 	
 	private static final String WHERE_ID_CONDITION = "id = ?";
@@ -1764,58 +1880,99 @@ public class DBUtils {
 			String filtroModISorgenteToken,
 			Boolean filtroModIDigestRichiesta, String filtroModIInfoUtente,
 			String filtroModIKeystore, String filtroModIAudience) throws Exception {
+		FiltroModIErogazioneFruizione filter = new FiltroModIErogazioneFruizione();
+		filter.setSicurezzaCanale(filtroModISicurezzaCanale);
+		filter.setSicurezzaMessaggio(filtroModISicurezzaMessaggio);
+		filter.setSorgenteToken(filtroModISorgenteToken);
+		filter.setDigestRichiesta(filtroModIDigestRichiesta);
+		filter.setInfoUtente(filtroModIInfoUtente);
+		filter.setKeystore(filtroModIKeystore);
+		filter.setAudience(filtroModIAudience);
+		
 		setFiltriModIErogazioneFruizione(sqlQueryObject, tipoDB,
-				filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-				filtroModISorgenteToken,
-				filtroModIDigestRichiesta, filtroModIInfoUtente,
-				filtroModIKeystore, filtroModIAudience,
+				filter,
 				true);
 	}
+	public static void setFiltriModIErogazione(ISQLQueryObject sqlQueryObject, String tipoDB,
+			FiltroModIErogazioneFruizione filter) throws Exception {
+		setFiltriModIErogazioneFruizione(sqlQueryObject, tipoDB,
+				filter,
+				true);
+		
+		ProprietariProtocolProperty proprietario = ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA;
+		String tabellaDB = 	CostantiDB.SERVIZI;
+		
+		if (filter.getSignalHub() != null) {
+			ISQLQueryObject sqlSignalHubTrue = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_API_IMPL_INFO_SIGNAL_HUB_ID, null, null, true);
+			sqlQueryObject.addWhereExistsCondition(!filter.getSignalHub().booleanValue(), sqlSignalHubTrue);
+		}
+		
+		if (filter.getServiceId() != null) {
+			ISQLQueryObject sqlServiceId = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_API_IMPL_INFO_ESERVICE_ID, null, filter.getServiceId(), null);
+			sqlQueryObject.addWhereExistsCondition(false, sqlServiceId);
+		}
+		
+		if (filter.getDescriptorId() != null) {
+			ISQLQueryObject sqlDescriptorId = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
+					tipoDB, CostantiDB.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID, null, filter.getDescriptorId(), null);
+			sqlQueryObject.addWhereExistsCondition(false, sqlDescriptorId);
+		}
+	}
+	
 	public static void setFiltriModIFruizione(ISQLQueryObject sqlQueryObject, String tipoDB,
 			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
 			String filtroModISorgenteToken,
 			Boolean filtroModIDigestRichiesta, String filtroModIInfoUtente,
 			String filtroModIKeystore, String filtroModIAudience) throws Exception {
+		FiltroModIErogazioneFruizione filter = new FiltroModIErogazioneFruizione();
+		filter.setSicurezzaCanale(filtroModISicurezzaCanale);
+		filter.setSicurezzaMessaggio(filtroModISicurezzaMessaggio);
+		filter.setSorgenteToken(filtroModISorgenteToken);
+		filter.setDigestRichiesta(filtroModIDigestRichiesta);
+		filter.setInfoUtente(filtroModIInfoUtente);
+		filter.setKeystore(filtroModIKeystore);
+		filter.setAudience(filtroModIAudience);
+		
 		setFiltriModIErogazioneFruizione(sqlQueryObject, tipoDB,
-				filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-				filtroModISorgenteToken,
-				filtroModIDigestRichiesta, filtroModIInfoUtente,
-				filtroModIKeystore, filtroModIAudience,
+				filter,
 				false);
 	}
+	public static void setFiltriModIFruizione(ISQLQueryObject sqlQueryObject, String tipoDB,
+			FiltroModIErogazioneFruizione filter) throws Exception {
+		setFiltriModIErogazioneFruizione(sqlQueryObject, tipoDB,
+				filter,
+				false);
+	}
+	
 	private static void setFiltriModIErogazioneFruizione(ISQLQueryObject sqlQueryObject, String tipoDB,
-			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
-			String filtroModISorgenteToken,
-			Boolean filtroModIDigestRichiesta, String filtroModIInfoUtente,
-			String filtroModIKeystore, String filtroModIAudience,
+			FiltroModIErogazioneFruizione filter,
 			boolean erogazione) throws Exception {
 		
-		setFiltriModI(sqlQueryObject, tipoDB,
-				filtroModISicurezzaCanale, filtroModISicurezzaMessaggio,
-				filtroModISorgenteToken,
-				filtroModIDigestRichiesta, filtroModIInfoUtente);
+		setFiltriModI(sqlQueryObject, tipoDB, filter);
 		
 		ProprietariProtocolProperty proprietario = erogazione ? ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_SPECIFICA : ProprietariProtocolProperty.FRUITORE;
 		String tabellaDB = 	erogazione ? CostantiDB.SERVIZI : CostantiDB.SERVIZI_FRUITORI ;
 		
-		if(filtroModIKeystore!=null) {
+		if(filter.getKeystore() != null) {
 			
 			List<String> query = new ArrayList<>();
 			
 			ISQLQueryObject sqlAccordoKeystore = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
-					tipoDB, CostantiDB.MODIPA_KEYSTORE_PATH, null, filtroModIKeystore, null);
+					tipoDB, CostantiDB.MODIPA_KEYSTORE_PATH, null, filter.getKeystore(), null);
 			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoKeystore));
 			
 			ISQLQueryObject sqlAccordoTruststore = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
-					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, null, filtroModIKeystore, null);
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_PATH, null, filter.getKeystore(), null);
 			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoTruststore));
 			
 			ISQLQueryObject sqlAccordoTruststoreCrl = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
-					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS, null, filtroModIKeystore, null);
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CERTIFICATI_TRUSTSTORE_CRLS, null, filter.getKeystore(), null);
 			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoTruststoreCrl));
 			
 			ISQLQueryObject sqlAccordoTruststoreSsl = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
-					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH, null, filtroModIKeystore, null);
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SSL_TRUSTSTORE_PATH, null, filter.getKeystore(), null);
 			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoTruststoreSsl));
 						
 			if(!query.isEmpty()) {
@@ -1823,74 +1980,86 @@ public class DBUtils {
 			}
 		}
 		
-		if(filtroModIAudience!=null) {
+		if(filter.getAudience()!=null) {
 			
 			ISQLQueryObject sqlAudience = buildSQLQueryObjectProtocolProperties(proprietario, tabellaDB,
-					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE , null, filtroModIAudience, null);
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RICHIESTA_AUDIENCE , null, filter.getAudience(), null);
 			sqlQueryObject.addWhereExistsCondition(false, sqlAudience);
 			
 		}
-		
 	}
+	
 	public static void setFiltriModI(ISQLQueryObject sqlQueryObject, String tipoDB,
 			String filtroModISicurezzaCanale, String filtroModISicurezzaMessaggio,
 			String filtroModISorgenteToken,
 			Boolean filtroModIDigestRichiesta, String filtroModIInfoUtente) throws Exception {
+		FiltroModIErogazioneFruizione filter = new FiltroModIErogazioneFruizione();
+		filter.setSicurezzaMessaggio(filtroModISicurezzaMessaggio);
+		filter.setSicurezzaCanale(filtroModISicurezzaCanale);
+		filter.setSorgenteToken(filtroModISorgenteToken);
+		filter.setDigestRichiesta(filtroModIDigestRichiesta);
+		filter.setInfoUtente(filtroModIInfoUtente);
 		
-		if(filtroModISicurezzaCanale!=null) {
+		setFiltriModI(sqlQueryObject, tipoDB, filter);
+	}
+	
+	public static void setFiltriModI(ISQLQueryObject sqlQueryObject, String tipoDB,
+			FiltroModIErogazioneFruizione filtro) throws Exception {
+		
+		if(filtro.getSicurezzaCanale()!=null) {
 			ISQLQueryObject sql = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
-					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE, filtroModISicurezzaCanale, null, null);
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_CANALE, filtro.getSicurezzaCanale(), null, null);
 			sqlQueryObject.addWhereExistsCondition(false, sql);
 		}
-		if(filtroModISicurezzaMessaggio!=null) {
+		if(filtro.getSicurezzaMessaggio()!=null) {
 			
 			List<String> query = new ArrayList<>();
 			
 			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
-					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtroModISicurezzaMessaggio, null, null);
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtro.getSicurezzaMessaggio(), null, null);
 			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoSec));
 			
-			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtroModISicurezzaMessaggio, null);
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtro.getSicurezzaMessaggio(), null);
 			
-			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtroModISicurezzaMessaggio, null);
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO, filtro.getSicurezzaMessaggio(), null);
 			
 			if(!query.isEmpty()) {
 				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
 			}
 		}
-		if(filtroModISorgenteToken!=null) {
+		if(filtro.getSorgenteToken()!=null) {
 			
 			List<String> query = new ArrayList<>();
 			
 			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
-					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, filtroModISorgenteToken, null, null);
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, filtro.getSorgenteToken(), null, null);
 			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoSec));
 			
-			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, filtroModISorgenteToken, null);
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, filtro.getSorgenteToken(), null);
 			
-			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, filtroModISorgenteToken, null);
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_SORGENTE_TOKEN_IDAUTH, filtro.getSorgenteToken(), null);
 			
 			if(!query.isEmpty()) {
 				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
 			}
 		}
-		if(filtroModIDigestRichiesta!=null) {
+		if(filtro.getDigestRichiesta()!=null) {
 			
 			List<String> query = new ArrayList<>();
 			
 			ISQLQueryObject sqlAccordoSec = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
-					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, null, filtroModIDigestRichiesta);
-			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoSec));
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, null, true);
+			query.add(sqlQueryObject.getWhereExistsCondition(!filtro.getDigestRichiesta(), sqlAccordoSec));
 			
-			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, filtroModIDigestRichiesta);
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, filtro.getDigestRichiesta());
 			
-			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, filtroModIDigestRichiesta);
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_RISPOSTA_REQUEST_DIGEST, null, filtro.getDigestRichiesta());
 			
 			if(!query.isEmpty()) {
 				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));
 			}
 		}
-		if(filtroModIInfoUtente!=null) {
+		if(filtro.getInfoUtente()!=null) {
 			
 			List<String> query = new ArrayList<>();
 			
@@ -1911,12 +2080,12 @@ public class DBUtils {
 			query = new ArrayList<>();
 			
 			ISQLQueryObject sqlAccordoSecPattern = buildSQLQueryObjectProtocolProperties(ProprietariProtocolProperty.ACCORDO_SERVIZIO_PARTE_COMUNE, CostantiDB.ACCORDI,
-					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, filtroModIInfoUtente, null, null);
+					tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, filtro.getInfoUtente(), null, null);
 			query.add(sqlQueryObject.getWhereExistsCondition(false, sqlAccordoSecPattern));
 			
-			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, filtroModIInfoUtente, null);
+			addRestCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, filtro.getInfoUtente(), null);
 			
-			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, filtroModIInfoUtente, null);
+			addSoapCondition(query, sqlQueryObject, tipoDB, CostantiDB.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_PATTERN, filtro.getInfoUtente(), null);
 			
 			if(!query.isEmpty()) {
 				sqlQueryObject.addWhereCondition(false, query.toArray(new String[1]));

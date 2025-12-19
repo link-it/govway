@@ -739,10 +739,21 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				// filtro sorgente token
 				this.addFilterModIGenerazioneToken(ricerca, idLista);
 				
-				// filtro sicurezza canale
+				// filtro digest richiesta
 				this.addFilterModIDigestRichiesta(ricerca, idLista);
-				
-				// filtro sicurezza canale
+
+				if (!gestioneFruitori) {
+					// filtro signal hub
+					this.addFilterModISignalHub(ricerca, idLista);
+	
+					// filtro service id
+					this.addFilterModIServiceId(ricerca, idLista);
+	
+					// filtro descriptor id
+					this.addFilterModIDescriptorId(ricerca, idLista);
+				}
+
+				// filtro informazioni utente
 				this.addFilterModIInfoUtente(ricerca, idLista);
 				
 				// filtro keystore
