@@ -25,22 +25,18 @@ package org.openspcoop2.protocol.modipa.authorization;
 import java.util.List;
 
 import org.openspcoop2.core.config.Ruolo;
-import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.pd.AbstractAutorizzazioneBase;
 import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazionePortaDelegata;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
-import org.openspcoop2.protocol.modipa.constants.ModICostanti;
-import org.openspcoop2.protocol.modipa.utils.SignalHubUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.IntegrationFunctionError;
-import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
 
 /**
- * Interfaccia che definisce un processo di autorizzazione sui token
+ * Interfaccia che definisce un processo di autorizzazione per la fruizione di signal hub
  *
  * @author Tommaso Burlon (tommaso.burlon@link.it)
  * @author $Author$
@@ -85,62 +81,47 @@ public class AutorizzazioneSignalHubPush extends AbstractAutorizzazioneBase {
 		return esito;
     }
     
-    public EsitoAutorizzazionePortaDelegata processEngine(DatiInvocazionePortaDelegata datiInvocazione) throws ProtocolException {
+    public EsitoAutorizzazionePortaDelegata processEngine(DatiInvocazionePortaDelegata datiInvocazione) {
     	EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
     	
 		PdDContext context = datiInvocazione.getPddContext();
     	
 		// ottengo le proprieta del protocollo per avere gli applicativi/ruoli autorizzati
-		List<ProtocolProperty> eServiceProperties = SignalHubUtils.obtainSignalHubProtocolProperty(context);
-    	
-		String allowedService = null;
-		try {
-			allowedService = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_SA_ID);
-		}catch(Exception e) {
-			if(getProtocolFactory().getLogger()!=null) {
-				getProtocolFactory().getLogger().error("Configurazione SignalHub non fornita per il servizio indicato: "+e.getMessage(),e);
-			}
-			return buildConfigurazioneNonDisponibile("Configurazione SignalHub non fornita per il servizio indicato", e);
-		}
-		String allowedRole = null;
-		try {
-			allowedRole = ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(eServiceProperties, ModICostanti.MODIPA_API_IMPL_INFO_SIGNAL_HUB_PUBLISHER_ROLE_ID);
-		}catch(Exception e) {
-			if(getProtocolFactory().getLogger()!=null) {
-				getProtocolFactory().getLogger().error("Configurazione SignalHub non fornita per il servizio indicato: "+e.getMessage(),e);
-			}
-			return buildConfigurazioneNonDisponibile("Configurazione SignalHub non fornita per il servizio indicato", e);
-		}
+		SignalHubPushParams params = SignalHubPushParams.load(context);
 			
-
-		List<Ruolo> roles = List.of();
-		
-		// controllo se sono presenti ruoli nel servizio applicativo
-		if (datiInvocazione.getServizioApplicativo() != null && 
-			datiInvocazione.getServizioApplicativo().getInvocazionePorta() != null &&
-			datiInvocazione.getServizioApplicativo().getInvocazionePorta().getRuoli() != null)
-			roles = datiInvocazione.getServizioApplicativo().getInvocazionePorta().getRuoli().getRuoloList();
-		
-		// controllo se sono presenti ruoli autorizzati
-		for (Ruolo role : roles) {
-			if (role.getNome().equals(allowedRole)) {
+		for (int i = 0; i < params.getRequiredAuthorizationsSize(); i++) {
+			String allowedRole = params.getRequiredAuthorizationRole(i);
+			String allowedService = params.getRequiredAuthorizationSA(i);
+			
+			List<Ruolo> roles = List.of();
+			
+			// controllo se sono presenti ruoli nel servizio applicativo
+			if (datiInvocazione.getServizioApplicativo() != null && 
+				datiInvocazione.getServizioApplicativo().getInvocazionePorta() != null &&
+				datiInvocazione.getServizioApplicativo().getInvocazionePorta().getRuoli() != null)
+				roles = datiInvocazione.getServizioApplicativo().getInvocazionePorta().getRuoli().getRuoloList();
+			
+			// controllo se sono presenti ruoli autorizzati
+			for (Ruolo role : roles) {
+				if (role.getNome().equals(allowedRole)) {
+					esito.setAutorizzato(true);
+					return esito;
+				}
+			}
+			
+			// controllo se l'applicativo e' autorizzato
+			if (datiInvocazione.getIdServizioApplicativo() == null) {
+				esito.setAutorizzato(false);
+				esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_410_AUTENTICAZIONE_RICHIESTA.getErroreIntegrazione());
+				/**esito.setDetails(ROLE_SERVICE_UNRECOGNIZED);*/
+				
+			} else if (!allowedService.equals(datiInvocazione.getIdServizioApplicativo().getNome())) {
+				esito.setAutorizzato(false);
+				esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.getErrore404_AutorizzazioneFallitaServizioApplicativo(datiInvocazione.getIdServizioApplicativo().getNome()));
+				esito.setDetails(ROLE_SERVICE_UNRECOGNIZED);
+			} else {
 				esito.setAutorizzato(true);
-				return esito;
 			}
-		}
-		
-		// controllo se l'applicativo e' autorizzato
-		if (datiInvocazione.getIdServizioApplicativo() == null) {
-			esito.setAutorizzato(false);
-			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_410_AUTENTICAZIONE_RICHIESTA.getErroreIntegrazione());
-			/**esito.setDetails(ROLE_SERVICE_UNRECOGNIZED);*/
-			
-		} else if (!allowedService.equals(datiInvocazione.getIdServizioApplicativo().getNome())) {
-			esito.setAutorizzato(false);
-			esito.setErroreIntegrazione(IntegrationFunctionError.AUTHORIZATION_DENY, ErroriIntegrazione.ERRORE_404_AUTORIZZAZIONE_FALLITA_SA.getErrore404_AutorizzazioneFallitaServizioApplicativo(datiInvocazione.getIdServizioApplicativo().getNome()));
-			esito.setDetails(ROLE_SERVICE_UNRECOGNIZED);
-		} else {
-			esito.setAutorizzato(true);
 		}
 		
 		return esito;

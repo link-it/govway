@@ -60,6 +60,7 @@ import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.ModIBustaRawContent;
+import org.openspcoop2.protocol.modipa.authorization.SignalHubPushParams;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.constants.ModIHeaderType;
@@ -318,7 +319,7 @@ public class ModIImbustamento {
 			
 			/* *** SIGNAL HUB PUSH SIGNALS *** */	
 			if (RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)
-					&& context.containsKey(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SIGNAL_TYPE)) {
+					&& context.containsKey(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_PUSH_PARAMS)) {
 				msg = this.computeSignalHubMessage(msg, context, protocolFactory, state);
 			}
 			
@@ -947,11 +948,12 @@ public class ModIImbustamento {
 			IProtocolFactory<?> protocolFactory, IState state) throws ProtocolException, UtilsException, DriverConfigurazioneException {
 		
 		// ottengo le informazioni inserite dall'handler
-		IDServizio idServizio = (IDServizio) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SERVICE);
-		String objectId = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_ID);
-		String objectType = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_OBJECT_TYPE);
-		ModISignalHubOperation signalType = (ModISignalHubOperation) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_SIGNAL_TYPE);
-		String serviceId = (String) context.get(ModICostanti.MODIPA_KEY_INFO_SIGNAL_HUB_ESERVICE_ID);
+		SignalHubPushParams params = SignalHubPushParams.load(context);
+		IDServizio idServizio = params.getIdServizio();
+		String objectId = params.getObjectId();
+		String objectType = params.getObjectType();
+		ModISignalHubOperation signalType = params.getSignalType();
+		String serviceId = params.getEServiceId();
 		
 		// configuro il generatore di numeri seriali
 		ConfigurazionePdD config = protocolFactory.getConfigurazionePdD();

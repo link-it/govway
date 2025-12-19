@@ -21,8 +21,12 @@ package org.openspcoop2.protocol.modipa.properties;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -45,6 +49,7 @@ import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Property;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
@@ -90,7 +95,6 @@ import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.certificate.remote.RemoteStoreConfig;
 import org.openspcoop2.utils.digest.DigestEncoding;
-import org.openspcoop2.utils.sql.LikeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -3063,17 +3067,16 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 		
 		// eServiceId
 		
-		String modiEServiceIdItemValue = validatePdndInfoId(registryReader, idServizio, consoleConfiguration, properties,
-				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_ID, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL,
-				ModIProperties.getInstance().isPdndEServiceIdCheckUnique());
+		String modiEServiceIdItemValue = validatePdndInfoId(consoleConfiguration, properties,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_ID, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL);
 		
 		// descriptorId
 		
-		validatePdndInfoId(registryReader, idServizio, consoleConfiguration, properties,
-				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_ID, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL,
+		String modiDescriptorIdItemValue = validatePdndInfoId(consoleConfiguration, properties,
+				ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_ID, ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL);
+		
+		validatePdndInfoIdExists(registryReader, idServizio, modiEServiceIdItemValue, modiDescriptorIdItemValue,
 				ModIProperties.getInstance().isPdndDescriptorIdCheckUnique());
-		
-		
 		// signalHub
 		
 		boolean signalHub = false;
@@ -3088,8 +3091,8 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 			validatePdndInfoSignalHub(registryReader, configIntegrationReader, api, idServizio, portType, consoleConfiguration, properties);
 		}
 	}
-	private static String validatePdndInfoId(IRegistryReader registryReader, IDServizio idServizio, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
-			String id, String label, boolean checkUnique) throws ProtocolException {
+	private static String validatePdndInfoId(ConsoleConfiguration consoleConfiguration, ProtocolProperties properties,
+			String id, String label) throws ProtocolException {
 		AbstractConsoleItem<?> modiEServiceIdItem = 	
 				ProtocolPropertiesUtils.getAbstractConsoleItem(consoleConfiguration.getConsoleItem(),
 						id
@@ -3108,55 +3111,107 @@ public class ModIDynamicConfigurationAccordiParteSpecificaSicurezzaMessaggioUtil
 				idValue = modiEServiceIdItemValue.getValue();
 			}
 			
-			validatePdndInfoIdExists(registryReader, idServizio,
-					id, label, checkUnique, idValue);
-			
 			return idValue;
 		}
 		return null;
 	}
 	private static void validatePdndInfoIdExists(IRegistryReader registryReader, IDServizio idServizio,
-			String id, String label, boolean checkUnique, String idValue) throws ProtocolException {
-		if(idValue!=null && checkUnique) {
-			if(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_ID.equals(id)) {
-				List<String> values = ModISecurityConfig.convertToList(idValue);
-				if(values!=null && !values.isEmpty()) {
-					for (String v : values) {
-						validatePdndInfoIdExists(registryReader, idServizio, 
-								id, label, v, LikeConfig.contains(false)); // gli uuid sono sempre univoci, una ricerca per contains va bene		
-					}
-				}
-			}
-			else {
-				validatePdndInfoIdExists(registryReader, idServizio, 
-						id, label, idValue, null);
-			}
-		}
-	}
-	private static void validatePdndInfoIdExists(IRegistryReader registryReader, IDServizio idServizio, 
-			String id, String label, String idValue, LikeConfig likeConfig) throws ProtocolException {
+			String eServiceId, String descriptorIds, boolean checkUnique) throws ProtocolException {
+		if (eServiceId == null)
+			return;
+		
 		ProtocolFiltroRicercaServizi filtro = new ProtocolFiltroRicercaServizi();
 		filtro.setProtocolPropertiesServizi(new ProtocolProperties());
-		filtro.getProtocolPropertiesServizi().addProperty(id, idValue, likeConfig);
+		filtro.getProtocolPropertiesServizi().addProperty(ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_ID, eServiceId, null);
+		List<IDServizio> idServices = validatePdndInfoIdExists(registryReader, idServizio, filtro);
+		
+		// se presente un solo serviceId configurazione corretta
+		if (idServices.isEmpty())
+			return;
+		IDServizio sameId = idServices.get(0);
+		
+		// se presente un erogazione con stesso serviceId e configurazione abilita il controllo di unicità errore
+		if (checkUnique) {
+			String msg = String.format("L'erogazione '%s' v%d' erogata da '%s' risulta già registrata con il campo '%s' valorizzato con l'identificativo fornito", 
+					sameId.getNome(),
+					sameId.getVersione(),
+					sameId.getSoggettoErogatore().getNome(),
+					ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL);
+			throw new ProtocolException(msg);
+		}
+	
+		
+		Set<String> descriptorSet = descriptorIds == null ? Set.of() : new HashSet<>(ModISecurityConfig.convertToList(descriptorIds));
+		List<ProtocolProperty> properties;
+		
+		for (IDServizio idService : idServices) {
+			try {
+				AccordoServizioParteSpecifica asps = registryReader.getAccordoServizioParteSpecifica(idService);
+				properties = asps.getProtocolPropertyList();
+			} catch (Exception e) {
+				throw new ProtocolException("Errore nella lettura delle protocol properties", e);
+			}
+			 
+			String foundDescriptors = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(
+				     properties,
+				     ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_ID
+			);
+			 
+			// se esiste un erogazione con stesso serviceId ma descriptorId non valorizzato -> errore
+			if (foundDescriptors == null) {
+				 String msg = String.format("Impossibile aggiungere l'erogazione. L'erogazione '%s v%d' erogata da '%s' ha lo stesso valore nel campo '%s' ma il campo '%s' risulta non valorizzato",
+						 idService.getNome(),
+						 idService.getVersione(),
+						 idService.getSoggettoErogatore().getNome(),
+						 ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL,
+						 ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL);
+				throw new ProtocolException(msg);
+			}
+			
+			Optional<String> conflictId = ModISecurityConfig.convertToList(foundDescriptors)
+				.stream()
+				.filter(descriptorSet::contains)
+				.findAny();
+			
+			// se esiste un erogazione con stesso serviceId e che contiene almeno uno dei descriptorId inseriti -> errore
+			if (conflictId.isPresent()) {
+				String msg = String.format("L'erogazione '%s' v%d' erogata da '%s' risulta già registrata con il campo '%s' valorizzato con l'identificativo fornito '%s'", 
+						idService.getNome(),
+						idService.getVersione(),
+						idService.getSoggettoErogatore().getNome(),
+						ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL,
+						conflictId.get());
+				throw new ProtocolException(msg);
+			}
+		}
+		
+		// se non presente descriptor id -> errore
+		if (descriptorIds == null) {
+			String msg = String.format("L'erogazione '%s' v%d' erogata da '%s' risulta già registrata con il campo '%s' valorizzato con l'identificativo fornito, necessario valorizzare il campo '%s'", 
+					sameId.getNome(),
+					sameId.getVersione(),
+					sameId.getSoggettoErogatore().getNome(),
+					ModIConsoleCostanti.MODIPA_API_IMPL_INFO_ESERVICE_ID_LABEL,
+					ModIConsoleCostanti.MODIPA_API_IMPL_INFO_DESCRIPTOR_ID_LABEL);
+			throw new ProtocolException(msg);
+		}
+	}
+	private static List<IDServizio> validatePdndInfoIdExists(IRegistryReader registryReader, IDServizio idServizio, 
+			ProtocolFiltroRicercaServizi filter) throws ProtocolException {
 		List<IDServizio> list = null;
 		try {
-			list = registryReader.findIdAccordiServizioParteSpecifica(filtro);
-			if(list!=null && !list.isEmpty()) {
-				for (IDServizio check : list) {
-					if(!check.equals(idServizio, false)) {
-						String msg = "L'erogazione '"+check.getNome()+" v"+check.getVersione()+"' erogata da '"+check.getSoggettoErogatore().getNome()+"' risulta già registrata con il campo '"+label+"' valorizzato con l'identificativo fornito";
-						if(likeConfig==null) {
-							msg = msg + " '"+idValue+"'";
-						}
-						throw new ProtocolException(msg);
-					}
-				}
+			list = registryReader.findIdAccordiServizioParteSpecifica(filter);
+			if (list != null) {
+				return list.stream()
+						.filter(found -> !found.equals(idServizio, false))
+						.collect(Collectors.toList());
 			}
 		}catch(RegistryNotFound notFound) {
 			// ignore
 		}catch(Exception e) {
 			throw new ProtocolException(e.getMessage(),e);
 		}
+		return List.of();
 	}
 	private static void validatePdndInfoSignalHub(IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, AccordoServizioParteComune api, IDServizio idServizio, String portType, ConsoleConfiguration consoleConfiguration, ProtocolProperties properties) throws ProtocolException {
 
