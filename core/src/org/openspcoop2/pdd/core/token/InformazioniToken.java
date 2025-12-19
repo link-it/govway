@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openspcoop2.pdd.core.token.attribute_authority.InformazioniAttributi;
+import org.openspcoop2.pdd.core.token.dpop.DPoP;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
@@ -354,6 +355,9 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	private List<SorgenteInformazioniToken> sourceTypes = null;
 	private Map<SorgenteInformazioniToken,String> sourcesTokenInfo = null;
 	
+	// DPoP (ulteriore informazione valorizzata con la funzionalità specifica)
+	private DPoP dpop;
+	
 	// DynamicDiscovery (ulteriore informazione valorizzata con la funzionalità specifica)
 	private DynamicDiscovery dynamicDiscovery;
 	
@@ -521,6 +525,13 @@ public class InformazioniToken extends org.openspcoop2.utils.beans.BaseBean impl
 	}
 	public void setSourceTypes(List<SorgenteInformazioniToken> sourceTypes) {
 		this.sourceTypes = sourceTypes;
+	}
+	
+	public DPoP getDpop() {
+		return this.dpop;
+	}
+	public void setDpop(DPoP dpop) {
+		this.dpop = dpop;
 	}
 	
 	public DynamicDiscovery getDynamicDiscovery() {

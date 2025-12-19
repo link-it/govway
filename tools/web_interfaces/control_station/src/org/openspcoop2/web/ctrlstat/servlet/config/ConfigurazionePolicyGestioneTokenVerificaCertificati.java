@@ -180,6 +180,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 			boolean forwardToJwt = false;
 			boolean https = false;
 			boolean signedJwt = false;
+			boolean dpopJwt = false;
 			boolean jwtRichiesta = false;
 			boolean jwtRisposta = false;
 			
@@ -187,6 +188,8 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 			
 			boolean riferimentoApplicativoModi = false;
 			boolean riferimentoFruizioneModi = false;
+			boolean riferimentoApplicativoModiDpop = false;
+			boolean riferimentoFruizioneModiDpop = false;
 			
 			if(!verificaConnettivita) {
 				if(attributeAuthority) {
@@ -263,10 +266,20 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 							if(keystoreParams!=null &&
 									!riferimentoApplicativoModi &&
 									!riferimentoFruizioneModi) {
-								signedJwt = true;		
+								signedJwt = true;
 							}
 						}
-						verificaCertificatiPossibile = https || signedJwt;
+						if(policy.isDpop()) {
+							KeystoreParams keystoreParamsDpop = TokenUtilities.getDpopKeystoreParams(policy);
+							riferimentoApplicativoModiDpop = keystoreParamsDpop!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equalsIgnoreCase(keystoreParamsDpop.getPath());
+							riferimentoFruizioneModiDpop = keystoreParamsDpop!=null && org.openspcoop2.pdd.core.token.Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equalsIgnoreCase(keystoreParamsDpop.getPath());
+							if(keystoreParamsDpop!=null &&
+									!riferimentoApplicativoModiDpop &&
+									!riferimentoFruizioneModiDpop) {
+								dpopJwt = true;
+							}
+						}
+						verificaCertificatiPossibile = https || signedJwt || dpopJwt;
 					}
 					else {
 						throw new CoreException("Tipologia '"+genericProperties.getTipologia()+"' non gestita");
@@ -280,12 +293,20 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 
 			
 			if(!verificaConnettivita && !verificaCertificatiPossibile) {
-				
+
 				if(riferimentoApplicativoModi) {
 					pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DEFINITI_IN_MODI_APPLICATIVO,
 							Costanti.MESSAGE_TYPE_INFO);
 				}
 				else if(riferimentoFruizioneModi) {
+					pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DEFINITI_IN_MODI_FRUIZIONE,
+							Costanti.MESSAGE_TYPE_INFO);
+				}
+				else if(riferimentoApplicativoModiDpop) {
+					pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DEFINITI_IN_MODI_APPLICATIVO,
+							Costanti.MESSAGE_TYPE_INFO);
+				}
+				else if(riferimentoFruizioneModiDpop) {
 					pd.setMessage(CostantiControlStation.LABEL_VERIFICA_CERTIFICATI_DEFINITI_IN_MODI_FRUIZIONE,
 							Costanti.MESSAGE_TYPE_INFO);
 				}
@@ -467,7 +488,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						}
 						else if(negoziazione) {
 							certificateChecker.checkTokenPolicyNegoziazione(sbDetailsError, sbDetailsWarningPolicy,
-									https, signedJwt,
+									https, signedJwt, dpopJwt,
 									genericProperties,
 									sogliaWarningGiorni);
 						}
@@ -495,6 +516,7 @@ public class ConfigurazionePolicyGestioneTokenVerificaCertificati extends Action
 						formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_JWT);
 						formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_VALIDAZIONE_FORWARD_TO_JWT);
 						formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_SIGNED_JWT);
+						formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_TOKEN_NEGOZIAZIONE_DPOP_JWT);
 						formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RICHIESTA);
 						formatIds.add(ConfigurazionePdDReader.ID_CONFIGURAZIONE_ATTRIBUTE_AUTHORITY_JWT_RISPOSTA);
 						confCore.formatVerificaCertificatiEsito(pd, formatIds, 

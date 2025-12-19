@@ -39,20 +39,32 @@ public class EsitoNegoziazioneToken extends AbstractEsitoValidazioneToken implem
 
 	/** Informazioni sul token */
 	private InformazioniNegoziazioneToken informazioniNegoziazioneToken;
-		
+
+	/** DPoP backend in cache */
+	private boolean dpopBackendInCache;
+
 	public InformazioniNegoziazioneToken getInformazioniNegoziazioneToken() {
 		return this.informazioniNegoziazioneToken;
 	}
 	public void setInformazioniNegoziazioneToken(InformazioniNegoziazioneToken informazioniNegoziazioneToken) {
 		this.informazioniNegoziazioneToken = informazioniNegoziazioneToken;
 	}
-	
+
+	public boolean isDpopBackendInCache() {
+		return this.dpopBackendInCache;
+	}
+	public void setDpopBackendInCache(boolean dpopBackendInCache) {
+		this.dpopBackendInCache = dpopBackendInCache;
+	}
+
 	@Override
 	public String toString(){
 		StringBuilder bf = new StringBuilder();
-		
+
 		bf.append(super.toString());
-		
+		bf.append(" dpop backend in cache: ");
+		bf.append(this.dpopBackendInCache);
+
 		return bf.toString();
 	}
 }

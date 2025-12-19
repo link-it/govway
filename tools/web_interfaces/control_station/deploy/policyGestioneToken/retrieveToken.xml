@@ -32,6 +32,10 @@
 			</conditions>
 			<property name="policy.retrieveToken.jwt.pdnd" />
 		</item>
+		
+		<item type="checkbox" name="dpop" label="DPoP" defaultSelected="false" reloadOnChange="true">
+			<property name="policy.retrieveToken.dpop" />
+		</item> 
 
 		<item type="textarea" name="endpointURL" label="URL" required="true" default="http://">
 			<property name="policy.retrieveToken.endpoint.url" />
@@ -1044,9 +1048,17 @@
 
 		</subsection>
 
+		<subsection label="Dati Risposta">
+
+			<item type="text" name="expectedTokenType" label="Tipo Token" note="Valore atteso; se non impostato, la validazione è disabilitata.">
+				<property name="policy.expectedTokenType" />
+			</item>
+
+		</subsection>
+
 	</section>
 
-	
+
 	<section label="Https">
 
 		<conditions>
@@ -1202,6 +1214,136 @@
 		</item>
 		
 	</section>
+	
+	<section label="DPoP">
+
+		<conditions>
+			<condition and="false">
+				<selected name="dpop"/>
+			</condition>	
+		</conditions>
+		
+		<item type="select" name="dpopAsymmetricSignatureAlgorithm" label="Signature Algorithm" >
+		      	<property name="policy.retrieveToken.dpop.signature.algorithm"/>
+		</item>
+
+		<item type="checkbox" name="dpopCacheEnabled" label="Cache"
+			  defaultSelected="false" reloadOnChange="true">
+			<property name="policy.retrieveToken.dpop.cache.enabled" />
+		</item>
+		<item type="number" name="dpopCacheTtl" label="TTL (secondi)"
+			  required="true" default="60" min="1" note="&lt;b>Attenzione: &lt;/b>RFC 9449 indica che ogni richiesta HTTP deve essere associata a una nuova DPoP proof con jti univoco per prevenire replay attack.&lt;/br> Abilitando la cache, la DPoP Proof viene riutilizzata su più richieste, vanificando questa protezione.&lt;/br> La cache può essere abilitato solo se il Resource Server non implementa il reply filter.">
+			<conditions>
+				<condition and="true">
+					<selected name="dpopCacheEnabled"/>
+				</condition>
+			</conditions>
+			<property name="policy.retrieveToken.dpop.cache.ttl" />
+		</item>
+
+		<subsection label="KeyStore">
+
+			<!-- Keystore Type con supporto applicativo/fruizione ModI (solo per Signed JWT) -->
+			<item type="select" name="dpopKeystoreType" label="Tipo" default="jks" reloadOnChange="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.dpop.signature.keystoreType" />
+			</item>
+			<!-- Keystore Type senza supporto applicativo/fruizione ModI (per altri metodi) -->
+			<item type="select" name="dpopKeystoreTypeNoModi" label="Tipo" default="jks" reloadOnChange="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="retrieveTokenMethod" value="rfc7523_x509"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.dpop.signature.keystoreType" />
+			</item>
+			<item type="textarea" name="dpopKeystoreFile" label="File" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="dpopKeystoreType" value="keys"/>
+						<equals name="dpopKeystoreTypeNoModi" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.dpop.signature.keystoreFile" />
+			</item>
+			<item type="textarea" name="dpopKeystorePrivateKey" label="Chiave Privata" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="dpopKeystoreType" value="keys"/>
+						<equals name="dpopKeystoreTypeNoModi" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.dpop.signature.keystoreFile" />
+			</item>
+			<item type="textarea" name="dpopKeystorePublicKey" label="Chiave Pubblica" required="true">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="dpopKeystoreType" value="keys"/>
+						<equals name="dpopKeystoreTypeNoModi" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.dpop.signature.keystoreFilePublicKey" />
+			</item>
+			<item type="hidden" name="dpopKeystoreKeyPairAlgorithm" value="RSA">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="dpopKeystoreType" value="keys"/>
+						<equals name="dpopKeystoreTypeNoModi" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.dpop.signature.keyPairAlgorithm" />
+			</item>
+			<item type="lock" name="dpopKeystorePassword" label="Password" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="dpopKeystoreType" value="jwk"/>
+						<equals name="dpopKeystoreType" value="keys"/>
+						<equals name="dpopKeystoreTypeNoModi" value="jwk"/>
+						<equals name="dpopKeystoreTypeNoModi" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.dpop.signature.keystorePassword" />
+			</item>
+			<item type="text" name="dpopAliasChiavePrivata" label="Alias Chiave Privata" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="dpopKeystoreType" value="keys"/>
+						<equals name="dpopKeystoreTypeNoModi" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.dpop.signature.keyAlias" />
+			</item>
+			<item type="lock" name="dpopPasswordChiavePrivata" label="Password Chiave Privata" required="true">
+				<conditions and="true">
+					<condition not="true" and="false">
+						<equals name="dpopKeystoreType" value="jwk"/>
+						<equals name="dpopKeystoreType" value="keys"/>
+						<equals name="dpopKeystoreTypeNoModi" value="jwk"/>
+						<equals name="dpopKeystoreTypeNoModi" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.dpop.signature.keyPassword" />
+			</item>
+			<item type="lock" name="dpopPasswordChiavePrivataOpzionale" label="Password Chiave Privata" required="false">
+				<conditions and="true">
+					<condition and="false">
+						<equals name="dpopKeystoreType" value="keys"/>
+						<equals name="dpopKeystoreTypeNoModi" value="keys"/>
+					</condition>
+				</conditions>
+				<property name="policy.retrieveToken.dpop.signature.keyPassword" />
+			</item>
+			<item type="select" name="dpopByokPolicy" label="BYOK Policy" default="" reloadOnChange="true">
+				<property name="policy.retrieveToken.dpop.signature.byok" />
+			</item>
+
+		</subsection>
+
+	</section>
 
 	<section label="Token Forward">
 
@@ -1232,6 +1374,41 @@
 			</conditions>
 		    <property name="policy.tokenForward.mode.queryParameter" />
 		</item>
+
+		<subsection label="DPoP">
+			<conditions>
+				<condition and="false">
+					<selected name="dpop"/>
+				</condition>
+			</conditions>
+
+			<item type="select" name="tokenForwardDpopMode" label="Modalità" default="RFC9449_header" reloadOnChange="true">
+				<values>
+					<value value="RFC9449_header" label="RFC 9449 - DPoP Header"/>
+					<value value="CUSTOM_header" label="Header HTTP"/>
+					<value value="CUSTOM_url" label="Parametro URL"/>
+				</values>
+				<property name="policy.tokenForward.dpop.mode" />
+			</item>
+
+			<item type="text" name="tokenForwardDpopModeHeader" label="Nome Header HTTP" required="true">
+				<conditions>
+					<condition>
+						<equals name="tokenForwardDpopMode" value="CUSTOM_header"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.dpop.mode.header" />
+			</item>
+
+			<item type="text" name="tokenForwardDpopModeQueryParameter" label="Nome Parametro URL" required="true">
+				<conditions>
+					<condition>
+						<equals name="tokenForwardDpopMode" value="CUSTOM_url"/>
+					</condition>
+				</conditions>
+				<property name="policy.tokenForward.dpop.mode.queryParameter" />
+			</item>
+		</subsection>
 
 	</section>
 

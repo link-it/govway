@@ -1074,8 +1074,20 @@ public class TransazioneUtilities {
 							||
 							(
 									op2Properties.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature() &&
-									informazioniNegoziazioneToken.getRequest()!=null
+									informazioniNegoziazioneToken.getRequest()!=null &&
+									informazioniNegoziazioneToken.getRequest().getJwtClientAssertion()!=null
 							)
+							||
+							(
+									op2Properties.isGestioneRetrieveTokenDpopSaveDpopInfoExcludeJwtSignature() &&
+									informazioniNegoziazioneToken.getRequest()!=null &&
+									informazioniNegoziazioneToken.getRequest().getDpop()!=null
+							)
+						||
+						(
+								op2Properties.isGestioneRetrieveTokenDpopBackendSaveDpopInfoExcludeJwtSignature() &&
+								informazioniNegoziazioneToken.getDpopBackend()!=null
+						)
 					) {
 						// clone for fix 'Caused by: java.util.ConcurrentModificationException' e non modificare informazione in cache dovuto alla deleteSignature e alla sostituzione del token
 						informazioniNegoziazioneToken = (InformazioniNegoziazioneToken) informazioniNegoziazioneToken.clone();
@@ -1105,6 +1117,19 @@ public class TransazioneUtilities {
 						informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()!=null &&
 						op2Properties.isGestioneRetrieveTokenGrantTypeRfc7523SaveClientAssertionJWTInfoExcludeJwtSignature()) {
 						informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().setToken(TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getRequest().getJwtClientAssertion().getToken()));
+					}
+
+					if(informazioniNegoziazioneToken.getRequest()!=null &&
+						informazioniNegoziazioneToken.getRequest().getDpop()!=null &&
+						informazioniNegoziazioneToken.getRequest().getDpop().getToken()!=null &&
+						op2Properties.isGestioneRetrieveTokenDpopSaveDpopInfoExcludeJwtSignature()) {
+						informazioniNegoziazioneToken.getRequest().getDpop().setToken(TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getRequest().getDpop().getToken()));
+					}
+
+					if(informazioniNegoziazioneToken.getDpopBackend()!=null &&
+						informazioniNegoziazioneToken.getDpopBackend().getToken()!=null &&
+						op2Properties.isGestioneRetrieveTokenDpopBackendSaveDpopInfoExcludeJwtSignature()) {
+						informazioniNegoziazioneToken.getDpopBackend().setToken(TokenUtilities.deleteSignature(informazioniNegoziazioneToken.getDpopBackend().getToken()));
 					}
 					
 				}

@@ -13,6 +13,7 @@
 		<collection name="sslClientConfig"/>
 		<collection name="dynamicDiscoveryParserPropRefId"/>
 		<collection name="validazioneJwtTokenParserPropRefId"/>
+		<collection name="validazioneDPoPTokenParserPropRefId"/>
 		<collection name="introspectionTokenParserPropRefId"/>
 		<collection name="userInfoTokenParserPropRefId"/>
 	</properties>
@@ -41,16 +42,6 @@
 					<value value="jwe" label="JWE"/>
 				</values>
 				<property name="policy.token.type" />
-			</item>
-			<item type="checkbox" name="discoveryStato" label="Discovery Document URL" defaultSelected="false" reloadOnChange="true">
-				<!-- 
-				Serve anche ad identificare le url di introspection o userinfo
-				<conditions>
-					<condition and="false">
-						<equals name="tokenType" value="jws"/>
-					</condition>
-				</conditions> -->
-				<property name="policy.token.discovery" />
 			</item>
 		
 			<item type="select" name="tokenSource" label="Posizione" default="RFC6750" reloadOnChange="true">
@@ -81,6 +72,58 @@
 					</condition>
 				</conditions>
 			    <property name="policy.token.source.queryParameter" />
+			</item>
+
+			<item type="checkbox" name="dpopValidation" label="DPoP" defaultSelected="false" reloadOnChange="true">
+				<conditions>
+					<condition>
+						<equals name="tokenType" value="jws"/>
+					</condition>
+				</conditions>
+				<property name="policy.dpop.validation" />
+			</item>
+
+			<item type="select" name="dpopSource" label="Posizione DPoP" default="RFC9449_header" reloadOnChange="true">
+				<conditions>
+					<condition>
+						<selected name="dpopValidation"/>
+					</condition>
+				</conditions>
+				<values>
+					<value value="RFC9449_header" label="RFC 9449 - DPoP Header"/>
+					<value value="CUSTOM_header" label="Header HTTP"/>
+					<value value="CUSTOM_url" label="Parametro URL"/>
+				</values>
+				<property name="policy.dpop.source" />
+			</item>
+			<item type="text" name="dpopSourceHeader" label="Nome Header HTTP" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="dpopValidation"/>
+						<equals name="dpopSource" value="CUSTOM_header"/>
+					</condition>
+				</conditions>
+			    <property name="policy.dpop.source.header" />
+			</item>
+			<item type="text" name="dpopSourceQueryParameter" label="Nome Parametro URL" required="true">
+				<conditions>
+					<condition and="true">
+						<selected name="dpopValidation"/>
+						<equals name="dpopSource" value="CUSTOM_url"/>
+					</condition>
+				</conditions>
+			    <property name="policy.dpop.source.queryParameter" />
+			</item>
+			
+			<item type="checkbox" name="discoveryStato" label="Discovery Document URL" defaultSelected="false" reloadOnChange="true">
+				<!-- 
+				Serve anche ad identificare le url di introspection o userinfo
+				<conditions>
+					<condition and="false">
+						<equals name="tokenType" value="jws"/>
+					</condition>
+				</conditions> -->
+				<property name="policy.token.discovery" />
 			</item>
 					
 		</subsection>
@@ -731,6 +774,7 @@
 		</subsection>
 
 	</section>
+
 		
 		
 	<section label="Token Introspection">
@@ -1521,6 +1565,170 @@
 	
 	</section>
 	
+	<section label="Validazione DPoP">
+		
+		<conditions>
+			<condition and="true">
+				<selected name="dpopValidation"/>
+			</condition>
+		</conditions>
+		
+		<item type="select" name="validazioneDPoPParserType" label="Formato Token" default="RFC9449" reloadOnChange="true">
+			<values>
+				<value value="RFC9449" label="RFC 9449 - DPoP Header"/>
+				<value value="MAPPING" label="Personalizzato"/>
+				<value value="CUSTOM" label="Plugin"/>
+			</values>
+			<property name="policy.validazioneDPoP.claimsParser" />
+		</item>
+
+		<item type="select" name="validazioneDPoPParserCustomPluginChoice" label="" reloadOnChange="true" >
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneDPoPParserType" value="CUSTOM"/>
+				</condition>
+			</conditions>
+			<property name="policy.validazioneDPoP.claimsParser.pluginType" />
+		</item>
+		<item type="text" name="validazioneDPoPParserCustom" label="ClassName" required="true">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneDPoPParserType" value="CUSTOM"/>
+				</condition>
+			</conditions>
+		   	<property name="policy.validazioneDPoP.claimsParser.className" />
+		</item>
+
+		<!-- MAPPING Header Claims -->
+		<item type="text" name="validazioneDPoPTyp" label="Type (typ)" required="true" default="typ">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneDPoPParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+		   	<property name="dpop.parser.typ" properties="validazioneDPoPTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneDPoPAlg" label="Algorithm (alg)" required="true" default="alg">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneDPoPParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+		   	<property name="dpop.parser.alg" properties="validazioneDPoPTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneDPoPJwk" label="JWK (jwk)" required="true" default="jwk">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneDPoPParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+		   	<property name="dpop.parser.jwk" properties="validazioneDPoPTokenParserPropRefId" />
+		</item>
+
+		<!-- MAPPING Payload Claims -->
+		<item type="text" name="validazioneDPoPJti" label="JWT ID (jti)" required="true" default="jti">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneDPoPParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+		   	<property name="dpop.parser.jti" properties="validazioneDPoPTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneDPoPHtm" label="HTTP Method (htm)" required="true" default="htm">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneDPoPParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+		   	<property name="dpop.parser.htm" properties="validazioneDPoPTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneDPoPHtu" label="HTTP URI (htu)" required="true" default="htu">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneDPoPParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+		   	<property name="dpop.parser.htu" properties="validazioneDPoPTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneDPoPIat" label="Issued At (iat)" required="true" default="iat">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneDPoPParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+		   	<property name="dpop.parser.iat" properties="validazioneDPoPTokenParserPropRefId" />
+		</item>
+		<item type="text" name="validazioneDPoPAth" label="Access Token Hash (ath)" required="true" default="ath" note="Per ogni campo possono essere indicati più claims, separandoli con la virgola.&lt;BR/>Nel token verranno cercati nell'ordine in cui sono definiti.&lt;BR/>L'indicazione di un nome non è vincolante rispetto alla presenza all'interno del token.">
+			<conditions>
+				<condition and="true">
+					<equals name="validazioneDPoPParserType" value="MAPPING"/>
+				</condition>
+			</conditions>
+		   	<property name="dpop.parser.ath" properties="validazioneDPoPTokenParserPropRefId" />
+		</item>
+
+		<subsection label="Header">
+
+			<item type="checkbox" name="validazioneDPoPHeader" label="" reloadOnChange="true" defaultSelected="true" note="Consente di indicare i valori attesi nell'header">
+				<property name="policy.validazioneDPoP.header" />
+			</item>	
+
+			<item type="text" name="validazioneDPoPHeaderType" label="Type (typ)" required="false" default="dpop+jwt">
+				<conditions>
+					<condition and="true">
+						<selected name="validazioneDPoPHeader"/>
+					</condition>
+				</conditions>
+		      		<property name="policy.validazioneDPoP.header.typ" />
+			</item>
+
+			<item type="text" name="validazioneDPoPHeaderAlg" label="Algorithm (alg)" required="false" note="È possibile elencare più valori separandoli con la ','">
+				<conditions>
+					<condition and="true">
+						<selected name="validazioneDPoPHeader"/>
+					</condition>
+				</conditions>
+		      		<property name="policy.validazioneDPoP.header.alg" />
+			</item>
+
+		</subsection>
+		
+		<subsection label="Payload">
+
+			<item type="number" name="validazioneDPoPPayloadTtl" label="TTL (secondi)" required="true" min="1" note="Tempo massimo di validità del DPoP dalla sua emissione (iat + TTL)" default="60">
+				<property name="policy.validazioneDPoP.payload.ttl" />
+			</item>
+
+			<item type="select" name="validazioneDPoPJtiValidation" label="Validazione Anti-Replay (jti)" default="LOCAL_REJECT" reloadOnChange="true">
+				<values>
+					<value value="DISABLED" label="Disabilitata"/>
+					<value value="LOCAL_REJECT" label="Cache Locale (Reject Policy)"/>
+					<value value="LOCAL_EVICT" label="Cache Locale (LRU Policy)"/>
+					<value value="DISTRIBUTED" label="Distribuita (Redis)"/>
+				</values>
+				<property name="policy.validazioneDPoP.jti.validation" />
+			</item>	
+			<item type="number" name="validazioneDPoPJtiMaxSizeEvict" label="Dimensione Cache" required="true" min="1" default="100000" note="Numero massimo di JTI memorizzabili durante il TTL. &lt;br/>&lt;b>Attenzione&lt;/b>: in caso di riempimento cache le ulteriori richieste verrranno rifiutate">
+				<conditions>
+					<condition and="false">
+						<equals name="validazioneDPoPJtiValidation" value="LOCAL_REJECT"/>
+					</condition>
+				</conditions>
+				<property name="policy.validazioneDPoP.jti.maxSize" />
+			</item>	
+			<item type="number" name="validazioneDPoPJtiMaxSizeReject" label="Dimensione Cache" required="true" min="1" default="100000" note="Numero massimo di JTI memorizzabili durante il TTL. &lt;br/>&lt;b>Attenzione&lt;/b>: in caso di riempimento cache verranno rimosse le entry meno recenti esponendo a replay attack">
+				<conditions>
+					<condition and="false">
+						<equals name="validazioneDPoPJtiValidation" value="LOCAL_EVICT"/>
+					</condition>
+				</conditions>
+				<property name="policy.validazioneDPoP.jti.maxSize" />
+			</item>
+
+
+		</subsection>
+
+	</section>
 	<section label="Https">
 
 		<conditions>

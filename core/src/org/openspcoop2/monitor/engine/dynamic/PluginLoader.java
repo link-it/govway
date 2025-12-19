@@ -172,6 +172,8 @@ public class PluginLoader implements IPluginLoader {
 			return "token dynamic discovery";
 		case TOKEN_VALIDAZIONE:
 			return "token validation policy";
+		case DPOP_VALIDAZIONE:
+			return "dpop-token validation policy";
 		case TOKEN_NEGOZIAZIONE:
 			return "token retrieve policy";
 		case ATTRIBUTE_AUTHORITY:

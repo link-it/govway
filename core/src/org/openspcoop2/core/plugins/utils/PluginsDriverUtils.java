@@ -245,6 +245,7 @@ public class PluginsDriverUtils {
 				case TRANSAZIONE:
 				case TOKEN_DYNAMIC_DISCOVERY:
 				case TOKEN_VALIDAZIONE:
+				case DPOP_VALIDAZIONE:
 				case TOKEN_NEGOZIAZIONE:
 				case ATTRIBUTE_AUTHORITY:
 					break;

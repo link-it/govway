@@ -119,7 +119,12 @@ public class NegoziazioneTokenProvider implements IProvider {
 				Costanti.ID_RETRIEVE_TOKEN_METHOD_RFC_7523_CLIENT_SECRET.equals(retMode)) {
 			validateJWTSigned(pDefault, retMode, pdnd);
 		}
-		
+
+		boolean dpop = TokenUtilities.isEnabled(pDefault, Costanti.POLICY_RETRIEVE_TOKEN_DPOP);
+		if(dpop) {
+			validateDPoP(pDefault);
+		}
+
 		validateFormParameters(pDefault, pdnd);
 		
 		validateCustomFormParameters(pDefault, pdnd);
@@ -321,6 +326,53 @@ public class NegoziazioneTokenProvider implements IProvider {
 			}
 			if(p.endsWith(" ")) {
 				throw new ProviderValidationException("Il valore indicato nel campo 'JWT KeyStore - Password Chiave Privata', non deve terminare con uno spazio");
+			}
+		}
+	}
+	private void validateDPoP(Properties pDefault) throws ProviderValidationException {
+		validateDPoPKeystore(pDefault);
+		validateDPoPKey(pDefault);
+	}
+	private void validateDPoPKeystore(Properties pDefault) throws ProviderValidationException {
+		String file = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_FILE);
+		InputValidationUtils.validateTextAreaInput(file, "DPoP KeyStore - File");
+
+		String fileChiavePubblica = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_FILE_PUBLIC_KEY);
+		if(fileChiavePubblica!=null && StringUtils.isNotEmpty(fileChiavePubblica)) {
+			InputValidationUtils.validateTextAreaInput(fileChiavePubblica, "DPoP KeyStore - Chiave Pubblica");
+		}
+
+		// NOTA: i controlli seguenti di inizio e fine, vengono fatti gia' in automatico dal framework
+		String p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEYSTORE_PASSWORD);
+		if(p!=null) {
+			if(p.startsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'DPoP KeyStore - Password', non deve iniziare con uno spazio");
+			}
+			if(p.endsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'DPoP KeyStore - Password', non deve terminare con uno spazio");
+			}
+		}
+	}
+	private void validateDPoPKey(Properties pDefault) throws ProviderValidationException {
+
+		// NOTA: i controlli seguenti di inizio e fine, vengono fatti gia' in automatico dal framework
+		String p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEY_ALIAS);
+		if(p!=null) {
+			if(p.startsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'DPoP KeyStore - Alias Chiave Privata', non deve iniziare con uno spazio");
+			}
+			if(p.endsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'DPoP KeyStore - Alias Chiave Privata', non deve terminare con uno spazio");
+			}
+		}
+
+		p = pDefault.getProperty(Costanti.POLICY_RETRIEVE_TOKEN_DPOP_SIGN_KEY_PASSWORD);
+		if(p!=null) {
+			if(p.startsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'DPoP KeyStore - Password Chiave Privata', non deve iniziare con uno spazio");
+			}
+			if(p.endsWith(" ")) {
+				throw new ProviderValidationException("Il valore indicato nel campo 'DPoP KeyStore - Password Chiave Privata', non deve terminare con uno spazio");
 			}
 		}
 	}
@@ -546,10 +598,13 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return tipologie;
 		}
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
-				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id) ||
+				Costanti.ID_RETRIEVE_TOKEN_DPOP_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
 			return getValuesSignatureAlgorithm(id);
 		}
-		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) || 
+		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE_NO_MODI.equals(id) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_TYPE.equals(id) ||
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			return getStoreType(id,true);
@@ -569,6 +624,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return this.ocspProvider.getValues();
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_BYOK_POLICY.equals(id) ||
 				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id)) {
 			return this.byokProvider.getValues();
 		}
@@ -611,10 +667,13 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return methodsList;
 		}
 		else if(Costanti.ID_RETRIEVE_TOKEN_JWT_SYMMETRIC_SIGN_ALGORITHM.equals(id) ||
-				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
+				Costanti.ID_RETRIEVE_TOKEN_JWT_ASYMMETRIC_SIGN_ALGORITHM.equals(id) ||
+				Costanti.ID_RETRIEVE_TOKEN_DPOP_ASYMMETRIC_SIGN_ALGORITHM.equals(id)) {
 			return getLabelsSignatureAlgorithm(id);
 		}
-		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) || 
+		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE_NO_MODI.equals(id) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_TYPE.equals(id) ||
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			return getStoreType(id,false);
@@ -626,6 +685,7 @@ public class NegoziazioneTokenProvider implements IProvider {
 			return this.ocspProvider.getLabels();
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_BYOK_POLICY.equals(id) ||
 				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(id)) {
 			return this.byokProvider.getLabels();
 		}
@@ -662,7 +722,9 @@ public class NegoziazioneTokenProvider implements IProvider {
 		List<String> l = new ArrayList<>();
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_JKS_VALUE : SecurityConstants.KEYSTORE_TYPE_JKS_LABEL);
 		l.add(value ? SecurityConstants.KEYSTORE_TYPE_PKCS12_VALUE : SecurityConstants.KEYSTORE_TYPE_PKCS12_LABEL);
-		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id)) {
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE_NO_MODI.equals(id)) {
 			l.add(value ? SecurityConstants.KEYSTORE_TYPE_JWK_VALUE: SecurityConstants.KEYSTORE_TYPE_JWK_LABEL);
 			l.add(value ? SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_VALUE: SecurityConstants.KEYSTORE_TYPE_KEY_PAIR_LABEL);
 		}
@@ -671,12 +733,15 @@ public class NegoziazioneTokenProvider implements IProvider {
 //			secret = true;
 //		}
 		**/
-		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id)) {
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(id)) {
 			l.add(value ? Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE: Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_LABEL);
 			l.add(value ? Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE: Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_LABEL);
 		}
-		
+
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(id) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE_NO_MODI.equals(id) ||
 				Costanti.ID_HTTPS_KEYSTORE_TYPE.equals(id)) {
 			trustStore = false;
 		}
@@ -849,21 +914,28 @@ public class NegoziazioneTokenProvider implements IProvider {
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE_PRIVATE_KEY.equals(item.getName()) ||
 				Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_FILE_PUBLIC_KEY.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_FILE_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_FILE_PUBLIC_KEY.equals(item.getName()) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName())) {
 			return dynamicUpdateStoreFile(items, mapNameValue, item, actualValue);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_PASSWORD.equals(item.getName()) ||
 				Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
 			return dynamicUpdateStorePassword(items, mapNameValue, item, actualValue);
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
 				Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_PASSWORD_PRIVATE_KEY_OPZIONALE.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_PASSWORD_PRIVATE_KEY_OPZIONALE.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ) {
-			return dynamicUpdateStoreKeyPassword(items, mapNameValue, item, actualValue);	
+			return dynamicUpdateStoreKeyPassword(items, mapNameValue, item, actualValue);
 		}
-		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY.equals(item.getName()) ) {
+		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_ALIAS_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_ALIAS_PRIVATE_KEY.equals(item.getName()) ) {
 			return dynamicUpdateStoreKeyAlias(items, mapNameValue, item, actualValue);
 		}		
 		else if(Costanti.ID_NEGOZIAZIONE_CUSTOM_PARSER_PLUGIN_CHOICE.equals(item.getName())) {
@@ -881,22 +953,32 @@ public class NegoziazioneTokenProvider implements IProvider {
 			}
 		}
 		else if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_BYOK_POLICY.equals(item.getName()) ||
 				Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
 			return dynamicUpdateByok(items, mapNameValue, item, actualValue);
 		}
-		
+		else if(Costanti.ID_RETRIEVE_TOKEN_EXPECTED_TOKEN_TYPE.equals(item.getName())) {
+			return dynamicUpdateExpectedTokenType(items, mapNameValue, item, actualValue);
+		}
+
 		return actualValue;
 	}
 	private String dynamicUpdateStoreFile(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
-		if(Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName())) {
+		if(Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_FILE.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_FILE_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_FILE_PUBLIC_KEY.equals(item.getName())) {
+			type = getDpopKeystoreType(items, mapNameValue);
+		}
+		else if(Costanti.ID_HTTPS_TRUSTSTORE_FILE.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
 		}
 		else if(Costanti.ID_HTTPS_KEYSTORE_FILE.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
 		}
-		
-		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(type)) {
 			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
 			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 				item.setValue(typeValue);
@@ -904,21 +986,33 @@ public class NegoziazioneTokenProvider implements IProvider {
 				return item.getValue();
 			}
 		}
-		
+
 		return AbstractSecurityProvider.processStoreFile(type, items, mapNameValue, item, actualValue);
+	}
+	private String getDpopKeystoreType(List<?> items, Map<String, String> mapNameValue) {
+		// Verifica quale dei due tipi DPoP è attivo (dpopKeystoreType o dpopKeystoreTypeNoModi)
+		String typeValue = AbstractSecurityProvider.readValue(Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE, items, mapNameValue);
+		if(typeValue != null && !typeValue.isEmpty()) {
+			return Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE;
+		}
+		return Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE_NO_MODI;
 	}
 	private String dynamicUpdateStorePassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
 		boolean keystore = true;
-		if(Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName())) {
+		if(Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_PASSWORD.equals(item.getName())) {
+			type = getDpopKeystoreType(items, mapNameValue);
+		}
+		else if(Costanti.ID_HTTPS_TRUSTSTORE_PASSWORD.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_TRUSTSTORE_TYPE;
 			keystore = false;
 		}
 		else if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
 		}
-		
-		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(type)) {
 			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
 			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 				item.setValue("-");
@@ -926,16 +1020,21 @@ public class NegoziazioneTokenProvider implements IProvider {
 				return item.getValue();
 			}
 		}
-		
+
 		return AbstractSecurityProvider.processStorePassword(keystore, type, items, mapNameValue, item, actualValue);
 	}
 	private String dynamicUpdateStoreKeyPassword(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
-		if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
+		if(Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName()) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_PASSWORD_PRIVATE_KEY_OPZIONALE.equals(item.getName())) {
+			type = getDpopKeystoreType(items, mapNameValue);
+		}
+		else if(Costanti.ID_HTTPS_KEYSTORE_PASSWORD_PRIVATE_KEY.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
 		}
-		
-		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(type)) {
 			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
 			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 				item.setValue("-");
@@ -943,12 +1042,15 @@ public class NegoziazioneTokenProvider implements IProvider {
 				return item.getValue();
 			}
 		}
-		
+
 		return AbstractSecurityProvider.processStoreKeyPassword(type, items, mapNameValue, item, actualValue);
 	}
 	private String dynamicUpdateStoreKeyAlias(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
 		String type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
-		
+		if(Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_ALIAS_PRIVATE_KEY.equals(item.getName())) {
+			type = getDpopKeystoreType(items, mapNameValue);
+		}
+
 		String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
 		if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 			item.setValue("-");
@@ -975,11 +1077,15 @@ public class NegoziazioneTokenProvider implements IProvider {
 		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
 			type = Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE;
 		}
+		else if(Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
+			type = getDpopKeystoreType(items, mapNameValue);
+		}
 		else if(Costanti.ID_HTTPS_KEYSTORE_BYOK_POLICY.equals(item.getName())) {
 			type = Costanti.ID_HTTPS_KEYSTORE_TYPE;
 		}
-		
-		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type)) {
+
+		if(Costanti.ID_NEGOZIAZIONE_JWT_KEYSTORE_TYPE.equals(type) ||
+				Costanti.ID_NEGOZIAZIONE_DPOP_KEYSTORE_TYPE.equals(type)) {
 			String typeValue = AbstractSecurityProvider.readValue(type, items, mapNameValue);
 			if(Costanti.KEYSTORE_TYPE_APPLICATIVO_MODI_VALUE.equals(typeValue) || Costanti.KEYSTORE_TYPE_FRUIZIONE_MODI_VALUE.equals(typeValue)) {
 				item.setValue(typeValue);
@@ -987,7 +1093,26 @@ public class NegoziazioneTokenProvider implements IProvider {
 				return item.getValue();
 			}
 		}
-		
+
 		return AbstractSecurityProvider.processStoreByokPolicy(type, items, mapNameValue, item, actualValue);
+	}
+	private String dynamicUpdateExpectedTokenType(List<?> items, Map<String, String> mapNameValue, Item item, String actualValue) {
+		// Legge lo stato del checkbox DPoP
+		String dpopValue = AbstractSecurityProvider.readValue(Costanti.ID_RETRIEVE_TOKEN_DPOP, items, mapNameValue);
+		boolean dpopEnabled = "true".equalsIgnoreCase(dpopValue) || "selected".equalsIgnoreCase(dpopValue) || "yes".equalsIgnoreCase(dpopValue);
+
+		// Se il campo è vuoto, lascialo vuoto (non forzare un valore)
+		if(actualValue == null || actualValue.trim().isEmpty()) {
+			return actualValue;
+		}
+
+		// Se il campo ha un valore di default (Bearer o DPoP), aggiorna automaticamente in base allo stato di DPoP
+		if(HttpConstants.AUTHENTICATION_BEARER.equals(actualValue) ||
+				HttpConstants.AUTHORIZATION_DPOP.equals(actualValue)) {
+			return dpopEnabled ? HttpConstants.AUTHORIZATION_DPOP : HttpConstants.AUTHENTICATION_BEARER;
+		}
+
+		// Se l'utente ha impostato un valore custom, lo mantiene
+		return actualValue;
 	}
 }

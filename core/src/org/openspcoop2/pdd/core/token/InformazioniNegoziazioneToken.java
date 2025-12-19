@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openspcoop2.pdd.core.token.dpop.InformazioniJWTDpop;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -155,9 +156,12 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	
 	// Claims
 	private Map<String,Serializable> claims = new HashMap<>();
-		
+
+	// DPoP Backend (RFC 9449)
+	private InformazioniJWTDpop dpopBackend;
+
 	// NOTA: l'ordine stabilisce come viene serializzato nell'oggetto json
-	
+
 	// RawResponse
 	private String rawResponse;
 	
@@ -166,8 +170,11 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	
 	// Failed
 	private String errorDetails;
-		
-	
+
+	// DPoP: Save dynamic parameters for backend proof generation
+	private transient NegoziazioneTokenDynamicParameters dynamicParameters;
+
+
 	public TipoInformazioni getType() {
 		return this.type;
 	}
@@ -254,7 +261,14 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	public void setClaims(Map<String, Serializable> claims) {
 		this.claims = claims;
 	}
-			
+
+	public InformazioniJWTDpop getDpopBackend() {
+		return this.dpopBackend;
+	}
+	public void setDpopBackend(InformazioniJWTDpop dpopBackend) {
+		this.dpopBackend = dpopBackend;
+	}
+
 	public String getRawResponse() {
 		return this.rawResponse;
 	}
@@ -279,5 +293,12 @@ public class InformazioniNegoziazioneToken extends org.openspcoop2.utils.beans.B
 	}
 	public void setErrorDetails(String errorDetails) {
 		this.errorDetails = errorDetails;
+	}
+
+	public NegoziazioneTokenDynamicParameters getDynamicParameters() {
+		return this.dynamicParameters;
+	}
+	public void setDynamicParameters(NegoziazioneTokenDynamicParameters dynamicParameters) {
+		this.dynamicParameters = dynamicParameters;
 	}
 }

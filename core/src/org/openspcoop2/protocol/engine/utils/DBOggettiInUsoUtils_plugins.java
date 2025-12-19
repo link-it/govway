@@ -585,12 +585,15 @@ public class DBOggettiInUsoUtils_plugins {
 					||
 				"TOKEN_VALIDAZIONE".equals(tipoPlugin)
 				||
+				"DPOP_VALIDAZIONE".equals(tipoPlugin)
+				||
 				"TOKEN_NEGOZIAZIONE".equals(tipoPlugin)
 				||
 				"ATTRIBUTE_AUTHORITY".equals(tipoPlugin) ) {
-				
+
 				boolean tokenDynamicDiscovery = "TOKEN_DYNAMIC_DISCOVERY".equals(tipoPlugin);
 				boolean tokenValidazione = "TOKEN_VALIDAZIONE".equals(tipoPlugin);
+				boolean dpopValidazione = "DPOP_VALIDAZIONE".equals(tipoPlugin);
 				boolean tokenNegoziazione = "TOKEN_NEGOZIAZIONE".equals(tipoPlugin);
 				boolean attributeAuthority = "ATTRIBUTE_AUTHORITY".equals(tipoPlugin);
 				
@@ -602,6 +605,10 @@ public class DBOggettiInUsoUtils_plugins {
 				}
 				else if(tokenValidazione) {
 					constants = ErrorsHandlerCostant.TOKEN_PA;
+					tipologia = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION;
+				}
+				else if(dpopValidazione) {
+					constants = ErrorsHandlerCostant.TOKEN_DPOP;
 					tipologia = CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION;
 				}
 				else if(tokenNegoziazione) {
@@ -633,7 +640,7 @@ public class DBOggettiInUsoUtils_plugins {
 					sqlQueryObject.addWhereCondition(false, campoGpNome, campoGpNome, campoGpNome);
 					sqlQueryObject.addWhereLikeCondition(campoGpValore, tipo, false, false, false);
 				}
-				else if(tokenDynamicDiscovery || tokenNegoziazione || attributeAuthority) {
+				else if(dpopValidazione || tokenDynamicDiscovery || tokenNegoziazione || attributeAuthority) {
 					sqlQueryObject.addWhereCondition(campoGpNome);
 					sqlQueryObject.addWhereLikeCondition(campoGpValore, tipo, false, false, false);
 				}
@@ -647,6 +654,9 @@ public class DBOggettiInUsoUtils_plugins {
 					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
 					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_INTROSPECTION_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
 					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_USER_INFO_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
+				}
+				else if(dpopValidazione) {
+					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
 				}
 				else if(tokenDynamicDiscovery) {
 					utils.setParameter(stmt, index++, CostantiConfigurazione.POLICY_DYNAMIC_DISCOVERY_CLAIMS_PARSER_PLUGIN_TYPE, String.class);
@@ -892,6 +902,11 @@ public class DBOggettiInUsoUtils_plugins {
 			case TOKEN_DYNAMIC_DISCOVERY_PA:
 				if ( messages!=null && !messages.isEmpty() ) {
 					msg.append("utilizzato nelle Token Policy di Validazione: " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
+				}
+				break;	
+			case TOKEN_DPOP:
+				if ( messages!=null && !messages.isEmpty() ) {
+					msg.append("utilizzato nelle Token Policy di Validazione (DPoP): " + DBOggettiInUsoUtils.formatList(messages,separator) + separator);
 				}
 				break;	
 			case TOKEN_PA:

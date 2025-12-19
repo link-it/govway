@@ -1396,6 +1396,9 @@ public class ConsoleProperties {
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiSignedJwtTokenPolicyNegoziazione(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiSignedJwtTokenPolicyNegoziazione");
 	}
+	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiDpopJwtTokenPolicyNegoziazione(String alias) throws UtilsException {
+		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiDpopJwtTokenPolicyNegoziazione");
+	}
 	public String getJmxPdDConfigurazioneSistemaNomeMetodoCheckCertificatiConnettoreHttpsAttributeAuthority(String alias) throws UtilsException {
 		return getJmxPdDValueEngine(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.checkCertificatiConnettoreHttpsAttributeAuthority");
 	}

@@ -55,6 +55,7 @@ import org.openspcoop2.pdd.core.handlers.PreInResponseHandler;
 import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePA;
 import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePD;
 import org.openspcoop2.pdd.core.token.attribute_authority.IRetrieveAttributeAuthorityResponseParser;
+import org.openspcoop2.pdd.core.token.parser.IDPoPParser;
 import org.openspcoop2.pdd.core.token.parser.IDynamicDiscoveryParser;
 import org.openspcoop2.pdd.core.token.parser.INegoziazioneTokenParser;
 import org.openspcoop2.pdd.core.token.parser.ITokenParser;
@@ -317,7 +318,13 @@ public class PddPluginLoader extends PluginLoader implements IPluginLoader {
 		Class<?> c = getPddDynamicClass(classNameRegistered, TipoPlugin.TOKEN_VALIDAZIONE, tipo);
 		return (ITokenParser) newInstance(c, TipoPlugin.TOKEN_VALIDAZIONE, tipo);
 	}
-	
+
+	public IDPoPParser newDPoPValidazione(String tipo) throws CoreException {
+		String classNameRegistered = this.className.getDPoPValidazione(tipo);
+		Class<?> c = getPddDynamicClass(classNameRegistered, TipoPlugin.DPOP_VALIDAZIONE, tipo);
+		return (IDPoPParser) newInstance(c, TipoPlugin.DPOP_VALIDAZIONE, tipo);
+	}
+
 	public INegoziazioneTokenParser newTokenNegoziazione(String tipo) throws CoreException {
 		String classNameRegistered = this.className.getTokenNegoziazione(tipo);
 		Class<?> c = getPddDynamicClass(classNameRegistered, TipoPlugin.TOKEN_NEGOZIAZIONE, tipo);

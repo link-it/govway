@@ -30,14 +30,9 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.config.CanaliConfigurazione;
-import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.constants.RuoloContesto;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortTypeAzione;
-import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDResource;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -52,8 +47,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.MessageXMLUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
-import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
-import org.openspcoop2.pdd.core.autorizzazione.canali.CanaliUtils;
+import org.openspcoop2.pdd.config.UrlInvocazioneAPIUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.SecurityTokenUtilities;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
@@ -66,16 +60,15 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityToken;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
+import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
+import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaPortTypeAzioni;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaRisorse;
 import org.openspcoop2.protocol.sdk.registry.ProtocolFiltroRicercaServizi;
-import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
-import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.RequestInfo;
 import org.openspcoop2.utils.MapKey;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
@@ -426,7 +419,7 @@ public class ModIUtilities {
 							" verso l'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta)+
 							" erogata dal soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato));
 				}
-				return getUrlInvocazione(protocolFactory, state, requestInfo,
+				return UrlInvocazioneAPIUtils.getUrlInvocazione(protocolFactory, state, requestInfo,
 						rest, aspc, RuoloContesto.PORTA_DELEGATA, nomePD, proprietarioPD);
 			}
 			else {
@@ -447,7 +440,7 @@ public class ModIUtilities {
 					throw new RegistryNotFound("(inbound) Non è stata individuata alcun'erogazione da parte del soggetto "+NamingUtils.getLabelSoggetto(idSoggettoErogatoreServizioCorrelato)+
 							" relativamente all'API "+NamingUtils.getLabelAccordoServizioParteComune(idAccordoRisposta));
 				}
-				return getUrlInvocazione(protocolFactory, state, requestInfo,
+				return UrlInvocazioneAPIUtils.getUrlInvocazione(protocolFactory, state, requestInfo,
 						rest, aspc, RuoloContesto.PORTA_APPLICATIVA, nomePA, proprietarioPA);
 			}
 		}catch(Exception e) {
@@ -455,62 +448,6 @@ public class ModIUtilities {
 		}
 	}
 	
-	
-	public static String getUrlInvocazione(IProtocolFactory<?> protocolFactory, IState state, RequestInfo requestInfo,
-			boolean rest, AccordoServizioParteComune aspc, RuoloContesto ruoloContesto, String nomePorta, IDSoggetto proprietarioPorta) throws ProtocolException {
-		try {
-			List<String> tags = new ArrayList<>();
-			if(aspc!=null && aspc.getGruppi()!=null && aspc.getGruppi().sizeGruppoList()>0) {
-				for (int i = 0; i < aspc.getGruppi().sizeGruppoList(); i++) {
-					tags.add(aspc.getGruppi().getGruppo(i).getNome());
-				}
-			}
-			
-			IConfigIntegrationReader configReader = protocolFactory.getCachedConfigIntegrationReader(state, requestInfo);
-			CanaliConfigurazione canaliConfigurazione = configReader.getCanaliConfigurazione();
-			String canaleApi = null;
-			if(aspc!=null) {
-				canaleApi = aspc.getCanale();
-			}
-			String canalePorta = null;
-			if(nomePorta!=null) {
-				if(RuoloContesto.PORTA_APPLICATIVA.equals(ruoloContesto)) {
-					try {
-						IDPortaApplicativa idPA = new IDPortaApplicativa();
-						idPA.setNome(nomePorta);
-						PortaApplicativa pa = configReader.getPortaApplicativa(idPA);
-						canalePorta = pa.getNome();
-					}catch(Exception t) {
-						// ignore
-					}
-				}
-				else {
-					try {
-						IDPortaDelegata idPD = new IDPortaDelegata();
-						idPD.setNome(nomePorta);
-						PortaDelegata pd = configReader.getPortaDelegata(idPD);
-						canalePorta = pd.getNome();
-					}catch(Exception t) {
-						// ignore
-					}
-				}
-			}
-			String canale = CanaliUtils.getCanale(canaliConfigurazione, canaleApi, canalePorta);
-			
-			UrlInvocazioneAPI urlInvocazioneApi = ConfigurazionePdDManager.getInstance().getConfigurazioneUrlInvocazione(protocolFactory, 
-					ruoloContesto,
-					rest ? org.openspcoop2.message.constants.ServiceBinding.REST : org.openspcoop2.message.constants.ServiceBinding.SOAP,
-					nomePorta,
-					proprietarioPorta,
-					tags, canale, 
-					requestInfo);		 
-			String prefixGatewayUrl = urlInvocazioneApi.getBaseUrl();
-			String contesto = urlInvocazioneApi.getContext();
-			return Utilities.buildUrl(prefixGatewayUrl, contesto);
-		}catch(Exception e) {
-			throw new ProtocolException(e.getMessage(),e);
-		}
-	}
 	
 	public static String getSOAPHeaderReplyToValue(OpenSPCoop2SoapMessage soapMessage, boolean bufferMessageReadOnly, String idTransazione) throws ProtocolException {
 		boolean useSoapReader = true; // interessa solo il valore

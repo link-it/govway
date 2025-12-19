@@ -53,6 +53,7 @@
 		<rhino.version>1.7.14.1</rhino.version>
 		<hazelcast.version>5.3.8</hazelcast.version>
 		<hibernate.version>6.1.4.Final</hibernate.version>
+		<caffeine.version>3.2.3</caffeine.version>
 	</properties>
 
 	<dependencies>
@@ -534,6 +535,18 @@
 			<groupId>org.hibernate.orm</groupId>
         		<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+        		<artifactId>caffeine</artifactId>
+			<version>${caffeine.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

@@ -395,7 +395,12 @@ public class CostantiConfigurazione {
 	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
 	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_CLASS_NAME = "policy.validazioneJWT.claimsParser.className";
 	public static final String POLICY_VALIDAZIONE_CLAIMS_PARSER_PLUGIN_TYPE = "policy.validazioneJWT.claimsParser.pluginType";
-	
+
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE = "policy.validazioneDPoP.claimsParser";
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_CLASS_NAME = "policy.validazioneDPoP.claimsParser.className";
+	public static final String POLICY_VALIDAZIONE_DPOP_CLAIMS_PARSER_PLUGIN_TYPE = "policy.validazioneDPoP.claimsParser.pluginType";
+
 	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE = "policy.introspection.claimsParser";
 	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_TYPE_CUSTOM = "CUSTOM";
 	public static final String POLICY_INTROSPECTION_CLAIMS_PARSER_CLASS_NAME = "policy.introspection.claimsParser.className";

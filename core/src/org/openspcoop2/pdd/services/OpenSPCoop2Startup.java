@@ -158,6 +158,7 @@ import org.openspcoop2.pdd.core.keystore.RemoteStoreProviderDriver;
 import org.openspcoop2.pdd.core.response_caching.GestoreCacheResponseCaching;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.token.GestoreToken;
+import org.openspcoop2.pdd.core.token.dpop.jti.LocalJtiCacheManager;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.DiagnosticInputStream;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -4859,6 +4860,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 		try{
 			org.openspcoop2.utils.SemaphoreLock.releaseScheduledExecutorService();
 		}catch(Throwable e){
+			// ignore
+		}
+		
+		// ** LocalJtiCacheManager **
+		try{
+			LocalJtiCacheManager.shutdownAll();
+		}catch(Exception e){
 			// ignore
 		}
 		
