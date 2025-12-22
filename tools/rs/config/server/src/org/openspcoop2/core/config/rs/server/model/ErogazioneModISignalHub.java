@@ -22,21 +22,31 @@ package org.openspcoop2.core.config.rs.server.model;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import javax.validation.Valid;
 
 public class ErogazioneModISignalHub  {
   
-  @Schema(example = "/pseudonymization", required = true, description = "")
+  @Schema(example = "/pseudonymization", description = "")
   private String risorsa = null;
   
-  @Schema(example = "SHA-256", required = true, description = "")
+  @Schema(example = "SHA-256", description = "")
   private String algoritmo = null;
   
-  @Schema(example = "16", required = true, description = "")
+  @Schema(example = "16", description = "")
   private Integer dimensioneSeme = null;
   
-  @Schema(example = "15", required = true, description = "")
+  @Schema(example = "15", description = "")
   private Integer giorniRotazione = null;
   
   @Schema(description = "")
@@ -52,10 +62,9 @@ public class ErogazioneModISignalHub  {
    * @return risorsa
   **/
   @JsonProperty("risorsa")
-  @NotNull
   @Valid
   public String getRisorsa() {
-    return this.risorsa;
+    return risorsa;
   }
 
   public void setRisorsa(String risorsa) {
@@ -72,10 +81,9 @@ public class ErogazioneModISignalHub  {
    * @return algoritmo
   **/
   @JsonProperty("algoritmo")
-  @NotNull
   @Valid
   public String getAlgoritmo() {
-    return this.algoritmo;
+    return algoritmo;
   }
 
   public void setAlgoritmo(String algoritmo) {
@@ -92,10 +100,9 @@ public class ErogazioneModISignalHub  {
    * @return dimensioneSeme
   **/
   @JsonProperty("dimensione_seme")
-  @NotNull
   @Valid
   public Integer getDimensioneSeme() {
-    return this.dimensioneSeme;
+    return dimensioneSeme;
   }
 
   public void setDimensioneSeme(Integer dimensioneSeme) {
@@ -112,10 +119,9 @@ public class ErogazioneModISignalHub  {
    * @return giorniRotazione
   **/
   @JsonProperty("giorni_rotazione")
-  @NotNull
   @Valid
   public Integer getGiorniRotazione() {
-    return this.giorniRotazione;
+    return giorniRotazione;
   }
 
   public void setGiorniRotazione(Integer giorniRotazione) {
@@ -134,7 +140,7 @@ public class ErogazioneModISignalHub  {
   @JsonProperty("applicativo")
   @Valid
   public String getApplicativo() {
-    return this.applicativo;
+    return applicativo;
   }
 
   public void setApplicativo(String applicativo) {
@@ -153,7 +159,7 @@ public class ErogazioneModISignalHub  {
   @JsonProperty("ruolo")
   @Valid
   public String getRuolo() {
-    return this.ruolo;
+    return ruolo;
   }
 
   public void setRuolo(String ruolo) {
@@ -172,7 +178,7 @@ public class ErogazioneModISignalHub  {
   @JsonProperty("pseudoanonimizzazione")
   @Valid
   public Boolean isPseudoanonimizzazione() {
-    return this.pseudoanonimizzazione;
+    return pseudoanonimizzazione;
   }
 
   public void setPseudoanonimizzazione(Boolean pseudoanonimizzazione) {
@@ -190,13 +196,13 @@ public class ErogazioneModISignalHub  {
     StringBuilder sb = new StringBuilder();
     sb.append("class ErogazioneModISignalHub {\n");
     
-    sb.append("    risorsa: ").append(ErogazioneModISignalHub.toIndentedString(this.risorsa)).append("\n");
-    sb.append("    algoritmo: ").append(ErogazioneModISignalHub.toIndentedString(this.algoritmo)).append("\n");
-    sb.append("    dimensioneSeme: ").append(ErogazioneModISignalHub.toIndentedString(this.dimensioneSeme)).append("\n");
-    sb.append("    giorniRotazione: ").append(ErogazioneModISignalHub.toIndentedString(this.giorniRotazione)).append("\n");
-    sb.append("    applicativo: ").append(ErogazioneModISignalHub.toIndentedString(this.applicativo)).append("\n");
-    sb.append("    ruolo: ").append(ErogazioneModISignalHub.toIndentedString(this.ruolo)).append("\n");
-    sb.append("    pseudoanonimizzazione: ").append(ErogazioneModISignalHub.toIndentedString(this.pseudoanonimizzazione)).append("\n");
+    sb.append("    risorsa: ").append(toIndentedString(risorsa)).append("\n");
+    sb.append("    algoritmo: ").append(toIndentedString(algoritmo)).append("\n");
+    sb.append("    dimensioneSeme: ").append(toIndentedString(dimensioneSeme)).append("\n");
+    sb.append("    giorniRotazione: ").append(toIndentedString(giorniRotazione)).append("\n");
+    sb.append("    applicativo: ").append(toIndentedString(applicativo)).append("\n");
+    sb.append("    ruolo: ").append(toIndentedString(ruolo)).append("\n");
+    sb.append("    pseudoanonimizzazione: ").append(toIndentedString(pseudoanonimizzazione)).append("\n");
     sb.append("}");
     return sb.toString();
   }

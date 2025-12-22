@@ -10969,11 +10969,6 @@ components:
         signal_hub:
           $ref: "#/components/schemas/ErogazioneModISignalHub"
     ErogazioneModISignalHub:
-      required:
-      - "algoritmo"
-      - "dimensione_seme"
-      - "giorni_rotazione"
-      - "risorsa"
       type: "object"
       properties:
         risorsa:

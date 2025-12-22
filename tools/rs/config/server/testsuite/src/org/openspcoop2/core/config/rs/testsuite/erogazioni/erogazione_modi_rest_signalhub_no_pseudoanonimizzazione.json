@@ -16,14 +16,9 @@
                     	"PROVA_IDDESCRITTORE_1","PROVA_IDDESCRITTORE_2"
                     ],
                     "signal_hub": {
-                        "pseudoanonimizzazione": true,
-                        "risorsa": "GET_pseudonymization",
-                        "algoritmo": "SHAKE128",
-                        "dimensione_seme": 16,
-                        "giorni_rotazione": 4,
+                        "pseudoanonimizzazione": false,
                         "applicativo": "DemoPetStoreSignalHub"
                     }
                 }
         }
 }
-
