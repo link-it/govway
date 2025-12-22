@@ -9,6 +9,7 @@ Background:
 	* def push_signal_url = govway_base_path + '/rest/out/DemoSoggettoErogatore/PDND/api-pdnd-push-signals/v1/signals'
 	* def push_signal_url_default = govway_base_path + '/rest/out/DemoSoggettoErogatore/PDND/api-pdnd-push-signals-default/v1/signals'
 	* def crypto_info_url_erase = govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore2/SignalHubTest/v1/pseudonymization'
+	* def crypto_info_url_no_digest = govway_base_path + '/rest/out/DemoSoggettoFruitore/DemoSoggettoErogatore/SignalHubTestNoDigest/v1/pseudonymization'
 	* def api_config_url = govway_config_api_path + ''
 
 	* def check_traccia = read('classpath:utils/check-traccia-idac01.feature')
@@ -249,6 +250,23 @@ Scenario: richiesta informazioni crittografiche tramite signalId corrispondente
 	Then status 200
 	And match response == { seed: '#(seed)', cryptoHashFunction: 'SHA256'}
 
+@test-pseudonymization
+@test-pseudonymization-no-digest
+Scenario: Informazioni crittografiche non disponibili per servizio senza digest richiesta
+
+	* def deleted = remove_seeds();
+	* call reset_cache { cache_name: 'ConfigurazionePdD' }
+
+	Given url crypto_info_url_no_digest
+	And header simulazionepdnd-purposeId = 'purposeId'
+	And header simulazionepdnd-audience = 'audience'
+	And header simulazionepdnd-username = 'ApplicativoBlockingJWK'
+	And header GovWay-TestSuite-Test-ID = 'crypto_info_no_digest'
+
+	When method get
+	Then status 200
+	And match response == ''
+
 #
 # TEST SUL PUSH DEI SEGNALI
 #
@@ -282,6 +300,64 @@ Scenario: push del segnale corretto (usando service/serviceVersion)
 	And header GovWay-Testsuite-ObjectType = 'objectType'
 	And header GovWay-Testsuite-Service = 'SignalHubTest'
 	And header GovWay-Testsuite-Service-Version = 1
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: '#number' }
+
+@test-push
+@test-push-multiple-descriptor-no-descriptor
+Scenario: push del segnale di erogazioni con serviceId multipli senza specificare descriptorId
+
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdMultipleNoDescriptor'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdMultipleNoDescriptor'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_signal'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMultiple'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 400
+	And match response == bad_request
+
+	* def id_transazione = responseHeaders['GovWay-Transaction-ID'][0]
+	* def msgs = get_diagnostico(id_transazione, 'Sono presenti % servizi con serviceId % per individuare univocamente il servizio è richiesto anche il descriptorId')
+	* match msgs[0].MESSAGGIO contains "'2'"
+	* match msgs[0].MESSAGGIO contains "'eServiceMultiple'"
+	* if (msgs.length != 1) karate.fail('messaggio di errore non trovato')
+
+@test-push
+@test-push-multiple-descriptor-no-digest
+Scenario: push del segnale di erogazione senza pseudoanonimizzazione con serviceId multipli e con descriptorId noDigest2 
+
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdMultipleNoDigest2'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdMultipleNoDigest2'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_multiple_id'
+	And header GovWay-TestSuite-Hash = 'false'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMultiple'
+	And header GovWay-Signal-DescriptorId = 'noDigest2'
+	And request {data:[{signalType: "UPDATE"}]}
+	When method post
+	Then status 200
+	And match response == { signalId: '#number' }
+
+@test-push
+@test-push-multiple-descriptor-yes-digest
+Scenario: push del segnale di erogazione con pseudoanonimizzazione con serviceId multipli e con descriptorId yesDigest1 
+
+	Given url push_signal_url
+	And param govway_testsuite_objectId = 'objectIdMultipleYesDigest1'
+	And header GovWay-TestSuite-Plain-Object-ID = 'objectIdMultipleYesDigest1'
+	And header Authorization = call basic (auth_push_signal)
+	And header GovWay-TestSuite-Test-ID = 'push_multiple_id'
+	And header GovWay-TestSuite-Hash = 'true'
+	And header GovWay-Testsuite-ObjectType = 'objectType'
+	And header GovWay-Signal-ServiceId = 'eServiceMultiple'
+	And header GovWay-Signal-DescriptorId = 'yesDigest1'
 	And request {data:[{signalType: "UPDATE"}]}
 	When method post
 	Then status 200
