@@ -2069,6 +2069,7 @@ components:
             type: string
          pseudoanonimizzazione:
             type: boolean
+            default: true
     # ModI Fruizione
     FruizioneModI:
       type: object

@@ -46,7 +46,7 @@ public class ErogazioneModISignalHub  {
   private String ruolo = null;
   
   @Schema(description = "")
-  private Boolean pseudoanonimizzazione = null;
+  private Boolean pseudoanonimizzazione = true;
  /**
    * Get risorsa
    * @return risorsa

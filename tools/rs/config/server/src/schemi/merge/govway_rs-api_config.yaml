@@ -10996,6 +10996,7 @@ components:
           type: "string"
         pseudoanonimizzazione:
           type: "boolean"
+          default: true
     FruizioneModI:
       required:
       - "modi"
